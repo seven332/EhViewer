@@ -1,5 +1,6 @@
 package com.hippo.ehviewer.activity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import com.handmark.pulltorefresh.library.LoadingLayoutProxy;
@@ -264,7 +265,7 @@ public class MangaListActivity extends SlidingActivity {
                 }).setNeutralButton(R.string.add, new View.OnClickListener() {
                     @Override
                     public void onClick(final View v) {
-                        createSetNameDialog(null, new OnSetNameListener() {
+                        createSetNameDialog(null, null, new OnSetNameListener() {
                             @Override
                             public void onSetVaildName(String newName) {
                                 ((AlertButton)v).dialog.dismiss();
@@ -580,12 +581,19 @@ public class MangaListActivity extends SlidingActivity {
         public void onSetVaildName(String newName);
     }
     
-    private AlertDialog createSetNameDialog(String oldStr, final OnSetNameListener listener) {
+    /**
+     * Create a set name dialog
+     * 
+     * @param hint Text to set in edittext first
+     * @param oldStr string can be oldstr, even it is in listMenuTitle
+     * @param listener what to do when set right text
+     */
+    private AlertDialog createSetNameDialog(final String hint, final String oldStr, final OnSetNameListener listener) {
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.set_name, null);
         final EditText et = (EditText)view.findViewById(R.id.set_name_edit);
-        if (oldStr != null)
-            et.setText(oldStr);
+        if (hint != null)
+            et.setText(hint);
             
         return new DialogBuilder(this).setTitle(R.string.add_tag)
                 .setView(view, true).setPositiveButton(android.R.string.ok,
@@ -597,7 +605,7 @@ public class MangaListActivity extends SlidingActivity {
                             Toast.makeText(MangaListActivity.this,
                                     getString(R.string.tag_name_empty),
                                     Toast.LENGTH_SHORT).show();
-                        else if (listMenuTitle.contains(key))
+                        else if (listMenuTitle.contains(key) && !key.equals(oldStr))
                             Toast.makeText(MangaListActivity.this,
                                     getString(R.string.tag_name_exist),
                                     Toast.LENGTH_SHORT).show();
@@ -663,12 +671,18 @@ public class MangaListActivity extends SlidingActivity {
                 }).setNeutralButton(R.string.tag_change_name, new View.OnClickListener() {
                     @Override
                     public void onClick(final View v) {
-                        createSetNameDialog(listMenuTitle.get(position), new OnSetNameListener(){
+                        String hint = newTagName == null ? listMenuTitle.get(position) : newTagName;
+                        createSetNameDialog(hint, listMenuTitle.get(position), new OnSetNameListener(){
                             @Override
                             public void onSetVaildName(String newName) {
-                                newTagName = newName;
-                                SuperDialogUtil.setTitle(((AlertButton)v).dialog,
-                                        String.format(getString(R.string.new_tag_name), newTagName)); // TODO
+                                if (newName.equals(listMenuTitle.get(position))) // If new is old name
+                                    SuperDialogUtil.setTitle(((AlertButton)v).dialog,
+                                            listMenuTitle.get(position));
+                                else {
+                                    newTagName = newName;
+                                    SuperDialogUtil.setTitle(((AlertButton)v).dialog,
+                                            String.format(getString(R.string.new_tag_name), newTagName));
+                                }
                             }
                         }).show();
                     }

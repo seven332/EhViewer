@@ -35,7 +35,6 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.view.OlImageView;
 
-//TODO make favourite list like manga list, load from cache
 public class FavouriteActivity extends Activity{
     private static final String TAG = "FavouriteActivity";
     
