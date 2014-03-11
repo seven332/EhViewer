@@ -39,6 +39,7 @@ import com.hippo.ehviewer.PageList;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.network.ShapreCookieStore;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -47,6 +48,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
@@ -150,6 +152,8 @@ public class EhClient {
             listHeader = E_HENTAI_LIST_HEADER;
             detailHeader = E_HENTAI_DETAIL_HEADER;
         }
+        
+        DownloadMangaManager.init();
     }
 
     /**
@@ -1146,6 +1150,120 @@ public class EhClient {
     }
     
     
+    interface OnDownloadMangaListener {
+        public void onDownloadMangaStart(int id, int pageSum);
+        public void onDownloadMangaOver(int id);
+        
+        public void onDownloadPage(int id, int index);
+        
+        public void onDownloadMangaAllStart();
+        public void onDownloadMangaAllOver();
+    }
+    
+    /****** DownloadMangaManager ******/
+    public static class DownloadMangaManager {
+        private static final int INVALID_ID = -1;
+        
+        private static int id = INVALID_ID;
+        private static int curDownloadId = INVALID_ID;
+        private static ArrayList<DMTaskInfo> mDownloadQueue = new ArrayList<DMTaskInfo>();
+        
+        private static NotificationManager mNotifyManager;
+        private static NotificationCompat.Builder mBuilder;
+        
+        private static Object taskLock = new Object();
+        
+        private static OnDownloadMangaListener listener;
+        
+        public static void init() {
+            mNotifyManager = (NotificationManager)mContext
+                    .getSystemService(Context.NOTIFICATION_SERVICE);
+            mBuilder = new NotificationCompat.Builder(mContext);
+            mBuilder.setSmallIcon(R.drawable.ic_launcher);
+        }
+        
+        public static void setOnDownloadMangaListener(OnDownloadMangaListener listener) {
+            DownloadMangaManager.listener = listener;
+        }
+        
+        /**
+         * Add a download task to task queue
+         * 
+         * @param detailUrlStr
+         * @param foldName
+         * @return
+         */
+        public static int add(String detailUrlStr, String foldName) {
+            int newId = ++id;
+            if (newId < 0)
+                newId = id = 0;
+            mDownloadQueue.add(new DMTaskInfo(newId, detailUrlStr, foldName));
+            
+            synchronized (taskLock) {
+                if (curDownloadId == INVALID_ID && mDownloadQueue.size() != 0)
+                    start();
+            }
+            return newId;
+        }
+        
+        private static void start(){
+            if(curDownloadId != INVALID_ID){
+                return;
+            }
+            
+            new Thread(new Runnable(){
+                @Override
+                public void run() {
+                    if (listener != null)
+                        listener.onDownloadMangaAllStart();
+                    
+                    while(mDownloadQueue.size() > 0){
+                        DMTaskInfo ti = mDownloadQueue.get(0);
+                        curDownloadId = ti.id;
+                        mDownloadQueue.remove(0);
+                        
+                        StringBuffer sb = new StringBuffer();
+                        int pageSum = getFirstPageForDetail(ti.detailUrlStr, sb);
+                        if (listener != null)
+                            listener.onDownloadMangaStart(curDownloadId, pageSum);
+                        
+                        
+                        
+                        
+                    }
+                    synchronized (taskLock) {
+                        curDownloadId = INVALID_ID;
+                        if (listener != null)
+                            listener.onDownloadMangaAllOver();
+                    }
+                }
+            }).start();
+        }
+    }
+    
+    public static int getFirstPageForDetail(String detailUrlStr, StringBuffer firstPage) {
+        int mOK = 0;
+        int errorMessageId;
+        StringBuffer sb = new StringBuffer();
+        errorMessageId = get(loginUrl, sb);
+        if (sb.length() != 0) {
+            String pageContent = sb.toString();
+        }
+        return detailUrlStr;
+    }
+    
+    
+    public static class DMTaskInfo {
+        public int id;
+        public String detailUrlStr;
+        public String foldName;
+        
+        public DMTaskInfo(int id, String detailUrlStr, String foldName) {
+            this.id = id;
+            this.detailUrlStr = detailUrlStr;
+            this.foldName = foldName;
+        }
+    }
     
     
     /********** Use E-hentai API ************/
