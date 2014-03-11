@@ -1015,7 +1015,7 @@ public class MangaListActivity extends SlidingActivity {
                 freshButton.setVisibility(View.GONE);
                 Toast.makeText(
                         MangaListActivity.this,
-                        getString(errorMessageId) + getString(R.string.period)
+                        getString(errorMessageId) + " "
                         + getString(R.string.em_retry), Toast.LENGTH_SHORT).show();
             }
         }

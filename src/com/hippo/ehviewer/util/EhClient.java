@@ -17,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,6 +74,7 @@ public class EhClient {
     private static String logoutUrl;
 
     private static final int TIMEOUT = 10 * 1000;
+    private static final int DOWNLOAD_RETRY_TIMES = 5;
     
     private static Context mContext;
     
@@ -288,6 +290,9 @@ public class EhClient {
         } catch (ConnectTimeoutException e) {
             errorMessageId = R.string.em_timeout;
             e.printStackTrace();
+        } catch (UnknownHostException e) {
+            errorMessageId = R.string.em_no_network_2;
+            e.printStackTrace();
         } catch (IOException e) {
             errorMessageId = R.string.em_network_error;
             e.printStackTrace();
@@ -334,6 +339,9 @@ public class EhClient {
         } catch (ConnectTimeoutException e) {
             errorMessageId = R.string.em_timeout;
             e.printStackTrace();
+        } catch (UnknownHostException e) {
+            errorMessageId = R.string.em_no_network_2;
+            e.printStackTrace();
         } catch (IOException e) {
             errorMessageId = R.string.em_network_error;
             e.printStackTrace();
@@ -373,6 +381,9 @@ public class EhClient {
             e.printStackTrace();
         } catch (ConnectTimeoutException e) {
             errorMessageId = R.string.em_timeout;
+            e.printStackTrace();
+        } catch (UnknownHostException e) {
+            errorMessageId = R.string.em_no_network_2;
             e.printStackTrace();
         } catch (IOException e) {
             errorMessageId = R.string.em_network_error;
@@ -1123,6 +1134,9 @@ public class EhClient {
                 } catch (ConnectTimeoutException e) {
                     errorMessageId = R.string.em_timeout;
                     e.printStackTrace();
+                } catch (UnknownHostException e) {
+                    errorMessageId = R.string.em_no_network_2;
+                    e.printStackTrace();
                 } catch (IOException e) {
                     errorMessageId = R.string.em_network_error;
                     e.printStackTrace();
@@ -1242,14 +1256,29 @@ public class EhClient {
     }
     
     public static int getFirstPageForDetail(String detailUrlStr, StringBuffer firstPage) {
-        int mOK = 0;
+        int retry_times = 0;
         int errorMessageId;
+        String pageContent;
         StringBuffer sb = new StringBuffer();
-        errorMessageId = get(loginUrl, sb);
-        if (sb.length() != 0) {
-            String pageContent = sb.toString();
+        
+        // Get content
+        while (sb.length() == 0) {
+            errorMessageId = get(detailUrlStr, sb);
+            pageContent = sb.toString();
+            
+            retry_times++;
+            if (retry_times > DOWNLOAD_RETRY_TIMES)
+                break;
         }
-        return detailUrlStr;
+        
+        // If error
+        if (sb.length() == 0)
+            return 0;
+        
+        // TODO
+        
+        
+        return 0;
     }
     
     

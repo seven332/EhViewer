@@ -136,7 +136,7 @@ public class MangaActivity extends Activity {
             retryTimes++;
             int targetPage = (Integer)checkFlag;
             if (retryTimes < maxRetry) {
-                Toast.makeText(MangaActivity.this, getString(errorMessageId) + getString(R.string.period) + 
+                Toast.makeText(MangaActivity.this, getString(errorMessageId) + " " + 
                         String.format(getString(R.string.em_retry_times), retryTimes), 
                         Toast.LENGTH_SHORT).show();
                 if (targetPage == firstPage &&

@@ -104,6 +104,7 @@
     <string name="em_unknown_error">Unknown error</string>
     <string name="em_no_network">No network</string>
     <string name="em_can_not_reach">Your network can not reach e-hentai</string>
+    <string name="em_no_network_2">No network ?</string>
     
     <!-- Action -->
     <string name="action_refresh">Refresh</string>

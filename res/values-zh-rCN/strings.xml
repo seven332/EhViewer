@@ -100,6 +100,7 @@
     <string name="em_unknown_error">未知错误</string>
     <string name="em_no_network">无网络连接</string>
     <string name="em_can_not_reach">你所在的网络无法连接到 e-hentai</string>
+    <string name="em_no_network_2">无网络连接？</string>
     
     <!-- Action -->
     <string name="action_refresh">刷新</string>
