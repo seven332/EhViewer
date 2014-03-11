@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- Warning -->
+    <string name="dailog_waring_title">警告</string>
+    <string name="dailog_waring_plain">该应用内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。该应用作者不会对由该应用造成的后果负责。您是否愿意继续使用该应用？</string>
+    <string name="dailog_waring_yes">我愿意</string>
+    <string name="dailog_waring_no">不！</string>
+    
+    <!-- Network -->
+    <string name="dailog_check_network">检查网络</string>
+    <string name="dailog_network_error_yes">我不在意</string>
+    <string name="dailog_network_error_no">成</string>
+    
+    <!-- Exit -->
+    <string name="exit_tip">再按一次退出</string>
+    
+    <!-- Login -->
+    <string name="dailog_check_login">检查登陆状态</string>
+    <string name="toast_login_succeeded">登陆成功</string>
+    <string name="toast_login_failed">登陆失败</string>
+    <string name="dialog_title_login_or_not">是否登陆</string>
+    <string name="dialog_messgae_login_or_not">登陆以后好处都有啥？</string>
+    <string name="not_login">不登陆</string>
+    
+    <string name="toast_logout_succeeded">退出成功</string>
+    <string name="toast_logout_failed">退出失败</string>
+
+    <!-- Filter -->
+    <string name="hint_no_keyword">没关键字也行</string>
+    <string name="checkbox_advance">高级选项</string>
+    <string name="checkbox_sname">搜索本子</string>
+    <string name="checkbox_stags">搜索本子标签</string>
+    <string name="checkbox_sdesc">搜索本子描述</string>
+    <string name="checkbox_storr">搜索种子文件名</string>
+    <string name="checkbox_sto">仅搜索有种子的本子</string>
+    <string name="checkbox_sdt1">搜索 Low-Power 标签</string>
+    <string name="checkbox_sdt2">搜索 Downvoted 标签</string>
+    <string name="checkbox_sh">搜索被删除的本子</string>
+    <string name="checkbox_sr">最低评分：</string>
+    
+    <!-- Jump -->
+    <string name="jump_sum">共 %d 页</string>
+    <string name="jump_to">跳至：</string>
+    <string name="toast_invalid_page">非法页面</string>
+    
+    <!-- Send Crash -->
+    <string name="dialog_send_crash_title">这很重要</string>
+    <string name="dialog_send_crash_plain">上次该应用崩溃了。你愿意把日志发送给开发者以便以后得到更好的用户体验么？</string>
+    <string name="dialog_send_crash_yes">我愿意</string>
+    <string name="dialog_send_crash_no">门儿都没有</string>
+
+    <!-- List item long click -->
+    <string name="toast_add_favourite">已添加到收藏</string>
+    
+    <!-- MangaListActivity -->
+    <string name="no_found">未找到</string>
+
+    <!-- MangaDetialActivity -->
+    <string name="detail_uploader">上传者：%s</string>
+    <string name="detail_posted">发布时间：%s</string>
+    <string name="detail_pages">页数：%s</string>
+    <string name="detail_size">大小：%s</string>
+    <string name="detail_language">语言：%s</string>
+    <string name="detail_average">平均得分：%s</string>
+    <string name="detail_people">投票人数：%s</string>
+    <string name="detail_offensive_title">内容警告</string>
+    <string name="detail_offensive">这个本子被所有人标记为瞎眼。所以任何人都不应该看。\n\n（如果你忽略了这个警告，你就失去了抱怨的权利。）</string>
+    <string name="detail_button_read">阅读</string>
+    <string name="detail_button_cancel">算了，不看了</string>
+    <string name="detail_button_once">就看这一次</string>
+    <string name="detail_button_every">别再烦我了</string>
+    <string name="detail_pining">This gallery is pining for the fjords.</string>
+    <string name="detail_button_known">我知道了</string>
+    <string name="detail_preview_error">获取预览失败</string>
+    <string name="detail_not_rated">暂无人投票</string>
+
+    <!-- MangaActivity -->
+    <string name="load_pre">载入上一页</string>
+    <string name="first_page">已是第一页</string>
+    <string name="start_reloading">开始继续载入</string>
+    <string name="retry_max_pre">已达重试上限，滑至最左侧继续加载</string>
+    <string name="retry_max_next">已达重试上限，滑至最右侧继续加载</string>
+
+    <!-- ErrorMessage -->
+    <string name="em_network_error">网络错误</string>
+    <string name="em_timeout">超时</string>
+    <string name="em_response_code_error">响应码错误</string>
+    <string name="em_parser_error">网页分析错误</string>
+    <string name="em_open_input_stream_error">打开输入流错误</string>
+    <string name="em_read_input_stream_error">读取输入流错误</string>
+    <string name="em_client_protocol">无效的请求或无效的响应</string>
+    <string name="em_put_cache_error">存入缓存错误</string>
+    <string name="em_url_format_error">网址错误</string>
+    <string name="em_check_login_error">获取用户信息错误</string>
+    <string name="em_logout_error">退出错误</string>
+    <string name="em_url_error">网址错误</string>
+    <string name="em_retry">重试</string>
+    <string name="em_retry_times">重试次数：%d</string>
+    <string name="em_unknown_error">未知错误</string>
+    <string name="em_no_network">无网络连接</string>
+    <string name="em_can_not_reach">你所在的网络无法连接到 e-hentai</string>
+    
+    <!-- Action -->
+    <string name="action_refresh">刷新</string>
+    <string name="action_settings">设置</string>
+    
+    <!-- Settings -->
+    <string name="preference_category_display">显示</string>
+    <string name="preference_screen_ori">屏幕方向</string>
+    <string name="portrait">竖屏</string>
+    <string name="landscape">横屏</string>
+    
+    <string name="preference_page_scaling">页面缩放</string>
+    
+    <string name="preference_settings_title">设置</string>
+    <string name="preference_category_cache">缓存</string>
+    <string name="preference_cp_cache">封面与预览缓存大小</string>
+    <string name="preference_clear_cp_cache">清除封面与预览缓存</string>
+    <string name="preference_page_cache">页面缓存大小</string>
+    <string name="preference_clear_page_cache">清除页面缓存</string>
+    <string name="preference_cache_summary" formatted="false">大小 : %.2f / %d MB</string>
+    <string name="preference_cache_summary_no">无缓存</string>
+    <string name="preference_auto_page_cache">自动清理页面缓存</string>
+    <string name="preference_auto_page_cache_summary_on">当应用关闭时清除页面缓存</string>
+    <string name="preference_auto_page_cache_summary_off">啥都不做</string>
+    
+    <string name="preference_category_about">关于</string>
+    <string name="preference_author">作者</string>
+    
+    <string name="cache_large">缓存太大了！</string>
+    <string name="input_error">输入错误</string>
+    <string name="create_cache_error">创建缓存错误</string>
+    
+    <!-- Tag -->
+    <string name="add_tag">添加标签</string>
+    <string name="tag_name">标签名称：</string>
+    <string name="tag_name_empty">标签名称不能为空</string>
+    <string name="tag_name_exist">标签名称已存在</string>
+    <string name="tag_change_name">修改名称</string>
+    <string name="new_tag_name">新名称：%s</string>
+    
+    <!-- Pull -->
+    <string name="pull_refresh_pull">下拉刷新…</string>
+    <string name="pull_refresh_release">释放刷新…</string>
+    <string name="pull_pre_pull">下拉载入上一页…</string>
+    <string name="pull_pre_release">释放载入上一页…</string>
+    <string name="pull_next_pull">上提载入下一页…</string>
+    <string name="pull_next_release">释放载入下一页…</string>
+    
+    <!-- Util -->
+    <string name="last_page">最后一页！</string>
+    <string name="unfinished">未完成的功能</string>
+    <string name="period">。</string>
+    <string name="refresh">刷新</string>
+    <string name="error">错误</string>
+    <string name="changelog">日志</string>
+    <string name="login">登陆</string>
+    <string name="logout">退出</string>
+    <string name="wait">请稍后</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+    <string name="add">添加</string>
+    <string name="what_to_do">你想做什么？</string>
+    <string name="jump">跳页</string>
+    <string name="some_page">第 %d 页</string>
+    <string name="_default">默认</string>
+    
+    <string name="homepage">首页</string>
+    <string name="favourite">收藏</string>
+    
+    <string name="star_2">2 星</string>
+    <string name="star_3">3 星</string>
+    <string name="star_4">4 星</string>
+    <string name="star_5">5 星</string>
+    
+    <string name="actual_size">原始尺寸</string>
+    <string name="fit_to_width">匹配宽度</string>
+    <string name="fit_to_height">匹配长度</string>
+    <string name="fit_to_screen">匹配屏幕</string>
+    
+    <string name="add_to_favourite">收藏</string>
+    <string name="download">下载</string>
+    <string name="remove">移除</string>
+    
+    <string name="thanks">感谢</string>
+    
+    <string name="advance_search_left">高级搜索请左划</string>
+</resources>

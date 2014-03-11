@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="list_list_title">
+        <item>@string/homepage</item>
+        <item>@string/favourite</item>
+        <item>@android:string/search_go</item>
+    </string-array>
+    
+    <string-array name="min_rating">
+        <item>@string/star_2</item>
+        <item>@string/star_3</item>
+        <item>@string/star_4</item>
+        <item>@string/star_5</item>
+    </string-array>
+    
+    <string-array name="page_scaling_entries">
+        <item>@string/actual_size</item>
+        <item>@string/fit_to_width</item>
+        <item>@string/fit_to_height</item>
+        <item>@string/fit_to_screen</item>
+    </string-array>
+    
+    <string-array name="page_scaling_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    
+    <string-array name="list_item_long_click">
+        <item>@string/add_to_favourite</item>
+        <item>@string/download</item>
+    </string-array>
+    
+    <string-array name="favourite_item_long_click">
+        <item>@string/remove</item>
+        <item>@string/download</item>
+    </string-array>
+    
+    <string-array name="preference_screen_ori_entries">
+        <item>@string/portrait</item>
+        <item>@string/landscape</item>
+        <item>@string/_default</item>
+    </string-array>
+    
+    <string-array name="preference_screen_ori_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    
+    <string-array name="is_exhentai" translatable="false">
+        <item>g.e-hentai.org</item>
+        <item>exhentai.org</item>
+    </string-array>
+    
+    <string-array name="pull_refresh">
+        <item>@string/pull_refresh_pull</item>
+        <item>@string/pull_refresh_release</item>
+    </string-array>
+    
+    <string-array name="pull_pre">
+        <item>@string/pull_pre_pull</item>
+        <item>@string/pull_pre_release</item>
+    </string-array>
+    
+    <string-array name="pull_next">
+        <item>@string/pull_next_pull</item>
+        <item>@string/pull_next_release</item>
+    </string-array>
+
+</resources>

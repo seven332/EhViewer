@@ -1,0 +1,35 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <style name="ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/blue_dark</item>
+        <item name="android:backgroundStacked">@color/blue_dark</item>
+        <item name="android:backgroundSplit">@color/blue_dark</item>
+    </style>
+
+    <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_action_core_overflow</item>
+    </style>
+    
+    <style name="PopupMenu" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
+    </style>
+    
+    
+    <!-- Button -->
+    <style name="Button" parent="@android:style/Widget.Button">
+        <item name="android:textSize">18sp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:minHeight">48dip</item>
+        <item name="android:minWidth">64dip</item>
+    </style>
+    
+    <style name="Button.Blue">
+        <item name="android:background">@color/blue_dark</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    
+    <style name="Button.White">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    
+</resources>

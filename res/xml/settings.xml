@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/preference_category_display" >
+        <com.hippo.ehviewer.preference.AutoListPreference
+            android:defaultValue="0"
+            android:entries="@array/preference_screen_ori_entries"
+            android:entryValues="@array/preference_screen_ori_entry_values"
+            android:key="preference_screen_ori"
+            android:summary="%s"
+            android:title="@string/preference_screen_ori" />
+        
+        <com.hippo.ehviewer.preference.AutoListPreference
+            android:defaultValue="3"
+            android:entries="@array/page_scaling_entries"
+            android:entryValues="@array/page_scaling_entry_values"
+            android:key="preference_page_scaling"
+            android:summary="%s"
+            android:title="@string/preference_page_scaling" />
+    </PreferenceCategory>
+    
+    
+    <PreferenceCategory android:title="@string/preference_category_cache" >
+        <EditTextPreference
+            android:defaultValue="25"
+            android:inputType="number"
+            android:key="preference_cp_cache"
+            android:title="@string/preference_cp_cache" />
+        
+        <Preference 
+            android:key="preference_clear_cp_cache"
+            android:title="@string/preference_clear_cp_cache" />
+        
+        <EditTextPreference
+            android:defaultValue="256"
+            android:inputType="number"
+            android:key="preference_page_cache"
+            android:title="@string/preference_page_cache" />
+        
+        <Preference 
+            android:key="preference_clear_page_cache"
+            android:title="@string/preference_clear_page_cache" />
+        
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="preference_auto_page_cache"
+            android:summaryOff="@string/preference_auto_page_cache_summary_off"
+            android:summaryOn="@string/preference_auto_page_cache_summary_on"
+            android:title="@string/preference_auto_page_cache" />
+        
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/preference_category_about" >
+        <Preference 
+            android:key="preference_author"
+            android:title="@string/preference_author"
+            android:summary="@string/preference_author_summary" />
+        
+        <Preference
+            android:key="preference_changelog"
+            android:title="@string/changelog" />
+        
+        <Preference
+            android:key="preference_thanks"
+            android:title="@string/thanks" />
+        
+    </PreferenceCategory>
+
+</PreferenceScreen>

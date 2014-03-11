@@ -1,0 +1,37 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/transparent" >
+
+    <TextView
+        android:id="@+id/text_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_marginTop="80dp"
+        android:textColor="@android:color/white" />
+
+    <Button
+        style="@style/Button.White"
+        android:id="@+id/list_button_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_username"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:text="@string/logout"
+        android:onClick="buttonLogout" />
+    
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:id="@+id/list_wait_logout"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_username"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp" />
+    
+</RelativeLayout>

@@ -1,0 +1,247 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:hippo="http://schemas.android.com/apk/res/com.hippo.ehviewer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical" >
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp" >
+
+        <TableRow android:layout_marginBottom="8dp" >
+
+            <com.hippo.ehviewer.view.CheckImage
+                android:id="@+id/button_doujinshi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="12dp"
+                android:src="@drawable/doujinshi"
+                hippo:mask="@drawable/mask" />
+
+            <com.hippo.ehviewer.view.CheckImage
+                android:id="@+id/button_manga"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/manga"
+                hippo:mask="@drawable/mask" />
+        </TableRow>
+
+        <TableRow android:layout_marginBottom="8dp" >
+
+            <com.hippo.ehviewer.view.CheckImage
+                android:id="@+id/button_artistcg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="12dp"
+                android:src="@drawable/artistcg"
+                hippo:mask="@drawable/mask" />
+
+            <com.hippo.ehviewer.view.CheckImage
+                android:id="@+id/button_gamecg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/gamecg"
+                hippo:mask="@drawable/mask" />
+        </TableRow>
+
+        <TableRow android:layout_marginBottom="8dp" >
+
+            <com.hippo.ehviewer.view.CheckImage
+                android:id="@+id/button_western"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="12dp"
+                android:src="@drawable/western"
+                hippo:mask="@drawable/mask" />
+
+            <com.hippo.ehviewer.view.CheckImage
+                android:id="@+id/button_non_h"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/non_h"
+                hippo:mask="@drawable/mask" />
+        </TableRow>
+
+        <TableRow android:layout_marginBottom="8dp" >
+
+            <com.hippo.ehviewer.view.CheckImage
+                android:id="@+id/button_imageset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="12dp"
+                android:src="@drawable/imageset"
+                hippo:mask="@drawable/mask" />
+
+            <com.hippo.ehviewer.view.CheckImage
+                android:id="@+id/button_cosplay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/cosplay"
+                hippo:mask="@drawable/mask" />
+        </TableRow>
+
+        <TableRow android:layout_marginBottom="8dp" >
+
+            <com.hippo.ehviewer.view.CheckImage
+                android:id="@+id/button_asianporn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="12dp"
+                android:src="@drawable/asianporn"
+                hippo:mask="@drawable/mask" />
+
+            <com.hippo.ehviewer.view.CheckImage
+                android:id="@+id/button_misc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/misc"
+                hippo:mask="@drawable/mask" />
+        </TableRow>
+    </TableLayout>
+
+    <EditText
+        android:id="@+id/search_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:ems="10"
+        android:hint="@string/hint_no_keyword"
+        android:singleLine="true" >
+    </EditText>
+
+    <CheckBox
+        android:id="@+id/checkbox_advance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/checkbox_advance" />
+
+    <TableLayout
+        android:id="@+id/filter_advance"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:visibility="gone" >
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <CheckBox
+                android:id="@+id/checkbox_sname"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="@string/checkbox_sname" />
+
+            <CheckBox
+                android:id="@+id/checkbox_stags"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="@string/checkbox_stags" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <CheckBox
+                android:id="@+id/checkbox_sdesc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="@string/checkbox_sdesc" />
+
+            <CheckBox
+                android:id="@+id/checkbox_storr"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="@string/checkbox_storr" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <CheckBox
+                android:id="@+id/checkbox_sto"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="@string/checkbox_sto" />
+
+            <CheckBox
+                android:id="@+id/checkbox_sdt1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="@string/checkbox_sdt1" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <CheckBox
+                android:id="@+id/checkbox_sdt2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="@string/checkbox_sdt2" />
+
+            <CheckBox
+                android:id="@+id/checkbox_sh"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="@string/checkbox_sh" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <CheckBox
+                android:id="@+id/checkbox_sr"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="@string/checkbox_sr" />
+
+            <Spinner
+                android:id="@+id/spinner_min_rating"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:entries="@array/min_rating" >
+            </Spinner>
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

@@ -1,0 +1,39 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_marginBottom="12dp"
+    android:orientation="vertical"
+    android:gravity="center_horizontal" >
+    
+    <include
+        layout="@layout/page_list_panel"
+        android:layout_gravity="center" />
+    
+    <android.support.v7.widget.GridLayout
+        android:id="@+id/paper_list_gridLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+    </android.support.v7.widget.GridLayout>
+    
+    <ProgressBar
+        android:id="@+id/paper_list_wait"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:visibility="gone" />
+    
+    <Button
+        android:id="@+id/preview_button_refresh"
+        android:layout_margin="12dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/refresh"
+        android:visibility="gone"
+        android:onClick="ButtonPreviewRefresh" />
+    
+    <include
+        layout="@layout/page_list_panel"
+        android:id="@+id/bottom_panel"
+        android:layout_gravity="center" />
+    
+</LinearLayout>

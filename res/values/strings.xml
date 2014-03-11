@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name" translatable="false">EhViewer</string>
+    
+    <!-- Warning -->
+    <string name="dailog_waring_title">Waring</string>
+    <string name="dailog_waring_plain">该应用内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。该应用作者不会对由该应用造成的后果负责。您是否愿意继续使用该应用？</string>
+    <string name="dailog_waring_yes">Yes, I would</string>
+    <string name="dailog_waring_no">NO !</string>
+    
+    <!-- Network -->
+    <string name="dailog_check_network">Checking network</string>
+    <string name="dailog_network_error_yes">I don\'t care</string>
+    <string name="dailog_network_error_no">Fine</string>
+    
+    <!-- Exit -->
+    <string name="exit_tip">Click again to exit</string>
+    
+    <!-- Login -->
+    <string name="dailog_check_login">Checking login status</string>
+    <string name="toast_login_succeeded">Login succeeded</string>
+    <string name="toast_login_failed">Login failed</string>
+    <string name="dialog_title_login_or_not">Login or not</string>
+    <string name="dialog_messgae_login_or_not">What are the benefits of login ?</string>
+    <string name="not_login">Do not login</string>
+    
+    <string name="toast_logout_succeeded">Logout succeeded</string>
+    <string name="toast_logout_failed">Logout failed</string>
+
+    <!-- Filter -->
+    <string name="hint_no_keyword">No keyword is OK</string>
+    <string name="checkbox_advance">Advanced Options</string>
+    <string name="checkbox_sname">Search Gallery</string>
+    <string name="checkbox_stags">Search Gallery Tags</string>
+    <string name="checkbox_sdesc">Search Gallery Description</string>
+    <string name="checkbox_storr">Search Torrent Filenames</string>
+    <string name="checkbox_sto">Only Show Galleries With Torrents</string>
+    <string name="checkbox_sdt1">Search Low-Power Tags</string>
+    <string name="checkbox_sdt2">Search Downvoted Tags</string>
+    <string name="checkbox_sh">Show Expunged Galleries</string>
+    <string name="checkbox_sr">Minimum Rating:</string>
+    
+    <!-- Jump -->
+    <string name="jump_sum">%d pages in total</string>
+    <string name="jump_to">Jump to : </string>
+    <string name="toast_invalid_page">Invalid page</string>
+    
+    <!-- Send Crash -->
+    <string name="dialog_send_crash_title">It is important</string>
+    <string name="dialog_send_crash_plain">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ?</string>
+    <string name="dialog_send_crash_yes">Never mind</string>
+    <string name="dialog_send_crash_no">Yes, I would</string>
+    
+    <!-- List item long click -->
+    <string name="toast_add_favourite">Add to favourite</string>
+    
+    <!-- MangaListActivity -->
+    <string name="no_found">No hits found</string>
+
+    <!-- MangaDetialActivity -->
+    <string name="detail_uploader">Uploader: %s</string>
+    <string name="detail_posted">Posted: %s</string>
+    <string name="detail_pages">Pages: %s</string>
+    <string name="detail_size">Size: %s</string>
+    <string name="detail_language">Language: %s</string>
+    <string name="detail_average">Average: %s</string>
+    <string name="detail_people">Number of voters: %s</string>
+    <string name="detail_offensive_title">Content Warning</string>
+    <string name="detail_offensive">This gallery has been flagged as Offensive For Everyone. Due to its content, it should not be viewed by anyone.\n\n(And if you choose to ignore this warning, you lose all rights to complain about it in the future.)</string>
+    <string name="detail_button_read">Read</string>
+    <string name="detail_button_cancel">I would not read it</string>
+    <string name="detail_button_once">Just this time</string>
+    <string name="detail_button_every">Do not trouble me</string>
+    <string name="detail_pining">This gallery is pining for the fjords.</string>
+    <string name="detail_button_known">Yes, I know</string>
+    <string name="detail_preview_error">Get preview error !</string>
+    <string name="detail_not_rated">Not yet rated</string>
+    
+    
+    <!-- MangaActivity -->
+    <string name="load_pre">Load previous page</string>
+    <string name="first_page">First page !</string>
+    <string name="start_reloading">Start reloading</string>
+    <string name="retry_max_pre">Reached retry limit, scroll to leftmost side to reload</string>
+    <string name="retry_max_next">Reached retry limit, scroll to rightmost side to reload</string>
+    
+
+    <!-- ErrorMessage -->
+    <string name="em_network_error">Network Error</string>
+    <string name="em_timeout">Time out</string>
+    <string name="em_response_code_error">Response code is not HTTP_OK</string>
+    <string name="em_parser_error">Parser Error</string>
+    <string name="em_open_input_stream_error">Open input stream error</string>
+    <string name="em_read_input_stream_error">Read input stream error</string>
+    <string name="em_client_protocol">Invalid request or invalid response</string>
+    <string name="em_put_cache_error">Put cache error</string>
+    <string name="em_url_format_error">Url format error</string>
+    <string name="em_check_login_error">Get user info error</string>
+    <string name="em_logout_error">Logout error</string>
+    <string name="em_url_error">Url error</string>
+    <string name="em_retry">Retry</string>
+    <string name="em_retry_times">Retry times : %d</string>
+    <string name="em_unknown_error">Unknown error</string>
+    <string name="em_no_network">No network</string>
+    <string name="em_can_not_reach">Your network can not reach e-hentai</string>
+    
+    <!-- Action -->
+    <string name="action_refresh">Refresh</string>
+    <string name="action_settings">Settings</string>
+    
+    <!-- Settings -->
+    <string name="preference_category_display">Display</string>
+    <string name="preference_screen_ori">Screen orientation</string>
+    <string name="portrait">Portrait</string>
+    <string name="landscape">Landscape</string>
+    <string name="preference_page_scaling">Page scaling</string>
+    
+    <string name="preference_settings_title">Settings</string>
+    <string name="preference_category_cache">Cache</string>
+    <string name="preference_cp_cache">Cover and preview cache size</string>
+    <string name="preference_clear_cp_cache">Clear cover and preview cache</string>
+    <string name="preference_page_cache">Page cache size</string>
+    <string name="preference_clear_page_cache">Clear page cache</string>
+    <string name="preference_cache_summary" formatted="false">Size : %.2f / %d MB</string>
+    <string name="preference_cache_summary_no">No cache</string>
+    <string name="preference_auto_page_cache">Auto clear page cache</string>
+    <string name="preference_auto_page_cache_summary_on">Clean page cache when the application close</string>
+    <string name="preference_auto_page_cache_summary_off">Leave page cache alone</string>
+    
+    <string name="preference_category_about">About</string>
+    <string name="preference_author">Author</string>
+    <string name="preference_author_summary" translatable="false">Hippo &lt;ehviewersu@gmail.com&gt;</string>
+    
+    
+    <string name="cache_large">Cache size is too larger !</string>
+    <string name="input_error">Input error</string>
+    <string name="create_cache_error">Create cache error</string>
+    
+    
+    <!-- Tag -->
+    <string name="add_tag">Add tag</string>
+    <string name="tag_name">Tag name : </string>
+    <string name="tag_name_empty">Tag name can\'t be empty</string>
+    <string name="tag_name_exist">Tag name already existed</string>
+    <string name="tag_change_name">Change name</string>
+    <string name="new_tag_name">New name : %s</string>
+    
+    <!-- Pull -->
+    <string name="pull_refresh_pull">Pull to refresh…</string>
+    <string name="pull_refresh_release">Release to refresh…</string>
+    <string name="pull_pre_pull">Pull to load previous page…</string>
+    <string name="pull_pre_release">Release to load previous page…</string>
+    <string name="pull_next_pull">Pull to load next page…</string>
+    <string name="pull_next_release">Release to load next page…</string>
+    
+    <!-- Util -->
+    <string name="last_page">Last page !</string>
+    <string name="sadpanda" translatable="false">Sad Panda</string>
+    <string name="unfinished">Unfinished</string>
+    <string name="period">.&#160;</string>
+    <string name="refresh">Refresh</string>
+    <string name="error">Error</string>
+    <string name="changelog">Changelog</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="wait">Please wait</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="add">Add</string>
+    <string name="what_to_do">What can I do for you ?</string>
+    <string name="jump">Jump</string>
+    <string name="some_page">Page %d</string>
+    <string name="_default">Default</string>
+    
+    <string name="homepage">Homepage</string>
+    <string name="favourite">Favourite</string>
+    
+    <string name="star_2">2 stars</string>
+    <string name="star_3">3 stars</string>
+    <string name="star_4">4 stars</string>
+    <string name="star_5">5 stars</string>
+    
+    <string name="actual_size">Actual size</string>
+    <string name="fit_to_width">Fit to width</string>
+    <string name="fit_to_height">Fit to height</string>
+    <string name="fit_to_screen">Fit to screen</string>
+    
+    <string name="add_to_favourite">Add to favourite</string>
+    <string name="download">Download</string>
+    <string name="remove">Remove</string>
+    
+    <string name="thanks">Thanks</string>
+    
+    <string name="advance_search_left">Advance search in left</string>
+</resources>

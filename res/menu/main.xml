@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <item android:id="@+id/action_search"
+          android:title="@android:string/search_go"
+          android:icon="@drawable/ic_action_search"
+          android:hint="@android:string/search_go"
+          android:showAsAction="collapseActionView|ifRoom"
+          android:actionViewClass="android.widget.SearchView" />
+    
+    <item
+        android:id="@+id/action_refresh"
+        android:showAsAction="never"
+        android:icon="@drawable/ic_action_refresh"
+        android:title="@string/action_refresh"/>
+    
+    <item
+        android:id="@+id/action_jump"
+        android:showAsAction="never"
+        android:icon="@drawable/ic_action_jump"
+        android:title="@string/jump"/>
+    
+    <item
+        android:id="@+id/action_settings"
+        android:showAsAction="never"
+        android:icon="@drawable/ic_action_settings"
+        android:title="@string/action_settings" />
+</menu>

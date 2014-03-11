@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<resources>  
+  
+    <declare-styleable name="SuperImageView">  
+        <!-- Sets a drawable as the content of this ImageView. -->
+        <attr name="src" format="reference|color" />
+        <!-- Controls how the image should be resized or moved to match the size
+             of this ImageView. -->
+        <attr name="scaleType">
+            <enum name="matrix" value="0" />
+            <enum name="fitXY" value="1" /> <!-- error -->
+            <enum name="fitStart" value="2" />
+            <enum name="fitCenter" value="3" />
+            <enum name="fitEnd" value="4" />
+            <enum name="center" value="5" />
+            <enum name="centerCrop" value="6" />
+            <enum name="centerInside" value="7" />
+        </attr>
+        <!-- Set this to true if you want the ImageView to adjust its bounds
+             to preserve the aspect ratio of its drawable. -->
+        <attr name="adjustViewBounds" format="boolean" />
+        <!-- An optional argument to supply a maximum width for this view.
+             See {see android.widget.ImageView#setMaxWidth} for details. -->
+        <attr name="maxWidth" format="dimension" />
+        <!-- An optional argument to supply a maximum height for this view.
+             See {see android.widget.ImageView#setMaxHeight} for details. -->
+        <attr name="maxHeight" format="dimension" />
+        <!-- Set a tinting color for the image. -->
+        <attr name="tint" format="color" />
+        <!-- If true, the image view will be baseline aligned with based on its
+             bottom edge. -->
+        <attr name="baselineAlignBottom" format="boolean" />
+         <!-- If true, the image will be cropped to fit within its padding. -->
+        <attr name="cropToPadding" format="boolean" />
+        <!-- The offset of the baseline within this view. See {see android.view.View#getBaseline}
+             for details -->
+        <attr name="baseline" format="dimension" />
+        <!-- @hide The alpha value (0-255) set on the ImageView's drawable. Equivalent
+             to calling ImageView.setAlpha(int), not the same as View.setAlpha(float). -->
+        <attr name="drawableAlpha" format="integer" />
+    </declare-styleable>
+    
+    <declare-styleable name="CheckImage">
+        <attr name="mask" format="reference" />
+    </declare-styleable>
+    
+
+    
+</resources> 

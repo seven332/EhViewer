@@ -1,0 +1,4 @@
+<com.hippo.ehviewer.view.MangaViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pager"  
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" />
