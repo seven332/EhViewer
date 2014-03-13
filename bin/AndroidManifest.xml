@@ -65,6 +65,27 @@
             android:configChanges="orientation|screenSize" >
         </activity>
         
+        <activity
+            android:name="com.hippo.ehviewer.activity.DownloadActivity"
+            android:label="@string/download"
+            android:icon="@drawable/ic_action_download"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize"
+            android:launchMode="singleTask" >
+        </activity>
+        
+        <activity
+            android:name="com.hippo.ehviewer.activity.MangaDownloadActivity"
+            android:label="@string/download"
+            android:icon="@drawable/ic_action_download"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize" >
+        </activity>
+        
+        <service 
+            android:name="com.hippo.ehviewer.service.DownloadService"
+            android:label="DownloadService" />
+        
     </application>
 
 </manifest>

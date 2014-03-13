@@ -14,6 +14,8 @@ import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.dialog.DialogBuilder;
 import com.hippo.ehviewer.dialog.SuperDialogUtil;
+import com.hippo.ehviewer.service.DownloadService;
+import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
@@ -32,12 +34,15 @@ import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.R.color;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -133,6 +138,8 @@ public class MangaListActivity extends SlidingActivity {
     private int firstIndex = 1;
     private int lastIndex = 1;
     private int visiblePage = 0;
+    
+    private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
     private AlertDialog createCheckLoginDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
@@ -434,9 +441,10 @@ public class MangaListActivity extends SlidingActivity {
                     @Override
                     public void onItemClick(AdapterView<?> arg0, View arg1,
                             int position, long arg3) {
+                        ListMangaDetail lmd;
                         switch (position) {
                         case 0: // Add favourite item
-                            ListMangaDetail lmd = lmdArray.get(longClickItemIndex);
+                            lmd = lmdArray.get(longClickItemIndex);
                             Favourite.push(lmd);
                             Toast.makeText(MangaListActivity.this,
                                     getString(R.string.toast_add_favourite),
@@ -444,9 +452,14 @@ public class MangaListActivity extends SlidingActivity {
                             break;
                         case 1:
                             // TODO
+                            lmd = lmdArray.get(longClickItemIndex);
+                            Intent it = new Intent(MangaListActivity.this, DownloadService.class);
+                            startService(it);
+                            mServiceConn.getService().add(lmd.gid, lmd.thumb, 
+                                    EhClient.detailHeader + lmd.gid + "/" + lmd.token, lmd.title);
                             Toast.makeText(MangaListActivity.this,
-                                    getString(R.string.unfinished), Toast.LENGTH_SHORT)
-                                    .show();
+                                    getString(R.string.toast_add_download),
+                                    Toast.LENGTH_SHORT).show();
                             break;
                         default:
                             break;
@@ -1099,37 +1112,30 @@ public class MangaListActivity extends SlidingActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            // Check is the item is the same
             ListMangaDetail lmd= lmdArray.get(position);
-            if (convertView != null) {
-                OlImageView cover = (OlImageView)convertView.findViewById(R.id.cover);
-                if (cover.getUrl().equals(lmd.thumb))
-                    return convertView;
-            }
+            if (convertView == null)
+                convertView = mInflater.inflate(R.layout.list_item, null);
             
-            convertView = mInflater.inflate(R.layout.list_item, null);
+            OlImageView thumb = (OlImageView)convertView.findViewById(R.id.cover);
+            if (!lmd.gid.equals(thumb.getKey())) {
+                thumb.setUrl(lmd.thumb);
+                thumb.setKey(lmd.gid);
+                thumb.setCache(Cache.memoryCache, Cache.cpCache);
+                thumb.loadFromCache();
 
-            // Set cover url
-            OlImageView cover = (OlImageView) convertView
-                    .findViewById(R.id.cover);
-            cover.setUrl(lmdArray.get(position).thumb);
-            cover.setKey(lmdArray.get(position).gid);
-            cover.setCache(Cache.memoryCache, Cache.cpCache);
-            cover.loadFromCache();
+                // Set manga name
+                TextView name = (TextView) convertView.findViewById(R.id.name);
+                name.setText(lmd.title);
 
-            // Set manga name
-            TextView name = (TextView) convertView.findViewById(R.id.name);
-            name.setText(lmdArray.get(position).title);
+                // Set Tpye
+                ImageView type = (ImageView) convertView.findViewById(R.id.type);
+                Ui.setType(type, lmd.category);
 
-            // Set Tpye
-            ImageView type = (ImageView) convertView.findViewById(R.id.type);
-            Ui.setType(type, lmdArray.get(position).category);
-
-            // Add star
-            LinearLayout rate = (LinearLayout) convertView
-                    .findViewById(R.id.rate);
-            Ui.addStar(rate, lmdArray.get(position).rating);
-
+                // Add star
+                LinearLayout rate = (LinearLayout) convertView
+                        .findViewById(R.id.rate);
+                Ui.addStar(rate, lmd.rating);
+            }
             return convertView;
         }
     }
@@ -1168,6 +1174,10 @@ public class MangaListActivity extends SlidingActivity {
         int screenOri = Config.getScreenOriMode();
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);
+        
+        // Download service
+        Intent it = new Intent(MangaListActivity.this, DownloadService.class);
+        bindService(it, mServiceConn, BIND_AUTO_CREATE);
         
         // Get url
         Intent intent = getIntent();
@@ -1246,7 +1256,12 @@ public class MangaListActivity extends SlidingActivity {
                     showContent();
                 } else if (position == 2) { // filter
                     filterDialog.show();
-                } else {
+                } else if (position == 3) { // Download //TODO
+                    Intent intent = new Intent(MangaListActivity.this,
+                            DownloadActivity.class);
+                    startActivity(intent);
+                    showContent();
+                } else if (position >= mStableItemCount){
                     ListUrls listUrls = Tag.get(listMenuTitle.get(position));
                     if (listUrls != null) {
                         lus = listUrls;
@@ -1500,10 +1515,11 @@ public class MangaListActivity extends SlidingActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mServiceConn);
         if (Config.isAutoPageCache()) {
             Cache.pageCache.clear();
         }
-        super.onDestroy();
     }
 
     private void layout() { // First time

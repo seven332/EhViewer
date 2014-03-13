@@ -5,12 +5,14 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
+import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.EhClient;
 import com.hippo.ehviewer.util.Favourite;
 import com.hippo.ehviewer.util.Tag;
 import com.hippo.ehviewer.util.Ui;
 
 import android.app.Application;
+import android.util.Log;
 
 public class CrashApplication extends Application implements UncaughtExceptionHandler {
     
@@ -31,6 +33,7 @@ public class CrashApplication extends Application implements UncaughtExceptionHa
         Crash.init(this);
         BeautifyScreen.init(this);
         EhClient.init(this);
+        Download.init(this);
         
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);

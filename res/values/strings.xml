@@ -54,6 +54,7 @@
     
     <!-- List item long click -->
     <string name="toast_add_favourite">Add to favourite</string>
+    <string name="toast_add_download">Add to download list</string>
     
     <!-- MangaListActivity -->
     <string name="no_found">No hits found</string>
@@ -155,6 +156,15 @@
     <string name="pull_next_pull">Pull to load next page…</string>
     <string name="pull_next_release">Release to load next page…</string>
     
+    <!-- Download -->
+    <string name="start_download_task">Start download task</string>
+    <string name="download_task_finished">Download task finished</string>
+    <string name="downloading">Downloading</string>
+    <string name="download_successfully">download successfully</string>
+    <string name="download_unsuccessfully">download unsuccessfully</string>
+    <string name="not_started">Not started</string>
+    <string name="waiting">Waiting</string>
+    
     <!-- Util -->
     <string name="last_page">Last page !</string>
     <string name="sadpanda" translatable="false">Sad Panda</string>
@@ -176,6 +186,7 @@
     
     <string name="homepage">Homepage</string>
     <string name="favourite">Favourite</string>
+    <string name="download">Download</string>
     
     <string name="star_2">2 stars</string>
     <string name="star_3">3 stars</string>

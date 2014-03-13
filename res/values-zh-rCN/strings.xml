@@ -52,6 +52,7 @@
 
     <!-- List item long click -->
     <string name="toast_add_favourite">已添加到收藏</string>
+    <string name="toast_add_download">已添加到下载列表</string>
     
     <!-- MangaListActivity -->
     <string name="no_found">未找到</string>
@@ -149,6 +150,15 @@
     <string name="pull_next_pull">上提载入下一页…</string>
     <string name="pull_next_release">释放载入下一页…</string>
     
+    <!-- Download -->
+    <string name="start_download_task">开始下载任务</string>
+    <string name="download_task_finished">完成下载任务</string>
+    <string name="downloading">正在下载</string>
+    <string name="download_successfully">下载成功</string>
+    <string name="download_unsuccessfully">下载失败</string>
+    <string name="not_started">未启动</string>
+    <string name="waiting">等待中</string>
+    
     <!-- Util -->
     <string name="last_page">最后一页！</string>
     <string name="unfinished">未完成的功能</string>
@@ -169,6 +179,7 @@
     
     <string name="homepage">首页</string>
     <string name="favourite">收藏</string>
+    <string name="download">下载</string>
     
     <string name="star_2">2 星</string>
     <string name="star_3">3 星</string>

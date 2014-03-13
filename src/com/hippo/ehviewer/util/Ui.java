@@ -150,6 +150,7 @@ public class Ui {
         }
         if (viewGroup == null || rawRateString == null)
             return;
+        viewGroup.removeAllViews();
         float num = 0;
         try{
             num = Float.parseFloat(rawRateString);

@@ -38,7 +38,7 @@ public class Util {
     private static String TAG = "Util";
     
     /**
-     * Put InputStream to File, default bufferSize is 16 * 1024
+     * Put InputStream to File, default bufferSize is 512 * 1024
      * 
      * @param is
      * @param file
@@ -50,7 +50,7 @@ public class Util {
     }
     
     public static void copy(InputStream is, OutputStream os) throws IOException {
-        byte[] buffer = new byte[16 * 1024];
+        byte[] buffer = new byte[512 * 1024];
         int bytesRead;
         while((bytesRead = is.read(buffer)) !=-1)
             os.write(buffer, 0, bytesRead);
@@ -65,9 +65,34 @@ public class Util {
     public static int getResourcesType(String url) {
         int type = BITMAP;
         int index = url.lastIndexOf('.');
-        if (index != -1 && url.substring(index + 1).toLowerCase().equals("gif"))
+        if (index != -1 && getExtension(url).equals("gif"))
             type = MOVIE;
         return type;
+    }
+    
+    public static String getExtension(String url) {
+        int index = url.lastIndexOf('.');
+        if (index != -1)
+            return url.substring(index + 1).toLowerCase();
+        else
+            return "png";
+    }
+    
+    public static String getName(String fileName) {
+        int index = fileName.lastIndexOf('.');
+        if (index != -1)
+            return fileName.substring(0, index).toLowerCase();
+        else
+            return "png";
+    }
+    
+    public static boolean isNumber(String str) {
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            if (ch < '0' || ch > '9')
+                return false;
+        }
+        return true;
     }
     
     public static String byteArrayToHexString(byte[] b) {
@@ -129,5 +154,21 @@ public class Util {
         if (length != 0)
             sb.delete(length - 1, length);
         shaper.edit().putString(key, byteArrayToHexString(sb.toString().getBytes())).apply();
+    }
+    
+    public static void closeStreamQuietly (InputStream is) {
+        try {
+            if (is != null)
+                is.close();
+        } catch (IOException e) {
+        }
+    }
+    
+    public static void closeStreamQuietly (OutputStream os) {
+        try {
+            if (os != null)
+                os.close();
+        } catch (IOException e) {
+        }
     }
 }

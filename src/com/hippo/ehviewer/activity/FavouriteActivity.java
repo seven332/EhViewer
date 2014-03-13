@@ -100,33 +100,29 @@ public class FavouriteActivity extends Activity{
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ListMangaDetail lmd= mFavouriteLmd.get(position);
+            if (convertView == null)
+                convertView = mInflater.inflate(R.layout.list_item, null);
             
-            if (convertView != null) {
-                OlImageView cover = (OlImageView)convertView.findViewById(R.id.cover);
-                if (cover.getUrl().equals(lmd.thumb))
-                    return convertView;
+            OlImageView thumb = (OlImageView)convertView.findViewById(R.id.cover);
+            if (!lmd.gid.equals(thumb.getKey())) {
+                thumb.setUrl(lmd.thumb);
+                thumb.setKey(lmd.gid);
+                thumb.setCache(Cache.memoryCache, Cache.cpCache);
+                thumb.loadFromCache();
+
+                // Set manga name
+                TextView name = (TextView) convertView.findViewById(R.id.name);
+                name.setText(lmd.title);
+
+                // Set Tpye
+                ImageView type = (ImageView) convertView.findViewById(R.id.type);
+                Ui.setType(type, lmd.category);
+
+                // Add star
+                LinearLayout rate = (LinearLayout) convertView
+                        .findViewById(R.id.rate);
+                Ui.addStar(rate, lmd.rating);
             }
-            
-            // View is different
-            convertView = mInflater.inflate(R.layout.list_item, null);
-            
-            OlImageView cover = (OlImageView) convertView
-                    .findViewById(R.id.cover);
-            cover.setUrl(lmd.thumb);
-            cover.setKey(lmd.gid);
-            cover.setCache(Cache.memoryCache, Cache.cpCache);
-            cover.loadImage(false);
-            
-            TextView name = (TextView) convertView.findViewById(R.id.name);
-            name.setText(lmd.title);
-            
-            ImageView type = (ImageView) convertView.findViewById(R.id.type);
-            Ui.setType(type, lmd.category);
-            
-            LinearLayout rate = (LinearLayout) convertView
-                    .findViewById(R.id.rate);
-            Ui.addStar(rate, lmd.rating);
-            
             return convertView;
         }
     }

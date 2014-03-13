@@ -5,6 +5,7 @@
         <item>@string/homepage</item>
         <item>@string/favourite</item>
         <item>@android:string/search_go</item>
+        <item>@string/download</item>
     </string-array>
     
     <string-array name="min_rating">

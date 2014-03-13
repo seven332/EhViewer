@@ -5,9 +5,12 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -33,12 +36,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.hippo.ehviewer.DiskCache;
+import com.hippo.ehviewer.DownloadInfo;
 import com.hippo.ehviewer.ListMangaDetail;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.MangaDetail;
 import com.hippo.ehviewer.PageList;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.network.ShapreCookieStore;
+import com.hippo.ehviewer.service.DownloadService;
 
 import android.app.NotificationManager;
 import android.content.Context;
@@ -47,6 +53,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Movie;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.NotificationCompat;
@@ -74,7 +81,7 @@ public class EhClient {
     private static String logoutUrl;
 
     private static final int TIMEOUT = 10 * 1000;
-    private static final int DOWNLOAD_RETRY_TIMES = 5;
+    private static final int RETRY_TIMES = 5;
     
     private static Context mContext;
     
@@ -154,10 +161,9 @@ public class EhClient {
             listHeader = E_HENTAI_LIST_HEADER;
             detailHeader = E_HENTAI_DETAIL_HEADER;
         }
-        
         DownloadMangaManager.init();
     }
-
+    
     /**
      * Is init
      * 
@@ -1164,11 +1170,15 @@ public class EhClient {
     }
     
     
-    interface OnDownloadMangaListener {
-        public void onDownloadMangaStart(int id, int pageSum);
-        public void onDownloadMangaOver(int id);
+    public interface OnDownloadMangaListener {
+        public void onDownloadMangaStart(String id);
+        public void onDownloadMangaStart(String id, int pageSum, int startIndex);
+        public void onDownloadMangaStop(String id);
+        public void onDownloadMangaOver(String id, boolean ok);
         
-        public void onDownloadPage(int id, int index);
+        public void onDownloadPage(String id, int pageSum, int index);
+        public void onDownloadPageProgress(String id, int pageSum,
+                int index, float totalSize, float downloadSize);
         
         public void onDownloadMangaAllStart();
         public void onDownloadMangaAllOver();
@@ -1176,28 +1186,28 @@ public class EhClient {
     
     /****** DownloadMangaManager ******/
     public static class DownloadMangaManager {
-        private static final int INVALID_ID = -1;
+        public static final String DOWNLOAD_PATH = "/EhViewer/download/";
+        private static final String ACTION_UPDATE = "com.hippo.ehviewer.service.DownloadService.UPDATE";
         
-        private static int id = INVALID_ID;
-        private static int curDownloadId = INVALID_ID;
-        private static ArrayList<DMTaskInfo> mDownloadQueue = new ArrayList<DMTaskInfo>();
+        private static DownloadInfo curDownloadInfo = null;
         
-        private static NotificationManager mNotifyManager;
-        private static NotificationCompat.Builder mBuilder;
-        
+        private static ArrayList<DownloadInfo> mDownloadQueue = new ArrayList<DownloadInfo>();
         private static Object taskLock = new Object();
-        
         private static OnDownloadMangaListener listener;
+        private static DownloadService mService;
+        
+        private static boolean mStop = false;
         
         public static void init() {
-            mNotifyManager = (NotificationManager)mContext
-                    .getSystemService(Context.NOTIFICATION_SERVICE);
-            mBuilder = new NotificationCompat.Builder(mContext);
-            mBuilder.setSmallIcon(R.drawable.ic_launcher);
+
         }
         
         public static void setOnDownloadMangaListener(OnDownloadMangaListener listener) {
             DownloadMangaManager.listener = listener;
+        }
+        
+        public static void setDownloadService(DownloadService service) {
+            DownloadMangaManager.mService = service;
         }
         
         /**
@@ -1207,90 +1217,283 @@ public class EhClient {
          * @param foldName
          * @return
          */
-        public static int add(String detailUrlStr, String foldName) {
-            int newId = ++id;
-            if (newId < 0)
-                newId = id = 0;
-            mDownloadQueue.add(new DMTaskInfo(newId, detailUrlStr, foldName));
-            
+        public static void add(DownloadInfo di) {
             synchronized (taskLock) {
-                if (curDownloadId == INVALID_ID && mDownloadQueue.size() != 0)
+                mDownloadQueue.add(di);
+                if (curDownloadInfo == null && mDownloadQueue.size() != 0)
                     start();
             }
-            return newId;
+        }
+        
+        public static void cancel(String id) {
+            synchronized (taskLock) {
+                DownloadInfo di = Download.get(id);
+                if (di != null) {
+                    di.status = DownloadInfo.STOP;
+                    mDownloadQueue.remove(di);
+                    if (!id.equals(getCurDownloadId())) {
+                        mService.notifyUpdate();
+                        Download.notify(id);
+                    }
+                }
+            }
+        }
+        
+        public static String getCurDownloadId() {
+            synchronized (taskLock) {
+                if (curDownloadInfo == null)
+                    return null;
+                else
+                    return curDownloadInfo.gid;
+            }
+        }
+        
+        public static boolean isWaiting(String str) {
+            synchronized (taskLock) {
+                for (DownloadInfo di : mDownloadQueue) {
+                    if (di.gid.equals(str))
+                        return true;
+                }
+            }
+            return false;
         }
         
         private static void start(){
-            if(curDownloadId != INVALID_ID){
+            if(curDownloadInfo != null){
                 return;
             }
             
             new Thread(new Runnable(){
                 @Override
                 public void run() {
-                    if (listener != null)
-                        listener.onDownloadMangaAllStart();
+                    listener.onDownloadMangaAllStart();
                     
+                    Parser parser = new Parser();
+                    Downloader imageDownloader = new Downloader();
+                    imageDownloader.setOnDownloadListener(new Downloader.OnDownloadListener() {
+                        @Override
+                        public void onDownloadStart(int totalSize) {
+                            if (curDownloadInfo != null) {
+                                curDownloadInfo.downloadSize = 0;
+                                curDownloadInfo.totalSize = totalSize/1024.0f;
+                                mService.notifyUpdate();
+                            }
+                        }
+
+                        @Override
+                        public void onDownloadStatusUpdate(int downloadSize,
+                                int totalSize) {
+                            curDownloadInfo.downloadSize = downloadSize/1024.0f;
+                            curDownloadInfo.totalSize = totalSize/1024.0f;
+                            mService.notifyUpdate();
+                        }
+                    });
                     while(mDownloadQueue.size() > 0){
-                        DMTaskInfo ti = mDownloadQueue.get(0);
-                        curDownloadId = ti.id;
-                        mDownloadQueue.remove(0);
+                        synchronized (taskLock) {
+                            curDownloadInfo = mDownloadQueue.get(0);
+                            curDownloadInfo.status = DownloadInfo.DOWNLOADING;
+                            mDownloadQueue.remove(0);
+                        }
+                        Download.notify(String.valueOf(curDownloadInfo.gid));
                         
-                        StringBuffer sb = new StringBuffer();
-                        int pageSum = getFirstPageForDetail(ti.detailUrlStr, sb);
-                        if (listener != null)
-                            listener.onDownloadMangaStart(curDownloadId, pageSum);
+                        if (curDownloadInfo.type == DownloadInfo.DETAIL_URL) {
+                            listener.onDownloadMangaStart(curDownloadInfo.gid);
+                            mService.notifyUpdate();
+                            if (parser.getFirstPagePageSumForDetail(curDownloadInfo.detailUrlStr)) { // Get page info
+                                curDownloadInfo.type = DownloadInfo.PAGE_URL;
+                                curDownloadInfo.lastStartIndex = 1;
+                                curDownloadInfo.pageSum = parser.getPageSum();
+                                curDownloadInfo.pageUrlStr = parser.getFirstPage();
+                                Download.notify(curDownloadInfo.gid);
+                                
+                            } else { // If get info error
+                                listener.onDownloadMangaOver(curDownloadInfo.gid, false);
+                                curDownloadInfo.status = DownloadInfo.FAILED;
+                                mService.notifyUpdate();
+                                Download.notify(String.valueOf(curDownloadInfo.gid));
+                                continue;
+                            }
+                        }
                         
+                        //Create folder
+                        File folder = new File(Environment.getExternalStorageDirectory() + DOWNLOAD_PATH + curDownloadInfo.title); // TODO 
+                        if (!folder.mkdirs() && !folder.isDirectory()) {
+                            folder = new File(Environment.getExternalStorageDirectory() + DOWNLOAD_PATH + curDownloadInfo.gid);
+                            if (!folder.mkdirs() && !folder.isDirectory()) {
+                                listener.onDownloadMangaOver(curDownloadInfo.gid, false);
+                                curDownloadInfo.status = DownloadInfo.FAILED;
+                                mService.notifyUpdate();
+                                Download.notify(String.valueOf(curDownloadInfo.gid));
+                                continue;
+                            }
+                        }
                         
-                        
-                        
+                        String nextPage = curDownloadInfo.pageUrlStr;
+                        curDownloadInfo.pageUrlStr = null;
+                        String imageUrlStr = null;
+                        boolean mComplete = true;
+                        boolean mStop = false;
+                        // Get page
+                        curDownloadInfo.lastStartIndex--;
+                        while (!nextPage.equals(curDownloadInfo.pageUrlStr)) {
+                            curDownloadInfo.pageUrlStr = nextPage;
+                            curDownloadInfo.lastStartIndex++;
+                            Download.notify(String.valueOf(curDownloadInfo.gid));
+                            listener.onDownloadPage(curDownloadInfo.gid, curDownloadInfo.pageSum, curDownloadInfo.lastStartIndex-1);
+                            mService.notifyUpdate();
+                            
+                            if (parser.getPageInfoSumForPage(curDownloadInfo.pageUrlStr)) {
+                                nextPage = parser.getNextPage();
+                                imageUrlStr = parser.getImageUrlStr();
+                                
+                                // Check stop
+                                if (curDownloadInfo.status == DownloadInfo.STOP) {
+                                    listener.onDownloadMangaStop(curDownloadInfo.gid);
+                                    mService.notifyUpdate();
+                                    Download.notify(String.valueOf(curDownloadInfo.gid));
+                                    mComplete = false;
+                                    mStop = true;
+                                    break;
+                                }
+                                
+                                try {
+                                    imageDownloader.resetData(folder.toString(),
+                                            String.format("%05d", curDownloadInfo.lastStartIndex) + "." + Util.getExtension(imageUrlStr),
+                                            imageUrlStr, curDownloadInfo);
+                                    imageDownloader.run();
+                                    
+                                    curDownloadInfo.downloadSize = 0;
+                                    curDownloadInfo.totalSize = 0;
+                                    
+                                    int downloadStatus = imageDownloader.getStatus();
+                                    if (downloadStatus == Downloader.STOP) { // If stop by user
+                                        listener.onDownloadMangaStop(curDownloadInfo.gid);
+                                        mService.notifyUpdate();
+                                        Download.notify(String.valueOf(curDownloadInfo.gid));
+                                        mComplete = false;
+                                        mStop = true;
+                                        break;
+                                    } else if (downloadStatus != Downloader.COMPLETED) { // If get image error
+                                        Log.e(TAG, "Download image error, downloadStatus is " + downloadStatus);
+                                        mComplete = false;
+                                        break;
+                                    }
+                                } catch (MalformedURLException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                mComplete = false;
+                                break;
+                            }
+                        }
+                        if (mComplete) {
+                            listener.onDownloadMangaOver(curDownloadInfo.gid, true);
+                            curDownloadInfo.status = DownloadInfo.COMPLETED;
+                            mService.notifyUpdate();
+                            Download.notify(String.valueOf(curDownloadInfo.gid));
+                        } else if (!mStop) {
+                            listener.onDownloadMangaOver(curDownloadInfo.gid, false);
+                            curDownloadInfo.status = DownloadInfo.FAILED;
+                            mService.notifyUpdate();
+                            Download.notify(String.valueOf(curDownloadInfo.gid));
+                        }
                     }
                     synchronized (taskLock) {
-                        curDownloadId = INVALID_ID;
-                        if (listener != null)
-                            listener.onDownloadMangaAllOver();
+                        curDownloadInfo = null;
+                        listener.onDownloadMangaAllOver();
                     }
                 }
             }).start();
         }
+        
+        public static boolean isEmpty() {
+            synchronized (taskLock) {
+                return curDownloadInfo == null;
+            }
+        }
     }
     
-    public static int getFirstPageForDetail(String detailUrlStr, StringBuffer firstPage) {
-        int retry_times = 0;
-        int errorMessageId;
-        String pageContent;
-        StringBuffer sb = new StringBuffer();
+    private static class Parser {
         
-        // Get content
-        while (sb.length() == 0) {
-            errorMessageId = get(detailUrlStr, sb);
-            pageContent = sb.toString();
-            
-            retry_times++;
-            if (retry_times > DOWNLOAD_RETRY_TIMES)
-                break;
+        private int errorMegId;
+        
+        private int pageSum;
+        private String firstPage;
+        
+        private String prePage;
+        private String nextPage;
+        private String imageUrlStr;
+        
+        
+        public int getPageSum() {
+            return pageSum;
         }
         
-        // If error
-        if (sb.length() == 0)
-            return 0;
+        public String getFirstPage() {
+            return firstPage;
+        }
         
-        // TODO
+        public String getPrePage() {
+            return prePage;
+        }
         
+        public String getNextPage() {
+            return nextPage;
+        }
         
-        return 0;
-    }
-    
-    
-    public static class DMTaskInfo {
-        public int id;
-        public String detailUrlStr;
-        public String foldName;
+        public String getImageUrlStr() {
+            return imageUrlStr;
+        }
         
-        public DMTaskInfo(int id, String detailUrlStr, String foldName) {
-            this.id = id;
-            this.detailUrlStr = detailUrlStr;
-            this.foldName = foldName;
+        public String getPageContent(String urlStr) {
+            int retry_times = 0;
+            StringBuffer sb = new StringBuffer();
+            
+            // Get content
+            while (sb.length() == 0) {
+                errorMegId = get(urlStr, sb);
+                retry_times++;
+                if (retry_times > RETRY_TIMES)
+                    break;
+            }
+            return sb.toString();
+        }
+        
+        public boolean getFirstPagePageSumForDetail(String detailUrlStr) {
+            String pageContent = getPageContent(detailUrlStr);
+            if (pageContent.length() == 0)
+                return false;
+            
+            Pattern p = Pattern.compile("<p class=\"ip\">Showing [\\d|,]+ - [\\d|,]+ of ([\\d|,]+) images</p>.+<div id=\"gdt\"><div[^<>]*>(?:<div[^<>]*>)?<a[^<>]*href=\"([^<>\"]+)\"[^<>]*>");
+            Matcher m = p.matcher(pageContent);
+            if (m.find()) {
+                pageSum = Integer.parseInt(m.group(1).replace(",", ""));
+                firstPage = m.group(2);
+                return true;
+            }
+            return false;
+        }
+        
+        /**
+         * Get page info, previous page, next page, image url
+         * 
+         * @param pageUrlStr
+         * @return True if get
+         */
+        public boolean getPageInfoSumForPage(String pageUrlStr) {
+            String pageContent = getPageContent(pageUrlStr);
+            if (pageContent.length() == 0)
+                return false;
+            
+            Pattern p = Pattern.compile("<a[^<>]*id=\"prev\"[^<>]*href=\"([^<>\"]+)\"><img[^<>]*/></a>.+<a[^<>]id=\"next\"[^<>]*href=\"([^<>\"]+)\"><img[^<>]*/></a>.+<img[^<>]*src=\"([^<>\"]+?)\"[^<>]*style=\"[^<>\"]*\"[^<>]*/>");
+            Matcher m = p.matcher(pageContent);
+            if (m.find()) {
+                prePage = m.group(1);
+                nextPage = m.group(2);
+                imageUrlStr = StringEscapeUtils.unescapeHtml4(m.group(3));
+                return true;
+            }
+            return false;
         }
     }
     

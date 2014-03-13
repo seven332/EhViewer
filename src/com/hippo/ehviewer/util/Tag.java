@@ -25,9 +25,8 @@ public class Tag {
     private static ArrayList<ListUrls> mTags = new ArrayList<ListUrls>();
     
     private static boolean mInit = false;
-    private static final String NOT_INIT_ERROR_INFO = "Please init Tag first.";
     /**
-     * Init Favourite
+     * Init Tag
      * 
      * @param context Application context
      */
@@ -51,9 +50,6 @@ public class Tag {
     }
     
     private static void getTag() {
-        if (!mInit)
-            throw new IllegalStateException(NOT_INIT_ERROR_INFO);
-        
         String[] allOrder = Util.getStrings(mTagPre, LIST_ORDER);
         
         if (allOrder == null)
@@ -82,9 +78,6 @@ public class Tag {
      * @return
      */
     public static boolean add(String key, ListUrls tag) {
-        if (!mInit)
-            throw new IllegalStateException(NOT_INIT_ERROR_INFO);
-        
         // Check contain this item or not
         if (mListOrder.indexOf(key) == -1) {
             mListOrder.add(key);
@@ -133,9 +126,6 @@ public class Tag {
      * @return True if remove successfully
      */
     public static boolean remove(String key) {
-        if (!mInit)
-            throw new IllegalStateException(NOT_INIT_ERROR_INFO);
-        
         int index = mListOrder.indexOf(key);
         if (index != -1) {
             mListOrder.remove(index);
@@ -154,9 +144,6 @@ public class Tag {
      * @return True if remove successfully
      */
     public static boolean remove(int index) {
-        if (!mInit)
-            throw new IllegalStateException(NOT_INIT_ERROR_INFO);
-        
         mTags.remove(index);
         String key = mListOrder.remove(index);
         mTagPre.edit().remove(key).apply();
@@ -198,8 +185,6 @@ public class Tag {
      * @return
      */
     public static ArrayList<ListUrls> getTagList() {
-        if (!mInit)
-            throw new IllegalStateException(NOT_INIT_ERROR_INFO);
         return mTags;
     }
     
@@ -209,8 +194,6 @@ public class Tag {
      * @return
      */
     public static ArrayList<String> getKeyList() {
-        if (!mInit)
-            throw new IllegalStateException(NOT_INIT_ERROR_INFO);
         return mListOrder;
     }
     

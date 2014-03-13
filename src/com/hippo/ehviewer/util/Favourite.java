@@ -109,10 +109,6 @@ public class Favourite {
      * @return True if remove successfully
      */
     public static boolean remove(int index) {
-        if (!mInit) {
-            throw new IllegalStateException("Please init Favourite first.");
-        }
-        
         mFavouriteLmd.remove(index);
         String key = mListOrder.remove(index);
         Util.putStrings(mFavouritePre, LIST_ORDER, mListOrder);
@@ -126,9 +122,6 @@ public class Favourite {
      * @return
      */
     public static ArrayList<ListMangaDetail> getFavouriteList() {
-        if (!mInit) {
-            throw new IllegalStateException("Please init Favourite first.");
-        }
         return mFavouriteLmd;
     }
     

@@ -15,7 +15,6 @@ public class Cache {
 
     private static Context mContext;
 
-    private static boolean mSdCard = false;
     public static final String cpCachePath = "/EhViewer/cache/cover";
     public static final String pageCachePath = "/EhViewer/cache/page";
     public static DiskCache cpCache = null;
@@ -38,10 +37,8 @@ public class Cache {
         mInit = true;
         
         mContext = context;
-        mSdCard = Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED);
 
-        if (mSdCard) {
+        if (hasSdCard()) {
             try {
                 int cpCacheSize = Config.getCoverDiskCacheSize() * 1024 * 1024;
                 if (cpCacheSize <= 0)
@@ -98,9 +95,7 @@ public class Cache {
      * @return True if has sd card
      */
     public static boolean hasSdCard() {
-        if (!mInit) {
-            throw new IllegalStateException("Please init Cache first.");
-        }
-        return mSdCard;
+        return Environment.getExternalStorageState().equals(
+                Environment.MEDIA_MOUNTED);
     }
 }
