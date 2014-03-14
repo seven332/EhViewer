@@ -39,16 +39,11 @@ public class DownloadService extends Service {
         mNotifyManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);
         mBuilder = new NotificationCompat.Builder(this);
-        Intent resultIntent = new Intent(this, DownloadActivity.class);
-        resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent resultPendingIntent =
-            PendingIntent.getActivity(
-            this,
-            0,
-            resultIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        );
-        mBuilder.setSmallIcon(R.drawable.ic_launcher).setContentIntent(resultPendingIntent);
+        mBuilder.setSmallIcon(R.drawable.ic_launcher);
+        
+        Intent intent = new Intent(DownloadService.this,DownloadActivity.class);  
+        PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);  
+        mBuilder.setContentIntent(pendingIntent);  
         
         EhClient.DownloadMangaManager.setDownloadService(this);
         EhClient.DownloadMangaManager.setOnDownloadMangaListener(new EhClient.OnDownloadMangaListener() {
