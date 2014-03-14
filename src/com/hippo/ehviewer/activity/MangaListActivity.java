@@ -451,7 +451,6 @@ public class MangaListActivity extends SlidingActivity {
                                     Toast.LENGTH_SHORT).show();
                             break;
                         case 1:
-                            // TODO
                             lmd = lmdArray.get(longClickItemIndex);
                             Intent it = new Intent(MangaListActivity.this, DownloadService.class);
                             startService(it);

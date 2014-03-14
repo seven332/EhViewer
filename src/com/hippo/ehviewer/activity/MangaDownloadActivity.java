@@ -68,7 +68,7 @@ public class MangaDownloadActivity extends Activity {
             finish();
             return;
         }
-        dir = new File(Environment.getExternalStorageDirectory() + "/EhViewer/download/", title);
+        dir = new File(Config.getDownloadPath(), title);
         String[] files;
         if (!dir.isDirectory() || (files = dir.list()) == null) {
             finish();
@@ -77,10 +77,8 @@ public class MangaDownloadActivity extends Activity {
         fileList = new ArrayList<String>();
         for (String fileName : files) {
             String name = Util.getName(fileName);
-            if (Util.isNumber(name)) {
-                Log.d(TAG, fileName);
+            if (Util.isNumber(name))
                 fileList.add(fileName);
-            }
         }
         // TODO do it you self
         Collections.sort(fileList);

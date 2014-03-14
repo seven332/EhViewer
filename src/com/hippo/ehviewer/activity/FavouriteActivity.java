@@ -27,6 +27,8 @@ import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.ListMangaDetail;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.dialog.DialogBuilder;
+import com.hippo.ehviewer.service.DownloadService;
+import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhClient;
@@ -41,6 +43,8 @@ public class FavouriteActivity extends Activity{
     private FlAdapter flAdapter;
     private ArrayList<ListMangaDetail> mFavouriteLmd;
     private int longClickItemIndex;
+    
+    private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
     // List item long click dialog
     private AlertDialog longClickDialog;
@@ -57,10 +61,14 @@ public class FavouriteActivity extends Activity{
                             flAdapter.notifyDataSetChanged();
                             break;
                         case 1:
-                            // TODO
+                            ListMangaDetail lmd = mFavouriteLmd.get(longClickItemIndex);
+                            Intent it = new Intent(FavouriteActivity.this, DownloadService.class);
+                            startService(it);
+                            mServiceConn.getService().add(lmd.gid, lmd.thumb, 
+                                    EhClient.detailHeader + lmd.gid + "/" + lmd.token, lmd.title);
                             Toast.makeText(FavouriteActivity.this,
-                                    getString(R.string.unfinished), Toast.LENGTH_SHORT)
-                                    .show();
+                                    getString(R.string.toast_add_download),
+                                    Toast.LENGTH_SHORT).show();
                             break;
                         default:
                             break;
@@ -155,6 +163,10 @@ public class FavouriteActivity extends Activity{
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);
         
+        // Download service
+        Intent it = new Intent(FavouriteActivity.this, DownloadService.class);
+        bindService(it, mServiceConn, BIND_AUTO_CREATE);
+        
         longClickDialog = setLongClickDialog();
         
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -217,6 +229,12 @@ public class FavouriteActivity extends Activity{
         default:
             return super.onOptionsItemSelected(item);
         }
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mServiceConn);
     }
     
     public void buttonListItemCancel(View v) {

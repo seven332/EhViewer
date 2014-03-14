@@ -1186,9 +1186,6 @@ public class EhClient {
     
     /****** DownloadMangaManager ******/
     public static class DownloadMangaManager {
-        public static final String DOWNLOAD_PATH = "/EhViewer/download/";
-        private static final String ACTION_UPDATE = "com.hippo.ehviewer.service.DownloadService.UPDATE";
-        
         private static DownloadInfo curDownloadInfo = null;
         
         private static ArrayList<DownloadInfo> mDownloadQueue = new ArrayList<DownloadInfo>();
@@ -1316,16 +1313,13 @@ public class EhClient {
                         }
                         
                         //Create folder
-                        File folder = new File(Environment.getExternalStorageDirectory() + DOWNLOAD_PATH + curDownloadInfo.title); // TODO 
+                        File folder = new File(Config.getDownloadPath() + curDownloadInfo.title); // TODO For  title contain invailed char
                         if (!folder.mkdirs() && !folder.isDirectory()) {
-                            folder = new File(Environment.getExternalStorageDirectory() + DOWNLOAD_PATH + curDownloadInfo.gid);
-                            if (!folder.mkdirs() && !folder.isDirectory()) {
-                                listener.onDownloadMangaOver(curDownloadInfo.gid, false);
-                                curDownloadInfo.status = DownloadInfo.FAILED;
-                                mService.notifyUpdate();
-                                Download.notify(String.valueOf(curDownloadInfo.gid));
-                                continue;
-                            }
+                            listener.onDownloadMangaOver(curDownloadInfo.gid, false);
+                            curDownloadInfo.status = DownloadInfo.FAILED;
+                            mService.notifyUpdate();
+                            Download.notify(String.valueOf(curDownloadInfo.gid));
+                            continue;
                         }
                         
                         String nextPage = curDownloadInfo.pageUrlStr;

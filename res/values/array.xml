@@ -39,6 +39,11 @@
         <item>@string/download</item>
     </string-array>
     
+    <string-array name="download_item_long_click">
+        <item>@string/remove</item>
+        <item>@string/remove_info_data</item>
+    </string-array>
+    
     <string-array name="preference_screen_ori_entries">
         <item>@string/portrait</item>
         <item>@string/landscape</item>

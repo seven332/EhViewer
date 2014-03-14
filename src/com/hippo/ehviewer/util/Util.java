@@ -1,6 +1,7 @@
 package com.hippo.ehviewer.util;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -156,7 +157,7 @@ public class Util {
         shaper.edit().putString(key, byteArrayToHexString(sb.toString().getBytes())).apply();
     }
     
-    public static void closeStreamQuietly (InputStream is) {
+    public static void closeStreamQuietly (Closeable is) {
         try {
             if (is != null)
                 is.close();
@@ -164,11 +165,18 @@ public class Util {
         }
     }
     
-    public static void closeStreamQuietly (OutputStream os) {
-        try {
-            if (os != null)
-                os.close();
-        } catch (IOException e) {
+    public static void deleteContents(File dir) throws IOException {
+        File[] files = dir.listFiles();
+        if (files == null) {
+          throw new IOException("not a readable directory: " + dir);
         }
-    }
+        for (File file : files) {
+          if (file.isDirectory()) {
+            deleteContents(file);
+          }
+          if (!file.delete()) {
+            throw new IOException("failed to delete file: " + file);
+          }
+        }
+      }
 }

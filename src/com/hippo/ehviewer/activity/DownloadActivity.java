@@ -1,18 +1,28 @@
 package com.hippo.ehviewer.activity;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.DownloadInfo;
+import com.hippo.ehviewer.ListMangaDetail;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.dialog.DialogBuilder;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Download;
+import com.hippo.ehviewer.util.EhClient;
+import com.hippo.ehviewer.util.Favourite;
+import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.view.AlertButton;
+import com.hippo.ehviewer.view.DownloadItemLayout;
 import com.hippo.ehviewer.view.OlImageView;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -28,44 +38,71 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 
 public class DownloadActivity extends Activity {
     
-    private static final String TAG = "com.hippo.ehviewer.service.UPDATE";
+    private static final String TAG = "DownloadActivity";
     private static final String ACTION_UPDATE = "com.hippo.ehviewer.service.UPDATE";
     
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
     private List<DownloadInfo> mDownloadInfos;
     private DlAdapter mDlAdapter;
+    private int longClickItemIndex;
+    
+    private AlertDialog longClickDialog;
+    
+    private AlertDialog setLongClickDialog() {
+        return new DialogBuilder(this).setTitle(R.string.what_to_do)
+                .setItems(R.array.download_item_long_click, new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View arg1,
+                            int position, long arg3) {
+                        switch (position) {
+                        case 0: // Remove info item
+                            mServiceConn.getService().cancel(Download.getKey(longClickItemIndex));
+                            Download.remove(longClickItemIndex);
+                            mDlAdapter.notifyDataSetChanged();
+                            break;
+                        case 1: // Remove info item
+                            mServiceConn.getService().cancel(Download.getKey(longClickItemIndex));
+                            mDlAdapter.notifyDataSetChanged();
+                            File dir = new File(Config.getDownloadPath(), Download.get(longClickItemIndex).title);
+                            try {
+                                Util.deleteContents(dir);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            dir.delete();
+                            Download.remove(longClickItemIndex);
+                            break;
+                        default:
+                            break;
+                        }
+                        longClickDialog.cancel();
+                    }
+                }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((AlertButton)v).dialog.dismiss();
+                    }
+                }).create();
+    }
     
     private class DlAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
-        // TODO clean map sometimes
-        private SparseArray<Data> map;
-        
-        class Data {
-            public int status;
-            public boolean type;
-            public int lastStartIndex;
-            public float downloadSize;
-            
-            public Data(int status, boolean type, int lastStartIndex, float downloadSize) {
-                this.status = status;
-                this.type = type;
-                this.lastStartIndex = lastStartIndex;
-                this.downloadSize = downloadSize;
-            }
-        }
         
         public DlAdapter() {
             mInflater = LayoutInflater.from(DownloadActivity.this);
-            map = new SparseArray<Data>();
         }
         
         @Override
@@ -86,38 +123,45 @@ public class DownloadActivity extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             DownloadInfo di= mDownloadInfos.get(position);
-            Data data;
-            int oldId;
-            int newId;
-            if (convertView != null && (data = map.get((oldId = convertView.getId()))) != null) {
-                if (oldId != (newId = Integer.parseInt(di.gid))) {
-                    convertView.setId(newId);
+            if (convertView != null) {
+                DownloadItemLayout view = (DownloadItemLayout)convertView;
+                if (!view.gid.equals(di.gid)) {
+                    view.gid = di.gid;
+                    view.status = di.status;
+                    view.type = di.type;
+                    view.lastStartIndex = di.lastStartIndex;
+                    view.downloadSize = di.downloadSize;
+                    view.isWait = false;
                     
-                    OlImageView thumb = (OlImageView)convertView
+                    OlImageView thumb = (OlImageView)view
                             .findViewById(R.id.thumb);
                     thumb.setUrl(di.thumb);
                     thumb.setKey(String.valueOf(di.gid));
                     thumb.setCache(Cache.memoryCache, Cache.cpCache);
                     thumb.loadImage(true);
                     
-                    TextView title = (TextView)convertView.findViewById(R.id.title);
+                    TextView title = (TextView)view.findViewById(R.id.title);
                     title.setText(di.title);
-                }
-                if (data.status != di.status) {
-                    data.status = di.status;
-                    data.type = di.type;
-                    data.lastStartIndex = di.lastStartIndex;
                     
-                    setDownloadInfo(convertView, di, position);
-                } else if (di.status == DownloadInfo.DOWNLOADING &&
-                        (data.type != di.type
-                        || data.lastStartIndex != di.lastStartIndex
-                        || data.downloadSize != di.downloadSize)) {
-                    data.type = di.type;
-                    data.lastStartIndex = di.lastStartIndex;
+                    setDownloadInfo(view, di);
+                } else if (view.status != di.status || view.isWait) {
+                    view.status = di.status;
+                    view.type = di.type;
+                    view.lastStartIndex = di.lastStartIndex;
+                    view.downloadSize = di.downloadSize;
+                    view.isWait = false;
                     
-                    ProgressBar pb = (ProgressBar)convertView.findViewById(R.id.progressBar);
-                    TextView info = (TextView)convertView.findViewById(R.id.info);
+                    setDownloadInfo(view, di);
+                } else if (view.status == DownloadInfo.DOWNLOADING &&
+                        (view.type != di.type
+                        || view.lastStartIndex != di.lastStartIndex
+                        || view.downloadSize != di.downloadSize)) {
+                    view.type = di.type;
+                    view.lastStartIndex = di.lastStartIndex;
+                    view.downloadSize = di.downloadSize;
+                    
+                    ProgressBar pb = (ProgressBar)view.findViewById(R.id.progressBar);
+                    TextView info = (TextView)view.findViewById(R.id.info);
                     
                     if (di.type == DownloadInfo.DETAIL_URL) {
                         pb.setIndeterminate(true);
@@ -134,27 +178,30 @@ public class DownloadActivity extends Activity {
                         info.setText(sb.toString());
                     }
                 }
-                return convertView;
+                return view;
             }
             
-            convertView = mInflater.inflate(R.layout.download_item, null);
+            DownloadItemLayout view = (DownloadItemLayout)mInflater.inflate(R.layout.download_item, null);
+            view.gid = di.gid;
+            view.status = di.status;
+            view.type = di.type;
+            view.lastStartIndex = di.lastStartIndex;
+            view.downloadSize = di.downloadSize;
+            view.isWait = false;
             
-            OlImageView thumb = (OlImageView)convertView
+            OlImageView thumb = (OlImageView)view
                     .findViewById(R.id.thumb);
             thumb.setUrl(di.thumb);
             thumb.setKey(String.valueOf(di.gid));
             thumb.setCache(Cache.memoryCache, Cache.cpCache);
             thumb.loadImage(true);
             
-            TextView title = (TextView)convertView.findViewById(R.id.title);
+            TextView title = (TextView)view.findViewById(R.id.title);
             title.setText(di.title);
             
-            setDownloadInfo(convertView, di, position);
+            setDownloadInfo(view, di);
             
-            convertView.setId(Integer.parseInt(di.gid));
-            map.put(convertView.getId(),
-                    new Data(di.status, di.type, di.lastStartIndex, di.downloadSize));
-            return convertView;
+            return view;
         }
         
         /**
@@ -164,7 +211,7 @@ public class DownloadActivity extends Activity {
          * @param di
          * @param position
          */
-        private void setDownloadInfo(View view, final DownloadInfo di, final int position) {
+        private void setDownloadInfo(final DownloadItemLayout view, final DownloadInfo di) {
             final ProgressBar pb = (ProgressBar)view.findViewById(R.id.progressBar);
             final TextView info = (TextView)view.findViewById(R.id.info);
             final ImageView action = (ImageView)view.findViewById(R.id.action);
@@ -181,10 +228,11 @@ public class DownloadActivity extends Activity {
                         pb.setVisibility(View.GONE);
                         info.setText(R.string.wait);
                         action.setClickable(false);
+                        view.isWait = true;
                         
                         Intent it = new Intent(DownloadActivity.this, DownloadService.class);
                         startService(it);
-                        mServiceConn.getService().add(Download.get(position));
+                        mServiceConn.getService().add(di);
                     }
                 });
             } else if (di.status == DownloadInfo.DOWNLOADING) {
@@ -210,8 +258,9 @@ public class DownloadActivity extends Activity {
                         pb.setVisibility(View.GONE);
                         info.setText(R.string.wait);
                         action.setClickable(false);
+                        view.isWait = true;
                         
-                        mServiceConn.getService().cancel(Download.get(position).gid);
+                        mServiceConn.getService().cancel(di.gid);
                     }
                 });
             } else if (di.status == DownloadInfo.WAITING) {
@@ -224,8 +273,9 @@ public class DownloadActivity extends Activity {
                         pb.setVisibility(View.GONE);
                         info.setText(R.string.wait);
                         action.setClickable(false);
+                        view.isWait = true;
                         
-                        mServiceConn.getService().cancel(Download.get(position).gid);
+                        mServiceConn.getService().cancel(di.gid);
                     }
                 });
             } else if (di.status == DownloadInfo.COMPLETED) {
@@ -238,6 +288,7 @@ public class DownloadActivity extends Activity {
                         Intent intent = new Intent(DownloadActivity.this,
                                 MangaDownloadActivity.class);
                         intent.putExtra("title", di.title);
+                        
                         startActivity(intent);
                     }
                 });
@@ -253,15 +304,17 @@ public class DownloadActivity extends Activity {
                         pb.setVisibility(View.GONE);
                         info.setText(R.string.wait);
                         action.setClickable(false);
+                        view.isWait = true;
                         
                         Intent it = new Intent(DownloadActivity.this, DownloadService.class);
                         startService(it);
-                        mServiceConn.getService().add(Download.get(position));
+                        mServiceConn.getService().add(di);
                     }
                 });
             }
         }
     }
+    
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -302,6 +355,8 @@ public class DownloadActivity extends Activity {
         filter.addAction(ACTION_UPDATE);
         registerReceiver(mReceiver, filter);
         
+        longClickDialog = setLongClickDialog();
+        
         // For colourfy the activity
         if (Build.VERSION.SDK_INT >= 19) {
             BeautifyScreen.ColourfyScreen(this);
@@ -312,6 +367,15 @@ public class DownloadActivity extends Activity {
         ListView listView = (ListView)findViewById(R.id.download);
         mDlAdapter = new DlAdapter();
         listView.setAdapter(mDlAdapter);
+        listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+                    int position, long arg3) {
+                longClickItemIndex = position;
+                longClickDialog.show();
+                return true;
+            }
+        });
     }
     
     private BroadcastReceiver mReceiver = new BroadcastReceiver(){

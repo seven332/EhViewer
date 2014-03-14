@@ -129,6 +129,8 @@
     <string name="preference_auto_page_cache">Auto clear page cache</string>
     <string name="preference_auto_page_cache_summary_on">Clean page cache when the application close</string>
     <string name="preference_auto_page_cache_summary_off">Leave page cache alone</string>
+    <string name="preference_download_path">Download path</string>
+    
     
     <string name="preference_category_about">About</string>
     <string name="preference_author">Author</string>
@@ -201,6 +203,8 @@
     <string name="add_to_favourite">Add to favourite</string>
     <string name="download">Download</string>
     <string name="remove">Remove</string>
+    <string name="remove_info_data">Remove information and data</string>
+    
     
     <string name="thanks">Thanks</string>
     

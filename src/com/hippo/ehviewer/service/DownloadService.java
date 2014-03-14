@@ -116,8 +116,6 @@ public class DownloadService extends Service {
                 
             }
         });
-        
-        stopForeground(true);
     }  
   
     @Override  

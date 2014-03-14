@@ -50,6 +50,15 @@
         
     </PreferenceCategory>
     
+    <!--  
+    <PreferenceCategory android:title="@string/download" >
+        <Preference 
+            android:key="preference_download_path"
+            android:title="@string/preference_download_path"
+            android:enabled="false" />
+    </PreferenceCategory>
+    -->
+    
     <PreferenceCategory android:title="@string/preference_category_about" >
         <Preference 
             android:key="preference_author"

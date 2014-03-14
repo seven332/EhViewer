@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 
 public class Config {
@@ -29,6 +30,8 @@ public class Config {
     private static final String PAGE_SCALING_DEFAULT = "3";
     private static final String SCREEN_ORI = "preference_screen_ori";
     private static final String SCREEN_ORI_DEFAULT = "0";
+    private static final String DOWNLOAD_PATH = "preference_download_path";
+    private static final String DOWNLOAD_PATH_DEFAULT = Environment.getExternalStorageDirectory() + "/EhViewer/download/";
     
     private static boolean mInit = false;
 
@@ -135,7 +138,11 @@ public class Config {
         editor.putBoolean(KEY_LOGIN, false);
         editor.commit();
     }
-
+    
+    public static String getDownloadPath() {
+        return mConfigPre.getString(DOWNLOAD_PATH, DOWNLOAD_PATH_DEFAULT);
+    }
+    
     /**
      * Get cover cache size in MB
      * 

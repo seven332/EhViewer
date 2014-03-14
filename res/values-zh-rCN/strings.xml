@@ -126,6 +126,8 @@
     <string name="preference_auto_page_cache">自动清理页面缓存</string>
     <string name="preference_auto_page_cache_summary_on">当应用关闭时清除页面缓存</string>
     <string name="preference_auto_page_cache_summary_off">啥都不做</string>
+    <string name="preference_download_path">下载路径</string>
+    
     
     <string name="preference_category_about">关于</string>
     <string name="preference_author">作者</string>
@@ -194,6 +196,7 @@
     <string name="add_to_favourite">收藏</string>
     <string name="download">下载</string>
     <string name="remove">移除</string>
+    <string name="remove_info_data">移除信息与数据</string>
     
     <string name="thanks">感谢</string>
     

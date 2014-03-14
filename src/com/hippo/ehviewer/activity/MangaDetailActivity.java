@@ -8,6 +8,8 @@ import com.hippo.ehviewer.MangaDetail;
 import com.hippo.ehviewer.PageList;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.dialog.DialogBuilder;
+import com.hippo.ehviewer.service.DownloadService;
+import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhClient;
@@ -85,6 +87,8 @@ public class MangaDetailActivity extends Activity {
     private int curPage;
     private int screenHeight;
     private int columnCount;
+    
+    private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
     private class PageImageGetListener implements EhClient.OnGetImageListener {
         @Override
@@ -425,6 +429,12 @@ public class MangaDetailActivity extends Activity {
     }
     
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mServiceConn);
+    }
+    
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail);
@@ -432,6 +442,10 @@ public class MangaDetailActivity extends Activity {
         int screenOri = Config.getScreenOriMode();
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);
+        
+        // Download service
+        Intent it = new Intent(MangaDetailActivity.this, DownloadService.class);
+        bindService(it, mServiceConn, BIND_AUTO_CREATE);
         
         // Get information
         Intent intent = getIntent();
@@ -615,6 +629,21 @@ public class MangaDetailActivity extends Activity {
                     getString(R.string.toast_add_favourite),
                     Toast.LENGTH_SHORT).show();
             return true;
+        case R.id.action_download:
+            Intent it = new Intent(MangaDetailActivity.this, DownloadService.class);
+            startService(it);
+            if (mangaDetail.firstPage == null)
+                mServiceConn.getService().add(mangaDetail.gid, mangaDetail.thumb,
+                        EhClient.detailHeader + mangaDetail.gid + "/" + mangaDetail.token,
+                        mangaDetail.title);
+            else
+                mServiceConn.getService().add(mangaDetail.gid, mangaDetail.thumb,
+                        EhClient.detailHeader + mangaDetail.gid + "/" + mangaDetail.token,
+                        mangaDetail.firstPage, Integer.parseInt(mangaDetail.pages),
+                        1, mangaDetail.title);
+            Toast.makeText(MangaDetailActivity.this,
+                    getString(R.string.toast_add_download),
+                    Toast.LENGTH_SHORT).show();
         default:
             return super.onOptionsItemSelected(item);
         }
