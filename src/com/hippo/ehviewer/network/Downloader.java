@@ -80,6 +80,10 @@ public class Downloader implements Runnable {
         if (Cache.hasSdCard())
             while(true) {
                 try {
+                    if (mDi.status == DownloadInfo.STOP)
+                        throw new StopRequestException(STOP,
+                                "Download is stopped");
+                    
                     mDownloadSize = 0;
                     mRedirectionCount = 0;
                     status = COMPLETED;
@@ -164,6 +168,11 @@ public class Downloader implements Runnable {
         InputStream in = null;
         OutputStream out = null;
         File file = null;
+        
+        if (mDi.status == DownloadInfo.STOP)
+            throw new StopRequestException(STOP,
+                    "Download is stopped");
+        
         try {
             try {
                 in = conn.getInputStream();
@@ -211,7 +220,7 @@ public class Downloader implements Runnable {
             if (mListener != null)
                 mListener.onDownloadStatusUpdate(mDownloadSize, mTotalSize);
 
-            if (mDi.status == mDi.STOP)
+            if (mDi.status == DownloadInfo.STOP)
                 throw new StopRequestException(STOP,
                         "Download is stopped");
         }

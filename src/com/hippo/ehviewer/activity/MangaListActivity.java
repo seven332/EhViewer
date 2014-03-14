@@ -1441,6 +1441,7 @@ public class MangaListActivity extends SlidingActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final SearchView searchView =
@@ -1460,6 +1461,8 @@ public class MangaListActivity extends SlidingActivity {
                 return true;
             }
         });
+        
+        // Make search view custom look
         int searchTextID = searchView.getContext().
                 getResources().getIdentifier("android:id/search_src_text", null, null);
         if (searchTextID > 0) {
@@ -1470,6 +1473,16 @@ public class MangaListActivity extends SlidingActivity {
                 searchText.setHintTextColor(Color.WHITE);
             }
         }
+        
+        int removeImageID = searchView.getContext().
+                getResources().getIdentifier("android:id/search_close_btn", null, null);
+        if (removeImageID > 0) {
+            ImageView removeImage = 
+                    (ImageView)searchView.findViewById(removeImageID);
+            if (removeImage != null)
+                removeImage.setImageResource(R.drawable.ic_action_remove);
+        }
+        
         return true;
     }
     

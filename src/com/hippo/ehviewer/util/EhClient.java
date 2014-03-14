@@ -267,6 +267,7 @@ public class EhClient {
             conn.addRequestProperty("Accept-Encoding", "gzip");
             conn.setRequestProperty("User-Agent", userAgent);
             conn.setConnectTimeout(TIMEOUT);
+            conn.setReadTimeout(TIMEOUT);
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setRequestMethod("POST");
@@ -323,6 +324,7 @@ public class EhClient {
             conn.addRequestProperty("Accept-Encoding", "gzip");
             conn.setRequestProperty("User-Agent", userAgent);
             conn.setConnectTimeout(TIMEOUT);
+            conn.setReadTimeout(TIMEOUT);
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setRequestMethod("POST");
@@ -379,6 +381,7 @@ public class EhClient {
             conn.addRequestProperty("Accept-Encoding", "gzip");
             conn.setRequestProperty("User-Agent", userAgent);
             conn.setConnectTimeout(TIMEOUT);
+            conn.setReadTimeout(TIMEOUT);
             conn.connect();
 
             getStringHUC(conn, sb);
@@ -1374,6 +1377,8 @@ public class EhClient {
                                     }
                                 } catch (MalformedURLException e) {
                                     e.printStackTrace();
+                                    mComplete = false;
+                                    break;
                                 }
                             } else {
                                 mComplete = false;

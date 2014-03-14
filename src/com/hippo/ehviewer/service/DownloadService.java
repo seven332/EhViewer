@@ -51,7 +51,7 @@ public class DownloadService extends Service {
             public void onDownloadMangaAllStart() {
                 mBuilder.setContentTitle(getString(R.string.start_download_task))
                         .setContentText(null)
-                        .setProgress(0, 0, true).setOngoing(true);
+                        .setProgress(0, 0, true).setOngoing(true).setAutoCancel(false);;
                 mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
             }
             
@@ -66,7 +66,7 @@ public class DownloadService extends Service {
                 mBuilder.setContentTitle(getString(R.string.downloading)
                         + " " + Download.get(id).title)
                         .setContentText(null)
-                        .setProgress(0, 0, true).setOngoing(true);
+                        .setProgress(0, 0, true).setOngoing(true).setAutoCancel(false);;
                 mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
             }
             
@@ -75,7 +75,8 @@ public class DownloadService extends Service {
                 mBuilder.setContentTitle(getString(R.string.downloading)
                         + " " + Download.get(id).title)
                         .setContentText(startIndex + " / " + pageSum)
-                        .setProgress(pageSum, startIndex, false).setOngoing(true);
+                        .setProgress(pageSum, startIndex, false).setOngoing(true)
+                        .setAutoCancel(false);
                 mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
             }
             
@@ -91,7 +92,8 @@ public class DownloadService extends Service {
                     mBuilder.setContentTitle(getString(R.string.download_successfully) + " " + Download.get(id).title);
                 else
                     mBuilder.setContentTitle(getString(R.string.download_unsuccessfully) + " " + Download.get(id).title);
-                mBuilder.setContentText(null).setProgress(0, 0, false).setOngoing(false);
+                mBuilder.setContentText(null).setProgress(0, 0, false).setOngoing(false)
+                        .setAutoCancel(true);
                 mNotifyManager.notify(Integer.parseInt(id), mBuilder.build());
             }
             
@@ -100,7 +102,8 @@ public class DownloadService extends Service {
                 mBuilder.setContentTitle(getString(R.string.downloading)
                         + " " + Download.get(id).title)
                         .setContentText(index + " / " + pageSum)
-                        .setProgress(pageSum, index, false).setOngoing(true);
+                        .setProgress(pageSum, index, false).setOngoing(true)
+                        .setAutoCancel(false);
                 mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
             }
 
