@@ -74,8 +74,8 @@ public class Ui {
         BITMAP_START_HALF = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.star_half), null, opt);
         BITMAP_START_EMPTY = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.star_empty), null, opt);
         
-        OlImageView.setDefaultImage(Movie.decodeStream(mContext.getResources().openRawResource(R.drawable.wait))
-                , BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.refresh), null, opt));
+        OlImageView.setDefaultImage(BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.ic_launcher))
+                , BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.ic_touch), null, opt));
     }
     
     /**

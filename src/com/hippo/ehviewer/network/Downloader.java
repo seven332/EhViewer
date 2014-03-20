@@ -8,6 +8,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 import android.util.Log;
 
@@ -36,7 +38,7 @@ public class Downloader implements Runnable {
     private String mPath;
     private String mFileName;
     private URL mUrl;
-    private DownloadInfo mDi;
+    private Controlor mContorlor;
     
     private int mTotalSize;
     private int mDownloadSize = 0;
@@ -48,46 +50,60 @@ public class Downloader implements Runnable {
     public interface OnDownloadListener {
         public void onDownloadStart(int totalSize);
         public void onDownloadStatusUpdate(int downloadSize, int totalSize);
+        public void onDownloadOver(boolean ok, int eMesgId);
     }
     
-    public void resetData(String path, String fileName, String urlStr, DownloadInfo di) throws MalformedURLException {
+    public class Controlor {
+        private boolean mStop = false;
+        
+        public synchronized void stop() {
+            mStop = true; 
+        }
+        
+        public synchronized void reset() {
+            mStop = false; 
+        }
+        
+        public synchronized boolean isStop() {
+            return mStop; 
+        }
+    }
+    
+    public Controlor resetData(String path, String fileName, String urlStr) throws MalformedURLException {
         mPath = path;
         mFileName = fileName;
         mUrl = new URL(urlStr);
-        mDi = di;
         
         mDownloadSize = 0;
         mRedirectionCount = 0;
         status = COMPLETED;
+        
+        mContorlor.reset();
+        return mContorlor;
     }
     
     public void setOnDownloadListener(OnDownloadListener listener) {
         mListener = listener;
     }
     
-    public Downloader(){}
-    
-    public Downloader(String path, String fileName, String urlStr, DownloadInfo di) throws MalformedURLException {
-        mPath = path;
-        mFileName = fileName;
-        mUrl = new URL(urlStr);
-        mDi = di;
+    public Downloader() {
+        mContorlor = new Controlor();
     }
     
     @Override
     public void run() {
+        boolean ok = false;
         int retryTimes = 0;
         if (Cache.hasSdCard())
             while(true) {
                 try {
-                    if (mDi.status == DownloadInfo.STOP)
-                        throw new StopRequestException(STOP,
-                                "Download is stopped");
-                    
+                    if (mContorlor.isStop())
+                        throw new StopRequestException(STOP, "Download is stopped");
                     mDownloadSize = 0;
                     mRedirectionCount = 0;
                     status = COMPLETED;
                     executeDownload();
+                    ok = true;
                     break;
                 } catch (StopRequestException e) {
                     e.printStackTrace();
@@ -99,6 +115,9 @@ public class Downloader implements Runnable {
             }
         else
             status = NO_SDCARD;
+        
+        if (mListener != null)
+            mListener.onDownloadOver(ok, status);
     }
     
     public int getStatus() {
@@ -112,19 +131,17 @@ public class Downloader implements Runnable {
                 Log.d(TAG, "Get file " + mUrl.toString());
                 conn = (HttpURLConnection)mUrl.openConnection();
                 conn.setInstanceFollowRedirects(false);
+                conn.addRequestProperty("Range", "bytes=0-"); // TODO
                 conn.setConnectTimeout(DEFAULT_TIMEOUT);
                 conn.setReadTimeout(DEFAULT_TIMEOUT);
-
+                conn.connect();
                 final int responseCode = conn.getResponseCode();
                 switch (responseCode) {
                     case HttpURLConnection.HTTP_OK:
+                    case HttpURLConnection.HTTP_PARTIAL:
                         processResponseHeaders(conn);
                         if (mListener != null)
                             mListener.onDownloadStart(mTotalSize);
-                        transferData(conn);
-                        return;
-
-                    case HttpURLConnection.HTTP_PARTIAL:
                         transferData(conn);
                         return;
 
@@ -159,6 +176,17 @@ public class Downloader implements Runnable {
      */
     private void processResponseHeaders(HttpURLConnection conn) {
         mTotalSize = conn.getContentLength();
+        String range;
+        int index;
+        if (mTotalSize == -1
+                && (range = conn.getHeaderField("Content-Range")) != null
+                && (index = range.lastIndexOf('/')) != -1) {
+            try {
+                mTotalSize = Integer.parseInt(range.substring(index + 1));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
     
     /**
@@ -169,7 +197,7 @@ public class Downloader implements Runnable {
         OutputStream out = null;
         File file = null;
         
-        if (mDi.status == DownloadInfo.STOP)
+        if (mContorlor.isStop())
             throw new StopRequestException(STOP,
                     "Download is stopped");
         
@@ -211,7 +239,6 @@ public class Downloader implements Runnable {
         for (;;) {
             int bytesRead = readFromResponse(data, in);
             if (bytesRead == -1) { // success, end of stream already reached
-                handleEndOfStream();
                 return;
             }
             
@@ -220,7 +247,7 @@ public class Downloader implements Runnable {
             if (mListener != null)
                 mListener.onDownloadStatusUpdate(mDownloadSize, mTotalSize);
 
-            if (mDi.status == DownloadInfo.STOP)
+            if (mContorlor.isStop())
                 throw new StopRequestException(STOP,
                         "Download is stopped");
         }
@@ -238,9 +265,6 @@ public class Downloader implements Runnable {
             return entityStream.read(data);
         } catch (IOException ex) {
             // TODO: handle stream errors the same as other retries
-            if ("unexpected end of stream".equals(ex.getMessage())) {
-                return -1;
-            }
             throw new StopRequestException(STATUS_HTTP_DATA_ERROR,
                     "Failed reading response: " + ex, ex);
         }
@@ -261,19 +285,6 @@ public class Downloader implements Runnable {
             // TODO: check disk is full
             throw new StopRequestException(STATUS_FILE_ERROR,
                     "Failed to write data: " + ex);
-        }
-    }
-    
-    /**
-     * Called when we've reached the end of the HTTP response stream, to update the database and
-     * check for consistency.
-     */
-    private void handleEndOfStream() throws StopRequestException {
-        final boolean lengthMismatched = (mTotalSize != -1)
-                && (mDownloadSize != mTotalSize);
-        if (lengthMismatched) {
-            throw new StopRequestException(STATUS_HTTP_DATA_ERROR,
-                    "mismatched content length; unable to resume");
         }
     }
 }

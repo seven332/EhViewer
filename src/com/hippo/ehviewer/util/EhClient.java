@@ -48,6 +48,9 @@ import com.hippo.ehviewer.service.DownloadService;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Movie;
@@ -59,6 +62,8 @@ import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.util.LruCache;
 import android.util.Log;
+
+// TODO Stringbuffer to StringBuild
 
 public class EhClient {
 
@@ -72,6 +77,9 @@ public class EhClient {
     private static final String EXHENTAI_LIST_HEADER = "http://exhentai.org/";
     public static final String E_HENTAI_DETAIL_HEADER = "http://g.e-hentai.org/g/";
     public static final String EXHENTAI_DETAIL_HEADER = "http://exhentai.org/g/";
+    
+    public static final String UPDATE_URL = "http://ehviewersu.appsp0t.com/";
+    public static final String UPDATE_API = "http://ehviewersu.appsp0t.com/API";
     
     public static String listHeader;
     public static String detailHeader;
@@ -90,6 +98,11 @@ public class EhClient {
 
     public interface OnCheckNetworkListener {
         public void onSuccess();
+        public void onFailure(int errorMessageId);
+    }
+    
+    public interface OnCheckUpdateListener {
+        public void onSuccess(String pageContext);
         public void onFailure(int errorMessageId);
     }
     
@@ -173,17 +186,6 @@ public class EhClient {
         return mInit;
     }
     
-    private static Handler checkNetworkHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            OnCheckNetworkListener listener = (OnCheckNetworkListener) msg.obj;
-            if (msg.arg1 == 0)
-                listener.onFailure(msg.what);
-            else
-                listener.onSuccess();
-        };
-    };
-    
     public static void setHeader(boolean isExhentai) {
         Config.exhentai(isExhentai);
         if (isExhentai) {
@@ -194,6 +196,102 @@ public class EhClient {
             detailHeader = E_HENTAI_DETAIL_HEADER;
         }
     }
+    
+    private static Handler checkUpdateHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            String pageContext = ((CheckUpdatePackage)msg.obj).pageContext;
+            OnCheckUpdateListener listener = ((CheckUpdatePackage)msg.obj).listener;
+            if (msg.arg1 == 0)
+                listener.onFailure(msg.what);
+            else
+                listener.onSuccess(pageContext);
+        };
+    };
+    
+    // Get Manga List
+    private static class CheckUpdatePackage {
+        public String pageContext;
+        public OnCheckUpdateListener listener;
+
+        public CheckUpdatePackage(String pageContext, OnCheckUpdateListener listener) {
+            this.pageContext = pageContext;
+            this.listener = listener;
+        }
+    }
+    
+    public static void checkUpdate(final OnCheckUpdateListener listener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int mOK = 0;
+                int emsgId = R.string.em_unknown_error;
+                StringBuffer sb = new StringBuffer();
+                HttpURLConnection conn = null;
+                try {
+                    URL url = new URL(UPDATE_API);
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.addRequestProperty("Accept-Encoding", "gzip");
+                    conn.setRequestProperty("User-Agent", userAgent);
+                    conn.setConnectTimeout(TIMEOUT);
+                    conn.setReadTimeout(TIMEOUT);
+                    conn.setDoOutput(true);
+                    conn.setDoInput(true);
+                    conn.setRequestMethod("POST");
+                    conn.setUseCaches(false);
+                    conn.setInstanceFollowRedirects(true);
+                    
+                    DataOutputStream out = new DataOutputStream(conn.getOutputStream());
+                    StringBuffer StrBuf = new StringBuffer();
+                    PackageManager pm = mContext.getPackageManager();
+                    PackageInfo pi = pm.getPackageInfo(mContext.getPackageName(), PackageManager.GET_ACTIVITIES);
+                    StrBuf.append("last\n").append(pi.versionName);
+                    out.writeBytes(StrBuf.toString());
+                    out.flush();
+                    out.close();
+
+                    conn.connect();
+                    
+                    getStringHUC(conn, sb);
+                    mOK = 1;
+                } catch (MalformedURLException e) {
+                    emsgId = R.string.em_url_format_error;
+                    e.printStackTrace();
+                } catch (ConnectTimeoutException e) {
+                    emsgId = R.string.em_timeout;
+                    e.printStackTrace();
+                } catch (UnknownHostException e) {
+                    emsgId = R.string.em_no_network_2;
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    emsgId = R.string.em_network_error;
+                    e.printStackTrace();
+                } catch (NameNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } finally {
+                    if (conn != null)
+                        conn.disconnect();
+                }
+                Message msg = new Message();
+                msg.what = emsgId;
+                msg.arg1 = mOK;
+                msg.obj = new CheckUpdatePackage(sb.toString(), listener);
+                checkUpdateHandler.sendMessage(msg);
+            }
+        }).start();
+    }
+    
+    private static Handler checkNetworkHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            OnCheckNetworkListener listener = (OnCheckNetworkListener) msg.obj;
+            if (msg.arg1 == 0)
+                listener.onFailure(msg.what);
+            else
+                listener.onSuccess();
+        };
+    };
     
     /**
      * Is network available and can reach host
@@ -1190,6 +1288,7 @@ public class EhClient {
     /****** DownloadMangaManager ******/
     public static class DownloadMangaManager {
         private static DownloadInfo curDownloadInfo = null;
+        private static Downloader.Controlor curControlor = null;
         
         private static ArrayList<DownloadInfo> mDownloadQueue = new ArrayList<DownloadInfo>();
         private static Object taskLock = new Object();
@@ -1232,6 +1331,8 @@ public class EhClient {
                     di.status = DownloadInfo.STOP;
                     mDownloadQueue.remove(di);
                     if (!id.equals(getCurDownloadId())) {
+                        if (curControlor != null)
+                            curControlor.stop();
                         mService.notifyUpdate();
                         Download.notify(id);
                     }
@@ -1287,6 +1388,9 @@ public class EhClient {
                             curDownloadInfo.totalSize = totalSize/1024.0f;
                             mService.notifyUpdate();
                         }
+
+                        @Override
+                        public void onDownloadOver(boolean ok, int eMesgId) {}
                     });
                     while(mDownloadQueue.size() > 0){
                         synchronized (taskLock) {
@@ -1354,9 +1458,10 @@ public class EhClient {
                                 }
                                 
                                 try {
-                                    imageDownloader.resetData(folder.toString(),
+                                    // TODO
+                                    curControlor = imageDownloader.resetData(folder.toString(),
                                             String.format("%05d", curDownloadInfo.lastStartIndex) + "." + Util.getExtension(imageUrlStr),
-                                            imageUrlStr, curDownloadInfo);
+                                            imageUrlStr);
                                     imageDownloader.run();
                                     
                                     curDownloadInfo.downloadSize = 0;

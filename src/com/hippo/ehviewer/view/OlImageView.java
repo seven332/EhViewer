@@ -30,7 +30,7 @@ public class OlImageView extends SuperImageView {
     private LruCache<String, Bitmap> memoryCache = null;
     private DiskCache diskCache = null;
 
-    private static Movie waitMovie;
+    private static Bitmap waitBitmap;
     private static Bitmap refreshBitmap;
 
     private OnLoadListener onLoadListener = null;
@@ -56,7 +56,7 @@ public class OlImageView extends SuperImageView {
     }
 
     public void setWaitMovie() {
-        setImageMovie(waitMovie);
+        setImageBitmap(waitBitmap);
     }
 
     public void setUrl(String s) {
@@ -115,8 +115,7 @@ public class OlImageView extends SuperImageView {
                     OlImageView.this.setImageMovie((Movie) res);
                 return true;
             }
-            if(!verifyMovie(waitMovie))
-                setImageMovie(waitMovie);
+            setImageBitmap(waitBitmap);
             return false;
         }
     }
@@ -154,8 +153,7 @@ public class OlImageView extends SuperImageView {
     private void load() {
         status = STATUS_LOADING;
         
-        if(!verifyMovie(waitMovie))
-            setImageMovie(waitMovie);
+        setImageBitmap(waitBitmap);
 
         int type = Util.getResourcesType(url);
         synchronized (this) {
@@ -179,9 +177,9 @@ public class OlImageView extends SuperImageView {
                             OlImageView.this.setOnClickListener(new OnClickListener() {
                                 @Override
                                 public void onClick(View arg0) {
-                                    OlImageView.this.setImageMovie(waitMovie);
-                                    OlImageView.this.loadImage(true);
-                                    OlImageView.this.setClickable(false);
+                                    setImageBitmap(waitBitmap);
+                                    loadImage(true);
+                                    setClickable(false);
                                 }
                             });
                             OlImageView.this.status = STATUS_LOAD_FAIL;
@@ -192,8 +190,8 @@ public class OlImageView extends SuperImageView {
         }
     }
     
-    public static void setDefaultImage(Movie waitMovie, Bitmap refreshBitmap) {
-        OlImageView.waitMovie = waitMovie;
+    public static void setDefaultImage(Bitmap waitBitmap, Bitmap refreshBitmap) {
+        OlImageView.waitBitmap = waitBitmap;
         OlImageView.refreshBitmap = refreshBitmap;
     }
 

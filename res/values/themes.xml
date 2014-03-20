@@ -15,4 +15,13 @@
         <item name="@android:scrollbarThumbVertical">@drawable/scrollbar_blue</item>
     </style>
     
+    <style name="AppTheme.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    
+    <style name="AppTheme.NoActionBar.Fullscreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
 </resources>

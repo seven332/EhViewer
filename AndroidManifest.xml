@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hippo.ehviewer"
     android:versionCode="6"
-    android:versionName="0.3.1" >
+    android:versionName="0.3.0" >
     
     <uses-sdk
         android:minSdkVersion="14"
@@ -22,14 +22,23 @@
         android:theme="@style/AppTheme" >
         
         <activity
+            android:name="com.hippo.ehviewer.StartActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar.Fullscreen"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity
             android:name="com.hippo.ehviewer.activity.MangaListActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.SEARCH" />
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <meta-data
                 android:name="android.app.searchable"

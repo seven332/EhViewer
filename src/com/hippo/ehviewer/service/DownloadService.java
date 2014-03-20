@@ -88,12 +88,16 @@ public class DownloadService extends Service {
             
             @Override
             public void onDownloadMangaOver(String id, boolean ok) {
+                String mesg = null;
                 if (ok)
-                    mBuilder.setContentTitle(getString(R.string.download_successfully) + " " + Download.get(id).title);
+                    mesg = getString(R.string.download_successfully) + " ";
                 else
-                    mBuilder.setContentTitle(getString(R.string.download_unsuccessfully) + " " + Download.get(id).title);
-                mBuilder.setContentText(null).setProgress(0, 0, false).setOngoing(false)
-                        .setAutoCancel(true);
+                    mesg = getString(R.string.download_unsuccessfully) + " ";
+                DownloadInfo di = Download.get(id);
+                if (di != null)
+                    mesg += Download.get(id).title;
+                mBuilder.setContentTitle(mesg);
+                mBuilder.setContentText(null).setProgress(0, 0, false).setOngoing(false);
                 mNotifyManager.notify(Integer.parseInt(id), mBuilder.build());
             }
             
