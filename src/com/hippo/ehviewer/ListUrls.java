@@ -50,8 +50,11 @@ public class ListUrls {
         if (!(object instanceof ListUrls))
             return false;
         ListUrls listUrls = (ListUrls)object;
-        
-        if (page == listUrls.page && type == listUrls.type
+        return page == listUrls.page && isSameUrls(listUrls);
+    }
+    
+    public boolean isSameUrls(ListUrls listUrls) {
+        if (type == listUrls.type
                 && mAdvsearch == listUrls.mAdvsearch
                 && isMinRating == listUrls.isMinRating) {
             if ((search == null && listUrls.search != null)
@@ -72,6 +75,7 @@ public class ListUrls {
     @Override
     public ListUrls clone() {
         ListUrls listUrls = new ListUrls(type, search, page);
+        listUrls.setMax(max);
         if (mAdvsearch) {
             if (isMinRating)
                 listUrls.setAdvance(advsearchType, minRating);

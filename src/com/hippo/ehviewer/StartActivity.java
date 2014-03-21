@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -111,7 +112,7 @@ public class StartActivity extends Activity {
         LinearLayout wellcome = (LinearLayout)findViewById(R.id.app_start_view);
         // Show welcome in progress
         AlphaAnimation aa = new AlphaAnimation(0.3f,1.0f);
-        aa.setDuration(3000);
+        aa.setDuration(2000);
         aa.setAnimationListener(new AnimationListener() {
             @Override
             public void onAnimationEnd(Animation arg0) {

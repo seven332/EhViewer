@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hippo.ehviewer"
-    android:versionCode="6"
-    android:versionName="0.3.0" >
+    android:versionCode="7"
+    android:versionName="0.3.2" >
     
     <uses-sdk
         android:minSdkVersion="14"
@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     
     <application
-        android:name="com.hippo.ehviewer.CrashApplication"
+        android:name=".CrashApplication"
         android:allowBackup="true"
         android:largeHeap="true"
         android:hardwareAccelerated="false"
@@ -22,9 +22,9 @@
         android:theme="@style/AppTheme" >
         
         <activity
-            android:name="com.hippo.ehviewer.StartActivity"
+            android:name=".StartActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar.Fullscreen"
+            android:theme="@style/AppTheme.NoActionBar.Transparent"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,7 +33,7 @@
         </activity>
         
         <activity
-            android:name="com.hippo.ehviewer.activity.MangaListActivity"
+            android:name=".activity.MangaListActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize" >
@@ -46,7 +46,7 @@
         </activity>
         
         <activity
-            android:name="com.hippo.ehviewer.activity.MangaDetailActivity"
+            android:name=".activity.MangaDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|adjustUnspecified|stateHidden"
             android:configChanges="orientation|screenSize" >

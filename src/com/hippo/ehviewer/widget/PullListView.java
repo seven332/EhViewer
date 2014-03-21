@@ -1,10 +1,10 @@
 package com.hippo.ehviewer.widget;
 
+import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -96,10 +96,12 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
     private int lastY;
     
     private boolean mHeaderEnabled = true;
+    @SuppressWarnings("unused")
     private boolean mFooterEnabled = true;
     
     public interface OnHeaderRefreshListener {  
-        public void onHeaderRefresh();  
+        public void onHeaderRefresh();
+        public void onHeaderRefresh(Object obj);  
     }
     
     public interface OnFooterRefreshListener {
@@ -265,7 +267,7 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
                 return false;
             
         default:
-            return false;  
+            return super.onInterceptTouchEvent(event);
         }
     }
     
@@ -445,17 +447,35 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
         mHeaderRefreshStr = refreshStr;
         mHeaderDoneStr = doneStr;
         mHeaderCancelStr = cancelStr;
+        
+        switch (headerState) {
+        case HEADER_PULL_TO_REFRESH:
+            mTipTextView.setText(mHeaderPullStr);
+            break;
+        case HEADER_RELEASE_TO_REFRESH:
+            mTipTextView.setText(mHeaderReleaseStr);
+            break;
+        case HEADER_REFRESHING:
+            mTipTextView.setText(mHeaderRefreshStr);
+            break;
+        case HEADER_DONE:
+            mTipTextView.setText(mHeaderDoneStr);
+            break;
+        case HEADER_CANCEL:
+            mTipTextView.setText(mHeaderCancelStr);
+            break;
+        }
     }
     
-    public void clickHeaderRefresh() {
+    public boolean clickHeaderRefresh(Object obj) {
         if (!mHeaderEnabled || isHeaderRecored || isFooterRecored)
-            return;
+            return false;
         
         isHeaderRecored = true;
         headerState = HEADER_REFRESHING;
-        //mListView.setSelection(0);
         changeHeaderViewByState();
-        onHeaderRefresh();
+        onHeaderRefresh(obj);
+        return true;
     }
     
     public void setOnRefreshListener(OnHeaderRefreshListener refreshListener) {
@@ -465,6 +485,12 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
     private void onHeaderRefresh() {
         if (headerRefreshListener != null) {
             headerRefreshListener.onHeaderRefresh();
+        }
+    }
+    
+    private void onHeaderRefresh(Object obj) {
+        if (headerRefreshListener != null) {
+            headerRefreshListener.onHeaderRefresh(obj);
         }
     }
     
@@ -489,7 +515,18 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
         mFooterRefreshStr = refreshStr;
         mFooterSuccessStr = successStr;
         mFooterFailStr = failStr;
-        changeFooterViewByState();
+        
+        switch (footerState) {
+        case FOOTER_REFRESHING:
+            mFooterTipTextView.setText(mFooterRefreshStr);
+            break;
+        case FOOTER_SUCCESS:
+            mFooterTipTextView.setText(mFooterSuccessStr);
+            break;
+        case FOOTER_FAIL:
+            mFooterTipTextView.setText(mFooterFailStr);
+            break;
+        }
     }
     
     public void footerRefresh() {
@@ -522,6 +559,10 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
         changeFooterViewByState();
     }
     
+    public boolean isFooterRefreshing() {
+        return footerState == FOOTER_REFRESHING;
+    }
+    
     public void onFooterRefreshComplete(boolean isSuccess, boolean actionWhenShow) {
         if (isSuccess)
             footerState = FOOTER_SUCCESS;
@@ -539,14 +580,15 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
     private boolean isListAtTop()   {
         if(mListView.getChildCount() == 0)
             return true;
-        return mListView.getChildAt(0).getTop() == 0;
+        return mListView.getFirstVisiblePosition() == 0
+                && mListView.getChildAt(0).getTop() == 0;
     }
     
     // Get header width and height
     private void measureView(View child) {
         ViewGroup.LayoutParams p = child.getLayoutParams();
         if (p == null) {
-            p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+            p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
         }
         int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0 + 0, p.width);

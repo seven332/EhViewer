@@ -32,4 +32,23 @@
         <item name="android:textColor">@android:color/black</item>
     </style>
     
+    <style name="ProgressBar" parent="@android:Widget.Holo.ProgressBar">
+    </style>
+    
+    <style name="ProgressBar.Small">
+        <item name="android:indeterminateDrawable">@drawable/progress_small</item>
+        <item name="android:minWidth">16dip</item>
+        <item name="android:maxWidth">16dip</item>
+        <item name="android:minHeight">16dip</item>
+        <item name="android:maxHeight">16dip</item>
+    </style>
+    
+        <style name="ProgressBar.Large">
+        <item name="android:indeterminateDrawable">@drawable/progress_large</item>
+        <item name="android:minWidth">76dip</item>
+        <item name="android:maxWidth">76dip</item>
+        <item name="android:minHeight">76dip</item>
+        <item name="android:maxHeight">76dip</item>
+    </style>
+    
 </resources>

@@ -14,7 +14,6 @@ import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.EhClient;
 import com.hippo.ehviewer.util.Favourite;
 import com.hippo.ehviewer.util.Tag;
@@ -30,7 +29,6 @@ import com.hippo.ehviewer.widget.PullListView.OnHeaderRefreshListener;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
 
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.AlertDialog;
@@ -61,7 +59,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -76,12 +73,6 @@ import android.widget.Toast;
 public class MangaListActivity extends SlidingActivity {
     private static String TAG = "MangaListActivity";
     
-    // How to get manga list
-    private static final int OTHER = 0;
-    private static final int PULL_HEADER = 1;
-    private static final int ACTION_FOOTER = 2;
-    
-    private RelativeLayout mainView;
     private TagListView listMenu;
     private ListView isExhentaiList;
     private PullListView pullListView;
@@ -100,7 +91,6 @@ public class MangaListActivity extends SlidingActivity {
     
     private SlidingMenu mSlidingMenu;
 
-    private String lastCrash;
     private ListUrls lus;
     private GmlAdapter gmlAdapter;
     private ArrayList<String> listMenuTitle = new ArrayList<String>();
@@ -110,7 +100,6 @@ public class MangaListActivity extends SlidingActivity {
 
     private int longClickItemIndex;
 
-    private boolean mLayout = false;
     private boolean mListFirst = true;
     private boolean mLoadListOver = false;
     
@@ -118,22 +107,22 @@ public class MangaListActivity extends SlidingActivity {
     private AlertDialog loginDialog;
     private AlertDialog filterDialog;
     private AlertDialog longClickDialog;
-    private AlertDialog waitNetworkDialog;
     
     // Modify tag
     private String newTagName = null;
-    
     
     // Double click back exit
     private long curBackTime = 0;
     private static final int BACK_PRESSED_INTERVAL = 2000;
     
+    private long lastGetStamp;
+    
     //
     private int firstPage = 0;
     private int lastPage = 0;
     
-    private int firstIndex = 1;
-    private int lastIndex = 1;
+    private int firstIndex = 0;
+    private int lastIndex = 0;
     private int visiblePage = 0;
     
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
@@ -147,30 +136,6 @@ public class MangaListActivity extends SlidingActivity {
         return new DialogBuilder(this).setCancelable(false)
                 .setTitle(R.string.wait)
                 .setView(view, true).create();
-    }
-
-    private AlertDialog createAskLoginDialog() {
-        return new DialogBuilder(this).setCancelable(false)
-                .setTitle(R.string.dialog_title_login_or_not)
-                .setMessage(R.string.dialog_messgae_login_or_not)
-                .setPositiveButton(R.string.login,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        loginDialog.show();
-                    }
-                }).setNegativeButton(R.string.not_login,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        if (mLayout)
-                            layoutDrawRight();
-                        else
-                            layout();
-                    }
-                }).create();
     }
     
     private AlertDialog createLoginDialog() {
@@ -198,10 +163,7 @@ public class MangaListActivity extends SlidingActivity {
                                         Toast.makeText( MangaListActivity.this,
                                                 getString(R.string.toast_login_succeeded),
                                                 Toast.LENGTH_SHORT).show();
-                                        if (mLayout)
-                                            layoutDrawRight();
-                                        else
-                                            layout();
+                                        layoutDrawRight();
                                         }
                                     @Override
                                     public void onFailure(int errorMessageId) {
@@ -226,10 +188,7 @@ public class MangaListActivity extends SlidingActivity {
                     @Override
                     public void onClick(View v) {
                         ((AlertButton)v).dialog.dismiss();
-                        if (mLayout)
-                            layoutDrawRight();
-                        else
-                            layout();
+                        layoutDrawRight();
                     }
                 }).create();
     }
@@ -247,7 +206,7 @@ public class MangaListActivity extends SlidingActivity {
                 if (isChecked)
                     advance.setVisibility(View.VISIBLE);
                 else
-                    advance.setVisibility(View.INVISIBLE);
+                    advance.setVisibility(View.GONE);
             }
         });
         
@@ -258,8 +217,7 @@ public class MangaListActivity extends SlidingActivity {
                     public void onClick(View v) {
                         ((AlertButton)v).dialog.dismiss();
                         MangaListActivity.this.showContent();
-                        lus = getLus(filterDialog);
-                        refresh(OTHER);
+                        refresh(getLus(filterDialog));
                     }
                 }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
                     @Override
@@ -386,51 +344,6 @@ public class MangaListActivity extends SlidingActivity {
         return lus;
     }
     
-    private AlertDialog createWaitNetworkDialog() {
-        LayoutInflater inflater = this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.wait, null);
-        TextView tv = (TextView)view.findViewById(R.id.wait_message);
-        tv.setText(R.string.dailog_check_network);
-        
-        return new DialogBuilder(this).setCancelable(false)
-                .setTitle(R.string.wait)
-                .setView(view, true).create();
-    }
-    
-
-    private AlertDialog createSendCrashDialog() {
-        return new DialogBuilder(this).setCancelable(false)
-                .setTitle(R.string.dialog_send_crash_title)
-                .setMessage(R.string.dialog_send_crash_plain)
-                .setPositiveButton(R.string.dialog_send_crash_yes, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        Intent i = new Intent(Intent.ACTION_SENDTO);
-                        i.setData(Uri.parse("mailto:ehviewersu@gmail.com"));
-                        i.putExtra(Intent.EXTRA_SUBJECT, "I found a bug in EhViewer !");
-                        i.putExtra(Intent.EXTRA_TEXT, lastCrash);
-                        startActivity(i);
-                        lastCrash = null;
-                        
-                        waitNetworkDialog = createWaitNetworkDialog();
-                        waitNetworkDialog.show();
-                        EhClient.checkNetwork(new NetworkListener());
-                    }
-                }).setNegativeButton(R.string.dialog_send_crash_no, new View.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        lastCrash = null;
-                        
-                        waitNetworkDialog = createWaitNetworkDialog();
-                        waitNetworkDialog.show();
-                        EhClient.checkNetwork(new NetworkListener());
-                    }
-                }).create();
-    }
-    
     private AlertDialog createLongClickDialog() {
         return new DialogBuilder(this).setTitle(R.string.what_to_do)
                 .setItems(R.array.list_item_long_click,
@@ -470,63 +383,6 @@ public class MangaListActivity extends SlidingActivity {
                 }).create();
     }
     
-    private AlertDialog createWarningDialog() {
-        return new DialogBuilder(this).setCancelable(false)
-                .setTitle(R.string.dailog_waring_title)
-                .setMessage(R.string.dailog_waring_plain)
-                .setPositiveButton(R.string.dailog_waring_yes,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        Config.allowed();
-                        
-                        if ((lastCrash = Crash.getLastCrash()) != null) {
-                            createSendCrashDialog().show();
-                        } else {
-                            waitNetworkDialog = createWaitNetworkDialog();
-                            waitNetworkDialog.show();
-                            EhClient.checkNetwork(new NetworkListener());
-                        }
-                    }
-                }).setNegativeButton(R.string.dailog_waring_no,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        finish();
-                    }
-                }).create();
-    }
-    
-    private AlertDialog createNetworkErrorDialog(int networkEmsId) {
-        return new DialogBuilder(this).setCancelable(false)
-                .setTitle(R.string.error).setMessage(networkEmsId)
-                .setPositiveButton(R.string.dailog_network_error_yes,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        if (Config.isFirstTime()){
-                            Config.firstTime();
-                            createAskLoginDialog();
-                            createAskLoginDialog().show();
-                        } else if (!EhClient.hasLogin() && Config.isLogin()) {
-                            checkLogin();
-                        } else
-                            layout();
-                    }
-                })
-                .setNegativeButton(R.string.dailog_network_error_no,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        finish();
-                    }
-                }).create();
-    }
-    
     private AlertDialog createJumpDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.jump, null);
@@ -544,31 +400,29 @@ public class MangaListActivity extends SlidingActivity {
                     public void onClick(View v) {
                         try{
                             int targetPage = Integer.parseInt(et.getText().toString()) - 1;
-                            
                             if (targetPage >= firstPage
-                                    && targetPage <= lastPage) { // If targetPage is in range
-                                ((AlertButton)v).dialog.dismiss();
+                                    && targetPage <= lastPage) {   // If targetPage is in range
+                                ((AlertButton)v).dialog.dismiss(); // Just jump there
                                 int position = (targetPage - firstPage) *
-                                        lus.getNumPerPage() + 1;
+                                        lus.getNumPerPage();
                                 listView.setSelectionFromTop(position, -1);
-                            } else if (lus.setPage(targetPage)) {
-                                ((AlertButton)v).dialog.dismiss();
-                                
-                                mListFirst = true;
-                                mLoadListOver = false;
-                                
-                                waitView.setVisibility(View.VISIBLE);
-                                freshButton.setVisibility(View.INVISIBLE);
-                                noFoundView.setVisibility(View.INVISIBLE);
-                                sadpanda.setVisibility(View.INVISIBLE);
-                                
-                                EhClient.getManagaList(lus.getUrl(),
-                                        new MangaListGetPackage(lus.clone(), true, OTHER),
-                                        new MangaListGetListener());
-                            } else {
-                                Toast.makeText(MangaListActivity.this,
-                                        getString(R.string.toast_invalid_page),
-                                        Toast.LENGTH_SHORT).show();
+                            } else{
+                                ListUrls listUrls = lus.clone();
+                                if (listUrls.setPage(targetPage)) {
+                                    ((AlertButton)v).dialog.dismiss();
+                                    mListFirst = true;
+                                    mLoadListOver = false;
+                                    
+                                    waitView.setVisibility(View.GONE);
+                                    freshButton.setVisibility(View.GONE);
+                                    noFoundView.setVisibility(View.GONE);
+                                    sadpanda.setVisibility(View.GONE);
+                                    pullListView.clickHeaderRefresh(listUrls);
+                                } else {
+                                    Toast.makeText(MangaListActivity.this,
+                                            getString(R.string.toast_invalid_page),
+                                            Toast.LENGTH_SHORT).show();
+                                }
                             }
                         } catch(Exception e) {
                             Toast.makeText(MangaListActivity.this,
@@ -647,7 +501,7 @@ public class MangaListActivity extends SlidingActivity {
                 if (isChecked)
                     advance.setVisibility(View.VISIBLE);
                 else
-                    advance.setVisibility(View.INVISIBLE);
+                    advance.setVisibility(View.GONE);
             }
         });
         if (cb.isChecked())
@@ -834,38 +688,15 @@ public class MangaListActivity extends SlidingActivity {
         spinnerMinRating.setSelection(listUrls.getMinRating() - 2);
     }
     
-    
-    private class NetworkListener implements
-            EhClient.OnCheckNetworkListener {
-        @Override
-        public void onSuccess() {
-            waitNetworkDialog.dismiss();
-            waitNetworkDialog = null;
-            if (Config.isFirstTime()){
-                Config.firstTime();
-                createAskLoginDialog().show();
-            } else if (!EhClient.hasLogin() && Config.isLogin()) {
-                checkLogin();
-            } else
-                layout();
-        }
-
-        @Override
-        public void onFailure(int errorMessageId) {
-            waitNetworkDialog.dismiss();
-            waitNetworkDialog = null;
-            createNetworkErrorDialog(errorMessageId).show();
-        }
-    }
-    
     private class MangaListGetPackage {
+        public long stamp;
         public ListUrls targetListUrls;
-        public boolean isSetPosition;
-        public int getType;
-        public MangaListGetPackage(ListUrls targetListUrls, boolean isSetPosition, int getType) {
+        public boolean setPosition;
+        public MangaListGetPackage(long stamp, ListUrls targetListUrls,
+                boolean setPosition) {
+            this.stamp = stamp;
             this.targetListUrls = targetListUrls;
-            this.isSetPosition = isSetPosition;
-            this.getType = getType;
+            this.setPosition = setPosition;
         }
     }
     
@@ -875,25 +706,28 @@ public class MangaListActivity extends SlidingActivity {
         public void onSuccess(Object checkFlag, ArrayList<ListMangaDetail> newLmdArray,
                 int indexPerPage, int maxPage) {
             MangaListGetPackage getPackage = (MangaListGetPackage)checkFlag;
-            if (!getPackage.targetListUrls.equals(lus))
+            if (getPackage.stamp != lastGetStamp)
                 return;
+            lus = getPackage.targetListUrls;
             
             // Check no Found view later
-            waitView.setVisibility(View.INVISIBLE);
-            freshButton.setVisibility(View.INVISIBLE);
+            waitView.setVisibility(View.GONE);
+            freshButton.setVisibility(View.GONE);
             
             if (maxPage == 0) { // If No hits found
                 mLoadListOver = false;
                 
+                pullListView.setVisibility(View.GONE);
                 noFoundView.setVisibility(View.VISIBLE);
-                sadpanda.setVisibility(View.INVISIBLE);
+                sadpanda.setVisibility(View.GONE);
                 setTitle(R.string.no_found);
                 lmdArray.clear();
                 gmlAdapter.notifyDataSetChanged();
             } else if (maxPage == -1) { //panda
                 mLoadListOver = false;
                 
-                noFoundView.setVisibility(View.INVISIBLE);
+                pullListView.setVisibility(View.GONE);
+                noFoundView.setVisibility(View.GONE);
                 sadpanda.setVisibility(View.VISIBLE);
                 setTitle(R.string.sadpanda);
                 lmdArray.clear();
@@ -902,61 +736,58 @@ public class MangaListActivity extends SlidingActivity {
                 mLoadListOver = true;
                 
                 pullListView.setVisibility(View.VISIBLE);
-                noFoundView.setVisibility(View.INVISIBLE);
-                sadpanda.setVisibility(View.INVISIBLE);
+                noFoundView.setVisibility(View.GONE);
+                sadpanda.setVisibility(View.GONE);
                 // Set indexPerPage and maxPage
                 lus.setNumPerPage(indexPerPage);
                 lus.setMax(maxPage);
                 
                 // Check refresh or get more
-                int getPageIndex = getPackage.targetListUrls.getPage();
-                boolean setPositon = getPackage.isSetPosition;
+                int getPageIndex = lus.getPage();
                 if (getPageIndex == 0 && firstPage == 0) { // Refresh
                     firstPage = 0;
                     lastPage = 0;
                     lmdArray.clear();
                     lmdArray.addAll(newLmdArray);
+                    gmlAdapter.notifyDataSetChanged();
                     
                     // Get visible page
-                    firstIndex = 1;
-                    lastIndex = lus.getNumPerPage() + 1;
+                    firstIndex = 0;
+                    lastIndex = newLmdArray.size() - 1;
                     visiblePage = 0;
                     setTitle(String.format(getString(R.string.some_page), visiblePage + 1));
                     
-                    gmlAdapter.notifyDataSetChanged();
-                    if (setPositon) {
-                        int position = (getPageIndex - firstPage) *
-                                lus.getNumPerPage() + 1;
-                        listView.setSelectionFromTop(position, -1);
-                    }
+                    // Go to top
+                    listView.setSelection(0);
                 } else if (getPageIndex == firstPage - 1) { // Get last page
                     firstPage = getPageIndex;
                     lmdArray.addAll(0, newLmdArray);
-                    
-                    // Get visible page
-                    firstIndex += lus.getNumPerPage();
-                    lastIndex += lus.getNumPerPage();
-                    //setTitle(String.format(getString(R.string.list_page), visiblePage + 1));
-                    
                     gmlAdapter.notifyDataSetChanged();
-                    if (!setPositon) { // TODO Make it more 
-                        int position = lus.getNumPerPage() + 1;
-                        listView.setSelectionFromTop(position, -1);
-                    } else {
-                        int position = (getPageIndex - firstPage) *
-                                lus.getNumPerPage() + 1;
-                        listView.setSelectionFromTop(position, -1);
-                    }
                     
+                    if (getPackage.setPosition) {
+                        firstIndex = 0;
+                        lastIndex = newLmdArray.size()-1;
+                        visiblePage = getPageIndex;
+                        setTitle(String.format(getString(R.string.some_page), visiblePage + 1));
+                        // Go to top
+                        listView.setSelection(0);
+                    } else {
+                        firstIndex += newLmdArray.size();
+                        lastIndex += newLmdArray.size();
+                        // Stay there
+                        listView.setSelectionFromTop(listView.getFirstVisiblePosition() + newLmdArray.size(), -1);
+                    }
                 } else if (getPageIndex == lastPage + 1) { // Get next page
                     lastPage = getPageIndex;
                     lmdArray.addAll(newLmdArray);
-                    
                     gmlAdapter.notifyDataSetChanged();
-                    if (setPositon) {
-                        int position = (getPageIndex - firstPage) *
-                                lus.getNumPerPage() + 1;
-                        listView.setSelectionFromTop(position, -1);
+                    
+                    if (getPackage.setPosition) { // Go to next page top
+                        firstIndex = lmdArray.size() - newLmdArray.size();
+                        lastIndex = lmdArray.size() - 1;
+                        visiblePage = getPageIndex;
+                        setTitle(String.format(getString(R.string.some_page), visiblePage + 1));
+                        listView.setSelectionFromTop(firstIndex, -1);
                     }
                 } else if (getPageIndex < firstPage - 1 ||
                         getPageIndex > lastPage + 1){ // Jump somewhere
@@ -964,28 +795,26 @@ public class MangaListActivity extends SlidingActivity {
                     lastPage = getPageIndex;
                     lmdArray.clear();
                     lmdArray.addAll(newLmdArray);
+                    gmlAdapter.notifyDataSetChanged();
                     
                     // Get visible page
-                    firstIndex = 1;
-                    lastIndex = lus.getNumPerPage() + 1;
+                    firstIndex = 0;
+                    lastIndex = newLmdArray.size();
                     visiblePage = getPageIndex;
                     setTitle(String.format(getString(R.string.some_page), visiblePage + 1));
                     
-                    Log.d(TAG, (visiblePage + 1) + "");
-                    
-                    gmlAdapter.notifyDataSetChanged();
-                    if (setPositon) {
-                        int position = (getPageIndex - firstPage) *
-                                lus.getNumPerPage() + 1;
-                        listView.setSelectionFromTop(position, -1);
-                    }
+                    // Go to top
+                    listView.setSelection(0);
                 }
             }
-            //handlePullList
-            if (getPackage.getType == PULL_HEADER)
+            // Reset pullListView
+            if (pullListView.isHeaderRefreshing())
                 pullListView.onHeaderRefreshComplete();
-            else if (getPackage.getType == ACTION_FOOTER)
+            else if (pullListView.isFooterRefreshing())
                 pullListView.onFooterRefreshComplete(true);
+            if (lus.getPage() == lus.getMax() - 1)
+                pullListView.setActionWhenShow(false);
+            
             // Reset pull string
             setHeaderPullString();
         }
@@ -993,21 +822,21 @@ public class MangaListActivity extends SlidingActivity {
         @Override
         public void onFailure(Object checkFlag, int errorMessageId) {
             MangaListGetPackage getPackage = (MangaListGetPackage)checkFlag;
-            if (!getPackage.targetListUrls.equals(lus))
+            if (getPackage.stamp != lastGetStamp)
                 return;
             
             // Check pull list view later
             // Check fresh view later
-
-            waitView.setVisibility(View.INVISIBLE);
-            noFoundView.setVisibility(View.INVISIBLE);
-            sadpanda.setVisibility(View.INVISIBLE);
+            waitView.setVisibility(View.GONE);
+            noFoundView.setVisibility(View.GONE);
+            sadpanda.setVisibility(View.GONE);
             
             int getPageIndex = getPackage.targetListUrls.getPage();
             
             if (getPageIndex == 0 && firstPage == 0) { // Refresh
                 mLoadListOver = false;
                 // Only show freshButton
+                pullListView.setVisibility(View.GONE);
                 freshButton.setVisibility(View.VISIBLE);
                 Toast.makeText(MangaListActivity.this,
                         getString(errorMessageId), Toast.LENGTH_SHORT)
@@ -1016,18 +845,33 @@ public class MangaListActivity extends SlidingActivity {
                 gmlAdapter.notifyDataSetChanged();
             } else {// List is not empty
                 // Only show freshButton
-                freshButton.setVisibility(View.INVISIBLE);
+                freshButton.setVisibility(View.GONE);
                 Toast.makeText(
                         MangaListActivity.this,
-                        getString(errorMessageId) + " "
-                        + getString(R.string.em_retry), Toast.LENGTH_SHORT).show();
+                        getString(errorMessageId),
+                        Toast.LENGTH_SHORT).show();
             }
             
-            //handlePullList
-            if (getPackage.getType == PULL_HEADER)
+            // Reset pullListView
+            if (pullListView.isHeaderRefreshing())
                 pullListView.onHeaderRefreshComplete();
-            else if (getPackage.getType == ACTION_FOOTER)
+            else if (pullListView.isFooterRefreshing())
                 pullListView.onFooterRefreshComplete(false);
+        }
+        
+        private void setHeaderPullString() {
+            if (firstPage == 0)
+                pullListView.setHeaderString("下拉刷新...",
+                        "释放刷新...",
+                        "正在刷新...",
+                        "完成刷新",
+                        "取消刷新"); // TODO
+            else
+                pullListView.setHeaderString("下拉读取上一页...",
+                        "释放读取上一页...",
+                        "正在读取上一页...",
+                        "完成读取上一页",
+                        "取消读取上一页"); // TODO
         }
     }
 
@@ -1049,15 +893,15 @@ public class MangaListActivity extends SlidingActivity {
                 mListFirst = false;
             }
 
-            if (lus == null || visibleItemCount == 0)
+            if (lus == null || visibleItemCount < 2)
                 return;
-            if (lastIndex == 1)
-                lastIndex = lus.getNumPerPage() + 1;
+            if (lastIndex == 0)
+                lastIndex = lus.getNumPerPage() - 1;
 
             int pageChanged = (firstVisibleItem - firstIndex)
                     / lus.getNumPerPage();
             if (pageChanged == 0)
-                pageChanged = (firstVisibleItem + visibleItemCount - lastIndex)
+                pageChanged = (firstVisibleItem + visibleItemCount - lastIndex - 1)
                         / lus.getNumPerPage();
             
             if (pageChanged != 0) {
@@ -1136,21 +980,6 @@ public class MangaListActivity extends SlidingActivity {
         }
     }
     
-    private void setHeaderPullString() {
-        if (firstPage == 0)
-            pullListView.setHeaderString("下拉刷新...",
-                    "释放刷新...",
-                    "正在刷新...",
-                    "刷新完成",
-                    "取消刷新"); // TODO
-        else
-            pullListView.setHeaderString("下拉读取上一页...",
-                    "释放读取上一页...",
-                    "正在读取上一页...",
-                    "读取上一页完成",
-                    "读取上一页刷新"); // TODO
-    }
-    
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -1207,7 +1036,6 @@ public class MangaListActivity extends SlidingActivity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
         // Get View
-        mainView = (RelativeLayout) findViewById(R.id.list_main);
         listMenu = (TagListView) findViewById(R.id.list_menu_list);
         isExhentaiList = (ListView)findViewById(R.id.is_exhentai);
         pullListView = ((PullListView)findViewById(R.id.list_list));
@@ -1245,9 +1073,8 @@ public class MangaListActivity extends SlidingActivity {
             public void onItemClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
                 if (position == 0) { // Home page
-                    lus = new ListUrls(ListUrls.ALL_TYPE, null, 0);
-                    refresh(OTHER);
-                    showContent();
+                    if (refresh(new ListUrls(ListUrls.ALL_TYPE, null, 0)))
+                        showContent();
                 } else if (position == 1) { // Favourite
                     Intent intent = new Intent(MangaListActivity.this,
                             FavouriteActivity.class);
@@ -1255,18 +1082,15 @@ public class MangaListActivity extends SlidingActivity {
                     showContent();
                 } else if (position == 2) { // filter
                     filterDialog.show();
-                } else if (position == 3) { // Download //TODO
+                } else if (position == 3) { // Download
                     Intent intent = new Intent(MangaListActivity.this,
                             DownloadActivity.class);
                     startActivity(intent);
                     showContent();
                 } else if (position >= mStableItemCount){
                     ListUrls listUrls = Tag.get(listMenuTitle.get(position));
-                    if (listUrls != null) {
-                        lus = listUrls;
-                        refresh(OTHER);
-                    }
-                    showContent();
+                    if (listUrls != null && refresh(listUrls))
+                        showContent();
                 }
             }
         });
@@ -1332,9 +1156,8 @@ public class MangaListActivity extends SlidingActivity {
                 }
                 if (isChanged) {
                     isExhentaiListAdapter.notifyDataSetChanged();
-                    lus = new ListUrls(ListUrls.ALL_TYPE, null, 0);
-                    refresh(OTHER);
-                    MangaListActivity.this.showContent();
+                    refresh(new ListUrls(ListUrls.ALL_TYPE, null, 0));
+                    showContent();
                 }
             }
         });
@@ -1344,32 +1167,45 @@ public class MangaListActivity extends SlidingActivity {
         pullListView.setOnRefreshListener(new OnHeaderRefreshListener() {
             @Override
             public void onHeaderRefresh() {
+                mListFirst = true;
+                mLoadListOver = false;
+                ListUrls listUrls = lus.clone();
                 if (firstPage == 0)
-                    refresh(PULL_HEADER);
-                else {
-                    mListFirst = true;
-                    mLoadListOver = false;
-                    lus.setPage(firstPage - 1);
-                    EhClient.getManagaList(lus.getUrl(),
-                            new MangaListGetPackage(lus.clone(), false, PULL_HEADER),
-                            new MangaListGetListener());
-                }
+                    listUrls.setPage(0);
+                else
+                    listUrls.setPage(firstPage - 1);
+                EhClient.getManagaList(listUrls.getUrl(),
+                        new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, true),
+                        new MangaListGetListener());
+            }
+
+            @Override
+            public void onHeaderRefresh(Object obj) {
+                mListFirst = true;
+                mLoadListOver = false;
+                ListUrls listUrls = (ListUrls)obj;
+                EhClient.getManagaList(listUrls.getUrl(),
+                        new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, true),
+                        new MangaListGetListener());
             }
         });
+        
         pullListView.setOnFooterRefreshListener(new OnFooterRefreshListener() {
             @Override
             public void onFooterRefresh() {
+                ListUrls listUrls = lus.clone();
+                if (listUrls.setPage(lastPage + 1)) {
                     mListFirst = true;
                     mLoadListOver = false;
-                    if (lus.setPage(lastPage + 1))
-                        EhClient.getManagaList(lus.getUrl(),
-                                new MangaListGetPackage(lus.clone(), false, ACTION_FOOTER),
-                                new MangaListGetListener());
-                    else
-                        pullListView.onFooterRefreshComplete(true, false);
+                    EhClient.getManagaList(listUrls.getUrl(),
+                            new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, false),
+                            new MangaListGetListener());
+                }
+                else
+                    pullListView.onFooterRefreshComplete(true, false);
             }
         });
-        pullListView.setFooterString("正在加载更多", "已全部加载完成，点击尝试加载更多", "加载失败，点击继续加载"); // TODO
+        pullListView.setFooterString("正在加载更多", "已全部加载", "加载失败，点击继续加载"); // TODO
         // Listview
         gmlAdapter = new GmlAdapter();
         listView.setAdapter(gmlAdapter);
@@ -1382,7 +1218,6 @@ public class MangaListActivity extends SlidingActivity {
                         MangaDetailActivity.class);
                 ListMangaDetail lmd = lmdArray.get(position);
                 intent.putExtra("url", EhClient.detailHeader + lmd.gid + "/" + lmd.token);
-                
                 intent.putExtra("gid", lmd.gid);
                 intent.putExtra("token", lmd.token);
                 intent.putExtra("archiver_key", lmd.archiver_key);
@@ -1411,15 +1246,20 @@ public class MangaListActivity extends SlidingActivity {
             }
         });
         
-        if (!Config.isAllowed()) {
-            createWarningDialog().show();
-        } else if ((lastCrash = Crash.getLastCrash()) != null) {
-            createSendCrashDialog().show();
-        } else {
-            waitNetworkDialog = createWaitNetworkDialog();
-            waitNetworkDialog.show();
-            EhClient.checkNetwork(new NetworkListener());
-        }
+        setTitle(String.format(getString(R.string.some_page), visiblePage + 1));
+        layoutDrawRight();
+        
+        pullListView.setVisibility(View.GONE);
+        waitView.setVisibility(View.VISIBLE);
+        freshButton.setVisibility(View.GONE);
+        noFoundView.setVisibility(View.GONE);
+        sadpanda.setVisibility(View.GONE);
+        
+        // Check update
+        //checkupdate();
+        
+        // get MangeList
+        refresh(lus.clone());
     }
     
     @Override
@@ -1440,8 +1280,7 @@ public class MangaListActivity extends SlidingActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchView.clearFocus();
-                lus = new ListUrls(ListUrls.ALL_TYPE, query);
-                refresh(OTHER);
+                refresh(new ListUrls(ListUrls.ALL_TYPE, query));
                 return true;
             }
         });
@@ -1492,8 +1331,7 @@ public class MangaListActivity extends SlidingActivity {
             toggle();
             return true;
         case R.id.action_refresh:
-            lus.setPage(0);
-            refresh(OTHER);
+            refresh(lus.clone());
             return true;
         case R.id.action_jump:
             if (mLoadListOver)
@@ -1516,28 +1354,6 @@ public class MangaListActivity extends SlidingActivity {
         if (Config.isAutoPageCache()) {
             Cache.pageCache.clear();
         }
-    }
-
-    private void layout() { // First time
-        mLayout = true;
-
-        setTitle(String.format(getString(R.string.some_page), visiblePage + 1));
-        layoutDrawRight();
-        
-        pullListView.setVisibility(View.INVISIBLE);
-        waitView.setVisibility(View.VISIBLE);
-        freshButton.setVisibility(View.INVISIBLE);
-        noFoundView.setVisibility(View.INVISIBLE);
-        sadpanda.setVisibility(View.INVISIBLE);
-        
-        // Check update
-        //checkupdate();
-        
-        // get MangeList
-        lus.setPage(0);
-        EhClient.getManagaList(lus.getUrl(),
-                new MangaListGetPackage(lus.clone(), true, OTHER),
-                new MangaListGetListener());
     }
     
     private class UpdateListener implements Downloader.OnDownloadListener {
@@ -1583,7 +1399,7 @@ public class MangaListActivity extends SlidingActivity {
             @Override
             public void onSuccess(String pageContext) {
                 String[] items = pageContext.split("\n");
-                if (items.length == 2) {
+                if (items.length > 1) {
                     String newVer = items[0];
                     String url = EhClient.UPDATE_URL + items[1];
                     
@@ -1610,33 +1426,43 @@ public class MangaListActivity extends SlidingActivity {
     private void layoutDrawRight() {
 
         if (EhClient.isLogin()) { // If have login
-            loginView.setVisibility(View.INVISIBLE);
+            loginView.setVisibility(View.GONE);
             loginOverView.setVisibility(View.VISIBLE);
             usernameText.setText(EhClient.getUsername());
         } else {
             loginView.setVisibility(View.VISIBLE);
-            loginOverView.setVisibility(View.INVISIBLE);
+            loginOverView.setVisibility(View.GONE);
         }
     }
     
-    private void refresh(int getType) {
-        mListFirst = true;
-        mLoadListOver = false;
-        
-        firstPage = 0;
-        lastPage = 0;
-        
-        // Only ProgressBar in center
-        waitView.setVisibility(View.VISIBLE);
-        freshButton.setVisibility(View.INVISIBLE);
-        noFoundView.setVisibility(View.INVISIBLE);
-        sadpanda.setVisibility(View.INVISIBLE);
-
-        // Get MangeList
-        lus.setPage(0);
-        EhClient.getManagaList(lus.getUrl(),
-                new MangaListGetPackage(lus.clone(), true, getType),
-                new MangaListGetListener());
+    private boolean refresh(ListUrls listUrls) {
+        listUrls.setPage(0);
+        boolean re = pullListView.clickHeaderRefresh(listUrls);
+        if (re) {
+            mListFirst = true;
+            mLoadListOver = false;
+            
+            // Make sure callback while think it is refresh
+            firstPage = 0;
+            lastPage = 0;
+            
+            if (lmdArray.size() == 0)
+                waitView.setVisibility(View.VISIBLE);
+            else
+                waitView.setVisibility(View.GONE);
+            
+            freshButton.setVisibility(View.GONE);
+            noFoundView.setVisibility(View.GONE);
+            sadpanda.setVisibility(View.GONE);
+            
+            pullListView.setHeaderString(
+                    "下拉加载...",
+                    "释放加载...",
+                    "正在加载...",
+                    "完成加载",
+                    "取消加载");
+        }
+        return re;
     }
     
     
@@ -1650,10 +1476,7 @@ public class MangaListActivity extends SlidingActivity {
                 Toast.makeText(MangaListActivity.this,
                         getString(R.string.toast_login_succeeded),
                         Toast.LENGTH_SHORT).show();
-                if (mLayout)
                     layoutDrawRight();
-                else
-                    layout();
             }
 
             @Override
@@ -1670,11 +1493,11 @@ public class MangaListActivity extends SlidingActivity {
     // *** Button onclick ***//
 
     public void buttonRefresh(View arg0) {
-        refresh(OTHER);
+        refresh(lus.clone());
     }
 
     public void buttonLogout(View paramView) {
-        logoutButton.setVisibility(View.INVISIBLE);
+        logoutButton.setVisibility(View.GONE);
         waitlogoutView.setVisibility(View.VISIBLE);
         EhClient.logout(new EhClient.OnLogoutListener() {
             @Override
@@ -1683,7 +1506,7 @@ public class MangaListActivity extends SlidingActivity {
                         getString(R.string.toast_logout_succeeded),
                         Toast.LENGTH_SHORT).show();
                 logoutButton.setVisibility(View.VISIBLE);
-                waitlogoutView.setVisibility(View.INVISIBLE);
+                waitlogoutView.setVisibility(View.GONE);
                 Config.logoutNow();
                 layoutDrawRight();
             }
@@ -1694,7 +1517,7 @@ public class MangaListActivity extends SlidingActivity {
                         getString(errorMessageId),
                         Toast.LENGTH_SHORT).show();
                 logoutButton.setVisibility(View.VISIBLE);
-                waitlogoutView.setVisibility(View.INVISIBLE);
+                waitlogoutView.setVisibility(View.GONE);
             }
         });
     }

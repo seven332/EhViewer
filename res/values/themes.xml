@@ -20,8 +20,11 @@
         <item name="android:windowNoTitle">true</item>
     </style>
     
-    <style name="AppTheme.NoActionBar.Fullscreen">
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
+    <!-- Theme for start activity -->
+    <style name="AppTheme.NoActionBar.Transparent">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
     </style>
 </resources>
