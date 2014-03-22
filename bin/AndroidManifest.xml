@@ -14,7 +14,7 @@
     
     <application
         android:name=".CrashApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:largeHeap="true"
         android:hardwareAccelerated="false"
         android:icon="@drawable/ic_launcher"
@@ -53,13 +53,13 @@
         </activity>
         
         <activity
-            android:name="com.hippo.ehviewer.activity.MangaActivity"
+            android:name=".activity.MangaActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize" >
         </activity>
         
         <activity
-            android:name="com.hippo.ehviewer.activity.SettingsActivity"
+            android:name=".activity.SettingsActivity"
             android:label="@string/preference_settings_title"
             android:icon="@drawable/ic_action_settings"
             android:screenOrientation="portrait"
@@ -67,7 +67,7 @@
         </activity>
         
         <activity
-            android:name="com.hippo.ehviewer.activity.FavouriteActivity"
+            android:name=".activity.FavouriteActivity"
             android:label="@string/favourite"
             android:icon="@drawable/ic_action_favourite"
             android:screenOrientation="portrait"
@@ -75,7 +75,7 @@
         </activity>
         
         <activity
-            android:name="com.hippo.ehviewer.activity.DownloadActivity"
+            android:name=".activity.DownloadActivity"
             android:label="@string/download"
             android:icon="@drawable/ic_action_download"
             android:screenOrientation="portrait"
@@ -84,7 +84,7 @@
         </activity>
         
         <activity
-            android:name="com.hippo.ehviewer.activity.MangaDownloadActivity"
+            android:name=".activity.MangaDownloadActivity"
             android:label="@string/download"
             android:icon="@drawable/ic_action_download"
             android:screenOrientation="portrait"
@@ -92,7 +92,7 @@
         </activity>
         
         <service 
-            android:name="com.hippo.ehviewer.service.DownloadService"
+            android:name=".service.DownloadService"
             android:label="DownloadService" />
         
     </application>

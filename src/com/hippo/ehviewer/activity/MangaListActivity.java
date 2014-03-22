@@ -20,17 +20,18 @@ import com.hippo.ehviewer.util.Tag;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.view.CheckImage;
+import com.hippo.ehviewer.view.GetPaddingRelativeLayout;
 import com.hippo.ehviewer.view.OlImageView;
 import com.hippo.ehviewer.view.TagListView;
 import com.hippo.ehviewer.view.TagsAdapter;
+import com.hippo.ehviewer.widget.DrawerLayout;
 import com.hippo.ehviewer.widget.PullListView;
 import com.hippo.ehviewer.widget.PullListView.OnFooterRefreshListener;
 import com.hippo.ehviewer.widget.PullListView.OnHeaderRefreshListener;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.SearchManager;
@@ -41,6 +42,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,6 +61,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -70,10 +73,13 @@ import android.widget.Toast;
 // TODO http://exhentai.org/
 // TODO add lock to get list
 
-public class MangaListActivity extends SlidingActivity {
+public class MangaListActivity extends Activity {
     private static String TAG = "MangaListActivity";
     
+    private DrawerLayout drawer;
+    private GetPaddingRelativeLayout mainLayout;
     private TagListView listMenu;
+    private RelativeLayout loginMenu;
     private ListView isExhentaiList;
     private PullListView pullListView;
     private ListView listView;
@@ -83,13 +89,13 @@ public class MangaListActivity extends SlidingActivity {
     private ImageView sadpanda;
     private ViewGroup loginView;
     private ViewGroup loginOverView;
+    private Button loginButton;
+    private View waitloginView;
     private TextView usernameText;
     private Button logoutButton;
     private View waitlogoutView;
     
     private TagsAdapter tagsAdapter;
-    
-    private SlidingMenu mSlidingMenu;
 
     private ListUrls lus;
     private GmlAdapter gmlAdapter;
@@ -125,6 +131,18 @@ public class MangaListActivity extends SlidingActivity {
     private int lastIndex = 0;
     private int visiblePage = 0;
     
+    private String title;
+    
+    private class RefreshPackage {
+        public ListUrls listUrls;
+        public String title;
+        
+        public RefreshPackage(ListUrls listUrls, String title) {
+            this.listUrls = listUrls;
+            this.title = title;
+        }
+    }
+    
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
     private AlertDialog createCheckLoginDialog() {
@@ -149,38 +167,22 @@ public class MangaListActivity extends SlidingActivity {
                     @Override
                     public void onClick(View v) {
                         ((AlertButton)v).dialog.dismiss();
-                        checkLoginDialog.show();
+                        loginButton.setVisibility(View.GONE);
+                        waitloginView.setVisibility(View.VISIBLE);
                         String username = ((EditText) loginDialog.findViewById(R.id.username)).getText().toString();
                         String password = ((EditText) loginDialog.findViewById(R.id.password)).getText().toString();
                         EhClient.login(username, password, new EhClient.OnLoginListener() {
                             @Override
                             public void onSuccess() {
-                                EhClient.checkLogin(new EhClient.OnCheckLoginListener() {
-                                    @Override
-                                    public void onSuccess() {
-                                        checkLoginDialog.dismiss();
-                                        Config.loginNow();
-                                        Toast.makeText( MangaListActivity.this,
-                                                getString(R.string.toast_login_succeeded),
-                                                Toast.LENGTH_SHORT).show();
-                                        layoutDrawRight();
-                                        }
-                                    @Override
-                                    public void onFailure(int errorMessageId) {
-                                        checkLoginDialog.dismiss();
-                                        Toast.makeText(MangaListActivity.this,
-                                                getString(errorMessageId), Toast.LENGTH_SHORT).show();
-                                        loginDialog.show();
-                                    }
-                                });
+                                checkLogin();
                             }
                             @Override
                             public void onFailure(int errorMessageId) {
-                                checkLoginDialog.dismiss();
+                                loginButton.setVisibility(View.VISIBLE);
+                                waitloginView.setVisibility(View.GONE);
                                 Toast.makeText(MangaListActivity.this,
                                         getString(errorMessageId),
                                         Toast.LENGTH_SHORT).show();
-                                loginDialog.show();
                             }
                         });
                     }
@@ -216,8 +218,15 @@ public class MangaListActivity extends SlidingActivity {
                     @Override
                     public void onClick(View v) {
                         ((AlertButton)v).dialog.dismiss();
-                        MangaListActivity.this.showContent();
-                        refresh(getLus(filterDialog));
+                        drawer.closeDrawers();
+                        ListUrls listUrls = getLus(filterDialog);
+                        String search = listUrls.getSearch();
+                        String t = null;
+                        if (search == null || search.isEmpty())
+                            t = getString(android.R.string.search_go);
+                        else
+                            t = getString(android.R.string.search_go) + " " + search;
+                        refresh(listUrls, t);
                     }
                 }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
                     @Override
@@ -417,7 +426,13 @@ public class MangaListActivity extends SlidingActivity {
                                     freshButton.setVisibility(View.GONE);
                                     noFoundView.setVisibility(View.GONE);
                                     sadpanda.setVisibility(View.GONE);
-                                    pullListView.clickHeaderRefresh(listUrls);
+                                    if (pullListView.clickHeaderRefresh(new RefreshPackage(listUrls, title)))
+                                        pullListView.setHeaderString(
+                                                "下拉加载...",
+                                                "释放加载...",
+                                                "正在加载...",
+                                                "完成加载",
+                                                "取消加载");
                                 } else {
                                     Toast.makeText(MangaListActivity.this,
                                             getString(R.string.toast_invalid_page),
@@ -692,11 +707,13 @@ public class MangaListActivity extends SlidingActivity {
         public long stamp;
         public ListUrls targetListUrls;
         public boolean setPosition;
+        public String title;
         public MangaListGetPackage(long stamp, ListUrls targetListUrls,
-                boolean setPosition) {
+                boolean setPosition, String title) {
             this.stamp = stamp;
             this.targetListUrls = targetListUrls;
             this.setPosition = setPosition;
+            this.title = title;
         }
     }
     
@@ -709,7 +726,7 @@ public class MangaListActivity extends SlidingActivity {
             if (getPackage.stamp != lastGetStamp)
                 return;
             lus = getPackage.targetListUrls;
-            
+            title = getPackage.title;
             // Check no Found view later
             waitView.setVisibility(View.GONE);
             freshButton.setVisibility(View.GONE);
@@ -755,7 +772,7 @@ public class MangaListActivity extends SlidingActivity {
                     firstIndex = 0;
                     lastIndex = newLmdArray.size() - 1;
                     visiblePage = 0;
-                    setTitle(String.format(getString(R.string.some_page), visiblePage + 1));
+                    setTitle(String.format(getString(R.string.list_title), title, visiblePage + 1));
                     
                     // Go to top
                     listView.setSelection(0);
@@ -768,7 +785,7 @@ public class MangaListActivity extends SlidingActivity {
                         firstIndex = 0;
                         lastIndex = newLmdArray.size()-1;
                         visiblePage = getPageIndex;
-                        setTitle(String.format(getString(R.string.some_page), visiblePage + 1));
+                        setTitle(String.format(getString(R.string.list_title), title, visiblePage + 1));
                         // Go to top
                         listView.setSelection(0);
                     } else {
@@ -786,7 +803,7 @@ public class MangaListActivity extends SlidingActivity {
                         firstIndex = lmdArray.size() - newLmdArray.size();
                         lastIndex = lmdArray.size() - 1;
                         visiblePage = getPageIndex;
-                        setTitle(String.format(getString(R.string.some_page), visiblePage + 1));
+                        setTitle(String.format(getString(R.string.list_title), title, visiblePage + 1));
                         listView.setSelectionFromTop(firstIndex, -1);
                     }
                 } else if (getPageIndex < firstPage - 1 ||
@@ -801,7 +818,7 @@ public class MangaListActivity extends SlidingActivity {
                     firstIndex = 0;
                     lastIndex = newLmdArray.size();
                     visiblePage = getPageIndex;
-                    setTitle(String.format(getString(R.string.some_page), visiblePage + 1));
+                    setTitle(String.format(getString(R.string.list_title), title, visiblePage + 1));
                     
                     // Go to top
                     listView.setSelection(0);
@@ -908,8 +925,7 @@ public class MangaListActivity extends SlidingActivity {
                 visiblePage = visiblePage + pageChanged;
                 firstIndex += pageChanged * lus.getNumPerPage();
                 lastIndex += pageChanged * lus.getNumPerPage();
-                setTitle(String.format(
-                        getString(R.string.some_page), visiblePage + 1));
+                setTitle(String.format(getString(R.string.list_title), title, visiblePage + 1));
             }
         }
 
@@ -983,7 +999,6 @@ public class MangaListActivity extends SlidingActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mSlidingMenu.setBehindOffsetRes(R.dimen.menu_offset);
         if (Build.VERSION.SDK_INT >= 19) {
             BeautifyScreen.fixColour(this);
         }
@@ -1024,19 +1039,18 @@ public class MangaListActivity extends SlidingActivity {
         filterDialog = createFilterDialog();
         longClickDialog = createLongClickDialog();
         
-        // Set menu
-        mSlidingMenu = getSlidingMenu();
-        mSlidingMenu.setMode(SlidingMenu.LEFT_RIGHT);
-        mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-        setSlidingActionBarEnabled(false);
-        mSlidingMenu.setBehindOffsetRes(R.dimen.menu_offset);
-        setBehindContentView(R.layout.list_menu_list);
-        mSlidingMenu.setSecondaryMenu(R.layout.list_menu_login);
-        
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
+        // For colourfy the activity
+        if (Build.VERSION.SDK_INT >= 19) {
+            BeautifyScreen.ColourfyScreen(this);
+        }
+        
         // Get View
+        drawer = (DrawerLayout)findViewById(R.id.drawer_layout);
+        mainLayout = (GetPaddingRelativeLayout)findViewById(R.id.list_main);
         listMenu = (TagListView) findViewById(R.id.list_menu_list);
+        loginMenu = (RelativeLayout)findViewById(R.id.list_menu_login);
         isExhentaiList = (ListView)findViewById(R.id.is_exhentai);
         pullListView = ((PullListView)findViewById(R.id.list_list));
         listView = pullListView.getListView();
@@ -1045,16 +1059,16 @@ public class MangaListActivity extends SlidingActivity {
         noFoundView = (View) findViewById(R.id.list_no_found);
         sadpanda = (ImageView) findViewById(R.id.sadpanda);
         loginView = (ViewGroup) findViewById(R.id.drawer_login);
+        loginButton = (Button) findViewById(R.id.button_login);
+        waitloginView = (View) findViewById(R.id.list_wait_login);
         loginOverView = (ViewGroup) findViewById(R.id.drawer_login_over);
         usernameText = (TextView) findViewById(R.id.text_username);
         logoutButton = (Button) findViewById(R.id.list_button_logout);
         waitlogoutView = (View) findViewById(R.id.list_wait_logout);
-
-        // For colourfy the activity
-        if (Build.VERSION.SDK_INT >= 19) {
-            BeautifyScreen.ColourfyScreen(this);
-        }
-
+        
+        // fitsSystemWindows for menu
+        mainLayout.setView(listMenu, loginMenu);
+        
         // leftDrawer
         String[] menuTitles = getResources().getStringArray(R.array.list_list_title);
         mStableItemCount = menuTitles.length;
@@ -1073,24 +1087,24 @@ public class MangaListActivity extends SlidingActivity {
             public void onItemClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
                 if (position == 0) { // Home page
-                    if (refresh(new ListUrls(ListUrls.ALL_TYPE, null, 0)))
-                        showContent();
+                    if (refresh(new ListUrls(ListUrls.ALL_TYPE, null, 0), listMenuTitle.get(position)))
+                        drawer.closeDrawers();
                 } else if (position == 1) { // Favourite
                     Intent intent = new Intent(MangaListActivity.this,
                             FavouriteActivity.class);
                     startActivity(intent);
-                    showContent();
+                    drawer.closeDrawers();
                 } else if (position == 2) { // filter
                     filterDialog.show();
                 } else if (position == 3) { // Download
                     Intent intent = new Intent(MangaListActivity.this,
                             DownloadActivity.class);
                     startActivity(intent);
-                    showContent();
+                    drawer.closeDrawers();
                 } else if (position >= mStableItemCount){
                     ListUrls listUrls = Tag.get(listMenuTitle.get(position));
-                    if (listUrls != null && refresh(listUrls))
-                        showContent();
+                    if (listUrls != null && refresh(listUrls, listMenuTitle.get(position)))
+                        drawer.closeDrawers();
                 }
             }
         });
@@ -1100,6 +1114,18 @@ public class MangaListActivity extends SlidingActivity {
                 createModifyTagDialog(position).show();
             }
         });
+        listMenu.setOnMoveLister(new TagListView.OnMoveLister() {
+            @Override
+            public void onMoveStart() {
+                drawer.setEnabled(false);
+            }
+
+            @Override
+            public void onMoveOver() {
+                drawer.setEnabled(true);
+            }
+        });
+        
         
         // is Exhentai
         final String[] isExhentaiListTitle = getResources().getStringArray(R.array.is_exhentai);
@@ -1156,8 +1182,8 @@ public class MangaListActivity extends SlidingActivity {
                 }
                 if (isChanged) {
                     isExhentaiListAdapter.notifyDataSetChanged();
-                    refresh(new ListUrls(ListUrls.ALL_TYPE, null, 0));
-                    showContent();
+                    refresh(new ListUrls(ListUrls.ALL_TYPE, null, 0), listMenuTitle.get(0));
+                    drawer.closeDrawers(); // TODO
                 }
             }
         });
@@ -1175,7 +1201,7 @@ public class MangaListActivity extends SlidingActivity {
                 else
                     listUrls.setPage(firstPage - 1);
                 EhClient.getManagaList(listUrls.getUrl(),
-                        new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, true),
+                        new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, false, title),
                         new MangaListGetListener());
             }
 
@@ -1183,9 +1209,10 @@ public class MangaListActivity extends SlidingActivity {
             public void onHeaderRefresh(Object obj) {
                 mListFirst = true;
                 mLoadListOver = false;
-                ListUrls listUrls = (ListUrls)obj;
-                EhClient.getManagaList(listUrls.getUrl(),
-                        new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, true),
+                RefreshPackage rp = (RefreshPackage)obj;
+                EhClient.getManagaList(rp.listUrls.getUrl(),
+                        new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()),
+                                rp.listUrls, true, rp.title),
                         new MangaListGetListener());
             }
         });
@@ -1198,7 +1225,7 @@ public class MangaListActivity extends SlidingActivity {
                     mListFirst = true;
                     mLoadListOver = false;
                     EhClient.getManagaList(listUrls.getUrl(),
-                            new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, false),
+                            new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, false, title),
                             new MangaListGetListener());
                 }
                 else
@@ -1255,11 +1282,20 @@ public class MangaListActivity extends SlidingActivity {
         noFoundView.setVisibility(View.GONE);
         sadpanda.setVisibility(View.GONE);
         
+        loginView.setVisibility(View.VISIBLE);
+        loginOverView.setVisibility(View.GONE);
+        loginButton.setVisibility(View.VISIBLE);
+        waitloginView.setVisibility(View.GONE);
+        
         // Check update
-        //checkupdate();
+        checkUpdate();
+        
+        // Check login
+        checkLogin();
         
         // get MangeList
-        refresh(lus.clone());
+        title = listMenuTitle.get(0);
+        refresh(lus.clone(), listMenuTitle.get(0));
     }
     
     @Override
@@ -1280,7 +1316,12 @@ public class MangaListActivity extends SlidingActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchView.clearFocus();
-                refresh(new ListUrls(ListUrls.ALL_TYPE, query));
+                String t = null;
+                if (query == null || query.isEmpty())
+                    t = getString(android.R.string.search_go);
+                else
+                    t = getString(android.R.string.search_go) + " " + query;
+                refresh(new ListUrls(ListUrls.ALL_TYPE, query), t);
                 return true;
             }
         });
@@ -1328,10 +1369,13 @@ public class MangaListActivity extends SlidingActivity {
         // Handle item selection
         switch (item.getItemId()) {
         case android.R.id.home:
-            toggle();
+            if (drawer.isDrawerOpen(Gravity.START))
+                drawer.closeDrawers();
+            else
+                drawer.openDrawer(Gravity.START);
             return true;
         case R.id.action_refresh:
-            refresh(lus.clone());
+            refresh(lus.clone(), listMenuTitle.get(0));
             return true;
         case R.id.action_jump:
             if (mLoadListOver)
@@ -1394,25 +1438,41 @@ public class MangaListActivity extends SlidingActivity {
         }
     }
     
-    private void checkupdate() {
+    private void checkUpdate() {
         EhClient.checkUpdate(new EhClient.OnCheckUpdateListener() {
             @Override
             public void onSuccess(String pageContext) {
                 String[] items = pageContext.split("\n");
-                if (items.length > 1) {
+                if (items.length > 3) {
                     String newVer = items[0];
-                    String url = EhClient.UPDATE_URL + items[1];
+                    final String url = EhClient.UPDATE_URL + items[1];
+                    final String name = url.substring(url.lastIndexOf('/')+1);
+                    String size = items[2];
+                    String info = items[3];
                     
-                    String name = url.substring(url.lastIndexOf('/')+1);
-                    
-                    Downloader d = new Downloader();
-                    try {
-                        Downloader.Controlor controlor = d.resetData(Config.getDownloadPath(), name, url);
-                        d.setOnDownloadListener(new UpdateListener());
-                        new Thread(d).start();
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    }
+                    AlertDialog dialog = new DialogBuilder(MangaListActivity.this).setTitle(R.string.update)
+                            .setMessage(String.format(getString(R.string.update_message), newVer, size, info))
+                            .setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    ((AlertButton)v).dialog.dismiss();
+                                }
+                            }).setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    ((AlertButton)v).dialog.dismiss();
+                                    Downloader d = new Downloader();
+                                    try {
+                                        Downloader.Controlor controlor = d.resetData(Config.getDownloadPath(), name, url);
+                                        d.setOnDownloadListener(new UpdateListener());
+                                        new Thread(d).start();
+                                    } catch (MalformedURLException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }).create();
+                    if (!MangaListActivity.this.isFinishing())
+                        dialog.show();
                 }
             }
 
@@ -1423,8 +1483,33 @@ public class MangaListActivity extends SlidingActivity {
         });
     }
     
-    private void layoutDrawRight() {
+    private void checkLogin() {
+        if (EhClient.hasLogin())
+            loginButton.setVisibility(View.GONE);
+            waitloginView.setVisibility(View.VISIBLE);
+            EhClient.checkLogin(new EhClient.OnCheckLoginListener() {
+                @Override
+                public void onSuccess() {
+                    loginButton.setVisibility(View.VISIBLE);
+                    waitloginView.setVisibility(View.GONE);
+                    Toast.makeText(MangaListActivity.this,
+                            getString(R.string.toast_login_succeeded),
+                            Toast.LENGTH_SHORT).show();
+                        layoutDrawRight();
+                }
 
+                @Override
+                public void onFailure(int errorMessageId) {
+                    loginButton.setVisibility(View.VISIBLE);
+                    waitloginView.setVisibility(View.GONE);
+                    Toast.makeText(MangaListActivity.this,
+                            getString(errorMessageId),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+    }
+    
+    private void layoutDrawRight() {
         if (EhClient.isLogin()) { // If have login
             loginView.setVisibility(View.GONE);
             loginOverView.setVisibility(View.VISIBLE);
@@ -1435,9 +1520,9 @@ public class MangaListActivity extends SlidingActivity {
         }
     }
     
-    private boolean refresh(ListUrls listUrls) {
+    private boolean refresh(ListUrls listUrls, String title) {
         listUrls.setPage(0);
-        boolean re = pullListView.clickHeaderRefresh(listUrls);
+        boolean re = pullListView.clickHeaderRefresh(new RefreshPackage(listUrls, title));
         if (re) {
             mListFirst = true;
             mLoadListOver = false;
@@ -1467,6 +1552,7 @@ public class MangaListActivity extends SlidingActivity {
     
     
     // CheckLogin
+    /*
     private void checkLogin() {
         checkLoginDialog.show();
         EhClient.checkLogin(new EhClient.OnCheckLoginListener() {
@@ -1488,12 +1574,12 @@ public class MangaListActivity extends SlidingActivity {
                 loginDialog.show();
             }
         });
-    }
+    }*/
     
     // *** Button onclick ***//
 
     public void buttonRefresh(View arg0) {
-        refresh(lus.clone());
+        refresh(lus.clone(), listMenuTitle.get(0));
     }
 
     public void buttonLogout(View paramView) {

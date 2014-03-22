@@ -4,14 +4,23 @@
     android:background="@android:color/transparent" >
 
     <Button
-        style="@style/Button.White"
         android:id="@+id/button_login"
+        style="@style/Button.White"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
-        android:text="@string/login"
-        android:onClick="buttonLogin" />
+        android:onClick="buttonLogin"
+        android:text="@string/login" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:id="@+id/list_wait_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 
 import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.MangaDetail;
@@ -62,7 +63,7 @@ public class Cache {
         }
         
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-        final int cacheSize = maxMemory / 8;
+        final int cacheSize = maxMemory / 24;
         memoryCache = new LruCache<String, Bitmap>(cacheSize) {
             @SuppressLint("NewApi")
             @Override

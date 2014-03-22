@@ -13,6 +13,7 @@ import com.hippo.ehviewer.util.Ui;
 
 import android.app.Application;
 import android.util.Log;
+import android.widget.Toast;
 
 public class CrashApplication extends Application implements UncaughtExceptionHandler {
     
@@ -23,7 +24,7 @@ public class CrashApplication extends Application implements UncaughtExceptionHa
     @Override
     public void onCreate() {
         super.onCreate();
-        
+        Log.i(TAG, "onCreate");
         // TODO Init everything
         Config.init(this);
         Ui.init(this);

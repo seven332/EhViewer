@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
@@ -55,6 +56,8 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
     // Make sure only one pull event
     private boolean isHeaderRecored = false;
     private boolean isFooterRecored = false;
+    
+    private int mTouchSlop;
     
     // Header String to show
     private String mHeaderPullStr;
@@ -225,6 +228,8 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
         
         mHeader.setPadding(headerOriginalLeftPadding, -headerHeight, headerOriginalRightPadding, headerOriginalBottomPadding);  
         mHeader.invalidate();
+        
+        //mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
     }
     
     @Override
@@ -284,6 +289,11 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
             break;
             
         case MotionEvent.ACTION_CANCEL:
+            headerState = HEADER_DONE;
+            isHeaderRecored = false;
+            isBack = false;
+            changeHeaderViewByState();
+            break;
         case MotionEvent.ACTION_UP:
             if (headerState == HEADER_PULL_TO_REFRESH) {
                 headerState = HEADER_CANCEL;

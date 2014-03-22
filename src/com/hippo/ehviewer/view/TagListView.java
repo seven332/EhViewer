@@ -111,6 +111,7 @@ public class TagListView extends ListView {
     private int mScrollState = OnScrollListener.SCROLL_STATE_IDLE;
 
     private OnModifyListener listener = null;
+    private OnMoveLister movelistener = null;
     
     public TagListView(Context context) {
         super(context);
@@ -143,6 +144,9 @@ public class TagListView extends ListView {
                 public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
                     if (pos < mStableItemCount)
                         return true;
+                    
+                    if (movelistener != null)
+                        movelistener.onMoveStart();
                     
                     mTotalOffset = 0;
                     
@@ -315,6 +319,15 @@ public class TagListView extends ListView {
         this.listener = listener;
     }
     
+    public interface OnMoveLister {
+        public void onMoveStart();
+        public void onMoveOver();
+    }
+    
+    public void setOnMoveLister(OnMoveLister listener) {
+        this.movelistener = listener;
+    }
+    
     /**
      *  dispatchDraw gets invoked when all the child views are about to be drawn.
      *  By overriding this method, the hover cell (BitmapDrawable) can be drawn
@@ -381,9 +394,13 @@ public class TagListView extends ListView {
                 }
                 break;
             case MotionEvent.ACTION_UP:
+                if (movelistener != null)
+                    movelistener.onMoveOver();
                 touchEventsEnded();
                 break;
             case MotionEvent.ACTION_CANCEL:
+                if (movelistener != null)
+                    movelistener.onMoveOver();
                 touchEventsCancelled();
                 break;
             case MotionEvent.ACTION_POINTER_UP:
@@ -395,6 +412,8 @@ public class TagListView extends ListView {
                         MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                 final int pointerId = event.getPointerId(pointerIndex);
                 if (pointerId == mActivePointerId) {
+                    if (movelistener != null)
+                        movelistener.onMoveOver();
                     touchEventsEnded();
                 }
                 break;

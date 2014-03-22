@@ -56,7 +56,11 @@
     
     <!-- MangaListActivity -->
     <string name="no_found">未找到</string>
+    <string name="list_title" formatted="false">%s 第 %d 页</string>
 
+    <!-- Update -->
+    <string name="update_message" formatted="false">发现新版本：%s\n大小：%s\n%s\n\n是否更新？</string>
+    
     <!-- MangaDetialActivity -->
     <string name="detail_uploader">上传者：%s</string>
     <string name="detail_posted">发布时间：%s</string>
@@ -194,10 +198,10 @@
     <string name="fit_to_screen">匹配屏幕</string>
     
     <string name="add_to_favourite">收藏</string>
-    <string name="download">下载</string>
     <string name="remove">移除</string>
     <string name="remove_info_data">移除信息与数据</string>
     
+    <string name="update">更新</string>
     <string name="thanks">感谢</string>
     
     <string name="advance_search_left">高级搜索请左划</string>

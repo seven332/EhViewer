@@ -58,7 +58,11 @@
     
     <!-- MangaListActivity -->
     <string name="no_found">No hits found</string>
-
+    <string name="list_title" formatted="false">%s Page %d</string>
+    
+    <!-- Update -->
+    <string name="update_message" formatted="false">Found new version : %s\nSize : %s\n%s\n\nUpdate ?</string>
+    
     <!-- MangaDetialActivity -->
     <string name="detail_uploader">Uploader: %s</string>
     <string name="detail_posted">Posted: %s</string>
@@ -201,11 +205,10 @@
     <string name="fit_to_screen">Fit to screen</string>
     
     <string name="add_to_favourite">Add to favourite</string>
-    <string name="download">Download</string>
     <string name="remove">Remove</string>
     <string name="remove_info_data">Remove information and data</string>
     
-    
+    <string name="update">Update</string>
     <string name="thanks">Thanks</string>
     
     <string name="advance_search_left">Advance search in left</string>
