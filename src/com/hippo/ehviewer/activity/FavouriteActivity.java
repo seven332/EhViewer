@@ -24,6 +24,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.BeautifyScreen;
+import com.hippo.ehviewer.ImageLoadManager;
 import com.hippo.ehviewer.ListMangaDetail;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.dialog.DialogBuilder;
@@ -36,6 +37,7 @@ import com.hippo.ehviewer.util.Favourite;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.view.OlImageView;
+import com.hippo.ehviewer.widget.LoadImageView;
 
 public class FavouriteActivity extends Activity{
     private static final String TAG = "FavouriteActivity";
@@ -43,6 +45,8 @@ public class FavouriteActivity extends Activity{
     private FlAdapter flAdapter;
     private ArrayList<ListMangaDetail> mFavouriteLmd;
     private int longClickItemIndex;
+    
+    private ImageLoadManager mImageLoadManager;
     
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
@@ -111,12 +115,10 @@ public class FavouriteActivity extends Activity{
             if (convertView == null)
                 convertView = mInflater.inflate(R.layout.list_item, null);
             
-            OlImageView thumb = (OlImageView)convertView.findViewById(R.id.cover);
+            LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
             if (!lmd.gid.equals(thumb.getKey())) {
-                thumb.setUrl(lmd.thumb);
-                thumb.setKey(lmd.gid);
-                thumb.setCache(Cache.memoryCache, Cache.cpCache);
-                thumb.loadFromCache();
+                thumb.setLoadInfo(lmd.thumb, lmd.gid);
+                mImageLoadManager.add(thumb, true);
 
                 // Set manga name
                 TextView name = (TextView) convertView.findViewById(R.id.name);
@@ -168,6 +170,8 @@ public class FavouriteActivity extends Activity{
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
         
         longClickDialog = setLongClickDialog();
+        
+        mImageLoadManager = new ImageLoadManager(getApplicationContext(), Cache.memoryCache, Cache.cpCache);
         
         getActionBar().setDisplayHomeAsUpEnabled(true);
         

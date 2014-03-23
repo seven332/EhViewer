@@ -1,5 +1,7 @@
 package com.hippo.ehviewer.network;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -45,6 +47,8 @@ public class HttpHelper {
             LruCache<String, Bitmap> memoryCache,
             DiskCache diskCache, boolean getImage) {
         HttpURLConnection conn = null;
+        ByteArrayOutputStream baos = null;
+        InputStream is = null;
         Bitmap bitmap = null;
         try {
             Log.d(TAG, "Get Image " + urlStr);
@@ -54,7 +58,7 @@ public class HttpHelper {
             conn.setConnectTimeout(DEFAULT_TIMEOUT);
             conn.setReadTimeout(DEFAULT_TIMEOUT);
             conn.connect();
-            InputStream is = conn.getInputStream();
+            is = conn.getInputStream();
             
             if (diskCache == null) {
                 if (getImage
@@ -63,15 +67,28 @@ public class HttpHelper {
                         memoryCache.put(key, bitmap);
                 }
             } else {
-                diskCache.put(key, is);
-                if (memoryCache != null || getImage) {
-                    Bitmap bmp = (Bitmap)diskCache.get(key, Util.BITMAP);
+                boolean twice = memoryCache != null || getImage;
+                if (twice) {
+                    baos = new ByteArrayOutputStream();
+                    Util.copy(is, baos);
+                    byte[] bytes = baos.toByteArray();
+                    // To disk cache
+                    is = new ByteArrayInputStream(bytes);
+                    diskCache.put(key, is);
+                    is.close();
+                    // 
+                    is = new ByteArrayInputStream(bytes);
+                    Bitmap bmp = BitmapFactory.decodeStream(is, null, Ui.getBitmapOpt());
                     if (bmp != null) {
                         if (memoryCache != null)
                             memoryCache.put(key, bmp);
                         if (getImage)
                             bitmap = bmp;
                     }
+                    is.close();
+                    baos.close();
+                } else {
+                    diskCache.put(key, is);
                 }
             }
         } catch (MalformedURLException e) {
@@ -87,6 +104,10 @@ public class HttpHelper {
             lastEMsgId = R.string.em_network_error;
             e.printStackTrace();
         } finally {
+            if (baos != null)
+                Util.closeStreamQuietly(baos);
+            if (is != null)
+                Util.closeStreamQuietly(is);
             if (conn != null)
                 conn.disconnect();
         }

@@ -51,6 +51,10 @@ public class Util {
     }
     
     public static void copy(InputStream is, OutputStream os) throws IOException {
+        copy(is, os, 512 * 1024);
+    }
+    
+    public static void copy(InputStream is, OutputStream os, int size) throws IOException {
         byte[] buffer = new byte[512 * 1024];
         int bytesRead;
         while((bytesRead = is.read(buffer)) !=-1)

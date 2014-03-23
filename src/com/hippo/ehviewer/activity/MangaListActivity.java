@@ -968,11 +968,21 @@ public class MangaListActivity extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ListMangaDetail lmd= lmdArray.get(position);
-            if (convertView == null)
+            boolean isNew = false;
+            if (convertView == null) {
+                isNew = true;
                 convertView = mInflater.inflate(R.layout.list_item, null);
-            
+            }
             LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
             if (!lmd.gid.equals(thumb.getKey())) {
+                if (!isNew) {
+                    // TODO default index = 0, should get it id
+                    ((ViewGroup)convertView).removeView(thumb);
+                    ViewGroup.LayoutParams lp = thumb.getLayoutParams();
+                    thumb = new LoadImageView(MangaListActivity.this);
+                    thumb.setId(R.id.cover);
+                    ((ViewGroup)convertView).addView(thumb, 0, lp);
+                }
                 thumb.setLoadInfo(lmd.thumb, lmd.gid);
                 mImageLoadManager.add(thumb, false);
 
