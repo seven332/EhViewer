@@ -594,7 +594,7 @@ public class EhClient {
                     if (pageContent.contains("<p>You are now logged in as: ")) {
                         mOK = 1;
                     } else if (errorMessageId == R.string.em_unknown_error)
-                        errorMessageId = R.string.em_check_login_error;
+                        errorMessageId = R.string.em_login_error;
                 }
                 Message msg = new Message();
                 msg.what = errorMessageId;

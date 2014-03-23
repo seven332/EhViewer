@@ -25,7 +25,7 @@
         android:onClick="buttonLogout" />
     
     <ProgressBar
-        style="?android:attr/progressBarStyleLarge"
+        style="@android:style/Widget.Holo.ProgressBar.Large"
         android:id="@+id/list_wait_logout"
         android:visibility="gone"
         android:layout_width="wrap_content"

@@ -19,7 +19,6 @@
             android:title="@string/preference_page_scaling" />
     </PreferenceCategory>
     
-    
     <PreferenceCategory android:title="@string/preference_category_cache" >
         <EditTextPreference
             android:defaultValue="25"
@@ -73,6 +72,17 @@
             android:key="preference_thanks"
             android:title="@string/thanks" />
         
+        <Preference
+            android:key="preference_update"
+            android:title="@string/update"
+            android:summary="@string/tap_update" />
+        
     </PreferenceCategory>
-
+    
+    <PreferenceCategory android:title="@string/develop" >
+        <Preference
+            android:key="preference_remove_all_noification"
+            android:title="点击移除所有通知" />
+    </PreferenceCategory>
+    
 </PreferenceScreen>

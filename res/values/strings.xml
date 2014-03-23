@@ -62,6 +62,10 @@
     
     <!-- Update -->
     <string name="update_message" formatted="false">Found new version : %s\nSize : %s\n%s\n\nUpdate ?</string>
+    <string name="tap_update">Tap to check update</string>
+    <string name="checking_update">checking updating</string>
+    <string name="up_to_date">Up to date</string>
+    <string name="found_update">Found update</string>
     
     <!-- MangaDetialActivity -->
     <string name="detail_uploader">Uploader: %s</string>
@@ -101,6 +105,7 @@
     <string name="em_client_protocol">Invalid request or invalid response</string>
     <string name="em_put_cache_error">Put cache error</string>
     <string name="em_url_format_error">Url format error</string>
+    <string name="em_login_error">Username or password error</string>
     <string name="em_check_login_error">Get user info error</string>
     <string name="em_logout_error">Logout error</string>
     <string name="em_url_error">Url error</string>
@@ -110,6 +115,8 @@
     <string name="em_no_network">No network</string>
     <string name="em_can_not_reach">Your network can not reach e-hentai</string>
     <string name="em_no_network_2">No network ?</string>
+        <string name="em_request_error">Request error</string>
+    <string name="em_host_error">Host error</string>
     
     <!-- Action -->
     <string name="action_refresh">Refresh</string>
@@ -210,6 +217,6 @@
     
     <string name="update">Update</string>
     <string name="thanks">Thanks</string>
-    
+    <string name="develop">Develop</string>
     <string name="advance_search_left">Advance search in left</string>
 </resources>

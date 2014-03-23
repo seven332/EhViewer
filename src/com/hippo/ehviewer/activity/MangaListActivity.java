@@ -1,5 +1,6 @@
 package com.hippo.ehviewer.activity;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
@@ -7,6 +8,7 @@ import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.ListMangaDetail;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.dialog.DialogBuilder;
 import com.hippo.ehviewer.dialog.SuperDialogUtil;
 import com.hippo.ehviewer.network.Downloader;
@@ -29,6 +31,7 @@ import com.hippo.ehviewer.widget.PullListView;
 import com.hippo.ehviewer.widget.PullListView.OnFooterRefreshListener;
 import com.hippo.ehviewer.widget.PullListView.OnHeaderRefreshListener;
 
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
@@ -109,7 +112,6 @@ public class MangaListActivity extends Activity {
     private boolean mListFirst = true;
     private boolean mLoadListOver = false;
     
-    private AlertDialog checkLoginDialog;
     private AlertDialog loginDialog;
     private AlertDialog filterDialog;
     private AlertDialog longClickDialog;
@@ -132,6 +134,7 @@ public class MangaListActivity extends Activity {
     private int visiblePage = 0;
     
     private String title;
+    private String updateFileName;
     
     private class RefreshPackage {
         public ListUrls listUrls;
@@ -144,17 +147,6 @@ public class MangaListActivity extends Activity {
     }
     
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
-    
-    private AlertDialog createCheckLoginDialog() {
-        LayoutInflater inflater = this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.wait, null);
-        TextView tv = (TextView)view.findViewById(R.id.wait_message);
-        tv.setText(R.string.dailog_check_login);
-        
-        return new DialogBuilder(this).setCancelable(false)
-                .setTitle(R.string.wait)
-                .setView(view, true).create();
-    }
     
     private AlertDialog createLoginDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
@@ -174,7 +166,7 @@ public class MangaListActivity extends Activity {
                         EhClient.login(username, password, new EhClient.OnLoginListener() {
                             @Override
                             public void onSuccess() {
-                                checkLogin();
+                                checkLogin(true);
                             }
                             @Override
                             public void onFailure(int errorMessageId) {
@@ -183,6 +175,7 @@ public class MangaListActivity extends Activity {
                                 Toast.makeText(MangaListActivity.this,
                                         getString(errorMessageId),
                                         Toast.LENGTH_SHORT).show();
+                                loginDialog.show();
                             }
                         });
                     }
@@ -1034,7 +1027,6 @@ public class MangaListActivity extends Activity {
         visiblePage = lus.getPage();
         
         // Init dialog
-        checkLoginDialog = createCheckLoginDialog();
         loginDialog = createLoginDialog();
         filterDialog = createFilterDialog();
         longClickDialog = createLongClickDialog();
@@ -1291,7 +1283,7 @@ public class MangaListActivity extends Activity {
         checkUpdate();
         
         // Check login
-        checkLogin();
+        checkLogin(false);
         
         // get MangeList
         title = listMenuTitle.get(0);
@@ -1400,102 +1392,22 @@ public class MangaListActivity extends Activity {
         }
     }
     
-    private class UpdateListener implements Downloader.OnDownloadListener {
-        
-        private NotificationManager mNotifyManager;
-        private NotificationCompat.Builder mBuilder;
-        
-        public UpdateListener() {
-            mNotifyManager = (NotificationManager)
-                    getSystemService(Context.NOTIFICATION_SERVICE);
-            mBuilder = new NotificationCompat.Builder(MangaListActivity.this.getApplication());
-            mBuilder.setSmallIcon(R.drawable.ic_launcher);
-        }
-        
-        @Override
-        public void onDownloadStart(int totalSize) {
-            mBuilder.setContentTitle("正在下载更新")
-                    .setContentText(null)
-                    .setProgress(0, 0, true).setOngoing(true).setAutoCancel(false);
-            mNotifyManager.notify(233, mBuilder.build());
-        }
-        @Override
-        public void onDownloadStatusUpdate(
-                int downloadSize, int totalSize) {
-            mBuilder.setContentTitle("正在下载更新")
-                    .setContentText(String.format("%.2f / %.2f KB", downloadSize/1024.0f, totalSize/1024.0f))
-                    .setProgress(totalSize, downloadSize, false).setOngoing(true).setAutoCancel(false);
-            mNotifyManager.notify(233, mBuilder.build());
-            
-        }
-        @Override
-        public void onDownloadOver(boolean ok, int eMesgId) {
-            mBuilder.setContentTitle("更新下载完成")
-                    .setContentText("点击更新")
-                    .setProgress(0, 0, false).setOngoing(false).setAutoCancel(true);
-            mNotifyManager.notify(233, mBuilder.build());
-            
-        }
-    }
-    
     private void checkUpdate() {
-        EhClient.checkUpdate(new EhClient.OnCheckUpdateListener() {
-            @Override
-            public void onSuccess(String pageContext) {
-                String[] items = pageContext.split("\n");
-                if (items.length > 3) {
-                    String newVer = items[0];
-                    final String url = EhClient.UPDATE_URL + items[1];
-                    final String name = url.substring(url.lastIndexOf('/')+1);
-                    String size = items[2];
-                    String info = items[3];
-                    
-                    AlertDialog dialog = new DialogBuilder(MangaListActivity.this).setTitle(R.string.update)
-                            .setMessage(String.format(getString(R.string.update_message), newVer, size, info))
-                            .setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    ((AlertButton)v).dialog.dismiss();
-                                }
-                            }).setPositiveButton(android.R.string.ok, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    ((AlertButton)v).dialog.dismiss();
-                                    Downloader d = new Downloader();
-                                    try {
-                                        Downloader.Controlor controlor = d.resetData(Config.getDownloadPath(), name, url);
-                                        d.setOnDownloadListener(new UpdateListener());
-                                        new Thread(d).start();
-                                    } catch (MalformedURLException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }).create();
-                    if (!MangaListActivity.this.isFinishing())
-                        dialog.show();
-                }
-            }
-
-            @Override
-            public void onFailure(int errorMessageId) {
-                Log.d(TAG, getString(errorMessageId));
-            }
-        });
+        new UpdateHelper(this).checkUpdate();
     }
     
-    private void checkLogin() {
-        if (EhClient.hasLogin())
+    private void checkLogin(boolean force) {
+        if (Config.isLogin() || force) {
             loginButton.setVisibility(View.GONE);
             waitloginView.setVisibility(View.VISIBLE);
             EhClient.checkLogin(new EhClient.OnCheckLoginListener() {
                 @Override
                 public void onSuccess() {
-                    loginButton.setVisibility(View.VISIBLE);
-                    waitloginView.setVisibility(View.GONE);
+                    Config.loginNow();
                     Toast.makeText(MangaListActivity.this,
                             getString(R.string.toast_login_succeeded),
                             Toast.LENGTH_SHORT).show();
-                        layoutDrawRight();
+                    layoutDrawRight();
                 }
 
                 @Override
@@ -1507,16 +1419,23 @@ public class MangaListActivity extends Activity {
                             Toast.LENGTH_SHORT).show();
                 }
             });
+        }
     }
     
     private void layoutDrawRight() {
         if (EhClient.isLogin()) { // If have login
             loginView.setVisibility(View.GONE);
             loginOverView.setVisibility(View.VISIBLE);
+            
             usernameText.setText(EhClient.getUsername());
+            logoutButton.setVisibility(View.VISIBLE);
+            waitlogoutView.setVisibility(View.GONE);
         } else {
             loginView.setVisibility(View.VISIBLE);
             loginOverView.setVisibility(View.GONE);
+            
+            loginButton.setVisibility(View.VISIBLE);
+            waitloginView.setVisibility(View.GONE);
         }
     }
     
@@ -1549,34 +1468,6 @@ public class MangaListActivity extends Activity {
         }
         return re;
     }
-    
-    
-    // CheckLogin
-    /*
-    private void checkLogin() {
-        checkLoginDialog.show();
-        EhClient.checkLogin(new EhClient.OnCheckLoginListener() {
-            @Override
-            public void onSuccess() {
-                checkLoginDialog.dismiss();
-                Toast.makeText(MangaListActivity.this,
-                        getString(R.string.toast_login_succeeded),
-                        Toast.LENGTH_SHORT).show();
-                    layoutDrawRight();
-            }
-
-            @Override
-            public void onFailure(int errorMessageId) {
-                checkLoginDialog.dismiss();
-                Toast.makeText(MangaListActivity.this,
-                        getString(errorMessageId),
-                        Toast.LENGTH_SHORT).show();
-                loginDialog.show();
-            }
-        });
-    }*/
-    
-    // *** Button onclick ***//
 
     public void buttonRefresh(View arg0) {
         refresh(lus.clone(), listMenuTitle.get(0));
@@ -1591,8 +1482,6 @@ public class MangaListActivity extends Activity {
                 Toast.makeText(MangaListActivity.this,
                         getString(R.string.toast_logout_succeeded),
                         Toast.LENGTH_SHORT).show();
-                logoutButton.setVisibility(View.VISIBLE);
-                waitlogoutView.setVisibility(View.GONE);
                 Config.logoutNow();
                 layoutDrawRight();
             }
@@ -1612,5 +1501,11 @@ public class MangaListActivity extends Activity {
         loginDialog.show();
     }
     
-    // *** Button onclick end ***//
+    class ImageLoadTask {
+        
+    }
+    
+    
+    
+    
 }

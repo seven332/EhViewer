@@ -60,6 +60,10 @@
 
     <!-- Update -->
     <string name="update_message" formatted="false">发现新版本：%s\n大小：%s\n%s\n\n是否更新？</string>
+    <string name="tap_update">点击检查更新</string>
+    <string name="checking_update">正在检查更新</string>
+    <string name="up_to_date">已是最新版</string>
+    <string name="found_update">发现新版本</string>
     
     <!-- MangaDetialActivity -->
     <string name="detail_uploader">上传者：%s</string>
@@ -97,6 +101,7 @@
     <string name="em_client_protocol">无效的请求或无效的响应</string>
     <string name="em_put_cache_error">存入缓存错误</string>
     <string name="em_url_format_error">网址错误</string>
+    <string name="em_login_error">用户名或密码错误</string>
     <string name="em_check_login_error">获取用户信息错误</string>
     <string name="em_logout_error">退出错误</string>
     <string name="em_url_error">网址错误</string>
@@ -106,6 +111,8 @@
     <string name="em_no_network">无网络连接</string>
     <string name="em_can_not_reach">你所在的网络无法连接到 e-hentai</string>
     <string name="em_no_network_2">无网络连接？</string>
+    <string name="em_request_error">请求错误</string>
+    <string name="em_host_error">主机错误</string>
     
     <!-- Action -->
     <string name="action_refresh">刷新</string>
@@ -203,6 +210,6 @@
     
     <string name="update">更新</string>
     <string name="thanks">感谢</string>
-    
+    <string name="develop">开发</string>
     <string name="advance_search_left">高级搜索请左划</string>
 </resources>

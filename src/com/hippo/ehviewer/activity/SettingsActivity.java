@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Util;
@@ -16,6 +17,7 @@ import com.hippo.ehviewer.dialog.DialogBuilder;
 import com.hippo.ehviewer.preference.AutoListPreference;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -55,6 +57,8 @@ public class SettingsActivity extends PreferenceActivity {
     private String SCREEN_ORI = "preference_screen_ori";
     private String CHANGELOG = "preference_changelog";
     private String THANKS = "preference_thanks";
+    private String UPDATE = "preference_update";
+    private String RAN = "preference_remove_all_noification";
 
     private EditTextPreference cpCachePre;
     private Preference clearCpCachePre;
@@ -280,6 +284,45 @@ public class SettingsActivity extends PreferenceActivity {
                 webView.loadData(Util.InputStream2String(is), "text/html; charset=UTF-8", null);
                 new DialogBuilder(SettingsActivity.this).setTitle(R.string.thanks)
                         .setView(webView, false).create().show();
+                return true;
+            }
+        });
+        
+        final Preference update = (Preference)screen.findPreference(UPDATE);
+        update.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                update.setSummary(R.string.checking_update);
+                new UpdateHelper(SettingsActivity.this)
+                        .SetOnCheckUpdateListener(new UpdateHelper.OnCheckUpdateListener() {
+                            @Override
+                            public void onSuccess(String pageContext) {
+                                update.setSummary(R.string.found_update);
+                                update.setEnabled(true);
+                            }
+                            @Override
+                            public void onNoUpdate() {
+                                update.setSummary(R.string.up_to_date);
+                                update.setEnabled(true);
+                            }
+                            @Override
+                            public void onFailure(int eMesgId) {
+                                update.setSummary(eMesgId);
+                                update.setEnabled(true);
+                            }
+                        }).checkUpdate();
+                update.setEnabled(false);
+                return true;
+            }
+        });
+        
+        Preference ran = (Preference)screen.findPreference(RAN);
+        ran.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference arg0) {
+                NotificationManager mNotifyManager = (NotificationManager)
+                        getSystemService(Context.NOTIFICATION_SERVICE);
+                mNotifyManager.cancelAll();
                 return true;
             }
         });

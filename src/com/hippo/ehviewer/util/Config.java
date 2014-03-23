@@ -103,9 +103,6 @@ public class Config {
      * It is first time to launch the application
      */
     public static void firstTime() {
-        if (!mInit) {
-            throw new IllegalStateException(EMSG);
-        }
         mConfigPre.edit().putBoolean(KEY_FIRST, false).apply();
     }
 
@@ -115,28 +112,15 @@ public class Config {
      * @return
      */
     public static boolean isLogin() {
-        if (!mInit) {
-            throw new IllegalStateException(EMSG);
-        }
         return mConfigPre.getBoolean(KEY_LOGIN, false);
     }
 
     public static void loginNow() {
-        if (!mInit) {
-            throw new IllegalStateException(EMSG);
-        }
-        Editor editor = mConfigPre.edit();
-        editor.putBoolean(KEY_LOGIN, true);
-        editor.commit();
+        mConfigPre.edit().putBoolean(KEY_LOGIN, true).apply();
     }
 
     public static void logoutNow() {
-        if (!mInit) {
-            throw new IllegalStateException(EMSG);
-        }
-        Editor editor = mConfigPre.edit();
-        editor.putBoolean(KEY_LOGIN, false);
-        editor.commit();
+        mConfigPre.edit().putBoolean(KEY_LOGIN, false).apply();
     }
     
     public static String getDownloadPath() {
@@ -149,9 +133,6 @@ public class Config {
      * @return
      */
     public static int getCoverDiskCacheSize() {
-        if (!mInit) {
-            throw new IllegalStateException(EMSG);
-        }
         try {
             return Integer.parseInt(mConfigPre.getString(CP_CACHE, CP_CACHE_DEFAULT));
         } catch (Exception e) {

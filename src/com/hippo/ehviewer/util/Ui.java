@@ -58,6 +58,7 @@ public class Ui {
         opt.inPurgeable = true;
         opt.inInputShareable = true;
         
+        /*
         BITMAP_DOUJINSHI = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.doujinshi), null, opt);
         BITMAP_MANGAI = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.manga), null, opt);
         BITMAP_ARTIST_CG = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.artistcg), null, opt);
@@ -73,7 +74,7 @@ public class Ui {
         BITMAP_START = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.star), null, opt);
         BITMAP_START_HALF = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.star_half), null, opt);
         BITMAP_START_EMPTY = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.star_empty), null, opt);
-        
+        */
         OlImageView.setDefaultImage(BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.ic_launcher))
                 , BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.ic_touch), null, opt));
     }

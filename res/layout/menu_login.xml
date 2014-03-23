@@ -15,7 +15,7 @@
         android:text="@string/login" />
 
     <ProgressBar
-        style="?android:attr/progressBarStyleLarge"
+        style="@android:style/Widget.Holo.ProgressBar.Large"
         android:id="@+id/list_wait_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
