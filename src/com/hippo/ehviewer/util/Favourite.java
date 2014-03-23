@@ -193,14 +193,6 @@ public class Favourite {
         out.writeObject((Boolean)lmd.expunged);
         out.writeObject(lmd.rating);
         out.writeObject(lmd.torrentcount);
-        int length;
-        if (lmd.tags == null)
-            length = 0;
-        else
-            length = lmd.tags.length;
-        out.writeObject((Integer)length);
-        for (int i = 0; i< length; i++)
-            out.writeObject(lmd.tags[i]);
     }
     
     public static ListMangaDetail readObject(ObjectInputStream in) {
@@ -220,12 +212,6 @@ public class Favourite {
             lmd.expunged = (Boolean)in.readObject();
             lmd.rating = (String)in.readObject();
             lmd.torrentcount = (String)in.readObject();
-            int length = (Integer)in.readObject();
-            if (length != 0) {
-                lmd.tags = new String[length];
-                for (int i = 0; i < length; i++)
-                    lmd.tags[i] = (String)in.readObject();
-            }
         } catch (OptionalDataException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

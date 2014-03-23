@@ -869,17 +869,17 @@ public class MangaListActivity extends Activity {
         
         private void setHeaderPullString() {
             if (firstPage == 0)
-                pullListView.setHeaderString("下拉刷新...",
-                        "释放刷新...",
-                        "正在刷新...",
-                        "完成刷新",
-                        "取消刷新"); // TODO
+                pullListView.setHeaderString(getString(R.string.pull_refresh_pull),
+                        getString(R.string.pull_refresh_release),
+                        getString(R.string.pull_refresh_doing),
+                        getString(R.string.pull_refresh_done),
+                        getString(R.string.pull_refresh_cancel));
             else
-                pullListView.setHeaderString("下拉读取上一页...",
-                        "释放读取上一页...",
-                        "正在读取上一页...",
-                        "完成读取上一页",
-                        "取消读取上一页"); // TODO
+                pullListView.setHeaderString(getString(R.string.pull_pre_pull),
+                        getString(R.string.pull_pre_release),
+                        getString(R.string.pull_pre_doing),
+                        getString(R.string.pull_pre_done),
+                        getString(R.string.pull_pre_cancel));
         }
     }
 
@@ -1232,7 +1232,10 @@ public class MangaListActivity extends Activity {
                     pullListView.onFooterRefreshComplete(true, false);
             }
         });
-        pullListView.setFooterString("正在加载更多", "已全部加载", "加载失败，点击继续加载"); // TODO
+        pullListView.setFooterString(getString(R.string.footer_loading),
+                getString(R.string.footer_loaded),
+                getString(R.string.footer_fail));
+        
         // Listview
         gmlAdapter = new GmlAdapter();
         listView.setAdapter(gmlAdapter);
@@ -1472,11 +1475,11 @@ public class MangaListActivity extends Activity {
             sadpanda.setVisibility(View.GONE);
             
             pullListView.setHeaderString(
-                    "下拉加载...",
-                    "释放加载...",
-                    "正在加载...",
-                    "完成加载",
-                    "取消加载");
+                    getString(R.string.pull_load_pull),
+                    getString(R.string.pull_load_release),
+                    getString(R.string.pull_load_doing),
+                    getString(R.string.pull_load_done),
+                    getString(R.string.pull_load_cancel));
         }
         return re;
     }
@@ -1516,8 +1519,4 @@ public class MangaListActivity extends Activity {
     public void buttonCheckLogin(View v) {
         checkLogin(false);
     }
-    
-    
-    
-    
 }

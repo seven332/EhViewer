@@ -159,10 +159,25 @@
     <!-- Pull -->
     <string name="pull_refresh_pull">下拉刷新…</string>
     <string name="pull_refresh_release">释放刷新…</string>
-    <string name="pull_pre_pull">下拉载入上一页…</string>
-    <string name="pull_pre_release">释放载入上一页…</string>
-    <string name="pull_next_pull">上提载入下一页…</string>
-    <string name="pull_next_release">释放载入下一页…</string>
+    <string name="pull_refresh_doing">正在刷新…</string>
+    <string name="pull_refresh_done">完成刷新</string>
+    <string name="pull_refresh_cancel">取消刷新</string>
+    
+    <string name="pull_pre_pull">下拉读取上一页…</string>
+    <string name="pull_pre_release">释放读取上一页…</string>
+    <string name="pull_pre_doing">正在读取上一页…</string>
+    <string name="pull_pre_done">完成读取上一页</string>
+    <string name="pull_pre_cancel">取消读取上一页</string>
+    
+    <string name="pull_load_pull">下拉加载…</string>
+    <string name="pull_load_release">释放加载…</string>
+    <string name="pull_load_doing">正在加载…</string>
+    <string name="pull_load_done">完成加载</string>
+    <string name="pull_load_cancel">取消加载</string>
+    
+    <string name="footer_loading">正在加载更多…</string>
+    <string name="footer_loaded">已全部加载</string>
+    <string name="footer_fail">加载失败，点击继续加载</string>
     
     <!-- Download -->
     <string name="start_download_task">开始下载任务</string>

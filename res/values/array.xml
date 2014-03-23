@@ -60,20 +60,5 @@
         <item>g.e-hentai.org</item>
         <item>exhentai.org</item>
     </string-array>
-    
-    <string-array name="pull_refresh">
-        <item>@string/pull_refresh_pull</item>
-        <item>@string/pull_refresh_release</item>
-    </string-array>
-    
-    <string-array name="pull_pre">
-        <item>@string/pull_pre_pull</item>
-        <item>@string/pull_pre_release</item>
-    </string-array>
-    
-    <string-array name="pull_next">
-        <item>@string/pull_next_pull</item>
-        <item>@string/pull_next_release</item>
-    </string-array>
 
 </resources>

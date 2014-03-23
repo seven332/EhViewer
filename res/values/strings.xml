@@ -166,10 +166,25 @@
     <!-- Pull -->
     <string name="pull_refresh_pull">Pull to refresh…</string>
     <string name="pull_refresh_release">Release to refresh…</string>
+    <string name="pull_refresh_doing">Refreshing…</string>
+    <string name="pull_refresh_done">Refreshed</string>
+    <string name="pull_refresh_cancel">Cancel refresh</string>
+    
     <string name="pull_pre_pull">Pull to load previous page…</string>
     <string name="pull_pre_release">Release to load previous page…</string>
-    <string name="pull_next_pull">Pull to load next page…</string>
-    <string name="pull_next_release">Release to load next page…</string>
+    <string name="pull_pre_doing">Loading previous page…</string>
+    <string name="pull_pre_done">Loaded previous page…</string>
+    <string name="pull_pre_cancel">Cancel previous page…</string>
+    
+    <string name="pull_load_pull">Pull to load…</string>
+    <string name="pull_load_release">Release to load…</string>
+    <string name="pull_load_doing">Loading…</string>
+    <string name="pull_load_done">Loaded</string>
+    <string name="pull_load_cancel">Cancel load</string>
+    
+    <string name="footer_loading">Loading more…</string>
+    <string name="footer_loaded">All loaded</string>
+    <string name="footer_fail">Load fail，click to reload</string>
     
     <!-- Download -->
     <string name="start_download_task">Start download task</string>

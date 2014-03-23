@@ -946,6 +946,7 @@ public class EhClient {
                     // Add page 1 pagelist
                     PageList pageList = getPageList(pageContent);
                     md.previewLists[0] = pageList;
+                    md.tags = getTags(pageContent);
                 } else if (pageContent.contains(offensiveKeystring)) {
                     mOK = 1;
                     md.firstPage = "offensive";
@@ -968,7 +969,52 @@ public class EhClient {
             OnGetManagaDetailListener listener) {
         new Thread(new GetManagaDetailRunnable(url, md, listener)).start();
     }
-
+    
+    
+    public static String[][] getTags(String pageContent) {
+        ArrayList<String[]> list = new ArrayList<String[]>();
+        Pattern p = Pattern
+                .compile("<tr><td[^<>]*>([^<>]+):</td><td>(?:<div[^<>]*><a[^<>]*>[^<>]*</a>[^<>]*<span[^<>]*>\\d+</span>[^<>]*</div>)+</td></tr>");
+        Matcher m = p.matcher(pageContent);
+        while (m.find()) {
+            String groupName = m.group(1);
+            String[] group = getTagGroup(m.group(0));
+            if (groupName != null && group != null) {
+                group[0] = groupName;
+                list.add(group);
+            }
+        }
+        if (list.size() == 0)
+            return null;
+        String[][] groups = new String[list.size()][];
+        int i = 0;
+        for (String[] item : list) {
+            groups[i] = item;
+            i++;
+        }
+        return groups;
+    }
+    
+    public static String[] getTagGroup(String pageContent) {
+        ArrayList<String> list = new ArrayList<String>();
+        Pattern p = Pattern.compile("<a[^<>]*>([^<>]+)</a>");
+        Matcher m = p.matcher(pageContent);
+        while (m.find()) {
+            String str = m.group(1);
+            if (str != null)
+                list.add(str);
+        }
+        if (list.size() == 0)
+            return null;
+        String[] strs = new String[list.size() + 1];
+        int i = 1;
+        for (String str : list) {
+            strs[i] = str;
+            i++;
+        }
+        return strs;
+    }
+    
     // Get page list
     private static class GetPageListPackage {
         public PageList pageList;
@@ -1679,9 +1725,10 @@ public class EhClient {
                         lmd.torrentcount = jo.getString("torrentcount");
                         JSONArray ja = jo.getJSONArray("tags");
                         int length = ja.length();
-                        lmd.tags = new String[length];
-                        for (int j = 0; j < length; j++)
-                            lmd.tags[j] = ja.getString(j);
+                        lmd.tags = new String[1][length+1];
+                        lmd.tags[0][0] = "all";
+                        for (int j = 1; j < length+1; j++)
+                            lmd.tags[0][j] = ja.getString(j);
                         
                         lmds.put(lmd.gid, lmd);
                     }

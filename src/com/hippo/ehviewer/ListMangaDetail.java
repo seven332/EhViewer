@@ -15,6 +15,6 @@ public class ListMangaDetail {
     public boolean expunged;
     public String rating;
     public String torrentcount;
-    public String[] tags;
+    public String[][] tags;
 }
 

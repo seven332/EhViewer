@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -55,9 +56,6 @@ import android.widget.Toast;
 public class MangaDetailActivity extends Activity {
 
     private static final String TAG = "MangaDetailActivity";
-    
-    private static final int previewWidth = 100;
-    private static final int previewHeigth = 142;
     
     private String url;
     //private String gid;
@@ -155,7 +153,7 @@ public class MangaDetailActivity extends Activity {
                 white.setBounds(0, 0, item.width, item.height);
                 tvu.setCompoundDrawables(null, white, null, null);
                 
-                AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams();
                 lp.leftMargin = Ui.dp2pix(8);
                 lp.topMargin = Ui.dp2pix(8);
                 lp.rightMargin = Ui.dp2pix(8);
@@ -417,6 +415,7 @@ public class MangaDetailActivity extends Activity {
         if (Build.VERSION.SDK_INT >= 19) {
             BeautifyScreen.fixColour(this);
         }
+        
     }
     
     @Override
@@ -562,6 +561,11 @@ public class MangaDetailActivity extends Activity {
             peopleTv.setText(String.format(
                     getString(R.string.detail_people), mangaDetail.people));
 
+            if (mangaDetail.tags != null) {
+                LinearLayout tagsLayout = (LinearLayout) findViewById(R.id.tags_layout);
+                addTags(tagsLayout, mangaDetail.tags);
+            }
+            
             mangaDetailNormal.setVisibility(View.VISIBLE);
             
             // Init go to dialog or disable it
@@ -591,17 +595,49 @@ public class MangaDetailActivity extends Activity {
         }
     }
     
-    /*
-    private void calcGridLayout() {
-        // TODO If pre is longer then length, add plane at bottom
-        // For pageListGridLayout
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int screenWidth = displaymetrics.widthPixels;
-        screenHeight = displaymetrics.heightPixels;
-        columnCount = screenWidth / (previewWidth + Ui.dp2pix(16));
-        pageListGridLayout.setColumnCount(columnCount);
-    }*/
+    private void addTags(LinearLayout tagsLayout, String[][] tagGroups) {
+        tagsLayout.removeAllViews();
+        int darkBlue = getResources().getColor(R.color.blue_dark);
+        int x = Ui.dp2pix(8);
+        
+        
+        AutoWrapLayout layout = new AutoWrapLayout(this);
+        for (String[] tagGroup : tagGroups) {
+            for (int i = 0; i < tagGroup.length; i ++) {
+                if (i == 0)
+                    continue;
+                TextView tagView = new TextView(this);
+                tagView.setText(tagGroup[i]);
+                tagView.setTextColor(Color.WHITE);
+                tagView.setBackgroundColor(darkBlue);
+                tagView.setPadding(x, x, x, x);
+                AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams();
+                lp.setMargins(x, x, x, x);
+                layout.addView(tagView, lp);
+            }
+        }
+        tagsLayout.addView(layout);
+        // TODO show group name when it look well
+        /*
+        for (String[] tagGroup : tagGroups) {
+            AutoWrapLayout layout = new AutoWrapLayout(this);
+            for (int i = 0; i < tagGroup.length; i ++) {
+                TextView tagView = new TextView(this);
+                if (i == 0) {
+                    tagView.setText(tagGroup[i] + ":");
+                } else {
+                    tagView.setText(tagGroup[i]);
+                    tagView.setTextColor(Color.WHITE);
+                    tagView.setBackgroundColor(darkBlue);
+                }
+                tagView.setPadding(x, x, x, x);
+                AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams();
+                lp.setMargins(x, x, x, x);
+                layout.addView(tagView, lp);
+            }
+            tagsLayout.addView(layout);
+        }*/
+    }
     
     
     @Override
