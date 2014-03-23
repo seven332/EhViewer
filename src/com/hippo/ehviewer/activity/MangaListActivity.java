@@ -88,6 +88,7 @@ public class MangaListActivity extends Activity {
     private ViewGroup loginView;
     private ViewGroup loginOverView;
     private Button loginButton;
+    private Button checkLoginButton;
     private View waitloginView;
     private TextView usernameText;
     private Button logoutButton;
@@ -1035,7 +1036,7 @@ public class MangaListActivity extends Activity {
         longClickDialog = createLongClickDialog();
         
         //
-        mImageLoadManager = new ImageLoadManager(Cache.memoryCache, Cache.cpCache);
+        mImageLoadManager = new ImageLoadManager(getApplicationContext(), Cache.memoryCache, Cache.cpCache);
         
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
@@ -1058,6 +1059,7 @@ public class MangaListActivity extends Activity {
         sadpanda = (ImageView) findViewById(R.id.sadpanda);
         loginView = (ViewGroup) findViewById(R.id.drawer_login);
         loginButton = (Button) findViewById(R.id.button_login);
+        checkLoginButton = (Button) findViewById(R.id.button_check_login);
         waitloginView = (View) findViewById(R.id.list_wait_login);
         loginOverView = (ViewGroup) findViewById(R.id.drawer_login_over);
         usernameText = (TextView) findViewById(R.id.text_username);
@@ -1272,18 +1274,13 @@ public class MangaListActivity extends Activity {
         });
         
         setTitle(String.format(getString(R.string.some_page), visiblePage + 1));
-        layoutDrawRight();
         
         pullListView.setVisibility(View.GONE);
         waitView.setVisibility(View.VISIBLE);
         freshButton.setVisibility(View.GONE);
         noFoundView.setVisibility(View.GONE);
         sadpanda.setVisibility(View.GONE);
-        
-        loginView.setVisibility(View.VISIBLE);
-        loginOverView.setVisibility(View.GONE);
-        loginButton.setVisibility(View.VISIBLE);
-        waitloginView.setVisibility(View.GONE);
+        layoutDrawRight();
         
         // Check update
         checkUpdate();
@@ -1405,6 +1402,7 @@ public class MangaListActivity extends Activity {
     private void checkLogin(boolean force) {
         if (Config.isLogin() || force) {
             loginButton.setVisibility(View.GONE);
+            checkLoginButton.setVisibility(View.GONE);
             waitloginView.setVisibility(View.VISIBLE);
             EhClient.checkLogin(new EhClient.OnCheckLoginListener() {
                 @Override
@@ -1419,6 +1417,10 @@ public class MangaListActivity extends Activity {
                 @Override
                 public void onFailure(int errorMessageId) {
                     loginButton.setVisibility(View.VISIBLE);
+                    if (Config.isLogin())
+                        checkLoginButton.setVisibility(View.VISIBLE);
+                    else
+                        checkLoginButton.setVisibility(View.GONE);
                     waitloginView.setVisibility(View.GONE);
                     Toast.makeText(MangaListActivity.this,
                             getString(errorMessageId),
@@ -1441,6 +1443,10 @@ public class MangaListActivity extends Activity {
             loginOverView.setVisibility(View.GONE);
             
             loginButton.setVisibility(View.VISIBLE);
+            if (Config.isLogin())
+                checkLoginButton.setVisibility(View.VISIBLE);
+            else
+                checkLoginButton.setVisibility(View.GONE);
             waitloginView.setVisibility(View.GONE);
         }
     }
@@ -1505,6 +1511,10 @@ public class MangaListActivity extends Activity {
     
     public void buttonLogin(View v) {
         loginDialog.show();
+    }
+    
+    public void buttonCheckLogin(View v) {
+        checkLogin(false);
     }
     
     

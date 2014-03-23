@@ -10,9 +10,20 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:onClick="buttonLogin"
         android:text="@string/login" />
+    
+    <Button
+        android:id="@+id/button_check_login"
+        style="@style/Button.White"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="120dp"
+        android:onClick="buttonCheckLogin"
+        android:text="@string/check_login" />
 
     <ProgressBar
         style="@android:style/Widget.Holo.ProgressBar.Large"

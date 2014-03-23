@@ -18,12 +18,13 @@
     <string name="exit_tip">Click again to exit</string>
     
     <!-- Login -->
-    <string name="dailog_check_login">Checking login status</string>
+    <string name="check_login">Checking login status</string>
     <string name="toast_login_succeeded">Login succeeded</string>
     <string name="toast_login_failed">Login failed</string>
     <string name="dialog_title_login_or_not">Login or not</string>
     <string name="dialog_messgae_login_or_not">What are the benefits of login ?</string>
     <string name="not_login">Do not login</string>
+    
     
     <string name="toast_logout_succeeded">Logout succeeded</string>
     <string name="toast_logout_failed">Logout failed</string>

@@ -16,7 +16,7 @@
     <string name="exit_tip">再按一次退出</string>
     
     <!-- Login -->
-    <string name="dailog_check_login">检查登陆状态</string>
+    <string name="check_login">检查登陆状态</string>
     <string name="toast_login_succeeded">登陆成功</string>
     <string name="toast_login_failed">登陆失败</string>
     <string name="dialog_title_login_or_not">是否登陆</string>

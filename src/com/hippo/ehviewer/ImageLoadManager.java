@@ -7,13 +7,15 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.widget.LoadImageView;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 
 public class ImageLoadManager {
-    
+    private static final String TAG = "ImageLoadManager";
     private class LoadTask {
         public LoadImageView liv;
         public boolean download;
@@ -24,6 +26,7 @@ public class ImageLoadManager {
             this.download = download;
         }
     }
+    private Context mContext;
     
     private final Stack<LoadTask> mLoadCacheTask;
     private ImageDownloadManager mImageDownloadTask;
@@ -43,11 +46,12 @@ public class ImageLoadManager {
                 }
             };
     
-    public ImageLoadManager(LruCache<String, Bitmap> memoryCache,
+    public ImageLoadManager(Context context, LruCache<String, Bitmap> memoryCache,
             DiskCache diskCache) {
         mLoadCacheTask = new Stack<LoadTask>();
         mImageDownloadTask = new ImageDownloadManager();
         
+        mContext = context;
         mMemoryCache = memoryCache;
         mDiskCache = diskCache;
     }
@@ -99,6 +103,7 @@ public class ImageLoadManager {
     }
     
     private class ImageDownloadManager {
+        
         private static final int MAX_DOWNLOAD_THREADS = 3;
         
         private final Stack<LoadTask> mDownloadTask;
@@ -138,6 +143,7 @@ public class ImageLoadManager {
                     Message msg = new Message();
                     msg.obj = loadTask;
                     if (bitmap == null) {
+                        Log.d(TAG, mContext.getString(httpHelper.getLastEMsgId()));
                         loadTask.bitmap = Ui.BITMAP_TOUCH;
                         liv.setState(LoadImageView.FAIL);
                         liv.setOnClickListener(ImageLoadManager.this);
