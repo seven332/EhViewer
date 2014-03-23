@@ -439,6 +439,9 @@ public class MangaDetailActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail);
         
+        // Get error here
+        Log.d(TAG, null);
+        
         int screenOri = Config.getScreenOriMode();
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);

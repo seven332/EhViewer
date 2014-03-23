@@ -49,6 +49,7 @@
     <string name="dialog_send_crash_plain">上次该应用崩溃了。你愿意把日志发送给开发者以便以后得到更好的用户体验么？</string>
     <string name="dialog_send_crash_yes">我愿意</string>
     <string name="dialog_send_crash_no">门儿都没有</string>
+    <string name="dialog_wait_send_crash_msg">请在发送完日志后关闭该窗口</string>
 
     <!-- List item long click -->
     <string name="toast_add_favourite">已添加到收藏</string>

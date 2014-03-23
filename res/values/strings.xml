@@ -13,6 +13,7 @@
     <string name="dailog_check_network">Checking network</string>
     <string name="dailog_network_error_yes">I don\'t care</string>
     <string name="dailog_network_error_no">Fine</string>
+    <string name="dialog_wait_send_crash_msg">Please close the dialog after sending logcat</string>
     
     <!-- Exit -->
     <string name="exit_tip">Click again to exit</string>

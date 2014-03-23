@@ -42,9 +42,31 @@ public class StartActivity extends Activity {
                         ((AlertButton)v).dialog.dismiss();
                         Config.allowed();
                         
-                        check(CHECK_CRESH);
+                        check(CHECK_NETWORK);
                     }
                 }).setNegativeButton(R.string.dailog_waring_no,
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((AlertButton)v).dialog.dismiss();
+                        finish();
+                    }
+                }).create();
+    }
+    
+    private AlertDialog createNetworkErrorDialog() {
+        return new DialogBuilder(this).setCancelable(false)
+                .setTitle(R.string.error).setMessage(R.string.em_no_network)
+                .setPositiveButton(R.string.dailog_network_error_yes,
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((AlertButton)v).dialog.dismiss();
+                        
+                        check(CHECK_CRESH);
+                    }
+                })
+                .setNegativeButton(R.string.dailog_network_error_no,
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -62,14 +84,25 @@ public class StartActivity extends Activity {
                     @Override
                     public void onClick(View v) {
                         ((AlertButton)v).dialog.dismiss();
+                        
+                        new DialogBuilder(StartActivity.this).setCancelable(false)
+                                .setTitle(R.string.wait)
+                                .setMessage(R.string.dialog_wait_send_crash_msg)
+                                .setPositiveButton(android.R.string.ok,
+                                        new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                ((AlertButton)v).dialog.dismiss();
+                                                checkOver();
+                                            }
+                                        }).show();
+                        
                         Intent i = new Intent(Intent.ACTION_SENDTO);
                         i.setData(Uri.parse("mailto:ehviewersu@gmail.com"));
                         i.putExtra(Intent.EXTRA_SUBJECT, "I found a bug in EhViewer !");
                         i.putExtra(Intent.EXTRA_TEXT, lastCrash);
                         startActivity(i);
                         lastCrash = null;
-                        
-                        check(CHECK_NETWORK);
                     }
                 }).setNegativeButton(R.string.dialog_send_crash_no, new View.OnClickListener() {
                     
@@ -78,28 +111,7 @@ public class StartActivity extends Activity {
                         ((AlertButton)v).dialog.dismiss();
                         lastCrash = null;
                         
-                        check(CHECK_NETWORK);
-                    }
-                }).create();
-    }
-    
-    private AlertDialog createNetworkErrorDialog() {
-        return new DialogBuilder(this).setCancelable(false)
-                .setTitle(R.string.error).setMessage(R.string.em_no_network)
-                .setPositiveButton(R.string.dailog_network_error_yes,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
                         checkOver();
-                    }
-                })
-                .setNegativeButton(R.string.dailog_network_error_no,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        finish();
                     }
                 }).create();
     }
@@ -138,14 +150,14 @@ public class StartActivity extends Activity {
                 createWarningDialog().show();
                 return;
             }
-        case CHECK_CRESH:
-            if ((lastCrash = Crash.getLastCrash()) != null) {
-                createSendCrashDialog().show();
-                return;
-            }
         case CHECK_NETWORK:
             if (!isNetworkAvailable()) {
                 createNetworkErrorDialog().show();
+                return;
+            }
+        case CHECK_CRESH:
+            if ((lastCrash = Crash.getLastCrash()) != null) {
+                createSendCrashDialog().show();
                 return;
             }
         }
