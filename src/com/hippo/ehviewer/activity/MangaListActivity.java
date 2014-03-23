@@ -1,17 +1,15 @@
 package com.hippo.ehviewer.activity;
 
-import java.io.File;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import com.hippo.ehviewer.BeautifyScreen;
+import com.hippo.ehviewer.ImageLoadManager;
 import com.hippo.ehviewer.ListMangaDetail;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.dialog.DialogBuilder;
 import com.hippo.ehviewer.dialog.SuperDialogUtil;
-import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
@@ -23,28 +21,24 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.view.CheckImage;
 import com.hippo.ehviewer.view.GetPaddingRelativeLayout;
-import com.hippo.ehviewer.view.OlImageView;
 import com.hippo.ehviewer.view.TagListView;
 import com.hippo.ehviewer.view.TagsAdapter;
 import com.hippo.ehviewer.widget.DrawerLayout;
+import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.PullListView;
 import com.hippo.ehviewer.widget.PullListView.OnFooterRefreshListener;
 import com.hippo.ehviewer.widget.PullListView.OnHeaderRefreshListener;
 
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.NotificationManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -77,6 +71,7 @@ import android.widget.Toast;
 // TODO add lock to get list
 
 public class MangaListActivity extends Activity {
+    @SuppressWarnings("unused")
     private static String TAG = "MangaListActivity";
     
     private DrawerLayout drawer;
@@ -106,7 +101,10 @@ public class MangaListActivity extends Activity {
     private int mStableItemCount;
     
     private ArrayList<ListMangaDetail> lmdArray = new ArrayList<ListMangaDetail>();
-
+    
+    private ImageLoadManager mImageLoadManager;
+    
+    
     private int longClickItemIndex;
 
     private boolean mListFirst = true;
@@ -134,7 +132,6 @@ public class MangaListActivity extends Activity {
     private int visiblePage = 0;
     
     private String title;
-    private String updateFileName;
     
     private class RefreshPackage {
         public ListUrls listUrls;
@@ -897,8 +894,12 @@ public class MangaListActivity extends Activity {
                 int getChildCount = view.getChildCount();
                 for (int i = 0; i < getChildCount; i++) {
                     View v = ((ViewGroup) view.getChildAt(i)).getChildAt(0);
-                    if (v instanceof OlImageView)
-                        ((OlImageView)v).loadImage(false);
+                    if (v instanceof LoadImageView) {
+                        LoadImageView liv = (LoadImageView)v;
+                        int status = liv.getState();
+                        if (status != LoadImageView.LOADING && status != LoadImageView.LOADED)
+                            mImageLoadManager.add(liv, true);
+                    }
                 }
                 mListFirst = false;
             }
@@ -930,8 +931,12 @@ public class MangaListActivity extends Activity {
                     && (getChildCount = view.getChildCount()) != 0) {
                 for (int i = 0; i < getChildCount; i++) {
                     View v = ((ViewGroup) view.getChildAt(i)).getChildAt(0);
-                    if (v instanceof OlImageView)
-                        ((OlImageView) v).loadImage(false);
+                    if (v instanceof LoadImageView) {
+                        LoadImageView liv = (LoadImageView)v;
+                        int status = liv.getState();
+                        if (status != LoadImageView.LOADING && status != LoadImageView.LOADED)
+                            mImageLoadManager.add(liv, true);
+                    }
                 }
             }
         }
@@ -965,12 +970,10 @@ public class MangaListActivity extends Activity {
             if (convertView == null)
                 convertView = mInflater.inflate(R.layout.list_item, null);
             
-            OlImageView thumb = (OlImageView)convertView.findViewById(R.id.cover);
+            LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
             if (!lmd.gid.equals(thumb.getKey())) {
-                thumb.setUrl(lmd.thumb);
-                thumb.setKey(lmd.gid);
-                thumb.setCache(Cache.memoryCache, Cache.cpCache);
-                thumb.loadFromCache();
+                thumb.setLoadInfo(lmd.thumb, lmd.gid);
+                mImageLoadManager.add(thumb, false);
 
                 // Set manga name
                 TextView name = (TextView) convertView.findViewById(R.id.name);
@@ -1030,6 +1033,9 @@ public class MangaListActivity extends Activity {
         loginDialog = createLoginDialog();
         filterDialog = createFilterDialog();
         longClickDialog = createLongClickDialog();
+        
+        //
+        mImageLoadManager = new ImageLoadManager(Cache.memoryCache, Cache.cpCache);
         
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
@@ -1499,10 +1505,6 @@ public class MangaListActivity extends Activity {
     
     public void buttonLogin(View v) {
         loginDialog.show();
-    }
-    
-    class ImageLoadTask {
-        
     }
     
     

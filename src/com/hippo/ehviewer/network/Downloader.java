@@ -33,7 +33,7 @@ public class Downloader implements Runnable {
     
     private static final int MAX_REDIRECTS = 5;
     private static final int MAX_RETRY = 5;
-    private static final int DEFAULT_TIMEOUT = 20 * 1000;
+    private static final int DEFAULT_TIMEOUT = 5 * 1000;
     
     private String mPath;
     private String mFileName;

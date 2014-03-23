@@ -58,6 +58,7 @@ public class Util {
         is.close();
         os.flush();
         os.close();
+        buffer = null;
     }
     
     public static final int BITMAP = 0x0;

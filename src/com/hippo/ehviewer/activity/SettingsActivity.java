@@ -1,9 +1,6 @@
 package com.hippo.ehviewer.activity;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 
 import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.DiskCache;
@@ -20,7 +17,6 @@ import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -33,15 +29,12 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.support.v4.util.LruCache;
-import android.text.Html;
-import android.util.Log;
 import android.webkit.WebView;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 //TODO Add thanks
 public class SettingsActivity extends PreferenceActivity {
+    @SuppressWarnings("unused")
     private static String TAG = "Settings";
 
     private Context mContext;
@@ -86,6 +79,7 @@ public class SettingsActivity extends PreferenceActivity {
             setRequestedOrientation(screenOri);
     }
     
+    @SuppressWarnings("deprecation")
     @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {
