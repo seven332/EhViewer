@@ -69,15 +69,18 @@ public class UpdateHelper {
                             }).create();
                     if (!mActivity.isFinishing())
                         dialog.show();
-                } else if(pageContext.equals("none")) {
-                    if (listener != null)
-                        listener.onNoUpdate();
-                } else if(pageContext.equals("error")){
-                    if (listener != null)
-                        listener.onFailure(R.string.em_request_error);
                 } else {
-                    if (listener != null)
-                        listener.onFailure(R.string.em_host_error);
+                    pageContext = pageContext.replaceAll("[\r|\n]+", "");
+                    if(pageContext.equals("none")) {
+                        if (listener != null)
+                            listener.onNoUpdate();
+                    } else if(pageContext.equals("error")){
+                        if (listener != null)
+                            listener.onFailure(R.string.em_request_error);
+                    } else {
+                        if (listener != null)
+                            listener.onFailure(R.string.em_host_error);
+                    }
                 }
             }
 
