@@ -197,9 +197,6 @@ public class Ui {
      * @return value in pix
      */
     public static int dp2pix(int dp) {
-        if (!mInit) {
-            throw new IllegalStateException("Please init Ui first.");
-        }
         return (int) (mContext.getResources().getDisplayMetrics().density * dp + 0.5f);
     }
     
@@ -209,9 +206,6 @@ public class Ui {
      * @return
      */
     public static BitmapFactory.Options getBitmapOpt() {
-        if (!mInit) {
-            throw new IllegalStateException("Please init Ui first.");
-        }
         return opt;
     }
     

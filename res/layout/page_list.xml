@@ -9,11 +9,12 @@
         layout="@layout/page_list_panel"
         android:layout_gravity="center" />
     
-    <android.support.v7.widget.GridLayout
-        android:id="@+id/paper_list_gridLayout"
+    <com.hippo.ehviewer.widget.AutoWrapLayout
+        android:id="@+id/paper_list_layout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-    </android.support.v7.widget.GridLayout>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" >
+    </com.hippo.ehviewer.widget.AutoWrapLayout>
     
     <ProgressBar
         android:id="@+id/paper_list_wait"

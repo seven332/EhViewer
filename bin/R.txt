@@ -202,7 +202,7 @@ int id negative_button 0x7f060036
 int id neutral_button 0x7f060037
 int id page_list 0x7f06002c
 int id pager 0x7f06006b
-int id paper_list_gridLayout 0x7f060072
+int id paper_list_layout 0x7f060072
 int id paper_list_wait 0x7f060073
 int id password 0x7f06006a
 int id positive_button 0x7f060038

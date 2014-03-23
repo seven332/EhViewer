@@ -17,10 +17,10 @@ import com.hippo.ehviewer.util.Favourite;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.OlImageView;
+import com.hippo.ehviewer.widget.AutoWrapLayout;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -29,7 +29,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -38,17 +37,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,7 +71,7 @@ public class MangaDetailActivity extends Activity {
     private ViewGroup mangaDetailOffensive;
     private ViewGroup mangaDetailPining;
     private ViewGroup pageListMain;
-    private GridLayout pageListGridLayout;
+    private AutoWrapLayout pageListLayout;
     private ProgressBar waitPageList;
     private TextView previewNumText;
     private TextView previewNumText2;
@@ -158,13 +155,13 @@ public class MangaDetailActivity extends Activity {
                 white.setBounds(0, 0, item.width, item.height);
                 tvu.setCompoundDrawables(null, white, null, null);
                 
-                GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
+                AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                 lp.leftMargin = Ui.dp2pix(8);
                 lp.topMargin = Ui.dp2pix(8);
                 lp.rightMargin = Ui.dp2pix(8);
                 lp.bottomMargin = Ui.dp2pix(8);
                 
-                pageListGridLayout.addView(tvu, lp);
+                pageListLayout.addView(tvu, lp);
                 index++;
             }
             // Download pic
@@ -172,6 +169,8 @@ public class MangaDetailActivity extends Activity {
                     + curPage + "-" + rowIndex, Util.getResourcesType(row.imageUrl), Cache.memoryCache,
                     Cache.cpCache, new int[]{page, rowIndex}, new PageImageGetListener());
             rowIndex ++;
+            
+            Log.d(TAG, "add page row");
         }
     }
     
@@ -206,7 +205,7 @@ public class MangaDetailActivity extends Activity {
                     item.xOffset, item.yOffset, item.width, item.height));
             bitmapDrawable.setBounds(0, 0, item.width, item.height);
             
-            TextViewWithUrl tvu = (TextViewWithUrl)pageListGridLayout.getChildAt(i);
+            TextViewWithUrl tvu = (TextViewWithUrl)pageListLayout.getChildAt(i);
             tvu.setCompoundDrawables(null, bitmapDrawable, null, null);
         }
         
@@ -370,7 +369,7 @@ public class MangaDetailActivity extends Activity {
     }
     
     private void refreshPageList() {
-        pageListGridLayout.removeAllViews();
+        pageListLayout.removeAllViews();
         waitPageList.setVisibility(View.VISIBLE);
         previewRefreshButton.setVisibility(View.GONE);
         
@@ -483,7 +482,7 @@ public class MangaDetailActivity extends Activity {
         mangaDetailOffensive = (ViewGroup) findViewById(R.id.manga_detail_offensive);
         mangaDetailPining = (ViewGroup) findViewById(R.id.manga_detail_pining);
         pageListMain = (ViewGroup) findViewById(R.id.page_list);
-        pageListGridLayout = (GridLayout) findViewById(R.id.paper_list_gridLayout);
+        pageListLayout = (AutoWrapLayout) findViewById(R.id.paper_list_layout);
         waitPageList = (ProgressBar) findViewById(R.id.paper_list_wait);
         previewRefreshButton = (Button) findViewById(R.id.preview_button_refresh);
         previewNumText = (TextView) findViewById(R.id.preview_num);
@@ -496,7 +495,7 @@ public class MangaDetailActivity extends Activity {
         
         setTitle(mangaDetail.gid);
         
-        calcGridLayout();
+        //calcGridLayout();
         
         OlImageView coverImage = (OlImageView) findViewById(R.id.detail_cover);
         coverImage.setUrl(mangaDetail.thumb);
@@ -576,11 +575,6 @@ public class MangaDetailActivity extends Activity {
             if (mangaDetail.previewLists[0] != null) {
                 pageListMain.setVisibility(View.VISIBLE);
                 // preview num
-                int row = (mangaDetail.previewLists[0].getSum()+columnCount-1)
-                        /columnCount;
-                if (row * (previewHeigth + Ui.dp2pix(32))
-                        < (screenHeight - Ui.getStatusBarHeight()
-                        - Ui.getNavigationBarHeight(false))/2)
                     bottomPanel.setVisibility(View.GONE);
                 
                 previewNumText.setText(String.format("%d / %d",
@@ -597,7 +591,7 @@ public class MangaDetailActivity extends Activity {
         }
     }
     
-    
+    /*
     private void calcGridLayout() {
         // TODO If pre is longer then length, add plane at bottom
         // For pageListGridLayout
@@ -607,7 +601,7 @@ public class MangaDetailActivity extends Activity {
         screenHeight = displaymetrics.heightPixels;
         columnCount = screenWidth / (previewWidth + Ui.dp2pix(16));
         pageListGridLayout.setColumnCount(columnCount);
-    }
+    }*/
     
     
     @Override
