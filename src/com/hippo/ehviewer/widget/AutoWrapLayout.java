@@ -47,14 +47,6 @@ public class AutoWrapLayout extends ViewGroup {
         int maxWidth = MeasureSpec.getSize(widthMeasureSpec);
         int maxHeight = MeasureSpec.getSize(heightMeasureSpec);
         
-        
-        Log.d(TAG, "widthMode = " + widthMode);
-        Log.d(TAG, "heightMode = " + heightMode);
-        Log.d(TAG, "maxWidth = " + maxWidth);
-        Log.d(TAG, "maxHeight = " + maxHeight);
-        
-        Log.d(TAG, "getChildCount() = " + getChildCount());
-        
         if (widthMode == MeasureSpec.UNSPECIFIED)
             maxWidth = Integer.MAX_VALUE;
         if (heightMode == MeasureSpec.UNSPECIFIED)
@@ -143,9 +135,6 @@ public class AutoWrapLayout extends ViewGroup {
             if (heightMode == MeasureSpec.AT_MOST)
                 measuredHeight = measuredHeight > maxHeight ? maxHeight : measuredHeight;
         }
-        
-        Log.d(TAG, "measuredWidth = " + measuredWidth);
-        Log.d(TAG, "measuredHeight = " + measuredHeight);
         
         setMeasuredDimension(measuredWidth, measuredHeight);
     }

@@ -600,7 +600,7 @@ public class MangaDetailActivity extends Activity {
         int darkBlue = getResources().getColor(R.color.blue_dark);
         int x = Ui.dp2pix(8);
         
-        
+        /*
         AutoWrapLayout layout = new AutoWrapLayout(this);
         for (String[] tagGroup : tagGroups) {
             for (int i = 0; i < tagGroup.length; i ++) {
@@ -616,27 +616,37 @@ public class MangaDetailActivity extends Activity {
                 layout.addView(tagView, lp);
             }
         }
-        tagsLayout.addView(layout);
+        tagsLayout.addView(layout);*/
+        
         // TODO show group name when it look well
-        /*
         for (String[] tagGroup : tagGroups) {
-            AutoWrapLayout layout = new AutoWrapLayout(this);
+            LinearLayout tagGroupLayout = new LinearLayout(this);
+            tagGroupLayout.setOrientation(LinearLayout.HORIZONTAL);
+            AutoWrapLayout tagLayout = new AutoWrapLayout(this);
             for (int i = 0; i < tagGroup.length; i ++) {
-                TextView tagView = new TextView(this);
                 if (i == 0) {
-                    tagView.setText(tagGroup[i] + ":");
+                    TextView groupNameView = new TextView(this);
+                    groupNameView.setText(tagGroup[i]);
+                    groupNameView.setTextColor(Color.WHITE);
+                    groupNameView.setBackgroundColor(Color.BLACK);
+                    groupNameView.setPadding(x, x, x, x);
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                    lp.setMargins(x, x, x, x);
+                    tagGroupLayout.addView(groupNameView, lp);
                 } else {
+                    TextView tagView = new TextView(this);
                     tagView.setText(tagGroup[i]);
                     tagView.setTextColor(Color.WHITE);
                     tagView.setBackgroundColor(darkBlue);
+                    tagView.setPadding(x, x, x, x);
+                    AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams();
+                    lp.setMargins(x, x, x, x);
+                    tagLayout.addView(tagView, lp);
                 }
-                tagView.setPadding(x, x, x, x);
-                AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams();
-                lp.setMargins(x, x, x, x);
-                layout.addView(tagView, lp);
             }
-            tagsLayout.addView(layout);
-        }*/
+            tagGroupLayout.addView(tagLayout);
+            tagsLayout.addView(tagGroupLayout);
+        }
     }
     
     
