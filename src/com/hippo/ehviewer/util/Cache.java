@@ -62,16 +62,16 @@ public class Cache {
             }
         }
         
-        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-        final int cacheSize = maxMemory / 24;
+        //final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        final int cacheSize = 8 * 1024 * 1024; // 8MB, can store 80 thumb
         memoryCache = new LruCache<String, Bitmap>(cacheSize) {
             @SuppressLint("NewApi")
             @Override
             protected int sizeOf(String key, Bitmap bitmap) {
                 if (Build.VERSION.SDK_INT < 19)
-                    return bitmap.getByteCount() / 1024;
+                    return bitmap.getByteCount();
                 else
-                    return bitmap.getAllocationByteCount() / 1024;
+                    return bitmap.getAllocationByteCount();
             }
         };
         
