@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>  
 <resources>  
   
-    <declare-styleable name="SuperImageView">  
+    <declare-styleable name="SuperImageView">
         <!-- Sets a drawable as the content of this ImageView. -->
         <attr name="src" format="reference|color" />
         <!-- Controls how the image should be resized or moved to match the size
              of this ImageView. -->
         <attr name="scaleType">
             <enum name="matrix" value="0" />
-            <enum name="fitXY" value="1" /> <!-- error -->
+            <enum name="fitXY" value="1" />
             <enum name="fitStart" value="2" />
             <enum name="fitCenter" value="3" />
             <enum name="fitEnd" value="4" />
@@ -44,6 +44,12 @@
         <attr name="mask" format="reference" />
     </declare-styleable>
     
-
+    <declare-styleable name="AutoWrapLayout">
+        <attr name="baseLine">
+            <enum name="top" value="0" />
+            <enum name="center" value="1" />
+            <enum name="bottom" value="2" />
+        </attr>
+    </declare-styleable>
     
 </resources> 

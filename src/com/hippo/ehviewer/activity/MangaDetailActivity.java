@@ -18,6 +18,7 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.OlImageView;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
+import com.hippo.ehviewer.widget.AutoWrapLayout.BaseLine;
 
 import android.app.Activity;
 import android.app.AlertDialog;
