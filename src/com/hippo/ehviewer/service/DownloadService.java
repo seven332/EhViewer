@@ -63,21 +63,31 @@ public class DownloadService extends Service {
             
             @Override
             public void onDownloadMangaStart(String id) {
-                mBuilder.setContentTitle(getString(R.string.downloading)
-                        + " " + Download.get(id).title)
+                DownloadInfo di = Download.get(id);
+                if (di == null)
+                    mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
+                else {
+                    mBuilder.setContentTitle(getString(R.string.downloading)
+                        + " " + di.title)
                         .setContentText(null)
                         .setProgress(0, 0, true).setOngoing(true).setAutoCancel(false);;
                 mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
+                }
             }
             
             @Override
             public void onDownloadMangaStart(String id, int pageSum, int startIndex) {
-                mBuilder.setContentTitle(getString(R.string.downloading)
-                        + " " + Download.get(id).title)
-                        .setContentText(startIndex + " / " + pageSum)
-                        .setProgress(pageSum, startIndex, false).setOngoing(true)
-                        .setAutoCancel(false);
-                mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
+                DownloadInfo di = Download.get(id);
+                if (di == null)
+                    mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
+                else {
+                    mBuilder.setContentTitle(getString(R.string.downloading)
+                            + " " + di.title)
+                            .setContentText(startIndex + " / " + pageSum)
+                            .setProgress(pageSum, startIndex, false).setOngoing(true)
+                            .setAutoCancel(false);
+                    mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
+                }
             }
             
             @Override
