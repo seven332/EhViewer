@@ -423,7 +423,7 @@ public class MangaListActivity extends Activity {
                                                 "释放加载...",
                                                 "正在加载...",
                                                 "完成加载",
-                                                "取消加载");
+                                                "取消加载"); // TODO
                                 } else {
                                     Toast.makeText(MangaListActivity.this,
                                             getString(R.string.toast_invalid_page),
@@ -1382,7 +1382,7 @@ public class MangaListActivity extends Activity {
             else
                 drawer.openDrawer(Gravity.START);
             return true;
-        case R.id.action_refresh:
+        case R.id.action_refresh: // TODO 点击刷新，pullviewheader 不会自动出来
             refresh(lus.clone(), listMenuTitle.get(0));
             return true;
         case R.id.action_jump:

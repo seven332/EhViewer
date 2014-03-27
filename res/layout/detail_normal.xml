@@ -62,7 +62,7 @@
     
     <LinearLayout
         android:id="@+id/tags_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation = "vertical"
         android:layout_marginLeft="18dp"

@@ -601,25 +601,6 @@ public class MangaDetailActivity extends Activity {
         int darkBlue = getResources().getColor(R.color.blue_dark);
         int x = Ui.dp2pix(8);
         
-        /*
-        AutoWrapLayout layout = new AutoWrapLayout(this);
-        for (String[] tagGroup : tagGroups) {
-            for (int i = 0; i < tagGroup.length; i ++) {
-                if (i == 0)
-                    continue;
-                TextView tagView = new TextView(this);
-                tagView.setText(tagGroup[i]);
-                tagView.setTextColor(Color.WHITE);
-                tagView.setBackgroundColor(darkBlue);
-                tagView.setPadding(x, x, x, x);
-                AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams();
-                lp.setMargins(x, x, x, x);
-                layout.addView(tagView, lp);
-            }
-        }
-        tagsLayout.addView(layout);*/
-        
-        // TODO show group name when it look well
         for (String[] tagGroup : tagGroups) {
             LinearLayout tagGroupLayout = new LinearLayout(this);
             tagGroupLayout.setOrientation(LinearLayout.HORIZONTAL);
