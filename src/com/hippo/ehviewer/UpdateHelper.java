@@ -70,7 +70,6 @@ public class UpdateHelper {
                     if (!mActivity.isFinishing())
                         dialog.show();
                 } else {
-                    pageContext = pageContext.replaceAll("[\r|\n]+", "");
                     if(pageContext.equals("none")) {
                         if (listener != null)
                             listener.onNoUpdate();

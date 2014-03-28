@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -343,13 +344,12 @@ public class EhClient {
         String encoding = conn.getContentEncoding();
         if (encoding != null && encoding.equals("gzip"))
             is = new GZIPInputStream(is);
-        BufferedReader br = new BufferedReader(new InputStreamReader(is,
-                "UTF-8")); // TODO get charsetName from header
-        String inputLine;
-        while ((inputLine = br.readLine()) != null)
-            sb.append(inputLine + "\n");
-        br.close();
-        is.close();
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Util.copy(is, baos, 1024);
+        sb.append(baos.toString("utf-8"));
+        Util.closeStreamQuietly(is);
+        Util.closeStreamQuietly(baos);
     }
 
     private static int post(String urlStr, String[][] args, StringBuffer sb) {
@@ -481,7 +481,9 @@ public class EhClient {
             conn.setConnectTimeout(TIMEOUT);
             conn.setReadTimeout(TIMEOUT);
             conn.connect();
-
+            
+            Log.d(TAG, "ResponseCode = " + conn.getResponseCode());
+            
             getStringHUC(conn, sb);
         } catch (MalformedURLException e) {
             errorMessageId = R.string.em_url_format_error;

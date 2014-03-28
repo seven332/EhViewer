@@ -76,6 +76,7 @@ public class DownloadActivity extends Activity {
                         case 1: // Remove info item
                             mServiceConn.getService().cancel(Download.getKey(longClickItemIndex));
                             mDlAdapter.notifyDataSetChanged();
+                            // TODO 有人反馈 Download.get(longClickItemIndex).title 为空，看来很有必要在正则抓取时检查是否为空
                             File dir = new File(Config.getDownloadPath(), Download.get(longClickItemIndex).title);
                             try {
                                 Util.deleteContents(dir);
