@@ -9,7 +9,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
@@ -110,7 +113,7 @@ public class Util {
             }
             sb.append(Integer.toHexString(v));
         }
-        return sb.toString().toUpperCase();
+        return sb.toString().toUpperCase(Locale.getDefault());
     }
 
     public static byte[] hexStringToByteArray(String s) {
@@ -184,4 +187,13 @@ public class Util {
           }
         }
       }
+    
+    @SuppressLint("SimpleDateFormat")
+    public static int getDate() {
+        int time = 0;
+        try {
+            time = Integer.parseInt(new SimpleDateFormat("yyyyMMdd").format(new Date()));
+        } catch (NumberFormatException e) {}
+        return time;
+    }
 }

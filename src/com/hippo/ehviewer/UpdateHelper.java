@@ -17,6 +17,7 @@ import com.hippo.ehviewer.dialog.DialogBuilder;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhClient;
+import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.AlertButton;
 
 public class UpdateHelper {
@@ -29,10 +30,16 @@ public class UpdateHelper {
         mActivity = activity;
     }
     
+    public void autoCheckUpdate() {
+        if (Config.getUpdateDate() < Util.getDate())
+            checkUpdate();
+    }
+    
     public void checkUpdate() {
         EhClient.checkUpdate(new EhClient.OnCheckUpdateListener() {
             @Override
             public void onSuccess(String pageContext) {
+                Config.setUpdateDate();
                 String[] items = pageContext.split("\n");
                 if (items.length > 3) {
                     

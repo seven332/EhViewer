@@ -69,7 +69,8 @@ import android.util.Log;
 public class EhClient {
 
     private static final String TAG = "EhClient";
-    private static String userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36";
+    private static String defaultUserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36";
+    private static String userAgent = System.getProperty("http.agent", defaultUserAgent);
     private static String HOST = "g.e-hentai.org";
     private static String API_URL = "http://g.e-hentai.org/api.php";
     private static String loginUrl = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
@@ -481,9 +482,6 @@ public class EhClient {
             conn.setConnectTimeout(TIMEOUT);
             conn.setReadTimeout(TIMEOUT);
             conn.connect();
-            
-            Log.d(TAG, "ResponseCode = " + conn.getResponseCode());
-            
             getStringHUC(conn, sb);
         } catch (MalformedURLException e) {
             errorMessageId = R.string.em_url_format_error;

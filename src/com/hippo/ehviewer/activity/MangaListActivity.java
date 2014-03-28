@@ -1409,7 +1409,7 @@ public class MangaListActivity extends Activity {
     }
     
     private void checkUpdate() {
-        new UpdateHelper(this).checkUpdate();
+        new UpdateHelper(this).autoCheckUpdate();
     }
     
     private void checkLogin(boolean force) {

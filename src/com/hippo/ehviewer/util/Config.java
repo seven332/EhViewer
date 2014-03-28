@@ -1,25 +1,22 @@
 package com.hippo.ehviewer.util;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.hippo.ehviewer.view.MangaImage;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
 public class Config {
+    @SuppressWarnings("unused")
     private static final String TAG = "Config";
     
     private static final String KEY_ALLOWED = "allowed";
     private static final String KEY_FIRST = "first_time";
     private static final String KEY_LOGIN = "login";
     private static final String KEY_IS_EXHENTAI = "is_exhentai";
+    private static final String KEY_UPDATE_DATE = "update_date";
     
     private static final String CP_CACHE = "preference_cp_cache";
     private static final String CP_CACHE_DEFAULT = "25";
@@ -215,4 +212,17 @@ public class Config {
     public static void exhentai(boolean isExhentai) {
         mConfigPre.edit().putBoolean(KEY_IS_EXHENTAI, isExhentai).apply();
     }
+    
+    public static int getUpdateDate() {
+        return mConfigPre.getInt(KEY_UPDATE_DATE, 0);
+    }
+    
+    public static void setUpdateDate() {
+        setUpdateDate(Util.getDate());
+    }
+    
+    public static void setUpdateDate(int date) {
+        mConfigPre.edit().putInt(KEY_UPDATE_DATE, date).apply();
+    }
+    
 }
