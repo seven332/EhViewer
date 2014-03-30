@@ -289,6 +289,7 @@ public class DownloadActivity extends Activity {
                         Intent intent = new Intent(DownloadActivity.this,
                                 MangaDownloadActivity.class);
                         intent.putExtra("title", di.title);
+                        intent.putExtra("size", di.pageSum);
                         
                         startActivity(intent);
                     }

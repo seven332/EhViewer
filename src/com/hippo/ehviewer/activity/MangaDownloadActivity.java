@@ -4,6 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.gallery.GalleryView;
+import com.hippo.ehviewer.gallery.data.ImageSet;
+import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.MangaImage;
@@ -64,6 +68,17 @@ public class MangaDownloadActivity extends Activity {
         
         Intent intent = getIntent();
         String title = intent.getStringExtra("title");
+        int size = intent.getIntExtra("size", 1);
+        
+        setContentView(R.layout.gl_root_group);
+        GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);
+        
+        ImageSet is = new ImageSet(new File(Config.getDownloadPath(), title), size, 0, size, null);
+        GalleryView isv = new GalleryView(getApplicationContext(), is, 0);
+        
+        glrv.setContentPane(isv);
+        
+        /*
         if (title == null) {
             finish();
             return;
@@ -123,7 +138,7 @@ public class MangaDownloadActivity extends Activity {
             }
         });
         
-        setContentView(pageView);
+        setContentView(pageView);*/
     }
     
     @Override
