@@ -108,7 +108,7 @@ public class ImageSet {
                     File file = new File(mFolder, fileName);
                     try {
                         BitmapFactory.Options opt = new BitmapFactory.Options();
-                        opt.inPreferredConfig = Bitmap.Config.RGB_565;
+                        opt.inPreferredConfig = Bitmap.Config.ARGB_8888;
                         FileInputStream fis = new FileInputStream(file);
                         bmp = BitmapFactory.decodeStream(fis, null, opt);
                         fis.close();

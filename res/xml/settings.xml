@@ -17,6 +17,14 @@
             android:key="preference_page_scaling"
             android:summary="%s"
             android:title="@string/preference_page_scaling" />
+        
+        <com.hippo.ehviewer.preference.AutoListPreference
+            android:defaultValue="1"
+            android:entries="@array/start_position_entries"
+            android:entryValues="@array/start_position_values"
+            android:key="preference_start_position"
+            android:summary="%s"
+            android:title="@string/preference_page_scaling" />
     </PreferenceCategory>
     
     <PreferenceCategory android:title="@string/preference_category_cache" >

@@ -25,6 +25,8 @@ public class Config {
     private static final String AUTO_PAGE_CACHE = "preference_auto_page_cache";
     private static final String PAGE_SCALING = "preference_page_scaling";
     private static final String PAGE_SCALING_DEFAULT = "3";
+    private static final String START_POSITION = "preference_start_position";
+    private static final String START_POSITION_DEFAULT = "1";
     private static final String SCREEN_ORI = "preference_screen_ori";
     private static final String SCREEN_ORI_DEFAULT = "0";
     private static final String DOWNLOAD_PATH = "preference_download_path";
@@ -34,8 +36,6 @@ public class Config {
 
     private static Context mContext;
     private static SharedPreferences mConfigPre;
-    
-    private static final String EMSG = "Please init Config first.";
 
     /**
      * Init Config
@@ -68,9 +68,6 @@ public class Config {
      * @return True if allowed
      */
     public static boolean isAllowed() {
-        if (!mInit) {
-            throw new IllegalStateException(EMSG);
-        }
         return mConfigPre.getBoolean(KEY_ALLOWED, false);
     }
     
@@ -78,9 +75,6 @@ public class Config {
      * Allowed the appliation to launch
      */
     public static void allowed() {
-        if (!mInit) {
-            throw new IllegalStateException(EMSG);
-        }
         mConfigPre.edit().putBoolean(KEY_ALLOWED, true).apply();
     }
     
@@ -90,9 +84,6 @@ public class Config {
      * @return
      */
     public static boolean isFirstTime() {
-        if (!mInit) {
-            throw new IllegalStateException();
-        }
         return mConfigPre.getBoolean(KEY_FIRST, true);
     }
 
@@ -144,9 +135,6 @@ public class Config {
      * @return
      */
     public static int getPageDiskCacheSize() {
-        if (!mInit) {
-            throw new IllegalStateException(EMSG);
-        }
         try {
             return Integer.parseInt(mConfigPre.getString(PAGE_CACHE, PAGE_CACHE_DEFAULT));
         } catch (Exception e) {
@@ -156,16 +144,10 @@ public class Config {
     }
 
     public static boolean isAutoPageCache() {
-        if (!mInit) {
-            throw new IllegalStateException(EMSG);
-        }
         return mConfigPre.getBoolean(AUTO_PAGE_CACHE, false);
     }
 
     public static int getPageScalingMode() {
-        if (!mInit) {
-            throw new IllegalStateException(EMSG);
-        }
         int pageScalingMode = 3;
         try {
             pageScalingMode = Integer.parseInt(mConfigPre.getString(
@@ -177,10 +159,19 @@ public class Config {
         return pageScalingMode;
     }
     
-    public static int getScreenOriMode() {
-        if (!mInit) {
-            throw new IllegalStateException(EMSG);
+    public static int getStartPosition() {
+        int startPosition = 1;
+        try {
+            startPosition = Integer.parseInt(mConfigPre.getString(
+                    START_POSITION, START_POSITION_DEFAULT));
+        } catch (Exception e) {
+            mConfigPre.edit().putString(START_POSITION, START_POSITION_DEFAULT)
+                    .apply();
         }
+        return startPosition;
+    }
+    
+    public static int getScreenOriMode() {
         int screenOriMode = 0;
         try {
             screenOriMode = Integer.parseInt(mConfigPre.getString(

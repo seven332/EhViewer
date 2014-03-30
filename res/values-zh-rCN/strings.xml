@@ -126,6 +126,7 @@
     <string name="landscape">横屏</string>
     
     <string name="preference_page_scaling">页面缩放</string>
+    <string name="preference_start_position">开页位置</string>
     
     <string name="preference_settings_title">设置</string>
     <string name="preference_category_cache">缓存</string>
@@ -188,6 +189,13 @@
     <string name="not_started">未启动</string>
     <string name="waiting">等待中</string>
     
+    <!-- GalleryView -->
+    <string name="pre_page">上一页</string>
+    <string name="next_page">下一页</string>
+    <string name="zoom_in">放大</string>
+    <string name="zoom_out">缩小</string>
+    <string name="menu">菜单</string>
+    
     <!-- Util -->
     <string name="last_page">最后一页！</string>
     <string name="unfinished">未完成的功能</string>
@@ -219,6 +227,13 @@
     <string name="fit_to_width">匹配宽度</string>
     <string name="fit_to_height">匹配长度</string>
     <string name="fit_to_screen">匹配屏幕</string>
+    <string name="fixed_scale">固定缩放</string>
+    
+    <string name="top_left">左上角</string>
+    <string name="top_right">右上角</string>
+    <string name="bottom_left">左下角</string>
+    <string name="bottom_right">右下角</string>
+    <string name="center">中心</string>
     
     <string name="add_to_favourite">收藏</string>
     <string name="remove">移除</string>

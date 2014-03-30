@@ -6,7 +6,7 @@ import android.os.Message;
 
 public abstract class TimeRunner {
     
-    private static final int INTERVAL = 1;
+    private static final int INTERVAL = 5;
     
     private static final int RUNNING = 0;
     private static final int START = 1;

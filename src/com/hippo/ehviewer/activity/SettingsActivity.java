@@ -32,7 +32,6 @@ import android.support.v4.util.LruCache;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-//TODO Add thanks
 public class SettingsActivity extends PreferenceActivity {
     @SuppressWarnings("unused")
     private static String TAG = "Settings";
@@ -41,17 +40,18 @@ public class SettingsActivity extends PreferenceActivity {
 
     public LruCache<String, Bitmap> memoryCache;
 
-    private String CP_CACHE = "preference_cp_cache";
-    private String CLEAR_CP_CACHE = "preference_clear_cp_cache";
-    private String PAGE_CACHE = "preference_page_cache";
-    private String CLEAR_PAGE_CACHE = "preference_clear_page_cache";
-    private String PAGE_SCALING = "preference_page_scaling";
-    private String AUTHOR = "preference_author";
-    private String SCREEN_ORI = "preference_screen_ori";
-    private String CHANGELOG = "preference_changelog";
-    private String THANKS = "preference_thanks";
-    private String UPDATE = "preference_update";
-    private String RAN = "preference_remove_all_noification";
+    private static final String CP_CACHE = "preference_cp_cache";
+    private static final String CLEAR_CP_CACHE = "preference_clear_cp_cache";
+    private static final String PAGE_CACHE = "preference_page_cache";
+    //private static final String START_POSITION = "preference_start_position";
+    private static final String CLEAR_PAGE_CACHE = "preference_clear_page_cache";
+    private static final String PAGE_SCALING = "preference_page_scaling";
+    private static final String AUTHOR = "preference_author";
+    private static final String SCREEN_ORI = "preference_screen_ori";
+    private static final String CHANGELOG = "preference_changelog";
+    private static final String THANKS = "preference_thanks";
+    private static final String UPDATE = "preference_update";
+    private static final String RAN = "preference_remove_all_noification";
 
     private EditTextPreference cpCachePre;
     private Preference clearCpCachePre;
@@ -227,7 +227,20 @@ public class SettingsActivity extends PreferenceActivity {
                         return true;
                     }
                 });
-
+        
+        /*
+        final AutoListPreference start_position =
+                (AutoListPreference)screen.findPreference(START_POSITION);
+        start_position.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                    Object newValue) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+        });*/
+        
+        
         // Connect me !
         authorPer = screen.findPreference(AUTHOR);
         authorPer.setOnPreferenceClickListener(new OnPreferenceClickListener() {

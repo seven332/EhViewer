@@ -130,6 +130,7 @@
     <string name="portrait">Portrait</string>
     <string name="landscape">Landscape</string>
     <string name="preference_page_scaling">Page scaling</string>
+    <string name="preference_start_position">Start position</string>
     
     <string name="preference_settings_title">Settings</string>
     <string name="preference_category_cache">Cache</string>
@@ -195,6 +196,13 @@
     <string name="not_started">Not started</string>
     <string name="waiting">Waiting</string>
     
+    <!-- GalleryView -->
+    <string name="pre_page">Previous page</string>
+    <string name="next_page">Next page</string>
+    <string name="zoom_in">Zoom in</string>
+    <string name="zoom_out">Zoom out</string>
+    <string name="menu">Menu</string>
+    
     <!-- Util -->
     <string name="last_page">Last page !</string>
     <string name="sadpanda" translatable="false">Sad Panda</string>
@@ -227,6 +235,13 @@
     <string name="fit_to_width">Fit to width</string>
     <string name="fit_to_height">Fit to height</string>
     <string name="fit_to_screen">Fit to screen</string>
+    <string name="fixed_scale">Fixed</string>
+    
+    <string name="top_left">Top left</string>
+    <string name="top_right">Top right</string>
+    <string name="bottom_left">Bottom left</string>
+    <string name="bottom_right">Bottom right</string>
+    <string name="center">Center</string>
     
     <string name="add_to_favourite">Add to favourite</string>
     <string name="remove">Remove</string>

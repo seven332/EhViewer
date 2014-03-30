@@ -31,6 +31,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class MangaDownloadActivity extends Activity {
     private static final String TAG = "MangaDownloadActivity";
@@ -47,8 +48,6 @@ public class MangaDownloadActivity extends Activity {
             mBitmap = bitmap;
         }
     }
-    
-    
     
     @SuppressLint("NewApi")
     @Override
@@ -75,70 +74,20 @@ public class MangaDownloadActivity extends Activity {
         
         ImageSet is = new ImageSet(new File(Config.getDownloadPath(), title), size, 0, size, null);
         GalleryView isv = new GalleryView(getApplicationContext(), is, 0);
-        
-        glrv.setContentPane(isv);
-        
-        /*
-        if (title == null) {
-            finish();
-            return;
-        }
-        dir = new File(Config.getDownloadPath(), title);
-        String[] files;
-        if (!dir.isDirectory() || (files = dir.list()) == null) {
-            finish();
-            return;
-        }
-        fileList = new ArrayList<String>();
-        for (String fileName : files) {
-            String name = Util.getName(fileName);
-            if (Util.isNumber(name))
-                fileList.add(fileName);
-        }
-        // TODO do it you self
-        Collections.sort(fileList);
-        
-        pageView = new MangaViewPager(this);
-        pageView.setBackgroundColor(color.darker_gray);
-        // For fullscreen
-        if (Build.VERSION.SDK_INT >= 19) {
-            pageView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        }
-        pageView.setAdapter(new PagerAdapter() {
+        isv.setOnEdgeListener(new GalleryView.OnEdgeListener() {
             @Override
-            public void destroyItem(ViewGroup container, int position, Object view) {
-                container.removeView((View)view);
-            }
-            
-            @Override  
-            public Object instantiateItem(ViewGroup container, int position) {
-                final String imageName = fileList.get(position);
-                MangaImage oiv = new MangaImage(MangaDownloadActivity.this);
-                Bitmap bitmap = BitmapFactory.decodeFile(dir.toString() + "/" + imageName);
-                oiv.setImageBitmap(bitmap);
-                //oiv.enableZoomMove(true);
-                container.addView(oiv);
-                return oiv;
+            public void onLastPageEdge() {
+                Toast.makeText(MangaDownloadActivity.this, getString(R.string.last_page), Toast.LENGTH_SHORT).show();
             }
             
             @Override
-            public int getCount() {
-                return fileList.size();
-            }
-            
-            @Override
-            public boolean isViewFromObject(View arg0, Object arg1) {
-                return arg0==arg1;
+            public void onFirstPageEdge() {
+                Toast.makeText(MangaDownloadActivity.this, getString(R.string.first_page), Toast.LENGTH_SHORT).show();
             }
         });
         
-        setContentView(pageView);*/
+        glrv.setContentPane(isv);
+        
     }
     
     @Override

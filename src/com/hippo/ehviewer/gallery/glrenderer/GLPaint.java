@@ -21,7 +21,14 @@ import junit.framework.Assert;
 public class GLPaint {
     private float mLineWidth = 1f;
     private int mColor = 0;
-
+    
+    public GLPaint() {}
+    
+    public GLPaint(int color, float width) {
+        setColor(color);
+        setLineWidth(width);
+    }
+    
     public void setColor(int color) {
         mColor = color;
     }

@@ -20,6 +20,7 @@
         <item>@string/fit_to_width</item>
         <item>@string/fit_to_height</item>
         <item>@string/fit_to_screen</item>
+        <item>@string/fixed_scale</item>
     </string-array>
     
     <string-array name="page_scaling_entry_values" translatable="false">
@@ -27,6 +28,23 @@
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
+    </string-array>
+    
+    <string-array name="start_position_entries">
+        <item>@string/top_left</item>
+        <item>@string/top_right</item>
+        <item>@string/bottom_left</item>
+        <item>@string/bottom_right</item>
+        <item>@string/center</item>
+    </string-array>
+    
+    <string-array name="start_position_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
     </string-array>
     
     <string-array name="list_item_long_click">
