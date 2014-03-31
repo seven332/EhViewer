@@ -42,9 +42,6 @@ public class SettingsActivity extends PreferenceActivity {
 
     private static final String CP_CACHE = "preference_cp_cache";
     private static final String CLEAR_CP_CACHE = "preference_clear_cp_cache";
-    private static final String PAGE_CACHE = "preference_page_cache";
-    //private static final String START_POSITION = "preference_start_position";
-    private static final String CLEAR_PAGE_CACHE = "preference_clear_page_cache";
     private static final String PAGE_SCALING = "preference_page_scaling";
     private static final String AUTHOR = "preference_author";
     private static final String SCREEN_ORI = "preference_screen_ori";
@@ -153,65 +150,6 @@ public class SettingsActivity extends PreferenceActivity {
                     public boolean onPreferenceClick(Preference preference) {
                         Cache.cpCache.clear();
                         updateCpCacheSummary();
-                        return true;
-                    }
-                });
-
-        pageCachePre = (EditTextPreference) screen.findPreference(PAGE_CACHE);
-        pageCachePre
-                .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(Preference preference,
-                            Object newValue) {
-                        int pageCacheSize = 0;
-                        try {
-                            int pageCacheSizeInMB = Integer
-                                    .parseInt((String) newValue);
-                            if (pageCacheSizeInMB > 1024) {
-                                Toast.makeText(mContext,
-                                        getString(R.string.cache_large),
-                                        Toast.LENGTH_SHORT).show();
-                                return false;
-                            }
-                            pageCacheSize = pageCacheSizeInMB * 1024 * 1024;
-                        } catch (Exception e) {
-                            Toast.makeText(mContext,
-                                    getString(R.string.input_error),
-                                    Toast.LENGTH_SHORT).show();
-                            return false;
-                        }
-                        if (pageCacheSize <= 0 && Cache.pageCache != null) {
-                            Cache.pageCache.clear();
-                            Cache.pageCache.close();
-                            Cache.pageCache = null;
-                        } else if (Cache.pageCache == null) {
-                            try {
-                                Cache.pageCache = new DiskCache(
-                                        SettingsActivity.this.getApplication()
-                                                .getApplicationContext(),
-                                        Cache.pageCachePath, pageCacheSize);
-                            } catch (Exception e) {
-                                Toast.makeText(mContext,
-                                        getString(R.string.create_cache_error),
-                                        Toast.LENGTH_SHORT).show();
-                                e.printStackTrace();
-                            }
-                        } else
-                            Cache.pageCache.setMaxSize(pageCacheSize);
-                        updatePageCacheSummary();
-                        return true;
-                    }
-                });
-
-        clearPageCachePre = (Preference) screen
-                .findPreference(CLEAR_PAGE_CACHE);
-        updatePageCacheSummary();
-        clearPageCachePre
-                .setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
-                        Cache.pageCache.clear();
-                        updatePageCacheSummary();
                         return true;
                     }
                 });
@@ -346,20 +284,6 @@ public class SettingsActivity extends PreferenceActivity {
             clearCpCachePre
                     .setSummary(getString(R.string.preference_cache_summary_no));
             clearCpCachePre.setEnabled(false);
-        }
-    }
-
-    private void updatePageCacheSummary() {
-        if (Cache.pageCache != null) {
-            clearPageCachePre.setSummary(String.format(
-                    getString(R.string.preference_cache_summary),
-                    Cache.pageCache.size() / 1024 / 1024f,
-                    Cache.pageCache.maxSize() / 1024 / 1024));
-            clearPageCachePre.setEnabled(true);
-        } else {
-            clearPageCachePre
-                    .setSummary(getString(R.string.preference_cache_summary_no));
-            clearPageCachePre.setEnabled(false);
         }
     }
 }

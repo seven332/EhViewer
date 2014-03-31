@@ -1403,9 +1403,6 @@ public class MangaListActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mServiceConn);
-        if (Config.isAutoPageCache()) {
-            Cache.pageCache.clear();
-        }
     }
     
     private void checkUpdate() {

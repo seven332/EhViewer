@@ -138,16 +138,17 @@ public class ImageSet {
                     Log.d(TAG, imageData.fileName);
                     
                     File file = new File(mFolder, imageData.fileName);
+                    FileInputStream fis = null;
                     try {
                         BitmapFactory.Options opt = new BitmapFactory.Options();
                         opt.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                        FileInputStream fis = new FileInputStream(file);
+                        fis = new FileInputStream(file);
                         bmp = BitmapFactory.decodeStream(fis, null, opt);
-                        fis.close();
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    } finally {
+                        if (fis != null)
+                            Util.closeStreamQuietly(fis);
                     }
                     return bmp;
                 }

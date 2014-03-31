@@ -38,23 +38,6 @@
             android:key="preference_clear_cp_cache"
             android:title="@string/preference_clear_cp_cache" />
         
-        <EditTextPreference
-            android:defaultValue="256"
-            android:inputType="number"
-            android:key="preference_page_cache"
-            android:title="@string/preference_page_cache" />
-        
-        <Preference 
-            android:key="preference_clear_page_cache"
-            android:title="@string/preference_clear_page_cache" />
-        
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="preference_auto_page_cache"
-            android:summaryOff="@string/preference_auto_page_cache_summary_off"
-            android:summaryOn="@string/preference_auto_page_cache_summary_on"
-            android:title="@string/preference_auto_page_cache" />
-        
     </PreferenceCategory>
     
     <!--  

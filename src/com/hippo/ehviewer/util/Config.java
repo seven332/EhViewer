@@ -20,9 +20,6 @@ public class Config {
     
     private static final String CP_CACHE = "preference_cp_cache";
     private static final String CP_CACHE_DEFAULT = "25";
-    private static final String PAGE_CACHE = "preference_page_cache";
-    private static final String PAGE_CACHE_DEFAULT = "256";
-    private static final String AUTO_PAGE_CACHE = "preference_auto_page_cache";
     private static final String PAGE_SCALING = "preference_page_scaling";
     private static final String PAGE_SCALING_DEFAULT = "3";
     private static final String START_POSITION = "preference_start_position";
@@ -127,24 +124,6 @@ public class Config {
             mConfigPre.edit().putString(CP_CACHE, CP_CACHE_DEFAULT).apply();
             return 25;
         }
-    }
-
-    /**
-     * Get page cache size in MB
-     * 
-     * @return
-     */
-    public static int getPageDiskCacheSize() {
-        try {
-            return Integer.parseInt(mConfigPre.getString(PAGE_CACHE, PAGE_CACHE_DEFAULT));
-        } catch (Exception e) {
-            mConfigPre.edit().putString(PAGE_CACHE, PAGE_CACHE_DEFAULT).apply();
-            return 256;
-        }
-    }
-
-    public static boolean isAutoPageCache() {
-        return mConfigPre.getBoolean(AUTO_PAGE_CACHE, false);
     }
 
     public static int getPageScalingMode() {

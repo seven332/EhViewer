@@ -17,9 +17,7 @@ public class Cache {
     private static Context mContext;
 
     public static final String cpCachePath = "/EhViewer/cache/cover";
-    public static final String pageCachePath = "/EhViewer/cache/page";
     public static DiskCache cpCache = null;
-    public static DiskCache pageCache = null;
     public static LruCache<String, Bitmap> memoryCache = null;
     public static LruCache<String, MangaDetail> mdCache = null;
     
@@ -46,17 +44,6 @@ public class Cache {
                     cpCache = null;
                 else
                     cpCache = new DiskCache(mContext, cpCachePath, cpCacheSize);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try {
-                int pageCacheSize = Config.getPageDiskCacheSize() * 1024 * 1024;
-                if (pageCacheSize <= 0)
-                    pageCache = null;
-                else
-                    pageCache = new DiskCache(mContext, pageCachePath,
-                            pageCacheSize);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -1,6 +1,8 @@
 package com.hippo.ehviewer.activity;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -27,6 +29,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
@@ -84,27 +87,24 @@ public class MangaActivity extends Activity {
             }
             retryTimes = 0;
             
-            final int targetPage = (Integer)checkFlag;
-            //
+            final int index = (Integer)checkFlag;
             final String prePageUrl = arg[0];
             final String nextPageUrl = arg[1];
             final String imageUrl = arg[2];
             
-            Log.d(TAG, "targetPage = " + targetPage);
-            Log.d(TAG, "firstPage = " + firstPage);
-            Log.d(TAG, "lastPage = " + lastPage);
-            
-            if (targetPage == firstPage - 1 || (targetPage == firstPage && allPrePageUrl == null))
+            if (index == firstPage - 1 || (index == firstPage && allPrePageUrl == null))
                 allPrePageUrl = prePageUrl;
-            if (targetPage == lastPage)
+            if (index == lastPage)
                 allNextPageUrl = nextPageUrl;
-            if (targetPage != firstPage - 1 && (targetPage == firstPage && allPrePageUrl == null) && targetPage != lastPage) {
+            if (index != firstPage - 1 && (index == firstPage && allPrePageUrl == null) && index != lastPage) {
                 Log.e(TAG, "targetPage != firstPage - 1 && (targetPage == firstPage && allPrePageUrl == null) && targetPage != lastPage");
             }
             
+            final String imageName = String.format("%05d", index + 1) + "." + Util.getExtension(imageUrl);
+            
             try {
                 mDownloader.resetData(mFolder.getPath(),
-                        String.format("%05d", targetPage + 1) + "." + Util.getExtension(imageUrl),
+                        imageName,
                         imageUrl);
             } catch (MalformedURLException e) {
                 onFailure(checkFlag, R.string.em_url_format_error);
@@ -115,25 +115,56 @@ public class MangaActivity extends Activity {
             new Thread() {
                 @Override
                 public void run() {
-                    mImageSet.changeState(targetPage, ImageSet.STATE_LOADING);
-                    mDownloader.run();
-                    if (mDownloader.getStatus() == Downloader.COMPLETED) {
-                        mImageSet.changeState(targetPage, ImageSet.STATE_LOADED);
+                    // First check is it in disk and ok
+                    if (testImage(mFolder.getPath(), imageName)) {
+                        onGetImage(index, Downloader.COMPLETED, nextPageUrl);
                     } else {
-                        mImageSet.changeState(targetPage, ImageSet.STATE_FAIL);
-                    }
-                    if (targetPage == firstPage - 1 &&
-                            getPrePage == true) { // If get prePage
-                        firstPage--;
-                        getPrePage = false;
-                    } else if (nextPageUrl != "last") { // If get nextPage
-                        lastPage++;
-                        EhClient.getManagaUrl(nextPageUrl, lastPage, new MangaUrlGetListener());
+                        mImageSet.changeState(index, ImageSet.STATE_LOADING);
+                        mDownloader.run();
+                        onGetImage(index, mDownloader.getStatus(), nextPageUrl);
                     }
                 }
             }.start();
         }
-
+        
+        // TODO only test bitmap here
+        private boolean testImage(String path, String name) {
+            boolean isImage = false;
+            File file = new File(path, name);
+            FileInputStream fis = null;
+            try {
+                // Just test bound might error
+                fis = new FileInputStream(file);
+                Bitmap bmp = BitmapFactory.decodeStream(fis);
+                if (bmp != null) {
+                    bmp.recycle();
+                    isImage = true;
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                if (fis != null)
+                    Util.closeStreamQuietly(fis);
+            }
+            return isImage;
+        }
+        
+        private void onGetImage(int index, int state, String nextPageUrl) {
+            if (state == Downloader.COMPLETED) {
+                mImageSet.changeState(index, ImageSet.STATE_LOADED);
+            } else {
+                mImageSet.changeState(index, ImageSet.STATE_FAIL);
+            }
+            if (index == firstPage - 1 &&
+                    getPrePage == true) { // If get prePage
+                firstPage--;
+                getPrePage = false;
+            } else if (nextPageUrl != "last") { // If get nextPage
+                lastPage++;
+                EhClient.getManagaUrl(nextPageUrl, lastPage, new MangaUrlGetListener());
+            }
+        }
+        
         @Override
         public void onFailure(Object checkFlag, int errorMessageId) {
             if (stopFlag) {
