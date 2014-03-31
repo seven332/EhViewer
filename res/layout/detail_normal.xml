@@ -75,7 +75,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:text="@string/detail_button_read"
+        android:text="@string/read"
         android:onClick="buttonRead" />
     
     <include

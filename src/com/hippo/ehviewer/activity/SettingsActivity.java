@@ -275,7 +275,7 @@ public class SettingsActivity extends PreferenceActivity {
                 InputStream is = SettingsActivity.this.getResources()
                         .openRawResource(R.raw.change_log);
                 new DialogBuilder(SettingsActivity.this).setTitle(R.string.changelog)
-                        .setLongMessage(Util.InputStream2String(is)).create().show();
+                        .setLongMessage(Util.InputStream2String(is, "utf-8")).create().show();
                 return true;
             }
         });
@@ -288,7 +288,7 @@ public class SettingsActivity extends PreferenceActivity {
                 InputStream is = SettingsActivity.this.getResources()
                         .openRawResource(R.raw.thanks);
                 final WebView webView = new WebView(SettingsActivity.this);
-                webView.loadData(Util.InputStream2String(is), "text/html; charset=UTF-8", null);
+                webView.loadData(Util.InputStream2String(is, "utf-8"), "text/html; charset=UTF-8", null);
                 new DialogBuilder(SettingsActivity.this).setTitle(R.string.thanks)
                         .setView(webView, false).create().show();
                 return true;

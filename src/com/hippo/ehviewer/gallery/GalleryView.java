@@ -21,6 +21,8 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.TimeRunner;
 import com.hippo.ehviewer.util.Ui;
 
+
+// TODO 手动触屏滑动可能闪烁
 public class GalleryView extends GLView {
     @SuppressWarnings("unused")
     private static final String TAG = "ImagesView";
@@ -78,6 +80,7 @@ public class GalleryView extends GLView {
     private static final int LINE_COLOR = -1; // White
     private static final int TAP_AREA_TEXT_COLOR = -1; // White
     private static final int TAP_AREA_TEXT_SIZE = Ui.dp2pix(24);
+    private static final int TAP_AREA_MASK_COLOR = 0x88888888;
     
     private final GestureRecognizer mGestureRecognizer;
     private Context mContext;
@@ -122,15 +125,33 @@ public class GalleryView extends GLView {
     private boolean mShowTapArea = false;
     private boolean mShowTapAreaTurn = false;
     
-    public OnEdgeListener mOnEdgeListener;
+    private OnEdgeListener mOnEdgeListener;
+    private OnTapTextListener mOnTapTextListener;
+    private OnScrollPageListener mOnScrollPageListener;
     
     public interface OnEdgeListener {
         public void onFirstPageEdge();
         public void onLastPageEdge();
     }
     
+    public interface OnTapTextListener {
+        public void onTapText(int index);
+    }
+    
+    public interface OnScrollPageListener {
+        public void onScrollPage(int index);
+    }
+    
     public void setOnEdgeListener(OnEdgeListener l) {
         mOnEdgeListener = l;
+    }
+    
+    public void setOnTapTextListener(OnTapTextListener l) {
+        mOnTapTextListener = l;
+    }
+    
+    public void setOnScrollPageListener(OnScrollPageListener l) {
+        mOnScrollPageListener = l;
     }
     
     public GalleryView(Context context, ImageSet imageSet, int startIndex) {
@@ -153,6 +174,18 @@ public class GalleryView extends GLView {
         // Init config
         scaleMode = Config.getPageScalingMode();
         startMode = Config.getStartPosition();
+        
+        //
+        imageSet.setOnStateChangeListener(new ImageSet.OnStateChangeListener() {
+            @Override
+            public void onStateChange(int index, int state) {
+                int targetIndex = index - mCurIndex + 1;
+                if (targetIndex >= PRE_TARGET_INDEX
+                        && targetIndex <= NEXT_TARGET_INDEX) {
+                    loadImage(index);
+                }
+            }
+        });
     }
     
     private void setState() {
@@ -164,6 +197,9 @@ public class GalleryView extends GLView {
     }
     
     private void drawTapArea(GLCanvas canvas) {
+        // Background
+        canvas.fillRect(0, 0, mWidth, mHeight, TAP_AREA_MASK_COLOR);
+        
         drawRect(canvas, leftArea);
         drawRect(canvas, topArea);
         drawRect(canvas, rightArea);
@@ -433,11 +469,11 @@ public class GalleryView extends GLView {
         
         if (!mInit) {
             mInit = true;
-            loadImage(mCurIndex, 1);
+            loadImage(mCurIndex);
             if ((mState & STATE_LAST) == 0)
-                loadImage(mCurIndex + 1, 2);
+                loadImage(mCurIndex + 1);
             if ((mState & STATE_FIRST) == 0)
-                loadImage(mCurIndex - 1, 0);
+                loadImage(mCurIndex - 1);
         } else {
             resetSizePosition();
         }
@@ -445,7 +481,8 @@ public class GalleryView extends GLView {
         invalidate();
     }
     
-    private void loadImage(int index, int targetIndex) {
+    private void loadImage(int index) {
+        int targetIndex = index - mCurIndex + 1;
         int state = mImageSet.getImage(index, new DecodeImageListener());
         ShowItem showItem = showItems[targetIndex];
         if (showItem != null)
@@ -469,7 +506,7 @@ public class GalleryView extends GLView {
         case ImageSet.STATE_FAIL:
             return "加载失败";
         default:
-            return "错误的错误代码";
+            return "错误的代码";
         }
     }
     
@@ -583,7 +620,11 @@ public class GalleryView extends GLView {
         
         mCurIndex--;
         setState();
-        loadImage(mCurIndex-1, PRE_TARGET_INDEX);
+        loadImage(mCurIndex-1);
+        
+        if (mOnScrollPageListener != null) {
+            mOnScrollPageListener.onScrollPage(mCurIndex);
+        }
         
         invalidate();
         return true;
@@ -616,7 +657,11 @@ public class GalleryView extends GLView {
         
         mCurIndex++;
         setState();
-        loadImage(mCurIndex+1, NEXT_TARGET_INDEX);
+        loadImage(mCurIndex+1);
+        
+        if (mOnScrollPageListener != null) {
+            mOnScrollPageListener.onScrollPage(mCurIndex);
+        }
         
         invalidate();
         return true;
@@ -678,6 +723,12 @@ public class GalleryView extends GLView {
             if (mScrollState != SCROLL_NONE || mShowTapAreaTurn)
                 return false;
             
+            if ( showItems[CUR_TARGET_INDEX] == null
+                    || showItems[CUR_TARGET_INDEX] instanceof Text) {
+                if (mOnTapTextListener != null)
+                    mOnTapTextListener.onTapText(mCurIndex);
+            }
+            
             if (isInArea(leftArea, (int)x, (int)y)) {
                 // TODO goto bottom first the to pre page
                 resetSizePosition(PRE_TARGET_INDEX);
@@ -731,13 +782,12 @@ public class GalleryView extends GLView {
                 return false;
             case SCROLL_NONE:
                 boolean changePage = false;
-                Rect rect = null;
+                Rect rect = curShowItem.mRect;
                 
                 // Check change page or not
                 if (curShowItem == null || !(curShowItem instanceof Image))
                     changePage = true;
                 else{
-                    rect = curShowItem.mRect;
                     if ( Math.abs(totalX/totalY) > 1 && ((totalX > CHANGE_PAGE_OFFSET && dx < 0 && rect.left >= 0)
                             || (totalX < -CHANGE_PAGE_OFFSET && dx > 0 && rect.right <= mWidth)))
                         changePage = true;
@@ -782,7 +832,7 @@ public class GalleryView extends GLView {
                     rect.offset(actDx, actDy);
                     
                     // Fix position
-                    adjustPosition((Image)curShowItem);
+                    adjustPosition(curShowItem);
                 }
                 break;
                 

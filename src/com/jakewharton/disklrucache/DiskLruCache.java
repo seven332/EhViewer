@@ -523,7 +523,9 @@ public final class DiskLruCache implements Closeable {
             throws IOException {
         Entry entry = editor.entry;
         if (entry.currentEditor != editor) {
-            throw new IllegalStateException();
+            // throw new IllegalStateException();
+            // TODO I add, It may error when call delete()
+            return;
         }
 
         // If this edit is creating the entry for the first time, every index
@@ -670,57 +672,12 @@ public final class DiskLruCache implements Closeable {
      * the cache.
      */
     public synchronized void delete() throws IOException {
-        // Close
-        if (journalWriter == null) {
-            return; // Already closed.
-        }
-        for (Entry entry : new ArrayList<Entry>(lruEntries.values())) {
-            if (entry.currentEditor != null) {
-                entry.currentEditor.abort();
-            }
-        }
-        trimToSize();
-        journalWriter.close();
-        journalWriter = null;
+        close();
         Util.deleteContents(directory);
         // TODO I add
         size = 0;
         lruEntries.clear();
-        
-        // rebuildJournal
-        Writer writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(journalFileTmp), Util.US_ASCII));
-        try {
-            writer.write(MAGIC);
-            writer.write("\n");
-            writer.write(VERSION_1);
-            writer.write("\n");
-            writer.write(Integer.toString(appVersion));
-            writer.write("\n");
-            writer.write(Integer.toString(valueCount));
-            writer.write("\n");
-            writer.write("\n");
-
-            for (Entry entry : lruEntries.values()) {
-                if (entry.currentEditor != null) {
-                    writer.write(DIRTY + ' ' + entry.key + '\n');
-                } else {
-                    writer.write(CLEAN + ' ' + entry.key + entry.getLengths()
-                            + '\n');
-                }
-            }
-        } finally {
-            writer.close();
-        }
-
-        if (journalFile.exists()) {
-            renameTo(journalFile, journalFileBackup, true);
-        }
-        renameTo(journalFileTmp, journalFile, false);
-        journalFileBackup.delete();
-
-        journalWriter = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(journalFile, true), Util.US_ASCII));
+        rebuildJournal();
     }
 
     private void validateKey(String key) {

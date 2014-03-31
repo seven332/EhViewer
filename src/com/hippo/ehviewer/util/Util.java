@@ -1,6 +1,7 @@
 package com.hippo.ehviewer.util;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -126,24 +127,34 @@ public class Util {
         return data;
     }
     
-    public static String InputStream2String(InputStream is) {
-        StringBuffer sb = new StringBuffer();
+    /**
+     * Convernt context in stream to string
+     * 
+     * @param is
+     * @param charset
+     * @return
+     */
+    public static String InputStream2String(InputStream is, String charset) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        String str = null;
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(is,
-                    "UTF-8"));
-            String inputLine;
-            while ((inputLine = br.readLine()) != null)
-                sb.append(inputLine + "\n");
-            br.close();
-            is.close();
-        } catch (Exception e) {
+            Util.copy(is, baos, 1024);
+            str = baos.toString(charset);
+        } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            Util.closeStreamQuietly(baos);
         }
-        
-        int length = sb.length();
-        if (length != 0)
-            sb.delete(length - 1, length);
-        return sb.toString();
+        return str;
+    }
+    
+    public static String getFileForUrl(String url) {
+        String file = null;
+        int index = url.lastIndexOf("/");
+        if (index == -1)
+            return url;
+        else
+            return url.substring(index + 1);
     }
     
     public static String[] getStrings(SharedPreferences shaper, String key) {
@@ -173,6 +184,13 @@ public class Util {
         }
     }
     
+    /**
+     * Delete dir and it child file and dir
+     * 
+     * @param dir
+     * The dir to deleted
+     * @throws IOException
+     */
     public static void deleteContents(File dir) throws IOException {
         File[] files = dir.listFiles();
         if (files == null) {

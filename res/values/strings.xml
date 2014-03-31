@@ -79,7 +79,6 @@
     <string name="detail_people">Number of voters: %s</string>
     <string name="detail_offensive_title">Content Warning</string>
     <string name="detail_offensive">This gallery has been flagged as Offensive For Everyone. Due to its content, it should not be viewed by anyone.\n\n(And if you choose to ignore this warning, you lose all rights to complain about it in the future.)</string>
-    <string name="detail_button_read">Read</string>
     <string name="detail_button_cancel">I would not read it</string>
     <string name="detail_button_once">Just this time</string>
     <string name="detail_button_every">Do not trouble me</string>
@@ -204,6 +203,7 @@
     <string name="menu">Menu</string>
     
     <!-- Util -->
+    <string name="read">Read</string>
     <string name="last_page">Last page !</string>
     <string name="sadpanda" translatable="false">Sad Panda</string>
     <string name="unfinished">Unfinished</string>

@@ -76,7 +76,6 @@
     <string name="detail_people">投票人数：%s</string>
     <string name="detail_offensive_title">内容警告</string>
     <string name="detail_offensive">这个本子被所有人标记为瞎眼。所以任何人都不应该看。\n\n（如果你忽略了这个警告，你就失去了抱怨的权利。）</string>
-    <string name="detail_button_read">阅读</string>
     <string name="detail_button_cancel">算了，不看了</string>
     <string name="detail_button_once">就看这一次</string>
     <string name="detail_button_every">别再烦我了</string>
@@ -197,6 +196,7 @@
     <string name="menu">菜单</string>
     
     <!-- Util -->
+    <string name="read">阅读</string>
     <string name="last_page">最后一页！</string>
     <string name="unfinished">未完成的功能</string>
     <string name="period">。</string>

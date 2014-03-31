@@ -22,7 +22,10 @@ import android.util.Log;
 public class DownloadService extends Service {
     private static final int DOWNLOAD_NOTIFY_ID = -1;
     private static final String TAG = "DownloadService";
-    private static final String ACTION_UPDATE = "com.hippo.ehviewer.service.UPDATE";
+    public static final String ACTION_UPDATE = "com.hippo.ehviewer.service.DownloadService";
+    public static final String KEY_GID = "gid";
+    public static final String KEY_INDEX = "index";
+    public static final String KEY_STATE = "state";
     
     private ServiceBinder mBinder = null;
     
@@ -206,6 +209,14 @@ public class DownloadService extends Service {
     
     public void notifyUpdate(){
         Intent it = new Intent(ACTION_UPDATE);
+        sendBroadcast(it);
+    }
+    
+    public void notifyUpdate(String gid, int index, int state){
+        Intent it = new Intent(ACTION_UPDATE);
+        it.putExtra(KEY_GID, gid);
+        it.putExtra(KEY_INDEX, index);
+        it.putExtra(KEY_STATE, state);
         sendBroadcast(it);
     }
     

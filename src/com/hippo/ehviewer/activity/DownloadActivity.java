@@ -51,7 +51,6 @@ import android.widget.AdapterView.OnItemLongClickListener;
 public class DownloadActivity extends Activity {
     
     private static final String TAG = "DownloadActivity";
-    private static final String ACTION_UPDATE = "com.hippo.ehviewer.service.UPDATE";
     
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
@@ -86,6 +85,14 @@ public class DownloadActivity extends Activity {
                             dir.delete();
                             Download.remove(longClickItemIndex);
                             break;
+                        case 2:
+                            DownloadInfo di= mDownloadInfos.get(longClickItemIndex);
+                            Intent intent = new Intent(DownloadActivity.this,
+                                    MangaDownloadActivity.class);
+                            intent.putExtra(MangaDownloadActivity.KEY_TITLE, di.title);
+                            intent.putExtra(MangaDownloadActivity.KEY_SIZE, di.pageSum);
+                            intent.putExtra(MangaDownloadActivity.KEY_GID, di.gid);
+                            startActivity(intent);
                         default:
                             break;
                         }
@@ -170,9 +177,9 @@ public class DownloadActivity extends Activity {
                     } else {
                         pb.setIndeterminate(false);
                         pb.setMax(di.pageSum);
-                        pb.setProgress(di.lastStartIndex-1);
+                        pb.setProgress(di.lastStartIndex);
                         StringBuilder sb = new StringBuilder(getString(R.string.downloading));
-                        sb.append("  ").append(di.lastStartIndex-1).append(" / ").append(di.pageSum).append("\n");
+                        sb.append("  ").append(di.lastStartIndex).append(" / ").append(di.pageSum).append("\n");
                         if (di.totalSize != 0)
                             sb.append(String.format("%.2f", di.downloadSize))
                                     .append(" / ").append(String.format("%.2f", di.totalSize)).append(" KB");
@@ -220,7 +227,7 @@ public class DownloadActivity extends Activity {
             if (di.status == DownloadInfo.STOP) {
                 pb.setVisibility(View.GONE);
                 String meg = getString(R.string.not_started) + (di.type == DownloadInfo.DETAIL_URL ? ""
-                        : ("  " + (di.lastStartIndex-1) + " / " + di.pageSum));
+                        : ("  " + (di.lastStartIndex) + " / " + di.pageSum));
                 info.setText(meg);
                 action.setImageResource(R.drawable.ic_action_start);
                 action.setOnClickListener(new View.OnClickListener() {
@@ -244,9 +251,9 @@ public class DownloadActivity extends Activity {
                 } else {
                     pb.setIndeterminate(false);
                     pb.setMax(di.pageSum);
-                    pb.setProgress(di.lastStartIndex-1);
+                    pb.setProgress(di.lastStartIndex);
                     StringBuilder sb = new StringBuilder(getString(R.string.downloading));
-                    sb.append("  ").append(di.lastStartIndex-1).append(" / ").append(di.pageSum).append("\n");
+                    sb.append("  ").append(di.lastStartIndex).append(" / ").append(di.pageSum).append("\n");
                     if (di.totalSize != 0)
                         sb.append(String.format("%.2f", di.downloadSize))
                                 .append(" / ").append(String.format("%.2f", di.totalSize)).append(" KB");
@@ -288,16 +295,16 @@ public class DownloadActivity extends Activity {
                     public void onClick(View v) {
                         Intent intent = new Intent(DownloadActivity.this,
                                 MangaDownloadActivity.class);
-                        intent.putExtra("title", di.title);
-                        intent.putExtra("size", di.pageSum);
-                        
+                        intent.putExtra(MangaDownloadActivity.KEY_TITLE, di.title);
+                        intent.putExtra(MangaDownloadActivity.KEY_SIZE, di.pageSum);
+                        intent.putExtra(MangaDownloadActivity.KEY_GID, di.gid);
                         startActivity(intent);
                     }
                 });
             } else if (di.status == DownloadInfo.FAILED) {
                 pb.setVisibility(View.GONE);
                 String meg = getString(R.string.download_unsuccessfully) + (di.type == DownloadInfo.DETAIL_URL ? ""
-                        : ("  " + (di.lastStartIndex-1) + " / " + di.pageSum));
+                        : ("  " + (di.lastStartIndex) + " / " + di.pageSum));
                 info.setText(meg);
                 action.setImageResource(R.drawable.ic_action_start);
                 action.setOnClickListener(new View.OnClickListener() {
@@ -354,7 +361,7 @@ public class DownloadActivity extends Activity {
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
         
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_UPDATE);
+        filter.addAction(DownloadService.ACTION_UPDATE);
         registerReceiver(mReceiver, filter);
         
         longClickDialog = setLongClickDialog();
@@ -383,7 +390,7 @@ public class DownloadActivity extends Activity {
     private BroadcastReceiver mReceiver = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(ACTION_UPDATE))
+            if(intent.getAction().equals(DownloadService.ACTION_UPDATE))
                 mDlAdapter.notifyDataSetChanged();
         }
     };

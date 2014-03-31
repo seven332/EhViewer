@@ -43,6 +43,7 @@ import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.MangaDetail;
 import com.hippo.ehviewer.PageList;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.network.ShapreCookieStore;
 import com.hippo.ehviewer.service.DownloadService;
@@ -82,6 +83,8 @@ public class EhClient {
     
     public static final String UPDATE_URL = "http://ehviewersu.appsp0t.com/";
     public static final String UPDATE_API = "http://ehviewersu.appsp0t.com/API";
+    
+    public static final String UPDATE_URI_QINIU = "http://ehviewer.qiniudn.com/";
     
     public static String listHeader;
     public static String detailHeader;
@@ -1423,7 +1426,7 @@ public class EhClient {
                             if (curDownloadInfo != null) {
                                 curDownloadInfo.downloadSize = 0;
                                 curDownloadInfo.totalSize = totalSize/1024.0f;
-                                mService.notifyUpdate();
+                                mService.notifyUpdate(curDownloadInfo.gid, curDownloadInfo.lastStartIndex, ImageSet.STATE_LOADING);
                             }
                         }
 
@@ -1436,7 +1439,12 @@ public class EhClient {
                         }
 
                         @Override
-                        public void onDownloadOver(boolean ok, int eMesgId) {}
+                        public void onDownloadOver(boolean ok, int eMesgId) {
+                            if (ok)
+                                mService.notifyUpdate(curDownloadInfo.gid, curDownloadInfo.lastStartIndex, ImageSet.STATE_LOADED);
+                            else
+                                mService.notifyUpdate(curDownloadInfo.gid, curDownloadInfo.lastStartIndex, ImageSet.STATE_FAIL);
+                        }
                     });
                     while(mDownloadQueue.size() > 0){
                         synchronized (taskLock) {
@@ -1451,7 +1459,7 @@ public class EhClient {
                             mService.notifyUpdate();
                             if (parser.getFirstPagePageSumForDetail(curDownloadInfo.detailUrlStr)) { // Get page info
                                 curDownloadInfo.type = DownloadInfo.PAGE_URL;
-                                curDownloadInfo.lastStartIndex = 1;
+                                curDownloadInfo.lastStartIndex = 0;
                                 curDownloadInfo.pageSum = parser.getPageSum();
                                 curDownloadInfo.pageUrlStr = parser.getFirstPage();
                                 Download.notify(curDownloadInfo.gid);
@@ -1486,7 +1494,7 @@ public class EhClient {
                             curDownloadInfo.pageUrlStr = nextPage;
                             curDownloadInfo.lastStartIndex++;
                             Download.notify(String.valueOf(curDownloadInfo.gid));
-                            listener.onDownloadPage(curDownloadInfo.gid, curDownloadInfo.pageSum, curDownloadInfo.lastStartIndex-1);
+                            listener.onDownloadPage(curDownloadInfo.gid, curDownloadInfo.pageSum, curDownloadInfo.lastStartIndex);
                             mService.notifyUpdate();
                             
                             if (parser.getPageInfoSumForPage(curDownloadInfo.pageUrlStr)) {
@@ -1506,7 +1514,7 @@ public class EhClient {
                                 try {
                                     // TODO
                                     curControlor = imageDownloader.resetData(folder.toString(),
-                                            String.format("%05d", curDownloadInfo.lastStartIndex) + "." + Util.getExtension(imageUrlStr),
+                                            String.format("%05d", curDownloadInfo.lastStartIndex + 1) + "." + Util.getExtension(imageUrlStr),
                                             imageUrlStr);
                                     imageDownloader.run();
                                     

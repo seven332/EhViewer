@@ -144,6 +144,7 @@ public class MangaDetailActivity extends Activity {
                                 MangaActivity.class);
                         intent.putExtra("url", ((TextViewWithUrl) v).url);
                         intent.putExtra("gid", mangaDetail.gid);
+                        intent.putExtra("title", mangaDetail.title);
                         intent.putExtra("firstPage", index1 - 1);
                         intent.putExtra("pageSum", mangaDetail.pages);
                         startActivity(intent);
@@ -294,6 +295,7 @@ public class MangaDetailActivity extends Activity {
                 MangaActivity.class);
         intent.putExtra("url", mangaDetail.firstPage);
         intent.putExtra("gid", mangaDetail.gid);
+        intent.putExtra("title", mangaDetail.title);
         intent.putExtra("firstPage", 0);
         intent.putExtra("pageSum", mangaDetail.pages);
         startActivity(intent);
@@ -580,7 +582,7 @@ public class MangaDetailActivity extends Activity {
             if (mangaDetail.previewLists[0] != null) {
                 pageListMain.setVisibility(View.VISIBLE);
                 // preview num
-                    bottomPanel.setVisibility(View.GONE);
+                    bottomPanel.setVisibility(View.VISIBLE);
                 
                 previewNumText.setText(String.format("%d / %d",
                         1, mangaDetail.previewSum));

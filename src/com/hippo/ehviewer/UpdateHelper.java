@@ -22,9 +22,17 @@ import com.hippo.ehviewer.view.AlertButton;
 
 public class UpdateHelper {
     private static final String TAG = "UpdateHelper";
+    
+    // Update host
+    private static final int GOOGLE = 0;
+    private static final int QINIU = 1;
+    
     private Activity mActivity;
     private String updateFileName;
     private OnCheckUpdateListener listener;
+    
+    
+    private int downloadHost = QINIU;
     
     public UpdateHelper(Activity activity) {
         mActivity = activity;
@@ -47,7 +55,17 @@ public class UpdateHelper {
                         listener.onSuccess(pageContext);
                     
                     String newVer = items[0];
-                    final String url = EhClient.UPDATE_URL + items[1];
+                    
+                    String tempUrl = "";
+                    switch (downloadHost) {
+                    case GOOGLE:
+                        tempUrl = EhClient.UPDATE_URL + items[1];
+                        break;
+                    case QINIU:
+                        tempUrl = EhClient.UPDATE_URI_QINIU + Util.getFileForUrl(items[1]);
+                        break;
+                    }
+                    final String url = tempUrl;
                     final String name = url.substring(url.lastIndexOf('/')+1);
                     updateFileName = name;
                     String size = items[2];
