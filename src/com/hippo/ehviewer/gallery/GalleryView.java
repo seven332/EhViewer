@@ -594,6 +594,8 @@ public class GalleryView extends GLView {
         
         rect.set(rect.left - xOffset, rect.top - yOffset, rect.right + xOffset, rect.bottom + yOffset);
         
+        adjustPosition(curShowItem);
+        
         invalidate();
         return true;
     }
@@ -1007,7 +1009,7 @@ public class GalleryView extends GLView {
      * 
      * @param showItem
      */
-    public void adjustPosition(ShowItem showItem) {
+    private void adjustPosition(ShowItem showItem) {
         Rect rect = showItem.mRect;
         int showWidth = rect.width();
         int showHeight = rect.height();
