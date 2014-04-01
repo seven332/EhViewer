@@ -41,6 +41,7 @@ public class MangaDownloadActivity extends Activity {
     public static final String KEY_TITLE = "title";
     public static final String KEY_GID= "gid";
     public static final String KEY_SIZE = "size";
+    public static final String KEY_END_INDEX = "endIndex";
     
     private RelativeLayout mainView;
     private DownloadImageSet mDownloadImageSet;
@@ -87,10 +88,10 @@ public class MangaDownloadActivity extends Activity {
         String title = intent.getStringExtra(KEY_TITLE);
         String gid = intent.getStringExtra(KEY_GID);
         int size = intent.getIntExtra(KEY_SIZE, 1);
-        
+        int endIndex = intent.getIntExtra(KEY_END_INDEX, 0);
         GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);
         
-        mDownloadImageSet = new DownloadImageSet(this, gid, new File(Config.getDownloadPath(), title), size, 0, size, null);
+        mDownloadImageSet = new DownloadImageSet(this, gid, new File(Config.getDownloadPath(), title), size, 0, endIndex, null);
         GalleryView isv = new GalleryView(getApplicationContext(), mDownloadImageSet, 0);
         isv.setOnEdgeListener(new GalleryView.OnEdgeListener() {
             @Override
@@ -102,7 +103,6 @@ public class MangaDownloadActivity extends Activity {
                 Toast.makeText(MangaDownloadActivity.this, getString(R.string.first_page), Toast.LENGTH_SHORT).show();
             }
         });
-        
         glrv.setContentPane(isv);
     }
     
@@ -130,6 +130,7 @@ public class MangaDownloadActivity extends Activity {
     
     @Override
     public void onDestroy() {
+        super.onDestroy();
         mDownloadImageSet.unregisterReceiver();
     }
 }

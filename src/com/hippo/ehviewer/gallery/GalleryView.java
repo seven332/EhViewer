@@ -80,7 +80,10 @@ public class GalleryView extends GLView {
     private static final int LINE_COLOR = -1; // White
     private static final int TAP_AREA_TEXT_COLOR = -1; // White
     private static final int TAP_AREA_TEXT_SIZE = Ui.dp2pix(24);
-    private static final int TAP_AREA_MASK_COLOR = 0x88888888;
+    private static final int TAP_AREA_MASK_COLOR = 0x88000000;
+    
+    // TODO
+    private static final int MASK_COLOR = 0x88000000;
     
     private final GestureRecognizer mGestureRecognizer;
     private Context mContext;
@@ -167,7 +170,7 @@ public class GalleryView extends GLView {
         setState();
         
         mGestureRecognizer = new GestureRecognizer(mContext, new MyGestureListener());
-        setBackgroundColor(GalleryUtils.intColorToFloatARGBArray(Color.GRAY));
+        setBackgroundColor(GalleryUtils.intColorToFloatARGBArray(Color.BLACK));
         
         showItems = new ShowItem[TARGET_INDEX_SIZE];
         
@@ -263,6 +266,9 @@ public class GalleryView extends GLView {
         // Add mInit to make show the leftArea or other is not null
         if (mShowTapArea && mInit)
             drawTapArea(canvas);
+        
+        // Mask to reduce brightness
+        //canvas.fillRect(0, 0, mWidth, mHeight, MASK_COLOR);
     }
     
     private void resetSizePosition() {
@@ -727,6 +733,7 @@ public class GalleryView extends GLView {
                     || showItems[CUR_TARGET_INDEX] instanceof Text) {
                 if (mOnTapTextListener != null)
                     mOnTapTextListener.onTapText(mCurIndex);
+                return true;
             }
             
             if (isInArea(leftArea, (int)x, (int)y)) {
