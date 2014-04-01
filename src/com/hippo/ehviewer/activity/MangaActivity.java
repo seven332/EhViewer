@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,11 +74,12 @@ public class MangaActivity extends Activity {
     
     private File mFolder;
     private ImageSet mImageSet;
-    private Downloader mDownloader;
     
     // two element, first is web url, second is image url
-    private ArrayList<String[]> imagesUrl;
+    private List<String[]> imagesUrl;
     
+    // TODO use downloader to download image
+    // TODO combine it with MangaDownloadActivity
     private class MangaUrlGetListener implements EhClient.OnGetManagaUrlListener {
 
         @Override
@@ -94,18 +97,18 @@ public class MangaActivity extends Activity {
             
             String[] urls = imagesUrl.get(index);
             if (urls == null) {
-                imagesUrl.add(index, urls = new String[2]);
+                imagesUrl.set(index, urls = new String[2]);
             }
             urls[1] = imageUrl;
             if (index == firstPage - 1 || (index == firstPage && allPrePageUrl == null)) {
                 allPrePageUrl = prePageUrl;
                 if (index > 0)
-                    imagesUrl.add(index - 1, new String[]{allPrePageUrl, null});
+                    imagesUrl.set(index - 1, new String[]{allPrePageUrl, null});
             }
             if (index == lastPage) {
                 allNextPageUrl = nextPageUrl;
                 if (index < pageSum - 1)
-                    imagesUrl.add(index + 1, new String[]{allNextPageUrl, null});
+                    imagesUrl.set(index + 1, new String[]{allNextPageUrl, null});
             }
             if (index != firstPage - 1 && (index == firstPage && allPrePageUrl == null) && index != lastPage) {
                 Log.e(TAG, "targetPage != firstPage - 1 && (targetPage == firstPage && allPrePageUrl == null) && targetPage != lastPage");
@@ -113,8 +116,9 @@ public class MangaActivity extends Activity {
             
             final String imageName = String.format("%05d", index + 1) + "." + Util.getExtension(imageUrl);
             
+            final Downloader downloader = new Downloader();
             try {
-                mDownloader.resetData(mFolder.getPath(),
+                downloader.resetData(mFolder.getPath(),
                         imageName,
                         imageUrl);
             } catch (MalformedURLException e) {
@@ -131,8 +135,8 @@ public class MangaActivity extends Activity {
                         onGetImage(index, Downloader.COMPLETED, nextPageUrl);
                     } else {
                         
-                        mDownloader.run();
-                        onGetImage(index, mDownloader.getStatus(), nextPageUrl);
+                        downloader.run();
+                        onGetImage(index, downloader.getStatus(), nextPageUrl);
                     }
                 }
             }.start();
@@ -329,9 +333,6 @@ public class MangaActivity extends Activity {
         GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);
         glrv.setContentPane(isv);
         
-        // Start download
-        mDownloader = new Downloader();
-        
         String url = intent.getStringExtra("url");
         allNextPageUrl = url;
         allPrePageUrl = null;
@@ -341,8 +342,8 @@ public class MangaActivity extends Activity {
         if (firstPage == pageSum - 1)
             allNextPageUrl = "last";
         
-        imagesUrl = new ArrayList<String[]>(pageSum);
-        imagesUrl.add(lastPage, new String[]{url, null});
+        imagesUrl = new ArrayList<String[]>(Collections.nCopies(pageSum, (String[])null));
+        imagesUrl.set(lastPage, new String[]{url, null});
         
         // Get image and next page
         EhClient.getManagaUrl(url, lastPage, new MangaUrlGetListener());

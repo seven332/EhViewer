@@ -1334,6 +1334,8 @@ public class EhClient {
         public void onDownloadMangaAllOver();
     }
     
+    // TODO 下载前检查文件是否已存在
+    
     /****** DownloadMangaManager ******/
     public static class DownloadMangaManager {
         private static DownloadInfo curDownloadInfo = null;
@@ -1489,10 +1491,8 @@ public class EhClient {
                         boolean mComplete = true;
                         boolean mStop = false;
                         // Get page
-                        curDownloadInfo.lastStartIndex--;
                         while (!nextPage.equals(curDownloadInfo.pageUrlStr)) {
                             curDownloadInfo.pageUrlStr = nextPage;
-                            curDownloadInfo.lastStartIndex++;
                             Download.notify(String.valueOf(curDownloadInfo.gid));
                             listener.onDownloadPage(curDownloadInfo.gid, curDownloadInfo.pageSum, curDownloadInfo.lastStartIndex);
                             mService.notifyUpdate();
@@ -1543,6 +1543,7 @@ public class EhClient {
                                 mComplete = false;
                                 break;
                             }
+                            curDownloadInfo.lastStartIndex++;
                         }
                         if (mComplete) {
                             listener.onDownloadMangaOver(curDownloadInfo.gid, true);

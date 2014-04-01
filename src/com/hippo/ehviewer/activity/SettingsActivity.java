@@ -10,7 +10,7 @@ import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.MangaImage;
-import com.hippo.ehviewer.dialog.DialogBuilder;
+import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.preference.AutoListPreference;
 
 import android.annotation.SuppressLint;

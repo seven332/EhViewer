@@ -7,7 +7,6 @@ import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.MangaDetail;
 import com.hippo.ehviewer.PageList;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.dialog.DialogBuilder;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
@@ -18,6 +17,7 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.OlImageView;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
+import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.AutoWrapLayout.BaseLine;
 
 import android.app.Activity;

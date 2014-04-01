@@ -1,22 +1,28 @@
 package com.hippo.ehviewer.network;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
 
 import android.util.Log;
 
-import com.hippo.ehviewer.DownloadInfo;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Util;
 
+// TODO 添加断点续传
+// TODO 添加检查次磁盘空间
+
+/**
+ * Thread unsafe
+ * 
+ * @author Hippo
+ *
+ */
 public class Downloader implements Runnable {
     private static final String TAG = "Downloader";
     
@@ -41,6 +47,7 @@ public class Downloader implements Runnable {
     private Controlor mContorlor;
     
     private int mTotalSize;
+    // If support Content-Range, start from it
     private int mDownloadSize = 0;
     private int mRedirectionCount = 0;
     
@@ -99,7 +106,6 @@ public class Downloader implements Runnable {
                 try {
                     if (mContorlor.isStop())
                         throw new StopRequestException(STOP, "Download is stopped");
-                    mDownloadSize = 0;
                     mRedirectionCount = 0;
                     status = COMPLETED;
                     executeDownload();
@@ -131,7 +137,7 @@ public class Downloader implements Runnable {
                 Log.d(TAG, "Get file " + mUrl.toString());
                 conn = (HttpURLConnection)mUrl.openConnection();
                 conn.setInstanceFollowRedirects(false);
-                conn.addRequestProperty("Range", "bytes=0-"); // TODO
+                conn.addRequestProperty("Range", "bytes=" + mDownloadSize + "-"); // TODO
                 conn.setConnectTimeout(DEFAULT_TIMEOUT);
                 conn.setReadTimeout(DEFAULT_TIMEOUT);
                 conn.connect();
@@ -176,16 +182,38 @@ public class Downloader implements Runnable {
      */
     private void processResponseHeaders(HttpURLConnection conn) {
         mTotalSize = conn.getContentLength();
+        
+        // bytes 500-999/1234
         String range;
-        int index;
-        if (mTotalSize == -1
-                && (range = conn.getHeaderField("Content-Range")) != null
-                && (index = range.lastIndexOf('/')) != -1) {
-            try {
-                mTotalSize = Integer.parseInt(range.substring(index + 1));
-            } catch (Exception e) {
-                e.printStackTrace();
+        if ((range = conn.getHeaderField("Content-Range")) != null) { // Support Content-Range
+            boolean newNum = true;
+            int numIndex = 0;
+            int num = 0;
+            int length = range.length();
+            char ch;
+            for (int i = 0; i < length; i++) {
+                ch = range.charAt(i);
+                if (ch >= '0' && ch <= '9') {
+                    if (newNum) {
+                        newNum = false;
+                        num = ch - '0';
+                    } else
+                        num = num * 10 + ch - '0';
+                } else {
+                    if (!newNum) {
+                        newNum = true;
+                        if (numIndex == 0)
+                            mDownloadSize = num;
+                        else if (numIndex == 2)
+                            mTotalSize = num;
+                        numIndex++;
+                    }
+                }
             }
+            if (numIndex == 2)
+                mTotalSize = num;
+        } else { // Do not support Content-Range, restart download
+            mDownloadSize = 0;
         }
     }
     
@@ -194,7 +222,7 @@ public class Downloader implements Runnable {
      */
     private void transferData(HttpURLConnection conn) throws StopRequestException {
         InputStream in = null;
-        OutputStream out = null;
+        RandomAccessFile raf = null;
         File file = null;
         
         if (mContorlor.isStop())
@@ -210,29 +238,32 @@ public class Downloader implements Runnable {
 
             try {
                 file = new File(mPath, mFileName);
-                out = new FileOutputStream(file);
+                raf = new RandomAccessFile(file, "rw");
+                raf.seek(mDownloadSize);
             } catch (IOException e) {
                 throw new StopRequestException(STATUS_FILE_ERROR, e);
             }
 
             // Start streaming data, periodically watch for pause/cancel
             // commands and checking disk space as needed.
-            transferData(in, out);
+            transferData(in, raf);
         } finally {
             Util.closeStreamQuietly(in);
-            try {
-                if (out != null) out.flush();
-            } catch (IOException e) {
-            } finally {
-                Util.closeStreamQuietly(out);
-            }
+            if (raf != null)
+                try {
+                    raf.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
         }
     }
+    
     
     /**
      * Transfer as much data as possible from the HTTP response to the
      * destination file.
      */
+    @SuppressWarnings("unused")
     private void transferData(InputStream in, OutputStream out)
             throws StopRequestException {
         final byte data[] = new byte[BUFFER_SIZE];
@@ -243,6 +274,30 @@ public class Downloader implements Runnable {
             }
             
             writeDataToDestination(data, bytesRead, out);
+            mDownloadSize += bytesRead;
+            if (mListener != null)
+                mListener.onDownloadStatusUpdate(mDownloadSize, mTotalSize);
+
+            if (mContorlor.isStop())
+                throw new StopRequestException(STOP,
+                        "Download is stopped");
+        }
+    }
+    
+    /**
+     * Transfer as much data as possible from the HTTP response to the
+     * destination file.
+     */
+    private void transferData(InputStream in, RandomAccessFile raf)
+            throws StopRequestException {
+        final byte data[] = new byte[BUFFER_SIZE];
+        for (;;) {
+            int bytesRead = readFromResponse(data, in);
+            if (bytesRead == -1) { // success, end of stream already reached
+                return;
+            }
+            
+            writeDataToDestination(data, bytesRead, raf);
             mDownloadSize += bytesRead;
             if (mListener != null)
                 mListener.onDownloadStatusUpdate(mDownloadSize, mTotalSize);
@@ -270,6 +325,7 @@ public class Downloader implements Runnable {
         }
     }
     
+    
     /**
      * Write a data buffer to the destination file.
      * @param data buffer containing the data to write
@@ -279,6 +335,24 @@ public class Downloader implements Runnable {
             throws StopRequestException {
         try {
             out.write(data, 0, bytesRead);
+            return;
+        } catch (IOException ex) {
+            // TODO: better differentiate between DRM and disk failures
+            // TODO: check disk is full
+            throw new StopRequestException(STATUS_FILE_ERROR,
+                    "Failed to write data: " + ex);
+        }
+    }
+    
+    /**
+     * Write a data buffer to the destination file.
+     * @param data buffer containing the data to write
+     * @param bytesRead how many bytes to write from the buffer
+     */
+    private void writeDataToDestination(byte[] data, int bytesRead, RandomAccessFile raf)
+            throws StopRequestException {
+        try {
+            raf.write(data, 0, bytesRead);
             return;
         } catch (IOException ex) {
             // TODO: better differentiate between DRM and disk failures

@@ -27,7 +27,6 @@ import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.ImageLoadManager;
 import com.hippo.ehviewer.ListMangaDetail;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.dialog.DialogBuilder;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
@@ -37,6 +36,7 @@ import com.hippo.ehviewer.util.Favourite;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.view.OlImageView;
+import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.LoadImageView;
 
 public class FavouriteActivity extends Activity{

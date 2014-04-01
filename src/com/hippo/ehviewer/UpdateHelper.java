@@ -13,15 +13,16 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 
-import com.hippo.ehviewer.dialog.DialogBuilder;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhClient;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.AlertButton;
+import com.hippo.ehviewer.widget.DialogBuilder;
 
 public class UpdateHelper {
     private static final String TAG = "UpdateHelper";
+    private static final int NOTIFICATION_ID = -1;
     
     // Update host
     private static final int GOOGLE = 0;
@@ -141,10 +142,10 @@ public class UpdateHelper {
         
         @Override
         public void onDownloadStart(int totalSize) {
-            mBuilder.setContentTitle("正在下载更新")
+            mBuilder.setContentTitle("正在下载更新") // TODO
                     .setContentText(null)
                     .setProgress(0, 0, true).setOngoing(true);
-            mNotifyManager.notify(233, mBuilder.build());
+            mNotifyManager.notify(NOTIFICATION_ID, mBuilder.build());
         }
         @Override
         public void onDownloadStatusUpdate(
@@ -152,13 +153,13 @@ public class UpdateHelper {
             mBuilder.setContentTitle("正在下载更新")
                     .setContentText(String.format("%.2f / %.2f KB", downloadSize/1024.0f, totalSize/1024.0f))
                     .setProgress(totalSize, downloadSize, false).setOngoing(true);
-            mNotifyManager.notify(233, mBuilder.build());
+            mNotifyManager.notify(NOTIFICATION_ID, mBuilder.build());
             
         }
         @Override
         public void onDownloadOver(boolean ok, int eMesgId) {
             if (ok) {
-                mNotifyManager.cancel(233);
+                mNotifyManager.cancel(NOTIFICATION_ID);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.fromFile(new File(Config.getDownloadPath(), updateFileName)),
                         "application/vnd.android.package-archive");
@@ -166,8 +167,9 @@ public class UpdateHelper {
                 mActivity.getApplicationContext().startActivity(intent);
             } else {
                 mBuilder.setContentTitle("下载更新失败")
-                .setContentText(null)
-                .setProgress(0, 0, false).setOngoing(false);
+                        .setContentText(null)
+                        .setProgress(0, 0, false).setOngoing(false);
+                mNotifyManager.notify(NOTIFICATION_ID, mBuilder.build());
             }
         }
     }

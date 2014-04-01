@@ -1,10 +1,11 @@
 package com.hippo.ehviewer;
 
 import com.hippo.ehviewer.activity.MangaListActivity;
-import com.hippo.ehviewer.dialog.DialogBuilder;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.view.AlertButton;
+import com.hippo.ehviewer.widget.DialogBuilder;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
