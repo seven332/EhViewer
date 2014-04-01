@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -33,6 +34,7 @@ abstract class CanvasTexture extends UploadedTexture {
         setOpaque(false);
     }
 
+    @SuppressLint("WrongCall")
     @Override
     protected Bitmap onGetBitmap() {
         Bitmap bitmap = Bitmap.createBitmap(mWidth, mHeight, mConfig);
