@@ -1,6 +1,7 @@
 package com.hippo.ehviewer;
 
 import com.hippo.ehviewer.activity.MangaListActivity;
+import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.view.AlertButton;
@@ -26,8 +27,10 @@ import android.widget.RelativeLayout;
 public class StartActivity extends Activity {
     
     private static final int CHECK_WARING = 0;
-    private static final int CHECK_CRESH = 1;
-    private static final int CHECK_NETWORK = 2;
+    private static final int CHECK_NETWORK = 1;
+    private static final int CHECK_CRASH = 2;
+    private static final int CHECK_EXTERNAL_STORAGE = 3;
+    
     
     private String lastCrash;
     private boolean isAnimationOver = false;
@@ -65,7 +68,7 @@ public class StartActivity extends Activity {
                     public void onClick(View v) {
                         ((AlertButton)v).dialog.dismiss();
                         
-                        check(CHECK_CRESH);
+                        check(CHECK_CRASH);
                     }
                 })
                 .setNegativeButton(R.string.dailog_network_error_no,
@@ -95,7 +98,8 @@ public class StartActivity extends Activity {
                                             @Override
                                             public void onClick(View v) {
                                                 ((AlertButton)v).dialog.dismiss();
-                                                checkOver();
+                                                
+                                                check(CHECK_EXTERNAL_STORAGE);
                                             }
                                         }).show();
                         
@@ -113,7 +117,27 @@ public class StartActivity extends Activity {
                         ((AlertButton)v).dialog.dismiss();
                         lastCrash = null;
                         
+                        check(CHECK_EXTERNAL_STORAGE);
+                    }
+                }).create();
+    }
+    
+    private AlertDialog createNoSdCardDialog() {
+        return new DialogBuilder(this).setCancelable(false)
+                .setTitle("未检测到内置存储空间或 Sd Card")
+                .setMessage("未检测到内置存储空间或 Sd Card，您无法使用磁盘缓存与下载功能，用户体验会很糟，是否继续？")
+                .setPositiveButton("我不介意", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((AlertButton)v).dialog.dismiss();
+                        
                         checkOver();
+                    }
+                }).setNegativeButton("算了", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((AlertButton)v).dialog.dismiss();
+                        finish();
                     }
                 }).create();
     }
@@ -158,6 +182,15 @@ public class StartActivity extends Activity {
         check(CHECK_WARING);
     }
     
+    /**
+     * Order is
+     * 1. check waring
+     * 2. check network
+     * 3. check crash
+     * 4. check external storage
+     * 
+     * @param order
+     */
     private void check(int order) {
         switch (order) {
         case CHECK_WARING:
@@ -170,9 +203,14 @@ public class StartActivity extends Activity {
                 createNetworkErrorDialog().show();
                 return;
             }
-        case CHECK_CRESH:
+        case CHECK_CRASH:
             if ((lastCrash = Crash.getLastCrash()) != null) {
                 createSendCrashDialog().show();
+                return;
+            }
+        case CHECK_EXTERNAL_STORAGE:
+            if (!Cache.hasSdCard()) {
+                createNoSdCardDialog().show();
                 return;
             }
         }

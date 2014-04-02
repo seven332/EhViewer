@@ -75,7 +75,9 @@ public class ImageSet {
             throw new IllegalArgumentException("Folder is null or not directory");
         if (size < 0 || startIndex < 0
                 || startIndex > endIndex || endIndex > size)
-            throw new IllegalArgumentException("size or index value error");
+            throw new IllegalArgumentException("size or index value error, size = "
+                + size + ", startIndex = " + startIndex
+                + ", endIndex" + endIndex);
         
         mContext = context;
         mGid = gid;

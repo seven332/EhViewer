@@ -78,10 +78,11 @@ public class ImageLoadManager {
                 }
                 LoadImageView liv = curLoadTask.liv;
                 String key = liv.getKey();
-                Bitmap bitmap;
-                if ((bitmap = mMemoryCache.get(key)) == null) {
-                    bitmap = (Bitmap)mDiskCache.get(key, Util.BITMAP);
-                    if (bitmap != null)
+                Bitmap bitmap = null;
+                if (mMemoryCache == null || (bitmap = mMemoryCache.get(key)) == null) {
+                    if (mDiskCache != null
+                            && (bitmap = (Bitmap)mDiskCache.get(key, Util.BITMAP)) != null
+                            && mMemoryCache != null)
                         mMemoryCache.put(key, bitmap);
                 }
                 

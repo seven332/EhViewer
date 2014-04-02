@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hippo.ehviewer"
-    android:versionCode="11"
-    android:versionName="0.4.1" >
+    android:versionCode="12"
+    android:versionName="0.4.2" >
     
     <uses-sdk
         android:minSdkVersion="14"
