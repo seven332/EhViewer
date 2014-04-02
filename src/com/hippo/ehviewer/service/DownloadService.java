@@ -90,6 +90,7 @@ public class DownloadService extends Service {
                             .setProgress(pageSum, startIndex, false).setOngoing(true)
                             .setAutoCancel(false);
                     mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
+                    mNotifyManager.cancel(Integer.parseInt(id));
                 }
             }
             
@@ -116,12 +117,17 @@ public class DownloadService extends Service {
             
             @Override
             public void onDownloadPage(String id, int pageSum, int index) {
-                mBuilder.setContentTitle(getString(R.string.downloading)
-                        + " " + Download.get(id).title)
-                        .setContentText(index + " / " + pageSum)
-                        .setProgress(pageSum, index, false).setOngoing(true)
-                        .setAutoCancel(false);
-                mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
+                DownloadInfo di = Download.get(id);
+                if (di == null)
+                    mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
+                else {
+                    mBuilder.setContentTitle(getString(R.string.downloading)
+                            + " " + di.title)
+                            .setContentText(index + " / " + pageSum)
+                            .setProgress(pageSum, index, false).setOngoing(true)
+                            .setAutoCancel(false);
+                    mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
+                }
             }
 
             @Override
