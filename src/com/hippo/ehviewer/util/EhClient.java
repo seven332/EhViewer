@@ -957,7 +957,6 @@ public class EhClient {
                     mOK = 1;
                     md.firstPage = "pining";
                 } else if (errorMessageId == R.string.em_unknown_error) {
-                    mOK = 1;
                     errorMessageId = R.string.em_parser_error;
                 }
             }
