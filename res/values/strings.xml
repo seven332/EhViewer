@@ -116,7 +116,10 @@
     <string name="em_no_network">No network</string>
     <string name="em_can_not_reach">Your network can not reach e-hentai</string>
     <string name="em_no_network_2">No network ?</string>
-        <string name="em_request_error">Request error</string>
+    <string name="em_request_error">Request error</string>
+    <string name="em_unknown_host">Hostname can not be resolved</string>
+    <string name="em_unexpected_response_code">Unexpected response code : %d</string>
+    <string name="em_redirection_error">Too many redirects</string>
     <string name="em_host_error">Host error</string>
     
     <!-- Action -->

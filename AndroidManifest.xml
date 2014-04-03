@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     
     <application
-        android:name=".CrashApplication"
+        android:name=".AppContext"
         android:allowBackup="true"
         android:largeHeap="false"
         android:hardwareAccelerated="true"

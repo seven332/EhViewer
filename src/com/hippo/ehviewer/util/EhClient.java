@@ -1,42 +1,18 @@
 package com.hippo.ehviewer.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.StringWriter;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
-import java.net.Socket;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.http.conn.ConnectTimeoutException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import com.hippo.ehviewer.DiskCache;
+import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.DownloadInfo;
 import com.hippo.ehviewer.ListMangaDetail;
 import com.hippo.ehviewer.ListUrls;
@@ -45,34 +21,21 @@ import com.hippo.ehviewer.PageList;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.network.Downloader;
+import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.network.ShapreCookieStore;
 import com.hippo.ehviewer.service.DownloadService;
+import com.hippo.ehviewer.util.ThreadPool.Job;
+import com.hippo.ehviewer.util.ThreadPool.JobContext;
 
-import android.app.NotificationManager;
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Movie;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.util.LruCache;
 import android.util.Log;
 
 // TODO Stringbuffer to StringBuild
 
 public class EhClient {
-
+    
     private static final String TAG = "EhClient";
-    private static String defaultUserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36";
-    private static String userAgent = System.getProperty("http.agent", defaultUserAgent);
-    private static String HOST = "g.e-hentai.org";
+    
     private static String API_URL = "http://g.e-hentai.org/api.php";
     private static String loginUrl = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
     
@@ -82,94 +45,87 @@ public class EhClient {
     public static final String EXHENTAI_DETAIL_HEADER = "http://exhentai.org/g/";
     
     public static final String UPDATE_URL = "http://ehviewersu.appsp0t.com/";
-    public static final String UPDATE_API = "http://ehviewersu.appsp0t.com/API";
+    
     
     public static final String UPDATE_URI_QINIU = "http://ehviewer.qiniudn.com/";
+    
+    private static final int RETRY_TIMES = 5;
     
     public static String listHeader;
     public static String detailHeader;
     
-    private static boolean mLogin = false;
-    private static String name;
-    private static String logoutUrl;
-
-    private static final int TIMEOUT = 10 * 1000;
-    private static final int RETRY_TIMES = 5;
+    private boolean mLogin = false;
+    private String name;
+    private String logoutUrl;
     
-    private static Context mContext;
-    
-    private static boolean mInit = false;
-    private static boolean mHasLogin = false;
+    private Context mContext;
+    private ThreadPool mThreadPool;
 
     public interface OnCheckNetworkListener {
         public void onSuccess();
-        public void onFailure(int errorMessageId);
+        public void onFailure(String eMsg);
     }
     
     public interface OnCheckUpdateListener {
         public void onSuccess(String pageContext);
-        public void onFailure(int errorMessageId);
+        public void onFailure(String eMsg);
     }
     
     public interface OnLogoutListener {
         public void onSuccess();
-        public void onFailure(int errorMessageId);
+        public void onFailure(String eMsg);
     }
 
     public interface OnLoginListener {
         public void onSuccess();
-        public void onFailure(int errorMessageId);
+        public void onFailure(String eMsg);
     }
 
     public interface OnCheckLoginListener {
         public void onSuccess();
-        public void onFailure(int errorMessageId);
+        public void onFailure(String eMsg);
     }
 
     public interface OnGetManagaListListener {
         public void onSuccess(Object checkFlag, ArrayList<ListMangaDetail> lmdArray,
                 int indexPerPage, int maxPage);
-        public void onFailure(Object checkFlag, int errorMessageId);
+        public void onFailure(Object checkFlag, String eMsg);
     }
 
     public interface OnGetManagaDetailListener {
         public void onSuccess(MangaDetail md);
-        public void onFailure(int errorMessageId);
+        public void onFailure(String eMsg);
     }
 
     public interface OnGetPageListListener {
         public void onSuccess(Object checkFlag, PageList pageList);
-        public void onFailure(Object checkFlag, int errorMessageId);
+        public void onFailure(Object checkFlag, String eMsg);
     }
 
     public interface OnGetManagaUrlListener {
         public void onSuccess(Object checkFlag, String[] arg);
-        public void onFailure(Object checkFlag, int errorMessageId);
+        public void onFailure(Object checkFlag, String eMsg);
     }
 
     public interface OnGetImageListener {
         public void onSuccess(Object checkFlag, Object res);
-        public void onFailure(int errorMessageId);
+        public void onFailure(String eMsg);
     }
     
     public interface OnGetGalleryMetadataListener {
         public void onSuccess(Map<String, ListMangaDetail> lmds);
-        public void onFailure(int errorMessageId);
+        public void onFailure(String eMsg);
     }
     
     public interface OnGetGalleryTokensListener {
         public void onSuccess(Map<String, String> tokens);
-        public void onFailure(int errorMessageId);
+        public void onFailure(String eMsg);
     }
     
-
-    public static void init(Context context) {
-        if (mInit)
-            return;
-        mInit = true;
+    public EhClient(Context context) {
         mContext = context;
         
-        CookieManager cookieManager = new CookieManager(new ShapreCookieStore(context), CookiePolicy.ACCEPT_ALL);
+        CookieManager cookieManager = new CookieManager(new ShapreCookieStore(mContext), CookiePolicy.ACCEPT_ALL);
         CookieHandler.setDefault(cookieManager);
         
         if (Config.isExhentai()) {
@@ -179,16 +135,8 @@ public class EhClient {
             listHeader = E_HENTAI_LIST_HEADER;
             detailHeader = E_HENTAI_DETAIL_HEADER;
         }
-        DownloadMangaManager.init();
-    }
-    
-    /**
-     * Is init
-     * 
-     * @return True if init
-     */
-    public static boolean isInit() {
-        return mInit;
+        
+        mThreadPool = ((AppContext)(context.getApplicationContext())).getNetworkThreadPool();
     }
     
     public static void setHeader(boolean isExhentai) {
@@ -201,524 +149,193 @@ public class EhClient {
             detailHeader = E_HENTAI_DETAIL_HEADER;
         }
     }
-    
-    private static Handler checkUpdateHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            String pageContext = ((CheckUpdatePackage)msg.obj).pageContext;
-            OnCheckUpdateListener listener = ((CheckUpdatePackage)msg.obj).listener;
-            if (msg.arg1 == 0)
-                listener.onFailure(msg.what);
-            else
-                listener.onSuccess(pageContext);
-        };
-    };
-    
-    // Get Manga List
-    private static class CheckUpdatePackage {
-        public String pageContext;
-        public OnCheckUpdateListener listener;
 
-        public CheckUpdatePackage(String pageContext, OnCheckUpdateListener listener) {
-            this.pageContext = pageContext;
-            this.listener = listener;
-        }
-    }
-    
-    public static void checkUpdate(final OnCheckUpdateListener listener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int mOK = 0;
-                int emsgId = R.string.em_unknown_error;
-                StringBuffer sb = new StringBuffer();
-                HttpURLConnection conn = null;
-                try {
-                    URL url = new URL(UPDATE_API);
-                    conn = (HttpURLConnection) url.openConnection();
-                    conn.addRequestProperty("Accept-Encoding", "gzip");
-                    conn.setRequestProperty("User-Agent", userAgent);
-                    conn.setConnectTimeout(TIMEOUT);
-                    conn.setReadTimeout(TIMEOUT);
-                    conn.setDoOutput(true);
-                    conn.setDoInput(true);
-                    conn.setRequestMethod("POST");
-                    conn.setUseCaches(false);
-                    conn.setInstanceFollowRedirects(true);
-                    
-                    DataOutputStream out = new DataOutputStream(conn.getOutputStream());
-                    StringBuffer StrBuf = new StringBuffer();
-                    PackageManager pm = mContext.getPackageManager();
-                    PackageInfo pi = pm.getPackageInfo(mContext.getPackageName(), PackageManager.GET_ACTIVITIES);
-                    StrBuf.append("last\n").append(pi.versionName);
-                    out.writeBytes(StrBuf.toString());
-                    out.flush();
-                    out.close();
-
-                    conn.connect();
-                    
-                    getStringHUC(conn, sb);
-                    mOK = 1;
-                } catch (MalformedURLException e) {
-                    emsgId = R.string.em_url_format_error;
-                    e.printStackTrace();
-                } catch (ConnectTimeoutException e) {
-                    emsgId = R.string.em_timeout;
-                    e.printStackTrace();
-                } catch (UnknownHostException e) {
-                    emsgId = R.string.em_no_network_2;
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    emsgId = R.string.em_network_error;
-                    e.printStackTrace();
-                } catch (NameNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } finally {
-                    if (conn != null)
-                        conn.disconnect();
-                }
-                Message msg = new Message();
-                msg.what = emsgId;
-                msg.arg1 = mOK;
-                msg.obj = new CheckUpdatePackage(sb.toString(), listener);
-                checkUpdateHandler.sendMessage(msg);
-            }
-        }).start();
-    }
-    
-    private static Handler checkNetworkHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            OnCheckNetworkListener listener = (OnCheckNetworkListener) msg.obj;
-            if (msg.arg1 == 0)
-                listener.onFailure(msg.what);
-            else
-                listener.onSuccess();
-        };
-    };
-    
-    /**
-     * Is network available and can reach host
-     * @return Error message id or 0
-     */
-    public static void checkNetwork(final OnCheckNetworkListener listener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int mOK = 0;
-                int emsgId = R.string.em_unknown_error;
-                
-                ConnectivityManager cm = (ConnectivityManager)mContext
-                        .getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo mNetworkInfo = cm.getActiveNetworkInfo();
-                if (mNetworkInfo == null || !mNetworkInfo.isAvailable())
-                    emsgId = R.string.em_no_network;
-                else {
-                    Socket server = null;
-                    try {
-                        server = new Socket();
-                        InetSocketAddress address = new InetSocketAddress(HOST, 80);
-                        server.connect(address, 5000);
-                        mOK = 1;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        emsgId = R.string.em_can_not_reach;
-                    } finally {
-                        if (server != null)
-                            try {
-                                server.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                    }
-                }
-                Message msg = new Message();
-                msg.what = emsgId;
-                msg.arg1 = mOK;
-                msg.obj = listener;
-                checkNetworkHandler.sendMessage(msg);
-            }
-        }).start();
-    }
-    
-    private static void getStringHUC(HttpURLConnection conn, StringBuffer sb)
-            throws IOException {
-        InputStream is = conn.getInputStream();
-        String encoding = conn.getContentEncoding();
-        if (encoding != null && encoding.equals("gzip"))
-            is = new GZIPInputStream(is);
-        
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Util.copy(is, baos, 1024);
-        sb.append(baos.toString("utf-8"));
-        Util.closeStreamQuietly(is);
-        Util.closeStreamQuietly(baos);
-    }
-
-    private static int post(String urlStr, String[][] args, StringBuffer sb) {
-        HttpURLConnection conn = null;
-        int errorMessageId = R.string.em_unknown_error;
-
-        Log.d(TAG, "Post " + urlStr);
-        
-        URL url;
-        try {
-            url = new URL(urlStr);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.addRequestProperty("Accept-Encoding", "gzip");
-            conn.setRequestProperty("User-Agent", userAgent);
-            conn.setConnectTimeout(TIMEOUT);
-            conn.setReadTimeout(TIMEOUT);
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-            conn.setRequestMethod("POST");
-            conn.setUseCaches(false);
-            conn.setInstanceFollowRedirects(true);
-            conn.setRequestProperty("Content-Type",
-                    "application/x-www-form-urlencoded");
-
-            DataOutputStream out = new DataOutputStream(conn.getOutputStream());
-            StringBuffer StrBuf = new StringBuffer();
-            for (String[] arg : args) {
-                StrBuf.append(URLEncoder.encode(arg[0], "UTF-8"));
-                StrBuf.append("=");
-                StrBuf.append(URLEncoder.encode(arg[1], "UTF-8"));
-                StrBuf.append("&");
-            }
-            out.writeBytes(StrBuf.toString());
-            out.flush();
-            out.close();
-
-            conn.connect();
-
-            getStringHUC(conn, sb);
-        } catch (MalformedURLException e) {
-            errorMessageId = R.string.em_url_format_error;
-            e.printStackTrace();
-        } catch (ConnectTimeoutException e) {
-            errorMessageId = R.string.em_timeout;
-            e.printStackTrace();
-        } catch (UnknownHostException e) {
-            errorMessageId = R.string.em_no_network_2;
-            e.printStackTrace();
-        } catch (IOException e) {
-            errorMessageId = R.string.em_network_error;
-            e.printStackTrace();
-        } finally {
-            if (conn != null)
-                conn.disconnect();
-        }
-        return errorMessageId;
-    }
-    
-    private static int postJson(String urlStr, String arg, StringBuffer sb) {
-        HttpURLConnection conn = null;
-        int errorMessageId = R.string.em_unknown_error;
-
-        Log.d(TAG, "Post json " + urlStr);
-        
-        URL url;
-        
-        try {
-            url = new URL(urlStr);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.addRequestProperty("Accept-Encoding", "gzip");
-            conn.setRequestProperty("User-Agent", userAgent);
-            conn.setConnectTimeout(TIMEOUT);
-            conn.setReadTimeout(TIMEOUT);
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-            conn.setRequestMethod("POST");
-            conn.setUseCaches(false);
-            conn.setInstanceFollowRedirects(true);
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Accept", "application/json");
-
-            DataOutputStream out = new DataOutputStream(conn.getOutputStream());
-            out.writeBytes(arg);
-            out.flush();
-            out.close();
-
-            conn.connect();
-
-            getStringHUC(conn, sb);
-        } catch (MalformedURLException e) {
-            errorMessageId = R.string.em_url_format_error;
-            e.printStackTrace();
-        } catch (ConnectTimeoutException e) {
-            errorMessageId = R.string.em_timeout;
-            e.printStackTrace();
-        } catch (UnknownHostException e) {
-            errorMessageId = R.string.em_no_network_2;
-            e.printStackTrace();
-        } catch (IOException e) {
-            errorMessageId = R.string.em_network_error;
-            e.printStackTrace();
-        } finally {
-            if (conn != null)
-                conn.disconnect();
-        }
-        return errorMessageId;
-    }
-    
-    
-    /**
-     * 
-     * @param urlStr
-     * @param sb
-     *            StringBuffer sb should be empty
-     * @return
-     */
-    // TODO change stringbuffer to other
-    private static int get(String urlStr, StringBuffer sb) {
-        HttpURLConnection conn = null;
-        int errorMessageId = R.string.em_unknown_error;
-
-        Log.d(TAG, "Get " + urlStr);
-
-        try {
-            URL url = new URL(urlStr);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.addRequestProperty("Accept-Encoding", "gzip");
-            conn.setRequestProperty("User-Agent", userAgent);
-            conn.setConnectTimeout(TIMEOUT);
-            conn.setReadTimeout(TIMEOUT);
-            conn.connect();
-            getStringHUC(conn, sb);
-        } catch (MalformedURLException e) {
-            errorMessageId = R.string.em_url_format_error;
-            e.printStackTrace();
-        } catch (ConnectTimeoutException e) {
-            errorMessageId = R.string.em_timeout;
-            e.printStackTrace();
-        } catch (UnknownHostException e) {
-            errorMessageId = R.string.em_no_network_2;
-            e.printStackTrace();
-        } catch (IOException e) {
-            errorMessageId = R.string.em_network_error;
-            e.printStackTrace();
-        } finally {
-            if (conn != null)
-                conn.disconnect();
-        }
-        return errorMessageId;
-    }
-
-    public static boolean isLogin() {
+    public boolean isLogin() {
         return mLogin;
     }
 
-    public static String getUsername() {
+    public String getUsername() {
         return name;
     }
 
-    public static boolean hasLogin() {
-        return mHasLogin;
-    }
-
-    // Logout
-    private static Handler logoutHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            OnLogoutListener listener = (OnLogoutListener) msg.obj;
-            if (msg.arg1 == 0)
-                listener.onFailure(msg.what);
-            else
-                listener.onSuccess();
-        };
-    };
-
-    private static class LogoutRunnable implements Runnable {
-
-        private OnLogoutListener mListener;
-
-        public LogoutRunnable(OnLogoutListener listener) {
-            this.mListener = listener;
+    // Login
+    private class LoginRunnable implements Runnable {
+        
+        private String username;
+        private String password;
+        
+        public String eMsg;
+        public boolean ok;
+        
+        public LoginRunnable(String username, String password) {
+            this.username = username;
+            this.password = password;
         }
-
+        
         @Override
         public void run() {
-            int mOK = 0;
-            int errorMessageId;
-            StringBuffer sb = new StringBuffer();
-            errorMessageId = get(logoutUrl, sb);
-            if (sb.length() != 0) {
-                String pageContent = sb.toString();
-                if (pageContent.contains("<p>You are now logged out<br />")) {
-                    mLogin = false;
-                    mHasLogin = false;
-                    mOK = 1;
-                } else if (errorMessageId == R.string.em_unknown_error)
-                    errorMessageId = R.string.em_logout_error;
-            }
-            Message msg = new Message();
-            msg.what = errorMessageId;
-            msg.arg1 = mOK;
-            msg.obj = mListener;
-            logoutHandler.sendMessage(msg);
+            ok = false;
+            String[][] args = new String[][] {
+                    new String[] { "UserName", username },
+                    new String[] { "PassWord", password },
+                    new String[] { "submit", "Log+me+in" },
+                    new String[] { "CookieDate", "1" },
+                    new String[] { "temporary_https", "on" }};
+            HttpHelper hp = new HttpHelper(mContext);
+            String pageContent = hp.post(loginUrl, args);
+            if (pageContent != null) {
+                if (pageContent.contains("<p>You are now logged in as: "))
+                    ok = true;
+                else
+                    eMsg = mContext.getString(R.string.em_logout_error);
+            } else
+                eMsg = hp.getEMsg();
         }
     }
-
-    public static void logout(OnLogoutListener listener) {
-        new Thread(new LogoutRunnable(listener)).start();
-    }
-
-    // Login
-    private static Handler loginHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            OnLoginListener listener = (OnLoginListener) msg.obj;
-            if (msg.arg1 == 0)
-                listener.onFailure(msg.what);
-            else
-                listener.onSuccess();
-        };
-    };
-
-    public static void login(final String username, final String password,
+    
+    public void login(String username, String password,
             final OnLoginListener listener) {
-        new Thread(new Runnable() {
+        
+        final LoginRunnable task = new LoginRunnable(username, password);
+        mThreadPool.submit(new Job<Object>() {
             @Override
-            public void run() {
-                int mOK = 0;
-                int errorMessageId;
-
-                String[][] args = new String[][] {
-                        new String[] { "UserName", username },
-                        new String[] { "PassWord", password },
-                        new String[] { "submit", "Log+me+in" },
-                        new String[] { "CookieDate", "1" },
-                        new String[] { "temporary_https", "on" }, };
-                StringBuffer sb = new StringBuffer();
-                errorMessageId = post(loginUrl, args, sb);
-                if (sb.length() != 0) {
-                    String pageContent = sb.toString();
-                    if (pageContent.contains("<p>You are now logged in as: ")) {
-                        mOK = 1;
-                    } else if (errorMessageId == R.string.em_unknown_error)
-                        errorMessageId = R.string.em_login_error;
-                }
-                Message msg = new Message();
-                msg.what = errorMessageId;
-                msg.arg1 = mOK;
-                msg.obj = listener;
-                loginHandler.sendMessage(msg);
+            public Object run(JobContext jc) {
+                task.run();
+                return null;
             }
-        }).start();
-        mHasLogin = true;
+        }, new FutureListener<Object>() {
+            @Override
+            public void onFutureDone(Future<Object> future) {
+                if (task.ok) {
+                    if (listener != null)
+                        listener.onSuccess();
+                } else {
+                    if (listener != null)
+                        listener.onFailure(task.eMsg);
+                }
+            }
+        });
     }
 
     // Check login get info and logout url
-    private static Handler checkLoginHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            OnCheckLoginListener listener = (OnCheckLoginListener) msg.obj;
-            if (msg.arg1 == 0)
-                listener.onFailure(msg.what);
-            else
-                listener.onSuccess();
-        };
-    };
-
-    private static class checkLoginRunnable implements Runnable {
-        OnCheckLoginListener mListener;
-
-        public checkLoginRunnable(OnCheckLoginListener listener) {
-            mListener = listener;
-        }
+    private class checkLoginRunnable implements Runnable {
+        
+        public String eMsg;
+        public boolean ok;
 
         @Override
         public void run() {
-            int mOK = 0;
-            int errorMessageId;
-            StringBuffer sb = new StringBuffer();
-            errorMessageId = get(loginUrl, sb);
-            if (sb.length() != 0) {
-                String pageContent = sb.toString();
+            ok = false;
+            HttpHelper hp = new HttpHelper(mContext);
+            String pageContent = hp.get(loginUrl);
+            if (pageContent != null) {
                 Pattern p = Pattern
                         .compile("<p class=\"home\"><b>Logged in as:  <a href=\"[^<>\"]+\">([^<>]+)</a></b> \\( <a href=\"([^<>\"]+)\">Log Out</a> \\)</p>");
                 Matcher m = p.matcher(pageContent);
                 if (m.find() && m.groupCount() == 2) {
+                    ok = true;
                     mLogin = true;
                     name = m.group(1);
                     logoutUrl = StringEscapeUtils.unescapeHtml4(m.group(2));
-                    mOK = 1;
-                } else if (errorMessageId == R.string.em_unknown_error)
-                    errorMessageId = R.string.em_check_login_error;
+                } else
+                    eMsg = mContext.getString(R.string.em_check_login_error);
+            } else
+                eMsg = hp.getEMsg();
+        }
+    }
+
+    public void checkLogin(final OnCheckLoginListener listener) {
+        final checkLoginRunnable task = new checkLoginRunnable();
+        mThreadPool.submit(new Job<Object>() {
+            @Override
+            public Object run(JobContext jc) {
+                task.run();
+                return null;
             }
-            Message msg = new Message();
-            msg.what = errorMessageId;
-            msg.arg1 = mOK;
-            msg.obj = mListener;
-            checkLoginHandler.sendMessage(msg);
-        }
+        }, new FutureListener<Object>() {
+            @Override
+            public void onFutureDone(Future<Object> future) {
+                if (task.ok) {
+                    mLogin = true;
+                    if (listener != null)
+                        listener.onSuccess();
+                } else {
+                    if (listener != null)
+                        listener.onFailure(task.eMsg);
+                }
+            }
+        });
     }
+    
+    // Logout
+    private class LogoutRunnable implements Runnable {
 
-    public static void checkLogin(OnCheckLoginListener listener) {
-        new Thread(new checkLoginRunnable(listener)).start();
-        mHasLogin = true;
-    }
+        public String eMsg;
+        public boolean ok;
 
-    // Get Manga List
-    private static class GetManagaListPackage {
-        public Object checkFlag;
-        public ArrayList<ListMangaDetail> lmdArray;
-        public OnGetManagaListListener listener;
-        public int indexPerPage;
-        public int maxPage;
-
-        public GetManagaListPackage(Object checkFlag, ArrayList<ListMangaDetail> lmdArray,
-                int indexPerPage, int maxPage, OnGetManagaListListener listener) {
-            this.checkFlag = checkFlag;
-            this.lmdArray = lmdArray;
-            this.indexPerPage = indexPerPage;
-            this.maxPage = maxPage;
-            this.listener = listener;
-        }
-    }
-
-    private static Handler getManagaListHandler = new Handler() {
         @Override
-        public void handleMessage(Message msg) {
-            Object checkFlag = ((GetManagaListPackage) msg.obj).checkFlag;
-            OnGetManagaListListener listener = ((GetManagaListPackage) msg.obj).listener;
-            ArrayList<ListMangaDetail> lmdArray = ((GetManagaListPackage) msg.obj).lmdArray;
-            int indexPerPage = ((GetManagaListPackage) msg.obj).indexPerPage;
-            int maxPage = ((GetManagaListPackage) msg.obj).maxPage;
-            if (lmdArray == null)
-                listener.onFailure(checkFlag, msg.what);
-            else
-                listener.onSuccess(checkFlag, lmdArray, indexPerPage, maxPage);
-        };
-    };
+        public void run() {
+            ok = false;
+            HttpHelper hp = new HttpHelper(mContext);
+            String pageContent = hp.get(logoutUrl);
+            if (pageContent != null) {
+                if (pageContent.contains("<p>You are now logged out<br />"))
+                    ok = true;
+                else
+                    eMsg = mContext.getString(R.string.em_logout_error);
+            } else
+                eMsg = hp.getEMsg();
+        }
+    }
 
-    private static class GetManagaListRunnable implements Runnable {
+    public void logout(final OnLogoutListener listener) {
+        final LogoutRunnable task = new LogoutRunnable();
+        mThreadPool.submit(new Job<Object>() {
+            @Override
+            public Object run(JobContext jc) {
+                task.run();
+                return null;
+            }
+        }, new FutureListener<Object>() {
+            @Override
+            public void onFutureDone(Future<Object> future) {
+                if (task.ok) {
+                    mLogin = false;
+                    if (listener != null)
+                        listener.onSuccess();
+                } else {
+                    if (listener != null)
+                        listener.onFailure(task.eMsg);
+                }
+            }
+        });
+    }
+    
+    // Get Manga List
+    private class GetManagaListRunnable implements Runnable {
 
         private String url;
-        private Object checkFlag;
-        private OnGetManagaListListener listener;
+        
+        public ArrayList<ListMangaDetail> lmdArray;
+        public int indexPerPage;
+        public int maxPage;
+        public String eMsg;
 
-        public GetManagaListRunnable(String url, Object checkFlag,
-                OnGetManagaListListener listener) {
+        public GetManagaListRunnable(String url) {
             this.url = url;
-            this.checkFlag = checkFlag;
-            this.listener = listener;
         }
 
         @Override
         public void run() {
-            int errorMessageId = R.string.em_unknown_error;
-            ArrayList<ListMangaDetail> lmdArray = null;
-            int indexPerPage = 25;
-            int maxPage = 0;
+            lmdArray = null;
+            indexPerPage = 25;
+            maxPage = 0;
 
-            StringBuffer sb = new StringBuffer();
-            errorMessageId = get(url, sb);
+            HttpHelper hp = new HttpHelper(mContext);
+            String pageContent = hp.get(url);
 
-            if (sb.length() != 0) {
+            if (pageContent != null) {
                 boolean getPageCount = false;
-                String pageContent = sb.toString();
                 
                 // Get indexPerPage and maxPage
                 Pattern p = Pattern
@@ -742,8 +359,8 @@ public class EhClient {
                 } else if (pageContent.contains("JFIF")) { // sad panda
                     lmdArray = new ArrayList<ListMangaDetail>();
                     maxPage = -1;
-                } else if (errorMessageId == R.string.em_unknown_error)
-                    errorMessageId = R.string.em_parser_error;
+                } else
+                    eMsg = mContext.getString(R.string.em_parser_error);
 
                 // Get list
                 if (getPageCount) {
@@ -792,23 +409,36 @@ public class EhClient {
                         lmd.rating = getRate(m.group(9));
                         lmdArray.add(lmd);
                     }
-                    if (lmdArray == null
-                            && errorMessageId == R.string.em_unknown_error)
-                        errorMessageId = R.string.em_parser_error;
+                    if (lmdArray == null)
+                        eMsg = mContext.getString(R.string.em_parser_error);
                 }
-            }
-
-            Message msg = new Message();
-            msg.what = errorMessageId;
-            msg.obj = new GetManagaListPackage(checkFlag, lmdArray, indexPerPage, maxPage,
-                    listener);
-            getManagaListHandler.sendMessage(msg);
+            } else
+                eMsg = hp.getEMsg();
         }
     }
 
-    public static void getManagaList(String url, Object checkFlag,
-            OnGetManagaListListener listener) {
-        new Thread(new GetManagaListRunnable(url, checkFlag, listener)).start();
+    public void getManagaList(String url, final Object checkFlag,
+            final OnGetManagaListListener listener) {
+        
+        final GetManagaListRunnable task = new GetManagaListRunnable(url);
+        mThreadPool.submit(new Job<Object>() {
+            @Override
+            public Object run(JobContext jc) {
+                task.run();
+                return null;
+            }
+        }, new FutureListener<Object>() {
+            @Override
+            public void onFutureDone(Future<Object> future) {
+                if (task.lmdArray != null) {
+                    if (listener != null)
+                        listener.onSuccess(checkFlag, task.lmdArray, task.indexPerPage, task.maxPage);
+                } else {
+                    if (listener != null)
+                        listener.onFailure(checkFlag, task.eMsg);
+                }
+            }
+        });
     }
 
     private static int getType(String rawType) {
@@ -864,60 +494,32 @@ public class EhClient {
     }
 
     // Get Manga Detail
-    private static class GetManagaDetailPackage {
-        public int mOK;
-        public MangaDetail md;
-        public OnGetManagaDetailListener listener;
-
-        public GetManagaDetailPackage(int mOK, MangaDetail md,
-                OnGetManagaDetailListener listener) {
-            this.mOK = mOK;
-            this.md = md;
-            this.listener = listener;
-        }
-    }
-
-    private static Handler getManagaDetailHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            int mOK = ((GetManagaDetailPackage) msg.obj).mOK;
-            OnGetManagaDetailListener listener = ((GetManagaDetailPackage) msg.obj).listener;
-            MangaDetail md = ((GetManagaDetailPackage) msg.obj).md;
-            if (mOK == 0)
-                listener.onFailure(msg.what);
-            else
-                listener.onSuccess(md);
-        };
-    };
-
-    private static class GetManagaDetailRunnable implements Runnable {
+    private class GetManagaDetailRunnable implements Runnable {
 
         private String url;
         private MangaDetail md;
-        private OnGetManagaDetailListener listener;
+        
+        public boolean ok;
+        public String eMsg;
 
-        public GetManagaDetailRunnable(String url, MangaDetail md,
-                OnGetManagaDetailListener listener) {
+        public GetManagaDetailRunnable(String url, MangaDetail md) {
             this.url = url;
             this.md = md;
-            this.listener = listener;
         }
 
         @Override
         public void run() {
-            int mOK = 0;
-            int errorMessageId = R.string.em_unknown_error;
-            StringBuffer sb = new StringBuffer();
-            errorMessageId = get(url, sb);
-            if (sb.length() != 0) {
-                String pageContent = sb.toString();
+            ok = false;
+            HttpHelper hp = new HttpHelper(mContext);
+            String pageContent = hp.get(url);
+            if (pageContent != null) {
                 Pattern p = Pattern
-                        .compile("<div id=\"gdc\"><a href=\"[^<>\"]+\"><img[^<>]*alt=\"([\\w|\\-]+)\"[^<>]*/></a></div><div id=\"gdn\"><a href=\"[^<>\"]+\">([^<>]*)</a>.+Posted:</td><td[^<>]*>([\\w|\\-|\\s|:]+)</td></tr><tr><td[^<>]*>Images:</td><td[^<>]*>([\\d]+) @ ([\\w|\\.|\\s]+)</td></tr><tr><td[^<>]*>Resized:</td><td[^<>]*>([^<>]+)</td></tr><tr><td[^<>]*>Parent:</td><td[^<>]*>(?:<a[^<>]*>)?([^<>]+)(?:</a>)?</td></tr><tr><td[^<>]*>Visible:</td><td[^<>]*>([^<>]+)</td></tr><tr><td[^<>]*>Language:</td><td[^<>]*>([^<>]+)</td></tr>(?:</tbody>)?</table></div><div[^<>]*><table>(?:<tbody>)?<tr><td[^<>]*>Rating:</td><td[^<>]*><div[^<>]*style=\"([^<>]+)\"[^<>]*><img[^<>]*></div></td><td[^<>]*>\\(<span[^<>]*>([\\d]+)</span>\\)</td></tr><tr><td[^<>]*>([^<>]+)</td>.+<p class=\"ip\">Showing ([\\d|,]+) - ([\\d|,]+) of ([\\d|,]+) images</p>.+<div id=\"gdt\"><div[^<>]*>(?:<div[^<>]*>)?<a[^<>]*href=\"([^<>\"]+)\"[^<>]*>");
+                        .compile("<div id=\"gdc\"><a href=\"[^<>\"]+\"><img[^<>]*alt=\"([\\w|\\-]+)\"[^<>]*/></a></div><div id=\"gdn\"><a href=\"[^<>\"]+\">([^<>]+)</a>.+Posted:</td><td[^<>]*>([\\w|\\-|\\s|:]+)</td></tr><tr><td[^<>]*>Images:</td><td[^<>]*>([\\d]+) @ ([\\w|\\.|\\s]+)</td></tr><tr><td[^<>]*>Resized:</td><td[^<>]*>([^<>]+)</td></tr><tr><td[^<>]*>Parent:</td><td[^<>]*>(?:<a[^<>]*>)?([^<>]+)(?:</a>)?</td></tr><tr><td[^<>]*>Visible:</td><td[^<>]*>([^<>]+)</td></tr><tr><td[^<>]*>Language:</td><td[^<>]*>([^<>]+)</td></tr>(?:</tbody>)?</table></div><div[^<>]*><table>(?:<tbody>)?<tr><td[^<>]*>Rating:</td><td[^<>]*><div[^<>]*style=\"([^<>]+)\"[^<>]*><img[^<>]*></div></td><td[^<>]*>\\(<span[^<>]*>([\\d]+)</span>\\)</td></tr><tr><td[^<>]*>([^<>]+)</td>.+<p class=\"ip\">Showing ([\\d|,]+) - ([\\d|,]+) of ([\\d|,]+) images</p>.+<div id=\"gdt\"><div[^<>]*>(?:<div[^<>]*>)?<a[^<>]*href=\"([^<>\"]+)\"[^<>]*>");
                 Matcher m = p.matcher(pageContent);
                 String offensiveKeystring = "<p>(And if you choose to ignore this warning, you lose all rights to complain about it in the future.)</p>";
                 String piningKeyString = "<p>This gallery is pining for the fjords.</p>";
                 if (m.find()) {
-                    mOK = 1;
+                    ok = true;
                     md.category = getType(m.group(1));
                     md.uploader = m.group(2);
                     md.posted = m.group(3);
@@ -951,29 +553,43 @@ public class EhClient {
                     md.previewLists[0] = pageList;
                     md.tags = getTags(pageContent);
                 } else if (pageContent.contains(offensiveKeystring)) {
-                    mOK = 1;
+                    ok = true;
                     md.firstPage = "offensive";
                 } else if (pageContent.contains(piningKeyString)) {
-                    mOK = 1;
+                    ok = true;
                     md.firstPage = "pining";
-                } else if (errorMessageId == R.string.em_unknown_error) {
-                    errorMessageId = R.string.em_parser_error;
-                }
-            }
-            Message msg = new Message();
-            msg.what = errorMessageId;
-            msg.obj = new GetManagaDetailPackage(mOK, md, listener);
-            getManagaDetailHandler.sendMessage(msg);
+                } else
+                    eMsg = mContext.getString(R.string.em_parser_error);
+            } else
+                eMsg = hp.getEMsg();
         }
     }
 
-    public static void getManagaDetail(String url, MangaDetail md,
-            OnGetManagaDetailListener listener) {
-        new Thread(new GetManagaDetailRunnable(url, md, listener)).start();
+    public void getManagaDetail(String url, final MangaDetail md,
+            final OnGetManagaDetailListener listener) {
+        
+        final GetManagaDetailRunnable task = new GetManagaDetailRunnable(url, md);
+        mThreadPool.submit(new Job<Object>() {
+            @Override
+            public Object run(JobContext jc) {
+                task.run();
+                return null;
+            }
+        }, new FutureListener<Object>() {
+            @Override
+            public void onFutureDone(Future<Object> future) {
+                if (task.ok) {
+                    if (listener != null)
+                        listener.onSuccess(md);
+                } else {
+                    if (listener != null)
+                        listener.onFailure(task.eMsg);
+                }
+            }
+        });
     }
     
-    
-    public static String[][] getTags(String pageContent) {
+    public String[][] getTags(String pageContent) {
         ArrayList<String[]> list = new ArrayList<String[]>();
         Pattern p = Pattern
                 .compile("<tr><td[^<>]*>([^<>]+):</td><td>(?:<div[^<>]*><a[^<>]*>[^<>]*</a>[^<>]*<span[^<>]*>\\d+</span>[^<>]*</div>)+</td></tr>");
@@ -997,7 +613,7 @@ public class EhClient {
         return groups;
     }
     
-    public static String[] getTagGroup(String pageContent) {
+    public String[] getTagGroup(String pageContent) {
         ArrayList<String> list = new ArrayList<String>();
         Pattern p = Pattern.compile("<a[^<>]*>([^<>]+)</a>");
         Matcher m = p.matcher(pageContent);
@@ -1018,71 +634,56 @@ public class EhClient {
     }
     
     // Get page list
-    private static class GetPageListPackage {
-        public PageList pageList;
-        public Object checkFlag;
-        public OnGetPageListListener listener;
-
-        public GetPageListPackage(PageList pageList, Object checkFlag,
-                OnGetPageListListener listener) {
-            this.pageList = pageList;
-            this.checkFlag = checkFlag;
-            this.listener = listener;
-        }
-    }
-
-    private static Handler getPageListHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            OnGetPageListListener listener = ((GetPageListPackage) msg.obj).listener;
-            Object checkFlag = ((GetPageListPackage) msg.obj).checkFlag;
-            PageList pageList = ((GetPageListPackage) msg.obj).pageList;
-            if (pageList == null)
-                listener.onFailure(checkFlag, msg.what);
-            else
-                listener.onSuccess(checkFlag, pageList);
-        }
-    };
-
-    private static class GetPageListRunnable implements Runnable {
+    private class GetPageListRunnable implements Runnable {
         private String url;
-        private Object checkFlag;
-        private OnGetPageListListener listener;
+        
+        public PageList pageList;
+        public String eMsg;
 
-        public GetPageListRunnable(String url, Object checkFlag,
-                OnGetPageListListener listener) {
+        public GetPageListRunnable(String url) {
             this.url = url;
-            this.checkFlag = checkFlag;
-            this.listener = listener;
         }
 
         @Override
         public void run() {
-            int errorMessageId = R.string.em_unknown_error;
             PageList pageList = null;
-            StringBuffer sb = new StringBuffer();
-            errorMessageId = get(url, sb);
-            if (sb.length() != 0) {
-                String pageContent = sb.toString();
+            
+            HttpHelper hp = new HttpHelper(mContext);
+            String pageContent = hp.get(url);
+            if (pageContent != null) {
                 pageList = getPageList(pageContent);
-                if (pageList == null
-                        && errorMessageId == R.string.em_unknown_error)
-                    errorMessageId = R.string.em_parser_error;
-            }
-            Message msg = new Message();
-            msg.what = errorMessageId;
-            msg.obj = new GetPageListPackage(pageList, checkFlag, listener);
-            getPageListHandler.sendMessage(msg);
+                if (pageList == null)
+                    eMsg = mContext.getString(R.string.em_parser_error);
+            } else
+                eMsg = hp.getEMsg();
         }
     }
 
-    public static void getPageList(String url, Object checkFlag,
-            OnGetPageListListener listener) {
-        new Thread(new GetPageListRunnable(url, checkFlag, listener)).start();
-
+    public void getPageList(String url, final Object checkFlag,
+            final OnGetPageListListener listener) {
+        
+        final GetPageListRunnable task = new GetPageListRunnable(url);
+        mThreadPool.submit(new Job<Object>() {
+            @Override
+            public Object run(JobContext jc) {
+                task.run();
+                return null;
+            }
+        }, new FutureListener<Object>() {
+            @Override
+            public void onFutureDone(Future<Object> future) {
+                if (task.pageList != null) {
+                    if (listener != null)
+                        listener.onSuccess(checkFlag, task.pageList);
+                } else {
+                    if (listener != null)
+                        listener.onFailure(checkFlag, task.eMsg);
+                }
+            }
+        });
     }
 
-    private static PageList getPageList(String pageContent) {
+    private PageList getPageList(String pageContent) {
         PageList pageList = null;
         Pattern p = Pattern
                 .compile("<div[^<>]*class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*>");
@@ -1097,52 +698,23 @@ public class EhClient {
     }
 
     // Get Manga url and next page
-    private static class GetManagaUrlPackage {
-        public Object checkFlag;
-        public String[] strs;
-        public OnGetManagaUrlListener listener;
-
-        public GetManagaUrlPackage(Object checkFlag, String[] strs,
-                OnGetManagaUrlListener listener) {
-            this.checkFlag = checkFlag;
-            this.strs = strs;
-            this.listener = listener;
-        }
-    }
-
-    private static Handler getManagaUrlHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            Object checkFlag = ((GetManagaUrlPackage) msg.obj).checkFlag;
-            OnGetManagaUrlListener listener = ((GetManagaUrlPackage) msg.obj).listener;
-            String[] strs = ((GetManagaUrlPackage) msg.obj).strs;
-            if (strs == null)
-                listener.onFailure(checkFlag, msg.what);
-            else
-                listener.onSuccess(checkFlag, strs);
-        };
-    };
-
-    private static class GetManagaUrlRunnable implements Runnable {
+    private class GetManagaUrlRunnable implements Runnable {
         private String url;
-        private Object checkFlag;
-        private OnGetManagaUrlListener listener;
+        
+        public String[] strs;
+        public String eMsg;
 
-        public GetManagaUrlRunnable(String url, Object checkFlag,
-                OnGetManagaUrlListener listener) {
+        public GetManagaUrlRunnable(String url) {
             this.url = url;
-            this.checkFlag = checkFlag;
-            this.listener = listener;
         }
 
         @Override
         public void run() {
-            int errorMessageId = R.string.em_unknown_error;
             String[] strs = null;
-            StringBuffer sb = new StringBuffer();
-            errorMessageId = get(url, sb);
-            if (sb.length() != 0) {
-                String pageContent = sb.toString();
+            
+            HttpHelper hp = new HttpHelper(mContext);
+            String pageContent = hp.get(url);
+            if (pageContent != null) {
                 Pattern p = Pattern.compile("<a[^<>]*id=\"prev\"[^<>]*href=\"([^<>\"]+)\"><img[^<>]*/></a>.+<a[^<>]id=\"next\"[^<>]*href=\"([^<>\"]+)\"><img[^<>]*/></a>.+<img[^<>]*src=\"([^<>\"]+?)\"[^<>]*style=\"[^<>\"]*\"[^<>]*/>");
                         //.compile("<a[^<>]*href=\"([^<>\"]+?)\"[^<>]*><img[^<>]*src=\"([^<>\"]+?)\"[^<>]*style=\"[^<>\"]*\"[^<>]*/></a>");
                 Matcher m = p.matcher(pageContent);
@@ -1157,20 +729,36 @@ public class EhClient {
                     else
                         strs[1] = m.group(2);
                     strs[2] = StringEscapeUtils.unescapeHtml4(m.group(3));
-                } else if (errorMessageId == R.string.em_unknown_error)
-                    errorMessageId = R.string.em_parser_error;
-            }
-            Message msg = new Message();
-            msg.what = errorMessageId;
-            msg.obj = new GetManagaUrlPackage(checkFlag, strs, listener);
-            getManagaUrlHandler.sendMessage(msg);
+                } else
+                    eMsg = mContext.getString(R.string.em_parser_error);
+            } else
+                eMsg = hp.getEMsg();
         }
     }
 
-    public static void getManagaUrl(String url, Object checkFlag, OnGetManagaUrlListener listener) {
-        new Thread(new GetManagaUrlRunnable(url, checkFlag, listener)).start();
+    public void getManagaUrl(String url, final Object checkFlag, final OnGetManagaUrlListener listener) {
+        
+        final GetManagaUrlRunnable task = new GetManagaUrlRunnable(url);
+        mThreadPool.submit(new Job<Object>() {
+            @Override
+            public Object run(JobContext jc) {
+                task.run();
+                return null;
+            }
+        }, new FutureListener<Object>() {
+            @Override
+            public void onFutureDone(Future<Object> future) {
+                if (task.strs != null) {
+                    if (listener != null)
+                        listener.onSuccess(checkFlag, task.strs);
+                } else {
+                    if (listener != null)
+                        listener.onFailure(checkFlag, task.eMsg);
+                }
+            }
+        });
     }
-
+/*
     // Get image
     private static class GetImagePackage {
         public Object res;
@@ -1318,7 +906,7 @@ public class EhClient {
                 checkFlag, listener)).start();
     }
     
-    
+    */
     public interface OnDownloadMangaListener {
         public void onDownloadMangaStart(String id);
         public void onDownloadMangaStart(String id, int pageSum, int startIndex);
@@ -1336,27 +924,27 @@ public class EhClient {
     // TODO 下载前检查文件是否已存在
     
     /****** DownloadMangaManager ******/
-    public static class DownloadMangaManager {
-        private static DownloadInfo curDownloadInfo = null;
-        private static Downloader.Controlor curControlor = null;
+    public class DownloadMangaManager {
+        private DownloadInfo curDownloadInfo = null;
+        private Downloader.Controlor curControlor = null;
         
-        private static ArrayList<DownloadInfo> mDownloadQueue = new ArrayList<DownloadInfo>();
-        private static Object taskLock = new Object();
-        private static OnDownloadMangaListener listener;
-        private static DownloadService mService;
+        private ArrayList<DownloadInfo> mDownloadQueue = new ArrayList<DownloadInfo>();
+        private Object taskLock = new Object();
+        private OnDownloadMangaListener listener;
+        private DownloadService mService;
         
-        private static boolean mStop = false;
+        private boolean mStop = false;
         
-        public static void init() {
+        public void init() {
 
         }
         
-        public static void setOnDownloadMangaListener(OnDownloadMangaListener listener) {
-            DownloadMangaManager.listener = listener;
+        public void setOnDownloadMangaListener(OnDownloadMangaListener listener) {
+            this.listener = listener;
         }
         
-        public static void setDownloadService(DownloadService service) {
-            DownloadMangaManager.mService = service;
+        public void setDownloadService(DownloadService service) {
+            this.mService = service;
         }
         
         /**
@@ -1366,7 +954,7 @@ public class EhClient {
          * @param foldName
          * @return
          */
-        public static void add(DownloadInfo di) {
+        public void add(DownloadInfo di) {
             synchronized (taskLock) {
                 mDownloadQueue.add(di);
                 if (curDownloadInfo == null && mDownloadQueue.size() != 0)
@@ -1374,7 +962,7 @@ public class EhClient {
             }
         }
         
-        public static void cancel(String id) {
+        public void cancel(String id) {
             synchronized (taskLock) {
                 DownloadInfo di = Download.get(id);
                 if (di != null) {
@@ -1390,7 +978,7 @@ public class EhClient {
             }
         }
         
-        public static String getCurDownloadId() {
+        public String getCurDownloadId() {
             synchronized (taskLock) {
                 if (curDownloadInfo == null)
                     return null;
@@ -1399,7 +987,7 @@ public class EhClient {
             }
         }
         
-        public static boolean isWaiting(String str) {
+        public boolean isWaiting(String str) {
             synchronized (taskLock) {
                 for (DownloadInfo di : mDownloadQueue) {
                     if (di.gid.equals(str))
@@ -1409,7 +997,7 @@ public class EhClient {
             return false;
         }
         
-        private static void start(){
+        private void start(){
             if(curDownloadInfo != null){
                 return;
             }
@@ -1564,14 +1152,14 @@ public class EhClient {
             }).start();
         }
         
-        public static boolean isEmpty() {
+        public boolean isEmpty() {
             synchronized (taskLock) {
                 return curDownloadInfo == null;
             }
         }
     }
     
-    private static class Parser {
+    private class Parser {
         
         private int errorMegId;
         
@@ -1603,23 +1191,10 @@ public class EhClient {
             return imageUrlStr;
         }
         
-        public String getPageContent(String urlStr) {
-            int retry_times = 0;
-            StringBuffer sb = new StringBuffer();
-            
-            // Get content
-            while (sb.length() == 0) {
-                errorMegId = get(urlStr, sb);
-                retry_times++;
-                if (retry_times > RETRY_TIMES)
-                    break;
-            }
-            return sb.toString();
-        }
-        
         public boolean getFirstPagePageSumForDetail(String detailUrlStr) {
-            String pageContent = getPageContent(detailUrlStr);
-            if (pageContent.length() == 0)
+            HttpHelper hp = new HttpHelper(mContext);
+            String pageContent = hp.get(detailUrlStr);
+            if (pageContent == null)
                 return false;
             
             Pattern p = Pattern.compile("<p class=\"ip\">Showing [\\d|,]+ - [\\d|,]+ of ([\\d|,]+) images</p>.+<div id=\"gdt\"><div[^<>]*>(?:<div[^<>]*>)?<a[^<>]*href=\"([^<>\"]+)\"[^<>]*>");
@@ -1639,8 +1214,9 @@ public class EhClient {
          * @return True if get
          */
         public boolean getPageInfoSumForPage(String pageUrlStr) {
-            String pageContent = getPageContent(pageUrlStr);
-            if (pageContent.length() == 0)
+            HttpHelper hp = new HttpHelper(mContext);
+            String pageContent = hp.get(pageUrlStr);
+            if (pageContent == null)
                 return false;
             
             Pattern p = Pattern.compile("<a[^<>]*id=\"prev\"[^<>]*href=\"([^<>\"]+)\"><img[^<>]*/></a>.+<a[^<>]id=\"next\"[^<>]*href=\"([^<>\"]+)\"><img[^<>]*/></a>.+<img[^<>]*src=\"([^<>\"]+?)\"[^<>]*style=\"[^<>\"]*\"[^<>]*/>");
@@ -1657,6 +1233,8 @@ public class EhClient {
     
     
     /********** Use E-hentai API ************/
+    
+    /*
     private static class GetGalleryMetadataPackage {
         public Map<String, ListMangaDetail> lmds;
         public OnGetGalleryMetadataListener listener;
@@ -1825,14 +1403,14 @@ public class EhClient {
     }
     
     
+    */
     
-    
-    
+    /*
     // TODO this api does not work !!!!!!
     private static void getGalleryTokens(String gid, String token, String[] pages,
             OnGetGalleryMetadataListener listener) {
         new Thread(new GetGalleryTokensRunnable(gid, token, pages,
                 listener)).start();
-    }
+    }*/
     
 }

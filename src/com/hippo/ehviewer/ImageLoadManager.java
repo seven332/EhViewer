@@ -127,7 +127,7 @@ public class ImageLoadManager {
             @Override
             public void run() {
                 LoadTask loadTask;
-                HttpHelper httpHelper = new HttpHelper();
+                HttpHelper httpHelper = new HttpHelper(mContext);
                 while (true) {
                     synchronized (ImageDownloadManager.this) {
                         if (mDownloadTask.isEmpty()) {
@@ -144,7 +144,7 @@ public class ImageLoadManager {
                     Message msg = new Message();
                     msg.obj = loadTask;
                     if (bitmap == null) {
-                        Log.d(TAG, mContext.getString(httpHelper.getLastEMsgId()));
+                        Log.d(TAG, httpHelper.getEMsg());
                         loadTask.bitmap = Ui.BITMAP_TOUCH;
                         liv.setState(LoadImageView.FAIL);
                         liv.setOnClickListener(ImageLoadManager.this);

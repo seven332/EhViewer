@@ -112,6 +112,9 @@
     <string name="em_can_not_reach">你所在的网络无法连接到 e-hentai</string>
     <string name="em_no_network_2">无网络连接？</string>
     <string name="em_request_error">请求错误</string>
+    <string name="em_unknown_host">无法解析主机</string>
+    <string name="em_unexpected_response_code">非预期的响应码：%d</string>
+    <string name="em_redirection_error">太多重定向</string>
     <string name="em_host_error">主机错误</string>
     
     <!-- Action -->

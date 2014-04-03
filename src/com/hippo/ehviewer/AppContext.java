@@ -9,17 +9,22 @@ import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.EhClient;
 import com.hippo.ehviewer.util.Favourite;
 import com.hippo.ehviewer.util.Tag;
+import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.Ui;
 
 import android.app.Application;
 import android.util.Log;
 import android.widget.Toast;
 
-public class CrashApplication extends Application implements UncaughtExceptionHandler {
+public class AppContext extends Application implements UncaughtExceptionHandler {
     
     private static final String TAG = "CrashApplication";
     
     private Thread.UncaughtExceptionHandler mDefaultHandler;
+    
+    private EhClient mEhClient;
+    
+    private ThreadPool mNetworkThreadPool;
     
     @Override
     public void onCreate() {
@@ -33,11 +38,21 @@ public class CrashApplication extends Application implements UncaughtExceptionHa
         Tag.init(this);
         Crash.init(this);
         BeautifyScreen.init(this);
-        EhClient.init(this);
+        mEhClient = new EhClient(this);
         Download.init(this);
+        
+        mNetworkThreadPool = new ThreadPool(1, 2);
         
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
+    }
+    
+    public EhClient getEhClient() {
+        return mEhClient;
+    }
+    
+    public ThreadPool getNetworkThreadPool() {
+        return mNetworkThreadPool;
     }
     
     @Override

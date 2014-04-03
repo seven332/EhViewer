@@ -14,15 +14,23 @@ import android.util.Log;
 import android.view.View;
 
 import com.hippo.ehviewer.network.Downloader;
+import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhClient;
+import com.hippo.ehviewer.util.Future;
+import com.hippo.ehviewer.util.FutureListener;
+import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.ThreadPool.Job;
+import com.hippo.ehviewer.util.ThreadPool.JobContext;
 import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 
 public class UpdateHelper {
     private static final String TAG = "UpdateHelper";
     private static final int NOTIFICATION_ID = -1;
+    
+    public static final String UPDATE_API = "http://ehviewersu.appsp0t.com/API";
     
     // Update host
     private static final int GOOGLE = 0;
@@ -45,6 +53,26 @@ public class UpdateHelper {
     }
     
     public void checkUpdate() {
+        ThreadPool threadPool = ((AppContext)(mActivity.getApplicationContext())).getNetworkThreadPool();
+        threadPool.submit(new Job<String>() {
+            @Override
+            public String run(JobContext jc) {
+                
+                HttpHelper hp = new HttpHelper(mActivity.getApplicationContext());
+                hp.post(UPDATE_API, "")
+                return null;
+            }
+        }, new FutureListener<String>() {
+
+            @Override
+            public void onFutureDone(Future<String> future) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+        });
+        
+        
         EhClient.checkUpdate(new EhClient.OnCheckUpdateListener() {
             @Override
             public void onSuccess(String pageContext) {
