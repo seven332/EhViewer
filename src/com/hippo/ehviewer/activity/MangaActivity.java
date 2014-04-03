@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.R.id;
@@ -23,8 +24,6 @@ import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhClient;
 import com.hippo.ehviewer.util.Util;
-import com.hippo.ehviewer.view.MangaImage;
-import com.hippo.ehviewer.view.MangaViewPager;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -50,6 +49,9 @@ import android.widget.Toast;
 
 public class MangaActivity extends Activity {
     private String TAG = "MangaActivity";
+    
+    private AppContext mAppContext;
+    private EhClient mEhClient;
     
     private RelativeLayout mainView;
     
@@ -122,7 +124,7 @@ public class MangaActivity extends Activity {
                         imageName,
                         imageUrl);
             } catch (MalformedURLException e) {
-                onFailure(checkFlag, R.string.em_url_format_error);
+                onFailure(checkFlag, mAppContext.getString(R.string.em_url_format_error));
                 e.printStackTrace();
             }
             
@@ -176,13 +178,13 @@ public class MangaActivity extends Activity {
                 getPrePage = false;
             } else if (index == lastPage && nextPageUrl != "last") { // If get nextPage
                 lastPage++;
-                EhClient.getManagaUrl(nextPageUrl, lastPage, new MangaUrlGetListener());
+                mEhClient.getManagaUrl(nextPageUrl, lastPage, new MangaUrlGetListener());
                 mImageSet.changeState(lastPage, ImageSet.STATE_LOADING);
             }
         }
         
         @Override
-        public void onFailure(Object checkFlag, int errorMessageId) {
+        public void onFailure(Object checkFlag, String eMsg) {
             if (stopFlag) {
                 Log.d(TAG, "Stop by stop flag");
                 return;
@@ -190,15 +192,15 @@ public class MangaActivity extends Activity {
             retryTimes++;
             int targetPage = (Integer)checkFlag;
             if (retryTimes < maxRetry) {
-                Toast.makeText(MangaActivity.this, getString(errorMessageId) + " " + 
+                Toast.makeText(MangaActivity.this, eMsg + " " + 
                         String.format(getString(R.string.em_retry_times), retryTimes), 
                         Toast.LENGTH_SHORT).show();
                 if (targetPage == firstPage - 1 &&
                         getPrePage == true) {
-                    EhClient.getManagaUrl(allPrePageUrl, targetPage, new MangaUrlGetListener());
+                    mEhClient.getManagaUrl(allPrePageUrl, targetPage, new MangaUrlGetListener());
                 }
                 else {
-                    EhClient.getManagaUrl(allNextPageUrl, targetPage, new MangaUrlGetListener());
+                    mEhClient.getManagaUrl(allNextPageUrl, targetPage, new MangaUrlGetListener());
                 }
                 mImageSet.changeState(targetPage, ImageSet.STATE_LOADING);
             } else {
@@ -255,6 +257,9 @@ public class MangaActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gl_root_group);
         
+        mAppContext = (AppContext)getApplication();
+        mEhClient = mAppContext.getEhClient();
+        
         int screenOri = Config.getScreenOriMode();
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);
@@ -307,7 +312,7 @@ public class MangaActivity extends Activity {
                 if (mStop && index == lastPage) {
                     mStop = false;
                     MangaUrlGetListener listener = new MangaUrlGetListener();
-                    EhClient.getManagaUrl(allNextPageUrl, lastPage, listener);
+                    mEhClient.getManagaUrl(allNextPageUrl, lastPage, listener);
                     mImageSet.changeState(lastPage, ImageSet.STATE_LOADING);
                 }
             }
@@ -317,7 +322,7 @@ public class MangaActivity extends Activity {
             public void onScrollPage(int index) {
                 if (mStop && index == lastPage) {
                     mStop = false;
-                    EhClient.getManagaUrl(allNextPageUrl, lastPage, new MangaUrlGetListener());
+                    mEhClient.getManagaUrl(allNextPageUrl, lastPage, new MangaUrlGetListener());
                     mImageSet.changeState(lastPage, ImageSet.STATE_LOADING);
                 }
                 
@@ -325,7 +330,7 @@ public class MangaActivity extends Activity {
                         && !allPrePageUrl.equals("first")
                         && index == firstPage - 1) {
                     getPrePage = true;
-                    EhClient.getManagaUrl(allPrePageUrl, firstPage - 1, new MangaUrlGetListener());
+                    mEhClient.getManagaUrl(allPrePageUrl, firstPage - 1, new MangaUrlGetListener());
                     mImageSet.changeState(firstPage - 1, ImageSet.STATE_LOADING);
                 }
             }
@@ -346,7 +351,7 @@ public class MangaActivity extends Activity {
         imagesUrl.set(lastPage, new String[]{url, null});
         
         // Get image and next page
-        EhClient.getManagaUrl(url, lastPage, new MangaUrlGetListener());
+        mEhClient.getManagaUrl(url, lastPage, new MangaUrlGetListener());
         mImageSet.changeState(lastPage, ImageSet.STATE_LOADING);
     }
     

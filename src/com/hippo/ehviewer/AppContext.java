@@ -29,8 +29,10 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(TAG, "onCreate");
+        
         // TODO Init everything
+        mNetworkThreadPool = new ThreadPool(1, 2);
+        
         Config.init(this);
         Ui.init(this);
         Cache.init(this);
@@ -40,8 +42,6 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         BeautifyScreen.init(this);
         mEhClient = new EhClient(this);
         Download.init(this);
-        
-        mNetworkThreadPool = new ThreadPool(1, 2);
         
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);

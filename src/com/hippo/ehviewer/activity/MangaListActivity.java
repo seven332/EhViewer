@@ -2,6 +2,7 @@ package com.hippo.ehviewer.activity;
 
 import java.util.ArrayList;
 
+import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.ImageLoadManager;
 import com.hippo.ehviewer.ListMangaDetail;
@@ -73,6 +74,9 @@ import android.widget.Toast;
 public class MangaListActivity extends Activity {
     @SuppressWarnings("unused")
     private static String TAG = "MangaListActivity";
+    
+    private AppContext mAppContext;
+    private EhClient mEhClient;
     
     private DrawerLayout drawer;
     private GetPaddingRelativeLayout mainLayout;
@@ -161,17 +165,17 @@ public class MangaListActivity extends Activity {
                         waitloginView.setVisibility(View.VISIBLE);
                         String username = ((EditText) loginDialog.findViewById(R.id.username)).getText().toString();
                         String password = ((EditText) loginDialog.findViewById(R.id.password)).getText().toString();
-                        EhClient.login(username, password, new EhClient.OnLoginListener() {
+                        mEhClient.login(username, password, new EhClient.OnLoginListener() {
                             @Override
                             public void onSuccess() {
                                 checkLogin(true);
                             }
                             @Override
-                            public void onFailure(int errorMessageId) {
+                            public void onFailure(String eMsg) {
                                 loginButton.setVisibility(View.VISIBLE);
                                 waitloginView.setVisibility(View.GONE);
                                 Toast.makeText(MangaListActivity.this,
-                                        getString(errorMessageId),
+                                        eMsg,
                                         Toast.LENGTH_SHORT).show();
                                 loginDialog.show();
                             }
@@ -828,7 +832,7 @@ public class MangaListActivity extends Activity {
         }
 
         @Override
-        public void onFailure(Object checkFlag, int errorMessageId) {
+        public void onFailure(Object checkFlag, String eMsg) {
             MangaListGetPackage getPackage = (MangaListGetPackage)checkFlag;
             if (getPackage.stamp != lastGetStamp)
                 return;
@@ -847,7 +851,7 @@ public class MangaListActivity extends Activity {
                 pullListView.setVisibility(View.GONE);
                 freshButton.setVisibility(View.VISIBLE);
                 Toast.makeText(MangaListActivity.this,
-                        getString(errorMessageId), Toast.LENGTH_SHORT)
+                        eMsg, Toast.LENGTH_SHORT)
                         .show();
                 lmdArray.clear();
                 gmlAdapter.notifyDataSetChanged();
@@ -856,7 +860,7 @@ public class MangaListActivity extends Activity {
                 freshButton.setVisibility(View.GONE);
                 Toast.makeText(
                         MangaListActivity.this,
-                        getString(errorMessageId),
+                        eMsg,
                         Toast.LENGTH_SHORT).show();
             }
             
@@ -1023,6 +1027,9 @@ public class MangaListActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list);
+        
+        mAppContext = (AppContext)getApplication();
+        mEhClient = mAppContext.getEhClient();
         
         int screenOri = Config.getScreenOriMode();
         if (screenOri != getRequestedOrientation())
@@ -1210,7 +1217,7 @@ public class MangaListActivity extends Activity {
                     listUrls.setPage(0);
                 else
                     listUrls.setPage(firstPage - 1);
-                EhClient.getManagaList(listUrls.getUrl(),
+                mEhClient.getManagaList(listUrls.getUrl(),
                         new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, false, title),
                         new MangaListGetListener());
             }
@@ -1220,7 +1227,7 @@ public class MangaListActivity extends Activity {
                 mListFirst = true;
                 mLoadListOver = false;
                 RefreshPackage rp = (RefreshPackage)obj;
-                EhClient.getManagaList(rp.listUrls.getUrl(),
+                mEhClient.getManagaList(rp.listUrls.getUrl(),
                         new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()),
                                 rp.listUrls, true, rp.title),
                         new MangaListGetListener());
@@ -1234,7 +1241,7 @@ public class MangaListActivity extends Activity {
                 if (listUrls.setPage(lastPage + 1)) {
                     mListFirst = true;
                     mLoadListOver = false;
-                    EhClient.getManagaList(listUrls.getUrl(),
+                    mEhClient.getManagaList(listUrls.getUrl(),
                             new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, false, title),
                             new MangaListGetListener());
                 }
@@ -1414,7 +1421,7 @@ public class MangaListActivity extends Activity {
             loginButton.setVisibility(View.GONE);
             checkLoginButton.setVisibility(View.GONE);
             waitloginView.setVisibility(View.VISIBLE);
-            EhClient.checkLogin(new EhClient.OnCheckLoginListener() {
+            mEhClient.checkLogin(new EhClient.OnCheckLoginListener() {
                 @Override
                 public void onSuccess() {
                     Config.loginNow();
@@ -1425,7 +1432,7 @@ public class MangaListActivity extends Activity {
                 }
 
                 @Override
-                public void onFailure(int errorMessageId) {
+                public void onFailure(String eMsg) {
                     loginButton.setVisibility(View.VISIBLE);
                     if (Config.isLogin())
                         checkLoginButton.setVisibility(View.VISIBLE);
@@ -1433,7 +1440,7 @@ public class MangaListActivity extends Activity {
                         checkLoginButton.setVisibility(View.GONE);
                     waitloginView.setVisibility(View.GONE);
                     Toast.makeText(MangaListActivity.this,
-                            getString(errorMessageId),
+                            eMsg,
                             Toast.LENGTH_SHORT).show();
                 }
             });
@@ -1441,11 +1448,11 @@ public class MangaListActivity extends Activity {
     }
     
     private void layoutDrawRight() {
-        if (EhClient.isLogin()) { // If have login
+        if (mEhClient.isLogin()) { // If have login
             loginView.setVisibility(View.GONE);
             loginOverView.setVisibility(View.VISIBLE);
             
-            usernameText.setText(EhClient.getUsername());
+            usernameText.setText(mEhClient.getUsername());
             logoutButton.setVisibility(View.VISIBLE);
             waitlogoutView.setVisibility(View.GONE);
         } else {
@@ -1498,7 +1505,7 @@ public class MangaListActivity extends Activity {
     public void buttonLogout(View paramView) {
         logoutButton.setVisibility(View.GONE);
         waitlogoutView.setVisibility(View.VISIBLE);
-        EhClient.logout(new EhClient.OnLogoutListener() {
+        mEhClient.logout(new EhClient.OnLogoutListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(MangaListActivity.this,
@@ -1509,9 +1516,9 @@ public class MangaListActivity extends Activity {
             }
 
             @Override
-            public void onFailure(int errorMessageId) {
+            public void onFailure(String eMsg) {
                 Toast.makeText(MangaListActivity.this,
-                        getString(errorMessageId),
+                        eMsg,
                         Toast.LENGTH_SHORT).show();
                 logoutButton.setVisibility(View.VISIBLE);
                 waitlogoutView.setVisibility(View.GONE);

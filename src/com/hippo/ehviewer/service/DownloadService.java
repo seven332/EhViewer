@@ -3,11 +3,13 @@ package com.hippo.ehviewer.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.DownloadInfo;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.activity.DownloadActivity;
 import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.EhClient;
+import com.hippo.ehviewer.util.EhClient.DownloadMangaManager;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -27,16 +29,20 @@ public class DownloadService extends Service {
     public static final String KEY_INDEX = "index";
     public static final String KEY_STATE = "state";
     
+    private AppContext mAppContext;
+    
     private ServiceBinder mBinder = null;
     
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
     
+    private DownloadMangaManager downloadMangaManager;
+    
     @Override  
     public void onCreate() {  
         super.onCreate();
         
-        Log.d(TAG, "Service onCreate");
+        mAppContext = (AppContext)getApplication();
         
         mBinder = new ServiceBinder();
         mNotifyManager = (NotificationManager)
@@ -48,8 +54,10 @@ public class DownloadService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);  
         mBuilder.setContentIntent(pendingIntent);  
         
-        EhClient.DownloadMangaManager.setDownloadService(this);
-        EhClient.DownloadMangaManager.setOnDownloadMangaListener(new EhClient.OnDownloadMangaListener() {
+        downloadMangaManager = mAppContext.getEhClient().new DownloadMangaManager();
+        
+        downloadMangaManager.setDownloadService(this);
+        downloadMangaManager.setOnDownloadMangaListener(new EhClient.OnDownloadMangaListener() {
             @Override
             public void onDownloadMangaAllStart() {
                 mBuilder.setContentTitle(getString(R.string.start_download_task))
@@ -206,11 +214,11 @@ public class DownloadService extends Service {
                 || di.status == DownloadInfo.WAITING)
             return;
         di.status = DownloadInfo.WAITING;
-        EhClient.DownloadMangaManager.add(di);
+        downloadMangaManager.add(di);
     }
     
     public void cancel(String id) {
-        EhClient.DownloadMangaManager.cancel(id);
+        downloadMangaManager.cancel(id);
     }
     
     public void notifyUpdate(){

@@ -4,15 +4,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.DownloadImageSet;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.EhClient;
 import com.hippo.ehviewer.util.Util;
-import com.hippo.ehviewer.view.MangaImage;
-import com.hippo.ehviewer.view.MangaViewPager;
 
 import android.R.color;
 import android.annotation.SuppressLint;
@@ -45,16 +45,6 @@ public class MangaDownloadActivity extends Activity {
     
     private RelativeLayout mainView;
     private DownloadImageSet mDownloadImageSet;
-    
-    class ImageLoadPackage {
-        public MangaImage mMangaImage;
-        public Bitmap mBitmap;
-        
-        public ImageLoadPackage(MangaImage mangaImage, Bitmap bitmap) {
-            mMangaImage = mangaImage;
-            mBitmap = bitmap;
-        }
-    }
     
     @SuppressLint("NewApi")
     @Override

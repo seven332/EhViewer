@@ -9,7 +9,6 @@ import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Util;
-import com.hippo.ehviewer.view.MangaImage;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.preference.AutoListPreference;
 
@@ -153,30 +152,6 @@ public class SettingsActivity extends PreferenceActivity {
                         return true;
                     }
                 });
-
-        pageScalingListPre = (AutoListPreference) screen
-                .findPreference(PAGE_SCALING);
-        pageScalingListPre
-                .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(Preference preference,
-                            Object newValue) {
-                        MangaImage.setMode(Integer.parseInt((String) newValue));
-                        return true;
-                    }
-                });
-        
-        /*
-        final AutoListPreference start_position =
-                (AutoListPreference)screen.findPreference(START_POSITION);
-        start_position.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                    Object newValue) {
-                // TODO Auto-generated method stub
-                return false;
-            }
-        });*/
         
         
         // Connect me !
@@ -251,8 +226,8 @@ public class SettingsActivity extends PreferenceActivity {
                                 update.setEnabled(true);
                             }
                             @Override
-                            public void onFailure(int eMesgId) {
-                                update.setSummary(eMesgId);
+                            public void onFailure(String eMsg) {
+                                update.setSummary(eMsg);
                                 update.setEnabled(true);
                             }
                         }).checkUpdate();

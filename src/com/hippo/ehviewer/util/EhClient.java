@@ -1,18 +1,28 @@
 package com.hippo.ehviewer.util;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.http.conn.ConnectTimeoutException;
 
 import com.hippo.ehviewer.AppContext;
+import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.DownloadInfo;
 import com.hippo.ehviewer.ListMangaDetail;
 import com.hippo.ehviewer.ListUrls;
@@ -28,6 +38,12 @@ import com.hippo.ehviewer.util.ThreadPool.Job;
 import com.hippo.ehviewer.util.ThreadPool.JobContext;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Movie;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.util.LruCache;
 import android.util.Log;
 
 // TODO Stringbuffer to StringBuild
@@ -58,18 +74,8 @@ public class EhClient {
     private String name;
     private String logoutUrl;
     
-    private Context mContext;
+    private AppContext mAppContext;
     private ThreadPool mThreadPool;
-
-    public interface OnCheckNetworkListener {
-        public void onSuccess();
-        public void onFailure(String eMsg);
-    }
-    
-    public interface OnCheckUpdateListener {
-        public void onSuccess(String pageContext);
-        public void onFailure(String eMsg);
-    }
     
     public interface OnLogoutListener {
         public void onSuccess();
@@ -109,7 +115,7 @@ public class EhClient {
 
     public interface OnGetImageListener {
         public void onSuccess(Object checkFlag, Object res);
-        public void onFailure(String eMsg);
+        public void onFailure(int eMsgId);
     }
     
     public interface OnGetGalleryMetadataListener {
@@ -122,10 +128,10 @@ public class EhClient {
         public void onFailure(String eMsg);
     }
     
-    public EhClient(Context context) {
-        mContext = context;
+    public EhClient(AppContext appContext) {
+        mAppContext = appContext;
         
-        CookieManager cookieManager = new CookieManager(new ShapreCookieStore(mContext), CookiePolicy.ACCEPT_ALL);
+        CookieManager cookieManager = new CookieManager(new ShapreCookieStore(mAppContext), CookiePolicy.ACCEPT_ALL);
         CookieHandler.setDefault(cookieManager);
         
         if (Config.isExhentai()) {
@@ -136,7 +142,7 @@ public class EhClient {
             detailHeader = E_HENTAI_DETAIL_HEADER;
         }
         
-        mThreadPool = ((AppContext)(context.getApplicationContext())).getNetworkThreadPool();
+        mThreadPool = mAppContext.getNetworkThreadPool();
     }
     
     public static void setHeader(boolean isExhentai) {
@@ -181,13 +187,13 @@ public class EhClient {
                     new String[] { "submit", "Log+me+in" },
                     new String[] { "CookieDate", "1" },
                     new String[] { "temporary_https", "on" }};
-            HttpHelper hp = new HttpHelper(mContext);
+            HttpHelper hp = new HttpHelper(mAppContext);
             String pageContent = hp.post(loginUrl, args);
             if (pageContent != null) {
                 if (pageContent.contains("<p>You are now logged in as: "))
                     ok = true;
                 else
-                    eMsg = mContext.getString(R.string.em_logout_error);
+                    eMsg = mAppContext.getString(R.string.em_logout_error);
             } else
                 eMsg = hp.getEMsg();
         }
@@ -226,7 +232,7 @@ public class EhClient {
         @Override
         public void run() {
             ok = false;
-            HttpHelper hp = new HttpHelper(mContext);
+            HttpHelper hp = new HttpHelper(mAppContext);
             String pageContent = hp.get(loginUrl);
             if (pageContent != null) {
                 Pattern p = Pattern
@@ -238,7 +244,7 @@ public class EhClient {
                     name = m.group(1);
                     logoutUrl = StringEscapeUtils.unescapeHtml4(m.group(2));
                 } else
-                    eMsg = mContext.getString(R.string.em_check_login_error);
+                    eMsg = mAppContext.getString(R.string.em_check_login_error);
             } else
                 eMsg = hp.getEMsg();
         }
@@ -249,12 +255,18 @@ public class EhClient {
         mThreadPool.submit(new Job<Object>() {
             @Override
             public Object run(JobContext jc) {
+                
+                Log.d(TAG, Thread.currentThread().toString());
+                
                 task.run();
                 return null;
             }
         }, new FutureListener<Object>() {
             @Override
             public void onFutureDone(Future<Object> future) {
+                
+                Log.d(TAG, Thread.currentThread().toString());
+                
                 if (task.ok) {
                     mLogin = true;
                     if (listener != null)
@@ -276,13 +288,13 @@ public class EhClient {
         @Override
         public void run() {
             ok = false;
-            HttpHelper hp = new HttpHelper(mContext);
+            HttpHelper hp = new HttpHelper(mAppContext);
             String pageContent = hp.get(logoutUrl);
             if (pageContent != null) {
                 if (pageContent.contains("<p>You are now logged out<br />"))
                     ok = true;
                 else
-                    eMsg = mContext.getString(R.string.em_logout_error);
+                    eMsg = mAppContext.getString(R.string.em_logout_error);
             } else
                 eMsg = hp.getEMsg();
         }
@@ -331,7 +343,7 @@ public class EhClient {
             indexPerPage = 25;
             maxPage = 0;
 
-            HttpHelper hp = new HttpHelper(mContext);
+            HttpHelper hp = new HttpHelper(mAppContext);
             String pageContent = hp.get(url);
 
             if (pageContent != null) {
@@ -360,7 +372,7 @@ public class EhClient {
                     lmdArray = new ArrayList<ListMangaDetail>();
                     maxPage = -1;
                 } else
-                    eMsg = mContext.getString(R.string.em_parser_error);
+                    eMsg = mAppContext.getString(R.string.em_parser_error);
 
                 // Get list
                 if (getPageCount) {
@@ -410,7 +422,7 @@ public class EhClient {
                         lmdArray.add(lmd);
                     }
                     if (lmdArray == null)
-                        eMsg = mContext.getString(R.string.em_parser_error);
+                        eMsg = mAppContext.getString(R.string.em_parser_error);
                 }
             } else
                 eMsg = hp.getEMsg();
@@ -510,7 +522,7 @@ public class EhClient {
         @Override
         public void run() {
             ok = false;
-            HttpHelper hp = new HttpHelper(mContext);
+            HttpHelper hp = new HttpHelper(mAppContext);
             String pageContent = hp.get(url);
             if (pageContent != null) {
                 Pattern p = Pattern
@@ -536,7 +548,7 @@ public class EhClient {
                     if (matcher.find())
                         md.rating = matcher.group(1);
                     else
-                        md.rating = mContext.getString(R.string.detail_not_rated);
+                        md.rating = mAppContext.getString(R.string.detail_not_rated);
                     md.firstPage = m.group(16);
                     md.previewPerPage = Integer.parseInt(m.group(14).replace(",",
                             ""))
@@ -559,7 +571,7 @@ public class EhClient {
                     ok = true;
                     md.firstPage = "pining";
                 } else
-                    eMsg = mContext.getString(R.string.em_parser_error);
+                    eMsg = mAppContext.getString(R.string.em_parser_error);
             } else
                 eMsg = hp.getEMsg();
         }
@@ -648,12 +660,12 @@ public class EhClient {
         public void run() {
             PageList pageList = null;
             
-            HttpHelper hp = new HttpHelper(mContext);
+            HttpHelper hp = new HttpHelper(mAppContext);
             String pageContent = hp.get(url);
             if (pageContent != null) {
                 pageList = getPageList(pageContent);
                 if (pageList == null)
-                    eMsg = mContext.getString(R.string.em_parser_error);
+                    eMsg = mAppContext.getString(R.string.em_parser_error);
             } else
                 eMsg = hp.getEMsg();
         }
@@ -712,7 +724,7 @@ public class EhClient {
         public void run() {
             String[] strs = null;
             
-            HttpHelper hp = new HttpHelper(mContext);
+            HttpHelper hp = new HttpHelper(mAppContext);
             String pageContent = hp.get(url);
             if (pageContent != null) {
                 Pattern p = Pattern.compile("<a[^<>]*id=\"prev\"[^<>]*href=\"([^<>\"]+)\"><img[^<>]*/></a>.+<a[^<>]id=\"next\"[^<>]*href=\"([^<>\"]+)\"><img[^<>]*/></a>.+<img[^<>]*src=\"([^<>\"]+?)\"[^<>]*style=\"[^<>\"]*\"[^<>]*/>");
@@ -730,7 +742,7 @@ public class EhClient {
                         strs[1] = m.group(2);
                     strs[2] = StringEscapeUtils.unescapeHtml4(m.group(3));
                 } else
-                    eMsg = mContext.getString(R.string.em_parser_error);
+                    eMsg = mAppContext.getString(R.string.em_parser_error);
             } else
                 eMsg = hp.getEMsg();
         }
@@ -758,7 +770,7 @@ public class EhClient {
             }
         });
     }
-/*
+
     // Get image
     private static class GetImagePackage {
         public Object res;
@@ -834,8 +846,8 @@ public class EhClient {
                 try {
                     URL url = new URL(this.url);
                     conn = (HttpURLConnection) url.openConnection();
-                    conn.setConnectTimeout(TIMEOUT);
-                    conn.setRequestProperty("User-Agent", userAgent);
+                    conn.setConnectTimeout(5 * 1000);
+                    conn.setReadTimeout(5 * 1000);
                     conn.connect();
                     InputStream is = conn.getInputStream();
                     if (diskCache != null) {
@@ -906,7 +918,7 @@ public class EhClient {
                 checkFlag, listener)).start();
     }
     
-    */
+    
     public interface OnDownloadMangaListener {
         public void onDownloadMangaStart(String id);
         public void onDownloadMangaStart(String id, int pageSum, int startIndex);
@@ -1192,7 +1204,7 @@ public class EhClient {
         }
         
         public boolean getFirstPagePageSumForDetail(String detailUrlStr) {
-            HttpHelper hp = new HttpHelper(mContext);
+            HttpHelper hp = new HttpHelper(mAppContext);
             String pageContent = hp.get(detailUrlStr);
             if (pageContent == null)
                 return false;
@@ -1214,7 +1226,7 @@ public class EhClient {
          * @return True if get
          */
         public boolean getPageInfoSumForPage(String pageUrlStr) {
-            HttpHelper hp = new HttpHelper(mContext);
+            HttpHelper hp = new HttpHelper(mAppContext);
             String pageContent = hp.get(pageUrlStr);
             if (pageContent == null)
                 return false;

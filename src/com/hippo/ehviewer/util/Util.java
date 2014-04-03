@@ -21,7 +21,6 @@ import java.util.zip.InflaterInputStream;
 import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.view.OlImageView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

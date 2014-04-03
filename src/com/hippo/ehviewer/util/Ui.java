@@ -2,7 +2,6 @@ package com.hippo.ehviewer.util;
 
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.view.OlImageView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -80,7 +79,6 @@ public class Ui {
         
         BITMAP_LAUNCH = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.ic_launcher), null, opt);
         BITMAP_TOUCH = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.ic_touch), null, opt);
-        OlImageView.setDefaultImage(BITMAP_LAUNCH, BITMAP_TOUCH);
     }
     
     /**

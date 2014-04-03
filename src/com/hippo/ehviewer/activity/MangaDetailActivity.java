@@ -2,6 +2,7 @@ package com.hippo.ehviewer.activity;
 
 import java.util.ArrayList;
 
+import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.MangaDetail;
@@ -57,6 +58,9 @@ import android.widget.Toast;
 public class MangaDetailActivity extends Activity {
 
     private static final String TAG = "MangaDetailActivity";
+    
+    private AppContext mAppContext;
+    private EhClient mEhClient;
     
     private String url;
     //private String gid;
@@ -220,12 +224,12 @@ public class MangaDetailActivity extends Activity {
         }
 
         @Override
-        public void onFailure(int errorMessageId) {
+        public void onFailure(String eMsg) {
             // Delete progress bar
             waitPb.setVisibility(View.GONE);
             // Show refresh button
             Toast.makeText(MangaDetailActivity.this,
-                    getString(errorMessageId), Toast.LENGTH_SHORT).show();
+                    eMsg, Toast.LENGTH_SHORT).show();
 
             refeshButton.setVisibility(View.VISIBLE);
         }
@@ -235,7 +239,7 @@ public class MangaDetailActivity extends Activity {
     // Refresh
     public void buttonRefresh(View v) {
         MangaDetailGetListener listener = new MangaDetailGetListener();
-        EhClient.getManagaDetail(url, mangaDetail, listener);
+        mEhClient.getManagaDetail(url, mangaDetail, listener);
         // Delete refresh button
         refeshButton.setVisibility(View.GONE);
         // Add progressBar
@@ -261,7 +265,7 @@ public class MangaDetailActivity extends Activity {
         }
 
         MangaDetailGetListener listener = new MangaDetailGetListener();
-        EhClient.getManagaDetail(url, mangaDetail, listener);
+        mEhClient.getManagaDetail(url, mangaDetail, listener);
         // Delete offensiveView
         mangaDetailOffensive.setVisibility(View.GONE);
         // Add progressBar
@@ -282,7 +286,7 @@ public class MangaDetailActivity extends Activity {
         }
 
         MangaDetailGetListener listener = new MangaDetailGetListener();
-        EhClient.getManagaDetail(url, mangaDetail, listener);
+        mEhClient.getManagaDetail(url, mangaDetail, listener);
         // Delete offensiveView
         mangaDetailOffensive.setVisibility(View.GONE);
         // Add progressBar
@@ -387,7 +391,7 @@ public class MangaDetailActivity extends Activity {
                 tempUrl += "/";
             tempUrl += "?p=" + curPage;
 
-            EhClient.getPageList(tempUrl, curPage,
+            mEhClient.getPageList(tempUrl, curPage,
                     new EhClient.OnGetPageListListener() {
                         @Override
                         public void onSuccess(Object checkFlag, PageList pageList) {
@@ -397,11 +401,11 @@ public class MangaDetailActivity extends Activity {
                         }
 
                         @Override
-                        public void onFailure(Object checkFlag, int errorMessageId) {
+                        public void onFailure(Object checkFlag, String eMsg) {
                             int page = (Integer)checkFlag;
                             if (page == curPage) {
                                 Toast.makeText(MangaDetailActivity.this,
-                                        getString(errorMessageId), Toast.LENGTH_SHORT).show();
+                                        eMsg, Toast.LENGTH_SHORT).show();
                                 waitPageList.setVisibility(View.GONE);
                                 previewRefreshButton.setVisibility(View.VISIBLE);    
                             }
@@ -439,6 +443,9 @@ public class MangaDetailActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail);
+        
+        mAppContext = (AppContext)getApplication();
+        mEhClient = mAppContext.getEhClient();
         
         int screenOri = Config.getScreenOriMode();
         if (screenOri != getRequestedOrientation())
@@ -512,7 +519,7 @@ public class MangaDetailActivity extends Activity {
         if (getFromCache)
             layout(mangaDetail);
         else
-            EhClient.getManagaDetail(url, mangaDetail, new MangaDetailGetListener());
+            mEhClient.getManagaDetail(url, mangaDetail, new MangaDetailGetListener());
     }
     
     private void layout(MangaDetail md) {

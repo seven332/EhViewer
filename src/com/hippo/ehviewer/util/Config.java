@@ -1,7 +1,5 @@
 package com.hippo.ehviewer.util;
 
-import com.hippo.ehviewer.view.MangaImage;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -46,9 +44,6 @@ public class Config {
         
         mContext = context;
         mConfigPre = PreferenceManager.getDefaultSharedPreferences(mContext);
-        
-        // Init what in config
-        MangaImage.setMode(getPageScalingMode());
     }
     
     /**
