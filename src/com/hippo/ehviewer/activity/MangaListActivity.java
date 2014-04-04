@@ -713,7 +713,7 @@ public class MangaListActivity extends Activity {
     }
     
     private class MangaListGetListener implements
-            EhClient.OnGetManagaListListener {
+            EhClient.OnGetMangaListListener {
         @Override
         public void onSuccess(Object checkFlag, ArrayList<ListMangaDetail> newLmdArray,
                 int indexPerPage, int maxPage) {
@@ -1217,7 +1217,7 @@ public class MangaListActivity extends Activity {
                     listUrls.setPage(0);
                 else
                     listUrls.setPage(firstPage - 1);
-                mEhClient.getManagaList(listUrls.getUrl(),
+                mEhClient.getMangaList(listUrls.getUrl(),
                         new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, false, title),
                         new MangaListGetListener());
             }
@@ -1227,7 +1227,7 @@ public class MangaListActivity extends Activity {
                 mListFirst = true;
                 mLoadListOver = false;
                 RefreshPackage rp = (RefreshPackage)obj;
-                mEhClient.getManagaList(rp.listUrls.getUrl(),
+                mEhClient.getMangaList(rp.listUrls.getUrl(),
                         new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()),
                                 rp.listUrls, true, rp.title),
                         new MangaListGetListener());
@@ -1241,7 +1241,7 @@ public class MangaListActivity extends Activity {
                 if (listUrls.setPage(lastPage + 1)) {
                     mListFirst = true;
                     mLoadListOver = false;
-                    mEhClient.getManagaList(listUrls.getUrl(),
+                    mEhClient.getMangaList(listUrls.getUrl(),
                             new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, false, title),
                             new MangaListGetListener());
                 }
@@ -1306,6 +1306,7 @@ public class MangaListActivity extends Activity {
         checkUpdate();
         
         // Check login
+        layoutDrawRight();
         checkLogin(false);
         
         // get MangeList

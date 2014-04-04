@@ -17,8 +17,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Movie;
 import android.util.Log;
 import android.util.SparseArray;
+
+// TODO 初期建立一个线程检索文件夹中所有文件以寻找到所有图片文件
 
 /**
  * @author Hippo
@@ -31,7 +34,14 @@ import android.util.SparseArray;
  */
 public class ImageSet {
     
+    @SuppressWarnings("unused")
     private static final String TAG = "ImageSet";
+    
+    private static final String GIF_EXTENSION = "gif";
+    
+    public static final int TYPE_NONE = 0x0;
+    public static final int TYPE_BITMAP = 0x1;
+    public static final int TYPE_MOVIE = 0x2;
     
     public static final int INVALID_ID = -1;
     
@@ -55,29 +65,39 @@ public class ImageSet {
     }
     
     public interface OnDecodeOverListener {
-        void onDecodeOver(Bitmap bmp, int index);
+        /**
+         * May return Bitmap or Movie
+         * 
+         * @param res
+         * @param index
+         */
+        void onDecodeOver(Object res, int index);
     }
     
     private class ImageData {
         int state;
         String fileName;
+        int type;
         
         public ImageData() {
             state = STATE_NONE;
             fileName = null;
+            type = TYPE_NONE;
         }
     }
     
     // [startIndex, endIndex)
     public ImageSet(Context context, String gid, File folder, int size, int startIndex, int endIndex,
             Set<Integer> failIndexSet) {
-        if (folder == null || !folder.isDirectory())
-            throw new IllegalArgumentException("Folder is null or not directory");
+        if (folder == null)
+            throw new IllegalArgumentException("Folder is null");
+        if (!folder.isDirectory())
+            throw new IllegalArgumentException("Folder is not directory, path is " + folder.getPath());
         if (size < 0 || startIndex < 0
                 || startIndex > endIndex || endIndex > size)
             throw new IllegalArgumentException("size or index value error, size = "
                 + size + ", startIndex = " + startIndex
-                + ", endIndex" + endIndex);
+                + ", endIndex = " + endIndex + ", path is " + folder.getPath());
         
         mContext = context;
         mGid = gid;
@@ -126,37 +146,39 @@ public class ImageSet {
         else
             state = imageData.state;
         if (state == STATE_LOADED && listener != null) {
-            mThreadPool.submit(new Job<Bitmap>() {
+            mThreadPool.submit(new Job<Object>() {
                 @Override
-                public Bitmap run(JobContext jc) {
-                    Bitmap bmp = null;
-                    if (imageData.fileName == null) {
-                        imageData.fileName = getFileForName(getFileNameForIndex(index));
-                    }
-                    if (imageData.fileName == null)
+                public Object run(JobContext jc) {
+                    Object res = null;
+                    if (imageData.fileName == null
+                            && !getFileForName(getFileNameForIndex(index), imageData))
                         return null;
-                    
-                    
-                    Log.d(TAG, imageData.fileName);
                     
                     File file = new File(mFolder, imageData.fileName);
                     FileInputStream fis = null;
                     try {
-                        BitmapFactory.Options opt = new BitmapFactory.Options();
-                        opt.inPreferredConfig = Bitmap.Config.ARGB_8888;
                         fis = new FileInputStream(file);
-                        bmp = BitmapFactory.decodeStream(fis, null, opt);
+                        if (imageData.type == TYPE_BITMAP) {
+                            BitmapFactory.Options opt = new BitmapFactory.Options();
+                            // TODO why only ARGB_8888 always work well, other may slit image
+                            opt.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                            res = BitmapFactory.decodeStream(fis, null, opt);
+                        } else if (imageData.type == TYPE_MOVIE) {
+                            res = Movie.decodeStream(fis);
+                        } else {
+                            // TYPE_NONE or something else, get error
+                        }
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     } finally {
                         if (fis != null)
                             Util.closeStreamQuietly(fis);
                     }
-                    return bmp;
+                    return res;
                 }
-            }, new FutureListener<Bitmap>() {
+            }, new FutureListener<Object>() {
                 @Override
-                public void onFutureDone(Future<Bitmap> future) {
+                public void onFutureDone(Future<Object> future) {
                     listener.onDecodeOver(future.get(), index);
                 }
             });
@@ -169,13 +191,19 @@ public class ImageSet {
         return String.format("%05d", index + 1);
     }
     
-    public String getFileForName(String name) {
+    public boolean getFileForName(String name, ImageData imageData) {
         String[] list = mFolder.list();
         for (String item : list) {
-            if(name.equals(Util.getName(item)))
-                return item;
+            if(name.equals(Util.getName(item))) {
+                imageData.fileName = item;
+                if (Util.getExtension(item).toLowerCase().equals(GIF_EXTENSION))
+                    imageData.type = TYPE_MOVIE;
+                else
+                    imageData.type = TYPE_BITMAP;
+                return true;
+            }
         }
-        return null;
+        return false;
     }
     
     public void changeState(int index, int state) {

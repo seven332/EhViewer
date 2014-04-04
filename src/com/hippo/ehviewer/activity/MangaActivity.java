@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.R;
@@ -82,7 +84,7 @@ public class MangaActivity extends Activity {
     
     // TODO use downloader to download image
     // TODO combine it with MangaDownloadActivity
-    private class MangaUrlGetListener implements EhClient.OnGetManagaUrlListener {
+    private class MangaUrlGetListener implements EhClient.OnGetMangaUrlListener {
 
         @Override
         public void onSuccess(Object checkFlag, String[] arg) {
@@ -178,7 +180,7 @@ public class MangaActivity extends Activity {
                 getPrePage = false;
             } else if (index == lastPage && nextPageUrl != "last") { // If get nextPage
                 lastPage++;
-                mEhClient.getManagaUrl(nextPageUrl, lastPage, new MangaUrlGetListener());
+                mEhClient.getMangaUrl(nextPageUrl, lastPage, new MangaUrlGetListener());
                 mImageSet.changeState(lastPage, ImageSet.STATE_LOADING);
             }
         }
@@ -197,10 +199,10 @@ public class MangaActivity extends Activity {
                         Toast.LENGTH_SHORT).show();
                 if (targetPage == firstPage - 1 &&
                         getPrePage == true) {
-                    mEhClient.getManagaUrl(allPrePageUrl, targetPage, new MangaUrlGetListener());
+                    mEhClient.getMangaUrl(allPrePageUrl, targetPage, new MangaUrlGetListener());
                 }
                 else {
-                    mEhClient.getManagaUrl(allNextPageUrl, targetPage, new MangaUrlGetListener());
+                    mEhClient.getMangaUrl(allNextPageUrl, targetPage, new MangaUrlGetListener());
                 }
                 mImageSet.changeState(targetPage, ImageSet.STATE_LOADING);
             } else {
@@ -287,7 +289,7 @@ public class MangaActivity extends Activity {
         lastPage = firstPage;
         gid = intent.getStringExtra("gid");
         title = intent.getStringExtra("title");
-        mFolder = new File(Config.getDownloadPath(), title);
+        mFolder = new File(Config.getDownloadPath(), StringEscapeUtils.escapeHtml4(title));
         if (mFolder.isFile())
             mFolder.delete();
         mFolder.mkdirs();
@@ -312,9 +314,15 @@ public class MangaActivity extends Activity {
                 if (mStop && index == lastPage) {
                     mStop = false;
                     MangaUrlGetListener listener = new MangaUrlGetListener();
-                    mEhClient.getManagaUrl(allNextPageUrl, lastPage, listener);
+                    mEhClient.getMangaUrl(allNextPageUrl, lastPage, listener);
                     mImageSet.changeState(lastPage, ImageSet.STATE_LOADING);
                 }
+            }
+
+            @Override
+            public void onTapDoubleText(int index) {
+                // TODO Auto-generated method stub
+                
             }
         });
         isv.setOnScrollPageListener(new GalleryView.OnScrollPageListener() {
@@ -322,7 +330,7 @@ public class MangaActivity extends Activity {
             public void onScrollPage(int index) {
                 if (mStop && index == lastPage) {
                     mStop = false;
-                    mEhClient.getManagaUrl(allNextPageUrl, lastPage, new MangaUrlGetListener());
+                    mEhClient.getMangaUrl(allNextPageUrl, lastPage, new MangaUrlGetListener());
                     mImageSet.changeState(lastPage, ImageSet.STATE_LOADING);
                 }
                 
@@ -330,7 +338,7 @@ public class MangaActivity extends Activity {
                         && !allPrePageUrl.equals("first")
                         && index == firstPage - 1) {
                     getPrePage = true;
-                    mEhClient.getManagaUrl(allPrePageUrl, firstPage - 1, new MangaUrlGetListener());
+                    mEhClient.getMangaUrl(allPrePageUrl, firstPage - 1, new MangaUrlGetListener());
                     mImageSet.changeState(firstPage - 1, ImageSet.STATE_LOADING);
                 }
             }
@@ -351,7 +359,7 @@ public class MangaActivity extends Activity {
         imagesUrl.set(lastPage, new String[]{url, null});
         
         // Get image and next page
-        mEhClient.getManagaUrl(url, lastPage, new MangaUrlGetListener());
+        mEhClient.getMangaUrl(url, lastPage, new MangaUrlGetListener());
         mImageSet.changeState(lastPage, ImageSet.STATE_LOADING);
     }
     

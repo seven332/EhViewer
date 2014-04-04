@@ -216,7 +216,7 @@ public class MangaDetailActivity extends Activity {
     }
 
     private class MangaDetailGetListener implements
-            EhClient.OnGetManagaDetailListener {
+            EhClient.OnGetMangaDetailListener {
         @Override
         public void onSuccess(MangaDetail md) {
             Cache.mdCache.put(mangaDetail.gid, md);
@@ -239,7 +239,7 @@ public class MangaDetailActivity extends Activity {
     // Refresh
     public void buttonRefresh(View v) {
         MangaDetailGetListener listener = new MangaDetailGetListener();
-        mEhClient.getManagaDetail(url, mangaDetail, listener);
+        mEhClient.getMangaDetail(url, mangaDetail, listener);
         // Delete refresh button
         refeshButton.setVisibility(View.GONE);
         // Add progressBar
@@ -265,7 +265,7 @@ public class MangaDetailActivity extends Activity {
         }
 
         MangaDetailGetListener listener = new MangaDetailGetListener();
-        mEhClient.getManagaDetail(url, mangaDetail, listener);
+        mEhClient.getMangaDetail(url, mangaDetail, listener);
         // Delete offensiveView
         mangaDetailOffensive.setVisibility(View.GONE);
         // Add progressBar
@@ -286,7 +286,7 @@ public class MangaDetailActivity extends Activity {
         }
 
         MangaDetailGetListener listener = new MangaDetailGetListener();
-        mEhClient.getManagaDetail(url, mangaDetail, listener);
+        mEhClient.getMangaDetail(url, mangaDetail, listener);
         // Delete offensiveView
         mangaDetailOffensive.setVisibility(View.GONE);
         // Add progressBar
@@ -519,7 +519,7 @@ public class MangaDetailActivity extends Activity {
         if (getFromCache)
             layout(mangaDetail);
         else
-            mEhClient.getManagaDetail(url, mangaDetail, new MangaDetailGetListener());
+            mEhClient.getMangaDetail(url, mangaDetail, new MangaDetailGetListener());
     }
     
     private void layout(MangaDetail md) {

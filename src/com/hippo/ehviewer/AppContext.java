@@ -13,12 +13,11 @@ import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.Ui;
 
 import android.app.Application;
-import android.util.Log;
-import android.widget.Toast;
 
 public class AppContext extends Application implements UncaughtExceptionHandler {
     
-    private static final String TAG = "CrashApplication";
+    @SuppressWarnings("unused")
+    private static final String TAG = "AppContext";
     
     private Thread.UncaughtExceptionHandler mDefaultHandler;
     

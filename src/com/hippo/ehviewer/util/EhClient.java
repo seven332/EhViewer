@@ -37,7 +37,6 @@ import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.util.ThreadPool.Job;
 import com.hippo.ehviewer.util.ThreadPool.JobContext;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Movie;
@@ -61,18 +60,14 @@ public class EhClient {
     public static final String EXHENTAI_DETAIL_HEADER = "http://exhentai.org/g/";
     
     public static final String UPDATE_URL = "http://ehviewersu.appsp0t.com/";
-    
-    
     public static final String UPDATE_URI_QINIU = "http://ehviewer.qiniudn.com/";
-    
-    private static final int RETRY_TIMES = 5;
     
     public static String listHeader;
     public static String detailHeader;
     
     private boolean mLogin = false;
-    private String name;
-    private String logoutUrl;
+    private String mName;
+    private String mLogoutUrl;
     
     private AppContext mAppContext;
     private ThreadPool mThreadPool;
@@ -92,13 +87,13 @@ public class EhClient {
         public void onFailure(String eMsg);
     }
 
-    public interface OnGetManagaListListener {
+    public interface OnGetMangaListListener {
         public void onSuccess(Object checkFlag, ArrayList<ListMangaDetail> lmdArray,
                 int indexPerPage, int maxPage);
         public void onFailure(Object checkFlag, String eMsg);
     }
 
-    public interface OnGetManagaDetailListener {
+    public interface OnGetMangaDetailListener {
         public void onSuccess(MangaDetail md);
         public void onFailure(String eMsg);
     }
@@ -108,7 +103,7 @@ public class EhClient {
         public void onFailure(Object checkFlag, String eMsg);
     }
 
-    public interface OnGetManagaUrlListener {
+    public interface OnGetMangaUrlListener {
         public void onSuccess(Object checkFlag, String[] arg);
         public void onFailure(Object checkFlag, String eMsg);
     }
@@ -161,10 +156,106 @@ public class EhClient {
     }
 
     public String getUsername() {
-        return name;
+        return mName;
     }
 
+    private static final int LOGIN = 0x0;
+    private static final int CHECK_LOGIN = 0x1;
+    private static final int LOGOUT = 0x2;
+    private static final int GET_MANGA_LIST = 0x3;
+    private static final int GET_MANGA_DETAIL = 0x4;
+    private static final int GET_PAGE_LIST = 0x5;
+    private static final int GET_MANGA_URL = 0x6;
+    
+    private static Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            
+            switch (msg.what) {
+            case LOGIN:
+                LoginPackage loginPackage = (LoginPackage) msg.obj;
+                OnLoginListener listener1 = loginPackage.listener;
+                if (loginPackage.ok)
+                    listener1.onSuccess();
+                else
+                    listener1.onFailure(loginPackage.eMsg);
+                break;
+                
+            case CHECK_LOGIN:
+                CheckLoginPackage checkLoginPackage = (CheckLoginPackage) msg.obj;
+                OnCheckLoginListener listener2 = checkLoginPackage.listener;
+                if (checkLoginPackage.ok)
+                    listener2.onSuccess();
+                else
+                    listener2.onFailure(checkLoginPackage.eMsg);
+                break;
+                
+            case LOGOUT:
+                LogoutPackage logoutPackage = (LogoutPackage) msg.obj;
+                OnLogoutListener listener3 = logoutPackage.listener;
+                if (logoutPackage.ok)
+                    listener3.onSuccess();
+                else
+                    listener3.onFailure(logoutPackage.eMsg);
+                break;
+                
+            case GET_MANGA_LIST:
+                GetMangaListPackage getMangaListPackage = (GetMangaListPackage) msg.obj;
+                OnGetMangaListListener listener4 = getMangaListPackage.listener;
+                if (getMangaListPackage.lmdArray != null)
+                    listener4.onSuccess(getMangaListPackage.checkFlag,
+                            getMangaListPackage.lmdArray,
+                            getMangaListPackage.indexPerPage,
+                            getMangaListPackage.maxPage);
+                else
+                    listener4.onFailure(getMangaListPackage.checkFlag,
+                            getMangaListPackage.eMsg);
+                break;
+                
+            case GET_MANGA_DETAIL:
+                GetMangaDetailPackage getMangaDetailPackage = (GetMangaDetailPackage) msg.obj;
+                OnGetMangaDetailListener listener5 = getMangaDetailPackage.listener;
+                if (getMangaDetailPackage.ok)
+                    listener5.onSuccess(getMangaDetailPackage.mangaDetail);
+                else
+                    listener5.onFailure(getMangaDetailPackage.eMsg);
+                break;
+                
+            case GET_PAGE_LIST:
+                GetPageListPackage getPageListPackage = (GetPageListPackage) msg.obj;
+                OnGetPageListListener listener6 = getPageListPackage.listener;
+                if (getPageListPackage.pageList != null)
+                    listener6.onSuccess(getPageListPackage.checkFlag, getPageListPackage.pageList);
+                else
+                    listener6.onFailure(getPageListPackage.checkFlag, getPageListPackage.eMsg);
+                break;
+                
+            case GET_MANGA_URL:
+                GetMangaUrlPackage getMangaUrlPackage = (GetMangaUrlPackage) msg.obj;
+                OnGetMangaUrlListener listener7 = getMangaUrlPackage.listener;
+                if (getMangaUrlPackage.strs != null)
+                    listener7.onSuccess(getMangaUrlPackage.checkFlag, getMangaUrlPackage.strs);
+                else
+                    listener7.onFailure(getMangaUrlPackage.checkFlag, getMangaUrlPackage.eMsg);
+                break;
+            }
+        };
+    };
+    
+    
     // Login
+    private class LoginPackage {
+        public boolean ok;
+        public OnLoginListener listener;
+        public String eMsg;
+        
+        public LoginPackage(boolean ok, OnLoginListener listener, String eMsg) {
+            this.ok = ok;
+            this.listener = listener;
+            this.eMsg = eMsg;
+        }
+    }
+    
     private class LoginRunnable implements Runnable {
         
         private String username;
@@ -212,22 +303,33 @@ public class EhClient {
         }, new FutureListener<Object>() {
             @Override
             public void onFutureDone(Future<Object> future) {
-                if (task.ok) {
-                    if (listener != null)
-                        listener.onSuccess();
-                } else {
-                    if (listener != null)
-                        listener.onFailure(task.eMsg);
-                }
+                Message msg = new Message();
+                msg.what = LOGIN;
+                msg.obj = new LoginPackage(task.ok, listener, task.eMsg);
+                mHandler.sendMessage(msg);
             }
         });
     }
 
     // Check login get info and logout url
+    private class CheckLoginPackage {
+        public boolean ok;
+        public OnCheckLoginListener listener;
+        public String eMsg;
+        
+        public CheckLoginPackage(boolean ok, OnCheckLoginListener listener, String eMsg) {
+            this.ok = ok;
+            this.listener = listener;
+            this.eMsg = eMsg;
+        }
+    }
+    
     private class checkLoginRunnable implements Runnable {
         
         public String eMsg;
         public boolean ok;
+        public String name;
+        public String logoutUrl;
 
         @Override
         public void run() {
@@ -240,7 +342,6 @@ public class EhClient {
                 Matcher m = p.matcher(pageContent);
                 if (m.find() && m.groupCount() == 2) {
                     ok = true;
-                    mLogin = true;
                     name = m.group(1);
                     logoutUrl = StringEscapeUtils.unescapeHtml4(m.group(2));
                 } else
@@ -255,31 +356,38 @@ public class EhClient {
         mThreadPool.submit(new Job<Object>() {
             @Override
             public Object run(JobContext jc) {
-                
-                Log.d(TAG, Thread.currentThread().toString());
-                
                 task.run();
                 return null;
             }
         }, new FutureListener<Object>() {
             @Override
             public void onFutureDone(Future<Object> future) {
-                
-                Log.d(TAG, Thread.currentThread().toString());
-                
                 if (task.ok) {
                     mLogin = true;
-                    if (listener != null)
-                        listener.onSuccess();
-                } else {
-                    if (listener != null)
-                        listener.onFailure(task.eMsg);
+                    mName = task.name;
+                    mLogoutUrl = task.logoutUrl;
                 }
+                Message msg = new Message();
+                msg.what = CHECK_LOGIN;
+                msg.obj = new CheckLoginPackage(task.ok, listener, task.eMsg);
+                mHandler.sendMessage(msg);
             }
         });
     }
     
     // Logout
+    private class LogoutPackage {
+        public boolean ok;
+        public OnLogoutListener listener;
+        public String eMsg;
+        
+        public LogoutPackage(boolean ok, OnLogoutListener listener, String eMsg) {
+            this.ok = ok;
+            this.listener = listener;
+            this.eMsg = eMsg;
+        }
+    }
+    
     private class LogoutRunnable implements Runnable {
 
         public String eMsg;
@@ -289,7 +397,7 @@ public class EhClient {
         public void run() {
             ok = false;
             HttpHelper hp = new HttpHelper(mAppContext);
-            String pageContent = hp.get(logoutUrl);
+            String pageContent = hp.get(mLogoutUrl);
             if (pageContent != null) {
                 if (pageContent.contains("<p>You are now logged out<br />"))
                     ok = true;
@@ -311,20 +419,37 @@ public class EhClient {
         }, new FutureListener<Object>() {
             @Override
             public void onFutureDone(Future<Object> future) {
-                if (task.ok) {
+                if (task.ok)
                     mLogin = false;
-                    if (listener != null)
-                        listener.onSuccess();
-                } else {
-                    if (listener != null)
-                        listener.onFailure(task.eMsg);
-                }
+                Message msg = new Message();
+                msg.what = LOGOUT;
+                msg.obj = new LogoutPackage(task.ok, listener, task.eMsg);
+                mHandler.sendMessage(msg);
             }
         });
     }
     
     // Get Manga List
-    private class GetManagaListRunnable implements Runnable {
+    private class GetMangaListPackage {
+        public Object checkFlag;
+        public ArrayList<ListMangaDetail> lmdArray;
+        public int indexPerPage;
+        public int maxPage;
+        public OnGetMangaListListener listener;
+        public String eMsg;
+        
+        public GetMangaListPackage(Object checkFlag, ArrayList<ListMangaDetail> lmdArray, int indexPerPage,
+                int maxPage, OnGetMangaListListener listener, String eMsg) {
+            this.checkFlag = checkFlag;
+            this.lmdArray = lmdArray;
+            this.indexPerPage = indexPerPage;
+            this.maxPage = maxPage;
+            this.listener = listener;
+            this.eMsg = eMsg;
+        }
+    }
+    
+    private class GetMangaListRunnable implements Runnable {
 
         private String url;
         
@@ -333,7 +458,7 @@ public class EhClient {
         public int maxPage;
         public String eMsg;
 
-        public GetManagaListRunnable(String url) {
+        public GetMangaListRunnable(String url) {
             this.url = url;
         }
 
@@ -429,10 +554,10 @@ public class EhClient {
         }
     }
 
-    public void getManagaList(String url, final Object checkFlag,
-            final OnGetManagaListListener listener) {
+    public void getMangaList(String url, final Object checkFlag,
+            final OnGetMangaListListener listener) {
         
-        final GetManagaListRunnable task = new GetManagaListRunnable(url);
+        final GetMangaListRunnable task = new GetMangaListRunnable(url);
         mThreadPool.submit(new Job<Object>() {
             @Override
             public Object run(JobContext jc) {
@@ -442,13 +567,10 @@ public class EhClient {
         }, new FutureListener<Object>() {
             @Override
             public void onFutureDone(Future<Object> future) {
-                if (task.lmdArray != null) {
-                    if (listener != null)
-                        listener.onSuccess(checkFlag, task.lmdArray, task.indexPerPage, task.maxPage);
-                } else {
-                    if (listener != null)
-                        listener.onFailure(checkFlag, task.eMsg);
-                }
+                Message msg = new Message();
+                msg.what = GET_MANGA_LIST;
+                msg.obj = new GetMangaListPackage(checkFlag, task.lmdArray, task.indexPerPage, task.maxPage, listener, task.eMsg);
+                mHandler.sendMessage(msg);
             }
         });
     }
@@ -506,7 +628,22 @@ public class EhClient {
     }
 
     // Get Manga Detail
-    private class GetManagaDetailRunnable implements Runnable {
+    private class GetMangaDetailPackage {
+        public boolean ok;
+        public MangaDetail mangaDetail;
+        public OnGetMangaDetailListener listener;
+        public String eMsg;
+        
+        public GetMangaDetailPackage(boolean ok, MangaDetail mangaDetail,
+                OnGetMangaDetailListener listener, String eMsg) {
+            this.ok = ok;
+            this.mangaDetail = mangaDetail;
+            this.listener = listener;
+            this.eMsg = eMsg;
+        }
+    }
+    
+    private class GetMangaDetailRunnable implements Runnable {
 
         private String url;
         private MangaDetail md;
@@ -514,7 +651,7 @@ public class EhClient {
         public boolean ok;
         public String eMsg;
 
-        public GetManagaDetailRunnable(String url, MangaDetail md) {
+        public GetMangaDetailRunnable(String url, MangaDetail md) {
             this.url = url;
             this.md = md;
         }
@@ -577,10 +714,10 @@ public class EhClient {
         }
     }
 
-    public void getManagaDetail(String url, final MangaDetail md,
-            final OnGetManagaDetailListener listener) {
+    public void getMangaDetail(String url, final MangaDetail md,
+            final OnGetMangaDetailListener listener) {
         
-        final GetManagaDetailRunnable task = new GetManagaDetailRunnable(url, md);
+        final GetMangaDetailRunnable task = new GetMangaDetailRunnable(url, md);
         mThreadPool.submit(new Job<Object>() {
             @Override
             public Object run(JobContext jc) {
@@ -590,13 +727,10 @@ public class EhClient {
         }, new FutureListener<Object>() {
             @Override
             public void onFutureDone(Future<Object> future) {
-                if (task.ok) {
-                    if (listener != null)
-                        listener.onSuccess(md);
-                } else {
-                    if (listener != null)
-                        listener.onFailure(task.eMsg);
-                }
+                Message msg = new Message();
+                msg.what = GET_MANGA_DETAIL;
+                msg.obj = new GetMangaDetailPackage(task.ok, md, listener, task.eMsg);
+                mHandler.sendMessage(msg);
             }
         });
     }
@@ -646,6 +780,21 @@ public class EhClient {
     }
     
     // Get page list
+    private class GetPageListPackage {
+        public Object checkFlag;
+        public PageList pageList;
+        public OnGetPageListListener listener;
+        public String eMsg;
+        
+        public GetPageListPackage(Object checkFlag, PageList pageList, OnGetPageListListener listener,
+                String eMsg) {
+            this.checkFlag = checkFlag;
+            this.pageList = pageList;
+            this.listener = listener;
+            this.eMsg = eMsg;
+        }
+    }
+    
     private class GetPageListRunnable implements Runnable {
         private String url;
         
@@ -658,11 +807,12 @@ public class EhClient {
 
         @Override
         public void run() {
-            PageList pageList = null;
+            pageList = null;
             
             HttpHelper hp = new HttpHelper(mAppContext);
             String pageContent = hp.get(url);
             if (pageContent != null) {
+                
                 pageList = getPageList(pageContent);
                 if (pageList == null)
                     eMsg = mAppContext.getString(R.string.em_parser_error);
@@ -684,13 +834,10 @@ public class EhClient {
         }, new FutureListener<Object>() {
             @Override
             public void onFutureDone(Future<Object> future) {
-                if (task.pageList != null) {
-                    if (listener != null)
-                        listener.onSuccess(checkFlag, task.pageList);
-                } else {
-                    if (listener != null)
-                        listener.onFailure(checkFlag, task.eMsg);
-                }
+                Message msg = new Message();
+                msg.what = GET_PAGE_LIST;
+                msg.obj = new GetPageListPackage(checkFlag, task.pageList, listener, task.eMsg);
+                mHandler.sendMessage(msg);
             }
         });
     }
@@ -710,19 +857,34 @@ public class EhClient {
     }
 
     // Get Manga url and next page
-    private class GetManagaUrlRunnable implements Runnable {
+    private class GetMangaUrlPackage {
+        public Object checkFlag;
+        public String[] strs;
+        public OnGetMangaUrlListener listener;
+        public String eMsg;
+        
+        public GetMangaUrlPackage(Object checkFlag, String[] strs, OnGetMangaUrlListener listener,
+                String eMsg) {
+            this.checkFlag = checkFlag;
+            this.strs = strs;
+            this.listener = listener;
+            this.eMsg = eMsg;
+        }
+    }
+    
+    private class GetMangaUrlRunnable implements Runnable {
         private String url;
         
         public String[] strs;
         public String eMsg;
 
-        public GetManagaUrlRunnable(String url) {
+        public GetMangaUrlRunnable(String url) {
             this.url = url;
         }
 
         @Override
         public void run() {
-            String[] strs = null;
+            strs = null;
             
             HttpHelper hp = new HttpHelper(mAppContext);
             String pageContent = hp.get(url);
@@ -748,9 +910,9 @@ public class EhClient {
         }
     }
 
-    public void getManagaUrl(String url, final Object checkFlag, final OnGetManagaUrlListener listener) {
+    public void getMangaUrl(String url, final Object checkFlag, final OnGetMangaUrlListener listener) {
         
-        final GetManagaUrlRunnable task = new GetManagaUrlRunnable(url);
+        final GetMangaUrlRunnable task = new GetMangaUrlRunnable(url);
         mThreadPool.submit(new Job<Object>() {
             @Override
             public Object run(JobContext jc) {
@@ -760,13 +922,10 @@ public class EhClient {
         }, new FutureListener<Object>() {
             @Override
             public void onFutureDone(Future<Object> future) {
-                if (task.strs != null) {
-                    if (listener != null)
-                        listener.onSuccess(checkFlag, task.strs);
-                } else {
-                    if (listener != null)
-                        listener.onFailure(checkFlag, task.eMsg);
-                }
+                Message msg = new Message();
+                msg.what = GET_MANGA_URL;
+                msg.obj = new GetMangaUrlPackage(checkFlag, task.strs, listener, task.eMsg);
+                mHandler.sendMessage(msg);
             }
         });
     }
@@ -1075,7 +1234,7 @@ public class EhClient {
                         }
                         
                         //Create folder
-                        File folder = new File(Config.getDownloadPath() + curDownloadInfo.title); // TODO For  title contain invailed char
+                        File folder = new File(Config.getDownloadPath() + StringEscapeUtils.escapeHtml4(curDownloadInfo.title)); // TODO For  title contain invailed char
                         if (!folder.mkdirs() && !folder.isDirectory()) {
                             listener.onDownloadMangaOver(curDownloadInfo.gid, false);
                             curDownloadInfo.status = DownloadInfo.FAILED;

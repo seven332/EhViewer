@@ -19,7 +19,7 @@ package com.hippo.ehviewer.gallery.glrenderer;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.opengl.GLUtils;
-
+import android.util.Log;
 import junit.framework.Assert;
 
 import java.util.HashMap;
@@ -231,7 +231,7 @@ public abstract class UploadedTexture extends BasicTexture {
                     int format = GLUtils.getInternalFormat(bitmap);
                     int type = GLUtils.getType(bitmap);
                     Config config = bitmap.getConfig();
-
+                    
                     canvas.initializeTextureSize(this, format, type);
                     canvas.texSubImage2D(this, mBorder, mBorder, bitmap, format, type);
 

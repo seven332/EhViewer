@@ -3,6 +3,7 @@ package com.hippo.ehviewer.gallery;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Movie;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
@@ -11,15 +12,21 @@ import android.view.MotionEvent;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.gallery.glrenderer.BitmapTexture;
+import com.hippo.ehviewer.gallery.glrenderer.ColorTexture;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLPaint;
+import com.hippo.ehviewer.gallery.glrenderer.MovieTexture;
 import com.hippo.ehviewer.gallery.glrenderer.StringTexture;
+import com.hippo.ehviewer.gallery.glrenderer.UploadedTexture;
 import com.hippo.ehviewer.gallery.ui.GLView;
 import com.hippo.ehviewer.gallery.ui.GestureRecognizer;
 import com.hippo.ehviewer.gallery.util.GalleryUtils;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.TimeRunner;
 import com.hippo.ehviewer.util.Ui;
+
+// TODO 双击加载该页
+// TODO 长按从该页开始加载
 
 
 // TODO 手动触屏滑动可能闪烁
@@ -83,7 +90,10 @@ public class GalleryView extends GLView {
     private static final int TAP_AREA_MASK_COLOR = 0x88000000;
     
     // TODO
+    private static final int BACKGROUND_COLOR = Color.BLACK;
     private static final int MASK_COLOR = 0x88000000;
+    
+    
     
     private final GestureRecognizer mGestureRecognizer;
     private Context mContext;
@@ -139,6 +149,7 @@ public class GalleryView extends GLView {
     
     public interface OnTapTextListener {
         public void onTapText(int index);
+        public void onTapDoubleText(int index);
     }
     
     public interface OnScrollPageListener {
@@ -170,7 +181,7 @@ public class GalleryView extends GLView {
         setState();
         
         mGestureRecognizer = new GestureRecognizer(mContext, new MyGestureListener());
-        setBackgroundColor(GalleryUtils.intColorToFloatARGBArray(Color.BLACK));
+        setBackgroundColor(GalleryUtils.intColorToFloatARGBArray(BACKGROUND_COLOR));
         
         showItems = new ShowItem[TARGET_INDEX_SIZE];
         
@@ -233,13 +244,15 @@ public class GalleryView extends GLView {
     protected void render(GLCanvas canvas) {
         super.render(canvas);
         
+        boolean hasMovie = false;
         ShowItem item;
         switch (mScrollState) {
         case SCROLL_NONE:
             item = showItems[CUR_TARGET_INDEX];
-            if (item != null) {
+            if (item != null)
                 item.draw(canvas);
-            }
+            if (item instanceof MovieImage)
+                hasMovie |= true;
             break;
             
         case SCROLL_LEFT:
@@ -247,9 +260,14 @@ public class GalleryView extends GLView {
             item = showItems[PRE_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas, scrollXOffset, scrollYOffset);
+            if (item instanceof MovieImage)
+                hasMovie |= true;
+            
             item = showItems[CUR_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas, scrollXOffset, scrollYOffset);
+            if (item instanceof MovieImage)
+                hasMovie |= true;
             break;
             
         case SCROLL_RIGHT:
@@ -257,9 +275,14 @@ public class GalleryView extends GLView {
             item = showItems[CUR_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas, scrollXOffset, scrollYOffset);
+            if (item instanceof MovieImage)
+                hasMovie |= true;
+            
             item = showItems[NEXT_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas, scrollXOffset, scrollYOffset);
+            if (item instanceof MovieImage)
+                hasMovie |= true;
             break;
         }
         
@@ -267,8 +290,11 @@ public class GalleryView extends GLView {
         if (mShowTapArea && mInit)
             drawTapArea(canvas);
         
-        // Mask to reduce brightness
+        // TODO Mask to reduce brightness
         //canvas.fillRect(0, 0, mWidth, mHeight, MASK_COLOR);
+        
+        if (hasMovie)
+            invalidate();
     }
     
     private void resetSizePosition() {
@@ -494,7 +520,7 @@ public class GalleryView extends GLView {
         if (showItem != null)
             showItem.recycle();
         if (state == ImageSet.STATE_LOADED)
-            showItems[targetIndex] = new Image();
+            showItems[targetIndex] = new EmptyItem();
         else {
             showItems[targetIndex] = new Text(getErrorStateString(state));
         }
@@ -534,21 +560,28 @@ public class GalleryView extends GLView {
     
     class DecodeImageListener implements ImageSet.OnDecodeOverListener {
         @Override
-        public void onDecodeOver(Bitmap bmp, int index) {
+        public void onDecodeOver(Object res, int index) {
             int targetIndex = index - mCurIndex + 1;
             ShowItem showItem;
             Image image;
             
             if (targetIndex < 0 || targetIndex > 2
-                    || !((showItem = showItems[targetIndex]) instanceof Image)
-                    || (image = (Image)showItem).isLoaded()) {// If it do not need any more
-                if (bmp != null)
-                    bmp.recycle();
+                    || !((showItem = showItems[targetIndex]) instanceof EmptyItem)) {// If it do not need any more
+                if (res != null && res instanceof Bitmap)
+                    ((Bitmap)res).recycle();
             } else {
-                if (bmp == null) {
-                    showItems[targetIndex] = new Text("读取图片错误");
+                if (res == null) {
+                    showItems[targetIndex] = new Text("读取图片错误"); // TODO
                 } else {
-                    image.load(bmp);
+                    if (res instanceof Bitmap) {
+                        BitmapImage bi = new BitmapImage();
+                        bi.load((Bitmap)res);
+                        showItems[targetIndex] = bi;
+                    } else {
+                        MovieImage mi = new MovieImage();
+                        mi.load((Movie)res);
+                        showItems[targetIndex] = mi;
+                    }
                 }
                 resetSizePosition(targetIndex);
             }
@@ -735,7 +768,7 @@ public class GalleryView extends GLView {
                     || showItems[CUR_TARGET_INDEX] instanceof Text) {
                 if (mOnTapTextListener != null)
                     mOnTapTextListener.onTapText(mCurIndex);
-                return true;
+                //return true;
             }
             
             if (isInArea(leftArea, (int)x, (int)y)) {
@@ -766,6 +799,12 @@ public class GalleryView extends GLView {
         @Override
         public boolean onDoubleTap(float x, float y) {
             return true;
+        }
+        
+        @Override
+        public void onLongPress(MotionEvent e) {
+            // TODO Auto-generated method stub
+            
         }
         
         @Override
@@ -1079,18 +1118,36 @@ public class GalleryView extends GLView {
         public abstract void recycle();
     }
     
-    private class Image extends ShowItem{
-        private BitmapTexture mTexture;
-        private Bitmap mContextBmp;
+    private class EmptyItem extends ShowItem{
+        
+        private ColorTexture mTexture;
+        
+        public EmptyItem() {
+            mTexture = new ColorTexture(BACKGROUND_COLOR);
+        }
+        
+        @Override
+        public void recycle() {
+            mTexture = null;
+        }
+
+        @Override
+        public void draw(GLCanvas canvas, int xOffset, int yOffset) {
+            mTexture.draw(canvas, xOffset, yOffset);
+        }
+    }
+    
+    
+    private abstract class Image extends ShowItem{
+        private UploadedTexture mTexture;
         public float imageScale = 1;
         
-        public void load(Bitmap bmp) {
-            if (mTexture != null)
-                recycle();
-            mTexture = new BitmapTexture(bmp);
-            mContextBmp = bmp;
-            width = bmp.getWidth();
-            height = bmp.getHeight();
+        /**
+         * You must call init before draw
+         * @param texture
+         */
+        public void init(UploadedTexture texture) {
+            mTexture = texture;
             imageScale = 1;
         }
         
@@ -1098,18 +1155,6 @@ public class GalleryView extends GLView {
             return mTexture != null;
         }
         
-        @Override
-        public void recycle() {
-            if (mTexture == null)
-                return;
-            
-            mTexture.recycle();
-            mContextBmp.recycle();
-            
-            mTexture = null;
-            mContextBmp = null;
-        }
-
         @Override
         public void draw(GLCanvas canvas, int xOffset, int yOffset) {
             if (mTexture != null) {
@@ -1188,6 +1233,62 @@ public class GalleryView extends GLView {
                     }
                 }
             }
+        }
+    }
+    
+    private class BitmapImage extends Image{
+        private BitmapTexture mTexture;
+        private Bitmap mContextBmp;
+        
+        public void load(Bitmap bmp) {
+            if (mTexture != null)
+                recycle();
+            mContextBmp = bmp;
+            mTexture = new BitmapTexture(bmp);
+            width = mContextBmp.getWidth();
+            height = mContextBmp.getHeight();
+            
+            super.init(mTexture);
+        }
+        
+        @Override
+        public void recycle() {
+            if (mTexture == null)
+                return;
+            
+            mTexture.recycle();
+            mContextBmp.recycle();
+            
+            mTexture = null;
+            mContextBmp = null;
+        }
+    }
+    
+    private class MovieImage extends Image{
+        private MovieTexture mTexture;
+        private Movie mContextMovie;
+        
+        public void load(Movie movie) {
+            if (mTexture != null)
+                recycle();
+            mContextMovie = movie;
+            mTexture = MovieTexture.newInstance(mContextMovie);
+            
+            width = mContextMovie.width();
+            height = mContextMovie.height();
+            
+            super.init(mTexture);
+        }
+        
+        @Override
+        public void recycle() {
+            if (mTexture == null)
+                return;
+            
+            mTexture.recycle();
+            
+            mTexture = null;
+            mContextMovie = null;
         }
     }
     

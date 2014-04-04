@@ -11,9 +11,7 @@ import android.content.IntentFilter;
 import com.hippo.ehviewer.service.DownloadService;
 
 public class DownloadImageSet extends ImageSet {
-
-  
-
+    
     public DownloadImageSet(Context context, String gid, File folder, int size,
             int startIndex, int endIndex, Set<Integer> failIndexSet) {
         super(context, gid, folder, size, startIndex, endIndex, failIndexSet);

@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.GalleryView;
@@ -81,7 +83,9 @@ public class MangaDownloadActivity extends Activity {
         int endIndex = intent.getIntExtra(KEY_END_INDEX, 0);
         GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);
         
-        mDownloadImageSet = new DownloadImageSet(this, gid, new File(Config.getDownloadPath(), title), size, 0, endIndex, null);
+        File folder = new File(Config.getDownloadPath(), StringEscapeUtils.escapeHtml4(title));
+        folder.mkdirs();
+        mDownloadImageSet = new DownloadImageSet(this, gid, folder, size, 0, endIndex, null);
         GalleryView isv = new GalleryView(getApplicationContext(), mDownloadImageSet, 0);
         isv.setOnEdgeListener(new GalleryView.OnEdgeListener() {
             @Override
@@ -94,6 +98,9 @@ public class MangaDownloadActivity extends Activity {
             }
         });
         glrv.setContentPane(isv);
+        
+        // Avoid error when use Movie
+        //glrv.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
     
     @Override

@@ -3,8 +3,7 @@
     android:id="@+id/search_bar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:background="@drawable/textfield" >
+    android:orientation="horizontal" >
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView1"

@@ -1,6 +1,5 @@
 package com.hippo.ehviewer.widget;
 
-import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 
 import android.content.Context;
@@ -8,7 +7,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
@@ -56,8 +54,6 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
     // Make sure only one pull event
     private boolean isHeaderRecored = false;
     private boolean isFooterRecored = false;
-    
-    private int mTouchSlop;
     
     // Header String to show
     private String mHeaderPullStr;
@@ -228,14 +224,10 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
         
         mHeader.setPadding(headerOriginalLeftPadding, -headerHeight, headerOriginalRightPadding, headerOriginalBottomPadding);  
         mHeader.invalidate();
-        
-        //mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
     }
     
     @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-        // TODO Auto-generated method stub
-    }
+    public void onScrollStateChanged(AbsListView view, int scrollState) {}
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem,

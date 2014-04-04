@@ -2,7 +2,7 @@ package com.hippo.ehviewer;
 
 import java.io.File;
 import java.net.MalformedURLException;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
@@ -12,10 +12,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.view.View;
-
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.Config;
@@ -30,6 +30,7 @@ import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 
 public class UpdateHelper {
+    @SuppressWarnings("unused")
     private static final String TAG = "UpdateHelper";
     private static final int NOTIFICATION_ID = -1;
     
@@ -41,7 +42,7 @@ public class UpdateHelper {
     
     private Activity mActivity;
     private String updateFileName;
-    private OnCheckUpdateListener listener;
+    private OnCheckUpdateListener mListener;
     
     
     private int downloadHost = QINIU;
@@ -51,13 +52,21 @@ public class UpdateHelper {
     }
     
     public UpdateHelper SetOnCheckUpdateListener(OnCheckUpdateListener listener) {
-        this.listener = listener;
+        this.mListener = listener;
         return this;
     }
     
     public void autoCheckUpdate() {
         if (Config.getUpdateDate() < Util.getDate())
             checkUpdate();
+    }
+    
+    
+    class CheckUpdatePackage {
+        public OnCheckUpdateListener listener;
+        public Activity activity;
+        public String pageContext;
+        public HttpHelper hp;
     }
     
     public void checkUpdate() {
@@ -81,76 +90,96 @@ public class UpdateHelper {
             @Override
             public void onFutureDone(Future<String> future) {
                 String pageContext = future.get();
-                if (pageContext != null) {
-                    Config.setUpdateDate();
-                    String[] items = pageContext.split("\n");
-                    if (items.length > 3) {
-                        
-                        if (listener != null)
-                            listener.onSuccess(pageContext);
-                        
-                        String newVer = items[0];
-                        
-                        String tempUrl = "";
-                        switch (downloadHost) {
-                        case GOOGLE:
-                            tempUrl = EhClient.UPDATE_URL + items[1];
-                            break;
-                        case QINIU:
-                            tempUrl = EhClient.UPDATE_URI_QINIU + Util.getFileForUrl(items[1]);
-                            break;
-                        }
-                        final String url = tempUrl;
-                        final String name = url.substring(url.lastIndexOf('/')+1);
-                        updateFileName = name;
-                        String size = items[2];
-                        String info = items[3];
-                        
-                        AlertDialog dialog = new DialogBuilder(mActivity).setTitle(R.string.update)
-                                .setMessage(String.format(mActivity.getString(R.string.update_message), newVer, size, info))
-                                .setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        ((AlertButton)v).dialog.dismiss();
-                                    }
-                                }).setPositiveButton(android.R.string.ok, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        ((AlertButton)v).dialog.dismiss();
-                                        Downloader d = new Downloader();
-                                        try {
-                                            d.resetData(Config.getDownloadPath(), name, url);
-                                            d.setOnDownloadListener(new UpdateListener());
-                                            new Thread(d).start();
-                                        } catch (MalformedURLException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }).create();
-                        if (!mActivity.isFinishing())
-                            dialog.show();
-                    } else {
-                        if(pageContext.equals("none")) {
-                            if (listener != null)
-                                listener.onNoUpdate();
-                        } else if(pageContext.equals("error")){
-                            if (listener != null)
-                                listener.onFailure(appContext.getString(R.string.em_request_error));
-                        } else if (pageContext.equals("NameNotFound")){
-                            if (listener != null)
-                                listener.onFailure("NameNotFound");
-                        }else {
-                            if (listener != null)
-                                listener.onFailure(appContext.getString(R.string.em_host_error));
-                        }
-                    }
-                } else {
-                    if (listener != null)
-                        listener.onFailure(hp.getEMsg());
-                }
+                CheckUpdatePackage checkUpdatePackage = new CheckUpdatePackage();
+                checkUpdatePackage.listener = mListener;
+                checkUpdatePackage.activity = mActivity;
+                checkUpdatePackage.pageContext = pageContext;
+                checkUpdatePackage.hp = hp;
+                Message msg = new Message();
+                msg.obj = checkUpdatePackage;
+                
+                mHandler.sendMessage(msg);
             }
         });
     }
+    
+    // TODO
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            CheckUpdatePackage checkUpdatePackage = (CheckUpdatePackage)msg.obj;
+            OnCheckUpdateListener listener = checkUpdatePackage.listener;
+            Activity activity = checkUpdatePackage.activity;
+            String pageContext = checkUpdatePackage.pageContext;
+            
+            if (pageContext != null) {
+                Config.setUpdateDate();
+                String[] items = pageContext.split("\n");
+                if (items.length > 3) {
+                    
+                    String newVer = items[0];
+                    String tempUrl = "";
+                    switch (downloadHost) {
+                    case GOOGLE:
+                        tempUrl = EhClient.UPDATE_URL + items[1];
+                        break;
+                    case QINIU:
+                        tempUrl = EhClient.UPDATE_URI_QINIU + Util.getFileForUrl(items[1]);
+                        break;
+                    }
+                    final String url = tempUrl;
+                    final String name = url.substring(url.lastIndexOf('/')+1);
+                    updateFileName = name;
+                    String size = items[2];
+                    String info = items[3];
+                    
+                    AlertDialog dialog = new DialogBuilder(activity).setTitle(R.string.update)
+                            .setMessage(String.format(activity.getString(R.string.update_message), newVer, size, info))
+                            .setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    ((AlertButton)v).dialog.dismiss();
+                                }
+                            }).setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    ((AlertButton)v).dialog.dismiss();
+                                    Downloader d = new Downloader();
+                                    try {
+                                        d.resetData(Config.getDownloadPath(), name, url);
+                                        d.setOnDownloadListener(new UpdateListener());
+                                        new Thread(d).start();
+                                    } catch (MalformedURLException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }).create();
+                    dialog.show();
+                    
+                    if (listener != null)
+                        listener.onSuccess(pageContext);
+                } else {
+                    if(pageContext.equals("none")) {
+                        if (listener != null)
+                            listener.onNoUpdate();
+                    } else if(pageContext.equals("error")){
+                        if (listener != null)
+                            listener.onFailure(activity.getString(R.string.em_request_error));
+                    } else if (pageContext.equals("NameNotFound")){
+                        if (listener != null)
+                            listener.onFailure("NameNotFound"); // TODO
+                    }else {
+                        if (listener != null)
+                            listener.onFailure(activity.getString(R.string.em_host_error));
+                    }
+                }
+            } else {
+                if (listener != null)
+                    listener.onFailure(checkUpdatePackage.hp.getEMsg());
+            }
+        }
+    };
     
     public interface OnCheckUpdateListener {
         public void onSuccess(String pageContext);

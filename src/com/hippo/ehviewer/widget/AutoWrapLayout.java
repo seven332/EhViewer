@@ -132,8 +132,7 @@ public class AutoWrapLayout extends ViewGroup {
         int maxRightNoPadding = rightBound;
         int bottomBound;
         int lastMaxBottom = paddingTop;
-        int maxBottom = lastMaxBottom; // maxBottom is maxBottomNoPadding
-        //int maxBottomNoPadding = maxBottom;
+        int maxBottom = lastMaxBottom;
         int childWidth;
         int childHeight;
         

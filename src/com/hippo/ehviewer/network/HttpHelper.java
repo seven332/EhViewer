@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
@@ -60,7 +61,8 @@ public class HttpHelper {
         else if (mException instanceof MalformedURLException)
             return mContext.getString(R.string.em_url_format_error);
         
-        else if (mException instanceof ConnectTimeoutException)
+        else if (mException instanceof ConnectTimeoutException ||
+                mException instanceof SocketTimeoutException)
             return mContext.getString(R.string.em_timeout);
         
         else if (mException instanceof UnknownHostException)
@@ -140,6 +142,7 @@ public class HttpHelper {
                 throw new RedirectionException();
         }  catch (Exception e) {
             mException = e;
+            e.printStackTrace();
         } finally {
             if (conn != null)
                 conn.disconnect();
@@ -210,6 +213,7 @@ public class HttpHelper {
                 throw new RedirectionException();
         }  catch (Exception e) {
             mException = e;
+            e.printStackTrace();
         } finally {
             if (conn != null)
                 conn.disconnect();
@@ -268,6 +272,7 @@ public class HttpHelper {
                 throw new RedirectionException();
         }  catch (Exception e) {
             mException = e;
+            e.printStackTrace();
         } finally {
             if (conn != null)
                 conn.disconnect();
@@ -329,6 +334,7 @@ public class HttpHelper {
                 throw new RedirectionException();
         }  catch (Exception e) {
             mException = e;
+            e.printStackTrace();
         } finally {
             if (conn != null)
                 conn.disconnect();
@@ -413,6 +419,7 @@ public class HttpHelper {
                 throw new RedirectionException();
         }  catch (Exception e) {
             mException = e;
+            e.printStackTrace();
         } finally {
             if (baos != null)
                 Util.closeStreamQuietly(baos);
