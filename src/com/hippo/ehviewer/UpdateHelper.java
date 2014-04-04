@@ -29,8 +29,8 @@ import com.hippo.ehviewer.util.ThreadPool.JobContext;
 import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 
-
 // TODO return onFailure when downloading update or check update
+// TODO add disable to achieve
 
 public class UpdateHelper {
     @SuppressWarnings("unused")

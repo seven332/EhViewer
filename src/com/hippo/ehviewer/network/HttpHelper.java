@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -74,10 +75,11 @@ public class HttpHelper {
         else if (mException instanceof RedirectionException)
             return mContext.getString(R.string.em_redirection_error);
         
-        else if (mException instanceof IOException)
-            return mContext.getString(R.string.em_network_error);
+        else if (mException instanceof SocketException)
+            return "SocketException : " + mException.getMessage();
         
-        return mContext.getString(R.string.em_unknown_error);
+        else
+            return mContext.getString(R.string.em_unknown_error) + " : " + mException.getMessage();
     }
     
     private String getPageContext(HttpURLConnection conn)
