@@ -29,6 +29,9 @@ import com.hippo.ehviewer.util.ThreadPool.JobContext;
 import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 
+
+// TODO return onFailure when downloading update or check update
+
 public class UpdateHelper {
     @SuppressWarnings("unused")
     private static final String TAG = "UpdateHelper";
@@ -39,6 +42,8 @@ public class UpdateHelper {
     // Update host
     private static final int GOOGLE = 0;
     private static final int QINIU = 1;
+    
+    private static boolean isWorking = false;
     
     private Activity mActivity;
     private String updateFileName;
@@ -70,6 +75,14 @@ public class UpdateHelper {
     }
     
     public void checkUpdate() {
+        if (isWorking) {
+            if (mListener != null)
+                mListener.onFailure("正在检查更新"); // TODO
+            return;
+        } else {
+            isWorking = true;
+        }
+        
         final AppContext appContext = (AppContext)(mActivity.getApplicationContext());
         final HttpHelper hp = new HttpHelper(mActivity.getApplicationContext());
         ThreadPool threadPool = appContext.getNetworkThreadPool();
@@ -102,6 +115,8 @@ public class UpdateHelper {
             }
         });
     }
+    
+    // TODO move dialog into listener
     
     // TODO
     @SuppressLint("HandlerLeak")
@@ -178,6 +193,8 @@ public class UpdateHelper {
                 if (listener != null)
                     listener.onFailure(checkUpdatePackage.hp.getEMsg());
             }
+            
+            isWorking = false;
         }
     };
     
