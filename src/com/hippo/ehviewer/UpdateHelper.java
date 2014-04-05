@@ -1,10 +1,10 @@
 package com.hippo.ehviewer;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -15,19 +15,16 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.NotificationCompat;
-import android.view.View;
+
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.EhClient;
 import com.hippo.ehviewer.util.Future;
 import com.hippo.ehviewer.util.FutureListener;
 import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.util.ThreadPool.Job;
 import com.hippo.ehviewer.util.ThreadPool.JobContext;
-import com.hippo.ehviewer.view.AlertButton;
-import com.hippo.ehviewer.widget.DialogBuilder;
 
 // TODO return onFailure when downloading update or check update
 // TODO add disable to achieve
@@ -43,17 +40,22 @@ public class UpdateHelper {
     private static final int GOOGLE = 0;
     private static final int QINIU = 1;
     
-    private static boolean isWorking = false;
-    
-    private Activity mActivity;
+    private AppContext mAppContext;
     private String updateFileName;
     private OnCheckUpdateListener mListener;
     
+    private static boolean mEnabled = true;
     
     private int downloadHost = QINIU;
     
-    public UpdateHelper(Activity activity) {
-        mActivity = activity;
+    public interface OnCheckUpdateListener {
+        public void onSuccess(String version, long size, String url, String info);
+        public void onNoUpdate();
+        public void onFailure(String eMsg);
+    }
+    
+    public UpdateHelper(AppContext appContext) {
+        mAppContext = appContext;
     }
     
     public UpdateHelper SetOnCheckUpdateListener(OnCheckUpdateListener listener) {
@@ -66,46 +68,62 @@ public class UpdateHelper {
             checkUpdate();
     }
     
+    public static void setEnabled(boolean enabled) {
+        mEnabled = enabled;
+    }
+    
     
     class CheckUpdatePackage {
         public OnCheckUpdateListener listener;
-        public Activity activity;
+        public AppContext appContext;
         public String pageContext;
         public HttpHelper hp;
     }
     
     public void checkUpdate() {
-        if (isWorking) {
-            if (mListener != null)
-                mListener.onFailure("正在检查更新"); // TODO
-            return;
-        } else {
-            isWorking = true;
-        }
-        
-        final AppContext appContext = (AppContext)(mActivity.getApplicationContext());
-        final HttpHelper hp = new HttpHelper(mActivity.getApplicationContext());
-        ThreadPool threadPool = appContext.getNetworkThreadPool();
+        final HttpHelper hp = new HttpHelper(mAppContext);
+        ThreadPool threadPool = mAppContext.getNetworkThreadPool();
         threadPool.submit(new Job<String>() {
             @Override
             public String run(JobContext jc) {
-                PackageManager pm = appContext.getPackageManager();
+                if (!mEnabled) {
+                    return "working";
+                }
+                
+                mEnabled = false;
+                
+                PackageManager pm = mAppContext.getPackageManager();
                 PackageInfo pi = null;
                 try {
-                    pi = pm.getPackageInfo(appContext.getPackageName(), PackageManager.GET_ACTIVITIES);
+                    pi = pm.getPackageInfo(mAppContext.getPackageName(), PackageManager.GET_ACTIVITIES);
+                    
+                    JSONObject jo = new JSONObject();
+                    jo.put("method", "update");
+                    
+                    JSONObject detailJO = new JSONObject();
+                    detailJO.put("version", pi.versionName);
+                    
+                    // TODO switch server
+                    detailJO.put("server", "qiniu");
+                    
+                    jo.put("detail", detailJO);
+                    
+                    return hp.postJson(UPDATE_API, jo.toString());
                 } catch (NameNotFoundException e) {
                     e.printStackTrace();
                     return "NameNotFound";
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return "JSONException";
                 }
-                return hp.post(UPDATE_API, "last\n" + pi.versionName);
             }
         }, new FutureListener<String>() {
             @Override
             public void onFutureDone(Future<String> future) {
                 String pageContext = future.get();
                 CheckUpdatePackage checkUpdatePackage = new CheckUpdatePackage();
+                checkUpdatePackage.appContext = mAppContext;
                 checkUpdatePackage.listener = mListener;
-                checkUpdatePackage.activity = mActivity;
                 checkUpdatePackage.pageContext = pageContext;
                 checkUpdatePackage.hp = hp;
                 Message msg = new Message();
@@ -117,109 +135,96 @@ public class UpdateHelper {
     }
     
     // TODO move dialog into listener
-    
-    // TODO
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
+    private static Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             CheckUpdatePackage checkUpdatePackage = (CheckUpdatePackage)msg.obj;
             OnCheckUpdateListener listener = checkUpdatePackage.listener;
-            Activity activity = checkUpdatePackage.activity;
+            AppContext appContext = checkUpdatePackage.appContext;
             String pageContext = checkUpdatePackage.pageContext;
             
             if (pageContext != null) {
                 Config.setUpdateDate();
-                String[] items = pageContext.split("\n");
-                if (items.length > 3) {
-                    
-                    String newVer = items[0];
-                    String tempUrl = "";
-                    switch (downloadHost) {
-                    case GOOGLE:
-                        tempUrl = EhClient.UPDATE_URL + items[1];
-                        break;
-                    case QINIU:
-                        tempUrl = EhClient.UPDATE_URI_QINIU + Util.getFileForUrl(items[1]);
-                        break;
-                    }
-                    final String url = tempUrl;
-                    final String name = url.substring(url.lastIndexOf('/')+1);
-                    updateFileName = name;
-                    String size = items[2];
-                    String info = items[3];
-                    
-                    AlertDialog dialog = new DialogBuilder(activity).setTitle(R.string.update)
-                            .setMessage(String.format(activity.getString(R.string.update_message), newVer, size, info))
-                            .setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    ((AlertButton)v).dialog.dismiss();
-                                }
-                            }).setPositiveButton(android.R.string.ok, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    ((AlertButton)v).dialog.dismiss();
-                                    Downloader d = new Downloader();
-                                    try {
-                                        d.resetData(Config.getDownloadPath(), name, url);
-                                        d.setOnDownloadListener(new UpdateListener());
-                                        new Thread(d).start();
-                                    } catch (MalformedURLException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }).create();
-                    dialog.show();
-                    
+                
+                if (pageContext.equals("working")) {
                     if (listener != null)
-                        listener.onSuccess(pageContext);
+                        listener.onFailure("正在检查更新或者下载更新"); // TODO
+                    
+                }
+                else if (pageContext.equals("NameNotFound")) {
+                    if (listener != null)
+                        listener.onFailure("NameNotFound"); // TODO
+                    
+                } else if (pageContext.equals("JSONException")) {
+                    if (listener != null)
+                        listener.onFailure("JSONException"); // TODO
+                    
                 } else {
-                    if(pageContext.equals("none")) {
+                    try {
+                        
+                        JSONObject jo = new JSONObject(pageContext);
+                        JSONObject updateJO = jo.getJSONObject("update");
+                        
+                        String version = updateJO.getString("version");
+                        
+                        if (version.equals("error")) {
+                            if (listener != null)
+                                listener.onFailure(appContext.getString(R.string.em_invalid_request));
+                        } else if (version.equals("none")) {
+                            if (listener != null)
+                                listener.onNoUpdate();
+                        } else {
+                            long size = updateJO.getLong("size");
+                            String url = updateJO.getString("url");
+                            String info = updateJO.getString("info");
+                            
+                            if (listener != null)
+                                listener.onSuccess(version, size, url, info);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                         if (listener != null)
-                            listener.onNoUpdate();
-                    } else if(pageContext.equals("error")){
-                        if (listener != null)
-                            listener.onFailure(activity.getString(R.string.em_request_error));
-                    } else if (pageContext.equals("NameNotFound")){
-                        if (listener != null)
-                            listener.onFailure("NameNotFound"); // TODO
-                    }else {
-                        if (listener != null)
-                            listener.onFailure(activity.getString(R.string.em_host_error));
+                            listener.onFailure(appContext.getString(R.string.em_host_error));
                     }
                 }
             } else {
                 if (listener != null)
                     listener.onFailure(checkUpdatePackage.hp.getEMsg());
             }
-            
-            isWorking = false;
         }
     };
     
-    public interface OnCheckUpdateListener {
-        public void onSuccess(String pageContext);
-        public void onNoUpdate();
-        public void onFailure(String eMsg);
-    }
-    
-    private class UpdateListener implements Downloader.OnDownloadListener {
+    public static class UpdateListener implements Downloader.OnDownloadListener {
+        private Context mContext;
+        private String mFileName;
+        
         private NotificationManager mNotifyManager;
         private NotificationCompat.Builder mBuilder;
         
-        public UpdateListener() {
+        
+        
+        public UpdateListener(Context context, String fileName) {
+            mContext = context;
+            mFileName = fileName;
             mNotifyManager = (NotificationManager)
-                    mActivity.getSystemService(Context.NOTIFICATION_SERVICE);
-            mBuilder = new NotificationCompat.Builder(mActivity.getApplicationContext());
+                    mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            mBuilder = new NotificationCompat.Builder(mContext);
             mBuilder.setSmallIcon(R.drawable.ic_launcher);
         }
         
         @Override
-        public void onDownloadStart(int totalSize) {
-            mBuilder.setContentTitle("正在下载更新") // TODO
+        public void onDownloadStartConnect() {
+            mBuilder.setContentTitle("开始下载更新") // TODO
                     .setContentText(null)
                     .setProgress(0, 0, true).setOngoing(true);
+            mNotifyManager.notify(NOTIFICATION_ID, mBuilder.build());
+        }
+        
+        @Override
+        public void onDownloadStartDownload(int totalSize) {
+            mBuilder.setContentTitle("正在下载更新")
+                    .setContentText(String.format("%.2f / %.2f KB", 0/1024.0f, totalSize/1024.0f))
+                    .setProgress(totalSize, 0, false).setOngoing(true);
             mNotifyManager.notify(NOTIFICATION_ID, mBuilder.build());
         }
         @Override
@@ -232,20 +237,22 @@ public class UpdateHelper {
             
         }
         @Override
-        public void onDownloadOver(boolean ok, int eMesgId) {
-            if (ok) {
+        public void onDownloadOver(int status) {
+            if (status == Downloader.COMPLETED) {
                 mNotifyManager.cancel(NOTIFICATION_ID);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(new File(Config.getDownloadPath(), updateFileName)),
+                intent.setDataAndType(Uri.fromFile(new File(Config.getDownloadPath(), mFileName)),
                         "application/vnd.android.package-archive");
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mActivity.getApplicationContext().startActivity(intent);
+                mContext.startActivity(intent);
             } else {
                 mBuilder.setContentTitle("下载更新失败")
                         .setContentText(null)
                         .setProgress(0, 0, false).setOngoing(false);
                 mNotifyManager.notify(NOTIFICATION_ID, mBuilder.build());
             }
+            
+            setEnabled(true);
         }
     }
 }

@@ -116,6 +116,8 @@
     <string name="em_unexpected_response_code">非预期的响应码：%d</string>
     <string name="em_redirection_error">太多重定向</string>
     <string name="em_host_error">主机错误</string>
+    <string name="em_invalid_request">无效的请求</string>
+    <string name="em_no_sdcard">未挂载 SD卡</string>
     
     <!-- Action -->
     <string name="action_refresh">刷新</string>

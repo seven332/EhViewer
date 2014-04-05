@@ -1,5 +1,6 @@
 package com.hippo.ehviewer.activity;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import com.hippo.ehviewer.AppContext;
@@ -9,6 +10,7 @@ import com.hippo.ehviewer.ListMangaDetail;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UpdateHelper;
+import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
@@ -17,6 +19,7 @@ import com.hippo.ehviewer.util.EhClient;
 import com.hippo.ehviewer.util.Favourite;
 import com.hippo.ehviewer.util.Tag;
 import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.view.CheckImage;
 import com.hippo.ehviewer.view.GetPaddingRelativeLayout;
@@ -1414,7 +1417,50 @@ public class MangaListActivity extends Activity {
     }
     
     private void checkUpdate() {
-        new UpdateHelper(this).autoCheckUpdate();
+        new UpdateHelper((AppContext)getApplication())
+        .SetOnCheckUpdateListener(new UpdateHelper.OnCheckUpdateListener() {
+            @Override
+            public void onSuccess(String version, long size,
+                    final String url, String info) {
+                String sizeStr = Util.sizeToString(size);
+                AlertDialog dialog = SuperDialogUtil.createUpdateDialog(MangaListActivity.this,
+                        version, sizeStr, info,
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ((AlertButton)v).dialog.dismiss();
+                                // TODO
+                                try {
+                                    Downloader downloader = new Downloader(MangaListActivity.this);
+                                    String fileName = Util.getFileForUrl(url);
+                                    downloader.resetData(Config.getDownloadPath(), fileName, url);
+                                    downloader.setOnDownloadListener(
+                                            new UpdateHelper.UpdateListener(MangaListActivity.this,
+                                                    fileName));
+                                    new Thread(downloader).start();
+                                } catch (MalformedURLException e) {
+                                    UpdateHelper.setEnabled(true);
+                                }
+                            }
+                        }, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ((AlertButton)v).dialog.dismiss();
+                                UpdateHelper.setEnabled(true);
+                            }
+                        });
+                if (!MangaListActivity.this.isFinishing())
+                    dialog.show();
+            }
+            @Override
+            public void onNoUpdate() {
+                UpdateHelper.setEnabled(true);
+            }
+            @Override
+            public void onFailure(String eMsg) {
+                UpdateHelper.setEnabled(true);
+            }
+        }).autoCheckUpdate();
     }
     
     private void checkLogin(boolean force) {

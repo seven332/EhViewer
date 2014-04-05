@@ -1,7 +1,9 @@
 package com.hippo.ehviewer.activity;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
 
+import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.R;
@@ -9,10 +11,14 @@ import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
+import com.hippo.ehviewer.widget.SuperDialogUtil;
+import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.preference.AutoListPreference;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -28,8 +34,13 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.support.v4.util.LruCache;
+import android.util.Log;
+import android.view.View;
 import android.webkit.WebView;
 import android.widget.Toast;
+
+
+// TODO 添加服务器选择
 
 public class SettingsActivity extends PreferenceActivity {
     @SuppressWarnings("unused")
@@ -41,7 +52,6 @@ public class SettingsActivity extends PreferenceActivity {
 
     private static final String CP_CACHE = "preference_cp_cache";
     private static final String CLEAR_CP_CACHE = "preference_clear_cp_cache";
-    private static final String PAGE_SCALING = "preference_page_scaling";
     private static final String AUTHOR = "preference_author";
     private static final String SCREEN_ORI = "preference_screen_ori";
     private static final String CHANGELOG = "preference_changelog";
@@ -51,9 +61,6 @@ public class SettingsActivity extends PreferenceActivity {
 
     private EditTextPreference cpCachePre;
     private Preference clearCpCachePre;
-    private EditTextPreference pageCachePre;
-    private Preference clearPageCachePre;
-    private AutoListPreference pageScalingListPre;
     private Preference authorPer;
     private AutoListPreference screenOriPer;
     private Preference changelogPer;
@@ -213,24 +220,60 @@ public class SettingsActivity extends PreferenceActivity {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 update.setSummary(R.string.checking_update);
-                new UpdateHelper(SettingsActivity.this)
+                new UpdateHelper((AppContext)SettingsActivity.this.getApplication())
                         .SetOnCheckUpdateListener(new UpdateHelper.OnCheckUpdateListener() {
                             @Override
-                            public void onSuccess(String pageContext) {
+                            public void onSuccess(String version, long size,
+                                    final String url, String info) {
                                 update.setSummary(R.string.found_update);
-                                update.setEnabled(true);
+                                
+                                String sizeStr = Util.sizeToString(size);
+                                AlertDialog dialog = SuperDialogUtil.createUpdateDialog(SettingsActivity.this,
+                                        version, sizeStr, info,
+                                        new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                ((AlertButton)v).dialog.dismiss();
+                                                // TODO
+                                                try {
+                                                    Downloader downloader = new Downloader(SettingsActivity.this);
+                                                    String fileName = Util.getFileForUrl(url);
+                                                    downloader.resetData(Config.getDownloadPath(), fileName, url);
+                                                    downloader.setOnDownloadListener(
+                                                            new UpdateHelper.UpdateListener(SettingsActivity.this,
+                                                                    fileName));
+                                                    new Thread(downloader).start();
+                                                } catch (MalformedURLException e) {
+                                                    update.setSummary(R.string.em_url_format_error);
+                                                    UpdateHelper.setEnabled(true);
+                                                }
+                                                update.setEnabled(true);
+                                            }
+                                        }, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                ((AlertButton)v).dialog.dismiss();
+                                                update.setEnabled(true);
+                                                UpdateHelper.setEnabled(true);
+                                            }
+                                        });
+                                if (!SettingsActivity.this.isFinishing())
+                                    dialog.show();
                             }
                             @Override
                             public void onNoUpdate() {
                                 update.setSummary(R.string.up_to_date);
                                 update.setEnabled(true);
+                                UpdateHelper.setEnabled(true);
                             }
                             @Override
                             public void onFailure(String eMsg) {
                                 update.setSummary(eMsg);
                                 update.setEnabled(true);
+                                UpdateHelper.setEnabled(true);
                             }
                         }).checkUpdate();
+                
                 update.setEnabled(false);
                 return true;
             }

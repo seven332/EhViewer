@@ -18,6 +18,8 @@ import org.apache.http.conn.ConnectTimeoutException;
 
 import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.exception.RedirectionException;
+import com.hippo.ehviewer.exception.ResponseCodeException;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 
@@ -36,15 +38,7 @@ import android.util.Log;
 public class HttpHelper {
     private static final String TAG = "HttpHelper";
     
-    public static final int HTTP_TEMP_REDIRECT = 307;
-    
-    private static String defaultUserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.76 Safari/537.36";
-    private static String userAgent = System.getProperty("http.agent", defaultUserAgent);
-    private static final int DEFAULT_TIMEOUT = 5 * 1000;
-    private static final int MAX_REDIRECTS = 5;
-    
     private Context mContext;
-    private int responseCode;
     private Exception mException;
     
     public HttpHelper(Context context) {
@@ -70,7 +64,8 @@ public class HttpHelper {
             return mContext.getString(R.string.em_unknown_host);
         
         else if (mException instanceof ResponseCodeException)
-            return String.format(mContext.getString(R.string.em_unexpected_response_code), responseCode);
+            return String.format(mContext.getString(R.string.em_unexpected_response_code),
+                    ((ResponseCodeException)mException).getResponseCode());
         
         else if (mException instanceof RedirectionException)
             return mContext.getString(R.string.em_redirection_error);
@@ -79,7 +74,7 @@ public class HttpHelper {
             return "SocketException : " + mException.getMessage();
         
         else
-            return mContext.getString(R.string.em_unknown_error) + " : " + mException.getMessage();
+            return mException.getMessage();
     }
     
     private String getPageContext(HttpURLConnection conn)
@@ -93,7 +88,7 @@ public class HttpHelper {
             if (encoding != null && encoding.equals("gzip"))
                 is = new GZIPInputStream(is);
             baos = new ByteArrayOutputStream();
-            Util.copy(is, baos, 1024);
+            Util.copy(is, baos, Constant.BUFFER_SIZE);
             // TODO charset
             pageContext = baos.toString("utf-8");
         } catch (IOException e) {
@@ -113,16 +108,19 @@ public class HttpHelper {
         HttpURLConnection conn = null;
         
         try {
+            
+            Log.d(TAG, "Http get " + urlStr);
+            
             url = new URL(urlStr);
-            while (redirectionCount++ < MAX_REDIRECTS) {
+            while (redirectionCount++ < Constant.MAX_REDIRECTS) {
                 conn = (HttpURLConnection) url.openConnection();
                 conn.addRequestProperty("Accept-Encoding", "gzip");
-                conn.setRequestProperty("User-Agent", userAgent);
-                conn.setConnectTimeout(DEFAULT_TIMEOUT);
-                conn.setReadTimeout(DEFAULT_TIMEOUT);
+                conn.setRequestProperty("User-Agent", Constant.userAgent);
+                conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
+                conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
                 conn.connect();
                 
-                responseCode = conn.getResponseCode();
+                final int responseCode = conn.getResponseCode();
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
@@ -131,7 +129,7 @@ public class HttpHelper {
                 case HttpURLConnection.HTTP_MOVED_PERM:
                 case HttpURLConnection.HTTP_MOVED_TEMP:
                 case HttpURLConnection.HTTP_SEE_OTHER:
-                case HTTP_TEMP_REDIRECT:
+                case Constant.HTTP_TEMP_REDIRECT:
                     final String location = conn.getHeaderField("Location");
                     url = new URL(url, location);
                     continue;
@@ -140,16 +138,16 @@ public class HttpHelper {
                     throw new ResponseCodeException(responseCode);
                 }
             }
-            if (redirectionCount > MAX_REDIRECTS)
-                throw new RedirectionException();
         }  catch (Exception e) {
             mException = e;
             e.printStackTrace();
+            return null;
         } finally {
             if (conn != null)
                 conn.disconnect();
         }
         
+        mException = new RedirectionException();
         return null;
     }
     
@@ -161,13 +159,16 @@ public class HttpHelper {
         HttpURLConnection conn = null;
         
         try {
+            
+            Log.d(TAG, "Http post " + urlStr);
+            
             url = new URL(urlStr);
-            while (redirectionCount++ < MAX_REDIRECTS) {
+            while (redirectionCount++ < Constant.MAX_REDIRECTS) {
                 conn = (HttpURLConnection) url.openConnection();
                 conn.addRequestProperty("Accept-Encoding", "gzip");
-                conn.setRequestProperty("User-Agent", userAgent);
-                conn.setConnectTimeout(DEFAULT_TIMEOUT);
-                conn.setReadTimeout(DEFAULT_TIMEOUT);
+                conn.setRequestProperty("User-Agent", Constant.userAgent);
+                conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
+                conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
                 conn.setDoOutput(true);
                 conn.setDoInput(true);
                 conn.setRequestMethod("POST");
@@ -193,7 +194,7 @@ public class HttpHelper {
                 
                 conn.connect();
                 
-                responseCode = conn.getResponseCode();
+                final int responseCode = conn.getResponseCode();
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
@@ -202,7 +203,7 @@ public class HttpHelper {
                 case HttpURLConnection.HTTP_MOVED_PERM:
                 case HttpURLConnection.HTTP_MOVED_TEMP:
                 case HttpURLConnection.HTTP_SEE_OTHER:
-                case HTTP_TEMP_REDIRECT:
+                case Constant.HTTP_TEMP_REDIRECT:
                     final String location = conn.getHeaderField("Location");
                     url = new URL(url, location);
                     continue;
@@ -211,16 +212,16 @@ public class HttpHelper {
                     throw new ResponseCodeException(responseCode);
                 }
             }
-            if (redirectionCount > MAX_REDIRECTS)
-                throw new RedirectionException();
         }  catch (Exception e) {
             mException = e;
             e.printStackTrace();
+            return null;
         } finally {
             if (conn != null)
                 conn.disconnect();
         }
         
+        mException = new RedirectionException();
         return null;
     }
     
@@ -232,13 +233,16 @@ public class HttpHelper {
         HttpURLConnection conn = null;
         
         try {
+            
+            Log.d(TAG, "Http post " + urlStr);
+            
             url = new URL(urlStr);
-            while (redirectionCount++ < MAX_REDIRECTS) {
+            while (redirectionCount++ < Constant.MAX_REDIRECTS) {
                 conn = (HttpURLConnection) url.openConnection();
                 conn.addRequestProperty("Accept-Encoding", "gzip");
-                conn.setRequestProperty("User-Agent", userAgent);
-                conn.setConnectTimeout(DEFAULT_TIMEOUT);
-                conn.setReadTimeout(DEFAULT_TIMEOUT);
+                conn.setRequestProperty("User-Agent", Constant.userAgent);
+                conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
+                conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
                 conn.setDoOutput(true);
                 conn.setDoInput(true);
                 conn.setRequestMethod("POST");
@@ -252,7 +256,7 @@ public class HttpHelper {
                 
                 conn.connect();
                 
-                responseCode = conn.getResponseCode();
+                final int responseCode = conn.getResponseCode();
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
@@ -261,7 +265,7 @@ public class HttpHelper {
                 case HttpURLConnection.HTTP_MOVED_PERM:
                 case HttpURLConnection.HTTP_MOVED_TEMP:
                 case HttpURLConnection.HTTP_SEE_OTHER:
-                case HTTP_TEMP_REDIRECT:
+                case Constant.HTTP_TEMP_REDIRECT:
                     final String location = conn.getHeaderField("Location");
                     url = new URL(url, location);
                     continue;
@@ -270,16 +274,16 @@ public class HttpHelper {
                     throw new ResponseCodeException(responseCode);
                 }
             }
-            if (redirectionCount > MAX_REDIRECTS)
-                throw new RedirectionException();
         }  catch (Exception e) {
             mException = e;
             e.printStackTrace();
+            return null;
         } finally {
             if (conn != null)
                 conn.disconnect();
         }
         
+        mException = new RedirectionException();
         return null;
     }
     
@@ -292,13 +296,16 @@ public class HttpHelper {
         HttpURLConnection conn = null;
         
         try {
+            
+            Log.d(TAG, "Http post " + urlStr);
+            
             url = new URL(urlStr);
-            while (redirectionCount++ < MAX_REDIRECTS) {
+            while (redirectionCount++ < Constant.MAX_REDIRECTS) {
                 conn = (HttpURLConnection) url.openConnection();
                 conn.addRequestProperty("Accept-Encoding", "gzip");
-                conn.setRequestProperty("User-Agent", userAgent);
-                conn.setConnectTimeout(DEFAULT_TIMEOUT);
-                conn.setReadTimeout(DEFAULT_TIMEOUT);
+                conn.setRequestProperty("User-Agent", Constant.userAgent);
+                conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
+                conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
                 conn.setDoOutput(true);
                 conn.setDoInput(true);
                 conn.setRequestMethod("POST");
@@ -314,7 +321,7 @@ public class HttpHelper {
                 
                 conn.connect();
                 
-                responseCode = conn.getResponseCode();
+                final int responseCode = conn.getResponseCode();
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
@@ -323,7 +330,7 @@ public class HttpHelper {
                 case HttpURLConnection.HTTP_MOVED_PERM:
                 case HttpURLConnection.HTTP_MOVED_TEMP:
                 case HttpURLConnection.HTTP_SEE_OTHER:
-                case HTTP_TEMP_REDIRECT:
+                case Constant.HTTP_TEMP_REDIRECT:
                     final String location = conn.getHeaderField("Location");
                     url = new URL(url, location);
                     continue;
@@ -332,16 +339,16 @@ public class HttpHelper {
                     throw new ResponseCodeException(responseCode);
                 }
             }
-            if (redirectionCount > MAX_REDIRECTS)
-                throw new RedirectionException();
         }  catch (Exception e) {
             mException = e;
             e.printStackTrace();
+            return null;
         } finally {
             if (conn != null)
                 conn.disconnect();
         }
         
+        mException = new RedirectionException();
         return null;
     }
     
@@ -358,15 +365,18 @@ public class HttpHelper {
         InputStream is = null;
         
         try {
+            
+            Log.d(TAG, "Http get bitmap " + urlStr);
+            
             url = new URL(urlStr);
-            while (redirectionCount++ < MAX_REDIRECTS) {
+            while (redirectionCount++ < Constant.MAX_REDIRECTS) {
                 conn = (HttpURLConnection)url.openConnection();
-                conn.setRequestProperty("User-Agent", userAgent);
-                conn.setConnectTimeout(DEFAULT_TIMEOUT);
-                conn.setReadTimeout(DEFAULT_TIMEOUT);
+                conn.setRequestProperty("User-Agent", Constant.userAgent);
+                conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
+                conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
                 conn.connect();
                 
-                responseCode = conn.getResponseCode();
+                final int responseCode = conn.getResponseCode();
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
@@ -408,7 +418,7 @@ public class HttpHelper {
                 case HttpURLConnection.HTTP_MOVED_PERM:
                 case HttpURLConnection.HTTP_MOVED_TEMP:
                 case HttpURLConnection.HTTP_SEE_OTHER:
-                case HTTP_TEMP_REDIRECT:
+                case Constant.HTTP_TEMP_REDIRECT:
                     final String location = conn.getHeaderField("Location");
                     url = new URL(url, location);
                     continue;
@@ -417,11 +427,10 @@ public class HttpHelper {
                     throw new ResponseCodeException(responseCode);
                 }
             }
-            if (redirectionCount > MAX_REDIRECTS)
-                throw new RedirectionException();
         }  catch (Exception e) {
             mException = e;
             e.printStackTrace();
+            return null;
         } finally {
             if (baos != null)
                 Util.closeStreamQuietly(baos);
@@ -430,6 +439,7 @@ public class HttpHelper {
             if (conn != null)
                 conn.disconnect();
         }
+        mException = new RedirectionException();
         return null;
     }
 }

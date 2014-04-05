@@ -1,44 +1,22 @@
 package com.hippo.ehviewer.util;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
-
-import com.hippo.ehviewer.DiskCache;
-import com.hippo.ehviewer.ListUrls;
-import com.hippo.ehviewer.R;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Movie;
-import android.os.Build;
-import android.os.Environment;
-import android.preference.PreferenceManager;
-import android.support.v4.util.LruCache;
-import android.util.Log;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 
 public class Util {
+    @SuppressWarnings("unused")
     private static String TAG = "Util";
     
     /**
@@ -212,5 +190,21 @@ public class Util {
             time = Integer.parseInt(new SimpleDateFormat("yyyyMMdd").format(new Date()));
         } catch (NumberFormatException e) {}
         return time;
+    }
+    
+    
+    private static String[] SIZE_UNIT = {"%.2f B", "%.2f KB", "%.2f MB", "%.2f GB"};
+    
+    public static String sizeToString(long size) {
+        int length = SIZE_UNIT.length;
+        
+        float sizeFloat = (float)size;
+        for (int i = 0; i < length; i++) {
+            if (sizeFloat < 1024 || i == length - 1) {
+                return String.format(SIZE_UNIT[i], sizeFloat);
+            }
+            sizeFloat /= 1024;
+        }
+        return null;
     }
 }

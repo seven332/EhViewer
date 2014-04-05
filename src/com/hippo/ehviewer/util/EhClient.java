@@ -1179,10 +1179,16 @@ public class EhClient {
                     listener.onDownloadMangaAllStart();
                     
                     Parser parser = new Parser();
-                    Downloader imageDownloader = new Downloader();
+                    Downloader imageDownloader = new Downloader(mAppContext);
                     imageDownloader.setOnDownloadListener(new Downloader.OnDownloadListener() {
                         @Override
-                        public void onDownloadStart(int totalSize) {
+                        public void onDownloadStartConnect() {
+                            
+                        }
+                        
+                        
+                        @Override
+                        public void onDownloadStartDownload(int totalSize) {
                             if (curDownloadInfo != null) {
                                 curDownloadInfo.downloadSize = 0;
                                 curDownloadInfo.totalSize = totalSize/1024.0f;
@@ -1199,8 +1205,8 @@ public class EhClient {
                         }
 
                         @Override
-                        public void onDownloadOver(boolean ok, int eMesgId) {
-                            if (ok)
+                        public void onDownloadOver(int status) {
+                            if (status == Downloader.COMPLETED)
                                 mService.notifyUpdate(curDownloadInfo.gid, curDownloadInfo.lastStartIndex, ImageSet.STATE_LOADED);
                             else
                                 mService.notifyUpdate(curDownloadInfo.gid, curDownloadInfo.lastStartIndex, ImageSet.STATE_FAIL);
@@ -1280,7 +1286,7 @@ public class EhClient {
                                     curDownloadInfo.totalSize = 0;
                                     
                                     int downloadStatus = imageDownloader.getStatus();
-                                    if (downloadStatus == Downloader.STOP) { // If stop by user
+                                    if (downloadStatus == Downloader.STOPED) { // If stop by user
                                         listener.onDownloadMangaStop(curDownloadInfo.gid);
                                         mService.notifyUpdate();
                                         Download.notify(String.valueOf(curDownloadInfo.gid));

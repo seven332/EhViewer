@@ -120,7 +120,7 @@ public class MangaActivity extends Activity {
             
             final String imageName = String.format("%05d", index + 1) + "." + Util.getExtension(imageUrl);
             
-            final Downloader downloader = new Downloader();
+            final Downloader downloader = new Downloader(MangaActivity.this);
             try {
                 downloader.resetData(mFolder.getPath(),
                         imageName,

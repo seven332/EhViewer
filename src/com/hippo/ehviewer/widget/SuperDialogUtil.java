@@ -15,4 +15,15 @@ public class SuperDialogUtil {
         titleView.setText(title);
     }
     
+    
+    public static AlertDialog createUpdateDialog(Context context, String version,
+            String size, String info, View.OnClickListener positiveListener,
+            View.OnClickListener negativeListener) {
+        
+        return new DialogBuilder(context).setTitle(R.string.update).setCancelable(false)
+                .setMessage(String.format(context.getString(R.string.update_message), version, size, info))
+                .setPositiveButton(android.R.string.ok, positiveListener)
+                .setNegativeButton(android.R.string.cancel, negativeListener)
+                .create();
+    }
 }

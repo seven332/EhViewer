@@ -121,6 +121,8 @@
     <string name="em_unexpected_response_code">Unexpected response code : %d</string>
     <string name="em_redirection_error">Too many redirects</string>
     <string name="em_host_error">Host error</string>
+    <string name="em_invalid_request">Invalid request</string>
+    <string name="em_no_sdcard">SD card is Unmounted</string>
     
     <!-- Action -->
     <string name="action_refresh">Refresh</string>
