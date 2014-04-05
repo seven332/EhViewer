@@ -134,16 +134,15 @@
     
     <string name="preference_settings_title">设置</string>
     <string name="preference_category_cache">缓存</string>
-    <string name="preference_cp_cache">封面与预览缓存大小</string>
-    <string name="preference_clear_cp_cache">清除封面与预览缓存</string>
-    <string name="preference_page_cache">页面缓存大小</string>
-    <string name="preference_clear_page_cache">清除页面缓存</string>
+    <string name="preference_cache">缓存大小</string>
+    <string name="preference_clear_cache">清除缓存</string>
     <string name="preference_cache_summary" formatted="false">大小 : %.2f / %d MB</string>
     <string name="preference_cache_summary_no">无缓存</string>
     <string name="preference_auto_page_cache">自动清理页面缓存</string>
     <string name="preference_auto_page_cache_summary_on">当应用关闭时清除页面缓存</string>
     <string name="preference_auto_page_cache_summary_off">啥都不做</string>
     <string name="preference_download_path">下载路径</string>
+    <string name="preference_update_server">更新服务器</string>
     
     
     <string name="preference_category_about">关于</string>
@@ -152,6 +151,10 @@
     <string name="cache_large">缓存太大了！</string>
     <string name="input_error">输入错误</string>
     <string name="create_cache_error">创建缓存错误</string>
+    
+    <!-- server -->
+    <string name="update_server_google">国外服务器</string>
+    <string name="update_server_qiniu">国内服务器</string>
     
     <!-- Tag -->
     <string name="add_tag">添加标签</string>

@@ -138,16 +138,15 @@
     
     <string name="preference_settings_title">Settings</string>
     <string name="preference_category_cache">Cache</string>
-    <string name="preference_cp_cache">Cover and preview cache size</string>
-    <string name="preference_clear_cp_cache">Clear cover and preview cache</string>
-    <string name="preference_page_cache">Page cache size</string>
-    <string name="preference_clear_page_cache">Clear page cache</string>
+    <string name="preference_cache">Cache size</string>
+    <string name="preference_clear_cache">Clear cache</string>
     <string name="preference_cache_summary" formatted="false">Size : %.2f / %d MB</string>
     <string name="preference_cache_summary_no">No cache</string>
     <string name="preference_auto_page_cache">Auto clear page cache</string>
     <string name="preference_auto_page_cache_summary_on">Clean page cache when the application close</string>
     <string name="preference_auto_page_cache_summary_off">Leave page cache alone</string>
     <string name="preference_download_path">Download path</string>
+    <string name="preference_update_server">Update server</string>
     
     
     <string name="preference_category_about">About</string>
@@ -159,6 +158,10 @@
     <string name="input_error">Input error</string>
     <string name="create_cache_error">Create cache error</string>
     
+    
+    <!-- server -->
+    <string name="update_server_google">Google</string>
+    <string name="update_server_qiniu">Qiniu</string>
     
     <!-- Tag -->
     <string name="add_tag">Add tag</string>

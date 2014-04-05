@@ -34,7 +34,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.support.v4.util.LruCache;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Toast;
@@ -50,8 +49,8 @@ public class SettingsActivity extends PreferenceActivity {
 
     public LruCache<String, Bitmap> memoryCache;
 
-    private static final String CP_CACHE = "preference_cp_cache";
-    private static final String CLEAR_CP_CACHE = "preference_clear_cp_cache";
+    private static final String CACHE = "preference_cache";
+    private static final String CLEAR_CACHE = "preference_clear_cache";
     private static final String AUTHOR = "preference_author";
     private static final String SCREEN_ORI = "preference_screen_ori";
     private static final String CHANGELOG = "preference_changelog";
@@ -59,8 +58,8 @@ public class SettingsActivity extends PreferenceActivity {
     private static final String UPDATE = "preference_update";
     private static final String RAN = "preference_remove_all_noification";
 
-    private EditTextPreference cpCachePre;
-    private Preference clearCpCachePre;
+    private EditTextPreference cachePre;
+    private Preference clearCachePre;
     private Preference authorPer;
     private AutoListPreference screenOriPer;
     private Preference changelogPer;
@@ -104,8 +103,8 @@ public class SettingsActivity extends PreferenceActivity {
         // Set PreferenceActivity
         PreferenceScreen screen = getPreferenceScreen();
 
-        cpCachePre = (EditTextPreference) screen.findPreference(CP_CACHE);
-        cpCachePre
+        cachePre = (EditTextPreference) screen.findPreference(CACHE);
+        cachePre
                 .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
                     @Override
                     public boolean onPreferenceChange(Preference preference,
@@ -148,9 +147,9 @@ public class SettingsActivity extends PreferenceActivity {
                     }
                 });
 
-        clearCpCachePre = (Preference) screen.findPreference(CLEAR_CP_CACHE);
+        clearCachePre = (Preference) screen.findPreference(CLEAR_CACHE);
         updateCpCacheSummary();
-        clearCpCachePre
+        clearCachePre
                 .setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
@@ -293,15 +292,15 @@ public class SettingsActivity extends PreferenceActivity {
     
     private void updateCpCacheSummary() {
         if (Cache.cpCache != null) {
-            clearCpCachePre.setSummary(String.format(
+            clearCachePre.setSummary(String.format(
                     getString(R.string.preference_cache_summary),
                     Cache.cpCache.size() / 1024 / 1024f,
                     Cache.cpCache.maxSize() / 1024 / 1024));
-            clearCpCachePre.setEnabled(true);
+            clearCachePre.setEnabled(true);
         } else {
-            clearCpCachePre
+            clearCachePre
                     .setSummary(getString(R.string.preference_cache_summary_no));
-            clearCpCachePre.setEnabled(false);
+            clearCachePre.setEnabled(false);
         }
     }
 }

@@ -31,12 +31,12 @@
         <EditTextPreference
             android:defaultValue="25"
             android:inputType="number"
-            android:key="preference_cp_cache"
-            android:title="@string/preference_cp_cache" />
+            android:key="preference_cache"
+            android:title="@string/preference_cache" />
         
         <Preference 
-            android:key="preference_clear_cp_cache"
-            android:title="@string/preference_clear_cp_cache" />
+            android:key="preference_clear_cache"
+            android:title="@string/preference_clear_cache" />
         
     </PreferenceCategory>
     
@@ -67,6 +67,14 @@
             android:key="preference_update"
             android:title="@string/update"
             android:summary="@string/tap_update" />
+        
+        <com.hippo.ehviewer.preference.AutoListPreference
+            android:defaultValue="1"
+            android:entries="@array/preference_update_server_entries"
+            android:entryValues="@array/preference_update_server_entry_values"
+            android:key="preference_update_server"
+            android:summary="%s"
+            android:title="@string/preference_update_server" />
         
     </PreferenceCategory>
     

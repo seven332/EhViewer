@@ -27,6 +27,9 @@ public class Config {
     private static final String DOWNLOAD_PATH = "preference_download_path";
     private static final String DOWNLOAD_PATH_DEFAULT = Environment.getExternalStorageDirectory() + "/EhViewer/download/";
     
+    private static final String UPDATE_SERVER = "preference_update_server";
+    private static final String UPDATE_SERVER_DEFAULT = "1";
+    
     private static boolean mInit = false;
 
     private static Context mContext;
@@ -190,4 +193,23 @@ public class Config {
         mConfigPre.edit().putInt(KEY_UPDATE_DATE, date).apply();
     }
     
+    public static String getUpdateServer() {
+        
+        int value = 1;
+        try {
+            value = Integer.parseInt(mConfigPre.getString(UPDATE_SERVER, null));
+        } catch (Exception e) {
+            mConfigPre.edit().putString(UPDATE_SERVER, UPDATE_SERVER_DEFAULT)
+                    .apply();
+        }
+        
+        switch (value) {
+        case 1:
+            return "qiniu";
+        
+        case 0:
+        default:
+            return "google";
+        }
+    }
 }

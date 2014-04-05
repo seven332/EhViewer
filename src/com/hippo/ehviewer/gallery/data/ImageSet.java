@@ -93,6 +93,8 @@ public class ImageSet {
         if (folder == null || !folder.isDirectory())
             size = 0;
         
+        
+        // TODO
         /*
         if (folder == null)
             throw new IllegalArgumentException("Folder is null");
@@ -109,6 +111,7 @@ public class ImageSet {
         if (startIndex > endIndex)
             startIndex = endIndex;
         
+        // TODO
         /*
         if (size < 0 || startIndex < 0
                 || startIndex > endIndex || endIndex > size)

@@ -36,17 +36,10 @@ public class UpdateHelper {
     
     public static final String UPDATE_API = "http://ehviewersu.appsp0t.com/API";
     
-    // Update host
-    private static final int GOOGLE = 0;
-    private static final int QINIU = 1;
-    
     private AppContext mAppContext;
-    private String updateFileName;
     private OnCheckUpdateListener mListener;
     
     private static boolean mEnabled = true;
-    
-    private int downloadHost = QINIU;
     
     public interface OnCheckUpdateListener {
         public void onSuccess(String version, long size, String url, String info);
@@ -102,9 +95,7 @@ public class UpdateHelper {
                     
                     JSONObject detailJO = new JSONObject();
                     detailJO.put("version", pi.versionName);
-                    
-                    // TODO switch server
-                    detailJO.put("server", "qiniu");
+                    detailJO.put("server", Config.getUpdateServer());
                     
                     jo.put("detail", detailJO);
                     
