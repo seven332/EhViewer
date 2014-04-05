@@ -89,15 +89,33 @@ public class ImageSet {
     // [startIndex, endIndex)
     public ImageSet(Context context, String gid, File folder, int size, int startIndex, int endIndex,
             Set<Integer> failIndexSet) {
+        
+        if (folder == null || !folder.isDirectory())
+            size = 0;
+        
+        /*
         if (folder == null)
             throw new IllegalArgumentException("Folder is null");
         if (!folder.isDirectory())
             throw new IllegalArgumentException("Folder is not directory, path is " + folder.getPath());
+        */
+        
+        if (size < 0)
+            size = 0;
+        if (endIndex > size)
+            endIndex = size;
+        if (startIndex < 0)
+            startIndex = 0;
+        if (startIndex > endIndex)
+            startIndex = endIndex;
+        
+        /*
         if (size < 0 || startIndex < 0
                 || startIndex > endIndex || endIndex > size)
             throw new IllegalArgumentException("size or index value error, size = "
                 + size + ", startIndex = " + startIndex
                 + ", endIndex = " + endIndex + ", path is " + folder.getPath());
+        */
         
         mContext = context;
         mGid = gid;

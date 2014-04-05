@@ -139,6 +139,9 @@ public class Downloader implements Runnable {
         else if (mException instanceof NoSdCardException)
             return mContext.getString(R.string.em_no_sdcard);
         
+        else if (mException instanceof FileException)
+            return ((FileException)mException).getMessage();
+        
         else
             return mException.getMessage();
     }

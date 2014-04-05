@@ -22,4 +22,27 @@ public class FileException extends Exception {
         return mErrorCode;
     }
     
+    
+    // TODO
+    public String getMessage() {
+        switch (mErrorCode) {
+        case MKDIR_ERROR:
+            return "mkdir error";
+        case CREATE_FILE_ERROR:
+            return "create file error";
+        case NOT_DIR:
+            return "it is not a dir";
+        case NOT_FILE:
+            return "it is not a file";
+        case CANNOT_EXECUTE:
+            return "can not execute";
+        case CANNOT_READ:
+            return "can not read";
+        case CANNOT_WRITE:
+            return "can not write";
+        default:
+            return "unknown error";
+        }
+    }
+    
 }
