@@ -27,7 +27,7 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 import android.view.WindowManager;
 
 import com.hippo.ehviewer.util.ThreadPool.CancelListener;

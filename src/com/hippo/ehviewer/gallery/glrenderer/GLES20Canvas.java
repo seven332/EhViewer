@@ -21,7 +21,7 @@ import android.graphics.RectF;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 
 import com.hippo.ehviewer.util.IntArray;
 

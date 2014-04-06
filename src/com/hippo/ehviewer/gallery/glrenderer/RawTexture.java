@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 
 import javax.microedition.khronos.opengles.GL11;
 

@@ -17,7 +17,7 @@
 package com.hippo.ehviewer.gallery.glrenderer;
 
 import android.graphics.RectF;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 
 import com.hippo.ehviewer.gallery.common.Utils;
 

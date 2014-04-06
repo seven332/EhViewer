@@ -15,7 +15,7 @@ import java.net.UnknownHostException;
 import org.apache.http.conn.ConnectTimeoutException;
 
 import android.content.Context;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.exception.FileException;

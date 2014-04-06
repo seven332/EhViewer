@@ -23,7 +23,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 
 import java.io.Closeable;
 import java.io.IOException;

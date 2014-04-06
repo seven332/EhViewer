@@ -33,7 +33,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;

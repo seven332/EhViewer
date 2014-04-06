@@ -18,7 +18,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Movie;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 import android.util.SparseArray;
 
 // TODO 初期建立一个线程检索文件夹中所有文件以寻找到所有图片文件

@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer.util;
 
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;

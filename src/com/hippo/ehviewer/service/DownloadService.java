@@ -19,7 +19,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 
 public class DownloadService extends Service {
     private static final int DOWNLOAD_NOTIFY_ID = -1;

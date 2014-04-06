@@ -43,7 +43,7 @@ import android.graphics.Movie;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.util.LruCache;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 
 // TODO Stringbuffer to StringBuild
 

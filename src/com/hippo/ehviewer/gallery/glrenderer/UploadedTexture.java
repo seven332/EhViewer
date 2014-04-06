@@ -19,7 +19,7 @@ package com.hippo.ehviewer.gallery.glrenderer;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.opengl.GLUtils;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 import junit.framework.Assert;
 
 import java.util.HashMap;

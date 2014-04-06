@@ -22,7 +22,7 @@ import android.graphics.RectF;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 
 import com.hippo.ehviewer.gallery.common.Utils;
 import com.hippo.ehviewer.util.IntArray;

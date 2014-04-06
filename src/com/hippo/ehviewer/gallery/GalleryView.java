@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.graphics.Movie;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 import android.view.MotionEvent;
 
 import com.hippo.ehviewer.R;

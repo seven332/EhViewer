@@ -19,7 +19,7 @@ package com.hippo.ehviewer.gallery.ui;
 import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.os.SystemClock;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 import android.view.MotionEvent;
 
 import com.hippo.ehviewer.gallery.anim.CanvasAnimation;

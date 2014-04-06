@@ -4,7 +4,7 @@ import junit.framework.Assert;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Movie;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 
 public class MovieTexture extends CanvasTexture {
     private static final int DEFAULT_MOVIE_DURATION = 1000;

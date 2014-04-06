@@ -30,7 +30,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;

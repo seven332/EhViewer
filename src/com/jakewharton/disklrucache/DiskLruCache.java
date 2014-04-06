@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 
 /**
  * A cache that uses a bounded amount of space on a filesystem. Each cache entry

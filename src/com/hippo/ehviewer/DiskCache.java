@@ -19,7 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Movie;
 import android.os.Environment;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 
 // For Gallery cover key is gid,
 // for example , gid is 618395, token is 0439fa3666,

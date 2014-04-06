@@ -26,7 +26,7 @@ import android.os.Build;
 import android.os.Process;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;

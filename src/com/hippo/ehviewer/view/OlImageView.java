@@ -9,7 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.Movie;
 import android.support.v4.util.LruCache;
 import android.util.AttributeSet;
-import android.util.Log;
+import com.hippo.ehviewer.util.Log;
 import android.view.View;
 
 public class OlImageView extends SuperImageView {
