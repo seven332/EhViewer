@@ -1,0 +1,122 @@
+# view AndroidManifest.xml #generated:15
+-keep class com.hippo.ehviewer.AppContext { <init>(...); }
+
+# view AndroidManifest.xml #generated:24
+-keep class com.hippo.ehviewer.StartActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:77
+-keep class com.hippo.ehviewer.activity.DownloadActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:69
+-keep class com.hippo.ehviewer.activity.FavouriteActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:55
+-keep class com.hippo.ehviewer.activity.MangaActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:48
+-keep class com.hippo.ehviewer.activity.MangaDetailActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:86
+-keep class com.hippo.ehviewer.activity.MangaDownloadActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:35
+-keep class com.hippo.ehviewer.activity.MangaListActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:61
+-keep class com.hippo.ehviewer.activity.SettingsActivity { <init>(...); }
+
+# view res/layout/gl_root_group.xml #generated:7
+-keep class com.hippo.ehviewer.gallery.ui.GLRootView { <init>(...); }
+
+# view res/xml/settings.xml #generated:13
+# view res/xml/settings.xml #generated:21
+# view res/xml/settings.xml #generated:5
+# view res/xml/settings.xml #generated:71
+-keep class com.hippo.ehviewer.preference.AutoListPreference { <init>(...); }
+
+# view AndroidManifest.xml #generated:94
+-keep class com.hippo.ehviewer.service.DownloadService { <init>(...); }
+
+# view res/layout/dialog.xml #generated:70
+# view res/layout/dialog.xml #generated:77
+# view res/layout/dialog.xml #generated:84
+-keep class com.hippo.ehviewer.view.AlertButton { <init>(...); }
+
+# view res/layout/filter.xml #generated:19
+# view res/layout/filter.xml #generated:27
+# view res/layout/filter.xml #generated:37
+# view res/layout/filter.xml #generated:45
+# view res/layout/filter.xml #generated:55
+# view res/layout/filter.xml #generated:63
+# view res/layout/filter.xml #generated:73
+# view res/layout/filter.xml #generated:81
+# view res/layout/filter.xml #generated:91
+# view res/layout/filter.xml #generated:99
+-keep class com.hippo.ehviewer.view.CheckImage { <init>(...); }
+
+# view res/layout/download_item.xml #generated:1
+-keep class com.hippo.ehviewer.view.DownloadItemLayout { <init>(...); }
+
+# view res/layout/list.xml #generated:6
+-keep class com.hippo.ehviewer.view.GetPaddingRelativeLayout { <init>(...); }
+
+# view res/layout/manga.xml #generated:1
+-keep class com.hippo.ehviewer.view.MangaViewPager { <init>(...); }
+
+# view res/layout/detail.xml #generated:20
+# view res/layout/download_item.xml #generated:8
+-keep class com.hippo.ehviewer.view.OlImageView { <init>(...); }
+
+# view res/layout/list_menu_list.xml #generated:1
+-keep class com.hippo.ehviewer.view.TagListView { <init>(...); }
+
+# view res/layout/page_list.xml #generated:13
+-keep class com.hippo.ehviewer.widget.AutoWrapLayout { <init>(...); }
+
+# view res/layout/list.xml #generated:1
+-keep class com.hippo.ehviewer.widget.DrawerLayout { <init>(...); }
+
+# view res/layout/list_item.xml #generated:6
+-keep class com.hippo.ehviewer.widget.LoadImageView { <init>(...); }
+
+# view res/layout/list.xml #generated:12
+-keep class com.hippo.ehviewer.widget.PullListView { <init>(...); }
+
+# onClick res/layout/page_list_panel.xml #generated:6
+-keepclassmembers class * { *** ButtonBack(...); }
+
+# onClick res/layout/page_list_panel.xml #generated:25
+-keepclassmembers class * { *** ButtonFront(...); }
+
+# onClick res/layout/page_list.xml #generated:28
+-keepclassmembers class * { *** ButtonPreviewRefresh(...); }
+
+# onClick res/layout/menu_login.xml #generated:17
+-keepclassmembers class * { *** buttonCheckLogin(...); }
+
+# onClick res/layout/detail_offensive.xml #generated:41
+-keepclassmembers class * { *** buttonEvery(...); }
+
+# onClick res/layout/detail_offensive.xml #generated:23
+# onClick res/layout/detail_pining.xml #generated:15
+-keepclassmembers class * { *** buttonFinsh(...); }
+
+# onClick res/layout/menu_login.xml #generated:6
+-keepclassmembers class * { *** buttonLogin(...); }
+
+# onClick res/layout/menu_login_over.xml #generated:16
+-keepclassmembers class * { *** buttonLogout(...); }
+
+# onClick res/layout/detail_offensive.xml #generated:31
+-keepclassmembers class * { *** buttonOnce(...); }
+
+# onClick res/layout/detail_normal.xml #generated:73
+-keepclassmembers class * { *** buttonRead(...); }
+
+# onClick res/layout/detail.xml #generated:60
+# onClick res/layout/list.xml #generated:25
+-keepclassmembers class * { *** buttonRefresh(...); }
+
+# onClick res/layout/page_list_panel.xml #generated:12
+-keepclassmembers class * { *** goTo(...); }
+

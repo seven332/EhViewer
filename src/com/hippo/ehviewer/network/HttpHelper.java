@@ -12,6 +12,8 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.conn.ConnectTimeoutException;
@@ -27,6 +29,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.util.LruCache;
+
 import com.hippo.ehviewer.util.Log;
 
 /**
@@ -37,6 +40,9 @@ import com.hippo.ehviewer.util.Log;
  */
 public class HttpHelper {
     private static final String TAG = "HttpHelper";
+    
+    private static String DEFAULT_CHARSET = "utf-8";
+    private static String CHARSET_KEY = "charset=";
     
     private Context mContext;
     private Exception mException;
@@ -89,8 +95,27 @@ public class HttpHelper {
                 is = new GZIPInputStream(is);
             baos = new ByteArrayOutputStream();
             Util.copy(is, baos, Constant.BUFFER_SIZE);
-            // TODO charset
-            pageContext = baos.toString("utf-8");
+            
+            // Get charset
+            String charset = null;
+            List<String> contentType = conn.getHeaderFields().get("Content-Type");
+            if (contentType != null) {
+                for (String item : contentType) {
+                    if (item == null)
+                        continue;
+                    int index = -1;
+                    if ((index = item.indexOf(CHARSET_KEY)) != -1) {
+                        charset = item.substring(index + CHARSET_KEY.length());
+                        break;
+                    }
+                }
+            }
+            // Use default charset
+            if (charset == null) {
+                charset = DEFAULT_CHARSET;
+            }
+            
+            pageContext = baos.toString(charset);
         } catch (IOException e) {
             throw e;
         } finally {

@@ -6,7 +6,9 @@ import android.graphics.Color;
 import android.graphics.Movie;
 import android.graphics.Rect;
 import android.graphics.RectF;
+
 import com.hippo.ehviewer.util.Log;
+
 import android.view.MotionEvent;
 
 import com.hippo.ehviewer.R;
@@ -293,8 +295,23 @@ public class GalleryView extends GLView {
         // TODO Mask to reduce brightness
         //canvas.fillRect(0, 0, mWidth, mHeight, MASK_COLOR);
         
-        if (hasMovie)
-            invalidate();
+        
+        // TODO
+        if (hasMovie) {
+            Log.d(TAG, "hasMovie");
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } finally {
+                        invalidate();
+                    }
+                }
+            }.start();
+        }
     }
     
     private void resetSizePosition() {
