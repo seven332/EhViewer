@@ -150,6 +150,8 @@ public class MangaActivity extends Activity {
         private boolean testImage(String path, String name) {
             boolean isImage = false;
             File file = new File(path, name);
+            if (!file.exists() || !file.isFile())
+                return false;
             FileInputStream fis = null;
             try {
                 // Just test bound might error

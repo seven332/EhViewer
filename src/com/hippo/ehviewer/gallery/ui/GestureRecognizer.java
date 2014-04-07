@@ -29,7 +29,7 @@ public class GestureRecognizer {
     private static final String TAG = "GestureRecognizer";
 
     public interface Listener {
-        boolean onSingleTapUp(float x, float y);
+        boolean onSingleTapConfirmed(float x, float y);
         boolean onDoubleTap(float x, float y);
         void onLongPress(MotionEvent e);
         boolean onScrollBegin(float dx, float dy, float totalX, float totalY);
@@ -82,8 +82,8 @@ public class GestureRecognizer {
         float firstX = 0;
         float firstY = 0;
         @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            return mListener.onSingleTapUp(e.getX(), e.getY());
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            return mListener.onSingleTapConfirmed(e.getX(), e.getY());
         }
 
         @Override

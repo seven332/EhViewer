@@ -6,9 +6,6 @@ import android.graphics.Color;
 import android.graphics.Movie;
 import android.graphics.Rect;
 import android.graphics.RectF;
-
-import com.hippo.ehviewer.util.Log;
-
 import android.view.MotionEvent;
 
 import com.hippo.ehviewer.R;
@@ -24,6 +21,10 @@ import com.hippo.ehviewer.gallery.ui.GLView;
 import com.hippo.ehviewer.gallery.ui.GestureRecognizer;
 import com.hippo.ehviewer.gallery.util.GalleryUtils;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.util.ThreadPool;
+import com.hippo.ehviewer.util.ThreadPool.Job;
+import com.hippo.ehviewer.util.ThreadPool.JobContext;
 import com.hippo.ehviewer.util.TimeRunner;
 import com.hippo.ehviewer.util.Ui;
 
@@ -93,6 +94,7 @@ public class GalleryView extends GLView {
     
     // TODO
     private static final int BACKGROUND_COLOR = Color.BLACK;
+    @SuppressWarnings("unused")
     private static final int MASK_COLOR = 0x88000000;
     
     
@@ -144,6 +146,8 @@ public class GalleryView extends GLView {
     private OnTapTextListener mOnTapTextListener;
     private OnScrollPageListener mOnScrollPageListener;
     
+    private ThreadPool mMovieWait;
+    
     public interface OnEdgeListener {
         public void onFirstPageEdge();
         public void onLastPageEdge();
@@ -181,6 +185,8 @@ public class GalleryView extends GLView {
             mCurIndex = 0;
         
         setState();
+        
+        mMovieWait = new ThreadPool(1, 1);
         
         mGestureRecognizer = new GestureRecognizer(mContext, new MyGestureListener());
         setBackgroundColor(GalleryUtils.intColorToFloatARGBArray(BACKGROUND_COLOR));
@@ -296,23 +302,23 @@ public class GalleryView extends GLView {
         //canvas.fillRect(0, 0, mWidth, mHeight, MASK_COLOR);
         
         
-        // TODO
-        if (hasMovie) {
-            Log.d(TAG, "hasMovie");
-            new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } finally {
-                        invalidate();
-                    }
-                }
-            }.start();
-        }
+        if (hasMovie)
+            mMovieWait.submit(mMovieShowJob);
     }
+    
+    private Job<Object> mMovieShowJob = new Job<Object>() {
+        @Override
+        public Object run(JobContext jc) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                invalidate();
+            }
+            return null;
+        }
+    };
     
     private void resetSizePosition() {
         resetSizePosition(PRE_TARGET_INDEX);
@@ -579,11 +585,9 @@ public class GalleryView extends GLView {
         @Override
         public void onDecodeOver(Object res, int index) {
             int targetIndex = index - mCurIndex + 1;
-            ShowItem showItem;
-            Image image;
             
             if (targetIndex < 0 || targetIndex > 2
-                    || !((showItem = showItems[targetIndex]) instanceof EmptyItem)) {// If it do not need any more
+                    || !(showItems[targetIndex] instanceof EmptyItem)) {// If it do not need any more
                 if (res != null && res instanceof Bitmap)
                     ((Bitmap)res).recycle();
             } else {
@@ -777,9 +781,14 @@ public class GalleryView extends GLView {
         }
         
         @Override
-        public boolean onSingleTapUp(float x, float y) {
-            if (mScrollState != SCROLL_NONE || mShowTapAreaTurn)
+        public boolean onSingleTapConfirmed(float x, float y) {
+            if (mScrollState != SCROLL_NONE) {
                 return false;
+            }
+            if (mShowTapAreaTurn) {
+                mShowTapAreaTurn = false;
+                return false;
+            }
             
             if ( showItems[CUR_TARGET_INDEX] == null
                     || showItems[CUR_TARGET_INDEX] instanceof Text) {
@@ -815,6 +824,7 @@ public class GalleryView extends GLView {
         
         @Override
         public boolean onDoubleTap(float x, float y) {
+            Log.d(TAG, "onDoubleTap");
             return true;
         }
         
@@ -1029,8 +1039,13 @@ public class GalleryView extends GLView {
         @Override
         public void onUp() {
             mShowEdegTip = true;
-            if (!mShowTapArea)
+            
+            
+            //  if use onSingleTapUp, use below
+            /*
+             * if (mShowTapAreaTurn) {
                 mShowTapAreaTurn = false;
+             */
         }
         
         // *** TimeRunner *** //
@@ -1166,10 +1181,6 @@ public class GalleryView extends GLView {
         public void init(UploadedTexture texture) {
             mTexture = texture;
             imageScale = 1;
-        }
-        
-        public boolean isLoaded() {
-            return mTexture != null;
         }
         
         @Override

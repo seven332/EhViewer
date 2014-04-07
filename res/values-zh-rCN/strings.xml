@@ -153,8 +153,8 @@
     <string name="create_cache_error">创建缓存错误</string>
     
     <!-- server -->
-    <string name="update_server_google">国外服务器</string>
-    <string name="update_server_qiniu">国内服务器</string>
+    <string name="update_server_google">Google</string>
+    <string name="update_server_qiniu">七牛</string>
     
     <!-- Tag -->
     <string name="add_tag">添加标签</string>
