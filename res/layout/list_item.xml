@@ -7,8 +7,7 @@
         android:id="@+id/cover"
         android:layout_width="67dp"
         android:layout_height="100dp"
-        android:scaleType="fitCenter"
-        android:layout_gravity="center" />
+        android:scaleType="fitCenter" />
 
     <LinearLayout
         android:layout_width="fill_parent"

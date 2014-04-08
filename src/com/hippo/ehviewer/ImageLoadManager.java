@@ -16,6 +16,11 @@ import com.hippo.ehviewer.util.Log;
 
 public class ImageLoadManager {
     private static final String TAG = "ImageLoadManager";
+    
+    private static final int WAIT = 0x0;
+    private static final int TOUCH = 0x1;
+    private static final int CONTEXT = 0x2;
+    
     private class LoadTask {
         public LoadImageView liv;
         public boolean download;
@@ -42,7 +47,19 @@ public class ImageLoadManager {
                 @Override
                 public void handleMessage(Message msg) {
                     LoadTask task = (LoadTask)msg.obj;
-                    task.liv.setImageBitmap(task.bitmap);
+                    switch (msg.what) {
+                    case WAIT:
+                        task.liv.setWaitImage();
+                        break;
+                        
+                    case TOUCH:
+                        task.liv.setTouchImage();
+                        break;
+                        
+                    case CONTEXT:
+                        task.liv.setContextImage(task.bitmap);
+                        break;
+                    }
                 }
             };
     
@@ -89,14 +106,17 @@ public class ImageLoadManager {
                 Message msg = new Message();
                 msg.obj = curLoadTask;
                 if (bitmap == null) { // Load from cache error
-                    curLoadTask.bitmap = Ui.BITMAP_LAUNCH;
-                    if (curLoadTask.download)
+                    if (curLoadTask.download) {
                         mImageDownloadTask.add(curLoadTask);
-                    else
+                    }
+                    else {
                         liv.setState(LoadImageView.FAIL);
+                    }
+                    msg.what = WAIT;
                 } else {
                     curLoadTask.bitmap = bitmap;
                     liv.setState(LoadImageView.LOADED);
+                    msg.what = CONTEXT;
                 }
                 loadImageHandler.sendMessage(msg);
             }
@@ -145,12 +165,13 @@ public class ImageLoadManager {
                     msg.obj = loadTask;
                     if (bitmap == null) {
                         Log.d(TAG, httpHelper.getEMsg());
-                        loadTask.bitmap = Ui.BITMAP_TOUCH;
                         liv.setState(LoadImageView.FAIL);
                         liv.setOnClickListener(ImageLoadManager.this);
+                        msg.what = TOUCH;
                     } else {
                         loadTask.bitmap = bitmap;
                         liv.setState(LoadImageView.LOADED);
+                        msg.what = CONTEXT;
                     }
                     loadImageHandler.sendMessage(msg);
                 }

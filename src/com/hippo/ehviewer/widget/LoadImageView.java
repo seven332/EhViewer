@@ -1,9 +1,14 @@
 package com.hippo.ehviewer.widget;
 
 import com.hippo.ehviewer.ImageLoadManager;
+import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,6 +21,11 @@ public class LoadImageView extends ImageView {
     public static final int LOADING = 0x1;
     public static final int LOADED = 0x2;
     public static final int FAIL = 0x3;
+    
+    private static final int WAIT_IMAGE_ID = R.drawable.ic_launcher;
+    private static final int TOUCH_IMAGE_ID = R.drawable.ic_touch;
+    
+    private static final int DURATION = 300;
     
     private int mState = NONE;
     
@@ -59,6 +69,29 @@ public class LoadImageView extends ImageView {
         return mState;
     }
     
+    public void setWaitImage() {
+        setImageResource(WAIT_IMAGE_ID);
+    }
+    
+    public void setTouchImage() {
+        setImageResource(TOUCH_IMAGE_ID);
+    }
+    
+    public void setContextImage(Bitmap bmp) {
+        Drawable oldDrawable = getDrawable();
+        
+        if (oldDrawable == null)
+            setImageBitmap(bmp);
+        else {
+            Drawable[] layers = new Drawable[2];
+            layers[0] = oldDrawable;
+            layers[1] = new BitmapDrawable(getContext().getResources(), bmp);
+            TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
+            setImageDrawable(transitionDrawable);
+            transitionDrawable.startTransition(DURATION);
+        }
+    }
+    
     class OnClickListener implements View.OnClickListener {
         private ImageLoadManager mImageLoadManager;
         public OnClickListener(ImageLoadManager imageLoadManager) {
@@ -67,7 +100,7 @@ public class LoadImageView extends ImageView {
         
         @Override
         public void onClick(View v) {
-            LoadImageView.this.setImageBitmap(Ui.BITMAP_LAUNCH);
+            LoadImageView.this.setImageResource(R.drawable.ic_launcher);
             mImageLoadManager.add(LoadImageView.this, true);
         }
     }

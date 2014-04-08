@@ -23,25 +23,6 @@ public class Ui {
     private static Context mContext;
     private static final BitmapFactory.Options opt = new BitmapFactory.Options();
     
-    public static Bitmap BITMAP_DOUJINSHI;
-    public static Bitmap BITMAP_MANGAI;
-    public static Bitmap BITMAP_ARTIST_CG;
-    public static Bitmap BITMAP_GAME_CG;
-    public static Bitmap BITMAP_WESTERN;
-    public static Bitmap BITMAP_NON_H;
-    public static Bitmap BITMAP_IMAGE_SET;
-    public static Bitmap BITMAP_COSPLAY;
-    public static Bitmap BITMAP_ASIAN_PORN;
-    public static Bitmap BITMAP_MISC;
-    public static Bitmap BITMAP_UNKNOWN;
-    
-    public static Bitmap BITMAP_START;
-    public static Bitmap BITMAP_START_HALF;
-    public static Bitmap BITMAP_START_EMPTY;
-    
-    public static Bitmap BITMAP_LAUNCH;
-    public static Bitmap BITMAP_TOUCH;
-    
     private static boolean mInit = false;
     
     /**
@@ -59,26 +40,6 @@ public class Ui {
         opt.inPreferredConfig = Bitmap.Config.RGB_565;
         opt.inPurgeable = true;
         opt.inInputShareable = true;
-        
-        
-        BITMAP_DOUJINSHI = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.doujinshi), null, opt);
-        BITMAP_MANGAI = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.manga), null, opt);
-        BITMAP_ARTIST_CG = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.artistcg), null, opt);
-        BITMAP_GAME_CG = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.gamecg), null, opt);
-        BITMAP_WESTERN = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.western), null, opt);
-        BITMAP_NON_H = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.non_h), null, opt);
-        BITMAP_IMAGE_SET = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.imageset), null, opt);
-        BITMAP_COSPLAY = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.cosplay), null, opt);
-        BITMAP_ASIAN_PORN = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.asianporn), null, opt);
-        BITMAP_MISC = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.misc), null, opt);
-        BITMAP_UNKNOWN = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.unknown), null, opt);
-        
-        BITMAP_START = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.star), null, opt);
-        BITMAP_START_HALF = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.star_half), null, opt);
-        BITMAP_START_EMPTY = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.star_empty), null, opt);
-        
-        BITMAP_LAUNCH = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.ic_launcher), null, opt);
-        BITMAP_TOUCH = BitmapFactory.decodeStream(mContext.getResources().openRawResource(R.drawable.ic_touch), null, opt);
     }
     
     /**
@@ -104,37 +65,37 @@ public class Ui {
             return;
         switch (type) {
         case ListUrls.DOUJINSHI:
-            imageView.setImageBitmap(BITMAP_DOUJINSHI);
+            imageView.setImageResource(R.drawable.doujinshi);
             break;
         case ListUrls.MANGA:
-            imageView.setImageBitmap(BITMAP_MANGAI);
+            imageView.setImageResource(R.drawable.manga);
             break;
         case ListUrls.ARTIST_CG:
-            imageView.setImageBitmap(BITMAP_ARTIST_CG);
+            imageView.setImageResource(R.drawable.artistcg);
             break;
         case ListUrls.GAME_CG:
-            imageView.setImageBitmap(BITMAP_GAME_CG);
+            imageView.setImageResource(R.drawable.gamecg);
             break;
         case ListUrls.WESTERN:
-            imageView.setImageBitmap(BITMAP_WESTERN);
+            imageView.setImageResource(R.drawable.western);
             break;
         case ListUrls.NON_H:
-            imageView.setImageBitmap(BITMAP_NON_H);
+            imageView.setImageResource(R.drawable.non_h);
             break;
         case ListUrls.IMAGE_SET:
-            imageView.setImageBitmap(BITMAP_IMAGE_SET);
+            imageView.setImageResource(R.drawable.imageset);
             break;
         case ListUrls.COSPLAY:
-            imageView.setImageBitmap(BITMAP_COSPLAY);
+            imageView.setImageResource(R.drawable.cosplay);
             break;
         case ListUrls.ASIAN_PORN:
-            imageView.setImageBitmap(BITMAP_ASIAN_PORN);
+            imageView.setImageResource(R.drawable.asianporn);
             break;
         case ListUrls.MISC:
-            imageView.setImageBitmap(BITMAP_MISC);
+            imageView.setImageResource(R.drawable.misc);
             break;
         default:
-            imageView.setImageBitmap(BITMAP_UNKNOWN);
+            imageView.setImageResource(R.drawable.unknown);
             break;
         }
     }
@@ -160,7 +121,7 @@ public class Ui {
         } catch (Exception e) {
             for (int i = 0; i < 5; i++) {
                 ImageView IvStarEmpty = new ImageView(mContext);
-                IvStarEmpty.setImageBitmap(BITMAP_START_EMPTY);
+                IvStarEmpty.setImageResource(R.drawable.star_empty);
                 viewGroup.addView(IvStarEmpty);
             }
             return;
@@ -171,19 +132,19 @@ public class Ui {
         
         for (int i = 0; i < leve/2; i++) {
             ImageView IvStar = new ImageView(mContext);
-            IvStar.setImageBitmap(BITMAP_START);
+            IvStar.setImageResource(R.drawable.star);
             viewGroup.addView(IvStar);
             starNum--;
         }
         if (leve % 2 != 0) {
             ImageView IvStarHalf = new ImageView(mContext);
-            IvStarHalf.setImageBitmap(BITMAP_START_HALF);
+            IvStarHalf.setImageResource(R.drawable.star_half);
             viewGroup.addView(IvStarHalf);
             starNum--;
         }
         for (int i = 0; i < starNum; i++) {
             ImageView IvStarEmpty = new ImageView(mContext);
-            IvStarEmpty.setImageBitmap(BITMAP_START_EMPTY);
+            IvStarEmpty.setImageResource(R.drawable.star_empty);
             viewGroup.addView(IvStarEmpty);
         }
     }
