@@ -93,7 +93,13 @@ public class HttpHelper {
             String encoding = conn.getContentEncoding();
             if (encoding != null && encoding.equals("gzip"))
                 is = new GZIPInputStream(is);
-            baos = new ByteArrayOutputStream();
+            
+            int length = conn.getContentLength();
+            if (length >= 0)
+                baos = new ByteArrayOutputStream(length);
+            else
+                baos = new ByteArrayOutputStream();
+            
             Util.copy(is, baos, Constant.BUFFER_SIZE);
             
             // Get charset

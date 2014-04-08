@@ -202,11 +202,11 @@ public class Config {
             mConfigPre.edit().putString(UPDATE_SERVER, UPDATE_SERVER_DEFAULT)
                     .apply();
         }
-        
         switch (value) {
         case 1:
             return "qiniu";
-        
+        case 2:
+            return "gokuai";
         case 0:
         default:
             return "google";

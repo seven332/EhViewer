@@ -78,11 +78,13 @@
     <string-array name="preference_update_server_entries">
         <item>@string/update_server_google</item>
         <item>@string/update_server_qiniu</item>
+        <item>@string/update_server_gokuai</item>
     </string-array>
     
     <string-array name="preference_update_server_entry_values" translatable="false">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
     
     

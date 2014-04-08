@@ -155,6 +155,7 @@
     <!-- server -->
     <string name="update_server_google">Google</string>
     <string name="update_server_qiniu">七牛</string>
+    <string name="update_server_gokuai">够快</string>
     
     <!-- Tag -->
     <string name="add_tag">添加标签</string>

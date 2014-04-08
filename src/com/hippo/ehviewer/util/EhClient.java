@@ -1002,6 +1002,7 @@ public class EhClient {
                 Log.d(TAG, "Download image " + url);
 
                 HttpURLConnection conn = null;
+                ByteArrayOutputStream baos = null;
                 try {
                     URL url = new URL(this.url);
                     conn = (HttpURLConnection) url.openConnection();
@@ -1010,7 +1011,12 @@ public class EhClient {
                     conn.connect();
                     InputStream is = conn.getInputStream();
                     if (diskCache != null) {
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        
+                        int length = conn.getContentLength();
+                        if (length >= 0)
+                            baos = new ByteArrayOutputStream(length);
+                        else
+                            baos = new ByteArrayOutputStream();
                         Util.copy(is, baos);
                         byte[] bytes = baos.toByteArray();
                         // To disk cache
@@ -1057,6 +1063,8 @@ public class EhClient {
                 } finally {
                     if (conn != null)
                         conn.disconnect();
+                    if (baos != null)
+                        Util.closeStreamQuietly(baos);
                 }
                 sendMessage(res, errorMessageId);
             }

@@ -11,6 +11,7 @@ import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.EhClient;
 import com.hippo.ehviewer.util.EhClient.DownloadMangaManager;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -18,7 +19,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
+
 import com.hippo.ehviewer.util.Log;
 
 public class DownloadService extends Service {
@@ -34,7 +35,6 @@ public class DownloadService extends Service {
     private ServiceBinder mBinder = null;
     
     private NotificationManager mNotifyManager;
-    private NotificationCompat.Builder mBuilder;
     
     private DownloadMangaManager downloadMangaManager;
     
@@ -47,12 +47,6 @@ public class DownloadService extends Service {
         mBinder = new ServiceBinder();
         mNotifyManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);
-        mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setSmallIcon(R.drawable.ic_launcher);
-        
-        Intent intent = new Intent(DownloadService.this,DownloadActivity.class);  
-        PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);  
-        mBuilder.setContentIntent(pendingIntent);  
         
         downloadMangaManager = mAppContext.getEhClient().new DownloadMangaManager();
         
@@ -60,10 +54,12 @@ public class DownloadService extends Service {
         downloadMangaManager.setOnDownloadMangaListener(new EhClient.OnDownloadMangaListener() {
             @Override
             public void onDownloadMangaAllStart() {
-                mBuilder.setContentTitle(getString(R.string.start_download_task))
+                Notification.Builder builder = new Notification.Builder(getApplicationContext());
+                setNotification(builder);
+                builder.setContentTitle(getString(R.string.start_download_task))
                         .setContentText(null)
-                        .setProgress(0, 0, true).setOngoing(true).setAutoCancel(false);;
-                mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
+                        .setProgress(0, 0, true).setOngoing(true).setAutoCancel(false);
+                mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, builder.getNotification());
             }
             
             @Override
@@ -78,11 +74,13 @@ public class DownloadService extends Service {
                 if (di == null)
                     mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
                 else {
-                    mBuilder.setContentTitle(getString(R.string.downloading)
+                    Notification.Builder builder = new Notification.Builder(getApplicationContext());
+                    setNotification(builder);
+                    builder.setContentTitle(getString(R.string.downloading)
                         + " " + di.title)
                         .setContentText(null)
-                        .setProgress(0, 0, true).setOngoing(true).setAutoCancel(false);;
-                mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
+                        .setProgress(0, 0, true).setOngoing(true).setAutoCancel(false);
+                    mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, builder.getNotification());
                 }
             }
             
@@ -92,12 +90,14 @@ public class DownloadService extends Service {
                 if (di == null)
                     mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
                 else {
-                    mBuilder.setContentTitle(getString(R.string.downloading)
+                    Notification.Builder builder = new Notification.Builder(getApplicationContext());
+                    setNotification(builder);
+                    builder.setContentTitle(getString(R.string.downloading)
                             + " " + di.title)
                             .setContentText(startIndex + " / " + pageSum)
                             .setProgress(pageSum, startIndex, false).setOngoing(true)
                             .setAutoCancel(false);
-                    mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
+                    mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, builder.getNotification());
                     mNotifyManager.cancel(Integer.parseInt(id));
                 }
             }
@@ -118,9 +118,11 @@ public class DownloadService extends Service {
                 DownloadInfo di = Download.get(id);
                 if (di != null)
                     mesg += Download.get(id).title;
-                mBuilder.setContentTitle(mesg);
-                mBuilder.setContentText(null).setProgress(0, 0, false).setOngoing(false);
-                mNotifyManager.notify(Integer.parseInt(id), mBuilder.build());
+                Notification.Builder builder = new Notification.Builder(getApplicationContext());
+                setNotification(builder);
+                builder.setContentTitle(mesg);
+                builder.setContentText(null).setProgress(0, 0, false).setOngoing(false);
+                mNotifyManager.notify(Integer.parseInt(id), builder.getNotification());
             }
             
             @Override
@@ -129,12 +131,14 @@ public class DownloadService extends Service {
                 if (di == null)
                     mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
                 else {
-                    mBuilder.setContentTitle(getString(R.string.downloading)
+                    Notification.Builder builder = new Notification.Builder(getApplicationContext());
+                    setNotification(builder);
+                    builder.setContentTitle(getString(R.string.downloading)
                             + " " + di.title)
                             .setContentText(index + " / " + pageSum)
                             .setProgress(pageSum, index, false).setOngoing(true)
                             .setAutoCancel(false);
-                    mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
+                    mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, builder.getNotification());
                 }
             }
 
@@ -145,8 +149,17 @@ public class DownloadService extends Service {
                 
             }
         });
-    }  
-  
+    }
+    
+    private void setNotification(Notification.Builder builder) {
+        
+        builder.setSmallIcon(R.drawable.ic_launcher);
+        
+        Intent intent = new Intent(DownloadService.this,DownloadActivity.class);  
+        PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);  
+        builder.setContentIntent(pendingIntent);  
+    }
+    
     @Override  
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Service onStartCommand");
@@ -170,7 +183,6 @@ public class DownloadService extends Service {
         
         mBinder = null;
         mNotifyManager = null;
-        mBuilder = null;
     }
     
     public void add(String gid, String thumb, String detailUrlStr, String title) {
