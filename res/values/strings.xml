@@ -3,6 +3,9 @@
 
     <string name="app_name" translatable="false">EhViewer</string>
     
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    
     <!-- Warning -->
     <string name="dailog_waring_title">Waring</string>
     <string name="dailog_waring_plain">该应用内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。该应用作者不会对由该应用造成的后果负责。您是否愿意继续使用该应用？</string>

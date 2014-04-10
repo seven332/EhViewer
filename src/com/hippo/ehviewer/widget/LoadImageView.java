@@ -6,7 +6,9 @@ import com.hippo.ehviewer.util.Ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
@@ -79,17 +81,19 @@ public class LoadImageView extends ImageView {
     
     public void setContextImage(Bitmap bmp) {
         Drawable oldDrawable = getDrawable();
-        
-        if (oldDrawable == null)
-            setImageBitmap(bmp);
-        else {
-            Drawable[] layers = new Drawable[2];
-            layers[0] = oldDrawable;
-            layers[1] = new BitmapDrawable(getContext().getResources(), bmp);
-            TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
-            setImageDrawable(transitionDrawable);
-            transitionDrawable.startTransition(DURATION);
+        if (oldDrawable == null) {
+            oldDrawable = new ColorDrawable(Ui.HOLO_WHITE);
+            oldDrawable.setBounds(0, 0, bmp.getWidth(), bmp.getHeight());
+        } else if (oldDrawable instanceof TransitionDrawable){
+            oldDrawable = ((TransitionDrawable)oldDrawable).getDrawable(1);
         }
+        
+        Drawable[] layers = new Drawable[2];
+        layers[0] = oldDrawable;
+        layers[1] = new BitmapDrawable(getContext().getResources(), bmp);
+        TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
+        setImageDrawable(transitionDrawable);
+        transitionDrawable.startTransition(DURATION);
     }
     
     class OnClickListener implements View.OnClickListener {

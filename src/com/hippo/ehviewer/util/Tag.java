@@ -8,7 +8,6 @@ import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
 import java.util.ArrayList;
 
-import com.hippo.ehviewer.ListMangaDetail;
 import com.hippo.ehviewer.ListUrls;
 
 import android.content.Context;

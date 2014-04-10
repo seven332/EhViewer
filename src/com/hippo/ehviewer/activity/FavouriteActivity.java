@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+
 import com.hippo.ehviewer.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,8 +26,8 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.BeautifyScreen;
+import com.hippo.ehviewer.GalleryInfo;
 import com.hippo.ehviewer.ImageLoadManager;
-import com.hippo.ehviewer.ListMangaDetail;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
@@ -43,7 +45,7 @@ public class FavouriteActivity extends Activity{
     private static final String TAG = "FavouriteActivity";
     
     private FlAdapter flAdapter;
-    private ArrayList<ListMangaDetail> mFavouriteLmd;
+    private ArrayList<GalleryInfo> mFavouriteLmd;
     private int longClickItemIndex;
     
     private ImageLoadManager mImageLoadManager;
@@ -65,7 +67,7 @@ public class FavouriteActivity extends Activity{
                             flAdapter.notifyDataSetChanged();
                             break;
                         case 1:
-                            ListMangaDetail lmd = mFavouriteLmd.get(longClickItemIndex);
+                            GalleryInfo lmd = mFavouriteLmd.get(longClickItemIndex);
                             Intent it = new Intent(FavouriteActivity.this, DownloadService.class);
                             startService(it);
                             mServiceConn.getService().add(lmd.gid, lmd.thumb, 
@@ -111,7 +113,7 @@ public class FavouriteActivity extends Activity{
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            ListMangaDetail lmd= mFavouriteLmd.get(position);
+            GalleryInfo lmd= mFavouriteLmd.get(position);
             if (convertView == null)
                 convertView = mInflater.inflate(R.layout.list_item, null);
             
@@ -191,24 +193,9 @@ public class FavouriteActivity extends Activity{
                     int position, long arg3) {
                 Intent intent = new Intent(FavouriteActivity.this,
                         MangaDetailActivity.class);
-                ListMangaDetail lmd = mFavouriteLmd.get(position);
-                intent.putExtra("url", EhClient.detailHeader + lmd.gid + "/" + lmd.token);
-                
-                intent.putExtra("gid", lmd.gid);
-                intent.putExtra("token", lmd.token);
-                intent.putExtra("archiver_key", lmd.archiver_key);
-                intent.putExtra("title", lmd.title);
-                intent.putExtra("title_jpn", lmd.title_jpn);
-                intent.putExtra("category", lmd.category);
-                intent.putExtra("thumb", lmd.thumb);
-                intent.putExtra("uploader", lmd.uploader);
-                intent.putExtra("posted", lmd.posted);
-                intent.putExtra("filecount", lmd.filecount);
-                intent.putExtra("filesize", lmd.filesize);
-                intent.putExtra("expunged", lmd.expunged);
-                intent.putExtra("rating", lmd.rating);
-                intent.putExtra("torrentcount", lmd.torrentcount);
-                
+                GalleryInfo gi = mFavouriteLmd.get(position);
+                intent.putExtra("url", EhClient.detailHeader + gi.gid + "/" + gi.token);
+                intent.putExtra(MangaDetailActivity.KEY_G_INFO, gi);
                 startActivity(intent);
             }
         });

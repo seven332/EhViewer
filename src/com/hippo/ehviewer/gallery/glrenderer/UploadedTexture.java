@@ -144,8 +144,9 @@ public abstract class UploadedTexture extends BasicTexture {
     }
 
     private void freeBitmap() {
-        Assert.assertTrue(mBitmap != null);
-        onFreeBitmap(mBitmap);
+        //Assert.assertTrue(mBitmap != null);
+        if (mBitmap != null)
+            onFreeBitmap(mBitmap);
         mBitmap = null;
     }
 

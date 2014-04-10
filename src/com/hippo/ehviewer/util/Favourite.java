@@ -8,7 +8,7 @@ import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
 import java.util.ArrayList;
 
-import com.hippo.ehviewer.ListMangaDetail;
+import com.hippo.ehviewer.GalleryInfo;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -23,7 +23,7 @@ public class Favourite {
     private static SharedPreferences mFavouritePre;
     //private static boolean isLru = false; // TODO float the last read favourite item
     private static ArrayList<String> mListOrder = null;
-    private static ArrayList<ListMangaDetail> mFavouriteLmd = null;
+    private static ArrayList<GalleryInfo> mFavouriteLmd = null;
     
     private static boolean mInit = false;
     
@@ -53,7 +53,7 @@ public class Favourite {
     
     private static void getFavourite() {
         mListOrder = new ArrayList<String>();
-        mFavouriteLmd = new ArrayList<ListMangaDetail>();
+        mFavouriteLmd = new ArrayList<GalleryInfo>();
         String[] allOrder = Util.getStrings(mFavouritePre, LIST_ORDER);
         
         if (allOrder == null)
@@ -80,7 +80,7 @@ public class Favourite {
      * @param lmd
      * @return True if push successfully
      */
-    public static boolean push(ListMangaDetail lmd) {
+    public static boolean push(GalleryInfo lmd) {
         if (!mInit) {
             throw new IllegalStateException("Please init Favourite first.");
         }
@@ -121,7 +121,7 @@ public class Favourite {
      * 
      * @return
      */
-    public static ArrayList<ListMangaDetail> getFavouriteList() {
+    public static ArrayList<GalleryInfo> getFavouriteList() {
         return mFavouriteLmd;
     }
     
@@ -141,7 +141,7 @@ public class Favourite {
         // TODO
     }
     
-    protected static String encodeLmd(ListMangaDetail lmd) {
+    protected static String encodeLmd(GalleryInfo lmd) {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(os);
@@ -159,10 +159,10 @@ public class Favourite {
         return Util.byteArrayToHexString(os.toByteArray());
     }
 
-    protected static ListMangaDetail decodeLmd(String lmdStr) {
+    protected static GalleryInfo decodeLmd(String lmdStr) {
         byte[] bytes = Util.hexStringToByteArray(lmdStr);
         ByteArrayInputStream is = new ByteArrayInputStream(bytes);
-        ListMangaDetail lmd = null;
+        GalleryInfo lmd = null;
         try {
             ObjectInputStream ois = new ObjectInputStream(is);
             lmd = readObject(ois);
@@ -178,40 +178,28 @@ public class Favourite {
         return lmd;
     }
     
-    public static void writeObject(ListMangaDetail lmd, ObjectOutputStream out) throws IOException {
+    public static void writeObject(GalleryInfo lmd, ObjectOutputStream out) throws IOException {
         out.writeObject(lmd.gid);
         out.writeObject(lmd.token);
-        out.writeObject(lmd.archiver_key);
         out.writeObject(lmd.title);
-        out.writeObject(lmd.title_jpn);
         out.writeObject((Integer)lmd.category);
         out.writeObject(lmd.thumb);
         out.writeObject(lmd.uploader);
         out.writeObject(lmd.posted);
-        out.writeObject(lmd.filecount);
-        out.writeObject((Long)lmd.filesize);
-        out.writeObject((Boolean)lmd.expunged);
         out.writeObject(lmd.rating);
-        out.writeObject(lmd.torrentcount);
     }
     
-    public static ListMangaDetail readObject(ObjectInputStream in) {
-        ListMangaDetail lmd = new ListMangaDetail();
+    public static GalleryInfo readObject(ObjectInputStream in) {
+        GalleryInfo lmd = new GalleryInfo();
         try {
             lmd.gid = (String)in.readObject();
             lmd.token = (String)in.readObject();
-            lmd.archiver_key = (String)in.readObject();
             lmd.title = (String)in.readObject();
-            lmd.title_jpn = (String)in.readObject();
             lmd.category = (Integer)in.readObject();
             lmd.thumb = (String)in.readObject();
             lmd.uploader = (String)in.readObject();
             lmd.posted = (String)in.readObject();
-            lmd.filecount = (String)in.readObject();
-            lmd.filesize = (Long)in.readObject();
-            lmd.expunged = (Boolean)in.readObject();
             lmd.rating = (String)in.readObject();
-            lmd.torrentcount = (String)in.readObject();
         } catch (OptionalDataException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

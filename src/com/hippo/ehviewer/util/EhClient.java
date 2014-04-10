@@ -24,9 +24,9 @@ import org.apache.http.conn.ConnectTimeoutException;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.DownloadInfo;
-import com.hippo.ehviewer.ListMangaDetail;
+import com.hippo.ehviewer.GalleryDetail;
+import com.hippo.ehviewer.GalleryInfo;
 import com.hippo.ehviewer.ListUrls;
-import com.hippo.ehviewer.MangaDetail;
 import com.hippo.ehviewer.PageList;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.data.ImageSet;
@@ -43,6 +43,7 @@ import android.graphics.Movie;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.util.LruCache;
+
 import com.hippo.ehviewer.util.Log;
 
 // TODO Stringbuffer to StringBuild
@@ -51,7 +52,6 @@ public class EhClient {
     
     private static final String TAG = "EhClient";
     
-    private static String API_URL = "http://g.e-hentai.org/api.php";
     private static String loginUrl = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
     
     private static final String E_HENTAI_LIST_HEADER = "http://g.e-hentai.org/";
@@ -59,14 +59,12 @@ public class EhClient {
     public static final String E_HENTAI_DETAIL_HEADER = "http://g.e-hentai.org/g/";
     public static final String EXHENTAI_DETAIL_HEADER = "http://exhentai.org/g/";
     
-    public static final String UPDATE_URL = "http://ehviewersu.appsp0t.com/";
-    public static final String UPDATE_URI_QINIU = "http://ehviewer.qiniudn.com/";
-    
     public static String listHeader;
     public static String detailHeader;
     
     private boolean mLogin = false;
-    private String mName;
+    private String mUsername;
+    private String mDisplayName;
     private String mLogoutUrl;
     
     private AppContext mAppContext;
@@ -88,13 +86,13 @@ public class EhClient {
     }
 
     public interface OnGetMangaListListener {
-        public void onSuccess(Object checkFlag, ArrayList<ListMangaDetail> lmdArray,
+        public void onSuccess(Object checkFlag, ArrayList<GalleryInfo> lmdArray,
                 int indexPerPage, int maxPage);
         public void onFailure(Object checkFlag, String eMsg);
     }
 
     public interface OnGetMangaDetailListener {
-        public void onSuccess(MangaDetail md);
+        public void onSuccess(GalleryDetail md);
         public void onFailure(String eMsg);
     }
 
@@ -114,7 +112,7 @@ public class EhClient {
     }
     
     public interface OnGetGalleryMetadataListener {
-        public void onSuccess(Map<String, ListMangaDetail> lmds);
+        public void onSuccess(Map<String, GalleryInfo> lmds);
         public void onFailure(String eMsg);
     }
     
@@ -156,7 +154,7 @@ public class EhClient {
     }
 
     public String getUsername() {
-        return mName;
+        return mUsername;
     }
 
     private static final int LOGIN = 0x0;
@@ -364,7 +362,7 @@ public class EhClient {
             public void onFutureDone(Future<Object> future) {
                 if (task.ok) {
                     mLogin = true;
-                    mName = task.name;
+                    mUsername = task.name;
                     mLogoutUrl = task.logoutUrl;
                 }
                 Message msg = new Message();
@@ -432,13 +430,13 @@ public class EhClient {
     // Get Manga List
     private class GetMangaListPackage {
         public Object checkFlag;
-        public ArrayList<ListMangaDetail> lmdArray;
+        public ArrayList<GalleryInfo> lmdArray;
         public int indexPerPage;
         public int maxPage;
         public OnGetMangaListListener listener;
         public String eMsg;
         
-        public GetMangaListPackage(Object checkFlag, ArrayList<ListMangaDetail> lmdArray, int indexPerPage,
+        public GetMangaListPackage(Object checkFlag, ArrayList<GalleryInfo> lmdArray, int indexPerPage,
                 int maxPage, OnGetMangaListListener listener, String eMsg) {
             this.checkFlag = checkFlag;
             this.lmdArray = lmdArray;
@@ -453,7 +451,7 @@ public class EhClient {
 
         private String url;
         
-        public ArrayList<ListMangaDetail> lmdArray;
+        public ArrayList<GalleryInfo> lmdArray;
         public int indexPerPage;
         public int maxPage;
         public String eMsg;
@@ -491,10 +489,10 @@ public class EhClient {
                     // To continue get list
                     getPageCount = true;
                 } else if (pageContent.contains("No hits found</p></div>")) {
-                    lmdArray = new ArrayList<ListMangaDetail>();
+                    lmdArray = new ArrayList<GalleryInfo>();
                     maxPage = 0;
                 } else if (pageContent.contains("JFIF")) { // sad panda
-                    lmdArray = new ArrayList<ListMangaDetail>();
+                    lmdArray = new ArrayList<GalleryInfo>();
                     maxPage = -1;
                 } else
                     eMsg = mAppContext.getString(R.string.em_parser_error);
@@ -507,8 +505,8 @@ public class EhClient {
 
                     while (m.find()) {
                         if (lmdArray == null)
-                            lmdArray = new ArrayList<ListMangaDetail>();
-                        ListMangaDetail lmd = new ListMangaDetail();
+                            lmdArray = new ArrayList<GalleryInfo>();
+                        GalleryInfo lmd = new GalleryInfo();
 
                         lmd.category = getType(m.group(1));
                         lmd.posted = m.group(2);
@@ -630,11 +628,11 @@ public class EhClient {
     // Get Manga Detail
     private class GetMangaDetailPackage {
         public boolean ok;
-        public MangaDetail mangaDetail;
+        public GalleryDetail mangaDetail;
         public OnGetMangaDetailListener listener;
         public String eMsg;
         
-        public GetMangaDetailPackage(boolean ok, MangaDetail mangaDetail,
+        public GetMangaDetailPackage(boolean ok, GalleryDetail mangaDetail,
                 OnGetMangaDetailListener listener, String eMsg) {
             this.ok = ok;
             this.mangaDetail = mangaDetail;
@@ -646,12 +644,12 @@ public class EhClient {
     private class GetMangaDetailRunnable implements Runnable {
 
         private String url;
-        private MangaDetail md;
+        private GalleryDetail md;
         
         public boolean ok;
         public String eMsg;
 
-        public GetMangaDetailRunnable(String url, MangaDetail md) {
+        public GetMangaDetailRunnable(String url, GalleryDetail md) {
             this.url = url;
             this.md = md;
         }
@@ -714,7 +712,7 @@ public class EhClient {
         }
     }
 
-    public void getMangaDetail(String url, final MangaDetail md,
+    public void getMangaDetail(String url, final GalleryDetail md,
             final OnGetMangaDetailListener listener) {
         
         final GetMangaDetailRunnable task = new GetMangaDetailRunnable(url, md);

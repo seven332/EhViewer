@@ -6,10 +6,10 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.util.LruCache;
-import com.hippo.ehviewer.util.Log;
 
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.DiskCache;
-import com.hippo.ehviewer.MangaDetail;
+import com.hippo.ehviewer.GalleryDetail;
 
 public class Cache {
     private static final String TAG = "Cache";
@@ -19,7 +19,7 @@ public class Cache {
     public static final String cpCachePath = "/EhViewer/cache/cover";
     public static DiskCache cpCache = null;
     public static LruCache<String, Bitmap> memoryCache = null;
-    public static LruCache<String, MangaDetail> mdCache = null;
+    public static LruCache<String, GalleryDetail> mdCache = null;
     
     private static final int MD_CACHE_SIZE = 5;
     
@@ -62,9 +62,9 @@ public class Cache {
             }
         };
         
-        mdCache = new LruCache<String, MangaDetail>(MD_CACHE_SIZE) {
+        mdCache = new LruCache<String, GalleryDetail>(MD_CACHE_SIZE) {
             @Override
-            protected int sizeOf(String key, MangaDetail md) {
+            protected int sizeOf(String key, GalleryDetail md) {
                 return 1;
             }
         };

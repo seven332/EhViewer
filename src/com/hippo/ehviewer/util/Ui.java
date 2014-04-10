@@ -18,10 +18,11 @@ import android.widget.ImageView;
 
 public class Ui {
     //private static final String TAG = "Ui";
-    private static final Ui INSTANCE = new Ui();
-    
     private static Context mContext;
     private static final BitmapFactory.Options opt = new BitmapFactory.Options();
+    
+    public static final int HOLO_WHITE = 0xfff3f3f3;
+    
     
     private static boolean mInit = false;
     
@@ -40,6 +41,8 @@ public class Ui {
         opt.inPreferredConfig = Bitmap.Config.RGB_565;
         opt.inPurgeable = true;
         opt.inInputShareable = true;
+        
+        // init color
     }
     
     /**

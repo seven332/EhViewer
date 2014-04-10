@@ -4,8 +4,9 @@ import java.util.ArrayList;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
+import com.hippo.ehviewer.GalleryDetail;
+import com.hippo.ehviewer.GalleryInfo;
 import com.hippo.ehviewer.ListUrls;
-import com.hippo.ehviewer.MangaDetail;
 import com.hippo.ehviewer.PageList;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.service.DownloadService;
@@ -33,7 +34,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+
 import com.hippo.ehviewer.util.Log;
+
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -59,6 +62,8 @@ public class MangaDetailActivity extends Activity {
 
     private static final String TAG = "MangaDetailActivity";
     
+    public static final String KEY_G_INFO = "gallery_info";
+    
     private AppContext mAppContext;
     private EhClient mEhClient;
     
@@ -83,7 +88,7 @@ public class MangaDetailActivity extends Activity {
     
     private AlertDialog goToDialog;
     
-    private MangaDetail mangaDetail;
+    private GalleryDetail mangaDetail;
     private int curPage;
     private int screenHeight;
     private int columnCount;
@@ -155,7 +160,7 @@ public class MangaDetailActivity extends Activity {
                     }
                 });
                 // Set white drawable for temp
-                ColorDrawable white = new ColorDrawable(getResources().getColor(android.R.color.white));
+                ColorDrawable white = new ColorDrawable(Ui.HOLO_WHITE);
                 white.setBounds(0, 0, item.width, item.height);
                 tvu.setCompoundDrawables(null, white, null, null);
                 
@@ -218,7 +223,7 @@ public class MangaDetailActivity extends Activity {
     private class MangaDetailGetListener implements
             EhClient.OnGetMangaDetailListener {
         @Override
-        public void onSuccess(MangaDetail md) {
+        public void onSuccess(GalleryDetail md) {
             Cache.mdCache.put(mangaDetail.gid, md);
             layout(md);
         }
@@ -463,22 +468,7 @@ public class MangaDetailActivity extends Activity {
         mangaDetail = Cache.mdCache.get(gid);
         if (mangaDetail == null) {
             getFromCache = false;
-            mangaDetail = new MangaDetail();
-            mangaDetail.gid = gid;
-            mangaDetail.token = intent.getStringExtra("token");
-            mangaDetail.archiver_key = intent.getStringExtra("archiver_key");
-            mangaDetail.title = intent.getStringExtra("title");
-            mangaDetail.title_jpn = intent.getStringExtra("title_jpn");
-            mangaDetail.category = intent.getIntExtra("category", ListUrls.UNKNOWN);
-            mangaDetail.thumb = intent.getStringExtra("thumb");
-            mangaDetail.uploader = intent.getStringExtra("uploader");
-            mangaDetail.posted = intent.getStringExtra("posted");
-            mangaDetail.filecount = intent.getStringExtra("filecount");
-            mangaDetail.filesize = intent.getLongExtra("filesize", 0);
-            mangaDetail.expunged = intent.getBooleanExtra("expunged", false);
-            mangaDetail.rating = intent.getStringExtra("rating");
-            mangaDetail.torrentcount = intent.getStringExtra("torrentcount");
-            mangaDetail.tags = null;
+            mangaDetail = new GalleryDetail((GalleryInfo)(intent.getParcelableExtra(KEY_G_INFO)));
         }
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -522,7 +512,7 @@ public class MangaDetailActivity extends Activity {
             mEhClient.getMangaDetail(url, mangaDetail, new MangaDetailGetListener());
     }
     
-    private void layout(MangaDetail md) {
+    private void layout(GalleryDetail md) {
         // Delete progress bar
         waitPb.setVisibility(View.GONE);
 
