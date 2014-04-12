@@ -17,6 +17,7 @@ import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhClient;
 import com.hippo.ehviewer.util.Favourite;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Tag;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
@@ -31,10 +32,11 @@ import com.hippo.ehviewer.widget.PullListView;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 import com.hippo.ehviewer.widget.PullListView.OnFooterRefreshListener;
 import com.hippo.ehviewer.widget.PullListView.OnHeaderRefreshListener;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -43,8 +45,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.widget.DrawerLayout;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,19 +70,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 // TODO check visiblePage is right or not
-// TODO Good resource
 // TODO http://lofi.e-hentai.org/
-// TODO http://exhentai.org/
-// TODO add lock to get list
 
-public class MangaListActivity extends Activity {
+public class MangaListActivity extends SlidingActivity {
     @SuppressWarnings("unused")
     private static String TAG = "MangaListActivity";
     
     private AppContext mAppContext;
     private EhClient mEhClient;
     
-    private DrawerLayout mDrawerLayout;
+    private SlidingMenu mSlidingMenu;
+    
     private GetPaddingRelativeLayout mainLayout;
     private TagListView listMenu;
     private RelativeLayout loginMenu;
@@ -101,8 +99,6 @@ public class MangaListActivity extends Activity {
     private TextView usernameText;
     private Button logoutButton;
     private View waitlogoutView;
-    
-    private ActionBarDrawerToggle mDrawerToggle;
     
     private TagsAdapter tagsAdapter;
 
@@ -219,7 +215,7 @@ public class MangaListActivity extends Activity {
                     @Override
                     public void onClick(View v) {
                         ((AlertButton)v).dialog.dismiss();
-                        mDrawerLayout.closeDrawers();
+                        showContent();
                         ListUrls listUrls = getLus(filterDialog);
                         String search = listUrls.getSearch();
                         String t = null;
@@ -701,7 +697,12 @@ public class MangaListActivity extends Activity {
             checkImageSr.setChecked(false);
         Spinner spinnerMinRating = (Spinner) view
                 .findViewById(R.id.spinner_min_rating);
-        spinnerMinRating.setSelection(listUrls.getMinRating() - 2);
+        int index;
+        if (listUrls.getMinRating() == -1)
+            index = 0;
+        else
+            index = listUrls.getMinRating() - 2;
+        spinnerMinRating.setSelection(index);
     }
     
     private class MangaListGetPackage {
@@ -1016,17 +1017,9 @@ public class MangaListActivity extends Activity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
         if (Build.VERSION.SDK_INT >= 19) {
             BeautifyScreen.fixColour(this);
         }
-    }
-    
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
     }
     
     @Override
@@ -1041,6 +1034,30 @@ public class MangaListActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list);
+        
+        setBehindContentView(R.layout.list_menu_list);
+        setSlidingActionBarEnabled(false);
+        mSlidingMenu = getSlidingMenu();
+        mSlidingMenu.setMode(SlidingMenu.LEFT_RIGHT);
+        mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        mSlidingMenu.setSecondaryMenu(R.layout.list_menu_login);
+        mSlidingMenu.setBehindWidth(Ui.dp2pix(240));
+        
+        mSlidingMenu.setOnOpenedListener(new SlidingMenu.OnOpenedListener() {
+            @Override
+            public void onOpened() {
+                setTitle(R.string.app_name);
+                invalidateOptionsMenu();
+            }
+        });
+        
+        mSlidingMenu.setOnClosedListener(new SlidingMenu.OnClosedListener() {
+            @Override
+            public void onClosed() {
+                setTitle(title);
+                invalidateOptionsMenu();
+            }
+        });
         
         mAppContext = (AppContext)getApplication();
         mEhClient = mAppContext.getEhClient();
@@ -1075,7 +1092,6 @@ public class MangaListActivity extends Activity {
         }
         
         // Get View
-        mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
         mainLayout = (GetPaddingRelativeLayout)findViewById(R.id.list_main);
         listMenu = (TagListView) findViewById(R.id.list_menu_list);
         loginMenu = (RelativeLayout)findViewById(R.id.list_menu_login);
@@ -1096,33 +1112,11 @@ public class MangaListActivity extends Activity {
         waitlogoutView = (View) findViewById(R.id.list_wait_logout);
         
         // fitsSystemWindows for menu
-        mainLayout.setView(listMenu, loginMenu);
+        //mainLayout.setView(listMenu, loginMenu);
         
         // Drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,                  /* host Activity */
-                mDrawerLayout,         /* DrawerLayout object */
-                R.drawable.ic_navigation_drawer,  /* nav drawer image to replace 'Up' caret */
-                R.string.drawer_open,  /* "open drawer" description for accessibility */
-                R.string.drawer_close  /* "close drawer" description for accessibility */
-                ) {
-            public void onDrawerClosed(View view) {
-                getActionBar().setTitle(title);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(R.string.app_name);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        
-        // set drawer shadow
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_left, Gravity.LEFT);
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_right, Gravity.RIGHT);
         
         // leftDrawer
         String[] menuTitles = getResources().getStringArray(R.array.list_list_title);
@@ -1143,23 +1137,23 @@ public class MangaListActivity extends Activity {
                     int position, long arg3) {
                 if (position == 0) { // Home page
                     if (refresh(new ListUrls(ListUrls.ALL_TYPE, null, 0), listMenuTitle.get(position)))
-                        mDrawerLayout.closeDrawers();
+                        showContent();
                 } else if (position == 1) { // Favourite
                     Intent intent = new Intent(MangaListActivity.this,
                             FavouriteActivity.class);
                     startActivity(intent);
-                    mDrawerLayout.closeDrawers();
+                    showContent();
                 } else if (position == 2) { // filter
                     filterDialog.show();
                 } else if (position == 3) { // Download
                     Intent intent = new Intent(MangaListActivity.this,
                             DownloadActivity.class);
                     startActivity(intent);
-                    mDrawerLayout.closeDrawers();
+                    showContent();
                 } else if (position >= mStableItemCount){
                     ListUrls listUrls = Tag.get(listMenuTitle.get(position));
                     if (listUrls != null && refresh(listUrls, listMenuTitle.get(position)))
-                        mDrawerLayout.closeDrawers();
+                        showContent();
                 }
             }
         });
@@ -1169,18 +1163,6 @@ public class MangaListActivity extends Activity {
                 createModifyTagDialog(position).show();
             }
         });
-        listMenu.setOnMoveLister(new TagListView.OnMoveLister() {
-            @Override
-            public void onMoveStart() {
-                mDrawerLayout.setEnabled(false);
-            }
-
-            @Override
-            public void onMoveOver() {
-                mDrawerLayout.setEnabled(true);
-            }
-        });
-        
         
         // is Exhentai
         final String[] isExhentaiListTitle = getResources().getStringArray(R.array.is_exhentai);
@@ -1238,7 +1220,7 @@ public class MangaListActivity extends Activity {
                 if (isChanged) {
                     isExhentaiListAdapter.notifyDataSetChanged();
                     refresh(new ListUrls(ListUrls.ALL_TYPE, null, 0), listMenuTitle.get(0));
-                    mDrawerLayout.closeDrawers(); // TODO
+                    showContent(); // TODO
                 }
             }
         });
@@ -1393,8 +1375,7 @@ public class MangaListActivity extends Activity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(Gravity.LEFT)
-                | mDrawerLayout.isDrawerOpen(Gravity.RIGHT);
+        boolean drawerOpen = mSlidingMenu.isMenuShowing();
         menu.findItem(R.id.action_search).setVisible(!drawerOpen);
         menu.findItem(R.id.action_refresh).setVisible(!drawerOpen);
         menu.findItem(R.id.action_jump).setVisible(!drawerOpen);
@@ -1421,10 +1402,10 @@ public class MangaListActivity extends Activity {
         // Handle item selection
         switch (item.getItemId()) {
         case android.R.id.home:
-            if (mDrawerLayout.isDrawerOpen(Gravity.START))
-                mDrawerLayout.closeDrawers();
+            if (mSlidingMenu.isMenuShowing())
+                showContent();
             else
-                mDrawerLayout.openDrawer(Gravity.START);
+                showMenu();
             return true;
         case R.id.action_refresh: // TODO 点击刷新，pullviewheader 不会自动出来
             refresh(lus.clone(), listMenuTitle.get(0));

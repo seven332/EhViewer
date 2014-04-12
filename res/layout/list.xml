@@ -1,9 +1,6 @@
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
 
-    <com.hippo.ehviewer.view.GetPaddingRelativeLayout
+
+    <com.hippo.ehviewer.view.GetPaddingRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/list_main"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -48,11 +45,3 @@
             android:textSize="24sp"
             android:visibility="gone" />
     </com.hippo.ehviewer.view.GetPaddingRelativeLayout>
-
-    <include
-        layout="@layout/list_menu_list" />
-
-    <include
-        layout="@layout/list_menu_login" />
-
-</android.support.v4.widget.DrawerLayout>

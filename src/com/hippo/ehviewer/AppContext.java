@@ -2,6 +2,9 @@ package com.hippo.ehviewer;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 
+import com.hippo.ehviewer.data.Data;
+import com.hippo.ehviewer.network.HttpHelper;
+import com.hippo.ehviewer.network.PrefCookieHelper;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
@@ -21,6 +24,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
     
     private Thread.UncaughtExceptionHandler mDefaultHandler;
     
+    private Data mData;
     private EhClient mEhClient;
     
     private ThreadPool mNetworkThreadPool;
@@ -36,11 +40,14 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         Ui.init(this);
         Cache.init(this);
         Favourite.init(this);
-        Tag.init(this);
         Crash.init(this);
+        Tag.init(this);
         BeautifyScreen.init(this);
         mEhClient = new EhClient(this);
         Download.init(this);
+        
+        mData = new Data(this);
+        HttpHelper.setCookieHelper(this);
         
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);

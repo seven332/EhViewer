@@ -5,6 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketException;
@@ -49,6 +52,11 @@ public class HttpHelper {
     
     public HttpHelper(Context context) {
         mContext = context;
+    }
+    
+    public static void setCookieHelper(Context context) {
+        CookieManager cookieManager = new CookieManager(new ShapreCookieStore(context), CookiePolicy.ACCEPT_ALL);
+        CookieHandler.setDefault(cookieManager);
     }
     
     /**
@@ -104,22 +112,13 @@ public class HttpHelper {
             
             // Get charset
             String charset = null;
-            List<String> contentType = conn.getHeaderFields().get("Content-Type");
-            if (contentType != null) {
-                for (String item : contentType) {
-                    if (item == null)
-                        continue;
-                    int index = -1;
-                    if ((index = item.indexOf(CHARSET_KEY)) != -1) {
-                        charset = item.substring(index + CHARSET_KEY.length());
-                        break;
-                    }
-                }
-            }
-            // Use default charset
-            if (charset == null) {
+            String contentType = conn.getContentType();
+            int index = -1;
+            if (contentType != null
+                    && (index = contentType.indexOf(CHARSET_KEY)) != -1) {
+                charset = contentType.substring(index + CHARSET_KEY.length());
+            } else
                 charset = DEFAULT_CHARSET;
-            }
             
             pageContext = baos.toString(charset);
         } catch (IOException e) {
@@ -145,10 +144,12 @@ public class HttpHelper {
             url = new URL(urlStr);
             while (redirectionCount++ < Constant.MAX_REDIRECTS) {
                 conn = (HttpURLConnection) url.openConnection();
+                conn.setInstanceFollowRedirects(true);
                 conn.addRequestProperty("Accept-Encoding", "gzip");
                 conn.setRequestProperty("User-Agent", Constant.userAgent);
                 conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
                 conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
+                conn.setRequestProperty("Connection", "close");
                 conn.connect();
                 
                 final int responseCode = conn.getResponseCode();
@@ -207,6 +208,7 @@ public class HttpHelper {
                 conn.setInstanceFollowRedirects(true);
                 conn.setRequestProperty("Content-Type",
                         "application/x-www-form-urlencoded");
+                conn.setRequestProperty("Connection", "close");
                 
                 DataOutputStream out = new DataOutputStream(conn.getOutputStream());
                 StringBuilder sb = new StringBuilder();
@@ -279,6 +281,7 @@ public class HttpHelper {
                 conn.setRequestMethod("POST");
                 conn.setUseCaches(false);
                 conn.setInstanceFollowRedirects(true);
+                conn.setRequestProperty("Connection", "close");
                 
                 DataOutputStream out = new DataOutputStream(conn.getOutputStream());
                 out.writeBytes(str);
@@ -344,6 +347,7 @@ public class HttpHelper {
                 conn.setInstanceFollowRedirects(true);
                 conn.setRequestProperty("Content-Type", "application/json");
                 conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Connection", "close");
                 
                 DataOutputStream out = new DataOutputStream(conn.getOutputStream());
                 out.writeBytes(jsonStr);
@@ -405,12 +409,14 @@ public class HttpHelper {
                 conn.setRequestProperty("User-Agent", Constant.userAgent);
                 conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
                 conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
+                conn.setRequestProperty("Connection", "close");
                 conn.connect();
                 
                 final int responseCode = conn.getResponseCode();
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
+                    
                     Bitmap bitmap = null;
                     is = conn.getInputStream();
                     if (diskCache == null) {

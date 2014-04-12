@@ -124,9 +124,6 @@ public class EhClient {
     public EhClient(AppContext appContext) {
         mAppContext = appContext;
         
-        CookieManager cookieManager = new CookieManager(new ShapreCookieStore(mAppContext), CookiePolicy.ACCEPT_ALL);
-        CookieHandler.setDefault(cookieManager);
-        
         if (Config.isExhentai()) {
             listHeader = EXHENTAI_LIST_HEADER;
             detailHeader = EXHENTAI_DETAIL_HEADER;

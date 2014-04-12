@@ -959,6 +959,13 @@ public class GLES11Canvas implements GLCanvas {
         mGL.glBindTexture(target, texture.getId());
         GLUtils.texSubImage2D(target, 0, xOffset, yOffset, bitmap, format, type);
     }
+    
+    @Override
+    public void texSubImage2D(BasicTexture texture, int xOffset, int yOffset, Bitmap bitmap) {
+        int target = texture.getTarget();
+        mGL.glBindTexture(target, texture.getId());
+        GLUtils.texSubImage2D(target, 0, xOffset, yOffset, bitmap);
+    }
 
     @Override
     public int uploadBuffer(FloatBuffer buf) {

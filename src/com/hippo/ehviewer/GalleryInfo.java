@@ -26,7 +26,7 @@ public class GalleryInfo implements Parcelable{
                     p.thumb = source.readString();
                     p.uploader = source.readString();
                     p.rating = source.readString();
-                    return null;
+                    return p;
                 }
 
                 @Override

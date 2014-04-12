@@ -43,6 +43,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Tag;
 import com.hippo.ehviewer.util.Ui;
 
@@ -68,7 +69,9 @@ import com.hippo.ehviewer.util.Ui;
  * listview also scrolls on its own so as to reveal additional content.
  */
 public class TagListView extends ListView {
-
+    
+    private static final String TAG = "TagListView";
+    
     private final int SMOOTH_SCROLL_AMOUNT_AT_EDGE = 15;
     private final int MOVE_DURATION = 150;
     private final int LINE_THICKNESS = Ui.dp2pix(3);
@@ -180,7 +183,7 @@ public class TagListView extends ListView {
         int top = v.getTop();
         int left = v.getLeft();
 
-        Bitmap b = getBitmapWithBorder(v);
+        Bitmap b = getHoverBitmap(v);
 
         BitmapDrawable drawable = new BitmapDrawable(getResources(), b);
 
@@ -201,18 +204,13 @@ public class TagListView extends ListView {
     }
     
     private Bitmap getDeleteBitmap(View v) {
-        Bitmap bitmap = getBitmapWithBorder(v);
+        Bitmap bitmap = getBitmapFromView(v);
         Canvas can = new Canvas(bitmap);
         
+        Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         Paint paint = new Paint();
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(LINE_THICKNESS/2);
-        paint.setColor(Color.WHITE);
-        
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        for (int i = -height; i < width; i += height/2)
-            can.drawLine(i, 0, i + height, height, paint);
+        paint.setColor(0x8fff0000);
+        can.drawRect(rect, paint);
         
         return bitmap;
     }
@@ -226,38 +224,27 @@ public class TagListView extends ListView {
     }
     
     private Bitmap getModifyBitmap(View v) {
-        Bitmap bitmap = getBitmapWithBorder(v);
+        Bitmap bitmap = getBitmapFromView(v);
         Canvas can = new Canvas(bitmap);
         
+        Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         Paint paint = new Paint();
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(LINE_THICKNESS/2);
-        paint.setColor(Color.WHITE);
-        
-        int gap = LINE_THICKNESS * 4;
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        for (int i = gap; i < height; i += gap)
-            can.drawLine(0, i, width, i, paint);
+        paint.setColor(0x8faa00ff);
+        can.drawRect(rect, paint);
         
         return bitmap;
     }
     
     /** Draws a black border over the screenshot of the view passed in. */
-    private Bitmap getBitmapWithBorder(View v) {
+    private Bitmap getHoverBitmap(View v) {
         Bitmap bitmap = getBitmapFromView(v);
         Canvas can = new Canvas(bitmap);
-
+        
         Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-
         Paint paint = new Paint();
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(LINE_THICKNESS);
-        paint.setColor(Color.WHITE);
-
-        //can.drawBitmap(bitmap, 0, 0, null);
+        paint.setColor(0x8f00aadd);
         can.drawRect(rect, paint);
-
+        
         return bitmap;
     }
 
@@ -350,7 +337,6 @@ public class TagListView extends ListView {
 
     @Override
     public boolean onTouchEvent (MotionEvent event) {
-
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 mDownX = (int)event.getX();

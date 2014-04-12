@@ -1,6 +1,6 @@
 package com.hippo.ehviewer;
 
-public class apiGetGalleryInfo extends GalleryInfo{
+public class ApiGetGalleryInfo extends GalleryInfo{
     public String archiver_key;
     public String title_jpn;
     public String filecount;

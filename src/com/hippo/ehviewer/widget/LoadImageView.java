@@ -27,6 +27,7 @@ public class LoadImageView extends ImageView {
     private static final int WAIT_IMAGE_ID = R.drawable.ic_launcher;
     private static final int TOUCH_IMAGE_ID = R.drawable.ic_touch;
     
+    private static final int SHORT_DURATION = 100;
     private static final int DURATION = 300;
     
     private int mState = NONE;
@@ -80,10 +81,12 @@ public class LoadImageView extends ImageView {
     }
     
     public void setContextImage(Bitmap bmp) {
+        int dur = DURATION;
+        
         Drawable oldDrawable = getDrawable();
         if (oldDrawable == null) {
-            oldDrawable = new ColorDrawable(Ui.HOLO_WHITE);
-            oldDrawable.setBounds(0, 0, bmp.getWidth(), bmp.getHeight());
+            oldDrawable = new ColorDrawable(Color.TRANSPARENT);
+            dur = SHORT_DURATION;
         } else if (oldDrawable instanceof TransitionDrawable){
             oldDrawable = ((TransitionDrawable)oldDrawable).getDrawable(1);
         }
@@ -93,7 +96,7 @@ public class LoadImageView extends ImageView {
         layers[1] = new BitmapDrawable(getContext().getResources(), bmp);
         TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
         setImageDrawable(transitionDrawable);
-        transitionDrawable.startTransition(DURATION);
+        transitionDrawable.startTransition(dur);
     }
     
     class OnClickListener implements View.OnClickListener {

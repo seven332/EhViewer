@@ -49,6 +49,7 @@ public class Downloader implements Runnable {
     
     private Context mContext;
     
+    private File mFile;
     private File mFolder;
     private String mPath;
     private String mFileName;
@@ -69,6 +70,10 @@ public class Downloader implements Runnable {
         public void onDownloadStartConnect();
         public void onDownloadStartDownload(int totalSize);
         public void onDownloadStatusUpdate(int downloadSize, int totalSize);
+        /**
+         * FAILED or COMPLETED or STOPED
+         * @param status
+         */
         public void onDownloadOver(int status);
     }
     
@@ -185,6 +190,9 @@ public class Downloader implements Runnable {
         
         if (mContorlor.isStop())
             status = STOPED;
+        
+        if (status != COMPLETED && mFile != null)
+            mFile.delete();
         
         if (mListener != null)
             mListener.onDownloadOver(status);
@@ -304,7 +312,6 @@ public class Downloader implements Runnable {
     private void transferData(HttpURLConnection conn) throws Exception {
         InputStream in = null;
         RandomAccessFile raf = null;
-        File file = null;
         
         if (mContorlor.isStop())
             throw new StopRequestException();
@@ -317,8 +324,8 @@ public class Downloader implements Runnable {
             }
 
             try {
-                file = new File(mPath, mFileName);
-                raf = new RandomAccessFile(file, "rw");
+                mFile = new File(mPath, mFileName);
+                raf = new RandomAccessFile(mFile, "rw");
                 raf.seek(mDownloadSize);
             } catch (IOException e) {
                 throw new FileException(FileException.CREATE_FILE_ERROR);

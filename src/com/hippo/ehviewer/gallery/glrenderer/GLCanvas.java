@@ -179,6 +179,18 @@ public interface GLCanvas {
     public abstract void texSubImage2D(BasicTexture texture, int xOffset, int yOffset,
             Bitmap bitmap,
             int format, int type);
+    
+    /**
+     * Calls glTexSubImage2D to upload a bitmap to the texture.
+     *
+     * @param texture The target texture to write to.
+     * @param xOffset Specifies a texel offset in the x direction within the
+     *            texture array.
+     * @param yOffset Specifies a texel offset in the y direction within the
+     *            texture array.
+     */
+    public abstract void texSubImage2D(BasicTexture texture, int xOffset, int yOffset,
+            Bitmap bitmap);
 
     /**
      * Generates buffers and uploads the buffer data.

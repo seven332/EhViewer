@@ -33,15 +33,16 @@ public class ListUrls {
     public static final int STD2 = 0x40;
     public static final int SH = 0x80;
     
+    public static final int DEFAULT_ADVANCE = SNAME | STAGS;
+    public static final int DEFAULT_MIN_RATING = 2;
+    
     private int page = 0;
     private int numPerPage = 25;
     private int max = -1;
     private int type = ALL_TYPE;
     
-    private boolean mAdvsearch = false;
-    private int advsearchType = SNAME|STAGS;
-    private boolean isMinRating = false;
-    private int minRating = 2;
+    private int advsearchType = -1;
+    private int minRating = -1;
     
     private String search = null;
     
@@ -54,18 +55,16 @@ public class ListUrls {
     }
     
     public boolean isSameUrls(ListUrls listUrls) {
-        if (type == listUrls.type
-                && mAdvsearch == listUrls.mAdvsearch
-                && isMinRating == listUrls.isMinRating) {
+        if (type == listUrls.type) {
             if ((search == null && listUrls.search != null)
                     || (search != null && listUrls.search == null))
                 return false;
             if (search != null && listUrls.search != null
                     && !search.equals(listUrls.search))
                 return false;
-            if (mAdvsearch && advsearchType != listUrls.advsearchType)
+            if (advsearchType != listUrls.advsearchType)
                 return false;
-            if (isMinRating && minRating != listUrls.minRating)
+            if (minRating != listUrls.minRating)
                 return false;
             return true;
         } else
@@ -76,12 +75,7 @@ public class ListUrls {
     public ListUrls clone() {
         ListUrls listUrls = new ListUrls(type, search, page);
         listUrls.setMax(max);
-        if (mAdvsearch) {
-            if (isMinRating)
-                listUrls.setAdvance(advsearchType, minRating);
-            else
-                listUrls.setAdvance(advsearchType);
-        }
+        listUrls.setAdvance(advsearchType, minRating);
         return listUrls;
     }
     
@@ -120,20 +114,24 @@ public class ListUrls {
         return search;
     }
     
+    public void setAdvance(boolean enabled) {
+        if (enabled && advsearchType == -1)
+            advsearchType = DEFAULT_ADVANCE;
+        else if (!enabled)
+            advsearchType = -1;
+    }
+    
     public void setAdvance(int advanceType) {
-        mAdvsearch = true;
         advsearchType = advanceType;
     }
     
     public void setAdvance(int advanceType, int minRating) {
-        mAdvsearch = true;
         advsearchType = advanceType;
-        isMinRating = true;
         this.minRating = minRating;
     }
     
     public boolean isAdvance() {
-        return mAdvsearch;
+        return advsearchType != -1;
     }
     
     public int getAdvanceType() {
@@ -141,14 +139,12 @@ public class ListUrls {
     }
     
     public boolean isMinRating() {
-        return isMinRating;
+        return minRating != -1;
     }
     
     public int getMinRating() {
         return minRating;
     }
-    
-
     
     public boolean isSetMax() {
         return max == -1 ? false : true;
@@ -284,7 +280,7 @@ public class ListUrls {
         url.append("f_apply=Apply+Filter");
         
         // Is advance search
-        if (mAdvsearch) {
+        if (isAdvance()) {
             url.append("&advsearch=1");
             if((advsearchType & SNAME) != 0)
                 url.append("&f_sname=on");
@@ -304,7 +300,7 @@ public class ListUrls {
                 url.append("&f_sh=on");
             
             // Set min star
-            if (isMinRating)
+            if (isMinRating())
                 url.append("&f_sr=on&f_srdd=").append(minRating);
         }
         return url.toString();

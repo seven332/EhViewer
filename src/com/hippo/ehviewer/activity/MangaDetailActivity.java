@@ -160,7 +160,7 @@ public class MangaDetailActivity extends Activity {
                     }
                 });
                 // Set white drawable for temp
-                ColorDrawable white = new ColorDrawable(Ui.HOLO_WHITE);
+                ColorDrawable white = new ColorDrawable(Color.TRANSPARENT);
                 white.setBounds(0, 0, item.width, item.height);
                 tvu.setCompoundDrawables(null, white, null, null);
                 
@@ -203,7 +203,6 @@ public class MangaDetailActivity extends Activity {
         for(int i = startIndex ; i < endIndex; i++) {
             PageList.Row.Item item = items.get(i - startIndex);
             
-            // 
             if (item.xOffset + item.width > maxWidth)
                 item.width = maxWidth - item.xOffset;
             if (item.yOffset + item.height > maxHeight)
@@ -463,12 +462,13 @@ public class MangaDetailActivity extends Activity {
         // Get information
         Intent intent = getIntent();
         url = intent.getStringExtra("url");
-        String gid = intent.getStringExtra("gid");
+        GalleryInfo galleryInfo = (GalleryInfo)(intent.getParcelableExtra(KEY_G_INFO));
+        
         boolean getFromCache = true;
-        mangaDetail = Cache.mdCache.get(gid);
+        mangaDetail = Cache.mdCache.get(galleryInfo.gid);
         if (mangaDetail == null) {
             getFromCache = false;
-            mangaDetail = new GalleryDetail((GalleryInfo)(intent.getParcelableExtra(KEY_G_INFO)));
+            mangaDetail = new GalleryDetail(galleryInfo);
         }
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
