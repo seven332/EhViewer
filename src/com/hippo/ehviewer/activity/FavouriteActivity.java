@@ -1,6 +1,7 @@
 package com.hippo.ehviewer.activity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,16 +26,17 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Toast;
 
+import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.GalleryInfo;
 import com.hippo.ehviewer.ImageLoadManager;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhClient;
-import com.hippo.ehviewer.util.Favourite;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.view.OlImageView;
@@ -44,8 +46,11 @@ import com.hippo.ehviewer.widget.LoadImageView;
 public class FavouriteActivity extends Activity{
     private static final String TAG = "FavouriteActivity";
     
+    private AppContext mAppContext;
+    private Data mData;
+    
     private FlAdapter flAdapter;
-    private ArrayList<GalleryInfo> mFavouriteLmd;
+    private List<GalleryInfo> mFavouriteLmd;
     private int longClickItemIndex;
     
     private ImageLoadManager mImageLoadManager;
@@ -63,7 +68,7 @@ public class FavouriteActivity extends Activity{
                             int position, long arg3) {
                         switch (position) {
                         case 0: // Remove favourite item
-                            Favourite.remove(longClickItemIndex);
+                            mData.deleteLocalFavourite(mFavouriteLmd.get(longClickItemIndex).gid);
                             flAdapter.notifyDataSetChanged();
                             break;
                         case 1:
@@ -163,6 +168,9 @@ public class FavouriteActivity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.favourite);
         
+        mAppContext = (AppContext)getApplication();
+        mData = mAppContext.getData();
+        
         int screenOri = Config.getScreenOriMode();
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);
@@ -182,7 +190,7 @@ public class FavouriteActivity extends Activity{
             BeautifyScreen.ColourfyScreen(this);
         }
         
-        mFavouriteLmd = Favourite.getFavouriteList();
+        mFavouriteLmd = mData.getAllLocalFavourites();
         
         ListView listView = (ListView)findViewById(R.id.favourite);
         flAdapter = new FlAdapter();

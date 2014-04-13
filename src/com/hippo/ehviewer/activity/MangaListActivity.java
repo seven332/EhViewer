@@ -2,6 +2,7 @@ package com.hippo.ehviewer.activity;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
@@ -9,16 +10,16 @@ import com.hippo.ehviewer.GalleryInfo;
 import com.hippo.ehviewer.ImageLoadManager;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.Tag;
 import com.hippo.ehviewer.UpdateHelper;
+import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhClient;
-import com.hippo.ehviewer.util.Favourite;
 import com.hippo.ehviewer.util.Log;
-import com.hippo.ehviewer.util.Tag;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.AlertButton;
@@ -111,6 +112,7 @@ public class MangaListActivity extends SlidingActivity {
     
     private ImageLoadManager mImageLoadManager;
     
+    private Data mData;
     
     private int longClickItemIndex;
 
@@ -237,11 +239,10 @@ public class MangaListActivity extends SlidingActivity {
                             @Override
                             public void onSetVaildName(String newName) {
                                 ((AlertButton)v).dialog.dismiss();
-                                if (Tag.add(newName, getLus(filterDialog))) {
-                                    listMenuTitle.add(newName);
-                                    tagsAdapter.addId(newName);
-                                    tagsAdapter.notifyDataSetChanged();
-                                }
+                                mData.addTag(new Tag(newName, getLus(filterDialog)));
+                                listMenuTitle.add(newName);
+                                tagsAdapter.addId(newName);
+                                tagsAdapter.notifyDataSetChanged();
                             }
                         })
                         .show();
@@ -361,7 +362,7 @@ public class MangaListActivity extends SlidingActivity {
                         switch (position) {
                         case 0: // Add favourite item
                             lmd = lmdArray.get(longClickItemIndex);
-                            Favourite.push(lmd);
+                            mData.addLocalFavourite(lmd);
                             Toast.makeText(MangaListActivity.this,
                                     getString(R.string.toast_add_favourite),
                                     Toast.LENGTH_SHORT).show();
@@ -502,7 +503,7 @@ public class MangaListActivity extends SlidingActivity {
     private AlertDialog createModifyTagDialog(final int position) {
         LayoutInflater inflater = this.getLayoutInflater();
         final View view = inflater.inflate(R.layout.filter, null);
-        ListUrls listUrls = Tag.get(position - mStableItemCount);
+        ListUrls listUrls = mData.getTag(position - mStableItemCount);
         setFilterView(view, listUrls);
         final View advance = view.findViewById(R.id.filter_advance);
         CheckBox cb = (CheckBox)view.findViewById(R.id.checkbox_advance);
@@ -528,13 +529,13 @@ public class MangaListActivity extends SlidingActivity {
                         ListUrls listUrls = getLus(view);
                         if (newTagName != null) {
                             tagsAdapter.set(listMenuTitle.get(position), newTagName);
-                            Tag.set(position - mStableItemCount, newTagName, listUrls);
+                            mData.setTag(position - mStableItemCount, new Tag(newTagName, listUrls));
                             listMenuTitle.set(position, newTagName);
                             tagsAdapter.notifyDataSetChanged();
                             
                             newTagName = null;
                         } else
-                            Tag.set(position - mStableItemCount, listUrls);
+                            mData.setTag(position - mStableItemCount, new Tag(listMenuTitle.get(position), listUrls));
                     }
                 }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
                     @Override
@@ -1060,6 +1061,7 @@ public class MangaListActivity extends SlidingActivity {
         });
         
         mAppContext = (AppContext)getApplication();
+        mData = mAppContext.getData();
         mEhClient = mAppContext.getEhClient();
         
         int screenOri = Config.getScreenOriMode();
@@ -1123,14 +1125,15 @@ public class MangaListActivity extends SlidingActivity {
         mStableItemCount = menuTitles.length;
         for (int i = 0; i < menuTitles.length; i++)
             listMenuTitle.add(menuTitles[i]);
-        ArrayList<String> keys = Tag.getKeyList();
+        
+        List<String> keys = mData.getAllTagNames();
+        
         for (int i = 0; i < keys.size(); i++)
             listMenuTitle.add(keys.get(i));
         tagsAdapter = new TagsAdapter(this, R.layout.menu_item, listMenuTitle);
         listMenu.setAdapter(tagsAdapter);
         listMenu.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         listMenu.setStableItemCount(mStableItemCount);
-        listMenu.setItemList(listMenuTitle);
         listMenu.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
@@ -1151,7 +1154,7 @@ public class MangaListActivity extends SlidingActivity {
                     startActivity(intent);
                     showContent();
                 } else if (position >= mStableItemCount){
-                    ListUrls listUrls = Tag.get(listMenuTitle.get(position));
+                    ListUrls listUrls = mData.getTag(position - mStableItemCount);
                     if (listUrls != null && refresh(listUrls, listMenuTitle.get(position)))
                         showContent();
                 }
@@ -1163,6 +1166,28 @@ public class MangaListActivity extends SlidingActivity {
                 createModifyTagDialog(position).show();
             }
         });
+        listMenu.setOnSwapListener(new TagListView.OnSwapListener() {
+            @Override
+            public void onSwap(int positionOne, int positionTwo) {
+                String temp = listMenuTitle.get(positionOne);
+                listMenuTitle.set(positionOne, listMenuTitle.get(positionTwo));
+                listMenuTitle.set(positionTwo, temp);
+                tagsAdapter.notifyDataSetChanged();
+                
+                mData.swapTag(positionOne - mStableItemCount, positionTwo - mStableItemCount);
+            }
+        });
+        listMenu.setOnDeleteListener(new TagListView.OnDeleteListener() {
+            @Override
+            public void onDelete(int position) {
+                String removeItem = listMenuTitle.remove(position);
+                tagsAdapter.remove(removeItem);
+                tagsAdapter.notifyDataSetChanged();
+                
+                mData.deleteTag(position - mStableItemCount);
+            }
+        });
+        
         
         // is Exhentai
         final String[] isExhentaiListTitle = getResources().getStringArray(R.array.is_exhentai);

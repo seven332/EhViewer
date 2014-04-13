@@ -10,8 +10,6 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.EhClient;
-import com.hippo.ehviewer.util.Favourite;
-import com.hippo.ehviewer.util.Tag;
 import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.Ui;
 
@@ -39,9 +37,9 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         Config.init(this);
         Ui.init(this);
         Cache.init(this);
-        Favourite.init(this);
+        //Favourite.init(this);
         Crash.init(this);
-        Tag.init(this);
+        //Tag.init(this);
         BeautifyScreen.init(this);
         mEhClient = new EhClient(this);
         Download.init(this);
@@ -59,6 +57,10 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
     
     public ThreadPool getNetworkThreadPool() {
         return mNetworkThreadPool;
+    }
+    
+    public Data getData() {
+        return mData;
     }
     
     @Override

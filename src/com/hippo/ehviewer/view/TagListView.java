@@ -25,11 +25,9 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
-import android.provider.Contacts.Intents.UI;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
@@ -37,15 +35,10 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import com.hippo.ehviewer.util.Log;
-import com.hippo.ehviewer.util.Tag;
-import com.hippo.ehviewer.util.Ui;
 
 /**
  * The dynamic listview is an extension of listview that supports cell dragging
@@ -74,10 +67,9 @@ public class TagListView extends ListView {
     
     private final int SMOOTH_SCROLL_AMOUNT_AT_EDGE = 15;
     private final int MOVE_DURATION = 150;
-    private final int LINE_THICKNESS = Ui.dp2pix(3);
     private final int SENSITY = 5;
     
-    public ArrayList<String> mItemList;
+    //public ArrayList<String> mItemList;
     
     private int mLastEventX = -1;
     private int mLastEventY = -1;
@@ -113,8 +105,10 @@ public class TagListView extends ListView {
     private boolean mIsWaitingForScrollFinish = false;
     private int mScrollState = OnScrollListener.SCROLL_STATE_IDLE;
 
-    private OnModifyListener listener = null;
-    private OnMoveLister movelistener = null;
+    private OnModifyListener mModifylistener = null;
+    private OnMoveLister mMovelistener = null;
+    private OnDeleteListener mOnDeleteListener = null;
+    private OnSwapListener mOnSwapListener = null;
     
     public TagListView(Context context) {
         super(context);
@@ -148,8 +142,8 @@ public class TagListView extends ListView {
                     if (pos < mStableItemCount)
                         return true;
                     
-                    if (movelistener != null)
-                        movelistener.onMoveStart();
+                    if (mMovelistener != null)
+                        mMovelistener.onMoveStart();
                     
                     mTotalOffset = 0;
                     
@@ -303,7 +297,7 @@ public class TagListView extends ListView {
     }
     
     public void setOnModifyListener(OnModifyListener listener) {
-        this.listener = listener;
+        this.mModifylistener = listener;
     }
     
     public interface OnMoveLister {
@@ -312,7 +306,23 @@ public class TagListView extends ListView {
     }
     
     public void setOnMoveLister(OnMoveLister listener) {
-        this.movelistener = listener;
+        this.mMovelistener = listener;
+    }
+    
+    public interface OnDeleteListener {
+        public void onDelete(int position);
+    }
+    
+    public void setOnDeleteListener(OnDeleteListener listener) {
+        mOnDeleteListener = listener;
+    }
+    
+    public interface OnSwapListener {
+        public void onSwap(int positionOne, int positionTwo);
+    }
+    
+    public void setOnSwapListener(OnSwapListener listener) {
+        mOnSwapListener = listener;
     }
     
     /**
@@ -380,13 +390,13 @@ public class TagListView extends ListView {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (movelistener != null)
-                    movelistener.onMoveOver();
+                if (mMovelistener != null)
+                    mMovelistener.onMoveOver();
                 touchEventsEnded();
                 break;
             case MotionEvent.ACTION_CANCEL:
-                if (movelistener != null)
-                    movelistener.onMoveOver();
+                if (mMovelistener != null)
+                    mMovelistener.onMoveOver();
                 touchEventsCancelled();
                 break;
             case MotionEvent.ACTION_POINTER_UP:
@@ -398,8 +408,8 @@ public class TagListView extends ListView {
                         MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                 final int pointerId = event.getPointerId(pointerIndex);
                 if (pointerId == mActivePointerId) {
-                    if (movelistener != null)
-                        movelistener.onMoveOver();
+                    if (mMovelistener != null)
+                        mMovelistener.onMoveOver();
                     touchEventsEnded();
                 }
                 break;
@@ -441,10 +451,9 @@ public class TagListView extends ListView {
                 return;
             }
             
-            swapElements(mItemList, originalItem, getPositionForView(switchView));
-            Tag.swap(originalItem - mStableItemCount, getPositionForView(switchView) - mStableItemCount);
-            
-            ((BaseAdapter)getAdapter()).notifyDataSetChanged();
+            if (mOnSwapListener != null) {
+                mOnSwapListener.onSwap(originalItem, getPositionForView(switchView));
+            }
             
             mDownY = mLastEventY;
             
@@ -515,8 +524,8 @@ public class TagListView extends ListView {
             
             if (mIsModify) {
                 mIsModify = false;
-                if (listener != null) {
-                    listener.onModify(getPositionForID(mMobileItemId));
+                if (mModifylistener != null) {
+                    mModifylistener.onModify(getPositionForID(mMobileItemId));
                 }
             }
             
@@ -578,9 +587,8 @@ public class TagListView extends ListView {
         }
         // Delete the item from the adapter and tag
         int position = getPositionForView(viewToRemove);
-        String key = mAdapter.getItem(position);
-        mAdapter.remove(key);
-        Tag.remove(key);
+        if (mOnDeleteListener != null)
+            mOnDeleteListener.onDelete(position);
         
         final ViewTreeObserver observer = getViewTreeObserver();
         observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -726,10 +734,6 @@ public class TagListView extends ListView {
         }
 
         return false;
-    }
-    
-    public void setItemList(ArrayList<String> itemList) {
-        mItemList = itemList;
     }
     
     /**

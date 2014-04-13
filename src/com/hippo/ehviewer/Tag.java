@@ -8,6 +8,11 @@ public class Tag extends ListUrls {
         mName = name;
     }
     
+    public Tag(String name, ListUrls lus) {
+        this(name, lus.getType(), lus.getSearch());
+        this.setAdvance(lus.getAdvanceType(), lus.getMinRating());
+    }
+    
     public void setName(String name) {
         mName = name;
     }

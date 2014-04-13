@@ -15,7 +15,6 @@ import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.EhClient;
-import com.hippo.ehviewer.util.Favourite;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.view.DownloadItemLayout;

@@ -9,12 +9,12 @@ import com.hippo.ehviewer.GalleryInfo;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.PageList;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhClient;
-import com.hippo.ehviewer.util.Favourite;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.OlImageView;
@@ -65,6 +65,7 @@ public class MangaDetailActivity extends Activity {
     public static final String KEY_G_INFO = "gallery_info";
     
     private AppContext mAppContext;
+    private Data mData;
     private EhClient mEhClient;
     
     private String url;
@@ -450,6 +451,7 @@ public class MangaDetailActivity extends Activity {
         
         mAppContext = (AppContext)getApplication();
         mEhClient = mAppContext.getEhClient();
+        mData = mAppContext.getData();
         
         int screenOri = Config.getScreenOriMode();
         if (screenOri != getRequestedOrientation())
@@ -645,7 +647,7 @@ public class MangaDetailActivity extends Activity {
             finish();
             return true;
         case R.id.action_favourite:
-            Favourite.push(mangaDetail);
+            mData.addLocalFavourite(mangaDetail);
             Toast.makeText(MangaDetailActivity.this,
                     getString(R.string.toast_add_favourite),
                     Toast.LENGTH_SHORT).show();
