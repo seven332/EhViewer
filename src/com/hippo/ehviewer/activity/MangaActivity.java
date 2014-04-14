@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
+import com.hippo.ehviewer.EhClient;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.R.id;
 import com.hippo.ehviewer.R.layout;
@@ -24,7 +25,6 @@ import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.EhClient;
 import com.hippo.ehviewer.util.Util;
 
 import android.annotation.SuppressLint;
@@ -37,7 +37,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+
 import com.hippo.ehviewer.util.Log;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;

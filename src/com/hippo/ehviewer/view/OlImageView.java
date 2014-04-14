@@ -1,7 +1,7 @@
 package com.hippo.ehviewer.view;
 
 import com.hippo.ehviewer.DiskCache;
-import com.hippo.ehviewer.util.EhClient;
+import com.hippo.ehviewer.EhClient;
 import com.hippo.ehviewer.util.Util;
 
 import android.content.Context;
@@ -9,7 +9,9 @@ import android.graphics.Bitmap;
 import android.graphics.Movie;
 import android.support.v4.util.LruCache;
 import android.util.AttributeSet;
+
 import com.hippo.ehviewer.util.Log;
+
 import android.view.View;
 
 public class OlImageView extends SuperImageView {

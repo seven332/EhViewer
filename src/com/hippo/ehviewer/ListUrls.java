@@ -4,8 +4,6 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import com.hippo.ehviewer.util.EhClient;
-
 public class ListUrls {
     
     // Search type

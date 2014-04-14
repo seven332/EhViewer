@@ -5,11 +5,11 @@ import java.util.Map;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.DownloadInfo;
+import com.hippo.ehviewer.EhClient;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.EhClient.DownloadMangaManager;
 import com.hippo.ehviewer.activity.DownloadActivity;
 import com.hippo.ehviewer.util.Download;
-import com.hippo.ehviewer.util.EhClient;
-import com.hippo.ehviewer.util.EhClient.DownloadMangaManager;
 
 import android.app.Notification;
 import android.app.NotificationManager;

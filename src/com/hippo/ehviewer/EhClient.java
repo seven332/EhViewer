@@ -1,4 +1,4 @@
-package com.hippo.ehviewer.util;
+package com.hippo.ehviewer;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -21,14 +21,10 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.conn.ConnectTimeoutException;
 
-import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.DiskCache;
-import com.hippo.ehviewer.DownloadInfo;
-import com.hippo.ehviewer.GalleryDetail;
-import com.hippo.ehviewer.GalleryInfo;
-import com.hippo.ehviewer.ListUrls;
-import com.hippo.ehviewer.PageList;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.data.GalleryDetail;
+import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.data.PageList;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.network.HttpHelper;
@@ -44,7 +40,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.util.LruCache;
 
+import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Download;
+import com.hippo.ehviewer.util.Future;
+import com.hippo.ehviewer.util.FutureListener;
 import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.util.ThreadPool;
+import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.util.Util;
 
 // TODO Stringbuffer to StringBuild
 

@@ -8,13 +8,13 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.DownloadInfo;
+import com.hippo.ehviewer.EhClient;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Download;
-import com.hippo.ehviewer.util.EhClient;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.view.DownloadItemLayout;

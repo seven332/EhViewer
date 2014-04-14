@@ -1,4 +1,5 @@
-package com.hippo.ehviewer;
+package com.hippo.ehviewer.data;
+
 
 public class ApiGetGalleryInfo extends GalleryInfo{
     public String archiver_key;

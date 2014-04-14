@@ -1,4 +1,4 @@
-package com.hippo.ehviewer;
+package com.hippo.ehviewer.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;

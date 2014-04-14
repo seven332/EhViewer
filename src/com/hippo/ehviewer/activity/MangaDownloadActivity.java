@@ -7,13 +7,13 @@ import java.util.Collections;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.hippo.ehviewer.AppContext;
+import com.hippo.ehviewer.EhClient;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.DownloadImageSet;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.EhClient;
 import com.hippo.ehviewer.util.Util;
 
 import android.R.color;
@@ -30,7 +30,9 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.PagerAdapter;
+
 import com.hippo.ehviewer.util.Log;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;

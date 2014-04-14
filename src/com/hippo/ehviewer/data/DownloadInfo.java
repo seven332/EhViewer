@@ -1,6 +1,5 @@
 package com.hippo.ehviewer.data;
 
-import com.hippo.ehviewer.GalleryInfo;
 
 /**
  * 

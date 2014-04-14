@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.hippo.ehviewer.GalleryInfo;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
