@@ -223,7 +223,7 @@ public class SettingsActivity extends PreferenceActivity {
                         .SetOnCheckUpdateListener(new UpdateHelper.OnCheckUpdateListener() {
                             @Override
                             public void onSuccess(String version, long size,
-                                    final String url, String info) {
+                                    final String url, final String fileName, String info) {
                                 update.setSummary(R.string.found_update);
                                 
                                 String sizeStr = Util.sizeToString(size);
@@ -236,7 +236,6 @@ public class SettingsActivity extends PreferenceActivity {
                                                 // TODO
                                                 try {
                                                     Downloader downloader = new Downloader(SettingsActivity.this);
-                                                    String fileName = Util.getFileForUrl(url);
                                                     downloader.resetData(Config.getDownloadPath(), fileName, url);
                                                     downloader.setOnDownloadListener(
                                                             new UpdateHelper.UpdateListener(SettingsActivity.this,

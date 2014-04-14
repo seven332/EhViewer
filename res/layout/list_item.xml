@@ -7,6 +7,7 @@
         android:id="@+id/cover"
         android:layout_width="67dp"
         android:layout_height="100dp"
+        android:layout_gravity="center"
         android:scaleType="fitCenter" />
 
     <LinearLayout
@@ -18,7 +19,9 @@
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:ellipsize="end" />
         
         <LinearLayout
             android:layout_width="fill_parent"

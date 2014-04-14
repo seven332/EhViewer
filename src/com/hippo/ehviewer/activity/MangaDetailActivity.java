@@ -6,7 +6,6 @@ import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.GalleryDetail;
 import com.hippo.ehviewer.GalleryInfo;
-import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.PageList;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Data;
@@ -20,7 +19,6 @@ import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.OlImageView;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
 import com.hippo.ehviewer.widget.DialogBuilder;
-import com.hippo.ehviewer.widget.AutoWrapLayout.BaseLine;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -91,8 +89,6 @@ public class MangaDetailActivity extends Activity {
     
     private GalleryDetail mangaDetail;
     private int curPage;
-    private int screenHeight;
-    private int columnCount;
     
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
@@ -150,6 +146,9 @@ public class MangaDetailActivity extends Activity {
                 tvu.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        // Add to read in Data
+                        mData.addRead(mangaDetail);
+                        
                         Intent intent = new Intent(MangaDetailActivity.this,
                                 MangaActivity.class);
                         intent.putExtra("url", ((TextViewWithUrl) v).url);
@@ -300,6 +299,9 @@ public class MangaDetailActivity extends Activity {
 
     // Read
     public void buttonRead(View v) {
+        // Add to read
+        mData.addRead(mangaDetail);
+        
         Intent intent = new Intent(MangaDetailActivity.this,
                 MangaActivity.class);
         intent.putExtra("url", mangaDetail.firstPage);

@@ -6,14 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.hippo.ehviewer.GalleryInfo;
-import com.hippo.ehviewer.ListUrls;
-import com.hippo.ehviewer.Tag;
-import com.hippo.ehviewer.util.Util;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -33,6 +29,7 @@ public class Data {
     private static final String TABLE_READ = "read";
     private static final String TABLE_LOCAL_FAVOURITE = "local_favourite";
     private static final String TABLE_TAG = "tag";
+    private static final String TABLE_DOWNLOAD = "download";
     
     private static final String COLUMN_GID = "gid";
     private static final String COLUMN_TOKEN = "token";
@@ -50,12 +47,18 @@ public class Data {
     private static final String COLUMN_ADVANCE = "advance";
     private static final String COLUMN_MIN_RATING = "min_rating";
     
+    private static final String COLUMN_STATE = "state";
+    private static final String COLUMN_DETAIL = "detail";
+    private static final String COLUMN_START_PAGE = "start_page";
+    
     private Map<String, GalleryInfo> mGallerys;
     
-    private long tagRowNum;
+    private long mTagRowNum;
     private List<Tag> mTags;
-    
     private List<GalleryInfo> mLocalFavourites;
+    private List<GalleryInfo> mReads;
+    private long mDownloadRowNum;
+    private List<DownloadInfo> mDownloads;
     
     private Context mContext;
     
@@ -70,7 +73,9 @@ public class Data {
         mGallerys = new HashMap<String, GalleryInfo>();
         
         getTags();
+        getReads();
         getLocalFavourites();
+        getDownloads();
     }
     
     @Override
@@ -79,6 +84,13 @@ public class Data {
     }
     
     /****** gallery ******/
+    
+    /**
+     * Get galleryInfo in table, if do not exits return null
+     * 
+     * @param gid
+     * @return
+     */
     public GalleryInfo getGallery(String gid) {
         GalleryInfo galleryInfo = mGallerys.get(gid);
         if (galleryInfo == null) {
@@ -98,6 +110,7 @@ public class Data {
                 // add to map
                 mGallerys.put(gid, galleryInfo);
             }
+            cursor.close();
         }
         return galleryInfo;
     }
@@ -187,12 +200,240 @@ public class Data {
         }
         reference--;
         if (reference == 0) { // delete gallery
+            // delete in sql
             mDatabase.delete(TABLE_GALLERY, COLUMN_GID + "=?", new String[]{gid});
+            // delete in list
+            mGallerys.remove(gid);
         } else { // update reference
             ContentValues values = new ContentValues();
             values.put(COLUMN_REFERENCE, reference);
             mDatabase.update(TABLE_GALLERY, values, COLUMN_GID + "=?", new String[]{gid});
         }
+    }
+    
+    /****** download ******/
+    private synchronized void getDownloads() {
+        mDownloads = new ArrayList<DownloadInfo>();
+        mDownloadRowNum = 0;
+        
+        List<String> invaildGids = new ArrayList<String>();
+        
+        Cursor cursor = mDatabase.rawQuery("select * from " + TABLE_DOWNLOAD
+                + " order by " + COLUMN_ID + " asc", null);
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                
+                String gid = cursor.getString(1);
+                GalleryInfo galleryInfo = getGallery(gid);
+                if (galleryInfo == null) {
+                    invaildGids.add(gid);
+                } else {
+                    int state = cursor.getInt(2);
+                    byte[] detail = cursor.getBlob(3);
+                    int startPage = cursor.getInt(4);
+                    
+                    DownloadInfo downloadInfo = new DownloadInfo(
+                            galleryInfo, state, detail, startPage);
+                    
+                    mDownloads.add(downloadInfo);
+                }
+                cursor.moveToNext();
+                mDownloadRowNum++;
+            }
+        }
+        cursor.close();
+    }
+    
+    public synchronized boolean addDownload(DownloadInfo downloadInfo) {
+        GalleryInfo galleryInfo = downloadInfo.getGalleryInfo();
+        
+        // add to sql
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ID, mDownloadRowNum);
+        values.put(COLUMN_GID, galleryInfo.gid);
+        values.put(COLUMN_STATE, downloadInfo.getState());
+        values.put(COLUMN_DETAIL, downloadInfo.getDetail());
+        values.put(COLUMN_START_PAGE, downloadInfo.getStartPage());
+        
+        boolean ok = mDatabase.insert(
+                TABLE_DOWNLOAD, null, values) != -1;
+        if (ok) {
+            // add to list
+            mDownloadRowNum++;
+            mDownloads.add(downloadInfo);
+            
+            // add reference
+            addGallery(galleryInfo, false);
+        }
+        return ok;
+    }
+    
+    public synchronized boolean deleteDownload(int id) {
+        int deleteNum = mDatabase.delete(TABLE_DOWNLOAD, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        if (deleteNum > 1)
+            Log.e(TAG, "WTF? more than one id is " + id);
+        
+        if (deleteNum == 0)
+            return false;
+        if (id < 0 || id >= mDownloads.size()) {
+            Log.e(TAG, "id is out of bounds, id is " + id + ", mDownloads.size() is " + mDownloads.size());
+            return false;
+        }
+        
+        // delete from sql
+        ContentValues values = new ContentValues();
+        for (int i = id + 1; i < mDownloadRowNum; i++) {
+            values.put(COLUMN_ID, i - 1);
+            mDatabase.update(TABLE_DOWNLOAD, values, COLUMN_ID + "=?", new String[]{String.valueOf(i)});
+        }
+        mDownloadRowNum -= deleteNum;
+        
+        // delete from list
+        DownloadInfo downloadInfo = mDownloads.remove(id);
+        
+        // sub reference
+        if (downloadInfo != null) {
+            deleteGallery(downloadInfo.getGalleryInfo().gid);
+        } else {
+            Log.e(TAG, id + " of mDownloads is null");
+        }
+        
+        return true;
+    }
+    
+    public synchronized List<DownloadInfo> getAllDownloads() {
+        return mDownloads;
+    }
+    
+    public synchronized DownloadInfo getDownload(int location) {
+        return mDownloads.get(location);
+    }
+    
+    public synchronized void setDownload(int location, DownloadInfo downloadInfo) {
+        if (location == mDownloadRowNum) {
+            addDownload(downloadInfo);
+        } else {
+            // Update list
+            mDownloads.set(location, downloadInfo);
+            
+            // Update sql
+            GalleryInfo galleryInfo = downloadInfo.getGalleryInfo();
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_ID, mDownloadRowNum);
+            values.put(COLUMN_GID, galleryInfo.gid);
+            values.put(COLUMN_STATE, downloadInfo.getState());
+            values.put(COLUMN_DETAIL, downloadInfo.getDetail());
+            values.put(COLUMN_START_PAGE, downloadInfo.getStartPage());
+            mDatabase.update(TABLE_DOWNLOAD, values, COLUMN_ID + "=?", new String[]{String.valueOf(location)});
+            
+            // Update gallery
+            addGallery(galleryInfo, true);
+        }
+    }
+    
+    public synchronized void notifyDownloadChange(int location) {
+        setDownload(location, mDownloads.get(location));
+    }
+    
+    public synchronized boolean swapDownload(int indexOne, int indexTwo) {
+        if (indexOne < 0 || indexOne > mDownloadRowNum
+                || indexTwo < 0 || indexTwo > mDownloadRowNum)
+            return false;
+        
+        if (indexOne == indexTwo)
+            return true;
+        
+        // Update list
+        DownloadInfo temp = mDownloads.get(indexOne);
+        mDownloads.set(indexOne, mDownloads.get(indexTwo));
+        mDownloads.set(indexTwo, temp);
+        // Update sql
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ID, -1);
+        mDatabase.update(TABLE_DOWNLOAD, values, COLUMN_ID + "=?", new String[]{String.valueOf(indexOne)});
+        values.put(COLUMN_ID, indexOne);
+        mDatabase.update(TABLE_DOWNLOAD, values, COLUMN_ID + "=?", new String[]{String.valueOf(indexTwo)});
+        values.put(COLUMN_ID, indexTwo);
+        mDatabase.update(TABLE_DOWNLOAD, values, COLUMN_ID + "=?", new String[]{String.valueOf(-1)});
+        return true;
+    }
+    
+    /****** read ******/
+    private synchronized void getReads() {
+        mReads = new ArrayList<GalleryInfo>();
+        Cursor cursor = mDatabase.rawQuery("select * from "
+                + TABLE_READ, null);
+        
+        List<String> invaildGids = new ArrayList<String>();
+        
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                String gid = cursor.getString(0);
+                GalleryInfo galleryInfo = getGallery(gid);
+                if (galleryInfo == null) {
+                    invaildGids.add(gid);
+                } else {
+                    mReads.add(galleryInfo);
+                }
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        
+        // remove invail gid
+        for (String invaildGid : invaildGids) {
+            mDatabase.delete(TABLE_READ, COLUMN_GID + "=?",
+                    new String[]{String.valueOf(invaildGid)});
+        }
+    }
+    
+    public synchronized List<GalleryInfo> getAllReads() {
+        return mReads;
+    }
+    
+    public synchronized void addRead(GalleryInfo galleryInfo) {
+        // add to sql
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_GID, galleryInfo.gid);
+        boolean isUpdate = mDatabase.insert(
+                TABLE_READ, null, values) == -1;
+        addGallery(galleryInfo, isUpdate);
+        
+        // add to list
+        if (!isUpdate)
+            mReads.add(galleryInfo);
+    }
+    
+    public synchronized void deleteRead(String gid) {
+        // delete from list
+        for (GalleryInfo  galleryInfo : mReads) {
+            if (galleryInfo.gid.equals(gid)) {
+                mReads.remove(galleryInfo);
+                break;
+            }
+        }
+        
+        // delete from sql
+        mDatabase.delete(TABLE_READ, COLUMN_GID + "=?", new String[]{gid});
+        deleteGallery(gid);
+    }
+    
+    public synchronized void deleteAllReads() {
+        // delete from list
+        mReads.clear();
+        
+        // delete from sql
+        Cursor cursor = mDatabase.rawQuery("select * from "
+                + TABLE_READ, null);
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                String gid = cursor.getString(0);
+                deleteGallery(gid);
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        mDatabase.delete(TABLE_READ, null, null);
     }
     
     /****** local favourite ******/
@@ -274,7 +515,7 @@ public class Data {
     /******  tag ******/
     private synchronized void getTags() {
         mTags = new ArrayList<Tag>();
-        tagRowNum = 0;
+        mTagRowNum = 0;
         Cursor cursor = mDatabase.rawQuery("select * from " + TABLE_TAG
                 + " order by " + COLUMN_ID + " asc", null);
         if (cursor.moveToFirst()) {
@@ -292,7 +533,7 @@ public class Data {
                 mTags.add(tag);
                 
                 cursor.moveToNext();
-                tagRowNum++;
+                mTagRowNum++;
             }
         }
         cursor.close();
@@ -300,7 +541,7 @@ public class Data {
     
     public synchronized boolean addTag(Tag tag) {
         ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, tagRowNum);
+        values.put(COLUMN_ID, mTagRowNum);
         values.put(COLUMN_NAME, tag.getName());
         values.put(COLUMN_CATEGORY, tag.getType());
         values.put(COLUMN_SEARCH, tag.getSearch());
@@ -310,7 +551,7 @@ public class Data {
         boolean ok = mDatabase.insert(
                 TABLE_TAG, null, values) != -1;
         if (ok) {
-            tagRowNum++;
+            mTagRowNum++;
             mTags.add(tag);
         }
         return ok;
@@ -330,11 +571,11 @@ public class Data {
         
         // Update sql
         ContentValues values = new ContentValues();
-        for (int i = id + 1; i < tagRowNum; i++) {
+        for (int i = id + 1; i < mTagRowNum; i++) {
             values.put(COLUMN_ID, i - 1);
             mDatabase.update(TABLE_TAG, values, COLUMN_ID + "=?", new String[]{String.valueOf(i)});
         }
-        tagRowNum -= deleteNum;
+        mTagRowNum -= deleteNum;
         
         // Update list
         mTags.remove(id);
@@ -357,8 +598,13 @@ public class Data {
         return names;
     }
     
+    /**
+     * location >= 0 && location <= tagRowNum please
+     * @param location
+     * @param tag
+     */
     public synchronized void setTag(int location, Tag tag) {
-        if (location == tagRowNum) {
+        if (location == mTagRowNum) {
             addTag(tag);
         } else {
             // Update list
@@ -376,8 +622,8 @@ public class Data {
     }
     
     public synchronized boolean swapTag(int indexOne, int indexTwo) {
-        if (indexOne < 0 || indexOne > tagRowNum
-                || indexTwo < 0 || indexTwo > tagRowNum)
+        if (indexOne < 0 || indexOne > mTagRowNum
+                || indexTwo < 0 || indexTwo > mTagRowNum)
             return false;
         
         if (indexOne == indexTwo)
@@ -408,39 +654,49 @@ public class Data {
         public void onCreate(SQLiteDatabase db) {
             // gallery
             String CreateGallery = "create table " + TABLE_GALLERY + "("
-                    + "gid text primary key,"
-                    + "token text,"
-                    + "title text,"
-                    + "posted text,"
-                    + "category integer,"
-                    + "thumb text,"
-                    + "uploader text,"
-                    + "rating text,"
-                    + "reference integer);";
+                    + COLUMN_GID + " text primary key,"
+                    + COLUMN_TOKEN + " text,"
+                    + COLUMN_TITLE + " text,"
+                    + COLUMN_POSTED + " text,"
+                    + COLUMN_CATEGORY + " integer,"
+                    + COLUMN_THUMB + " text,"
+                    + COLUMN_UPLOADER + " text,"
+                    + COLUMN_RATING + " text,"
+                    + COLUMN_REFERENCE + " integer);";
             db.execSQL(CreateGallery);
             
             // read
             String CreateRead = "create table "
                     + TABLE_READ + "("
-                    + "gid text primary key);";
+                    + COLUMN_GID + " text primary key);";
             db.execSQL(CreateRead);
             
             // local favourite
             String CreateLocalFavourite = "create table "
                     + TABLE_LOCAL_FAVOURITE + "("
-                    + "gid text primary key);";
+                    + COLUMN_GID + " text primary key);";
             db.execSQL(CreateLocalFavourite);
             
             // tag
             String CreateTag = "create table "
                     + TABLE_TAG + "("
-                    + "id integer primary key,"
-                    + "name text,"
-                    + "category integer,"
-                    + "search text,"
-                    + "advance integer,"
-                    + "min_rating integer);";
+                    + COLUMN_ID + " integer primary key,"
+                    + COLUMN_NAME + " text,"
+                    + COLUMN_CATEGORY + " integer,"
+                    + COLUMN_SEARCH + " text,"
+                    + COLUMN_ADVANCE + " integer,"
+                    + COLUMN_MIN_RATING + " integer);";
             db.execSQL(CreateTag);
+            
+            // download
+            String CreateDownload = "create table "
+                    + TABLE_DOWNLOAD + "("
+                    + COLUMN_ID + " integer primary key,"
+                    + COLUMN_GID + " text unique,"
+                    + COLUMN_STATE + " integer,"
+                    + COLUMN_DETAIL + " blob,"
+                    + COLUMN_START_PAGE + " integer);";
+            db.execSQL(CreateDownload);
         }
         
         @Override

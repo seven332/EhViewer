@@ -1,6 +1,5 @@
 package com.hippo.ehviewer.activity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -9,9 +8,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.hippo.ehviewer.util.Log;
-
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,11 +35,11 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhClient;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.view.AlertButton;
-import com.hippo.ehviewer.view.OlImageView;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.LoadImageView;
 
 public class FavouriteActivity extends Activity{
+    @SuppressWarnings("unused")
     private static final String TAG = "FavouriteActivity";
     
     private AppContext mAppContext;

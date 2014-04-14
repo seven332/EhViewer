@@ -47,8 +47,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-// Add load front page
-
 public class MangaActivity extends Activity {
     private String TAG = "MangaActivity";
     
@@ -156,10 +154,13 @@ public class MangaActivity extends Activity {
             try {
                 // Just test bound might error
                 fis = new FileInputStream(file);
-                Bitmap bmp = BitmapFactory.decodeStream(fis);
+                BitmapFactory.Options ops = new BitmapFactory.Options();
+                // Make sure it do not malloc too many memory
+                ops.inSampleSize = 10000;
+                Bitmap bmp = BitmapFactory.decodeStream(fis, null, ops);
                 if (bmp != null) {
-                    bmp.recycle();
                     isImage = true;
+                    bmp.recycle();
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

@@ -34,7 +34,10 @@ public class UpdateHelper {
     private static final String TAG = "UpdateHelper";
     private static final int NOTIFICATION_ID = -1;
     
-    public static final String UPDATE_API = "http://ehviewersu.appsp0t.com/API";
+    private static final String UPDATE_API = "http://ehviewersu.appsp0t.com/API";
+    private static final String HEADER = "Ehviewer-";
+    private static final String FOOTER = ".apk";
+    
     
     private AppContext mAppContext;
     private OnCheckUpdateListener mListener;
@@ -42,7 +45,7 @@ public class UpdateHelper {
     private static boolean mEnabled = true;
     
     public interface OnCheckUpdateListener {
-        public void onSuccess(String version, long size, String url, String info);
+        public void onSuccess(String version, long size, String url, String fileName, String info);
         public void onNoUpdate();
         public void onFailure(String eMsg);
     }
@@ -140,7 +143,6 @@ public class UpdateHelper {
                 if (pageContext.equals("working")) {
                     if (listener != null)
                         listener.onFailure("正在检查更新或者下载更新"); // TODO
-                    
                 }
                 else if (pageContext.equals("NameNotFound")) {
                     if (listener != null)
@@ -170,7 +172,7 @@ public class UpdateHelper {
                             String info = updateJO.getString("info");
                             
                             if (listener != null)
-                                listener.onSuccess(version, size, url, info);
+                                listener.onSuccess(version, size, url, HEADER + version + FOOTER, info);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -191,8 +193,6 @@ public class UpdateHelper {
         
         private NotificationManager mNotifyManager;
         private NotificationCompat.Builder mBuilder;
-        
-        
         
         public UpdateListener(Context context, String fileName) {
             mContext = context;

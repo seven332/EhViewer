@@ -1,8 +1,12 @@
 package com.hippo.ehviewer.activity;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
@@ -10,9 +14,9 @@ import com.hippo.ehviewer.GalleryInfo;
 import com.hippo.ehviewer.ImageLoadManager;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.Tag;
 import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.data.Data;
+import com.hippo.ehviewer.data.Tag;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
@@ -140,7 +144,7 @@ public class MangaListActivity extends SlidingActivity {
     private int lastIndex = 0;
     private int visiblePage = 0;
     
-    private String title;
+    private String mTitle;
     
     private class RefreshPackage {
         public ListUrls listUrls;
@@ -424,7 +428,7 @@ public class MangaListActivity extends SlidingActivity {
                                     freshButton.setVisibility(View.GONE);
                                     noFoundView.setVisibility(View.GONE);
                                     sadpanda.setVisibility(View.GONE);
-                                    if (pullListView.clickHeaderRefresh(new RefreshPackage(listUrls, title)))
+                                    if (pullListView.clickHeaderRefresh(new RefreshPackage(listUrls, mTitle)))
                                         pullListView.setHeaderString(
                                                 "下拉加载...",
                                                 "释放加载...",
@@ -729,7 +733,7 @@ public class MangaListActivity extends SlidingActivity {
             if (getPackage.stamp != lastGetStamp)
                 return;
             lus = getPackage.targetListUrls;
-            title = getPackage.title;
+            mTitle = getPackage.title;
             // Check no Found view later
             waitView.setVisibility(View.GONE);
             freshButton.setVisibility(View.GONE);
@@ -775,7 +779,7 @@ public class MangaListActivity extends SlidingActivity {
                     firstIndex = 0;
                     lastIndex = newLmdArray.size() - 1;
                     visiblePage = 0;
-                    setTitle(String.format(getString(R.string.list_title), title, visiblePage + 1));
+                    setTitle(String.format(getString(R.string.list_title), mTitle, visiblePage + 1));
                     
                     // Go to top
                     listView.setSelection(0);
@@ -788,7 +792,7 @@ public class MangaListActivity extends SlidingActivity {
                         firstIndex = 0;
                         lastIndex = newLmdArray.size()-1;
                         visiblePage = getPageIndex;
-                        setTitle(String.format(getString(R.string.list_title), title, visiblePage + 1));
+                        setTitle(String.format(getString(R.string.list_title), mTitle, visiblePage + 1));
                         // Go to top
                         listView.setSelection(0);
                     } else {
@@ -806,7 +810,7 @@ public class MangaListActivity extends SlidingActivity {
                         firstIndex = lmdArray.size() - newLmdArray.size();
                         lastIndex = lmdArray.size() - 1;
                         visiblePage = getPageIndex;
-                        setTitle(String.format(getString(R.string.list_title), title, visiblePage + 1));
+                        setTitle(String.format(getString(R.string.list_title), mTitle, visiblePage + 1));
                         listView.setSelectionFromTop(firstIndex, -1);
                     }
                 } else if (getPageIndex < firstPage - 1 ||
@@ -821,7 +825,7 @@ public class MangaListActivity extends SlidingActivity {
                     firstIndex = 0;
                     lastIndex = newLmdArray.size();
                     visiblePage = getPageIndex;
-                    setTitle(String.format(getString(R.string.list_title), title, visiblePage + 1));
+                    setTitle(String.format(getString(R.string.list_title), mTitle, visiblePage + 1));
                     
                     // Go to top
                     listView.setSelection(0);
@@ -932,7 +936,7 @@ public class MangaListActivity extends SlidingActivity {
                 visiblePage = visiblePage + pageChanged;
                 firstIndex += pageChanged * lus.getNumPerPage();
                 lastIndex += pageChanged * lus.getNumPerPage();
-                setTitle(String.format(getString(R.string.list_title), title, visiblePage + 1));
+                setTitle(String.format(getString(R.string.list_title), mTitle, visiblePage + 1));
             }
         }
 
@@ -1029,6 +1033,7 @@ public class MangaListActivity extends SlidingActivity {
         int screenOri = Config.getScreenOriMode();
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);
+        
     }
 
     @Override
@@ -1055,7 +1060,7 @@ public class MangaListActivity extends SlidingActivity {
         mSlidingMenu.setOnClosedListener(new SlidingMenu.OnClosedListener() {
             @Override
             public void onClosed() {
-                setTitle(title);
+                setTitle(String.format(getString(R.string.list_title), mTitle, visiblePage + 1));
                 invalidateOptionsMenu();
             }
         });
@@ -1263,7 +1268,7 @@ public class MangaListActivity extends SlidingActivity {
                 else
                     listUrls.setPage(firstPage - 1);
                 mEhClient.getMangaList(listUrls.getUrl(),
-                        new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, false, title),
+                        new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, false, mTitle),
                         new MangaListGetListener());
             }
 
@@ -1287,7 +1292,7 @@ public class MangaListActivity extends SlidingActivity {
                     mListFirst = true;
                     mLoadListOver = false;
                     mEhClient.getMangaList(listUrls.getUrl(),
-                            new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, false, title),
+                            new MangaListGetPackage((lastGetStamp = System.currentTimeMillis()), listUrls, false, mTitle),
                             new MangaListGetListener());
                 }
                 else
@@ -1324,8 +1329,6 @@ public class MangaListActivity extends SlidingActivity {
             }
         });
         
-        setTitle(String.format(getString(R.string.some_page), visiblePage + 1));
-        
         pullListView.setVisibility(View.GONE);
         waitView.setVisibility(View.VISIBLE);
         freshButton.setVisibility(View.GONE);
@@ -1341,8 +1344,10 @@ public class MangaListActivity extends SlidingActivity {
         checkLogin(false);
         
         // get MangeList
-        title = listMenuTitle.get(0);
+        mTitle = listMenuTitle.get(0);
         refresh(lus.clone(), listMenuTitle.get(0));
+        
+        setTitle(String.format(getString(R.string.list_title), mTitle, visiblePage + 1));
     }
     
     @Override
@@ -1453,6 +1458,19 @@ public class MangaListActivity extends SlidingActivity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mServiceConn);
+        
+        List<GalleryInfo> reads = mData.getAllReads();
+        for (GalleryInfo item : reads) {
+            File folder = new File(Config.getDownloadPath(),
+                    StringEscapeUtils.escapeHtml4(item.title));
+            try {
+                Util.deleteContents(folder);
+                folder.delete();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        mData.deleteAllReads();
     }
     
     private void checkUpdate() {
@@ -1460,7 +1478,7 @@ public class MangaListActivity extends SlidingActivity {
         .SetOnCheckUpdateListener(new UpdateHelper.OnCheckUpdateListener() {
             @Override
             public void onSuccess(String version, long size,
-                    final String url, String info) {
+                    final String url, final String fileName, String info) {
                 String sizeStr = Util.sizeToString(size);
                 AlertDialog dialog = SuperDialogUtil.createUpdateDialog(MangaListActivity.this,
                         version, sizeStr, info,
@@ -1471,7 +1489,6 @@ public class MangaListActivity extends SlidingActivity {
                                 // TODO
                                 try {
                                     Downloader downloader = new Downloader(MangaListActivity.this);
-                                    String fileName = Util.getFileForUrl(url);
                                     downloader.resetData(Config.getDownloadPath(), fileName, url);
                                     downloader.setOnDownloadListener(
                                             new UpdateHelper.UpdateListener(MangaListActivity.this,
