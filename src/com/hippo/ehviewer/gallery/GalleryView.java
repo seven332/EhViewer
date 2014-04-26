@@ -832,6 +832,8 @@ public class GalleryView extends GLView {
                 return false;
             
             ShowItem curShowItem = showItems[CUR_TARGET_INDEX];
+            if (curShowItem == null) // If not load now
+                return true;
             
             switch(mScrollState) {
             case SCROLL_ANIME_LEFT:
