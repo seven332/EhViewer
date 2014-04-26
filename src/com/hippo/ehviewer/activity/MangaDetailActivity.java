@@ -601,7 +601,6 @@ public class MangaDetailActivity extends Activity {
     
     private void addTags(LinearLayout tagsLayout, String[][] tagGroups) {
         tagsLayout.removeAllViews();
-        int darkBlue = getResources().getColor(R.color.blue_dark);
         int x = Ui.dp2pix(8);
         
         for (String[] tagGroup : tagGroups) {
@@ -622,7 +621,7 @@ public class MangaDetailActivity extends Activity {
                     TextView tagView = new TextView(this);
                     tagView.setText(tagGroup[i]);
                     tagView.setTextColor(Color.WHITE);
-                    tagView.setBackgroundColor(darkBlue);
+                    tagView.setBackgroundColor(Ui.HOLO_BLUE_DARK);
                     tagView.setPadding(x, x, x, x);
                     AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams();
                     lp.setMargins(x, x, x, x);

@@ -77,8 +77,8 @@ public class ImageLoadManager {
         liv.setState(LoadImageView.LOADING);
         mLoadCacheTask.push(new LoadTask(liv, download));
         if (curLoadTask == null) {
-            new Thread(new LoadFromCacheTask()).start();
             curLoadTask = emptyLoadTask;
+            new Thread(new LoadFromCacheTask()).start();
         }
     }
     

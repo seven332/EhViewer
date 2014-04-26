@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.conn.ConnectTimeoutException;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.activity.DownloadInfo;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.PageList;
@@ -61,6 +62,8 @@ public class EhClient {
     private static final String EXHENTAI_LIST_HEADER = "http://exhentai.org/";
     public static final String E_HENTAI_DETAIL_HEADER = "http://g.e-hentai.org/g/";
     public static final String EXHENTAI_DETAIL_HEADER = "http://exhentai.org/g/";
+    
+    public static final String EXHENTAI_PAGE_HEADER = "http://exhentai.org/s/";
     
     public static String listHeader;
     public static String detailHeader;
@@ -1211,7 +1214,7 @@ public class EhClient {
                         }
 
                         @Override
-                        public void onDownloadOver(int status) {
+                        public void onDownloadOver(int status, String eMsg) {
                             if (status == Downloader.COMPLETED)
                                 mService.notifyUpdate(curDownloadInfo.gid, curDownloadInfo.lastStartIndex, ImageSet.STATE_LOADED);
                             else
@@ -1412,7 +1415,20 @@ public class EhClient {
             }
             return false;
         }
+        
+        
     }
+    
+    /**
+     * page start from 1
+     * @param gid
+     * @param page
+     * @param token
+     * @return
+     */
+    //public String getPageUrl(String gid, int page, String token) {
+        
+    //}
     
     
     /********** Use E-hentai API ************/

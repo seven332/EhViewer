@@ -74,7 +74,7 @@ public class Downloader implements Runnable {
          * FAILED or COMPLETED or STOPED
          * @param status
          */
-        public void onDownloadOver(int status);
+        public void onDownloadOver(int status, String eMsg);
     }
     
     public class Controlor {
@@ -195,7 +195,7 @@ public class Downloader implements Runnable {
             mFile.delete();
         
         if (mListener != null)
-            mListener.onDownloadOver(status);
+            mListener.onDownloadOver(status, getEMsg());
     }
     
     public int getStatus() {

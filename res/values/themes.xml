@@ -7,12 +7,16 @@
         <item name="@android:actionBarStyle">@style/ActionBar</item>
         <item name="@android:actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="@android:homeAsUpIndicator">@drawable/ic_navigation_drawer</item>
+        <item name="android:windowContentOverlay">@null</item>
         
         <!-- Button -->
         <item name="@android:buttonStyle">@style/Button.Blue</item>
         
         <!-- Scrollbar attributes -->
         <item name="@android:scrollbarThumbVertical">@drawable/scrollbar_blue</item>
+        
+        <!-- List attributes -->
+        <item name="@android:listDivider">@drawable/list_divider</item>
     </style>
     
     <style name="AppTheme.NoActionBar">

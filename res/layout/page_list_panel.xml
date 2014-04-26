@@ -18,7 +18,7 @@
         android:padding="12dp"
         android:textSize="14sp"
         android:textColor="@android:color/white"
-        android:background="@color/blue_dark"
+        android:background="@android:color/holo_blue_dark"
         android:clickable="true"
         android:onClick="goTo" />
 

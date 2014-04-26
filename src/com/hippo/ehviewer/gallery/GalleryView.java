@@ -35,7 +35,7 @@ import com.hippo.ehviewer.util.Ui;
 // TODO 手动触屏滑动可能闪烁
 public class GalleryView extends GLView {
     @SuppressWarnings("unused")
-    private static final String TAG = "ImagesView";
+    private static final String TAG = "GalleryView";
     
     public static final int INVALID_ID = -1;
     
@@ -146,8 +146,6 @@ public class GalleryView extends GLView {
     private OnTapTextListener mOnTapTextListener;
     private OnScrollPageListener mOnScrollPageListener;
     
-    private ThreadPool mMovieWait;
-    
     public interface OnEdgeListener {
         public void onFirstPageEdge();
         public void onLastPageEdge();
@@ -185,8 +183,6 @@ public class GalleryView extends GLView {
             mCurIndex = 0;
         
         setState();
-        
-        mMovieWait = new ThreadPool(1, 1);
         
         mGestureRecognizer = new GestureRecognizer(mContext, new MyGestureListener());
         setBackgroundColor(GalleryUtils.intColorToFloatARGBArray(BACKGROUND_COLOR));
@@ -303,22 +299,8 @@ public class GalleryView extends GLView {
         
         
         if (hasMovie)
-            mMovieWait.submit(mMovieShowJob);
+            invalidate();
     }
-    
-    private Job<Object> mMovieShowJob = new Job<Object>() {
-        @Override
-        public Object run(JobContext jc) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                invalidate();
-            }
-            return null;
-        }
-    };
     
     private void resetSizePosition() {
         resetSizePosition(PRE_TARGET_INDEX);

@@ -40,6 +40,7 @@ import com.hippo.ehviewer.widget.PullListView.OnHeaderRefreshListener;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
 
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.AlertDialog;
@@ -86,7 +87,7 @@ public class MangaListActivity extends SlidingActivity {
     
     private SlidingMenu mSlidingMenu;
     
-    private GetPaddingRelativeLayout mainLayout;
+    private RelativeLayout mainLayout;
     private TagListView listMenu;
     private RelativeLayout loginMenu;
     private ListView isExhentaiList;
@@ -195,6 +196,13 @@ public class MangaListActivity extends SlidingActivity {
                         ((AlertButton)v).dialog.dismiss();
                         layoutDrawRight();
                     }
+                }).setNeutralButton(R.string.register, new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        Uri uri = Uri.parse("http://forums.e-hentai.org/index.php?act=Reg");
+                        Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+                        startActivity(intent);
+                    } 
                 }).create();
     }
     
@@ -1048,7 +1056,9 @@ public class MangaListActivity extends SlidingActivity {
         mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
         mSlidingMenu.setSecondaryMenu(R.layout.list_menu_login);
         mSlidingMenu.setBehindWidth(Ui.dp2pix(240));
-        
+        //mSlidingMenu.setShadowWidth(R.dimen.shadow_width);
+        //mSlidingMenu.setShadowDrawable(R.drawable.shadow_left);
+        //mSlidingMenu.setSecondaryShadowDrawable(R.drawable.shadow_right);
         mSlidingMenu.setOnOpenedListener(new SlidingMenu.OnOpenedListener() {
             @Override
             public void onOpened() {
@@ -1099,7 +1109,7 @@ public class MangaListActivity extends SlidingActivity {
         }
         
         // Get View
-        mainLayout = (GetPaddingRelativeLayout)findViewById(R.id.list_main);
+        mainLayout = (RelativeLayout)findViewById(R.id.list_main);
         listMenu = (TagListView) findViewById(R.id.list_menu_list);
         loginMenu = (RelativeLayout)findViewById(R.id.list_menu_login);
         isExhentaiList = (ListView)findViewById(R.id.is_exhentai);
@@ -1225,11 +1235,11 @@ public class MangaListActivity extends SlidingActivity {
                 Resources resources = getResources();
                 if ((paramInt == 0 && !Config.isExhentai()) ||
                         (paramInt == 1 && Config.isExhentai())) {
-                    tv.setTextColor(resources.getColor(android.R.color.black));
-                    tv.setBackgroundColor(resources.getColor(android.R.color.white));
+                    tv.setTextColor(Color.BLACK);
+                    tv.setBackgroundColor(Color.WHITE);
                 } else {
-                    tv.setTextColor(resources.getColor(android.R.color.white));
-                    tv.setBackgroundColor(resources.getColor(R.color.blue_dark));
+                    tv.setTextColor(Color.WHITE);
+                    tv.setBackgroundColor(Ui.HOLO_BLUE_DARK);
                 }
                 return tv;
             }

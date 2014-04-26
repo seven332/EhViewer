@@ -10,9 +10,7 @@
     <ListView
         android:id="@+id/list_view"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp" >
+        android:layout_height="fill_parent" >
     </ListView>
 
 </LinearLayout>

@@ -1,4 +1,4 @@
-package com.hippo.ehviewer;
+package com.hippo.ehviewer.activity;
 
 public class DownloadInfo {
     public static final int STOP = 0x0;

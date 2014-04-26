@@ -12,7 +12,7 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_margin="8dp"
         android:orientation="vertical" >
 
@@ -23,15 +23,15 @@
             android:maxLines="3"
             android:ellipsize="end" />
         
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:layout_height="fill_parent" >
             
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:orientation="horizontal" >
                 
                 <ImageView
@@ -42,13 +42,14 @@
             
             <LinearLayout
                 android:id="@+id/rate"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:orientation="horizontal" >
             </LinearLayout>
         
-        </LinearLayout>
+        </RelativeLayout>
         
     </LinearLayout>
 

@@ -32,7 +32,6 @@ import com.hippo.ehviewer.util.ThreadPool.JobContext;
 public class UpdateHelper {
     @SuppressWarnings("unused")
     private static final String TAG = "UpdateHelper";
-    private static final int NOTIFICATION_ID = -1;
     
     private static final String UPDATE_API = "http://ehviewersu.appsp0t.com/API";
     private static final String HEADER = "Ehviewer-";
@@ -192,57 +191,68 @@ public class UpdateHelper {
         private String mFileName;
         
         private NotificationManager mNotifyManager;
-        private NotificationCompat.Builder mBuilder;
         
         public UpdateListener(Context context, String fileName) {
             mContext = context;
             mFileName = fileName;
             mNotifyManager = (NotificationManager)
                     mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-            mBuilder = new NotificationCompat.Builder(mContext);
-            mBuilder.setSmallIcon(R.drawable.ic_launcher);
         }
         
         @Override
         public void onDownloadStartConnect() {
-            mBuilder.setContentTitle("开始下载更新") // TODO
-                    .setContentText(null)
-                    .setProgress(0, 0, true).setOngoing(true);
-            mNotifyManager.notify(NOTIFICATION_ID, mBuilder.build());
+            NotificationCompat.Builder builder = 
+                    new NotificationCompat.Builder(mContext)
+                    .setSmallIcon(android.R.drawable.stat_sys_download)
+                    .setContentTitle(mContext.getString(R.string.start_update))
+                    .setProgress(0, 0, true)
+                    .setOngoing(true)
+                    .setTicker(mContext.getString(R.string.start_update));
+            mNotifyManager.notify(NotificationId.UPDATE_ID, builder.build());
         }
         
         @Override
         public void onDownloadStartDownload(int totalSize) {
-            mBuilder.setContentTitle("正在下载更新")
+            NotificationCompat.Builder builder = 
+                    new NotificationCompat.Builder(mContext)
+                    .setSmallIcon(android.R.drawable.stat_sys_download)
+                    .setContentTitle(mContext.getString(R.string.download_update))
                     .setContentText(String.format("%.2f / %.2f KB", 0/1024.0f, totalSize/1024.0f))
-                    .setProgress(totalSize, 0, false).setOngoing(true);
-            mNotifyManager.notify(NOTIFICATION_ID, mBuilder.build());
+                    .setProgress(totalSize, 0, false)
+                    .setOngoing(true);
+            mNotifyManager.notify(NotificationId.UPDATE_ID, builder.build());
         }
         @Override
         public void onDownloadStatusUpdate(
                 int downloadSize, int totalSize) {
-            mBuilder.setContentTitle("正在下载更新")
+            NotificationCompat.Builder builder = 
+                    new NotificationCompat.Builder(mContext)
+                    .setSmallIcon(android.R.drawable.stat_sys_download)
+                    .setContentTitle(mContext.getString(R.string.download_update))
                     .setContentText(String.format("%.2f / %.2f KB", downloadSize/1024.0f, totalSize/1024.0f))
-                    .setProgress(totalSize, downloadSize, false).setOngoing(true);
-            mNotifyManager.notify(NOTIFICATION_ID, mBuilder.build());
+                    .setProgress(totalSize, downloadSize, false)
+                    .setOngoing(true);
+            mNotifyManager.notify(NotificationId.UPDATE_ID, builder.build());
             
         }
         @Override
-        public void onDownloadOver(int status) {
+        public void onDownloadOver(int status, String eMsg) {
             if (status == Downloader.COMPLETED) {
-                mNotifyManager.cancel(NOTIFICATION_ID);
+                mNotifyManager.cancel(NotificationId.UPDATE_ID);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.fromFile(new File(Config.getDownloadPath(), mFileName)),
                         "application/vnd.android.package-archive");
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
             } else {
-                mBuilder.setContentTitle("下载更新失败")
-                        .setContentText(null)
-                        .setProgress(0, 0, false).setOngoing(false);
-                mNotifyManager.notify(NOTIFICATION_ID, mBuilder.build());
+                NotificationCompat.Builder builder = 
+                        new NotificationCompat.Builder(mContext)
+                        .setSmallIcon(android.R.drawable.stat_sys_warning)
+                        .setContentTitle(mContext.getString(R.string.update_failed))
+                        .setContentText(eMsg)
+                        .setOngoing(false);
+                mNotifyManager.notify(NotificationId.UPDATE_ID, builder.build());
             }
-            
             setEnabled(true);
         }
     }

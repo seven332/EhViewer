@@ -26,9 +26,11 @@ public class Config {
     private static final String SCREEN_ORI_DEFAULT = "0";
     private static final String DOWNLOAD_PATH = "preference_download_path";
     private static final String DOWNLOAD_PATH_DEFAULT = Environment.getExternalStorageDirectory() + "/EhViewer/download/";
-    
     private static final String UPDATE_SERVER = "preference_update_server";
     private static final String UPDATE_SERVER_DEFAULT = "1";
+    private static final String MEDIA_SCAN = "preference_media_scan";
+    private static final boolean MEDIA_SCAN_DEFAULT = false;
+    
     
     private static boolean mInit = false;
 
@@ -211,5 +213,9 @@ public class Config {
         default:
             return "google";
         }
+    }
+    
+    public static boolean getMediaScan() {
+        return mConfigPre.getBoolean(MEDIA_SCAN, MEDIA_SCAN_DEFAULT);
     }
 }

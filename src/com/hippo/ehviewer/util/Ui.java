@@ -19,10 +19,12 @@ import android.widget.ImageView;
 public class Ui {
     //private static final String TAG = "Ui";
     private static Context mContext;
+    private static Resources mResources;
     private static final BitmapFactory.Options opt = new BitmapFactory.Options();
     
-    public static final int HOLO_WHITE = 0xfff3f3f3;
-    
+    //public static final int HOLO_WHITE = 0xfff3f3f3;
+    public static int HOLO_BLUE_DARK;
+    public static int BG_WHITE;
     
     private static boolean mInit = false;
     
@@ -42,7 +44,10 @@ public class Ui {
         opt.inPurgeable = true;
         opt.inInputShareable = true;
         
+        mResources = mContext.getResources();
         // init color
+        HOLO_BLUE_DARK = mResources.getColor(android.R.color.holo_blue_dark);
+        BG_WHITE = mResources.getColor(R.color.bg_white);
     }
     
     /**
@@ -215,11 +220,10 @@ public class Ui {
     public static int getNavigationBarHeight(boolean force) {
         if (!force && !hasNavigationBar())
             return 0;
-        Resources resources = mContext.getResources();
-        int nbhResourceId = resources.getIdentifier(
+        int nbhResourceId = mResources.getIdentifier(
                 "navigation_bar_height", "dimen", "android");
         if (nbhResourceId > 0)
-            return resources.getDimensionPixelSize(nbhResourceId);
+            return mResources.getDimensionPixelSize(nbhResourceId);
         else
             return 0;
     }

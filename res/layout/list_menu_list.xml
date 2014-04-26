@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:layout_gravity="start"
     android:clickable="true"
-    android:background="@color/blue_dark"
+    android:background="@android:color/holo_blue_dark"
     android:choiceMode="singleChoice"
     android:divider="@android:color/transparent"
     android:dividerHeight="0dp"

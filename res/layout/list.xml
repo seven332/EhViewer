@@ -1,47 +1,48 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_main"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/bg_white"
+    android:fitsSystemWindows="true" >
 
-
-    <com.hippo.ehviewer.view.GetPaddingRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/list_main"
+    <com.hippo.ehviewer.widget.PullListView
+        android:id="@+id/list_list"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:fitsSystemWindows="true" >
+        android:layout_height="fill_parent" />
 
-        <com.hippo.ehviewer.widget.PullListView
-            android:id="@+id/list_list"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+    <ProgressBar
+        android:id="@+id/list_wait_first"
+        style="@style/ProgressBar.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
-        <ProgressBar
-            android:id="@+id/list_wait_first"
-            style="@style/ProgressBar.Large"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone" />
+    <Button
+        android:id="@+id/list_refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:onClick="buttonRefresh"
+        android:text="@string/refresh"
+        android:visibility="gone" />
 
-        <Button
-            android:id="@+id/list_refresh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:onClick="buttonRefresh"
-            android:text="@string/refresh"
-            android:visibility="gone" />
+    <ImageView
+        android:id="@+id/sadpanda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/sadpanda"
+        android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/sadpanda"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:src="@drawable/sadpanda"
-            android:visibility="gone" />
+    <TextView
+        android:id="@+id/list_no_found"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/no_found"
+        android:textSize="24sp"
+        android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/list_no_found"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/no_found"
-            android:textSize="24sp"
-            android:visibility="gone" />
-    </com.hippo.ehviewer.view.GetPaddingRelativeLayout>
+</RelativeLayout>

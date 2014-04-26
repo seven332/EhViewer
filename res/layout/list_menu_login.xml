@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:layout_gravity="end"
     android:clickable="true"
-    android:background="@color/blue_dark"
+    android:background="@android:color/holo_blue_dark"
     android:orientation="vertical" >
 
     <include

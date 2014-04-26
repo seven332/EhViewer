@@ -67,8 +67,7 @@ public class BeautifyScreen {
                         LayoutParams.MATCH_PARENT, mStatusBarHeight);
                 params1.gravity = Gravity.TOP;
                 statusBarView.setLayoutParams(params1);
-                statusBarView.setBackgroundColor(resources
-                        .getColor(R.color.blue_dark));
+                statusBarView.setBackgroundColor(Ui.HOLO_BLUE_DARK);
                 statusBarView.setId(sbbId);
                 decorViewGroup.addView(statusBarView);
             }
@@ -81,8 +80,7 @@ public class BeautifyScreen {
                         LayoutParams.MATCH_PARENT, mNavigationBarHeight);
                 params2.gravity = Gravity.BOTTOM;
                 navigationBarView.setLayoutParams(params2);
-                navigationBarView.setBackgroundColor(resources
-                        .getColor(R.color.blue_dark));
+                navigationBarView.setBackgroundColor(Ui.HOLO_BLUE_DARK);
                 navigationBarView.setId(nbbId);
                 decorViewGroup.addView(navigationBarView);
             }

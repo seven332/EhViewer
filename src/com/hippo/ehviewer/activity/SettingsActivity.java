@@ -1,5 +1,7 @@
 package com.hippo.ehviewer.activity;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 
@@ -27,6 +29,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -57,6 +60,7 @@ public class SettingsActivity extends PreferenceActivity {
     private static final String THANKS = "preference_thanks";
     private static final String UPDATE = "preference_update";
     private static final String RAN = "preference_remove_all_noification";
+    private static final String MEDIA_SCAN = "preference_media_scan";
 
     private EditTextPreference cachePre;
     private Preference clearCachePre;
@@ -284,6 +288,26 @@ public class SettingsActivity extends PreferenceActivity {
                 NotificationManager mNotifyManager = (NotificationManager)
                         getSystemService(Context.NOTIFICATION_SERVICE);
                 mNotifyManager.cancelAll();
+                return true;
+            }
+        });
+        
+        CheckBoxPreference mediaScan = (CheckBoxPreference)screen.findPreference(MEDIA_SCAN);
+        mediaScan.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                    Object newValue) {
+                boolean value = (Boolean)newValue;
+                File nomedia = new File(Config.getDownloadPath(), ".nomedia");
+                if (value) {
+                    nomedia.delete();
+                } else {
+                    try {
+                        nomedia.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 return true;
             }
         });

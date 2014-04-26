@@ -1,9 +1,9 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     
     <style name="ActionBar" parent="@android:style/Widget.Holo.ActionBar">
-        <item name="android:background">@color/blue_dark</item>
-        <item name="android:backgroundStacked">@color/blue_dark</item>
-        <item name="android:backgroundSplit">@color/blue_dark</item>
+        <item name="android:background">@android:color/holo_blue_dark</item>
+        <item name="android:backgroundStacked">@android:color/holo_blue_dark</item>
+        <item name="android:backgroundSplit">@android:color/holo_blue_dark</item>
         <item name="android:titleTextStyle">@style/ActionBarTitleFont</item>
     </style>
 
@@ -29,7 +29,7 @@
     </style>
     
     <style name="Button.Blue">
-        <item name="android:background">@color/blue_dark</item>
+        <item name="android:background">@android:color/holo_blue_dark</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
     

@@ -71,6 +71,9 @@
     <string name="checking_update">checking updating</string>
     <string name="up_to_date">Up to date</string>
     <string name="found_update">Found update</string>
+    <string name="start_update">Start downloading the update</string>
+    <string name="download_update">Downloading the update</string>
+    <string name="update_failed">Download the update Failed</string>
     
     <!-- MangaDetialActivity -->
     <string name="detail_uploader">Uploader: %s</string>
@@ -149,6 +152,7 @@
     <string name="preference_auto_page_cache_summary_on">Clean page cache when the application close</string>
     <string name="preference_auto_page_cache_summary_off">Leave page cache alone</string>
     <string name="preference_download_path">Download path</string>
+    <string name="preference_media_scan">Allow media scan</string>
     <string name="preference_update_server">Update server</string>
     
     
@@ -223,6 +227,7 @@
     <string name="refresh">Refresh</string>
     <string name="error">Error</string>
     <string name="changelog">Changelog</string>
+    <string name="register">Register</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="wait">Please wait</string>

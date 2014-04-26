@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="64dp"
-        android:background="@color/blue_dark"
+        android:background="@android:color/holo_blue_dark"
         android:orientation="horizontal" >
 
         <TextView

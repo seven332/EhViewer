@@ -1,5 +1,7 @@
 package com.hippo.ehviewer;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import com.hippo.ehviewer.data.Data;
@@ -45,6 +47,18 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
+        
+        // Add .nomedia or delete it
+        File nomedia = new File(Config.getDownloadPath(), ".nomedia");
+        if (Config.getMediaScan()) {
+            nomedia.delete();
+        } else {
+            try {
+                nomedia.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
     
     public EhClient getEhClient() {
