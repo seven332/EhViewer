@@ -56,7 +56,11 @@ public class EhClient {
     
     private static final String TAG = "EhClient";
     
-    private static String loginUrl = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
+    private static final int G = 0x0;
+    private static final int EX = 0x1;
+    private static final int LOFI = 0x2;
+    
+    private static final String loginUrl = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
     
     private static final String E_HENTAI_LIST_HEADER = "http://g.e-hentai.org/";
     private static final String EXHENTAI_LIST_HEADER = "http://exhentai.org/";
@@ -75,6 +79,11 @@ public class EhClient {
     
     private AppContext mAppContext;
     private ThreadPool mThreadPool;
+    
+    public String getDetailUrl(String gid, String token, int mode) {
+        //switch
+        return null;
+    }
     
     public interface OnLogoutListener {
         public void onSuccess();
@@ -503,7 +512,7 @@ public class EhClient {
                 // Get list
                 if (getPageCount) {
                     p = Pattern
-                            .compile("alt=\"([\\w|\\-]+)\"[^<>]*/></a></td><td[^<>]*>([\\w|\\-|\\s|:]+)</td><td[^<>]*><div[^<>]*><div[^<>]+>(?:<img[^<>]*src=\"([^<>\"]+)\"[^<>]*alt=\"([^<>]+)\" style[^<>]*/>|init~([^<>\"~]+~[^<>\"~]+)~([^<>]+))</div>(?:<div[^<>]*>(?:<div[^<>]*><img[^<>]*/></div>)?(?:<div[^<>]*>(?:<a[^<>]*>)?<img[^<>]*/>(?:</a>)?</div>)?</div>)?<div[^<>]*><a[^<>\"]*href=\"([^<>\"]*)\"[^<>]*>([^<>]+)</a></div><div[^<>]*><div[^<>]*style=\"([^<>\"]+)\">");
+                            .compile("alt=\"([\\w|\\-]+)\"[^<>]*/></a></td><td[^<>]*>([\\w|\\-|\\s|:]+)</td><td[^<>]*><div[^<>]*><div[^<>]+>(?:<img[^<>]*src=\"([^<>\"]+)\"[^<>]*alt=\"([^<>]+)\" style[^<>]*/>|init~([^<>\"~]+~[^<>\"~]+)~([^<>]+))</div>(?:<div[^<>]*>(?:<div[^<>]*><img[^<>]*/></div>)?(?:<div[^<>]*>(?:<a[^<>]*>)?<img[^<>]*/>(?:</a>)?</div>)?</div>)?<div[^<>]*><a[^<>\"]*href=\"([^<>\"]*)\"[^<>]*>([^<>]+)</a></div><div[^<>]*><div[^<>]*style=\"([^<>\"]+)\"></div>\\s*</div></div></td><td[^<>]*><div><a[^<>]*>([^<>]+)</a></div></td>");
                     m = p.matcher(pageContent);
 
                     while (m.find()) {
@@ -545,6 +554,7 @@ public class EhClient {
                             lmd.title = temp;
                         }
                         lmd.rating = getRate(m.group(9));
+                        lmd.uploader = m.group(10);
                         lmdArray.add(lmd);
                     }
                     if (lmdArray == null)

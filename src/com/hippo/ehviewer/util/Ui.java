@@ -47,7 +47,7 @@ public class Ui {
         mResources = mContext.getResources();
         // init color
         HOLO_BLUE_DARK = mResources.getColor(android.R.color.holo_blue_dark);
-        BG_WHITE = mResources.getColor(R.color.bg_white);
+        BG_WHITE = mResources.getColor(R.color.main_background);
     }
     
     /**
@@ -56,6 +56,33 @@ public class Ui {
      */
     public static boolean isInit() {
         return mInit;
+    }
+    
+    public static String getCategoryText(int category) {
+        switch (category) {
+        case ListUrls.DOUJINSHI:
+            return "dojinshi";
+        case ListUrls.MANGA:
+            return "manga";
+        case ListUrls.ARTIST_CG:
+            return "artist cg";
+        case ListUrls.GAME_CG:
+            return "game cg";
+        case ListUrls.WESTERN:
+            return "western";
+        case ListUrls.NON_H:
+            return "non h";
+        case ListUrls.IMAGE_SET:
+            return "image set";
+        case ListUrls.COSPLAY:
+            return "cosplay";
+        case ListUrls.ASIAN_PORN:
+            return "asian porn";
+        case ListUrls.MISC:
+            return "misc";
+        default:
+            return "unknown";
+        }
     }
     
     /**

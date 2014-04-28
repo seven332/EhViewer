@@ -6,6 +6,7 @@ import java.util.List;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.DownloadInfo;
 import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.network.HttpHelper;
 
 public class GalleryDownloader {
     
@@ -13,14 +14,14 @@ public class GalleryDownloader {
     
     private Data mData;
     private List<DownloadInfo> mDownloadList;
-    private ArrayList<String> mPageTokes;
+    private String[] mPageTokes;
     private DownloadInfo curDownloadInfo;
     
     private static DownloadInfo emptyDownloadInfo = new DownloadInfo(null);
     
     public GalleryDownloader(AppContext appContext) {
         mAppContext = appContext;
-        mPageTokes = new ArrayList<String>();
+        mPageTokes = null;
         mData = mAppContext.getData();
         mDownloadList = mData.getAllDownloads();
     }
@@ -64,13 +65,26 @@ public class GalleryDownloader {
     private class DownloadGallery implements Runnable {
         @Override
         public void run() {
-            while ((curDownloadInfo = getFirstWaiting()) != null) {
+            if ((curDownloadInfo = getFirstWaiting()) != null) {
                 curDownloadInfo.setDownloadState(DownloadInfo.DOWNLOADING);
                 
-                // Check need get 
+                // get
+                GalleryInfo galleryInfo = curDownloadInfo.getGalleryInfo();
+                byte[] detail = curDownloadInfo.getDetail();
+                if (detail == null) { // First time to start this downloadinfo
+                    HttpHelper hp = new HttpHelper(mAppContext);
+                    //hp.get(urlStr);
+                }
+                
+                
+                
             }
         }
     }
+    
+    
+    
+    
     
     
     

@@ -918,13 +918,11 @@ public class MangaListActivity extends SlidingActivity {
                 // load image
                 int getChildCount = view.getChildCount();
                 for (int i = 0; i < getChildCount; i++) {
-                    View v = ((ViewGroup) view.getChildAt(i)).getChildAt(0);
-                    if (v instanceof LoadImageView) {
-                        LoadImageView liv = (LoadImageView)v;
-                        int status = liv.getState();
-                        if (status != LoadImageView.LOADING && status != LoadImageView.LOADED)
-                            mImageLoadManager.add(liv, true);
-                    }
+                    LoadImageView liv = (LoadImageView)((ViewGroup)
+                            view.getChildAt(i)).findViewById(R.id.cover);
+                    int status = liv.getState();
+                    if (status != LoadImageView.LOADING && status != LoadImageView.LOADED)
+                        mImageLoadManager.add(liv, true);
                 }
                 mListFirst = false;
             }
@@ -1013,15 +1011,23 @@ public class MangaListActivity extends SlidingActivity {
                 // Set manga name
                 TextView name = (TextView) convertView.findViewById(R.id.name);
                 name.setText(lmd.title);
-
-                // Set Tpye
-                ImageView type = (ImageView) convertView.findViewById(R.id.type);
-                Ui.setType(type, lmd.category);
-
+                
+                // Set uploder
+                TextView uploader = (TextView) convertView.findViewById(R.id.uploader);
+                uploader.setText(lmd.uploader);
+                
+                // Set category
+                TextView category = (TextView) convertView.findViewById(R.id.category);
+                category.setText(Ui.getCategoryText(lmd.category));
+                
                 // Add star
                 LinearLayout rate = (LinearLayout) convertView
                         .findViewById(R.id.rate);
                 Ui.addStar(rate, lmd.rating);
+                
+                // set posted
+                TextView posted = (TextView) convertView.findViewById(R.id.posted);
+                posted.setText(lmd.posted);
             }
             return convertView;
         }

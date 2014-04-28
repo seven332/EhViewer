@@ -126,15 +126,23 @@ public class FavouriteActivity extends Activity{
                 // Set manga name
                 TextView name = (TextView) convertView.findViewById(R.id.name);
                 name.setText(lmd.title);
-
-                // Set Tpye
-                ImageView type = (ImageView) convertView.findViewById(R.id.type);
-                Ui.setType(type, lmd.category);
-
+                
+                // Set uploder
+                TextView uploader = (TextView) convertView.findViewById(R.id.uploader);
+                uploader.setText(lmd.uploader);
+                
+                // Set category
+                TextView category = (TextView) convertView.findViewById(R.id.category);
+                category.setText(Ui.getCategoryText(lmd.category));
+                
                 // Add star
                 LinearLayout rate = (LinearLayout) convertView
                         .findViewById(R.id.rate);
                 Ui.addStar(rate, lmd.rating);
+                
+                // set posted
+                TextView posted = (TextView) convertView.findViewById(R.id.posted);
+                posted.setText(lmd.posted);
             }
             return convertView;
         }

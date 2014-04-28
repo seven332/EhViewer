@@ -3,7 +3,6 @@
     android:id="@+id/list_main"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/bg_white"
     android:fitsSystemWindows="true" >
 
     <com.hippo.ehviewer.widget.PullListView

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bg_white">#ffeeeeee</color>
+    <color name="main_background">#ffe5e5e5</color>
     <color name="holo_blue_light_light">#ff81d3f7</color>
+    
+    <color name="lighter_gray">#ddd</color>
+    
+    <color name="card_title_primary">#ff333333</color>
+    <color name="card_title_secondary">#ffaaaaaa</color>
 </resources>

@@ -46,6 +46,7 @@ public class Data {
     private static final String COLUMN_MIN_RATING = "min_rating";
     
     private static final String COLUMN_STATE = "state";
+    private static final String COLUMN_PAGES = "pages";
     private static final String COLUMN_DETAIL = "detail";
     private static final String COLUMN_START_PAGE = "start_page";
     
@@ -227,11 +228,12 @@ public class Data {
                     invaildGids.add(gid);
                 } else {
                     int state = cursor.getInt(2);
-                    byte[] detail = cursor.getBlob(3);
-                    int startPage = cursor.getInt(4);
+                    int pages = cursor.getInt(3);
+                    byte[] detail = cursor.getBlob(4);
+                    int startPage = cursor.getInt(5);
                     
                     DownloadInfo downloadInfo = new DownloadInfo(
-                            galleryInfo, state, detail, startPage);
+                            galleryInfo, state, pages, detail, startPage);
                     
                     mDownloads.add(downloadInfo);
                 }
@@ -692,6 +694,7 @@ public class Data {
                     + COLUMN_ID + " integer primary key,"
                     + COLUMN_GID + " text unique,"
                     + COLUMN_STATE + " integer,"
+                    + COLUMN_PAGES + " integer,"
                     + COLUMN_DETAIL + " blob,"
                     + COLUMN_START_PAGE + " integer);";
             db.execSQL(CreateDownload);

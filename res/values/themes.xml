@@ -2,6 +2,7 @@
     
     <!-- Application theme. -->
     <style name="AppTheme" parent="@android:Theme.Holo.Light">
+        <item name="android:windowBackground">@color/main_background</item>
         
         <!-- ActionBar -->
         <item name="@android:actionBarStyle">@style/ActionBar</item>
@@ -16,7 +17,7 @@
         <item name="@android:scrollbarThumbVertical">@drawable/scrollbar_blue</item>
         
         <!-- List attributes -->
-        <item name="@android:listDivider">@drawable/list_divider</item>
+        <!-- item name="@android:listDivider">@drawable/list_divider</item -->
     </style>
     
     <style name="AppTheme.NoActionBar">

@@ -29,12 +29,12 @@
     </style>
     
     <style name="Button.Blue">
-        <item name="android:background">@android:color/holo_blue_dark</item>
+        <item name="android:background">@drawable/blue_bn_bg</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
     
     <style name="Button.White">
-        <item name="android:background">@android:color/white</item>
+        <item name="android:background">@drawable/white_bn_bg</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
     
@@ -57,4 +57,22 @@
         <item name="android:maxHeight">76dip</item>
     </style>
     
+    <!-- Text -->
+    <style name="CardTitle">
+        <item name="android:textColor">@color/card_title_primary</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:singleLine">false</item>
+        <item name="android:lineSpacingExtra">0.0sp</item>
+    </style>
+    
+    <style name="CardSubtitle">
+        <item name="android:textSize">@dimen/text_medium</item>
+        <item name="android:textColor">@color/card_title_secondary</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:drawablePadding">4.0dip</item>
+        <item name="android:lineSpacingExtra">0.0sp</item>
+    </style>
 </resources>
