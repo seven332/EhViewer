@@ -23,9 +23,10 @@
     <!-- Button -->
     <style name="Button" parent="@android:style/Widget.Button">
         <item name="android:textSize">18sp</item>
-        <item name="android:padding">12dp</item>
-        <item name="android:minHeight">48dip</item>
-        <item name="android:minWidth">64dip</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="android:paddingBottom">12dp</item>
     </style>
     
     <style name="Button.Blue">
@@ -34,6 +35,22 @@
     </style>
     
     <style name="Button.White">
+        <item name="android:background">@drawable/white_bn_bg</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    
+    <style name="Button.Small">
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+    </style>
+    
+    <style name="Button.Small.Blue">
+        <item name="android:background">@drawable/blue_bn_bg</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    
+    <style name="Button.Small.White">
         <item name="android:background">@drawable/white_bn_bg</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
@@ -59,7 +76,7 @@
     
     <!-- Text -->
     <style name="CardTitle">
-        <item name="android:textColor">@color/card_title_primary</item>
+        <item name="android:textColor">@color/title_primary</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">2</item>
         <item name="android:singleLine">false</item>
@@ -68,11 +85,28 @@
     
     <style name="CardSubtitle">
         <item name="android:textSize">@dimen/text_medium</item>
-        <item name="android:textColor">@color/card_title_secondary</item>
+        <item name="android:textColor">@color/title_secondary</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
         <item name="android:singleLine">true</item>
         <item name="android:drawablePadding">4.0dip</item>
         <item name="android:lineSpacingExtra">0.0sp</item>
     </style>
+    
+    <style name="DetailTitle">
+        <item name="android:textSize">@dimen/detail_title_size</item>
+        <item name="android:textColor">@color/title_primary</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:singleLine">false</item>
+        <item name="android:lineSpacingExtra">0.0sp</item>
+    </style>
+    
+    <style name="DetailSubtitle">
+        <item name="android:textSize">@dimen/detail_subtitle_size</item>
+        <item name="android:textColor">@color/detail_title_secondary</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:singleLine">true</item>
+    </style>
+    
 </resources>

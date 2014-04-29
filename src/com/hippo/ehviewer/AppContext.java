@@ -32,7 +32,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         super.onCreate();
         
         // Init everything
-        mNetworkThreadPool = new ThreadPool(1, 2);
+        mNetworkThreadPool = new ThreadPool(2, 4);
         
         Config.init(this);
         Ui.init(this);

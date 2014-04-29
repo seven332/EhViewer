@@ -3,13 +3,14 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true" >
-
+    
     <ListView
         android:id="@+id/favourite"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp" >
+        android:divider="@null"
+        android:listSelector="@android:color/transparent"
+        android:cacheColorHint="@color/main_background" >
     </ListView>
-
+    
 </LinearLayout>

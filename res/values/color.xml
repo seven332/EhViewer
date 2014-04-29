@@ -5,6 +5,20 @@
     
     <color name="lighter_gray">#ddd</color>
     
-    <color name="card_title_primary">#ff333333</color>
-    <color name="card_title_secondary">#ffaaaaaa</color>
+    <color name="doujinshi_bg">#fff02d2d</color>
+    <color name="manga_bg">#ffffa037</color>
+    <color name="artist_cg_bg">#ffffd84f</color>
+    <color name="game_cg_bg">#ff00b26f</color>
+    <color name="western_bg">#ffa2df86</color>
+    <color name="non_h_bg">#ff4ec8f7</color>
+    <color name="image_set_bg">#ff4272d7</color>
+    <color name="cosplay_bg">#ff8058bd</color>
+    <color name="asian_porn_bg">#ffdda0f6</color>
+    <color name="misc_bg">#ffeaccf3</color>
+    <color name="unknown_bg">@android:color/black</color>
+    
+    <color name="title_primary">#ff333333</color>
+    <color name="title_secondary">#ffaaaaaa</color>
+    
+    <color name="detail_title_secondary">#ff777777</color>
 </resources>

@@ -17,21 +17,88 @@
             android:gravity="center"
             android:orientation="vertical" >
 
-            <com.hippo.ehviewer.view.OlImageView
-                android:id="@+id/detail_cover"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp" />
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/detail_thumb_height" >
 
-            <TextView
-                android:id="@+id/detail_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp" />
+                <com.hippo.ehviewer.view.OlImageView
+                    android:id="@+id/detail_cover"
+                    android:layout_width="@dimen/detail_thumb_width"
+                    android:layout_height="@dimen/detail_thumb_height"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:scaleType="fitCenter" />
+
+                <TextView
+                    android:id="@+id/detail_title"
+                    style="@style/DetailTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_toRightOf="@id/detail_cover" />
+
+                <TextView
+                    android:id="@+id/detail_uploader"
+                    style="@style/DetailSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/detail_title"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_toRightOf="@id/detail_cover" />
+
+                <TextView
+                    android:id="@+id/detail_category"
+                    style="@style/DetailSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/detail_cover"
+                    android:layout_alignParentBottom="true"
+                    android:paddingBottom="2.0dp"
+                    android:paddingLeft="8.0dp"
+                    android:paddingRight="8.0dp"
+                    android:paddingTop="2.0dp"
+                    android:layout_marginBottom="10.0dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:textColor="@android:color/white" />
+                
+                <!-- Need to make button do rate and read the same width
+                     Disable is before make sure it is normal -->
+                
+                <Button
+                    android:id="@+id/detail_do_rate"
+                    style="@style/Button.Small.Blue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="10.0dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:text="@string/rate"/>
+                
+                <Button
+                    android:id="@+id/detail_read"
+                    style="@style/Button.Small.Blue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/detail_do_rate"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="10.0dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:text="@string/read"/>
+                
+            </RelativeLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2.0dp"
+                android:background="@android:color/holo_blue_light" />
 
             <include
                 android:id="@+id/manga_detail_normal"

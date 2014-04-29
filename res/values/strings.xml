@@ -220,6 +220,7 @@
     
     <!-- Util -->
     <string name="read">Read</string>
+    <string name="rate">Rate</string>
     <string name="last_page">Last page !</string>
     <string name="sadpanda" translatable="false">Sad Panda</string>
     <string name="unfinished">Unfinished</string>

@@ -9,4 +9,10 @@
     <dimen name="text_xlarge">18.0sp</dimen>
     <dimen name="text_large">16.0sp</dimen>
     <dimen name="text_medium">13.0sp</dimen>
+    
+    <dimen name="detail_thumb_width">100.0dp</dimen>
+    <dimen name="detail_thumb_height">150.0dp</dimen>
+    
+    <dimen name="detail_title_size">18.0sp</dimen>
+    <dimen name="detail_subtitle_size">14.0sp</dimen>
 </resources>

@@ -509,6 +509,13 @@ public class MangaDetailActivity extends Activity {
         TextView title = (TextView) findViewById(R.id.detail_title);
         title.setText(mangaDetail.title);
         
+        TextView uploader = (TextView) findViewById(R.id.detail_uploader);
+        uploader.setText(mangaDetail.uploader);
+        
+        TextView category = (TextView) findViewById(R.id.detail_category);
+        category.setText(Ui.getCategoryText(mangaDetail.category));
+        category.setBackgroundColor(Ui.getCategoryColor(mangaDetail.category));
+        
         // get from cache
         if (getFromCache)
             layout(mangaDetail);

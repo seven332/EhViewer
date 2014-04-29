@@ -69,6 +69,12 @@ public class EhClient {
     
     public static final String EXHENTAI_PAGE_HEADER = "http://exhentai.org/s/";
     
+    
+    
+    public static final String G_HEADER = "http://g.e-hentai.org/";
+    public static final String EH_HEADER = "http://exhentai.org/";
+    public static final String LOFI_HEADER = "http://lofi.e-hentai.org/";
+    
     public static String listHeader;
     public static String detailHeader;
     
@@ -81,8 +87,25 @@ public class EhClient {
     private ThreadPool mThreadPool;
     
     public String getDetailUrl(String gid, String token, int mode) {
-        //switch
-        return null;
+        switch (mode) {
+        case EX:
+            return EH_HEADER + "g/" + gid + "/" + token;
+        case LOFI:
+            return LOFI_HEADER + "g/" + gid + "/" + token;
+        default:
+            return G_HEADER + "g/" + gid + "/" + token;
+        }
+    }
+    
+    public String getPageUrl(String gid, String token, int pageNum, int mode) {
+        switch (mode) {
+        case EX:
+            return EH_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
+        case LOFI:
+            return LOFI_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
+        default:
+            return G_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
+        }
     }
     
     public interface OnLogoutListener {

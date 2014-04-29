@@ -1019,6 +1019,7 @@ public class MangaListActivity extends SlidingActivity {
                 // Set category
                 TextView category = (TextView) convertView.findViewById(R.id.category);
                 category.setText(Ui.getCategoryText(lmd.category));
+                category.setBackgroundColor(Ui.getCategoryColor(lmd.category));
                 
                 // Add star
                 LinearLayout rate = (LinearLayout) convertView

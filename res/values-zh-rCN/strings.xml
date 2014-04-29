@@ -213,6 +213,7 @@
     
     <!-- Util -->
     <string name="read">阅读</string>
+    <string name="rate">评价</string>
     <string name="last_page">最后一页！</string>
     <string name="unfinished">未完成的功能</string>
     <string name="period">。</string>

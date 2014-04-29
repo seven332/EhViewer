@@ -6,8 +6,8 @@
 
     <com.hippo.ehviewer.widget.LoadImageView
         android:id="@+id/cover"
-        android:layout_width="67dp"
-        android:layout_height="100dp"
+        android:layout_width="67.0dp"
+        android:layout_height="100.0dp"
         android:layout_gravity="center"
         android:scaleType="fitCenter" />
 
@@ -46,27 +46,29 @@
                 android:layout_marginTop="2.0dip"
                 android:orientation="horizontal" >
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/category"
-                style="@style/CardSubtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
         </LinearLayout>
-
-        <LinearLayout
+        
+        <TextView
+            android:id="@+id/category"
+            style="@style/CardSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
+            android:paddingTop="2.0dp"
+            android:paddingBottom="2.0dp"
+            android:paddingLeft="8.0dp"
+            android:paddingRight="8.0dp"
+            android:layout_marginBottom="4.0dp"
+            android:textColor="@android:color/white" />
+        
+        <TextView
+            android:id="@+id/posted"
+            style="@style/CardSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/posted"
-                style="@style/CardSubtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+            android:layout_alignParentBottom="true" />
     </RelativeLayout>
 
 </LinearLayout>

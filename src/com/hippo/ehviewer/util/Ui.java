@@ -17,14 +17,26 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 public class Ui {
-    //private static final String TAG = "Ui";
+    @SuppressWarnings("unused")
+    private static final String TAG = "Ui";
     private static Context mContext;
     private static Resources mResources;
     private static final BitmapFactory.Options opt = new BitmapFactory.Options();
     
-    //public static final int HOLO_WHITE = 0xfff3f3f3;
     public static int HOLO_BLUE_DARK;
     public static int BG_WHITE;
+    
+    public static int DOUJINSHI_BG_COLOR;
+    public static int MANGA_BG_COLOR;
+    public static int ARTIST_CG_BG_COLOR;
+    public static int GAME_CG_BG_COLOR;
+    public static int WESTERN_BG_COLOR;
+    public static int NON_H_BG_COLOR;
+    public static int IMAGE_SET_BG_COLOR;
+    public static int COSPLAY_BG_COLOR;
+    public static int ASIAN_PORN_BG_COLOR;
+    public static int MISC_BG_COLOR;
+    public static int UNKNOWN_BG_COLOR;
     
     private static boolean mInit = false;
     
@@ -48,6 +60,18 @@ public class Ui {
         // init color
         HOLO_BLUE_DARK = mResources.getColor(android.R.color.holo_blue_dark);
         BG_WHITE = mResources.getColor(R.color.main_background);
+        
+        DOUJINSHI_BG_COLOR = mResources.getColor(R.color.doujinshi_bg);
+        MANGA_BG_COLOR = mResources.getColor(R.color.manga_bg);
+        ARTIST_CG_BG_COLOR = mResources.getColor(R.color.artist_cg_bg);
+        GAME_CG_BG_COLOR = mResources.getColor(R.color.game_cg_bg);
+        WESTERN_BG_COLOR = mResources.getColor(R.color.western_bg);
+        NON_H_BG_COLOR = mResources.getColor(R.color.non_h_bg);
+        IMAGE_SET_BG_COLOR = mResources.getColor(R.color.image_set_bg);
+        COSPLAY_BG_COLOR = mResources.getColor(R.color.cosplay_bg);
+        ASIAN_PORN_BG_COLOR = mResources.getColor(R.color.asian_porn_bg);
+        MISC_BG_COLOR = mResources.getColor(R.color.misc_bg);
+        UNKNOWN_BG_COLOR = mResources.getColor(R.color.unknown_bg);
     }
     
     /**
@@ -61,27 +85,54 @@ public class Ui {
     public static String getCategoryText(int category) {
         switch (category) {
         case ListUrls.DOUJINSHI:
-            return "dojinshi";
+            return "DOUJINSHI";
         case ListUrls.MANGA:
-            return "manga";
+            return "MANGA";
         case ListUrls.ARTIST_CG:
-            return "artist cg";
+            return "ARTIST CG";
         case ListUrls.GAME_CG:
-            return "game cg";
+            return "GAME CG";
         case ListUrls.WESTERN:
-            return "western";
+            return "WESTERN";
         case ListUrls.NON_H:
-            return "non h";
+            return "NON H";
         case ListUrls.IMAGE_SET:
-            return "image set";
+            return "IMAGE SET";
         case ListUrls.COSPLAY:
-            return "cosplay";
+            return "COSPLAY";
         case ListUrls.ASIAN_PORN:
-            return "asian porn";
+            return "ASIAN PORN";
         case ListUrls.MISC:
-            return "misc";
+            return "MISC";
         default:
-            return "unknown";
+            return "UNKNOWN";
+        }
+    }
+    
+    public static int getCategoryColor(int category) {
+        switch (category) {
+        case ListUrls.DOUJINSHI:
+            return DOUJINSHI_BG_COLOR;
+        case ListUrls.MANGA:
+            return MANGA_BG_COLOR;
+        case ListUrls.ARTIST_CG:
+            return ARTIST_CG_BG_COLOR;
+        case ListUrls.GAME_CG:
+            return GAME_CG_BG_COLOR;
+        case ListUrls.WESTERN:
+            return WESTERN_BG_COLOR;
+        case ListUrls.NON_H:
+            return NON_H_BG_COLOR;
+        case ListUrls.IMAGE_SET:
+            return IMAGE_SET_BG_COLOR;
+        case ListUrls.COSPLAY:
+            return COSPLAY_BG_COLOR;
+        case ListUrls.ASIAN_PORN:
+            return ASIAN_PORN_BG_COLOR;
+        case ListUrls.MISC:
+            return MISC_BG_COLOR;
+        default:
+            return UNKNOWN_BG_COLOR;
         }
     }
     

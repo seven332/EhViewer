@@ -2,13 +2,10 @@
     
     <!-- Application theme. -->
     <style name="AppTheme" parent="@android:Theme.Holo.Light">
-        <item name="android:windowBackground">@color/main_background</item>
-        
         <!-- ActionBar -->
         <item name="@android:actionBarStyle">@style/ActionBar</item>
         <item name="@android:actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="@android:homeAsUpIndicator">@drawable/ic_navigation_drawer</item>
-        <item name="android:windowContentOverlay">@null</item>
         
         <!-- Button -->
         <item name="@android:buttonStyle">@style/Button.Blue</item>
@@ -23,6 +20,11 @@
     <style name="AppTheme.NoActionBar">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
+    </style>
+    
+    <!-- For activity whose main view is list, make background darker to match white list -->
+    <style name="AppTheme.ListActivity">
+        <item name="android:windowBackground">@color/main_background</item>
     </style>
     
     <!-- Theme for start activity -->
