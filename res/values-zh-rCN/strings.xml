@@ -73,11 +73,8 @@
     <string name="update_failed">下载更新失败</string>
     
     <!-- MangaDetialActivity -->
-    <string name="detail_uploader">上传者：%s</string>
-    <string name="detail_posted">发布时间：%s</string>
-    <string name="detail_pages">页数：%s</string>
-    <string name="detail_size">大小：%s</string>
-    <string name="detail_language">语言：%s</string>
+    <string name="detail_pages_size" formatted="false">页数 : %s (%s)</string>
+    <string name="detail_language">语言 : %s</string>
     <string name="detail_average">平均得分：%s</string>
     <string name="detail_people">投票人数：%s</string>
     <string name="detail_offensive_title">内容警告</string>

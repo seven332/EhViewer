@@ -52,19 +52,14 @@
 
                 <TextView
                     android:id="@+id/detail_category"
-                    style="@style/DetailSubtitle"
+                    style="@style/TextTag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/detail_cover"
                     android:layout_alignParentBottom="true"
-                    android:paddingBottom="2.0dp"
-                    android:paddingLeft="8.0dp"
-                    android:paddingRight="8.0dp"
-                    android:paddingTop="2.0dp"
                     android:layout_marginBottom="10.0dp"
                     android:layout_marginLeft="12dp"
-                    android:layout_marginRight="12dp"
-                    android:textColor="@android:color/white" />
+                    android:layout_marginRight="12dp" />
                 
                 <!-- Need to make button do rate and read the same width
                      Disable is before make sure it is normal -->

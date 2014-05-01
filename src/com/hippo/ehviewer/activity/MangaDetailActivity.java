@@ -35,6 +35,7 @@ import android.util.DisplayMetrics;
 
 import com.hippo.ehviewer.util.Log;
 
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -84,6 +85,8 @@ public class MangaDetailActivity extends Activity {
     private TextView previewNumText2;
     private Button previewRefreshButton;
     private View bottomPanel;
+    private Button readButton;
+    private Button rateButton;
     
     private AlertDialog goToDialog;
     
@@ -491,14 +494,14 @@ public class MangaDetailActivity extends Activity {
         previewNumText = (TextView) findViewById(R.id.preview_num);
         bottomPanel = (View)findViewById(R.id.bottom_panel);
         previewNumText2 = (TextView)bottomPanel.findViewById(R.id.preview_num);
+        readButton = (Button)findViewById(R.id.detail_read);
+        rateButton = (Button)findViewById(R.id.detail_do_rate);
         
         if (Build.VERSION.SDK_INT >= 19) {
             BeautifyScreen.ColourfyScreen(this);
         }
         
         setTitle(mangaDetail.gid);
-        
-        //calcGridLayout();
         
         OlImageView coverImage = (OlImageView) findViewById(R.id.detail_cover);
         coverImage.setUrl(mangaDetail.thumb);
@@ -515,6 +518,20 @@ public class MangaDetailActivity extends Activity {
         TextView category = (TextView) findViewById(R.id.detail_category);
         category.setText(Ui.getCategoryText(mangaDetail.category));
         category.setBackgroundColor(Ui.getCategoryColor(mangaDetail.category));
+        
+        // Make rate and read button same width
+        // Disable them for temp
+        Ui.measureView(readButton);
+        Ui.measureView(rateButton);
+        int readbw = readButton.getMeasuredWidth();
+        int ratebw = rateButton.getMeasuredWidth();
+        if (readbw > ratebw) {
+            rateButton.setWidth(readbw);
+        } else if (ratebw > readbw) {
+            readButton.setWidth(ratebw);
+        }
+        readButton.setEnabled(false);
+        rateButton.setEnabled(false);
         
         // get from cache
         if (getFromCache)
@@ -536,42 +553,27 @@ public class MangaDetailActivity extends Activity {
         else {
             mangaDetail = md;
             
-            ImageView typeIv = (ImageView) findViewById(R.id.detail_type);
-            Ui.setType(typeIv, mangaDetail.category);
+            // Enable button
+            readButton.setEnabled(true);
+            rateButton.setEnabled(true);
             
-            TextView uploaderTv = (TextView) findViewById(R.id.detail_uploader);
-            uploaderTv.setText(String.format(
-                    getString(R.string.detail_uploader), mangaDetail.uploader));
+            LinearLayout rate = (LinearLayout) findViewById(R.id.detail_rate);
+            Ui.addStar(rate, mangaDetail.rating);
             
-            TextView postedTv = (TextView) findViewById(R.id.detail_posted);
-            postedTv.setText(String.format(
-                    getString(R.string.detail_posted), mangaDetail.posted));
-
-            TextView pagesTv = (TextView) findViewById(R.id.detail_pages);
-            pagesTv.setText(String.format(getString(R.string.detail_pages),
-                    mangaDetail.pages));
-
-            TextView sizeTv = (TextView) findViewById(R.id.detail_size);
-            sizeTv.setText(String.format(getString(R.string.detail_size),
-                    mangaDetail.size));
-
-            TextView languageTv = (TextView) findViewById(R.id.detail_language);
-            languageTv.setText(String.format(
-                    getString(R.string.detail_language),
-                    mangaDetail.language));
-
-            LinearLayout ratell = (LinearLayout) findViewById(R.id.detail_rate);
-            Ui.addStar(ratell, mangaDetail.rating);
-
-            TextView averageTv = (TextView) findViewById(R.id.detail_average);
-            averageTv.setText(String
-                    .format(getString(R.string.detail_average),
-                            mangaDetail.rating));
-
-            TextView peopleTv = (TextView) findViewById(R.id.detail_people);
-            peopleTv.setText(String.format(
-                    getString(R.string.detail_people), mangaDetail.people));
-
+            TextView averagePeople = (TextView) findViewById(R.id.detail_average_people);
+            averagePeople.setText(String.format("%s (%s)", mangaDetail.rating, mangaDetail.people));
+            
+            TextView posted = (TextView) findViewById(R.id.detail_posted);
+            posted.setText(mangaDetail.posted);
+            
+            TextView language = (TextView) findViewById(R.id.detail_language);
+            language.setText(String.format(getString(R.string.detail_language), mangaDetail.language));
+            
+            TextView pagesSize = (TextView) findViewById(R.id.detail_pages_size);
+            pagesSize.setText(String.format(getString(R.string.detail_pages_size), mangaDetail.pages, mangaDetail.size));
+            
+            // TODO
+            
             if (mangaDetail.tags != null) {
                 LinearLayout tagsLayout = (LinearLayout) findViewById(R.id.tags_layout);
                 addTags(tagsLayout, mangaDetail.tags);
@@ -609,6 +611,7 @@ public class MangaDetailActivity extends Activity {
     private void addTags(LinearLayout tagsLayout, String[][] tagGroups) {
         tagsLayout.removeAllViews();
         int x = Ui.dp2pix(8);
+        int y = Ui.dp2pix(6);
         
         for (String[] tagGroup : tagGroups) {
             LinearLayout tagGroupLayout = new LinearLayout(this);
@@ -616,22 +619,18 @@ public class MangaDetailActivity extends Activity {
             AutoWrapLayout tagLayout = new AutoWrapLayout(this);
             for (int i = 0; i < tagGroup.length; i ++) {
                 if (i == 0) {
-                    TextView groupNameView = new TextView(this);
+                    TextView groupNameView = new TextView(new ContextThemeWrapper(this, R.style.TextTag));
                     groupNameView.setText(tagGroup[i]);
-                    groupNameView.setTextColor(Color.WHITE);
-                    groupNameView.setBackgroundColor(Color.BLACK);
-                    groupNameView.setPadding(x, x, x, x);
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                    lp.setMargins(x, x, x, x);
+                    lp.setMargins(x, y, x, y);
                     tagGroupLayout.addView(groupNameView, lp);
                 } else {
-                    TextView tagView = new TextView(this);
+                    TextView tagView = new TextView(new ContextThemeWrapper(this, R.style.TextTag));
                     tagView.setText(tagGroup[i]);
                     tagView.setTextColor(Color.WHITE);
                     tagView.setBackgroundColor(Ui.HOLO_BLUE_DARK);
-                    tagView.setPadding(x, x, x, x);
                     AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams();
-                    lp.setMargins(x, x, x, x);
+                    lp.setMargins(x, y, x, y);
                     tagLayout.addView(tagView, lp);
                 }
             }
@@ -639,7 +638,6 @@ public class MangaDetailActivity extends Activity {
             tagsLayout.addView(tagGroupLayout);
         }
     }
-    
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

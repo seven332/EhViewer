@@ -3,6 +3,7 @@
     <color name="main_background">#ffe5e5e5</color>
     <color name="holo_blue_light_light">#ff81d3f7</color>
     
+    <color name="light_gray">#aaa</color>
     <color name="lighter_gray">#ddd</color>
     
     <color name="doujinshi_bg">#fff02d2d</color>
@@ -21,4 +22,6 @@
     <color name="title_secondary">#ffaaaaaa</color>
     
     <color name="detail_title_secondary">#ff777777</color>
+    
+    <color name="detail_divider">#22000000</color>
 </resources>

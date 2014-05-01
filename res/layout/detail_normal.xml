@@ -1,76 +1,82 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal" >
+    android:orientation="vertical" >
+    
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12.0dp"
+        android:layout_marginRight="12.0dp"
+        android:layout_marginTop="6.0dp"
+        android:layout_marginBottom="6.0dp" >
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation = "horizontal" >
+            
+            <LinearLayout
+                android:id="@+id/detail_rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation = "horizontal" />
+            
+            <TextView
+                android:id="@+id/detail_average_people"
+                style="@style/DetailSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="6.0dp" />
+        </LinearLayout>
+        
+        <TextView
+            android:id="@+id/detail_posted"
+            style="@style/DetailSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true" />
+        
+        <TextView
+            android:id="@+id/detail_language"
+            style="@style/DetailSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/detail_posted"
+            android:layout_marginTop="2.0dp" />
+        
+        <TextView
+            android:id="@+id/detail_pages_size"
+            style="@style/DetailSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/detail_posted"
+            android:layout_marginTop="2.0dp" />
+        
+    </RelativeLayout>
     
     <ImageView
-        android:id="@+id/detail_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp" />
-    
-    <TextView
-        android:id="@+id/detail_posted"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp" />
-    
-    <TextView
-        android:id="@+id/detail_pages"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp" />
+        android:layout_width="fill_parent"
+        android:layout_height="1.0dp"
+        android:src="@color/detail_divider" />
 
-    <TextView
-        android:id="@+id/detail_size"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp" />
-    
-    <TextView
-        android:id="@+id/detail_language"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp" />
-
-    <LinearLayout
-        android:id="@+id/detail_rate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation = "horizontal"
-        android:layout_marginBottom="8dp" >
-    </LinearLayout>
-    
-    <TextView
-        android:id="@+id/detail_average"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp" />
-    
-    <TextView
-        android:id="@+id/detail_people"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp" />
-    
     <LinearLayout
         android:id="@+id/tags_layout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation = "vertical"
-        android:layout_marginLeft="18dp"
-        android:layout_marginRight="18dp"
-        android:layout_marginBottom="8dp" >
+        android:layout_margin="2.0dp" >
     </LinearLayout>
     
-    <Button
-        android:id="@+id/button_read"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:text="@string/read"
-        android:onClick="buttonRead" />
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="1.0dp"
+        android:src="@color/detail_divider" />
     
     <include
         layout="@layout/page_list"

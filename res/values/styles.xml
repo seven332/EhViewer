@@ -23,15 +23,15 @@
     <!-- Button -->
     <style name="Button" parent="@android:style/Widget.Button">
         <item name="android:textSize">18sp</item>
-        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingLeft">12dp</item>
         <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingRight">24dp</item>
+        <item name="android:paddingRight">12dp</item>
         <item name="android:paddingBottom">12dp</item>
     </style>
     
     <style name="Button.Blue">
         <item name="android:background">@drawable/blue_bn_bg</item>
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">@color/blue_bn_text</item>
     </style>
     
     <style name="Button.White">
@@ -47,7 +47,7 @@
     
     <style name="Button.Small.Blue">
         <item name="android:background">@drawable/blue_bn_bg</item>
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">@color/blue_bn_text</item>
     </style>
     
     <style name="Button.Small.White">
@@ -107,6 +107,18 @@
         <item name="android:textColor">@color/detail_title_secondary</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:singleLine">true</item>
+    </style>
+    
+    <style name="TextTag">
+        <item name="android:textSize">@dimen/detail_subtitle_size</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@android:color/black</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingTop">2.0dp</item>
+        <item name="android:paddingBottom">2.0dp</item>
+        <item name="android:paddingLeft">8.0dp</item>
+        <item name="android:paddingRight">8.0dp</item>
     </style>
     
 </resources>

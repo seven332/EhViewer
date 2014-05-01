@@ -76,13 +76,8 @@
     <string name="update_failed">Download the update Failed</string>
     
     <!-- MangaDetialActivity -->
-    <string name="detail_uploader">Uploader: %s</string>
-    <string name="detail_posted">Posted: %s</string>
-    <string name="detail_pages">Pages: %s</string>
-    <string name="detail_size">Size: %s</string>
-    <string name="detail_language">Language: %s</string>
-    <string name="detail_average">Average: %s</string>
-    <string name="detail_people">Number of voters: %s</string>
+    <string name="detail_pages_size" formatted="false">Pages : %s (%s)</string>
+    <string name="detail_language">Language : %s</string>
     <string name="detail_offensive_title">Content Warning</string>
     <string name="detail_offensive">This gallery has been flagged as Offensive For Everyone. Due to its content, it should not be viewed by anyone.\n\n(And if you choose to ignore this warning, you lose all rights to complain about it in the future.)</string>
     <string name="detail_button_cancel">I would not read it</string>

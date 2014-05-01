@@ -11,5 +11,8 @@
         android:state_pressed="true"
         android:drawable="@color/holo_blue_light_light" />
     <item
+        android:state_enabled="false"
+        android:drawable="@color/light_gray" />
+    <item
         android:drawable="@android:color/holo_blue_dark" />
 </selector>

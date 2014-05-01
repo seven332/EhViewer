@@ -1,6 +1,7 @@
 package com.hippo.ehviewer.widget;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -217,7 +218,7 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
         headerOriginalRightPadding = mHeader.getPaddingRight();
         headerOriginalBottomPadding = mHeader.getPaddingBottom();
         
-        measureView(mHeader);  
+        Ui.measureView(mHeader);
         headerHeight = mHeader.getMeasuredHeight();
         pullThreshold = headerHeight;
         pullOffestMax = (int)(headerHeight * 2.3f);
@@ -587,22 +588,5 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
     }
     
     // Get header width and height
-    private void measureView(View child) {
-        ViewGroup.LayoutParams p = child.getLayoutParams();
-        if (p == null) {
-            p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-        }
-        int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0 + 0, p.width);
-        int lpHeight = p.height;
-        int childHeightSpec;
-        if (lpHeight > 0) {
-            childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight,
-                    MeasureSpec.EXACTLY);
-        } else {
-            childHeightSpec = MeasureSpec.makeMeasureSpec(0,
-                    MeasureSpec.UNSPECIFIED);
-        }
-        child.measure(childWidthSpec, childHeightSpec);
-    }
+
 }
