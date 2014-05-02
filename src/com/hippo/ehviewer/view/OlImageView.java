@@ -1,7 +1,7 @@
 package com.hippo.ehviewer.view;
 
 import com.hippo.ehviewer.DiskCache;
-import com.hippo.ehviewer.EhClient;
+import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.util.Util;
 
 import android.content.Context;

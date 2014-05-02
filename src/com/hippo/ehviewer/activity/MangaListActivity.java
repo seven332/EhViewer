@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
-import com.hippo.ehviewer.EhClient;
 import com.hippo.ehviewer.ImageLoadManager;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
@@ -18,6 +17,7 @@ import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.Tag;
+import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
@@ -383,7 +383,7 @@ public class MangaListActivity extends SlidingActivity {
                             lmd = lmdArray.get(longClickItemIndex);
                             Intent it = new Intent(MangaListActivity.this, DownloadService.class);
                             startService(it);
-                            mServiceConn.getService().add(lmd.gid, lmd.thumb, 
+                            mServiceConn.getService().add(String.valueOf(lmd.gid), lmd.thumb, 
                                     EhClient.detailHeader + lmd.gid + "/" + lmd.token, lmd.title);
                             Toast.makeText(MangaListActivity.this,
                                     getString(R.string.toast_add_download),
@@ -996,7 +996,7 @@ public class MangaListActivity extends SlidingActivity {
                 convertView = mInflater.inflate(R.layout.list_item, null);
             }
             LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
-            if (!lmd.gid.equals(thumb.getKey())) {
+            if (!String.valueOf(lmd.gid).equals(thumb.getKey())) {
                 if (!isNew) {
                     // TODO default index = 0, should get it id
                     ((ViewGroup)convertView).removeView(thumb);
@@ -1005,7 +1005,7 @@ public class MangaListActivity extends SlidingActivity {
                     thumb.setId(R.id.cover);
                     ((ViewGroup)convertView).addView(thumb, 0, lp);
                 }
-                thumb.setLoadInfo(lmd.thumb, lmd.gid);
+                thumb.setLoadInfo(lmd.thumb, String.valueOf(lmd.gid));
                 mImageLoadManager.add(thumb, false);
 
                 // Set manga name

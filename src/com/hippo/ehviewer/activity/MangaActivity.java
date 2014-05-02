@@ -14,11 +14,11 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
-import com.hippo.ehviewer.EhClient;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.R.id;
 import com.hippo.ehviewer.R.layout;
 import com.hippo.ehviewer.R.string;
+import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;

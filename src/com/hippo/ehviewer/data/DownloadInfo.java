@@ -1,6 +1,5 @@
 package com.hippo.ehviewer.data;
 
-
 /**
  * 
  * Use byte[] to store download detail,
@@ -82,6 +81,10 @@ public class DownloadInfo {
     
     public GalleryInfo getGalleryInfo() {
         return mGalleryInfo;
+    }
+    
+    public int getMode() {
+        return mMode;
     }
     
     public int getState() {

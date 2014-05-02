@@ -7,8 +7,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.hippo.ehviewer.BeautifyScreen;
-import com.hippo.ehviewer.EhClient;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;

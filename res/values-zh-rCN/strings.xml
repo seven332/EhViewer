@@ -86,6 +86,9 @@
     <string name="detail_button_known">我知道了</string>
     <string name="detail_preview_error">获取预览失败</string>
     <string name="detail_not_rated">暂无人投票</string>
+    <string name="vote_up">顶</string>
+    <string name="vote_down">踩</string>
+    <string name="show_tagged">相同标签</string>
 
     <!-- MangaActivity -->
     <string name="load_pre">载入上一页</string>

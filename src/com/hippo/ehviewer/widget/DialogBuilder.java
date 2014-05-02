@@ -18,7 +18,7 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class DialogBuilder extends AlertDialog.Builder{
+public class DialogBuilder extends AlertDialog.Builder {
     private View mView;
     private Context mContext;
     public DialogBuilder(Context context) {
@@ -253,6 +253,7 @@ public class DialogBuilder extends AlertDialog.Builder{
         return this;
     }
     
+    @Override
     public AlertDialog create() {
         AlertDialog dialog = super.create();
         AlertButton button = (AlertButton)mView.findViewById(R.id.positive_button);

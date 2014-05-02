@@ -6,9 +6,10 @@ import java.util.List;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.DownloadInfo;
 import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.network.HttpHelper;
 
-public class GalleryDownloader {
+public class GallerysDownloader {
     
     private AppContext mAppContext;
     
@@ -16,14 +17,19 @@ public class GalleryDownloader {
     private List<DownloadInfo> mDownloadList;
     private String[] mPageTokes;
     private DownloadInfo curDownloadInfo;
+    private OnGalleryDownloadListener mListener;
     
     private static DownloadInfo emptyDownloadInfo = new DownloadInfo(null);
     
-    public GalleryDownloader(AppContext appContext) {
+    public GallerysDownloader(AppContext appContext) {
         mAppContext = appContext;
         mPageTokes = null;
         mData = mAppContext.getData();
         mDownloadList = mData.getAllDownloads();
+    }
+    
+    public void setOnGalleryDownloadListener(OnGalleryDownloadListener l) {
+        mListener = l;
     }
     
     public synchronized void add(GalleryInfo galleryInfo) {
@@ -62,27 +68,53 @@ public class GalleryDownloader {
         return null;
     }
     
+    private String getUrlContext(HttpHelper hp, String url) {
+        int times = 3;
+        String pageContent;
+        for (int i = 0; i < times; i++) {
+            pageContent = hp.get(url);
+            if (pageContent != null)
+                return pageContent;
+        }
+        return null;
+    }
+    
     private class DownloadGallery implements Runnable {
         @Override
         public void run() {
             if ((curDownloadInfo = getFirstWaiting()) != null) {
                 curDownloadInfo.setDownloadState(DownloadInfo.DOWNLOADING);
+                if (mListener != null)
+                    mListener.onGalleryDownloadStart(curDownloadInfo);
                 
                 // get
                 GalleryInfo galleryInfo = curDownloadInfo.getGalleryInfo();
-                byte[] detail = curDownloadInfo.getDetail();
-                if (detail == null) { // First time to start this downloadinfo
-                    HttpHelper hp = new HttpHelper(mAppContext);
-                    //hp.get(urlStr);
+                
+                HttpHelper hp = new HttpHelper(mAppContext);
+                String url = EhClient.getDetailUrl(galleryInfo.gid, galleryInfo.token,
+                        EhClient.getDetailModeForDownloadMode(curDownloadInfo.getMode()));
+                String pageContent = getUrlContext(hp, url);
+                if (pageContent == null) {
+                    if (mListener != null)
+                        mListener.onGalleryDownloadFailed(curDownloadInfo, hp.getEMsg());
+                    // New turn
+                    new Thread(new DownloadGallery()).start();
+                } else {
+                    
+                    
+                    
+                    
                 }
-                
-                
-                
             }
         }
     }
     
-    
+    interface OnGalleryDownloadListener {
+        void onGalleryDownloadStart(DownloadInfo downloadInfo);
+        void onGalleryDownloadStop(DownloadInfo downloadInfo);
+        void onGalleryDownloadFailed(DownloadInfo downloadInfo, String eMsg);
+        void onGalleryDownloadCompleted(DownloadInfo downloadInfo);
+    }
     
     
     

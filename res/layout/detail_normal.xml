@@ -11,7 +11,7 @@
         android:layout_marginTop="6.0dp"
         android:layout_marginBottom="6.0dp" >
         
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation = "horizontal" >
@@ -20,7 +20,7 @@
                 android:id="@+id/detail_rate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_centerVertical="true"
                 android:orientation = "horizontal" />
             
             <TextView
@@ -28,9 +28,22 @@
                 style="@style/DetailSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/detail_rate"
                 android:layout_marginLeft="6.0dp" />
-        </LinearLayout>
+            
+            <!-- Just to make animation -->
+            <TextView
+                android:id="@+id/detail_average_people_bak"
+                style="@style/DetailSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/detail_rate"
+                android:layout_marginLeft="6.0dp"
+                android:visibility="gone" />
+            
+        </RelativeLayout>
         
         <TextView
             android:id="@+id/detail_posted"

@@ -7,10 +7,6 @@
     android:orientation="vertical"
     android:gravity="center_horizontal" >
     
-    <include
-        layout="@layout/page_list_panel"
-        android:layout_gravity="center" />
-    
     <com.hippo.ehviewer.widget.AutoWrapLayout
         android:id="@+id/paper_list_layout"
         android:layout_width="wrap_content"

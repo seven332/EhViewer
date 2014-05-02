@@ -20,17 +20,21 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.conn.ConnectTimeoutException;
+import org.json.JSONObject;
 
 import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.exception.RedirectionException;
 import com.hippo.ehviewer.exception.ResponseCodeException;
+import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.util.LruCache;
 
 import com.hippo.ehviewer.util.Log;
@@ -47,8 +51,40 @@ public class HttpHelper {
     private static String DEFAULT_CHARSET = "utf-8";
     private static String CHARSET_KEY = "charset=";
     
+    class Package {
+        OnRespondListener listener;
+        String str;
+    }
+    
+    private static Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            Package p = (Package)msg.obj;
+            OnRespondListener listener = p.listener;
+            String str = p.str;
+            switch (msg.what) {
+            case Constants.TRUE:
+                listener.onSuccess(str);
+                break;
+            case Constants.FALSE:
+                listener.onFailure(str);
+                break;
+            }
+        }
+    };
+    
     private Context mContext;
     private Exception mException;
+    private OnRespondListener mListener;
+    
+    public interface OnRespondListener {
+        void onSuccess(String pageContext);
+        void onFailure(String eMsg);
+    }
+    
+    public void setOnRespondListener(OnRespondListener l) {
+        mListener = l;
+    }
     
     public HttpHelper(Context context) {
         mContext = context;
@@ -136,7 +172,9 @@ public class HttpHelper {
         int redirectionCount = 0;
         URL url = null;
         HttpURLConnection conn = null;
-        
+        Message msg = null;
+        if (mListener != null)
+            msg = new Message();
         try {
             
             Log.d(TAG, "Http get " + urlStr);
@@ -156,7 +194,16 @@ public class HttpHelper {
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
-                    return getPageContext(conn);
+                    String pageContext = getPageContext(conn);
+                    if (msg != null) {
+                        Package p = new Package();
+                        p.listener = mListener;
+                        p.str = pageContext;
+                        msg.obj = p;
+                        msg.what = Constants.TRUE;
+                        mHandler.sendMessage(msg);
+                    }
+                    return pageContext;
                     
                 case HttpURLConnection.HTTP_MOVED_PERM:
                 case HttpURLConnection.HTTP_MOVED_TEMP:
@@ -173,6 +220,15 @@ public class HttpHelper {
         }  catch (Exception e) {
             mException = e;
             e.printStackTrace();
+            
+            if (msg != null) {
+                Package p = new Package();
+                p.listener = mListener;
+                p.str = getEMsg();
+                msg.obj = p;
+                msg.what = Constants.FALSE;
+                mHandler.sendMessage(msg);
+            }
             return null;
         } finally {
             if (conn != null)
@@ -189,6 +245,10 @@ public class HttpHelper {
         int redirectionCount = 0;
         URL url = null;
         HttpURLConnection conn = null;
+        
+        Message msg = null;
+        if (mListener != null)
+            msg = new Message();
         
         try {
             
@@ -231,7 +291,16 @@ public class HttpHelper {
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
-                    return getPageContext(conn);
+                    String pageContext = getPageContext(conn);
+                    if (msg != null) {
+                        Package p = new Package();
+                        p.listener = mListener;
+                        p.str = pageContext;
+                        msg.obj = p;
+                        msg.what = Constants.TRUE;
+                        mHandler.sendMessage(msg);
+                    }
+                    return pageContext;
                     
                 case HttpURLConnection.HTTP_MOVED_PERM:
                 case HttpURLConnection.HTTP_MOVED_TEMP:
@@ -248,6 +317,15 @@ public class HttpHelper {
         }  catch (Exception e) {
             mException = e;
             e.printStackTrace();
+            
+            if (msg != null) {
+                Package p = new Package();
+                p.listener = mListener;
+                p.str = getEMsg();
+                msg.obj = p;
+                msg.what = Constants.FALSE;
+                mHandler.sendMessage(msg);
+            }
             return null;
         } finally {
             if (conn != null)
@@ -264,6 +342,10 @@ public class HttpHelper {
         int redirectionCount = 0;
         URL url = null;
         HttpURLConnection conn = null;
+        
+        Message msg = null;
+        if (mListener != null)
+            msg = new Message();
         
         try {
             
@@ -294,7 +376,16 @@ public class HttpHelper {
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
-                    return getPageContext(conn);
+                    String pageContext = getPageContext(conn);
+                    if (msg != null) {
+                        Package p = new Package();
+                        p.listener = mListener;
+                        p.str = pageContext;
+                        msg.obj = p;
+                        msg.what = Constants.TRUE;
+                        mHandler.sendMessage(msg);
+                    }
+                    return pageContext;
                     
                 case HttpURLConnection.HTTP_MOVED_PERM:
                 case HttpURLConnection.HTTP_MOVED_TEMP:
@@ -311,6 +402,15 @@ public class HttpHelper {
         }  catch (Exception e) {
             mException = e;
             e.printStackTrace();
+            
+            if (msg != null) {
+                Package p = new Package();
+                p.listener = mListener;
+                p.str = getEMsg();
+                msg.obj = p;
+                msg.what = Constants.FALSE;
+                mHandler.sendMessage(msg);
+            }
             return null;
         } finally {
             if (conn != null)
@@ -322,12 +422,16 @@ public class HttpHelper {
     }
     
     
-    public String postJson(String urlStr, String jsonStr) {
+    public String postJson(String urlStr, JSONObject json) {
         mException = null;
         
         int redirectionCount = 0;
         URL url = null;
         HttpURLConnection conn = null;
+        
+        Message msg = null;
+        if (mListener != null)
+            msg = new Message();
         
         try {
             
@@ -350,7 +454,7 @@ public class HttpHelper {
                 conn.setRequestProperty("Connection", "close");
                 
                 DataOutputStream out = new DataOutputStream(conn.getOutputStream());
-                out.writeBytes(jsonStr);
+                out.writeBytes(json.toString());
                 out.flush();
                 out.close();
                 
@@ -360,7 +464,16 @@ public class HttpHelper {
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
-                    return getPageContext(conn);
+                    String pageContext = getPageContext(conn);
+                    if (msg != null) {
+                        Package p = new Package();
+                        p.listener = mListener;
+                        p.str = pageContext;
+                        msg.obj = p;
+                        msg.what = Constants.TRUE;
+                        mHandler.sendMessage(msg);
+                    }
+                    return pageContext;
                     
                 case HttpURLConnection.HTTP_MOVED_PERM:
                 case HttpURLConnection.HTTP_MOVED_TEMP:
@@ -377,6 +490,15 @@ public class HttpHelper {
         }  catch (Exception e) {
             mException = e;
             e.printStackTrace();
+            
+            if (msg != null) {
+                Package p = new Package();
+                p.listener = mListener;
+                p.str = getEMsg();
+                msg.obj = p;
+                msg.what = Constants.FALSE;
+                mHandler.sendMessage(msg);
+            }
             return null;
         } finally {
             if (conn != null)

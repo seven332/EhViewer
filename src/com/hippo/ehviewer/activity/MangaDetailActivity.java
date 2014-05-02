@@ -4,27 +4,31 @@ import java.util.ArrayList;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
-import com.hippo.ehviewer.EhClient;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
-import com.hippo.ehviewer.data.PageList;
+import com.hippo.ehviewer.data.PreviewList;
+import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.view.OlImageView;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
+import com.hippo.ehviewer.widget.ButtonsDialogBuilder;
 import com.hippo.ehviewer.widget.DialogBuilder;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -32,6 +36,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
 import com.hippo.ehviewer.util.Log;
 
@@ -44,12 +49,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -81,7 +90,7 @@ public class MangaDetailActivity extends Activity {
     private ViewGroup pageListMain;
     private AutoWrapLayout pageListLayout;
     private ProgressBar waitPageList;
-    private TextView previewNumText;
+    //private TextView previewNumText;
     private TextView previewNumText2;
     private Button previewRefreshButton;
     private View bottomPanel;
@@ -131,7 +140,7 @@ public class MangaDetailActivity extends Activity {
         waitPageList.setVisibility(View.GONE);
         previewRefreshButton.setVisibility(View.GONE);
         
-        PageList pageList = mangaDetail.previewLists[page];
+        PreviewList pageList = mangaDetail.previewLists[page];
         if (pageList == null) {
             Log.d(TAG, "WTF, I may check mangaDetail.pageLists[page] is not null");
             Toast.makeText(this, "WTF, I may check mangaDetail.pageLists[page] is not null", Toast.LENGTH_SHORT).show();
@@ -139,8 +148,8 @@ public class MangaDetailActivity extends Activity {
         }
         int index = page * mangaDetail.previewPerPage + 1;
         int rowIndex = 0;
-        for (PageList.Row row : pageList.rowArray) {
-            for (PageList.Row.Item item : row.itemArray) {
+        for (PreviewList.Row row : pageList.rowArray) {
+            for (PreviewList.Row.Item item : row.itemArray) {
                 TextViewWithUrl tvu = new TextViewWithUrl(MangaDetailActivity.this,
                         item.url);
                 tvu.setGravity(Gravity.CENTER);
@@ -189,7 +198,7 @@ public class MangaDetailActivity extends Activity {
     private void addPageImage(int page, int rowIndex, Bitmap bitmap) {
         if (page != curPage)
             return;
-        PageList pageList = mangaDetail.previewLists[page];
+        PreviewList pageList = mangaDetail.previewLists[page];
         if (pageList == null) {
             Log.d(TAG, "WTF, I may check mangaDetail.pageLists[page] is not null");
             return;
@@ -198,13 +207,13 @@ public class MangaDetailActivity extends Activity {
         int maxWidth = bitmap.getWidth();
         int maxHeight = bitmap.getHeight();
         
-        PageList.Row row = pageList.rowArray.get(rowIndex);
-        ArrayList<PageList.Row.Item> items = row.itemArray;
+        PreviewList.Row row = pageList.rowArray.get(rowIndex);
+        ArrayList<PreviewList.Row.Item> items = row.itemArray;
         
         int startIndex = row.startIndex;
         int endIndex = startIndex + items.size();
         for(int i = startIndex ; i < endIndex; i++) {
-            PageList.Row.Item item = items.get(i - startIndex);
+            PreviewList.Row.Item item = items.get(i - startIndex);
             
             if (item.xOffset + item.width > maxWidth)
                 item.width = maxWidth - item.xOffset;
@@ -226,7 +235,7 @@ public class MangaDetailActivity extends Activity {
             EhClient.OnGetMangaDetailListener {
         @Override
         public void onSuccess(GalleryDetail md) {
-            Cache.mdCache.put(mangaDetail.gid, md);
+            Cache.mdCache.put(String.valueOf(mangaDetail.gid), md);
             layout(md);
         }
 
@@ -334,8 +343,106 @@ public class MangaDetailActivity extends Activity {
     public void ButtonPreviewRefresh(View v) {
         refreshPageList();
     }
-
+    
+    public void ButtonRate(View v) {
+        rate();
+    }
+    
     // *** Button onclick end ***//
+    
+    private int getSendableRating(float ratingFloat) {
+        float dr = ratingFloat*2;        
+        return (int)(dr + 0.5);
+    }
+    
+    public void rate() {
+        final RatingBar rb = new RatingBar(this);
+        rb.setMax(10);
+        rb.setStepSize(0.5f);
+        LinearLayout ll = new LinearLayout(this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.gravity = Gravity.CENTER;
+        lp.setMargins(0, Ui.dp2pix(24), 0, Ui.dp2pix(24));
+        ll.addView(rb, lp);
+        new DialogBuilder(this).setTitle(R.string.rate)
+                .setView(ll, true)
+                .setPositiveButton(android.R.string.ok, new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int rating = getSendableRating(rb.getRating());
+                        if (rating <= 0 || rating > 10)
+                            Toast.makeText(MangaDetailActivity.this, "非法评分", Toast.LENGTH_SHORT).show(); // TODO
+                        else {
+                            ((AlertButton)v).dialog.dismiss();
+                            mEhClient.rate(mangaDetail.gid, mangaDetail.token,
+                                    rating, new EhClient.OnRateListener() {
+                                        @Override
+                                        public void onSuccess(float ratingAvg,
+                                                int ratingCnt) {
+                                            mangaDetail.rating = ratingAvg;
+                                            mangaDetail.people = ratingCnt;
+                                            if (!MangaDetailActivity.this.isFinishing()) {
+                                                //Reset start
+                                                LinearLayout rate = (LinearLayout) findViewById(R.id.detail_rate);
+                                                Ui.addStar(rate, mangaDetail.rating);
+                                                
+                                                // Animation
+                                                TextView averagePeople = (TextView)findViewById(
+                                                        R.id.detail_average_people);
+                                                final TextView averagePeopleBak = (TextView)findViewById(
+                                                        R.id.detail_average_people_bak);
+                                                averagePeopleBak.setText(averagePeople.getText());
+                                                averagePeople.setText(String.format("%.2f (%d)",
+                                                        mangaDetail.rating, mangaDetail.people));
+                                                averagePeopleBak.setVisibility(View.VISIBLE);
+                                                
+                                                int duration = 1000;
+                                                int height = averagePeople.getHeight();
+                                                
+                                                TranslateAnimation animation = new TranslateAnimation(0, 0, height, 0);
+                                                animation.setDuration(duration);
+                                                averagePeople.setAnimation(animation);
+                                                
+                                                TranslateAnimation animationBak = new TranslateAnimation(0, 0, 0, -height);
+                                                animationBak.setDuration(duration);
+                                                averagePeopleBak.setAnimation(animationBak);
+                                                animationBak.setAnimationListener(new AnimationListener() {
+                                                    @Override
+                                                    public void onAnimationStart(
+                                                            Animation animation) {}
+
+                                                    @Override
+                                                    public void onAnimationEnd(
+                                                            Animation animation) {
+                                                        averagePeopleBak.setVisibility(View.GONE);
+                                                    }
+                                                    @Override
+                                                    public void onAnimationRepeat(
+                                                            Animation animation) {}
+                                                });
+                                                animation.startNow();
+                                                animationBak.startNow();
+                                            }
+                                            Toast.makeText(MangaDetailActivity.this,
+                                                    "评价成功", Toast.LENGTH_SHORT).show(); // TODO
+                                        }
+                                        @Override
+                                        public void onFailure(String eMsg) {
+                                            Toast.makeText(MangaDetailActivity.this,
+                                                    "评价失败\n" + eMsg, Toast.LENGTH_SHORT).show(); // TODO
+                                        }
+                            });
+                        }
+                    }
+                }).setNegativeButton(android.R.string.cancel, new OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        ((AlertButton)v).dialog.dismiss();
+                    }
+                }).create().show();
+    }
     
     private AlertDialog createGoToDialog() {
         return new DialogBuilder(this).setTitle(R.string.jump)
@@ -388,12 +495,12 @@ public class MangaDetailActivity extends Activity {
         waitPageList.setVisibility(View.VISIBLE);
         previewRefreshButton.setVisibility(View.GONE);
         
-        previewNumText.setText(String.format("%d / %d",
-                curPage+1, mangaDetail.previewSum));
+        //previewNumText.setText(String.format("%d / %d",
+                //curPage+1, mangaDetail.previewSum));
         previewNumText2.setText(String.format("%d / %d",
                 curPage+1, mangaDetail.previewSum));
 
-        PageList pageList = mangaDetail.previewLists[curPage];
+        PreviewList pageList = mangaDetail.previewLists[curPage];
 
         if (pageList == null) {
             String tempUrl = url;
@@ -404,7 +511,7 @@ public class MangaDetailActivity extends Activity {
             mEhClient.getPageList(tempUrl, curPage,
                     new EhClient.OnGetPageListListener() {
                         @Override
-                        public void onSuccess(Object checkFlag, PageList pageList) {
+                        public void onSuccess(Object checkFlag, PreviewList pageList) {
                             int page = (Integer)checkFlag;
                             mangaDetail.previewLists[page] = pageList;
                             addPageItem(page);
@@ -472,7 +579,7 @@ public class MangaDetailActivity extends Activity {
         GalleryInfo galleryInfo = (GalleryInfo)(intent.getParcelableExtra(KEY_G_INFO));
         
         boolean getFromCache = true;
-        mangaDetail = Cache.mdCache.get(galleryInfo.gid);
+        mangaDetail = Cache.mdCache.get(String.valueOf(galleryInfo.gid));
         if (mangaDetail == null) {
             getFromCache = false;
             mangaDetail = new GalleryDetail(galleryInfo);
@@ -491,7 +598,7 @@ public class MangaDetailActivity extends Activity {
         pageListLayout = (AutoWrapLayout) findViewById(R.id.paper_list_layout);
         waitPageList = (ProgressBar) findViewById(R.id.paper_list_wait);
         previewRefreshButton = (Button) findViewById(R.id.preview_button_refresh);
-        previewNumText = (TextView) findViewById(R.id.preview_num);
+        //previewNumText = (TextView) findViewById(R.id.preview_num);
         bottomPanel = (View)findViewById(R.id.bottom_panel);
         previewNumText2 = (TextView)bottomPanel.findViewById(R.id.preview_num);
         readButton = (Button)findViewById(R.id.detail_read);
@@ -501,11 +608,11 @@ public class MangaDetailActivity extends Activity {
             BeautifyScreen.ColourfyScreen(this);
         }
         
-        setTitle(mangaDetail.gid);
+        setTitle(String.valueOf(mangaDetail.gid));
         
         OlImageView coverImage = (OlImageView) findViewById(R.id.detail_cover);
         coverImage.setUrl(mangaDetail.thumb);
-        coverImage.setKey(mangaDetail.gid);
+        coverImage.setKey(String.valueOf(mangaDetail.gid));
         coverImage.setCache(Cache.memoryCache, Cache.cpCache);
         coverImage.loadImage(false);
         
@@ -561,7 +668,7 @@ public class MangaDetailActivity extends Activity {
             Ui.addStar(rate, mangaDetail.rating);
             
             TextView averagePeople = (TextView) findViewById(R.id.detail_average_people);
-            averagePeople.setText(String.format("%s (%s)", mangaDetail.rating, mangaDetail.people));
+            averagePeople.setText(String.format("%.2f (%d)", mangaDetail.rating, mangaDetail.people));
             
             TextView posted = (TextView) findViewById(R.id.detail_posted);
             posted.setText(mangaDetail.posted);
@@ -574,10 +681,8 @@ public class MangaDetailActivity extends Activity {
             
             // TODO
             
-            if (mangaDetail.tags != null) {
-                LinearLayout tagsLayout = (LinearLayout) findViewById(R.id.tags_layout);
-                addTags(tagsLayout, mangaDetail.tags);
-            }
+            LinearLayout tagsLayout = (LinearLayout) findViewById(R.id.tags_layout);
+            addTags(tagsLayout, mangaDetail.tags);
             
             mangaDetailNormal.setVisibility(View.VISIBLE);
             
@@ -585,7 +690,7 @@ public class MangaDetailActivity extends Activity {
             if (mangaDetail.previewSum > 1)
                 goToDialog = createGoToDialog();
             else {
-                previewNumText.setClickable(false);
+                //previewNumText.setClickable(false);
                 previewNumText2.setClickable(false);
             }
             // paper list
@@ -594,8 +699,8 @@ public class MangaDetailActivity extends Activity {
                 // preview num
                     bottomPanel.setVisibility(View.VISIBLE);
                 
-                previewNumText.setText(String.format("%d / %d",
-                        1, mangaDetail.previewSum));
+                //previewNumText.setText(String.format("%d / %d",
+                        //1, mangaDetail.previewSum));
                 previewNumText2.setText(String.format("%d / %d",
                         1, mangaDetail.previewSum));
                     
@@ -612,7 +717,12 @@ public class MangaDetailActivity extends Activity {
         tagsLayout.removeAllViews();
         int x = Ui.dp2pix(8);
         int y = Ui.dp2pix(6);
-        
+        Resources resources = getResources();
+        // Get tag view resources
+        int tagTextSize = resources.getDimensionPixelOffset(R.dimen.button_small_size);
+        ColorStateList tagTextColor = resources.getColorStateList(R.color.blue_bn_text);
+        int tagPaddingX = resources.getDimensionPixelOffset(R.dimen.button_tag_padding_x);
+        int tagPaddingY = resources.getDimensionPixelOffset(R.dimen.button_tag_padding_y);
         for (String[] tagGroup : tagGroups) {
             LinearLayout tagGroupLayout = new LinearLayout(this);
             tagGroupLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -625,10 +735,27 @@ public class MangaDetailActivity extends Activity {
                     lp.setMargins(x, y, x, y);
                     tagGroupLayout.addView(groupNameView, lp);
                 } else {
-                    TextView tagView = new TextView(new ContextThemeWrapper(this, R.style.TextTag));
-                    tagView.setText(tagGroup[i]);
-                    tagView.setTextColor(Color.WHITE);
-                    tagView.setBackgroundColor(Ui.HOLO_BLUE_DARK);
+                    final String tagText = tagGroup[i];
+                    Button tagView = new Button(this);
+                    tagView.setTextSize(TypedValue.COMPLEX_UNIT_PX, tagTextSize);
+                    tagView.setText(tagText);
+                    tagView.setTextColor(tagTextColor);
+                    tagView.setBackgroundResource(R.drawable.blue_bn_bg);
+                    tagView.setPadding(tagPaddingX, tagPaddingY, tagPaddingX, tagPaddingY);
+                    tagView.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            AlertButton voteUp = new AlertButton(MangaDetailActivity.this);
+                            voteUp.setText(getString(R.string.vote_up)); // TODO
+                            AlertButton voteDown = new AlertButton(MangaDetailActivity.this);
+                            voteDown.setText(getString(R.string.vote_down)); // TODO
+                            AlertButton showTagged = new AlertButton(MangaDetailActivity.this);
+                            showTagged.setText(getString(R.string.show_tagged)); // TODO
+                            new ButtonsDialogBuilder(MangaDetailActivity.this).setTitle(tagText)
+                                    .addButton(voteUp).addButton(voteDown).addButton(showTagged)
+                                    .create().show();
+                        }
+                    });
                     AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams();
                     lp.setMargins(x, y, x, y);
                     tagLayout.addView(tagView, lp);
@@ -637,6 +764,20 @@ public class MangaDetailActivity extends Activity {
             tagGroupLayout.addView(tagLayout);
             tagsLayout.addView(tagGroupLayout);
         }
+        
+        // Add tag
+        Button addtagView = new Button(this);
+        addtagView.setTextSize(TypedValue.COMPLEX_UNIT_PX, tagTextSize);
+        addtagView.setText("+");
+        addtagView.setTextColor(tagTextColor);
+        addtagView.setBackgroundResource(R.drawable.blue_bn_bg);
+        addtagView.setPadding(tagPaddingX, tagPaddingY, tagPaddingX, tagPaddingY);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.gravity = Gravity.RIGHT;
+        lp.setMargins(x, y, x, y);
+        tagsLayout.addView(addtagView, lp);
     }
     
     @Override
@@ -662,13 +803,13 @@ public class MangaDetailActivity extends Activity {
             Intent it = new Intent(MangaDetailActivity.this, DownloadService.class);
             startService(it);
             if (mangaDetail.firstPage == null)
-                mServiceConn.getService().add(mangaDetail.gid, mangaDetail.thumb,
+                mServiceConn.getService().add(String.valueOf(mangaDetail.gid), mangaDetail.thumb,
                         EhClient.detailHeader + mangaDetail.gid + "/" + mangaDetail.token,
                         mangaDetail.title);
             else
-                mServiceConn.getService().add(mangaDetail.gid, mangaDetail.thumb,
+                mServiceConn.getService().add(String.valueOf(mangaDetail.gid), mangaDetail.thumb,
                         EhClient.detailHeader + mangaDetail.gid + "/" + mangaDetail.token,
-                        mangaDetail.firstPage, Integer.parseInt(mangaDetail.pages),
+                        mangaDetail.firstPage, mangaDetail.pages,
                         1, mangaDetail.title);
             Toast.makeText(MangaDetailActivity.this,
                     getString(R.string.toast_add_download),

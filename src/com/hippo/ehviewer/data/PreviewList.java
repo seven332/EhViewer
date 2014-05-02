@@ -2,7 +2,7 @@ package com.hippo.ehviewer.data;
 
 import java.util.ArrayList;
 
-public class PageList {
+public class PreviewList {
     
     public class Row {
         

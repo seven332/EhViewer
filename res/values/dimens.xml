@@ -15,4 +15,14 @@
     
     <dimen name="detail_title_size">18.0sp</dimen>
     <dimen name="detail_subtitle_size">14.0sp</dimen>
+    
+    <!-- Button -->
+    <dimen name="button_size">18.0sp</dimen>
+    <dimen name="button_small_size">14.0sp</dimen>
+    <dimen name="button_small_padding_x">12.0dp</dimen>
+    <dimen name="button_small_padding_y">2.0dp</dimen>
+    
+    <dimen name="button_tag_padding_x">8.0dp</dimen>
+    <dimen name="button_tag_padding_y">2.0dp</dimen>
+    
 </resources>

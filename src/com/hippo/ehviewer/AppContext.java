@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import com.hippo.ehviewer.data.Data;
+import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;

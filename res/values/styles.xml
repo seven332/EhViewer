@@ -41,7 +41,9 @@
     
     <style name="Button.Small">
         <item name="android:textSize">14sp</item>
+        <item name="android:paddingLeft">12dp</item>
         <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingRight">12dp</item>
         <item name="android:paddingBottom">2dp</item>
     </style>
     
@@ -51,6 +53,24 @@
     </style>
     
     <style name="Button.Small.White">
+        <item name="android:background">@drawable/white_bn_bg</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    
+    <style name="Button.Small.Flat">
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingLeft">18dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingRight">18dp</item>
+        <item name="android:paddingBottom">2dp</item>
+    </style>
+    
+    <style name="Button.Small.Flat.Blue">
+        <item name="android:background">@drawable/blue_bn_bg</item>
+        <item name="android:textColor">@color/blue_bn_text</item>
+    </style>
+    
+    <style name="Button.Small.Flat.White">
         <item name="android:background">@drawable/white_bn_bg</item>
         <item name="android:textColor">@android:color/black</item>
     </style>

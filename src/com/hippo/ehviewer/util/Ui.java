@@ -196,26 +196,15 @@ public class Ui {
      * @param rawRateString
      */
     public static void addStar(ViewGroup viewGroup,
-            String rawRateString) {
+            float rawRate) {
         if (!mInit) {
             throw new IllegalStateException("Please init Ui first.");
         }
-        if (viewGroup == null || rawRateString == null)
+        if (viewGroup == null)
             return;
         viewGroup.removeAllViews();
-        float num = 0;
-        try{
-            num = Float.parseFloat(rawRateString);
-        } catch (Exception e) {
-            for (int i = 0; i < 5; i++) {
-                ImageView IvStarEmpty = new ImageView(mContext);
-                IvStarEmpty.setImageResource(R.drawable.star_empty);
-                viewGroup.addView(IvStarEmpty);
-            }
-            return;
-        }
         
-        int leve = (int)((num + 0.4999)/0.5);
+        int leve = (int)((rawRate + 0.4999)/0.5);
         int starNum = 5;
         
         for (int i = 0; i < leve/2; i++) {

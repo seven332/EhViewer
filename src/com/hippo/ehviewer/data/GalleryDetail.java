@@ -5,20 +5,20 @@ import android.os.Parcelable;
 
 public class GalleryDetail extends GalleryInfo{
     
-    public String pages;
+    public int pages;
     public String size;
     public String resized;
     public String parent;
     public String visible;
     public String language;
-    public String people;
+    public int people;
     public String firstPage;
     public String[][] tags;
     
     // For Preview
     public int previewSum;
     public int previewPerPage;
-    public PageList[] previewLists;
+    public PreviewList[] previewLists;
     
     /*
     public static final Parcelable.Creator<GalleryDetail> CREATOR =

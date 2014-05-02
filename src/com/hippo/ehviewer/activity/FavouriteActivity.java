@@ -24,11 +24,11 @@ import android.widget.Toast;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
-import com.hippo.ehviewer.EhClient;
 import com.hippo.ehviewer.ImageLoadManager;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
@@ -71,7 +71,7 @@ public class FavouriteActivity extends Activity{
                             GalleryInfo lmd = mFavouriteLmd.get(longClickItemIndex);
                             Intent it = new Intent(FavouriteActivity.this, DownloadService.class);
                             startService(it);
-                            mServiceConn.getService().add(lmd.gid, lmd.thumb, 
+                            mServiceConn.getService().add(String.valueOf(lmd.gid), lmd.thumb, 
                                     EhClient.detailHeader + lmd.gid + "/" + lmd.token, lmd.title);
                             Toast.makeText(FavouriteActivity.this,
                                     getString(R.string.toast_add_download),
@@ -119,8 +119,8 @@ public class FavouriteActivity extends Activity{
                 convertView = mInflater.inflate(R.layout.list_item, null);
             
             LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
-            if (!lmd.gid.equals(thumb.getKey())) {
-                thumb.setLoadInfo(lmd.thumb, lmd.gid);
+            if (!String.valueOf(lmd.gid).equals(thumb.getKey())) {
+                thumb.setLoadInfo(lmd.thumb, String.valueOf(lmd.gid));
                 mImageLoadManager.add(thumb, true);
 
                 // Set manga name

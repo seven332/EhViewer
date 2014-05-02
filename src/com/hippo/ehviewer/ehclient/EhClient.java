@@ -1,4 +1,4 @@
-package com.hippo.ehviewer;
+package com.hippo.ehviewer.ehclient;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -20,12 +20,18 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.conn.ConnectTimeoutException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import com.hippo.ehviewer.AppContext;
+import com.hippo.ehviewer.DiskCache;
+import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.R.string;
 import com.hippo.ehviewer.activity.DownloadInfo;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
-import com.hippo.ehviewer.data.PageList;
+import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.network.HttpHelper;
@@ -60,13 +66,17 @@ public class EhClient {
     private static final int EX = 0x1;
     private static final int LOFI = 0x2;
     
+    public static final String G_API = "http://g.e-hentai.org/api.php";
+    public static final String E_API = "http://exhentai.org/api.php";
+    public static final long APIUID = 1363542;
+    public static final String APIKEY = "f4b5407ab1727b9d08d7";
+    
     private static final String loginUrl = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
     
     private static final String E_HENTAI_LIST_HEADER = "http://g.e-hentai.org/";
     private static final String EXHENTAI_LIST_HEADER = "http://exhentai.org/";
     public static final String E_HENTAI_DETAIL_HEADER = "http://g.e-hentai.org/g/";
     public static final String EXHENTAI_DETAIL_HEADER = "http://exhentai.org/g/";
-    
     public static final String EXHENTAI_PAGE_HEADER = "http://exhentai.org/s/";
     
     
@@ -86,7 +96,7 @@ public class EhClient {
     private AppContext mAppContext;
     private ThreadPool mThreadPool;
     
-    public String getDetailUrl(String gid, String token, int mode) {
+    public static String getDetailUrl(int gid, String token, int mode) {
         switch (mode) {
         case EX:
             return EH_HEADER + "g/" + gid + "/" + token;
@@ -97,7 +107,7 @@ public class EhClient {
         }
     }
     
-    public String getPageUrl(String gid, String token, int pageNum, int mode) {
+    public static String getPageUrl(String gid, String token, int pageNum, int mode) {
         switch (mode) {
         case EX:
             return EH_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
@@ -105,6 +115,19 @@ public class EhClient {
             return LOFI_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
         default:
             return G_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
+        }
+    }
+    
+    public static int getDetailModeForDownloadMode(int downloadMode) {
+        switch (downloadMode) {
+        case com.hippo.ehviewer.data.DownloadInfo.EX:
+            return EX;
+        case com.hippo.ehviewer.data.DownloadInfo.LOFI_460x:
+        case com.hippo.ehviewer.data.DownloadInfo.LOFI_780x:
+        case com.hippo.ehviewer.data.DownloadInfo.LOFI_980x:
+            return LOFI;
+        default:
+            return G;
         }
     }
     
@@ -135,7 +158,7 @@ public class EhClient {
     }
 
     public interface OnGetPageListListener {
-        public void onSuccess(Object checkFlag, PageList pageList);
+        public void onSuccess(Object checkFlag, PreviewList pageList);
         public void onFailure(Object checkFlag, String eMsg);
     }
 
@@ -199,6 +222,7 @@ public class EhClient {
     private static final int GET_MANGA_DETAIL = 0x4;
     private static final int GET_PAGE_LIST = 0x5;
     private static final int GET_MANGA_URL = 0x6;
+    private static final int RATE = 0x7;
     
     private static Handler mHandler = new Handler() {
         @Override
@@ -271,6 +295,9 @@ public class EhClient {
                 else
                     listener7.onFailure(getMangaUrlPackage.checkFlag, getMangaUrlPackage.eMsg);
                 break;
+                
+            case RATE:
+                
             }
         };
     };
@@ -562,7 +589,7 @@ public class EhClient {
                                 .compile("/(\\d+)/(\\w+)");
                         Matcher matcher = pattern.matcher(m.group(7));
                         if (matcher.find()) {
-                            lmd.gid = matcher.group(1);
+                            lmd.gid = Integer.parseInt(matcher.group(1));
                             lmd.token = matcher.group(2);
                         } else
                             continue;
@@ -576,7 +603,7 @@ public class EhClient {
                             Log.w(TAG, "second is " + temp);
                             lmd.title = temp;
                         }
-                        lmd.rating = getRate(m.group(9));
+                        lmd.rating = Float.parseFloat(getRate(m.group(9)));
                         lmd.uploader = m.group(10);
                         lmdArray.add(lmd);
                     }
@@ -696,53 +723,42 @@ public class EhClient {
             HttpHelper hp = new HttpHelper(mAppContext);
             String pageContent = hp.get(url);
             if (pageContent != null) {
-                Pattern p = Pattern
-                        .compile("<div id=\"gdc\"><a href=\"[^<>\"]+\"><img[^<>]*alt=\"([\\w|\\-]+)\"[^<>]*/></a></div><div id=\"gdn\"><a href=\"[^<>\"]+\">([^<>]+)</a>.+Posted:</td><td[^<>]*>([\\w|\\-|\\s|:]+)</td></tr><tr><td[^<>]*>Images:</td><td[^<>]*>([\\d]+) @ ([\\w|\\.|\\s]+)</td></tr><tr><td[^<>]*>Resized:</td><td[^<>]*>([^<>]+)</td></tr><tr><td[^<>]*>Parent:</td><td[^<>]*>(?:<a[^<>]*>)?([^<>]+)(?:</a>)?</td></tr><tr><td[^<>]*>Visible:</td><td[^<>]*>([^<>]+)</td></tr><tr><td[^<>]*>Language:</td><td[^<>]*>([^<>]+)</td></tr>(?:</tbody>)?</table></div><div[^<>]*><table>(?:<tbody>)?<tr><td[^<>]*>Rating:</td><td[^<>]*><div[^<>]*style=\"([^<>]+)\"[^<>]*><img[^<>]*></div></td><td[^<>]*>\\(<span[^<>]*>([\\d]+)</span>\\)</td></tr><tr><td[^<>]*>([^<>]+)</td>.+<p class=\"ip\">Showing ([\\d|,]+) - ([\\d|,]+) of ([\\d|,]+) images</p>.+<div id=\"gdt\"><div[^<>]*>(?:<div[^<>]*>)?<a[^<>]*href=\"([^<>\"]+)\"[^<>]*>");
-                Matcher m = p.matcher(pageContent);
-                String offensiveKeystring = "<p>(And if you choose to ignore this warning, you lose all rights to complain about it in the future.)</p>";
-                String piningKeyString = "<p>This gallery is pining for the fjords.</p>";
-                if (m.find()) {
-                    ok = true;
-                    md.category = getType(m.group(1));
-                    md.uploader = m.group(2);
-                    md.posted = m.group(3);
-                    md.pages = m.group(4);
-                    md.size = m.group(5);
-                    md.resized = m.group(6);
-                    md.parent = m.group(7);
-                    md.visible = m.group(8);
-                    md.language = m.group(9);
-                    md.people = m.group(11);
-                    
-                    Pattern pattern = Pattern.compile("([\\d|\\.]+)");
-                    Matcher matcher = pattern.matcher(m.group(12));
-                    if (matcher.find())
-                        md.rating = matcher.group(1);
-                    else
-                        md.rating = mAppContext.getString(R.string.detail_not_rated);
-                    md.firstPage = m.group(16);
-                    md.previewPerPage = Integer.parseInt(m.group(14).replace(",",
-                            ""))
-                            - Integer.parseInt(m.group(13).replace(",", ""))
-                            + 1;
-                    int total = Integer.parseInt(m.group(15).replace(",", ""));
-
-                    md.previewSum = (total + md.previewPerPage - 1) / md.previewPerPage;
-
-                    // New pageListArray
-                    md.previewLists = new PageList[md.previewSum];
-                    // Add page 1 pagelist
-                    PageList pageList = getPageList(pageContent);
-                    md.previewLists[0] = pageList;
-                    md.tags = getTags(pageContent);
-                } else if (pageContent.contains(offensiveKeystring)) {
+                
+                
+                ParserDetail parser = new ParserDetail();
+                int mode = ParserDetail.DETAIL | ParserDetail.TAG
+                        | ParserDetail.PREVIEW_INFO | ParserDetail.PREVIEW;
+                parser.setMode(mode);
+                int result = parser.parser(pageContent);
+                if (result == ParserDetail.OFFENSIVE) {
                     ok = true;
                     md.firstPage = "offensive";
-                } else if (pageContent.contains(piningKeyString)) {
+                } else if (result == ParserDetail.PINING) {
                     ok = true;
                     md.firstPage = "pining";
-                } else
+                } else if ((result & (ParserDetail.DETAIL | ParserDetail.PREVIEW_INFO)) != 0) {
+                    ok = true;
+                    md.category = parser.category;
+                    md.uploader = parser.uploader;
+                    md.posted = parser.posted;
+                    md.pages = parser.pages;
+                    md.size = parser.size;
+                    md.resized = parser.resized;
+                    md.parent = parser.parent;
+                    md.visible = parser.visible;
+                    md.language = parser.language;
+                    md.people = parser.people;
+                    md.rating = parser.rating;
+                    md.firstPage = parser.firstPage;
+                    md.previewPerPage = parser.previewPerPage;
+                    md.previewSum = parser.previewSum;
+                    
+                    md.tags = parser.tags;
+                    md.previewLists = new PreviewList[md.previewSum];
+                    md.previewLists[0] = parser.previewList;
+                } else {
                     eMsg = mAppContext.getString(R.string.em_parser_error);
+                }
             } else
                 eMsg = hp.getEMsg();
         }
@@ -783,7 +799,7 @@ public class EhClient {
             }
         }
         if (list.size() == 0)
-            return null;
+            return new String[0][0];
         String[][] groups = new String[list.size()][];
         int i = 0;
         for (String[] item : list) {
@@ -816,11 +832,11 @@ public class EhClient {
     // Get page list
     private class GetPageListPackage {
         public Object checkFlag;
-        public PageList pageList;
+        public PreviewList pageList;
         public OnGetPageListListener listener;
         public String eMsg;
         
-        public GetPageListPackage(Object checkFlag, PageList pageList, OnGetPageListListener listener,
+        public GetPageListPackage(Object checkFlag, PreviewList pageList, OnGetPageListListener listener,
                 String eMsg) {
             this.checkFlag = checkFlag;
             this.pageList = pageList;
@@ -832,7 +848,7 @@ public class EhClient {
     private class GetPageListRunnable implements Runnable {
         private String url;
         
-        public PageList pageList;
+        public PreviewList pageList;
         public String eMsg;
 
         public GetPageListRunnable(String url) {
@@ -876,14 +892,14 @@ public class EhClient {
         });
     }
 
-    private PageList getPageList(String pageContent) {
-        PageList pageList = null;
+    private PreviewList getPageList(String pageContent) {
+        PreviewList pageList = null;
         Pattern p = Pattern
                 .compile("<div[^<>]*class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*>");
         Matcher m = p.matcher(pageContent);
         while (m.find()) {
             if (pageList == null)
-                pageList = new PageList();
+                pageList = new PreviewList();
             pageList.addItem(m.group(3), m.group(4), "0", m.group(1),
                     m.group(2), m.group(5));
         }
@@ -1465,6 +1481,51 @@ public class EhClient {
     
     
     /********** Use E-hentai API ************/
+    
+    public interface OnRateListener {
+        void onSuccess(float ratingAvg, int ratingCnt);
+        void onFailure(String eMsg);
+    }
+    
+    public void rate(final int gid, final String token,
+            final int rating, final OnRateListener listener) {
+        final JSONObject json = new JSONObject();
+        try {
+            json.put("method", "rategallery");
+            json.put("apiuid", APIUID);
+            json.put("apikey", APIKEY);
+            json.put("gid", gid);
+            json.put("token", token);
+            json.put("rating", rating);
+        } catch (JSONException e) {
+            listener.onFailure(e.getMessage());
+            return;
+        }
+        
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpHelper hp = new HttpHelper(mAppContext);
+                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
+                    @Override
+                    public void onSuccess(String pageContext) {
+                        ParserRate parser = new ParserRate();
+                        if (parser.parser(pageContext)) {
+                            listener.onSuccess(parser.mRatingAvg, parser.mRatingCnt);
+                        } else {
+                            listener.onFailure("parser error");   // TODO
+                        }
+                    }
+                    @Override
+                    public void onFailure(String eMsg) {
+                        listener.onFailure(eMsg);
+                    }
+                });
+                hp.postJson(E_API, json);
+            }
+        }).start();
+    }
+    
     
     /*
     private static class GetGalleryMetadataPackage {

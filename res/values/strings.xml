@@ -87,7 +87,9 @@
     <string name="detail_button_known">Yes, I know</string>
     <string name="detail_preview_error">Get preview error !</string>
     <string name="detail_not_rated">Not yet rated</string>
-    
+    <string name="vote_up">Vote up</string>
+    <string name="vote_down">Vote down</string>
+    <string name="show_tagged">Show tagged</string>
     
     <!-- MangaActivity -->
     <string name="load_pre">Load previous page</string>

@@ -66,7 +66,7 @@
                 
                 <Button
                     android:id="@+id/detail_do_rate"
-                    style="@style/Button.Small.Blue"
+                    style="@style/Button.Small.Flat.Blue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -74,11 +74,12 @@
                     android:layout_marginBottom="10.0dp"
                     android:layout_marginLeft="12dp"
                     android:layout_marginRight="12dp"
-                    android:text="@string/rate"/>
+                    android:text="@string/rate"
+                    android:onClick="ButtonRate" />
                 
                 <Button
                     android:id="@+id/detail_read"
-                    style="@style/Button.Small.Blue"
+                    style="@style/Button.Small.Flat.Blue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_above="@id/detail_do_rate"

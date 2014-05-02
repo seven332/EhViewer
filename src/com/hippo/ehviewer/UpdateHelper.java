@@ -101,7 +101,7 @@ public class UpdateHelper {
                     
                     jo.put("detail", detailJO);
                     
-                    return hp.postJson(UPDATE_API, jo.toString());
+                    return hp.postJson(UPDATE_API, jo);
                 } catch (NameNotFoundException e) {
                     e.printStackTrace();
                     return "NameNotFound";

@@ -7,8 +7,8 @@ import java.util.Collections;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.EhClient;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.DownloadImageSet;
 import com.hippo.ehviewer.gallery.data.ImageSet;

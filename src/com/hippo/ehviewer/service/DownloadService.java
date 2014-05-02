@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.EhClient;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.EhClient.DownloadMangaManager;
 import com.hippo.ehviewer.activity.DownloadActivity;
 import com.hippo.ehviewer.activity.DownloadInfo;
+import com.hippo.ehviewer.ehclient.EhClient;
+import com.hippo.ehviewer.ehclient.EhClient.DownloadMangaManager;
 import com.hippo.ehviewer.util.Download;
 
 import android.app.Notification;
