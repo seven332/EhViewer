@@ -1,14 +1,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:fitsSystemWindows="true" >
+    android:layout_height="fill_parent" >
 
     <ScrollView
         android:id="@+id/manga_detail_scrollview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:fadingEdge="vertical"
-        android:scrollbars="vertical" >
+        android:scrollbars="vertical"
+        android:clipToPadding="false"
+        android:fitsSystemWindows="true" >
 
         <LinearLayout
             android:id="@+id/manga_detail"

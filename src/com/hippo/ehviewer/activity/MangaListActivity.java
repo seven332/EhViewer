@@ -39,6 +39,7 @@ import com.hippo.ehviewer.widget.PullListView.OnFooterRefreshListener;
 import com.hippo.ehviewer.widget.PullListView.OnHeaderRefreshListener;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import android.net.Uri;
 import android.os.Build;
@@ -56,6 +57,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -87,12 +90,10 @@ public class MangaListActivity extends SlidingActivity {
     
     private SlidingMenu mSlidingMenu;
     
-    private RelativeLayout mainLayout;
     private TagListView listMenu;
     private RelativeLayout loginMenu;
     private ListView isExhentaiList;
     private PullListView pullListView;
-    private ListView listView;
     private View waitView;
     private Button freshButton;
     private View noFoundView;
@@ -424,7 +425,7 @@ public class MangaListActivity extends SlidingActivity {
                                 ((AlertButton)v).dialog.dismiss(); // Just jump there
                                 int position = (targetPage - firstPage) *
                                         lus.getNumPerPage();
-                                listView.setSelectionFromTop(position, -1);
+                                pullListView.setSelectionFromTop(position, -1);
                             } else{
                                 ListUrls listUrls = lus.clone();
                                 if (listUrls.setPage(targetPage)) {
@@ -790,7 +791,7 @@ public class MangaListActivity extends SlidingActivity {
                     setTitle(String.format(getString(R.string.list_title), mTitle, visiblePage + 1));
                     
                     // Go to top
-                    listView.setSelection(0);
+                    pullListView.setSelection(0);
                 } else if (getPageIndex == firstPage - 1) { // Get last page
                     firstPage = getPageIndex;
                     lmdArray.addAll(0, newLmdArray);
@@ -802,12 +803,12 @@ public class MangaListActivity extends SlidingActivity {
                         visiblePage = getPageIndex;
                         setTitle(String.format(getString(R.string.list_title), mTitle, visiblePage + 1));
                         // Go to top
-                        listView.setSelection(0);
+                        pullListView.setSelection(0);
                     } else {
                         firstIndex += newLmdArray.size();
                         lastIndex += newLmdArray.size();
                         // Stay there
-                        listView.setSelectionFromTop(listView.getFirstVisiblePosition() + newLmdArray.size(), -1);
+                        pullListView.setSelectionFromTop(pullListView.getFirstVisiblePosition() + newLmdArray.size(), -1);
                     }
                 } else if (getPageIndex == lastPage + 1) { // Get next page
                     lastPage = getPageIndex;
@@ -819,7 +820,7 @@ public class MangaListActivity extends SlidingActivity {
                         lastIndex = lmdArray.size() - 1;
                         visiblePage = getPageIndex;
                         setTitle(String.format(getString(R.string.list_title), mTitle, visiblePage + 1));
-                        listView.setSelectionFromTop(firstIndex, -1);
+                        pullListView.setSelectionFromTop(firstIndex, -1);
                     }
                 } else if (getPageIndex < firstPage - 1 ||
                         getPageIndex > lastPage + 1){ // Jump somewhere
@@ -836,7 +837,7 @@ public class MangaListActivity extends SlidingActivity {
                     setTitle(String.format(getString(R.string.list_title), mTitle, visiblePage + 1));
                     
                     // Go to top
-                    listView.setSelection(0);
+                    pullListView.setSelection(0);
                 }
             }
             // Reset pullListView
@@ -920,6 +921,8 @@ public class MangaListActivity extends SlidingActivity {
                 for (int i = 0; i < getChildCount; i++) {
                     LoadImageView liv = (LoadImageView)((ViewGroup)
                             view.getChildAt(i)).findViewById(R.id.cover);
+                    if (liv == null)
+                        continue;
                     int status = liv.getState();
                     if (status != LoadImageView.LOADING && status != LoadImageView.LOADED)
                         mImageLoadManager.add(liv, true);
@@ -1037,9 +1040,10 @@ public class MangaListActivity extends SlidingActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        /*
         if (Build.VERSION.SDK_INT >= 19) {
             BeautifyScreen.fixColour(this);
-        }
+        }*/
     }
     
     @Override
@@ -1110,18 +1114,29 @@ public class MangaListActivity extends SlidingActivity {
         //
         mImageLoadManager = new ImageLoadManager(getApplicationContext(), Cache.memoryCache, Cache.cpCache);
         
-        // For colourfy the activity
-        if (Build.VERSION.SDK_INT >= 19) {
-            BeautifyScreen.ColourfyScreen(this);
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window win = getWindow();
+            WindowManager.LayoutParams winParams = win.getAttributes();
+            final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
+            winParams.flags |= bits;
+            win.setAttributes(winParams);
         }
         
+        
+        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+        tintManager.setStatusBarTintEnabled(true);
+        tintManager.setStatusBarTintResource(android.R.color.holo_blue_dark);
+        tintManager.setNavigationBarTintEnabled(true);
+        tintManager.setNavigationBarAlpha(0.0f);
+        
+        
         // Get View
-        mainLayout = (RelativeLayout)findViewById(R.id.list_main);
         listMenu = (TagListView) findViewById(R.id.list_menu_list);
         loginMenu = (RelativeLayout)findViewById(R.id.list_menu_login);
         isExhentaiList = (ListView)findViewById(R.id.is_exhentai);
         pullListView = ((PullListView)findViewById(R.id.list_list));
-        listView = pullListView.getListView();
         waitView = (View) findViewById(R.id.list_wait_first);
         freshButton = (Button) findViewById(R.id.list_refresh);
         noFoundView = (View) findViewById(R.id.list_no_found);
@@ -1134,9 +1149,6 @@ public class MangaListActivity extends SlidingActivity {
         usernameText = (TextView) findViewById(R.id.text_username);
         logoutButton = (Button) findViewById(R.id.list_button_logout);
         waitlogoutView = (View) findViewById(R.id.list_wait_logout);
-        
-        // fitsSystemWindows for menu
-        //mainLayout.setView(listMenu, loginMenu);
         
         // Drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -1322,9 +1334,9 @@ public class MangaListActivity extends SlidingActivity {
         
         // Listview
         gmlAdapter = new GmlAdapter();
-        listView.setAdapter(gmlAdapter);
-        listView.setOnScrollListener(new MangaListListener());
-        listView.setOnItemClickListener(new OnItemClickListener() {
+        pullListView.setAdapter(gmlAdapter);
+        pullListView.setOnScrollListener(new MangaListListener());
+        pullListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
@@ -1336,7 +1348,7 @@ public class MangaListActivity extends SlidingActivity {
                 startActivity(intent);
             }
         });
-        listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+        pullListView.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {

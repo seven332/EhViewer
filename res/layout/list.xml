@@ -1,14 +1,18 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/list_main"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:fitsSystemWindows="true" >
+    android:layout_height="fill_parent" >
 
     <com.hippo.ehviewer.widget.PullListView
         android:id="@+id/list_list"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:divider="@null"
+        android:listSelector="@android:color/transparent"
+        android:cacheColorHint="@color/main_background"
+        android:clipToPadding="false"
+        android:fitsSystemWindows="true" />
 
     <ProgressBar
         android:id="@+id/list_wait_first"

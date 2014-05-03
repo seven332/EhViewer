@@ -5,6 +5,7 @@ import com.hippo.ehviewer.util.Ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,7 +21,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class PullListView extends LinearLayout implements AbsListView.OnScrollListener{
+public class PullListView extends ListView implements AbsListView.OnScrollListener{
     @SuppressWarnings("unused")
     private static final String TAG = "PullListView";
     
@@ -42,7 +43,6 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
     private Animation mRefreshAnimation;
     private Animation mOverAnimation;
     
-    private ListView mListView;
     private LinearLayout mHeader;
     private LinearLayout mFooter;
     private TextView mTipTextView;
@@ -192,7 +192,6 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
         });
         mOverAnimation.setDuration(200);
         
-        View view = LayoutInflater.from(context).inflate(R.layout.pull_list_view, this);
         mFooter = (LinearLayout)LayoutInflater.from(context).inflate(R.layout.pull_list_view_footer, null);
         mFooter.setOnClickListener(new OnClickListener() {
             @Override
@@ -200,13 +199,13 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
                 footerRefresh();
             }
         });
-        mListView = (ListView)view.findViewById(R.id.list_view);
-        mListView.setOnScrollListener(this);
-        mListView.addFooterView(mFooter);
+        setOnScrollListener(this);
+        addFooterView(mFooter);
         mFooterTipTextView = (TextView)mFooter.findViewById(R.id.footer_tip_text);
         mFooterProgressBar = (ProgressBar)mFooter.findViewById(R.id.footer_progressBar);
         
-        mHeader = (LinearLayout)view.findViewById(R.id.header);
+        mHeader = (LinearLayout)LayoutInflater.from(context).inflate(R.layout.pull_list_view_header, null);
+        addHeaderView(mHeader);
         mArrowImageView = (ImageView) mHeader.findViewById(R.id.header_arrow_image);
         mArrowImageView.setMinimumWidth(50);
         mArrowImageView.setMinimumHeight(50);
@@ -239,45 +238,15 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
     }
     
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent event) {
-        if (!mHeaderEnabled || isHeaderRecored || isFooterRecored)
-            return false;
-        
-        final int action = event.getAction() & MotionEvent.ACTION_MASK;
-        
-        switch (action) {
-        case MotionEvent.ACTION_DOWN:
-            lastY = (int)event.getY();
-            return false;
-            
-        case MotionEvent.ACTION_UP:
-        case MotionEvent.ACTION_CANCEL:
-            return false;
-        
-        case MotionEvent.ACTION_MOVE:
-            int y = (int)event.getY();
-            int offsetY = y - lastY;
-            lastY = y;
-            
-            if (offsetY > 0 && isListAtTop())
-                return true;
-            else
-                return false;
-            
-        default:
-            return super.onInterceptTouchEvent(event);
-        }
-    }
-    
-    @Override
     public boolean onTouchEvent(MotionEvent event) {
-        final int action = event.getAction() & MotionEvent.ACTION_MASK;
         
+        final int action = event.getAction() & MotionEvent.ACTION_MASK;
         switch (action) {
         case MotionEvent.ACTION_DOWN:
-            if (mHeaderEnabled && !isHeaderRecored && !isFooterRecored) {
+            if (mHeaderEnabled && !isHeaderRecored && !isFooterRecored && isListAtTop()) {
                 isHeaderRecored = true;
                 startY = (int) event.getY();
+                lastY = startY;
             }
             break;
             
@@ -305,8 +274,13 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
             
         case MotionEvent.ACTION_MOVE:
             int tempY = (int)event.getY();
-            if (mHeaderEnabled && !isHeaderRecored && !isFooterRecored) {
-                isHeaderRecored = true;  
+            int FingerOffsetY = tempY - lastY;
+            lastY = tempY;
+            if (mHeaderEnabled && !isHeaderRecored && !isFooterRecored && isListAtTop() && FingerOffsetY > 0) {
+                
+                Log.d(TAG, "sdsd");
+                
+                isHeaderRecored = true;
                 startY = tempY;
             }
             if (headerState != HEADER_REFRESHING && isHeaderRecored) {
@@ -321,6 +295,7 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
                     else if (offsetY <= 0) {
                         headerState = HEADER_DONE;
                         startY = tempY;
+                        isHeaderRecored = false;
                     }
                 } else if (headerState == HEADER_PULL_TO_REFRESH) {
                     // 下拉到可以进入RELEASE_TO_REFRESH的状态
@@ -333,13 +308,15 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
                     else if (offsetY <= 0) {
                         headerState = HEADER_DONE;
                         startY = tempY;
+                        isHeaderRecored = false;
                     }
                 } else if (headerState == HEADER_DONE) {
-                    if (offsetY > 0) {
+                    if (offsetY >= 0) {
                         headerState = HEADER_PULL_TO_REFRESH;
                         changeHeaderViewByState();
                     } else {
                         startY = tempY;
+                        isHeaderRecored = false;
                     }
                 }
                 
@@ -359,7 +336,16 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
             }
             break;
         }
-        return true;
+        
+        if (isHeaderRecored && (headerState == HEADER_PULL_TO_REFRESH ||
+                headerState == HEADER_RELEASE_TO_REFRESH)) {
+            setEnabled(false);
+        }
+        else {
+            setEnabled(true);
+        }
+        
+        return super.onTouchEvent(event);
     }
     
     private int getShowOffset(int eventOffset, int target) {
@@ -433,10 +419,6 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
             mFooterProgressBar.setVisibility(View.GONE);
             break;
         }
-    }
-    
-    public ListView getListView() {
-        return mListView;
     }
     
     // Header
@@ -581,10 +563,10 @@ public class PullListView extends LinearLayout implements AbsListView.OnScrollLi
     }
     
     private boolean isListAtTop()   {
-        if(mListView.getChildCount() == 0)
+        if(getChildCount() == 0)
             return true;
-        return mListView.getFirstVisiblePosition() == 0
-                && mListView.getChildAt(0).getTop() == 0;
+        return getFirstVisiblePosition() == 0
+                && getChildAt(0).getTop() == getPaddingTop();
     }
     
     // Get header width and height

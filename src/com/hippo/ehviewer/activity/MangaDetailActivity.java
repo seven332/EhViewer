@@ -39,6 +39,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 import com.hippo.ehviewer.util.Log;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
@@ -46,6 +47,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup;
@@ -536,10 +539,6 @@ public class MangaDetailActivity extends Activity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (Build.VERSION.SDK_INT >= 19) {
-            BeautifyScreen.fixColour(this);
-        }
-        
     }
     
     @Override
@@ -604,9 +603,20 @@ public class MangaDetailActivity extends Activity {
         readButton = (Button)findViewById(R.id.detail_read);
         rateButton = (Button)findViewById(R.id.detail_do_rate);
         
-        if (Build.VERSION.SDK_INT >= 19) {
-            BeautifyScreen.ColourfyScreen(this);
+        // TODO
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window win = getWindow();
+            WindowManager.LayoutParams winParams = win.getAttributes();
+            final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
+            winParams.flags |= bits;
+            win.setAttributes(winParams);
         }
+        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+        tintManager.setStatusBarTintEnabled(true);
+        tintManager.setStatusBarTintResource(android.R.color.holo_blue_dark);
+        tintManager.setNavigationBarTintEnabled(true);
+        tintManager.setNavigationBarAlpha(0.0f);
         
         setTitle(String.valueOf(mangaDetail.gid));
         
