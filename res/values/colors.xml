@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    
+    <integer-array name="refresh_colors">
+        <item>@color/refresh_color_1</item>
+        <item>@color/refresh_color_2</item>
+        <item>@color/refresh_color_3</item>
+        <item>@color/refresh_color_4</item>
+    </integer-array>
+
+    <color name="refresh_color_1">#3e802f</color>
+    <color name="refresh_color_2">#427fed</color>
+    <color name="refresh_color_3">#b23424</color>
+    <color name="refresh_color_4">#f4b400</color>
+    
+    <color name="ab_bg">@android:color/holo_blue_dark</color>
     <color name="main_background">#ffe5e5e5</color>
     <color name="holo_blue_light_light">#ff81d3f7</color>
     

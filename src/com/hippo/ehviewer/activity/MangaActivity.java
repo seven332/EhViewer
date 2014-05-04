@@ -57,7 +57,7 @@ public class MangaActivity extends Activity {
     
     private RelativeLayout mainView;
     
-    private String gid;
+    private int gid;
     private String title;
     
     private int retryTimes = 0;
@@ -292,13 +292,13 @@ public class MangaActivity extends Activity {
         Intent intent = getIntent();
         firstPage = intent.getIntExtra("firstPage", 0);
         lastPage = firstPage;
-        gid = intent.getStringExtra("gid");
+        gid = intent.getIntExtra("gid", 0);
         title = intent.getStringExtra("title");
         mFolder = new File(Config.getDownloadPath(), StringEscapeUtils.escapeHtml4(title));
         if (mFolder.isFile())
             mFolder.delete();
         mFolder.mkdirs();
-        pageSum = Integer.parseInt(intent.getStringExtra("pageSum"));
+        pageSum = intent.getIntExtra("pageSum", 0);
         
         mImageSet = new ImageSet(this, gid, mFolder, pageSum, firstPage, lastPage, null);
         GalleryView isv = new GalleryView(getApplicationContext(), mImageSet, firstPage);

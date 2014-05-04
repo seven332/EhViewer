@@ -51,7 +51,7 @@ public class ImageSet {
     public static final int STATE_FAIL = 3;
     
     protected Context mContext;
-    protected String mGid;
+    protected int mGid;
     protected File mFolder;
     protected int mSize;
     
@@ -87,7 +87,7 @@ public class ImageSet {
     }
     
     // [startIndex, endIndex)
-    public ImageSet(Context context, String gid, File folder, int size, int startIndex, int endIndex,
+    public ImageSet(Context context, int gid, File folder, int size, int startIndex, int endIndex,
             Set<Integer> failIndexSet) {
         
         if (folder == null || !folder.isDirectory())

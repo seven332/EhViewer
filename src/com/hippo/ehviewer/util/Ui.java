@@ -2,8 +2,10 @@ package com.hippo.ehviewer.util;
 
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
-
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -15,6 +17,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.View.MeasureSpec;
 import android.widget.ImageView;
 
@@ -314,5 +318,22 @@ public class Ui {
                     MeasureSpec.UNSPECIFIED);
         }
         child.measure(childWidthSpec, childHeightSpec);
+    }
+    
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public static void translucent(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window win = activity.getWindow();
+            WindowManager.LayoutParams winParams = win.getAttributes();
+            winParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
+            win.setAttributes(winParams);
+        }
+        
+        SystemBarTintManager tintManager = new SystemBarTintManager(activity);
+        tintManager.setStatusBarTintEnabled(true);
+        tintManager.setStatusBarTintResource(R.color.ab_bg);
+        tintManager.setNavigationBarTintEnabled(true);
+        tintManager.setNavigationBarAlpha(0.0f);
     }
 }

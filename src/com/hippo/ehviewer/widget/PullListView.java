@@ -53,6 +53,9 @@ public class PullListView extends ListView implements AbsListView.OnScrollListen
     private ProgressBar mFooterProgressBar;
     
     // Make sure only one pull event
+    /**
+     * True if Header is shown
+     */
     private boolean isHeaderRecored = false;
     private boolean isFooterRecored = false;
     
@@ -185,6 +188,9 @@ public class PullListView extends ListView implements AbsListView.OnScrollListen
                     headerState = HEADER_DONE;
                     isHeaderRecored = false;
                     isBack = false;
+                    
+                    
+                    Log.d(TAG, "cancel animation over");
                 }
             }
             @Override
@@ -243,11 +249,7 @@ public class PullListView extends ListView implements AbsListView.OnScrollListen
         final int action = event.getAction() & MotionEvent.ACTION_MASK;
         switch (action) {
         case MotionEvent.ACTION_DOWN:
-            if (mHeaderEnabled && !isHeaderRecored && !isFooterRecored && isListAtTop()) {
-                isHeaderRecored = true;
-                startY = (int) event.getY();
-                lastY = startY;
-            }
+            lastY = (int)event.getY();
             break;
             
         case MotionEvent.ACTION_CANCEL:
@@ -277,12 +279,10 @@ public class PullListView extends ListView implements AbsListView.OnScrollListen
             int FingerOffsetY = tempY - lastY;
             lastY = tempY;
             if (mHeaderEnabled && !isHeaderRecored && !isFooterRecored && isListAtTop() && FingerOffsetY > 0) {
-                
-                Log.d(TAG, "sdsd");
-                
                 isHeaderRecored = true;
                 startY = tempY;
             }
+            
             if (headerState != HEADER_REFRESHING && isHeaderRecored) {
                 int offsetY = getShowOffset(tempY - startY, pullOffestMax);
                 if (headerState == HEADER_RELEASE_TO_REFRESH) {
@@ -320,15 +320,9 @@ public class PullListView extends ListView implements AbsListView.OnScrollListen
                     }
                 }
                 
-                // 更新headView的size   
-                if (headerState == HEADER_PULL_TO_REFRESH) {
-                    int topPadding = (int)(offsetY - headerHeight);
-                    mHeader.setPadding(headerOriginalLeftPadding, topPadding, headerOriginalRightPadding, headerOriginalBottomPadding);
-                    mHeader.invalidate();
-                }
-                
-                // 更新headView的paddingTop
-                if (headerState == HEADER_RELEASE_TO_REFRESH) {
+                // update headView
+                if (headerState == HEADER_RELEASE_TO_REFRESH
+                        || headerState == HEADER_PULL_TO_REFRESH) {
                     int topPadding = (int)(offsetY - headerHeight);
                     mHeader.setPadding(headerOriginalLeftPadding, topPadding, headerOriginalRightPadding, headerOriginalBottomPadding);
                     mHeader.invalidate();
@@ -337,20 +331,27 @@ public class PullListView extends ListView implements AbsListView.OnScrollListen
             break;
         }
         
+        
         if (isHeaderRecored && (headerState == HEADER_PULL_TO_REFRESH ||
                 headerState == HEADER_RELEASE_TO_REFRESH)) {
-            setEnabled(false);
-        }
-        else {
-            setEnabled(true);
+            event.setAction(MotionEvent.ACTION_CANCEL);
+            
+            
+            Log.d(TAG, "set cancel");
         }
         
-        return super.onTouchEvent(event);
+        super.onTouchEvent(event);
+        
+        Log.d(TAG, "get event");
+        
+        return true;
     }
     
     private int getShowOffset(int eventOffset, int target) {
-        if (eventOffset <= 0) // avoid divide zero
+        if (eventOffset == 0) // avoid divide zero
             return 0;
+        if (eventOffset < 0)
+            return eventOffset;
         else
             return (target * eventOffset) / (eventOffset + target);
     }

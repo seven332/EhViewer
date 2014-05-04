@@ -604,19 +604,7 @@ public class MangaDetailActivity extends Activity {
         rateButton = (Button)findViewById(R.id.detail_do_rate);
         
         // TODO
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window win = getWindow();
-            WindowManager.LayoutParams winParams = win.getAttributes();
-            final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
-            winParams.flags |= bits;
-            win.setAttributes(winParams);
-        }
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintResource(android.R.color.holo_blue_dark);
-        tintManager.setNavigationBarTintEnabled(true);
-        tintManager.setNavigationBarAlpha(0.0f);
+        Ui.translucent(this);
         
         setTitle(String.valueOf(mangaDetail.gid));
         

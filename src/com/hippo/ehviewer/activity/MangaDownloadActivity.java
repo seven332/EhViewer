@@ -80,7 +80,7 @@ public class MangaDownloadActivity extends Activity {
         
         Intent intent = getIntent();
         String title = intent.getStringExtra(KEY_TITLE);
-        String gid = intent.getStringExtra(KEY_GID);
+        int gid = intent.getIntExtra(KEY_GID, 0);
         int size = intent.getIntExtra(KEY_SIZE, 1);
         int endIndex = intent.getIntExtra(KEY_END_INDEX, 0);
         GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);

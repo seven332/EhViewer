@@ -18,6 +18,7 @@ import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.preference.AutoListPreference;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -38,7 +39,10 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.support.v4.util.LruCache;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.WebView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 
@@ -72,9 +76,6 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (Build.VERSION.SDK_INT >= 19) {
-            BeautifyScreen.fixColour(this);
-        }
     }
     
     @Override
@@ -97,13 +98,27 @@ public class SettingsActivity extends PreferenceActivity {
             setRequestedOrientation(screenOri);
         
         mContext = getApplicationContext();
-
-        // Colourfy Screen
-        if (Build.VERSION.SDK_INT >= 19) {
-            BeautifyScreen.ColourfyScreen(this);
-            this.getListView().setFitsSystemWindows(true);
+        
+        // Tint
+        ListView listView = getListView();
+        listView.setFitsSystemWindows(true);
+        listView.setClipToPadding(false);
+        // TODO
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window win = getWindow();
+            WindowManager.LayoutParams winParams = win.getAttributes();
+            final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
+            winParams.flags |= bits;
+            win.setAttributes(winParams);
         }
-
+        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+        tintManager.setStatusBarTintEnabled(true);
+        tintManager.setStatusBarTintResource(android.R.color.holo_blue_dark);
+        tintManager.setNavigationBarTintEnabled(true);
+        tintManager.setNavigationBarAlpha(0.0f);
+        
+        
         // Set PreferenceActivity
         PreferenceScreen screen = getPreferenceScreen();
 
