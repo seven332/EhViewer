@@ -70,7 +70,7 @@
         <activity
             android:name=".activity.FavouriteActivity"
             android:label="@string/favourite"
-            android:icon="@drawable/ic_action_favourite"
+            android:icon="@drawable/ic_action_favorite"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.ListActivity" >

@@ -2,9 +2,9 @@
     android:id="@android:id/text1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textSize="@dimen/title_large"
+    android:textSize="@dimen/title_medium"
     android:gravity="center_vertical"
-    android:paddingLeft="10dp"
-    android:minHeight="56dp"
+    android:paddingLeft="18dp"
+    android:minHeight="48dp"
     android:textColor="@android:color/white"
     android:singleLine="true" />

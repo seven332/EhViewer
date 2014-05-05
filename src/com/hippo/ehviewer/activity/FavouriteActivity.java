@@ -24,7 +24,7 @@ import android.widget.Toast;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
-import com.hippo.ehviewer.ImageLoadManager;
+import com.hippo.ehviewer.ImageGeterManager;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
@@ -49,7 +49,7 @@ public class FavouriteActivity extends Activity{
     private List<GalleryInfo> mFavouriteLmd;
     private int longClickItemIndex;
     
-    private ImageLoadManager mImageLoadManager;
+    private ImageGeterManager mImageGeterManager;
     
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
@@ -121,7 +121,8 @@ public class FavouriteActivity extends Activity{
             LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
             if (!String.valueOf(lmd.gid).equals(thumb.getKey())) {
                 thumb.setLoadInfo(lmd.thumb, String.valueOf(lmd.gid));
-                mImageLoadManager.add(thumb, true);
+                mImageGeterManager.add(lmd.thumb, String.valueOf(lmd.gid),
+                        new LoadImageView.SimpleImageGetListener(thumb), true);
 
                 // Set manga name
                 TextView name = (TextView) convertView.findViewById(R.id.name);
@@ -133,8 +134,11 @@ public class FavouriteActivity extends Activity{
                 
                 // Set category
                 TextView category = (TextView) convertView.findViewById(R.id.category);
-                category.setText(Ui.getCategoryText(lmd.category));
-                category.setBackgroundColor(Ui.getCategoryColor(lmd.category));
+                String newText = Ui.getCategoryText(lmd.category);
+                if (!newText.equals(category.getText())) {
+                    category.setText(newText);
+                    category.setBackgroundColor(Ui.getCategoryColor(lmd.category));
+                }
                 
                 // Add star
                 LinearLayout rate = (LinearLayout) convertView
@@ -175,6 +179,7 @@ public class FavouriteActivity extends Activity{
         
         mAppContext = (AppContext)getApplication();
         mData = mAppContext.getData();
+        mImageGeterManager = mAppContext.getImageGeterManager();
         
         int screenOri = Config.getScreenOriMode();
         if (screenOri != getRequestedOrientation())
@@ -185,8 +190,6 @@ public class FavouriteActivity extends Activity{
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
         
         longClickDialog = setLongClickDialog();
-        
-        mImageLoadManager = new ImageLoadManager(getApplicationContext(), Cache.memoryCache, Cache.cpCache);
         
         getActionBar().setDisplayHomeAsUpEnabled(true);
         

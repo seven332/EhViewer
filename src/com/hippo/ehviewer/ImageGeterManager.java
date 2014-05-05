@@ -3,6 +3,7 @@ package com.hippo.ehviewer;
 import java.util.Stack;
 
 import com.hippo.ehviewer.network.HttpHelper;
+import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.widget.LoadImageView;
@@ -12,22 +13,27 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.util.LruCache;
+
 import com.hippo.ehviewer.util.Log;
 
-public class ImageLoadManager {
-    private static final String TAG = "ImageLoadManager";
+public class ImageGeterManager {
+    private static final String TAG = "ImageGeterManager";
     
     private static final int WAIT = 0x0;
     private static final int TOUCH = 0x1;
     private static final int CONTEXT = 0x2;
     
     private class LoadTask {
-        public LoadImageView liv;
+        public String url;
+        public String key;
+        public OnGetImageListener listener;
         public boolean download;
         public Bitmap bitmap;
         
-        public LoadTask(LoadImageView liv, boolean download) {
-            this.liv = liv;
+        public LoadTask(String url, String key, OnGetImageListener listener, boolean download) {
+            this.url = url;
+            this.key = key;
+            this.listener = listener;
             this.download = download;
         }
     }
@@ -40,30 +46,25 @@ public class ImageLoadManager {
     private DiskCache mDiskCache;
     
     private LoadTask curLoadTask;
-    private final LoadTask emptyLoadTask = new LoadTask(null, false);
+    private final LoadTask emptyLoadTask = new LoadTask(null, null, null, false);
     
-    private static final Handler loadImageHandler = 
+    private static final Handler mHandler = 
             new Handler() {
                 @Override
                 public void handleMessage(Message msg) {
                     LoadTask task = (LoadTask)msg.obj;
                     switch (msg.what) {
-                    case WAIT:
-                        //task.liv.setWaitImage();
+                    case Constants.TRUE:
+                        task.listener.onGetImageSuccess(task.key, task.bitmap);
                         break;
-                        
-                    case TOUCH:
-                        task.liv.setTouchImage();
-                        break;
-                        
-                    case CONTEXT:
-                        task.liv.setContextImage(task.bitmap);
+                    case Constants.FALSE:
+                        task.listener.onGetImageFail(task.key);
                         break;
                     }
                 }
             };
     
-    public ImageLoadManager(Context context, LruCache<String, Bitmap> memoryCache,
+    public ImageGeterManager(Context context, LruCache<String, Bitmap> memoryCache,
             DiskCache diskCache) {
         mLoadCacheTask = new Stack<LoadTask>();
         mImageDownloadTask = new ImageDownloadManager();
@@ -73,9 +74,8 @@ public class ImageLoadManager {
         mDiskCache = diskCache;
     }
     
-    public synchronized void add(LoadImageView liv, boolean download) {
-        liv.setState(LoadImageView.LOADING);
-        mLoadCacheTask.push(new LoadTask(liv, download));
+    public synchronized void add(String url, String key, OnGetImageListener listener, boolean download) {
+        mLoadCacheTask.push(new LoadTask(url, key, listener, download));
         if (curLoadTask == null) {
             curLoadTask = emptyLoadTask;
             new Thread(new LoadFromCacheTask()).start();
@@ -86,39 +86,41 @@ public class ImageLoadManager {
         @Override
         public void run() {
             while (true) {
-                synchronized (ImageLoadManager.this) {
+                synchronized (ImageGeterManager.this) {
                     if (mLoadCacheTask.isEmpty()) {
                         curLoadTask = null;
                         break;
                     }
                     curLoadTask = mLoadCacheTask.pop();
                 }
-                LoadImageView liv = curLoadTask.liv;
-                String key = liv.getKey();
-                Bitmap bitmap = null;
-                if (mMemoryCache == null || (bitmap = mMemoryCache.get(key)) == null) {
+                
+                // Continue if do not need any more
+                if (!curLoadTask.listener.onGetImage(curLoadTask.key))
+                    continue;
+                
+                String key = curLoadTask.key;
+                if (mMemoryCache == null || (curLoadTask.bitmap = mMemoryCache.get(key)) == null) {
                     if (mDiskCache != null
-                            && (bitmap = (Bitmap)mDiskCache.get(key, Util.BITMAP)) != null
+                            && (curLoadTask.bitmap = (Bitmap)mDiskCache.get(key, Util.BITMAP)) != null
                             && mMemoryCache != null)
-                        mMemoryCache.put(key, bitmap);
+                        mMemoryCache.put(key, curLoadTask.bitmap);
                 }
                 
-                Message msg = new Message();
-                msg.obj = curLoadTask;
-                if (bitmap == null) { // Load from cache error
-                    if (curLoadTask.download) {
+                if (curLoadTask.bitmap == null) {
+                    if (curLoadTask.download)
                         mImageDownloadTask.add(curLoadTask);
-                    }
                     else {
-                        liv.setState(LoadImageView.FAIL);
+                        Message msg = new Message();
+                        msg.what = Constants.FALSE;
+                        msg.obj = curLoadTask;
+                        mHandler.sendMessage(msg);
                     }
-                    msg.what = WAIT;
                 } else {
-                    curLoadTask.bitmap = bitmap;
-                    liv.setState(LoadImageView.LOADED);
-                    msg.what = CONTEXT;
+                    Message msg = new Message();
+                    msg.what = Constants.TRUE;
+                    msg.obj = curLoadTask;
+                    mHandler.sendMessage(msg);
                 }
-                loadImageHandler.sendMessage(msg);
             }
         }
     }
@@ -157,25 +159,37 @@ public class ImageLoadManager {
                         }
                         loadTask = mDownloadTask.pop();
                     }
-                    LoadImageView liv = loadTask.liv;
-                    Bitmap bitmap = httpHelper.getImage(liv.getUrl(),
-                            liv.getKey(), mMemoryCache, mDiskCache, true);
+                    
+                    // Continue if do not need any more
+                    if (!loadTask.listener.onGetImage(loadTask.key))
+                        continue;
+                    
+                    loadTask.bitmap = httpHelper.getImage(loadTask.url,
+                            loadTask.key, mMemoryCache, mDiskCache, true);
+                    
+                    // Continue if do not need any more
+                    if (!loadTask.listener.onGetImage(loadTask.key))
+                        continue;
                     
                     Message msg = new Message();
                     msg.obj = loadTask;
-                    if (bitmap == null) {
-                        Log.d(TAG, httpHelper.getEMsg());
-                        liv.setState(LoadImageView.FAIL);
-                        liv.setOnClickListener(ImageLoadManager.this);
-                        msg.what = TOUCH;
+                    if (loadTask.bitmap == null) {
+                        msg.what = Constants.FALSE;
                     } else {
-                        loadTask.bitmap = bitmap;
-                        liv.setState(LoadImageView.LOADED);
-                        msg.what = CONTEXT;
+                        msg.what = Constants.TRUE;
                     }
-                    loadImageHandler.sendMessage(msg);
+                    mHandler.sendMessage(msg);
                 }
             }
         }
+    }
+    
+    public interface OnGetImageListener {
+        /**
+         * @return False if you wanna stop get
+         */
+        boolean onGetImage(String key);
+        void onGetImageSuccess(String key, Bitmap bmp);
+        void onGetImageFail(String key);
     }
 }

@@ -8,6 +8,13 @@
         <item>@string/download</item>
     </string-array>
     
+    <integer-array name="list_list_icon">
+        <item>@drawable/ic_action_home</item>
+        <item>@drawable/ic_action_home</item>
+        <item>@drawable/ic_action_home</item>
+        <item>@drawable/ic_action_home</item>
+    </integer-array>
+    
     <string-array name="min_rating">
         <item>@string/star_2</item>
         <item>@string/star_3</item>

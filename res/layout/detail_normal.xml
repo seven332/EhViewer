@@ -73,10 +73,10 @@
         
     </RelativeLayout>
     
-    <ImageView
+    <View
         android:layout_width="fill_parent"
         android:layout_height="1.0dp"
-        android:src="@color/detail_divider" />
+        android:background="@color/detail_divider" />
 
     <LinearLayout
         android:id="@+id/tags_layout"
@@ -86,10 +86,10 @@
         android:layout_margin="2.0dp" >
     </LinearLayout>
     
-    <ImageView
+    <View
         android:layout_width="fill_parent"
         android:layout_height="1.0dp"
-        android:src="@color/detail_divider" />
+        android:background="@color/detail_divider" />
     
     <include
         layout="@layout/page_list"

@@ -1,6 +1,6 @@
 package com.hippo.ehviewer.widget;
 
-import com.hippo.ehviewer.ImageLoadManager;
+import com.hippo.ehviewer.ImageGeterManager;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Ui;
 
@@ -35,6 +35,8 @@ public class LoadImageView extends ImageView {
     private String mUrl;
     private String mKey;
     
+    private static ImageGeterManager mImageGeterManager;
+    
     public LoadImageView(Context context) {
         super(context);
     }
@@ -56,8 +58,16 @@ public class LoadImageView extends ImageView {
             setClickable(false);
     }
     
-    public void setOnClickListener(ImageLoadManager ilm) {
-        setOnClickListener(new OnClickListener(ilm));
+    public void setOnClick() {
+        setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setClickable(false);
+                setImageDrawable(null);
+                mImageGeterManager.add(mUrl, mKey,
+                        new SimpleImageGetListener(LoadImageView.this), true);
+            }
+        });
     }
     
     public String getUrl() {
@@ -105,16 +115,36 @@ public class LoadImageView extends ImageView {
         }
     }
     
-    class OnClickListener implements View.OnClickListener {
-        private ImageLoadManager mImageLoadManager;
-        public OnClickListener(ImageLoadManager imageLoadManager) {
-            mImageLoadManager = imageLoadManager;
+    public static void setImageGeterManager(ImageGeterManager i) {
+        mImageGeterManager = i;
+    }
+    
+    public static class SimpleImageGetListener
+            implements ImageGeterManager.OnGetImageListener {
+        
+        private LoadImageView mLiv;
+        
+        public SimpleImageGetListener(LoadImageView liv) {
+            mLiv = liv;
         }
         
         @Override
-        public void onClick(View v) {
-            setImageDrawable(null);
-            mImageLoadManager.add(LoadImageView.this, true);
+        public boolean onGetImage(String key) {
+            return key.equals(mLiv.getKey());
+        }
+        @Override
+        public void onGetImageFail(String key) {
+            if (key.equals(mLiv.getKey())) {
+                mLiv.setTouchImage();
+                mLiv.setOnClick();
+            }
+        }
+        @Override
+        public void onGetImageSuccess(String key, Bitmap bmp) {
+            if (key.equals(mLiv.getKey())) {
+                mLiv.setImageDrawable(null);
+                mLiv.setContextImage(bmp);
+            }
         }
     }
 }

@@ -6,13 +6,6 @@
         android:id="@+id/list_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
-
-    <!-- 
-            android:divider="@null"
-        android:listSelector="@android:color/transparent"
-        android:cacheColorHint="@color/main_background"
-        android:clipToPadding="false"
-        android:fitsSystemWindows="true"  -->
     
     <ProgressBar
         android:id="@+id/list_wait_first"

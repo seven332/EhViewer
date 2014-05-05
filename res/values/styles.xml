@@ -13,7 +13,7 @@
     </style>
     
     <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
-        <item name="android:src">@drawable/ic_action_core_overflow</item>
+        <item name="android:src">@drawable/ic_action_core_overflow_selector</item>
     </style>
     
     <style name="PopupMenu" parent="@android:style/Widget.Holo.Light.ListPopupWindow">

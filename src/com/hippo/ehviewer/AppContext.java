@@ -13,6 +13,7 @@ import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.widget.LoadImageView;
 
 import android.app.Application;
 
@@ -25,7 +26,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
     
     private Data mData;
     private EhClient mEhClient;
-    
+    private ImageGeterManager mImageGeterManager;
     private ThreadPool mNetworkThreadPool;
     
     @Override
@@ -45,6 +46,8 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         
         mData = new Data(this);
         HttpHelper.setCookieHelper(this);
+        mImageGeterManager = new ImageGeterManager(this, Cache.memoryCache, Cache.cpCache);
+        LoadImageView.setImageGeterManager(mImageGeterManager);
         
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
@@ -72,6 +75,10 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
     
     public Data getData() {
         return mData;
+    }
+    
+    public ImageGeterManager getImageGeterManager() {
+        return mImageGeterManager;
     }
     
     @Override

@@ -28,7 +28,9 @@ public class TagsAdapter extends ArrayAdapter<String> {
     int lastId = -1;
 
     HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
-
+    
+    private OnDataSetChangedListener mListener;
+    
     public TagsAdapter(Context context, int textViewResourceId, List<String> objects) {
         super(context, textViewResourceId, objects);
         for (int i = 0; i < objects.size(); ++i) {
@@ -62,5 +64,20 @@ public class TagsAdapter extends ArrayAdapter<String> {
     
     public void addId(String item) {
         mIdMap.put(item, ++lastId);
+    }
+    
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+        if (mListener != null)
+            mListener.OnDataSetChanged();
+    }
+    
+    public void setOnDataSetChangedListener(OnDataSetChangedListener l) {
+        mListener = l;
+    }
+    
+    public interface OnDataSetChangedListener {
+        public void OnDataSetChanged();
     }
 }

@@ -1,5 +1,5 @@
 <resources>
     
-    <dimen name="menu_offset">400dp</dimen>
+    <dimen name="menu_offset">240dp</dimen>
 
 </resources>

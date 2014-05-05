@@ -3,8 +3,11 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     
-    <dimen name="shadow_width">15dp</dimen>
-    <dimen name="slidingmenu_offset">200dp</dimen>
+    <dimen name="shadow_width">12dp</dimen>
+    <dimen name="menu_offset">240dp</dimen>
+    
+    <dimen name="title_large">20.0sp</dimen>
+    <dimen name="title_medium">18.0sp</dimen>
     
     <dimen name="text_xlarge">18.0sp</dimen>
     <dimen name="text_large">16.0sp</dimen>
