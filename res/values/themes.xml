@@ -15,6 +15,9 @@
         
         <!-- List attributes -->
         <!-- item name="@android:listDivider">@drawable/list_divider</item -->
+        
+        <!-- No action bar shadow -->
+        <item name="android:windowContentOverlay">@null</item>
     </style>
     
     <style name="AppTheme.NoActionBar">

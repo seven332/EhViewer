@@ -49,7 +49,7 @@ public class ImageLoadManager {
                     LoadTask task = (LoadTask)msg.obj;
                     switch (msg.what) {
                     case WAIT:
-                        task.liv.setWaitImage();
+                        //task.liv.setWaitImage();
                         break;
                         
                     case TOUCH:

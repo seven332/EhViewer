@@ -1,11 +1,29 @@
-<com.hippo.ehviewer.view.TagListView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/list_menu_list"
-    android:layout_width="240dp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="start"
-    android:clickable="true"
-    android:background="@android:color/holo_blue_dark"
-    android:choiceMode="singleChoice"
-    android:divider="@android:color/transparent"
-    android:dividerHeight="0dp"
-    android:scrollbarThumbVertical="@drawable/scrollbar_white" />
+    android:background="@color/main_background"
+    android:orientation="vertical" >
+    
+    
+    
+    <ListView
+        android:id="@+id/list_menu_item_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice"
+        android:clickable="true"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:scrollbarThumbVertical="@drawable/scrollbar_blue" >
+        
+    </ListView>
+    
+    <com.hippo.ehviewer.view.TagListView
+        android:id="@+id/list_menu_tag_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice"
+        android:clickable="true"
+        android:scrollbarThumbVertical="@drawable/scrollbar_white" />
+
+</LinearLayout>

@@ -725,18 +725,18 @@ public class EhClient {
             if (pageContent != null) {
                 
                 
-                ParserDetail parser = new ParserDetail();
-                int mode = ParserDetail.DETAIL | ParserDetail.TAG
-                        | ParserDetail.PREVIEW_INFO | ParserDetail.PREVIEW;
+                DetailParser parser = new DetailParser();
+                int mode = DetailParser.DETAIL | DetailParser.TAG
+                        | DetailParser.PREVIEW_INFO | DetailParser.PREVIEW;
                 parser.setMode(mode);
                 int result = parser.parser(pageContent);
-                if (result == ParserDetail.OFFENSIVE) {
+                if (result == DetailParser.OFFENSIVE) {
                     ok = true;
                     md.firstPage = "offensive";
-                } else if (result == ParserDetail.PINING) {
+                } else if (result == DetailParser.PINING) {
                     ok = true;
                     md.firstPage = "pining";
-                } else if ((result & (ParserDetail.DETAIL | ParserDetail.PREVIEW_INFO)) != 0) {
+                } else if ((result & (DetailParser.DETAIL | DetailParser.PREVIEW_INFO)) != 0) {
                     ok = true;
                     md.category = parser.category;
                     md.uploader = parser.uploader;
@@ -1509,7 +1509,7 @@ public class EhClient {
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
                     public void onSuccess(String pageContext) {
-                        ParserRate parser = new ParserRate();
+                        RateParser parser = new RateParser();
                         if (parser.parser(pageContext)) {
                             listener.onSuccess(parser.mRatingAvg, parser.mRatingCnt);
                         } else {
@@ -1525,6 +1525,9 @@ public class EhClient {
             }
         }).start();
     }
+    
+    
+    
     
     
     /*

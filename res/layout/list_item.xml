@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/list_thumb_height"
     android:background="@drawable/list_item_bg" >
 
     <com.hippo.ehviewer.widget.LoadImageView
         android:id="@+id/cover"
-        android:layout_width="67.0dp"
-        android:layout_height="100.0dp"
+        android:layout_width="@dimen/list_thumb_width"
+        android:layout_height="@dimen/list_thumb_height"
         android:layout_gravity="center"
         android:scaleType="fitCenter" />
 

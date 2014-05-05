@@ -12,7 +12,6 @@ import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.ImageLoadManager;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
@@ -68,6 +67,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -110,7 +110,7 @@ import android.widget.Toast;
  * 
  * @author Hippo
  */
-public class MangaListActivity extends Activity {
+public class MangaListActivity extends SlidingActivity {
     private static String TAG = "MangaListActivity";
     
     private static final int REFRESH = 0x0;
@@ -124,7 +124,8 @@ public class MangaListActivity extends Activity {
     
     private SlidingMenu mSlidingMenu;
     
-    private TagListView listMenu;
+    private ListView itemListMenu;
+    private TagListView tagListMenu;
     private RelativeLayout loginMenu;
     private ListView isExhentaiList;
     private HfListView mHlv;
@@ -147,7 +148,6 @@ public class MangaListActivity extends Activity {
     private ListUrls lus;
     private GmlAdapter gmlAdapter;
     private ArrayList<String> listMenuTitle = new ArrayList<String>();
-    private int mStableItemCount;
     
     private ArrayList<GalleryInfo> lmdArray = new ArrayList<GalleryInfo>();
     
@@ -258,23 +258,25 @@ public class MangaListActivity extends Activity {
                 .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        
-                        // TODO
-                        //showContent();
-                        
-                        
+                        ListUrls backup = lus;
                         lus = getLus(filterDialog);
-                        String search = lus.getSearch();
-                        String t = null;
-                        if (search == null || search.isEmpty())
-                            t = getString(android.R.string.search_go);
-                        else
-                            t = getString(android.R.string.search_go) + " " + search;
-                        
-                        mTitle = t;
-                        setTitle(mTitle);
-                        unTriggerGetPage(0);
+                        if (refresh()) {
+                            ((AlertButton)v).dialog.dismiss();
+                            showContent();
+                            
+                            String search = lus.getSearch();
+                            String t = null;
+                            if (search == null || search.isEmpty())
+                                t = getString(android.R.string.search_go);
+                            else
+                                t = getString(android.R.string.search_go) + " " + search;
+                            
+                            mTitle = t;
+                            setTitle(mTitle);
+                        } else {
+                            // TODO add tips
+                            lus = backup;
+                        }
                     }
                 }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
                     @Override
@@ -471,8 +473,17 @@ public class MangaListActivity extends Activity {
                                     freshButton.setVisibility(View.GONE);
                                     noFoundView.setVisibility(View.GONE);
                                     sadpanda.setVisibility(View.GONE);
+                                    mHlv.setRefreshing(true);
                                     
-                                    unTriggerGetPage(targetPage, true, true);
+                                    if (targetPage == firstPage - 1)
+                                        mGetMode = PRE_PAGE;
+                                    else if (targetPage == lastPage + 1)
+                                        mGetMode = NEXT_PAGE;
+                                    else
+                                        mGetMode = SOMEWHERE;
+                                    mGetMode |= SET_POSITION;
+                                    
+                                    getList();
                                 } else {
                                     Toast.makeText(MangaListActivity.this,
                                             getString(R.string.toast_invalid_page),
@@ -545,7 +556,7 @@ public class MangaListActivity extends Activity {
     private AlertDialog createModifyTagDialog(final int position) {
         LayoutInflater inflater = this.getLayoutInflater();
         final View view = inflater.inflate(R.layout.filter, null);
-        ListUrls listUrls = mData.getTag(position - mStableItemCount);
+        ListUrls listUrls = mData.getTag(position);
         setFilterView(view, listUrls);
         final View advance = view.findViewById(R.id.filter_advance);
         CheckBox cb = (CheckBox)view.findViewById(R.id.checkbox_advance);
@@ -571,13 +582,13 @@ public class MangaListActivity extends Activity {
                         ListUrls listUrls = getLus(view);
                         if (newTagName != null) {
                             tagsAdapter.set(listMenuTitle.get(position), newTagName);
-                            mData.setTag(position - mStableItemCount, new Tag(newTagName, listUrls));
+                            mData.setTag(position, new Tag(newTagName, listUrls));
                             listMenuTitle.set(position, newTagName);
                             tagsAdapter.notifyDataSetChanged();
                             
                             newTagName = null;
                         } else
-                            mData.setTag(position - mStableItemCount, new Tag(listMenuTitle.get(position), listUrls));
+                            mData.setTag(position, new Tag(listMenuTitle.get(position), listUrls));
                     }
                 }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
                     @Override
@@ -879,14 +890,17 @@ public class MangaListActivity extends Activity {
             case REFRESH:
                 mHlv.setVisibility(View.GONE);
                 freshButton.setVisibility(View.VISIBLE);
+                
+                Log.d(TAG, "error");
+                
                 Toast.makeText(MangaListActivity.this,
                         eMsg, Toast.LENGTH_SHORT)
                         .show();
                 lmdArray.clear();
                 gmlAdapter.notifyDataSetChanged();
                 break;
-                
             default:
+                Log.d(TAG, "error " + mGetMode);
                 freshButton.setVisibility(View.GONE);
                 Toast.makeText(
                         MangaListActivity.this,
@@ -904,24 +918,6 @@ public class MangaListActivity extends Activity {
         public void onScroll(AbsListView view, int firstVisibleItem,
                 int visibleItemCount, int totalItemCount) {
             mHlv.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
-            
-            /*
-            // First time when list is created
-            if (mListFirst && mLoadListOver) {
-                // load image
-                int getChildCount = view.getChildCount();
-                for (int i = 0; i < getChildCount; i++) {
-                    LoadImageView liv = (LoadImageView)((ViewGroup)
-                            view.getChildAt(i)).findViewById(R.id.cover);
-                    if (liv == null)
-                        continue;
-                    int status = liv.getState();
-                    if (status != LoadImageView.LOADING && status != LoadImageView.LOADED)
-                        mImageLoadManager.add(liv, true);
-                }
-                mListFirst = false;
-            }
-            */
 
             if (lus == null || visibleItemCount < 2)
                 return;
@@ -943,25 +939,7 @@ public class MangaListActivity extends Activity {
         }
 
         @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
-            /*
-            
-            // When srcoll over load image in view
-            int getChildCount;
-            if (scrollState == SCROLL_STATE_IDLE
-                    && (getChildCount = view.getChildCount()) != 0) {
-                for (int i = 0; i < getChildCount; i++) {
-                    View v = ((ViewGroup) view.getChildAt(i)).getChildAt(0);
-                    if (v instanceof LoadImageView) {
-                        LoadImageView liv = (LoadImageView)v;
-                        int status = liv.getState();
-                        if (status != LoadImageView.LOADING && status != LoadImageView.LOADED)
-                            mImageLoadManager.add(liv, true);
-                    }
-                }
-            }
-            */
-        }
+        public void onScrollStateChanged(AbsListView view, int scrollState) {}
     }
 
     private class GmlAdapter extends BaseAdapter {
@@ -1053,17 +1031,17 @@ public class MangaListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list);
         
-        /*
-        
         setBehindContentView(R.layout.list_menu_list);
         setSlidingActionBarEnabled(false);
         mSlidingMenu = getSlidingMenu();
         mSlidingMenu.setMode(SlidingMenu.LEFT_RIGHT);
         mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
         mSlidingMenu.setSecondaryMenu(R.layout.list_menu_login);
+        
         mSlidingMenu.setBehindWidth(Ui.dp2pix(240));
-        //mSlidingMenu.setShadowWidth(R.dimen.shadow_width);
-        //mSlidingMenu.setShadowDrawable(R.drawable.shadow_left);
+        mSlidingMenu.setShadowDrawable(R.drawable.shadow);
+        mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
+        
         //mSlidingMenu.setSecondaryShadowDrawable(R.drawable.shadow_right);
         mSlidingMenu.setOnOpenedListener(new SlidingMenu.OnOpenedListener() {
             @Override
@@ -1080,7 +1058,7 @@ public class MangaListActivity extends Activity {
                 invalidateOptionsMenu();
             }
         });
-        */
+        
         mAppContext = (AppContext)getApplication();
         mData = mAppContext.getData();
         mEhClient = mAppContext.getEhClient();
@@ -1113,7 +1091,8 @@ public class MangaListActivity extends Activity {
         
         
         // Get View
-        listMenu = (TagListView) findViewById(R.id.list_menu_list);
+        itemListMenu = (ListView) findViewById(R.id.list_menu_item_list);
+        tagListMenu = (TagListView) findViewById(R.id.list_menu_tag_list);
         loginMenu = (RelativeLayout)findViewById(R.id.list_menu_login);
         isExhentaiList = (ListView)findViewById(R.id.is_exhentai);
         mHlv = (HfListView)findViewById(R.id.list_list);
@@ -1137,9 +1116,47 @@ public class MangaListActivity extends Activity {
         
         // leftDrawer
         String[] menuTitles = getResources().getStringArray(R.array.list_list_title);
-        mStableItemCount = menuTitles.length;
-        for (int i = 0; i < menuTitles.length; i++)
-            listMenuTitle.add(menuTitles[i]);
+        itemListMenu.setAdapter(new ArrayAdapter<String>(this, R.layout.menu_item, menuTitles));
+        itemListMenu.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                    int position, long id) {
+                Intent intent;
+                switch (position) {
+                case 0: // Home page
+                    ListUrls backup = lus;
+                    lus = new ListUrls(ListUrls.ALL_TYPE, null, 0);
+                    if (lus != null && refresh()) {
+                        mTitle = listMenuTitle.get(position);
+                        setTitle(mTitle);
+                        
+                        showContent();
+                    } else {
+                        lus = backup;
+                    }
+                    break;
+                    
+                case 1: // Favourite
+                    intent = new Intent(MangaListActivity.this,
+                            FavouriteActivity.class);
+                    startActivity(intent);
+                    showContent();
+                    break;
+                    
+                case 2:
+                    filterDialog.show();
+                    break;
+                    
+                case 3:
+                    intent = new Intent(MangaListActivity.this,
+                            DownloadActivity.class);
+                    startActivity(intent);
+                    showContent();
+                    break;
+                }
+            }
+        });
+        
         
         List<String> keys = mData.getAllTagNames();
         
@@ -1147,49 +1164,31 @@ public class MangaListActivity extends Activity {
             listMenuTitle.add(keys.get(i));
         tagsAdapter = new TagsAdapter(this, R.layout.menu_item, listMenuTitle);
         
-        /*
-        listMenu.setAdapter(tagsAdapter);
-        listMenu.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        listMenu.setStableItemCount(mStableItemCount);
-        listMenu.setOnItemClickListener(new OnItemClickListener() {
+        tagListMenu.setClipToPadding(false);
+        tagListMenu.setAdapter(tagsAdapter);
+        tagListMenu.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        tagListMenu.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
-                if (position == 0) { // Home page
-                    if (refresh(new ListUrls(ListUrls.ALL_TYPE, null, 0), listMenuTitle.get(position)))
-                     // TODO
-                        //showContent();
-                        ;
-                } else if (position == 1) { // Favourite
-                    Intent intent = new Intent(MangaListActivity.this,
-                            FavouriteActivity.class);
-                    startActivity(intent);
-                 // TODO
-                    //showContent();
-                } else if (position == 2) { // filter
-                    filterDialog.show();
-                } else if (position == 3) { // Download
-                    Intent intent = new Intent(MangaListActivity.this,
-                            DownloadActivity.class);
-                    startActivity(intent);
-                 // TODO
-                    //showContent();
-                } else if (position >= mStableItemCount){
-                    ListUrls listUrls = mData.getTag(position - mStableItemCount);
-                    if (listUrls != null && refresh(listUrls, listMenuTitle.get(position)))
-                     // TODO
-                        //showContent();
-                        ;
+                ListUrls backup = lus;
+                lus = mData.getTag(position);
+                if (lus != null && refresh()) {
+                    mTitle = listMenuTitle.get(position);
+                    setTitle(mTitle);
+                    showContent();
+                } else {
+                    lus = backup;
                 }
             }
         });
-        listMenu.setOnModifyListener(new TagListView.OnModifyListener(){
+        tagListMenu.setOnModifyListener(new TagListView.OnModifyListener(){
             @Override
             public void onModify(int position) {
                 createModifyTagDialog(position).show();
             }
         });
-        listMenu.setOnSwapListener(new TagListView.OnSwapListener() {
+        tagListMenu.setOnSwapListener(new TagListView.OnSwapListener() {
             @Override
             public void onSwap(int positionOne, int positionTwo) {
                 String temp = listMenuTitle.get(positionOne);
@@ -1197,20 +1196,19 @@ public class MangaListActivity extends Activity {
                 listMenuTitle.set(positionTwo, temp);
                 tagsAdapter.notifyDataSetChanged();
                 
-                mData.swapTag(positionOne - mStableItemCount, positionTwo - mStableItemCount);
+                mData.swapTag(positionOne, positionTwo);
             }
         });
-        listMenu.setOnDeleteListener(new TagListView.OnDeleteListener() {
+        tagListMenu.setOnDeleteListener(new TagListView.OnDeleteListener() {
             @Override
             public void onDelete(int position) {
                 String removeItem = listMenuTitle.remove(position);
                 tagsAdapter.remove(removeItem);
                 tagsAdapter.notifyDataSetChanged();
                 
-                mData.deleteTag(position - mStableItemCount);
+                mData.deleteTag(position);
             }
         });
-        */
         
         // is Exhentai
         final String[] isExhentaiListTitle = getResources().getStringArray(R.array.is_exhentai);
@@ -1314,6 +1312,9 @@ public class MangaListActivity extends Activity {
                 mFswPaddingTop = paddingTop;
                 mFswPaddingRight = paddingRight;
                 mFswPaddingBottom = paddingBottom;
+                
+                itemListMenu.setPadding(itemListMenu.getPaddingLeft(), paddingTop,
+                        itemListMenu.getPaddingRight(), itemListMenu.getPaddingBottom());
             }
         });
         mHlv.setFooterString(getString(R.string.footer_loading),
@@ -1367,7 +1368,7 @@ public class MangaListActivity extends Activity {
         // get MangeList
         mTitle = listMenuTitle.get(0);
         setTitle(String.format(getString(R.string.list_title), mTitle, visiblePage + 1));
-        unTriggerGetPage(0, false, false);
+        refresh(false);
     }
     
     @Override
@@ -1394,10 +1395,14 @@ public class MangaListActivity extends Activity {
                 else
                     t = getString(android.R.string.search_go) + " " + query;
                 
-                mTitle = t;
-                setTitle(mTitle);
+                ListUrls backup = lus;
                 lus = new ListUrls(ListUrls.ALL_TYPE, query);
-                unTriggerGetPage(0);
+                if (refresh()) {
+                    mTitle = t;
+                    setTitle(mTitle);
+                } else {
+                    lus = backup;
+                }
                 
                 return true;
             }
@@ -1469,7 +1474,7 @@ public class MangaListActivity extends Activity {
                 //showMenu();
             return true;
         case R.id.action_refresh: // TODO 点击刷新，pullviewheader 不会自动出来
-            unTriggerGetPage(0);
+            refresh();
             return true;
         case R.id.action_jump:
             if (!mHlv.isAnyRefreshing() && isGetOk())
@@ -1487,6 +1492,10 @@ public class MangaListActivity extends Activity {
     
     public boolean isGetOk() {
         return mHlv.getVisibility() == View.VISIBLE;
+    }
+    
+    public void setTitle() {
+        setTitle(String.format(getString(R.string.list_title), mTitle, visiblePage + 1));
     }
     
     @Override
@@ -1619,32 +1628,26 @@ public class MangaListActivity extends Activity {
                 new MangaListGetListener());
     }
     
-    public void unTriggerGetPage(int page) {
-        unTriggerGetPage(page, false, true);
+    public boolean refresh() {
+        return refresh(true);
     }
     
-    public void unTriggerGetPage(int page, boolean isSetPosition, boolean isShowProgress) {
+    public boolean refresh(boolean isShowProgress) {
         if (!mHlv.isAnyRefreshing()) {
-            lus.setPage(page);
-            
-            if (isShowProgress) {
+            lus.setPage(0);
+            if (isShowProgress)
                 mHlv.setRefreshing(true);
-            }
-            
-            if (page == firstPage - 1)
-                mGetMode = PRE_PAGE;
-            else if (page == lastPage + 1)
-                mGetMode = NEXT_PAGE;
-            else
-                mGetMode = SOMEWHERE;
-            if (isSetPosition)
-                mGetMode |= SET_POSITION;
+            mGetMode = REFRESH;
             getList();
+            return true;
         }
+        return false;
     }
     
     public void buttonRefresh(View arg0) {
-        unTriggerGetPage(0);
+        freshButton.setVisibility(View.GONE);
+        waitView.setVisibility(View.VISIBLE);
+        refresh(false);
     }
 
     public void buttonLogout(View paramView) {

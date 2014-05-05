@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
 public class LoadImageView extends ImageView {
@@ -27,7 +28,6 @@ public class LoadImageView extends ImageView {
     private static final int WAIT_IMAGE_ID = R.drawable.ic_launcher;
     private static final int TOUCH_IMAGE_ID = R.drawable.ic_touch;
     
-    private static final int SHORT_DURATION = 100;
     private static final int DURATION = 300;
     
     private int mState = NONE;
@@ -80,23 +80,29 @@ public class LoadImageView extends ImageView {
         setImageResource(TOUCH_IMAGE_ID);
     }
     
+    /**
+     * Load target bmp, set progressive animation
+     * @param bmp
+     */
     public void setContextImage(Bitmap bmp) {
-        int dur = DURATION;
-        
         Drawable oldDrawable = getDrawable();
-        if (oldDrawable == null) {
-            oldDrawable = new ColorDrawable(Color.TRANSPARENT);
-            dur = SHORT_DURATION;
-        } else if (oldDrawable instanceof TransitionDrawable){
-            oldDrawable = ((TransitionDrawable)oldDrawable).getDrawable(1);
+        if (oldDrawable == null) { // Just set alpha animation
+            Drawable drawable = new BitmapDrawable(getContext().getResources(), bmp);
+            setImageDrawable(drawable);
+            AlphaAnimation aa = new AlphaAnimation(0.0f,1.0f);
+            aa.setDuration(DURATION);
+            startAnimation(aa);
+        } else { // If exists previous drawable, use TransitionDrawable
+            if (oldDrawable instanceof TransitionDrawable)
+                oldDrawable = ((TransitionDrawable)oldDrawable).getDrawable(1);
+            
+            Drawable[] layers = new Drawable[2];
+            layers[0] = oldDrawable;
+            layers[1] = new BitmapDrawable(getContext().getResources(), bmp);
+            TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
+            setImageDrawable(transitionDrawable);
+            transitionDrawable.startTransition(DURATION);
         }
-        
-        Drawable[] layers = new Drawable[2];
-        layers[0] = oldDrawable;
-        layers[1] = new BitmapDrawable(getContext().getResources(), bmp);
-        TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
-        setImageDrawable(transitionDrawable);
-        transitionDrawable.startTransition(dur);
     }
     
     class OnClickListener implements View.OnClickListener {
@@ -107,7 +113,7 @@ public class LoadImageView extends ImageView {
         
         @Override
         public void onClick(View v) {
-            LoadImageView.this.setImageResource(R.drawable.ic_launcher);
+            setImageDrawable(null);
             mImageLoadManager.add(LoadImageView.this, true);
         }
     }

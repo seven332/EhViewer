@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.data.PreviewList;
 
-public class ParserDetail {
+public class DetailParser {
     
     private static final String OFFENSIVE_STRING =
             "<p>(And if you choose to ignore this warning, you lose all rights to complain about it in the future.)</p>";
