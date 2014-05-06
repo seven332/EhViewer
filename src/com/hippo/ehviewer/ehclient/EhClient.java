@@ -146,12 +146,6 @@ public class EhClient {
         public void onFailure(String eMsg);
     }
 
-    public interface OnGetMangaListListener {
-        public void onSuccess(Object checkFlag, ArrayList<GalleryInfo> lmdArray,
-                int indexPerPage, int maxPage);
-        public void onFailure(Object checkFlag, String eMsg);
-    }
-
     public interface OnGetMangaDetailListener {
         public void onSuccess(GalleryDetail md);
         public void onFailure(String eMsg);
@@ -490,6 +484,12 @@ public class EhClient {
     }
     
     // Get Manga List
+    public interface OnGetMangaListListener {
+        public void onSuccess(Object checkFlag, ArrayList<GalleryInfo> lmdArray,
+                int indexPerPage, int maxPage);
+        public void onFailure(Object checkFlag, String eMsg);
+    }
+    
     private class GetMangaListPackage {
         public Object checkFlag;
         public ArrayList<GalleryInfo> lmdArray;
@@ -614,7 +614,52 @@ public class EhClient {
                 eMsg = hp.getEMsg();
         }
     }
-
+    
+    /*
+    public void vote(final int gid, final String token,
+            final String group, final String tag,
+            final boolean isUp, final OnVoteListener listener) {
+        final JSONObject json = new JSONObject();
+        try {
+            json.put("method", "taggallery");
+            json.put("apiuid", APIUID);
+            json.put("apikey", APIKEY);
+            json.put("gid", gid);
+            json.put("token", token);
+            json.put("tags", group + ":" + tag);
+            if (isUp)
+                json.put("token", 1);
+            else
+                json.put("token", -1);
+        } catch (JSONException e) {
+            listener.onFailure(e.getMessage());
+            return;
+        }
+        
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpHelper hp = new HttpHelper(mAppContext);
+                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
+                    @Override
+                    public void onSuccess(String pageContext) {
+                        VoteParser parser = new VoteParser();
+                        if (parser.parser(pageContext)) {
+                            listener.onSuccess(parser.mTagPane);
+                        } else {
+                            listener.onFailure("parser error");   // TODO
+                        }
+                    }
+                    @Override
+                    public void onFailure(String eMsg) {
+                        listener.onFailure(eMsg);
+                    }
+                });
+                hp.postJson(E_API, json);
+            }
+        }).start();
+    }
+    */
     public void getMangaList(String url, final Object checkFlag,
             final OnGetMangaListListener listener) {
         
@@ -1468,20 +1513,9 @@ public class EhClient {
         
     }
     
-    /**
-     * page start from 1
-     * @param gid
-     * @param page
-     * @param token
-     * @return
-     */
-    //public String getPageUrl(String gid, int page, String token) {
-        
-    //}
-    
-    
     /********** Use E-hentai API ************/
     
+    // rate for gallery
     public interface OnRateListener {
         void onSuccess(float ratingAvg, int ratingCnt);
         void onFailure(String eMsg);
@@ -1526,8 +1560,55 @@ public class EhClient {
         }).start();
     }
     
+    // vote for tag
+    public interface OnVoteListener {
+        void onSuccess(String tagPane);
+        void onFailure(String eMsg);
+    }
     
-    
+    public void vote(final int gid, final String token,
+            final String group, final String tag,
+            final boolean isUp, final OnVoteListener listener) {
+        final JSONObject json = new JSONObject();
+        try {
+            json.put("method", "taggallery");
+            json.put("apiuid", APIUID);
+            json.put("apikey", APIKEY);
+            json.put("gid", gid);
+            json.put("token", token);
+            json.put("tags", group + ":" + tag);
+            if (isUp)
+                json.put("token", 1);
+            else
+                json.put("token", -1);
+        } catch (JSONException e) {
+            listener.onFailure(e.getMessage());
+            return;
+        }
+        
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpHelper hp = new HttpHelper(mAppContext);
+                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
+                    @Override
+                    public void onSuccess(String pageContext) {
+                        VoteParser parser = new VoteParser();
+                        if (parser.parser(pageContext)) {
+                            listener.onSuccess(parser.mTagPane);
+                        } else {
+                            listener.onFailure("parser error");   // TODO
+                        }
+                    }
+                    @Override
+                    public void onFailure(String eMsg) {
+                        listener.onFailure(eMsg);
+                    }
+                });
+                hp.postJson(E_API, json);
+            }
+        }).start();
+    }
     
     
     /*
