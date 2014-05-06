@@ -150,8 +150,6 @@ public class DownloadActivity extends Activity {
                     
                     LoadImageView thumb = (LoadImageView)view
                             .findViewById(R.id.thumb);
-                    if (thumb.getDrawable() != null)
-                        thumb.setImageDrawable(null);
                     thumb.setLoadInfo(di.thumb, di.gid);
                     mImageGeterManager.add(di.thumb, di.gid,
                             new LoadImageView.SimpleImageGetListener(thumb), true);
@@ -207,8 +205,6 @@ public class DownloadActivity extends Activity {
             
             LoadImageView thumb = (LoadImageView)view
                     .findViewById(R.id.thumb);
-            if (thumb.getDrawable() != null)
-                thumb.setImageDrawable(null);
             thumb.setLoadInfo(di.thumb, di.gid);
             mImageGeterManager.add(di.thumb, di.gid,
                     new LoadImageView.SimpleImageGetListener(thumb), true);
