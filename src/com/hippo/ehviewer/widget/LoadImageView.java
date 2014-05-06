@@ -135,6 +135,10 @@ public class LoadImageView extends ImageView {
             return isVaild(key);
         }
         @Override
+        public void onGetImageFromCacheFail(String key) {
+            mLiv.setImageDrawable(null);
+        }
+        @Override
         public void onGetImageFail(String key) {
             if (isVaild(key)) {
                 mLiv.setTouchImage();

@@ -44,8 +44,7 @@ public class ImageGeterManager {
     private LruCache<String, Bitmap> mMemoryCache;
     private DiskCache mDiskCache;
     
-    private LoadTask curLoadTask;
-    private final LoadTask emptyLoadTask = new LoadTask(null, null, null, false);
+    private Object mLock;
     
     private static final Handler mHandler = 
             new Handler() {
@@ -60,7 +59,10 @@ public class ImageGeterManager {
                             task.listener.onGetImageFromDownloadSuccess(task.key, task.bitmap);
                         break;
                     case Constants.FALSE:
-                        task.listener.onGetImageFail(task.key);
+                        if (msg.arg1 == CACHE)
+                            task.listener.onGetImageFromCacheFail(task.key);
+                        else
+                            task.listener.onGetImageFail(task.key);
                         break;
                     }
                 }
@@ -74,54 +76,62 @@ public class ImageGeterManager {
         mContext = context;
         mMemoryCache = memoryCache;
         mDiskCache = diskCache;
+        
+        mLock = new Object();
+        new Thread(new LoadFromCacheTask()).start();
     }
     
-    public synchronized void add(String url, String key, OnGetImageListener listener, boolean download) {
-        mLoadCacheTask.push(new LoadTask(url, key, listener, download));
-        if (curLoadTask == null) {
-            curLoadTask = emptyLoadTask;
-            new Thread(new LoadFromCacheTask()).start();
+    public void add(String url, String key, OnGetImageListener listener, boolean download) {
+        synchronized (mLock) {
+            mLoadCacheTask.push(new LoadTask(url, key, listener, download));
+            mLock.notify();
         }
     }
     
     private class LoadFromCacheTask implements Runnable {
         @Override
         public void run() {
+            LoadTask loadTask;
             while (true) {
-                synchronized (ImageGeterManager.this) {
+                synchronized (mLock) {
                     if (mLoadCacheTask.isEmpty()) {
-                        curLoadTask = null;
-                        break;
+                        try {
+                            mLock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        continue;
                     }
-                    curLoadTask = mLoadCacheTask.pop();
+                    loadTask = mLoadCacheTask.pop();
                 }
                 
                 // Continue if do not need any more
-                if (!curLoadTask.listener.onGetImage(curLoadTask.key))
+                if (!loadTask.listener.onGetImage(loadTask.key))
                     continue;
                 
-                String key = curLoadTask.key;
-                if (mMemoryCache == null || (curLoadTask.bitmap = mMemoryCache.get(key)) == null) {
+                String key = loadTask.key;
+                if (mMemoryCache == null || (loadTask.bitmap = mMemoryCache.get(key)) == null) {
                     if (mDiskCache != null
-                            && (curLoadTask.bitmap = (Bitmap)mDiskCache.get(key, Util.BITMAP)) != null
+                            && (loadTask.bitmap = (Bitmap)mDiskCache.get(key, Util.BITMAP)) != null
                             && mMemoryCache != null)
-                        mMemoryCache.put(key, curLoadTask.bitmap);
+                        mMemoryCache.put(key, loadTask.bitmap);
                 }
                 
-                if (curLoadTask.bitmap == null) {
-                    if (curLoadTask.download)
-                        mImageDownloadTask.add(curLoadTask);
-                    else {
-                        Message msg = new Message();
+                Message msg = new Message();
+                msg.obj = loadTask;
+                if (loadTask.bitmap == null) {
+                    if (loadTask.download) {
+                        mImageDownloadTask.add(loadTask);
                         msg.what = Constants.FALSE;
-                        msg.obj = curLoadTask;
+                        mHandler.sendMessage(msg);
+                    } else {
+                        msg.what = Constants.FALSE;
+                        msg.arg1 = CACHE;
                         mHandler.sendMessage(msg);
                     }
                 } else {
-                    Message msg = new Message();
                     msg.what = Constants.TRUE;
                     msg.arg1 = CACHE;
-                    msg.obj = curLoadTask;
                     mHandler.sendMessage(msg);
                 }
             }
@@ -193,6 +203,12 @@ public class ImageGeterManager {
          * @return False if you wanna stop get
          */
         boolean onGetImage(String key);
+        
+        /**
+         * It will call when active download and get from cache miss
+         * @param key
+         */
+        void onGetImageFromCacheFail(String key);
         void onGetImageFromCacheSuccess(String key, Bitmap bmp);
         void onGetImageFromDownloadSuccess(String key, Bitmap bmp);
         void onGetImageFail(String key);
