@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true"
+        android:drawable="@drawable/textfield_search_selected" />
+    <item android:drawable="@drawable/textfield_search_default" />
+</selector>

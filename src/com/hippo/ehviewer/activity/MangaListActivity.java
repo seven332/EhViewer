@@ -2,11 +2,10 @@ package com.hippo.ehviewer.activity;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -25,7 +24,6 @@ import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
-import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
@@ -36,42 +34,36 @@ import com.hippo.ehviewer.view.TagListView;
 import com.hippo.ehviewer.view.TagsAdapter;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswListView;
-import com.hippo.ehviewer.widget.GetPaddingRelativeLayout;
 import com.hippo.ehviewer.widget.HfListView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OnfitSystemWindowsListener;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.ActionBarDrawerToggle;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -83,7 +75,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -131,6 +122,7 @@ public class MangaListActivity extends SlidingActivity {
     
     private SlidingMenu mSlidingMenu;
     
+    private SearchView mSearchView;
     private ListView itemListMenu;
     private TagListView tagListMenu;
     private View mDivider;
@@ -280,8 +272,10 @@ public class MangaListActivity extends SlidingActivity {
                             mTitle = t;
                             setTitle(mTitle);
                         } else {
-                            // TODO add tips
                             lus = backup;
+                            Toast.makeText(MangaListActivity.this,
+                                    getString(R.string.wait_for_last),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
@@ -1119,6 +1113,7 @@ public class MangaListActivity extends SlidingActivity {
         
         // leftDrawer
         final int[] data = {R.drawable.ic_action_home, R.string.homepage,
+                R.drawable.ic_action_panda, R.string.mode,
                 R.drawable.ic_action_search, android.R.string.search_go,
                 R.drawable.ic_action_favorite, R.string.favourite,
                 R.drawable.ic_action_download, R.string.download};
@@ -1160,28 +1155,32 @@ public class MangaListActivity extends SlidingActivity {
                 case 0: // Home page
                     ListUrls backup = lus;
                     lus = new ListUrls(ListUrls.ALL_TYPE, null, 0);
-                    if (lus != null && refresh()) {
+                    if (refresh()) {
                         mTitle = mResources.getString(R.string.homepage);
                         setTitle(mTitle);
                         
                         showContent();
                     } else {
+                        Toast.makeText(MangaListActivity.this,
+                                getString(R.string.wait_for_last),
+                                Toast.LENGTH_SHORT).show();
                         lus = backup;
                     }
                     break;
-                    
                 case 1:
+                    break;
+                case 2:
                     filterDialog.show();
                     break;
                     
-                case 2: // Favourite
+                case 3: // Favourite
                     intent = new Intent(MangaListActivity.this,
                             FavouriteActivity.class);
                     startActivity(intent);
                     showContent();
                     break;
                     
-                case 3:
+                case 4:
                     intent = new Intent(MangaListActivity.this,
                             DownloadActivity.class);
                     startActivity(intent);
@@ -1224,6 +1223,9 @@ public class MangaListActivity extends SlidingActivity {
                     setTitle(mTitle);
                     showContent();
                 } else {
+                    Toast.makeText(MangaListActivity.this,
+                            getString(R.string.wait_for_last),
+                            Toast.LENGTH_SHORT).show();
                     lus = backup;
                 }
             }
@@ -1423,18 +1425,18 @@ public class MangaListActivity extends SlidingActivity {
         
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        final SearchView searchView =
+        mSearchView =
                 (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo(
+        mSearchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
                 return false;
             }
             @Override
             public boolean onQueryTextSubmit(String query) {
-                searchView.clearFocus();
+                mSearchView.clearFocus();
                 String t = null;
                 if (query == null || query.isEmpty())
                     t = getString(android.R.string.search_go);
@@ -1447,38 +1449,90 @@ public class MangaListActivity extends SlidingActivity {
                     mTitle = t;
                     setTitle(mTitle);
                 } else {
+                    Toast.makeText(MangaListActivity.this,
+                            getString(R.string.wait_for_last),
+                            Toast.LENGTH_SHORT).show();
                     lus = backup;
                 }
-                
                 return true;
             }
         });
         
         // Make search view custom look
         int searchTextID = mResources.getIdentifier("android:id/search_src_text", null, null);
-        if (searchTextID > 0) {
-            AutoCompleteTextView searchText =
-                    (AutoCompleteTextView)searchView.findViewById(searchTextID);
-            if (searchText != null) {
-                searchText.setTextColor(Color.WHITE);
-                searchText.setHintTextColor(Color.WHITE);
+        AutoCompleteTextView searchText = null;
+        if (searchTextID > 0
+                && (searchText = (AutoCompleteTextView)mSearchView.findViewById(searchTextID)) != null) {
+            
+            int searchCursorID = mResources.getIdentifier("android:drawable/text_cursor_holo_dark", null, null);
+            if (searchCursorID > 0) {
+                try {
+                    Field f = Class.forName("android.widget.TextView")
+                            .getDeclaredField("mCursorDrawableRes");
+                    f.setAccessible(true);
+                    f.setInt(searchText, searchCursorID);
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+            
+            searchText.setTextColor(Color.WHITE);
+            searchText.setHintTextColor(Color.WHITE);
+            
+            int searchImageID = mResources.getIdentifier("android:drawable/ic_search", null, null);
+            Drawable searchImage = null;
+            if (searchImageID > 0
+                    && (searchImage = mResources.getDrawable(searchImageID)) != null) {
+                SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
+                ssb.append(getString(R.string.advance_search_left));
+                int textSize = (int) (searchText.getTextSize() * 1.25);
+                searchImage.setBounds(0, 0, textSize, textSize);
+                ssb.setSpan(new ImageSpan(searchImage), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                searchText.setHint(ssb);
             }
         }
         
-        int removeImageID = mResources.getIdentifier("android:id/search_close_btn", null, null);
-        if (removeImageID > 0) {
-            ImageView removeImage = 
-                    (ImageView)searchView.findViewById(removeImageID);
-            if (removeImage != null)
-                removeImage.setImageResource(R.drawable.ic_action_remove);
+        int plateViewID = mResources.getIdentifier("android:id/search_plate", null, null);
+        View plateView = null;
+        if (plateViewID > 0
+                && (plateView = (View)mSearchView.findViewById(plateViewID)) != null) {
+            plateView.setBackgroundResource(R.drawable.textfield_searchview);
         }
         
-        int voiceImageID = mResources.getIdentifier("android:id/search_voice_btn", null, null);
-        if (voiceImageID > 0) {
-            ImageView removeImage = 
-                    (ImageView)searchView.findViewById(removeImageID);
+        int plateRightViewID = mResources.getIdentifier("android:id/submit_area", null, null);
+        View plateRightView = null;
+        if (plateRightViewID > 0
+                && (plateRightView = (View)mSearchView.findViewById(plateRightViewID)) != null) {
+            plateRightView.setBackgroundResource(R.drawable.textfield_searchview_right);
         }
         
+        int closeViewID = mResources.getIdentifier("android:id/search_close_btn", null, null);
+        ImageView closeView = null;
+        int closeImageID = mResources.getIdentifier("android:drawable/ic_clear", null, null);
+        Drawable closeImage = null;
+        if (closeViewID > 0
+                && (closeView = (ImageView)mSearchView.findViewById(closeViewID)) != null
+                && closeImageID > 0
+                && (closeImage = mResources.getDrawable(closeImageID)) != null) {
+            closeView.setImageDrawable(closeImage);
+        }
+        
+        int voiceViewID = mResources.getIdentifier("android:id/search_voice_btn", null, null);
+        ImageView voiceView = null;
+        int voiceImageID = mResources.getIdentifier("android:drawable/ic_voice_search", null, null);
+        Drawable voiceImage = null;
+        if (voiceViewID > 0
+                && (voiceView = (ImageView)mSearchView.findViewById(voiceViewID)) != null
+                && voiceImageID > 0
+                && (voiceImage = mResources.getDrawable(voiceImageID)) != null) {
+            voiceView.setImageDrawable(voiceImage);
+        }
         
         return true;
     }
@@ -1508,7 +1562,10 @@ public class MangaListActivity extends SlidingActivity {
                 showMenu();
             return true;
         case R.id.action_refresh: // TODO 点击刷新，pullviewheader 不会自动出来
-            refresh();
+            if (!refresh())
+                Toast.makeText(MangaListActivity.this,
+                        getString(R.string.wait_for_last),
+                        Toast.LENGTH_SHORT).show();
             return true;
         case R.id.action_jump:
             if (!mHlv.isAnyRefreshing() && isGetOk())
@@ -1670,15 +1727,17 @@ public class MangaListActivity extends SlidingActivity {
     }
     
     public boolean refresh(boolean isShowProgress) {
-        if (!mHlv.isAnyRefreshing()) {
+        if (!mHlv.isAnyRefreshing()
+                && waitView.getVisibility() != View.VISIBLE) {
             lus.setPage(0);
             if (isShowProgress)
                 mHlv.setRefreshing(true);
             mGetMode = REFRESH;
             getList();
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
     
     public void buttonRefresh(View arg0) {

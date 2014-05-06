@@ -24,7 +24,7 @@
             android:entryValues="@array/start_position_values"
             android:key="preference_start_position"
             android:summary="%s"
-            android:title="@string/preference_page_scaling" />
+            android:title="@string/preference_start_position" />
     </PreferenceCategory>
     
     <PreferenceCategory android:title="@string/preference_category_cache" >

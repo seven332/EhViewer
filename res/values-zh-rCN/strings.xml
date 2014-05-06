@@ -203,6 +203,7 @@
     <string name="download_unsuccessfully">下载失败</string>
     <string name="not_started">未启动</string>
     <string name="waiting">等待中</string>
+    <string name="wait_for_last">等待上个操作结束</string>
     
     <!-- GalleryView -->
     <string name="pre_page">上一页</string>
@@ -233,6 +234,7 @@
     <string name="_default">默认</string>
     
     <string name="homepage">首页</string>
+    <string name="mode">模式</string>
     <string name="favourite">收藏</string>
     <string name="download">下载</string>
     

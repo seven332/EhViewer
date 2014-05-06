@@ -207,6 +207,7 @@
     <string name="download_unsuccessfully">download unsuccessfully</string>
     <string name="not_started">Not started</string>
     <string name="waiting">Waiting</string>
+    <string name="wait_for_last">Please wait for the last operation</string>
     
     <!-- GalleryView -->
     <string name="pre_page">Previous page</string>
@@ -238,6 +239,7 @@
     <string name="_default">Default</string>
     
     <string name="homepage">Homepage</string>
+    <string name="mode">Mode</string>
     <string name="favourite">Favourite</string>
     <string name="download">Download</string>
     
