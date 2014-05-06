@@ -95,24 +95,21 @@ public class LoadImageView extends ImageView {
      * @param bmp
      */
     public void setContextImage(Bitmap bmp) {
-        Drawable oldDrawable = getDrawable();
-        if (oldDrawable == null) { // Just set alpha animation
-            Drawable drawable = new BitmapDrawable(getContext().getResources(), bmp);
-            setImageDrawable(drawable);
-            AlphaAnimation aa = new AlphaAnimation(0.0f,1.0f);
-            aa.setDuration(DURATION);
-            startAnimation(aa);
-        } else { // If exists previous drawable, use TransitionDrawable
-            if (oldDrawable instanceof TransitionDrawable)
-                oldDrawable = ((TransitionDrawable)oldDrawable).getDrawable(1);
-            
-            Drawable[] layers = new Drawable[2];
-            layers[0] = oldDrawable;
-            layers[1] = new BitmapDrawable(getContext().getResources(), bmp);
-            TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
-            setImageDrawable(transitionDrawable);
-            transitionDrawable.startTransition(DURATION);
-        }
+        
+        Drawable[] layers = new Drawable[2];
+        layers[0] = Ui.transparentDrawable;
+        layers[1] = new BitmapDrawable(getContext().getResources(), bmp);
+        TransitionDrawable transitionDrawable = new TransitionDrawable(layers);
+        setImageDrawable(transitionDrawable);
+        transitionDrawable.startTransition(DURATION);
+        
+        // I get no idea which is better
+        /*
+        setImageBitmap(bmp);
+        AlphaAnimation aa = new AlphaAnimation(0.0f,1.0f);
+        aa.setDuration(DURATION);
+        startAnimation(aa);
+        */
     }
     
     public static void setImageGeterManager(ImageGeterManager i) {
@@ -128,23 +125,32 @@ public class LoadImageView extends ImageView {
             mLiv = liv;
         }
         
+        public boolean isVaild(String key) {
+            return key.equals(mLiv.getKey())
+                    && mLiv.getParent() != null;
+        }
+        
         @Override
         public boolean onGetImage(String key) {
-            return key.equals(mLiv.getKey());
+            return isVaild(key);
         }
         @Override
         public void onGetImageFail(String key) {
-            if (key.equals(mLiv.getKey())) {
+            if (isVaild(key)) {
                 mLiv.setTouchImage();
                 mLiv.setOnClick();
             }
         }
         @Override
-        public void onGetImageSuccess(String key, Bitmap bmp) {
-            if (key.equals(mLiv.getKey())) {
-                mLiv.setImageDrawable(null);
+        public void onGetImageFromCacheSuccess(String key, Bitmap bmp) {
+            if (isVaild(key))
+                mLiv.setImageBitmap(bmp);
+        }
+
+        @Override
+        public void onGetImageFromDownloadSuccess(String key, Bitmap bmp) {
+            if (isVaild(key))
                 mLiv.setContextImage(bmp);
-            }
         }
     }
 }

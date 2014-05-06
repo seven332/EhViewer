@@ -189,7 +189,8 @@ public class HfListView extends PullToRefreshLayout
     public void onScroll(AbsListView view, int firstVisibleItem,
             int visibleItemCount, int totalItemCount) {
         if (firstVisibleItem + visibleItemCount == totalItemCount
-                && !isAnyRefreshing() && totalItemCount > 1)
+                && !isAnyRefreshing() && totalItemCount > 1
+                && footerState != FOOTER_FAIL)
             footerRefresh();
     }
     

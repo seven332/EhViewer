@@ -3,6 +3,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     
+    <dimen name="dialog_title_height">64dip</dimen>
+    
     <dimen name="shadow_width">12dp</dimen>
     <dimen name="menu_offset">240dp</dimen>
     

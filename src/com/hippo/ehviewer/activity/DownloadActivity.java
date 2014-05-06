@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
+import com.hippo.ehviewer.ImageGeterManager;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
@@ -17,8 +19,8 @@ import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.view.DownloadItemLayout;
-import com.hippo.ehviewer.view.OlImageView;
 import com.hippo.ehviewer.widget.DialogBuilder;
+import com.hippo.ehviewer.widget.LoadImageView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -54,6 +56,9 @@ public class DownloadActivity extends Activity {
     private static final String TAG = "DownloadActivity";
     
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
+    
+    private AppContext mAppContext;
+    private ImageGeterManager mImageGeterManager;
     
     private List<DownloadInfo> mDownloadInfos;
     private DlAdapter mDlAdapter;
@@ -143,12 +148,13 @@ public class DownloadActivity extends Activity {
                     view.downloadSize = di.downloadSize;
                     view.isWait = false;
                     
-                    OlImageView thumb = (OlImageView)view
+                    LoadImageView thumb = (LoadImageView)view
                             .findViewById(R.id.thumb);
-                    thumb.setUrl(di.thumb);
-                    thumb.setKey(String.valueOf(di.gid));
-                    thumb.setCache(Cache.memoryCache, Cache.cpCache);
-                    thumb.loadImage(true);
+                    if (thumb.getDrawable() != null)
+                        thumb.setImageDrawable(null);
+                    thumb.setLoadInfo(di.thumb, di.gid);
+                    mImageGeterManager.add(di.thumb, di.gid,
+                            new LoadImageView.SimpleImageGetListener(thumb), true);
                     
                     TextView title = (TextView)view.findViewById(R.id.title);
                     title.setText(di.title);
@@ -199,12 +205,13 @@ public class DownloadActivity extends Activity {
             view.downloadSize = di.downloadSize;
             view.isWait = false;
             
-            OlImageView thumb = (OlImageView)view
+            LoadImageView thumb = (LoadImageView)view
                     .findViewById(R.id.thumb);
-            thumb.setUrl(di.thumb);
-            thumb.setKey(String.valueOf(di.gid));
-            thumb.setCache(Cache.memoryCache, Cache.cpCache);
-            thumb.loadImage(true);
+            if (thumb.getDrawable() != null)
+                thumb.setImageDrawable(null);
+            thumb.setLoadInfo(di.thumb, di.gid);
+            mImageGeterManager.add(di.thumb, di.gid,
+                    new LoadImageView.SimpleImageGetListener(thumb), true);
             
             TextView title = (TextView)view.findViewById(R.id.title);
             title.setText(di.title);
@@ -354,6 +361,9 @@ public class DownloadActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.download);
+        
+        mAppContext = (AppContext)getApplication();
+        mImageGeterManager = mAppContext.getImageGeterManager();
         
         int screenOri = Config.getScreenOriMode();
         if (screenOri != getRequestedOrientation())

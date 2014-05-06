@@ -17,10 +17,10 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.AlertButton;
-import com.hippo.ehviewer.view.OlImageView;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
 import com.hippo.ehviewer.widget.ButtonsDialogBuilder;
 import com.hippo.ehviewer.widget.DialogBuilder;
+import com.hippo.ehviewer.widget.LoadImageView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -608,11 +608,11 @@ public class MangaDetailActivity extends Activity {
         
         setTitle(String.valueOf(mangaDetail.gid));
         
-        OlImageView coverImage = (OlImageView) findViewById(R.id.detail_cover);
-        coverImage.setUrl(mangaDetail.thumb);
-        coverImage.setKey(String.valueOf(mangaDetail.gid));
-        coverImage.setCache(Cache.memoryCache, Cache.cpCache);
-        coverImage.loadImage(false);
+        LoadImageView coverImage = (LoadImageView) findViewById(R.id.detail_cover);
+        coverImage.setLoadInfo(mangaDetail.thumb, String.valueOf(mangaDetail.gid));
+        mAppContext.getImageGeterManager().add(mangaDetail.thumb,
+                String.valueOf(mangaDetail.gid),
+                new LoadImageView.SimpleImageGetListener(coverImage), true);
         
         TextView title = (TextView) findViewById(R.id.detail_title);
         title.setText(mangaDetail.title);

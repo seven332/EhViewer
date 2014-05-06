@@ -22,7 +22,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/detail_thumb_height" >
 
-                <com.hippo.ehviewer.view.OlImageView
+                <com.hippo.ehviewer.widget.LoadImageView
                     android:id="@+id/detail_cover"
                     android:layout_width="@dimen/detail_thumb_width"
                     android:layout_height="@dimen/detail_thumb_height"

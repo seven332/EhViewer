@@ -18,6 +18,11 @@
         
         <!-- No action bar shadow -->
         <!-- item name="android:windowContentOverlay">@drawable/shadow</item -->
+        
+        <!-- Dialog -->
+        <!-- item name="@android:dialogTitleDecorLayout">@layout/dialog_title</item -->
+        
+        <!-- item name="@android:searchViewVoiceIcon">@android:drawable/ic_voice_search_api_holo_light</item -->
     </style>
     
     <style name="AppTheme.NoActionBar">

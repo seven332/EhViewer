@@ -3,6 +3,7 @@ package com.hippo.ehviewer.util;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -10,7 +11,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Movie;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -43,6 +47,8 @@ public class Ui {
     public static int ASIAN_PORN_BG_COLOR;
     public static int MISC_BG_COLOR;
     public static int UNKNOWN_BG_COLOR;
+    
+    public static Drawable transparentDrawable;
     
     private static boolean mInit = false;
     
@@ -78,6 +84,9 @@ public class Ui {
         ASIAN_PORN_BG_COLOR = mResources.getColor(R.color.asian_porn_bg);
         MISC_BG_COLOR = mResources.getColor(R.color.misc_bg);
         UNKNOWN_BG_COLOR = mResources.getColor(R.color.unknown_bg);
+        
+        // init drawable
+        transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
     }
     
     /**

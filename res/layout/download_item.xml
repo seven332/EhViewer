@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
 
-    <com.hippo.ehviewer.view.OlImageView
+    <com.hippo.ehviewer.widget.LoadImageView
         android:id="@+id/thumb"
         android:layout_width="67dp"
         android:layout_height="wrap_content"

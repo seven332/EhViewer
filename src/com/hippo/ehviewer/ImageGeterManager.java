@@ -19,9 +19,8 @@ import com.hippo.ehviewer.util.Log;
 public class ImageGeterManager {
     private static final String TAG = "ImageGeterManager";
     
-    private static final int WAIT = 0x0;
-    private static final int TOUCH = 0x1;
-    private static final int CONTEXT = 0x2;
+    private static final int CACHE = 0x0;
+    private static final int DOWNLOAD = 0x1;
     
     private class LoadTask {
         public String url;
@@ -55,7 +54,10 @@ public class ImageGeterManager {
                     LoadTask task = (LoadTask)msg.obj;
                     switch (msg.what) {
                     case Constants.TRUE:
-                        task.listener.onGetImageSuccess(task.key, task.bitmap);
+                        if (msg.arg1 == CACHE)
+                            task.listener.onGetImageFromCacheSuccess(task.key, task.bitmap);
+                        else if (msg.arg1 == DOWNLOAD)
+                            task.listener.onGetImageFromDownloadSuccess(task.key, task.bitmap);
                         break;
                     case Constants.FALSE:
                         task.listener.onGetImageFail(task.key);
@@ -118,6 +120,7 @@ public class ImageGeterManager {
                 } else {
                     Message msg = new Message();
                     msg.what = Constants.TRUE;
+                    msg.arg1 = CACHE;
                     msg.obj = curLoadTask;
                     mHandler.sendMessage(msg);
                 }
@@ -177,6 +180,7 @@ public class ImageGeterManager {
                         msg.what = Constants.FALSE;
                     } else {
                         msg.what = Constants.TRUE;
+                        msg.arg1 = DOWNLOAD;
                     }
                     mHandler.sendMessage(msg);
                 }
@@ -189,7 +193,8 @@ public class ImageGeterManager {
          * @return False if you wanna stop get
          */
         boolean onGetImage(String key);
-        void onGetImageSuccess(String key, Bitmap bmp);
+        void onGetImageFromCacheSuccess(String key, Bitmap bmp);
+        void onGetImageFromDownloadSuccess(String key, Bitmap bmp);
         void onGetImageFail(String key);
     }
 }

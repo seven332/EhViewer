@@ -120,6 +120,9 @@ public class FavouriteActivity extends Activity{
             
             LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
             if (!String.valueOf(lmd.gid).equals(thumb.getKey())) {
+                
+                if (thumb.getDrawable() != null)
+                    thumb.setImageDrawable(null);
                 thumb.setLoadInfo(lmd.thumb, String.valueOf(lmd.gid));
                 mImageGeterManager.add(lmd.thumb, String.valueOf(lmd.gid),
                         new LoadImageView.SimpleImageGetListener(thumb), true);

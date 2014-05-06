@@ -985,6 +985,8 @@ public class MangaListActivity extends SlidingActivity {
             final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
             if (!String.valueOf(lmd.gid).equals(thumb.getKey())) {
                 
+                if (thumb.getDrawable() != null)
+                    thumb.setImageDrawable(null);
                 thumb.setLoadInfo(lmd.thumb, String.valueOf(lmd.gid));
                 mImageGeterManager.add(lmd.thumb, String.valueOf(lmd.gid),
                         new LoadImageView.SimpleImageGetListener(thumb), true);
@@ -1357,8 +1359,10 @@ public class MangaListActivity extends SlidingActivity {
                 mFswPaddingRight = paddingRight;
                 mFswPaddingBottom = paddingBottom;
                 
-                itemListMenu.setPadding(itemListMenu.getPaddingLeft(), paddingTop,
+                itemListMenu.setPadding(itemListMenu.getPaddingLeft(), mFswPaddingTop,
                         itemListMenu.getPaddingRight(), itemListMenu.getPaddingBottom());
+                tagListMenu.setPadding(tagListMenu.getPaddingLeft(), tagListMenu.getPaddingTop(),
+                        tagListMenu.getPaddingRight(), mFswPaddingBottom);
             }
         });
         mHlv.setFooterString(getString(R.string.footer_loading),
@@ -1453,8 +1457,7 @@ public class MangaListActivity extends SlidingActivity {
         });
         
         // Make search view custom look
-        int searchTextID = searchView.getContext().
-                getResources().getIdentifier("android:id/search_src_text", null, null);
+        int searchTextID = mResources.getIdentifier("android:id/search_src_text", null, null);
         if (searchTextID > 0) {
             AutoCompleteTextView searchText =
                     (AutoCompleteTextView)searchView.findViewById(searchTextID);
@@ -1464,14 +1467,20 @@ public class MangaListActivity extends SlidingActivity {
             }
         }
         
-        int removeImageID = searchView.getContext().
-                getResources().getIdentifier("android:id/search_close_btn", null, null);
+        int removeImageID = mResources.getIdentifier("android:id/search_close_btn", null, null);
         if (removeImageID > 0) {
             ImageView removeImage = 
                     (ImageView)searchView.findViewById(removeImageID);
             if (removeImage != null)
                 removeImage.setImageResource(R.drawable.ic_action_remove);
         }
+        
+        int voiceImageID = mResources.getIdentifier("android:id/search_voice_btn", null, null);
+        if (voiceImageID > 0) {
+            ImageView removeImage = 
+                    (ImageView)searchView.findViewById(removeImageID);
+        }
+        
         
         return true;
     }
