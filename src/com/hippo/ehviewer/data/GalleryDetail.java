@@ -1,5 +1,11 @@
 package com.hippo.ehviewer.data;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -13,7 +19,8 @@ public class GalleryDetail extends GalleryInfo{
     public String language;
     public int people;
     public String firstPage;
-    public String[][] tags;
+    // I think LinkedHashMap may provides better performance
+    public LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>> tags;
     
     // For Preview
     public int previewSum;

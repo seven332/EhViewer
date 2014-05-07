@@ -1,6 +1,9 @@
 package com.hippo.ehviewer.ehclient;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,7 +40,7 @@ public class DetailParser {
     public String firstPage;
     public int previewPerPage;
     public int previewSum;
-    public String[][] tags;
+    public LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>> tags;
     public PreviewList previewList;
     
     public void setMode(int mode) {
@@ -87,24 +90,17 @@ public class DetailParser {
         }
         // Get tag
         if ((mMode & TAG) != 0) {
-            ArrayList<String[]> list = new ArrayList<String[]>();
+            tags = new LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>>();
             p = Pattern
                     .compile("<tr><td[^<>]*>([^<>]+):</td><td>(?:<div[^<>]*><a[^<>]*>[^<>]*</a>[^<>]*<span[^<>]*>\\d+</span>[^<>]*</div>)+</td></tr>");
             m = p.matcher(pageContent);
             while (m.find()) {
                 re |= TAG;
                 String groupName = m.group(1);
-                String[] group = getTagGroup(m.group(0));
-                if (groupName != null && group != null) {
-                    group[0] = groupName;
-                    list.add(group);
+                LinkedList<SimpleEntry<String, Integer>> group = getTagGroup(m.group(0));
+                if (group != null) {
+                    tags.put(groupName, group);
                 }
-            }
-            tags = new String[list.size()][];
-            int i = 0;
-            for (String[] item : list) {
-                tags[i] = item;
-                i++;
             }
         }
         
@@ -140,24 +136,19 @@ public class DetailParser {
         return re;
     }
     
-    private String[] getTagGroup(String pageContent) {
-        ArrayList<String> list = new ArrayList<String>();
-        Pattern p = Pattern.compile("<a[^<>]*>([^<>]+)</a>");
+    private LinkedList<SimpleEntry<String, Integer>> getTagGroup(String pageContent) {
+        LinkedList<SimpleEntry<String, Integer>> list =
+                new LinkedList<SimpleEntry<String, Integer>>();
+        Pattern p = Pattern.compile("<a[^<>]*>([^<>]+)</a> \\(<span[^<>]*>([\\d|,]+)</span>\\)");
         Matcher m = p.matcher(pageContent);
-        while (m.find()) {
-            String str = m.group(1);
-            if (str != null)
-                list.add(str);
-        }
+        while (m.find())
+            list.add(new SimpleEntry<String, Integer>(m.group(1),
+                    Integer.parseInt(m.group(2).replace(",", ""))));
+        
         if (list.size() == 0)
             return null;
-        String[] strs = new String[list.size() + 1];
-        int i = 1;
-        for (String str : list) {
-            strs[i] = str;
-            i++;
-        }
-        return strs;
+        else
+            return list;
     }
     
     private int getType(String rawType) {

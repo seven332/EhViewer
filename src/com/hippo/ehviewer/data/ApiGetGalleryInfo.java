@@ -8,6 +8,6 @@ public class ApiGetGalleryInfo extends GalleryInfo{
     public long filesize;
     public boolean expunged;
     public String torrentcount;
-    public String[][] tags;
+    public String[] tags;
 }
 

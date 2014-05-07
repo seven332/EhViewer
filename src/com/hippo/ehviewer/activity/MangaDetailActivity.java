@@ -1,6 +1,10 @@
 package com.hippo.ehviewer.activity;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map.Entry;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
@@ -10,6 +14,7 @@ import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.PreviewList;
+import com.hippo.ehviewer.ehclient.DetailParser;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
@@ -694,9 +699,7 @@ public class MangaDetailActivity extends Activity {
             pagesSize.setText(String.format(getString(R.string.detail_pages_size), mangaDetail.pages, mangaDetail.size));
             
             // TODO
-            
-            LinearLayout tagsLayout = (LinearLayout) findViewById(R.id.tags_layout);
-            addTags(tagsLayout, mangaDetail.tags);
+            addTags();
             
             mangaDetailNormal.setVisibility(View.VISIBLE);
             
@@ -727,7 +730,10 @@ public class MangaDetailActivity extends Activity {
         }
     }
     
-    private void addTags(LinearLayout tagsLayout, String[][] tagGroups) {
+    private void addTags() {
+        LinearLayout tagsLayout = (LinearLayout) findViewById(R.id.tags_layout);
+        LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>> tagGroups = 
+                mangaDetail.tags;
         tagsLayout.removeAllViews();
         int x = Ui.dp2pix(8);
         int y = Ui.dp2pix(6);
@@ -737,15 +743,13 @@ public class MangaDetailActivity extends Activity {
         ColorStateList tagTextColor = resources.getColorStateList(R.color.blue_bn_text);
         int tagPaddingX = resources.getDimensionPixelOffset(R.dimen.button_tag_padding_x);
         int tagPaddingY = resources.getDimensionPixelOffset(R.dimen.button_tag_padding_y);
-        for (String[] tagGroup : tagGroups) {
-            if (tagGroup == null || tagGroup.length == 0)
-                continue;
+        for (Entry<String, LinkedList<SimpleEntry<String, Integer>>> tagGroup : tagGroups.entrySet()) {
             LinearLayout tagGroupLayout = new LinearLayout(this);
             tagGroupLayout.setOrientation(LinearLayout.HORIZONTAL);
             AutoWrapLayout tagLayout = new AutoWrapLayout(this);
             
             // Group name
-            final String groupName = tagGroup[0];
+            final String groupName = tagGroup.getKey();
             TextView groupNameView = new TextView(new ContextThemeWrapper(this, R.style.TextTag));
             groupNameView.setText(groupName);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -753,11 +757,11 @@ public class MangaDetailActivity extends Activity {
             tagGroupLayout.addView(groupNameView, lp);
             
             // tags
-            for (int i = 1; i < tagGroup.length; i ++) {
-                final String tagText = tagGroup[i];
+            for (SimpleEntry<String, Integer> tag : tagGroup.getValue()) {
+                final String tagText = tag.getKey();
                 Button tagView = new Button(this);
                 tagView.setTextSize(TypedValue.COMPLEX_UNIT_PX, tagTextSize);
-                tagView.setText(tagText);
+                tagView.setText(String.format("%s (%d)", tagText, tag.getValue()));
                 tagView.setTextColor(tagTextColor);
                 tagView.setBackgroundResource(R.drawable.blue_bn_bg);
                 tagView.setPadding(tagPaddingX, tagPaddingY, tagPaddingX, tagPaddingY);
@@ -864,6 +868,18 @@ public class MangaDetailActivity extends Activity {
         public void onSuccess(String tagPane) {
             Toast.makeText(MangaDetailActivity.this,
                     "投票成功", Toast.LENGTH_SHORT).show(); // TODO
+            
+            DetailParser parser = new DetailParser();
+            parser.setMode(DetailParser.TAG);
+            if (parser.parser(tagPane) == DetailParser.TAG) {
+                mangaDetail.tags = parser.tags;
+                // TODO Only change target text view
+                addTags();
+            } else {
+                Toast.makeText(MangaDetailActivity.this,
+                        getString(R.string.em_parser_error),
+                        Toast.LENGTH_SHORT).show();
+            }
         }
 
         @Override
