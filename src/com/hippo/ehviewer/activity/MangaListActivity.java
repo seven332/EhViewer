@@ -1756,9 +1756,9 @@ public class MangaListActivity extends SlidingActivity {
     }
     
     public void buttonRefresh(View arg0) {
+        refresh(false);
         freshButton.setVisibility(View.GONE);
         waitView.setVisibility(View.VISIBLE);
-        refresh(false);
     }
 
     public void buttonLogout(View paramView) {

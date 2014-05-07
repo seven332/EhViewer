@@ -349,7 +349,7 @@ public class MangaDetailActivity extends Activity {
     }
     
     public void ButtonRate(View v) {
-        rate();
+        rate(mangaDetail.rating);
     }
     
     // *** Button onclick end ***//
@@ -359,19 +359,24 @@ public class MangaDetailActivity extends Activity {
         return (int)(dr + 0.5);
     }
     
-    public void rate() {
-        final RatingBar rb = new RatingBar(this);
-        rb.setMax(10);
-        rb.setStepSize(0.5f);
-        LinearLayout ll = new LinearLayout(this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.gravity = Gravity.CENTER;
-        lp.setMargins(0, Ui.dp2pix(24), 0, Ui.dp2pix(24));
-        ll.addView(rb, lp);
+    public void rate(float defaultRating) {
+        View view = getLayoutInflater().inflate(R.layout.rate, null);
+        final TextView tv = (TextView)view.findViewById(R.id.rate_text);
+        final RatingBar rb = (RatingBar)view.findViewById(R.id.rate);
+        rb.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating,
+                    boolean fromUser) {
+                int textId = getResources().getIdentifier(getApplicationContext().getPackageName()
+                        + ":string/rating" + getSendableRating(rating), null, null);
+                if (textId == 0)
+                    textId = R.string.rating0;
+                tv.setText(textId);
+            }
+        });
+        rb.setRating(defaultRating);
         new DialogBuilder(this).setTitle(R.string.rate)
-                .setView(ll, true)
+                .setView(view, true)
                 .setPositiveButton(android.R.string.ok, new OnClickListener() {
                     @Override
                     public void onClick(View v) {

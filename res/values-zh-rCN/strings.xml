@@ -212,6 +212,19 @@
     <string name="zoom_out">缩小</string>
     <string name="menu">菜单</string>
     
+    <!-- rating -->
+    <string name="rating10">根本把持不住</string>
+    <string name="rating9">好极了</string>
+    <string name="rating8">很棒</string>
+    <string name="rating7">不错</string>
+    <string name="rating6">还行</string>
+    <string name="rating5">一般般</string>
+    <string name="rating4">不行</string>
+    <string name="rating3">糟糕</string>
+    <string name="rating2">瞎眼</string>
+    <string name="rating1">以头抢地</string>
+    <string name="rating0">感觉快要窒息了</string>
+    
     <!-- Util -->
     <string name="read">阅读</string>
     <string name="rate">评价</string>
