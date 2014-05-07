@@ -7,7 +7,6 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.ImageGeterManager;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Data;
@@ -27,6 +26,7 @@ import com.hippo.ehviewer.widget.AutoWrapLayout;
 import com.hippo.ehviewer.widget.ButtonsDialogBuilder;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.LoadImageView;
+import com.hippo.ehviewer.widget.ProgressiveTextView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -39,13 +39,10 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 import com.hippo.ehviewer.util.Log;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
@@ -53,8 +50,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup;
@@ -64,7 +59,6 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -402,42 +396,10 @@ public class MangaDetailActivity extends Activity {
                                                 RatingBar rate = (RatingBar)findViewById(R.id.detail_rate);
                                                 rate.setRating(mangaDetail.rating);
                                                 
-                                                // Animation
-                                                TextView averagePeople = (TextView)findViewById(
+                                                ProgressiveTextView averagePeople = (ProgressiveTextView)findViewById(
                                                         R.id.detail_average_people);
-                                                final TextView averagePeopleBak = (TextView)findViewById(
-                                                        R.id.detail_average_people_bak);
-                                                averagePeopleBak.setText(averagePeople.getText());
-                                                averagePeople.setText(String.format("%.2f (%d)",
+                                                averagePeople.setNewText(String.format("%.2f (%d)",
                                                         mangaDetail.rating, mangaDetail.people));
-                                                averagePeopleBak.setVisibility(View.VISIBLE);
-                                                
-                                                int duration = 1000;
-                                                int height = averagePeople.getHeight();
-                                                
-                                                TranslateAnimation animation = new TranslateAnimation(0, 0, height, 0);
-                                                animation.setDuration(duration);
-                                                averagePeople.setAnimation(animation);
-                                                
-                                                TranslateAnimation animationBak = new TranslateAnimation(0, 0, 0, -height);
-                                                animationBak.setDuration(duration);
-                                                averagePeopleBak.setAnimation(animationBak);
-                                                animationBak.setAnimationListener(new AnimationListener() {
-                                                    @Override
-                                                    public void onAnimationStart(
-                                                            Animation animation) {}
-
-                                                    @Override
-                                                    public void onAnimationEnd(
-                                                            Animation animation) {
-                                                        averagePeopleBak.setVisibility(View.GONE);
-                                                    }
-                                                    @Override
-                                                    public void onAnimationRepeat(
-                                                            Animation animation) {}
-                                                });
-                                                animation.startNow();
-                                                animationBak.startNow();
                                             }
                                             Toast.makeText(MangaDetailActivity.this,
                                                     "评价成功", Toast.LENGTH_SHORT).show(); // TODO
@@ -838,6 +800,7 @@ public class MangaDetailActivity extends Activity {
             Toast.makeText(MangaDetailActivity.this,
                     getString(R.string.toast_add_download),
                     Toast.LENGTH_SHORT).show();
+            return true;
         default:
             return super.onOptionsItemSelected(item);
         }

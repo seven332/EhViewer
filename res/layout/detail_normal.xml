@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true" />
             
-            <TextView
+            <com.hippo.ehviewer.widget.ProgressiveTextView
                 android:id="@+id/detail_average_people"
                 style="@style/DetailSubtitle"
                 android:layout_width="wrap_content"
@@ -31,17 +31,6 @@
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/detail_rate"
                 android:layout_marginLeft="6.0dp" />
-            
-            <!-- Just to make animation -->
-            <TextView
-                android:id="@+id/detail_average_people_bak"
-                style="@style/DetailSubtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/detail_rate"
-                android:layout_marginLeft="6.0dp"
-                android:visibility="gone" />
             
         </RelativeLayout>
         
