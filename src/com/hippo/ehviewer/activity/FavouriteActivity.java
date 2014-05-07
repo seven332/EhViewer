@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -121,9 +123,20 @@ public class FavouriteActivity extends Activity{
             LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
             if (!String.valueOf(lmd.gid).equals(thumb.getKey())) {
                 
-                thumb.setLoadInfo(lmd.thumb, String.valueOf(lmd.gid));
-                mImageGeterManager.add(lmd.thumb, String.valueOf(lmd.gid),
-                        new LoadImageView.SimpleImageGetListener(thumb), true);
+                Bitmap bmp = null;
+                if (Cache.memoryCache != null &&
+                        (bmp = Cache.memoryCache.get(String.valueOf(lmd.gid))) != null) {
+                    thumb.setLoadInfo(lmd.thumb, String.valueOf(lmd.gid));
+                    thumb.setImageBitmap(bmp);
+                    thumb.setState(LoadImageView.LOADED);
+                } else {
+                    thumb.setImageDrawable(null);
+                    thumb.setLoadInfo(lmd.thumb, String.valueOf(lmd.gid));
+                    thumb.setState(LoadImageView.NONE);
+                    mImageGeterManager.add(lmd.thumb, String.valueOf(lmd.gid),
+                            ImageGeterManager.DISK_CACHE | ImageGeterManager.DOWNLOAD,
+                            new LoadImageView.SimpleImageGetListener(thumb));
+                }
 
                 // Set manga name
                 TextView name = (TextView) convertView.findViewById(R.id.name);
@@ -142,9 +155,9 @@ public class FavouriteActivity extends Activity{
                 }
                 
                 // Add star
-                LinearLayout rate = (LinearLayout) convertView
+                RatingBar rate = (RatingBar) convertView
                         .findViewById(R.id.rate);
-                Ui.addStar(rate, lmd.rating);
+                rate.setRating(lmd.rating);
                 
                 // set posted
                 TextView posted = (TextView) convertView.findViewById(R.id.posted);
@@ -157,9 +170,6 @@ public class FavouriteActivity extends Activity{
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (Build.VERSION.SDK_INT >= 19) {
-            BeautifyScreen.fixColour(this);
-        }
     }
     
     @Override
@@ -186,6 +196,8 @@ public class FavouriteActivity extends Activity{
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);
         
+        Ui.translucent(this);
+        
         // Download service
         Intent it = new Intent(FavouriteActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
@@ -193,11 +205,6 @@ public class FavouriteActivity extends Activity{
         longClickDialog = setLongClickDialog();
         
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        
-        // For colourfy the activity
-        if (Build.VERSION.SDK_INT >= 19) {
-            BeautifyScreen.ColourfyScreen(this);
-        }
         
         mFavouriteLmd = mData.getAllLocalFavourites();
         

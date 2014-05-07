@@ -31,6 +31,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -150,9 +151,20 @@ public class DownloadActivity extends Activity {
                     
                     LoadImageView thumb = (LoadImageView)view
                             .findViewById(R.id.thumb);
-                    thumb.setLoadInfo(di.thumb, di.gid);
-                    mImageGeterManager.add(di.thumb, di.gid,
-                            new LoadImageView.SimpleImageGetListener(thumb), true);
+                    Bitmap bmp = null;
+                    if (Cache.memoryCache != null &&
+                            (bmp = Cache.memoryCache.get(di.gid)) != null) {
+                        thumb.setLoadInfo(di.thumb, di.gid);
+                        thumb.setImageBitmap(bmp);
+                        thumb.setState(LoadImageView.LOADED);
+                    } else {
+                        thumb.setImageDrawable(null);
+                        thumb.setLoadInfo(di.thumb, di.gid);
+                        thumb.setState(LoadImageView.NONE);
+                        mImageGeterManager.add(di.thumb, di.gid,
+                                ImageGeterManager.DISK_CACHE | ImageGeterManager.DOWNLOAD,
+                                new LoadImageView.SimpleImageGetListener(thumb));
+                    }
                     
                     TextView title = (TextView)view.findViewById(R.id.title);
                     title.setText(di.title);
@@ -205,9 +217,20 @@ public class DownloadActivity extends Activity {
             
             LoadImageView thumb = (LoadImageView)view
                     .findViewById(R.id.thumb);
-            thumb.setLoadInfo(di.thumb, di.gid);
-            mImageGeterManager.add(di.thumb, di.gid,
-                    new LoadImageView.SimpleImageGetListener(thumb), true);
+            Bitmap bmp = null;
+            if (Cache.memoryCache != null &&
+                    (bmp = Cache.memoryCache.get(di.gid)) != null) {
+                thumb.setLoadInfo(di.thumb, di.gid);
+                thumb.setImageBitmap(bmp);
+                thumb.setState(LoadImageView.LOADED);
+            } else {
+                thumb.setImageDrawable(null);
+                thumb.setLoadInfo(di.thumb, di.gid);
+                thumb.setState(LoadImageView.NONE);
+                mImageGeterManager.add(di.thumb, di.gid,
+                        ImageGeterManager.DISK_CACHE | ImageGeterManager.DOWNLOAD,
+                        new LoadImageView.SimpleImageGetListener(thumb));
+            }
             
             TextView title = (TextView)view.findViewById(R.id.title);
             title.setText(di.title);

@@ -16,12 +16,12 @@
             android:layout_height="wrap_content"
             android:orientation = "horizontal" >
             
-            <LinearLayout
+            <RatingBar
                 android:id="@+id/detail_rate"
+                style="@style/RatingBarSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:orientation = "horizontal" />
+                android:layout_centerVertical="true" />
             
             <TextView
                 android:id="@+id/detail_average_people"

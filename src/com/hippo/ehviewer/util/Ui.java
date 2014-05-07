@@ -202,51 +202,17 @@ public class Ui {
     }
     
     /**
-     * Add star to a ViewGroup according to the 
-     * 
-     * @param context
-     * @param viewGroup
-     * @param rawRateString
-     */
-    public static void addStar(ViewGroup viewGroup,
-            float rawRate) {
-        if (!mInit) {
-            throw new IllegalStateException("Please init Ui first.");
-        }
-        if (viewGroup == null)
-            return;
-        viewGroup.removeAllViews();
-        
-        int leve = (int)((rawRate + 0.4999)/0.5);
-        int starNum = 5;
-        
-        for (int i = 0; i < leve/2; i++) {
-            ImageView IvStar = new ImageView(mContext);
-            IvStar.setImageResource(R.drawable.star);
-            viewGroup.addView(IvStar);
-            starNum--;
-        }
-        if (leve % 2 != 0) {
-            ImageView IvStarHalf = new ImageView(mContext);
-            IvStarHalf.setImageResource(R.drawable.star_half);
-            viewGroup.addView(IvStarHalf);
-            starNum--;
-        }
-        for (int i = 0; i < starNum; i++) {
-            ImageView IvStarEmpty = new ImageView(mContext);
-            IvStarEmpty.setImageResource(R.drawable.star_empty);
-            viewGroup.addView(IvStarEmpty);
-        }
-    }
-    
-    /**
      * dp conversion to pix
      * 
      * @param dp The value you want to conversion
      * @return value in pix
      */
-    public static int dp2pix(int dp) {
+    public static int dp2pix(float dp) {
         return (int) (mContext.getResources().getDisplayMetrics().density * dp + 0.5f);
+    }
+    
+    public static float pix2dp(int pix) {
+        return pix/mContext.getResources().getDisplayMetrics().density;
     }
     
     /**

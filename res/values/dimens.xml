@@ -33,4 +33,6 @@
     <dimen name="button_tag_padding_x">8.0dp</dimen>
     <dimen name="button_tag_padding_y">2.0dp</dimen>
     
+    <!-- Rating bar -->
+    <dimen name="rating_bar_small_height">14.0dip</dimen>
 </resources>

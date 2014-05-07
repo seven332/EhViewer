@@ -38,14 +38,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <LinearLayout
+            <RatingBar
                 android:id="@+id/rate"
+                style="@style/RatingBarSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="2.0dip"
-                android:layout_marginTop="2.0dip"
-                android:orientation="horizontal" >
-            </LinearLayout>
+                android:layout_marginTop="2.0dip" >
+            </RatingBar>
         </LinearLayout>
         
         <TextView

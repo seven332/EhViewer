@@ -1,8 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true" >
+    android:orientation="vertical" >
     
     <ListView
         android:id="@+id/favourite"
@@ -10,7 +9,9 @@
         android:layout_height="fill_parent"
         android:divider="@null"
         android:listSelector="@android:color/transparent"
-        android:cacheColorHint="@color/main_background" >
+        android:cacheColorHint="@color/main_background"
+        android:fitsSystemWindows="true"
+        android:clipToPadding="false" >
     </ListView>
     
 </LinearLayout>

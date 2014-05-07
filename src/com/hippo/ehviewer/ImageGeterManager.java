@@ -19,21 +19,22 @@ import com.hippo.ehviewer.util.Log;
 public class ImageGeterManager {
     private static final String TAG = "ImageGeterManager";
     
-    private static final int CACHE = 0x0;
-    private static final int DOWNLOAD = 0x1;
+    public static final int MEMORY_CACHE = 0x1;
+    public static final int DISK_CACHE = 0x2;
+    public static final int DOWNLOAD = 0x4;
     
     private class LoadTask {
         public String url;
         public String key;
+        public int mode;
         public OnGetImageListener listener;
-        public boolean download;
         public Bitmap bitmap;
         
-        public LoadTask(String url, String key, OnGetImageListener listener, boolean download) {
+        public LoadTask(String url, String key, int mode, OnGetImageListener listener) {
             this.url = url;
             this.key = key;
+            this.mode = mode;
             this.listener = listener;
-            this.download = download;
         }
     }
     private Context mContext;
@@ -51,19 +52,10 @@ public class ImageGeterManager {
                 @Override
                 public void handleMessage(Message msg) {
                     LoadTask task = (LoadTask)msg.obj;
-                    switch (msg.what) {
-                    case Constants.TRUE:
-                        if (msg.arg1 == CACHE)
-                            task.listener.onGetImageFromCacheSuccess(task.key, task.bitmap);
-                        else if (msg.arg1 == DOWNLOAD)
-                            task.listener.onGetImageFromDownloadSuccess(task.key, task.bitmap);
-                        break;
-                    case Constants.FALSE:
-                        if (msg.arg1 == CACHE)
-                            task.listener.onGetImageFromCacheFail(task.key);
-                        else
-                            task.listener.onGetImageFail(task.key);
-                        break;
+                    if (msg.what == Constants.TRUE) {
+                        task.listener.onGetImageSuccess(task.key, task.bitmap, msg.arg1);
+                    } else if (msg.what == Constants.FALSE){
+                        task.listener.onGetImageFail(task.key);
                     }
                 }
             };
@@ -81,9 +73,9 @@ public class ImageGeterManager {
         new Thread(new LoadFromCacheTask()).start();
     }
     
-    public void add(String url, String key, OnGetImageListener listener, boolean download) {
+    public void add(String url, String key, int mode, OnGetImageListener listener) {
         synchronized (mLock) {
-            mLoadCacheTask.push(new LoadTask(url, key, listener, download));
+            mLoadCacheTask.push(new LoadTask(url, key, mode, listener));
             mLock.notify();
         }
     }
@@ -106,33 +98,37 @@ public class ImageGeterManager {
                 }
                 
                 // Continue if do not need any more
-                if (!loadTask.listener.onGetImage(loadTask.key))
+                if (!loadTask.listener.onGetImageStart(loadTask.key))
                     continue;
                 
                 String key = loadTask.key;
-                if (mMemoryCache == null || (loadTask.bitmap = mMemoryCache.get(key)) == null) {
-                    if (mDiskCache != null
-                            && (loadTask.bitmap = (Bitmap)mDiskCache.get(key, Util.BITMAP)) != null
-                            && mMemoryCache != null)
+                int mode = loadTask.mode;
+                int getMode = MEMORY_CACHE;
+                if ((mode & MEMORY_CACHE) != 0 && mMemoryCache != null
+                        && (loadTask.bitmap = mMemoryCache.get(key)) != null)
+                    getMode = MEMORY_CACHE;
+                else if ((mode & DISK_CACHE) != 0 && mDiskCache != null
+                        && (loadTask.bitmap = (Bitmap)mDiskCache.get(key, Util.BITMAP)) != null) {
+                    getMode = DISK_CACHE;
+                    if (mMemoryCache != null)
                         mMemoryCache.put(key, loadTask.bitmap);
                 }
                 
-                Message msg = new Message();
-                msg.obj = loadTask;
-                if (loadTask.bitmap == null) {
-                    if (loadTask.download) {
+                if (loadTask.bitmap != null) { // Get bitmap
+                    Message msg = new Message();
+                    msg.obj = loadTask;
+                    msg.what = Constants.TRUE;
+                    msg.arg1 = getMode;
+                    mHandler.sendMessage(msg);
+                } else { // get from cache miss
+                    if ((mode & DOWNLOAD) != 0) {
                         mImageDownloadTask.add(loadTask);
-                        msg.what = Constants.FALSE;
-                        mHandler.sendMessage(msg);
                     } else {
+                        Message msg = new Message();
+                        msg.obj = loadTask;
                         msg.what = Constants.FALSE;
-                        msg.arg1 = CACHE;
                         mHandler.sendMessage(msg);
                     }
-                } else {
-                    msg.what = Constants.TRUE;
-                    msg.arg1 = CACHE;
-                    mHandler.sendMessage(msg);
                 }
             }
         }
@@ -173,16 +169,8 @@ public class ImageGeterManager {
                         loadTask = mDownloadTask.pop();
                     }
                     
-                    // Continue if do not need any more
-                    if (!loadTask.listener.onGetImage(loadTask.key))
-                        continue;
-                    
                     loadTask.bitmap = httpHelper.getImage(loadTask.url,
                             loadTask.key, mMemoryCache, mDiskCache, true);
-                    
-                    // Continue if do not need any more
-                    if (!loadTask.listener.onGetImage(loadTask.key))
-                        continue;
                     
                     Message msg = new Message();
                     msg.obj = loadTask;
@@ -202,15 +190,8 @@ public class ImageGeterManager {
         /**
          * @return False if you wanna stop get
          */
-        boolean onGetImage(String key);
-        
-        /**
-         * It will call when active download and get from cache miss
-         * @param key
-         */
-        void onGetImageFromCacheFail(String key);
-        void onGetImageFromCacheSuccess(String key, Bitmap bmp);
-        void onGetImageFromDownloadSuccess(String key, Bitmap bmp);
+        boolean onGetImageStart(String key);
+        void onGetImageSuccess(String key, Bitmap bmp, int mode);
         void onGetImageFail(String key);
     }
 }

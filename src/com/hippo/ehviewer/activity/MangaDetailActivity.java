@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.BeautifyScreen;
+import com.hippo.ehviewer.ImageGeterManager;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryDetail;
@@ -388,8 +389,8 @@ public class MangaDetailActivity extends Activity {
                                             mangaDetail.people = ratingCnt;
                                             if (!MangaDetailActivity.this.isFinishing()) {
                                                 //Reset start
-                                                LinearLayout rate = (LinearLayout) findViewById(R.id.detail_rate);
-                                                Ui.addStar(rate, mangaDetail.rating);
+                                                RatingBar rate = (RatingBar)findViewById(R.id.detail_rate);
+                                                rate.setRating(mangaDetail.rating);
                                                 
                                                 // Animation
                                                 TextView averagePeople = (TextView)findViewById(
@@ -608,11 +609,21 @@ public class MangaDetailActivity extends Activity {
         
         setTitle(String.valueOf(mangaDetail.gid));
         
-        LoadImageView coverImage = (LoadImageView) findViewById(R.id.detail_cover);
-        coverImage.setLoadInfo(mangaDetail.thumb, String.valueOf(mangaDetail.gid));
-        mAppContext.getImageGeterManager().add(mangaDetail.thumb,
-                String.valueOf(mangaDetail.gid),
-                new LoadImageView.SimpleImageGetListener(coverImage), true);
+        LoadImageView thumb = (LoadImageView) findViewById(R.id.detail_cover);
+        Bitmap bmp = null;
+        if (Cache.memoryCache != null &&
+                (bmp = Cache.memoryCache.get(String.valueOf(mangaDetail.gid))) != null) {
+            thumb.setLoadInfo(mangaDetail.thumb, String.valueOf(mangaDetail.gid));
+            thumb.setImageBitmap(bmp);
+            thumb.setState(LoadImageView.LOADED);
+        } else {
+            thumb.setImageDrawable(null);
+            thumb.setLoadInfo(mangaDetail.thumb, String.valueOf(mangaDetail.gid));
+            thumb.setState(LoadImageView.NONE);
+            mAppContext.getImageGeterManager().add(mangaDetail.thumb, String.valueOf(mangaDetail.gid),
+                    ImageGeterManager.DISK_CACHE | ImageGeterManager.DOWNLOAD,
+                    new LoadImageView.SimpleImageGetListener(thumb));
+        }
         
         TextView title = (TextView) findViewById(R.id.detail_title);
         title.setText(mangaDetail.title);
@@ -662,8 +673,8 @@ public class MangaDetailActivity extends Activity {
             readButton.setEnabled(true);
             rateButton.setEnabled(true);
             
-            LinearLayout rate = (LinearLayout) findViewById(R.id.detail_rate);
-            Ui.addStar(rate, mangaDetail.rating);
+            RatingBar rate = (RatingBar)findViewById(R.id.detail_rate);
+            rate.setRating(mangaDetail.rating);
             
             TextView averagePeople = (TextView) findViewById(R.id.detail_average_people);
             averagePeople.setText(String.format("%.2f (%d)", mangaDetail.rating, mangaDetail.people));

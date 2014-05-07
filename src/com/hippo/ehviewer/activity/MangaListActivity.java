@@ -24,6 +24,7 @@ import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
+import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
@@ -49,6 +50,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -73,6 +75,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Spinner;
@@ -979,9 +982,20 @@ public class MangaListActivity extends SlidingActivity {
             final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
             if (!String.valueOf(lmd.gid).equals(thumb.getKey())) {
                 
-                thumb.setLoadInfo(lmd.thumb, String.valueOf(lmd.gid));
-                mImageGeterManager.add(lmd.thumb, String.valueOf(lmd.gid),
-                        new LoadImageView.SimpleImageGetListener(thumb), true);
+                Bitmap bmp = null;
+                if (Cache.memoryCache != null &&
+                        (bmp = Cache.memoryCache.get(String.valueOf(lmd.gid))) != null) {
+                    thumb.setLoadInfo(lmd.thumb, String.valueOf(lmd.gid));
+                    thumb.setImageBitmap(bmp);
+                    thumb.setState(LoadImageView.LOADED);
+                } else {
+                    thumb.setImageDrawable(null);
+                    thumb.setLoadInfo(lmd.thumb, String.valueOf(lmd.gid));
+                    thumb.setState(LoadImageView.NONE);
+                    mImageGeterManager.add(lmd.thumb, String.valueOf(lmd.gid),
+                            ImageGeterManager.DISK_CACHE | ImageGeterManager.DOWNLOAD,
+                            new LoadImageView.SimpleImageGetListener(thumb));
+                }
                 
                 // Set manga name
                 TextView name = (TextView) convertView.findViewById(R.id.name);
@@ -1000,9 +1014,9 @@ public class MangaListActivity extends SlidingActivity {
                 }
                 
                 // Add star
-                LinearLayout rate = (LinearLayout) convertView
+                RatingBar rate = (RatingBar) convertView
                         .findViewById(R.id.rate);
-                Ui.addStar(rate, lmd.rating);
+                rate.setRating(lmd.rating);
                 
                 // set posted
                 TextView posted = (TextView) convertView.findViewById(R.id.posted);
@@ -1399,13 +1413,6 @@ public class MangaListActivity extends SlidingActivity {
             }
         });
         
-        mHlv.setVisibility(View.GONE);
-        waitView.setVisibility(View.VISIBLE);
-        freshButton.setVisibility(View.GONE);
-        noFoundView.setVisibility(View.GONE);
-        sadpanda.setVisibility(View.GONE);
-        layoutDrawRight();
-        
         // Check update
         checkUpdate();
         
@@ -1417,6 +1424,14 @@ public class MangaListActivity extends SlidingActivity {
         mTitle = mResources.getString(R.string.homepage);
         setTitle();
         refresh(false);
+        
+        // set layout
+        mHlv.setVisibility(View.GONE);
+        waitView.setVisibility(View.VISIBLE);
+        freshButton.setVisibility(View.GONE);
+        noFoundView.setVisibility(View.GONE);
+        sadpanda.setVisibility(View.GONE);
+        layoutDrawRight();
     }
     
     @Override

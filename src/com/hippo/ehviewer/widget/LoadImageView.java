@@ -65,7 +65,8 @@ public class LoadImageView extends ImageView {
                 setClickable(false);
                 setImageDrawable(null);
                 mImageGeterManager.add(mUrl, mKey,
-                        new SimpleImageGetListener(LoadImageView.this), true);
+                        ImageGeterManager.DISK_CACHE | ImageGeterManager.DOWNLOAD,
+                        new SimpleImageGetListener(LoadImageView.this));
             }
         });
     }
@@ -131,30 +132,32 @@ public class LoadImageView extends ImageView {
         }
         
         @Override
-        public boolean onGetImage(String key) {
-            return isVaild(key);
-        }
-        @Override
-        public void onGetImageFromCacheFail(String key) {
-            mLiv.setImageDrawable(null);
+        public boolean onGetImageStart(String key) {
+            boolean re = isVaild(key) && (mLiv.getState() == LoadImageView.NONE ||
+                    mLiv.getState() == LoadImageView.FAIL);
+            if (re)
+                mLiv.setState(LoadImageView.LOADING);
+            return re;
         }
         @Override
         public void onGetImageFail(String key) {
-            if (isVaild(key)) {
+            if (isVaild(key) && mLiv.getState() == LoadImageView.LOADING) {
                 mLiv.setTouchImage();
                 mLiv.setOnClick();
+                mLiv.setState(LoadImageView.FAIL);
             }
         }
         @Override
-        public void onGetImageFromCacheSuccess(String key, Bitmap bmp) {
-            if (isVaild(key))
-                mLiv.setImageBitmap(bmp);
-        }
-
-        @Override
-        public void onGetImageFromDownloadSuccess(String key, Bitmap bmp) {
-            if (isVaild(key))
-                mLiv.setContextImage(bmp);
+        public void onGetImageSuccess(String key, Bitmap bmp, int mode) {
+            if (isVaild(key) && mLiv.getState() == LoadImageView.LOADING) {
+                if (mode == ImageGeterManager.MEMORY_CACHE
+                        || mode == ImageGeterManager.DISK_CACHE)
+                    mLiv.setImageBitmap(bmp);
+                else if (mode == ImageGeterManager.DOWNLOAD) {
+                    mLiv.setContextImage(bmp);
+                }
+                mLiv.setState(LoadImageView.LOADED);
+            }
         }
     }
 }
