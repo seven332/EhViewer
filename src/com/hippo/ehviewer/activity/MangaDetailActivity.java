@@ -738,42 +738,48 @@ public class MangaDetailActivity extends Activity {
         int tagPaddingX = resources.getDimensionPixelOffset(R.dimen.button_tag_padding_x);
         int tagPaddingY = resources.getDimensionPixelOffset(R.dimen.button_tag_padding_y);
         for (String[] tagGroup : tagGroups) {
+            if (tagGroup == null || tagGroup.length == 0)
+                continue;
             LinearLayout tagGroupLayout = new LinearLayout(this);
             tagGroupLayout.setOrientation(LinearLayout.HORIZONTAL);
             AutoWrapLayout tagLayout = new AutoWrapLayout(this);
-            for (int i = 0; i < tagGroup.length; i ++) {
-                if (i == 0) {
-                    TextView groupNameView = new TextView(new ContextThemeWrapper(this, R.style.TextTag));
-                    groupNameView.setText(tagGroup[i]);
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                    lp.setMargins(x, y, x, y);
-                    tagGroupLayout.addView(groupNameView, lp);
-                } else {
-                    final String tagText = tagGroup[i];
-                    Button tagView = new Button(this);
-                    tagView.setTextSize(TypedValue.COMPLEX_UNIT_PX, tagTextSize);
-                    tagView.setText(tagText);
-                    tagView.setTextColor(tagTextColor);
-                    tagView.setBackgroundResource(R.drawable.blue_bn_bg);
-                    tagView.setPadding(tagPaddingX, tagPaddingY, tagPaddingX, tagPaddingY);
-                    tagView.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            AlertButton voteUp = new AlertButton(MangaDetailActivity.this);
-                            voteUp.setText(getString(R.string.vote_up)); // TODO
-                            AlertButton voteDown = new AlertButton(MangaDetailActivity.this);
-                            voteDown.setText(getString(R.string.vote_down)); // TODO
-                            AlertButton showTagged = new AlertButton(MangaDetailActivity.this);
-                            showTagged.setText(getString(R.string.show_tagged)); // TODO
-                            new ButtonsDialogBuilder(MangaDetailActivity.this).setTitle(tagText)
-                                    .addButton(voteUp).addButton(voteDown).addButton(showTagged)
-                                    .create().show();
-                        }
-                    });
-                    AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams();
-                    lp.setMargins(x, y, x, y);
-                    tagLayout.addView(tagView, lp);
-                }
+            
+            // Group name
+            final String groupName = tagGroup[0];
+            TextView groupNameView = new TextView(new ContextThemeWrapper(this, R.style.TextTag));
+            groupNameView.setText(groupName);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            lp.setMargins(x, y, x, y);
+            tagGroupLayout.addView(groupNameView, lp);
+            
+            // tags
+            for (int i = 1; i < tagGroup.length; i ++) {
+                final String tagText = tagGroup[i];
+                Button tagView = new Button(this);
+                tagView.setTextSize(TypedValue.COMPLEX_UNIT_PX, tagTextSize);
+                tagView.setText(tagText);
+                tagView.setTextColor(tagTextColor);
+                tagView.setBackgroundResource(R.drawable.blue_bn_bg);
+                tagView.setPadding(tagPaddingX, tagPaddingY, tagPaddingX, tagPaddingY);
+                tagView.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertButton voteUp = new AlertButton(MangaDetailActivity.this);
+                        voteUp.setText(getString(R.string.vote_up));
+                        voteUp.setOnClickListener(new SimpleVote(groupName, tagText, true));
+                        AlertButton voteDown = new AlertButton(MangaDetailActivity.this);
+                        voteDown.setText(getString(R.string.vote_down));
+                        voteDown.setOnClickListener(new SimpleVote(groupName, tagText, false));
+                        AlertButton showTagged = new AlertButton(MangaDetailActivity.this);
+                        showTagged.setText(getString(R.string.show_tagged));
+                        new ButtonsDialogBuilder(MangaDetailActivity.this).setTitle(tagText)
+                                .addButton(voteUp).addButton(voteDown).addButton(showTagged)
+                                .create().show();
+                    }
+                });
+                AutoWrapLayout.LayoutParams alp = new AutoWrapLayout.LayoutParams();
+                alp.setMargins(x, y, x, y);
+                tagLayout.addView(tagView, alp);
             }
             tagGroupLayout.addView(tagLayout);
             tagsLayout.addView(tagGroupLayout);
@@ -830,6 +836,40 @@ public class MangaDetailActivity extends Activity {
                     Toast.LENGTH_SHORT).show();
         default:
             return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    private class SimpleVote implements View.OnClickListener {
+        
+        private String groupName;
+        private String tagText;
+        private boolean isUp;
+        
+        public SimpleVote(String groupName, String tagText, boolean isUp) {
+            this.groupName = groupName;
+            this.tagText = tagText;
+            this.isUp = isUp;
+        }
+        
+        @Override
+        public void onClick(View v) {
+            ((AlertButton)v).dialog.dismiss();
+            mEhClient.vote(mangaDetail.gid, mangaDetail.token,
+                    groupName, tagText, true, new SimpleVoteListener());
+        }
+    }
+    
+    private class SimpleVoteListener implements EhClient.OnVoteListener {
+        @Override
+        public void onSuccess(String tagPane) {
+            Toast.makeText(MangaDetailActivity.this,
+                    "投票成功", Toast.LENGTH_SHORT).show(); // TODO
+        }
+
+        @Override
+        public void onFailure(String eMsg) {
+            Toast.makeText(MangaDetailActivity.this,
+                    "投票失败\n" + eMsg, Toast.LENGTH_SHORT).show(); // TODO
         }
     }
 }

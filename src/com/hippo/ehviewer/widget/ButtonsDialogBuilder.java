@@ -66,8 +66,7 @@ public class ButtonsDialogBuilder extends AlertDialog.Builder {
     }
     
     public ButtonsDialogBuilder addButton(AlertButton button) {
-        // TODO
-        button.setBackgroundColor(Color.WHITE);
+        button.setBackgroundResource(R.drawable.white_bn_bg);
         button.setTextColor(Color.BLACK);
         mButtonList.add(button);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(

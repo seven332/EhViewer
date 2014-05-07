@@ -1578,9 +1578,9 @@ public class EhClient {
             json.put("token", token);
             json.put("tags", group + ":" + tag);
             if (isUp)
-                json.put("token", 1);
+                json.put("vote", 1);
             else
-                json.put("token", -1);
+                json.put("vote", -1);
         } catch (JSONException e) {
             listener.onFailure(e.getMessage());
             return;
