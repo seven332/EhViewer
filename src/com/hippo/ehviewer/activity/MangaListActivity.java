@@ -129,9 +129,7 @@ public class MangaListActivity extends SlidingActivity {
     private SearchView mSearchView;
     private ListView itemListMenu;
     private TagListView tagListMenu;
-    private View mDivider;
     private RelativeLayout loginMenu;
-    private ListView isExhentaiList;
     private HfListView mHlv;
     private FswListView mMainList;
     private View waitView;
@@ -1069,15 +1067,17 @@ public class MangaListActivity extends SlidingActivity {
         mImageGeterManager = mAppContext.getImageGeterManager();
         mResources =getResources();
         
-        setBehindContentView(R.layout.list_menu_list);
+        setBehindContentView(R.layout.list_menu_left);
         setSlidingActionBarEnabled(false);
         mSlidingMenu = getSlidingMenu();
-        mSlidingMenu.setMode(SlidingMenu.LEFT);
+        mSlidingMenu.setSecondaryMenu(R.layout.list_menu_right);
+        mSlidingMenu.setMode(SlidingMenu.LEFT_RIGHT);
         mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
         mSlidingMenu.setBehindWidth(
                 mResources.getDimensionPixelOffset(R.dimen.menu_offset));
         mSlidingMenu.setShadowDrawable(R.drawable.shadow);
         mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
+        mSlidingMenu.setSecondaryShadowDrawable(R.drawable.shadow_right);
         mSlidingMenu.setOnOpenedListener(new SlidingMenu.OnOpenedListener() {
             @Override
             public void onOpened() {
@@ -1120,9 +1120,7 @@ public class MangaListActivity extends SlidingActivity {
         mUserPanel = (LinearLayout)findViewById(R.id.user_panel);
         itemListMenu = (ListView) findViewById(R.id.list_menu_item_list);
         tagListMenu = (TagListView) findViewById(R.id.list_menu_tag_list);
-        mDivider = (View)findViewById(R.id.divider);
         loginMenu = (RelativeLayout)findViewById(R.id.list_menu_login);
-        isExhentaiList = (ListView)findViewById(R.id.is_exhentai);
         mHlv = (HfListView)findViewById(R.id.list_list);
         mMainList = mHlv.getListView();
         waitView = (View) findViewById(R.id.list_wait_first);
@@ -1149,6 +1147,7 @@ public class MangaListActivity extends SlidingActivity {
                 R.drawable.ic_action_favorite, R.string.favourite,
                 R.drawable.ic_action_download, R.string.download};
         
+        itemListMenu.setClipToPadding(false);
         itemListMenu.setAdapter(new BaseAdapter() {
             @Override
             public int getCount() {
@@ -1221,25 +1220,11 @@ public class MangaListActivity extends SlidingActivity {
             }
         });
         
-        
         List<String> keys = mData.getAllTagNames();
         
         for (int i = 0; i < keys.size(); i++)
             listMenuTag.add(keys.get(i));
         tagsAdapter = new TagsAdapter(this, R.layout.menu_tag, listMenuTag);
-        tagsAdapter.setOnDataSetChangedListener(new TagsAdapter.OnDataSetChangedListener() {
-            @Override
-            public void OnDataSetChanged() {
-                if (mData.getAllTags().size() == 0)
-                    mDivider.setVisibility(View.GONE);
-                else
-                    mDivider.setVisibility(View.VISIBLE);
-            }
-        });
-        if (mData.getAllTags().size() == 0)
-            mDivider.setVisibility(View.GONE);
-        else
-            mDivider.setVisibility(View.VISIBLE);
         tagListMenu.setClipToPadding(false);
         tagListMenu.setAdapter(tagsAdapter);
         tagListMenu.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -1287,71 +1272,6 @@ public class MangaListActivity extends SlidingActivity {
             }
         });
         
-        // is Exhentai
-        final String[] isExhentaiListTitle = getResources().getStringArray(R.array.is_exhentai);
-        final BaseAdapter isExhentaiListAdapter =  new BaseAdapter() {
-            @Override
-            public int getCount() {
-                return isExhentaiListTitle.length;
-            }
-
-            @Override
-            public Object getItem(int paramInt) {
-                return isExhentaiListTitle[paramInt];
-            }
-
-            @Override
-            public long getItemId(int paramInt) {
-                return paramInt;
-            }
-
-            @Override
-            public View getView(int paramInt, View paramView,
-                    ViewGroup paramViewGroup) {
-                if (paramView == null || !(paramView instanceof TextView)
-                        || !isExhentaiListTitle[paramInt].equals((TextView)paramView)) {
-                    LayoutInflater inflater = getLayoutInflater();
-                    paramView = (TextView)inflater.inflate(R.layout.menu_item, null);
-                    ((TextView)paramView).setText(isExhentaiListTitle[paramInt]);
-                }
-                TextView tv = (TextView)paramView;
-                Resources resources = getResources();
-                if ((paramInt == 0 && !Config.isExhentai()) ||
-                        (paramInt == 1 && Config.isExhentai())) {
-                    tv.setTextColor(Color.BLACK);
-                    tv.setBackgroundColor(Color.WHITE);
-                } else {
-                    tv.setTextColor(Color.WHITE);
-                    tv.setBackgroundColor(Ui.HOLO_BLUE_DARK);
-                }
-                return tv;
-            }
-        };
-        
-        /*
-        isExhentaiList.setAdapter(isExhentaiListAdapter);
-        isExhentaiList.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> paramAdapterView,
-                    View paramView, int paramInt, long paramLong) {
-                boolean isChanged = false;
-                if (paramInt == 0 && Config.isExhentai()) {
-                    isChanged = true;
-                    EhClient.setHeader(false);
-                } else if (paramInt == 1 && !Config.isExhentai()){
-                    isChanged = true;
-                    EhClient.setHeader(true);
-                }
-                if (isChanged) {
-                    isExhentaiListAdapter.notifyDataSetChanged();
-                    refresh(new ListUrls(ListUrls.ALL_TYPE, null, 0), listMenuTitle.get(0));
-                 // TODO
-                    //showContent(); // TODO
-                }
-            }
-        });
-        */
-        
         // Pull list view
         // Setup ActionBarPullToRefresh
         ActionBarPullToRefresh.from(this)
@@ -1392,7 +1312,9 @@ public class MangaListActivity extends SlidingActivity {
                 
                 mUserPanel.setPadding(mUserPanel.getPaddingLeft(), mFswPaddingTop,
                         mUserPanel.getPaddingRight(), mUserPanel.getPaddingBottom());
-                tagListMenu.setPadding(tagListMenu.getPaddingLeft(), tagListMenu.getPaddingTop(),
+                itemListMenu.setPadding(itemListMenu.getPaddingLeft(), itemListMenu.getPaddingTop(),
+                        itemListMenu.getPaddingRight(), mFswPaddingBottom);
+                tagListMenu.setPadding(tagListMenu.getPaddingLeft(), mFswPaddingTop,
                         tagListMenu.getPaddingRight(), mFswPaddingBottom);
             }
         });

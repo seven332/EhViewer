@@ -16,29 +16,11 @@
     <ListView
         android:id="@+id/list_menu_item_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:choiceMode="singleChoice"
         android:clickable="true"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
         android:scrollbarThumbVertical="@drawable/scrollbar_blue" >
-        
     </ListView>
-    
-    <View
-        android:id="@+id/divider"
-        android:layout_width="fill_parent"
-        android:layout_height="1.0dp"
-        android:background="@color/detail_divider" />
-    
-    <com.hippo.ehviewer.view.TagListView
-        android:id="@+id/list_menu_tag_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:choiceMode="singleChoice"
-        android:clickable="true"
-        android:divider="@color/detail_divider"
-        android:dividerHeight="1.0dp"
-        android:scrollbarThumbVertical="@drawable/scrollbar_white" />
-
 </LinearLayout>

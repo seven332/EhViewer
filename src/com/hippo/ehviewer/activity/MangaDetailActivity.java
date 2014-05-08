@@ -821,7 +821,7 @@ public class MangaDetailActivity extends Activity {
         public void onClick(View v) {
             ((AlertButton)v).dialog.dismiss();
             mEhClient.vote(mangaDetail.gid, mangaDetail.token,
-                    groupName, tagText, true, new SimpleVoteListener());
+                    groupName, tagText, isUp, new SimpleVoteListener());
         }
     }
     

@@ -1,0 +1,10 @@
+<com.hippo.ehviewer.view.TagListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_menu_tag_list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/holo_blue_dark"
+    android:choiceMode="singleChoice"
+    android:clickable="true"
+    android:divider="@color/detail_divider"
+    android:dividerHeight="1.0dp"
+    android:scrollbarThumbVertical="@drawable/scrollbar_white" />
