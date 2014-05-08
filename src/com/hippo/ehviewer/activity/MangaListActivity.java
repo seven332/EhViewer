@@ -125,6 +125,7 @@ public class MangaListActivity extends SlidingActivity {
     
     private SlidingMenu mSlidingMenu;
     
+    private LinearLayout mUserPanel;
     private SearchView mSearchView;
     private ListView itemListMenu;
     private TagListView tagListMenu;
@@ -1101,6 +1102,7 @@ public class MangaListActivity extends SlidingActivity {
         
         
         // Get View
+        mUserPanel = (LinearLayout)findViewById(R.id.user_panel);
         itemListMenu = (ListView) findViewById(R.id.list_menu_item_list);
         tagListMenu = (TagListView) findViewById(R.id.list_menu_tag_list);
         mDivider = (View)findViewById(R.id.divider);
@@ -1373,8 +1375,8 @@ public class MangaListActivity extends SlidingActivity {
                 mFswPaddingRight = paddingRight;
                 mFswPaddingBottom = paddingBottom;
                 
-                itemListMenu.setPadding(itemListMenu.getPaddingLeft(), mFswPaddingTop,
-                        itemListMenu.getPaddingRight(), itemListMenu.getPaddingBottom());
+                mUserPanel.setPadding(mUserPanel.getPaddingLeft(), mFswPaddingTop,
+                        mUserPanel.getPaddingRight(), mUserPanel.getPaddingBottom());
                 tagListMenu.setPadding(tagListMenu.getPaddingLeft(), tagListMenu.getPaddingTop(),
                         tagListMenu.getPaddingRight(), mFswPaddingBottom);
             }

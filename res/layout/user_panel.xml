@@ -1,0 +1,13 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="64.0dp"
+        android:layout_height="64.0dp"
+        android:layout_margin="8.0dp"
+        android:src="@drawable/default_avatar" />
+
+</LinearLayout>

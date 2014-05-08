@@ -12,7 +12,7 @@
         android:layout_marginBottom="8.0dp"
         android:textSize="@dimen/text_xlarge" />
 
-    <RatingBar
+    <com.hippo.ehviewer.widget.ProgressiveRatingBar
         android:id="@+id/rate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -26,6 +26,7 @@ import com.hippo.ehviewer.widget.AutoWrapLayout;
 import com.hippo.ehviewer.widget.ButtonsDialogBuilder;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.LoadImageView;
+import com.hippo.ehviewer.widget.ProgressiveRatingBar;
 import com.hippo.ehviewer.widget.ProgressiveTextView;
 
 import android.app.Activity;
@@ -63,6 +64,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,8 +82,6 @@ public class MangaDetailActivity extends Activity {
     private EhClient mEhClient;
     
     private String url;
-    //private String gid;
-    //private String token;
 
     private ScrollView scrollView;
     private LinearLayout mainView;
@@ -361,11 +361,10 @@ public class MangaDetailActivity extends Activity {
     public void rate(float defaultRating) {
         View view = getLayoutInflater().inflate(R.layout.rate, null);
         final TextView tv = (TextView)view.findViewById(R.id.rate_text);
-        final RatingBar rb = (RatingBar)view.findViewById(R.id.rate);
-        rb.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+        final ProgressiveRatingBar rb = (ProgressiveRatingBar)view.findViewById(R.id.rate);
+        rb.setOnDrawListener(new ProgressiveRatingBar.OnDrawListener() {
             @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating,
-                    boolean fromUser) {
+            public void onDraw(float rating) {
                 int textId = getResources().getIdentifier(getApplicationContext().getPackageName()
                         + ":string/rating" + getSendableRating(rating), null, null);
                 if (textId == 0)
