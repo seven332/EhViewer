@@ -26,8 +26,6 @@
                     android:id="@+id/detail_cover"
                     android:layout_width="@dimen/detail_thumb_width"
                     android:layout_height="@dimen/detail_thumb_height"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
                     android:scaleType="fitCenter" />
 
                 <TextView
