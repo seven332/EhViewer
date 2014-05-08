@@ -1034,6 +1034,14 @@ public class MangaListActivity extends SlidingActivity {
                 mResources.getDimensionPixelOffset(R.dimen.menu_offset));
     }
     
+    private void handleIntent(Intent intent) { 
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+           String query = 
+                 intent.getStringExtra(SearchManager.QUERY); 
+           mSearchView.setQuery(query, true);
+        } 
+     }
+    
     @Override
     protected void onResume() {
         super.onResume();
@@ -1044,8 +1052,15 @@ public class MangaListActivity extends SlidingActivity {
     }
     
     @Override
+    public void onNewIntent(Intent intent) { 
+        setIntent(intent); 
+        handleIntent(intent); 
+     }
+    
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        handleIntent(getIntent());
         setContentView(R.layout.list);
         
         mAppContext = (AppContext)getApplication();
