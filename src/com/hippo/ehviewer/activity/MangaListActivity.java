@@ -1143,9 +1143,11 @@ public class MangaListActivity extends SlidingActivity {
         // leftDrawer
         final int[] data = {R.drawable.ic_action_home, R.string.homepage,
                 R.drawable.ic_action_panda, R.string.mode,
+                R.drawable.ic_action_jump, R.string.jump,
                 R.drawable.ic_action_search, android.R.string.search_go,
                 R.drawable.ic_action_favorite, R.string.favourite,
-                R.drawable.ic_action_download, R.string.download};
+                R.drawable.ic_action_download, R.string.download,
+                R.drawable.ic_action_settings, R.string.action_settings};
         
         itemListMenu.setClipToPadding(false);
         itemListMenu.setAdapter(new BaseAdapter() {
@@ -1200,21 +1202,32 @@ public class MangaListActivity extends SlidingActivity {
                 case 1:
                     break;
                 case 2:
+                    if (!mHlv.isAnyRefreshing() && isGetOk())
+                        jump();
+                    break;
+                case 3:
                     filterDialog.show();
                     break;
                     
-                case 3: // Favourite
+                case 4: // Favourite
                     intent = new Intent(MangaListActivity.this,
                             FavouriteActivity.class);
                     startActivity(intent);
                     showContent();
                     break;
                     
-                case 4:
+                case 5:
+                    showContent();
                     intent = new Intent(MangaListActivity.this,
                             DownloadActivity.class);
                     startActivity(intent);
+                    break;
+                    
+                case 6:
                     showContent();
+                    intent = new Intent(MangaListActivity.this,
+                            SettingsActivity.class);
+                    startActivity(intent);
                     break;
                 }
             }
@@ -1514,21 +1527,6 @@ public class MangaListActivity extends SlidingActivity {
                 showContent();
             else
                 showMenu();
-            return true;
-        case R.id.action_refresh: // TODO 点击刷新，pullviewheader 不会自动出来
-            if (!refresh())
-                Toast.makeText(MangaListActivity.this,
-                        getString(R.string.wait_for_last),
-                        Toast.LENGTH_SHORT).show();
-            return true;
-        case R.id.action_jump:
-            if (!mHlv.isAnyRefreshing() && isGetOk())
-                jump();
-            return true;
-        case R.id.action_settings:
-            Intent intent = new Intent(MangaListActivity.this,
-                    SettingsActivity.class);
-            startActivity(intent);
             return true;
         default:
             return super.onOptionsItemSelected(item);

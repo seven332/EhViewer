@@ -1,15 +1,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true" >
+    android:orientation="vertical" >
 
     <ListView
         android:id="@+id/download"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:divider="@android:color/transparent"
-        android:dividerHeight="0dp" >
+        android:dividerHeight="0dp"
+        android:fitsSystemWindows="true"
+        android:clipToPadding="false" >
     </ListView>
 
 </LinearLayout>

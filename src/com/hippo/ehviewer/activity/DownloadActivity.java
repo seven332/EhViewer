@@ -16,6 +16,7 @@ import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Download;
+import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.AlertButton;
 import com.hippo.ehviewer.view.DownloadItemLayout;
@@ -356,9 +357,6 @@ public class DownloadActivity extends Activity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (Build.VERSION.SDK_INT >= 19) {
-            BeautifyScreen.fixColour(this);
-        }
     }
     
     @Override
@@ -388,6 +386,8 @@ public class DownloadActivity extends Activity {
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);
         
+        Ui.translucent(this);
+        
         // Download service
         Intent it = new Intent(this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
@@ -397,11 +397,6 @@ public class DownloadActivity extends Activity {
         registerReceiver(mReceiver, filter);
         
         longClickDialog = setLongClickDialog();
-        
-        // For colourfy the activity
-        if (Build.VERSION.SDK_INT >= 19) {
-            BeautifyScreen.ColourfyScreen(this);
-        }
         
         mDownloadInfos = Download.getDownloadInfoList();
         

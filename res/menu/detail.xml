@@ -15,6 +15,6 @@
     <item
         android:id="@+id/action_reply"
         android:showAsAction="ifRoom"
-        android:icon="@drawable/ic_action_reply"
+        android:icon="@drawable/ic_action_reply_selector"
         android:title="@string/download"/>
 </menu>
