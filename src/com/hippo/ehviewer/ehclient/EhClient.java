@@ -29,6 +29,7 @@ import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.R.string;
 import com.hippo.ehviewer.activity.DownloadInfo;
+import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.PreviewList;
@@ -772,7 +773,8 @@ public class EhClient {
                 
                 DetailParser parser = new DetailParser();
                 int mode = DetailParser.DETAIL | DetailParser.TAG
-                        | DetailParser.PREVIEW_INFO | DetailParser.PREVIEW;
+                        | DetailParser.PREVIEW_INFO | DetailParser.PREVIEW
+                        | DetailParser.COMMENT;
                 parser.setMode(mode);
                 int result = parser.parser(pageContent);
                 if (result == DetailParser.OFFENSIVE) {
@@ -801,6 +803,7 @@ public class EhClient {
                     md.tags = parser.tags;
                     md.previewLists = new PreviewList[md.previewSum];
                     md.previewLists[0] = parser.previewList;
+                    md.comments = parser.comments;
                 } else {
                     eMsg = mAppContext.getString(R.string.em_parser_error);
                 }

@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.List;
 import java.util.Map.Entry;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageGeterManager;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
@@ -146,7 +148,7 @@ public class DetailSectionFragment extends Fragment
             scrollView.setPadding(paddingLeft, paddingTop,
                     paddingRight, paddingBottom);
         }
-        align.setOnFitSystemWindowsListener(new OnFitSystemWindowsListener() {
+        align.addOnFitSystemWindowsListener(new OnFitSystemWindowsListener() {
             @Override
             public void onfitSystemWindows(int paddingLeft, int paddingTop,
                     int paddingRight, int paddingBottom) {
@@ -501,6 +503,9 @@ public class DetailSectionFragment extends Fragment
                 Toast.makeText(mActivity,
                         getString(R.string.detail_preview_error), Toast.LENGTH_SHORT)
                         .show();
+            
+            // Set comments
+            mActivity.setComments(mGalleryDetail.comments);
         }
     }
     
@@ -656,6 +661,14 @@ public class DetailSectionFragment extends Fragment
     }
     
     
+    
+    public List<Comment> getComments() {
+        if (mGalleryDetail == null)
+            return null;
+        else
+            return mGalleryDetail.comments;
+    }
+    
     private class TextViewWithUrl extends TextView {
         private String url;
 
@@ -671,6 +684,10 @@ public class DetailSectionFragment extends Fragment
         public void onSuccess(GalleryDetail md) {
             Cache.mdCache.put(String.valueOf(mGalleryDetail.gid), md);
             layout(md);
+            
+            for (Comment c : mGalleryDetail.comments) {
+                Log.d(TAG, c.time);
+            }
         }
         
         @Override

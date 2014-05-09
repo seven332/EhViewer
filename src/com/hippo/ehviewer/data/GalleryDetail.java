@@ -25,6 +25,7 @@ public class GalleryDetail extends GalleryInfo{
     public int previewSum;
     public int previewPerPage;
     public PreviewList[] previewLists;
+    public LinkedList<Comment> comments;
     
     public GalleryDetail(GalleryInfo galleryInfo) {
         gid = galleryInfo.gid;

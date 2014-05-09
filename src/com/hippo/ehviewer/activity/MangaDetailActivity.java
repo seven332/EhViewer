@@ -3,12 +3,14 @@ package com.hippo.ehviewer.activity;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageGeterManager;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
@@ -88,6 +90,9 @@ public class MangaDetailActivity extends FragmentActivity
     
     private ViewPager mViewPager;
     private GalleryInfo mGalleryInfo;
+    
+    private DetailSectionFragment mDetailFragment;
+    private CommentsSectionFragment mCommentsFragment;
     
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
@@ -175,6 +180,18 @@ public class MangaDetailActivity extends FragmentActivity
         return mGalleryInfo;
     }
     
+    public List<Comment> getComments() {
+        if (mDetailFragment == null)
+            return null;
+        else
+            return mDetailFragment.getComments();
+    }
+    
+    public void setComments(List<Comment> comments) {
+        if (mCommentsFragment != null)
+            mCommentsFragment.setComments(comments);
+    }
+    
     /*
     
     @Override
@@ -213,17 +230,20 @@ public class MangaDetailActivity extends FragmentActivity
     
     */
     
-    private static class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int i) {
-            if (i == 0)
-                return new DetailSectionFragment();
-            else if (i == 1)
-                return new CommentsSectionFragment(); 
+            if (i == 0) {
+                return mDetailFragment = new DetailSectionFragment();
+            }
+
+            else if (i == 1) {
+                return mCommentsFragment = new CommentsSectionFragment();
+            }
             else
                 return null;
         }
@@ -239,17 +259,6 @@ public class MangaDetailActivity extends FragmentActivity
                 return "详情";
             else
                 return "评论";
-        }
-    }
-    
-    public static class CommentsSectionFragment extends Fragment {
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            TextView mRootView = (TextView)inflater.inflate(
-                    R.layout.list_item_text, container, false);
-            mRootView.setText("HJ");
-            return mRootView;
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.hippo.ehviewer.ehclient;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.LinkedList;
@@ -8,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.hippo.ehviewer.ListUrls;
+import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.PreviewList;
 
 public class DetailParser {
@@ -21,8 +21,9 @@ public class DetailParser {
     public static final int TAG = 0x2;
     public static final int PREVIEW_INFO = 0x4;
     public static final int PREVIEW = 0x8;
-    public static final int OFFENSIVE = 0x10;
-    public static final int PINING = 0x20;
+    public static final int COMMENT = 0x10;
+    public static final int OFFENSIVE = 0x20;
+    public static final int PINING = 0x40;
     
     private int mMode;
     
@@ -42,6 +43,7 @@ public class DetailParser {
     public int previewSum;
     public LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>> tags;
     public PreviewList previewList;
+    public LinkedList<Comment> comments;
     
     public void setMode(int mode) {
         mMode = mode;
@@ -132,7 +134,16 @@ public class DetailParser {
                         m.group(2), m.group(5));
             }
         }
-        
+        // Get comment
+        if ((mMode & COMMENT) != 0) {
+            p = Pattern
+                    .compile("<div class=\"c3\">Posted on ([^<>]+) by <a[^<>]+>([^<>]+)</a>.*?<div class=\"c6\">(.*?)</div>");
+            m = p.matcher(pageContent);
+            comments = new LinkedList<Comment>();
+            while (m.find()) {
+                comments.add(new Comment(m.group(1), m.group(2), m.group(3)));
+            }
+        }
         return re;
     }
     
