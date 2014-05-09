@@ -205,6 +205,9 @@ public class DetailSectionFragment extends Fragment
     }
     
     private void addPageItem(int page) {
+        if (mActivity.isFinishing())
+            return;
+        
         if (page != mCurPage)
             return;
         
@@ -424,7 +427,9 @@ public class DetailSectionFragment extends Fragment
     }
     
     private void layout(GalleryDetail md) {
-
+        if (mActivity.isFinishing())
+            return;
+            
         // Delete progress bar
         mWaitPb.setVisibility(View.GONE);
 
@@ -698,6 +703,9 @@ public class DetailSectionFragment extends Fragment
         }
         
         private void addPageImage(int page, int rowIndex, Bitmap bitmap) {
+            if (mActivity.isFinishing())
+                return;
+            
             if (page != mCurPage)
                 return;
             PreviewList pageList = mGalleryDetail.previewLists[page];
