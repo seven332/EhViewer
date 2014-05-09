@@ -37,7 +37,7 @@ import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswListView;
 import com.hippo.ehviewer.widget.HfListView;
 import com.hippo.ehviewer.widget.LoadImageView;
-import com.hippo.ehviewer.widget.OnfitSystemWindowsListener;
+import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
@@ -1302,7 +1302,7 @@ public class MangaListActivity extends SlidingActivity {
                 }
             }
         });
-        mMainList.setOnfitSystemWindowsListener(new OnfitSystemWindowsListener() {
+        mMainList.setOnFitSystemWindowsListener(new OnFitSystemWindowsListener() {
             public void onfitSystemWindows(int paddingLeft,
                     int paddingTop, int paddingRight, int paddingBottom) {
                 mFswPaddingLeft = paddingLeft;

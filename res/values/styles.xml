@@ -16,6 +16,11 @@
         <item name="android:src">@drawable/ic_action_core_overflow_selector</item>
     </style>
     
+    <style name="TabText" parent="@android:style/Widget.Holo.Light.ActionBar.TabText">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/tab_text</item>
+    </style>
+    
     <style name="PopupMenu" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
     </style>
     

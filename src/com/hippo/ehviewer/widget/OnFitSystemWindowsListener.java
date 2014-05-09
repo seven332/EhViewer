@@ -1,6 +1,6 @@
 package com.hippo.ehviewer.widget;
 
-public interface OnfitSystemWindowsListener {
+public interface OnFitSystemWindowsListener {
     void onfitSystemWindows(int paddingLeft,
             int paddingTop, int paddingRight, int paddingBottom);
 }

@@ -25,8 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="@string/detail_button_cancel"
-        android:onClick="buttonFinsh" />
+        android:text="@string/detail_button_cancel" />
 
     <Button
         android:id="@+id/detail_button_once"
@@ -35,8 +34,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:text="@string/detail_button_once"
-        android:onClick="buttonOnce" />
+        android:text="@string/detail_button_once" />
 
     <Button
         android:id="@+id/detail_button_every"
@@ -45,7 +43,6 @@
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:text="@string/detail_button_every"
-        android:onClick="buttonEvery" />
+        android:text="@string/detail_button_every" />
 
 </LinearLayout>

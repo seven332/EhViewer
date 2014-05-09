@@ -62,9 +62,9 @@ public class EhClient {
     
     private static final String TAG = "EhClient";
     
-    private static final int G = 0x0;
-    private static final int EX = 0x1;
-    private static final int LOFI = 0x2;
+    public static final int G = 0x0;
+    public static final int EX = 0x1;
+    public static final int LOFI = 0x2;
     
     public static final String G_API = "http://g.e-hentai.org/api.php";
     public static final String E_API = "http://exhentai.org/api.php";

@@ -11,6 +11,8 @@
     <dimen name="title_large">20.0sp</dimen>
     <dimen name="title_medium">18.0sp</dimen>
     
+    <dimen name="tab_text">16.0sp</dimen>
+    
     <dimen name="text_xlarge">18.0sp</dimen>
     <dimen name="text_large">16.0sp</dimen>
     <dimen name="text_medium">13.0sp</dimen>

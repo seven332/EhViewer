@@ -17,7 +17,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="@string/detail_button_known"
-        android:onClick="buttonFinsh" />
+        android:text="@string/detail_button_known" />
     
 </LinearLayout>

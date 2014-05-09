@@ -4,10 +4,10 @@
     android:gravity="center" >
 
     <ImageView
+        android:id="@+id/back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/back"
-        android:onClick="ButtonBack" />
+        android:src="@drawable/back" />
     
     <TextView
         android:id="@+id/preview_num"
@@ -19,13 +19,12 @@
         android:textSize="14sp"
         android:textColor="@android:color/white"
         android:background="@android:color/holo_blue_dark"
-        android:clickable="true"
-        android:onClick="goTo" />
+        android:clickable="true" />
 
     <ImageView
+        android:id="@+id/front"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/front"
-        android:onClick="ButtonFront" />
+        android:src="@drawable/front" />
 
 </LinearLayout>

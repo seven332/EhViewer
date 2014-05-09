@@ -6,6 +6,7 @@
         <item name="@android:actionBarStyle">@style/ActionBar</item>
         <item name="@android:actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="@android:homeAsUpIndicator">@drawable/ic_navigation_drawer</item>
+        <item name="@android:actionBarTabTextStyle">@style/TabText</item>
         
         <!-- Button -->
         <item name="@android:buttonStyle">@style/Button.Blue</item>

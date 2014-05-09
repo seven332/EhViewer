@@ -3,19 +3,18 @@ package com.hippo.ehviewer.widget;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.widget.ListView;
+import android.view.View;
 
-public class FswListView extends ListView {
-    
+public class FswView extends View {
     private OnFitSystemWindowsListener mListener;
     
-    public FswListView(Context context) {
+    public FswView(Context context) {
         super(context);
     }
-    public FswListView(Context context, AttributeSet attrs) {
+    public FswView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-    public FswListView(Context context, AttributeSet attrs, int defStyle) {
+    public FswView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
     

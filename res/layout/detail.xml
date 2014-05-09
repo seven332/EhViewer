@@ -8,8 +8,7 @@
         android:layout_height="fill_parent"
         android:fadingEdge="vertical"
         android:scrollbars="vertical"
-        android:clipToPadding="false"
-        android:fitsSystemWindows="true" >
+        android:clipToPadding="false" >
 
         <LinearLayout
             android:id="@+id/manga_detail"
@@ -73,8 +72,7 @@
                     android:layout_marginBottom="10.0dp"
                     android:layout_marginLeft="12dp"
                     android:layout_marginRight="12dp"
-                    android:text="@string/rate"
-                    android:onClick="ButtonRate" />
+                    android:text="@string/rate" />
                 
                 <Button
                     android:id="@+id/detail_read"
@@ -124,7 +122,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:onClick="buttonRefresh"
         android:text="@string/refresh"
         android:visibility="gone" />
 
