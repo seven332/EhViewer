@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 public class CommentsSectionFragment extends Fragment {
     
+    @SuppressWarnings("unused")
     private static final String TAG = "CommentsSectionFragment";
     
     private MangaDetailActivity mActivity;
@@ -101,16 +102,34 @@ public class CommentsSectionFragment extends Fragment {
         public long getItemId(int position) {
             return position;
         }
-
+        
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            boolean isUserSame = true;
+            boolean isTimeSame = true;
+            
             if (convertView == null)
                 convertView = LayoutInflater.from(mActivity)
                         .inflate(R.layout.comments_item, null);
             Comment c = mComments.get(position);
-            ((TextView)convertView.findViewById(R.id.user)).setText(c.user);
-            ((TextView)convertView.findViewById(R.id.time)).setText(c.time);
-            ((TextView)convertView.findViewById(R.id.comment)).setText(Html.fromHtml(c.comment));
+            
+            TextView user = (TextView)convertView.findViewById(R.id.user);
+            if (!c.user.equals(user.getText())) {
+                isUserSame = false;
+                user.setText(c.user);
+            }
+            
+            TextView time = (TextView)convertView.findViewById(R.id.time);
+            if (!c.time.equals(time.getText())) {
+                isTimeSame = false;
+                time.setText(c.time);
+            }
+            
+            // No one can post one comment at same this time
+            if (!isUserSame || !isTimeSame)
+                ((TextView)convertView.findViewById(R.id.comment))
+                        .setText(Html.fromHtml(c.comment));
+                
             return convertView;
         }
     };

@@ -1293,7 +1293,7 @@ public class MangaListActivity extends SlidingActivity {
         mHlv.setOnFooterRefreshListener(new HfListView.OnFooterRefreshListener() {
             @Override
             public boolean onFooterRefresh() {
-                if (lus.pageUp()) {
+                if (lus.setPage(lastPage+1)) {
                     mGetMode = NEXT_PAGE;
                     getList();
                     return true;

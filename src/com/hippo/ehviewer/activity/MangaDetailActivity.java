@@ -70,6 +70,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -93,6 +94,8 @@ public class MangaDetailActivity extends FragmentActivity
     
     private DetailSectionFragment mDetailFragment;
     private CommentsSectionFragment mCommentsFragment;
+    
+    private int mTabIndex;
     
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
@@ -162,6 +165,8 @@ public class MangaDetailActivity extends FragmentActivity
     @Override
     public void onTabSelected(Tab tab, FragmentTransaction ft) {
         mViewPager.setCurrentItem(tab.getPosition());
+        mTabIndex = tab.getPosition();
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -192,8 +197,6 @@ public class MangaDetailActivity extends FragmentActivity
             mCommentsFragment.setComments(comments);
     }
     
-    /*
-    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -202,12 +205,13 @@ public class MangaDetailActivity extends FragmentActivity
             finish();
             return true;
         case R.id.action_favourite:
-            mData.addLocalFavourite(mangaDetail);
+            ((AppContext)getApplication()).getData().addLocalFavourite(mGalleryInfo);
             Toast.makeText(MangaDetailActivity.this,
                     getString(R.string.toast_add_favourite),
                     Toast.LENGTH_SHORT).show();
             return true;
         case R.id.action_download:
+            /*
             Intent it = new Intent(MangaDetailActivity.this, DownloadService.class);
             startService(it);
             if (mangaDetail.firstPage == null)
@@ -222,13 +226,63 @@ public class MangaDetailActivity extends FragmentActivity
             Toast.makeText(MangaDetailActivity.this,
                     getString(R.string.toast_add_download),
                     Toast.LENGTH_SHORT).show();
+                    */
+            return true;
+            
+        case R.id.action_reply:
+            final EditText et = new EditText(this);
+            //et.setMinimumHeight(Ui.dp2pix(64));
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            int x = Ui.dp2pix(8);
+            lp.leftMargin = x;
+            lp.rightMargin = x;
+            lp.topMargin = x;
+            lp.bottomMargin = x;
+            new DialogBuilder(this).setView(et, lp)
+                    .setTitle("评论")
+                    .setPositiveButton("发送", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((AlertButton)v).dialog.dismiss();
+                            String comment = et.getText().toString();
+                            ((AppContext)getApplication()).getEhClient()
+                                    .comment(EhClient.getDetailUrl(mGalleryInfo.gid, mGalleryInfo.token, EhClient.EX),
+                                            comment, new EhClient.OnCommentListener() {
+                                                @Override
+                                                public void onSuccess(List<Comment> comments) {
+                                                    setComments(comments);
+                                                }
+                                                @Override
+                                                public void onFailure(String eMsg) {
+                                                    Toast.makeText(MangaDetailActivity.this, eMsg, Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                        }
+                    }).setNegativeButton(android.R.string.cancel,
+                            new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((AlertButton)v).dialog.dismiss();
+                        }
+                    }).create().show();
+            
             return true;
         default:
             return super.onOptionsItemSelected(item);
         }
     }
     
-    */
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        MenuItem reply = menu.findItem(R.id.action_reply);
+        if (mTabIndex == 1)
+            reply.setVisible(true);
+        else
+            reply.setVisible(false);
+        return true;
+    }
     
     private class SectionsPagerAdapter extends FragmentPagerAdapter {
         public SectionsPagerAdapter(FragmentManager fm) {

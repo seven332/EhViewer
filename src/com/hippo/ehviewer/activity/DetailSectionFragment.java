@@ -684,10 +684,6 @@ public class DetailSectionFragment extends Fragment
         public void onSuccess(GalleryDetail md) {
             Cache.mdCache.put(String.valueOf(mGalleryDetail.gid), md);
             layout(md);
-            
-            for (Comment c : mGalleryDetail.comments) {
-                Log.d(TAG, c.time);
-            }
         }
         
         @Override

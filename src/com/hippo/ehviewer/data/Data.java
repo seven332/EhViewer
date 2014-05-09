@@ -513,7 +513,7 @@ public class Data {
     public synchronized void addLocalFavourite(GalleryInfo galleryInfo) {
         int gid = galleryInfo.gid;
         
-        if (containsRead(gid)) {
+        if (containsLocalFavourite(gid)) {
             updateGallery(galleryInfo);
         } else {
             addGallery(galleryInfo);

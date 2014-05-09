@@ -185,28 +185,6 @@ public class ListUrls {
         return numPerPage;
     }
     
-    public boolean pageUp() {
-        if (page < max - 1) {
-            page++;
-            return true;
-        }
-        else {
-            page = max -1;
-            return false;
-        }
-    }
-    
-    public boolean pageDown() {
-        if (page > 0) {
-            page--;
-            return true;
-        }
-        else {
-            page = 0;
-            return false;
-        }
-    }
-    
     public String getUrl() {
         StringBuilder url = new StringBuilder(EhClient.listHeader);
         url.append("?");

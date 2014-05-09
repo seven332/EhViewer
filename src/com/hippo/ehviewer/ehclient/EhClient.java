@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1515,6 +1516,44 @@ public class EhClient {
         
         
     }
+    
+    // Post comment
+    public interface OnCommentListener {
+        void onSuccess(List<Comment> comments);
+        void onFailure(String eMsg);
+    }
+    
+    public void comment(final String detailUrl, final String comment,
+            final OnCommentListener listener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpHelper hp = new HttpHelper(mAppContext);
+                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
+                    @Override
+                    public void onSuccess(String pageContent) {
+                        DetailParser parser = new DetailParser();
+                        parser.setMode(DetailParser.COMMENT);
+                        if (parser.parser(pageContent) == DetailParser.COMMENT) {
+                            listener.onSuccess(parser.comments);
+                        } else {
+                            listener.onFailure("parser error");   // TODO
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String eMsg) {
+                        listener.onFailure(eMsg);   // TODO
+                    }
+                });
+                hp.post(detailUrl, new String[][]{
+                        new String[]{"commenttext", comment},
+                        new String[]{"postcomment", "Post New"}});
+            }
+        }).start();
+    }
+    
+    // TODO
     
     /********** Use E-hentai API ************/
     

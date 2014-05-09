@@ -103,20 +103,25 @@ public class DialogBuilder extends AlertDialog.Builder {
      * @return 
      */
     public DialogBuilder setView(View view, boolean center) {
+        LinearLayout.LayoutParams lp;
+        if (center) {
+            lp = new LinearLayout.LayoutParams(
+                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            lp.gravity = Gravity.CENTER;
+        } else {
+            lp = new LinearLayout.LayoutParams(
+                    LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+        }
+        setView(view, lp);
+        return this;
+    }
+    
+    public DialogBuilder setView(View view, LinearLayout.LayoutParams lp) {
         ScrollView scrollView = (ScrollView)mView.findViewById(R.id.scroll_view);
         scrollView.setVisibility(View.VISIBLE);
         LinearLayout customLayout = (LinearLayout)mView.findViewById(R.id.custom);
         customLayout.setVisibility(View.VISIBLE);
-        if (center) {
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            lp.gravity = Gravity.CENTER;
-            customLayout.addView(view, lp);
-        } else {
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-            customLayout.addView(view, lp);
-        }
+        customLayout.addView(view, lp);
         return this;
     }
     

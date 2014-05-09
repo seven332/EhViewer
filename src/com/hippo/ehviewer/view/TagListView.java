@@ -366,12 +366,12 @@ public class TagListView extends ListView {
                 int deltaY = mLastEventY - mDownY;
 
                 if (mCellIsMobile) {
-                    if (deltaX < -mHoverCellOriginalBounds.width() / SENSITY)
+                    if (deltaX > mHoverCellOriginalBounds.width() / SENSITY)
                         mIsDelete = true;
                     else
                         mIsDelete = false;
                     
-                    if (deltaX > mHoverCellOriginalBounds.width() / SENSITY)
+                    if (deltaX < -mHoverCellOriginalBounds.width() / SENSITY)
                         mIsModify = true;
                     else
                         mIsModify = false;

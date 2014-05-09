@@ -11,4 +11,10 @@
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_download"
         android:title="@string/download"/>
+    
+    <item
+        android:id="@+id/action_reply"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_reply"
+        android:title="@string/download"/>
 </menu>

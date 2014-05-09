@@ -1,5 +1,7 @@
 package com.hippo.ehviewer.ehclient;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.LinkedList;
@@ -24,6 +26,8 @@ public class DetailParser {
     public static final int COMMENT = 0x10;
     public static final int OFFENSIVE = 0x20;
     public static final int PINING = 0x40;
+    
+    private static final CommentSort cs = new CommentSort();
     
     private int mMode;
     
@@ -141,8 +145,10 @@ public class DetailParser {
             m = p.matcher(pageContent);
             comments = new LinkedList<Comment>();
             while (m.find()) {
+                re |= COMMENT;
                 comments.add(new Comment(m.group(1), m.group(2), m.group(3)));
             }
+            Collections.sort(comments, cs);
         }
         return re;
     }
@@ -187,5 +193,69 @@ public class DetailParser {
         else
             type = ListUrls.UNKNOWN;
         return type;
+    }
+    
+    static class CommentSort implements Comparator<Comment> {
+        private int compareNum(String n1, String n2, int median) {
+            int re = 0;
+            for (int i = 0; i < median; i++) {
+                re *= 10;
+                re += n1.charAt(i) - n2.charAt(i);
+            }
+            return re;
+        }
+        private int getMonth(String m) {
+            if (m.equals("January"))
+                return 1;
+            else if (m.equals("February"))
+                return 2;
+            else if (m.equals("March"))
+                return 3;
+            else if (m.equals("April"))
+                return 4;
+            else if (m.equals("May"))
+                return 5;
+            else if (m.equals("June"))
+                return 6;
+            else if (m.equals("July"))
+                return 7;
+            else if (m.equals("August"))
+                return 8;
+            else if (m.equals("September"))
+                return 9;
+            else if (m.equals("October"))
+                return 10;
+            else if (m.equals("November"))
+                return 11;
+            else if (m.equals("December"))
+                return 12;
+            else
+                return 0;
+        }
+        
+        @Override
+        public int compare(Comment c1, Comment c2) {
+            int re = 0;
+            Pattern p = Pattern.compile("(\\d{2}) (\\w+) (\\d{4}), (\\d{2}):(\\d{2})");
+            Matcher m1 = p.matcher(c1.time);
+            Matcher m2 = p.matcher(c2.time);
+            if (!m1.find() || !m2.find())
+                return 0;
+            // year
+            re += compareNum(m1.group(3), m2.group(3), 4);
+            re <<= 4;
+            // Month
+            re += getMonth(m1.group(2)) - getMonth(m2.group(2));
+            re <<= 5;
+            // Day
+            re += compareNum(m1.group(1), m2.group(1), 2);
+            re <<= 5;
+            // Hour
+            re += compareNum(m1.group(4), m2.group(4), 2);
+            re <<= 6;
+            // Minute
+            re += compareNum(m1.group(5), m2.group(5), 2);
+            return re;
+        }
     }
 }

@@ -336,6 +336,7 @@ public class HttpHelper {
         return null;
     }
     
+    /*
     public String post(String urlStr, String str) {
         mException = null;
         
@@ -420,7 +421,7 @@ public class HttpHelper {
         mException = new RedirectionException();
         return null;
     }
-    
+    */
     
     public String postJson(String urlStr, JSONObject json) {
         mException = null;
