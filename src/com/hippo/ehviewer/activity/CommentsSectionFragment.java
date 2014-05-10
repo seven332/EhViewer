@@ -103,7 +103,7 @@ public class CommentsSectionFragment extends Fragment
     public boolean onItemLongClick(AdapterView<?> parent, View view,
             int position, long id) {
         final Comment c = (Comment)parent.getItemAtPosition(position);
-        List<String> urls = new ArrayList<String>();
+        final List<String> urls = new ArrayList<String>();
         urls.add(getString(android.R.string.copy));
         urls.add("该用户上传的其他内容");
         
@@ -119,25 +119,54 @@ public class CommentsSectionFragment extends Fragment
         // Long Click dialog
         mLongClickDialog = new DialogBuilder(mActivity)
                 .setTitle(R.string.what_to_do)
-                .setItems(urls, new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                    int position, long id) {
-                if (position == 0) {
-                    ClipboardManager cm = (ClipboardManager)mActivity
-                            .getSystemService(Context.CLIPBOARD_SERVICE);
-                    cm.setPrimaryClip(ClipData.newPlainText(null, c.comment));
-                    Toast.makeText(mActivity, "已复制", Toast.LENGTH_SHORT).show(); // TODO
-                } else if (position == 1){
+                .setAdapter(new BaseAdapter() {
+                    @Override
+                    public int getCount() {
+                        return urls.size();
+                    }
+                    @Override
+                    public Object getItem(int position) {
+                        return urls.get(position);
+                    }
+
+                    @Override
+                    public long getItemId(int position) {
+                        return position;
+                    }
+
+                    @Override
+                    public View getView(int position, View convertView,
+                            ViewGroup parent) {
+                        LayoutInflater inflater = LayoutInflater.from(mActivity);
+                        if (position < 2) {
+                            convertView = inflater.inflate(R.layout.list_item_text, null);
+                        } else {
+                            convertView = inflater.inflate(R.layout.list_url_text, null);
+                        }
+                        ((TextView)convertView.findViewById(
+                                android.R.id.text1)).setText(urls.get(position));
+                        return convertView;
+                    }
                     
-                } else if (position > 1) {
-                    String str = (String)parent.getItemAtPosition(position);
-                    Uri uri = Uri.parse(str);
-                    Intent intent = new Intent(Intent.ACTION_VIEW,uri);
-                    startActivity(intent);
-                }
-                mLongClickDialog.dismiss();
-            }
+                }, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+                        if (position == 0) {
+                            ClipboardManager cm = (ClipboardManager)mActivity
+                                    .getSystemService(Context.CLIPBOARD_SERVICE);
+                            cm.setPrimaryClip(ClipData.newPlainText(null, c.comment));
+                            Toast.makeText(mActivity, "已复制", Toast.LENGTH_SHORT).show(); // TODO
+                        } else if (position == 1){
+                            
+                        } else if (position > 1) {
+                            String str = (String)parent.getItemAtPosition(position);
+                            Uri uri = Uri.parse(str);
+                            Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+                            startActivity(intent);
+                        }
+                        mLongClickDialog.dismiss();
+                    }
         }).create();
         mLongClickDialog.show();
         return true;

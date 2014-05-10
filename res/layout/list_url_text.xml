@@ -2,12 +2,12 @@
     android:id="@android:id/text1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textSize="20sp"
+    android:textSize="16sp"
     android:gravity="center_vertical"
-    android:paddingTop="12dp"
-    android:paddingBottom="12dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
     android:paddingLeft="24dp"
     android:paddingRight="24dp"
     android:minHeight="48dp"
     android:maxHeight="48dp"
-    android:singleLine="true" />
+    android:maxLines="2" />

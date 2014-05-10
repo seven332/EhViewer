@@ -33,8 +33,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-// TODO hover to show larger preview
-
 public class MangaDetailActivity extends FragmentActivity
         implements ActionBar.TabListener {
 
