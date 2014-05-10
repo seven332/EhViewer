@@ -34,7 +34,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 // TODO hover to show larger preview
-// TODO add detail cache
 
 public class MangaDetailActivity extends FragmentActivity
         implements ActionBar.TabListener {
@@ -199,7 +198,9 @@ public class MangaDetailActivity extends FragmentActivity
                     Toast.LENGTH_SHORT).show();
                     */
             return true;
-            
+        case R.id.action_info:
+            // TODO
+            return true;
         case R.id.action_reply:
             final EditText et = new EditText(this);
             //et.setMinimumHeight(Ui.dp2pix(64));
@@ -212,8 +213,8 @@ public class MangaDetailActivity extends FragmentActivity
             lp.topMargin = x;
             lp.bottomMargin = x;
             new DialogBuilder(this).setView(et, lp)
-                    .setTitle("评论")
-                    .setPositiveButton("发送", new View.OnClickListener() {
+                    .setTitle(R.string.comment)
+                    .setPositiveButton(R.string.send, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             ((AlertButton)v).dialog.dismiss();
@@ -247,11 +248,15 @@ public class MangaDetailActivity extends FragmentActivity
     
     @Override
     public boolean onPrepareOptionsMenu (Menu menu) {
+        MenuItem info = menu.findItem(R.id.action_info);
         MenuItem reply = menu.findItem(R.id.action_reply);
-        if (mTabIndex == 1)
+        if (mTabIndex == 1) {
+            info.setVisible(false);
             reply.setVisible(true);
-        else
+        } else {
+            info.setVisible(true);
             reply.setVisible(false);
+        }
         return true;
     }
     
@@ -281,9 +286,9 @@ public class MangaDetailActivity extends FragmentActivity
         @Override
         public CharSequence getPageTitle(int position) {
             if (position == 0)
-                return "详情";
+                return getString(R.string.detail);
             else
-                return "评论";
+                return getString(R.string.comment);
         }
     }
 }

@@ -226,6 +226,11 @@
     <string name="rating0">感觉快要窒息了</string>
     
     <!-- Util -->
+    <string name="send">Send</string>
+    <string name="detail">详情</string>
+    <string name="comment">评论</string>
+    <string name="info">信息</string>
+    <string name="reply">回复</string>
     <string name="read">阅读</string>
     <string name="rate">评价</string>
     <string name="last_page">最后一页！</string>

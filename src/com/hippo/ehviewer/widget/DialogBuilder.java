@@ -1,5 +1,7 @@
 package com.hippo.ehviewer.widget;
 
+import java.util.List;
+
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.view.AlertButton;
 
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -236,6 +239,18 @@ public class DialogBuilder extends AlertDialog.Builder {
      */
     public DialogBuilder setItems(CharSequence[] items, AdapterView.OnItemClickListener listener) {
         setAdapter(new ArrayAdapter<CharSequence>(mContext,
+                R.layout.list_item_text, items), listener);
+        return this;
+    }
+    
+    /**
+     * Set a list of items to be displayed in the dialog as the content, you will be notified of the
+     * selected item via the supplied listener.
+     *
+     * @return This Builder object to allow for chaining of calls to set methods
+     */
+    public DialogBuilder setItems(List<String> items, AdapterView.OnItemClickListener listener) {
+        setAdapter(new ArrayAdapter<String>(mContext,
                 R.layout.list_item_text, items), listener);
         return this;
     }

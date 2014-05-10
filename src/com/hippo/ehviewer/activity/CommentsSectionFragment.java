@@ -1,23 +1,37 @@
 package com.hippo.ehviewer.activity;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Comment;
+import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class CommentsSectionFragment extends Fragment {
+public class CommentsSectionFragment extends Fragment
+        implements AdapterView.OnItemLongClickListener {
     
     @SuppressWarnings("unused")
     private static final String TAG = "CommentsSectionFragment";
@@ -33,6 +47,7 @@ public class CommentsSectionFragment extends Fragment {
     
     private BaseAdapter adapter = new CommentsAdapter();
     
+    private AlertDialog mLongClickDialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -66,6 +81,7 @@ public class CommentsSectionFragment extends Fragment {
         });
         
         mList.setAdapter(adapter);
+        mList.setOnItemLongClickListener(this);
         
         mComments = mActivity.getComments();
         if (mComments != null) {
@@ -81,6 +97,50 @@ public class CommentsSectionFragment extends Fragment {
         adapter.notifyDataSetChanged();
         if (mWaitView != null)
             mWaitView.setVisibility(View.GONE);
+    }
+    
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view,
+            int position, long id) {
+        final Comment c = (Comment)parent.getItemAtPosition(position);
+        List<String> urls = new ArrayList<String>();
+        urls.add(getString(android.R.string.copy));
+        urls.add("该用户上传的其他内容");
+        
+        Pattern p = Pattern.compile("[a-zA-Z]+://[^\\s<>\"]*");
+        Matcher m = p.matcher(c.comment);
+        
+        while (m.find()) {
+            String url = m.group();
+            if (!urls.contains(url))
+                urls.add(url);
+        }
+        
+        // Long Click dialog
+        mLongClickDialog = new DialogBuilder(mActivity)
+                .setTitle(R.string.what_to_do)
+                .setItems(urls, new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                    int position, long id) {
+                if (position == 0) {
+                    ClipboardManager cm = (ClipboardManager)mActivity
+                            .getSystemService(Context.CLIPBOARD_SERVICE);
+                    cm.setPrimaryClip(ClipData.newPlainText(null, c.comment));
+                    Toast.makeText(mActivity, "已复制", Toast.LENGTH_SHORT).show(); // TODO
+                } else if (position == 1){
+                    
+                } else if (position > 1) {
+                    String str = (String)parent.getItemAtPosition(position);
+                    Uri uri = Uri.parse(str);
+                    Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+                    startActivity(intent);
+                }
+                mLongClickDialog.dismiss();
+            }
+        }).create();
+        mLongClickDialog.show();
+        return true;
     }
     
     private class CommentsAdapter extends BaseAdapter {
@@ -132,5 +192,5 @@ public class CommentsSectionFragment extends Fragment {
                 
             return convertView;
         }
-    };
+    }
 }

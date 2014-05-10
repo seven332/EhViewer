@@ -230,6 +230,11 @@
     <string name="rating0">DISASTER</string>
     
     <!-- Util -->
+    <string name="send">发送</string>
+    <string name="detail">Detail</string>
+    <string name="comment">Comment</string>
+    <string name="info">Info</string>
+    <string name="reply">Reply</string>
     <string name="read">Read</string>
     <string name="rate">Rate</string>
     <string name="last_page">Last page !</string>

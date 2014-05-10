@@ -13,8 +13,14 @@
         android:title="@string/download"/>
     
     <item
+        android:id="@+id/action_info"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_info"
+        android:title="@string/info"/>
+    
+    <item
         android:id="@+id/action_reply"
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_reply_selector"
-        android:title="@string/download"/>
+        android:title="@string/reply"/>
 </menu>

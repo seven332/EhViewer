@@ -51,17 +51,17 @@
             android:name=".activity.MangaDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|adjustUnspecified|stateHidden"
-            android:configChanges="orientation|screenSize" >
+            android:configChanges="orientation|screenSize"
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http"
-                    android:host="exhentai.org"
-                    android:pathPrefix="/g/" />
-                <data android:scheme="http"
-                    android:host="g.e-hentai.org"
-                    android:pathPrefix="/g/" />
+                <data android:scheme="http" />
+                <data android:host="exhentai.org" />
+                <data android:host="g.e-hentai.org" />
+                <data android:host="lofi.e-hentai.org" />
+                <data android:pathPrefix="/g/" />
             </intent-filter>
         </activity>
         

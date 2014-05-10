@@ -1,9 +1,9 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     
     <style name="ActionBar" parent="@android:style/Widget.Holo.ActionBar">
-        <item name="android:background">@android:color/holo_blue_dark</item>
-        <item name="android:backgroundStacked">@android:color/holo_blue_dark</item>
-        <item name="android:backgroundSplit">@android:color/holo_blue_dark</item>
+        <item name="android:background">@drawable/ab_bg</item>
+        <item name="android:backgroundStacked">@drawable/ab_bg_stacked</item>
+        <item name="android:backgroundSplit">@drawable/ab_bg_bottom</item>
         <item name="android:titleTextStyle">@style/ActionBarTitleFont</item>
     </style>
 
@@ -16,9 +16,8 @@
         <item name="android:src">@drawable/ic_action_core_overflow_selector</item>
     </style>
     
-    <style name="TabText" parent="@android:style/Widget.Holo.Light.ActionBar.TabText">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">@dimen/tab_text</item>
+    <style name="ActionBarTabStyle" parent="@android:style/Widget.Holo.Light.ActionBar.TabView">
+        <item name="android:background">@drawable/ab_tab_indicator</item>
     </style>
     
     <style name="PopupMenu" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
