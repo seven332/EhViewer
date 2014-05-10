@@ -1,82 +1,36 @@
 package com.hippo.ehviewer.activity;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Map.Entry;
 
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.ImageGeterManager;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Comment;
-import com.hippo.ehviewer.data.Data;
-import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
-import com.hippo.ehviewer.data.PreviewList;
-import com.hippo.ehviewer.ehclient.DetailParser;
+import com.hippo.ehviewer.ehclient.DetailUrlParser;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
-import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.view.AlertButton;
-import com.hippo.ehviewer.widget.AutoWrapLayout;
-import com.hippo.ehviewer.widget.ButtonsDialogBuilder;
 import com.hippo.ehviewer.widget.DialogBuilder;
-import com.hippo.ehviewer.widget.LoadImageView;
-import com.hippo.ehviewer.widget.ProgressiveRatingBar;
-import com.hippo.ehviewer.widget.ProgressiveTextView;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.TypedValue;
-
-import com.hippo.ehviewer.util.Log;
-
-import android.view.ContextThemeWrapper;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RatingBar;
-import android.widget.ScrollView;
-import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 // TODO hover to show larger preview
@@ -85,6 +39,7 @@ import android.widget.Toast;
 public class MangaDetailActivity extends FragmentActivity
         implements ActionBar.TabListener {
 
+    @SuppressWarnings("unused")
     private static final String TAG = "MangaDetailActivity";
     
     public static final String KEY_G_INFO = "gallery_info";
@@ -125,7 +80,23 @@ public class MangaDetailActivity extends FragmentActivity
         
         // Get information
         Intent intent = getIntent();
-        mGalleryInfo = intent.getParcelableExtra(KEY_G_INFO);
+        // Check from url or not
+        if (intent.getAction() == "android.intent.action.VIEW") {
+            DetailUrlParser parser = new DetailUrlParser();
+            if (parser.parser(intent.getData().getPath())) {
+                mGalleryInfo = new GalleryInfo();
+                mGalleryInfo.gid = parser.gid;
+                mGalleryInfo.token = parser.token;
+                // TODO get all information from detail page
+                // then update all view
+                mGalleryInfo.title = "haha";
+                mGalleryInfo.uploader = "haha";
+            } else {
+                // TODO
+            }
+        } else {
+            mGalleryInfo = intent.getParcelableExtra(KEY_G_INFO);
+        }
         
         // ViewPager need id or error
         
