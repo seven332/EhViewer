@@ -2,7 +2,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <ScrollView
+    <com.hippo.ehviewer.widget.OlScrollView
         android:id="@+id/manga_detail_scrollview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -108,7 +108,7 @@
                 layout="@layout/detail_pining"
                 android:visibility="gone" />
         </LinearLayout>
-    </ScrollView>
+    </com.hippo.ehviewer.widget.OlScrollView>
 
     <ProgressBar
         android:id="@+id/detail_wait"

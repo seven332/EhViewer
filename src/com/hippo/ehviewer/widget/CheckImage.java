@@ -1,4 +1,4 @@
-package com.hippo.ehviewer.view;
+package com.hippo.ehviewer.widget;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.R.styleable;

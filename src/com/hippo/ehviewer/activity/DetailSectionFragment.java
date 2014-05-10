@@ -21,13 +21,15 @@ import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
-import com.hippo.ehviewer.view.AlertButton;
+import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
 import com.hippo.ehviewer.widget.ButtonsDialogBuilder;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.LoadImageView;
+import com.hippo.ehviewer.widget.OlScrollView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
+import com.hippo.ehviewer.widget.OnLayoutListener;
 import com.hippo.ehviewer.widget.ProgressiveRatingBar;
 import com.hippo.ehviewer.widget.ProgressiveTextView;
 
@@ -72,6 +74,7 @@ public class DetailSectionFragment extends Fragment
     private String mUrl;
     
     private View mRootView;
+    private OlScrollView mScrollView;
     private Button mReadButton;
     private Button mRateButton;
     private ProgressBar mWaitPb;
@@ -91,10 +94,12 @@ public class DetailSectionFragment extends Fragment
     private View mBackButton;
     private View mFrontButton;
     private View mKnownButton;
+    private View mDivider;
     
     private AlertDialog mGoToDialog;
     
     private int mCurPage;
+    private boolean mShowPreview = false;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -116,7 +121,7 @@ public class DetailSectionFragment extends Fragment
         
         mRootView = inflater.inflate(
                 R.layout.detail, container, false);
-        final ScrollView scrollView = (ScrollView)mRootView.findViewById(R.id.manga_detail_scrollview);
+        mScrollView = (OlScrollView)mRootView.findViewById(R.id.manga_detail_scrollview);
         mReadButton = (Button)mRootView.findViewById(R.id.detail_read);
         mRateButton = (Button)mRootView.findViewById(R.id.detail_do_rate);
         mWaitPb = (ProgressBar)mRootView.findViewById(R.id.detail_wait);
@@ -136,6 +141,7 @@ public class DetailSectionFragment extends Fragment
         mKnownButton = mPiningView.findViewById(R.id.detail_button_known);
         mBackButton = mPreviewListMain.findViewById(R.id.back);
         mFrontButton = mPreviewListMain.findViewById(R.id.front);
+        mDivider = mNormalView.findViewById(R.id.divider);
         
         mRefreshButton.setOnClickListener(this);
         
@@ -145,17 +151,30 @@ public class DetailSectionFragment extends Fragment
         int paddingRight = align.getPaddingRight();
         int paddingBottom = align.getPaddingBottom();
         if (paddingTop != 0 || paddingBottom != 0) {
-            scrollView.setPadding(paddingLeft, paddingTop,
+            mScrollView.setPadding(paddingLeft, paddingTop,
                     paddingRight, paddingBottom);
         }
         align.addOnFitSystemWindowsListener(new OnFitSystemWindowsListener() {
             @Override
             public void onfitSystemWindows(int paddingLeft, int paddingTop,
                     int paddingRight, int paddingBottom) {
-                scrollView.setPadding(paddingLeft, paddingTop,
+                mScrollView.setPadding(paddingLeft, paddingTop,
                         paddingRight, paddingBottom);
             }
         });
+        
+        mScrollView.setOnLayoutListener(new OnLayoutListener() {
+            @Override
+            public void onLayout() {
+                if (mShowPreview) {
+                    mShowPreview = false;
+                    mScrollView.scrollTo(0,
+                            mNormalView.getTop() + mDivider.getTop());
+                }
+            }
+        });
+        
+        
         
         LoadImageView thumb = (LoadImageView)mRootView.findViewById(R.id.detail_cover);
         Bitmap bmp = null;
@@ -291,13 +310,20 @@ public class DetailSectionFragment extends Fragment
                     new EhClient.OnGetPageListListener() {
                         @Override
                         public void onSuccess(Object checkFlag, PreviewList pageList) {
+                            if (mActivity.isFinishing())
+                                return;
+                            
                             int page = (Integer)checkFlag;
                             mGalleryDetail.previewLists[page] = pageList;
                             addPageItem(page);
+                            mShowPreview = true;
                         }
 
                         @Override
                         public void onFailure(Object checkFlag, String eMsg) {
+                            if (mActivity.isFinishing())
+                                return;
+                            
                             int page = (Integer)checkFlag;
                             if (page == mCurPage) {
                                 Toast.makeText(mActivity,

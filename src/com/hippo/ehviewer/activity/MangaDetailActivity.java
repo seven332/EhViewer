@@ -12,7 +12,7 @@ import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.view.AlertButton;
+import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 
 import android.app.ActionBar;

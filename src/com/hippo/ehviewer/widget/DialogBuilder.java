@@ -3,7 +3,6 @@ package com.hippo.ehviewer.widget;
 import java.util.List;
 
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.view.AlertButton;
 
 import android.app.AlertDialog;
 import android.content.Context;

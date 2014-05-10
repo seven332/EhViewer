@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.view;
+package com.hippo.ehviewer.widget;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;

@@ -16,7 +16,7 @@
 
         <TableRow android:layout_marginBottom="8dp" >
 
-            <com.hippo.ehviewer.view.CheckImage
+            <com.hippo.ehviewer.widget.CheckImage
                 android:id="@+id/button_doujinshi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
                 android:src="@drawable/doujinshi"
                 hippo:mask="@drawable/mask" />
 
-            <com.hippo.ehviewer.view.CheckImage
+            <com.hippo.ehviewer.widget.CheckImage
                 android:id="@+id/button_manga"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
 
         <TableRow android:layout_marginBottom="8dp" >
 
-            <com.hippo.ehviewer.view.CheckImage
+            <com.hippo.ehviewer.widget.CheckImage
                 android:id="@+id/button_artistcg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
                 android:src="@drawable/artistcg"
                 hippo:mask="@drawable/mask" />
 
-            <com.hippo.ehviewer.view.CheckImage
+            <com.hippo.ehviewer.widget.CheckImage
                 android:id="@+id/button_gamecg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
 
         <TableRow android:layout_marginBottom="8dp" >
 
-            <com.hippo.ehviewer.view.CheckImage
+            <com.hippo.ehviewer.widget.CheckImage
                 android:id="@+id/button_western"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                 android:src="@drawable/western"
                 hippo:mask="@drawable/mask" />
 
-            <com.hippo.ehviewer.view.CheckImage
+            <com.hippo.ehviewer.widget.CheckImage
                 android:id="@+id/button_non_h"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
 
         <TableRow android:layout_marginBottom="8dp" >
 
-            <com.hippo.ehviewer.view.CheckImage
+            <com.hippo.ehviewer.widget.CheckImage
                 android:id="@+id/button_imageset"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
                 android:src="@drawable/imageset"
                 hippo:mask="@drawable/mask" />
 
-            <com.hippo.ehviewer.view.CheckImage
+            <com.hippo.ehviewer.widget.CheckImage
                 android:id="@+id/button_cosplay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
 
         <TableRow android:layout_marginBottom="8dp" >
 
-            <com.hippo.ehviewer.view.CheckImage
+            <com.hippo.ehviewer.widget.CheckImage
                 android:id="@+id/button_asianporn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
                 android:src="@drawable/asianporn"
                 hippo:mask="@drawable/mask" />
 
-            <com.hippo.ehviewer.view.CheckImage
+            <com.hippo.ehviewer.widget.CheckImage
                 android:id="@+id/button_misc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

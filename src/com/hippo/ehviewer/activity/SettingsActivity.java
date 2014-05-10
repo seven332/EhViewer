@@ -13,7 +13,7 @@ import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Util;
-import com.hippo.ehviewer.view.AlertButton;
+import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 import com.hippo.ehviewer.network.Downloader;

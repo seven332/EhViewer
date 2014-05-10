@@ -1,4 +1,4 @@
-<com.hippo.ehviewer.view.DownloadItemLayout
+<com.hippo.ehviewer.widget.DownloadItemLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:hippo="http://schemas.android.com/apk/res/com.hippo.ehviewer"
     android:layout_width="fill_parent"
@@ -46,4 +46,4 @@
         android:layout_gravity="center"
         android:padding="12dp" />
 
-</com.hippo.ehviewer.view.DownloadItemLayout>
+</com.hippo.ehviewer.widget.DownloadItemLayout>

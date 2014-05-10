@@ -1,4 +1,4 @@
-package com.hippo.ehviewer.view;
+package com.hippo.ehviewer.widget;
 
 import android.app.AlertDialog;
 import android.content.Context;

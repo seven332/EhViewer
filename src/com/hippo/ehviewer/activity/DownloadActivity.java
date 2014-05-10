@@ -18,9 +18,9 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
-import com.hippo.ehviewer.view.AlertButton;
-import com.hippo.ehviewer.view.DownloadItemLayout;
+import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
+import com.hippo.ehviewer.widget.DownloadItemLayout;
 import com.hippo.ehviewer.widget.LoadImageView;
 
 import android.app.Activity;

@@ -4,7 +4,7 @@ import com.hippo.ehviewer.activity.MangaListActivity;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
-import com.hippo.ehviewer.view.AlertButton;
+import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 
 import android.annotation.SuppressLint;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.view;
+package com.hippo.ehviewer.widget;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

@@ -67,21 +67,21 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
-        <com.hippo.ehviewer.view.AlertButton
+        <com.hippo.ehviewer.widget.AlertButton
             android:id="@+id/negative_button"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:visibility="gone" />
 
-        <com.hippo.ehviewer.view.AlertButton
+        <com.hippo.ehviewer.widget.AlertButton
             android:id="@+id/neutral_button"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:visibility="gone" />
 
-        <com.hippo.ehviewer.view.AlertButton
+        <com.hippo.ehviewer.widget.AlertButton
             android:id="@+id/positive_button"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
