@@ -95,7 +95,12 @@
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTask"
+            android:parentActivityName="com.hippo.ehviewer.activity.MangaListActivity"
             android:theme="@style/AppTheme.ListActivity" >
+            
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hippo.ehviewer.activity.MangaListActivity" />
         </activity>
         
         <activity

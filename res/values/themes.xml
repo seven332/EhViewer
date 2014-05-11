@@ -5,7 +5,6 @@
         
         <!-- ActionBar -->
         <item name="@android:actionBarStyle">@style/ActionBar</item>
-        <item name="@android:actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="@android:actionBarTabStyle">@style/ActionBarTabStyle</item>
         <item name="@android:homeAsUpIndicator">@drawable/ic_ab_back</item>
         

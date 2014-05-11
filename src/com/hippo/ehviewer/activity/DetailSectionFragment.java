@@ -336,8 +336,7 @@ public class DetailSectionFragment extends Fragment
                     });
         } else {
             addPageItem(mCurPage);
-            mScrollView.scrollTo(0,
-                    mNormalView.getTop() + mDivider.getTop());
+            mShowPreview = true;
         }
     }
     

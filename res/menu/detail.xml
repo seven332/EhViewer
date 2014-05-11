@@ -21,6 +21,6 @@
     <item
         android:id="@+id/action_reply"
         android:showAsAction="ifRoom"
-        android:icon="@drawable/ic_action_reply_selector"
+        android:icon="@drawable/ic_action_reply"
         android:title="@string/reply"/>
 </menu>
