@@ -23,14 +23,16 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true" />
             
-            <com.hippo.ehviewer.widget.ProgressiveTextView
+            <TextSwitcher
                 android:id="@+id/detail_average_people"
-                style="@style/DetailSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/detail_rate"
-                android:layout_marginLeft="6.0dp" />
+                android:layout_marginLeft="6.0dp"
+                android:inAnimation="@anim/push_up_in"
+                android:outAnimation="@anim/push_up_out" >
+            </TextSwitcher>
             
         </RelativeLayout>
         

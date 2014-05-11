@@ -92,7 +92,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="2.0dp"
                 android:background="@android:color/holo_blue_light" />
-
+            
+            <!-- TODO maybe viewstub and is better -->
             <include
                 android:id="@+id/manga_detail_normal"
                 layout="@layout/detail_normal"

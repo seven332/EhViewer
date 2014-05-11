@@ -53,6 +53,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -60,8 +61,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
+import android.widget.ViewSwitcher.ViewFactory;
 
 public class DetailSectionFragment extends Fragment
         implements View.OnClickListener {
@@ -485,8 +489,15 @@ public class DetailSectionFragment extends Fragment
             RatingBar rate = (RatingBar)mRootView.findViewById(R.id.detail_rate);
             rate.setRating(mGalleryDetail.rating);
             
-            TextView averagePeople = (TextView)mRootView.findViewById(R.id.detail_average_people);
-            averagePeople.setText(String.format("%.2f (%d)",
+            TextSwitcher averagePeople = (TextSwitcher)mRootView.findViewById(R.id.detail_average_people);
+            averagePeople.setFactory(new ViewFactory() {
+                @Override
+                public View makeView() {
+                    LayoutInflater inflater = LayoutInflater.from(mActivity);
+                    return inflater.inflate(R.layout.detail_avg_text, null);
+                }
+            });
+            averagePeople.setCurrentText(String.format("%.2f (%d)",
                     mGalleryDetail.rating, mGalleryDetail.people));
             
             TextView posted = (TextView)mRootView.findViewById(R.id.detail_posted);
@@ -664,9 +675,9 @@ public class DetailSectionFragment extends Fragment
                                                 RatingBar rate = (RatingBar)mRootView.findViewById(R.id.detail_rate);
                                                 rate.setRating(mGalleryDetail.rating);
                                                 
-                                                ProgressiveTextView averagePeople = (ProgressiveTextView)mRootView.findViewById(
-                                                        R.id.detail_average_people);
-                                                averagePeople.setNewText(String.format("%.2f (%d)",
+                                                TextSwitcher averagePeople = (TextSwitcher)
+                                                        mRootView.findViewById(R.id.detail_average_people);
+                                                averagePeople.setText(String.format("%.2f (%d)",
                                                         mGalleryDetail.rating, mGalleryDetail.people));
                                             }
                                             Toast.makeText(mActivity,
@@ -827,4 +838,12 @@ public class DetailSectionFragment extends Fragment
                     "投票失败\n" + eMsg, Toast.LENGTH_SHORT).show(); // TODO
         }
     }
+    
+    private ViewFactory mFactory = new ViewFactory() {
+        @Override
+        public View makeView() {
+            LayoutInflater inflater = LayoutInflater.from(mActivity);
+            return inflater.inflate(R.layout.detail_avg_text, null);
+        }
+    };
 }
