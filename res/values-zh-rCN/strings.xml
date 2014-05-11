@@ -226,7 +226,7 @@
     <string name="rating0">感觉快要窒息了</string>
     
     <!-- Util -->
-    <string name="send">Send</string>
+    <string name="send">发送</string>
     <string name="detail">详情</string>
     <string name="comment">评论</string>
     <string name="info">信息</string>

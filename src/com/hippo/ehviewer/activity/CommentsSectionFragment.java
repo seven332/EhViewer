@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.util.Log;
@@ -157,8 +158,10 @@ public class CommentsSectionFragment extends Fragment
                                     .getSystemService(Context.CLIPBOARD_SERVICE);
                             cm.setPrimaryClip(ClipData.newPlainText(null, c.comment));
                             Toast.makeText(mActivity, "已复制", Toast.LENGTH_SHORT).show(); // TODO
-                        } else if (position == 1){
-                            
+                        } else if (position == 1) {
+                            ListUrls lus = new ListUrls(ListUrls.ALL_TYPE,
+                                    "uploader:" + mActivity.getGalleryInfo().uploader, 0);
+                            // TOOD
                         } else if (position > 1) {
                             String str = (String)parent.getItemAtPosition(position);
                             Uri uri = Uri.parse(str);

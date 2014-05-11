@@ -1050,10 +1050,10 @@ public class MangaListActivity extends SlidingActivity {
     }
     
     @Override
-    public void onNewIntent(Intent intent) { 
+    protected void onNewIntent(Intent intent) { 
         setIntent(intent); 
         handleIntent(intent); 
-     }
+    }
     
     @Override
     public void onCreate(Bundle savedInstanceState) {

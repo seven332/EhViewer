@@ -37,7 +37,7 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.ListActivity.PullList"
+            android:theme="@style/AppTheme.Main.ListActivity.PullList"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -52,7 +52,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|adjustUnspecified|stateHidden"
             android:configChanges="orientation|screenSize"
-            android:launchMode="singleTop" >
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

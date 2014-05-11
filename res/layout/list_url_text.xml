@@ -10,4 +10,5 @@
     android:paddingRight="24dp"
     android:minHeight="48dp"
     android:maxHeight="48dp"
-    android:maxLines="2" />
+    android:maxLines="2"
+    android:ellipsize="end" />

@@ -2,11 +2,12 @@
     
     <!-- Application theme. -->
     <style name="AppTheme" parent="@android:Theme.Holo.Light">
+        
         <!-- ActionBar -->
         <item name="@android:actionBarStyle">@style/ActionBar</item>
         <item name="@android:actionOverflowButtonStyle">@style/OverFlow</item>
-        <item name="@android:homeAsUpIndicator">@drawable/ic_navigation_drawer</item>
         <item name="@android:actionBarTabStyle">@style/ActionBarTabStyle</item>
+        <item name="@android:homeAsUpIndicator">@drawable/ic_ab_back</item>
         
         <!-- Button -->
         <item name="@android:buttonStyle">@style/Button.Blue</item>
@@ -26,6 +27,23 @@
         <!-- item name="@android:searchViewVoiceIcon">@android:drawable/ic_voice_search_api_holo_light</item -->
     </style>
     
+    <style name="AppTheme.Main">
+        <item name="@android:homeAsUpIndicator">@drawable/ic_navigation_drawer</item>
+    </style>
+    
+    <style name="AppTheme.Main.ListActivity">
+        <item name="android:windowBackground">@color/main_background</item>
+    </style>
+    
+    <style name="AppTheme.Main.ListActivity.PullList">
+        <item name="ptrPullText">@string/pull_load_pull</item>
+        <item name="ptrRefreshingText">@string/pull_load_doing</item>
+        <item name="ptrReleaseText">@string/pull_load_release</item>
+        
+        <item name="ptrProgressBarColor">@android:color/holo_orange_dark</item>
+        <item name="ptrSmoothProgressBarStyle">@style/RefreshSmoothProgressBar</item>
+    </style>
+    
     <style name="AppTheme.NoActionBar">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
@@ -34,15 +52,6 @@
     <!-- For activity whose main view is list, make background darker to match white list -->
     <style name="AppTheme.ListActivity">
         <item name="android:windowBackground">@color/main_background</item>
-    </style>
-    
-    <style name="AppTheme.ListActivity.PullList">
-        <item name="ptrPullText">@string/pull_load_pull</item>
-        <item name="ptrRefreshingText">@string/pull_load_doing</item>
-        <item name="ptrReleaseText">@string/pull_load_release</item>
-        
-        <item name="ptrProgressBarColor">@android:color/holo_orange_dark</item>
-        <item name="ptrSmoothProgressBarStyle">@style/RefreshSmoothProgressBar</item>
     </style>
     
     <!-- Theme for start activity -->

@@ -70,15 +70,9 @@ public class MangaDetailActivity extends FragmentActivity
         unbindService(mServiceConn);
     }
     
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.viewpager);
-        
-        // Get information
-        Intent intent = getIntent();
-        // Check from url or not
+    private void handleIntent(Intent intent) { 
         if (intent.getAction() == "android.intent.action.VIEW") {
+            
             DetailUrlParser parser = new DetailUrlParser();
             if (parser.parser(intent.getData().getPath())) {
                 mGalleryInfo = new GalleryInfo();
@@ -91,11 +85,27 @@ public class MangaDetailActivity extends FragmentActivity
             } else {
                 // TODO
             }
+            // TODO reset views
+            
+            Toast.makeText(this, "new", Toast.LENGTH_SHORT).show();
+            
         } else {
             mGalleryInfo = intent.getParcelableExtra(KEY_G_INFO);
         }
+    }
+    
+    @Override
+    protected void onNewIntent(Intent intent) { 
+        setIntent(intent); 
+        handleIntent(intent); 
+    }
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.viewpager);
         
-        // ViewPager need id or error
+        handleIntent(getIntent());
         
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
