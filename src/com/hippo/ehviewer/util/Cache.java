@@ -8,7 +8,6 @@ import android.os.Environment;
 import android.support.v4.util.LruCache;
 
 import com.hippo.ehviewer.data.GalleryDetail;
-import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.DiskCache;
 
 public class Cache {
