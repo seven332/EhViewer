@@ -11,5 +11,5 @@
         android:state_pressed="true"
         android:drawable="@color/lighter_gray" />
     <item
-        android:drawable="@android:color/white" />
+        android:drawable="@color/btn_white_default" />
 </selector>

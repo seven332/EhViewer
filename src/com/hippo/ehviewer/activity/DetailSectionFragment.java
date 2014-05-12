@@ -391,8 +391,8 @@ public class DetailSectionFragment extends Fragment
         LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>> tagGroups = 
                 mGalleryDetail.tags;
         tagsLayout.removeAllViews();
-        int x = Ui.dp2pix(8);
-        int y = Ui.dp2pix(6);
+        int x = Ui.dp2pix(4);
+        int y = Ui.dp2pix(4);
         Resources resources = getResources();
         // Get tag view resources
         int tagTextSize = resources.getDimensionPixelOffset(R.dimen.button_small_size);

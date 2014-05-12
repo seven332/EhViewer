@@ -11,7 +11,7 @@
     
     <ProgressBar
         android:id="@+id/commtens_wait"
-        style="?android:attr/progressBarStyleLarge"
+        style="@style/ProgressBar.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />

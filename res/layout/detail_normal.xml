@@ -84,7 +84,7 @@
         android:background="@color/detail_divider" />
     
     <include
-        layout="@layout/page_list"
+        layout="@layout/preview_list"
         android:id="@+id/page_list"
         android:visibility="gone" />
     

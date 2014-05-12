@@ -38,4 +38,7 @@
     <color name="detail_title_secondary">#ff777777</color>
     
     <color name="detail_divider">#22000000</color>
+    
+    
+    <color name="btn_white_default">#fff0f0f0</color>
 </resources>

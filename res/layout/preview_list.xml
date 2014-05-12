@@ -31,7 +31,7 @@
         android:visibility="gone" />
     
     <include
-        layout="@layout/page_list_panel"
+        layout="@layout/preview_list_panel"
         android:id="@+id/bottom_panel"
         android:layout_gravity="center" />
     
