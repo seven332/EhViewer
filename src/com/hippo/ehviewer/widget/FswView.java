@@ -13,15 +13,19 @@ public class FswView extends View {
     
     public FswView(Context context) {
         super(context);
-        mListeners = new LinkedList<OnFitSystemWindowsListener>();
+        init();
     }
     public FswView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        mListeners = new LinkedList<OnFitSystemWindowsListener>();
+        this(context, attrs, 0);
     }
     public FswView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init();
+    }
+    
+    public void init() {
         mListeners = new LinkedList<OnFitSystemWindowsListener>();
+        setVisibility(View.GONE);
     }
     
     public void addOnFitSystemWindowsListener(OnFitSystemWindowsListener l) {
