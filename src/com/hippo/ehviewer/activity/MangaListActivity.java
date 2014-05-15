@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.Options;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 import com.hippo.ehviewer.AppContext;
@@ -1301,7 +1302,7 @@ public class MangaListActivity extends SlidingActivity {
                             getList();
                         }
                     }
-                })
+                }).options(new Options.Builder().scrollDistance(0.25f).build())
                 .setup(mHlv);
         mHlv.setOnFooterRefreshListener(new HfListView.OnFooterRefreshListener() {
             @Override
