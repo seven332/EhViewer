@@ -9,10 +9,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
-import uk.co.senab.actionbarpulltorefresh.library.Options;
-import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
-
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageGeterManager;
 import com.hippo.ehviewer.ListUrls;
@@ -34,6 +30,7 @@ import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.CheckImage;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswListView;
+import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.HfListView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
@@ -55,6 +52,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -1288,22 +1286,21 @@ public class MangaListActivity extends SlidingActivity {
         
         // Pull list view
         // Setup ActionBarPullToRefresh
-        ActionBarPullToRefresh.from(this)
-                .listener(new OnRefreshListener() {
-                    @Override
-                    public void onRefreshStarted(View view) {
-                        if (firstPage != 0) {
-                            lus.setPage(firstPage - 1);
-                            mGetMode = PRE_PAGE;
-                            getList();
-                        } else {
-                            lus.setPage(0);
-                            mGetMode = REFRESH;
-                            getList();
-                        }
-                    }
-                }).options(new Options.Builder().scrollDistance(0.25f).build())
-                .setup(mHlv);
+        mHlv.setColorScheme(R.color.refresh_color_1, R.color.refresh_color_2, R.color.refresh_color_3, R.color.refresh_color_4);
+        mHlv.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (firstPage != 0) {
+                    lus.setPage(firstPage - 1);
+                    mGetMode = PRE_PAGE;
+                    getList();
+                } else {
+                    lus.setPage(0);
+                    mGetMode = REFRESH;
+                    getList();
+                }
+            }
+        });
         mHlv.setOnFooterRefreshListener(new HfListView.OnFooterRefreshListener() {
             @Override
             public boolean onFooterRefresh() {
@@ -1316,22 +1313,6 @@ public class MangaListActivity extends SlidingActivity {
                 }
             }
         });
-        mMainList.setOnFitSystemWindowsListener(new OnFitSystemWindowsListener() {
-            public void onfitSystemWindows(int paddingLeft,
-                    int paddingTop, int paddingRight, int paddingBottom) {
-                mFswPaddingLeft = paddingLeft;
-                mFswPaddingTop = paddingTop;
-                mFswPaddingRight = paddingRight;
-                mFswPaddingBottom = paddingBottom;
-                
-                mUserPanel.setPadding(mUserPanel.getPaddingLeft(), mFswPaddingTop,
-                        mUserPanel.getPaddingRight(), mUserPanel.getPaddingBottom());
-                itemListMenu.setPadding(itemListMenu.getPaddingLeft(), itemListMenu.getPaddingTop(),
-                        itemListMenu.getPaddingRight(), mFswPaddingBottom);
-                tagListMenu.setPadding(tagListMenu.getPaddingLeft(), mFswPaddingTop,
-                        tagListMenu.getPaddingRight(), mFswPaddingBottom);
-            }
-        });
         mHlv.setFooterString(getString(R.string.footer_loading),
                 getString(R.string.footer_loaded),
                 getString(R.string.footer_fail));
@@ -1340,7 +1321,6 @@ public class MangaListActivity extends SlidingActivity {
         gmlAdapter = new GmlAdapter();
         mMainList.setDivider(null);
         mMainList.setSelector(new ColorDrawable(Color.TRANSPARENT));
-        mMainList.setFitsSystemWindows(true);
         mMainList.setClipToPadding(false);
         mMainList.setAdapter(gmlAdapter);
         mMainList.setOnScrollListener(new MangaListListener());
@@ -1365,6 +1345,32 @@ public class MangaListActivity extends SlidingActivity {
                 return true;
             }
         });
+        
+        
+        
+        FswView alignment = (FswView)findViewById(R.id.alignment);
+        alignment.addOnFitSystemWindowsListener(new OnFitSystemWindowsListener() {
+            @Override
+            public void onfitSystemWindows(int paddingLeft, int paddingTop,
+                    int paddingRight, int paddingBottom) {
+                mFswPaddingLeft = paddingLeft;
+                mFswPaddingTop = paddingTop;
+                mFswPaddingRight = paddingRight;
+                mFswPaddingBottom = paddingBottom;
+                
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)mHlv.getLayoutParams();
+                lp.topMargin = mFswPaddingTop;
+                mMainList.setPadding(mMainList.getPaddingLeft(), mMainList.getPaddingTop(),
+                        mMainList.getPaddingRight(), mFswPaddingBottom);
+                mUserPanel.setPadding(mUserPanel.getPaddingLeft(), mFswPaddingTop,
+                        mUserPanel.getPaddingRight(), mUserPanel.getPaddingBottom());
+                itemListMenu.setPadding(itemListMenu.getPaddingLeft(), itemListMenu.getPaddingTop(),
+                        itemListMenu.getPaddingRight(), mFswPaddingBottom);
+                tagListMenu.setPadding(tagListMenu.getPaddingLeft(), mFswPaddingTop,
+                        tagListMenu.getPaddingRight(), mFswPaddingBottom);
+            }
+        });
+        
         
         // Check update
         checkUpdate();

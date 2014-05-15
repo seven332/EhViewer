@@ -34,15 +34,6 @@
         <item name="android:windowBackground">@color/main_background</item>
     </style>
     
-    <style name="AppTheme.Main.ListActivity.PullList">
-        <item name="ptrPullText">@string/pull_load_pull</item>
-        <item name="ptrRefreshingText">@string/pull_load_doing</item>
-        <item name="ptrReleaseText">@string/pull_load_release</item>
-        
-        <item name="ptrProgressBarColor">@android:color/holo_orange_dark</item>
-        <item name="ptrSmoothProgressBarStyle">@style/RefreshSmoothProgressBar</item>
-    </style>
-    
     <style name="AppTheme.NoActionBar">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>

@@ -3,16 +3,16 @@ package com.hippo.ehviewer.widget;
 import com.hippo.ehviewer.R;
 
 import android.content.Context;
+import android.graphics.Rect;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 
 /**
  * TODO disable pull refreshing when footer refreshing
@@ -20,7 +20,7 @@ import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
  * @author Hippo
  *
  */
-public class HfListView extends PullToRefreshLayout
+public class HfListView extends SwipeRefreshLayout
         implements AbsListView.OnScrollListener {
     
     private final static int FOOTER_REFRESHING = 0;
@@ -36,6 +36,8 @@ public class HfListView extends PullToRefreshLayout
     private int footerState = FOOTER_SUCCESS;
     private OnFooterRefreshListener mFooterRefreshListener;
     
+    private OnFitSystemWindowsListener mListener;
+    
     // Footer String to show
     private String mFooterRefreshStr;
     private String mFooterSuccessStr;
@@ -48,11 +50,7 @@ public class HfListView extends PullToRefreshLayout
     }
     
     public HfListView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-    
-    public HfListView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+        super(context, attrs);
         mContext = context;
         init();
     }
@@ -141,7 +139,7 @@ public class HfListView extends PullToRefreshLayout
     }
     
     public void setHeaderRefreshComplete() {
-        super.setRefreshComplete();
+        super.setRefreshing(false);
     }
     
     public void setFooterRefreshComplete(boolean isSuccess) {
@@ -165,7 +163,7 @@ public class HfListView extends PullToRefreshLayout
      * @return True if actionbar is refreshing
      */
     public boolean isHeaderRefreshing() {
-        return isSetup() ? isRefreshing() : false;
+        return super.isRefreshing();
     }
     
     /**
