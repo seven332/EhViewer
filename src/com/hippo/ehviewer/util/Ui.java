@@ -100,27 +100,27 @@ public class Ui {
     public static String getCategoryText(int category) {
         switch (category) {
         case ListUrls.DOUJINSHI:
-            return "DOUJINSHI";
+            return mResources.getString(R.string.doujinshi);
         case ListUrls.MANGA:
-            return "MANGA";
+            return mResources.getString(R.string.manga);
         case ListUrls.ARTIST_CG:
-            return "ARTIST CG";
+            return mResources.getString(R.string.artist_cg);
         case ListUrls.GAME_CG:
-            return "GAME CG";
+            return mResources.getString(R.string.game_cg);
         case ListUrls.WESTERN:
-            return "WESTERN";
+            return mResources.getString(R.string.western);
         case ListUrls.NON_H:
-            return "NON H";
+            return mResources.getString(R.string.non_h);
         case ListUrls.IMAGE_SET:
-            return "IMAGE SET";
+            return mResources.getString(R.string.image_set);
         case ListUrls.COSPLAY:
-            return "COSPLAY";
+            return mResources.getString(R.string.cosplay);
         case ListUrls.ASIAN_PORN:
-            return "ASIAN PORN";
+            return mResources.getString(R.string.asian_porn);
         case ListUrls.MISC:
-            return "MISC";
+            return mResources.getString(R.string.misc);
         default:
-            return "UNKNOWN";
+            return mResources.getString(R.string.unknown);
         }
     }
     
@@ -148,56 +148,6 @@ public class Ui {
             return MISC_BG_COLOR;
         default:
             return UNKNOWN_BG_COLOR;
-        }
-    }
-    
-    /**
-     * Set type image for a ImageView
-     * 
-     * @param imageView the ImageView to set type image
-     * @param type the type
-     */
-    public static void setType(ImageView imageView,
-            int type) {
-        if (!mInit) {
-            throw new IllegalStateException("Please init Ui first.");
-        }
-        if (mContext == null || imageView == null)
-            return;
-        switch (type) {
-        case ListUrls.DOUJINSHI:
-            imageView.setImageResource(R.drawable.doujinshi);
-            break;
-        case ListUrls.MANGA:
-            imageView.setImageResource(R.drawable.manga);
-            break;
-        case ListUrls.ARTIST_CG:
-            imageView.setImageResource(R.drawable.artistcg);
-            break;
-        case ListUrls.GAME_CG:
-            imageView.setImageResource(R.drawable.gamecg);
-            break;
-        case ListUrls.WESTERN:
-            imageView.setImageResource(R.drawable.western);
-            break;
-        case ListUrls.NON_H:
-            imageView.setImageResource(R.drawable.non_h);
-            break;
-        case ListUrls.IMAGE_SET:
-            imageView.setImageResource(R.drawable.imageset);
-            break;
-        case ListUrls.COSPLAY:
-            imageView.setImageResource(R.drawable.cosplay);
-            break;
-        case ListUrls.ASIAN_PORN:
-            imageView.setImageResource(R.drawable.asianporn);
-            break;
-        case ListUrls.MISC:
-            imageView.setImageResource(R.drawable.misc);
-            break;
-        default:
-            imageView.setImageResource(R.drawable.unknown);
-            break;
         }
     }
     

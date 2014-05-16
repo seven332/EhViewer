@@ -27,7 +27,7 @@ import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.widget.AlertButton;
-import com.hippo.ehviewer.widget.CheckImage;
+import com.hippo.ehviewer.widget.CheckTextView;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswListView;
 import com.hippo.ehviewer.widget.FswView;
@@ -307,25 +307,25 @@ public class MangaListActivity extends SlidingActivity {
     }
     
     private ListUrls getLus(View view) {
-        CheckImage checkImageDoujinshi = (CheckImage) view
+        CheckTextView checkImageDoujinshi = (CheckTextView) view
                 .findViewById(R.id.button_doujinshi);
-        CheckImage checkImageManga = (CheckImage) view
+        CheckTextView checkImageManga = (CheckTextView) view
                 .findViewById(R.id.button_manga);
-        CheckImage checkImageArtistcg = (CheckImage) view
+        CheckTextView checkImageArtistcg = (CheckTextView) view
                 .findViewById(R.id.button_artistcg);
-        CheckImage checkImageGamecg = (CheckImage) view
+        CheckTextView checkImageGamecg = (CheckTextView) view
                 .findViewById(R.id.button_gamecg);
-        CheckImage checkImageWestern = (CheckImage) view
+        CheckTextView checkImageWestern = (CheckTextView) view
                 .findViewById(R.id.button_western);
-        CheckImage checkImageNonH = (CheckImage) view
+        CheckTextView checkImageNonH = (CheckTextView) view
                 .findViewById(R.id.button_non_h);
-        CheckImage checkImageImageset = (CheckImage) view
+        CheckTextView checkImageImageset = (CheckTextView) view
                 .findViewById(R.id.button_imageset);
-        CheckImage checkImageCosplay = (CheckImage) view
+        CheckTextView checkImageCosplay = (CheckTextView) view
                 .findViewById(R.id.button_cosplay);
-        CheckImage checkImageAsianporn = (CheckImage) view
+        CheckTextView checkImageAsianporn = (CheckTextView) view
                 .findViewById(R.id.button_asianporn);
-        CheckImage checkImageMisc = (CheckImage) view
+        CheckTextView checkImageMisc = (CheckTextView) view
                 .findViewById(R.id.button_misc);
 
         int type = 0;
@@ -620,68 +620,68 @@ public class MangaListActivity extends SlidingActivity {
     
     private void setFilterView(View view, ListUrls listUrls) {
         // Normal
-        CheckImage checkImageDoujinshi = (CheckImage) view
+        CheckTextView checkImageDoujinshi = (CheckTextView) view
                 .findViewById(R.id.button_doujinshi);
-        CheckImage checkImageManga = (CheckImage) view
+        CheckTextView checkImageManga = (CheckTextView) view
                 .findViewById(R.id.button_manga);
-        CheckImage checkImageArtistcg = (CheckImage) view
+        CheckTextView checkImageArtistcg = (CheckTextView) view
                 .findViewById(R.id.button_artistcg);
-        CheckImage checkImageGamecg = (CheckImage) view
+        CheckTextView checkImageGamecg = (CheckTextView) view
                 .findViewById(R.id.button_gamecg);
-        CheckImage checkImageWestern = (CheckImage) view
+        CheckTextView checkImageWestern = (CheckTextView) view
                 .findViewById(R.id.button_western);
-        CheckImage checkImageNonH = (CheckImage) view
+        CheckTextView checkImageNonH = (CheckTextView) view
                 .findViewById(R.id.button_non_h);
-        CheckImage checkImageImageset = (CheckImage) view
+        CheckTextView checkImageImageset = (CheckTextView) view
                 .findViewById(R.id.button_imageset);
-        CheckImage checkImageCosplay = (CheckImage) view
+        CheckTextView checkImageCosplay = (CheckTextView) view
                 .findViewById(R.id.button_cosplay);
-        CheckImage checkImageAsianporn = (CheckImage) view
+        CheckTextView checkImageAsianporn = (CheckTextView) view
                 .findViewById(R.id.button_asianporn);
-        CheckImage checkImageMisc = (CheckImage) view
+        CheckTextView checkImageMisc = (CheckTextView) view
                 .findViewById(R.id.button_misc);
 
         int type = listUrls.getType();
         if ((type & ListUrls.DOUJINSHI) == 0)
-            checkImageDoujinshi.pressed();
+            checkImageDoujinshi.setChecked(true);
         else
-            checkImageDoujinshi.unpressed();
+            checkImageDoujinshi.setChecked(false);
         if ((type & ListUrls.MANGA) == 0)
-            checkImageManga.pressed();
+            checkImageManga.setChecked(true);
         else
-            checkImageManga.unpressed();
+            checkImageManga.setChecked(false);
         if ((type & ListUrls.ARTIST_CG) == 0)
-            checkImageArtistcg.pressed();
+            checkImageArtistcg.setChecked(true);
         else
-            checkImageArtistcg.unpressed();
+            checkImageArtistcg.setChecked(false);
         if ((type & ListUrls.GAME_CG) == 0)
-            checkImageGamecg.pressed();
+            checkImageGamecg.setChecked(true);
         else
-            checkImageGamecg.unpressed();
+            checkImageGamecg.setChecked(false);
         if ((type & ListUrls.WESTERN) == 0)
-            checkImageWestern.pressed();
+            checkImageWestern.setChecked(true);
         else
-            checkImageWestern.unpressed();
+            checkImageWestern.setChecked(false);
         if ((type & ListUrls.NON_H) == 0)
-            checkImageNonH.pressed();
+            checkImageNonH.setChecked(true);
         else
-            checkImageNonH.unpressed();
+            checkImageNonH.setChecked(false);
         if ((type & ListUrls.IMAGE_SET) == 0)
-            checkImageImageset.pressed();
+            checkImageImageset.setChecked(true);
         else
-            checkImageImageset.unpressed();
+            checkImageImageset.setChecked(false);
         if ((type & ListUrls.COSPLAY) == 0)
-            checkImageCosplay.pressed();
+            checkImageCosplay.setChecked(true);
         else
-            checkImageCosplay.unpressed();
+            checkImageCosplay.setChecked(false);
         if ((type & ListUrls.ASIAN_PORN) == 0)
-            checkImageAsianporn.pressed();
+            checkImageAsianporn.setChecked(true);
         else
-            checkImageAsianporn.unpressed();
+            checkImageAsianporn.setChecked(false);
         if ((type & ListUrls.MISC) == 0)
-            checkImageMisc.pressed();
+            checkImageMisc.setChecked(true);
         else
-            checkImageMisc.unpressed();
+            checkImageMisc.setChecked(false);
         
 
         EditText et = (EditText)view.findViewById(R.id.search_text);

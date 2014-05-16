@@ -40,10 +40,6 @@
         <attr name="drawableAlpha" format="integer" />
     </declare-styleable>
     
-    <declare-styleable name="CheckImage">
-        <attr name="mask" format="reference" />
-    </declare-styleable>
-    
     <declare-styleable name="AutoWrapLayout">
         <attr name="alignment">
             <enum name="top" value="0" />
