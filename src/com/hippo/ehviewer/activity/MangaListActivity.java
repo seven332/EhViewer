@@ -1175,7 +1175,6 @@ public class MangaListActivity extends SlidingActivity
         // leftDrawer
         final int[] data = {R.drawable.ic_action_home, R.string.homepage,
                 R.drawable.ic_action_panda, R.string.mode,
-                R.drawable.ic_action_jump, R.string.jump,
                 R.drawable.ic_action_search, android.R.string.search_go,
                 R.drawable.ic_action_favorite, R.string.favourite,
                 R.drawable.ic_action_download, R.string.download,
@@ -1234,28 +1233,24 @@ public class MangaListActivity extends SlidingActivity
                 case 1:
                     break;
                 case 2:
-                    if (!mHlv.isAnyRefreshing() && isGetOk())
-                        jump();
-                    break;
-                case 3:
                     filterDialog.show();
                     break;
                     
-                case 4: // Favourite
+                case 3: // Favourite
                     intent = new Intent(MangaListActivity.this,
                             FavouriteActivity.class);
                     startActivity(intent);
                     showContent();
                     break;
                     
-                case 5:
+                case 4:
                     showContent();
                     intent = new Intent(MangaListActivity.this,
                             DownloadActivity.class);
                     startActivity(intent);
                     break;
                     
-                case 6:
+                case 5:
                     showContent();
                     intent = new Intent(MangaListActivity.this,
                             SettingsActivity.class);
@@ -1563,6 +1558,16 @@ public class MangaListActivity extends SlidingActivity
                 showContent();
             else
                 showMenu();
+            return true;
+        case R.id.action_refresh: // TODO
+            if (!refresh())
+                Toast.makeText(MangaListActivity.this,
+                        getString(R.string.wait),
+                        Toast.LENGTH_SHORT).show();
+            return true;
+        case R.id.action_jump:
+            if (!mHlv.isAnyRefreshing() && isGetOk())
+                jump();
             return true;
         default:
             return super.onOptionsItemSelected(item);

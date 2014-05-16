@@ -16,6 +16,10 @@
         <item name="android:background">@drawable/ab_tab_indicator</item>
     </style>
     
+    <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_action_core_overflow</item>
+    </style>
+    
     <style name="PopupMenu" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
     </style>
     
