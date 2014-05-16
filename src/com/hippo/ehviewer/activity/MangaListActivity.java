@@ -108,7 +108,9 @@ import android.widget.Toast;
  * 
  * @author Hippo
  */
-public class MangaListActivity extends SlidingActivity {
+public class MangaListActivity extends SlidingActivity
+        implements View.OnClickListener {
+    
     private static String TAG = "MangaListActivity";
     
     private static final int REFRESH = 0x0;
@@ -128,21 +130,18 @@ public class MangaListActivity extends SlidingActivity {
     private SearchView mSearchView;
     private ListView itemListMenu;
     private TagListView tagListMenu;
-    private RelativeLayout loginMenu;
     private HfListView mHlv;
     private FswListView mMainList;
     private View waitView;
     private Button freshButton;
     private View noFoundView;
     private ImageView sadpanda;
-    private ViewGroup loginView;
-    private ViewGroup loginOverView;
+    
+    private TextView userView;
     private Button loginButton;
-    private Button checkLoginButton;
-    private View waitloginView;
-    private TextView usernameText;
+    private Button registerButton;
     private Button logoutButton;
-    private View waitlogoutView;
+    private View waitloginoutView;
     
     private TagsAdapter tagsAdapter;
 
@@ -188,6 +187,12 @@ public class MangaListActivity extends SlidingActivity {
     
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
+    private void toRegister() {
+        Uri uri = Uri.parse("http://forums.e-hentai.org/index.php?act=Reg");
+        Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+        startActivity(intent);
+    }
+    
     private AlertDialog createLoginDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.login, null);
@@ -199,8 +204,7 @@ public class MangaListActivity extends SlidingActivity {
                     @Override
                     public void onClick(View v) {
                         ((AlertButton)v).dialog.dismiss();
-                        loginButton.setVisibility(View.GONE);
-                        waitloginView.setVisibility(View.VISIBLE);
+                        setUserPanel(WAIT);
                         String username = ((EditText) loginDialog.findViewById(R.id.username)).getText().toString();
                         String password = ((EditText) loginDialog.findViewById(R.id.password)).getText().toString();
                         mEhClient.login(username, password, new EhClient.OnLoginListener() {
@@ -210,8 +214,7 @@ public class MangaListActivity extends SlidingActivity {
                             }
                             @Override
                             public void onFailure(String eMsg) {
-                                loginButton.setVisibility(View.VISIBLE);
-                                waitloginView.setVisibility(View.GONE);
+                                setUserPanel();
                                 Toast.makeText(MangaListActivity.this,
                                         eMsg,
                                         Toast.LENGTH_SHORT).show();
@@ -223,14 +226,12 @@ public class MangaListActivity extends SlidingActivity {
                     @Override
                     public void onClick(View v) {
                         ((AlertButton)v).dialog.dismiss();
-                        layoutDrawRight();
+                        setUserPanel();
                     }
                 }).setNeutralButton(R.string.register, new View.OnClickListener(){
                     @Override
                     public void onClick(View v) {
-                        Uri uri = Uri.parse("http://forums.e-hentai.org/index.php?act=Reg");
-                        Intent intent = new Intent(Intent.ACTION_VIEW,uri);
-                        startActivity(intent);
+                        toRegister();
                     } 
                 }).create();
     }
@@ -1055,6 +1056,37 @@ public class MangaListActivity extends SlidingActivity {
     }
     
     @Override
+    public void onClick(View v) {
+        
+        if (v == loginButton) {
+            loginDialog.show();
+        } else if (v == registerButton) {
+            toRegister();
+        } else if (v == logoutButton) {
+            setUserPanel(WAIT);
+            
+            mEhClient.logout(new EhClient.OnLogoutListener() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(MangaListActivity.this,
+                            getString(R.string.toast_logout_succeeded),
+                            Toast.LENGTH_SHORT).show();
+                    Config.logoutNow();
+                    setUserPanel();
+                }
+
+                @Override
+                public void onFailure(String eMsg) {
+                    Toast.makeText(MangaListActivity.this,
+                            eMsg,
+                            Toast.LENGTH_SHORT).show();
+                    setUserPanel();
+                }
+            });
+        }
+    }
+    
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         handleIntent(getIntent());
@@ -1119,21 +1151,22 @@ public class MangaListActivity extends SlidingActivity {
         mUserPanel = (LinearLayout)findViewById(R.id.user_panel);
         itemListMenu = (ListView) findViewById(R.id.list_menu_item_list);
         tagListMenu = (TagListView) findViewById(R.id.list_menu_tag_list);
-        loginMenu = (RelativeLayout)findViewById(R.id.list_menu_login);
         mHlv = (HfListView)findViewById(R.id.list_list);
         mMainList = mHlv.getListView();
         waitView = (View) findViewById(R.id.list_wait_first);
         freshButton = (Button) findViewById(R.id.list_refresh);
         noFoundView = (View) findViewById(R.id.list_no_found);
         sadpanda = (ImageView) findViewById(R.id.sadpanda);
-        loginView = (ViewGroup) findViewById(R.id.drawer_login);
-        loginButton = (Button) findViewById(R.id.button_login);
-        checkLoginButton = (Button) findViewById(R.id.button_check_login);
-        waitloginView = (View) findViewById(R.id.list_wait_login);
-        loginOverView = (ViewGroup) findViewById(R.id.drawer_login_over);
-        usernameText = (TextView) findViewById(R.id.text_username);
-        logoutButton = (Button) findViewById(R.id.list_button_logout);
-        waitlogoutView = (View) findViewById(R.id.list_wait_logout);
+        
+        userView = (TextView)mUserPanel.findViewById(R.id.user);
+        loginButton = (Button)mUserPanel.findViewById(R.id.login);
+        registerButton = (Button)mUserPanel.findViewById(R.id.register);
+        logoutButton = (Button)mUserPanel.findViewById(R.id.logout);
+        waitloginoutView = mUserPanel.findViewById(R.id.wait);
+        
+        loginButton.setOnClickListener(this);
+        registerButton.setOnClickListener(this);
+        logoutButton.setOnClickListener(this);
         
         // Drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -1346,8 +1379,6 @@ public class MangaListActivity extends SlidingActivity {
             }
         });
         
-        
-        
         FswView alignment = (FswView)findViewById(R.id.alignment);
         alignment.addOnFitSystemWindowsListener(new OnFitSystemWindowsListener() {
             @Override
@@ -1375,8 +1406,7 @@ public class MangaListActivity extends SlidingActivity {
         // Check update
         checkUpdate();
         
-        // Check login
-        layoutDrawRight();
+        // Check login and update user panel
         checkLogin(false);
         
         // get MangeList
@@ -1390,7 +1420,6 @@ public class MangaListActivity extends SlidingActivity {
         freshButton.setVisibility(View.GONE);
         noFoundView.setVisibility(View.GONE);
         sadpanda.setVisibility(View.GONE);
-        layoutDrawRight();
     }
     
     @Override
@@ -1617,12 +1646,10 @@ public class MangaListActivity extends SlidingActivity {
     }
     
     private void checkLogin(boolean force) {
-        /*
         
-        if (Config.isLogin() || force) {
-            loginButton.setVisibility(View.GONE);
-            checkLoginButton.setVisibility(View.GONE);
-            waitloginView.setVisibility(View.VISIBLE);
+        if ((Config.isLogin() || force)
+                && ! mEhClient.isLogin()) {
+            setUserPanel(WAIT);
             mEhClient.checkLogin(new EhClient.OnCheckLoginListener() {
                 @Override
                 public void onSuccess() {
@@ -1630,49 +1657,60 @@ public class MangaListActivity extends SlidingActivity {
                     Toast.makeText(MangaListActivity.this,
                             getString(R.string.toast_login_succeeded),
                             Toast.LENGTH_SHORT).show();
-                    layoutDrawRight();
+                    setUserPanel();
                 }
 
                 @Override
                 public void onFailure(String eMsg) {
-                    loginButton.setVisibility(View.VISIBLE);
-                    if (Config.isLogin())
-                        checkLoginButton.setVisibility(View.VISIBLE);
-                    else
-                        checkLoginButton.setVisibility(View.GONE);
-                    waitloginView.setVisibility(View.GONE);
+                    setUserPanel();
                     Toast.makeText(MangaListActivity.this,
                             eMsg,
                             Toast.LENGTH_SHORT).show();
                 }
             });
+        } else {
+            setUserPanel();
         }
-        */
+        
     }
     
-    private void layoutDrawRight() {
-        /*
+    private static final int LOGIN = 0x0;
+    private static final int LOGOUT = 0x1;
+    private static final int WAIT = 0x2;
+    
+    private void setUserPanel() {
+        if (mEhClient.isLogin())
+            setUserPanel(LOGOUT);
+        else
+            setUserPanel(LOGIN);
+    }
+    
+    private void setUserPanel(int state) {
         
-        if (mEhClient.isLogin()) { // If have login
-            loginView.setVisibility(View.GONE);
-            loginOverView.setVisibility(View.VISIBLE);
-            
-            usernameText.setText(mEhClient.getUsername());
-            logoutButton.setVisibility(View.VISIBLE);
-            waitlogoutView.setVisibility(View.GONE);
-        } else {
-            loginView.setVisibility(View.VISIBLE);
-            loginOverView.setVisibility(View.GONE);
-            
+        switch (state) {
+        case LOGIN:
+            userView.setVisibility(View.GONE);
             loginButton.setVisibility(View.VISIBLE);
-            if (Config.isLogin())
-                checkLoginButton.setVisibility(View.VISIBLE);
-            else
-                checkLoginButton.setVisibility(View.GONE);
-            waitloginView.setVisibility(View.GONE);
+            registerButton.setVisibility(View.VISIBLE);
+            logoutButton.setVisibility(View.GONE);
+            waitloginoutView.setVisibility(View.GONE);
+            break;
+        case LOGOUT:
+            userView.setText(mEhClient.getUsername());
+            userView.setVisibility(View.VISIBLE);
+            loginButton.setVisibility(View.GONE);
+            registerButton.setVisibility(View.GONE);
+            logoutButton.setVisibility(View.VISIBLE);
+            waitloginoutView.setVisibility(View.GONE);
+            break;
+        case WAIT:
+            userView.setVisibility(View.GONE);
+            loginButton.setVisibility(View.GONE);
+            registerButton.setVisibility(View.GONE);
+            logoutButton.setVisibility(View.GONE);
+            waitloginoutView.setVisibility(View.VISIBLE);
+            break;
         }
-        
-        */
     }
     
     private void getList() {
@@ -1703,34 +1741,6 @@ public class MangaListActivity extends SlidingActivity {
         refresh(false);
         freshButton.setVisibility(View.GONE);
         waitView.setVisibility(View.VISIBLE);
-    }
-
-    public void buttonLogout(View paramView) {
-        logoutButton.setVisibility(View.GONE);
-        waitlogoutView.setVisibility(View.VISIBLE);
-        mEhClient.logout(new EhClient.OnLogoutListener() {
-            @Override
-            public void onSuccess() {
-                Toast.makeText(MangaListActivity.this,
-                        getString(R.string.toast_logout_succeeded),
-                        Toast.LENGTH_SHORT).show();
-                Config.logoutNow();
-                layoutDrawRight();
-            }
-
-            @Override
-            public void onFailure(String eMsg) {
-                Toast.makeText(MangaListActivity.this,
-                        eMsg,
-                        Toast.LENGTH_SHORT).show();
-                logoutButton.setVisibility(View.VISIBLE);
-                waitlogoutView.setVisibility(View.GONE);
-            }
-        });
-    }
-    
-    public void buttonLogin(View v) {
-        loginDialog.show();
     }
     
     public void buttonCheckLogin(View v) {

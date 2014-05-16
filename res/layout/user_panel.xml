@@ -15,6 +15,7 @@
         android:layout_height="fill_parent" >
         
         <TextView
+            android:id="@+id/user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -24,41 +25,44 @@
             android:textSize="16.0sp"
             android:textColor="@android:color/white" />
         
-        <LinearLayout
-            android:layout_width="fill_parent"
+        <Button
+            android:id="@+id/login"
+            style="@style/Button.Small.White"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="8dp"
-            android:orientation="horizontal" >
-            
-            <Button
-                style="@style/Button.Small.White"
-                android:layout_width="0.0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.0"
-                android:layout_marginLeft="8.0dp"
-                android:layout_marginRight="8.0dp"
-                android:text="@string/login" />
-            
-            <Button
-                style="@style/Button.Small.White"
-                android:layout_width="0.0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.0"
-                android:layout_marginLeft="8.0dp"
-                android:layout_marginRight="8.0dp"
-                android:text="@string/register" />
-            
-            <Button
-                style="@style/Button.Small.White"
-                android:layout_width="0.0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.0"
-                android:layout_marginLeft="8.0dp"
-                android:layout_marginRight="8.0dp"
-                android:text="@string/logout" />
-            
-        </LinearLayout>
+            android:layout_marginLeft="8.0dp"
+            android:layout_marginBottom="8.0dp"
+            android:text="@string/login" />
+        
+        <Button
+            android:id="@+id/register"
+            style="@style/Button.Small.White"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/login"
+            android:layout_marginLeft="16.0dp"
+            android:layout_alignBottom="@id/login"
+            android:text="@string/register" />
+        
+        <Button
+            android:id="@+id/logout"
+            style="@style/Button.Small.White"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="8.0dp"
+            android:layout_marginBottom="8.0dp"
+            android:text="@string/logout" />
+        
+        <ProgressBar
+            android:id="@+id/wait"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
         
     </RelativeLayout>
     
