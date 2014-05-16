@@ -25,18 +25,18 @@ public class AutoWrapLayout extends ViewGroup {
     private final static String TAG = "AutoWrapLayout";
     private List<Rect> rectList = new ArrayList<Rect>();
     
-    private BaseLine mBaseLine;
+    private Alignment mAlignment;
     
-    private static final BaseLine[] sBaseLineArray = { BaseLine.TOP,
-        BaseLine.CENTER, BaseLine.BOTTOM };
+    private static final Alignment[] sBaseLineArray = { Alignment.TOP,
+        Alignment.CENTER, Alignment.BOTTOM };
     
     
-    public enum BaseLine {
+    public enum Alignment {
         TOP(0),
         CENTER(1),
         BOTTOM(2);
 
-        BaseLine(int ni) {
+        Alignment(int ni) {
             nativeInt = ni;
         }
 
@@ -55,31 +55,31 @@ public class AutoWrapLayout extends ViewGroup {
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.AutoWrapLayout, defStyle, 0);
         
-        int index = a.getInt(R.styleable.AutoWrapLayout_baseLine, -1);
+        int index = a.getInt(R.styleable.AutoWrapLayout_alignment, -1);
         if (index >= 0)
-            setBaseLine(sBaseLineArray[index]);
+            setAlignment(sBaseLineArray[index]);
         
         a.recycle();
     }
     
-    public void setBaseLine(BaseLine baseLine) {
+    public void setAlignment(Alignment baseLine) {
         if (baseLine == null)
             return;
 
-        if (mBaseLine != baseLine) {
-            mBaseLine = baseLine;
+        if (mAlignment != baseLine) {
+            mAlignment = baseLine;
 
             requestLayout();
             invalidate();
         }
     }
     
-    public BaseLine getScaleType() {
-        return mBaseLine;
+    public Alignment getScaleType() {
+        return mAlignment;
     }
     
     private void adjustBaseLine(int lineHeight, int startIndex, int endIndex) {
-        if (mBaseLine == BaseLine.TOP)
+        if (mAlignment == Alignment.TOP)
             return;
         
         for (int index = startIndex; index < endIndex; index++) {
@@ -88,9 +88,9 @@ public class AutoWrapLayout extends ViewGroup {
                     (AutoWrapLayout.LayoutParams)child.getLayoutParams();
             Rect rect = rectList.get(index);
             int offsetRaw = lineHeight - rect.height() - lp.topMargin - lp.bottomMargin;
-            if (mBaseLine == BaseLine.CENTER)
+            if (mAlignment == Alignment.CENTER)
                 rect.offset(0, offsetRaw/2);
-            else if (mBaseLine == BaseLine.BOTTOM)
+            else if (mAlignment == Alignment.BOTTOM)
                 rect.offset(0, offsetRaw);
         }
     }

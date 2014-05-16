@@ -45,7 +45,7 @@
     </declare-styleable>
     
     <declare-styleable name="AutoWrapLayout">
-        <attr name="baseLine">
+        <attr name="alignment">
             <enum name="top" value="0" />
             <enum name="center" value="1" />
             <enum name="bottom" value="2" />
