@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.R.id;
 import com.hippo.ehviewer.R.layout;
@@ -245,9 +244,6 @@ public class MangaActivity extends Activity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (Build.VERSION.SDK_INT >= 19) {
-            BeautifyScreen.fixColour(this);
-        }
     }
     
     @Override

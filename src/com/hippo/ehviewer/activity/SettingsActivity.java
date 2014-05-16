@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.BeautifyScreen;
 import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UpdateHelper;

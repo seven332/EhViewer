@@ -40,7 +40,6 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         Ui.init(this);
         Cache.init(this);
         Crash.init(this);
-        BeautifyScreen.init(this);
         mEhClient = new EhClient(this);
         Download.init(this);
         
