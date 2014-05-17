@@ -12,7 +12,9 @@ public class Tag extends ListUrls {
     
     public Tag(String name, ListUrls lus) {
         this(name, lus.getType(), lus.getSearch());
-        this.setAdvance(lus.getAdvanceType(), lus.getMinRating());
+        setAdvance(lus.getAdvanceType(), lus.getMinRating());
+        setTag(lus.getTag());
+        setMode(lus.getMode());
     }
     
     public void setName(String name) {

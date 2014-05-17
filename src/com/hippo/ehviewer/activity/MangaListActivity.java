@@ -740,150 +740,165 @@ public class MangaListActivity extends SlidingActivity
     }
     
     private void setFilterView(View view, ListUrls listUrls) {
-        // Normal
-        CheckTextView checkImageDoujinshi = (CheckTextView) view
-                .findViewById(R.id.button_doujinshi);
-        CheckTextView checkImageManga = (CheckTextView) view
-                .findViewById(R.id.button_manga);
-        CheckTextView checkImageArtistcg = (CheckTextView) view
-                .findViewById(R.id.button_artistcg);
-        CheckTextView checkImageGamecg = (CheckTextView) view
-                .findViewById(R.id.button_gamecg);
-        CheckTextView checkImageWestern = (CheckTextView) view
-                .findViewById(R.id.button_western);
-        CheckTextView checkImageNonH = (CheckTextView) view
-                .findViewById(R.id.button_non_h);
-        CheckTextView checkImageImageset = (CheckTextView) view
-                .findViewById(R.id.button_imageset);
-        CheckTextView checkImageCosplay = (CheckTextView) view
-                .findViewById(R.id.button_cosplay);
-        CheckTextView checkImageAsianporn = (CheckTextView) view
-                .findViewById(R.id.button_asianporn);
-        CheckTextView checkImageMisc = (CheckTextView) view
-                .findViewById(R.id.button_misc);
-
-        int type = listUrls.getType();
-        if ((type & ListUrls.DOUJINSHI) == 0)
-            checkImageDoujinshi.setChecked(true);
-        else
-            checkImageDoujinshi.setChecked(false);
-        if ((type & ListUrls.MANGA) == 0)
-            checkImageManga.setChecked(true);
-        else
-            checkImageManga.setChecked(false);
-        if ((type & ListUrls.ARTIST_CG) == 0)
-            checkImageArtistcg.setChecked(true);
-        else
-            checkImageArtistcg.setChecked(false);
-        if ((type & ListUrls.GAME_CG) == 0)
-            checkImageGamecg.setChecked(true);
-        else
-            checkImageGamecg.setChecked(false);
-        if ((type & ListUrls.WESTERN) == 0)
-            checkImageWestern.setChecked(true);
-        else
-            checkImageWestern.setChecked(false);
-        if ((type & ListUrls.NON_H) == 0)
-            checkImageNonH.setChecked(true);
-        else
-            checkImageNonH.setChecked(false);
-        if ((type & ListUrls.IMAGE_SET) == 0)
-            checkImageImageset.setChecked(true);
-        else
-            checkImageImageset.setChecked(false);
-        if ((type & ListUrls.COSPLAY) == 0)
-            checkImageCosplay.setChecked(true);
-        else
-            checkImageCosplay.setChecked(false);
-        if ((type & ListUrls.ASIAN_PORN) == 0)
-            checkImageAsianporn.setChecked(true);
-        else
-            checkImageAsianporn.setChecked(false);
-        if ((type & ListUrls.MISC) == 0)
-            checkImageMisc.setChecked(true);
-        else
-            checkImageMisc.setChecked(false);
         
-        EditText et = (EditText)view.findViewById(R.id.search_text);
-        et.setText(listUrls.getSearch());
+        View searchNormal = view.findViewById(R.id.search_normal);
+        View searchTag = view.findViewById(R.id.search_tag);
         
-        // Advance
-        CheckBox cb = (CheckBox)view.findViewById(R.id.checkbox_advance);
-        cb.setChecked(listUrls.isAdvance());
-        
-        CheckBox checkImageSname = (CheckBox) view
-                .findViewById(R.id.checkbox_sname);
-        CheckBox checkImageStags = (CheckBox) view
-                .findViewById(R.id.checkbox_stags);
-        CheckBox checkImageSdesc = (CheckBox) view
-                .findViewById(R.id.checkbox_sdesc);
-        CheckBox checkImageStorr = (CheckBox) view
-                .findViewById(R.id.checkbox_storr);
-        CheckBox checkImageSto = (CheckBox) view
-                .findViewById(R.id.checkbox_sto);
-        CheckBox checkImageSdt1 = (CheckBox) view
-                .findViewById(R.id.checkbox_sdt1);
-        CheckBox checkImageSdt2 = (CheckBox) view
-                .findViewById(R.id.checkbox_sdt2);
-        CheckBox checkImageSh = (CheckBox) view
-                .findViewById(R.id.checkbox_sh);
-
-        int advType = listUrls.getAdvanceType();
-        if (advType != -1) {
-            if ((advType & ListUrls.SNAME) == 0)
-                checkImageSname.setChecked(false);
-            else
-                checkImageSname.setChecked(true);
-            if ((advType & ListUrls.STAGS) == 0)
-                checkImageStags.setChecked(false);
-            else
-                checkImageStags.setChecked(true);
-            if ((advType & ListUrls.SDESC) == 0)
-                checkImageSdesc.setChecked(false);
-            else
-                checkImageSdesc.setChecked(true);
-            if ((advType & ListUrls.STORR) == 0)
-                checkImageStorr.setChecked(false);
-            else
-                checkImageStorr.setChecked(true);
-            if ((advType & ListUrls.STO) == 0)
-                checkImageSto.setChecked(false);
-            else
-                checkImageSto.setChecked(true);
-            if ((advType & ListUrls.STD1) == 0)
-                checkImageSdt1.setChecked(false);
-            else
-                checkImageSdt1.setChecked(true);
-            if ((advType & ListUrls.STD2) == 0)
-                checkImageSdt2.setChecked(false);
-            else
-                checkImageSdt2.setChecked(true);
-            if ((advType & ListUrls.SH) == 0)
-                checkImageSh.setChecked(false);
-            else
-                checkImageSh.setChecked(true);
+        if (listUrls.getMode() == ListUrls.TAG) {
+            searchNormal.setVisibility(View.GONE);
+            searchTag.setVisibility(View.VISIBLE);
             
-            // MinRating
-            CheckBox checkImageSr = (CheckBox) view
-                    .findViewById(R.id.checkbox_sr);
-            if (listUrls.isMinRating())
-                checkImageSr.setChecked(true);
+            EditText et = (EditText)view.findViewById(R.id.search_tag_text);
+            et.setText(listUrls.getTag());
+        } else {
+            searchNormal.setVisibility(View.VISIBLE);
+            searchTag.setVisibility(View.GONE);
+            
+            // Normal
+            CheckTextView checkImageDoujinshi = (CheckTextView) view
+                    .findViewById(R.id.button_doujinshi);
+            CheckTextView checkImageManga = (CheckTextView) view
+                    .findViewById(R.id.button_manga);
+            CheckTextView checkImageArtistcg = (CheckTextView) view
+                    .findViewById(R.id.button_artistcg);
+            CheckTextView checkImageGamecg = (CheckTextView) view
+                    .findViewById(R.id.button_gamecg);
+            CheckTextView checkImageWestern = (CheckTextView) view
+                    .findViewById(R.id.button_western);
+            CheckTextView checkImageNonH = (CheckTextView) view
+                    .findViewById(R.id.button_non_h);
+            CheckTextView checkImageImageset = (CheckTextView) view
+                    .findViewById(R.id.button_imageset);
+            CheckTextView checkImageCosplay = (CheckTextView) view
+                    .findViewById(R.id.button_cosplay);
+            CheckTextView checkImageAsianporn = (CheckTextView) view
+                    .findViewById(R.id.button_asianporn);
+            CheckTextView checkImageMisc = (CheckTextView) view
+                    .findViewById(R.id.button_misc);
+
+            int type = listUrls.getType();
+            if ((type & ListUrls.DOUJINSHI) == 0)
+                checkImageDoujinshi.setChecked(true);
             else
-                checkImageSr.setChecked(false);
-            Spinner spinnerMinRating = (Spinner) view
-                    .findViewById(R.id.spinner_min_rating);
-            int index;
-            if (listUrls.getMinRating() == -1)
-                index = 0;
+                checkImageDoujinshi.setChecked(false);
+            if ((type & ListUrls.MANGA) == 0)
+                checkImageManga.setChecked(true);
             else
-                index = listUrls.getMinRating() - 2;
-            spinnerMinRating.setSelection(index);
+                checkImageManga.setChecked(false);
+            if ((type & ListUrls.ARTIST_CG) == 0)
+                checkImageArtistcg.setChecked(true);
+            else
+                checkImageArtistcg.setChecked(false);
+            if ((type & ListUrls.GAME_CG) == 0)
+                checkImageGamecg.setChecked(true);
+            else
+                checkImageGamecg.setChecked(false);
+            if ((type & ListUrls.WESTERN) == 0)
+                checkImageWestern.setChecked(true);
+            else
+                checkImageWestern.setChecked(false);
+            if ((type & ListUrls.NON_H) == 0)
+                checkImageNonH.setChecked(true);
+            else
+                checkImageNonH.setChecked(false);
+            if ((type & ListUrls.IMAGE_SET) == 0)
+                checkImageImageset.setChecked(true);
+            else
+                checkImageImageset.setChecked(false);
+            if ((type & ListUrls.COSPLAY) == 0)
+                checkImageCosplay.setChecked(true);
+            else
+                checkImageCosplay.setChecked(false);
+            if ((type & ListUrls.ASIAN_PORN) == 0)
+                checkImageAsianporn.setChecked(true);
+            else
+                checkImageAsianporn.setChecked(false);
+            if ((type & ListUrls.MISC) == 0)
+                checkImageMisc.setChecked(true);
+            else
+                checkImageMisc.setChecked(false);
+            
+            EditText et = (EditText)view.findViewById(R.id.search_text);
+            et.setText(listUrls.getSearch());
+            
+            // Advance
+            CheckBox cb = (CheckBox)view.findViewById(R.id.checkbox_advance);
+            cb.setChecked(listUrls.isAdvance());
+            
+            CheckBox checkImageSname = (CheckBox) view
+                    .findViewById(R.id.checkbox_sname);
+            CheckBox checkImageStags = (CheckBox) view
+                    .findViewById(R.id.checkbox_stags);
+            CheckBox checkImageSdesc = (CheckBox) view
+                    .findViewById(R.id.checkbox_sdesc);
+            CheckBox checkImageStorr = (CheckBox) view
+                    .findViewById(R.id.checkbox_storr);
+            CheckBox checkImageSto = (CheckBox) view
+                    .findViewById(R.id.checkbox_sto);
+            CheckBox checkImageSdt1 = (CheckBox) view
+                    .findViewById(R.id.checkbox_sdt1);
+            CheckBox checkImageSdt2 = (CheckBox) view
+                    .findViewById(R.id.checkbox_sdt2);
+            CheckBox checkImageSh = (CheckBox) view
+                    .findViewById(R.id.checkbox_sh);
+
+            int advType = listUrls.getAdvanceType();
+            if (advType != -1) {
+                if ((advType & ListUrls.SNAME) == 0)
+                    checkImageSname.setChecked(false);
+                else
+                    checkImageSname.setChecked(true);
+                if ((advType & ListUrls.STAGS) == 0)
+                    checkImageStags.setChecked(false);
+                else
+                    checkImageStags.setChecked(true);
+                if ((advType & ListUrls.SDESC) == 0)
+                    checkImageSdesc.setChecked(false);
+                else
+                    checkImageSdesc.setChecked(true);
+                if ((advType & ListUrls.STORR) == 0)
+                    checkImageStorr.setChecked(false);
+                else
+                    checkImageStorr.setChecked(true);
+                if ((advType & ListUrls.STO) == 0)
+                    checkImageSto.setChecked(false);
+                else
+                    checkImageSto.setChecked(true);
+                if ((advType & ListUrls.STD1) == 0)
+                    checkImageSdt1.setChecked(false);
+                else
+                    checkImageSdt1.setChecked(true);
+                if ((advType & ListUrls.STD2) == 0)
+                    checkImageSdt2.setChecked(false);
+                else
+                    checkImageSdt2.setChecked(true);
+                if ((advType & ListUrls.SH) == 0)
+                    checkImageSh.setChecked(false);
+                else
+                    checkImageSh.setChecked(true);
+                
+                // MinRating
+                CheckBox checkImageSr = (CheckBox) view
+                        .findViewById(R.id.checkbox_sr);
+                if (listUrls.isMinRating())
+                    checkImageSr.setChecked(true);
+                else
+                    checkImageSr.setChecked(false);
+                Spinner spinnerMinRating = (Spinner) view
+                        .findViewById(R.id.spinner_min_rating);
+                int index;
+                if (listUrls.getMinRating() == -1)
+                    index = 0;
+                else
+                    index = listUrls.getMinRating() - 2;
+                spinnerMinRating.setSelection(index);
+            }
+            
+            // Show advance if need
+            final View advance = view.findViewById(R.id.filter_advance);
+            if (listUrls.isAdvance())
+                advance.setVisibility(View.VISIBLE);
         }
-        
-        // Show advance if need
-        final View advance = view.findViewById(R.id.filter_advance);
-        if (listUrls.isAdvance())
-            advance.setVisibility(View.VISIBLE);
     }
     
     private void setMainListPosition(int position) {

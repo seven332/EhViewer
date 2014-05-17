@@ -18,8 +18,6 @@ import android.util.SparseArray;
  * 
  */
 
-// TODO for ListUrls add tag mode
-
 public class Data {
     private static final String TAG = "Data";
     
@@ -44,9 +42,11 @@ public class Data {
     
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
+    private static final String COLUMN_MODE = "mode";
     private static final String COLUMN_SEARCH = "search";
     private static final String COLUMN_ADVANCE = "advance";
     private static final String COLUMN_MIN_RATING = "min_rating";
+    private static final String COLUMN_TAG = "tag";
     
     private static final String COLUMN_STATE = "state";
     private static final String COLUMN_PAGES = "pages";
@@ -546,7 +546,6 @@ public class Data {
         return mLocalFavourites;
     }
     
-    
     /******  tag ******/
     private synchronized void getTags() {
         mTags = new ArrayList<Tag>();
@@ -557,13 +556,17 @@ public class Data {
             while (!cursor.isAfterLast()) {
                 
                 String name = cursor.getString(1);
-                int category = cursor.getInt(2);
-                String search = cursor.getString(3);
-                int advance = cursor.getInt(4);
-                int min_rating = cursor.getInt(5);
+                int mode = cursor.getInt(2);
+                int category = cursor.getInt(3);
+                String search = cursor.getString(4);
+                int advance = cursor.getInt(5);
+                int min_rating = cursor.getInt(6);
+                String tagStr = cursor.getString(7);
                 
                 Tag tag = new Tag(name, category, search);
                 tag.setAdvance(advance, min_rating);
+                tag.setTag(tagStr);
+                tag.setMode(mode);
                 
                 mTags.add(tag);
                 
@@ -578,10 +581,12 @@ public class Data {
         ContentValues values = new ContentValues();
         values.put(COLUMN_ID, mTagRowNum);
         values.put(COLUMN_NAME, tag.getName());
+        values.put(COLUMN_MODE, tag.getName());
         values.put(COLUMN_CATEGORY, tag.getType());
         values.put(COLUMN_SEARCH, tag.getSearch());
         values.put(COLUMN_ADVANCE, tag.getAdvanceType());
         values.put(COLUMN_MIN_RATING, tag.getMinRating());
+        values.put(COLUMN_TAG, tag.getTag());
         
         boolean ok = mDatabase.insert(
                 TABLE_TAG, null, values) != -1;
@@ -719,10 +724,12 @@ public class Data {
                     + TABLE_TAG + "("
                     + COLUMN_ID + " integer primary key,"
                     + COLUMN_NAME + " text,"
+                    + COLUMN_MODE + " integer,"
                     + COLUMN_CATEGORY + " integer,"
                     + COLUMN_SEARCH + " text,"
                     + COLUMN_ADVANCE + " integer,"
-                    + COLUMN_MIN_RATING + " integer);";
+                    + COLUMN_MIN_RATING + " integer,"
+                    + COLUMN_TAG + " text);";
             db.execSQL(CreateTag);
             
             // download
