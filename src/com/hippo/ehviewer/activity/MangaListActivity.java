@@ -804,7 +804,6 @@ public class MangaListActivity extends SlidingActivity
         else
             checkImageMisc.setChecked(false);
         
-
         EditText et = (EditText)view.findViewById(R.id.search_text);
         et.setText(listUrls.getSearch());
         
@@ -830,59 +829,60 @@ public class MangaListActivity extends SlidingActivity
                 .findViewById(R.id.checkbox_sh);
 
         int advType = listUrls.getAdvanceType();
+        if (advType != -1) {
+            if ((advType & ListUrls.SNAME) == 0)
+                checkImageSname.setChecked(false);
+            else
+                checkImageSname.setChecked(true);
+            if ((advType & ListUrls.STAGS) == 0)
+                checkImageStags.setChecked(false);
+            else
+                checkImageStags.setChecked(true);
+            if ((advType & ListUrls.SDESC) == 0)
+                checkImageSdesc.setChecked(false);
+            else
+                checkImageSdesc.setChecked(true);
+            if ((advType & ListUrls.STORR) == 0)
+                checkImageStorr.setChecked(false);
+            else
+                checkImageStorr.setChecked(true);
+            if ((advType & ListUrls.STO) == 0)
+                checkImageSto.setChecked(false);
+            else
+                checkImageSto.setChecked(true);
+            if ((advType & ListUrls.STD1) == 0)
+                checkImageSdt1.setChecked(false);
+            else
+                checkImageSdt1.setChecked(true);
+            if ((advType & ListUrls.STD2) == 0)
+                checkImageSdt2.setChecked(false);
+            else
+                checkImageSdt2.setChecked(true);
+            if ((advType & ListUrls.SH) == 0)
+                checkImageSh.setChecked(false);
+            else
+                checkImageSh.setChecked(true);
+            
+            // MinRating
+            CheckBox checkImageSr = (CheckBox) view
+                    .findViewById(R.id.checkbox_sr);
+            if (listUrls.isMinRating())
+                checkImageSr.setChecked(true);
+            else
+                checkImageSr.setChecked(false);
+            Spinner spinnerMinRating = (Spinner) view
+                    .findViewById(R.id.spinner_min_rating);
+            int index;
+            if (listUrls.getMinRating() == -1)
+                index = 0;
+            else
+                index = listUrls.getMinRating() - 2;
+            spinnerMinRating.setSelection(index);
+        }
         
-        if ((advType & ListUrls.SNAME) == 0)
-            checkImageSname.setChecked(false);
-        else
-            checkImageSname.setChecked(true);
-        if ((advType & ListUrls.STAGS) == 0)
-            checkImageStags.setChecked(false);
-        else
-            checkImageStags.setChecked(true);
-        if ((advType & ListUrls.SDESC) == 0)
-            checkImageSdesc.setChecked(false);
-        else
-            checkImageSdesc.setChecked(true);
-        if ((advType & ListUrls.STORR) == 0)
-            checkImageStorr.setChecked(false);
-        else
-            checkImageStorr.setChecked(true);
-        if ((advType & ListUrls.STO) == 0)
-            checkImageSto.setChecked(false);
-        else
-            checkImageSto.setChecked(true);
-        if ((advType & ListUrls.STD1) == 0)
-            checkImageSdt1.setChecked(false);
-        else
-            checkImageSdt1.setChecked(true);
-        if ((advType & ListUrls.STD2) == 0)
-            checkImageSdt2.setChecked(false);
-        else
-            checkImageSdt2.setChecked(true);
-        if ((advType & ListUrls.SH) == 0)
-            checkImageSh.setChecked(false);
-        else
-            checkImageSh.setChecked(true);
-        
-        // MinRating
-        CheckBox checkImageSr = (CheckBox) view
-                .findViewById(R.id.checkbox_sr);
-        if (listUrls.isMinRating())
-            checkImageSr.setChecked(true);
-        else
-            checkImageSr.setChecked(false);
-        Spinner spinnerMinRating = (Spinner) view
-                .findViewById(R.id.spinner_min_rating);
-        int index;
-        if (listUrls.getMinRating() == -1)
-            index = 0;
-        else
-            index = listUrls.getMinRating() - 2;
-        spinnerMinRating.setSelection(index);
-        
-        // Hide advance if need
+        // Show advance if need
         final View advance = view.findViewById(R.id.filter_advance);
-        if (cb.isChecked())
+        if (listUrls.isAdvance())
             advance.setVisibility(View.VISIBLE);
     }
     
