@@ -52,6 +52,8 @@ public class ListUrls {
     
     private String search = null;
     
+    private String mTag = null;
+    
     public ListUrls() {}
     
     public ListUrls(int t) {
@@ -166,102 +168,139 @@ public class ListUrls {
         mMode = mode;
     }
     
+    public void setTag(String tag) {
+        mMode = TAG;
+        mTag = tag;
+    }
+    
+    public String getTag() {
+        return mTag;
+    }
+    
     public String getUrl() {
         StringBuilder url = new StringBuilder(EhClient.getUrlHeader());
-        url.append("?");
         
-        // Add type
-        if((type & DOUJINSHI) == 0)
-            url.append("f_doujinshi=0&");
-        else
-            url.append("f_doujinshi=1&");
-        if((type & MANGA) == 0)
-            url.append("f_manga=0&");
-        else
-            url.append("f_manga=1&");
-        if((type & ARTIST_CG) == 0)
-            url.append("f_artistcg=0&");
-        else
-            url.append("f_artistcg=1&");
-        if((type & GAME_CG) == 0)
-            url.append("f_gamecg=0&");
-        else
-            url.append("f_gamecg=1&");
-        if((type & WESTERN) == 0)
-            url.append("f_western=0&");
-        else
-            url.append("f_western=1&");
-        if((type & NON_H) == 0)
-            url.append("f_non-h=0&");
-        else
-            url.append("f_non-h=1&");
-        if((type & IMAGE_SET) == 0)
-            url.append("f_imageset=0&");
-        else
-            url.append("f_imageset=1&");
-        if((type & COSPLAY) == 0)
-            url.append("f_cosplay=0&");
-        else
-            url.append("f_cosplay=1&");
-        if((type & ASIAN_PORN) == 0)
-            url.append("f_asianporn=0&");
-        else
-            url.append("f_asianporn=1&");
-        if((type & MISC) == 0)
-            url.append("f_misc=0&");
-        else
-            url.append("f_misc=1&");
-        
-        // Add search
-        if (search != null) {
-            url.append("f_search=");
-            String[] searchItems = search.split("\\s+");
-            boolean firstItem = true;
-            for (String searcheItem : searchItems) {
-                try {
-                    searcheItem = java.net.URLEncoder.encode(searcheItem, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+        if (mMode == TAG) {
+            // Add tag
+            url.append("tag/");
+            if (mTag != null) {
+                String[] searchItems = mTag.split("\\s+");
+                boolean firstItem = true;
+                for (String searcheItem : searchItems) {
+                    try {
+                        searcheItem = java.net.URLEncoder.encode(searcheItem, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    if (firstItem)
+                        firstItem = false;
+                    else
+                        url.append('+');
+                    url.append(searcheItem);
                 }
-                if (firstItem)
-                    firstItem = false;
-                else
-                    url.append('+');
-                url.append(searcheItem);
-            }
-            url.append("&");
-        }
-        
-        // Add page
-        url.append("page=").append(page).append("&");
-        
-        // Add foot
-        url.append("f_apply=Apply+Filter");
-        
-        // Is advance search
-        if (isAdvance()) {
-            url.append("&advsearch=1");
-            if((advsearchType & SNAME) != 0)
-                url.append("&f_sname=on");
-            if((advsearchType & STAGS) != 0)
-                url.append("&f_stags=on");
-            if((advsearchType & SDESC) != 0)
-                url.append("&f_sdesc=on");
-            if((advsearchType & STORR) != 0)
-                url.append("&f_storr=on");
-            if((advsearchType & STO) != 0)
-                url.append("&f_sto=on");
-            if((advsearchType & STD1) != 0)
-                url.append("&f_sdt1=on");
-            if((advsearchType & STD2) != 0)
-                url.append("&f_sdt2=on");
-            if((advsearchType & SH) != 0)
-                url.append("&f_sh=on");
+                
+                // Add page
+                url.append("/").append(page);
+            } else
+                url.append(page);
             
-            // Set min star
-            if (isMinRating())
-                url.append("&f_sr=on&f_srdd=").append(minRating);
+        } else {
+            url.append("?");
+            
+            // Add type
+            if((type & DOUJINSHI) == 0)
+                url.append("f_doujinshi=0&");
+            else
+                url.append("f_doujinshi=1&");
+            if((type & MANGA) == 0)
+                url.append("f_manga=0&");
+            else
+                url.append("f_manga=1&");
+            if((type & ARTIST_CG) == 0)
+                url.append("f_artistcg=0&");
+            else
+                url.append("f_artistcg=1&");
+            if((type & GAME_CG) == 0)
+                url.append("f_gamecg=0&");
+            else
+                url.append("f_gamecg=1&");
+            if((type & WESTERN) == 0)
+                url.append("f_western=0&");
+            else
+                url.append("f_western=1&");
+            if((type & NON_H) == 0)
+                url.append("f_non-h=0&");
+            else
+                url.append("f_non-h=1&");
+            if((type & IMAGE_SET) == 0)
+                url.append("f_imageset=0&");
+            else
+                url.append("f_imageset=1&");
+            if((type & COSPLAY) == 0)
+                url.append("f_cosplay=0&");
+            else
+                url.append("f_cosplay=1&");
+            if((type & ASIAN_PORN) == 0)
+                url.append("f_asianporn=0&");
+            else
+                url.append("f_asianporn=1&");
+            if((type & MISC) == 0)
+                url.append("f_misc=0&");
+            else
+                url.append("f_misc=1&");
+            
+            // Add search
+            if (search != null) {
+                url.append("f_search=");
+                String[] searchItems = search.split("\\s+");
+                boolean firstItem = true;
+                for (String searcheItem : searchItems) {
+                    try {
+                        searcheItem = java.net.URLEncoder.encode(searcheItem, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    if (firstItem)
+                        firstItem = false;
+                    else
+                        url.append('+');
+                    url.append(searcheItem);
+                }
+                url.append("&");
+            }
+            
+            // Add page
+            url.append("page=").append(page).append("&");
+            
+            // Add foot
+            url.append("f_apply=Apply+Filter");
+            
+            // Is advance search
+            if (isAdvance()) {
+                url.append("&advsearch=1");
+                if((advsearchType & SNAME) != 0)
+                    url.append("&f_sname=on");
+                if((advsearchType & STAGS) != 0)
+                    url.append("&f_stags=on");
+                if((advsearchType & SDESC) != 0)
+                    url.append("&f_sdesc=on");
+                if((advsearchType & STORR) != 0)
+                    url.append("&f_storr=on");
+                if((advsearchType & STO) != 0)
+                    url.append("&f_sto=on");
+                if((advsearchType & STD1) != 0)
+                    url.append("&f_sdt1=on");
+                if((advsearchType & STD2) != 0)
+                    url.append("&f_sdt2=on");
+                if((advsearchType & SH) != 0)
+                    url.append("&f_sh=on");
+                
+                // Set min star
+                if (isMinRating())
+                    url.append("&f_sr=on&f_srdd=").append(minRating);
+            }
         }
+        
         return url.toString();
     }
 }

@@ -4,22 +4,35 @@
     android:background="@android:color/white"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="64dp"
-        android:background="@android:color/holo_blue_dark"
-        android:orientation="horizontal" >
+        android:layout_height="64.0dp"
+        android:background="@android:color/holo_blue_dark" >
 
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="24dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="24.0dp"
+            android:layout_centerVertical="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white"
             android:visibility="gone" />
-    </LinearLayout>
+        
+        <ImageView
+            android:id="@+id/action"
+            android:layout_width="48.0dp"
+            android:layout_height="48.0dp"
+            android:layout_gravity="right"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8.0dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_action_touch"
+            android:background="@drawable/blue_bn_bg"
+            android:visibility="gone" />
+        
+    </RelativeLayout>
 
     <ScrollView
         android:id="@+id/scroll_view"

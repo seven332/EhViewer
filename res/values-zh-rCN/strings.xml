@@ -29,7 +29,7 @@
     <string name="toast_logout_succeeded">退出成功</string>
     <string name="toast_logout_failed">退出失败</string>
 
-    <!-- Filter -->
+    <!-- Search -->
     <string name="hint_no_keyword">没关键字也行</string>
     <string name="checkbox_uploader">指定上传者</string>
     <string name="checkbox_advance">高级选项</string>
@@ -42,6 +42,8 @@
     <string name="checkbox_sdt2">搜索 Downvoted 标签</string>
     <string name="checkbox_sh">搜索被删除的本子</string>
     <string name="checkbox_sr">最低评分：</string>
+    <string name="toast_normal_mode">切换至普通搜索模式</string>
+    <string name="toast_tag_mode">切换至标签搜索模式</string>
     
     <!-- Jump -->
     <string name="jump_sum">共 %d 页</string>
@@ -239,6 +241,7 @@
     <string name="rating0">感觉快要窒息了</string>
     
     <!-- Util -->
+    <string name="tag">标签</string>
     <string name="copyed">已复制</string>
     <string name="send">发送</string>
     <string name="detail">详情</string>

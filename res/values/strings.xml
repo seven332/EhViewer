@@ -33,7 +33,7 @@
     <string name="toast_logout_succeeded">Logout succeeded</string>
     <string name="toast_logout_failed">Logout failed</string>
 
-    <!-- Filter -->
+    <!-- Search -->
     <string name="hint_no_keyword">No keyword is OK</string>
     <string name="checkbox_uploader">Specify Uploader</string>
     <string name="checkbox_advance">Advanced Options</string>
@@ -46,6 +46,8 @@
     <string name="checkbox_sdt2">Search Downvoted Tags</string>
     <string name="checkbox_sh">Show Expunged Galleries</string>
     <string name="checkbox_sr">Minimum Rating:</string>
+    <string name="toast_normal_mode">Switch To Normal Search Mode</string>
+    <string name="toast_tag_mode">Switch To Tag Search Mode</string>
     
     <!-- Jump -->
     <string name="jump_sum">%d pages in total</string>
@@ -259,6 +261,7 @@
     <string name="rating0">DISASTER</string>
     
     <!-- Util -->
+    <string name="tag">Tag</string>
     <string name="copyed">Copyed</string>
     <string name="send">Send</string>
     <string name="detail">Detail</string>

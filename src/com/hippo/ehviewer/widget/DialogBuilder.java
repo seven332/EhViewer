@@ -6,14 +6,15 @@ import com.hippo.ehviewer.R;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -269,6 +270,25 @@ public class DialogBuilder extends AlertDialog.Builder {
         listView.setVisibility(View.VISIBLE);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(listener);
+        return this;
+    }
+    
+    public DialogBuilder setAction(View.OnClickListener listener) {
+        setAction(null, listener);
+        return this;
+    }
+    
+    public DialogBuilder setAction(int resId, View.OnClickListener listener) {
+        setAction(mContext.getResources().getDrawable(resId), listener);
+        return this;
+    }
+    
+    public DialogBuilder setAction(Drawable drawable, View.OnClickListener listener) {
+        ImageView actionView = (ImageView)mView.findViewById(R.id.action);
+        actionView.setVisibility(View.VISIBLE);
+        if (drawable != null)
+            actionView.setImageDrawable(drawable);
+        actionView.setOnClickListener(listener);
         return this;
     }
     
