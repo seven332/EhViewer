@@ -34,6 +34,7 @@ import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.HfListView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
+import com.hippo.ehviewer.widget.PrefixEditText;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 import com.hippo.ehviewer.widget.TagListView;
 import com.hippo.ehviewer.widget.TagsAdapter;
@@ -53,8 +54,11 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.Editable;
+import android.text.Selection;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
 import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -289,6 +293,18 @@ public class MangaListActivity extends SlidingActivity
     private AlertDialog createFilterDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
         final View view = inflater.inflate(R.layout.filter, null);
+        final PrefixEditText pet = (PrefixEditText)view.findViewById(R.id.search_text);
+        CheckBox uploaderCb = (CheckBox)view.findViewById(R.id.checkbox_uploader);
+        uploaderCb.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,
+                    boolean isChecked) {
+                if (isChecked)
+                    pet.setPrefix("uploader:");
+                else
+                    pet.setPrefix(null);
+            }
+        });
         
         final View advance = view.findViewById(R.id.filter_advance);
         CheckBox cb = (CheckBox)view.findViewById(R.id.checkbox_advance);
@@ -316,11 +332,20 @@ public class MangaListActivity extends SlidingActivity
                             
                             String search = lus.getSearch();
                             String t = null;
-                            if (search == null || search.isEmpty())
-                                t = getString(android.R.string.search_go);
-                            else
-                                t = getString(android.R.string.search_go) + " " + search;
-                            
+                            switch(lus.getMode()) {
+                            case ListUrls.NORMAL:
+                                if (search == null || search.isEmpty())
+                                    t = getString(android.R.string.search_go);
+                                else
+                                    t = getString(android.R.string.search_go) + " " + search;
+                                break;
+                            case ListUrls.UPLOADER:
+                                t = search;
+                                break;
+                            case ListUrls.TAG:
+                                // TODO
+                                break;
+                            }
                             mTitle = t;
                             setTitle(mTitle);
                         } else {
@@ -404,6 +429,11 @@ public class MangaListActivity extends SlidingActivity
         EditText et = (EditText)view.findViewById(R.id.search_text);
 
         ListUrls lus = new ListUrls(type, et.getText().toString());
+        
+        CheckBox uploaderCb = (CheckBox)view.findViewById(R.id.checkbox_uploader);
+        if (uploaderCb.isChecked()) {
+            lus.setMode(ListUrls.UPLOADER);
+        }
         
         CheckBox cb = (CheckBox)view.findViewById(R.id.checkbox_advance);
         if (cb.isChecked()) {

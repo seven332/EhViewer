@@ -8,6 +8,10 @@ import com.hippo.ehviewer.ehclient.EhClient;
 
 public class ListUrls {
     
+    public static final int NORMAL = 0x0;
+    public static final int UPLOADER = 0x1;
+    public static final int TAG = 0x2;
+    
     // Search type
     public static final int DOUJINSHI = 0x1;
     public static final int MANGA = 0x2;
@@ -35,6 +39,8 @@ public class ListUrls {
     
     public static final int DEFAULT_ADVANCE = SNAME | STAGS;
     public static final int DEFAULT_MIN_RATING = 2;
+    
+    private int mMode = NORMAL;
     
     private int page = 0;
     private int numPerPage = 25;
@@ -150,6 +156,14 @@ public class ListUrls {
     
     public int getNumPerPage() {
         return numPerPage;
+    }
+    
+    public int getMode() {
+        return mMode;
+    }
+    
+    public void setMode(int mode) {
+        mMode = mode;
     }
     
     public String getUrl() {

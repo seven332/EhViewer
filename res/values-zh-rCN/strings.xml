@@ -31,6 +31,7 @@
 
     <!-- Filter -->
     <string name="hint_no_keyword">没关键字也行</string>
+    <string name="checkbox_uploader">指定上传者</string>
     <string name="checkbox_advance">高级选项</string>
     <string name="checkbox_sname">搜索本子</string>
     <string name="checkbox_stags">搜索本子标签</string>

@@ -35,6 +35,7 @@
 
     <!-- Filter -->
     <string name="hint_no_keyword">No keyword is OK</string>
+    <string name="checkbox_uploader">Specify Uploader</string>
     <string name="checkbox_advance">Advanced Options</string>
     <string name="checkbox_sname">Search Gallery</string>
     <string name="checkbox_stags">Search Gallery Tags</string>
