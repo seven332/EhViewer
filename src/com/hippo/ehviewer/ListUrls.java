@@ -46,39 +46,6 @@ public class ListUrls {
     
     private String search = null;
     
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof ListUrls))
-            return false;
-        ListUrls listUrls = (ListUrls)object;
-        return page == listUrls.page && isSameUrls(listUrls);
-    }
-    
-    public boolean isSameUrls(ListUrls listUrls) {
-        if (type == listUrls.type) {
-            if ((search == null && listUrls.search != null)
-                    || (search != null && listUrls.search == null))
-                return false;
-            if (search != null && listUrls.search != null
-                    && !search.equals(listUrls.search))
-                return false;
-            if (advsearchType != listUrls.advsearchType)
-                return false;
-            if (minRating != listUrls.minRating)
-                return false;
-            return true;
-        } else
-            return false;
-    }
-    
-    @Override
-    public ListUrls clone() {
-        ListUrls listUrls = new ListUrls(type, search, page);
-        listUrls.setMax(max);
-        listUrls.setAdvance(advsearchType, minRating);
-        return listUrls;
-    }
-    
     public ListUrls() {}
     
     public ListUrls(int t) {

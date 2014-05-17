@@ -299,12 +299,9 @@ public class DetailSectionFragment extends Fragment
         PreviewList pageList = mGalleryDetail.previewLists[mCurPage];
 
         if (pageList == null) {
-            String tempUrl = mUrl;
-            if (!mUrl.endsWith("/"))
-                tempUrl += "/";
-            tempUrl += "?p=" + mCurPage;
-
-            mClient.getPageList(tempUrl, mCurPage,
+            mUrl = EhClient.getDetailUrl(
+                    mGalleryDetail.gid, mGalleryDetail.token, mCurPage);
+            mClient.getPageList(mUrl, mCurPage,
                     new EhClient.OnGetPageListListener() {
                         @Override
                         public void onSuccess(Object checkFlag, PreviewList pageList) {
