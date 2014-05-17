@@ -228,6 +228,9 @@
     <string name="rate_succeeded">Rate succeeded</string>
     <string name="rate_failed">Rate failed</string>
     
+    
+    <string name="uploader_others">该用户上传的其他内容</string>
+    
     <!-- Category -->
     <string name="doujinshi" translatable="false">DOUJINSHI</string>
     <string name="manga" translatable="false">MANGA</string>
@@ -255,6 +258,7 @@
     <string name="rating0">DISASTER</string>
     
     <!-- Util -->
+    <string name="copyed">Copyed</string>
     <string name="send">Send</string>
     <string name="detail">Detail</string>
     <string name="comment">Comment</string>

@@ -29,6 +29,7 @@
         android:layout_below="@id/user"
         android:layout_marginTop="8.0dp"
         android:layout_marginRight="12.0dp"
-        android:layout_marginBottom="8.0dp" />
+        android:layout_marginBottom="8.0dp"
+        android:autoLink="web" />
     
 </RelativeLayout>

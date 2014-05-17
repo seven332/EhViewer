@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string-array name="list_list_title">
-        <item>@string/homepage</item>
-        <item>@string/favourite</item>
-        <item>@android:string/search_go</item>
-        <item>@string/download</item>
-    </string-array>
-    
-    <integer-array name="list_list_icon">
-        <item>@drawable/ic_action_home</item>
-        <item>@drawable/ic_action_home</item>
-        <item>@drawable/ic_action_home</item>
-        <item>@drawable/ic_action_home</item>
-    </integer-array>
     
     <string-array name="min_rating">
         <item>@string/star_2</item>
@@ -28,6 +14,11 @@
         <item>lofi.e-hentai.org (460x)</item>
         <item>lofi.e-hentai.org (780x)</item>
         <item>lofi.e-hentai.org (980x)</item>
+    </string-array>
+    
+    <string-array name="comment_long_click">
+        <item>@android:string/copy</item>
+        <item>@string/uploader_others</item>
     </string-array>
     
     <string-array name="page_scaling_entries">

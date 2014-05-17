@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,73 +105,37 @@ public class CommentsSectionFragment extends Fragment
     public boolean onItemLongClick(AdapterView<?> parent, View view,
             int position, long id) {
         final Comment c = (Comment)parent.getItemAtPosition(position);
-        final List<String> urls = new ArrayList<String>();
-        urls.add(getString(android.R.string.copy));
-        urls.add("该用户上传的其他内容");
         
-        Pattern p = Pattern.compile("[a-zA-Z]+://[^\\s<>\"]*");
-        Matcher m = p.matcher(c.comment);
-        
-        while (m.find()) {
-            String url = m.group();
-            if (!urls.contains(url))
-                urls.add(url);
-        }
-        
-        // Long Click dialog
         mLongClickDialog = new DialogBuilder(mActivity)
-                .setTitle(R.string.what_to_do)
-                .setAdapter(new BaseAdapter() {
-                    @Override
-                    public int getCount() {
-                        return urls.size();
-                    }
-                    @Override
-                    public Object getItem(int position) {
-                        return urls.get(position);
-                    }
-
-                    @Override
-                    public long getItemId(int position) {
-                        return position;
-                    }
-
-                    @Override
-                    public View getView(int position, View convertView,
-                            ViewGroup parent) {
-                        LayoutInflater inflater = LayoutInflater.from(mActivity);
-                        if (position < 2) {
-                            convertView = inflater.inflate(R.layout.list_item_text, null);
-                        } else {
-                            convertView = inflater.inflate(R.layout.list_url_text, null);
-                        }
-                        ((TextView)convertView.findViewById(
-                                android.R.id.text1)).setText(urls.get(position));
-                        return convertView;
-                    }
-                    
-                }, new AdapterView.OnItemClickListener() {
+                .setTitle(R.string.what_to_do).setItems(R.array.comment_long_click,
+                        new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                             int position, long id) {
-                        if (position == 0) {
+                        switch (position) {
+                        case 0:
                             ClipboardManager cm = (ClipboardManager)mActivity
                                     .getSystemService(Context.CLIPBOARD_SERVICE);
                             cm.setPrimaryClip(ClipData.newPlainText(null, c.comment));
-                            Toast.makeText(mActivity, "已复制", Toast.LENGTH_SHORT).show(); // TODO
-                        } else if (position == 1) {
+                            Toast.makeText(mActivity, getString(R.string.copyed),
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                            
+                        case 1:
                             ListUrls lus = new ListUrls(ListUrls.ALL_TYPE,
                                     "uploader:" + mActivity.getGalleryInfo().uploader, 0);
-                            // TOOD
-                        } else if (position > 1) {
-                            String str = (String)parent.getItemAtPosition(position);
-                            Uri uri = Uri.parse(str);
-                            Intent intent = new Intent(Intent.ACTION_VIEW,uri);
-                            startActivity(intent);
+                            // TODO
+                            break;
                         }
                         mLongClickDialog.dismiss();
                     }
-        }).create();
+                }).setNegativeButton(android.R.string.cancel, 
+                        new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mLongClickDialog.dismiss();
+                    }
+                }).create();
         mLongClickDialog.show();
         return true;
     }
@@ -218,10 +183,10 @@ public class CommentsSectionFragment extends Fragment
             }
             
             // No one can post one comment at same this time
-            if (!isUserSame || !isTimeSame)
-                ((TextView)convertView.findViewById(R.id.comment))
-                        .setText(Html.fromHtml(c.comment));
-                
+            if (!isUserSame || !isTimeSame) {
+                TextView comment = ((TextView)convertView.findViewById(R.id.comment));
+                comment.setText(Html.fromHtml(c.comment));
+            }
             return convertView;
         }
     }

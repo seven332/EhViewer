@@ -220,6 +220,10 @@
     <string name="vote_succeeded">投票成功</string>
     <string name="vote_failed">投票失败</string>
     
+    
+    <string name="uploader_others">该用户上传的其他内容</string>
+    
+    
     <!-- rating -->
     <string name="rating10">根本把持不住</string>
     <string name="rating9">好极了</string>
@@ -234,6 +238,7 @@
     <string name="rating0">感觉快要窒息了</string>
     
     <!-- Util -->
+    <string name="copyed">已复制</string>
     <string name="send">发送</string>
     <string name="detail">详情</string>
     <string name="comment">评论</string>
