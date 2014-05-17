@@ -21,6 +21,7 @@ public class DownloadInfo {
     public static final int WAITING = 0x1;
     public static final int DOWNLOADING = 0x2;
     
+    // TODO delete it use EhClient
     public static final int G = 0x0;
     public static final int EX = 0x1;
     public static final int LOFI_460x = 0x2;

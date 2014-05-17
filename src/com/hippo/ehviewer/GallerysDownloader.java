@@ -92,7 +92,7 @@ public class GallerysDownloader {
                 
                 HttpHelper hp = new HttpHelper(mAppContext);
                 String url = EhClient.getDetailUrl(galleryInfo.gid, galleryInfo.token,
-                        EhClient.getDetailModeForDownloadMode(curDownloadInfo.getMode()));
+                        curDownloadInfo.getMode());
                 String pageContent = getUrlContext(hp, url);
                 if (pageContent == null) {
                     if (mListener != null)

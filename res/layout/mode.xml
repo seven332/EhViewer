@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <Spinner
+        android:id="@+id/mode"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12.0dp"
+        android:layout_marginBottom="12.0dp"
+        android:entries="@array/mode" />
+    
+    <TextView
+        android:id="@+id/warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12.0dp"
+        android:textColor="@android:color/holo_red_dark"
+        android:text="@string/select_mode_warning"
+        android:visibility="gone" />
+
+</LinearLayout>

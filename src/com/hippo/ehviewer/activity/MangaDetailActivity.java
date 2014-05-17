@@ -228,7 +228,7 @@ public class MangaDetailActivity extends FragmentActivity
                             ((AlertButton)v).dialog.dismiss();
                             String comment = et.getText().toString();
                             ((AppContext)getApplication()).getEhClient()
-                                    .comment(EhClient.getDetailUrl(mGalleryInfo.gid, mGalleryInfo.token, EhClient.EX),
+                                    .comment(EhClient.getDetailUrl(mGalleryInfo.gid, mGalleryInfo.token),
                                             comment, new EhClient.OnCommentListener() {
                                                 @Override
                                                 public void onSuccess(List<Comment> comments) {

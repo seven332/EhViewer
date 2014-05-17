@@ -70,7 +70,7 @@ public class FavouriteActivity extends Activity{
                             Intent it = new Intent(FavouriteActivity.this, DownloadService.class);
                             startService(it);
                             mServiceConn.getService().add(String.valueOf(lmd.gid), lmd.thumb, 
-                                    EhClient.detailHeader + lmd.gid + "/" + lmd.token, lmd.title);
+                                    EhClient.getDetailUrl(lmd.gid, lmd.token), lmd.title);
                             Toast.makeText(FavouriteActivity.this,
                                     getString(R.string.toast_add_download),
                                     Toast.LENGTH_SHORT).show();
@@ -214,7 +214,7 @@ public class FavouriteActivity extends Activity{
                 Intent intent = new Intent(FavouriteActivity.this,
                         MangaDetailActivity.class);
                 GalleryInfo gi = mFavouriteLmd.get(position);
-                intent.putExtra("url", EhClient.detailHeader + gi.gid + "/" + gi.token);
+                intent.putExtra("url", EhClient.getDetailUrl(gi.gid, gi.token));
                 intent.putExtra(MangaDetailActivity.KEY_G_INFO, gi);
                 startActivity(intent);
             }

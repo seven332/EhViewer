@@ -31,7 +31,6 @@ import com.hippo.ehviewer.widget.OlScrollView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.OnLayoutListener;
 import com.hippo.ehviewer.widget.ProgressiveRatingBar;
-import com.hippo.ehviewer.widget.ProgressiveTextView;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -48,23 +47,19 @@ import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
-import android.widget.ScrollView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
 import android.widget.ViewSwitcher.ViewFactory;
 
 public class DetailSectionFragment extends Fragment
@@ -122,7 +117,7 @@ public class DetailSectionFragment extends Fragment
             mGalleryDetail = new GalleryDetail(galleryInfo);
         }
         mUrl = EhClient.getDetailUrl(
-                mGalleryDetail.gid, mGalleryDetail.token, EhClient.EX);
+                mGalleryDetail.gid, mGalleryDetail.token);
         
         mRootView = inflater.inflate(
                 R.layout.detail, container, false);
@@ -298,8 +293,6 @@ public class DetailSectionFragment extends Fragment
         mWaitPreviewList.setVisibility(View.VISIBLE);
         mPreviewRefreshButton.setVisibility(View.GONE);
         
-        //previewNumText.setText(String.format("%d / %d",
-                //curPage+1, mangaDetail.previewSum));
         mPreviewNumText.setText(String.format("%d / %d",
                 mCurPage+1, mGalleryDetail.previewSum));
 
@@ -838,12 +831,4 @@ public class DetailSectionFragment extends Fragment
                     "投票失败\n" + eMsg, Toast.LENGTH_SHORT).show(); // TODO
         }
     }
-    
-    private ViewFactory mFactory = new ViewFactory() {
-        @Override
-        public View makeView() {
-            LayoutInflater inflater = LayoutInflater.from(mActivity);
-            return inflater.inflate(R.layout.detail_avg_text, null);
-        }
-    };
 }

@@ -212,6 +212,9 @@
     <string name="zoom_out">缩小</string>
     <string name="menu">菜单</string>
     
+    <!-- Mode Dialog -->
+    <string name="select_mode_warning">请登录以避免 Sad Panda</string>
+    
     <!-- rating -->
     <string name="rating10">根本把持不住</string>
     <string name="rating9">好极了</string>

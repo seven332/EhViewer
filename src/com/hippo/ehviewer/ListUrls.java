@@ -186,7 +186,7 @@ public class ListUrls {
     }
     
     public String getUrl() {
-        StringBuilder url = new StringBuilder(EhClient.listHeader);
+        StringBuilder url = new StringBuilder(EhClient.getUrlHeader());
         url.append("?");
         
         // Add type

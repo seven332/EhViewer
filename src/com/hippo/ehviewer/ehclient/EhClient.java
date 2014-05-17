@@ -6,9 +6,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,7 +25,6 @@ import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.R.string;
 import com.hippo.ehviewer.activity.DownloadInfo;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.GalleryDetail;
@@ -37,7 +33,6 @@ import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.network.HttpHelper;
-import com.hippo.ehviewer.network.ShapreCookieStore;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.util.ThreadPool.Job;
 import com.hippo.ehviewer.util.ThreadPool.JobContext;
@@ -66,29 +61,20 @@ public class EhClient {
     
     public static final int G = 0x0;
     public static final int EX = 0x1;
-    public static final int LOFI = 0x2;
+    public static final int LOFI_460x = 0x2;
+    public static final int LOFI_780x = 0x3;
+    public static final int LOFI_980x = 0x4;
     
     public static final String G_API = "http://g.e-hentai.org/api.php";
-    public static final String E_API = "http://exhentai.org/api.php";
+    public static final String EX_API = "http://exhentai.org/api.php";
     public static final long APIUID = 1363542;
     public static final String APIKEY = "f4b5407ab1727b9d08d7";
     
     private static final String loginUrl = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
     
-    private static final String E_HENTAI_LIST_HEADER = "http://g.e-hentai.org/";
-    private static final String EXHENTAI_LIST_HEADER = "http://exhentai.org/";
-    public static final String E_HENTAI_DETAIL_HEADER = "http://g.e-hentai.org/g/";
-    public static final String EXHENTAI_DETAIL_HEADER = "http://exhentai.org/g/";
-    public static final String EXHENTAI_PAGE_HEADER = "http://exhentai.org/s/";
-    
-    
-    
     public static final String G_HEADER = "http://g.e-hentai.org/";
     public static final String EH_HEADER = "http://exhentai.org/";
     public static final String LOFI_HEADER = "http://lofi.e-hentai.org/";
-    
-    public static String listHeader;
-    public static String detailHeader;
     
     private boolean mLogin = false;
     private String mUsername;
@@ -98,38 +84,72 @@ public class EhClient {
     private AppContext mAppContext;
     private ThreadPool mThreadPool;
     
-    public static String getDetailUrl(int gid, String token, int mode) {
+    public static String getUrlHeader() {
+        return getUrlHeader(Config.getMode());
+    }
+    
+    public static String getUrlHeader(int mode) {
         switch (mode) {
         case EX:
-            return EH_HEADER + "g/" + gid + "/" + token;
-        case LOFI:
-            return LOFI_HEADER + "g/" + gid + "/" + token;
+            return EH_HEADER;
+        case LOFI_460x:
+        case LOFI_780x:
+        case LOFI_980x:
+            return LOFI_HEADER;
         default:
-            return G_HEADER + "g/" + gid + "/" + token;
+            return G_HEADER;
         }
+    }
+    
+    public static String getDetailUrl(int gid, String token) {
+        return getDetailUrl(gid, token, 0, Config.getMode());
+    }
+    
+    
+    public static String getDetailUrl(int gid, String token, int pageNum) {
+        return getDetailUrl(gid, token, pageNum, Config.getMode());
+    }
+    
+    public static String getDetailUrl(int gid, String token, int pageNum, int mode) {
+        switch (mode) {
+        case EX:
+            return EH_HEADER + "g/" + gid + "/" + token + "/?p=" + pageNum;
+        case LOFI_460x:
+        case LOFI_780x:
+        case LOFI_980x:
+            return LOFI_HEADER + "g/" + gid + "/" + token + "/?p=" + pageNum;
+        default:
+            return G_HEADER + "g/" + gid + "/" + token + "/?p=" + pageNum;
+        }
+    }
+    
+    public static String getPageUrl(String gid, String token, int pageNum) {
+        return getPageUrl(gid, token, pageNum, Config.getMode());
     }
     
     public static String getPageUrl(String gid, String token, int pageNum, int mode) {
         switch (mode) {
         case EX:
             return EH_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
-        case LOFI:
+        case LOFI_460x:
+        case LOFI_780x:
+        case LOFI_980x:
             return LOFI_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
         default:
             return G_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
         }
     }
     
-    public static int getDetailModeForDownloadMode(int downloadMode) {
-        switch (downloadMode) {
-        case com.hippo.ehviewer.data.DownloadInfo.EX:
-            return EX;
-        case com.hippo.ehviewer.data.DownloadInfo.LOFI_460x:
-        case com.hippo.ehviewer.data.DownloadInfo.LOFI_780x:
-        case com.hippo.ehviewer.data.DownloadInfo.LOFI_980x:
-            return LOFI;
+    public static String getApiUrl() {
+        return getApiUrl(Config.getMode());
+    }
+    
+    public static String getApiUrl(int mode) {
+        switch (mode) {
+        case EX:
+            return EX_API;
         default:
-            return G;
+            return G_API;
         }
     }
     
@@ -180,27 +200,7 @@ public class EhClient {
     
     public EhClient(AppContext appContext) {
         mAppContext = appContext;
-        
-        if (Config.isExhentai()) {
-            listHeader = EXHENTAI_LIST_HEADER;
-            detailHeader = EXHENTAI_DETAIL_HEADER;
-        } else {
-            listHeader = E_HENTAI_LIST_HEADER;
-            detailHeader = E_HENTAI_DETAIL_HEADER;
-        }
-        
         mThreadPool = mAppContext.getNetworkThreadPool();
-    }
-    
-    public static void setHeader(boolean isExhentai) {
-        Config.exhentai(isExhentai);
-        if (isExhentai) {
-            listHeader = EXHENTAI_LIST_HEADER;
-            detailHeader = EXHENTAI_DETAIL_HEADER;
-        } else {
-            listHeader = E_HENTAI_LIST_HEADER;
-            detailHeader = E_HENTAI_DETAIL_HEADER;
-        }
     }
 
     public boolean isLogin() {
@@ -1597,7 +1597,7 @@ public class EhClient {
                         listener.onFailure(eMsg);
                     }
                 });
-                hp.postJson(E_API, json);
+                hp.postJson(getApiUrl(), json);
             }
         }).start();
     }
@@ -1647,7 +1647,7 @@ public class EhClient {
                         listener.onFailure(eMsg);
                     }
                 });
-                hp.postJson(E_API, json);
+                hp.postJson(getApiUrl(), json);
             }
         }).start();
     }

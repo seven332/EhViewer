@@ -216,6 +216,9 @@
     <string name="zoom_out">Zoom out</string>
     <string name="menu">Menu</string>
     
+    <!-- Mode Dialog -->
+    <string name="select_mode_warning">Please login to avoid Sad Panda.</string>
+    
     <!-- Category -->
     <string name="doujinshi" translatable="false">DOUJINSHI</string>
     <string name="manga" translatable="false">MANGA</string>
@@ -243,7 +246,7 @@
     <string name="rating0">DISASTER</string>
     
     <!-- Util -->
-    <string name="send">发送</string>
+    <string name="send">Send</string>
     <string name="detail">Detail</string>
     <string name="comment">Comment</string>
     <string name="info">Info</string>

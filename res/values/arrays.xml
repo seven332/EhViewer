@@ -22,6 +22,14 @@
         <item>@string/star_5</item>
     </string-array>
     
+    <string-array name="mode"  translatable="false">
+        <item>g.e-hentai.org</item>
+        <item>exhentai.org</item>
+        <item>lofi.e-hentai.org (460x)</item>
+        <item>lofi.e-hentai.org (780x)</item>
+        <item>lofi.e-hentai.org (980x)</item>
+    </string-array>
+    
     <string-array name="page_scaling_entries">
         <item>@string/actual_size</item>
         <item>@string/fit_to_width</item>
@@ -92,12 +100,6 @@
         <item>0</item>
         <item>1</item>
         <item>2</item>
-    </string-array>
-    
-    
-    <string-array name="is_exhentai" translatable="false">
-        <item>g.e-hentai.org</item>
-        <item>exhentai.org</item>
     </string-array>
     
 </resources>

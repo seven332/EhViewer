@@ -1,5 +1,7 @@
 package com.hippo.ehviewer.util;
 
+import com.hippo.ehviewer.ehclient.EhClient;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -15,6 +17,8 @@ public class Config {
     private static final String KEY_LOGIN = "login";
     private static final String KEY_IS_EXHENTAI = "is_exhentai";
     private static final String KEY_UPDATE_DATE = "update_date";
+    private static final String KEY_MODE = "mode";
+    private static final int MODE_DEFAULT = 0;
     
     private static final String CP_CACHE = "preference_cp_cache";
     private static final String CP_CACHE_DEFAULT = "25";
@@ -110,6 +114,21 @@ public class Config {
     
     public static String getDownloadPath() {
         return mConfigPre.getString(DOWNLOAD_PATH, DOWNLOAD_PATH_DEFAULT);
+    }
+    
+    public static int getMode() {
+        int mode = mConfigPre.getInt(KEY_MODE, MODE_DEFAULT);
+        if (mode < EhClient.G || mode > EhClient.LOFI_980x) {
+            mode = MODE_DEFAULT;
+            setMode(mode);
+        }
+        return mode;
+    }
+    
+    public static void setMode(int mode) {
+        if (mode < EhClient.G || mode > EhClient.LOFI_980x)
+            mode = MODE_DEFAULT;
+        mConfigPre.edit().putInt(KEY_MODE, mode).apply();
     }
     
     /**

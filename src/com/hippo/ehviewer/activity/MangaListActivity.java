@@ -236,6 +236,56 @@ public class MangaListActivity extends SlidingActivity
                 }).create();
     }
     
+    private void checkModeWarning(int mode, View warning) {
+        if (mode == 1 && !mEhClient.isLogin())
+            warning.setVisibility(View.VISIBLE);
+        else
+            warning.setVisibility(View.GONE);
+    }
+    
+    private AlertDialog createModeDialog() {
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View view = inflater.inflate(R.layout.mode, null);
+        final TextView warning = (TextView)view.findViewById(R.id.warning);
+        final Spinner modeSpinner = (Spinner)view.findViewById(R.id.mode);
+        int mode = Config.getMode();
+        modeSpinner.setSelection(mode);
+        checkModeWarning(mode, warning);
+        modeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                    int position, long id) {
+                checkModeWarning(position, warning);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                warning.setVisibility(View.GONE);
+            }
+        });
+        
+        return new DialogBuilder(this).setTitle(R.string.mode)
+                .setView(view, true)
+                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int mode = modeSpinner.getSelectedItemPosition();
+                        if (mode > 1) {
+                            Toast.makeText(MangaListActivity.this,
+                                    R.string.unfinished, Toast.LENGTH_SHORT).show();
+                        } else {
+                            ((AlertButton)v).dialog.dismiss();
+                            Config.setMode(mode);
+                        }
+                    }
+                }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((AlertButton)v).dialog.dismiss();
+                    }
+                }).create();
+    }
+    
     private AlertDialog createFilterDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
         final View view = inflater.inflate(R.layout.filter, null);
@@ -425,7 +475,7 @@ public class MangaListActivity extends SlidingActivity
                             Intent it = new Intent(MangaListActivity.this, DownloadService.class);
                             startService(it);
                             mServiceConn.getService().add(String.valueOf(lmd.gid), lmd.thumb, 
-                                    EhClient.detailHeader + lmd.gid + "/" + lmd.token, lmd.title);
+                                    EhClient.getDetailUrl(lmd.gid, lmd.token), lmd.title);
                             Toast.makeText(MangaListActivity.this,
                                     getString(R.string.toast_add_download),
                                     Toast.LENGTH_SHORT).show();
@@ -1231,6 +1281,7 @@ public class MangaListActivity extends SlidingActivity
                     }
                     break;
                 case 1:
+                    createModeDialog().show();
                     break;
                 case 2:
                     filterDialog.show();
@@ -1359,7 +1410,7 @@ public class MangaListActivity extends SlidingActivity
                 Intent intent = new Intent(MangaListActivity.this,
                         MangaDetailActivity.class);
                 GalleryInfo gi = lmdArray.get(position);
-                intent.putExtra("url", EhClient.detailHeader + gi.gid + "/" + gi.token);
+                intent.putExtra("url", EhClient.getDetailUrl(gi.gid, gi.token));
                 intent.putExtra(MangaDetailActivity.KEY_G_INFO, gi);
                 startActivity(intent);
             }
@@ -1559,7 +1610,7 @@ public class MangaListActivity extends SlidingActivity
             else
                 showMenu();
             return true;
-        case R.id.action_refresh: // TODO
+        case R.id.action_refresh:
             if (!refresh())
                 Toast.makeText(MangaListActivity.this,
                         getString(R.string.wait),
