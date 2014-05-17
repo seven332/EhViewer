@@ -219,6 +219,15 @@
     <!-- Mode Dialog -->
     <string name="select_mode_warning">Please login to avoid Sad Panda.</string>
     
+    <!-- Vote -->
+    <string name="vote_succeeded">Vote succeeded</string>
+    <string name="vote_failed">Vote failed</string>
+    
+    <!-- Rate -->
+    <string name="invalid_rating">Invalid rating</string>
+    <string name="rate_succeeded">Rate succeeded</string>
+    <string name="rate_failed">Rate failed</string>
+    
     <!-- Category -->
     <string name="doujinshi" translatable="false">DOUJINSHI</string>
     <string name="manga" translatable="false">MANGA</string>

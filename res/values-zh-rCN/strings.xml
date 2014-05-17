@@ -215,6 +215,11 @@
     <!-- Mode Dialog -->
     <string name="select_mode_warning">请登录以避免 Sad Panda</string>
     
+    <!-- Vote -->
+    <string name="invalid_rating">非法评分</string>
+    <string name="vote_succeeded">投票成功</string>
+    <string name="vote_failed">投票失败</string>
+    
     <!-- rating -->
     <string name="rating10">根本把持不住</string>
     <string name="rating9">好极了</string>

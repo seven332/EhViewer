@@ -503,7 +503,6 @@ public class DetailSectionFragment extends Fragment
             pagesSize.setText(String.format(getString(R.string.detail_pages_size),
                     mGalleryDetail.pages, mGalleryDetail.size));
             
-            // TODO
             addTags();
             
             mNormalView.setVisibility(View.VISIBLE);
@@ -653,7 +652,8 @@ public class DetailSectionFragment extends Fragment
                     public void onClick(View v) {
                         int rating = getSendableRating(rb.getRating());
                         if (rating <= 0 || rating > 10)
-                            Toast.makeText(mActivity, "非法评分", Toast.LENGTH_SHORT).show(); // TODO
+                            Toast.makeText(mActivity, getString(R.string.invalid_rating),
+                                    Toast.LENGTH_SHORT).show();
                         else {
                             ((AlertButton)v).dialog.dismiss();
                             mClient.rate(mGalleryDetail.gid, mGalleryDetail.token,
@@ -674,12 +674,13 @@ public class DetailSectionFragment extends Fragment
                                                         mGalleryDetail.rating, mGalleryDetail.people));
                                             }
                                             Toast.makeText(mActivity,
-                                                    "评价成功", Toast.LENGTH_SHORT).show(); // TODO
+                                                    getString(R.string.rate_succeeded), Toast.LENGTH_SHORT).show();
                                         }
                                         @Override
                                         public void onFailure(String eMsg) {
                                             Toast.makeText(mActivity,
-                                                    "评价失败\n" + eMsg, Toast.LENGTH_SHORT).show(); // TODO
+                                                    getString(R.string.rate_failed) + "\n" + eMsg,
+                                                    Toast.LENGTH_SHORT).show();
                                         }
                             });
                         }
@@ -810,13 +811,12 @@ public class DetailSectionFragment extends Fragment
         @Override
         public void onSuccess(String tagPane) {
             Toast.makeText(mActivity,
-                    "投票成功", Toast.LENGTH_SHORT).show(); // TODO
+                    getString(R.string.vote_succeeded), Toast.LENGTH_SHORT).show();
             
             DetailParser parser = new DetailParser();
             parser.setMode(DetailParser.TAG);
             if (parser.parser(tagPane) == DetailParser.TAG) {
                 mGalleryDetail.tags = parser.tags;
-                // TODO Only change target text view
                 addTags();
             } else {
                 Toast.makeText(mActivity,
@@ -828,7 +828,7 @@ public class DetailSectionFragment extends Fragment
         @Override
         public void onFailure(String eMsg) {
             Toast.makeText(mActivity,
-                    "投票失败\n" + eMsg, Toast.LENGTH_SHORT).show(); // TODO
+                    getString(R.string.vote_failed) + "\n"+ eMsg, Toast.LENGTH_SHORT).show();
         }
     }
 }
