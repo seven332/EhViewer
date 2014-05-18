@@ -459,6 +459,14 @@ public class DetailSectionFragment extends Fragment
         addtagView.setTextColor(tagTextColor);
         addtagView.setBackgroundResource(R.drawable.blue_bn_bg);
         addtagView.setPadding(tagPaddingX, tagPaddingY, tagPaddingX, tagPaddingY);
+        addtagView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO
+                Toast.makeText(mActivity, getString(R.string.unfinished),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);

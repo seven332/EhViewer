@@ -211,10 +211,11 @@ public class MangaDetailActivity extends FragmentActivity
             return true;
         case R.id.action_info:
             // TODO
+            Toast.makeText(MangaDetailActivity.this, getString(R.string.unfinished),
+                    Toast.LENGTH_SHORT).show();
             return true;
         case R.id.action_reply:
             final EditText et = new EditText(this);
-            //et.setMinimumHeight(Ui.dp2pix(64));
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, 
                     LinearLayout.LayoutParams.WRAP_CONTENT);
