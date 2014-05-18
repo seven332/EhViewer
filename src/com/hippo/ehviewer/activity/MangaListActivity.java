@@ -54,11 +54,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.Editable;
-import android.text.Selection;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.TextWatcher;
 import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -116,6 +113,11 @@ public class MangaListActivity extends SlidingActivity
         implements View.OnClickListener {
     
     private static String TAG = "MangaListActivity";
+    
+    public static int TAG_CODE = 0x123;
+    
+    public static String KEY_GROUP = "group";
+    public static String KEY_TAG = "tag";
     
     private static final int REFRESH = 0x0;
     private static final int NEXT_PAGE = 0x1;
@@ -1503,7 +1505,8 @@ public class MangaListActivity extends SlidingActivity
                 GalleryInfo gi = lmdArray.get(position);
                 intent.putExtra("url", EhClient.getDetailUrl(gi.gid, gi.token));
                 intent.putExtra(MangaDetailActivity.KEY_G_INFO, gi);
-                startActivity(intent);
+                // Maybe shoud use other method
+                startActivityForResult(intent, TAG_CODE);
             }
         });
         mMainList.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -1689,6 +1692,26 @@ public class MangaListActivity extends SlidingActivity
     
     private void jump() {
         createJumpDialog().show();
+    }
+    
+    
+    // TODO when it is refreshing
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,  
+            Intent data) {
+        
+        Log.d(TAG, "onActivityResult");
+        
+        if (requestCode == TAG_CODE 
+                && resultCode == RESULT_OK) {
+            lus = new ListUrls();
+            String tag = data.getStringExtra(KEY_GROUP)
+                    + ":" + data.getStringExtra(KEY_TAG);
+            lus.setTag(tag);
+            mTitle = tag;
+            setTitle(tag);
+            refresh();
+        }
     }
     
     @Override

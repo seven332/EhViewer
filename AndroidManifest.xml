@@ -38,7 +38,7 @@
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.Main.ListActivity"
-            android:launchMode="singleTop" >
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -51,8 +51,7 @@
             android:name=".activity.MangaDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|adjustUnspecified|stateHidden"
-            android:configChanges="orientation|screenSize"
-            android:launchMode="singleTask" >
+            android:configChanges="orientation|screenSize" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

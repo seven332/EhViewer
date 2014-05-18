@@ -32,6 +32,7 @@ import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.OnLayoutListener;
 import com.hippo.ehviewer.widget.ProgressiveRatingBar;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -97,6 +98,7 @@ public class DetailSectionFragment extends Fragment
     private View mDivider;
     
     private AlertDialog mGoToDialog;
+    private AlertDialog mTagDialog;
     
     private int mCurPage;
     private boolean mShowPreview = false;
@@ -423,9 +425,21 @@ public class DetailSectionFragment extends Fragment
                         voteDown.setOnClickListener(new SimpleVote(groupName, tagText, false));
                         AlertButton showTagged = new AlertButton(mActivity);
                         showTagged.setText(getString(R.string.show_tagged));
-                        new ButtonsDialogBuilder(mActivity).setTitle(tagText)
+                        showTagged.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mTagDialog.dismiss();
+                                Intent intent = new Intent();
+                                intent.putExtra(MangaListActivity.KEY_GROUP, groupName);
+                                intent.putExtra(MangaListActivity.KEY_TAG, tagText);
+                                mActivity.setResult(Activity.RESULT_OK, intent);  
+                                mActivity.finish();
+                            }
+                        });
+                        mTagDialog = new ButtonsDialogBuilder(mActivity).setTitle(tagText)
                                 .addButton(voteUp).addButton(voteDown).addButton(showTagged)
-                                .create().show();
+                                .create();
+                        mTagDialog.show();
                     }
                 });
                 AutoWrapLayout.LayoutParams alp = new AutoWrapLayout.LayoutParams();
