@@ -22,7 +22,6 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 public class StartActivity extends Activity {
     
@@ -30,7 +29,6 @@ public class StartActivity extends Activity {
     private static final int CHECK_NETWORK = 1;
     private static final int CHECK_CRASH = 2;
     private static final int CHECK_EXTERNAL_STORAGE = 3;
-    
     
     private String lastCrash;
     private boolean isAnimationOver = false;
