@@ -112,12 +112,17 @@ import android.widget.Toast;
 public class MangaListActivity extends SlidingActivity
         implements View.OnClickListener {
     
-    private static String TAG = "MangaListActivity";
+    private static final String TAG = "MangaListActivity";
     
-    public static int TAG_CODE = 0x123;
+    public static final int DETAIL_CODE = 0x123;
     
-    public static String KEY_GROUP = "group";
-    public static String KEY_TAG = "tag";
+    public static final int MODE_TAG = 0x0;
+    public static final int MODE_UPLOADER = 0x1;
+    
+    public static final String KEY_MODE = "mode";
+    public static final String KEY_GROUP = "group";
+    public static final String KEY_TAG = "tag";
+    public static final String KEY_UPLOADER = "uploader";
     
     private static final int REFRESH = 0x0;
     private static final int NEXT_PAGE = 0x1;
@@ -1506,7 +1511,7 @@ public class MangaListActivity extends SlidingActivity
                 intent.putExtra("url", EhClient.getDetailUrl(gi.gid, gi.token));
                 intent.putExtra(MangaDetailActivity.KEY_G_INFO, gi);
                 // Maybe shoud use other method
-                startActivityForResult(intent, TAG_CODE);
+                startActivityForResult(intent, DETAIL_CODE);
             }
         });
         mMainList.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -1700,17 +1705,28 @@ public class MangaListActivity extends SlidingActivity
     protected void onActivityResult(int requestCode, int resultCode,  
             Intent data) {
         
-        Log.d(TAG, "onActivityResult");
-        
-        if (requestCode == TAG_CODE 
+        if (requestCode == DETAIL_CODE 
                 && resultCode == RESULT_OK) {
-            lus = new ListUrls();
-            String tag = data.getStringExtra(KEY_GROUP)
-                    + ":" + data.getStringExtra(KEY_TAG);
-            lus.setTag(tag);
-            mTitle = tag;
-            setTitle(tag);
-            refresh();
+            switch (data.getIntExtra(KEY_MODE, -1)) {
+            case MODE_TAG:
+                lus = new ListUrls();
+                String tag = data.getStringExtra(KEY_GROUP)
+                        + ":" + data.getStringExtra(KEY_TAG);
+                lus.setTag(tag);
+                mTitle = tag;
+                setTitle(mTitle);
+                refresh();
+                break;
+                
+            case MODE_UPLOADER:
+                String uploader = "uploader:" + data.getStringExtra(KEY_UPLOADER);
+                lus = new ListUrls(ListUrls.ALL_TYPE, uploader);
+                lus.setMode(ListUrls.UPLOADER);
+                mTitle = uploader;
+                setTitle(mTitle);
+                refresh();
+                break;
+            }
         }
     }
     

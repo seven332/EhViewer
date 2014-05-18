@@ -9,10 +9,12 @@ import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -105,6 +107,7 @@ public class CommentsSectionFragment extends Fragment
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                             int position, long id) {
+                        mLongClickDialog.dismiss();
                         switch (position) {
                         case 0:
                             ClipboardManager cm = (ClipboardManager)mActivity
@@ -115,12 +118,14 @@ public class CommentsSectionFragment extends Fragment
                             break;
                             
                         case 1:
-                            ListUrls lus = new ListUrls(ListUrls.ALL_TYPE,
-                                    "uploader:" + mActivity.getGalleryInfo().uploader, 0);
-                            // TODO
+                            Intent intent = new Intent();
+                            intent.putExtra(MangaListActivity.KEY_MODE,
+                                    MangaListActivity.MODE_UPLOADER);
+                            intent.putExtra(MangaListActivity.KEY_UPLOADER, c.user);
+                            mActivity.setResult(Activity.RESULT_OK, intent);  
+                            mActivity.finish();
                             break;
                         }
-                        mLongClickDialog.dismiss();
                     }
                 }).setNegativeButton(android.R.string.cancel, 
                         new View.OnClickListener() {

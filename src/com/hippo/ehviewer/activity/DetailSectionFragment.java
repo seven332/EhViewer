@@ -430,6 +430,8 @@ public class DetailSectionFragment extends Fragment
                             public void onClick(View v) {
                                 mTagDialog.dismiss();
                                 Intent intent = new Intent();
+                                intent.putExtra(MangaListActivity.KEY_MODE,
+                                        MangaListActivity.MODE_TAG);
                                 intent.putExtra(MangaListActivity.KEY_GROUP, groupName);
                                 intent.putExtra(MangaListActivity.KEY_TAG, tagText);
                                 mActivity.setResult(Activity.RESULT_OK, intent);  
