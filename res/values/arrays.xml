@@ -8,7 +8,7 @@
         <item>@string/star_5</item>
     </string-array>
     
-    <string-array name="mode"  translatable="false">
+    <string-array name="mode_list"  translatable="false">
         <item>g.e-hentai.org</item>
         <item>exhentai.org</item>
         <item>lofi.e-hentai.org (460x)</item>

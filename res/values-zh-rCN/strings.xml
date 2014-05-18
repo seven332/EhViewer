@@ -219,10 +219,13 @@
     <string name="select_mode_warning">请登录以避免 Sad Panda</string>
     
     <!-- Vote -->
-    <string name="invalid_rating">非法评分</string>
     <string name="vote_succeeded">投票成功</string>
     <string name="vote_failed">投票失败</string>
     
+    <!-- Rate -->
+    <string name="invalid_rating">非法评分</string>
+    <string name="rate_succeeded">评价成功</string>
+    <string name="rate_failed">评价失败</string>
     
     <string name="uploader_others">该用户上传的其他内容</string>
     
