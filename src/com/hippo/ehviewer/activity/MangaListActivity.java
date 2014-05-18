@@ -222,7 +222,8 @@ public class MangaListActivity extends SlidingActivity
                                 Toast.makeText(MangaListActivity.this,
                                         eMsg,
                                         Toast.LENGTH_SHORT).show();
-                                loginDialog.show();
+                                if (!MangaListActivity.this.isFinishing())
+                                    loginDialog.show();
                             }
                         });
                     }
@@ -1791,7 +1792,7 @@ public class MangaListActivity extends SlidingActivity
         }).autoCheckUpdate();
     }
     
-    private void checkLogin(boolean force) {
+    private void checkLogin(final boolean force) {
         
         if ((Config.isLogin() || force)
                 && ! mEhClient.isLogin()) {
@@ -1808,6 +1809,8 @@ public class MangaListActivity extends SlidingActivity
 
                 @Override
                 public void onFailure(String eMsg) {
+                    if (force && !MangaListActivity.this.isFinishing())
+                        loginDialog.show();
                     setUserPanel();
                     Toast.makeText(MangaListActivity.this,
                             eMsg,
