@@ -5,6 +5,7 @@ import java.util.List;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Comment;
+import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.DetailUrlParser;
 import com.hippo.ehviewer.ehclient.EhClient;
@@ -43,6 +44,7 @@ public class MangaDetailActivity extends FragmentActivity
     
     private ViewPager mViewPager;
     private GalleryInfo mGalleryInfo;
+    public GalleryDetail mGalleryDetail;
     
     private DetailSectionFragment mDetailFragment;
     private CommentsSectionFragment mCommentsFragment;
@@ -87,7 +89,8 @@ public class MangaDetailActivity extends FragmentActivity
             }
             // TODO reset views
             
-            Toast.makeText(this, "new", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.unfinished),
+                    Toast.LENGTH_SHORT).show();
             
         } else {
             mGalleryInfo = intent.getParcelableExtra(KEY_G_INFO);
@@ -96,8 +99,10 @@ public class MangaDetailActivity extends FragmentActivity
     
     @Override
     protected void onNewIntent(Intent intent) { 
-        setIntent(intent); 
-        handleIntent(intent); 
+        setIntent(intent);
+        handleIntent(intent);
+        // TODO set up a stack to store detail list
+        // override on back press
     }
     
     @Override
@@ -189,22 +194,20 @@ public class MangaDetailActivity extends FragmentActivity
                     Toast.LENGTH_SHORT).show();
             return true;
         case R.id.action_download:
-            /*
-            Intent it = new Intent(MangaDetailActivity.this, DownloadService.class);
-            startService(it);
-            if (mangaDetail.firstPage == null)
-                mServiceConn.getService().add(String.valueOf(mangaDetail.gid), mangaDetail.thumb,
-                        EhClient.detailHeader + mangaDetail.gid + "/" + mangaDetail.token,
-                        mangaDetail.title);
-            else
-                mServiceConn.getService().add(String.valueOf(mangaDetail.gid), mangaDetail.thumb,
-                        EhClient.detailHeader + mangaDetail.gid + "/" + mangaDetail.token,
-                        mangaDetail.firstPage, mangaDetail.pages,
-                        1, mangaDetail.title);
-            Toast.makeText(MangaDetailActivity.this,
-                    getString(R.string.toast_add_download),
-                    Toast.LENGTH_SHORT).show();
-                    */
+            if (mGalleryDetail.language == null) {
+                Toast.makeText(MangaDetailActivity.this,
+                        getString(R.string.wait),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                Intent it = new Intent(MangaDetailActivity.this, DownloadService.class);
+                startService(it);
+                mServiceConn.getService().add(String.valueOf(mGalleryDetail.gid), mGalleryDetail.thumb,
+                        EhClient.getDetailUrl(mGalleryDetail.gid, mGalleryDetail.token),
+                        mGalleryDetail.title);
+                Toast.makeText(MangaDetailActivity.this,
+                        getString(R.string.toast_add_download),
+                        Toast.LENGTH_SHORT).show();
+            }
             return true;
         case R.id.action_info:
             // TODO
@@ -233,6 +236,7 @@ public class MangaDetailActivity extends FragmentActivity
                                                 @Override
                                                 public void onSuccess(List<Comment> comments) {
                                                     setComments(comments);
+                                                    mGalleryDetail.comments = comments;
                                                 }
                                                 @Override
                                                 public void onFailure(String eMsg) {

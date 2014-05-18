@@ -111,11 +111,12 @@ public class DetailSectionFragment extends Fragment
         
         GalleryInfo galleryInfo = mActivity.getGalleryInfo();
         boolean getFromCache = true;
-        mGalleryDetail = Cache.mdCache.get(String.valueOf(galleryInfo.gid));
-        if (mGalleryDetail == null) {
+        mActivity.mGalleryDetail = Cache.mdCache.get(String.valueOf(galleryInfo.gid));
+        if (mActivity.mGalleryDetail == null) {
             getFromCache = false;
-            mGalleryDetail = new GalleryDetail(galleryInfo);
+            mActivity.mGalleryDetail = new GalleryDetail(galleryInfo);
         }
+        mGalleryDetail = mActivity.mGalleryDetail;
         mUrl = EhClient.getDetailUrl(
                 mGalleryDetail.gid, mGalleryDetail.token);
         

@@ -1,13 +1,9 @@
 package com.hippo.ehviewer.data;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Map;
-
-import android.os.Parcel;
-import android.os.Parcelable;
+import java.util.List;
 
 public class GalleryDetail extends GalleryInfo{
     
@@ -25,7 +21,7 @@ public class GalleryDetail extends GalleryInfo{
     public int previewSum;
     public int previewPerPage;
     public PreviewList[] previewLists;
-    public LinkedList<Comment> comments;
+    public List<Comment> comments;
     
     public GalleryDetail(GalleryInfo galleryInfo) {
         gid = galleryInfo.gid;
