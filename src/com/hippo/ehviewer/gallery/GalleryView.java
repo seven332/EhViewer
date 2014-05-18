@@ -779,6 +779,13 @@ public class GalleryView extends GLView {
                 //return true;
             }
             
+            if (leftArea == null
+                    || topArea == null
+                    || rightArea == null
+                    || bottomArea == null
+                    || centerArea == null)
+                return true;
+            
             if (isInArea(leftArea, (int)x, (int)y)) {
                 // TODO goto bottom first the to pre page
                 resetSizePosition(PRE_TARGET_INDEX);
