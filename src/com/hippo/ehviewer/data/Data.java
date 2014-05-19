@@ -581,7 +581,7 @@ public class Data {
         ContentValues values = new ContentValues();
         values.put(COLUMN_ID, mTagRowNum);
         values.put(COLUMN_NAME, tag.getName());
-        values.put(COLUMN_MODE, tag.getName());
+        values.put(COLUMN_MODE, tag.getMode());
         values.put(COLUMN_CATEGORY, tag.getType());
         values.put(COLUMN_SEARCH, tag.getSearch());
         values.put(COLUMN_ADVANCE, tag.getAdvanceType());
