@@ -245,7 +245,7 @@ public class FileExplorerView extends ListView
             else if (rhs == null)
                 return Integer.MAX_VALUE;
             else
-                return lhs.compareTo(rhs);
+                return lhs.getName().compareToIgnoreCase(rhs.getName());
         }
     }
 }
