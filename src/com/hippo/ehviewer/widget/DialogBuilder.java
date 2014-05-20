@@ -128,6 +128,17 @@ public class DialogBuilder extends AlertDialog.Builder {
         return this;
     }
     
+    public DialogBuilder setView(View view, LinearLayout.LayoutParams lp, boolean sroll) {
+        LinearLayout customLayout;
+        if (sroll)
+            customLayout = (LinearLayout)mView.findViewById(R.id.custom);
+        else
+            customLayout = (LinearLayout)mView.findViewById(R.id.custom_no_scroll);
+        customLayout.setVisibility(View.VISIBLE);
+        customLayout.addView(view, lp);
+        return this;
+    }
+    
     /**
      * Set a listener to be invoked when the positive button of the dialog is pressed.
      * @param textId The resource id of the text to display in the positive button

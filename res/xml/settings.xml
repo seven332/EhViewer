@@ -43,8 +43,7 @@
     <PreferenceCategory android:title="@string/download" >
         <Preference 
             android:key="preference_download_path"
-            android:title="@string/preference_download_path"
-            android:enabled="false" />
+            android:title="@string/preference_download_path" />
         
         <CheckBoxPreference 
             android:key="preference_media_scan"

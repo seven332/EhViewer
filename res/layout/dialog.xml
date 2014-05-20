@@ -67,7 +67,15 @@
                 android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
-
+    
+    <LinearLayout
+        android:id="@+id/custom_no_scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone" />
+    
     <ListView
         android:id="@+id/list"
         android:layout_width="fill_parent"

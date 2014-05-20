@@ -48,4 +48,12 @@
         </attr>
     </declare-styleable>
     
+    <declare-styleable name="FileExplorerView">
+        <attr name="path" format="string" />
+        <attr name="filter">
+            <enum name="all" value="0" />
+            <enum name="dir" value="1" />
+        </attr>
+    </declare-styleable>
+    
 </resources> 

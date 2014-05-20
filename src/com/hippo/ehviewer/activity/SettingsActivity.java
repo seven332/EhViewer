@@ -11,9 +11,11 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
+import com.hippo.ehviewer.widget.FileExplorerView;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.preference.AutoListPreference;
@@ -37,11 +39,16 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.support.v4.util.LruCache;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -302,6 +309,63 @@ public class SettingsActivity extends PreferenceActivity {
                 NotificationManager mNotifyManager = (NotificationManager)
                         getSystemService(Context.NOTIFICATION_SERVICE);
                 mNotifyManager.cancelAll();
+                return true;
+            }
+        });
+        
+        final Preference downloadPathPre = (Preference)screen.findPreference("preference_download_path");
+        downloadPathPre.setSummary(Config.getDownloadPath());
+        downloadPathPre.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            final LayoutInflater mInflater = LayoutInflater.from(mContext);
+            @Override
+            public boolean onPreferenceClick(Preference arg0) {
+                View view = mInflater.inflate(R.layout.dir_selection, null);
+                final FileExplorerView fileExplorerView = 
+                        (FileExplorerView)view.findViewById(R.id.file_list);
+                final TextView warning =
+                        (TextView)view.findViewById(R.id.warning);
+                if (fileExplorerView.canWrite())
+                    warning.setVisibility(View.GONE);
+                else
+                    warning.setVisibility(View.VISIBLE);
+                fileExplorerView.setPath(Config.getDownloadPath());
+                fileExplorerView.setOnItemClickListener(
+                        new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+                        fileExplorerView.onItemClick(parent, view, position, id);
+                        if (fileExplorerView.canWrite())
+                            warning.setVisibility(View.GONE);
+                        else
+                            warning.setVisibility(View.VISIBLE);
+                    }
+                });
+                
+                new DialogBuilder(SettingsActivity.this)
+                        .setView(view, new LinearLayout.LayoutParams(
+                        LayoutParams.MATCH_PARENT, Ui.dp2pix(360)), false)
+                        .setPositiveButton(android.R.string.ok,
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (!fileExplorerView.canWrite())
+                                    Toast.makeText(SettingsActivity.this,
+                                            "当前路径不可写", Toast.LENGTH_SHORT).show();
+                                else {
+                                    String downloadPath = fileExplorerView.getCurPath();
+                                    Config.setDownloadPath(downloadPath);
+                                    downloadPathPre.setSummary(downloadPath);
+                                    ((AlertButton)v).dialog.dismiss();
+                                }
+                            }
+                        }).setNegativeButton(android.R.string.cancel,
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ((AlertButton)v).dialog.dismiss();
+                            }
+                        }).create().show();
                 return true;
             }
         });

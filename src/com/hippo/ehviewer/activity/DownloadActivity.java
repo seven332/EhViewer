@@ -89,7 +89,7 @@ public class DownloadActivity extends Activity {
                                     MangaDownloadActivity.class);
                             intent.putExtra(MangaDownloadActivity.KEY_TITLE, di.title);
                             intent.putExtra(MangaDownloadActivity.KEY_SIZE, di.pageSum);
-                            intent.putExtra(MangaDownloadActivity.KEY_GID, di.gid);
+                            intent.putExtra(MangaDownloadActivity.KEY_GID, Integer.parseInt(di.gid));
                             intent.putExtra(MangaDownloadActivity.KEY_END_INDEX, di.lastStartIndex);
                             startActivity(intent);
                         default:
@@ -316,7 +316,7 @@ public class DownloadActivity extends Activity {
                                 MangaDownloadActivity.class);
                         intent.putExtra(MangaDownloadActivity.KEY_TITLE, di.title);
                         intent.putExtra(MangaDownloadActivity.KEY_SIZE, di.pageSum);
-                        intent.putExtra(MangaDownloadActivity.KEY_GID, di.gid);
+                        intent.putExtra(MangaDownloadActivity.KEY_GID, Integer.parseInt(di.gid));
                         intent.putExtra(MangaDownloadActivity.KEY_END_INDEX, di.lastStartIndex);
                         startActivity(intent);
                     }

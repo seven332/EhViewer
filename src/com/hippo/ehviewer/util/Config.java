@@ -116,6 +116,10 @@ public class Config {
         return mConfigPre.getString(DOWNLOAD_PATH, DOWNLOAD_PATH_DEFAULT);
     }
     
+    public static void setDownloadPath(String path) {
+        mConfigPre.edit().putString(DOWNLOAD_PATH, path).apply();
+    }
+    
     public static int getMode() {
         int mode = mConfigPre.getInt(KEY_MODE, MODE_DEFAULT);
         if (mode < EhClient.G || mode > EhClient.LOFI_980x) {

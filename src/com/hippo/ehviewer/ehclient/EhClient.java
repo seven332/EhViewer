@@ -1347,7 +1347,7 @@ public class EhClient {
                         }
                         
                         //Create folder
-                        File folder = new File(Config.getDownloadPath() + StringEscapeUtils.escapeHtml4(curDownloadInfo.title)); // TODO For  title contain invailed char
+                        File folder = new File(Config.getDownloadPath() + File.separatorChar + StringEscapeUtils.escapeHtml4(curDownloadInfo.title)); // TODO For  title contain invailed char
                         if (!folder.mkdirs() && !folder.isDirectory()) {
                             listener.onDownloadMangaOver(curDownloadInfo.gid, false);
                             curDownloadInfo.status = DownloadInfo.FAILED;
@@ -1384,7 +1384,10 @@ public class EhClient {
                                 
                                 try {
                                     // TODO
-                                    curControlor = imageDownloader.resetData(folder.toString(),
+                                    
+                                    Log.d(TAG, folder.getPath());
+                                    
+                                    curControlor = imageDownloader.resetData(folder.getPath(),
                                             String.format("%05d", curDownloadInfo.lastStartIndex + 1) + "." + Util.getExtension(imageUrlStr),
                                             imageUrlStr);
                                     imageDownloader.run();
