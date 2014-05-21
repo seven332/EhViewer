@@ -146,8 +146,6 @@
     </style>
     
     <style name="SearchCategory">
-        <item name="android:width">120.0dp</item>
-        <item name="android:height">24.0dp</item>
         <item name="android:gravity">center</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">marquee</item>

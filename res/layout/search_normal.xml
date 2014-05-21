@@ -10,20 +10,24 @@
         android:layout_gravity="center"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp" >
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:stretchColumns="*" >
 
         <TableRow android:layout_marginBottom="8dp" >
 
             <com.hippo.ehviewer.widget.CheckTextView
                 android:id="@+id/button_doujinshi"
+                android:layout_width="0.0dp"
+                android:layout_marginRight="6.0dp"
                 style="@style/SearchCategory"
-                android:layout_marginRight="12dp"
                 android:background="@color/doujinshi_bg"
                 android:text="@string/doujinshi" />
 
             <com.hippo.ehviewer.widget.CheckTextView
                 android:id="@+id/button_manga"
+                android:layout_width="0.0dp"
+                android:layout_marginLeft="6.0dp"
                 style="@style/SearchCategory"
                 android:background="@color/manga_bg"
                 android:text="@string/manga" />
@@ -33,13 +37,16 @@
 
             <com.hippo.ehviewer.widget.CheckTextView
                 android:id="@+id/button_artistcg"
+                android:layout_width="0.0dp"
+                android:layout_marginRight="6.0dp"
                 style="@style/SearchCategory"
-                android:layout_marginRight="12dp"
                 android:background="@color/artist_cg_bg"
                 android:text="@string/artist_cg" />
 
             <com.hippo.ehviewer.widget.CheckTextView
                 android:id="@+id/button_gamecg"
+                android:layout_width="0.0dp"
+                android:layout_marginLeft="6.0dp"
                 style="@style/SearchCategory"
                 android:background="@color/game_cg_bg"
                 android:text="@string/game_cg" />
@@ -49,13 +56,16 @@
 
             <com.hippo.ehviewer.widget.CheckTextView
                 android:id="@+id/button_western"
+                android:layout_width="0.0dp"
+                android:layout_marginRight="6.0dp"
                 style="@style/SearchCategory"
-                android:layout_marginRight="12dp"
                 android:background="@color/western_bg"
                 android:text="@string/western" />
 
             <com.hippo.ehviewer.widget.CheckTextView
                 android:id="@+id/button_non_h"
+                android:layout_width="0.0dp"
+                android:layout_marginLeft="6.0dp"
                 style="@style/SearchCategory"
                 android:background="@color/non_h_bg"
                 android:text="@string/non_h" />
@@ -65,13 +75,16 @@
 
             <com.hippo.ehviewer.widget.CheckTextView
                 android:id="@+id/button_imageset"
+                android:layout_width="0.0dp"
+                android:layout_marginRight="6.0dp"
                 style="@style/SearchCategory"
-                android:layout_marginRight="12dp"
                 android:background="@color/image_set_bg"
                 android:text="@string/image_set" />
 
             <com.hippo.ehviewer.widget.CheckTextView
                 android:id="@+id/button_cosplay"
+                android:layout_width="0.0dp"
+                android:layout_marginLeft="6.0dp"
                 style="@style/SearchCategory"
                 android:background="@color/cosplay_bg"
                 android:text="@string/cosplay" />
@@ -81,13 +94,16 @@
 
             <com.hippo.ehviewer.widget.CheckTextView
                 android:id="@+id/button_asianporn"
+                android:layout_width="0.0dp"
+                android:layout_marginRight="6.0dp"
                 style="@style/SearchCategory"
-                android:layout_marginRight="12dp"
                 android:background="@color/asian_porn_bg"
                 android:text="@string/asian_porn" />
 
             <com.hippo.ehviewer.widget.CheckTextView
                 android:id="@+id/button_misc"
+                android:layout_width="0.0dp"
+                android:layout_marginLeft="6.0dp"
                 style="@style/SearchCategory"
                 android:background="@color/misc_bg"
                 android:text="@string/misc" />
