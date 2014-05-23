@@ -173,10 +173,12 @@
     <string name="author_summary" translatable="false">Hippo &lt;ehviewersu@gmail.com&gt;</string>
     <string name="changelog_title">Changelog</string>
     <string name="thanks_title">Thanks</string>
+    <string name="source_title">Source</string>
     <string name="update_about_settings_title">Update</string>
     <string name="check_for_update_title">Check for update</string>
     <string name="check_for_update_summary">Tap to check for update</string>
     <string name="update_server_title">Update server</string>
+    
     
     <string name="portrait">Portrait</string>
     <string name="landscape">Landscape</string>

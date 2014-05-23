@@ -29,6 +29,10 @@
         android:key="thanks"
         android:title="@string/thanks_title" />
     
+    <Preference
+        android:key="source"
+        android:title="@string/source_title" />
+    
     <PreferenceCategory
         android:title="@string/update_about_settings_title">
         

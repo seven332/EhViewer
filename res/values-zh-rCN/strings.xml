@@ -170,6 +170,7 @@
     <string name="author_title">作者</string>
     <string name="changelog_title">日志</string>
     <string name="thanks_title">感谢</string>
+    <string name="source_title">源码</string>
     <string name="update_about_settings_title">更新</string>
     <string name="check_for_update_title">检查更新</string>
     <string name="check_for_update_summary">点击检查更新</string>

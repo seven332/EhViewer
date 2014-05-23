@@ -453,6 +453,7 @@ public class SettingsActivity extends PreferenceActivity {
         private static final String KEY_AUTHOR = "author";
         private static final String KEY_CHANGELOG = "changelog";
         private static final String KEY_THANKS = "thanks";
+        private static final String KEY_SOURCE = "source";
         private static final String KEY_CHECK_UPDATE = "check_update";
         
         private SettingsActivity mActivity;
@@ -460,6 +461,7 @@ public class SettingsActivity extends PreferenceActivity {
         private Preference mAuthor;
         private Preference mChangelog;
         private Preference mThanks;
+        private Preference mSource;
         private Preference mCheckUpdate;
         
         @Override
@@ -475,6 +477,8 @@ public class SettingsActivity extends PreferenceActivity {
             mChangelog.setOnPreferenceClickListener(this);
             mThanks = (Preference)findPreference(KEY_THANKS);
             mThanks.setOnPreferenceClickListener(this);
+            mSource = (Preference)findPreference(KEY_SOURCE);
+            mSource.setOnPreferenceClickListener(this);
             mCheckUpdate = (Preference)findPreference(KEY_CHECK_UPDATE);
             mCheckUpdate.setOnPreferenceClickListener(this);
         }
@@ -503,6 +507,11 @@ public class SettingsActivity extends PreferenceActivity {
                 new DialogBuilder(mActivity).setTitle(R.string.thanks)
                         .setView(webView, false).setSimpleNegativeButton()
                         .create().show();
+                
+            } else if (KEY_SOURCE.equals(key)) {
+                Uri uri = Uri.parse("https://github.com/seven332/EhViewer");
+                Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+                startActivity(intent);
                 
             } else if (KEY_CHECK_UPDATE.equals(key)) {
                 mCheckUpdate.setSummary(R.string.checking_update);
