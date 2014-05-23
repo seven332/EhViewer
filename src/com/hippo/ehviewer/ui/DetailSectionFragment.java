@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.activity;
+package com.hippo.ehviewer.ui;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

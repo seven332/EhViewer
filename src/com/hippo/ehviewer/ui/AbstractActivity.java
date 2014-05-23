@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.activity;
+package com.hippo.ehviewer.ui;
 
 import com.hippo.ehviewer.util.Config;
 

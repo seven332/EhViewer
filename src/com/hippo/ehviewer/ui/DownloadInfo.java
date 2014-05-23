@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.activity;
+package com.hippo.ehviewer.ui;
 
 public class DownloadInfo {
     public static final int STOP = 0x0;

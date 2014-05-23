@@ -27,7 +27,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.hippo.ehviewer.ListUrls;
-import com.hippo.ehviewer.activity.DownloadInfo;
+import com.hippo.ehviewer.ui.DownloadInfo;
 
 public class Download {
     private static final String SHA_PRE_NAME = "download_info";

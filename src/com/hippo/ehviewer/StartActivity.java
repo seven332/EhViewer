@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer;
 
-import com.hippo.ehviewer.activity.MangaListActivity;
+import com.hippo.ehviewer.ui.MangaListActivity;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
