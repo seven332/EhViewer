@@ -51,6 +51,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceActivity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -117,7 +118,6 @@ public class SettingsActivity extends PreferenceActivity {
             setRequestedOrientation(screenOri);
     }
     
-    @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,6 +125,8 @@ public class SettingsActivity extends PreferenceActivity {
         int screenOri = Config.getScreenOriMode();
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);
+        
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         
         mSystemBarConfig = Ui.translucent(this);
         mFragments = new LinkedList<TranslucentPreferenceFragment>();
@@ -135,6 +137,17 @@ public class SettingsActivity extends PreferenceActivity {
         originPaddingBottom = mListView.getPaddingBottom();
         
         adjustPadding();
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            finish();
+            return true;
+        }
+        
+        return super.onOptionsItemSelected(item);
     }
     
     public SystemBarConfig getSystemBarConfig() {
