@@ -40,6 +40,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -421,7 +422,35 @@ public class SettingsActivity extends PreferenceActivity {
                 .setView(view, new LinearLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT, Ui.dp2pix(360)), false)
                 .setTitle(downloadPath)
-                .setPositiveButton(android.R.string.ok,
+                .setAction(R.drawable.ic_action_new_folder,
+                        new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        final EditText et = new EditText(mActivity);
+                        et.setText("New folder");
+                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT, 
+                                LinearLayout.LayoutParams.WRAP_CONTENT);
+                        int x = Ui.dp2pix(8);
+                        lp.leftMargin = x;
+                        lp.rightMargin = x;
+                        lp.topMargin = x;
+                        lp.bottomMargin = x;
+                        new DialogBuilder(mActivity).setView(et, lp)
+                        .setTitle(R.string.new_folder)
+                        .setPositiveButton(R.string._new, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ((AlertButton)v).dialog.dismiss();
+                                File dir = new File(fileExplorerView.getCurPath(),
+                                        et.getText().toString());
+                                dir.mkdirs();
+                                fileExplorerView.refresh();
+                                // TODO check if the directory was created
+                            }
+                        }).setSimpleNegativeButton().create().show();
+                    }
+                }).setPositiveButton(android.R.string.ok,
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -164,16 +164,10 @@
     <string name="check_for_update_summary">Tap to check for update</string>
     <string name="update_server_title">Update server</string>
     
-    
-    
-    
-
     <string name="portrait">Portrait</string>
     <string name="landscape">Landscape</string>
-
     
     <string name="preference_settings_title">Settings</string>
-    
     
     <string name="preference_auto_page_cache">Auto clear page cache</string>
     <string name="preference_auto_page_cache_summary_on">Clean page cache when the application close</string>
@@ -184,6 +178,9 @@
     <string name="input_error">Input error</string>
     <string name="create_cache_error">Create cache error</string>
     
+    
+    <string name="new_folder">New folder</string>
+    <string name="_new">New</string>
     
     <!-- server -->
     <string name="update_server_google">Google</string>

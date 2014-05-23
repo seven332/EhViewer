@@ -37,8 +37,6 @@ public class Config {
     private static final String KEY_UPDATE_SERVER = "update_server";
     private static final String DEFAULT_UPDATE_SERVER = "2";
     
-    
-    
     private static boolean mInit = false;
 
     private static Context mContext;
