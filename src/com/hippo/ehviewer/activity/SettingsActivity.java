@@ -70,6 +70,7 @@ public class SettingsActivity extends PreferenceActivity {
     private List<TranslucentPreferenceFragment> mFragments;
     private ListView mListView;
     private int originPaddingRight;
+    private int originPaddingBottom;
     
     public void adjustPadding() {
         if (mListView != null && mSystemBarConfig != null) {
@@ -87,7 +88,7 @@ public class SettingsActivity extends PreferenceActivity {
                 mListView.setPadding(mListView.getPaddingLeft(),
                         mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
                         originPaddingRight + mSystemBarConfig.getNavigationBarWidth(),
-                        mListView.getPaddingBottom());
+                        originPaddingBottom);
                 break;
             }
         }
@@ -131,6 +132,7 @@ public class SettingsActivity extends PreferenceActivity {
         mListView = getListView();
         mListView.setClipToPadding(false);
         originPaddingRight = mListView.getPaddingRight();
+        originPaddingBottom = mListView.getPaddingBottom();
         
         adjustPadding();
     }
@@ -166,7 +168,8 @@ public class SettingsActivity extends PreferenceActivity {
         
         SystemBarConfig mSystemBarConfig;
         ListView mListView;
-        int originPaddingRight = -1;
+        int originPaddingRight;
+        int originPaddingBottom;
         
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -180,6 +183,7 @@ public class SettingsActivity extends PreferenceActivity {
                 mListView = (ListView)child;
                 mListView.setClipToPadding(false);
                 originPaddingRight = mListView.getPaddingRight();
+                originPaddingBottom = mListView.getPaddingBottom();
                 mSystemBarConfig = activity.getSystemBarConfig();
                 adjustPadding();
             }
@@ -199,7 +203,7 @@ public class SettingsActivity extends PreferenceActivity {
                     mListView.setPadding(mListView.getPaddingLeft(),
                             mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
                             originPaddingRight + mSystemBarConfig.getNavigationBarWidth(),
-                            mListView.getPaddingBottom());
+                            originPaddingBottom);
                     break;
                 }
             }
