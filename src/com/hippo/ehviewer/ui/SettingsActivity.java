@@ -156,6 +156,12 @@ public class SettingsActivity extends PreferenceActivity {
         AboutFragment.class.getName()
     };
     
+    private static final int[] FRAGMENT_ICONS = {
+        R.drawable.ic_setting_display,
+        R.drawable.ic_setting_data,
+        R.drawable.ic_action_info
+    };
+    
     @Override
     protected boolean isValidFragment(String fragmentName) {
         for (int i = 0; i < ENTRY_FRAGMENTS.length; i++) {
@@ -166,10 +172,29 @@ public class SettingsActivity extends PreferenceActivity {
     
     public static abstract class TranslucentPreferenceFragment extends PreferenceFragment {
         
-        SystemBarConfig mSystemBarConfig;
-        ListView mListView;
-        int originPaddingRight;
-        int originPaddingBottom;
+        protected SettingsActivity mActivity;
+        private SystemBarConfig mSystemBarConfig;
+        private ListView mListView;
+        private int originPaddingRight;
+        private int originPaddingBottom;
+        
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            mActivity = (SettingsActivity)getActivity();
+            
+            String fragmentName = getClass().getName();
+            int fragmentIndex = -1;
+            for (int i = 0; i < ENTRY_FRAGMENTS.length; i++) {
+                if (ENTRY_FRAGMENTS[i].equals(fragmentName)) {
+                    fragmentIndex = i;
+                    break;
+                }
+            }
+            if (fragmentIndex >= 0)
+                mActivity.getActionBar().setIcon(
+                        FRAGMENT_ICONS[fragmentIndex]);
+        }
         
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -215,16 +240,12 @@ public class SettingsActivity extends PreferenceActivity {
         
         private static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
         
-        private SettingsActivity mActivity;
-        
         private AutoListPreference mScreenOrientation;
         
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.display_settings);
-            
-            mActivity = (SettingsActivity)getActivity();
             
             mScreenOrientation = (AutoListPreference)findPreference(KEY_SCREEN_ORIENTATION);
             mScreenOrientation.setOnPreferenceChangeListener(this);
@@ -251,7 +272,6 @@ public class SettingsActivity extends PreferenceActivity {
         private static final String KEY_DOWNLOAD_PATH = "download_path";
         private static final String KEY_MEDIA_SCAN = "media_scan";
         
-        private SettingsActivity mActivity;
         private AlertDialog mDirSelectDialog;
         
         private EditTextPreference mCacheSize;
@@ -263,8 +283,6 @@ public class SettingsActivity extends PreferenceActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.data_settings);
-            
-            mActivity = (SettingsActivity)getActivity();
             
             mCacheSize = (EditTextPreference)findPreference(KEY_CACHE_SIZE);
             mCacheSize.setOnPreferenceChangeListener(this);
@@ -456,8 +474,6 @@ public class SettingsActivity extends PreferenceActivity {
         private static final String KEY_SOURCE = "source";
         private static final String KEY_CHECK_UPDATE = "check_update";
         
-        private SettingsActivity mActivity;
-        
         private Preference mAuthor;
         private Preference mChangelog;
         private Preference mThanks;
@@ -468,8 +484,6 @@ public class SettingsActivity extends PreferenceActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.about_settings);
-            
-            mActivity = (SettingsActivity)getActivity();
             
             mAuthor = (Preference)findPreference(KEY_AUTHOR);
             mAuthor.setOnPreferenceClickListener(this);

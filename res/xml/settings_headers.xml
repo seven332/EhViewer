@@ -18,19 +18,19 @@
     
     <header
         android:id="@+id/display_settings"
-        android:fragment="com.hippo.ehviewer.activity.SettingsActivity$DisplayFragment"
+        android:fragment="com.hippo.ehviewer.ui.SettingsActivity$DisplayFragment"
         android:title="@string/display_settings_title"
         android:icon="@drawable/ic_setting_display_dark" />
     
     <header
         android:id="@+id/data_settings"
-        android:fragment="com.hippo.ehviewer.activity.SettingsActivity$DataFragment"
+        android:fragment="com.hippo.ehviewer.ui.SettingsActivity$DataFragment"
         android:title="@string/data_settings_title"
         android:icon="@drawable/ic_setting_data_dark" />
     
     <header
         android:id="@+id/about_settings"
-        android:fragment="com.hippo.ehviewer.activity.SettingsActivity$AboutFragment"
+        android:fragment="com.hippo.ehviewer.ui.SettingsActivity$AboutFragment"
         android:title="@string/about_settings_title"
         android:icon="@drawable/ic_action_info_dark" />
     
