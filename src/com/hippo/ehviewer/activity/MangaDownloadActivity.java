@@ -55,7 +55,7 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-public class MangaDownloadActivity extends Activity {
+public class MangaDownloadActivity extends AbstractActivity {
     private static final String TAG = "MangaDownloadActivity";
     
     public static final String KEY_TITLE = "title";
@@ -71,10 +71,6 @@ public class MangaDownloadActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gl_root_group);
-        
-        int screenOri = Config.getScreenOriMode();
-        if (screenOri != getRequestedOrientation())
-            setRequestedOrientation(screenOri);
         
         getActionBar().hide();
         // For API < 16 Fullscreen

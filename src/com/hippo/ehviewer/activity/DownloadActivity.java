@@ -59,7 +59,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
-public class DownloadActivity extends Activity {
+public class DownloadActivity extends AbstractActivity {
     
     private static final String TAG = "DownloadActivity";
     
@@ -387,10 +387,6 @@ public class DownloadActivity extends Activity {
         
         mAppContext = (AppContext)getApplication();
         mImageGeterManager = mAppContext.getImageGeterManager();
-        
-        int screenOri = Config.getScreenOriMode();
-        if (screenOri != getRequestedOrientation())
-            setRequestedOrientation(screenOri);
         
         Ui.translucent(this);
         

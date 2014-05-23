@@ -64,7 +64,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-public class MangaActivity extends Activity {
+public class MangaActivity extends AbstractActivity {
     private String TAG = "MangaActivity";
     
     private AppContext mAppContext;
@@ -278,10 +278,6 @@ public class MangaActivity extends Activity {
         
         mAppContext = (AppContext)getApplication();
         mEhClient = mAppContext.getEhClient();
-        
-        int screenOri = Config.getScreenOriMode();
-        if (screenOri != getRequestedOrientation())
-            setRequestedOrientation(screenOri);
         
         getActionBar().hide();
         // For API < 16 Fullscreen

@@ -52,7 +52,7 @@ import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.LoadImageView;
 
-public class FavouriteActivity extends Activity{
+public class FavouriteActivity extends AbstractActivity {
     @SuppressWarnings("unused")
     private static final String TAG = "FavouriteActivity";
     
@@ -203,10 +203,6 @@ public class FavouriteActivity extends Activity{
         mAppContext = (AppContext)getApplication();
         mData = mAppContext.getData();
         mImageGeterManager = mAppContext.getImageGeterManager();
-        
-        int screenOri = Config.getScreenOriMode();
-        if (screenOri != getRequestedOrientation())
-            setRequestedOrientation(screenOri);
         
         Ui.translucent(this);
         
