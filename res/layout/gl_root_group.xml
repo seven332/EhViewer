@@ -8,11 +8,5 @@
         android:id="@+id/gl_root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <!--
-         View android:id="@+id/gl_root_cover"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#ff888888"/
-    -->
 
 </RelativeLayout>
