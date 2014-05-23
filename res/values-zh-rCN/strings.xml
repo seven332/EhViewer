@@ -133,6 +133,35 @@
     <string name="action_settings">设置</string>
     
     <!-- Settings -->
+    <string name="display_settings_title">显示</string>
+    <string name="screen_display_settings_title">屏幕</string>
+    <string name="screen_orientation_title">屏幕方向</string>
+    <string name="read_display_settings_title">阅读</string>
+    <string name="page_scaling_title">页面缩放</string>
+    <string name="start_position_title">开页位置</string>
+    
+    <string name="data_settings_title">数据</string>
+    <string name="cache_data_settings_title">缓存</string>
+    <string name="cache_size_title">缓存大小</string>
+    <string name="clear_cache_title">清除缓存</string>
+    <string name="clear_cache_summary_on" formatted="false">大小 : %.2f / %d MB</string>
+    <string name="clear_cache_summary_off">无缓存</string>
+    <string name="download_data_settings_title">下载</string>
+    <string name="download_path_title">下载路径</string>
+    <string name="media_scan_title">允许媒体扫描</string>
+    <string name="media_scan_summary_on">请避免他人翻看你的图库应用</string>
+    <string name="media_scan_summary_off">大多数图库应用将不会显示下载目录中的图片</string>
+    
+    <string name="about_settings_title">关于</string>
+    <string name="author_title">作者</string>
+    <string name="changelog_title">日志</string>
+    <string name="thanks_title">感谢</string>
+    <string name="update_about_settings_title">更新</string>
+    <string name="check_for_update_title">检查更新</string>
+    <string name="check_for_update_summary">点击检查更新</string>
+    <string name="update_server_title">更新服务器</string>
+    
+    
     <string name="preference_category_display">显示</string>
     <string name="preference_screen_ori">屏幕方向</string>
     <string name="portrait">竖屏</string>
@@ -143,15 +172,13 @@
     
     <string name="preference_settings_title">设置</string>
     <string name="preference_category_cache">缓存</string>
-    <string name="preference_cache">缓存大小</string>
-    <string name="preference_clear_cache">清除缓存</string>
+    
     <string name="preference_cache_summary" formatted="false">大小 : %.2f / %d MB</string>
     <string name="preference_cache_summary_no">无缓存</string>
     <string name="preference_auto_page_cache">自动清理页面缓存</string>
     <string name="preference_auto_page_cache_summary_on">当应用关闭时清除页面缓存</string>
     <string name="preference_auto_page_cache_summary_off">啥都不做</string>
-    <string name="preference_download_path">下载路径</string>
-    <string name="preference_media_scan">允许媒体扫描</string>
+    
     <string name="preference_update_server">更新服务器</string>
     
     

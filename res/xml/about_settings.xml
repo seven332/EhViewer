@@ -1,0 +1,35 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <Preference 
+        android:key="author"
+        android:title="@string/author_title"
+        android:summary="@string/author_summary" />
+    
+    <Preference
+        android:key="changelog"
+        android:title="@string/changelog_title" />
+    
+    <Preference
+        android:key="thanks"
+        android:title="@string/thanks_title" />
+    
+    <PreferenceCategory
+        android:title="@string/update_about_settings_title">
+        
+        <Preference
+            android:key="check_update"
+            android:title="@string/check_for_update_title"
+            android:summary="@string/check_for_update_summary" />
+        
+        <com.hippo.ehviewer.preference.AutoListPreference
+            android:defaultValue="1"
+            android:entries="@array/update_server_entries"
+            android:entryValues="@array/update_server_entry_values"
+            android:key="update_server"
+            android:title="@string/update_server_title"
+            android:summary="%s" />
+        
+    </PreferenceCategory>
+    
+</PreferenceScreen>

@@ -20,20 +20,23 @@ public class Config {
     private static final String KEY_MODE = "mode";
     private static final int MODE_DEFAULT = 0;
     
-    private static final String CP_CACHE = "preference_cp_cache";
-    private static final String CP_CACHE_DEFAULT = "25";
-    private static final String PAGE_SCALING = "preference_page_scaling";
-    private static final String PAGE_SCALING_DEFAULT = "3";
-    private static final String START_POSITION = "preference_start_position";
-    private static final String START_POSITION_DEFAULT = "1";
-    private static final String SCREEN_ORI = "preference_screen_ori";
-    private static final String SCREEN_ORI_DEFAULT = "0";
-    private static final String DOWNLOAD_PATH = "preference_download_path";
-    private static final String DOWNLOAD_PATH_DEFAULT = Environment.getExternalStorageDirectory() + "/EhViewer/download/";
-    private static final String UPDATE_SERVER = "preference_update_server";
-    private static final String UPDATE_SERVER_DEFAULT = "1";
-    private static final String MEDIA_SCAN = "preference_media_scan";
-    private static final boolean MEDIA_SCAN_DEFAULT = false;
+    private static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
+    private static final String DEFAULT_SCREEN_ORIENTATION = "0";
+    private static final String KEY_PAGE_SCALING = "page_scaling";
+    private static final String DEFAULT_PAGE_SCALING = "3";
+    private static final String KEY_START_POSITION = "start_position";
+    private static final String DEFAULT_START_POSITION = "1";
+    
+    private static final String KEY_CACHE_SIZE = "cache_size";
+    private static final String DEFAULT_CACHE_SIZE = "25";
+    private static final String KEY_DOWNLOAD_PATH = "download_path";
+    private static final String DEFAULT_DOWNLOAD_PATH = Environment.getExternalStorageDirectory() + "/EhViewer/download/";
+    private static final String KEY_MEDIA_SCAN = "media_scan";
+    private static final boolean DEFAULT_MEDIA_SCAN = false;
+    
+    private static final String KEY_UPDATE_SERVER = "update_server";
+    private static final String DEFAULT_UPDATE_SERVER = "2";
+    
     
     
     private static boolean mInit = false;
@@ -113,11 +116,11 @@ public class Config {
     }
     
     public static String getDownloadPath() {
-        return mConfigPre.getString(DOWNLOAD_PATH, DOWNLOAD_PATH_DEFAULT);
+        return mConfigPre.getString(KEY_DOWNLOAD_PATH, DEFAULT_DOWNLOAD_PATH);
     }
     
     public static void setDownloadPath(String path) {
-        mConfigPre.edit().putString(DOWNLOAD_PATH, path).apply();
+        mConfigPre.edit().putString(KEY_DOWNLOAD_PATH, path).apply();
     }
     
     public static int getMode() {
@@ -142,9 +145,9 @@ public class Config {
      */
     public static int getCoverDiskCacheSize() {
         try {
-            return Integer.parseInt(mConfigPre.getString(CP_CACHE, CP_CACHE_DEFAULT));
+            return Integer.parseInt(mConfigPre.getString(KEY_CACHE_SIZE, DEFAULT_CACHE_SIZE));
         } catch (Exception e) {
-            mConfigPre.edit().putString(CP_CACHE, CP_CACHE_DEFAULT).apply();
+            mConfigPre.edit().putString(KEY_CACHE_SIZE, DEFAULT_CACHE_SIZE).apply();
             return 25;
         }
     }
@@ -153,9 +156,9 @@ public class Config {
         int pageScalingMode = 3;
         try {
             pageScalingMode = Integer.parseInt(mConfigPre.getString(
-                    PAGE_SCALING, PAGE_SCALING_DEFAULT));
+                    KEY_PAGE_SCALING, DEFAULT_PAGE_SCALING));
         } catch (Exception e) {
-            mConfigPre.edit().putString(PAGE_SCALING, PAGE_SCALING_DEFAULT)
+            mConfigPre.edit().putString(KEY_PAGE_SCALING, DEFAULT_PAGE_SCALING)
                     .apply();
         }
         return pageScalingMode;
@@ -165,9 +168,9 @@ public class Config {
         int startPosition = 1;
         try {
             startPosition = Integer.parseInt(mConfigPre.getString(
-                    START_POSITION, START_POSITION_DEFAULT));
+                    KEY_START_POSITION, DEFAULT_START_POSITION));
         } catch (Exception e) {
-            mConfigPre.edit().putString(START_POSITION, START_POSITION_DEFAULT)
+            mConfigPre.edit().putString(KEY_START_POSITION, DEFAULT_START_POSITION)
                     .apply();
         }
         return startPosition;
@@ -177,9 +180,9 @@ public class Config {
         int screenOriMode = 0;
         try {
             screenOriMode = Integer.parseInt(mConfigPre.getString(
-                    SCREEN_ORI, SCREEN_ORI_DEFAULT));
+                    KEY_SCREEN_ORIENTATION, DEFAULT_SCREEN_ORIENTATION));
         } catch (Exception e) {
-            mConfigPre.edit().putString(SCREEN_ORI, SCREEN_ORI_DEFAULT)
+            mConfigPre.edit().putString(KEY_SCREEN_ORIENTATION, DEFAULT_SCREEN_ORIENTATION)
                     .apply();
         }
         return screenOriPre2Value(screenOriMode);
@@ -222,9 +225,9 @@ public class Config {
         
         int value = 1;
         try {
-            value = Integer.parseInt(mConfigPre.getString(UPDATE_SERVER, null));
+            value = Integer.parseInt(mConfigPre.getString(KEY_UPDATE_SERVER, null));
         } catch (Exception e) {
-            mConfigPre.edit().putString(UPDATE_SERVER, UPDATE_SERVER_DEFAULT)
+            mConfigPre.edit().putString(KEY_UPDATE_SERVER, DEFAULT_UPDATE_SERVER)
                     .apply();
         }
         switch (value) {
@@ -239,6 +242,6 @@ public class Config {
     }
     
     public static boolean getMediaScan() {
-        return mConfigPre.getBoolean(MEDIA_SCAN, MEDIA_SCAN_DEFAULT);
+        return mConfigPre.getBoolean(KEY_MEDIA_SCAN, DEFAULT_MEDIA_SCAN);
     }
 }

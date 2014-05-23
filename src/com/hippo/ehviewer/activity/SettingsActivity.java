@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.DiskCache;
@@ -19,30 +21,22 @@ import com.hippo.ehviewer.widget.FileExplorerView;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.preference.AutoListPreference;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
+import com.readystatesoftware.systembartint.SystemBarTintManager.SystemBarConfig;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceScreen;
-import android.support.v4.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.widget.AdapterView;
@@ -51,37 +45,50 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-// TODO 添加服务器选择
-
 public class SettingsActivity extends PreferenceActivity {
     @SuppressWarnings("unused")
     private static String TAG = "Settings";
-
-    private Context mContext;
-
-    public LruCache<String, Bitmap> memoryCache;
-
-    private static final String CACHE = "preference_cache";
-    private static final String CLEAR_CACHE = "preference_clear_cache";
-    private static final String AUTHOR = "preference_author";
-    private static final String SCREEN_ORI = "preference_screen_ori";
-    private static final String CHANGELOG = "preference_changelog";
-    private static final String THANKS = "preference_thanks";
-    private static final String UPDATE = "preference_update";
-    private static final String RAN = "preference_remove_all_noification";
-    private static final String MEDIA_SCAN = "preference_media_scan";
-
-    private EditTextPreference cachePre;
-    private Preference clearCachePre;
-    private Preference authorPer;
-    private AutoListPreference screenOriPer;
-    private Preference changelogPer;
-    private Preference thanksPer;
+    
+    private SystemBarConfig mSystemBarConfig;
+    private List<TranslucentPreferenceFragment> mFragments;
+    private ListView mListView;
+    private int originPaddingRight;
+    
+    public void adjustPadding() {
+        if (mListView != null && mSystemBarConfig != null) {
+            
+            switch (Ui.getOrientation(this)) {
+            case Ui.ORIENTATION_PORTRAIT:
+                
+                mListView.setPadding(mListView.getPaddingLeft(),
+                        mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
+                        originPaddingRight,
+                        mSystemBarConfig.getNavigationBarHeight());
+                break;
+            case Ui.ORIENTATION_LANDSCAPE:
+                
+                mListView.setPadding(mListView.getPaddingLeft(),
+                        mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
+                        originPaddingRight + mSystemBarConfig.getNavigationBarWidth(),
+                        mListView.getPaddingBottom());
+                break;
+            }
+        }
+    }
     
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        
+        for (TranslucentPreferenceFragment f : mFragments) {
+            if (f.isVisible()) {
+                f.adjustPadding();
+                return;
+            }
+        }
+        
+        // If no fragment is visible, just headers is shown
+        adjustPadding();
     }
     
     @Override
@@ -92,152 +99,25 @@ public class SettingsActivity extends PreferenceActivity {
             setRequestedOrientation(screenOri);
     }
     
-    @SuppressWarnings("deprecation")
     @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.settings);
         
         int screenOri = Config.getScreenOriMode();
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);
         
-        mContext = getApplicationContext();
+        mSystemBarConfig = Ui.translucent(this);
+        mFragments = new LinkedList<TranslucentPreferenceFragment>();
         
-        // Tint
-        ListView listView = getListView();
-        listView.setFitsSystemWindows(true);
-        listView.setClipToPadding(false);
-        // TODO
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window win = getWindow();
-            WindowManager.LayoutParams winParams = win.getAttributes();
-            final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
-            winParams.flags |= bits;
-            win.setAttributes(winParams);
-        }
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintResource(android.R.color.holo_blue_dark);
-        tintManager.setNavigationBarTintEnabled(true);
-        tintManager.setNavigationBarAlpha(0.0f);
+        mListView = getListView();
+        mListView.setClipToPadding(false);
+        originPaddingRight = mListView.getPaddingRight();
         
+        adjustPadding();
         
-        // Set PreferenceActivity
-        PreferenceScreen screen = getPreferenceScreen();
-
-        cachePre = (EditTextPreference) screen.findPreference(CACHE);
-        cachePre
-                .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(Preference preference,
-                            Object newValue) {
-                        long cpCacheSize = 0;
-                        try {
-                            int cpCacheSizeInMB = Integer
-                                    .parseInt((String) newValue);
-                            if (cpCacheSizeInMB > 1024) {
-                                Toast.makeText(mContext,
-                                        getString(R.string.cache_large),
-                                        Toast.LENGTH_SHORT).show();
-                                return false;
-                            }
-                            cpCacheSize = cpCacheSizeInMB * 1024 * 1024;
-                        } catch (Exception e) {
-                            Toast.makeText(mContext,
-                                    getString(R.string.input_error),
-                                    Toast.LENGTH_SHORT).show();
-                            return false;
-                        }
-                        if (cpCacheSize <= 0 && Cache.cpCache != null) {
-                            Cache.cpCache.clear();
-                            Cache.cpCache.close();
-                            Cache.cpCache = null;
-                        } else if (Cache.cpCache == null) {
-                            try {
-                                Cache.cpCache = new DiskCache(mContext,
-                                        Cache.cpCachePath, cpCacheSize);
-                            } catch (Exception e) {
-                                Toast.makeText(mContext,
-                                        getString(R.string.create_cache_error),
-                                        Toast.LENGTH_SHORT).show();
-                                e.printStackTrace();
-                            }
-                        } else
-                            Cache.cpCache.setMaxSize(cpCacheSize);
-                        updateCpCacheSummary();
-                        return true;
-                    }
-                });
-
-        clearCachePre = (Preference) screen.findPreference(CLEAR_CACHE);
-        updateCpCacheSummary();
-        clearCachePre
-                .setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
-                        Cache.cpCache.clear();
-                        updateCpCacheSummary();
-                        return true;
-                    }
-                });
-        
-        
-        // Connect me !
-        authorPer = screen.findPreference(AUTHOR);
-        authorPer.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                Intent i = new Intent(Intent.ACTION_SENDTO);
-                i.setData(Uri.parse("mailto:ehviewersu@gmail.com"));
-                i.putExtra(Intent.EXTRA_SUBJECT, "About EhViewer");
-                startActivity(i);
-                return true;
-            }
-        });
-        
-        // Screen Orientation
-        screenOriPer = (AutoListPreference) screen.findPreference(SCREEN_ORI);
-        screenOriPer
-                .setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                    Object newValue) {
-                setRequestedOrientation(Config.screenOriPre2Value(Integer.parseInt((String) newValue)));
-                return true;
-            }
-        });
-        
-        // Changelog
-        changelogPer = (Preference) screen.findPreference(CHANGELOG);
-        changelogPer.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                // Get changelog string
-                InputStream is = SettingsActivity.this.getResources()
-                        .openRawResource(R.raw.change_log);
-                new DialogBuilder(SettingsActivity.this).setTitle(R.string.changelog)
-                        .setLongMessage(Util.InputStream2String(is, "utf-8")).create().show();
-                return true;
-            }
-        });
-        
-        // Thanks
-        thanksPer = (Preference) screen.findPreference(THANKS);
-        thanksPer.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference arg0) {
-                InputStream is = SettingsActivity.this.getResources()
-                        .openRawResource(R.raw.thanks);
-                final WebView webView = new WebView(SettingsActivity.this);
-                webView.loadData(Util.InputStream2String(is, "utf-8"), "text/html; charset=UTF-8", null);
-                new DialogBuilder(SettingsActivity.this).setTitle(R.string.thanks)
-                        .setView(webView, false).create().show();
-                return true;
-            }
-        });
+/*
         
         final Preference update = (Preference)screen.findPreference(UPDATE);
         update.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -313,69 +193,198 @@ public class SettingsActivity extends PreferenceActivity {
             }
         });
         
-        final Preference downloadPathPre = (Preference)screen.findPreference("preference_download_path");
-        downloadPathPre.setSummary(Config.getDownloadPath());
-        downloadPathPre.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            final LayoutInflater mInflater = LayoutInflater.from(mContext);
-            @Override
-            public boolean onPreferenceClick(Preference arg0) {
-                View view = mInflater.inflate(R.layout.dir_selection, null);
-                final FileExplorerView fileExplorerView = 
-                        (FileExplorerView)view.findViewById(R.id.file_list);
-                final TextView warning =
-                        (TextView)view.findViewById(R.id.warning);
-                if (fileExplorerView.canWrite())
-                    warning.setVisibility(View.GONE);
-                else
-                    warning.setVisibility(View.VISIBLE);
-                fileExplorerView.setPath(Config.getDownloadPath());
-                fileExplorerView.setOnItemClickListener(
-                        new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                            int position, long id) {
-                        fileExplorerView.onItemClick(parent, view, position, id);
-                        if (fileExplorerView.canWrite())
-                            warning.setVisibility(View.GONE);
-                        else
-                            warning.setVisibility(View.VISIBLE);
-                    }
-                });
-                
-                new DialogBuilder(SettingsActivity.this)
-                        .setView(view, new LinearLayout.LayoutParams(
-                        LayoutParams.MATCH_PARENT, Ui.dp2pix(360)), false)
-                        .setPositiveButton(android.R.string.ok,
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (!fileExplorerView.canWrite())
-                                    Toast.makeText(SettingsActivity.this,
-                                            "当前路径不可写", Toast.LENGTH_SHORT).show();
-                                else {
-                                    String downloadPath = fileExplorerView.getCurPath();
-                                    Config.setDownloadPath(downloadPath);
-                                    downloadPathPre.setSummary(downloadPath);
-                                    ((AlertButton)v).dialog.dismiss();
-                                }
-                            }
-                        }).setNegativeButton(android.R.string.cancel,
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                ((AlertButton)v).dialog.dismiss();
-                            }
-                        }).create().show();
-                return true;
-            }
-        });
         
-        CheckBoxPreference mediaScan = (CheckBoxPreference)screen.findPreference(MEDIA_SCAN);
-        mediaScan.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference,
-                    Object newValue) {
-                boolean value = (Boolean)newValue;
+        */
+    }
+    
+    public SystemBarConfig getSystemBarConfig() {
+        return mSystemBarConfig;
+    }
+    
+    public List<TranslucentPreferenceFragment> getFragments() {
+        return mFragments;
+    }
+    
+    @Override
+    public void onBuildHeaders(List<Header> target) {
+        loadHeadersFromResource(R.xml.settings_headers, target);
+    }
+    
+    private static final String[] ENTRY_FRAGMENTS = {
+        DisplayFragment.class.getName(),
+        DataFragment.class.getName(),
+        AboutFragment.class.getName()
+    };
+    
+    @Override
+    protected boolean isValidFragment(String fragmentName) {
+        for (int i = 0; i < ENTRY_FRAGMENTS.length; i++) {
+            if (ENTRY_FRAGMENTS[i].equals(fragmentName)) return true;
+        }
+        return false;
+    }
+    
+    public static abstract class TranslucentPreferenceFragment extends PreferenceFragment {
+        
+        SystemBarConfig mSystemBarConfig;
+        ListView mListView;
+        int originPaddingRight = -1;
+        
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            SettingsActivity activity = (SettingsActivity)getActivity();
+            activity.getFragments().add(this);
+            
+            View child;
+            if (view instanceof ViewGroup
+                    && (child = ((ViewGroup)view).getChildAt(0)) != null
+                    && child instanceof ListView) {
+                mListView = (ListView)child;
+                mListView.setClipToPadding(false);
+                originPaddingRight = mListView.getPaddingRight();
+                mSystemBarConfig = activity.getSystemBarConfig();
+                adjustPadding();
+            }
+        }
+        
+        public void adjustPadding() {
+            if (mListView != null && mSystemBarConfig != null) {
+                switch (Ui.getOrientation(getActivity())) {
+                case Ui.ORIENTATION_PORTRAIT:
+                    mListView.setPadding(mListView.getPaddingLeft(),
+                            mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
+                            originPaddingRight,
+                            mSystemBarConfig.getNavigationBarHeight());
+                    break;
+                    
+                case Ui.ORIENTATION_LANDSCAPE:
+                    mListView.setPadding(mListView.getPaddingLeft(),
+                            mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
+                            originPaddingRight + mSystemBarConfig.getNavigationBarWidth(),
+                            mListView.getPaddingBottom());
+                    break;
+                }
+            }
+        }
+    }
+    
+    public static class DisplayFragment extends TranslucentPreferenceFragment
+            implements Preference.OnPreferenceChangeListener {
+        
+        private static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
+        
+        private SettingsActivity mActivity;
+        
+        private AutoListPreference mScreenOrientation;
+        
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.display_settings);
+            
+            mActivity = (SettingsActivity)getActivity();
+            
+            mScreenOrientation = (AutoListPreference)findPreference(KEY_SCREEN_ORIENTATION);
+            mScreenOrientation.setOnPreferenceChangeListener(this);
+        }
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final String key = preference.getKey();
+            if (KEY_SCREEN_ORIENTATION.equals(key)) {
+                mActivity.setRequestedOrientation(
+                        Config.screenOriPre2Value(Integer.parseInt((String) newValue)));
+            }
+            
+            return true;
+        }
+    }
+    
+    public static class DataFragment extends TranslucentPreferenceFragment
+            implements Preference.OnPreferenceChangeListener,
+            Preference.OnPreferenceClickListener {
+        
+        private static final String KEY_CACHE_SIZE = "cache_size";
+        private static final String KEY_CLEAR_CACHE = "clear_cache";
+        private static final String KEY_DOWNLOAD_PATH = "download_path";
+        private static final String KEY_MEDIA_SCAN = "media_scan";
+        
+        private SettingsActivity mActivity;
+        private AlertDialog mDirSelectDialog;
+        
+        private EditTextPreference mCacheSize;
+        private Preference mClearCache;
+        private Preference mDownloadPath;
+        private CheckBoxPreference mMediaScan;
+        
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.data_settings);
+            
+            mActivity = (SettingsActivity)getActivity();
+            
+            mCacheSize = (EditTextPreference)findPreference(KEY_CACHE_SIZE);
+            mCacheSize.setOnPreferenceChangeListener(this);
+            mClearCache = (Preference)findPreference(KEY_CLEAR_CACHE);
+            mClearCache.setOnPreferenceClickListener(this);
+            mDownloadPath = (Preference)findPreference(KEY_DOWNLOAD_PATH);
+            mDownloadPath.setOnPreferenceClickListener(this);
+            mMediaScan = (CheckBoxPreference)findPreference(KEY_MEDIA_SCAN);
+            mMediaScan.setOnPreferenceChangeListener(this);
+            
+            // Set summary
+            updateClearCacheSummary();
+            mDownloadPath.setSummary(Config.getDownloadPath());
+        }
+        
+        private void updateClearCacheSummary() {
+            if (Cache.diskCache != null) {
+                mClearCache.setSummary(String.format(
+                        getString(R.string.clear_cache_summary_on),
+                        Cache.diskCache.size() / 1024 / 1024f,
+                        Cache.diskCache.maxSize() / 1024 / 1024));
+                mClearCache.setEnabled(true);
+            } else {
+                mClearCache
+                        .setSummary(getString(R.string.clear_cache_summary_off));
+                mClearCache.setEnabled(false);
+            }
+        }
+        
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object objValue) {
+            final String key = preference.getKey();
+            if (KEY_CACHE_SIZE.equals(key)) {
+                long cacheSize = 0;
+                try {
+                    cacheSize = Integer.parseInt((String) objValue) * 1024 * 1024;
+                } catch (Exception e) {
+                    Toast.makeText(mActivity, getString(R.string.input_error),
+                            Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                
+                if (cacheSize <= 0 && Cache.diskCache != null) {
+                    Cache.diskCache.clear();
+                    Cache.diskCache.close();
+                    Cache.diskCache = null;
+                } else if (Cache.diskCache == null) {
+                    try {
+                        Cache.diskCache = new DiskCache(mActivity,
+                                Cache.cpCachePath, cacheSize);
+                    } catch (Exception e) {
+                        Toast.makeText(mActivity,
+                                getString(R.string.create_cache_error),
+                                Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                } else
+                    Cache.diskCache.setMaxSize(cacheSize);
+                updateClearCacheSummary();
+                
+            } else if (KEY_MEDIA_SCAN.equals(key)) {
+                boolean value = (Boolean)objValue;
                 File nomedia = new File(Config.getDownloadPath(), ".nomedia");
                 if (value) {
                     nomedia.delete();
@@ -384,24 +393,198 @@ public class SettingsActivity extends PreferenceActivity {
                         nomedia.createNewFile();
                     } catch (IOException e) {
                         e.printStackTrace();
+                        return false;
                     }
                 }
-                return true;
             }
-        });
+            
+            return true;
+        }
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            final String key = preference.getKey();
+            if (KEY_CLEAR_CACHE.equals(key)) {
+                Cache.diskCache.clear();
+                updateClearCacheSummary();
+                
+            } else if (KEY_DOWNLOAD_PATH.equals(key)) {
+                View view = LayoutInflater.from(mActivity)
+                        .inflate(R.layout.dir_selection, null);
+                final FileExplorerView fileExplorerView = 
+                        (FileExplorerView)view.findViewById(R.id.file_list);
+                final TextView warning =
+                        (TextView)view.findViewById(R.id.warning);
+                
+                String downloadPath = Config.getDownloadPath();
+                DialogBuilder dialogBuilder = new DialogBuilder(mActivity)
+                .setView(view, new LinearLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT, Ui.dp2pix(360)), false)
+                .setTitle(downloadPath)
+                .setPositiveButton(android.R.string.ok,
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!fileExplorerView.canWrite())
+                            Toast.makeText(mActivity, "当前路径不可写",
+                                    Toast.LENGTH_SHORT).show();
+                        else {
+                            String downloadPath = fileExplorerView.getCurPath();
+                            
+                            // Update .nomedia file
+                            // TODO Should I delete .nomedia in old download dir ?
+                            if (Config.getMediaScan()) {
+                                try {
+                                    new File(Config.getDownloadPath(), ".nomedia").createNewFile();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            
+                            Config.setDownloadPath(downloadPath);
+                            mDownloadPath.setSummary(downloadPath);
+                            ((AlertButton)v).dialog.dismiss();
+                        }
+                    }
+                }).setSimpleNegativeButton();
+                final TextView title = dialogBuilder.getTitleView();
+                
+                if (fileExplorerView.canWrite())
+                    warning.setVisibility(View.GONE);
+                else
+                    warning.setVisibility(View.VISIBLE);
+                
+                fileExplorerView.setPath(downloadPath);
+                fileExplorerView.setOnItemClickListener(
+                        new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+                        fileExplorerView.onItemClick(parent, view, position, id);
+                        title.setText(fileExplorerView.getCurPath());
+                        if (fileExplorerView.canWrite())
+                            warning.setVisibility(View.GONE);
+                        else
+                            warning.setVisibility(View.VISIBLE);
+                    }
+                });
+                
+                mDirSelectDialog = dialogBuilder.create();
+                mDirSelectDialog.show();
+            }
+            
+            return true;
+        }
     }
     
-    private void updateCpCacheSummary() {
-        if (Cache.cpCache != null) {
-            clearCachePre.setSummary(String.format(
-                    getString(R.string.preference_cache_summary),
-                    Cache.cpCache.size() / 1024 / 1024f,
-                    Cache.cpCache.maxSize() / 1024 / 1024));
-            clearCachePre.setEnabled(true);
-        } else {
-            clearCachePre
-                    .setSummary(getString(R.string.preference_cache_summary_no));
-            clearCachePre.setEnabled(false);
+    public static class AboutFragment extends TranslucentPreferenceFragment
+            implements Preference.OnPreferenceClickListener{
+        
+        private static final String KEY_AUTHOR = "author";
+        private static final String KEY_CHANGELOG = "changelog";
+        private static final String KEY_THANKS = "thanks";
+        private static final String KEY_CHECK_UPDATE = "check_update";
+        
+        private SettingsActivity mActivity;
+        
+        private Preference mAuthor;
+        private Preference mChangelog;
+        private Preference mThanks;
+        private Preference mCheckUpdate;
+        
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.about_settings);
+            
+            mActivity = (SettingsActivity)getActivity();
+            
+            mAuthor = (Preference)findPreference(KEY_AUTHOR);
+            mAuthor.setOnPreferenceClickListener(this);
+            mChangelog = (Preference)findPreference(KEY_CHANGELOG);
+            mChangelog.setOnPreferenceClickListener(this);
+            mThanks = (Preference)findPreference(KEY_THANKS);
+            mThanks.setOnPreferenceClickListener(this);
+            mCheckUpdate = (Preference)findPreference(KEY_CHECK_UPDATE);
+            mCheckUpdate.setOnPreferenceClickListener(this);
+        }
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            final String key = preference.getKey();
+            if (KEY_AUTHOR.equals(key)) {
+                Intent i = new Intent(Intent.ACTION_SENDTO);
+                i.setData(Uri.parse("mailto:ehviewersu@gmail.com"));
+                i.putExtra(Intent.EXTRA_SUBJECT, "About EhViewer");
+                startActivity(i);
+                
+            } else if (KEY_CHANGELOG.equals(key)) {
+                InputStream is = mActivity.getResources()
+                        .openRawResource(R.raw.change_log);
+                new DialogBuilder(mActivity).setTitle(R.string.changelog)
+                        .setLongMessage(Util.InputStream2String(is, "utf-8"))
+                        .setSimpleNegativeButton().create().show();
+                
+            } else if (KEY_THANKS.equals(key)) {
+                InputStream is = mActivity.getResources()
+                        .openRawResource(R.raw.thanks);
+                final WebView webView = new WebView(mActivity);
+                webView.loadData(Util.InputStream2String(is, "utf-8"), "text/html; charset=UTF-8", null);
+                new DialogBuilder(mActivity).setTitle(R.string.thanks)
+                        .setView(webView, false).setSimpleNegativeButton()
+                        .create().show();
+                
+            } else if (KEY_CHECK_UPDATE.equals(key)) {
+                mCheckUpdate.setSummary(R.string.checking_update);
+                mCheckUpdate.setEnabled(false);
+                new UpdateHelper((AppContext)mActivity.getApplication())
+                        .SetOnCheckUpdateListener(new UpdateHelper.OnCheckUpdateListener() {
+                            @Override
+                            public void onSuccess(String version, long size,
+                                    final String url, final String fileName, String info) {
+                                mCheckUpdate.setSummary(R.string.found_update);
+                                String sizeStr = Util.sizeToString(size);
+                                AlertDialog dialog = SuperDialogUtil.createUpdateDialog(
+                                        mActivity, version, sizeStr, info,
+                                        new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                ((AlertButton)v).dialog.dismiss();
+                                                // TODO
+                                                try {
+                                                    Downloader downloader = new Downloader(mActivity);
+                                                    downloader.resetData(Config.getDownloadPath(), fileName, url);
+                                                    downloader.setOnDownloadListener(
+                                                            new UpdateHelper.UpdateListener(mActivity,
+                                                                    fileName));
+                                                    new Thread(downloader).start();
+                                                } catch (MalformedURLException e) {
+                                                    mCheckUpdate.setSummary(R.string.em_url_format_error);
+                                                    UpdateHelper.setEnabled(true);
+                                                }
+                                                mCheckUpdate.setEnabled(true);
+                                            }
+                                        });
+                                if (!mActivity.isFinishing())
+                                    dialog.show();
+                            }
+
+                            @Override
+                            public void onNoUpdate() {
+                                mCheckUpdate.setSummary(R.string.up_to_date);
+                                mCheckUpdate.setEnabled(true);
+                                UpdateHelper.setEnabled(true);
+                            }
+
+                            @Override
+                            public void onFailure(String eMsg) {
+                                mCheckUpdate.setSummary(eMsg);
+                                mCheckUpdate.setEnabled(true);
+                                UpdateHelper.setEnabled(true);
+                            }
+                        }).checkUpdate();
+            }
+            return true;
         }
     }
 }

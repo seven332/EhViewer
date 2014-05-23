@@ -1810,12 +1810,6 @@ public class MangaListActivity extends SlidingActivity
                                     UpdateHelper.setEnabled(true);
                                 }
                             }
-                        }, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                ((AlertButton)v).dialog.dismiss();
-                                UpdateHelper.setEnabled(true);
-                            }
                         });
                 if (!MangaListActivity.this.isFinishing())
                     dialog.show();

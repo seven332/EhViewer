@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="0.0dp"
         android:layout_weight="1"
+        android:divider="@color/detail_divider"
+        android:dividerHeight="1.0dp"
         auto:filter="dir" >
     </com.hippo.ehviewer.widget.FileExplorerView>
 

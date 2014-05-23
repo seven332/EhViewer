@@ -1,0 +1,35 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:title="@string/cache_data_settings_title">
+        
+        <EditTextPreference
+            android:defaultValue="25"
+            android:inputType="number"
+            android:key="cache_size"
+            android:title="@string/cache_size_title" />
+        
+        <Preference 
+            android:key="clear_cache"
+            android:title="@string/clear_cache_title" />
+        
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+        android:title="@string/download_data_settings_title">
+
+        <Preference 
+            android:key="download_path"
+            android:title="@string/download_path_title" />
+        
+        <CheckBoxPreference 
+            android:key="media_scan"
+            android:title="@string/media_scan_title"
+            android:summaryOn="@string/media_scan_summary_on"
+            android:summaryOff="@string/media_scan_summary_off"
+            android:defaultValue="false" />
+        
+    </PreferenceCategory>
+    
+</PreferenceScreen>

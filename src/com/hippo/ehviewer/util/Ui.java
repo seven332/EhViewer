@@ -3,6 +3,7 @@ package com.hippo.ehviewer.util;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+import com.readystatesoftware.systembartint.SystemBarTintManager.SystemBarConfig;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -16,6 +17,7 @@ import android.graphics.Movie;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.DisplayMetrics;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
@@ -245,8 +247,21 @@ public class Ui {
         child.measure(childWidthSpec, childHeightSpec);
     }
     
+    public static final int ORIENTATION_PORTRAIT = 0x0;
+    public static final int ORIENTATION_LANDSCAPE = 0x1;
+    
+    public static int getOrientation(Activity activity) {
+        DisplayMetrics dm = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        if (dm.heightPixels > dm.widthPixels){
+            return ORIENTATION_PORTRAIT;
+        }else{
+            return ORIENTATION_LANDSCAPE;
+        }
+    }
+    
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    public static void translucent(Activity activity) {
+    public static SystemBarConfig translucent(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window win = activity.getWindow();
             WindowManager.LayoutParams winParams = win.getAttributes();
@@ -260,5 +275,7 @@ public class Ui {
         tintManager.setStatusBarTintResource(R.color.ab_bg);
         tintManager.setNavigationBarTintEnabled(true);
         tintManager.setNavigationBarAlpha(0.0f);
+        
+        return tintManager.getConfig();
     }
 }

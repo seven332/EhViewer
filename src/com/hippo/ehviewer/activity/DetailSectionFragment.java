@@ -286,7 +286,7 @@ public class DetailSectionFragment extends Fragment
             // Download pic
             EhClient.getImage(row.imageUrl, mGalleryDetail.gid + "-preview-"
                     + mCurPage + "-" + rowIndex, Util.getResourcesType(row.imageUrl), Cache.memoryCache,
-                    Cache.cpCache, new int[]{page, rowIndex}, new PageImageGetListener());
+                    Cache.diskCache, new int[]{page, rowIndex}, new PageImageGetListener());
             rowIndex ++;
         }
     }

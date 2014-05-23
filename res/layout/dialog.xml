@@ -15,9 +15,12 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="24.0dp"
+            android:layout_marginRight="24.0dp"
             android:layout_centerVertical="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white"
+            android:singleLine="true"
+            android:ellipsize="start"
             android:visibility="gone" />
         
         <ImageView

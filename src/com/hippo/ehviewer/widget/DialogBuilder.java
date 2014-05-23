@@ -193,6 +193,19 @@ public class DialogBuilder extends AlertDialog.Builder {
         return this;
     }
     
+    public DialogBuilder setSimpleNegativeButton() {
+        Button button = (Button)mView.findViewById(R.id.negative_button);
+        button.setVisibility(View.VISIBLE);
+        button.setText(android.R.string.cancel);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((AlertButton)v).dialog.dismiss();
+            }
+        });
+        return this;
+    }
+    
     /**
      * Set a listener to be invoked when the neutral button of the dialog is pressed.
      * @param textId The resource id of the text to display in the neutral button
@@ -301,6 +314,10 @@ public class DialogBuilder extends AlertDialog.Builder {
             actionView.setImageDrawable(drawable);
         actionView.setOnClickListener(listener);
         return this;
+    }
+    
+    public TextView getTitleView() {
+        return (TextView)mView.findViewById(R.id.title);
     }
     
     @Override

@@ -16,7 +16,7 @@ public class Cache {
     private static Context mContext;
 
     public static final String cpCachePath = "/EhViewer/cache/cover";
-    public static DiskCache cpCache = null;
+    public static DiskCache diskCache = null;
     public static LruCache<String, Bitmap> memoryCache = null;
     public static LruCache<String, GalleryDetail> mdCache = null;
     
@@ -40,9 +40,9 @@ public class Cache {
             try {
                 int cpCacheSize = Config.getCoverDiskCacheSize() * 1024 * 1024;
                 if (cpCacheSize <= 0)
-                    cpCache = null;
+                    diskCache = null;
                 else
-                    cpCache = new DiskCache(mContext, cpCachePath, cpCacheSize);
+                    diskCache = new DiskCache(mContext, cpCachePath, cpCacheSize);
             } catch (Exception e) {
                 e.printStackTrace();
             }
