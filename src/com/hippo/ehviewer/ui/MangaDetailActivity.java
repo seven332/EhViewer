@@ -50,7 +50,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-public class MangaDetailActivity extends FragmentActivity
+public class MangaDetailActivity extends AbstractFragmentActivity
         implements ActionBar.TabListener {
 
     @SuppressWarnings("unused")
@@ -72,14 +72,6 @@ public class MangaDetailActivity extends FragmentActivity
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-    }
-    
-    @Override
-    protected void onResume() {
-        super.onResume();
-        int screenOri = Config.getScreenOriMode();
-        if (screenOri != getRequestedOrientation())
-            setRequestedOrientation(screenOri);
     }
     
     @Override
@@ -148,10 +140,6 @@ public class MangaDetailActivity extends FragmentActivity
                             .setText(adapter.getPageTitle(i))
                             .setTabListener(this));
         }
-        
-        int screenOri = Config.getScreenOriMode();
-        if (screenOri != getRequestedOrientation())
-            setRequestedOrientation(screenOri);
         
         // Download service
         Intent it = new Intent(MangaDetailActivity.this, DownloadService.class);

@@ -18,10 +18,10 @@ package com.hippo.ehviewer.ui;
 
 import com.hippo.ehviewer.util.Config;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 
-public abstract class AbstractActivity extends Activity {
+public class AbstractPreferenceActivity extends PreferenceActivity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,4 +39,5 @@ public abstract class AbstractActivity extends Activity {
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);
     }
+    
 }

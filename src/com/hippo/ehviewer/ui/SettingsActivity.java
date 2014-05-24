@@ -63,7 +63,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends AbstractPreferenceActivity {
     @SuppressWarnings("unused")
     private static String TAG = "Settings";
     
@@ -111,20 +111,8 @@ public class SettingsActivity extends PreferenceActivity {
     }
     
     @Override
-    protected void onResume() {
-        super.onResume();
-        int screenOri = Config.getScreenOriMode();
-        if (screenOri != getRequestedOrientation())
-            setRequestedOrientation(screenOri);
-    }
-    
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        int screenOri = Config.getScreenOriMode();
-        if (screenOri != getRequestedOrientation())
-            setRequestedOrientation(screenOri);
         
         getActionBar().setDisplayHomeAsUpEnabled(true);
         

@@ -16,15 +16,15 @@
 
 package com.hippo.ehviewer.ui;
 
-import com.hippo.ehviewer.util.Config;
-
-import android.app.Activity;
 import android.os.Bundle;
 
-public abstract class AbstractActivity extends Activity {
+import com.hippo.ehviewer.util.Config;
+import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
+
+public class AbstractSlidingActivity extends SlidingActivity {
     
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         int screenOri = Config.getScreenOriMode();
@@ -39,4 +39,5 @@ public abstract class AbstractActivity extends Activity {
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);
     }
+    
 }

@@ -16,12 +16,12 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+
 import com.hippo.ehviewer.util.Config;
 
-import android.app.Activity;
-import android.os.Bundle;
-
-public abstract class AbstractActivity extends Activity {
+public abstract class AbstractFragmentActivity extends FragmentActivity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,4 +39,5 @@ public abstract class AbstractActivity extends Activity {
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);
     }
+    
 }

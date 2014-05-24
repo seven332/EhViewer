@@ -117,14 +117,6 @@ public class MangaDownloadActivity extends AbstractActivity {
         //glrv.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
     
-    @Override
-    protected void onResume() {
-        super.onResume();
-        int screenOri = Config.getScreenOriMode();
-        if (screenOri != getRequestedOrientation())
-            setRequestedOrientation(screenOri);
-    }
-    
     @SuppressLint("NewApi")
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {

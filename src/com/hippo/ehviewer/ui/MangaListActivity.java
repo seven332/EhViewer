@@ -125,7 +125,7 @@ import android.widget.Toast;
  * 
  * @author Hippo
  */
-public class MangaListActivity extends SlidingActivity
+public class MangaListActivity extends AbstractSlidingActivity
         implements View.OnClickListener {
     
     private static final String TAG = "MangaListActivity";
@@ -1205,15 +1205,6 @@ public class MangaListActivity extends SlidingActivity
      }
     
     @Override
-    protected void onResume() {
-        super.onResume();
-        int screenOri = Config.getScreenOriMode();
-        if (screenOri != getRequestedOrientation())
-            setRequestedOrientation(screenOri);
-        
-    }
-    
-    @Override
     protected void onNewIntent(Intent intent) { 
         setIntent(intent); 
         handleIntent(intent); 
@@ -1286,10 +1277,6 @@ public class MangaListActivity extends SlidingActivity
                 invalidateOptionsMenu();
             }
         });
-        
-        int screenOri = Config.getScreenOriMode();
-        if (screenOri != getRequestedOrientation())
-            setRequestedOrientation(screenOri);
         
         Ui.translucent(this);
         

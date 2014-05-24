@@ -262,14 +262,6 @@ public class MangaActivity extends AbstractActivity {
         super.onConfigurationChanged(newConfig);
     }
     
-    @Override
-    protected void onResume() {
-        super.onResume();
-        int screenOri = Config.getScreenOriMode();
-        if (screenOri != getRequestedOrientation())
-            setRequestedOrientation(screenOri);
-    }
-    
     @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {

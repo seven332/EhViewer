@@ -187,9 +187,6 @@ public class FavouriteActivity extends AbstractActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        int screenOri = Config.getScreenOriMode();
-        if (screenOri != getRequestedOrientation())
-            setRequestedOrientation(screenOri);
         
         if (flAdapter != null)
             flAdapter.notifyDataSetChanged();

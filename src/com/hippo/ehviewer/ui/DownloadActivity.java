@@ -366,14 +366,6 @@ public class DownloadActivity extends AbstractActivity {
     }
     
     @Override
-    protected void onResume() {
-        super.onResume();
-        int screenOri = Config.getScreenOriMode();
-        if (screenOri != getRequestedOrientation())
-            setRequestedOrientation(screenOri);
-    }
-    
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver);
