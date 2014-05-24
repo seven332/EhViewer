@@ -172,6 +172,9 @@
     <string name="thanks_title">感谢</string>
     <string name="source_title">源码</string>
     <string name="update_about_settings_title">更新</string>
+    <string name="auto_check_for_update_title">自动检查更新</string>
+        <string name="auto_check_for_update_summary_on">每日第一次启动时检查更新</string>
+    <string name="auto_check_for_update_summary_off">从不自动检查更新</string>
     <string name="check_for_update_title">检查更新</string>
     <string name="check_for_update_summary">点击检查更新</string>
     <string name="update_server_title">更新服务器</string>

@@ -31,7 +31,6 @@ public class Config {
     private static final String KEY_ALLOWED = "allowed";
     private static final String KEY_FIRST = "first_time";
     private static final String KEY_LOGIN = "login";
-    private static final String KEY_IS_EXHENTAI = "is_exhentai";
     private static final String KEY_UPDATE_DATE = "update_date";
     private static final String KEY_MODE = "mode";
     private static final int MODE_DEFAULT = 0;
@@ -50,6 +49,8 @@ public class Config {
     private static final String KEY_MEDIA_SCAN = "media_scan";
     private static final boolean DEFAULT_MEDIA_SCAN = false;
     
+    private static final String KEY_AUTO_CHECK_FOR_UPDATE = "auto_check_for_update";
+    private static final boolean DEFAULT_AUTO_CHECK_FOR_UPDATE = true;
     private static final String KEY_UPDATE_SERVER = "update_server";
     private static final String DEFAULT_UPDATE_SERVER = "2";
     
@@ -215,12 +216,14 @@ public class Config {
         }
     }
     
-    public static boolean isExhentai() {
-        return mConfigPre.getBoolean(KEY_IS_EXHENTAI, false);
+    public static boolean isAutoCheckForUpdate() {
+        return mConfigPre.getBoolean(KEY_AUTO_CHECK_FOR_UPDATE,
+                DEFAULT_AUTO_CHECK_FOR_UPDATE);
     }
     
-    public static void exhentai(boolean isExhentai) {
-        mConfigPre.edit().putBoolean(KEY_IS_EXHENTAI, isExhentai).apply();
+    public static void setAutoCheckForUpdate(boolean autoCheckForUpdate) {
+        mConfigPre.edit().putBoolean(KEY_AUTO_CHECK_FOR_UPDATE,
+                autoCheckForUpdate).apply();
     }
     
     public static int getUpdateDate() {

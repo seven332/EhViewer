@@ -1565,7 +1565,8 @@ public class MangaListActivity extends SlidingActivity
         
         
         // Check update
-        checkUpdate();
+        if (Config.isAutoCheckForUpdate())
+            checkUpdate();
         
         // Check login and update user panel
         checkLogin(false);
