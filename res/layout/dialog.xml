@@ -19,19 +19,20 @@
     android:background="@android:color/white"
     android:orientation="vertical" >
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="64.0dp"
+        android:orientation="horizontal"
         android:background="@android:color/holo_blue_dark" >
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:layout_width="0.0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_weight="1"
+            android:layout_gravity="center"
             android:layout_marginLeft="24.0dp"
             android:layout_marginRight="24.0dp"
-            android:layout_centerVertical="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white"
             android:singleLine="true"
@@ -42,15 +43,13 @@
             android:id="@+id/action"
             android:layout_width="48.0dp"
             android:layout_height="48.0dp"
-            android:layout_gravity="right"
-            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
             android:layout_marginRight="8.0dp"
-            android:layout_centerVertical="true"
             android:src="@drawable/ic_action_touch"
             android:background="@drawable/blue_bn_bg"
             android:visibility="gone" />
         
-    </RelativeLayout>
+    </LinearLayout>
 
     <ScrollView
         android:id="@+id/scroll_view"
