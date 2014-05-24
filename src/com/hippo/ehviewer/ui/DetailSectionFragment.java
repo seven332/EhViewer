@@ -608,36 +608,17 @@ public class DetailSectionFragment extends Fragment
            mActivity.finish();
            
        } else if (v == mOnceButton) {
-           if (mUrl.endsWith("nw=session")) {
-
-           } else if (mUrl.endsWith("nw=always"))
-               mUrl.replace("nw=always", "nw=session");
-           else {
-               if (!mUrl.endsWith("/"))
-                   mUrl += "/";
-               mUrl += "?nw=session";
-           }
-
+           // TODO create a class uri
            MangaDetailGetListener listener = new MangaDetailGetListener();
-           mClient.getMangaDetail(mUrl, mGalleryDetail, listener);
+           mClient.getMangaDetail(mUrl + "&nw=session", mGalleryDetail, listener);
            // Delete offensiveView
            mOffensiveView.setVisibility(View.GONE);
            // Add progressBar
            mWaitPb.setVisibility(View.VISIBLE);
            
        } else if (v == mEveryButton) {
-           if (mUrl.endsWith("nw=always")) {
-
-           } else if (mUrl.endsWith("nw=session"))
-               mUrl.replace("nw=session", "nw=always");
-           else {
-               if (!mUrl.endsWith("/"))
-                   mUrl += "/";
-               mUrl += "?nw=always";
-           }
-
            MangaDetailGetListener listener = new MangaDetailGetListener();
-           mClient.getMangaDetail(mUrl, mGalleryDetail, listener);
+           mClient.getMangaDetail(mUrl + "&nw=always", mGalleryDetail, listener);
            // Delete offensiveView
            mOffensiveView.setVisibility(View.GONE);
            // Add progressBar
