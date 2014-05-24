@@ -37,7 +37,7 @@
         android:title="@string/update_about_settings_title">
         
         <Preference
-            android:key="check_update"
+            android:key="check_for_update"
             android:title="@string/check_for_update_title"
             android:summary="@string/check_for_update_summary" />
         

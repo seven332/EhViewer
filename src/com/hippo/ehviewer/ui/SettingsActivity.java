@@ -485,7 +485,7 @@ public class SettingsActivity extends PreferenceActivity {
         private static final String KEY_CHANGELOG = "changelog";
         private static final String KEY_THANKS = "thanks";
         private static final String KEY_SOURCE = "source";
-        private static final String KEY_CHECK_UPDATE = "check_update";
+        private static final String KEY_CHECK_UPDATE = "check_for_update";
         
         private Preference mAuthor;
         private Preference mChangelog;
