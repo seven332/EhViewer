@@ -47,7 +47,7 @@
     </style>
     
     <style name="AppTheme.Main.ListActivity">
-        <item name="android:windowBackground">@color/main_background</item>
+        <item name="android:windowBackground">@color/list_main_bg</item>
     </style>
     
     <style name="AppTheme.NoActionBar">
@@ -57,7 +57,7 @@
     
     <!-- For activity whose main view is list, make background darker to match white list -->
     <style name="AppTheme.ListActivity">
-        <item name="android:windowBackground">@color/main_background</item>
+        <item name="android:windowBackground">@color/list_main_bg</item>
     </style>
     
     <!-- Theme for start activity -->

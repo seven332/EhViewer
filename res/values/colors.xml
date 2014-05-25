@@ -28,7 +28,8 @@
     <color name="refresh_color_4">#b23424</color>
     
     <color name="ab_bg">@android:color/holo_blue_dark</color>
-    <color name="main_background">#ffe5e5e5</color>
+    <color name="list_main_bg">#ffe5e5e5</color>
+    <color name="tag_bg">#bbffffff</color>
     <color name="holo_blue_light_light">#ff81d3f7</color>
     
     <color name="light_gray">#aaa</color>
