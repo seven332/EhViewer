@@ -50,6 +50,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+// TODO I'm going to add an awesome feature.
+//       When views in ListView or ScrollView or some ViewGroup can
+//       scroll are under actionbar, They should be seen.
+//       At that time actionbar's background must be translucent,
+//       statusbar too in 4.4. When no view under them, just normal.
+
 public class MangaDetailActivity extends AbstractFragmentActivity
         implements ActionBar.TabListener {
 
