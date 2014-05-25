@@ -1392,18 +1392,15 @@ public class MangaListActivity extends AbstractSlidingActivity
                     intent = new Intent(MangaListActivity.this,
                             FavouriteActivity.class);
                     startActivity(intent);
-                    showContent();
                     break;
                     
-                case 4:
-                    showContent();
+                case 4: // Download
                     intent = new Intent(MangaListActivity.this,
                             DownloadActivity.class);
                     startActivity(intent);
                     break;
                     
-                case 5:
-                    showContent();
+                case 5: // Settings
                     intent = new Intent(MangaListActivity.this,
                             SettingsActivity.class);
                     startActivity(intent);
