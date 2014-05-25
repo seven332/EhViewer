@@ -24,24 +24,27 @@ import com.hippo.ehviewer.ehclient.EhClient;
 
 public class ListUrls {
     
+    public static final boolean NUM_CATEGORY = true;
+    
     public static final int NORMAL = 0x0;
     public static final int UPLOADER = 0x1;
     public static final int TAG = 0x2;
     
     // Search type
-    public static final int DOUJINSHI = 0x1;
-    public static final int MANGA = 0x2;
-    public static final int ARTIST_CG = 0x4;
-    public static final int GAME_CG = 0x8;
-    public static final int WESTERN = 0x10;
-    public static final int NON_H = 0x20;
-    public static final int IMAGE_SET = 0x40;
-    public static final int COSPLAY = 0x80;
-    public static final int ASIAN_PORN = 0x100;
-    public static final int MISC = 0x200;
+    public static final int MISC = 0x1;
+    public static final int DOUJINSHI = 0x2;
+    public static final int MANGA = 0x4;
+    public static final int ARTIST_CG = 0x8;
+    public static final int GAME_CG = 0x10;
+    public static final int IMAGE_SET = 0x20;
+    public static final int COSPLAY = 0x40;
+    public static final int ASIAN_PORN = 0x80;
+    public static final int NON_H = 0x100;
+    public static final int WESTERN = 0x200;
     public static final int UNKNOWN = 0x400;
     
-    public static final int ALL_TYPE = DOUJINSHI|MANGA|ARTIST_CG|GAME_CG|WESTERN|NON_H|IMAGE_SET|COSPLAY|ASIAN_PORN|MISC;
+    public static final int ALL_TYPE = UNKNOWN - 1;
+    //DOUJINSHI|MANGA|ARTIST_CG|GAME_CG|WESTERN|NON_H|IMAGE_SET|COSPLAY|ASIAN_PORN|MISC;
     
     // advance search type
     public static final int SNAME = 0x1;
@@ -221,49 +224,54 @@ public class ListUrls {
                 url.append(page);
             
         } else {
-            url.append("?");
             
             // Add type
-            if((type & DOUJINSHI) == 0)
-                url.append("f_doujinshi=0&");
-            else
-                url.append("f_doujinshi=1&");
-            if((type & MANGA) == 0)
-                url.append("f_manga=0&");
-            else
-                url.append("f_manga=1&");
-            if((type & ARTIST_CG) == 0)
-                url.append("f_artistcg=0&");
-            else
-                url.append("f_artistcg=1&");
-            if((type & GAME_CG) == 0)
-                url.append("f_gamecg=0&");
-            else
-                url.append("f_gamecg=1&");
-            if((type & WESTERN) == 0)
-                url.append("f_western=0&");
-            else
-                url.append("f_western=1&");
-            if((type & NON_H) == 0)
-                url.append("f_non-h=0&");
-            else
-                url.append("f_non-h=1&");
-            if((type & IMAGE_SET) == 0)
-                url.append("f_imageset=0&");
-            else
-                url.append("f_imageset=1&");
-            if((type & COSPLAY) == 0)
-                url.append("f_cosplay=0&");
-            else
-                url.append("f_cosplay=1&");
-            if((type & ASIAN_PORN) == 0)
-                url.append("f_asianporn=0&");
-            else
-                url.append("f_asianporn=1&");
-            if((type & MISC) == 0)
-                url.append("f_misc=0&");
-            else
-                url.append("f_misc=1&");
+            if (NUM_CATEGORY) {
+                url.append(type);
+                url.append("?");
+            } else {
+                url.append("?");
+                if((type & DOUJINSHI) == 0)
+                    url.append("f_doujinshi=0&");
+                else
+                    url.append("f_doujinshi=1&");
+                if((type & MANGA) == 0)
+                    url.append("f_manga=0&");
+                else
+                    url.append("f_manga=1&");
+                if((type & ARTIST_CG) == 0)
+                    url.append("f_artistcg=0&");
+                else
+                    url.append("f_artistcg=1&");
+                if((type & GAME_CG) == 0)
+                    url.append("f_gamecg=0&");
+                else
+                    url.append("f_gamecg=1&");
+                if((type & WESTERN) == 0)
+                    url.append("f_western=0&");
+                else
+                    url.append("f_western=1&");
+                if((type & NON_H) == 0)
+                    url.append("f_non-h=0&");
+                else
+                    url.append("f_non-h=1&");
+                if((type & IMAGE_SET) == 0)
+                    url.append("f_imageset=0&");
+                else
+                    url.append("f_imageset=1&");
+                if((type & COSPLAY) == 0)
+                    url.append("f_cosplay=0&");
+                else
+                    url.append("f_cosplay=1&");
+                if((type & ASIAN_PORN) == 0)
+                    url.append("f_asianporn=0&");
+                else
+                    url.append("f_asianporn=1&");
+                if((type & MISC) == 0)
+                    url.append("f_misc=0&");
+                else
+                    url.append("f_misc=1&");
+            }
             
             // Add search
             if (search != null) {
