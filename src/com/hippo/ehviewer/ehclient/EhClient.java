@@ -69,7 +69,7 @@ import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 
-// TODO Stringbuffer to StringBuild
+// TODO newer versions tip
 
 public class EhClient {
     
@@ -89,7 +89,7 @@ public class EhClient {
     private static final String loginUrl = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
     
     public static final String G_HEADER = "http://g.e-hentai.org/";
-    public static final String EH_HEADER = "http://exhentai.org/";
+    public static final String EX_HEADER = "http://exhentai.org/";
     public static final String LOFI_HEADER = "http://lofi.e-hentai.org/";
     
     private boolean mLogin = false;
@@ -107,7 +107,7 @@ public class EhClient {
     public static String getUrlHeader(int mode) {
         switch (mode) {
         case EX:
-            return EH_HEADER;
+            return EX_HEADER;
         case LOFI_460x:
         case LOFI_780x:
         case LOFI_980x:
@@ -129,7 +129,7 @@ public class EhClient {
     public static String getDetailUrl(int gid, String token, int pageNum, int mode) {
         switch (mode) {
         case EX:
-            return EH_HEADER + "g/" + gid + "/" + token + "/?p=" + pageNum;
+            return EX_HEADER + "g/" + gid + "/" + token + "/?p=" + pageNum;
         case LOFI_460x:
         case LOFI_780x:
         case LOFI_980x:
@@ -146,7 +146,7 @@ public class EhClient {
     public static String getPageUrl(String gid, String token, int pageNum, int mode) {
         switch (mode) {
         case EX:
-            return EH_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
+            return EX_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
         case LOFI_460x:
         case LOFI_780x:
         case LOFI_980x:
@@ -1671,6 +1671,77 @@ public class EhClient {
         }).start();
     }
     
+    // Add to favorite
+    public interface OnAddToFavoriteListener {
+        void onSuccess();
+        void onFailure(String eMsg);
+    }
+    
+    public String getAddFavouriteUrl(int gid, String token) {
+        return getAddFavouriteUrl(gid, token, Config.getMode());
+    }
+    
+    public String getAddFavouriteUrl(int gid, String token, int mode) {
+        switch (mode) {
+        case EX:
+            return EX_HEADER + "gallerypopups.php?gid="
+                    + gid + "&t=" + token + "&act=addfav";
+        default:
+            return G_HEADER + "gallerypopups.php?gid="
+                    + gid + "&t=" + token + "&act=addfav";
+        }
+    }
+    
+    /**
+     * 
+     * @param gid
+     * @param token
+     * @param cat -1 for delete, number bigger than 9 or smaller than -1 go to 0
+     * @param note max 250 characters
+     * @param listener
+     */
+    public void addToFavorite(final int gid, final String token,
+            final int cat, final String note,
+            final OnAddToFavoriteListener listener) {
+        
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpHelper hp = new HttpHelper(mAppContext);
+                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
+                    @Override
+                    public void onSuccess(String pageContext) {
+                        
+                        AddToFavoriteParser parser = new AddToFavoriteParser();
+                        if (parser.parser(pageContext)) {
+                            listener.onSuccess();
+                        } else {
+                            listener.onFailure("parser error");   // TODO
+                        }
+                    }
+                    @Override
+                    public void onFailure(String eMsg) {
+                        listener.onFailure(eMsg);
+                    }
+                });
+                
+                String catStr;
+                if (cat == -1)
+                    catStr = "favdel";
+                else if (cat >= 0 && cat <= 9)
+                    catStr = String.valueOf(cat);
+                else
+                    catStr = "0";
+                
+                // submit=Add+to+Favorites is not necessary, just use submit=Apply+Changes all the time
+                hp.post(getAddFavouriteUrl(gid, token), new String[][]{
+                        new String[]{"favcat", catStr},
+                        new String[]{"favnote", note == null ? "" : note},
+                        new String[]{"submit", "Apply Changes"}});
+            }
+        }).start();
+    }
+    
     
     /*
     private static class GetGalleryMetadataPackage {
@@ -1844,7 +1915,6 @@ public class EhClient {
     */
     
     /*
-    // TODO this api does not work !!!!!!
     private static void getGalleryTokens(String gid, String token, String[] pages,
             OnGetGalleryMetadataListener listener) {
         new Thread(new GetGalleryTokensRunnable(gid, token, pages,
