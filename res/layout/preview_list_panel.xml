@@ -33,7 +33,7 @@
         android:padding="12dp"
         android:textSize="14sp"
         android:textColor="@android:color/white"
-        android:background="@android:color/holo_blue_dark"
+        android:background="@drawable/blue_bn_bg"
         android:clickable="true" />
 
     <ImageView
