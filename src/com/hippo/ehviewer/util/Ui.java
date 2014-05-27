@@ -51,6 +51,8 @@ public class Ui {
     private static Resources mResources;
     private static final BitmapFactory.Options opt = new BitmapFactory.Options();
     
+    private static float mDensity;
+    
     public static int HOLO_BLUE_DARK;
     public static int LIST_MAIN_BG;
     
@@ -87,6 +89,9 @@ public class Ui {
         opt.inInputShareable = true;
         
         mResources = mContext.getResources();
+        
+        mDensity = mResources.getDisplayMetrics().density;
+        
         // init color
         HOLO_BLUE_DARK = mResources.getColor(android.R.color.holo_blue_dark);
         LIST_MAIN_BG = mResources.getColor(R.color.list_main_bg);
@@ -176,11 +181,11 @@ public class Ui {
      * @return value in pix
      */
     public static int dp2pix(float dp) {
-        return (int) (mContext.getResources().getDisplayMetrics().density * dp + 0.5f);
+        return (int) (mDensity * dp + 0.5f);
     }
     
     public static float pix2dp(int pix) {
-        return pix/mContext.getResources().getDisplayMetrics().density;
+        return pix/mDensity;
     }
     
     /**
@@ -217,15 +222,6 @@ public class Ui {
         if (sbhResourceId > 0)
             return resources.getDimensionPixelSize(sbhResourceId);
         else return 0;
-    }
-    
-    /**
-     * Get height of action bar
-     * @return
-     */
-    public static int getActionBarHeight() {
-        // TODO
-        return Ui.dp2pix(48);
     }
     
     /**
