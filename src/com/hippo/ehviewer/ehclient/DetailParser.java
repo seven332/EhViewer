@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.PreviewList;
+import com.hippo.ehviewer.util.Log;
 
 public class DetailParser {
     
@@ -47,6 +48,9 @@ public class DetailParser {
     
     private int mMode;
     
+    public String thumb;
+    public String title;
+    public String title_jpn;
     public int category;
     public String uploader;
     public String posted;
@@ -85,29 +89,54 @@ public class DetailParser {
         // Get detail
         if ((mMode & DETAIL) != 0) {
             p = Pattern
-                    .compile("<div id=\"gdc\"><a href=\"[^<>\"]+\"><img[^<>]*alt=\"([\\w|\\-]+)\"[^<>]*/></a></div><div id=\"gdn\"><a href=\"[^<>\"]+\">([^<>]+)</a>.+Posted:</td><td[^<>]*>([\\w|\\-|\\s|:]+)</td></tr><tr><td[^<>]*>Images:</td><td[^<>]*>([\\d]+) @ ([\\w|\\.|\\s]+)</td></tr><tr><td[^<>]*>Resized:</td><td[^<>]*>([^<>]+)</td></tr><tr><td[^<>]*>Parent:</td><td[^<>]*>(?:<a[^<>]*>)?([^<>]+)(?:</a>)?</td></tr><tr><td[^<>]*>Visible:</td><td[^<>]*>([^<>]+)</td></tr><tr><td[^<>]*>Language:</td><td[^<>]*>([^<>]+)</td></tr>(?:</tbody>)?</table></div><div[^<>]*><table>(?:<tbody>)?<tr><td[^<>]*>Rating:</td><td[^<>]*><div[^<>]*style=\"([^<>]+)\"[^<>]*><img[^<>]*></div></td><td[^<>]*>\\(<span[^<>]*>([\\d]+)</span>\\)</td></tr><tr><td[^<>]*>([^<>]+)</td>.+<p class=\"ip\">Showing ([\\d|,]+) - ([\\d|,]+) of ([\\d|,]+) images</p>.+<div id=\"gdt\"><div[^<>]*>(?:<div[^<>]*>)?<a[^<>]*href=\"([^<>\"]+)\"[^<>]*>");
+                    .compile("<div id=\"gd1\"><img src=\"([^\"]+)\"[^<>]+/></div>" //  thumb
+                            + "</div>"
+                            + "<div id=\"gd2\">"
+                            + "<h1 id=\"gn\">([^<>]+)</h1>" // title
+                            + "<h1 id=\"gj\">([^<>]*)</h1>" // title_jpn might be empty string
+                            + "</div>"
+                            + ".+"
+                            + "<div id=\"gdc\"><a[^<>]+><[^<>]*alt=\"([\\w|\\-]+)\"[^<>]*/></a></div>" // category
+                            + "<div id=\"gdn\"><a[^<>]+>([^<>]+)</a>" // uploader
+                            + ".+"
+                            + "<tr><td[^<>]*>Posted:</td><td[^<>]*>([\\w|\\-|\\s|:]+)</td></tr>" // posted
+                            + "<tr><td[^<>]*>Images:</td><td[^<>]*>([\\d]+) @ ([\\w|\\.|\\s]+)</td></tr>" // pages and size
+                            + "<tr><td[^<>]*>Resized:</td><td[^<>]*>([^<>]+)</td></tr>" // resized
+                            + "<tr><td[^<>]*>Parent:</td><td[^<>]*>(?:<a[^<>]*>)?([^<>]+)(?:</a>)?</td></tr>" // parent
+                            + "<tr><td[^<>]*>Visible:</td><td[^<>]*>([^<>]+)</td></tr>" // visible
+                            + "<tr><td[^<>]*>Language:</td><td[^<>]*>([^<>]+)</td></tr>" // language
+                            + ".+"
+                            + "<td id=\"grt3\">\\(<span id=\"rating_count\">([\\d]+)</span>\\)</td>" // people
+                            + "</tr>"
+                            + "<tr><td[^<>]*>([^<>]+)</td>" // rating
+                            + ".+"
+                            + "<div id=\"gdt\"><div[^<>]*>(?:<div[^<>]*>)?<a[^<>]*href=\"([^<>\"]+)\"[^<>]*>"); // get firstPage
             m = p.matcher(pageContent);
             if (m.find()) {
                 re |= DETAIL;
-                category = getType(m.group(1));
-                uploader = m.group(2);
-                posted = m.group(3);
-                pages = Integer.parseInt(m.group(4));
-                size = m.group(5);
-                resized = m.group(6);
-                parent = m.group(7);
-                visible = m.group(8);
-                language = m.group(9);
-                people = Integer.parseInt(m.group(11));
+                
+                thumb = m.group(1);
+                title = m.group(2);
+                title_jpn = m.group(3);
+                category = getType(m.group(4));
+                uploader = m.group(5);
+                posted = m.group(6);
+                pages = Integer.parseInt(m.group(7));
+                size = m.group(8);
+                resized = m.group(9);
+                parent = m.group(10);
+                visible = m.group(11);
+                language = m.group(12);
+                people = Integer.parseInt(m.group(13));
                 
                 Pattern pattern = Pattern.compile("([\\d|\\.]+)");
-                Matcher matcher = pattern.matcher(m.group(12));
+                Matcher matcher = pattern.matcher(m.group(14));
                 if (matcher.find())
                     rating = Float.parseFloat(matcher.group(1));
                 else
                     rating = Float.NaN;
                 
-                firstPage = m.group(16);
+                firstPage = m.group(15);
             }
         }
         // Get tag

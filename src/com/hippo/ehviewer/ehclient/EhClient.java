@@ -802,6 +802,9 @@ public class EhClient {
                     md.firstPage = "pining";
                 } else if ((result & (DetailParser.DETAIL | DetailParser.PREVIEW_INFO)) != 0) {
                     ok = true;
+                    md.thumb = parser.thumb;
+                    md.title = parser.title;
+                    md.title_jpn = parser.title_jpn;
                     md.category = parser.category;
                     md.uploader = parser.uploader;
                     md.posted = parser.posted;

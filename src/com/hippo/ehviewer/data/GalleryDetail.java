@@ -23,6 +23,7 @@ import java.util.List;
 
 public class GalleryDetail extends GalleryInfo{
     
+    public String title_jpn;
     public int pages;
     public String size;
     public String resized;
