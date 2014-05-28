@@ -447,6 +447,36 @@ public class EhClient {
         });
     }
     
+    // Test Ex
+    
+    public interface OnTestExListener {
+        public void onSuccess();
+        public void onFailure(String eMsg);
+    }
+    
+    public void testEx(final OnTestExListener listener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpHelper hp = new HttpHelper(mAppContext);
+                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
+                    @Override
+                    public void onSuccess(String pageContext) {
+                        if (pageContext.equals("image/gif"))
+                            listener.onFailure("Not login");
+                        else
+                            listener.onSuccess();
+                    }
+                    @Override
+                    public void onFailure(String eMsg) {
+                        listener.onFailure(eMsg);
+                    }
+                });
+                hp.contentType(EX_HEADER);
+            }
+        }).start();
+    }
+    
     // Logout
     private class LogoutPackage {
         public boolean ok;

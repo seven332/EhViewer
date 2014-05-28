@@ -116,31 +116,35 @@ public class HttpHelper {
      * @return
      */
     public String getEMsg() {
-        if (mException == null)
-            return mContext.getString(R.string.em_unknown_error);
+        return getEMsg(mContext, mException);
+    }
+    
+    public static String getEMsg(Context c, Exception e) {
+        if (e == null)
+            return c.getString(R.string.em_unknown_error);
         
-        else if (mException instanceof MalformedURLException)
-            return mContext.getString(R.string.em_url_format_error);
+        else if (e instanceof MalformedURLException)
+            return c.getString(R.string.em_url_format_error);
         
-        else if (mException instanceof ConnectTimeoutException ||
-                mException instanceof SocketTimeoutException)
-            return mContext.getString(R.string.em_timeout);
+        else if (e instanceof ConnectTimeoutException ||
+                e instanceof SocketTimeoutException)
+            return c.getString(R.string.em_timeout);
         
-        else if (mException instanceof UnknownHostException)
-            return mContext.getString(R.string.em_unknown_host);
+        else if (e instanceof UnknownHostException)
+            return c.getString(R.string.em_unknown_host);
         
-        else if (mException instanceof ResponseCodeException)
-            return String.format(mContext.getString(R.string.em_unexpected_response_code),
-                    ((ResponseCodeException)mException).getResponseCode());
+        else if (e instanceof ResponseCodeException)
+            return String.format(c.getString(R.string.em_unexpected_response_code),
+                    ((ResponseCodeException)e).getResponseCode());
         
-        else if (mException instanceof RedirectionException)
-            return mContext.getString(R.string.em_redirection_error);
+        else if (e instanceof RedirectionException)
+            return c.getString(R.string.em_redirection_error);
         
-        else if (mException instanceof SocketException)
-            return "SocketException : " + mException.getMessage();
+        else if (e instanceof SocketException)
+            return "SocketException : " + e.getMessage();
         
         else
-            return mException.getMessage();
+            return e.getMessage();
     }
     
     private String getPageContext(HttpURLConnection conn)
@@ -232,6 +236,59 @@ public class HttpHelper {
                 default:
                     throw new ResponseCodeException(responseCode);
                 }
+            }
+        }  catch (Exception e) {
+            mException = e;
+            e.printStackTrace();
+            
+            if (msg != null) {
+                Package p = new Package();
+                p.listener = mListener;
+                p.str = getEMsg();
+                msg.obj = p;
+                msg.what = Constants.FALSE;
+                mHandler.sendMessage(msg);
+            }
+            return null;
+        } finally {
+            if (conn != null)
+                conn.disconnect();
+        }
+        
+        mException = new RedirectionException();
+        return null;
+    }
+    
+    public String contentType(String urlStr) {
+        mException = null;
+        
+        int redirectionCount = 0;
+        URL url = null;
+        HttpURLConnection conn = null;
+        Message msg = null;
+        if (mListener != null)
+            msg = new Message();
+        try {
+            
+            Log.d(TAG, "Http head " + urlStr);
+            
+            url = new URL(urlStr);
+            while (redirectionCount++ < Constant.MAX_REDIRECTS) {
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setInstanceFollowRedirects(true);
+                conn.connect();
+                
+                String contentType = conn.getHeaderField("Content-Type");
+                contentType = contentType == null ? "" : contentType;
+                if (msg != null) {
+                    Package p = new Package();
+                    p.listener = mListener;
+                    p.str = contentType;
+                    msg.obj = p;
+                    msg.what = Constants.TRUE;
+                    mHandler.sendMessage(msg);
+                }
+                return contentType;
             }
         }  catch (Exception e) {
             mException = e;
