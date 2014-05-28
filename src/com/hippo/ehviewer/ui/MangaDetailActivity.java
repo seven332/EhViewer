@@ -37,6 +37,8 @@ import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -126,9 +128,15 @@ public class MangaDetailActivity extends AbstractFragmentActivity
         
         handleIntent(getIntent());
         
+        int color = getResources().getColor(android.R.color.holo_blue_dark)
+                & 0x00ffffff | 0xdd000000;
+        Drawable drawable = new ColorDrawable(color);
+        Ui.translucent(this, drawable);
+        
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setBackgroundDrawable(drawable);
         
         SectionsPagerAdapter adapter = 
                 new SectionsPagerAdapter(getSupportFragmentManager());
@@ -151,7 +159,6 @@ public class MangaDetailActivity extends AbstractFragmentActivity
         Intent it = new Intent(MangaDetailActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
         
-        Ui.translucent(this);
         setTitle(String.valueOf(mGalleryInfo.gid));
     }
     
