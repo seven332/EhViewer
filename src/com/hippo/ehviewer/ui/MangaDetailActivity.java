@@ -220,9 +220,35 @@ public class MangaDetailActivity extends AbstractFragmentActivity
             }
             return true;
         case R.id.action_info:
-            // TODO
-            Toast.makeText(MangaDetailActivity.this, getString(R.string.unfinished),
-                    Toast.LENGTH_SHORT).show();
+            if (mGalleryDetail.language == null) {
+                Toast.makeText(MangaDetailActivity.this,
+                        getString(R.string.wait),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                
+                new DialogBuilder(this).setTitle(R.string.info)
+                .setLongMessage(
+                        "gid : " + mGalleryDetail.gid + "\n\n" +
+                        "token : " + mGalleryDetail.token + "\n\n" +
+                        "title : " + mGalleryDetail.title + "\n\n" +
+                        "title_jpn : " + mGalleryDetail.title_jpn + "\n\n" +
+                        "thumb : " + mGalleryDetail.thumb + "\n\n" +
+                        "category : " + EhClient.getType(mGalleryDetail.category) + "\n\n" +
+                        "uploader : " + mGalleryDetail.uploader + "\n\n" +
+                        "posted : " + mGalleryDetail.posted + "\n\n" +
+                        "pages : " + mGalleryDetail.pages + "\n\n" +
+                        "size : " + mGalleryDetail.size + "\n\n" +
+                        "resized : " + mGalleryDetail.resized + "\n\n" +
+                        "parent : " + mGalleryDetail.parent + "\n\n" +
+                        "visible : " + mGalleryDetail.visible + "\n\n" +
+                        "language : " + mGalleryDetail.language + "\n\n" +
+                        "people : " + mGalleryDetail.people + "\n\n" +
+                        "rating : " + mGalleryDetail.rating)
+                        .setMessageSelectable()
+                        .setSimpleNegativeButton().create().show();
+                
+                
+            }
             return true;
         case R.id.action_reply:
             final EditText et = new EditText(this);

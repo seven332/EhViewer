@@ -118,7 +118,7 @@ public class DetailParser {
                 thumb = m.group(1);
                 title = m.group(2);
                 title_jpn = m.group(3);
-                category = getType(m.group(4));
+                category = EhClient.getType(m.group(4));
                 uploader = m.group(5);
                 posted = m.group(6);
                 pages = Integer.parseInt(m.group(7));
@@ -213,32 +213,7 @@ public class DetailParser {
             return list;
     }
     
-    private int getType(String rawType) {
-        int type;
-        if (rawType.equalsIgnoreCase("doujinshi"))
-            type = ListUrls.DOUJINSHI;
-        else if (rawType.equalsIgnoreCase("manga"))
-            type = ListUrls.MANGA;
-        else if (rawType.equalsIgnoreCase("artistcg"))
-            type = ListUrls.ARTIST_CG;
-        else if (rawType.equalsIgnoreCase("gamecg"))
-            type = ListUrls.GAME_CG;
-        else if (rawType.equalsIgnoreCase("western"))
-            type = ListUrls.WESTERN;
-        else if (rawType.equalsIgnoreCase("non-h"))
-            type = ListUrls.NON_H;
-        else if (rawType.equalsIgnoreCase("imageset"))
-            type = ListUrls.IMAGE_SET;
-        else if (rawType.equalsIgnoreCase("cosplay"))
-            type = ListUrls.COSPLAY;
-        else if (rawType.equalsIgnoreCase("asianporn"))
-            type = ListUrls.ASIAN_PORN;
-        else if (rawType.equalsIgnoreCase("misc"))
-            type = ListUrls.MISC;
-        else
-            type = ListUrls.UNKNOWN;
-        return type;
-    }
+    
     
     static class CommentSort implements Comparator<Comment> {
         private int compareNum(String n1, String n2, int median) {

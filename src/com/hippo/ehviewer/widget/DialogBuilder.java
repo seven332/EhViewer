@@ -117,6 +117,12 @@ public class DialogBuilder extends AlertDialog.Builder {
         return this;
     }
     
+    public DialogBuilder setMessageSelectable() {
+        TextView messageView = (TextView)mView.findViewById(R.id.message);
+        messageView.setTextIsSelectable(true);
+        return this;
+    }
+    
     /**
      * Set the view to display in that dialog.
      * @return 

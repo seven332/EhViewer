@@ -698,34 +698,7 @@ public class EhClient {
             }
         });
     }
-
-    private static int getType(String rawType) {
-        int type;
-        if (rawType.equalsIgnoreCase("doujinshi"))
-            type = ListUrls.DOUJINSHI;
-        else if (rawType.equalsIgnoreCase("manga"))
-            type = ListUrls.MANGA;
-        else if (rawType.equalsIgnoreCase("artistcg"))
-            type = ListUrls.ARTIST_CG;
-        else if (rawType.equalsIgnoreCase("gamecg"))
-            type = ListUrls.GAME_CG;
-        else if (rawType.equalsIgnoreCase("western"))
-            type = ListUrls.WESTERN;
-        else if (rawType.equalsIgnoreCase("non-h"))
-            type = ListUrls.NON_H;
-        else if (rawType.equalsIgnoreCase("imageset"))
-            type = ListUrls.IMAGE_SET;
-        else if (rawType.equalsIgnoreCase("cosplay"))
-            type = ListUrls.COSPLAY;
-        else if (rawType.equalsIgnoreCase("asianporn"))
-            type = ListUrls.ASIAN_PORN;
-        else if (rawType.equalsIgnoreCase("misc"))
-            type = ListUrls.MISC;
-        else
-            type = ListUrls.UNKNOWN;
-        return type;
-    }
-
+    
     private static String getRate(String rawRate) {
         Pattern p = Pattern.compile("\\d+px");
         Matcher m = p.matcher(rawRate);
@@ -1743,6 +1716,52 @@ public class EhClient {
                         new String[]{"submit", "Apply Changes"}});
             }
         }).start();
+    }
+    
+    private static int CATEGORY_VALUES[] = {
+        ListUrls.MISC,
+        ListUrls.DOUJINSHI,
+        ListUrls.MANGA,
+        ListUrls.ARTIST_CG,
+        ListUrls.GAME_CG,
+        ListUrls.IMAGE_SET,
+        ListUrls.COSPLAY,
+        ListUrls.ASIAN_PORN,
+        ListUrls.NON_H,
+        ListUrls.WESTERN,
+        ListUrls.UNKNOWN
+    };
+    
+    private static String CATEGORY_STRINGS[] = {
+        "misc",
+        "doujinshi",
+        "manga",
+        "artistcg",
+        "gamecg",
+        "imageset",
+        "cosplay",
+        "asianporn",
+        "non-h",
+        "western",
+        "unknown"
+    };
+    
+    public static int getType(String type) {
+        int i;
+        for (i = 0; i < CATEGORY_STRINGS.length - 1; i++) {
+            if (CATEGORY_STRINGS[i].equals(type))
+                break;
+        }
+        return CATEGORY_VALUES[i];
+    }
+    
+    public static String getType(int type) {
+        int i;
+        for (i = 0; i < CATEGORY_VALUES.length - 1; i++) {
+            if (CATEGORY_VALUES[i] == type)
+                break;
+        }
+        return CATEGORY_STRINGS[i];
     }
     
     
