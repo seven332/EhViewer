@@ -31,7 +31,7 @@ public class ListParser {
     public static final int SAD_PANDA = 0x3;
     public static final int PARSER_ERROR = -1;
     
-    public int indexPerPage;
+    public int indexPerPage = 25;
     public int maxPage;
     
     public ArrayList<GalleryInfo> giList;
@@ -49,8 +49,6 @@ public class ListParser {
             int maxIndex = Integer.parseInt(m.group(3).replace(",", ""));
             if (endIndex != maxIndex || startIndex == 1)
                 indexPerPage = endIndex - startIndex + 1;
-            else
-                indexPerPage = 25; // default
             maxPage = (maxIndex + indexPerPage - 1) / indexPerPage;
         } else if (pageContext.contains("No hits found</p></div>")) {
             maxPage = 0;

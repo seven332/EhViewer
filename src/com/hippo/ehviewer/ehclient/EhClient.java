@@ -589,7 +589,11 @@ public class EhClient {
                     break;
                 case ListParser.NOT_FOUND:
                     maxPage = 0;
+                    indexPerPage = parser.indexPerPage;
+                    lmdArray = new ArrayList<GalleryInfo>();
                     break;
+                case ListParser.PARSER_ERROR:
+                    eMsg = "parser error";
                 }
             } else
                 eMsg = hp.getEMsg();
