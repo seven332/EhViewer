@@ -106,7 +106,7 @@ public class DetailParser {
                             + "<tr><td[^<>]*>Visible:</td><td[^<>]*>([^<>]+)</td></tr>" // visible
                             + "<tr><td[^<>]*>Language:</td><td[^<>]*>([^<>]+)</td></tr>" // language
                             + ".+"
-                            + "<td id=\"grt3\">\\(<span id=\"rating_count\">([\\d]+)</span>\\)</td>" // people
+                            + "<td id=\"grt3\">\\(<span id=\"rating_count\">([\\d|,]+)</span>\\)</td>" // people
                             + "</tr>"
                             + "<tr><td[^<>]*>([^<>]+)</td>" // rating
                             + ".+"
@@ -127,7 +127,7 @@ public class DetailParser {
                 parent = m.group(10);
                 visible = m.group(11);
                 language = m.group(12);
-                people = Integer.parseInt(m.group(13));
+                people = Integer.parseInt(m.group(13).replace(",", ""));
                 
                 Pattern pattern = Pattern.compile("([\\d|\\.]+)");
                 Matcher matcher = pattern.matcher(m.group(14));

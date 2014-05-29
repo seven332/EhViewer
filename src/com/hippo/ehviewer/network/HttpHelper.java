@@ -42,6 +42,7 @@ import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.exception.RedirectionException;
 import com.hippo.ehviewer.exception.ResponseCodeException;
+import com.hippo.ehviewer.exception.SadPandaException;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
@@ -143,6 +144,9 @@ public class HttpHelper {
         else if (e instanceof SocketException)
             return "SocketException : " + e.getMessage();
         
+        else if (e instanceof SadPandaException)
+            return "Sad Panda";
+        
         else
             return e.getMessage();
     }
@@ -214,6 +218,11 @@ public class HttpHelper {
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
+                    // Test sad panda
+                    String contentType = conn.getHeaderField("Content-Type");
+                    if (contentType != null && contentType.equals("image/gif"))
+                        throw new SadPandaException();
+                    
                     String pageContext = getPageContext(conn);
                     if (msg != null) {
                         Package p = new Package();
@@ -364,6 +373,11 @@ public class HttpHelper {
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
+                    // Test sad panda
+                    String contentType = conn.getHeaderField("Content-Type");
+                    if (contentType != null && contentType.equals("image/gif"))
+                        throw new SadPandaException();
+                    
                     String pageContext = getPageContext(conn);
                     if (msg != null) {
                         Package p = new Package();
@@ -538,6 +552,11 @@ public class HttpHelper {
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
+                    // Test sad panda
+                    String contentType = conn.getHeaderField("Content-Type");
+                    if (contentType != null && contentType.equals("image/gif"))
+                        throw new SadPandaException();
+                    
                     String pageContext = getPageContext(conn);
                     if (msg != null) {
                         Package p = new Package();

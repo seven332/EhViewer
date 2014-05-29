@@ -580,134 +580,22 @@ public class EhClient {
             String pageContent = hp.get(url);
 
             if (pageContent != null) {
-                boolean getPageCount = false;
-                
-                // Get indexPerPage and maxPage
-                Pattern p = Pattern
-                        .compile("</div><p class=\"ip\" style=\"[^<>\"]+\">Showing ([\\d|,]+)-([\\d|,]+) of ([\\d|,]+)</p>");
-                Matcher m = p.matcher(pageContent);
-                if (m.find() && m.groupCount() == 3) {
-                    int startIndex = Integer.parseInt(m.group(1).replace(",",
-                            ""));
-                    int endIndex = Integer
-                            .parseInt(m.group(2).replace(",", ""));
-                    int maxIndex = Integer
-                            .parseInt(m.group(3).replace(",", ""));
-                    if (endIndex != maxIndex)
-                        indexPerPage = endIndex - startIndex + 1;
-                    maxPage = (maxIndex + indexPerPage - 1) / indexPerPage;
-                    // To continue get list
-                    getPageCount = true;
-                } else if (pageContent.contains("No hits found</p></div>")) {
-                    lmdArray = new ArrayList<GalleryInfo>();
+                ListParser parser = new ListParser();
+                switch (parser.parser(pageContent)) {
+                case ListParser.ALL:
+                    maxPage = parser.maxPage;
+                    indexPerPage = parser.indexPerPage;
+                    lmdArray = parser.giList;
+                    break;
+                case ListParser.NOT_FOUND:
                     maxPage = 0;
-                } else if (pageContent.contains("JFIF")) { // sad panda
-                    lmdArray = new ArrayList<GalleryInfo>();
-                    maxPage = -1;
-                } else
-                    eMsg = mAppContext.getString(R.string.em_parser_error);
-
-                // Get list
-                if (getPageCount) {
-                    p = Pattern
-                            .compile("alt=\"([\\w|\\-]+)\"[^<>]*/></a></td><td[^<>]*>([\\w|\\-|\\s|:]+)</td><td[^<>]*><div[^<>]*><div[^<>]+>(?:<img[^<>]*src=\"([^<>\"]+)\"[^<>]*alt=\"([^<>]+)\" style[^<>]*/>|init~([^<>\"~]+~[^<>\"~]+)~([^<>]+))</div>(?:<div[^<>]*>(?:<div[^<>]*><img[^<>]*/></div>)?(?:<div[^<>]*>(?:<a[^<>]*>)?<img[^<>]*/>(?:</a>)?</div>)?</div>)?<div[^<>]*><a[^<>\"]*href=\"([^<>\"]*)\"[^<>]*>([^<>]+)</a></div><div[^<>]*><div[^<>]*style=\"([^<>\"]+)\"></div>\\s*</div></div></td><td[^<>]*><div><a[^<>]*>([^<>]+)</a></div></td>");
-                    m = p.matcher(pageContent);
-
-                    while (m.find()) {
-                        if (lmdArray == null)
-                            lmdArray = new ArrayList<GalleryInfo>();
-                        GalleryInfo lmd = new GalleryInfo();
-
-                        lmd.category = getType(m.group(1));
-                        lmd.posted = m.group(2);
-                        if (m.group(3) == null) {
-                            lmd.thumb = "http://"
-                                    + m.group(5).replace('~', '/');
-                            lmd.title = StringEscapeUtils.unescapeHtml4(m
-                                    .group(6));
-                        } else {
-                            lmd.thumb = m.group(3);
-                            lmd.title = StringEscapeUtils.unescapeHtml4(m
-                                    .group(4));
-                        }
-                        // http://g.e-hentai.org/g/671107/b726a0b986/
-
-                        // Get gid and token
-                        Pattern pattern = Pattern
-                                .compile("/(\\d+)/(\\w+)");
-                        Matcher matcher = pattern.matcher(m.group(7));
-                        if (matcher.find()) {
-                            lmd.gid = Integer.parseInt(matcher.group(1));
-                            lmd.token = matcher.group(2);
-                        } else
-                            continue;
-                        
-                        String temp = StringEscapeUtils.unescapeHtml4(m
-                                .group(8));
-                        if (!lmd.title.equals(temp)) {
-                            Log.w(TAG,
-                                    "Maybe parser error, !lmd.name.equals(temp)");
-                            Log.w(TAG, "first is " + lmd.title);
-                            Log.w(TAG, "second is " + temp);
-                            lmd.title = temp;
-                        }
-                        lmd.rating = Float.parseFloat(getRate(m.group(9)));
-                        lmd.uploader = m.group(10);
-                        lmdArray.add(lmd);
-                    }
-                    if (lmdArray == null)
-                        eMsg = mAppContext.getString(R.string.em_parser_error);
+                    break;
                 }
             } else
                 eMsg = hp.getEMsg();
         }
     }
     
-    /*
-    public void vote(final int gid, final String token,
-            final String group, final String tag,
-            final boolean isUp, final OnVoteListener listener) {
-        final JSONObject json = new JSONObject();
-        try {
-            json.put("method", "taggallery");
-            json.put("apiuid", APIUID);
-            json.put("apikey", APIKEY);
-            json.put("gid", gid);
-            json.put("token", token);
-            json.put("tags", group + ":" + tag);
-            if (isUp)
-                json.put("token", 1);
-            else
-                json.put("token", -1);
-        } catch (JSONException e) {
-            listener.onFailure(e.getMessage());
-            return;
-        }
-        
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpHelper hp = new HttpHelper(mAppContext);
-                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
-                    @Override
-                    public void onSuccess(String pageContext) {
-                        VoteParser parser = new VoteParser();
-                        if (parser.parser(pageContext)) {
-                            listener.onSuccess(parser.mTagPane);
-                        } else {
-                            listener.onFailure("parser error");   // TODO
-                        }
-                    }
-                    @Override
-                    public void onFailure(String eMsg) {
-                        listener.onFailure(eMsg);
-                    }
-                });
-                hp.postJson(E_API, json);
-            }
-        }).start();
-    }
-    */
     public void getMangaList(String url, final Object checkFlag,
             final OnGetMangaListListener listener) {
         
