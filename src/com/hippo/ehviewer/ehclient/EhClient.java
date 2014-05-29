@@ -1687,6 +1687,63 @@ public class EhClient {
     }
     
     
+    // modifyFavorite
+    public interface OnModifyFavoriteListener {
+        void onSuccess();
+        void onFailure(String eMsg);
+    }
+    
+    public String getModifyFavoriteUrl() {
+        return getModifyFavoriteUrl(Config.getMode());
+    }
+    
+    public String getModifyFavoriteUrl(int mode) {
+        switch (mode) {
+        case EX:
+            return EX_HEADER + "favorites.php";
+        default:
+            return G_HEADER + "favorites.php";
+        }
+    }
+    
+    public void modifyFavorite(final int[] gids, final int cat,
+            final OnAddToFavoriteListener listener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int i;
+                
+                HttpHelper hp = new HttpHelper(mAppContext);
+                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
+                    @Override
+                    public void onSuccess(String pageContext) {
+                        listener.onSuccess();
+                    }
+                    @Override
+                    public void onFailure(String eMsg) {
+                        listener.onFailure(eMsg);
+                    }
+                });
+                
+                String catStr;
+                if (cat == -1)
+                    catStr = "delete";
+                else if (cat >= 0 && cat <= 9)
+                    catStr = "fav" + String.valueOf(cat);
+                else
+                    catStr = "fav0";
+                
+                String[][] args = new String[gids.length + 2][];
+                args[0] = new String[]{"ddact", catStr};
+                for (i = 1; i <= gids.length; i++)
+                    args[i] = new String[]{"modifygids[]", String.valueOf(gids[i-1])};
+                args[i] = new String[]{"apply", "Apply"};
+                
+                hp.post(getModifyFavoriteUrl(), args);
+            }
+        }).start();
+    }
+    
     /*
     private static class GetGalleryMetadataPackage {
         public Map<String, ListMangaDetail> lmds;
