@@ -30,6 +30,8 @@ import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Build;
 
 public class Util {
     @SuppressWarnings("unused")
@@ -222,5 +224,28 @@ public class Util {
             sizeFloat /= 1024;
         }
         return null;
+    }
+    
+    /**
+     * Execute an {@link AsyncTask} on a thread pool
+     * 
+     * @param forceSerial True to force the task to run in serial order
+     * @param task Task to execute
+     * @param args Optional arguments to pass to
+     *            {@link AsyncTask#execute(Object[])}
+     * @param <T> Task argument type
+     */
+    @SuppressLint("NewApi")
+    public static <T> void execute(final boolean forceSerial, final AsyncTask<T, ?, ?> task,
+            final T... args) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.DONUT) {
+            throw new UnsupportedOperationException(
+                    "This class can only be used on API 4 and newer.");
+        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB || forceSerial) {
+            task.execute(args);
+        } else {
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, args);
+        }
     }
 }
