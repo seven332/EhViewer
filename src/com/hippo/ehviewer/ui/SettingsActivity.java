@@ -352,10 +352,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 } else {
                     try {
                         nomedia.createNewFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return false;
-                    }
+                    } catch (IOException e) {}
                 }
             }
             
@@ -422,7 +419,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                             
                             // Update .nomedia file
                             // TODO Should I delete .nomedia in old download dir ?
-                            if (Config.getMediaScan()) {
+                            if (!Config.getMediaScan()) {
                                 try {
                                     new File(Config.getDownloadPath(), ".nomedia").createNewFile();
                                 } catch (IOException e) {
