@@ -41,15 +41,10 @@ public class ListParser {
         Pattern p;
         Matcher m;
         
-        p = Pattern.compile("<p class=\"ip\" style=\"[^<>\"]+\">Showing ([\\d|,]+)-([\\d|,]+) of ([\\d|,]+)</p>");
+        p = Pattern.compile("<a[^<>]+>([\\d]+)</a></td><td[^<>]+>(?:<a[^<>]+>)?&");
         m = p.matcher(pageContext);
         if (m.find()) {
-            int startIndex = Integer.parseInt(m.group(1).replace(",", ""));
-            int endIndex = Integer.parseInt(m.group(2).replace(",", ""));
-            int maxIndex = Integer.parseInt(m.group(3).replace(",", ""));
-            if (endIndex != maxIndex || startIndex == 1)
-                indexPerPage = endIndex - startIndex + 1;
-            maxPage = (maxIndex + indexPerPage - 1) / indexPerPage;
+            maxPage = Integer.parseInt(m.group(1));
         } else if (pageContext.contains("No hits found</p></div>")) {
             maxPage = 0;
             return NOT_FOUND;
@@ -100,7 +95,7 @@ public class ListParser {
             gi.uploader = m.group(10);
             giList.add(gi);
         }
-        
+        indexPerPage = giList.size();
         return ALL;
     }
     
