@@ -36,7 +36,7 @@ import android.widget.TextView;
  * @author Hippo
  *
  */
-public class HfListView extends SwipeRefreshLayout
+public class HfListView extends SuperSwipeRefreshLayout
         implements AbsListView.OnScrollListener {
     
     private final static int FOOTER_REFRESHING = 0;

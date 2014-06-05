@@ -41,6 +41,7 @@ public class FswView extends View {
     
     public void init() {
         mListeners = new LinkedList<OnFitSystemWindowsListener>();
+        setFitsSystemWindows(true);
         setVisibility(View.GONE);
     }
     

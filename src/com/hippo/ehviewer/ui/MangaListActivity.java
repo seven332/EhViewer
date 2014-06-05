@@ -52,13 +52,14 @@ import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.PrefixEditText;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
+import com.hippo.ehviewer.widget.SuperSwipeRefreshLayout;
 import com.hippo.ehviewer.widget.TagListView;
 import com.hippo.ehviewer.widget.TagsAdapter;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -69,7 +70,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -1278,7 +1278,13 @@ public class MangaListActivity extends AbstractSlidingActivity
             }
         });
         
-        Ui.translucent(this);
+        int color = getResources().getColor(android.R.color.holo_blue_dark)
+                & 0x00ffffff | 0xdd000000;
+        Drawable drawable = new ColorDrawable(color);
+        Ui.translucent(this, drawable);
+        
+        final ActionBar actionBar = getActionBar();
+        actionBar.setBackgroundDrawable(drawable);
         
         // Download service
         Intent it = new Intent(MangaListActivity.this, DownloadService.class);
@@ -1464,7 +1470,7 @@ public class MangaListActivity extends AbstractSlidingActivity
         // Pull list view
         // Setup ActionBarPullToRefresh
         mHlv.setColorScheme(R.color.refresh_color_1, R.color.refresh_color_2, R.color.refresh_color_3, R.color.refresh_color_4);
-        mHlv.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mHlv.setOnRefreshListener(new SuperSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 if (firstPage != 0) {
@@ -1534,10 +1540,9 @@ public class MangaListActivity extends AbstractSlidingActivity
                 mFswPaddingRight = paddingRight;
                 mFswPaddingBottom = paddingBottom;
                 
-                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)mHlv.getLayoutParams();
-                lp.topMargin = mFswPaddingTop;
-                mMainList.setPadding(mMainList.getPaddingLeft(), mMainList.getPaddingTop(),
+                mMainList.setPadding(mMainList.getPaddingLeft(), mFswPaddingTop,
                         mMainList.getPaddingRight(), mFswPaddingBottom);
+                mHlv.setProgressBarTop(mFswPaddingTop);
                 mUserPanel.setPadding(mUserPanel.getPaddingLeft(), mFswPaddingTop,
                         mUserPanel.getPaddingRight(), mUserPanel.getPaddingBottom());
                 itemListMenu.setPadding(itemListMenu.getPaddingLeft(), itemListMenu.getPaddingTop(),

@@ -20,8 +20,7 @@
     <com.hippo.ehviewer.widget.FswView
         android:id="@+id/alignment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true" />
+        android:layout_height="match_parent" />
     
     <com.hippo.ehviewer.widget.HfListView
         android:id="@+id/list_list"
