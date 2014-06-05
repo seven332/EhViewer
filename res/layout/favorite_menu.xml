@@ -13,12 +13,12 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    
-    <PreferenceCategory android:title="@string/develop" >
-        <Preference
-            android:key="preference_remove_all_noification"
-            android:title="点击移除所有通知" />
-    </PreferenceCategory>
-    
-</PreferenceScreen>
+ <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/favorite_menu_list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/holo_blue_dark"
+    android:clickable="true"
+    android:divider="@color/detail_divider"
+    android:dividerHeight="1.0dp"
+    android:scrollbarThumbVertical="@drawable/scrollbar_white" />

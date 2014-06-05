@@ -28,7 +28,6 @@ public class ListParser {
     
     public static final int ALL = 0x1;
     public static final int NOT_FOUND = 0x2;
-    public static final int SAD_PANDA = 0x3;
     public static final int PARSER_ERROR = -1;
     
     public int indexPerPage = 25;
@@ -45,7 +44,7 @@ public class ListParser {
         m = p.matcher(pageContext);
         if (m.find()) {
             maxPage = Integer.parseInt(m.group(1));
-        } else if (pageContext.contains("No hits found</p></div>")) {
+        } else if (pageContext.contains("No hits found</p>")) {
             maxPage = 0;
             return NOT_FOUND;
         } else {
@@ -53,7 +52,7 @@ public class ListParser {
         }
         
         giList = new ArrayList<GalleryInfo>(indexPerPage);
-        p = Pattern.compile("<td class=\"itdc\"><a.+?><img.+?alt=\"(.+?)\".+?/></a></td>" // category
+        p = Pattern.compile("<td class=\"itdc\">(?:<a.+?>)?<img.+?alt=\"(.+?)\".+?/>(?:</a>)?</td>" // category
                 + "<td.+?>(.+?)</td>" // posted
                 + "<td.+?><div.+?><div.+?>"
                 + "(?:<img.+?src=\"(.+?)\".+?alt=\"(.+?)\" style.+?/>"

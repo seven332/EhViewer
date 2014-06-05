@@ -296,6 +296,7 @@
     <string name="rating0">DISASTER</string>
     
     <!-- Util -->
+    <string name="local">Local</string>
     <string name="tag">Tag</string>
     <string name="copyed">Copyed</string>
     <string name="send">Send</string>
@@ -323,6 +324,9 @@
     <string name="jump">Jump</string>
     <string name="some_page">Page %d</string>
     <string name="_default">Default</string>
+    <string name="delete">Delete</string>
+    <string name="move">Move</string>
+    <string name="list">List</string>
     
     <string name="homepage">Homepage</string>
     <string name="mode">Mode</string>

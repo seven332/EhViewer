@@ -292,6 +292,7 @@
     <string name="rating0">感觉快要窒息了</string>
     
     <!-- Util -->
+    <string name="local">本地</string>
     <string name="tag">标签</string>
     <string name="copyed">已复制</string>
     <string name="send">发送</string>
@@ -318,6 +319,9 @@
     <string name="jump">跳页</string>
     <string name="some_page">第 %d 页</string>
     <string name="_default">默认</string>
+    <string name="delete">删除</string>
+    <string name="move">移动</string>
+    <string name="list">列表</string>
     
     <string name="homepage">首页</string>
     <string name="mode">模式</string>

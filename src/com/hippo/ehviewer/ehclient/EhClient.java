@@ -75,6 +75,8 @@ public class EhClient {
     
     private static final String TAG = "EhClient";
     
+    public static final int FAVORITE_SLOT_NUM = 10;
+    
     public static final int G = 0x0;
     public static final int EX = 0x1;
     public static final int LOFI_460x = 0x2;
@@ -166,6 +168,19 @@ public class EhClient {
             return EX_API;
         default:
             return G_API;
+        }
+    }
+    
+    public static String getFavoriteUrl(int index) {
+        return getFavoriteUrl(Config.getMode(), index);
+    }
+    
+    public static String getFavoriteUrl(int mode, int index) {
+        switch (mode) {
+        case EX:
+            return EX_HEADER + "favorites.php?favcat=" + index;
+        default:
+            return G_HEADER  + "favorites.php?favcat=" + index;
         }
     }
     
@@ -1689,7 +1704,8 @@ public class EhClient {
     
     // modifyFavorite
     public interface OnModifyFavoriteListener {
-        void onSuccess();
+        void onSuccess(ArrayList<GalleryInfo> gis,
+                int indexPerPage, int maxPage);
         void onFailure(String eMsg);
     }
     
@@ -1706,8 +1722,14 @@ public class EhClient {
         }
     }
     
+    /**
+     * 
+     * @param gids
+     * @param cat -1 for delete
+     * @param listener
+     */
     public void modifyFavorite(final int[] gids, final int cat,
-            final OnAddToFavoriteListener listener) {
+            final OnModifyFavoriteListener listener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -1717,7 +1739,15 @@ public class EhClient {
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
                     public void onSuccess(String pageContext) {
-                        listener.onSuccess();
+                        ListParser parser = new ListParser();
+                        int re = parser.parser(pageContext);
+                        if (re == ListParser.ALL) {
+                            listener.onSuccess(parser.giList, parser.indexPerPage, parser.maxPage);
+                        } else if (re == ListParser.NOT_FOUND) {
+                            listener.onSuccess(parser.giList, parser.indexPerPage, parser.maxPage);
+                        } else if (re == ListParser.PARSER_ERROR) {
+                            listener.onFailure("parser error"); // TODO
+                        }
                     }
                     @Override
                     public void onFailure(String eMsg) {

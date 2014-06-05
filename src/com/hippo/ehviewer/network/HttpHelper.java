@@ -363,6 +363,7 @@ public class HttpHelper {
                     sb.append(URLEncoder.encode(arg[1], "UTF-8"));
                     i++;
                 }
+                Log.d(TAG, sb.toString());
                 out.writeBytes(sb.toString());
                 out.flush();
                 out.close();

@@ -16,15 +16,25 @@
 
 package com.hippo.ehviewer.ui;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Path;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.PathShape;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,9 +43,8 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageGeterManager;
@@ -46,63 +55,39 @@ import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Cache;
-import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
+import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.LoadImageView;
+import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
-public class FavouriteActivity extends AbstractActivity {
+public class FavouriteActivity extends AbstractSlidingActivity
+        implements ListView.MultiChoiceModeListener {
     @SuppressWarnings("unused")
     private static final String TAG = "FavouriteActivity";
     
     private AppContext mAppContext;
     private Data mData;
+    private Resources mResources;
+    private EhClient mClient;
     
-    private FlAdapter flAdapter;
-    private List<GalleryInfo> mFavouriteLmd;
-    private int longClickItemIndex;
+    private SlidingMenu mSlidingMenu;
+    private ListView mMenuList;
+    
+    private ListView mListView;
+    private FlAdapter mAdapter;
+    private List<GalleryInfo> mGis;
+    private Set<Integer> mChoiceGids; // Store gid
+    private int mMenuIndex;
+    private String[] mFavoriteTitles;
+    
+    private AlertDialog mMoveDialog;
     
     private ImageGeterManager mImageGeterManager;
     
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
-    
-    // List item long click dialog
-    private AlertDialog longClickDialog;
-
-    private AlertDialog setLongClickDialog() {
-        return new DialogBuilder(this).setTitle(R.string.what_to_do)
-                .setItems(R.array.favourite_item_long_click, new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> arg0, View arg1,
-                            int position, long arg3) {
-                        switch (position) {
-                        case 0: // Remove favourite item
-                            mData.deleteLocalFavourite(mFavouriteLmd.get(longClickItemIndex).gid);
-                            flAdapter.notifyDataSetChanged();
-                            break;
-                        case 1:
-                            GalleryInfo lmd = mFavouriteLmd.get(longClickItemIndex);
-                            Intent it = new Intent(FavouriteActivity.this, DownloadService.class);
-                            startService(it);
-                            mServiceConn.getService().add(String.valueOf(lmd.gid), lmd.thumb, 
-                                    EhClient.getDetailUrl(lmd.gid, lmd.token), lmd.title);
-                            Toast.makeText(FavouriteActivity.this,
-                                    getString(R.string.toast_add_download),
-                                    Toast.LENGTH_SHORT).show();
-                            break;
-                        default:
-                            break;
-                        }
-                        longClickDialog.cancel();
-                    }
-                }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                    }
-                }).create();
-    }
     
     private class FlAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
@@ -113,12 +98,12 @@ public class FavouriteActivity extends AbstractActivity {
 
         @Override
         public int getCount() {
-            return mFavouriteLmd.size();
+            return mGis.size();
         }
 
         @Override
         public Object getItem(int arg0) {
-            return mFavouriteLmd.get(arg0);
+            return mGis.get(arg0);
         }
 
         @Override
@@ -128,7 +113,7 @@ public class FavouriteActivity extends AbstractActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            GalleryInfo lmd= mFavouriteLmd.get(position);
+            GalleryInfo lmd= mGis.get(position);
             if (convertView == null)
                 convertView = mInflater.inflate(R.layout.list_item, null);
             
@@ -188,8 +173,8 @@ public class FavouriteActivity extends AbstractActivity {
     protected void onResume() {
         super.onResume();
         
-        if (flAdapter != null)
-            flAdapter.notifyDataSetChanged();
+        if (mAdapter != null)
+            mAdapter.notifyDataSetChanged();
     }
     
     @Override
@@ -199,44 +184,157 @@ public class FavouriteActivity extends AbstractActivity {
         
         mAppContext = (AppContext)getApplication();
         mData = mAppContext.getData();
+        mResources =getResources();
         mImageGeterManager = mAppContext.getImageGeterManager();
+        mClient = mAppContext.getEhClient();
         
         Ui.translucent(this);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         
         // Download service
         Intent it = new Intent(FavouriteActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
         
-        longClickDialog = setLongClickDialog();
+        setBehindContentView(R.layout.favorite_menu);
+        setSlidingActionBarEnabled(false);
+        mSlidingMenu = getSlidingMenu();
+        mSlidingMenu.setMode(SlidingMenu.RIGHT);
+        mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        mSlidingMenu.setBehindWidth(
+                mResources.getDimensionPixelOffset(R.dimen.menu_offset));
+        mSlidingMenu.setShadowDrawable(R.drawable.shadow_right);
+        mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
         
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        
-        mFavouriteLmd = mData.getAllLocalFavourites();
-        
-        ListView listView = (ListView)findViewById(R.id.favourite);
-        flAdapter = new FlAdapter();
-        listView.setAdapter(flAdapter);
-        listView.setOnItemClickListener(new OnItemClickListener() {
+        mFavoriteTitles = new String[EhClient.FAVORITE_SLOT_NUM];
+        for (int i = 0; i < EhClient.FAVORITE_SLOT_NUM; i++) {
+            mFavoriteTitles[i] = "收藏 " + i;
+        }
+        mMenuIndex = 0;
+        setTitle("本地收藏"); // TODO
+        mGis = mData.getAllLocalFavourites();
+        mChoiceGids = new HashSet<Integer>();
+        mListView = (ListView)findViewById(R.id.favourite);
+        mListView.setClipToPadding(false);
+        mAdapter = new FlAdapter();
+        mListView.setAdapter(mAdapter);
+        mListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
                 Intent intent = new Intent(FavouriteActivity.this,
                         MangaDetailActivity.class);
-                GalleryInfo gi = mFavouriteLmd.get(position);
+                GalleryInfo gi = mGis.get(position);
                 intent.putExtra("url", EhClient.getDetailUrl(gi.gid, gi.token));
                 intent.putExtra(MangaDetailActivity.KEY_G_INFO, gi);
                 startActivity(intent);
             }
         });
-        listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+        mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        mListView.setMultiChoiceModeListener(this);
+        
+        mMenuList = (ListView)findViewById(R.id.favorite_menu_list);
+        mMenuList.setClipToPadding(false);
+        mMenuList.setAdapter(new BaseAdapter() {
+            private ShapeDrawable d;
+            private ShapeDrawable createDrawable() {
+                Path path = new Path();
+                path.moveTo(50, 10);
+                path.lineTo(10, 50);
+                path.lineTo(50, 90);
+                path.lineTo(90, 50);
+                path.close();
+                ShapeDrawable d = new ShapeDrawable(new PathShape(path, 100, 100));
+                d.getPaint().setColor(0xcdffffff);
+                d.setBounds(0, 0, Ui.dp2pix(36), Ui.dp2pix(36));
+                return d;
+            }
             @Override
-            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-                    int position, long arg3) {
-                longClickItemIndex = position;
-                longClickDialog.show();
-                return true;
+            public int getCount() {
+                return EhClient.FAVORITE_SLOT_NUM + 1;
+            }
+            @Override
+            public Object getItem(int position) {
+                return null;
+            }
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                LayoutInflater li= LayoutInflater.from(FavouriteActivity.this);
+                TextView tv = (TextView)li.inflate(R.layout.menu_item, null);
+                
+                if (position == 0) {
+                    Drawable dr = mResources.getDrawable(R.drawable.ic_action_panda);
+                    dr.setBounds(0, 0, Ui.dp2pix(36), Ui.dp2pix(36));
+                    tv.setCompoundDrawables(dr, null, null, null);
+                    tv.setCompoundDrawablePadding(Ui.dp2pix(8));
+                    tv.setText("本地收藏"); // TODO
+                } else {
+                    if (d == null)
+                        d = createDrawable();
+                    tv.setCompoundDrawables(d, null, null, null);
+                    tv.setCompoundDrawablePadding(Ui.dp2pix(8));
+                    tv.setText(mFavoriteTitles[position - 1]); // TODO
+                }
+                return tv;
             }
         });
+        mMenuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                    int position, long id) {
+                // If same index, do nothing
+                if (mMenuIndex == position)
+                    return;
+                
+                showContent();
+                mMenuIndex = position;
+                if (mMenuIndex == 0) {
+                    setTitle("本地收藏"); // TODO
+                    mGis = mData.getAllLocalFavourites();
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    setTitle(mFavoriteTitles[mMenuIndex - 1]); // TODO
+                    mClient.getMangaList(EhClient.getFavoriteUrl(mMenuIndex - 1),
+                            null, new EhClient.OnGetMangaListListener() {
+                        @Override
+                        public void onSuccess(Object checkFlag, ArrayList<GalleryInfo> lmdArray,
+                                int indexPerPage, int maxPage) {
+                            
+                            mGis = lmdArray;
+                            mAdapter.notifyDataSetChanged();
+                        }
+                        
+                        @Override
+                        public void onFailure(Object checkFlag, String eMsg) {
+                            Toast.makeText(FavouriteActivity.this, eMsg, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    // TODO
+                }
+            }
+        });
+        
+        
+        FswView alignment = (FswView)findViewById(R.id.alignment);
+        alignment.addOnFitSystemWindowsListener(new OnFitSystemWindowsListener() {
+            @Override
+            public void onfitSystemWindows(int paddingLeft, int paddingTop,
+                    int paddingRight, int paddingBottom) {
+                mListView.setPadding(mListView.getPaddingLeft(), paddingTop,
+                        mListView.getPaddingRight(), paddingBottom);
+                mMenuList.setPadding(mMenuList.getPaddingLeft(), paddingTop,
+                        mMenuList.getPaddingRight(), paddingBottom);
+            }
+        });
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.favorite, menu);
+        return true;
     }
     
     @Override
@@ -245,6 +343,9 @@ public class FavouriteActivity extends AbstractActivity {
         switch (item.getItemId()) {
         case android.R.id.home:
             finish();
+            return true;
+        case R.id.action_list:
+            toggle();
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -257,7 +358,108 @@ public class FavouriteActivity extends AbstractActivity {
         unbindService(mServiceConn);
     }
     
-    public void buttonListItemCancel(View v) {
-        longClickDialog.cancel();
+    
+    // ListView.MultiChoiceModeListener
+    
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.favorite_choice, menu);
+        mode.setTitle("Select Items"); // TODO
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return true;
+    }
+    
+    private AlertDialog createMoveDialog(final ActionMode mode) {
+        return new DialogBuilder(this).setTitle("移动至何处？") //
+                .setItems(mFavoriteTitles, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+                        int[] gids = new int[mChoiceGids.size()];
+                        int i = 0;
+                        for (Integer gid : mChoiceGids)
+                            gids[i++] = gid;
+                        mClient.modifyFavorite(gids, position, new EhClient.OnModifyFavoriteListener() {
+                            @Override
+                            public void onSuccess(ArrayList<GalleryInfo> gis,
+                                    int indexPerPage, int maxPage) {
+                                Toast.makeText(FavouriteActivity.this,
+                                        "移动成功", Toast.LENGTH_SHORT).show(); // TODO
+                                mGis = gis;
+                                mAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onFailure(String eMsg) {
+                                Toast.makeText(FavouriteActivity.this,
+                                        "移动失败\n" + eMsg, Toast.LENGTH_SHORT).show(); // TODO
+                            }
+                        });
+                        
+                        mMoveDialog.dismiss();
+                        mMoveDialog = null;
+                        mode.finish();
+                    }
+                }).create();
+    }
+    
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        
+        switch (item.getItemId()) {
+        case R.id.action_delete:
+            if (mMenuIndex == 0) {
+                for (Integer gid : mChoiceGids)
+                    mData.deleteLocalFavourite(gid);
+                mAdapter.notifyDataSetChanged();
+            } else {
+                int[] gids = new int[mChoiceGids.size()];
+                int i = 0;
+                for (Integer gid : mChoiceGids)
+                    gids[i++] = gid;
+                mClient.modifyFavorite(gids, -1, new EhClient.OnModifyFavoriteListener() {
+                    @Override
+                    public void onSuccess(ArrayList<GalleryInfo> gis, int indexPerPage,
+                            int maxPage) {
+                        Toast.makeText(FavouriteActivity.this,
+                                "删除成功", Toast.LENGTH_SHORT).show(); // TODO
+                        mGis = gis;
+                        mAdapter.notifyDataSetChanged();
+                    }
+                    @Override
+                    public void onFailure(String eMsg) {
+                        Toast.makeText(FavouriteActivity.this,
+                                "删除失败\n" + eMsg, Toast.LENGTH_SHORT).show(); // TODO
+                    }
+                });
+            }
+            mode.finish();
+            return true;
+        case R.id.action_move:
+            mMoveDialog = createMoveDialog(mode);
+            mMoveDialog.show();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        mChoiceGids.clear();
+    }
+
+    @Override
+    public void onItemCheckedStateChanged(ActionMode mode, int position,
+            long id, boolean checked) {
+        if (checked)
+            mChoiceGids.add(mGis.get(position).gid);
+        else
+            mChoiceGids.remove(mGis.get(position).gid);
     }
 }

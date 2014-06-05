@@ -47,6 +47,17 @@
     <color name="misc_bg">#ffeaccf3</color>
     <color name="unknown_bg">@android:color/black</color>
     
+    <color name="fav0">#ff616161</color>
+    <color name="fav1">#ffff3e3e</color>
+    <color name="fav2">#ffff923e</color>
+    <color name="fav3">#fffff43e</color>
+    <color name="fav4">#ff3eff6b</color>
+    <color name="fav5">#ffb1ff3e</color>
+    <color name="fav6">#ff3efeff</color>
+    <color name="fav7">#ff4b3eff</color>
+    <color name="fav8">#ffa23eff</color>
+    <color name="fav9">#ffff3ec4</color>
+    
     <color name="title_primary">#ff333333</color>
     <color name="title_secondary">#ffaaaaaa</color>
     

@@ -13,20 +13,15 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<selector
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:state_selected="true"
-        android:drawable="@drawable/card_bg_selected" />
+        android:id="@+id/action_delete"
+        android:title="@string/delete"
+        android:icon="@drawable/ic_action_delete_dark"
+        android:showAsAction="always" />
     <item
-        android:state_focused="true"
-        android:drawable="@drawable/card_bg_selected" />
-    <item
-        android:state_pressed="true"
-        android:drawable="@drawable/card_bg_selected" />
-    <item
-        android:state_activated="true"
-        android:drawable="@drawable/card_bg_activated" />
-    <item
-        android:drawable="@drawable/card_bg" />
-</selector>
+        android:id="@+id/action_move"
+        android:title="@string/move"
+        android:icon="@drawable/ic_action_move_dark"
+        android:showAsAction="always" />
+</menu>
