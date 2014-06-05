@@ -158,7 +158,7 @@ public class MangaListActivity extends AbstractSlidingActivity
     private ListView itemListMenu;
     private TagListView tagListMenu;
     private HfListView mHlv;
-    private FswListView mMainList;
+    private ListView mMainList;
     private View waitView;
     private Button freshButton;
     private View noFoundView;
@@ -1753,7 +1753,7 @@ public class MangaListActivity extends AbstractSlidingActivity
                         Toast.LENGTH_SHORT).show();
             return true;
         case R.id.action_jump:
-            if (!mHlv.isAnyRefreshing() && isGetOk())
+            if (!mHlv.isRefreshing() && isGetOk())
                 jump();
             return true;
         default:
@@ -1912,7 +1912,7 @@ public class MangaListActivity extends AbstractSlidingActivity
     }
     
     public boolean refresh(boolean isShowProgress) {
-        if (!mHlv.isAnyRefreshing()
+        if (!mHlv.isRefreshing()
                 && waitView.getVisibility() != View.VISIBLE) {
             lus.setPage(0);
             if (isShowProgress)

@@ -19,23 +19,16 @@ package com.hippo.ehviewer.widget;
 import com.hippo.ehviewer.R;
 
 import android.content.Context;
-import android.graphics.Rect;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-/**
- * TODO disable pull refreshing when footer refreshing
- * 
- * @author Hippo
- *
- */
 public class HfListView extends SuperSwipeRefreshLayout
         implements AbsListView.OnScrollListener {
     
@@ -44,7 +37,7 @@ public class HfListView extends SuperSwipeRefreshLayout
     private final static int FOOTER_FAIL = 2;
     
     private Context mContext;
-    private FswListView mListView;
+    private ListView mListView;
     
     private View mFooter;
     private TextView mFooterTipTextView;
@@ -52,12 +45,13 @@ public class HfListView extends SuperSwipeRefreshLayout
     private int footerState = FOOTER_SUCCESS;
     private OnFooterRefreshListener mFooterRefreshListener;
     
-    private OnFitSystemWindowsListener mListener;
-    
     // Footer String to show
     private String mFooterRefreshStr;
     private String mFooterSuccessStr;
     private String mFooterFailStr;
+    
+    private boolean mIsEnabledHeader = true;
+    private boolean mIsEnabledFooter = true;
     
     public HfListView(Context context) {
         super(context);
@@ -72,7 +66,7 @@ public class HfListView extends SuperSwipeRefreshLayout
     }
     
     private void init() {
-        mListView = new FswListView(mContext);
+        mListView = new ListView(mContext);
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
@@ -86,7 +80,7 @@ public class HfListView extends SuperSwipeRefreshLayout
         mFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isAnyRefreshing() && footerState == FOOTER_FAIL)
+                if (!isRefreshing() && footerState == FOOTER_FAIL)
                     footerRefresh();
             }
         });
@@ -94,7 +88,7 @@ public class HfListView extends SuperSwipeRefreshLayout
         mListView.addFooterView(mFooter);
     }
     
-    public FswListView getListView() {
+    public ListView getListView() {
         return mListView;
     }
     
@@ -106,6 +100,10 @@ public class HfListView extends SuperSwipeRefreshLayout
         if (mFooterRefreshListener.onFooterRefresh()) {
             footerState = FOOTER_REFRESHING;
             changeFooterViewByState();
+            
+            // Disable header refresh
+            if (mIsEnabledHeader)
+                setEnabled(false);
         }
     }
     
@@ -164,6 +162,10 @@ public class HfListView extends SuperSwipeRefreshLayout
         else
             footerState = FOOTER_FAIL;
         changeFooterViewByState();
+        
+        // enable header refresh
+        if (mIsEnabledHeader)
+            setEnabled(true);
     }
     
     public void setAnyRefreshComplete() {
@@ -192,8 +194,9 @@ public class HfListView extends SuperSwipeRefreshLayout
     /**
      * @return True if actionbar or footer is refreshing
      */
-    public boolean isAnyRefreshing() {
-        return isHeaderRefreshing() | isFooterRefreshing();
+    public boolean isRefreshing() {
+        return (mIsEnabledHeader ? isHeaderRefreshing() : false)
+                | (mIsEnabledFooter ? isFooterRefreshing() : false);
     }
     
     @Override
@@ -202,10 +205,23 @@ public class HfListView extends SuperSwipeRefreshLayout
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem,
             int visibleItemCount, int totalItemCount) {
-        if (firstVisibleItem + visibleItemCount == totalItemCount
-                && !isAnyRefreshing() && totalItemCount > 1
+        if (mIsEnabledFooter
+                && firstVisibleItem + visibleItemCount == totalItemCount
+                && !isRefreshing() && totalItemCount > 1
                 && footerState != FOOTER_FAIL)
             footerRefresh();
+    }
+    
+    public void setEnabledHeader(boolean enabled) {
+        mIsEnabledHeader = enabled;
+        setEnabled(enabled);
+    }
+    
+    public void setEnabledFooter(boolean enabled) {
+        if (mIsEnabledFooter = enabled)
+            mListView.addFooterView(mFooter);
+        else
+            mListView.removeFooterView(mFooter);
     }
     
     public interface OnFooterRefreshListener {

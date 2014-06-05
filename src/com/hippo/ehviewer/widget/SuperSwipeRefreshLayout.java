@@ -44,6 +44,7 @@ public class SuperSwipeRefreshLayout extends ViewGroup {
     private static final int REFRESH_TRIGGER_DISTANCE = 120;
 
     private SwipeProgressBar mProgressBar; //the thing that shows progress is going
+    private boolean mIsProgressBarVisible = true;
     private View mTarget; //the content that gets pulled down
     private int mOriginalOffsetTop;
     private OnRefreshListener mListener;
@@ -282,10 +283,20 @@ public class SuperSwipeRefreshLayout extends ViewGroup {
         }
     }
 
+    /**
+     * Show or hide progress bar at same time
+     */
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        mIsProgressBarVisible = enabled;
+    }
+
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        mProgressBar.draw(canvas);
+        if (mIsProgressBarVisible)
+            mProgressBar.draw(canvas);
     }
 
     public void setProgressBarTop(int top) {
