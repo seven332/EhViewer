@@ -57,14 +57,15 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
-import com.hippo.ehviewer.ui.ActionableToastBar.ActionClickedListener;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.widget.ActionableToastBar;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
+import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 public class FavouriteActivity extends AbstractGalleryActivity
