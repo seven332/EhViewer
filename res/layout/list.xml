@@ -14,6 +14,7 @@
      limitations under the License.
  -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
     
@@ -23,42 +24,38 @@
         android:layout_height="match_parent" />
     
     <com.hippo.ehviewer.widget.HfListView
-        android:id="@+id/list_list"
+        android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
     
     <ProgressBar
-        android:id="@+id/list_wait_first"
+        android:id="@+id/wait"
         style="@style/ProgressBar.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:layout_centerInParent="true" />
 
     <Button
-        android:id="@+id/list_refresh"
+        android:id="@+id/refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:onClick="buttonRefresh"
-        android:text="@string/refresh"
-        android:visibility="gone" />
+        android:text="@string/refresh" />
 
     <ImageView
         android:id="@+id/sadpanda"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:src="@drawable/sadpanda"
-        android:visibility="gone" />
+        android:src="@drawable/sadpanda" />
 
     <TextView
-        android:id="@+id/list_no_found"
+        android:id="@+id/none"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/no_found"
-        android:textSize="24sp"
-        android:visibility="gone" />
+        android:text="@string/none"
+        android:textSize="24sp" />
 
 </RelativeLayout>

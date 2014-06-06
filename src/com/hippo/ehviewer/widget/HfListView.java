@@ -213,11 +213,17 @@ public class HfListView extends SuperSwipeRefreshLayout
     }
     
     public void setEnabledHeader(boolean enabled) {
+        if (mIsEnabledHeader == enabled)
+            return;
+        
         mIsEnabledHeader = enabled;
         setEnabled(enabled);
     }
     
     public void setEnabledFooter(boolean enabled) {
+        if (mIsEnabledFooter == enabled)
+            return;
+        
         if (mIsEnabledFooter = enabled)
             mListView.addFooterView(mFooter);
         else

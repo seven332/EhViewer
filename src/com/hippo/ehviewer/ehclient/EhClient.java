@@ -1725,10 +1725,11 @@ public class EhClient {
     /**
      * 
      * @param gids
-     * @param cat -1 for delete
+     * @param dstCat -1 for delete
+     * @param srcCat
      * @param listener
      */
-    public void modifyFavorite(final int[] gids, final int cat,
+    public void modifyFavorite(final int[] gids, final int dstCat, final int srcCat,
             final OnModifyFavoriteListener listener) {
         new Thread(new Runnable() {
             @Override
@@ -1756,10 +1757,10 @@ public class EhClient {
                 });
                 
                 String catStr;
-                if (cat == -1)
+                if (dstCat == -1)
                     catStr = "delete";
-                else if (cat >= 0 && cat <= 9)
-                    catStr = "fav" + String.valueOf(cat);
+                else if (dstCat >= 0 && dstCat <= 9)
+                    catStr = "fav" + String.valueOf(dstCat);
                 else
                     catStr = "fav0";
                 
@@ -1769,7 +1770,7 @@ public class EhClient {
                     args[i] = new String[]{"modifygids[]", String.valueOf(gids[i-1])};
                 args[i] = new String[]{"apply", "Apply"};
                 
-                hp.post(getModifyFavoriteUrl(), args);
+                hp.post(getFavoriteUrl(srcCat), args);
             }
         }).start();
     }

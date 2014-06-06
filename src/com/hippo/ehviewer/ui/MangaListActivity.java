@@ -125,7 +125,7 @@ import android.widget.Toast;
  * 
  * @author Hippo
  */
-public class MangaListActivity extends AbstractSlidingActivity
+public class MangaListActivity extends AbstractGalleryActivity
         implements View.OnClickListener {
     
     private static final String TAG = "MangaListActivity";
@@ -146,10 +146,8 @@ public class MangaListActivity extends AbstractSlidingActivity
     private static final int SOMEWHERE = 0x3;
     private static final int SET_POSITION = 0x8000;
     
-    private AppContext mAppContext;
     private EhClient mEhClient;
     private Resources mResources;
-    private ImageGeterManager mImageGeterManager;
     
     private SlidingMenu mSlidingMenu;
     
@@ -157,12 +155,6 @@ public class MangaListActivity extends AbstractSlidingActivity
     private SearchView mSearchView;
     private ListView itemListMenu;
     private TagListView tagListMenu;
-    private HfListView mHlv;
-    private ListView mMainList;
-    private View waitView;
-    private Button freshButton;
-    private View noFoundView;
-    private ImageView sadpanda;
     
     private TextView userView;
     private Button loginButton;
@@ -173,12 +165,7 @@ public class MangaListActivity extends AbstractSlidingActivity
     private TagsAdapter tagsAdapter;
 
     private ListUrls lus;
-    private GmlAdapter gmlAdapter;
     private ArrayList<String> listMenuTag = new ArrayList<String>();
-    
-    private ArrayList<GalleryInfo> lmdArray = new ArrayList<GalleryInfo>();
-    
-    
     
     private Data mData;
     
@@ -551,14 +538,14 @@ public class MangaListActivity extends AbstractSlidingActivity
                         GalleryInfo lmd;
                         switch (position) {
                         case 0: // Add favourite item
-                            lmd = lmdArray.get(longClickItemIndex);
+                            lmd = mGiList.get(longClickItemIndex);
                             mData.addLocalFavourite(lmd);
                             Toast.makeText(MangaListActivity.this,
                                     getString(R.string.toast_add_favourite),
                                     Toast.LENGTH_SHORT).show();
                             break;
                         case 1:
-                            lmd = lmdArray.get(longClickItemIndex);
+                            lmd = mGiList.get(longClickItemIndex);
                             Intent it = new Intent(MangaListActivity.this, DownloadService.class);
                             startService(it);
                             mServiceConn.getService().add(String.valueOf(lmd.gid), lmd.thumb, 
@@ -608,10 +595,10 @@ public class MangaListActivity extends AbstractSlidingActivity
                                 if (lus.setPage(targetPage)) {
                                     ((AlertButton)v).dialog.dismiss();
                                     
-                                    waitView.setVisibility(View.GONE);
-                                    freshButton.setVisibility(View.GONE);
-                                    noFoundView.setVisibility(View.GONE);
-                                    sadpanda.setVisibility(View.GONE);
+                                    mWaitProgressBar.setVisibility(View.GONE);
+                                    mFreshButton.setVisibility(View.GONE);
+                                    mNoneTextView.setVisibility(View.GONE);
+                                    mSadPanda.setVisibility(View.GONE);
                                     mHlv.setRefreshing(true);
                                     
                                     if (targetPage == firstPage - 1)
@@ -927,9 +914,9 @@ public class MangaListActivity extends AbstractSlidingActivity
     
     private void setMainListPosition(int position) {
         if (position == 0)
-            mMainList.setSelectionFromTop(position, mFswPaddingTop);
+            mList.setSelectionFromTop(position, mFswPaddingTop);
         else
-            mMainList.setSelectionFromTop(position, 0);
+            mList.setSelectionFromTop(position, 0);
     }
     
     private class MangaListGetListener implements
@@ -939,33 +926,33 @@ public class MangaListActivity extends AbstractSlidingActivity
                 int indexPerPage, int maxPage) {
             
             // Check no Found view later
-            waitView.setVisibility(View.GONE);
-            freshButton.setVisibility(View.GONE);
+            mWaitProgressBar.setVisibility(View.GONE);
+            mFreshButton.setVisibility(View.GONE);
             
             if (maxPage == 0) { // If No hits found
                 mHlv.setVisibility(View.GONE);
-                noFoundView.setVisibility(View.VISIBLE);
-                sadpanda.setVisibility(View.GONE);
+                mNoneTextView.setVisibility(View.VISIBLE);
+                mSadPanda.setVisibility(View.GONE);
                 
                 mTitle = mResources.getString(R.string.no_found);
                 setTitle();
                 
-                lmdArray.clear();
-                gmlAdapter.notifyDataSetChanged();
+                mGiList.clear();
+                mGalleryAdapter.notifyDataSetChanged();
             } else if (maxPage == -1) { //panda
                 mHlv.setVisibility(View.GONE);
-                noFoundView.setVisibility(View.GONE);
-                sadpanda.setVisibility(View.VISIBLE);
+                mNoneTextView.setVisibility(View.GONE);
+                mSadPanda.setVisibility(View.VISIBLE);
                 
                 mTitle = mResources.getString(R.string.sadpanda);
                 setTitle();
                 
-                lmdArray.clear();
-                gmlAdapter.notifyDataSetChanged();
+                mGiList.clear();
+                mGalleryAdapter.notifyDataSetChanged();
             } else {
                 mHlv.setVisibility(View.VISIBLE);
-                noFoundView.setVisibility(View.GONE);
-                sadpanda.setVisibility(View.GONE);
+                mNoneTextView.setVisibility(View.GONE);
+                mSadPanda.setVisibility(View.GONE);
                 
                 // Set indexPerPage and maxPage
                 lus.setNumPerPage(indexPerPage);
@@ -976,9 +963,9 @@ public class MangaListActivity extends AbstractSlidingActivity
                 case REFRESH:
                     firstPage = 0;
                     lastPage = 0;
-                    lmdArray.clear();
-                    lmdArray.addAll(newLmdArray);
-                    gmlAdapter.notifyDataSetChanged();
+                    mGiList.clear();
+                    mGiList.addAll(newLmdArray);
+                    mGalleryAdapter.notifyDataSetChanged();
                     
                     // set visible page
                     firstIndex = 0;
@@ -993,8 +980,8 @@ public class MangaListActivity extends AbstractSlidingActivity
                     break;
                 case PRE_PAGE:
                     firstPage -= 1;
-                    lmdArray.addAll(0, newLmdArray);
-                    gmlAdapter.notifyDataSetChanged();
+                    mGiList.addAll(0, newLmdArray);
+                    mGalleryAdapter.notifyDataSetChanged();
                     
                     // set position if necessary and set visible page
                     if ((mGetMode & SET_POSITION) != 0) {
@@ -1009,18 +996,18 @@ public class MangaListActivity extends AbstractSlidingActivity
                         lastIndex += newLmdArray.size();
                         
                         setMainListPosition(
-                                mMainList.getFirstVisiblePosition() + newLmdArray.size());
+                                mList.getFirstVisiblePosition() + newLmdArray.size());
                     }
                     break;
                 case NEXT_PAGE:
                     lastPage += 1;
-                    lmdArray.addAll(newLmdArray);
-                    gmlAdapter.notifyDataSetChanged();
+                    mGiList.addAll(newLmdArray);
+                    mGalleryAdapter.notifyDataSetChanged();
                     
                     // set position if necessary and set visible page
                     if ((mGetMode & SET_POSITION) != 0) {
-                        firstIndex = lmdArray.size() - newLmdArray.size();
-                        lastIndex = lmdArray.size() - 1;
+                        firstIndex = mGiList.size() - newLmdArray.size();
+                        lastIndex = mGiList.size() - 1;
                         visiblePage = lus.getPage();
                         
                         setMainListPosition(firstIndex);
@@ -1030,9 +1017,9 @@ public class MangaListActivity extends AbstractSlidingActivity
                 case SOMEWHERE:
                     firstPage = lus.getPage();
                     lastPage = lus.getPage();
-                    lmdArray.clear();
-                    lmdArray.addAll(newLmdArray);
-                    gmlAdapter.notifyDataSetChanged();
+                    mGiList.clear();
+                    mGiList.addAll(newLmdArray);
+                    mGalleryAdapter.notifyDataSetChanged();
                     
                     // Get visible page
                     firstIndex = 0;
@@ -1054,26 +1041,26 @@ public class MangaListActivity extends AbstractSlidingActivity
         public void onFailure(Object checkFlag, String eMsg) {
             // Check pull list view later
             // Check fresh view later
-            waitView.setVisibility(View.GONE);
-            noFoundView.setVisibility(View.GONE);
-            sadpanda.setVisibility(View.GONE);
+            mWaitProgressBar.setVisibility(View.GONE);
+            mNoneTextView.setVisibility(View.GONE);
+            mSadPanda.setVisibility(View.GONE);
             
             switch (mGetMode & (~SET_POSITION)) {
             case REFRESH:
                 mHlv.setVisibility(View.GONE);
-                freshButton.setVisibility(View.VISIBLE);
+                mFreshButton.setVisibility(View.VISIBLE);
                 
                 Log.d(TAG, "error");
                 
                 Toast.makeText(MangaListActivity.this,
                         eMsg, Toast.LENGTH_SHORT)
                         .show();
-                lmdArray.clear();
-                gmlAdapter.notifyDataSetChanged();
+                mGiList.clear();
+                mGalleryAdapter.notifyDataSetChanged();
                 break;
             default:
                 Log.d(TAG, "error " + mGetMode);
-                freshButton.setVisibility(View.GONE);
+                mFreshButton.setVisibility(View.GONE);
                 Toast.makeText(
                         MangaListActivity.this,
                         eMsg,
@@ -1112,81 +1099,6 @@ public class MangaListActivity extends AbstractSlidingActivity
 
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {}
-    }
-
-    private class GmlAdapter extends BaseAdapter {
-        private LayoutInflater mInflater;
-
-        public GmlAdapter() {
-            mInflater = LayoutInflater.from(MangaListActivity.this);
-        }
-
-        @Override
-        public int getCount() {
-            return lmdArray.size();
-        }
-
-        @Override
-        public Object getItem(int arg0) {
-            return lmdArray.get(arg0);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            GalleryInfo lmd= lmdArray.get(position);
-            if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.list_item, null);
-            }
-            final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
-            if (!String.valueOf(lmd.gid).equals(thumb.getKey())) {
-                
-                Bitmap bmp = null;
-                if (Cache.memoryCache != null &&
-                        (bmp = Cache.memoryCache.get(String.valueOf(lmd.gid))) != null) {
-                    thumb.setLoadInfo(lmd.thumb, String.valueOf(lmd.gid));
-                    thumb.setImageBitmap(bmp);
-                    thumb.setState(LoadImageView.LOADED);
-                } else {
-                    thumb.setImageDrawable(null);
-                    thumb.setLoadInfo(lmd.thumb, String.valueOf(lmd.gid));
-                    thumb.setState(LoadImageView.NONE);
-                    mImageGeterManager.add(lmd.thumb, String.valueOf(lmd.gid),
-                            ImageGeterManager.DISK_CACHE | ImageGeterManager.DOWNLOAD,
-                            new LoadImageView.SimpleImageGetListener(thumb));
-                }
-                
-                // Set manga name
-                TextView name = (TextView) convertView.findViewById(R.id.name);
-                name.setText(lmd.title);
-                
-                // Set uploder
-                TextView uploader = (TextView) convertView.findViewById(R.id.uploader);
-                uploader.setText(lmd.uploader);
-                
-                // Set category
-                TextView category = (TextView) convertView.findViewById(R.id.category);
-                String newText = Ui.getCategoryText(lmd.category);
-                if (!newText.equals(category.getText())) {
-                    category.setText(newText);
-                    category.setBackgroundColor(Ui.getCategoryColor(lmd.category));
-                }
-                
-                // Add star
-                RatingBar rate = (RatingBar) convertView
-                        .findViewById(R.id.rate);
-                rate.setRating(lmd.rating);
-                
-                // set posted
-                TextView posted = (TextView) convertView.findViewById(R.id.posted);
-                posted.setText(lmd.posted);
-            }
-            return convertView;
-        }
     }
     
     @Override
@@ -1245,12 +1157,9 @@ public class MangaListActivity extends AbstractSlidingActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         handleIntent(getIntent());
-        setContentView(R.layout.list);
         
-        mAppContext = (AppContext)getApplication();
         mData = mAppContext.getData();
         mEhClient = mAppContext.getEhClient();
-        mImageGeterManager = mAppContext.getImageGeterManager();
         mResources =getResources();
         
         setBehindContentView(R.layout.list_menu_left);
@@ -1308,12 +1217,6 @@ public class MangaListActivity extends AbstractSlidingActivity
         mUserPanel = (LinearLayout)findViewById(R.id.user_panel);
         itemListMenu = (ListView) findViewById(R.id.list_menu_item_list);
         tagListMenu = (TagListView) findViewById(R.id.list_menu_tag_list);
-        mHlv = (HfListView)findViewById(R.id.list_list);
-        mMainList = mHlv.getListView();
-        waitView = (View) findViewById(R.id.list_wait_first);
-        freshButton = (Button) findViewById(R.id.list_refresh);
-        noFoundView = (View) findViewById(R.id.list_no_found);
-        sadpanda = (ImageView) findViewById(R.id.sadpanda);
         
         userView = (TextView)mUserPanel.findViewById(R.id.user);
         loginButton = (Button)mUserPanel.findViewById(R.id.login);
@@ -1501,26 +1404,21 @@ public class MangaListActivity extends AbstractSlidingActivity
                 getString(R.string.footer_fail));
         
         // Listview
-        gmlAdapter = new GmlAdapter();
-        mMainList.setDivider(null);
-        mMainList.setSelector(new ColorDrawable(Color.TRANSPARENT));
-        mMainList.setClipToPadding(false);
-        mMainList.setAdapter(gmlAdapter);
-        mMainList.setOnScrollListener(new MangaListListener());
-        mMainList.setOnItemClickListener(new OnItemClickListener() {
+        mList.setOnScrollListener(new MangaListListener());
+        mList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
                 Intent intent = new Intent(MangaListActivity.this,
                         MangaDetailActivity.class);
-                GalleryInfo gi = lmdArray.get(position);
+                GalleryInfo gi = mGiList.get(position);
                 intent.putExtra("url", EhClient.getDetailUrl(gi.gid, gi.token));
                 intent.putExtra(MangaDetailActivity.KEY_G_INFO, gi);
                 // Maybe shoud use other method
                 startActivityForResult(intent, DETAIL_CODE);
             }
         });
-        mMainList.setOnItemLongClickListener(new OnItemLongClickListener() {
+        mList.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
@@ -1540,9 +1438,6 @@ public class MangaListActivity extends AbstractSlidingActivity
                 mFswPaddingRight = paddingRight;
                 mFswPaddingBottom = paddingBottom;
                 
-                mMainList.setPadding(mMainList.getPaddingLeft(), mFswPaddingTop,
-                        mMainList.getPaddingRight(), mFswPaddingBottom);
-                mHlv.setProgressBarTop(mFswPaddingTop);
                 mUserPanel.setPadding(mUserPanel.getPaddingLeft(), mFswPaddingTop,
                         mUserPanel.getPaddingRight(), mUserPanel.getPaddingBottom());
                 itemListMenu.setPadding(itemListMenu.getPaddingLeft(), itemListMenu.getPaddingTop(),
@@ -1567,10 +1462,10 @@ public class MangaListActivity extends AbstractSlidingActivity
         
         // set layout
         mHlv.setVisibility(View.GONE);
-        waitView.setVisibility(View.VISIBLE);
-        freshButton.setVisibility(View.GONE);
-        noFoundView.setVisibility(View.GONE);
-        sadpanda.setVisibility(View.GONE);
+        mWaitProgressBar.setVisibility(View.VISIBLE);
+        mFreshButton.setVisibility(View.GONE);
+        mNoneTextView.setVisibility(View.GONE);
+        mSadPanda.setVisibility(View.GONE);
     }
     
     @Override
@@ -1913,7 +1808,7 @@ public class MangaListActivity extends AbstractSlidingActivity
     
     public boolean refresh(boolean isShowProgress) {
         if (!mHlv.isRefreshing()
-                && waitView.getVisibility() != View.VISIBLE) {
+                && mWaitProgressBar.getVisibility() != View.VISIBLE) {
             lus.setPage(0);
             if (isShowProgress)
                 mHlv.setRefreshing(true);
@@ -1927,8 +1822,8 @@ public class MangaListActivity extends AbstractSlidingActivity
     
     public void buttonRefresh(View arg0) {
         refresh(false);
-        freshButton.setVisibility(View.GONE);
-        waitView.setVisibility(View.VISIBLE);
+        mFreshButton.setVisibility(View.GONE);
+        mWaitProgressBar.setVisibility(View.VISIBLE);
     }
     
     public void buttonCheckLogin(View v) {

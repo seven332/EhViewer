@@ -77,6 +77,7 @@
     
     <!-- MangaListActivity -->
     <string name="no_found">未找到</string>
+    <string name="none">无</string>
     <string name="list_title" formatted="false">%s 第 %d 页</string>
 
     <!-- Update -->

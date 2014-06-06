@@ -80,6 +80,7 @@
     
     <!-- MangaListActivity -->
     <string name="no_found">No hits found</string>
+    <string name="none">None</string>
     <string name="list_title" formatted="false">%s Page %d</string>
     
     <!-- Update -->

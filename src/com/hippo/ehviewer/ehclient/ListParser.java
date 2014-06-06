@@ -40,6 +40,8 @@ public class ListParser {
         Pattern p;
         Matcher m;
         
+        giList = new ArrayList<GalleryInfo>(indexPerPage);
+        
         p = Pattern.compile("<a[^<>]+>([\\d]+)</a></td><td[^<>]+>(?:<a[^<>]+>)?&");
         m = p.matcher(pageContext);
         if (m.find()) {
@@ -51,7 +53,6 @@ public class ListParser {
             return PARSER_ERROR;
         }
         
-        giList = new ArrayList<GalleryInfo>(indexPerPage);
         p = Pattern.compile("<td class=\"itdc\">(?:<a.+?>)?<img.+?alt=\"(.+?)\".+?/>(?:</a>)?</td>" // category
                 + "<td.+?>(.+?)</td>" // posted
                 + "<td.+?><div.+?><div.+?>"
