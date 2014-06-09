@@ -65,6 +65,7 @@
     
     <color name="detail_divider">#22000000</color>
     
-    
+    <color name="toast_bg">#ff458cf5</color>
+    <color name="toast_bg_light">#ff458cf5</color>
     <color name="btn_white_default">#fff0f0f0</color>
 </resources>

@@ -37,7 +37,6 @@ import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.DownloadItemLayout;
 import com.hippo.ehviewer.widget.LoadImageView;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -47,6 +47,7 @@ import com.hippo.ehviewer.widget.OlScrollView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.OnLayoutListener;
 import com.hippo.ehviewer.widget.ProgressiveRatingBar;
+import com.hippo.ehviewer.widget.SuperToast;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -76,7 +77,6 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewSwitcher.ViewFactory;
 
 public class DetailSectionFragment extends Fragment
@@ -257,7 +257,9 @@ public class DetailSectionFragment extends Fragment
         PreviewList pageList = mGalleryDetail.previewLists[page];
         if (pageList == null) {
             Log.d(TAG, "WTF, I may check mangaDetail.pageLists[page] is not null");
-            Toast.makeText(mActivity, "WTF, I may check mangaDetail.pageLists[page] is not null", Toast.LENGTH_SHORT).show();
+            new SuperToast(mActivity).setIcon(R.drawable.ic_warning)
+                     .setMessage("WTF, I may check mangaDetail.pageLists[page] is not null")
+                     .show();
             return;
         }
         int index = page * mGalleryDetail.previewPerPage + 1;
@@ -340,8 +342,9 @@ public class DetailSectionFragment extends Fragment
                             
                             int page = (Integer)checkFlag;
                             if (page == mCurPage) {
-                                Toast.makeText(mActivity,
-                                        eMsg, Toast.LENGTH_SHORT).show();
+                                new SuperToast(mActivity).setIcon(R.drawable.ic_warning)
+                                        .setMessage(eMsg)
+                                        .show();
                                 mWaitPreviewList.setVisibility(View.GONE);
                                 mPreviewRefreshButton.setVisibility(View.VISIBLE);    
                             }
@@ -479,8 +482,9 @@ public class DetailSectionFragment extends Fragment
             @Override
             public void onClick(View v) {
                 // TODO
-                Toast.makeText(mActivity, getString(R.string.unfinished),
-                        Toast.LENGTH_SHORT).show();
+                new SuperToast(mActivity)
+                        .setMessage(R.string.unfinished)
+                        .show();
             }
         });
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -569,8 +573,8 @@ public class DetailSectionFragment extends Fragment
                 mCurPage = 0;
                 addPageItem(0);
             } else
-                Toast.makeText(mActivity,
-                        getString(R.string.detail_preview_error), Toast.LENGTH_SHORT)
+                new SuperToast(mActivity)
+                        .setMessage(R.string.detail_preview_error)
                         .show();
             
             // Set comments
@@ -671,8 +675,10 @@ public class DetailSectionFragment extends Fragment
                     public void onClick(View v) {
                         int rating = getSendableRating(rb.getRating());
                         if (rating <= 0 || rating > 10)
-                            Toast.makeText(mActivity, getString(R.string.invalid_rating),
-                                    Toast.LENGTH_SHORT).show();
+                            new SuperToast(mActivity)
+                                    .setIcon(R.drawable.ic_warning)
+                                    .setMessage(R.string.invalid_rating)
+                                    .show();
                         else {
                             ((AlertButton)v).dialog.dismiss();
                             mClient.rate(mGalleryDetail.gid, mGalleryDetail.token,
@@ -692,14 +698,13 @@ public class DetailSectionFragment extends Fragment
                                                 averagePeople.setText(String.format("%.2f (%d)",
                                                         mGalleryDetail.rating, mGalleryDetail.people));
                                             }
-                                            Toast.makeText(mActivity,
-                                                    getString(R.string.rate_succeeded), Toast.LENGTH_SHORT).show();
+                                            new SuperToast(mActivity).setMessage(R.string.rate_succeeded).show();
                                         }
                                         @Override
                                         public void onFailure(String eMsg) {
-                                            Toast.makeText(mActivity,
-                                                    getString(R.string.rate_failed) + "\n" + eMsg,
-                                                    Toast.LENGTH_SHORT).show();
+                                            new SuperToast(mActivity).setIcon(R.drawable.ic_warning)
+                                                    .setMessage(getString(R.string.rate_failed) + "\n" + eMsg)
+                                                    .show();
                                         }
                             });
                         }
@@ -744,9 +749,7 @@ public class DetailSectionFragment extends Fragment
             // Show refresh button
             mWaitPb.setVisibility(View.GONE);
             mRefreshButton.setVisibility(View.VISIBLE);
-            Toast.makeText(mActivity,
-                    eMsg, Toast.LENGTH_SHORT).show();
-            
+            new SuperToast(mActivity).setIcon(R.drawable.ic_warning).setMessage(eMsg).show();
         }
     }
     private class PageImageGetListener implements EhClient.OnGetImageListener {
@@ -829,8 +832,7 @@ public class DetailSectionFragment extends Fragment
     private class SimpleVoteListener implements EhClient.OnVoteListener {
         @Override
         public void onSuccess(String tagPane) {
-            Toast.makeText(mActivity,
-                    getString(R.string.vote_succeeded), Toast.LENGTH_SHORT).show();
+            new SuperToast(mActivity).setMessage(R.string.vote_succeeded).show();
             
             DetailParser parser = new DetailParser();
             parser.setMode(DetailParser.TAG);
@@ -838,16 +840,13 @@ public class DetailSectionFragment extends Fragment
                 mGalleryDetail.tags = parser.tags;
                 addTags();
             } else {
-                Toast.makeText(mActivity,
-                        getString(R.string.em_parser_error),
-                        Toast.LENGTH_SHORT).show();
+                new SuperToast(mActivity).setIcon(R.drawable.ic_warning).setMessage(R.string.em_parser_error).show();
             }
         }
 
         @Override
         public void onFailure(String eMsg) {
-            Toast.makeText(mActivity,
-                    getString(R.string.vote_failed) + "\n"+ eMsg, Toast.LENGTH_SHORT).show();
+            new SuperToast(mActivity).setIcon(R.drawable.ic_warning).setMessage(getString(R.string.vote_failed) + "\n"+ eMsg).show();
         }
     }
 }

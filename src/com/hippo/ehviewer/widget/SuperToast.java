@@ -37,11 +37,24 @@ public class SuperToast extends Toast {
 
     public SuperToast(Context context) {
         super(context);
-        
         mContext = context;
         
+        init();
+    }
+
+    public SuperToast(Context context, String mesg) {
+        this(context);
+        setMessage(mesg);
+    }
+
+    public SuperToast(Context context, int strResId) {
+        this(context);
+        setMessage(strResId);
+    }
+
+    private void init() {
         LayoutInflater inflate = (LayoutInflater)
-                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mMainView = (LinearLayout)inflate.inflate(R.layout.super_toast, null);
         mIcon = (ImageView)mMainView.findViewById(R.id.icon);
         mMessage = (TextView)mMainView.findViewById(R.id.message);

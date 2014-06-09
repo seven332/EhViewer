@@ -17,43 +17,25 @@
 package com.hippo.ehviewer.ui;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.DownloadImageSet;
-import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Util;
 
-import android.R.color;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.view.PagerAdapter;
 
-import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.widget.SuperToast;
 
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 public class MangaDownloadActivity extends AbstractActivity {
     private static final String TAG = "MangaDownloadActivity";
@@ -104,11 +86,11 @@ public class MangaDownloadActivity extends AbstractActivity {
         isv.setOnEdgeListener(new GalleryView.OnEdgeListener() {
             @Override
             public void onLastPageEdge() {
-                Toast.makeText(MangaDownloadActivity.this, getString(R.string.last_page), Toast.LENGTH_SHORT).show();
+                new SuperToast(MangaDownloadActivity.this, R.string.last_page).show();
             }
             @Override
             public void onFirstPageEdge() {
-                Toast.makeText(MangaDownloadActivity.this, getString(R.string.first_page), Toast.LENGTH_SHORT).show();
+                new SuperToast(MangaDownloadActivity.this, R.string.first_page).show();
             }
         });
         glrv.setContentPane(isv);

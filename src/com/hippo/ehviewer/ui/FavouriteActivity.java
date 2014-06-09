@@ -17,16 +17,13 @@
 package com.hippo.ehviewer.ui;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -43,29 +40,24 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.ImageGeterManager;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
-import com.hippo.ehviewer.util.Cache;
-import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.ActionableToastBar;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
-import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
+import com.hippo.ehviewer.widget.SuperToast;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 public class FavouriteActivity extends AbstractGalleryActivity
@@ -123,7 +115,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
         
         mActionableToastBar = new ActionableToastBar(this);
-        mActionableToastBar.setBackgroundColor(Ui.HOLO_BLUE_DARK);
+        mActionableToastBar.setBackgroundColor(mResources.getColor(R.color.toast_bg));
         mMainView.addView(mActionableToastBar);
         mMainView.setOnTouchListener(this);
         
@@ -232,7 +224,9 @@ public class FavouriteActivity extends AbstractGalleryActivity
                         
                         @Override
                         public void onFailure(Object checkFlag, String eMsg) {
-                            Toast.makeText(FavouriteActivity.this, eMsg, Toast.LENGTH_SHORT).show();
+                            new SuperToast(FavouriteActivity.this)
+                                    .setIcon(R.drawable.ic_warning)
+                                    .setMessage(eMsg).show();
                         }
                     });
                     // TODO
@@ -342,16 +336,17 @@ public class FavouriteActivity extends AbstractGalleryActivity
                             @Override
                             public void onSuccess(ArrayList<GalleryInfo> gis,
                                     int indexPerPage, int maxPage) {
-                                Toast.makeText(FavouriteActivity.this,
-                                        "移动成功", Toast.LENGTH_SHORT).show(); // TODO
+                                new SuperToast(FavouriteActivity.this)
+                                        .setMessage("移动成功").show();
                                 mGiList = gis;
                                 mGalleryAdapter.notifyDataSetChanged();
                             }
 
                             @Override
                             public void onFailure(String eMsg) {
-                                Toast.makeText(FavouriteActivity.this,
-                                        "移动失败\n" + eMsg, Toast.LENGTH_SHORT).show(); // TODO
+                                new SuperToast(FavouriteActivity.this)
+                                .setIcon(R.drawable.ic_warning)
+                                .setMessage("移动失败\n" + eMsg).show(); // TODO
                             }
                         });
                         
@@ -379,15 +374,16 @@ public class FavouriteActivity extends AbstractGalleryActivity
                     @Override
                     public void onSuccess(ArrayList<GalleryInfo> gis, int indexPerPage,
                             int maxPage) {
-                        Toast.makeText(FavouriteActivity.this,
-                                "删除成功", Toast.LENGTH_SHORT).show(); // TODO
+                        new SuperToast(FavouriteActivity.this)
+                        .setMessage("删除成功").show(); // TODO
                         mGiList = gis;
                         mGalleryAdapter.notifyDataSetChanged();
                     }
                     @Override
                     public void onFailure(String eMsg) {
-                        Toast.makeText(FavouriteActivity.this,
-                                "删除失败\n" + eMsg, Toast.LENGTH_SHORT).show(); // TODO
+                        new SuperToast(FavouriteActivity.this)
+                        .setIcon(R.drawable.ic_warning)
+                        .setMessage("删除失败\n" + eMsg).show(); // TODO
                     }
                 });
             }

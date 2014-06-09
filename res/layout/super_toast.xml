@@ -18,8 +18,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="60.0dp"
-    android:minWidth="200.0dp"
-    android:background="@android:color/holo_blue_dark" >
+    android:minWidth="100.0dp"
+    android:background="@color/toast_bg" >
 
     <ImageView
         android:id="@+id/icon"

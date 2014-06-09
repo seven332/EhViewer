@@ -18,12 +18,12 @@ package com.hippo.ehviewer.ui;
 
 import java.util.List;
 
-import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
+import com.hippo.ehviewer.widget.SuperToast;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -41,7 +41,6 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class CommentsSectionFragment extends Fragment
         implements AdapterView.OnItemLongClickListener {
@@ -129,8 +128,7 @@ public class CommentsSectionFragment extends Fragment
                             ClipboardManager cm = (ClipboardManager)mActivity
                                     .getSystemService(Context.CLIPBOARD_SERVICE);
                             cm.setPrimaryClip(ClipData.newPlainText(null, c.comment));
-                            Toast.makeText(mActivity, getString(R.string.copyed),
-                                    Toast.LENGTH_SHORT).show();
+                            new SuperToast(mActivity).setMessage(R.string.copyed).show();
                             break;
                             
                         case 1:

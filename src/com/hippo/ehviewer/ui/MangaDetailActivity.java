@@ -27,10 +27,10 @@ import com.hippo.ehviewer.ehclient.DetailUrlParser;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
-import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
+import com.hippo.ehviewer.widget.SuperToast;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
@@ -41,7 +41,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -50,7 +49,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 // TODO I'm going to add an awesome feature.
 //       When views in ListView or ScrollView or some ViewGroup can
@@ -104,9 +102,9 @@ public class MangaDetailActivity extends AbstractFragmentActivity
                 // TODO
             }
             // TODO reset views
-            
-            Toast.makeText(this, getString(R.string.unfinished),
-                    Toast.LENGTH_SHORT).show();
+            new SuperToast(this)
+            .setIcon(R.drawable.ic_warning)
+            .setMessage(R.string.unfinished).show();
             
         } else {
             mGalleryInfo = intent.getParcelableExtra(KEY_G_INFO);
@@ -206,31 +204,23 @@ public class MangaDetailActivity extends AbstractFragmentActivity
             return true;
         case R.id.action_favourite:
             ((AppContext)getApplication()).getData().addLocalFavourite(mGalleryInfo);
-            Toast.makeText(MangaDetailActivity.this,
-                    getString(R.string.toast_add_favourite),
-                    Toast.LENGTH_SHORT).show();
+            new SuperToast(this).setMessage(R.string.toast_add_favourite).show();
             return true;
         case R.id.action_download:
             if (mGalleryDetail.language == null) {
-                Toast.makeText(MangaDetailActivity.this,
-                        getString(R.string.wait),
-                        Toast.LENGTH_SHORT).show();
+                new SuperToast(this).setMessage(R.string.wait).show();
             } else {
                 Intent it = new Intent(MangaDetailActivity.this, DownloadService.class);
                 startService(it);
                 mServiceConn.getService().add(String.valueOf(mGalleryDetail.gid), mGalleryDetail.thumb,
                         EhClient.getDetailUrl(mGalleryDetail.gid, mGalleryDetail.token),
                         mGalleryDetail.title);
-                Toast.makeText(MangaDetailActivity.this,
-                        getString(R.string.toast_add_download),
-                        Toast.LENGTH_SHORT).show();
+                new SuperToast(this, R.string.toast_add_download).show();
             }
             return true;
         case R.id.action_info:
             if (mGalleryDetail.language == null) {
-                Toast.makeText(MangaDetailActivity.this,
-                        getString(R.string.wait),
-                        Toast.LENGTH_SHORT).show();
+                new SuperToast(this, R.string.wait).show();
             } else {
                 
                 new DialogBuilder(this).setTitle(R.string.info)
@@ -284,7 +274,8 @@ public class MangaDetailActivity extends AbstractFragmentActivity
                                                 }
                                                 @Override
                                                 public void onFailure(String eMsg) {
-                                                    Toast.makeText(MangaDetailActivity.this, eMsg, Toast.LENGTH_SHORT).show();
+                                                    new SuperToast(MangaDetailActivity.this, eMsg)
+                                                    .setIcon(R.drawable.ic_warning).show();
                                                 }
                                             });
                         }

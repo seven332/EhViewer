@@ -35,11 +35,11 @@ import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FileExplorerView;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
+import com.hippo.ehviewer.widget.SuperToast;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.preference.AutoListPreference;
 import com.readystatesoftware.systembartint.SystemBarTintManager.SystemBarConfig;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -49,7 +49,6 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -61,7 +60,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class SettingsActivity extends AbstractPreferenceActivity {
     @SuppressWarnings("unused")
@@ -321,8 +319,8 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 try {
                     cacheSize = Integer.parseInt((String) objValue) * 1024 * 1024;
                 } catch (Exception e) {
-                    Toast.makeText(mActivity, getString(R.string.input_error),
-                            Toast.LENGTH_SHORT).show();
+                    new SuperToast(mActivity).setIcon(R.drawable.ic_warning)
+                            .setMessage(R.string.input_error).show();
                     return false;
                 }
                 
@@ -335,9 +333,8 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                         Cache.diskCache = new DiskCache(mActivity,
                                 Cache.cpCachePath, cacheSize);
                     } catch (Exception e) {
-                        Toast.makeText(mActivity,
-                                getString(R.string.create_cache_error),
-                                Toast.LENGTH_SHORT).show();
+                        new SuperToast(mActivity).setIcon(R.drawable.ic_warning)
+                                .setMessage(R.string.create_cache_error).show();
                         e.printStackTrace();
                     }
                 } else
@@ -412,8 +409,8 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                     @Override
                     public void onClick(View v) {
                         if (!fileExplorerView.canWrite())
-                            Toast.makeText(mActivity, "当前路径不可写",
-                                    Toast.LENGTH_SHORT).show();
+                            new SuperToast(mActivity).setIcon(R.drawable.ic_warning)
+                                    .setMessage("当前路径不可写").show();
                         else {
                             String downloadPath = fileExplorerView.getCurPath();
                             

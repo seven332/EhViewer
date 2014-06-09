@@ -23,46 +23,33 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.R.id;
-import com.hippo.ehviewer.R.layout;
-import com.hippo.ehviewer.R.string;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.network.Downloader;
-import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Util;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 
 import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.widget.SuperToast;
 
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 public class MangaActivity extends AbstractActivity {
     private String TAG = "MangaActivity";
@@ -214,9 +201,11 @@ public class MangaActivity extends AbstractActivity {
             retryTimes++;
             int targetPage = (Integer)checkFlag;
             if (retryTimes < maxRetry) {
-                Toast.makeText(MangaActivity.this, eMsg + " " + 
-                        String.format(getString(R.string.em_retry_times), retryTimes), 
-                        Toast.LENGTH_SHORT).show();
+                new SuperToast(MangaActivity.this)
+                .setIcon(R.drawable.ic_warning)
+                .setMessage(eMsg + " " + 
+                        String.format(getString(R.string.em_retry_times), retryTimes))
+                        .show(); // TODO
                 if (targetPage == firstPage - 1 &&
                         getPrePage == true) {
                     mEhClient.getMangaUrl(allPrePageUrl, targetPage, new MangaUrlGetListener());
@@ -230,12 +219,14 @@ public class MangaActivity extends AbstractActivity {
                 if (targetPage == firstPage - 1 &&
                         getPrePage == true) {
                     getPrePage = false;
-                    Toast.makeText(MangaActivity.this,
-                            getString(R.string.retry_max_pre), Toast.LENGTH_SHORT).show();
+                    new SuperToast(MangaActivity.this)
+                    .setIcon(R.drawable.ic_warning)
+                    .setMessage(R.string.retry_max_pre).show();
                 }
                 else {
-                    Toast.makeText(MangaActivity.this,
-                            getString(R.string.retry_max_next), Toast.LENGTH_SHORT).show();
+                    new SuperToast(MangaActivity.this)
+                    .setIcon(R.drawable.ic_warning)
+                    .setMessage(R.string.retry_max_next).show();
                     mStop = true;
                 }
                 mImageSet.changeState(targetPage, ImageSet.STATE_FAIL);
@@ -305,11 +296,13 @@ public class MangaActivity extends AbstractActivity {
         isv.setOnEdgeListener(new GalleryView.OnEdgeListener() {
             @Override
             public void onLastPageEdge() {
-                Toast.makeText(MangaActivity.this, getString(R.string.last_page), Toast.LENGTH_SHORT).show();
+                new SuperToast(MangaActivity.this)
+                .setMessage(R.string.last_page).show();
             }
             @Override
             public void onFirstPageEdge() {
-                Toast.makeText(MangaActivity.this, getString(R.string.first_page), Toast.LENGTH_SHORT).show();
+                new SuperToast(MangaActivity.this)
+                .setMessage(R.string.first_page).show();
             }
         });
         
