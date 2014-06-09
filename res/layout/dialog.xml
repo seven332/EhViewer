@@ -72,6 +72,7 @@
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="12dp"
                 android:layout_marginTop="36dp"
+                android:layout_gravity="center"
                 android:textSize="18sp"
                 android:visibility="gone" />
 
