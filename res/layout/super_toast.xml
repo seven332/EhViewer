@@ -14,41 +14,48 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:minHeight="60.0dp"
-    android:minWidth="100.0dp"
-    android:background="@color/toast_bg" >
-
-    <ImageView
-        android:id="@+id/icon"
+    android:paddingLeft="24.0dp"
+    android:paddingRight="24.0dp" >
+    
+    <!-- TODO I have no idear how to make some space in left and right when message is long -->
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:paddingLeft="16dip"
-        android:paddingStart="16dip" />
+        android:minHeight="60.0dp"
+        android:minWidth="100.0dp"
+        android:background="@color/toast_bg" >
 
-    <RelativeLayout
-        android:layout_width="0dip"
-        android:layout_height="match_parent"
-        android:layout_weight="1" >
-
-        <TextView
-            android:id="@+id/message"
+        <ImageView
+            android:id="@+id/icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
             android:paddingLeft="16dip"
-            android:paddingStart="16dip"
-            android:paddingRight="16dip"
-            android:paddingEnd="16dip"
-            android:singleLine="true"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            android:paddingStart="16dip" />
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingLeft="16dip"
+                android:paddingStart="16dip"
+                android:paddingRight="16dip"
+                android:paddingEnd="16dip"
+                android:paddingTop="18.0dp"
+                android:paddingBottom="18.0dp"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+    </LinearLayout>
+</FrameLayout>
+

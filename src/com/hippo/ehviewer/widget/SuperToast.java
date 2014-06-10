@@ -22,6 +22,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -55,14 +56,15 @@ public class SuperToast extends Toast {
     private void init() {
         LayoutInflater inflate = (LayoutInflater)
                 mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mMainView = (LinearLayout)inflate.inflate(R.layout.super_toast, null);
+        FrameLayout view = (FrameLayout)inflate.inflate(R.layout.super_toast, null);
+        mMainView = (LinearLayout)view.getChildAt(0);
         mIcon = (ImageView)mMainView.findViewById(R.id.icon);
         mMessage = (TextView)mMainView.findViewById(R.id.message);
         
         mIcon.setVisibility(View.GONE);
         
         setDuration(Toast.LENGTH_SHORT);
-        setView(mMainView);
+        setView(view);
     }
 
     public SuperToast setIcon(int resId) {
