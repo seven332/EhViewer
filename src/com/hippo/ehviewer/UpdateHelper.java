@@ -173,21 +173,22 @@ public class UpdateHelper {
                         JSONObject jo = new JSONObject(pageContext);
                         JSONObject updateJO = jo.getJSONObject("update");
                         
-                        String version = updateJO.getString("version");
-                        
-                        if (version.equals("error")) {
+                        if (updateJO.has("error")) {
                             if (listener != null)
-                                listener.onFailure(appContext.getString(R.string.em_invalid_request));
-                        } else if (version.equals("none")) {
-                            if (listener != null)
-                                listener.onNoUpdate();
+                                listener.onFailure(updateJO.getString("error"));
                         } else {
-                            long size = updateJO.getLong("size");
-                            String url = updateJO.getString("url");
-                            String info = updateJO.getString("info");
-                            
-                            if (listener != null)
-                                listener.onSuccess(version, size, url, HEADER + version + FOOTER, info);
+                            String version = updateJO.getString("version");
+                            if (version.equals("none")) {
+                                if (listener != null)
+                                    listener.onNoUpdate();
+                            } else {
+                                long size = updateJO.getLong("size");
+                                String url = updateJO.getString("url");
+                                String info = updateJO.getString("info");
+                                
+                                if (listener != null)
+                                    listener.onSuccess(version, size, url, HEADER + version + FOOTER, info);
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
