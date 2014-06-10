@@ -124,7 +124,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
         
         mActionableToastBar = new ActionableToastBar(this);
-        mActionableToastBar.setBackgroundColor(mResources.getColor(R.color.toast_bg));
+        mActionableToastBar.setBackgroundColor(mResources.getColor(android.R.color.holo_purple));
         mMainView.addView(mActionableToastBar);
         mMainView.setOnTouchListener(this);
         

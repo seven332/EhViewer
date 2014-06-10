@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:minHeight="60.0dp"
         android:minWidth="100.0dp"
-        android:background="@color/toast_bg" >
+        android:background="@android:color/holo_purple" >
 
         <ImageView
             android:id="@+id/icon"

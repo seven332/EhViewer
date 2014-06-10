@@ -27,6 +27,8 @@
     <color name="refresh_color_3">#427fed</color>
     <color name="refresh_color_4">#b23424</color>
     
+    <color name="holo_purple_light_light">#ffd7a2e6</color>
+    
     <color name="ab_bg">@android:color/holo_blue_dark</color>
     <color name="list_main_bg">#ffe5e5e5</color>
     <color name="tag_bg">#bbffffff</color>
@@ -65,7 +67,5 @@
     
     <color name="detail_divider">#22000000</color>
     
-    <color name="toast_bg">#ff458cf5</color>
-    <color name="toast_bg_light">#ff458cf5</color>
     <color name="btn_white_default">#fff0f0f0</color>
 </resources>
