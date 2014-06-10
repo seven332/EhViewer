@@ -261,14 +261,6 @@ final class SwipeProgressBar {
         canvas.restore();
     }
 
-    public int getTop() {
-        return mBounds.top;
-    }
-
-    public void setTop(int top) {
-        mBounds.top = top;
-    }
-
     /**
      * Set the drawing bounds of this SwipeProgressBar.
      */

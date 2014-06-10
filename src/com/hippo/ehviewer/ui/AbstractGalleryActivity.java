@@ -76,6 +76,7 @@ public class AbstractGalleryActivity extends AbstractSlidingActivity {
         
         mMainView = (RelativeLayout)findViewById(R.id.main);
         mHlv = (HfListView)findViewById(R.id.list);
+        mHlv.setAgainstToChildPadding(true);
         mList = mHlv.getListView();
         mWaitProgressBar = (ProgressBar)findViewById(R.id.wait);
         mFreshButton = (Button)findViewById(R.id.refresh);
@@ -93,7 +94,6 @@ public class AbstractGalleryActivity extends AbstractSlidingActivity {
             @Override
             public void onfitSystemWindows(int paddingLeft, int paddingTop,
                     int paddingRight, int paddingBottom) {
-                mHlv.setProgressBarTop(paddingTop);
                 mList.setPadding(mList.getPaddingLeft(), paddingTop,
                         mList.getPaddingRight(), paddingBottom);
             }

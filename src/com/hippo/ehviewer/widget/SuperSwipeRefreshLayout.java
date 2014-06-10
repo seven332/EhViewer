@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
@@ -45,6 +44,7 @@ public class SuperSwipeRefreshLayout extends ViewGroup {
 
     private SwipeProgressBar mProgressBar; //the thing that shows progress is going
     private boolean mIsProgressBarVisible = true;
+    private boolean mIsAgainstToChildPadding = false;
     private View mTarget; //the content that gets pulled down
     private int mOriginalOffsetTop;
     private OnRefreshListener mListener;
@@ -299,24 +299,45 @@ public class SuperSwipeRefreshLayout extends ViewGroup {
             mProgressBar.draw(canvas);
     }
 
-    public void setProgressBarTop(int top) {
-        mProgressBar.setTop(top);
+    /**
+     * If set true, refresh action will be triggered when
+     * the first item reaches the paddingTop of AbsListView.
+     * 
+     * @param againstToChildPadding
+     */
+    public void setAgainstToChildPadding(boolean againstToChildPadding) {
+        if (mIsAgainstToChildPadding != againstToChildPadding) {
+            mIsAgainstToChildPadding = againstToChildPadding;
+            setProgressBarBounds();
+        }
+    }
+
+    private void setProgressBarBounds() {
+        final int width =  getMeasuredWidth();
+        
+        if (mIsAgainstToChildPadding && getChildCount() != 0) {
+            final View child = getChildAt(0);
+            mProgressBar.setBounds(0, child.getPaddingTop(), width, mProgressBarHeight + child.getPaddingTop());
+        } else {
+            mProgressBar.setBounds(0, 0, width, mProgressBarHeight);
+        }
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        final int width =  getMeasuredWidth();
-        final int height = getMeasuredHeight();
-        mProgressBar.setBounds(0, mProgressBar.getTop(), width, mProgressBarHeight + mProgressBar.getTop());
-        if (getChildCount() == 0) {
-            return;
+        if (getChildCount() != 0) {
+            final int width =  getMeasuredWidth();
+            final int height = getMeasuredHeight();
+            
+            final View child = getChildAt(0);
+            final int childLeft = getPaddingLeft();
+            final int childTop = mCurrentTargetOffsetTop + getPaddingTop();
+            final int childWidth = width - getPaddingLeft() - getPaddingRight();
+            final int childHeight = height - getPaddingTop() - getPaddingBottom();
+            child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
         }
-        final View child = getChildAt(0);
-        final int childLeft = getPaddingLeft();
-        final int childTop = mCurrentTargetOffsetTop + getPaddingTop();
-        final int childWidth = width - getPaddingLeft() - getPaddingRight();
-        final int childHeight = height - getPaddingTop() - getPaddingBottom();
-        child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+        
+        setProgressBarBounds();
     }
 
     @Override
@@ -341,17 +362,13 @@ public class SuperSwipeRefreshLayout extends ViewGroup {
      *         scroll up. Override this if the child view is a custom view.
      */
     public boolean canChildScrollUp() {
-        if (android.os.Build.VERSION.SDK_INT < 14) {
-            if (mTarget instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) mTarget;
-                return absListView.getChildCount() > 0
-                        && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
-                                .getTop() < absListView.getPaddingTop());
-            } else {
-                return mTarget.getScrollY() > 0;
-            }
+        if (mTarget instanceof AbsListView) {
+            final AbsListView absListView = (AbsListView) mTarget;
+            return absListView.getChildCount() > 0
+                    && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
+                            .getTop() < absListView.getPaddingTop());
         } else {
-            return ViewCompat.canScrollVertically(mTarget, -1);
+            return mTarget.getScrollY() > 0;
         }
     }
 
