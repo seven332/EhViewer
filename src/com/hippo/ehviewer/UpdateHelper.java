@@ -49,7 +49,7 @@ public class UpdateHelper {
     @SuppressWarnings("unused")
     private static final String TAG = "UpdateHelper";
     
-    private static final String UPDATE_API = "http://ehviewersu.appsp0t.com/API";
+    private static final String UPDATE_API = "http://www.ehviewer.com/API";
     private static final String HEADER = "Ehviewer-";
     private static final String FOOTER = ".apk";
     
