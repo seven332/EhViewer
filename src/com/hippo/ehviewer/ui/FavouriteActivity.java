@@ -51,6 +51,7 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.ActionableToastBar;
 import com.hippo.ehviewer.widget.DialogBuilder;
@@ -85,6 +86,14 @@ public class FavouriteActivity extends AbstractGalleryActivity
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+    }
+    
+    @Override
+    public void onBackPressed() {
+        if (mActionableToastBar.isShown())
+            mActionableToastBar.hide(true);
+        else
+            super.onBackPressed();
     }
     
     @Override
@@ -323,7 +332,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
     
     private AlertDialog createMoveDialog(final ActionMode mode) {
         return new DialogBuilder(this).setTitle("移动至何处？") //
-                .setItems(mMenuIndex, new AdapterView.OnItemClickListener() {
+                .setItems(mMenuTitles, new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                             int position, long id) {
@@ -354,7 +363,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                         mMoveDialog = null;
                         mode.finish();
                     }
-                }).create();
+                }).setSimpleNegativeButton().create();
     }
     
     @Override
