@@ -49,12 +49,12 @@
     </style>
     
     <style name="Button.Blue">
-        <item name="android:background">@drawable/blue_bn_bg</item>
+        <item name="android:background">@drawable/clickable_bg_blue</item>
         <item name="android:textColor">@color/blue_bn_text</item>
     </style>
     
     <style name="Button.White">
-        <item name="android:background">@drawable/white_bn_bg</item>
+        <item name="android:background">@drawable/clickable_bg_white</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
     
@@ -67,12 +67,12 @@
     </style>
     
     <style name="Button.Small.Blue">
-        <item name="android:background">@drawable/blue_bn_bg</item>
+        <item name="android:background">@drawable/clickable_bg_blue</item>
         <item name="android:textColor">@color/blue_bn_text</item>
     </style>
     
     <style name="Button.Small.White">
-        <item name="android:background">@drawable/white_bn_bg</item>
+        <item name="android:background">@drawable/clickable_bg_white</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
     
@@ -85,12 +85,12 @@
     </style>
     
     <style name="Button.Small.Flat.Blue">
-        <item name="android:background">@drawable/blue_bn_bg</item>
+        <item name="android:background">@drawable/clickable_bg_blue</item>
         <item name="android:textColor">@color/blue_bn_text</item>
     </style>
     
     <style name="Button.Small.Flat.White">
-        <item name="android:background">@drawable/white_bn_bg</item>
+        <item name="android:background">@drawable/clickable_bg_white</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
     

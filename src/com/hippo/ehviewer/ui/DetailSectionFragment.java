@@ -431,7 +431,7 @@ public class DetailSectionFragment extends Fragment
                 tagView.setTextSize(TypedValue.COMPLEX_UNIT_PX, tagTextSize);
                 tagView.setText(String.format("%s (%d)", tagText, tag.getValue()));
                 tagView.setTextColor(tagTextColor);
-                tagView.setBackgroundResource(R.drawable.blue_bn_bg);
+                tagView.setBackgroundResource(R.drawable.clickable_bg_blue);
                 tagView.setPadding(tagPaddingX, tagPaddingY, tagPaddingX, tagPaddingY);
                 tagView.setOnClickListener(new OnClickListener() {
                     @Override
@@ -476,7 +476,7 @@ public class DetailSectionFragment extends Fragment
         addtagView.setTextSize(TypedValue.COMPLEX_UNIT_PX, tagTextSize);
         addtagView.setText("+");
         addtagView.setTextColor(tagTextColor);
-        addtagView.setBackgroundResource(R.drawable.blue_bn_bg);
+        addtagView.setBackgroundResource(R.drawable.clickable_bg_blue);
         addtagView.setPadding(tagPaddingX, tagPaddingY, tagPaddingX, tagPaddingY);
         addtagView.setOnClickListener(new View.OnClickListener() {
             @Override

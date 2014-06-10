@@ -46,7 +46,7 @@
             android:layout_gravity="center"
             android:layout_marginRight="8.0dp"
             android:src="@drawable/ic_action_touch"
-            android:background="@drawable/blue_bn_bg"
+            android:background="@drawable/clickable_bg_blue"
             android:visibility="gone" />
         
     </LinearLayout>

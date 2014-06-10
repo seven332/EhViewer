@@ -41,7 +41,7 @@
         android:id="@+id/action_button"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@drawable/purple_clickable_bg"
+        android:background="@drawable/clickable_bg_purple"
         android:clickable="true" >
 
         <View
