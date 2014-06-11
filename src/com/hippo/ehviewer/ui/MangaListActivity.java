@@ -1351,6 +1351,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         super.onDestroy();
         unbindService(mServiceConn);
         
+        /*
         List<GalleryInfo> reads = mData.getAllReads();
         for (GalleryInfo item : reads) {
             File folder = new File(Config.getDownloadPath(),
@@ -1361,7 +1362,7 @@ public class MangaListActivity extends AbstractGalleryActivity
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
         mData.deleteAllReads();
     }
     
