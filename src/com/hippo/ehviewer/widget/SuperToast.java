@@ -30,6 +30,10 @@ import android.widget.Toast;
 
 public class SuperToast extends Toast {
 
+    public static final int NONE = 0;
+    public static final int WARNING = 1;
+    public static final int ERROR = 2;
+
     private Context mContext;
 
     private LinearLayout mMainView;
@@ -43,14 +47,24 @@ public class SuperToast extends Toast {
         init();
     }
 
+    public SuperToast(Context context, int strResId) {
+        this(context);
+        setMessage(strResId);
+    }
+
     public SuperToast(Context context, String mesg) {
         this(context);
         setMessage(mesg);
     }
 
-    public SuperToast(Context context, int strResId) {
-        this(context);
-        setMessage(strResId);
+    public SuperToast(Context context, int strResId, int type) {
+        this(context, strResId);
+        setTypeIcon(type);
+    }
+
+    public SuperToast(Context context, String mesg, int type) {
+        this(context, mesg);
+        setTypeIcon(type);
     }
 
     private void init() {
@@ -65,6 +79,22 @@ public class SuperToast extends Toast {
         
         setDuration(Toast.LENGTH_SHORT);
         setView(view);
+    }
+
+    public SuperToast setTypeIcon(int type) {
+        switch(type) {
+        case WARNING:
+            setIcon(R.drawable.ic_warning);
+            break;
+        case ERROR:
+            setIcon(R.drawable.ic_error);
+            break;
+        case NONE:
+        default:
+            // nop
+            break;
+        }
+        return this;
     }
 
     public SuperToast setIcon(int resId) {

@@ -37,6 +37,7 @@ import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.widget.AlertButton;
@@ -132,12 +133,6 @@ public class MangaListActivity extends AbstractGalleryActivity
     public static final String KEY_TAG = "tag";
     public static final String KEY_UPLOADER = "uploader";
     
-    private static final int REFRESH = 0x0;
-    private static final int NEXT_PAGE = 0x1;
-    private static final int PRE_PAGE = 0x2;
-    private static final int SOMEWHERE = 0x3;
-    private static final int SET_POSITION = 0x8000;
-    
     private EhClient mEhClient;
     private Resources mResources;
     
@@ -153,6 +148,8 @@ public class MangaListActivity extends AbstractGalleryActivity
     private Button registerButton;
     private Button logoutButton;
     private View waitloginoutView;
+    
+    private ListView mList;
     
     private TagsAdapter tagsAdapter;
 
@@ -174,22 +171,7 @@ public class MangaListActivity extends AbstractGalleryActivity
     private long curBackTime = 0;
     private static final int BACK_PRESSED_INTERVAL = 2000;
     
-    //
-    private int firstPage = 0;
-    private int lastPage = 0;
-    
-    private int firstIndex = 0;
-    private int lastIndex = 0;
-    private int visiblePage = 0;
-    
     private String mTitle;
-    
-    private int mGetMode;
-    
-    private int mFswPaddingLeft;
-    private int mFswPaddingTop;
-    private int mFswPaddingRight;
-    private int mFswPaddingBottom;
     
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
@@ -345,7 +327,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                     public void onClick(View v) {
                         ListUrls backup = lus;
                         lus = getLus(filterDialog);
-                        if (refresh()) {
+                        if (refresh(false)) {
                             ((AlertButton)v).dialog.dismiss();
                             showContent();
                             
@@ -356,7 +338,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                                 if (search == null || search.isEmpty())
                                     t = getString(android.R.string.search_go);
                                 else
-                                    t = getString(android.R.string.search_go) + " " + search;
+                                    t = search;
                                 break;
                             case ListUrls.UPLOADER:
                                 t = search;
@@ -550,7 +532,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.jump, null);
         TextView tv = (TextView)view.findViewById(R.id.list_jump_sum);
-        tv.setText(String.format(getString(R.string.jump_sum), lus.getMax()));
+        tv.setText(String.format(getString(R.string.jump_sum), getMaxPage())); // TODO
         tv = (TextView)view.findViewById(R.id.list_jump_to);
         tv.setText(R.string.jump_to);
         final EditText et = (EditText)view.findViewById(R.id.list_jump_edit);
@@ -559,43 +541,25 @@ public class MangaListActivity extends AbstractGalleryActivity
                 .setView(view, true)
                 .setPositiveButton(android.R.string.ok,
                 new View.OnClickListener() {
-                    
                     @Override
                     public void onClick(View v) {
+                        boolean error = false;
+                        int targetPage = 0;
                         try{
-                            int targetPage = Integer.parseInt(et.getText().toString()) - 1;
-                            if (targetPage >= firstPage
-                                    && targetPage <= lastPage) {   // If targetPage is in range
-                                ((AlertButton)v).dialog.dismiss(); // Just jump there
-                                int position = (targetPage - firstPage) *
-                                        lus.getNumPerPage();
-                                setMainListPosition(position);
-                            } else{
-                                if (lus.setPage(targetPage)) {
-                                    ((AlertButton)v).dialog.dismiss();
-                                    
-                                    mWaitProgressBar.setVisibility(View.GONE);
-                                    mFreshButton.setVisibility(View.GONE);
-                                    mNoneTextView.setVisibility(View.GONE);
-                                    mSadPanda.setVisibility(View.GONE);
-                                    mHlv.setRefreshing(true);
-                                    
-                                    if (targetPage == firstPage - 1)
-                                        mGetMode = PRE_PAGE;
-                                    else if (targetPage == lastPage + 1)
-                                        mGetMode = NEXT_PAGE;
-                                    else
-                                        mGetMode = SOMEWHERE;
-                                    mGetMode |= SET_POSITION;
-                                    
-                                    getList();
-                                } else {
-                                    new SuperToast(MangaListActivity.this, R.string.toast_invalid_page).setIcon(R.drawable.ic_warning).show();
-                                }
-                            }
+                            targetPage = Integer.parseInt(et.getText().toString()) - 1;
                         } catch(Exception e) {
-                            new SuperToast(MangaListActivity.this, R.string.toast_invalid_page).setIcon(R.drawable.ic_warning).show();
+                            error = true;
                         }
+                        
+                        if (!error) {
+                            error = !jumpTo(targetPage, true);
+                        }
+                        
+                        if (error)
+                            new SuperToast(MangaListActivity.this, R.string.toast_invalid_page,
+                                    SuperToast.ERROR).show();
+                        else
+                            ((AlertButton)v).dialog.dismiss();
                     }
                 }).setNegativeButton(android.R.string.cancel,
                 new View.OnClickListener() {
@@ -879,187 +843,6 @@ public class MangaListActivity extends AbstractGalleryActivity
         }
     }
     
-    private void setMainListPosition(int position) {
-        if (position == 0)
-            mList.setSelectionFromTop(position, mFswPaddingTop);
-        else
-            mList.setSelectionFromTop(position, 0);
-    }
-    
-    private class MangaListGetListener implements
-            EhClient.OnGetMangaListListener {
-        @Override
-        public void onSuccess(Object checkFlag, ArrayList<GalleryInfo> newLmdArray,
-                int indexPerPage, int maxPage) {
-            
-            // Check no Found view later
-            mWaitProgressBar.setVisibility(View.GONE);
-            mFreshButton.setVisibility(View.GONE);
-            
-            if (maxPage == 0) { // If No hits found
-                mHlv.setVisibility(View.GONE);
-                mNoneTextView.setVisibility(View.VISIBLE);
-                mSadPanda.setVisibility(View.GONE);
-                
-                mTitle = mResources.getString(R.string.no_found);
-                setTitle();
-                
-                mGiList.clear();
-                mGalleryAdapter.notifyDataSetChanged();
-            } else if (maxPage == -1) { //panda
-                mHlv.setVisibility(View.GONE);
-                mNoneTextView.setVisibility(View.GONE);
-                mSadPanda.setVisibility(View.VISIBLE);
-                
-                mTitle = mResources.getString(R.string.sadpanda);
-                setTitle();
-                
-                mGiList.clear();
-                mGalleryAdapter.notifyDataSetChanged();
-            } else {
-                mHlv.setVisibility(View.VISIBLE);
-                mNoneTextView.setVisibility(View.GONE);
-                mSadPanda.setVisibility(View.GONE);
-                
-                // Set indexPerPage and maxPage
-                lus.setNumPerPage(indexPerPage);
-                lus.setMax(maxPage);
-                
-                // Check refresh or get more
-                switch (mGetMode & (~SET_POSITION)) {
-                case REFRESH:
-                    firstPage = 0;
-                    lastPage = 0;
-                    mGiList.clear();
-                    mGiList.addAll(newLmdArray);
-                    mGalleryAdapter.notifyDataSetChanged();
-                    
-                    // set visible page
-                    firstIndex = 0;
-                    lastIndex = newLmdArray.size() - 1;
-                    visiblePage = 0;
-                    
-                    // set title
-                    setTitle();
-                    
-                    // set main list positon
-                    setMainListPosition(0);
-                    break;
-                case PRE_PAGE:
-                    firstPage -= 1;
-                    mGiList.addAll(0, newLmdArray);
-                    mGalleryAdapter.notifyDataSetChanged();
-                    
-                    // set position if necessary and set visible page
-                    if ((mGetMode & SET_POSITION) != 0) {
-                        firstIndex = 0;
-                        lastIndex = newLmdArray.size()-1;
-                        visiblePage = lus.getPage();
-                        
-                        setMainListPosition(0);
-                        setTitle();
-                    } else {
-                        firstIndex += newLmdArray.size();
-                        lastIndex += newLmdArray.size();
-                        
-                        setMainListPosition(
-                                mList.getFirstVisiblePosition() + newLmdArray.size());
-                    }
-                    break;
-                case NEXT_PAGE:
-                    lastPage += 1;
-                    mGiList.addAll(newLmdArray);
-                    mGalleryAdapter.notifyDataSetChanged();
-                    
-                    // set position if necessary and set visible page
-                    if ((mGetMode & SET_POSITION) != 0) {
-                        firstIndex = mGiList.size() - newLmdArray.size();
-                        lastIndex = mGiList.size() - 1;
-                        visiblePage = lus.getPage();
-                        
-                        setMainListPosition(firstIndex);
-                        setTitle();
-                    }
-                    break;
-                case SOMEWHERE:
-                    firstPage = lus.getPage();
-                    lastPage = lus.getPage();
-                    mGiList.clear();
-                    mGiList.addAll(newLmdArray);
-                    mGalleryAdapter.notifyDataSetChanged();
-                    
-                    // Get visible page
-                    firstIndex = 0;
-                    lastIndex = newLmdArray.size();
-                    visiblePage = lus.getPage();
-                    
-                    setMainListPosition(0);
-                    setTitle();
-                    break;
-                default:
-                    break;
-                }
-            }
-            
-            mHlv.setAnyRefreshComplete(true);
-        }
-
-        @Override
-        public void onFailure(Object checkFlag, String eMsg) {
-            // Check pull list view later
-            // Check fresh view later
-            mWaitProgressBar.setVisibility(View.GONE);
-            mNoneTextView.setVisibility(View.GONE);
-            mSadPanda.setVisibility(View.GONE);
-            
-            switch (mGetMode & (~SET_POSITION)) {
-            case REFRESH:
-                mHlv.setVisibility(View.GONE);
-                mFreshButton.setVisibility(View.VISIBLE);
-                
-                new SuperToast(MangaListActivity.this, eMsg).setIcon(R.drawable.ic_warning).show();
-                mGiList.clear();
-                mGalleryAdapter.notifyDataSetChanged();
-                break;
-            default:
-                mFreshButton.setVisibility(View.GONE);
-                new SuperToast(MangaListActivity.this, eMsg).setIcon(R.drawable.ic_warning).show();
-                break;
-            }
-            mHlv.setAnyRefreshComplete(false);
-        }
-    }
-    
-    private class MangaListListener implements ListView.OnScrollListener {
-
-        @Override
-        public void onScroll(AbsListView view, int firstVisibleItem,
-                int visibleItemCount, int totalItemCount) {
-            mHlv.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
-
-            if (lus == null || visibleItemCount < 2)
-                return;
-            if (lastIndex == 0)
-                lastIndex = lus.getNumPerPage() - 1;
-
-            int pageChanged = (firstVisibleItem - firstIndex)
-                    / lus.getNumPerPage();
-            if (pageChanged == 0)
-                pageChanged = (firstVisibleItem + visibleItemCount - lastIndex - 1)
-                        / lus.getNumPerPage();
-            
-            if (pageChanged != 0) {
-                visiblePage = visiblePage + pageChanged;
-                firstIndex += pageChanged * lus.getNumPerPage();
-                lastIndex += pageChanged * lus.getNumPerPage();
-                setTitle();
-            }
-        }
-
-        @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {}
-    }
-    
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -1132,12 +915,13 @@ public class MangaListActivity extends AbstractGalleryActivity
             @Override
             public void onOpened() {
                 setTitle(R.string.app_name);
+                invalidateOptionsMenu();
             }
         });
         mSlidingMenu.setOnClosedListener(new SlidingMenu.OnClosedListener() {
             @Override
             public void onClosed() {
-                setTitle();
+                setTitle(mTitle);
                 invalidateOptionsMenu();
             }
         });
@@ -1160,7 +944,6 @@ public class MangaListActivity extends AbstractGalleryActivity
         String search = intent.getStringExtra("search");
         int page = intent.getIntExtra("page", 0);
         lus = new ListUrls(type, search, page);
-        visiblePage = lus.getPage();
         
         // Init dialog
         loginDialog = createLoginDialog();
@@ -1179,9 +962,12 @@ public class MangaListActivity extends AbstractGalleryActivity
         logoutButton = (Button)mUserPanel.findViewById(R.id.logout);
         waitloginoutView = mUserPanel.findViewById(R.id.wait);
         
+        mList = getListView();
+        
         loginButton.setOnClickListener(this);
         registerButton.setOnClickListener(this);
         logoutButton.setOnClickListener(this);
+        setNoneText(mResources.getString(R.string.no_found));
         
         // Drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -1233,7 +1019,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 case 0: // Home page
                     ListUrls backup = lus;
                     lus = new ListUrls(ListUrls.ALL_TYPE, null, 0);
-                    if (refresh()) {
+                    if (refresh(false)) {
                         mTitle = mResources.getString(R.string.homepage);
                         setTitle(mTitle);
                         
@@ -1285,7 +1071,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                     int position, long arg3) {
                 ListUrls backup = lus;
                 lus = mData.getTag(position);
-                if (lus != null && refresh()) {
+                if (lus != null && refresh(false)) {
                     mTitle = listMenuTag.get(position);
                     setTitle(mTitle);
                     showContent();
@@ -1321,41 +1107,7 @@ public class MangaListActivity extends AbstractGalleryActivity
             }
         });
         
-        // Pull list view
-        // Setup ActionBarPullToRefresh
-        mHlv.setColorScheme(R.color.refresh_color_1, R.color.refresh_color_2, R.color.refresh_color_3, R.color.refresh_color_4);
-        mHlv.setOnRefreshListener(new SuperSwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (firstPage != 0) {
-                    lus.setPage(firstPage - 1);
-                    mGetMode = PRE_PAGE;
-                    getList();
-                } else {
-                    lus.setPage(0);
-                    mGetMode = REFRESH;
-                    getList();
-                }
-            }
-        });
-        mHlv.setOnFooterRefreshListener(new HfListView.OnFooterRefreshListener() {
-            @Override
-            public boolean onFooterRefresh() {
-                if (lus.setPage(lastPage+1)) {
-                    mGetMode = NEXT_PAGE;
-                    getList();
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-        mHlv.setFooterString(getString(R.string.footer_loading),
-                getString(R.string.footer_loaded),
-                getString(R.string.footer_fail));
-        
         // Listview
-        mList.setOnScrollListener(new MangaListListener());
         mList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
@@ -1384,17 +1136,12 @@ public class MangaListActivity extends AbstractGalleryActivity
             @Override
             public void onfitSystemWindows(int paddingLeft, int paddingTop,
                     int paddingRight, int paddingBottom) {
-                mFswPaddingLeft = paddingLeft;
-                mFswPaddingTop = paddingTop;
-                mFswPaddingRight = paddingRight;
-                mFswPaddingBottom = paddingBottom;
-                
-                mUserPanel.setPadding(mUserPanel.getPaddingLeft(), mFswPaddingTop,
+                mUserPanel.setPadding(mUserPanel.getPaddingLeft(), paddingTop,
                         mUserPanel.getPaddingRight(), mUserPanel.getPaddingBottom());
                 itemListMenu.setPadding(itemListMenu.getPaddingLeft(), itemListMenu.getPaddingTop(),
-                        itemListMenu.getPaddingRight(), mFswPaddingBottom);
-                tagListMenu.setPadding(tagListMenu.getPaddingLeft(), mFswPaddingTop,
-                        tagListMenu.getPaddingRight(), mFswPaddingBottom);
+                        itemListMenu.getPaddingRight(), paddingBottom);
+                tagListMenu.setPadding(tagListMenu.getPaddingLeft(), paddingTop,
+                        tagListMenu.getPaddingRight(), paddingBottom);
             }
         });
         
@@ -1408,19 +1155,15 @@ public class MangaListActivity extends AbstractGalleryActivity
         
         // get MangeList
         mTitle = mResources.getString(R.string.homepage);
-        setTitle();
-        refresh(false);
-        
-        // set layout
-        mHlv.setVisibility(View.GONE);
-        mWaitProgressBar.setVisibility(View.VISIBLE);
-        mFreshButton.setVisibility(View.GONE);
-        mNoneTextView.setVisibility(View.GONE);
-        mSadPanda.setVisibility(View.GONE);
+        setTitle(mTitle);
+        firstTimeRefresh();
     }
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (mSlidingMenu!= null && mSlidingMenu.isMenuShowing())
+            return true;
+        
         getMenuInflater().inflate(R.menu.main, menu);
         
         SearchManager searchManager =
@@ -1441,11 +1184,11 @@ public class MangaListActivity extends AbstractGalleryActivity
                 if (query == null || query.isEmpty())
                     t = getString(android.R.string.search_go);
                 else
-                    t = getString(android.R.string.search_go) + " " + query;
+                    t = query;
                 
                 ListUrls backup = lus;
                 lus = new ListUrls(ListUrls.ALL_TYPE, query);
-                if (refresh()) {
+                if (refresh(false)) {
                     mTitle = t;
                     setTitle(mTitle);
                 } else {
@@ -1565,7 +1308,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 lus.setTag(tag);
                 mTitle = tag;
                 setTitle(mTitle);
-                refresh();
+                refresh(false);
                 break;
                 
             case MODE_UPLOADER:
@@ -1574,7 +1317,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 lus.setMode(ListUrls.UPLOADER);
                 mTitle = uploader;
                 setTitle(mTitle);
-                refresh();
+                refresh(false);
                 break;
             }
         }
@@ -1591,27 +1334,16 @@ public class MangaListActivity extends AbstractGalleryActivity
                 showMenu();
             return true;
         case R.id.action_refresh:
-            if (!refresh())
+            if (!refresh(false))
                 new SuperToast(MangaListActivity.this, R.string.wait).show();
             return true;
         case R.id.action_jump:
-            if (!mHlv.isRefreshing() && isGetOk())
+            if (!isRefreshing() && isGetGalleryOk())
                 jump();
             return true;
         default:
             return super.onOptionsItemSelected(item);
         }
-    }
-    
-    public boolean isGetOk() {
-        return mHlv.getVisibility() == View.VISIBLE;
-    }
-    
-    public void setTitle() {
-        if (isGetOk())
-            setTitle(String.format(getString(R.string.list_title), mTitle, visiblePage + 1));
-        else
-            setTitle(mTitle);
     }
     
     @Override
@@ -1739,37 +1471,13 @@ public class MangaListActivity extends AbstractGalleryActivity
         }
     }
     
-    private void getList() {
-        mEhClient.getMangaList(lus.getUrl(),
-                null,
-                new MangaListGetListener());
-    }
-    
-    public boolean refresh() {
-        return refresh(true);
-    }
-    
-    public boolean refresh(boolean isShowProgress) {
-        if (!mHlv.isRefreshing()
-                && mWaitProgressBar.getVisibility() != View.VISIBLE) {
-            lus.setPage(0);
-            if (isShowProgress)
-                mHlv.setRefreshing(true);
-            mGetMode = REFRESH;
-            getList();
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    public void buttonRefresh(View arg0) {
-        refresh(false);
-        mFreshButton.setVisibility(View.GONE);
-        mWaitProgressBar.setVisibility(View.VISIBLE);
-    }
-    
     public void buttonCheckLogin(View v) {
         checkLogin(false);
+    }
+
+    @Override
+    protected String getTargetUrl(int targetPage) {
+        lus.setPage(targetPage);
+        return lus.getUrl();
     }
 }

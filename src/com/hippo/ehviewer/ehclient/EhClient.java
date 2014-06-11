@@ -171,16 +171,16 @@ public class EhClient {
         }
     }
     
-    public static String getFavoriteUrl(int index) {
-        return getFavoriteUrl(Config.getMode(), index);
+    public static String getFavoriteUrl(int index, int page) {
+        return getFavoriteUrl(Config.getMode(), index, page);
     }
     
-    public static String getFavoriteUrl(int mode, int index) {
+    public static String getFavoriteUrl(int mode, int index, int page) {
         switch (mode) {
         case EX:
-            return EX_HEADER + "favorites.php?favcat=" + index;
+            return EX_HEADER + "favorites.php?favcat=" + index + "&page=" + page;
         default:
-            return G_HEADER  + "favorites.php?favcat=" + index;
+            return G_HEADER  + "favorites.php?favcat=" + index + "&page=" + page;
         }
     }
     
@@ -1770,7 +1770,7 @@ public class EhClient {
                     args[i] = new String[]{"modifygids[]", String.valueOf(gids[i-1])};
                 args[i] = new String[]{"apply", "Apply"};
                 
-                hp.post(getFavoriteUrl(srcCat), args);
+                hp.post(getFavoriteUrl(srcCat, 0), args);
             }
         }).start();
     }

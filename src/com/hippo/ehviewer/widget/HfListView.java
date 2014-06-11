@@ -92,6 +92,14 @@ public class HfListView extends SuperSwipeRefreshLayout
         return mListView;
     }
     
+    /**
+     * Just a alias
+     * @param l
+     */
+    public void setOnHeaderRefreshListener(HfListView.OnRefreshListener l) {
+        super.setOnRefreshListener(l);
+    }
+    
     public void setOnFooterRefreshListener(OnFooterRefreshListener l) {
         mFooterRefreshListener = l;
     }

@@ -62,8 +62,6 @@ public class ListUrls {
     private int mMode = NORMAL;
     
     private int page = 0;
-    private int numPerPage = 25;
-    private int max = -1;
     private int type = ALL_TYPE;
     
     private int advsearchType = -1;
@@ -140,43 +138,12 @@ public class ListUrls {
         return minRating;
     }
     
-    public boolean isSetMax() {
-        return max == -1 ? false : true;
-    }
-    
-    public void setMax(int m) {
-        if (m < 1)
-            return;
-        max = m;
-        if(page >= m)
-            page = m-1;
-    }
-    
-    public int getMax() {
-        return max;
-    }
-    
-    public boolean setPage(int p) {
-        if (p < max && p >= 0) {
-            page = p;
-            return true;
-        }
-        else
-            return false;
+    public void setPage(int p) {
+        page = p;
     }
     
     public int getPage() {
         return page;
-    }
-    
-    public void setNumPerPage(int n) {
-        if (n < 1)
-            return;
-        numPerPage = n;
-    }
-    
-    public int getNumPerPage() {
-        return numPerPage;
     }
     
     public int getMode() {

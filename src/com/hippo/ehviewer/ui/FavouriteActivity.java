@@ -51,11 +51,11 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
-import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.ActionableToastBar;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
+import com.hippo.ehviewer.widget.HfListView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
 import com.hippo.ehviewer.widget.SuperToast;
@@ -70,6 +70,10 @@ public class FavouriteActivity extends AbstractGalleryActivity
     private Data mData;
     private Resources mResources;
     private EhClient mClient;
+    
+    private RelativeLayout mMainView;
+    private HfListView mHlv;
+    private ListView mList;
     
     private SlidingMenu mSlidingMenu;
     private ListView mMenuList;
@@ -123,6 +127,12 @@ public class FavouriteActivity extends AbstractGalleryActivity
         mSlidingMenu.setShadowDrawable(R.drawable.shadow_right);
         mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
         
+        // Get View
+        mMainView = getMainView();
+        mHlv = getHlv();
+        mList = getListView();
+        mMenuList = (ListView)findViewById(R.id.favorite_menu_list);
+        
         mActionableToastBar = new ActionableToastBar(this);
         mActionableToastBar.setBackgroundColor(mResources.getColor(android.R.color.holo_purple));
         mMainView.addView(mActionableToastBar);
@@ -155,7 +165,6 @@ public class FavouriteActivity extends AbstractGalleryActivity
         mList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         mList.setMultiChoiceModeListener(this);
         
-        mMenuList = (ListView)findViewById(R.id.favorite_menu_list);
         mMenuList.setClipToPadding(false);
         mMenuList.setAdapter(new BaseAdapter() {
             private ShapeDrawable d;
@@ -221,7 +230,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                 } else {
                     mHlv.setEnabledHeader(true);
                     mHlv.setEnabledFooter(true);
-                    mClient.getMangaList(EhClient.getFavoriteUrl(mMenuIndex - 1),
+                    mClient.getMangaList(EhClient.getFavoriteUrl(mMenuIndex - 1, 0),
                             null, new EhClient.OnGetMangaListListener() {
                         @Override
                         public void onSuccess(Object checkFlag, ArrayList<GalleryInfo> lmdArray,
@@ -421,5 +430,10 @@ public class FavouriteActivity extends AbstractGalleryActivity
             mChoiceGiSet.add(mGiList.get(position));
         else
             mChoiceGiSet.remove(mGiList.get(position));
+    }
+
+    @Override
+    protected String getTargetUrl(int targetPage) {
+        return EhClient.getFavoriteUrl(mMenuIndex-1, targetPage);
     }
 }

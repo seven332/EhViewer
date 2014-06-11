@@ -64,6 +64,8 @@ import com.hippo.ehviewer.util.Log;
  */
 public class HttpHelper {
     private static final String TAG = "HttpHelper";
+    public static final String SAD_PANDA_ERROR = "Sad Panda";
+    
     
     private static String DEFAULT_CHARSET = "utf-8";
     private static String CHARSET_KEY = "charset=";
@@ -145,7 +147,7 @@ public class HttpHelper {
             return "SocketException : " + e.getMessage();
         
         else if (e instanceof SadPandaException)
-            return "Sad Panda";
+            return SAD_PANDA_ERROR;
         
         else
             return e.getMessage();
