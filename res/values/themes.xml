@@ -23,6 +23,7 @@
         <item name="@android:actionBarTabStyle">@style/ActionBarTabStyle</item>
         <item name="@android:actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="@android:homeAsUpIndicator">@drawable/ic_ab_back</item>
+        <item name="@android:windowActionBarOverlay">true</item>
         
         <!-- Button -->
         <item name="@android:buttonStyle">@style/Button.Blue</item>
@@ -45,6 +46,10 @@
         
         <!-- AlertDialog attributes -->
         <!-- item name="@android:alertDialogStyle">@style/AlertDialogStyle</item -->
+    </style>
+    
+    <style name="AppTheme.Normal">
+        <!-- nop -->
     </style>
     
     <style name="AppTheme.Main">

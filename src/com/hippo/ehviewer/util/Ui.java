@@ -283,23 +283,13 @@ public class Ui {
         return translucent(activity, new ColorDrawable(color));
     }
     
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public static SystemBarConfig translucent(
             Activity activity, Drawable drawable) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window win = activity.getWindow();
-            WindowManager.LayoutParams winParams = win.getAttributes();
-            winParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
-            win.setAttributes(winParams);
-        }
-        
         SystemBarTintManager tintManager = new SystemBarTintManager(activity);
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintDrawable(drawable);
         tintManager.setNavigationBarTintEnabled(true);
         tintManager.setNavigationBarAlpha(0.0f);
-        
         return tintManager.getConfig();
     }
 }
