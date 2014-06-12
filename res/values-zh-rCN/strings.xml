@@ -147,6 +147,9 @@
     <string name="action_refresh">刷新</string>
     <string name="action_settings">设置</string>
     
+    <!-- Favorite -->
+    <string name="local_favorite">本地收藏</string>
+    
     <!-- Settings -->
     <string name="display_settings_title">显示</string>
     <string name="screen_display_settings_title">屏幕</string>
@@ -303,7 +306,7 @@
     <string name="reply">回复</string>
     <string name="read">阅读</string>
     <string name="rate">评价</string>
-    <string name="last_page">最后一页！</string>
+    <string name="last_page">最后一页</string>
     <string name="unfinished">未完成的功能</string>
     <string name="period">。</string>
     <string name="refresh">刷新</string>

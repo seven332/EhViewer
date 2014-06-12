@@ -17,14 +17,18 @@
 package com.hippo.ehviewer.ui;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Path;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.PathShape;
@@ -58,6 +62,7 @@ import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.HfListView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
+import com.hippo.ehviewer.widget.ProgressDialogBulider;
 import com.hippo.ehviewer.widget.SuperToast;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
@@ -80,10 +85,16 @@ public class FavouriteActivity extends AbstractGalleryActivity
     private String[] mMenuTitles;
     private ActionableToastBar mActionableToastBar;
     
-    private Set<GalleryInfo> mChoiceGiSet; // Store gid
+    private Set<GalleryInfo> mChoiceGiSet;
+    private Set<GalleryInfo> mChoiceGiSetCopy; // Store selected GalleryInfo
+    private Iterator<GalleryInfo> mSetIter; // For move from local to cloud
+    private GalleryInfo mTargetGi;
     private int mMenuIndex;
+    private int mTargetCat;
     
     private AlertDialog mMoveDialog;
+    private ProgressDialogBulider mPdb;
+    private AlertDialog mProgressDialog;
     
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
@@ -100,6 +111,24 @@ public class FavouriteActivity extends AbstractGalleryActivity
             super.onBackPressed();
     }
     
+    private void initLocalFavorite() {
+        mHlv.setEnabledHeader(false);
+        mHlv.setEnabledFooter(false);
+        setTitle(mMenuTitles[mMenuIndex]);
+        setGalleryInfos(mData.getAllLocalFavourites());
+        if (mData.getAllLocalFavourites().isEmpty())
+            onlyShowNone();
+        else
+            onlyShowList();
+    }
+    
+    private void initFavorite() {
+        mHlv.setEnabledHeader(true);
+        mHlv.setEnabledFooter(true);
+        setTitle(mMenuTitles[mMenuIndex]);
+        refresh(true);
+    }
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,7 +139,12 @@ public class FavouriteActivity extends AbstractGalleryActivity
         mImageGeterManager = mAppContext.getImageGeterManager();
         mClient = mAppContext.getEhClient();
         
-        Ui.translucent(this);
+        int color = getResources().getColor(android.R.color.holo_blue_dark)
+                & 0x00ffffff | 0xdd000000;
+        Drawable drawable = new ColorDrawable(color);
+        Ui.translucent(this, drawable);
+        final ActionBar actionBar = getActionBar();
+        actionBar.setBackgroundDrawable(drawable);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
         // Download service
@@ -139,16 +173,16 @@ public class FavouriteActivity extends AbstractGalleryActivity
         mMainView.setOnTouchListener(this);
         
         mMenuTitles = new String[EhClient.FAVORITE_SLOT_NUM + 1];
-        mMenuTitles[0] = "本地收藏"; // TODO
+        mMenuTitles[0] = mResources.getString(R.string.local_favorite);
         for (int i = 1; i < EhClient.FAVORITE_SLOT_NUM + 1; i++) {
-            mMenuTitles[i] = "收藏 " + (i - 1); // TODO
+            mMenuTitles[i] = mResources.getString(R.string.favourite) + " "+ (i - 1);
         }
         mMenuIndex = 0;
-        mHlv.setEnabledHeader(false);
-        mHlv.setEnabledFooter(false);
-        setTitle(mMenuTitles[mMenuIndex]);
-        mGiList = mData.getAllLocalFavourites();
+        
+        initLocalFavorite();
+        
         mChoiceGiSet = new LinkedHashSet<GalleryInfo>();
+        mChoiceGiSetCopy = new LinkedHashSet<GalleryInfo>();
         mList.setOnTouchListener(this);
         mList.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -156,7 +190,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                     int position, long arg3) {
                 Intent intent = new Intent(FavouriteActivity.this,
                         MangaDetailActivity.class);
-                GalleryInfo gi = mGiList.get(position);
+                GalleryInfo gi = getGalleryInfo(position);
                 intent.putExtra("url", EhClient.getDetailUrl(gi.gid, gi.token));
                 intent.putExtra(MangaDetailActivity.KEY_G_INFO, gi);
                 startActivity(intent);
@@ -215,43 +249,19 @@ public class FavouriteActivity extends AbstractGalleryActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
+                showContent();
                 // If same index, do nothing
                 if (mMenuIndex == position)
                     return;
                 
-                showContent();
                 mMenuIndex = position;
                 setTitle(mMenuTitles[mMenuIndex]);
-                if (mMenuIndex == 0) {
-                    mHlv.setEnabledHeader(false);
-                    mHlv.setEnabledFooter(false);
-                    mGiList = mData.getAllLocalFavourites();
-                    mGalleryAdapter.notifyDataSetChanged();
-                } else {
-                    mHlv.setEnabledHeader(true);
-                    mHlv.setEnabledFooter(true);
-                    mClient.getMangaList(EhClient.getFavoriteUrl(mMenuIndex - 1, 0),
-                            null, new EhClient.OnGetMangaListListener() {
-                        @Override
-                        public void onSuccess(Object checkFlag, ArrayList<GalleryInfo> lmdArray,
-                                int indexPerPage, int maxPage) {
-                            
-                            mGiList = lmdArray;
-                            mGalleryAdapter.notifyDataSetChanged();
-                        }
-                        
-                        @Override
-                        public void onFailure(Object checkFlag, String eMsg) {
-                            new SuperToast(FavouriteActivity.this)
-                                    .setIcon(R.drawable.ic_warning)
-                                    .setMessage(eMsg).show();
-                        }
-                    });
-                    // TODO
-                }
+                if (mMenuIndex == 0)
+                    initLocalFavorite();
+                else
+                    initFavorite();
             }
         });
-        
         
         FswView alignment = (FswView)findViewById(R.id.alignment);
         alignment.addOnFitSystemWindowsListener(new OnFitSystemWindowsListener() {
@@ -272,6 +282,13 @@ public class FavouriteActivity extends AbstractGalleryActivity
                         mMenuList.getPaddingRight(), paddingBottom);
             }
         });
+        
+        // Check login
+        if (!mClient.isLogin()) {
+            SuperToast superToast = new SuperToast(this, "未检测到登陆状态，仅可使用本地收藏。由于开发者的问题，本地收藏不可靠，请尽快登陆，将本地收藏转移至账户中的收藏。");
+            superToast.setDuration(SuperToast.LENGTH_LONG);
+            superToast.show();
+        }
     }
     
     @Override
@@ -314,7 +331,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                 // Avoid touches inside the undo bar.
                 return;
             }
-            mActionableToastBar.hide(true);
+            mActionableToastBar.hide(false);
         }
     }
     
@@ -339,101 +356,205 @@ public class FavouriteActivity extends AbstractGalleryActivity
         return true;
     }
     
+    private int[] getGids(Set<GalleryInfo> giSet) {
+        int[] gids = new int[giSet.size()];
+        int i = 0;
+        for (GalleryInfo gi : giSet)
+            gids[i++] = gi.gid;
+        return gids;
+    }
+    
+    private void startMoveFromLocal2Cloud() {
+        mPdb = new ProgressDialogBulider(FavouriteActivity.this);
+        mPdb.setCancelable(true).setTitle("正在移动...");
+        mPdb.setMax(mChoiceGiSetCopy.size()).setProgress(0);
+        mProgressDialog = mPdb.create();
+        mProgressDialog.show();
+        moveFromLocal2Cloud();
+    }
+    
+    private void moveFromLocal2Cloud() {
+        if (mSetIter == null)
+            mSetIter = mChoiceGiSetCopy.iterator();
+        
+        if (mSetIter.hasNext() || mTargetGi != null) {
+            if (mTargetGi == null)
+                mTargetGi = mSetIter.next();
+            mClient.addToFavorite(mTargetGi.gid, mTargetGi.token,
+                    mTargetCat, null, new EhClient.OnAddToFavoriteListener() {
+                @Override
+                public void onSuccess() {
+                    // remove from set iterator, favorite data
+                    mSetIter.remove();
+                    mData.deleteLocalFavourite(mTargetGi.gid);
+                    // set mGiLocal2Cloud null for above
+                    mTargetGi = null;
+                    mPdb.setProgress(mPdb.getProgress() + 1);
+                    moveFromLocal2Cloud();
+                }
+                @Override
+                public void onFailure(String eMsg) {
+                    notifyDataSetChanged();
+                    mPdb = null;
+                    mProgressDialog.dismiss();
+                    mProgressDialog = null;
+                    showToastBar(new ActionClickedListener() {
+                        @Override
+                        public void onActionClicked() {
+                            startMoveFromLocal2Cloud();
+                        }
+                    }, 0, "移动失败", R.drawable.ic_warning, "重试", true);
+                }
+            });
+        } else {
+            notifyDataSetChanged();
+            mSetIter = null;
+            mPdb = null;
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+            new SuperToast(this, "移动成功").show(); // TODO
+        }
+    }
+    
     private AlertDialog createMoveDialog(final ActionMode mode) {
-        return new DialogBuilder(this).setTitle("移动至何处？") //
+        return new DialogBuilder(this).setTitle("移动至何处？") // TODO
                 .setItems(mMenuTitles, new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                             int position, long id) {
-                        int[] gids = new int[mChoiceGiSet.size()];
-                        int i = 0;
-                        for (GalleryInfo gi : mChoiceGiSet)
-                            gids[i++] = gi.gid;
-                        mClient.modifyFavorite(gids, position, mMenuIndex -1,
-                                new EhClient.OnModifyFavoriteListener() {
-                            @Override
-                            public void onSuccess(ArrayList<GalleryInfo> gis,
-                                    int indexPerPage, int maxPage) {
-                                new SuperToast(FavouriteActivity.this)
-                                        .setMessage("移动成功").show();
-                                mGiList = gis;
-                                mGalleryAdapter.notifyDataSetChanged();
-                            }
-
-                            @Override
-                            public void onFailure(String eMsg) {
-                                new SuperToast(FavouriteActivity.this)
-                                .setIcon(R.drawable.ic_warning)
-                                .setMessage("移动失败\n" + eMsg).show(); // TODO
-                            }
-                        });
+                        if (mMenuIndex == position) {
+                            new SuperToast(FavouriteActivity.this, "目标与源相同", SuperToast.WARNING).show();
+                            return;
+                        }
                         
-                        mMoveDialog.dismiss();
-                        mMoveDialog = null;
-                        mode.finish();
+                        mTargetCat = position - 1;
+                        if (mMenuIndex == 0) { // From local favorite to cloud
+                            mMoveDialog.dismiss();
+                            mMoveDialog = null;
+                            
+                            startMoveFromLocal2Cloud();
+                        } else {
+                            if (position == 0) { // From cloud to local favorite
+                                mMoveDialog.dismiss();
+                                mMoveDialog = null;
+                                
+                                mClient.modifyFavorite(getGids(mChoiceGiSetCopy), mTargetCat,
+                                        mMenuIndex -1, new Modify("移动成功", "移动失败", true));
+                                mHlv.setRefreshing(true);
+                            } else { // change cloud dir
+                                mMoveDialog.dismiss();
+                                mMoveDialog = null;
+                                
+                                mClient.modifyFavorite(getGids(mChoiceGiSetCopy), mTargetCat,
+                                        mMenuIndex -1, new Modify("移动成功", "移动失败", false));
+                                mHlv.setRefreshing(true);
+                            }
+                        }
                     }
                 }).setSimpleNegativeButton().create();
     }
     
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        // get a copy of mChoiceGiSet
+        mSetIter = null;
+        mChoiceGiSetCopy.clear();
+        for (GalleryInfo gi : mChoiceGiSet)
+            mChoiceGiSetCopy.add(gi);
+        
         switch (item.getItemId()) {
         case R.id.action_delete:
             if (mMenuIndex == 0) {
                 for (GalleryInfo gi : mChoiceGiSet)
                     mData.deleteLocalFavourite(gi.gid);
-                mGalleryAdapter.notifyDataSetChanged();
+                notifyDataSetChanged();
             } else {
-                int[] gids = new int[mChoiceGiSet.size()];
-                int i = 0;
-                for (GalleryInfo gi : mChoiceGiSet)
-                    gids[i++] = gi.gid;
-                mClient.modifyFavorite(gids, -1, mMenuIndex -1, new EhClient.OnModifyFavoriteListener() {
-                    @Override
-                    public void onSuccess(ArrayList<GalleryInfo> gis, int indexPerPage,
-                            int maxPage) {
-                        new SuperToast(FavouriteActivity.this)
-                        .setMessage("删除成功").show(); // TODO
-                        mGiList = gis;
-                        mGalleryAdapter.notifyDataSetChanged();
-                    }
-                    @Override
-                    public void onFailure(String eMsg) {
-                        new SuperToast(FavouriteActivity.this)
-                        .setIcon(R.drawable.ic_warning)
-                        .setMessage("删除失败\n" + eMsg).show(); // TODO
-                    }
-                });
+                mTargetCat = -1;
+                mClient.modifyFavorite(getGids(mChoiceGiSet), mTargetCat,
+                        mMenuIndex -1, new Modify("删除成功", "删除失败", false));
+                mHlv.setRefreshing(true);
             }
             mode.finish();
             return true;
         case R.id.action_move:
             mMoveDialog = createMoveDialog(mode);
             mMoveDialog.show();
+            mode.finish();
             return true;
         default:
             return super.onOptionsItemSelected(item);
         }
     }
-
+    
     @Override
     public void onDestroyActionMode(ActionMode mode) {
         mChoiceGiSet.clear();
-        
-        showToastBar(null, R.drawable.ic_warning, "haha", R.drawable.ic_action_redo, "nimei", true);
     }
-
+    
     @Override
     public void onItemCheckedStateChanged(ActionMode mode, int position,
             long id, boolean checked) {
         if (checked)
-            mChoiceGiSet.add(mGiList.get(position));
+            mChoiceGiSet.add(getGalleryInfo(position));
         else
-            mChoiceGiSet.remove(mGiList.get(position));
+            mChoiceGiSet.remove(getGalleryInfo(position));
     }
-
+    
     @Override
     protected String getTargetUrl(int targetPage) {
         return EhClient.getFavoriteUrl(mMenuIndex-1, targetPage);
+    }
+    
+    private class Modify implements EhClient.OnModifyFavoriteListener {
+        private String mSuccStr;
+        private String mFailStr;
+        private boolean mToLocal;
+        
+        public Modify(String succStr, String failStr, boolean toLocal) {
+            mSuccStr = succStr;
+            mFailStr = failStr;
+            mToLocal = toLocal;
+        }
+        
+        @Override
+        public void onSuccess(ArrayList<GalleryInfo> gis, int indexPerPage,
+                int maxPage) {
+            setGalleryInfos(gis, maxPage);
+            mHlv.setRefreshing(false);
+            new SuperToast(FavouriteActivity.this, mSuccStr).show();
+            
+            // add to local
+            if (mToLocal)
+                for (GalleryInfo gi : mChoiceGiSetCopy)
+                    mData.addLocalFavourite(gi);
+        }
+        @Override
+        public void onFailure(String eMsg) {
+            mHlv.setRefreshing(false);
+            showToastBar(new Remodify(mSuccStr, mFailStr, mToLocal), 0, mFailStr + ": " + eMsg,
+                    R.drawable.ic_action_redo, "重试", true); // TODO
+        }
+    }
+    
+    /**
+     * Redelete when delete error
+     * @author Hippo
+     *
+     */
+    private class Remodify implements ActionableToastBar.ActionClickedListener {
+        private String mSuccStr;
+        private String mFailStr;
+        private boolean mToLocal;
+        
+        public Remodify(String succStr, String failStr, boolean toLocal) {
+            mSuccStr = succStr;
+            mFailStr = failStr;
+            mToLocal = toLocal;
+        }
+        
+        @Override
+        public void onActionClicked() {
+            mClient.modifyFavorite(getGids(mChoiceGiSetCopy), -1, mMenuIndex -1, new Modify(mSuccStr, mFailStr, mToLocal));
+        }
     }
 }

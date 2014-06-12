@@ -181,4 +181,17 @@
         <item name="android:isIndicator">true</item>
     </style>
     
+    <style name="AlertDialogStyle">
+        <!--item name="android:fullDark">@android:drawable/popup_full_dark</item-->
+        <!--item name="android:topDark">@android:drawable/popup_top_dark</item-->
+        <!--item name="android:centerDark">@android:drawable/popup_center_dark</item-->
+        <!--item name="android:bottomDark">@android:drawable/popup_bottom_dark</item-->
+        <!--item name="android:fullBright">@android:drawable/popup_full_bright</item-->
+        <!--item name="android:topBright">@android:drawable/popup_top_bright</item-->
+        <!-- item name="android:centerBright">@android:drawable/popup_center_bright</item-->
+        <!--  item name="android:bottomBright">@android:drawable/popup_bottom_bright</item -->
+        <!-- item name="android:bottomMedium">@android:drawable/popup_bottom_medium</item-->
+        <!--item name="android:centerMedium">@android:drawable/popup_center_medium</item-->
+        <!--item name="android:layout">@android:layout/alert_dialog_holo</item-->
+    </style>
 </resources>

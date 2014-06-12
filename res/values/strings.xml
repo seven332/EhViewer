@@ -149,6 +149,9 @@
     <string name="action_refresh">Refresh</string>
     <string name="action_settings">Settings</string>
     
+    <!-- Favorite -->
+    <string name="local_favorite">Local Favorite</string>
+    
     <!-- Settings -->
     <string name="display_settings_title">Display</string>
     <string name="screen_display_settings_title">Screen</string>
@@ -307,7 +310,7 @@
     <string name="reply">Reply</string>
     <string name="read">Read</string>
     <string name="rate">Rate</string>
-    <string name="last_page">Last page !</string>
+    <string name="last_page">Last page</string>
     <string name="sadpanda" translatable="false">Sad Panda</string>
     <string name="unfinished">Unfinished</string>
     <string name="period">.&#160;</string>

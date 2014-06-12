@@ -64,8 +64,8 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     protected EhClient mClient;
     protected ImageGeterManager mImageGeterManager;
     
-    protected List<GalleryInfo> mGiList;
-    protected GalleryAdapter mGalleryAdapter;
+    private List<GalleryInfo> mGiList;
+    private GalleryAdapter mGalleryAdapter;
     
     private RelativeLayout mMainView;
     private HfListView mHlv;
@@ -128,11 +128,19 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         return re;
     }
     
-    protected void onlyShowList() {
+    public void onlyShowList() {
         mHlv.setVisibility(View.VISIBLE);
         mWaitProgressBar.setVisibility(View.GONE);
         mFreshButton.setVisibility(View.GONE);
         mNoneTextView.setVisibility(View.GONE);
+        mSadPanda.setVisibility(View.GONE);
+    }
+    
+    public void onlyShowNone() {
+        mHlv.setVisibility(View.GONE);
+        mWaitProgressBar.setVisibility(View.GONE);
+        mFreshButton.setVisibility(View.GONE);
+        mNoneTextView.setVisibility(View.VISIBLE);
         mSadPanda.setVisibility(View.GONE);
     }
     
@@ -341,6 +349,42 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         return mMaxPage;
     }
     
+    public int getCurPage() {
+        return mCurPage;
+    }
+    
+    public GalleryInfo getGalleryInfo(int position) {
+        return mGiList.get(position);
+    }
+    
+    public void setGalleryInfos(List<GalleryInfo> gis) {
+        setGalleryInfos(gis, 1);
+    }
+    
+    public void setGalleryInfos(List<GalleryInfo> gis, int maxPage) {
+        mGiList = gis;
+        mGalleryAdapter.notifyDataSetChanged();
+        
+        mFirstIndex = 0;
+        mLastIndex = mGiList.size() - 1;
+        mCurPage = 0;
+        mFirstPage = 0;
+        mLastPage = 0;
+        mMaxPage = maxPage;
+        mItemPerPage = mGiList.size();
+        
+        if (mItemPerPage == 0)
+            onlyShowNone();
+        else
+            onlyShowList();
+    }
+    
+    public void notifyDataSetChanged() {
+        mGalleryAdapter.notifyDataSetChanged();
+        if (mGiList.isEmpty())
+            onlyShowNone();
+    }
+    
     protected class GalleryAdapter extends BaseAdapter {
         @Override
         public int getCount() {
@@ -414,7 +458,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                 int visibleItemCount, int totalItemCount) {
             mHlv.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
             
-            if (visibleItemCount < 2)
+            if (visibleItemCount < 2 || mItemPerPage == 0)
                 return;
             if (mLastIndex == 0)
                 mLastIndex = mItemPerPage - 1;
@@ -462,7 +506,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                 
                 mFirstPage = 0;
                 mLastPage = 0;
-                mGiList.clear();
+                mGiList = new ArrayList<GalleryInfo>();
                 mGalleryAdapter.notifyDataSetChanged();
             } else {
                 mNoneTextView.setVisibility(View.GONE);
@@ -542,7 +586,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             case REFRESH:
                 mHlv.setVisibility(View.GONE);
                 mFreshButton.setVisibility(View.VISIBLE);
-                
+                break;
             default:
                 mFreshButton.setVisibility(View.GONE);
             }

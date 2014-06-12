@@ -503,12 +503,12 @@ public class MangaListActivity extends AbstractGalleryActivity
                         GalleryInfo lmd;
                         switch (position) {
                         case 0: // Add favourite item
-                            lmd = mGiList.get(longClickItemIndex);
+                            lmd = getGalleryInfo(longClickItemIndex);
                             mData.addLocalFavourite(lmd);
                             new SuperToast(MangaListActivity.this, R.string.toast_add_favourite).show();
                             break;
                         case 1:
-                            lmd = mGiList.get(longClickItemIndex);
+                            lmd = getGalleryInfo(longClickItemIndex);
                             Intent it = new Intent(MangaListActivity.this, DownloadService.class);
                             startService(it);
                             mServiceConn.getService().add(String.valueOf(lmd.gid), lmd.thumb, 
@@ -929,10 +929,9 @@ public class MangaListActivity extends AbstractGalleryActivity
         int color = getResources().getColor(android.R.color.holo_blue_dark)
                 & 0x00ffffff | 0xdd000000;
         Drawable drawable = new ColorDrawable(color);
-        Ui.translucent(this, drawable);
-        
         final ActionBar actionBar = getActionBar();
         actionBar.setBackgroundDrawable(drawable);
+        Ui.translucent(this, drawable);
         
         // Download service
         Intent it = new Intent(MangaListActivity.this, DownloadService.class);
@@ -1114,7 +1113,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                     int position, long arg3) {
                 Intent intent = new Intent(MangaListActivity.this,
                         MangaDetailActivity.class);
-                GalleryInfo gi = mGiList.get(position);
+                GalleryInfo gi = getGalleryInfo(position);
                 intent.putExtra("url", EhClient.getDetailUrl(gi.gid, gi.token));
                 intent.putExtra(MangaDetailActivity.KEY_G_INFO, gi);
                 // Maybe shoud use other method

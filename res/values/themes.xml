@@ -40,6 +40,11 @@
         <!-- item name="@android:dialogTitleDecorLayout">@layout/dialog_title</item -->
         
         <!-- item name="@android:searchViewVoiceIcon">@android:drawable/ic_voice_search_api_holo_light</item -->
+        
+        <!-- Dialog attributes -->
+        
+        <!-- AlertDialog attributes -->
+        <!-- item name="@android:alertDialogStyle">@style/AlertDialogStyle</item -->
     </style>
     
     <style name="AppTheme.Main">
