@@ -519,7 +519,8 @@ public class FavouriteActivity extends AbstractGalleryActivity
         @Override
         public void onSuccess(ArrayList<GalleryInfo> gis, int indexPerPage,
                 int maxPage) {
-            setGalleryInfos(gis, maxPage);
+            if (mTargetCat == mMenuIndex - 1)
+                setGalleryInfos(gis, maxPage);
             mHlv.setRefreshing(false);
             new SuperToast(FavouriteActivity.this, mSuccStr).show();
             
