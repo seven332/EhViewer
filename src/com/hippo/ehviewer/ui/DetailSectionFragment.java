@@ -35,6 +35,7 @@ import com.hippo.ehviewer.ehclient.DetailParser;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.widget.AlertButton;
@@ -57,8 +58,12 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Path;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.StateListDrawable;
+import android.graphics.drawable.shapes.PathShape;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
@@ -119,6 +124,40 @@ public class DetailSectionFragment extends Fragment
     private int mCurPage;
     private boolean mShowPreview = false;
     
+    private ShapeDrawable getArrowShapeDrawable(int color, boolean isToLeft) {
+        Path path = new Path();
+        if (isToLeft) {
+            path.moveTo(50, 0);
+            path.lineTo(50, 100);
+            path.lineTo(0, 50);
+            path.close();
+        } else {
+            path.moveTo(0, 0);
+            path.lineTo(0, 100);
+            path.lineTo(50, 50);
+            path.close();
+        }
+        ShapeDrawable d = new ShapeDrawable(new PathShape(path, 50, 100));
+        d.getPaint().setColor(color);
+        //d.setBounds(0, 0, Ui.dp2pix(24), Ui.dp2pix(48));
+        return d;
+    }
+    
+    private StateListDrawable getArrowClickDrawable(int color, boolean isToLeft) {
+        StateListDrawable sld = new StateListDrawable();
+        ShapeDrawable normal = getArrowShapeDrawable(color, isToLeft);
+        ShapeDrawable grey = getArrowShapeDrawable(Theme.GREY_COLOR, isToLeft);
+        ShapeDrawable dark = getArrowShapeDrawable(Theme.getDarkerColor(color), isToLeft);
+        sld.addState(new int[]{-android.R.attr.state_enabled}, grey);
+        sld.addState(new int[]{android.R.attr.state_enabled, android.R.attr.state_selected}, dark);
+        sld.addState(new int[]{android.R.attr.state_enabled, android.R.attr.state_focused}, dark);
+        sld.addState(new int[]{android.R.attr.state_enabled, android.R.attr.state_pressed}, dark);
+        sld.addState(new int[]{}, normal);
+        //sld.setBounds(0, 0, Ui.dp2pix(24), Ui.dp2pix(48));
+        return sld;
+    }
+    
+    @SuppressWarnings("deprecation")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -162,6 +201,24 @@ public class DetailSectionFragment extends Fragment
         mFrontButton = mPreviewListMain.findViewById(R.id.front);
         mDivider = mNormalView.findViewById(R.id.divider);
         
+        int color;
+        // Set random color
+        color = Theme.getRandomDeepColor();
+        mReadButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
+        mRateButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
+        color = Theme.getRandomDeepColor();
+        mRootView.findViewById(R.id.crude_divider).setBackgroundColor(Theme.getRandomDeepColor());
+        color = Theme.getRandomDeepColor();
+        mRefreshButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
+        mCancelButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
+        mOnceButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
+        mEveryButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
+        mKnownButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
+        color = Theme.getRandomDeepColor();
+        mPreviewNumText.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
+        mBackButton.setBackgroundDrawable(getArrowClickDrawable(color, true));
+        mFrontButton.setBackgroundDrawable(getArrowClickDrawable(color, false));
+        
         mRefreshButton.setOnClickListener(this);
         
         FswView align = (FswView)mActivity.findViewById(R.id.alignment);
@@ -192,8 +249,6 @@ public class DetailSectionFragment extends Fragment
                 }
             }
         });
-        
-        
         
         LoadImageView thumb = (LoadImageView)mRootView.findViewById(R.id.detail_cover);
         Bitmap bmp = null;
@@ -398,6 +453,7 @@ public class DetailSectionFragment extends Fragment
                 }).create();
     }
     
+    @SuppressWarnings("deprecation")
     private void addTags() {
         LinearLayout tagsLayout = (LinearLayout)mRootView.findViewById(R.id.tags_layout);
         LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>> tagGroups = 
@@ -406,6 +462,7 @@ public class DetailSectionFragment extends Fragment
         int x = Ui.dp2pix(4);
         int y = Ui.dp2pix(4);
         Resources resources = getResources();
+        
         // Get tag view resources
         int tagTextSize = resources.getDimensionPixelOffset(R.dimen.button_small_size);
         ColorStateList tagTextColor = resources.getColorStateList(R.color.blue_bn_text);
@@ -425,13 +482,15 @@ public class DetailSectionFragment extends Fragment
             tagGroupLayout.addView(groupNameView, lp);
             
             // tags
+            // get random color
+            int tagColor = Theme.getRandomDeepColor();
             for (SimpleEntry<String, Integer> tag : tagGroup.getValue()) {
                 final String tagText = tag.getKey();
                 Button tagView = new Button(mActivity);
                 tagView.setTextSize(TypedValue.COMPLEX_UNIT_PX, tagTextSize);
                 tagView.setText(String.format("%s (%d)", tagText, tag.getValue()));
                 tagView.setTextColor(tagTextColor);
-                tagView.setBackgroundResource(R.drawable.clickable_bg_blue);
+                tagView.setBackgroundDrawable(Theme.getClickDrawable(mActivity, tagColor));
                 tagView.setPadding(tagPaddingX, tagPaddingY, tagPaddingX, tagPaddingY);
                 tagView.setOnClickListener(new OnClickListener() {
                     @Override
@@ -476,7 +535,7 @@ public class DetailSectionFragment extends Fragment
         addtagView.setTextSize(TypedValue.COMPLEX_UNIT_PX, tagTextSize);
         addtagView.setText("+");
         addtagView.setTextColor(tagTextColor);
-        addtagView.setBackgroundResource(R.drawable.clickable_bg_blue);
+        addtagView.setBackgroundDrawable(Theme.getClickDrawable(mActivity, Theme.getRandomDeepColor()));
         addtagView.setPadding(tagPaddingX, tagPaddingY, tagPaddingX, tagPaddingY);
         addtagView.setOnClickListener(new View.OnClickListener() {
             @Override

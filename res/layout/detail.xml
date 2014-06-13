@@ -104,6 +104,7 @@
             </RelativeLayout>
 
             <View
+                android:id="@+id/crude_divider"
                 android:layout_width="fill_parent"
                 android:layout_height="2.0dp"
                 android:background="@android:color/holo_blue_light" />

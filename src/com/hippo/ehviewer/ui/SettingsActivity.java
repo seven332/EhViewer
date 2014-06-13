@@ -29,6 +29,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.widget.AlertButton;
@@ -40,9 +41,12 @@ import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.preference.AutoListPreference;
 import com.readystatesoftware.systembartint.SystemBarTintManager.SystemBarConfig;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -112,9 +116,15 @@ public class SettingsActivity extends AbstractPreferenceActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        // Set random color
+        int color = Theme.getRandomDeepColor() & 0x00ffffff | 0xdd000000;
+        Drawable drawable = new ColorDrawable(color);
+        final ActionBar actionBar = getActionBar();
+        actionBar.setBackgroundDrawable(drawable);
+        mSystemBarConfig = Ui.translucent(this, color);
         
-        mSystemBarConfig = Ui.translucent(this);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        
         mFragments = new LinkedList<TranslucentPreferenceFragment>();
         
         mListView = getListView();

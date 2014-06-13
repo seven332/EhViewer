@@ -23,7 +23,6 @@ import java.util.Set;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -55,6 +54,7 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
+import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.ActionableToastBar;
 import com.hippo.ehviewer.widget.DialogBuilder;
@@ -139,12 +139,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         mImageGeterManager = mAppContext.getImageGeterManager();
         mClient = mAppContext.getEhClient();
         
-        int color = getResources().getColor(android.R.color.holo_blue_dark)
-                & 0x00ffffff | 0xdd000000;
-        Drawable drawable = new ColorDrawable(color);
-        Ui.translucent(this, drawable);
         final ActionBar actionBar = getActionBar();
-        actionBar.setBackgroundDrawable(drawable);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         
         // Download service
@@ -283,6 +278,13 @@ public class FavouriteActivity extends AbstractGalleryActivity
             }
         });
         
+        // Set random color
+        int color = Theme.getRandomDeepColor() & 0x00ffffff | 0xdd000000;
+        Drawable drawable = new ColorDrawable(color);
+        actionBar.setBackgroundDrawable(drawable);
+        Ui.translucent(this, color);
+        mMenuList.setBackgroundColor(color);
+        
         // Check login
         if (!mClient.isLogin()) {
             SuperToast superToast = new SuperToast(this, "未检测到登陆状态，仅可使用本地收藏。由于开发者的问题，本地收藏不可靠，请尽快登陆，将本地收藏转移至账户中的收藏。");
@@ -366,7 +368,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
     
     private void startMoveFromLocal2Cloud() {
         mPdb = new ProgressDialogBulider(FavouriteActivity.this);
-        mPdb.setCancelable(true).setTitle("正在移动...");
+        mPdb.setCancelable(false).setTitle("正在移动...");
         mPdb.setMax(mChoiceGiSetCopy.size()).setProgress(0);
         mProgressDialog = mPdb.create();
         mProgressDialog.show();
@@ -519,8 +521,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         @Override
         public void onSuccess(ArrayList<GalleryInfo> gis, int indexPerPage,
                 int maxPage) {
-            if (mTargetCat == mMenuIndex - 1)
-                setGalleryInfos(gis, maxPage);
+            setGalleryInfos(gis, maxPage);
             mHlv.setRefreshing(false);
             new SuperToast(FavouriteActivity.this, mSuccStr).show();
             

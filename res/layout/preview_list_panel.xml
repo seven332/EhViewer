@@ -18,28 +18,26 @@
     android:layout_height="wrap_content"
     android:gravity="center" >
 
-    <ImageView
+    <View
         android:id="@+id/back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/back" />
+        android:layout_width="24.0dp"
+        android:layout_height="48.0dp" />
     
     <TextView
         android:id="@+id/preview_num"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="48dp"
-        android:layout_marginRight="48dp"
+        android:layout_marginLeft="48.0dp"
+        android:layout_marginRight="48.0dp"
         android:padding="12dp"
         android:textSize="14sp"
         android:textColor="@android:color/white"
         android:background="@drawable/clickable_bg_blue"
         android:clickable="true" />
 
-    <ImageView
+    <View
         android:id="@+id/front"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/front" />
+        android:layout_width="24.0dp"
+        android:layout_height="48.0dp" />
 
 </LinearLayout>

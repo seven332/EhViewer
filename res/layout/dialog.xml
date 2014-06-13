@@ -20,6 +20,7 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/title_layout"
         android:layout_width="fill_parent"
         android:layout_height="64.0dp"
         android:orientation="horizontal"

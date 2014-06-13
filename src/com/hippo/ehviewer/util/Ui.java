@@ -280,14 +280,14 @@ public class Ui {
     
     public static SystemBarConfig translucentColor(
             Activity activity, int color) {
-        return translucent(activity, new ColorDrawable(color));
+        return translucent(activity, color);
     }
     
     public static SystemBarConfig translucent(
-            Activity activity, Drawable drawable) {
+            Activity activity, int color) {
         SystemBarTintManager tintManager = new SystemBarTintManager(activity);
         tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintDrawable(drawable);
+        tintManager.setStatusBarTintColor(color);
         tintManager.setNavigationBarTintEnabled(true);
         tintManager.setNavigationBarAlpha(0.0f);
         return tintManager.getConfig();

@@ -19,6 +19,7 @@ package com.hippo.ehviewer.widget;
 import java.util.List;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Theme;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -38,8 +39,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class DialogBuilder extends AlertDialog.Builder {
+    
     private View mView;
     private Context mContext;
+    
+    private int mThemeColor;
+    
     public DialogBuilder(Context context) {
         super(context);
         mContext = context;
@@ -47,6 +52,8 @@ public class DialogBuilder extends AlertDialog.Builder {
                 Context.LAYOUT_INFLATER_SERVICE);
         mView = inflater.inflate(R.layout.dialog, null);
         super.setView(mView);
+        
+        mThemeColor = Theme.getRandomDeepColor();
     }
     
     /**
@@ -70,6 +77,8 @@ public class DialogBuilder extends AlertDialog.Builder {
         TextView titleView = (TextView)mView.findViewById(R.id.title);
         titleView.setVisibility(View.VISIBLE);
         titleView.setText(title);
+        // Set random color
+        mView.findViewById(R.id.title_layout).setBackgroundColor(mThemeColor);
         return this;
     }
     
@@ -135,7 +144,7 @@ public class DialogBuilder extends AlertDialog.Builder {
             lp.gravity = Gravity.CENTER;
         } else {
             lp = new LinearLayout.LayoutParams(
-                    LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         }
         setView(view, lp);
         return this;
@@ -180,11 +189,14 @@ public class DialogBuilder extends AlertDialog.Builder {
      *
      * @return This Builder object to allow for chaining of calls to set methods
      */
+    @SuppressWarnings("deprecation")
     public DialogBuilder setPositiveButton(CharSequence text, final View.OnClickListener listener) {
         Button button = (Button)mView.findViewById(R.id.positive_button);
         button.setVisibility(View.VISIBLE);
         button.setText(text);
         button.setOnClickListener(listener);
+        // Set random color
+        button.setBackgroundDrawable(Theme.getClickDrawable(mContext, mThemeColor));
         return this;
     }
     
@@ -207,19 +219,19 @@ public class DialogBuilder extends AlertDialog.Builder {
      *
      * @return This Builder object to allow for chaining of calls to set methods
      */
+    @SuppressWarnings("deprecation")
     public DialogBuilder setNegativeButton(CharSequence text, final View.OnClickListener listener) {
         Button button = (Button)mView.findViewById(R.id.negative_button);
         button.setVisibility(View.VISIBLE);
         button.setText(text);
         button.setOnClickListener(listener);
+        // Set random color
+        button.setBackgroundDrawable(Theme.getClickDrawable(mContext, mThemeColor));
         return this;
     }
     
     public DialogBuilder setSimpleNegativeButton() {
-        Button button = (Button)mView.findViewById(R.id.negative_button);
-        button.setVisibility(View.VISIBLE);
-        button.setText(android.R.string.cancel);
-        button.setOnClickListener(new View.OnClickListener() {
+        setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((AlertButton)v).dialog.dismiss();
@@ -247,11 +259,14 @@ public class DialogBuilder extends AlertDialog.Builder {
      *
      * @return This Builder object to allow for chaining of calls to set methods
      */
+    @SuppressWarnings("deprecation")
     public DialogBuilder setNeutralButton(CharSequence text, final View.OnClickListener listener) {
         Button button = (Button)mView.findViewById(R.id.neutral_button);
         button.setVisibility(View.VISIBLE);
         button.setText(text);
         button.setOnClickListener(listener);
+        // Set random color
+        button.setBackgroundDrawable(Theme.getClickDrawable(mContext, mThemeColor));
         return this;
     }
     
@@ -329,12 +344,15 @@ public class DialogBuilder extends AlertDialog.Builder {
         return this;
     }
     
+    @SuppressWarnings("deprecation")
     public DialogBuilder setAction(Drawable drawable, View.OnClickListener listener) {
         ImageView actionView = (ImageView)mView.findViewById(R.id.action);
         actionView.setVisibility(View.VISIBLE);
         if (drawable != null)
             actionView.setImageDrawable(drawable);
         actionView.setOnClickListener(listener);
+        // Set random color
+        actionView.setBackgroundDrawable(Theme.getClickDrawable(mContext, mThemeColor));
         return this;
     }
     

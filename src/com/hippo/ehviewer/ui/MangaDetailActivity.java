@@ -27,6 +27,7 @@ import com.hippo.ehviewer.ehclient.DetailUrlParser;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
+import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
@@ -126,15 +127,15 @@ public class MangaDetailActivity extends AbstractFragmentActivity
         
         handleIntent(getIntent());
         
-        int color = getResources().getColor(android.R.color.holo_blue_dark)
-                & 0x00ffffff | 0xdd000000;
-        Drawable drawable = new ColorDrawable(color);
-        Ui.translucent(this, drawable);
-        
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        
+        // Set random color
+        int color = Theme.getRandomDeepColor() & 0x00ffffff | 0xdd000000;
+        Drawable drawable = new ColorDrawable(color);
         actionBar.setBackgroundDrawable(drawable);
+        Ui.translucent(this, color);
         
         SectionsPagerAdapter adapter = 
                 new SectionsPagerAdapter(getSupportFragmentManager());

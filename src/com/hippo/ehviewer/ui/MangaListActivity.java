@@ -38,6 +38,7 @@ import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.widget.AlertButton;
@@ -74,6 +75,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -137,7 +139,7 @@ public class MangaListActivity extends AbstractGalleryActivity
     private Resources mResources;
     
     private SlidingMenu mSlidingMenu;
-    
+    private View mMenuLeft;
     private LinearLayout mUserPanel;
     private SearchView mSearchView;
     private ListView itemListMenu;
@@ -926,13 +928,6 @@ public class MangaListActivity extends AbstractGalleryActivity
             }
         });
         
-        int color = getResources().getColor(android.R.color.holo_blue_dark)
-                & 0x00ffffff | 0xdd000000;
-        Drawable drawable = new ColorDrawable(color);
-        final ActionBar actionBar = getActionBar();
-        actionBar.setBackgroundDrawable(drawable);
-        Ui.translucent(this, drawable);
-        
         // Download service
         Intent it = new Intent(MangaListActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
@@ -951,6 +946,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         
         
         // Get View
+        mMenuLeft = findViewById(R.id.list_menu_left);
         mUserPanel = (LinearLayout)findViewById(R.id.user_panel);
         itemListMenu = (ListView) findViewById(R.id.list_menu_item_list);
         tagListMenu = (TagListView) findViewById(R.id.list_menu_tag_list);
@@ -1144,6 +1140,14 @@ public class MangaListActivity extends AbstractGalleryActivity
             }
         });
         
+        // Set random color
+        int color = Theme.getRandomDeepColor() & 0x00ffffff | 0xdd000000;
+        Drawable drawable = new ColorDrawable(color);
+        final ActionBar actionBar = getActionBar();
+        actionBar.setBackgroundDrawable(drawable);
+        Ui.translucent(this, color);
+        mMenuLeft.setBackgroundColor(color);
+        tagListMenu.setBackgroundColor(color);
         
         // Check update
         if (Config.isAutoCheckForUpdate())
