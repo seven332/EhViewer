@@ -75,6 +75,7 @@
                 android:layout_marginTop="36dp"
                 android:layout_gravity="center"
                 android:textSize="18sp"
+                android:autoLink="web"
                 android:visibility="gone" />
 
             <LinearLayout

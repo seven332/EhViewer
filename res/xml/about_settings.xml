@@ -64,4 +64,20 @@
         
     </PreferenceCategory>
     
+    <PreferenceCategory
+        android:title="@string/analytics_about_settings_title" >
+        
+        <CheckBoxPreference
+            android:key="allow_analyics"
+            android:title="@string/allow_analyics_title"
+            android:summaryOn="@string/allow_analyics_summary_on"
+            android:summaryOff="@string/allow_analyics_summary_off"
+            android:defaultValue="false" />
+        
+        <Preference
+            android:key="about_analyics"
+            android:title="@string/about_analyics_title" />
+        
+    </PreferenceCategory>
+    
 </PreferenceScreen>

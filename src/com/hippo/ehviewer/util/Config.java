@@ -62,6 +62,11 @@ public class Config {
     private static final String KEY_DEFAULT_FAVORITE = "default_favorite";
     private static final String DEFAULT_DEFAULT_FAVORITE = "-2";
     
+    private static final String KEY_SET_ANALYTICS = "set_analyics";
+    private static final boolean DEFAULT_SET_ANALYTICS = false;
+    private static final String KEY_ALLOW_ANALYTICS = "allow_analyics";
+    private static final boolean DEFAULT_ALLOW_ANALYTICS = false;
+    
     private static boolean mInit = false;
 
     private static Context mContext;
@@ -288,5 +293,21 @@ public class Config {
     
     public static void setDefaultFavorite(int defaultFavorite) {
         mConfigPre.edit().putString(KEY_DEFAULT_FAVORITE, String.valueOf(defaultFavorite)).apply();
+    }
+    
+    public static boolean getSetAnalyics() {
+        return mConfigPre.getBoolean(KEY_SET_ANALYTICS, DEFAULT_SET_ANALYTICS);
+    }
+    
+    public static void setSetAnalyics(boolean setAnalyics) {
+        mConfigPre.edit().putBoolean(KEY_SET_ANALYTICS, setAnalyics).apply();
+    }
+    
+    public static boolean getAllowAnalyics() {
+        return mConfigPre.getBoolean(KEY_ALLOW_ANALYTICS, DEFAULT_ALLOW_ANALYTICS);
+    }
+    
+    public static void setAllowAnalyics(boolean setAnalyics) {
+        mConfigPre.edit().putBoolean(KEY_ALLOW_ANALYTICS, setAnalyics).apply();
     }
 }

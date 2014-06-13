@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.ui;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.hippo.ehviewer.util.Config;
 
 import android.app.Activity;
@@ -38,5 +39,19 @@ public abstract class AbstractActivity extends Activity {
         int screenOri = Config.getScreenOriMode();
         if (screenOri != getRequestedOrientation())
             setRequestedOrientation(screenOri);
+    }
+    
+    @Override
+    public void onStart() {
+      super.onStart();
+      if (Config.getAllowAnalyics())
+          EasyTracker.getInstance(this).activityStart(this);
+    }
+    
+    @Override
+    public void onStop() {
+      super.onStop();
+      if (Config.getAllowAnalyics())
+          EasyTracker.getInstance(this).activityStop(this);
     }
 }

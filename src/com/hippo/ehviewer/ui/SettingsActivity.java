@@ -505,6 +505,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         private static final String KEY_WEBSITE = "website";
         private static final String KEY_SOURCE = "source";
         private static final String KEY_CHECK_UPDATE = "check_for_update";
+        private static final String KEY_ABOUT_ANALYICS = "about_analyics";
         
         private Preference mAuthor;
         private Preference mChangelog;
@@ -512,6 +513,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         private Preference mWebsite;
         private Preference mSource;
         private Preference mCheckUpdate;
+        private Preference mAboutAnalyics;
         
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -530,6 +532,8 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             mSource.setOnPreferenceClickListener(this);
             mCheckUpdate = (Preference)findPreference(KEY_CHECK_UPDATE);
             mCheckUpdate.setOnPreferenceClickListener(this);
+            mAboutAnalyics = (Preference)findPreference(KEY_ABOUT_ANALYICS);
+            mAboutAnalyics.setOnPreferenceClickListener(this);
         }
 
         @Override
@@ -616,6 +620,12 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                                 UpdateHelper.setEnabled(true);
                             }
                         }).checkUpdate();
+                
+            } else if (KEY_ABOUT_ANALYICS.equals(key)) {
+                new DialogBuilder(mActivity).setTitle(R.string.about_analyics_title)
+                .setLongMessage(R.string.about_analyics_comment)
+                .setSimpleNegativeButton()
+                .create().show();
             }
             return true;
         }

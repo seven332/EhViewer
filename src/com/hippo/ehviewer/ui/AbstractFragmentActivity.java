@@ -19,6 +19,7 @@ package com.hippo.ehviewer.ui;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.hippo.ehviewer.util.Config;
 
 public abstract class AbstractFragmentActivity extends FragmentActivity {
@@ -40,4 +41,17 @@ public abstract class AbstractFragmentActivity extends FragmentActivity {
             setRequestedOrientation(screenOri);
     }
     
+    @Override
+    public void onStart() {
+      super.onStart();
+      if (Config.getAllowAnalyics())
+          EasyTracker.getInstance(this).activityStart(this);
+    }
+    
+    @Override
+    public void onStop() {
+      super.onStop();
+      if (Config.getAllowAnalyics())
+          EasyTracker.getInstance(this).activityStop(this);
+    }
 }

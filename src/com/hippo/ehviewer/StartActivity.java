@@ -42,9 +42,10 @@ import android.widget.LinearLayout;
 public class StartActivity extends Activity {
     
     private static final int CHECK_WARING = 0;
-    private static final int CHECK_NETWORK = 1;
-    private static final int CHECK_CRASH = 2;
-    private static final int CHECK_EXTERNAL_STORAGE = 3;
+    private static final int CHECK_ANALYTICS = 1;
+    private static final int CHECK_NETWORK = 2;
+    private static final int CHECK_CRASH = 3;
+    private static final int CHECK_EXTERNAL_STORAGE = 4;
     
     private String lastCrash;
     private boolean isAnimationOver = false;
@@ -61,7 +62,7 @@ public class StartActivity extends Activity {
                         ((AlertButton)v).dialog.dismiss();
                         Config.allowed();
                         
-                        check(CHECK_NETWORK);
+                        check(CHECK_ANALYTICS);
                     }
                 }).setNegativeButton(R.string.dailog_waring_no,
                 new View.OnClickListener() {
@@ -69,6 +70,27 @@ public class StartActivity extends Activity {
                     public void onClick(View v) {
                         ((AlertButton)v).dialog.dismiss();
                         finish();
+                    }
+                }).create();
+    }
+    
+    private AlertDialog createAllowAnalyicsDialog() {
+        return new DialogBuilder(this).setCancelable(false)
+                .setTitle(R.string.dailog_analyics_title)
+                .setLongMessage(R.string.dailog_analyics_plain)
+                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((AlertButton)v).dialog.dismiss();
+                        Config.setAllowAnalyics(true);
+                        check(CHECK_NETWORK);
+                    }
+                }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((AlertButton)v).dialog.dismiss();
+                        Config.setAllowAnalyics(false);
+                        check(CHECK_NETWORK);
                     }
                 }).create();
     }
@@ -199,9 +221,10 @@ public class StartActivity extends Activity {
     /**
      * Order is
      * 1. check waring
-     * 2. check network
-     * 3. check crash
-     * 4. check external storage
+     * 2. check analyics
+     * 3. check network
+     * 4. check crash
+     * 5. check external storage
      * 
      * @param order
      */
@@ -210,6 +233,12 @@ public class StartActivity extends Activity {
         case CHECK_WARING:
             if (!Config.isAllowed()) {
                 createWarningDialog().show();
+                return;
+            }
+        case CHECK_ANALYTICS:
+            if (!Config.getSetAnalyics()) {
+                Config.setSetAnalyics(true);
+                createAllowAnalyicsDialog().show();
                 return;
             }
         case CHECK_NETWORK:
