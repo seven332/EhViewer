@@ -19,6 +19,7 @@ package com.hippo.ehviewer.widget;
 import java.util.List;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Theme;
 
 import android.app.AlertDialog;
@@ -53,7 +54,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         mView = inflater.inflate(R.layout.dialog, null);
         super.setView(mView);
         
-        mThemeColor = Theme.getRandomDeepColor();
+        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDeepColor() : Config.getThemeColor();
     }
     
     /**

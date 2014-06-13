@@ -16,7 +16,7 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android" >
     
-    <Preference 
+    <Preference
         android:key="author"
         android:title="@string/author_title"
         android:summary="@string/author_summary" />
@@ -30,8 +30,14 @@
         android:title="@string/thanks_title" />
     
     <Preference
+        android:key="website"
+        android:title="@string/website_title"
+        android:summary="@string/website_summary" />
+    
+    <Preference
         android:key="source"
-        android:title="@string/source_title" />
+        android:title="@string/source_title"
+        android:summary="@string/source_summary" />
     
     <PreferenceCategory
         android:title="@string/update_about_settings_title">

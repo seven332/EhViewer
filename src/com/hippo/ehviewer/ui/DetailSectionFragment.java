@@ -34,6 +34,7 @@ import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.ehclient.DetailParser;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.util.Cache;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
@@ -201,20 +202,25 @@ public class DetailSectionFragment extends Fragment
         mFrontButton = mPreviewListMain.findViewById(R.id.front);
         mDivider = mNormalView.findViewById(R.id.divider);
         
-        int color;
+        boolean isRandomColor = Config.getRandomThemeColor();
+        int color = Config.getThemeColor();
         // Set random color
-        color = Theme.getRandomDeepColor();
+        if (isRandomColor)
+            color = Theme.getRandomDeepColor();
         mReadButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         mRateButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
-        color = Theme.getRandomDeepColor();
-        mRootView.findViewById(R.id.crude_divider).setBackgroundColor(Theme.getRandomDeepColor());
-        color = Theme.getRandomDeepColor();
+        if (isRandomColor)
+            color = Theme.getRandomDeepColor();
+        mRootView.findViewById(R.id.crude_divider).setBackgroundColor(color);
+        if (isRandomColor)
+            color = Theme.getRandomDeepColor();
         mRefreshButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         mCancelButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         mOnceButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         mEveryButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         mKnownButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
-        color = Theme.getRandomDeepColor();
+        if (isRandomColor)
+            color = Theme.getRandomDeepColor();
         mPreviewNumText.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         mBackButton.setBackgroundDrawable(getArrowClickDrawable(color, true));
         mFrontButton.setBackgroundDrawable(getArrowClickDrawable(color, false));
@@ -462,6 +468,9 @@ public class DetailSectionFragment extends Fragment
         int x = Ui.dp2pix(4);
         int y = Ui.dp2pix(4);
         Resources resources = getResources();
+        // color
+        boolean isRandomColor = Config.getRandomThemeColor();
+        int color = Config.getThemeColor();
         
         // Get tag view resources
         int tagTextSize = resources.getDimensionPixelOffset(R.dimen.button_small_size);
@@ -483,14 +492,15 @@ public class DetailSectionFragment extends Fragment
             
             // tags
             // get random color
-            int tagColor = Theme.getRandomDeepColor();
+            if (isRandomColor)
+                color = Theme.getRandomDeepColor();
             for (SimpleEntry<String, Integer> tag : tagGroup.getValue()) {
                 final String tagText = tag.getKey();
                 Button tagView = new Button(mActivity);
                 tagView.setTextSize(TypedValue.COMPLEX_UNIT_PX, tagTextSize);
                 tagView.setText(String.format("%s (%d)", tagText, tag.getValue()));
                 tagView.setTextColor(tagTextColor);
-                tagView.setBackgroundDrawable(Theme.getClickDrawable(mActivity, tagColor));
+                tagView.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
                 tagView.setPadding(tagPaddingX, tagPaddingY, tagPaddingX, tagPaddingY);
                 tagView.setOnClickListener(new OnClickListener() {
                     @Override
@@ -531,11 +541,13 @@ public class DetailSectionFragment extends Fragment
         }
         
         // Add tag
+        if (isRandomColor)
+            color = Theme.getRandomDeepColor();
         Button addtagView = new Button(mActivity);
         addtagView.setTextSize(TypedValue.COMPLEX_UNIT_PX, tagTextSize);
         addtagView.setText("+");
         addtagView.setTextColor(tagTextColor);
-        addtagView.setBackgroundDrawable(Theme.getClickDrawable(mActivity, Theme.getRandomDeepColor()));
+        addtagView.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         addtagView.setPadding(tagPaddingX, tagPaddingY, tagPaddingX, tagPaddingY);
         addtagView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.widget;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Theme;
 
 import android.content.Context;
@@ -74,7 +75,7 @@ public class SuperToast extends Toast {
         FrameLayout view = (FrameLayout)inflate.inflate(R.layout.super_toast, null);
         mMainView = (LinearLayout)view.getChildAt(0);
         // Set random color
-        mMainView.setBackgroundColor(Theme.getRandomDeepColor());
+        mMainView.setBackgroundColor(Config.getRandomThemeColor() ? Theme.getRandomDeepColor() : Config.getThemeColor());
         mIcon = (ImageView)mMainView.findViewById(R.id.icon);
         mMessage = (TextView)mMainView.findViewById(R.id.message);
         

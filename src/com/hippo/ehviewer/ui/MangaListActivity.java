@@ -1141,7 +1141,8 @@ public class MangaListActivity extends AbstractGalleryActivity
         });
         
         // Set random color
-        int color = Theme.getRandomDeepColor() & 0x00ffffff | 0xdd000000;
+        int color = Config.getRandomThemeColor() ? Theme.getRandomDeepColor() : Config.getThemeColor();
+        color = color & 0x00ffffff | 0xdd000000;
         Drawable drawable = new ColorDrawable(color);
         final ActionBar actionBar = getActionBar();
         actionBar.setBackgroundDrawable(drawable);

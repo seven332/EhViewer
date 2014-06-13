@@ -117,7 +117,8 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         super.onCreate(savedInstanceState);
         
         // Set random color
-        int color = Theme.getRandomDeepColor() & 0x00ffffff | 0xdd000000;
+        int color = Config.getRandomThemeColor() ? Theme.getRandomDeepColor() : Config.getThemeColor();
+        color = color & 0x00ffffff | 0xdd000000;
         Drawable drawable = new ColorDrawable(color);
         final ActionBar actionBar = getActionBar();
         actionBar.setBackgroundDrawable(drawable);
@@ -248,8 +249,12 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             implements Preference.OnPreferenceChangeListener {
         
         private static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
+        private static final String KEY_RANDOM_THEME_COLOR = "random_theme_color";
+        private static final String KEY_THEME_COLOR = "theme_color";
         
         private AutoListPreference mScreenOrientation;
+        private CheckBoxPreference mRandomThemeColor;
+        private Preference mThemeColor;
         
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -258,6 +263,11 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             
             mScreenOrientation = (AutoListPreference)findPreference(KEY_SCREEN_ORIENTATION);
             mScreenOrientation.setOnPreferenceChangeListener(this);
+            mRandomThemeColor = (CheckBoxPreference)findPreference(KEY_RANDOM_THEME_COLOR);
+            mRandomThemeColor.setOnPreferenceChangeListener(this);
+            mThemeColor = (Preference)findPreference(KEY_THEME_COLOR);
+            
+            mThemeColor.setEnabled(!mRandomThemeColor.isChecked());
         }
 
         @Override
@@ -266,6 +276,10 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             if (KEY_SCREEN_ORIENTATION.equals(key)) {
                 mActivity.setRequestedOrientation(
                         Config.screenOriPre2Value(Integer.parseInt((String) newValue)));
+                
+            } else if (KEY_RANDOM_THEME_COLOR.equals(key)) {
+                new SuperToast(mActivity, R.string.restart_to_take_effect).show();
+                mThemeColor.setEnabled(!(Boolean)newValue);
             }
             
             return true;
@@ -476,12 +490,14 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         private static final String KEY_AUTHOR = "author";
         private static final String KEY_CHANGELOG = "changelog";
         private static final String KEY_THANKS = "thanks";
+        private static final String KEY_WEBSITE = "website";
         private static final String KEY_SOURCE = "source";
         private static final String KEY_CHECK_UPDATE = "check_for_update";
         
         private Preference mAuthor;
         private Preference mChangelog;
         private Preference mThanks;
+        private Preference mWebsite;
         private Preference mSource;
         private Preference mCheckUpdate;
         
@@ -496,6 +512,8 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             mChangelog.setOnPreferenceClickListener(this);
             mThanks = (Preference)findPreference(KEY_THANKS);
             mThanks.setOnPreferenceClickListener(this);
+            mWebsite = (Preference)findPreference(KEY_WEBSITE);
+            mWebsite.setOnPreferenceClickListener(this);
             mSource = (Preference)findPreference(KEY_SOURCE);
             mSource.setOnPreferenceClickListener(this);
             mCheckUpdate = (Preference)findPreference(KEY_CHECK_UPDATE);
@@ -527,9 +545,14 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                         .setView(webView, false).setSimpleNegativeButton()
                         .create().show();
                 
+            } else if (KEY_WEBSITE.equals(key)) {
+                Uri uri = Uri.parse("http://www.ehviewer.com");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+                
             } else if (KEY_SOURCE.equals(key)) {
                 Uri uri = Uri.parse("https://github.com/seven332/EhViewer");
-                Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
                 
             } else if (KEY_CHECK_UPDATE.equals(key)) {

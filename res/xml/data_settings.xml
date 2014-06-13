@@ -34,11 +34,11 @@
     <PreferenceCategory
         android:title="@string/download_data_settings_title">
 
-        <Preference 
+        <Preference
             android:key="download_path"
             android:title="@string/download_path_title" />
         
-        <CheckBoxPreference 
+        <CheckBoxPreference
             android:key="media_scan"
             android:title="@string/media_scan_title"
             android:summaryOn="@string/media_scan_summary_on"

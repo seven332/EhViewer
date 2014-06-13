@@ -54,6 +54,11 @@ public class Config {
     private static final String KEY_UPDATE_SERVER = "update_server";
     private static final String DEFAULT_UPDATE_SERVER = "2";
     
+    private static final String KEY_RANDOM_THEME_COLOR = "random_theme_color";
+    private static final boolean DEFAULT_RANDOM_THEME_COLOR = true;
+    private static final String KEY_THEME_COLOR = "theme_color";
+    private static final int DEFAULT_THEME_COLOR = 0xff0099cc;
+    
     private static boolean mInit = false;
 
     private static Context mContext;
@@ -260,5 +265,17 @@ public class Config {
     
     public static boolean getMediaScan() {
         return mConfigPre.getBoolean(KEY_MEDIA_SCAN, DEFAULT_MEDIA_SCAN);
+    }
+    
+    public static boolean getRandomThemeColor() {
+        return mConfigPre.getBoolean(KEY_RANDOM_THEME_COLOR, DEFAULT_RANDOM_THEME_COLOR);
+    }
+    
+    public static int getThemeColor() {
+        return mConfigPre.getInt(KEY_THEME_COLOR, DEFAULT_THEME_COLOR);
+    }
+    
+    public static void setThemeColor(int themeColor) {
+        mConfigPre.edit().putInt(KEY_THEME_COLOR, themeColor).apply();
     }
 }

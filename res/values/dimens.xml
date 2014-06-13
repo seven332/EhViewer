@@ -53,4 +53,7 @@
     <!-- Rating bar -->
     <dimen name="rating_bar_small_height">14.0dip</dimen>
     <dimen name="rating_bar_large_height">57.0dip</dimen>
+    
+    <!-- Color scheme dialog -->
+    <dimen name="color_scheme_dialog_row_padding">8.0dip</dimen>
 </resources>

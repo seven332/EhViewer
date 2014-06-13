@@ -54,6 +54,7 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.ActionableToastBar;
@@ -279,7 +280,8 @@ public class FavouriteActivity extends AbstractGalleryActivity
         });
         
         // Set random color
-        int color = Theme.getRandomDeepColor() & 0x00ffffff | 0xdd000000;
+        int color = Config.getRandomThemeColor() ? Theme.getRandomDeepColor() : Config.getThemeColor();
+        color = color & 0x00ffffff | 0xdd000000;
         Drawable drawable = new ColorDrawable(color);
         actionBar.setBackgroundDrawable(drawable);
         Ui.translucent(this, color);

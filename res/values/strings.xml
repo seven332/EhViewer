@@ -154,6 +154,11 @@
     
     <!-- Settings -->
     <string name="display_settings_title">Display</string>
+    <string name="theme_display_settings_title">Theme</string>
+    <string name="random_theme_color_title">Random theme color</string>
+    <string name="random_theme_color_summary_on">Colorful !</string>
+    <string name="random_theme_color_summary_off">Specify the theme color below</string>
+    <string name="theme_color_title">Theme color</string>
     <string name="screen_display_settings_title">Screen</string>
     <string name="screen_orientation_title">Screen orientation</string>
     <string name="read_display_settings_title">Read</string>
@@ -177,7 +182,10 @@
     <string name="author_summary" translatable="false">Hippo &lt;ehviewersu@gmail.com&gt;</string>
     <string name="changelog_title">Changelog</string>
     <string name="thanks_title">Thanks</string>
+    <string name="website_title">Website</string>
+    <string name="website_summary" translatable="false">http://www.ehviewer.com</string>
     <string name="source_title">Source</string>
+    <string name="source_summary" translatable="false">https://github.com/seven332/EhViewer</string>
     <string name="update_about_settings_title">Update</string>
     <string name="auto_check_for_update_title">Check for update automatically</string>
     <string name="auto_check_for_update_summary_on">Check for update once a day</string>
@@ -204,6 +212,11 @@
     
     <string name="new_folder">New folder</string>
     <string name="_new">New</string>
+    
+    <string name="color_picker_title">Color scheme</string>
+    <string name="current_color">Current</string>
+    <string name="new_color">New</string>
+    <string name="hex" translatable="false">#</string>
     
     <!-- server -->
     <string name="update_server_google">Google</string>
@@ -362,4 +375,6 @@
     <string name="thanks">Thanks</string>
     <string name="develop">Develop</string>
     <string name="advance_search_left">Swipe left</string>
+    
+    <string name="restart_to_take_effect">Restart the application to take effect</string>
 </resources>

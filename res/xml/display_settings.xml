@@ -17,6 +17,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
+        android:title="@string/theme_display_settings_title">
+        
+        <CheckBoxPreference
+            android:key="random_theme_color"
+            android:title="@string/random_theme_color_title"
+            android:summaryOn="@string/random_theme_color_summary_on"
+            android:summaryOff="@string/random_theme_color_summary_off"
+            android:defaultValue="true" />
+        
+        <com.hippo.ehviewer.preference.ColorPreference
+            android:key="theme_color"
+            android:title="@string/theme_color_title" />
+        
+    </PreferenceCategory>
+    
+    <PreferenceCategory
         android:title="@string/screen_display_settings_title">
 
         <com.hippo.ehviewer.preference.AutoListPreference

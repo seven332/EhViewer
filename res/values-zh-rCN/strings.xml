@@ -152,6 +152,11 @@
     
     <!-- Settings -->
     <string name="display_settings_title">显示</string>
+    <string name="theme_display_settings_title">主题</string>
+    <string name="random_theme_color_title">随机主题颜色</string>
+    <string name="random_theme_color_summary_on">色彩斑斓！</string>
+    <string name="random_theme_color_summary_off">在下方指定主题颜色</string>
+    <string name="theme_color_title">主题颜色</string>
     <string name="screen_display_settings_title">屏幕</string>
     <string name="screen_orientation_title">屏幕方向</string>
     <string name="read_display_settings_title">阅读</string>
@@ -174,6 +179,7 @@
     <string name="author_title">作者</string>
     <string name="changelog_title">日志</string>
     <string name="thanks_title">感谢</string>
+    <string name="website_title">网站</string>
     <string name="source_title">源码</string>
     <string name="update_about_settings_title">更新</string>
     <string name="auto_check_for_update_title">自动检查更新</string>
@@ -203,7 +209,6 @@
     
     <string name="preference_update_server">更新服务器</string>
     
-    
     <string name="preference_category_about">关于</string>
     <string name="preference_author">作者</string>
     
@@ -213,6 +218,10 @@
     
     <string name="new_folder">新建文件夹</string>
     <string name="_new">新建</string>
+    
+    <string name="color_picker_title">配色方案</string>
+    <string name="current_color">当前</string>
+    <string name="new_color">新的</string>
     
     <!-- server -->
     <string name="update_server_google">Google</string>
@@ -357,4 +366,6 @@
     <string name="thanks">感谢</string>
     <string name="develop">开发</string>
     <string name="advance_search_left">左划更多</string>
+    
+    <string name="restart_to_take_effect">重启应用以便生效</string>
 </resources>
