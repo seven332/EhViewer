@@ -28,6 +28,7 @@ import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.AlertButton;
@@ -206,8 +207,28 @@ public class MangaDetailActivity extends AbstractFragmentActivity
             finish();
             return true;
         case R.id.action_favourite:
-            ((AppContext)getApplication()).getData().addLocalFavourite(mGalleryInfo);
-            new SuperToast(this).setMessage(R.string.toast_add_favourite).show();
+            int defaultFavorite = Config.getDefaultFavorite();
+            switch (defaultFavorite) {
+            case -2:
+                Favorite.getAddToFavoriteDialog(this, mGalleryInfo).show();
+                break;
+            case -1:
+                ((AppContext)getApplication()).getData().addLocalFavourite(mGalleryInfo);
+                new SuperToast(this).setMessage(R.string.toast_add_favourite).show();
+                break;
+            default:
+                ((AppContext)getApplication()).getEhClient().addToFavorite(mGalleryInfo.gid,
+                        mGalleryInfo.token, defaultFavorite, null, new EhClient.OnAddToFavoriteListener() {
+                    @Override
+                    public void onSuccess() {
+                        new SuperToast(MangaDetailActivity.this).setMessage(R.string.toast_add_favourite).show();
+                    }
+                    @Override
+                    public void onFailure(String eMsg) {
+                        new SuperToast(MangaDetailActivity.this).setMessage(R.string.failed_to_add).show();
+                    }
+                });
+            }
             return true;
         case R.id.action_download:
             if (mGalleryDetail.language == null) {

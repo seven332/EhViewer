@@ -47,4 +47,16 @@
         
     </PreferenceCategory>
     
+    <PreferenceCategory
+        android:title="@string/favorite_data_settings_title">
+        
+        <com.hippo.ehviewer.preference.AutoListPreference
+            android:key="default_favorite"
+            android:title="@string/default_favorite"
+            android:entryValues="@array/default_favorite_entry_values"
+            android:defaultValue="-2"
+            android:summary="%s" />
+        
+    </PreferenceCategory>
+    
 </PreferenceScreen>

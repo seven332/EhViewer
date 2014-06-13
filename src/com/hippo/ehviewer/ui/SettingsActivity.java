@@ -29,6 +29,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
@@ -51,6 +52,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.view.LayoutInflater;
@@ -294,6 +296,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         private static final String KEY_CLEAR_CACHE = "clear_cache";
         private static final String KEY_DOWNLOAD_PATH = "download_path";
         private static final String KEY_MEDIA_SCAN = "media_scan";
+        private static final String KEY_DEFAULT_FAVORITE = "default_favorite";
         
         private AlertDialog mDirSelectDialog;
         
@@ -301,6 +304,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         private Preference mClearCache;
         private Preference mDownloadPath;
         private CheckBoxPreference mMediaScan;
+        private ListPreference mDefaultFavorite;
         
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -315,10 +319,18 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             mDownloadPath.setOnPreferenceClickListener(this);
             mMediaScan = (CheckBoxPreference)findPreference(KEY_MEDIA_SCAN);
             mMediaScan.setOnPreferenceChangeListener(this);
+            mDefaultFavorite = (ListPreference)findPreference(KEY_DEFAULT_FAVORITE);
             
             // Set summary
             updateClearCacheSummary();
             mDownloadPath.setSummary(Config.getDownloadPath());
+            
+            int i = 0;
+            String[] entrise = new String[Favorite.FAVORITE_TITLES.length + 1];
+            entrise[i++] = getString(R.string.none);
+            for (String str : Favorite.FAVORITE_TITLES)
+                entrise[i++] = str;
+            mDefaultFavorite.setEntries(entrise);
         }
         
         private void updateClearCacheSummary() {

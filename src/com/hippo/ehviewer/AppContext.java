@@ -27,6 +27,7 @@ import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.Download;
+import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.LoadImageView;
@@ -58,6 +59,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         Crash.init(this);
         mEhClient = new EhClient(this);
         Download.init(this);
+        Favorite.init(this);
         
         mData = new Data(this);
         HttpHelper.setCookieHelper(this);

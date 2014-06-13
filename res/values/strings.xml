@@ -151,6 +151,8 @@
     <!-- Favorite -->
     <string name="local_favorite">Local Favorite</string>
     <string name="select_item">Select item</string>
+    <string name="where_to_add">Where to add ?</string>
+    <string name="failed_to_add">Failed to add</string>
     <string name="where_to_move">Where to move ?</string>
     <string name="moving">Moving…</string>
     <string name="move_successfully">Move successfully</string>
@@ -158,6 +160,7 @@
     <string name="dst_src_same">The same Source and Destination</string>
     <string name="delete_successfully">Delete successfully</string>
     <string name="failed_to_delete">Failed to delete</string>
+    <string name="set_default_favorite">Set it as default favorite</string>
     
     <!-- Settings -->
     <string name="display_settings_title">Display</string>
@@ -183,6 +186,8 @@
     <string name="media_scan_title">Allow media scan</string>
     <string name="media_scan_summary_on">Please keep your gallery apps away from other people</string>
     <string name="media_scan_summary_off">Most gallery apps will ignore pictures in download path</string>
+    <string name="favorite_data_settings_title">Favorite</string>
+    <string name="default_favorite">Default Favorite</string>
     
     <string name="about_settings_title">About</string>
     <string name="author_title">Author</string>

@@ -55,6 +55,7 @@ import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.ActionableToastBar;
@@ -83,7 +84,6 @@ public class FavouriteActivity extends AbstractGalleryActivity
     
     private SlidingMenu mSlidingMenu;
     private ListView mMenuList;
-    private String[] mMenuTitles;
     private ActionableToastBar mActionableToastBar;
     
     private Set<GalleryInfo> mChoiceGiSet;
@@ -115,7 +115,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
     private void initLocalFavorite() {
         mHlv.setEnabledHeader(false);
         mHlv.setEnabledFooter(false);
-        setTitle(mMenuTitles[mMenuIndex]);
+        setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
         setGalleryInfos(mData.getAllLocalFavourites());
         if (mData.getAllLocalFavourites().isEmpty())
             onlyShowNone();
@@ -126,7 +126,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
     private void initFavorite() {
         mHlv.setEnabledHeader(true);
         mHlv.setEnabledFooter(true);
-        setTitle(mMenuTitles[mMenuIndex]);
+        setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
         refresh(true);
     }
     
@@ -168,13 +168,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         mMainView.addView(mActionableToastBar);
         mMainView.setOnTouchListener(this);
         
-        mMenuTitles = new String[EhClient.FAVORITE_SLOT_NUM + 1];
-        mMenuTitles[0] = mResources.getString(R.string.local_favorite);
-        for (int i = 1; i < EhClient.FAVORITE_SLOT_NUM + 1; i++) {
-            mMenuTitles[i] = mResources.getString(R.string.favourite) + " "+ (i - 1);
-        }
         mMenuIndex = 0;
-        
         initLocalFavorite();
         
         mChoiceGiSet = new LinkedHashSet<GalleryInfo>();
@@ -226,7 +220,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
             public View getView(int position, View convertView, ViewGroup parent) {
                 LayoutInflater li= LayoutInflater.from(FavouriteActivity.this);
                 TextView tv = (TextView)li.inflate(R.layout.menu_item, null);
-                tv.setText(mMenuTitles[position]);
+                tv.setText(Favorite.FAVORITE_TITLES[position]);
                 if (position == 0) {
                     Drawable dr = mResources.getDrawable(R.drawable.ic_action_panda);
                     dr.setBounds(0, 0, Ui.dp2pix(36), Ui.dp2pix(36));
@@ -251,7 +245,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                     return;
                 
                 mMenuIndex = position;
-                setTitle(mMenuTitles[mMenuIndex]);
+                setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
                 if (mMenuIndex == 0)
                     initLocalFavorite();
                 else
@@ -423,7 +417,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
     
     private AlertDialog createMoveDialog(final ActionMode mode) {
         return new DialogBuilder(this).setTitle(R.string.where_to_move)
-                .setItems(mMenuTitles, new AdapterView.OnItemClickListener() {
+                .setItems(Favorite.FAVORITE_TITLES, new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                             int position, long id) {

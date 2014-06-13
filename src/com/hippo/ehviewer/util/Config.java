@@ -59,6 +59,9 @@ public class Config {
     private static final String KEY_THEME_COLOR = "theme_color";
     private static final int DEFAULT_THEME_COLOR = 0xff0099cc;
     
+    private static final String KEY_DEFAULT_FAVORITE = "default_favorite";
+    private static final String DEFAULT_DEFAULT_FAVORITE = "-2";
+    
     private static boolean mInit = false;
 
     private static Context mContext;
@@ -277,5 +280,13 @@ public class Config {
     
     public static void setThemeColor(int themeColor) {
         mConfigPre.edit().putInt(KEY_THEME_COLOR, themeColor).apply();
+    }
+    
+    public static int getDefaultFavorite() {
+        return Integer.parseInt(mConfigPre.getString(KEY_DEFAULT_FAVORITE, DEFAULT_DEFAULT_FAVORITE));
+    }
+    
+    public static void setDefaultFavorite(int defaultFavorite) {
+        mConfigPre.edit().putString(KEY_DEFAULT_FAVORITE, String.valueOf(defaultFavorite)).apply();
     }
 }

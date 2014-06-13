@@ -37,6 +37,7 @@ import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
@@ -502,19 +503,39 @@ public class MangaListActivity extends AbstractGalleryActivity
                     @Override
                     public void onItemClick(AdapterView<?> arg0, View arg1,
                             int position, long arg3) {
-                        GalleryInfo lmd;
+                        GalleryInfo gi;
                         switch (position) {
                         case 0: // Add favourite item
-                            lmd = getGalleryInfo(longClickItemIndex);
-                            mData.addLocalFavourite(lmd);
-                            new SuperToast(MangaListActivity.this, R.string.toast_add_favourite).show();
+                            gi = getGalleryInfo(longClickItemIndex);
+                            int defaultFavorite = Config.getDefaultFavorite();
+                            switch (defaultFavorite) {
+                            case -2:
+                                Favorite.getAddToFavoriteDialog(MangaListActivity.this, gi).show();
+                                break;
+                            case -1:
+                                ((AppContext)getApplication()).getData().addLocalFavourite(gi);
+                                new SuperToast(MangaListActivity.this).setMessage(R.string.toast_add_favourite).show();
+                                break;
+                            default:
+                                ((AppContext)getApplication()).getEhClient().addToFavorite(gi.gid,
+                                        gi.token, defaultFavorite, null, new EhClient.OnAddToFavoriteListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        new SuperToast(MangaListActivity.this).setMessage(R.string.toast_add_favourite).show();
+                                    }
+                                    @Override
+                                    public void onFailure(String eMsg) {
+                                        new SuperToast(MangaListActivity.this).setMessage(R.string.failed_to_add).show();
+                                    }
+                                });
+                            }
                             break;
                         case 1:
-                            lmd = getGalleryInfo(longClickItemIndex);
+                            gi = getGalleryInfo(longClickItemIndex);
                             Intent it = new Intent(MangaListActivity.this, DownloadService.class);
                             startService(it);
-                            mServiceConn.getService().add(String.valueOf(lmd.gid), lmd.thumb, 
-                                    EhClient.getDetailUrl(lmd.gid, lmd.token), lmd.title);
+                            mServiceConn.getService().add(String.valueOf(gi.gid), gi.thumb, 
+                                    EhClient.getDetailUrl(gi.gid, gi.token), gi.title);
                             new SuperToast(MangaListActivity.this, R.string.toast_add_download).show();
                             break;
                         default:

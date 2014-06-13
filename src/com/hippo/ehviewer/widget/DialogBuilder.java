@@ -28,6 +28,7 @@ import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -42,6 +43,7 @@ import android.widget.TextView;
 public class DialogBuilder extends AlertDialog.Builder {
     
     private View mView;
+    private LinearLayout mCustomLayout;
     private Context mContext;
     
     private int mThemeColor;
@@ -154,21 +156,36 @@ public class DialogBuilder extends AlertDialog.Builder {
     public DialogBuilder setView(View view, LinearLayout.LayoutParams lp) {
         ScrollView scrollView = (ScrollView)mView.findViewById(R.id.scroll_view);
         scrollView.setVisibility(View.VISIBLE);
-        LinearLayout customLayout = (LinearLayout)mView.findViewById(R.id.custom);
-        customLayout.setVisibility(View.VISIBLE);
-        customLayout.addView(view, lp);
+        mCustomLayout = (LinearLayout)mView.findViewById(R.id.custom);
+        mCustomLayout.setVisibility(View.VISIBLE);
+        mCustomLayout.addView(view, lp);
         return this;
     }
     
-    public DialogBuilder setView(View view, LinearLayout.LayoutParams lp, boolean sroll) {
-        LinearLayout customLayout;
-        if (sroll)
-            customLayout = (LinearLayout)mView.findViewById(R.id.custom);
+    public DialogBuilder setView(View view, LinearLayout.LayoutParams lp, boolean isSroll) {
+        if (isSroll)
+            mCustomLayout = (LinearLayout)mView.findViewById(R.id.custom);
         else
-            customLayout = (LinearLayout)mView.findViewById(R.id.custom_no_scroll);
-        customLayout.setVisibility(View.VISIBLE);
-        customLayout.addView(view, lp);
+            mCustomLayout = (LinearLayout)mView.findViewById(R.id.custom_no_scroll);
+        mCustomLayout.setVisibility(View.VISIBLE);
+        mCustomLayout.addView(view, lp);
         return this;
+    }
+    
+    public DialogBuilder setView(int resId, boolean isSroll) {
+        if (isSroll)
+            mCustomLayout = (LinearLayout)mView.findViewById(R.id.custom);
+        else
+            mCustomLayout = (LinearLayout)mView.findViewById(R.id.custom_no_scroll);
+        mCustomLayout.setVisibility(View.VISIBLE);
+        LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(resId, mCustomLayout);
+        return this;
+    }
+    
+    public LinearLayout getCustomLayout() {
+        return mCustomLayout;
     }
     
     /**
