@@ -18,6 +18,8 @@ package com.hippo.ehviewer.ui;
 
 import java.util.List;
 
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Comment;
@@ -111,6 +113,16 @@ public class MangaDetailActivity extends AbstractFragmentActivity
             
         } else {
             mGalleryInfo = intent.getParcelableExtra(KEY_G_INFO);
+        }
+        
+        if (Config.getAllowAnalyics()) {
+            EasyTracker easyTracker = EasyTracker.getInstance(this);
+            easyTracker.send(MapBuilder
+                    .createEvent("detail",
+                            "open",
+                            "{\"gid\":" + mGalleryInfo.gid + ",\"token\":" + mGalleryInfo.token +"}",
+                            null)
+                    .build());
         }
     }
     
