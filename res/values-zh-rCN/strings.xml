@@ -60,7 +60,7 @@
     <string name="toast_tag_mode">切换至标签搜索模式</string>
     
     <!-- Jump -->
-    <string name="jump_sum">共 %d 页</string>
+    <string name="jump_summary" formatted="false">第 %d 页，共 %d 页</string>
     <string name="jump_to">跳至：</string>
     <string name="toast_invalid_page">非法页面</string>
     
@@ -149,6 +149,14 @@
     
     <!-- Favorite -->
     <string name="local_favorite">本地收藏</string>
+    <string name="select_item">选择项目</string>
+    <string name="where_to_move">移动至何处？</string>
+    <string name="moving">正在移动…</string>
+    <string name="move_successfully">移动成功</string>
+    <string name="failed_to_move">移动失败</string>
+    <string name="dst_src_same">目标与源相同</string>
+    <string name="delete_successfully">删除成功</string>
+    <string name="failed_to_delete">删除失败</string>
     
     <!-- Settings -->
     <string name="display_settings_title">显示</string>
@@ -305,6 +313,7 @@
     <string name="rating0">感觉快要窒息了</string>
     
     <!-- Util -->
+    <string name="retry">重试</string>
     <string name="local">本地</string>
     <string name="tag">标签</string>
     <string name="copyed">已复制</string>
@@ -368,4 +377,5 @@
     <string name="advance_search_left">左划更多</string>
     
     <string name="restart_to_take_effect">重启应用以便生效</string>
+    <string name="cur_dir_not_writable">当前文件夹不可写</string>
 </resources>

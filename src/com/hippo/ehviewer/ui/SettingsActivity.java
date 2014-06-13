@@ -434,7 +434,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                     public void onClick(View v) {
                         if (!fileExplorerView.canWrite())
                             new SuperToast(mActivity).setIcon(R.drawable.ic_warning)
-                                    .setMessage("当前路径不可写").show();
+                                    .setMessage(R.string.cur_dir_not_writable).show();
                         else {
                             String downloadPath = fileExplorerView.getCurPath();
                             

@@ -36,6 +36,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textColor="@android:color/holo_red_dark"
-        android:text="当前路径不可写" />
+        android:text="@string/cur_dir_not_writable" />
 
 </LinearLayout>

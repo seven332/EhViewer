@@ -534,7 +534,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.jump, null);
         TextView tv = (TextView)view.findViewById(R.id.list_jump_sum);
-        tv.setText(String.format(getString(R.string.jump_sum), getMaxPage())); // TODO
+        tv.setText(String.format(getString(R.string.jump_summary), getCurPage() + 1, getMaxPage()));
         tv = (TextView)view.findViewById(R.id.list_jump_to);
         tv.setText(R.string.jump_to);
         final EditText et = (EditText)view.findViewById(R.id.list_jump_edit);

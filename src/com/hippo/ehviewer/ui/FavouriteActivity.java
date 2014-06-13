@@ -351,7 +351,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.favorite_choice, menu);
-        mode.setTitle("Select Items"); // TODO
+        mode.setTitle(R.string.select_item);
         return true;
     }
 
@@ -370,7 +370,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
     
     private void startMoveFromLocal2Cloud() {
         mPdb = new ProgressDialogBulider(FavouriteActivity.this);
-        mPdb.setCancelable(false).setTitle("正在移动...");
+        mPdb.setCancelable(false).setTitle(R.string.moving);
         mPdb.setMax(mChoiceGiSetCopy.size()).setProgress(0);
         mProgressDialog = mPdb.create();
         mProgressDialog.show();
@@ -407,7 +407,8 @@ public class FavouriteActivity extends AbstractGalleryActivity
                         public void onActionClicked() {
                             startMoveFromLocal2Cloud();
                         }
-                    }, 0, "移动失败", R.drawable.ic_warning, "重试", true);
+                    }, 0, mResources.getString(R.string.failed_to_move),
+                    R.drawable.ic_warning, mResources.getString(R.string.retry), true);
                 }
             });
         } else {
@@ -416,18 +417,19 @@ public class FavouriteActivity extends AbstractGalleryActivity
             mPdb = null;
             mProgressDialog.dismiss();
             mProgressDialog = null;
-            new SuperToast(this, "移动成功").show(); // TODO
+            new SuperToast(this, R.string.move_successfully).show();
         }
     }
     
     private AlertDialog createMoveDialog(final ActionMode mode) {
-        return new DialogBuilder(this).setTitle("移动至何处？") // TODO
+        return new DialogBuilder(this).setTitle(R.string.where_to_move)
                 .setItems(mMenuTitles, new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                             int position, long id) {
                         if (mMenuIndex == position) {
-                            new SuperToast(FavouriteActivity.this, "目标与源相同", SuperToast.WARNING).show();
+                            new SuperToast(FavouriteActivity.this, R.string.dst_src_same,
+                                    SuperToast.WARNING).show();
                             return;
                         }
                         
@@ -443,14 +445,16 @@ public class FavouriteActivity extends AbstractGalleryActivity
                                 mMoveDialog = null;
                                 
                                 mClient.modifyFavorite(getGids(mChoiceGiSetCopy), mTargetCat,
-                                        mMenuIndex -1, new Modify("移动成功", "移动失败", true));
+                                        mMenuIndex -1, new Modify(mResources.getString(R.string.move_successfully),
+                                                mResources.getString(R.string.failed_to_move), true));
                                 mHlv.setRefreshing(true);
                             } else { // change cloud dir
                                 mMoveDialog.dismiss();
                                 mMoveDialog = null;
                                 
                                 mClient.modifyFavorite(getGids(mChoiceGiSetCopy), mTargetCat,
-                                        mMenuIndex -1, new Modify("移动成功", "移动失败", false));
+                                        mMenuIndex -1, new Modify(mResources.getString(R.string.move_successfully),
+                                                mResources.getString(R.string.failed_to_move), false));
                                 mHlv.setRefreshing(true);
                             }
                         }
@@ -475,7 +479,8 @@ public class FavouriteActivity extends AbstractGalleryActivity
             } else {
                 mTargetCat = -1;
                 mClient.modifyFavorite(getGids(mChoiceGiSet), mTargetCat,
-                        mMenuIndex -1, new Modify("删除成功", "删除失败", false));
+                        mMenuIndex -1, new Modify(mResources.getString(R.string.delete_successfully),
+                                mResources.getString(R.string.failed_to_delete), false));
                 mHlv.setRefreshing(true);
             }
             mode.finish();
@@ -536,7 +541,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         public void onFailure(String eMsg) {
             mHlv.setRefreshing(false);
             showToastBar(new Remodify(mSuccStr, mFailStr, mToLocal), 0, mFailStr + ": " + eMsg,
-                    R.drawable.ic_action_redo, "重试", true); // TODO
+                    R.drawable.ic_action_redo, mResources.getString(R.string.retry), true);
         }
     }
     

@@ -37,15 +37,14 @@
     
     <!-- Login -->
     <string name="check_login">Checking login status</string>
-    <string name="toast_login_succeeded">Login succeeded</string>
-    <string name="toast_login_failed">Login failed</string>
+    <string name="toast_login_succeeded">Login succeedfully</string>
+    <string name="toast_login_failed">Failed to login</string>
     <string name="dialog_title_login_or_not">Login or not</string>
     <string name="dialog_messgae_login_or_not">What are the benefits of login ?</string>
     <string name="not_login">Do not login</string>
     
-    
-    <string name="toast_logout_succeeded">Logout succeeded</string>
-    <string name="toast_logout_failed">Logout failed</string>
+    <string name="toast_logout_succeeded">Logout succeedfully</string>
+    <string name="toast_logout_failed">Failed to logout</string>
 
     <!-- Search -->
     <string name="hint_no_keyword">No keyword is OK</string>
@@ -64,7 +63,7 @@
     <string name="toast_tag_mode">Switch To Tag Search Mode</string>
     
     <!-- Jump -->
-    <string name="jump_sum">%d pages in total</string>
+    <string name="jump_summary" formatted="false">Page %d, %d pages in total</string>
     <string name="jump_to">Jump to : </string>
     <string name="toast_invalid_page">Invalid page</string>
     
@@ -151,6 +150,14 @@
     
     <!-- Favorite -->
     <string name="local_favorite">Local Favorite</string>
+    <string name="select_item">Select item</string>
+    <string name="where_to_move">Where to move ?</string>
+    <string name="moving">Moving…</string>
+    <string name="move_successfully">Move successfully</string>
+    <string name="failed_to_move">Failed to move</string>
+    <string name="dst_src_same">The same Source and Destination</string>
+    <string name="delete_successfully">Delete successfully</string>
+    <string name="failed_to_delete">Failed to delete</string>
     
     <!-- Settings -->
     <string name="display_settings_title">Display</string>
@@ -258,8 +265,8 @@
     <string name="start_download_task">Start download task</string>
     <string name="download_task_finished">Download task finished</string>
     <string name="downloading">Downloading</string>
-    <string name="download_successfully">download successfully</string>
-    <string name="download_unsuccessfully">download unsuccessfully</string>
+    <string name="download_successfully">Download successfully</string>
+    <string name="download_unsuccessfully">Failed to download</string>
     <string name="not_started">Not started</string>
     <string name="waiting">Waiting</string>
     <string name="wait_for_last">Please wait for the last operation</string>
@@ -275,13 +282,13 @@
     <string name="select_mode_warning">Please login to avoid Sad Panda.</string>
     
     <!-- Vote -->
-    <string name="vote_succeeded">Vote succeeded</string>
-    <string name="vote_failed">Vote failed</string>
+    <string name="vote_succeeded">Vote successfully</string>
+    <string name="vote_failed">Failed to vote</string>
     
     <!-- Rate -->
     <string name="invalid_rating">Invalid rating</string>
-    <string name="rate_succeeded">Rate succeeded</string>
-    <string name="rate_failed">Rate failed</string>
+    <string name="rate_succeeded">Rate successfully</string>
+    <string name="rate_failed">Failed to rate</string>
     
     
     <string name="uploader_others">该用户上传的其他内容</string>
@@ -313,6 +320,7 @@
     <string name="rating0">DISASTER</string>
     
     <!-- Util -->
+    <string name="retry">Retry</string>
     <string name="local">Local</string>
     <string name="tag">Tag</string>
     <string name="copyed">Copyed</string>
@@ -377,4 +385,5 @@
     <string name="advance_search_left">Swipe left</string>
     
     <string name="restart_to_take_effect">Restart the application to take effect</string>
+    <string name="cur_dir_not_writable">Current directory is not writable</string>
 </resources>
