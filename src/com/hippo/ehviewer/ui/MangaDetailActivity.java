@@ -18,6 +18,9 @@ package com.hippo.ehviewer.ui;
 
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.hippo.ehviewer.AppContext;
@@ -49,6 +52,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -115,15 +119,14 @@ public class MangaDetailActivity extends AbstractFragmentActivity
             mGalleryInfo = intent.getParcelableExtra(KEY_G_INFO);
         }
         
-        if (Config.getAllowAnalyics()) {
+        if (!Config.getAllowAnalyics())
+            return;
+        try {
+            JSONObject js = new JSONObject();
+            js.put("gid", mGalleryInfo.gid).put("token", mGalleryInfo.token);
             EasyTracker easyTracker = EasyTracker.getInstance(this);
-            easyTracker.send(MapBuilder
-                    .createEvent("detail",
-                            "open",
-                            "{\"gid\":" + mGalleryInfo.gid + ",\"token\":" + mGalleryInfo.token +"}",
-                            null)
-                    .build());
-        }
+            easyTracker.send(MapBuilder.createEvent("gallery", "open", js.toString(), null).build());
+        } catch (Exception e) {}
     }
     
     @Override
