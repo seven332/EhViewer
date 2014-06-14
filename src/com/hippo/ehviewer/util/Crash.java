@@ -23,8 +23,6 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.content.Context;
@@ -34,6 +32,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Environment;
+
+import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.util.Log;
 
 public class Crash {
@@ -47,8 +47,6 @@ public class Crash {
     private static final String NEW_CRAHS = "new_crash";
     private static final String LAST_CRASH_POSITION = "last_crash_position";
     private static final String LAST_CRASH_NAME = "last_crash_name";
-    
-    private static DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
     
     private static boolean mInit = false;
     
@@ -97,7 +95,7 @@ public class Crash {
         sb.append(result);
         try {
             long timestamp = System.currentTimeMillis();
-            String time = formatter.format(new Date());
+            String time = ((AppContext)mContext).getDateFormat().format(new Date());
             String fileName = "crash-" + time + "-" + timestamp + ".log";
             String path = null;
             boolean position = false;

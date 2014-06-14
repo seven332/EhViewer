@@ -994,6 +994,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 R.drawable.ic_action_panda, R.string.mode,
                 R.drawable.ic_action_search, android.R.string.search_go,
                 R.drawable.ic_action_favorite, R.string.favourite,
+                R.drawable.ic_action_popular, R.string.popular,
                 R.drawable.ic_action_download, R.string.download,
                 R.drawable.ic_action_settings, R.string.action_settings};
         
@@ -1058,13 +1059,27 @@ public class MangaListActivity extends AbstractGalleryActivity
                     startActivity(intent);
                     break;
                     
-                case 4: // Download
+                case 4:
+                    if (isRefreshing()) {
+                        new SuperToast(MangaListActivity.this, R.string.wait_for_last).show();
+                    } else {
+                        lus = new ListUrls();
+                        lus.setMode(ListUrls.POPULAR);
+                        mTitle = mResources.getString(R.string.popular);
+                        setTitle(mTitle);
+                        refresh(true);
+                        
+                        showContent();
+                    }
+                    break;
+                    
+                case 5: // Download
                     intent = new Intent(MangaListActivity.this,
                             DownloadActivity.class);
                     startActivity(intent);
                     break;
                     
-                case 5: // Settings
+                case 6: // Settings
                     intent = new Intent(MangaListActivity.this,
                             SettingsActivity.class);
                     startActivity(intent);
@@ -1505,5 +1520,35 @@ public class MangaListActivity extends AbstractGalleryActivity
     protected String getTargetUrl(int targetPage) {
         lus.setPage(targetPage);
         return lus.getUrl();
+    }
+    
+    @Override
+    protected void doGetGallerys(String url, final long taskStamp,
+            final OnGetListListener listener) {
+        
+        if (lus.getMode() == ListUrls.POPULAR) {
+            mClient.getPopular(new EhClient.OnGetPopularListener() {
+                @Override
+                public void onSuccess(List<GalleryInfo> gis) {
+                    listener.onSuccess(taskStamp, gis, gis.size(), gis.size() == 0 ? 0 : 1);
+                }
+                @Override
+                public void onFailure(String eMsg) {
+                    listener.onFailure(taskStamp, eMsg);
+                }
+            });
+        } else {
+            mClient.getMangaList(url, null, new EhClient.OnGetMangaListListener() {
+                @Override
+                public void onSuccess(Object checkFlag, List<GalleryInfo> lmdArray,
+                        int indexPerPage, int maxPage) {
+                    listener.onSuccess(taskStamp, lmdArray, indexPerPage, maxPage);
+                }
+                @Override
+                public void onFailure(Object checkFlag, String eMsg) {
+                    listener.onFailure(taskStamp, eMsg);
+                }
+            });
+        }
     }
 }

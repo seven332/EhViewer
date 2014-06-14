@@ -75,7 +75,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     private TextView mNoneTextView;
     private ImageView mSadPanda;
     
-    private long taskStamp;
+    private long mTaskStamp;
     
     private int mFirstIndex;
     private int mLastIndex;
@@ -102,12 +102,13 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
      * @return
      */
     protected abstract String getTargetUrl(int targetPage);
+    protected abstract void doGetGallerys(String url, long taskStamp, OnGetListListener listener);
     
     private void getGallerys() {
         setGallerysLayout();
         
-        taskStamp = System.currentTimeMillis();
-        mClient.getMangaList(mTargetUrl, taskStamp, new ListGetListener());
+        mTaskStamp = System.currentTimeMillis();
+        doGetGallerys(mTargetUrl, mTaskStamp, mListener);
     }
     
     @Override
@@ -485,11 +486,16 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             mList.setSelectionFromTop(position, 0);
     }
     
-    private class ListGetListener implements EhClient.OnGetMangaListListener {
+    public interface OnGetListListener {
+        public void onSuccess(long taskStamp, List<GalleryInfo> gis, int itemPerPage, int maxPage);
+        public void onFailure(long taskStamp, String eMsg);
+    }
+    
+    private OnGetListListener mListener = new OnGetListListener() {
         @Override
-        public void onSuccess(Object checkFlag,
-                ArrayList<GalleryInfo> gis, int itemPerPage, int maxPage) {
-            if (taskStamp != (Long)checkFlag)
+        public void onSuccess(long taskStamp,
+                List<GalleryInfo> gis, int itemPerPage, int maxPage) {
+            if (mTaskStamp != taskStamp)
                 return;
             
             mMaxPage = maxPage;
@@ -574,8 +580,8 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             mHlv.setAnyRefreshComplete(true);
         }
         @Override
-        public void onFailure(Object checkFlag, String eMsg) {
-            if (taskStamp != (Long)checkFlag)
+        public void onFailure(long taskStamp, String eMsg) {
+            if (mTaskStamp != taskStamp)
                 return;
             
             mWaitProgressBar.setVisibility(View.GONE);
@@ -594,5 +600,5 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                     eMsg, SuperToast.WARNING).show();
             mHlv.setAnyRefreshComplete(false);
         }
-    }
+    };
 }

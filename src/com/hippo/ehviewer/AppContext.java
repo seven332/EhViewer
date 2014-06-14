@@ -19,6 +19,8 @@ package com.hippo.ehviewer;
 import java.io.File;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.ehclient.EhClient;
@@ -38,6 +40,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
     
     @SuppressWarnings("unused")
     private static final String TAG = "AppContext";
+    private DateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
     
     private Thread.UncaughtExceptionHandler mDefaultHandler;
     
@@ -96,6 +99,10 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
     
     public ImageGeterManager getImageGeterManager() {
         return mImageGeterManager;
+    }
+    
+    public DateFormat getDateFormat() {
+        return mFormatter;
     }
     
     @Override

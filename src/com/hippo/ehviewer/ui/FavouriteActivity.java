@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer.ui;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -54,6 +54,7 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
+import com.hippo.ehviewer.ui.AbstractGalleryActivity.OnGetListListener;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Theme;
@@ -508,6 +509,22 @@ public class FavouriteActivity extends AbstractGalleryActivity
         return EhClient.getFavoriteUrl(mMenuIndex-1, targetPage);
     }
     
+    @Override
+    protected void doGetGallerys(String url, final long taskStamp,
+            final OnGetListListener listener) {
+        mClient.getMangaList(url, null, new EhClient.OnGetMangaListListener() {
+            @Override
+            public void onSuccess(Object checkFlag, List<GalleryInfo> lmdArray,
+                    int indexPerPage, int maxPage) {
+                listener.onSuccess(taskStamp, lmdArray, indexPerPage, maxPage);
+            }
+            @Override
+            public void onFailure(Object checkFlag, String eMsg) {
+                listener.onFailure(taskStamp, eMsg);
+            }
+        });
+    }
+    
     private class Modify implements EhClient.OnModifyFavoriteListener {
         private String mSuccStr;
         private String mFailStr;
@@ -520,7 +537,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         }
         
         @Override
-        public void onSuccess(ArrayList<GalleryInfo> gis, int indexPerPage,
+        public void onSuccess(List<GalleryInfo> gis, int indexPerPage,
                 int maxPage) {
             setGalleryInfos(gis, maxPage);
             mHlv.setRefreshing(false);

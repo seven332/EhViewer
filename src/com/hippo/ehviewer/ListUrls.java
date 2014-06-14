@@ -29,6 +29,7 @@ public class ListUrls {
     public static final int NORMAL = 0x0;
     public static final int UPLOADER = 0x1;
     public static final int TAG = 0x2;
+    public static final int POPULAR = 0x3;
     
     // Search type
     public static final int MISC = 0x1;
@@ -189,6 +190,7 @@ public class ListUrls {
                 url.append("/").append(page);
             } else
                 url.append(page);
+        } else if (mMode == POPULAR) {
             
         } else {
             

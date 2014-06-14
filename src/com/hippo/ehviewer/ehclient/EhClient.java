@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.conn.ConnectTimeoutException;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -93,6 +94,8 @@ public class EhClient {
     public static final String G_HEADER = "http://g.e-hentai.org/";
     public static final String EX_HEADER = "http://exhentai.org/";
     public static final String LOFI_HEADER = "http://lofi.e-hentai.org/";
+    
+    private static final String EHVIEWER_API = "http://www.ehviewer.com/API";
     
     private boolean mLogin = false;
     private String mUsername;
@@ -548,20 +551,20 @@ public class EhClient {
     
     // Get Manga List
     public interface OnGetMangaListListener {
-        public void onSuccess(Object checkFlag, ArrayList<GalleryInfo> lmdArray,
+        public void onSuccess(Object checkFlag, List<GalleryInfo> lmdArray,
                 int indexPerPage, int maxPage);
         public void onFailure(Object checkFlag, String eMsg);
     }
     
     private class GetMangaListPackage {
         public Object checkFlag;
-        public ArrayList<GalleryInfo> lmdArray;
+        public List<GalleryInfo> lmdArray;
         public int indexPerPage;
         public int maxPage;
         public OnGetMangaListListener listener;
         public String eMsg;
         
-        public GetMangaListPackage(Object checkFlag, ArrayList<GalleryInfo> lmdArray, int indexPerPage,
+        public GetMangaListPackage(Object checkFlag, List<GalleryInfo> lmdArray, int indexPerPage,
                 int maxPage, OnGetMangaListListener listener, String eMsg) {
             this.checkFlag = checkFlag;
             this.lmdArray = lmdArray;
@@ -1704,7 +1707,7 @@ public class EhClient {
     
     // modifyFavorite
     public interface OnModifyFavoriteListener {
-        void onSuccess(ArrayList<GalleryInfo> gis,
+        void onSuccess(List<GalleryInfo> gis,
                 int indexPerPage, int maxPage);
         void onFailure(String eMsg);
     }
@@ -1774,6 +1777,66 @@ public class EhClient {
             }
         }).start();
     }
+    
+    public interface OnGetPopularListener {
+        void onSuccess(List<GalleryInfo> gis);
+        void onFailure(String eMsg);
+    }
+    
+    public void getPopular(final OnGetPopularListener listener) {
+        final JSONObject json = new JSONObject();
+        try {
+            json.put("method", "popular");
+        } catch (JSONException e) {
+            listener.onFailure(e.getMessage());
+            return;
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpHelper hp = new HttpHelper(mAppContext);
+                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
+                    @Override
+                    public void onSuccess(String pageContext) {
+                        try {
+                            List<GalleryInfo> gis = new ArrayList<GalleryInfo>();
+                            JSONObject js = new JSONObject(pageContext);
+                            js = js.getJSONObject("popular");
+                            
+                            if (!js.has("galleries")) {
+                                listener.onFailure(js.getString("error"));
+                                return;
+                            }
+                            
+                            JSONArray ja = js.getJSONArray("galleries");
+                            for (int i = 0; i < ja.length(); i++) {
+                                JSONObject j = ja.getJSONObject(i);
+                                GalleryInfo gi = new GalleryInfo();
+                                gi.gid = j.getInt("gid");
+                                gi.token = j.getString("token");
+                                gi.title = StringEscapeUtils.unescapeHtml4(j.getString("title"));
+                                gi.posted = mAppContext.getDateFormat().format(Long.parseLong(j.getString("posted")) * 1000);
+                                gi.thumb = j.getString("thumb");
+                                gi.category = getType(j.getString("category"));
+                                gi.uploader = j.getString("uploader");
+                                gi.rating = Float.parseFloat(j.getString("rating"));
+                                gis.add(gi);
+                            }
+                            listener.onSuccess(gis);
+                        } catch (JSONException e) {
+                            listener.onFailure(e.getMessage());
+                        }
+                    }
+                    @Override
+                    public void onFailure(String eMsg) {
+                        listener.onFailure(eMsg);
+                    }
+                });
+                hp.postJson(EHVIEWER_API, json);
+            }
+        }).start();
+    }
+    
     
     /*
     private static class GetGalleryMetadataPackage {
