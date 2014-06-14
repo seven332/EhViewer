@@ -1672,26 +1672,28 @@ public class EhClient {
         ListUrls.UNKNOWN
     };
     
-    private static String CATEGORY_STRINGS[] = {
-        "misc",
-        "doujinshi",
-        "manga",
-        "artistcg",
-        "gamecg",
-        "imageset",
-        "cosplay",
-        "asianporn",
-        "non-h",
-        "western",
-        "unknown"
+    private static String CATEGORY_STRINGS[][] = {
+        new String[]{"misc"},
+        new String[]{"doujinshi"},
+        new String[]{"manga"},
+        new String[]{"artistcg", "Artist CG Sets"},
+        new String[]{"gamecg", "Game CG Sets"},
+        new String[]{"imageset", "Image Sets"},
+        new String[]{"cosplay", "Asian Porn"},
+        new String[]{"asianporn"},
+        new String[]{"non-h"},
+        new String[]{"western"},
+        new String[]{"unknown"}
     };
     
     public static int getType(String type) {
         int i;
         for (i = 0; i < CATEGORY_STRINGS.length - 1; i++) {
-            if (CATEGORY_STRINGS[i].equalsIgnoreCase(type))
-                break;
+            for (String str : CATEGORY_STRINGS[i])
+                if (str.equalsIgnoreCase(type))
+                    return CATEGORY_VALUES[i];
         }
+        
         return CATEGORY_VALUES[i];
     }
     
@@ -1701,7 +1703,7 @@ public class EhClient {
             if (CATEGORY_VALUES[i] == type)
                 break;
         }
-        return CATEGORY_STRINGS[i];
+        return CATEGORY_STRINGS[i][0];
     }
     
     
