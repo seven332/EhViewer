@@ -23,6 +23,7 @@ import org.json.JSONObject;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
+import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Comment;
@@ -118,15 +119,8 @@ public class MangaDetailActivity extends AbstractFragmentActivity
         } else {
             mGalleryInfo = intent.getParcelableExtra(KEY_G_INFO);
         }
-        
-        if (!Config.getAllowAnalyics())
-            return;
-        try {
-            JSONObject js = new JSONObject();
-            js.put("gid", mGalleryInfo.gid).put("token", mGalleryInfo.token);
-            EasyTracker easyTracker = EasyTracker.getInstance(this);
-            easyTracker.send(MapBuilder.createEvent("gallery", "open", js.toString(), null).build());
-        } catch (Exception e) {}
+        // Analytics
+        Analytics.openGallery(this, mGalleryInfo);
     }
     
     @Override
@@ -230,6 +224,8 @@ public class MangaDetailActivity extends AbstractFragmentActivity
             case -1:
                 ((AppContext)getApplication()).getData().addLocalFavourite(mGalleryInfo);
                 new SuperToast(this).setMessage(R.string.toast_add_favourite).show();
+                // Analytics
+                Analytics.addToFavoriteGallery(MangaDetailActivity.this, mGalleryInfo);
                 break;
             default:
                 ((AppContext)getApplication()).getEhClient().addToFavorite(mGalleryInfo.gid,
@@ -237,6 +233,8 @@ public class MangaDetailActivity extends AbstractFragmentActivity
                     @Override
                     public void onSuccess() {
                         new SuperToast(MangaDetailActivity.this).setMessage(R.string.toast_add_favourite).show();
+                        // Analytics
+                        Analytics.addToFavoriteGallery(MangaDetailActivity.this, mGalleryInfo);
                     }
                     @Override
                     public void onFailure(String eMsg) {

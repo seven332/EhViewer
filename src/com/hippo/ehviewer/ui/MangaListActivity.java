@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
@@ -504,7 +505,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                     @Override
                     public void onItemClick(AdapterView<?> arg0, View arg1,
                             int position, long arg3) {
-                        GalleryInfo gi;
+                        final GalleryInfo gi;
                         switch (position) {
                         case 0: // Add favourite item
                             gi = getGalleryInfo(longClickItemIndex);
@@ -512,6 +513,8 @@ public class MangaListActivity extends AbstractGalleryActivity
                             switch (defaultFavorite) {
                             case -2:
                                 Favorite.getAddToFavoriteDialog(MangaListActivity.this, gi).show();
+                                // Analytics
+                                Analytics.addToFavoriteGallery(MangaListActivity.this, gi);
                                 break;
                             case -1:
                                 ((AppContext)getApplication()).getData().addLocalFavourite(gi);
@@ -523,6 +526,8 @@ public class MangaListActivity extends AbstractGalleryActivity
                                     @Override
                                     public void onSuccess() {
                                         new SuperToast(MangaListActivity.this).setMessage(R.string.toast_add_favourite).show();
+                                        // Analytics
+                                        Analytics.addToFavoriteGallery(MangaListActivity.this, gi);
                                     }
                                     @Override
                                     public void onFailure(String eMsg) {

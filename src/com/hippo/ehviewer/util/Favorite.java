@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.util;
 
+import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.GalleryInfo;
@@ -85,6 +86,8 @@ public class Favorite {
                         @Override
                         public void onSuccess() {
                             new SuperToast(context).setMessage(R.string.toast_add_favourite).show();
+                            // Analytics
+                            Analytics.addToFavoriteGallery(context, gi);
                         }
                         @Override
                         public void onFailure(String eMsg) {
