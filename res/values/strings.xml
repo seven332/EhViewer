@@ -166,6 +166,9 @@
     <string name="failed_to_delete">Failed to delete</string>
     <string name="set_default_favorite">Set it as default favorite</string>
     
+    <!-- Popular -->
+    <string name="popular_warning_message">该页面中的内容基于数据统计，您尚未开启数据统计。若开启了数据统计，您的行为将对该页面产生影响。是否现在开启数据统计？</string>
+    
     <!-- Settings -->
     <string name="display_settings_title">Display</string>
     <string name="theme_display_settings_title">Theme</string>
@@ -334,6 +337,7 @@
     <string name="rating0">DISASTER</string>
     
     <!-- Util -->
+    <string name="never_show">Never show me this dialog</string>
     <string name="retry">Retry</string>
     <string name="local">Local</string>
     <string name="tag">Tag</string>

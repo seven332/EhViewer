@@ -1689,7 +1689,7 @@ public class EhClient {
     public static int getType(String type) {
         int i;
         for (i = 0; i < CATEGORY_STRINGS.length - 1; i++) {
-            if (CATEGORY_STRINGS[i].equals(type))
+            if (CATEGORY_STRINGS[i].equalsIgnoreCase(type))
                 break;
         }
         return CATEGORY_VALUES[i];

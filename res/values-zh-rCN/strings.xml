@@ -165,6 +165,9 @@
     <string name="failed_to_delete">删除失败</string>
     <string name="set_default_favorite">设为默认收藏夹</string>
     
+    <!-- Popular -->
+    <string name="popular_warning_message">该页面中的内容基于数据统计，您尚未开启数据统计。若开启数据统计，您的行为将对该页面产生影响。是否现在开启数据统计？</string>
+    
     <!-- Settings -->
     <string name="display_settings_title">显示</string>
     <string name="theme_display_settings_title">主题</string>
@@ -327,6 +330,7 @@
     <string name="rating0">感觉快要窒息了</string>
     
     <!-- Util -->
+    <string name="never_show">不再显示</string>
     <string name="retry">重试</string>
     <string name="local">本地</string>
     <string name="tag">标签</string>

@@ -71,6 +71,12 @@ public class SettingsActivity extends AbstractPreferenceActivity {
     @SuppressWarnings("unused")
     private static String TAG = "Settings";
     
+    public static final String KEY_FRAGMENT = "FRAGMENT";
+    public static final int DEFAULT = -0x1;
+    public static final int DISPLAY = 0x0;
+    public static final int DATA = 0x1;
+    public static final int ABOUT = 0x2;
+    
     private SystemBarConfig mSystemBarConfig;
     private List<TranslucentPreferenceFragment> mFragments;
     private ListView mListView;
@@ -136,6 +142,17 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         originPaddingBottom = mListView.getPaddingBottom();
         
         adjustPadding();
+        
+        /*
+        switch (savedInstanceState.getInt(KEY_FRAGMENT, DEFAULT)) {
+        case DISPLAY:
+            this.star.startPreferenceFragment(fragment, true);
+            break;
+        case DATA:
+            break;
+        case ABOUT:
+            break;
+        }*/
     }
     
     @Override
@@ -497,7 +514,8 @@ public class SettingsActivity extends AbstractPreferenceActivity {
     }
     
     public static class AboutFragment extends TranslucentPreferenceFragment
-            implements Preference.OnPreferenceClickListener{
+            implements Preference.OnPreferenceClickListener,
+            Preference.OnPreferenceChangeListener {
         
         private static final String KEY_AUTHOR = "author";
         private static final String KEY_CHANGELOG = "changelog";
@@ -505,6 +523,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         private static final String KEY_WEBSITE = "website";
         private static final String KEY_SOURCE = "source";
         private static final String KEY_CHECK_UPDATE = "check_for_update";
+        private static final String KEY_ALLOW_ANALYICS = "allow_analyics";
         private static final String KEY_ABOUT_ANALYICS = "about_analyics";
         
         private Preference mAuthor;
@@ -513,6 +532,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         private Preference mWebsite;
         private Preference mSource;
         private Preference mCheckUpdate;
+        private CheckBoxPreference mAllowAnalyics;
         private Preference mAboutAnalyics;
         
         @Override
@@ -532,6 +552,8 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             mSource.setOnPreferenceClickListener(this);
             mCheckUpdate = (Preference)findPreference(KEY_CHECK_UPDATE);
             mCheckUpdate.setOnPreferenceClickListener(this);
+            mAllowAnalyics = (CheckBoxPreference)findPreference(KEY_ALLOW_ANALYICS);
+            mAllowAnalyics.setOnPreferenceChangeListener(this);
             mAboutAnalyics = (Preference)findPreference(KEY_ABOUT_ANALYICS);
             mAboutAnalyics.setOnPreferenceClickListener(this);
         }
@@ -626,6 +648,16 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 .setLongMessage(R.string.about_analyics_comment)
                 .setSimpleNegativeButton()
                 .create().show();
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final String key = preference.getKey();
+            if (KEY_ALLOW_ANALYICS.equals(key)) {
+                if (!(Boolean)newValue)
+                    Config.setPopularWarning(true);
             }
             return true;
         }

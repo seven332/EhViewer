@@ -66,6 +66,8 @@ public class Config {
     private static final boolean DEFAULT_SET_ANALYTICS = false;
     private static final String KEY_ALLOW_ANALYTICS = "allow_analyics";
     private static final boolean DEFAULT_ALLOW_ANALYTICS = false;
+    private static final String KEY_POPULAR_WARNING = "popular_warning";
+    private static final boolean DEFAULT_POPULAR_WARNING = true;
     
     private static boolean mInit = false;
 
@@ -309,5 +311,15 @@ public class Config {
     
     public static void setAllowAnalyics(boolean setAnalyics) {
         mConfigPre.edit().putBoolean(KEY_ALLOW_ANALYTICS, setAnalyics).apply();
+        if (!setAnalyics)
+            setPopularWarning(true);
+    }
+    
+    public static boolean getPopularWarning() {
+        return mConfigPre.getBoolean(KEY_POPULAR_WARNING, DEFAULT_POPULAR_WARNING);
+    }
+    
+    public static void setPopularWarning(boolean popularWarning) {
+        mConfigPre.edit().putBoolean(KEY_POPULAR_WARNING, popularWarning).apply();
     }
 }

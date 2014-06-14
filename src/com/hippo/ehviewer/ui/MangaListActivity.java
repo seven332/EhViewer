@@ -58,6 +58,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -914,6 +915,38 @@ public class MangaListActivity extends AbstractGalleryActivity
         }
     }
     
+    private void showPopularWarningDialog() {
+        DialogBuilder db = new DialogBuilder(MangaListActivity.this).
+                setCancelable(false).
+                setView(R.layout.popular_warning, false);
+        db.setTitle(R.string.about_analyics_title);
+        ViewGroup vg = db.getCustomLayout();
+        final CheckBox cb = (CheckBox)vg.findViewById(R.id.set_default);
+        db.setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((AlertButton)v).dialog.dismiss();
+                if (cb.isChecked())
+                    Config.setPopularWarning(false);
+                
+                Intent intent = new Intent(MangaListActivity.this,
+                        SettingsActivity.class);
+                intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, SettingsActivity.AboutFragment.class.getName());
+                intent.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
+                startActivity(intent);
+            }
+        });
+        db.setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((AlertButton)v).dialog.dismiss();
+                if (cb.isChecked())
+                    Config.setPopularWarning(false);
+            }
+        });
+        db.create().show();
+    }
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -1070,6 +1103,10 @@ public class MangaListActivity extends AbstractGalleryActivity
                         refresh(true);
                         
                         showContent();
+                        
+                        // Show dialog
+                        if (!Config.getAllowAnalyics() && Config.getPopularWarning())
+                            showPopularWarningDialog();
                     }
                     break;
                     
