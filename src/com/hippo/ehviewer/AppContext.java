@@ -40,7 +40,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
     
     @SuppressWarnings("unused")
     private static final String TAG = "AppContext";
-    private DateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+    private DateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     
     private Thread.UncaughtExceptionHandler mDefaultHandler;
     
