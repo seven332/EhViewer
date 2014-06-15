@@ -1571,8 +1571,11 @@ public class MangaListActivity extends AbstractGalleryActivity
         if (lus.getMode() == ListUrls.POPULAR) {
             mClient.getPopular(new EhClient.OnGetPopularListener() {
                 @Override
-                public void onSuccess(List<GalleryInfo> gis) {
+                public void onSuccess(List<GalleryInfo> gis, long timeStamp) {
                     listener.onSuccess(taskStamp, gis, gis.size(), gis.size() == 0 ? 0 : 1);
+                    // Show update time
+                    if (timeStamp != -1)
+                        new SuperToast(MangaListActivity.this, "更新时间 " + mAppContext.getDateFormat().format(timeStamp)).show();
                 }
                 @Override
                 public void onFailure(String eMsg) {

@@ -1781,7 +1781,7 @@ public class EhClient {
     }
     
     public interface OnGetPopularListener {
-        void onSuccess(List<GalleryInfo> gis);
+        void onSuccess(List<GalleryInfo> gis, long timeStamp);
         void onFailure(String eMsg);
     }
     
@@ -1824,7 +1824,14 @@ public class EhClient {
                                 gi.rating = Float.parseFloat(j.getString("rating"));
                                 gis.add(gi);
                             }
-                            listener.onSuccess(gis);
+                            
+                            long timeStamp;
+                            if (js.has("time"))
+                                timeStamp = js.getLong("time");
+                            else
+                                timeStamp = -1;
+                            
+                            listener.onSuccess(gis, timeStamp);
                         } catch (JSONException e) {
                             listener.onFailure(e.getMessage());
                         }
