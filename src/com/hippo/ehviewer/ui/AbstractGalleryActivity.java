@@ -23,6 +23,7 @@ import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageGeterManager;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.data.GalleryPopular;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Ui;
@@ -399,6 +400,23 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         public long getItemId(int position) {
             return position;
         }
+        
+        public String getCountStr(long count) {
+            String str = null;
+            if (count < 0) {
+                str = "0";
+            } else if (count < 1000) {
+                str = String.valueOf(count);
+            } else if (count < 1E10) {
+                double p = Math.log10(count);
+                int pInt = (int)p;
+                str = Math.round(count / Math.pow(10, pInt)) + "E" + pInt;
+            } else {
+                str = "***";
+            }
+            return str;
+        }
+        
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             GalleryInfo gi= mGiList.get(position);
@@ -448,6 +466,15 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                 // set posted
                 TextView posted = (TextView) convertView.findViewById(R.id.posted);
                 posted.setText(gi.posted);
+                
+                // Show count if possible
+                TextView count = (TextView) convertView.findViewById(R.id.count);
+                if (gi instanceof GalleryPopular) {
+                    count.setVisibility(View.VISIBLE);
+                    count.setText(getCountStr(((GalleryPopular)gi).count));
+                } else {
+                    count.setVisibility(View.GONE);
+                }
             }
             return convertView;
         }

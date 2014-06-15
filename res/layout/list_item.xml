@@ -33,7 +33,7 @@
         android:layout_toRightOf="@id/cover"
         android:layout_marginLeft="8.0dip"
         android:layout_marginTop="1.0dip"
-        android:layout_marginRight="4.0dip" />
+        android:layout_marginRight="32.0dip" />
     
     <TextView
         android:id="@+id/uploader"
@@ -84,5 +84,15 @@
         android:layout_alignParentBottom="true"
         android:layout_marginRight="4.0dip"
         android:paddingBottom="1.0dp" />
+    
+    <TextView
+        android:id="@+id/count"
+        style="@style/CardSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="1.0dip"
+        android:layout_marginRight="5.0dip"
+        android:visibility="gone" />
     
 </RelativeLayout>
