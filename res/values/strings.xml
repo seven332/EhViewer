@@ -168,6 +168,7 @@
     
     <!-- Popular -->
     <string name="popular_warning_message">该页面中的内容基于数据统计，您尚未开启数据统计。若开启了数据统计，您的行为将对该页面产生影响。是否现在开启数据统计？</string>
+    <string name="popular_update_time">Update at %s</string>
     
     <!-- Settings -->
     <string name="display_settings_title">Display</string>
@@ -181,6 +182,10 @@
     <string name="read_display_settings_title">Read</string>
     <string name="page_scaling_title">Page scaling</string>
     <string name="start_position_title">Start position</string>
+    <string name="list_display_settings_title">List</string>
+    <string name="list_mode_title">List mode</string>
+    <string name="popular_display_settings_title">Popular</string>
+    <string name="show_popular_update_time_title">Show popular update time</string>
     
     <string name="data_settings_title">Data</string>
     <string name="cache_data_settings_title">Cache</string>
@@ -233,6 +238,8 @@
     <string name="input_error">Input error</string>
     <string name="create_cache_error">Create cache error</string>
     
+    <string name="list_mode_detail">Detail</string>
+    <string name="list_mode_thumb">Thumb</string>
     
     <string name="new_folder">New folder</string>
     <string name="_new">New</string>

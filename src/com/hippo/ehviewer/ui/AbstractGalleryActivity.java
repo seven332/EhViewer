@@ -26,6 +26,8 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.GalleryPopular;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.util.Cache;
+import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.HfListView;
@@ -44,6 +46,8 @@ import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -387,10 +391,12 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             onlyShowNone();
     }
     
+    private int ITEM_PRE_ROW = 3;
+    
     protected class GalleryAdapter extends BaseAdapter {
         @Override
         public int getCount() {
-            return mGiList.size();
+            return Config.getListMode() == 0 ? mGiList.size() : (mGiList.size() + ITEM_PRE_ROW - 1) / ITEM_PRE_ROW;
         }
         @Override
         public Object getItem(int position) {
@@ -420,7 +426,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             GalleryInfo gi= mGiList.get(position);
-            if (convertView == null) {
+            if (convertView == null || !(convertView instanceof RelativeLayout)) {
                 convertView = LayoutInflater.from(AbstractGalleryActivity.this)
                         .inflate(R.layout.list_item, null);
             }
@@ -441,42 +447,36 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                             ImageGeterManager.DISK_CACHE | ImageGeterManager.DOWNLOAD,
                             new LoadImageView.SimpleImageGetListener(thumb));
                 }
-                
-                // Set manga name
-                TextView name = (TextView) convertView.findViewById(R.id.name);
-                name.setText(gi.title);
-                
-                // Set uploder
-                TextView uploader = (TextView) convertView.findViewById(R.id.uploader);
-                uploader.setText(gi.uploader);
-                
-                // Set category
-                TextView category = (TextView) convertView.findViewById(R.id.category);
-                String newText = Ui.getCategoryText(gi.category);
-                if (!newText.equals(category.getText())) {
-                    category.setText(newText);
-                    category.setBackgroundColor(Ui.getCategoryColor(gi.category));
-                }
-                
-                // Add star
-                RatingBar rate = (RatingBar) convertView
-                        .findViewById(R.id.rate);
-                rate.setRating(gi.rating);
-                
-                // set posted
-                TextView posted = (TextView) convertView.findViewById(R.id.posted);
-                posted.setText(gi.posted);
-                
-                // Show count if possible
-                TextView count = (TextView) convertView.findViewById(R.id.count);
-                if (gi instanceof GalleryPopular) {
-                    count.setVisibility(View.VISIBLE);
-                    count.setText(getCountStr(((GalleryPopular)gi).count));
-                } else {
-                    count.setVisibility(View.GONE);
-                }
             }
-            return convertView;
+            // Set manga name
+            TextView name = (TextView) convertView.findViewById(R.id.name);
+            name.setText(gi.title);
+            // Set uploder
+            TextView uploader = (TextView) convertView.findViewById(R.id.uploader);
+            uploader.setText(gi.uploader);
+            // Set category
+            TextView category = (TextView) convertView.findViewById(R.id.category);
+            String newText = Ui.getCategoryText(gi.category);
+            if (!newText.equals(category.getText())) {
+                category.setText(newText);
+                category.setBackgroundColor(Ui.getCategoryColor(gi.category));
+            }
+            // Add star
+            RatingBar rate = (RatingBar) convertView
+                    .findViewById(R.id.rate);
+            rate.setRating(gi.rating);
+            // set posted
+            TextView posted = (TextView) convertView.findViewById(R.id.posted);
+            posted.setText(gi.posted);
+            // Show count if possible
+            TextView count = (TextView) convertView.findViewById(R.id.count);
+            if (gi instanceof GalleryPopular) {
+                count.setVisibility(View.VISIBLE);
+                count.setText(getCountStr(((GalleryPopular)gi).count));
+            } else {
+                count.setVisibility(View.GONE);
+            }
+            return convertView; 
         }
     }
     

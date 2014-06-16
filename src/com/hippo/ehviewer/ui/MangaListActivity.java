@@ -1574,8 +1574,10 @@ public class MangaListActivity extends AbstractGalleryActivity
                 public void onSuccess(List<GalleryInfo> gis, long timeStamp) {
                     listener.onSuccess(taskStamp, gis, gis.size(), gis.size() == 0 ? 0 : 1);
                     // Show update time
-                    if (timeStamp != -1)
-                        new SuperToast(MangaListActivity.this, "更新时间 " + mAppContext.getDateFormat().format(timeStamp)).show();
+                    if (timeStamp != -1 && Config.getShowPopularUpdateTime())
+                        new SuperToast(MangaListActivity.this,
+                                String.format(getString(R.string.popular_update_time),
+                                        mAppContext.getDateFormat().format(timeStamp))).show();
                 }
                 @Override
                 public void onFailure(String eMsg) {

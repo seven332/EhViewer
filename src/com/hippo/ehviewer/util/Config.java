@@ -69,6 +69,12 @@ public class Config {
     private static final String KEY_POPULAR_WARNING = "popular_warning";
     private static final boolean DEFAULT_POPULAR_WARNING = true;
     
+    private static final String KEY_SHOW_POPULAR_UPDATE_TIME = "show_popular_update_time";
+    private static final boolean DEFAULT_SHOW_POPULAR_UPDATE_TIME = false;
+    
+    private static final String KEY_LIST_MODE = "list_mode";
+    private static final String DEFAULT_LIST_MODE = "0";
+    
     private static boolean mInit = false;
 
     private static Context mContext;
@@ -321,5 +327,13 @@ public class Config {
     
     public static void setPopularWarning(boolean popularWarning) {
         mConfigPre.edit().putBoolean(KEY_POPULAR_WARNING, popularWarning).apply();
+    }
+    
+    public static boolean getShowPopularUpdateTime() {
+        return mConfigPre.getBoolean(KEY_SHOW_POPULAR_UPDATE_TIME, DEFAULT_SHOW_POPULAR_UPDATE_TIME);
+    }
+    
+    public static int getListMode() {
+        return Integer.parseInt(mConfigPre.getString(KEY_LIST_MODE, DEFAULT_LIST_MODE));
     }
 }

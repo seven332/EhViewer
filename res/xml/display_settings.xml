@@ -66,4 +66,27 @@
         
     </PreferenceCategory>
     
+    <PreferenceCategory
+        android:title="@string/list_display_settings_title">
+        
+        <com.hippo.ehviewer.preference.AutoListPreference
+            android:key="list_mode"
+            android:title="@string/list_mode_title"
+            android:entries="@array/list_mode_entries"
+            android:entryValues="@array/list_mode_entry_values"
+            android:defaultValue="0"
+            android:summary="%s" />
+        
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+        android:title="@string/popular_display_settings_title">
+        
+        <CheckBoxPreference
+            android:key="show_popular_update_time"
+            android:title="@string/show_popular_update_time_title"
+            android:defaultValue="false" />
+        
+    </PreferenceCategory>
+    
 </PreferenceScreen>
