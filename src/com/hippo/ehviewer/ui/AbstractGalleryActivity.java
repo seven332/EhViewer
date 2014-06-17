@@ -391,12 +391,10 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             onlyShowNone();
     }
     
-    private int ITEM_PRE_ROW = 3;
-    
     protected class GalleryAdapter extends BaseAdapter {
         @Override
         public int getCount() {
-            return Config.getListMode() == 0 ? mGiList.size() : (mGiList.size() + ITEM_PRE_ROW - 1) / ITEM_PRE_ROW;
+            return mGiList.size();
         }
         @Override
         public Object getItem(int position) {
@@ -414,9 +412,18 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             } else if (count < 1000) {
                 str = String.valueOf(count);
             } else if (count < 1E10) {
-                double p = Math.log10(count);
-                int pInt = (int)p;
-                str = Math.round(count / Math.pow(10, pInt)) + "E" + pInt;
+                double pDouble = Math.log10(count);
+                int p = (int)pDouble;
+                int b = (int)Math.round(count / Math.pow(10, p));
+                if (b > 9) {
+                    if (p == 9) {
+                        b = 9;
+                    } else {
+                        b = 1;
+                        p++;
+                    }
+                }
+                str = b + "E" + p;
             } else {
                 str = "***";
             }
