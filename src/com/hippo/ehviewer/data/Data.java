@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.hippo.ehviewer.Analytics;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -541,6 +543,9 @@ public class Data {
             mDatabase.insert(TABLE_LOCAL_FAVOURITE, null, values);
             // add to list
             mLocalFavourites.add(galleryInfo);
+            
+            // Analytics
+            Analytics.addToFavoriteGallery(mContext, gid, galleryInfo.token);
         }
     }
     

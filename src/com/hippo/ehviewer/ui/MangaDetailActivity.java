@@ -120,7 +120,7 @@ public class MangaDetailActivity extends AbstractFragmentActivity
             mGalleryInfo = intent.getParcelableExtra(KEY_G_INFO);
         }
         // Analytics
-        Analytics.openGallery(this, mGalleryInfo);
+        Analytics.openGallery(this, mGalleryInfo.gid, mGalleryInfo.token);
     }
     
     @Override
@@ -224,8 +224,6 @@ public class MangaDetailActivity extends AbstractFragmentActivity
             case -1:
                 ((AppContext)getApplication()).getData().addLocalFavourite(mGalleryInfo);
                 new SuperToast(this).setMessage(R.string.toast_add_favourite).show();
-                // Analytics
-                Analytics.addToFavoriteGallery(MangaDetailActivity.this, mGalleryInfo);
                 break;
             default:
                 ((AppContext)getApplication()).getEhClient().addToFavorite(mGalleryInfo.gid,
@@ -233,8 +231,6 @@ public class MangaDetailActivity extends AbstractFragmentActivity
                     @Override
                     public void onSuccess() {
                         new SuperToast(MangaDetailActivity.this).setMessage(R.string.toast_add_favourite).show();
-                        // Analytics
-                        Analytics.addToFavoriteGallery(MangaDetailActivity.this, mGalleryInfo);
                     }
                     @Override
                     public void onFailure(String eMsg) {

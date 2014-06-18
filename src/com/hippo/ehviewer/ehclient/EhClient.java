@@ -38,6 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.ListUrls;
@@ -1632,6 +1633,8 @@ public class EhClient {
                         AddToFavoriteParser parser = new AddToFavoriteParser();
                         if (parser.parser(pageContext)) {
                             listener.onSuccess();
+                            // Analytics
+                            Analytics.addToFavoriteGallery(mAppContext, gid, token);
                         } else {
                             listener.onFailure("parser error");   // TODO
                         }

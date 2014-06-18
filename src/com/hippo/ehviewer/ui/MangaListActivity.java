@@ -513,8 +513,6 @@ public class MangaListActivity extends AbstractGalleryActivity
                             switch (defaultFavorite) {
                             case -2:
                                 Favorite.getAddToFavoriteDialog(MangaListActivity.this, gi).show();
-                                // Analytics
-                                Analytics.addToFavoriteGallery(MangaListActivity.this, gi);
                                 break;
                             case -1:
                                 ((AppContext)getApplication()).getData().addLocalFavourite(gi);
@@ -526,8 +524,6 @@ public class MangaListActivity extends AbstractGalleryActivity
                                     @Override
                                     public void onSuccess() {
                                         new SuperToast(MangaListActivity.this).setMessage(R.string.toast_add_favourite).show();
-                                        // Analytics
-                                        Analytics.addToFavoriteGallery(MangaListActivity.this, gi);
                                     }
                                     @Override
                                     public void onFailure(String eMsg) {

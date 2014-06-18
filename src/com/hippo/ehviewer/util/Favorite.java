@@ -86,8 +86,6 @@ public class Favorite {
                         @Override
                         public void onSuccess() {
                             new SuperToast(context).setMessage(R.string.toast_add_favourite).show();
-                            // Analytics
-                            Analytics.addToFavoriteGallery(context, gi);
                         }
                         @Override
                         public void onFailure(String eMsg) {
