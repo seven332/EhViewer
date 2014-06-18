@@ -1818,6 +1818,10 @@ public class EhClient {
                             for (int i = 0; i < ja.length(); i++) {
                                 JSONObject j = ja.getJSONObject(i);
                                 GalleryPopular gi = new GalleryPopular();
+                                if (j.has("count"))
+                                    gi.count = j.getLong("count");
+                                else
+                                    gi.count = -1;
                                 gi.gid = j.getInt("gid");
                                 gi.token = j.getString("token");
                                 gi.title = StringEscapeUtils.unescapeHtml4(j.getString("title"));
@@ -1826,7 +1830,6 @@ public class EhClient {
                                 gi.category = getType(j.getString("category"));
                                 gi.uploader = j.getString("uploader");
                                 gi.rating = Float.parseFloat(j.getString("rating"));
-                                gi.count = j.getLong("count");
                                 gis.add(gi);
                             }
                             

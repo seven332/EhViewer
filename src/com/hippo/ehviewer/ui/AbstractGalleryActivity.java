@@ -408,7 +408,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         public String getCountStr(long count) {
             String str = null;
             if (count < 0) {
-                str = "0";
+                str = "WEB";
             } else if (count < 1000) {
                 str = String.valueOf(count);
             } else if (count < 1E10) {
