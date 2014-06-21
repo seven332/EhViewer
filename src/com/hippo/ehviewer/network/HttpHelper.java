@@ -26,6 +26,7 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -40,6 +41,8 @@ import org.json.JSONObject;
 
 import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.ehclient.EhClient;
+import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.exception.RedirectionException;
 import com.hippo.ehviewer.exception.ResponseCodeException;
 import com.hippo.ehviewer.exception.SadPandaException;
@@ -65,7 +68,7 @@ import com.hippo.ehviewer.util.Log;
 public class HttpHelper {
     private static final String TAG = "HttpHelper";
     public static final String SAD_PANDA_ERROR = "Sad Panda";
-    
+    public static final String HAPPY_PANDA_BODY = "Happy Panda";
     
     private static String DEFAULT_CHARSET = "utf-8";
     private static String CHARSET_KEY = "charset=";
@@ -107,11 +110,6 @@ public class HttpHelper {
     
     public HttpHelper(Context context) {
         mContext = context;
-    }
-    
-    public static void setCookieHelper(Context context) {
-        CookieManager cookieManager = new CookieManager(new ShapreCookieStore(context), CookiePolicy.ACCEPT_ALL);
-        CookieHandler.setDefault(cookieManager);
     }
     
     /**
@@ -192,20 +190,28 @@ public class HttpHelper {
         return pageContext;
     }
     
-    public String get(String urlStr) {
+    private boolean isUrlCookiable(URL url) {
+        String host = url.getHost();
+        for (String h : EhInfo.COOKIABLE_HOSTS) {
+            if (h.equals(host))
+                return true;
+        }
+        return false;
+    }
+    
+    private String requst(RequestHelper rh, String urlStr) {
         mException = null;
-        
         int redirectionCount = 0;
         URL url = null;
         HttpURLConnection conn = null;
         Message msg = null;
+        
         if (mListener != null)
             msg = new Message();
         try {
-            
-            Log.d(TAG, "Http get " + urlStr);
-            
+            Log.d(TAG, "Requst " + urlStr);
             url = new URL(urlStr);
+            boolean isCookiable = isUrlCookiable(url);
             while (redirectionCount++ < Constant.MAX_REDIRECTS) {
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setInstanceFollowRedirects(true);
@@ -213,9 +219,13 @@ public class HttpHelper {
                 conn.setRequestProperty("User-Agent", Constant.userAgent);
                 conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
                 conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
-                conn.setRequestProperty("Connection", "close");
-                conn.connect();
+                // Set cookie if necessary
+                if (isCookiable)
+                    EhInfo.getInstance(mContext).setCookie(conn);
+                // Do custom staff
+                rh.onBeforeConnect(conn);
                 
+                conn.connect();
                 final int responseCode = conn.getResponseCode();
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
@@ -224,18 +234,24 @@ public class HttpHelper {
                     String contentType = conn.getHeaderField("Content-Type");
                     if (contentType != null && contentType.equals("image/gif"))
                         throw new SadPandaException();
-                    
-                    String pageContext = getPageContext(conn);
+                    // Store cookie if necessary
+                    if (isCookiable)
+                        EhInfo.getInstance(mContext).storeCookie(conn);
+                    // Get body if necessary
+                    String body = rh.isNeedBody();
+                    if (body == null)
+                        body = getPageContext(conn);
+                    // Send to UI thread if necessary
                     if (msg != null) {
                         Package p = new Package();
                         p.listener = mListener;
-                        p.str = pageContext;
+                        p.str = body;
                         msg.obj = p;
                         msg.what = Constants.TRUE;
                         mHandler.sendMessage(msg);
                     }
-                    return pageContext;
-                    
+                    return body;
+                // redirect
                 case HttpURLConnection.HTTP_MOVED_PERM:
                 case HttpURLConnection.HTTP_MOVED_TEMP:
                 case HttpURLConnection.HTTP_SEE_OTHER:
@@ -248,7 +264,7 @@ public class HttpHelper {
                     throw new ResponseCodeException(responseCode);
                 }
             }
-        }  catch (Exception e) {
+        } catch (Exception e) {
             mException = e;
             e.printStackTrace();
             
@@ -265,346 +281,157 @@ public class HttpHelper {
             if (conn != null)
                 conn.disconnect();
         }
-        
         mException = new RedirectionException();
         return null;
     }
     
-    public String contentType(String urlStr) {
-        mException = null;
-        
-        int redirectionCount = 0;
-        URL url = null;
-        HttpURLConnection conn = null;
-        Message msg = null;
-        if (mListener != null)
-            msg = new Message();
-        try {
-            
-            Log.d(TAG, "Http head " + urlStr);
-            
-            url = new URL(urlStr);
-            while (redirectionCount++ < Constant.MAX_REDIRECTS) {
-                conn = (HttpURLConnection) url.openConnection();
-                conn.setInstanceFollowRedirects(true);
-                conn.connect();
-                
-                String contentType = conn.getHeaderField("Content-Type");
-                contentType = contentType == null ? "" : contentType;
-                if (msg != null) {
-                    Package p = new Package();
-                    p.listener = mListener;
-                    p.str = contentType;
-                    msg.obj = p;
-                    msg.what = Constants.TRUE;
-                    mHandler.sendMessage(msg);
-                }
-                return contentType;
-            }
-        }  catch (Exception e) {
-            mException = e;
-            e.printStackTrace();
-            
-            if (msg != null) {
-                Package p = new Package();
-                p.listener = mListener;
-                p.str = getEMsg();
-                msg.obj = p;
-                msg.what = Constants.FALSE;
-                mHandler.sendMessage(msg);
-            }
-            return null;
-        } finally {
-            if (conn != null)
-                conn.disconnect();
+    interface RequestHelper {
+        public void onBeforeConnect(HttpURLConnection conn) throws Exception;
+        /**
+         * If need body, return null, otherwise return a string used as body
+         * @return
+         */
+        public String isNeedBody();
+    }
+    
+    /**
+     * RequstHelper for check sad panda, use HEAD method
+     */
+    private class CheckSpHelper implements RequestHelper {
+        @Override
+        public void onBeforeConnect(HttpURLConnection conn)
+                throws ProtocolException {
+            conn.setRequestMethod("HEAD");
         }
         
-        mException = new RedirectionException();
-        return null;
+        @Override
+        public String isNeedBody() {
+            return HAPPY_PANDA_BODY;
+        }
     }
     
-    public String post(String urlStr, String[][] args) {
-        mException = null;
-        
-        int redirectionCount = 0;
-        URL url = null;
-        HttpURLConnection conn = null;
-        
-        Message msg = null;
-        if (mListener != null)
-            msg = new Message();
-        
-        try {
-            
-            Log.d(TAG, "Http post " + urlStr);
-            
-            url = new URL(urlStr);
-            while (redirectionCount++ < Constant.MAX_REDIRECTS) {
-                conn = (HttpURLConnection) url.openConnection();
-                conn.addRequestProperty("Accept-Encoding", "gzip");
-                conn.setRequestProperty("User-Agent", Constant.userAgent);
-                conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
-                conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
-                conn.setRequestMethod("POST");
-                conn.setUseCaches(false);
-                conn.setInstanceFollowRedirects(true);
-                conn.setRequestProperty("Content-Type",
-                        "application/x-www-form-urlencoded");
-                conn.setRequestProperty("Connection", "close");
-                
-                DataOutputStream out = new DataOutputStream(conn.getOutputStream());
-                StringBuilder sb = new StringBuilder();
-                int i = 0;
-                for (String[] arg : args) {
-                    if (i != 0)
-                        sb.append("&");
-                    sb.append(URLEncoder.encode(arg[0], "UTF-8"));
-                    sb.append("=");
-                    sb.append(URLEncoder.encode(arg[1], "UTF-8"));
-                    i++;
-                }
-                Log.d(TAG, sb.toString());
-                out.writeBytes(sb.toString());
-                out.flush();
-                out.close();
-                
-                conn.connect();
-                
-                final int responseCode = conn.getResponseCode();
-                switch (responseCode) {
-                case HttpURLConnection.HTTP_OK:
-                case HttpURLConnection.HTTP_PARTIAL:
-                    // Test sad panda
-                    String contentType = conn.getHeaderField("Content-Type");
-                    if (contentType != null && contentType.equals("image/gif"))
-                        throw new SadPandaException();
-                    
-                    String pageContext = getPageContext(conn);
-                    if (msg != null) {
-                        Package p = new Package();
-                        p.listener = mListener;
-                        p.str = pageContext;
-                        msg.obj = p;
-                        msg.what = Constants.TRUE;
-                        mHandler.sendMessage(msg);
-                    }
-                    return pageContext;
-                    
-                case HttpURLConnection.HTTP_MOVED_PERM:
-                case HttpURLConnection.HTTP_MOVED_TEMP:
-                case HttpURLConnection.HTTP_SEE_OTHER:
-                case Constant.HTTP_TEMP_REDIRECT:
-                    final String location = conn.getHeaderField("Location");
-                    url = new URL(url, location);
-                    continue;
-                    
-                default:
-                    throw new ResponseCodeException(responseCode);
-                }
-            }
-        }  catch (Exception e) {
-            mException = e;
-            e.printStackTrace();
-            
-            if (msg != null) {
-                Package p = new Package();
-                p.listener = mListener;
-                p.str = getEMsg();
-                msg.obj = p;
-                msg.what = Constants.FALSE;
-                mHandler.sendMessage(msg);
-            }
+    /**
+     * RequstHelper for GET method
+     */
+    private class GetHelper implements RequestHelper {
+        @Override
+        public void onBeforeConnect(HttpURLConnection conn)
+                throws ProtocolException {
+            conn.setRequestMethod("GET");
+        }
+        @Override
+        public String isNeedBody() {
             return null;
-        } finally {
-            if (conn != null)
-                conn.disconnect();
+        }
+    }
+    
+    /**
+     * RequstHelper for post form data, use POST method
+     */
+    private class PostFormHelper implements RequestHelper {
+        private String[][] mArgs;
+        
+        public PostFormHelper(String[][] args) {
+            mArgs = args;
         }
         
-        mException = new RedirectionException();
-        return null;
+        @Override
+        public void onBeforeConnect(HttpURLConnection conn)
+                throws Exception {
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type",
+                    "application/x-www-form-urlencoded");
+            
+            DataOutputStream out = new DataOutputStream(conn.getOutputStream());
+            StringBuilder sb = new StringBuilder();
+            int i = 0;
+            for (String[] arg : mArgs) {
+                if (i != 0)
+                    sb.append("&");
+                sb.append(URLEncoder.encode(arg[0], "UTF-8"));
+                sb.append("=");
+                sb.append(URLEncoder.encode(arg[1], "UTF-8"));
+                i++;
+            }
+            Log.d(TAG, sb.toString());
+            out.writeBytes(sb.toString());
+            out.flush();
+            out.close();
+        }
+        @Override
+        public String isNeedBody() {
+            return null;
+        }
     }
     
-    /*
-    public String post(String urlStr, String str) {
-        mException = null;
+    /**
+     * RequstHelper for post json, use POST method
+     */
+    private class PostJsonHelper implements RequestHelper {
+        private JSONObject mJo;
         
-        int redirectionCount = 0;
-        URL url = null;
-        HttpURLConnection conn = null;
-        
-        Message msg = null;
-        if (mListener != null)
-            msg = new Message();
-        
-        try {
-            
-            Log.d(TAG, "Http post " + urlStr);
-            
-            url = new URL(urlStr);
-            while (redirectionCount++ < Constant.MAX_REDIRECTS) {
-                conn = (HttpURLConnection) url.openConnection();
-                conn.addRequestProperty("Accept-Encoding", "gzip");
-                conn.setRequestProperty("User-Agent", Constant.userAgent);
-                conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
-                conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
-                conn.setRequestMethod("POST");
-                conn.setUseCaches(false);
-                conn.setInstanceFollowRedirects(true);
-                conn.setRequestProperty("Connection", "close");
-                
-                DataOutputStream out = new DataOutputStream(conn.getOutputStream());
-                out.writeBytes(str);
-                out.flush();
-                out.close();
-                
-                conn.connect();
-                
-                final int responseCode = conn.getResponseCode();
-                switch (responseCode) {
-                case HttpURLConnection.HTTP_OK:
-                case HttpURLConnection.HTTP_PARTIAL:
-                    String pageContext = getPageContext(conn);
-                    if (msg != null) {
-                        Package p = new Package();
-                        p.listener = mListener;
-                        p.str = pageContext;
-                        msg.obj = p;
-                        msg.what = Constants.TRUE;
-                        mHandler.sendMessage(msg);
-                    }
-                    return pageContext;
-                    
-                case HttpURLConnection.HTTP_MOVED_PERM:
-                case HttpURLConnection.HTTP_MOVED_TEMP:
-                case HttpURLConnection.HTTP_SEE_OTHER:
-                case Constant.HTTP_TEMP_REDIRECT:
-                    final String location = conn.getHeaderField("Location");
-                    url = new URL(url, location);
-                    continue;
-                    
-                default:
-                    throw new ResponseCodeException(responseCode);
-                }
-            }
-        }  catch (Exception e) {
-            mException = e;
-            e.printStackTrace();
-            
-            if (msg != null) {
-                Package p = new Package();
-                p.listener = mListener;
-                p.str = getEMsg();
-                msg.obj = p;
-                msg.what = Constants.FALSE;
-                mHandler.sendMessage(msg);
-            }
-            return null;
-        } finally {
-            if (conn != null)
-                conn.disconnect();
+        public PostJsonHelper(JSONObject jo) {
+            mJo = jo;
         }
         
-        mException = new RedirectionException();
-        return null;
-    }
-    */
-    
-    public String postJson(String urlStr, JSONObject json) {
-        mException = null;
-        
-        int redirectionCount = 0;
-        URL url = null;
-        HttpURLConnection conn = null;
-        
-        Message msg = null;
-        if (mListener != null)
-            msg = new Message();
-        
-        try {
+        @Override
+        public void onBeforeConnect(HttpURLConnection conn) throws Exception {
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
             
-            Log.d(TAG, "Http post " + urlStr);
-            
-            url = new URL(urlStr);
-            while (redirectionCount++ < Constant.MAX_REDIRECTS) {
-                conn = (HttpURLConnection) url.openConnection();
-                conn.addRequestProperty("Accept-Encoding", "gzip");
-                conn.setRequestProperty("User-Agent", Constant.userAgent);
-                conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
-                conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
-                conn.setRequestMethod("POST");
-                conn.setUseCaches(false);
-                conn.setInstanceFollowRedirects(true);
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setRequestProperty("Accept", "application/json");
-                conn.setRequestProperty("Connection", "close");
-                
-                DataOutputStream out = new DataOutputStream(conn.getOutputStream());
-                out.writeBytes(json.toString());
-                out.flush();
-                out.close();
-                
-                conn.connect();
-                
-                final int responseCode = conn.getResponseCode();
-                switch (responseCode) {
-                case HttpURLConnection.HTTP_OK:
-                case HttpURLConnection.HTTP_PARTIAL:
-                    // Test sad panda
-                    String contentType = conn.getHeaderField("Content-Type");
-                    if (contentType != null && contentType.equals("image/gif"))
-                        throw new SadPandaException();
-                    
-                    String pageContext = getPageContext(conn);
-                    if (msg != null) {
-                        Package p = new Package();
-                        p.listener = mListener;
-                        p.str = pageContext;
-                        msg.obj = p;
-                        msg.what = Constants.TRUE;
-                        mHandler.sendMessage(msg);
-                    }
-                    return pageContext;
-                    
-                case HttpURLConnection.HTTP_MOVED_PERM:
-                case HttpURLConnection.HTTP_MOVED_TEMP:
-                case HttpURLConnection.HTTP_SEE_OTHER:
-                case Constant.HTTP_TEMP_REDIRECT:
-                    final String location = conn.getHeaderField("Location");
-                    url = new URL(url, location);
-                    continue;
-                    
-                default:
-                    throw new ResponseCodeException(responseCode);
-                }
-            }
-        }  catch (Exception e) {
-            mException = e;
-            e.printStackTrace();
-            
-            if (msg != null) {
-                Package p = new Package();
-                p.listener = mListener;
-                p.str = getEMsg();
-                msg.obj = p;
-                msg.what = Constants.FALSE;
-                mHandler.sendMessage(msg);
-            }
-            return null;
-        } finally {
-            if (conn != null)
-                conn.disconnect();
+            DataOutputStream out = new DataOutputStream(conn.getOutputStream());
+            out.writeBytes(mJo.toString());
+            out.flush();
+            out.close();
         }
-        
-        mException = new RedirectionException();
-        return null;
+        @Override
+        public String isNeedBody() {
+            return null;
+        }
     }
     
+    /**
+     * Check Sad Panda
+     * @return
+     */
+    public String checkSadPanda() {
+        return requst(new CheckSpHelper(), EhClient.EX_HEADER);
+    }
+    
+    /**
+     * Http GET method
+     * @param url
+     * @return
+     */
+    public String get(String url) {
+        return requst(new GetHelper(), url);
+    }
+    
+    /**
+     * Post form data
+     * @param url
+     * @param args
+     * @return
+     */
+    public String postForm(String url, String[][] args) {
+        return requst(new PostFormHelper(args), url);
+    }
+    
+    /**
+     * Post json data
+     * @param url
+     * @param json
+     * @return
+     */
+    public String postJson(String url, JSONObject json) {
+        return requst(new PostJsonHelper(json), url);
+    }
     
     public Bitmap getImage(String urlStr, String key,
             LruCache<String, Bitmap> memoryCache,

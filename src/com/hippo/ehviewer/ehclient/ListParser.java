@@ -74,12 +74,10 @@ public class ListParser {
             if (m.group(3) == null) {
                 gi.thumb = "http://"
                         + m.group(5).replace('~', '/');
-                gi.title = StringEscapeUtils.unescapeHtml4(m
-                        .group(6));
+                gi.title = m.group(6);
             } else {
                 gi.thumb = m.group(3);
-                gi.title = StringEscapeUtils.unescapeHtml4(m
-                        .group(4));
+                gi.title = m.group(4);
             }
             
             Pattern pattern = Pattern

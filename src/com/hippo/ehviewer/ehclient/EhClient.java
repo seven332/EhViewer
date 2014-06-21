@@ -371,7 +371,7 @@ public class EhClient {
                     new String[] { "CookieDate", "1" },
                     new String[] { "temporary_https", "on" }};
             HttpHelper hp = new HttpHelper(mAppContext);
-            String pageContent = hp.post(loginUrl, args);
+            String pageContent = hp.postForm(loginUrl, args);
             if (pageContent != null) {
                 if (pageContent.contains("<p>You are now logged in as: "))
                     ok = true;
@@ -473,7 +473,7 @@ public class EhClient {
         public void onSuccess();
         public void onFailure(String eMsg);
     }
-    
+    /*
     public void testEx(final OnTestExListener listener) {
         new Thread(new Runnable() {
             @Override
@@ -496,7 +496,7 @@ public class EhClient {
             }
         }).start();
     }
-    
+    */
     // Logout
     private class LogoutPackage {
         public boolean ok;
@@ -1483,7 +1483,7 @@ public class EhClient {
                         listener.onFailure(eMsg);   // TODO
                     }
                 });
-                hp.post(detailUrl, new String[][]{
+                hp.postForm(detailUrl, new String[][]{
                         new String[]{"commenttext", comment},
                         new String[]{"postcomment", "Post New"}});
             }
@@ -1654,7 +1654,7 @@ public class EhClient {
                     catStr = "0";
                 
                 // submit=Add+to+Favorites is not necessary, just use submit=Apply+Changes all the time
-                hp.post(getAddFavouriteUrl(gid, token), new String[][]{
+                hp.postForm(getAddFavouriteUrl(gid, token), new String[][]{
                         new String[]{"favcat", catStr},
                         new String[]{"favnote", note == null ? "" : note},
                         new String[]{"submit", "Apply Changes"}});
@@ -1779,7 +1779,7 @@ public class EhClient {
                     args[i] = new String[]{"modifygids[]", String.valueOf(gids[i-1])};
                 args[i] = new String[]{"apply", "Apply"};
                 
-                hp.post(getFavoriteUrl(srcCat, 0), args);
+                hp.postForm(getFavoriteUrl(srcCat, 0), args);
             }
         }).start();
     }

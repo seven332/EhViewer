@@ -65,7 +65,6 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         Favorite.init(this);
         
         mData = new Data(this);
-        HttpHelper.setCookieHelper(this);
         mImageGeterManager = new ImageGeterManager(this, Cache.memoryCache, Cache.diskCache);
         LoadImageView.setImageGeterManager(mImageGeterManager);
         
