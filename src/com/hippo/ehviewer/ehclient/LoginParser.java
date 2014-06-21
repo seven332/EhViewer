@@ -21,15 +21,29 @@ import java.util.regex.Pattern;
 
 public class LoginParser {
     public String displayname;
+    public String eMesg;
     
     public boolean parser(String body) {
-        Pattern p = Pattern.compile("<p>You are now logged in as: (.+?)<br />");
-        Matcher m = p.matcher(body);
+        Pattern p;
+        Matcher m;
         
+        p = Pattern.compile("<p>You are now logged in as: (.+?)<br />");
+        m = p.matcher(body);
         if (m.find()) {
             displayname = m.group(1);
             return true;
         } else {
+            p = Pattern.compile("(?:<h4>The error returned was:</h4>\\s*<p>(.+?)</p>)"
+                    + "|(?:<span class=\"postcolor\">(.+?)</span>)");
+            m = p.matcher(body);
+            
+            System.out.println(body);
+            
+            if (m.find())
+                eMesg = m.group(1) == null ? m.group(2) : m.group(1);
+            else
+                eMesg = "Unknown error";
+            
             return false;
         }
     }

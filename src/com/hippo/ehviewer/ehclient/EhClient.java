@@ -307,7 +307,7 @@ public class EhClient {
                             
                             listener.onSuccess();
                         } else {
-                            listener.onFailure("parser error");
+                            listener.onFailure(parser.eMesg);
                         }
                     }
                     @Override
