@@ -300,7 +300,7 @@ public class DetailSectionFragment extends Fragment
         if (getFromCache)
             layout(mGalleryDetail);
         else
-            mClient.getMangaDetail(mUrl, mGalleryDetail, new MangaDetailGetListener());
+            mClient.getGDetail(mUrl, mGalleryDetail, new GDetailGetListener());
         
         return mRootView;
     }
@@ -671,8 +671,8 @@ public class DetailSectionFragment extends Fragment
            startActivity(intent);
            
        } else if (v == mRefreshButton) {
-           MangaDetailGetListener listener = new MangaDetailGetListener();
-           mClient.getMangaDetail(mUrl, mGalleryDetail, listener);
+           GDetailGetListener listener = new GDetailGetListener();
+           mClient.getGDetail(mUrl, mGalleryDetail, listener);
            // Delete refresh button
            mRefreshButton.setVisibility(View.GONE);
            // Add progressBar
@@ -684,16 +684,16 @@ public class DetailSectionFragment extends Fragment
            
        } else if (v == mOnceButton) {
            // TODO create a class uri
-           MangaDetailGetListener listener = new MangaDetailGetListener();
-           mClient.getMangaDetail(mUrl + "&nw=session", mGalleryDetail, listener);
+           GDetailGetListener listener = new GDetailGetListener();
+           mClient.getGDetail(mUrl + "&nw=session", mGalleryDetail, listener);
            // Delete offensiveView
            mOffensiveView.setVisibility(View.GONE);
            // Add progressBar
            mWaitPb.setVisibility(View.VISIBLE);
            
        } else if (v == mEveryButton) {
-           MangaDetailGetListener listener = new MangaDetailGetListener();
-           mClient.getMangaDetail(mUrl + "&nw=always", mGalleryDetail, listener);
+           GDetailGetListener listener = new GDetailGetListener();
+           mClient.getGDetail(mUrl + "&nw=always", mGalleryDetail, listener);
            // Delete offensiveView
            mOffensiveView.setVisibility(View.GONE);
            // Add progressBar
@@ -806,8 +806,8 @@ public class DetailSectionFragment extends Fragment
         }
     }
     
-    private class MangaDetailGetListener
-            implements EhClient.OnGetMangaDetailListener {
+    private class GDetailGetListener
+            implements EhClient.OnGetGDetailListener {
         @Override
         public void onSuccess(GalleryDetail md) {
             Cache.mdCache.put(String.valueOf(mGalleryDetail.gid), md);

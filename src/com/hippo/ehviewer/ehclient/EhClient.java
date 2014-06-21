@@ -71,8 +71,6 @@ import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 
-// TODO newer versions tip
-
 public class EhClient {
     
     private static final String TAG = "EhClient";
@@ -190,16 +188,6 @@ public class EhClient {
         }
     }
     
-    public interface OnCheckLoginListener {
-        public void onSuccess();
-        public void onFailure(String eMsg);
-    }
-
-    public interface OnGetMangaDetailListener {
-        public void onSuccess(GalleryDetail md);
-        public void onFailure(String eMsg);
-    }
-
     public interface OnGetPageListListener {
         public void onSuccess(Object checkFlag, PreviewList pageList);
         public void onFailure(Object checkFlag, String eMsg);
@@ -267,25 +255,14 @@ public class EhClient {
         return mInfo.getAvatar();
     }
     
-    private static final int GET_MANGA_DETAIL = 0x4;
     private static final int GET_PAGE_LIST = 0x5;
     private static final int GET_MANGA_URL = 0x6;
-    private static final int RATE = 0x7;
     
     private static Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             
             switch (msg.what) {
-                
-            case GET_MANGA_DETAIL:
-                GetMangaDetailPackage getMangaDetailPackage = (GetMangaDetailPackage) msg.obj;
-                OnGetMangaDetailListener listener5 = getMangaDetailPackage.listener;
-                if (getMangaDetailPackage.ok)
-                    listener5.onSuccess(getMangaDetailPackage.mangaDetail);
-                else
-                    listener5.onFailure(getMangaDetailPackage.eMsg);
-                break;
                 
             case GET_PAGE_LIST:
                 GetPageListPackage getPageListPackage = (GetPageListPackage) msg.obj;
@@ -304,9 +281,6 @@ public class EhClient {
                 else
                     listener7.onFailure(getMangaUrlPackage.checkFlag, getMangaUrlPackage.eMsg);
                 break;
-                
-            case RATE:
-                
             }
         };
     };
@@ -344,7 +318,7 @@ public class EhClient {
                 hp.postForm(loginUrl, new String[][] {
                         new String[] { "UserName", username },
                         new String[] { "PassWord", password },
-                        new String[] { "submit", "Log+me+in" },
+                        new String[] { "submit", "Log me in" },
                         new String[] { "CookieDate", "1" },
                         new String[] { "temporary_https", "on" }});
             }
@@ -436,149 +410,68 @@ public class EhClient {
     }
     
     // Get Manga Detail
-    private class GetMangaDetailPackage {
-        public boolean ok;
-        public GalleryDetail mangaDetail;
-        public OnGetMangaDetailListener listener;
-        public String eMsg;
-        
-        public GetMangaDetailPackage(boolean ok, GalleryDetail mangaDetail,
-                OnGetMangaDetailListener listener, String eMsg) {
-            this.ok = ok;
-            this.mangaDetail = mangaDetail;
-            this.listener = listener;
-            this.eMsg = eMsg;
-        }
+    public interface OnGetGDetailListener {
+        public void onSuccess(GalleryDetail md);
+        public void onFailure(String eMsg);
     }
     
-    private class GetMangaDetailRunnable implements Runnable {
-
-        private String url;
-        private GalleryDetail md;
-        
-        public boolean ok;
-        public String eMsg;
-
-        public GetMangaDetailRunnable(String url, GalleryDetail md) {
-            this.url = url;
-            this.md = md;
-        }
-
-        @Override
-        public void run() {
-            ok = false;
-            HttpHelper hp = new HttpHelper(mAppContext);
-            String pageContent = hp.get(url);
-            if (pageContent != null) {
-                
-                
-                DetailParser parser = new DetailParser();
-                int mode = DetailParser.DETAIL | DetailParser.TAG
-                        | DetailParser.PREVIEW_INFO | DetailParser.PREVIEW
-                        | DetailParser.COMMENT;
-                parser.setMode(mode);
-                int result = parser.parser(pageContent);
-                if (result == DetailParser.OFFENSIVE) {
-                    ok = true;
-                    md.firstPage = "offensive";
-                } else if (result == DetailParser.PINING) {
-                    ok = true;
-                    md.firstPage = "pining";
-                } else if ((result & (DetailParser.DETAIL | DetailParser.PREVIEW_INFO)) != 0) {
-                    ok = true;
-                    md.thumb = parser.thumb;
-                    md.title = parser.title;
-                    md.title_jpn = parser.title_jpn;
-                    md.category = parser.category;
-                    md.uploader = parser.uploader;
-                    md.posted = parser.posted;
-                    md.pages = parser.pages;
-                    md.size = parser.size;
-                    md.resized = parser.resized;
-                    md.parent = parser.parent;
-                    md.visible = parser.visible;
-                    md.language = parser.language;
-                    md.people = parser.people;
-                    md.rating = parser.rating;
-                    md.firstPage = parser.firstPage;
-                    md.previewPerPage = parser.previewPerPage;
-                    md.previewSum = parser.previewSum;
-                    
-                    md.tags = parser.tags;
-                    md.previewLists = new PreviewList[md.previewSum];
-                    md.previewLists[0] = parser.previewList;
-                    md.comments = parser.comments;
-                } else {
-                    eMsg = mAppContext.getString(R.string.em_parser_error);
-                }
-            } else
-                eMsg = hp.getEMsg();
-        }
-    }
-
-    public void getMangaDetail(String url, final GalleryDetail md,
-            final OnGetMangaDetailListener listener) {
-        
-        final GetMangaDetailRunnable task = new GetMangaDetailRunnable(url, md);
-        mThreadPool.submit(new Job<Object>() {
+    public void getGDetail(final String url, final GalleryDetail md,
+            final OnGetGDetailListener listener) {
+        new Thread(new Runnable() {
             @Override
-            public Object run(JobContext jc) {
-                task.run();
-                return null;
+            public void run() {
+                HttpHelper hp = new HttpHelper(mAppContext);
+                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
+                    @Override
+                    public void onSuccess(String body) {
+                        DetailParser parser = new DetailParser();
+                        int mode = DetailParser.DETAIL | DetailParser.TAG
+                                | DetailParser.PREVIEW_INFO | DetailParser.PREVIEW
+                                | DetailParser.COMMENT;
+                        parser.setMode(mode);
+                        int result = parser.parser(body);
+                        if (result == DetailParser.OFFENSIVE) {
+                            md.firstPage = "offensive";
+                            listener.onSuccess(md);
+                        } else if (result == DetailParser.PINING) {
+                            md.firstPage = "pining";
+                            listener.onSuccess(md);
+                        } else if ((result & (DetailParser.DETAIL | DetailParser.PREVIEW_INFO)) != 0) {
+                            md.thumb = parser.thumb;
+                            md.title = parser.title;
+                            md.title_jpn = parser.title_jpn;
+                            md.category = parser.category;
+                            md.uploader = parser.uploader;
+                            md.posted = parser.posted;
+                            md.pages = parser.pages;
+                            md.size = parser.size;
+                            md.resized = parser.resized;
+                            md.parent = parser.parent;
+                            md.visible = parser.visible;
+                            md.language = parser.language;
+                            md.people = parser.people;
+                            md.rating = parser.rating;
+                            md.firstPage = parser.firstPage;
+                            md.previewPerPage = parser.previewPerPage;
+                            md.previewSum = parser.previewSum;
+                            
+                            md.tags = parser.tags;
+                            md.previewLists = new PreviewList[md.previewSum];
+                            md.previewLists[0] = parser.previewList;
+                            md.comments = parser.comments;
+                            listener.onSuccess(md);
+                        } else {
+                            listener.onFailure(mAppContext.getString(R.string.em_parser_error));
+                        }
+                    }
+                    @Override
+                    public void onFailure(String eMsg) {
+                        listener.onFailure(eMsg);
+                    }
+                });
+                hp.get(url);
             }
-        }, new FutureListener<Object>() {
-            @Override
-            public void onFutureDone(Future<Object> future) {
-                Message msg = new Message();
-                msg.what = GET_MANGA_DETAIL;
-                msg.obj = new GetMangaDetailPackage(task.ok, md, listener, task.eMsg);
-                mHandler.sendMessage(msg);
-            }
-        });
-    }
-    
-    public String[][] getTags(String pageContent) {
-        ArrayList<String[]> list = new ArrayList<String[]>();
-        Pattern p = Pattern
-                .compile("<tr><td[^<>]*>([^<>]+):</td><td>(?:<div[^<>]*><a[^<>]*>[^<>]*</a>[^<>]*<span[^<>]*>\\d+</span>[^<>]*</div>)+</td></tr>");
-        Matcher m = p.matcher(pageContent);
-        while (m.find()) {
-            String groupName = m.group(1);
-            String[] group = getTagGroup(m.group(0));
-            if (groupName != null && group != null) {
-                group[0] = groupName;
-                list.add(group);
-            }
-        }
-        if (list.size() == 0)
-            return new String[0][0];
-        String[][] groups = new String[list.size()][];
-        int i = 0;
-        for (String[] item : list) {
-            groups[i] = item;
-            i++;
-        }
-        return groups;
-    }
-    
-    public String[] getTagGroup(String pageContent) {
-        ArrayList<String> list = new ArrayList<String>();
-        Pattern p = Pattern.compile("<a[^<>]*>([^<>]+)</a>");
-        Matcher m = p.matcher(pageContent);
-        while (m.find()) {
-            String str = m.group(1);
-            if (str != null)
-                list.add(str);
-        }
-        if (list.size() == 0)
-            return null;
-        String[] strs = new String[list.size() + 1];
-        int i = 1;
-        for (String str : list) {
-            strs[i] = str;
-            i++;
-        }
-        return strs;
+        }).start();
     }
     
     // Get page list
