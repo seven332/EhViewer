@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ehclient.EhClient;
@@ -285,7 +283,7 @@ public class MangaActivity extends AbstractActivity {
         lastPage = firstPage;
         gid = intent.getIntExtra("gid", 0);
         title = intent.getStringExtra("title");
-        mFolder = new File(Config.getDownloadPath(), StringEscapeUtils.escapeHtml4(title));
+        mFolder = new File(Config.getDownloadPath(), Util.rightFileName(title));
         if (mFolder.isFile())
             mFolder.delete();
         mFolder.mkdirs();

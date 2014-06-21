@@ -18,8 +18,6 @@ package com.hippo.ehviewer;
 
 import java.io.UnsupportedEncodingException;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import com.hippo.ehviewer.ehclient.EhClient;
 
 public class ListUrls {

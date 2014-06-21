@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -705,7 +704,7 @@ public class EhClient {
                         strs[1] = "last";
                     else
                         strs[1] = m.group(2);
-                    strs[2] = StringEscapeUtils.unescapeHtml4(m.group(3));
+                    strs[2] = Util.htmlUnsescape(m.group(3));
                 } else
                     eMsg = mAppContext.getString(R.string.em_parser_error);
             } else
@@ -1051,7 +1050,7 @@ public class EhClient {
                         }
                         
                         //Create folder
-                        File folder = new File(Config.getDownloadPath() + File.separatorChar + StringEscapeUtils.escapeHtml4(curDownloadInfo.title)); // TODO For  title contain invailed char
+                        File folder = new File(Config.getDownloadPath() + File.separatorChar + Util.rightFileName(curDownloadInfo.title)); // TODO For  title contain invailed char
                         if (!folder.mkdirs() && !folder.isDirectory()) {
                             listener.onDownloadMangaOver(curDownloadInfo.gid, false);
                             curDownloadInfo.status = DownloadInfo.FAILED;
@@ -1215,7 +1214,7 @@ public class EhClient {
             if (m.find()) {
                 prePage = m.group(1);
                 nextPage = m.group(2);
-                imageUrlStr = StringEscapeUtils.unescapeHtml4(m.group(3));
+                imageUrlStr = Util.htmlUnsescape(m.group(3));
                 return true;
             }
             return false;
@@ -1594,7 +1593,7 @@ public class EhClient {
                                     gi.count = -1;
                                 gi.gid = j.getInt("gid");
                                 gi.token = j.getString("token");
-                                gi.title = StringEscapeUtils.unescapeHtml4(j.getString("title"));
+                                gi.title = Util.htmlUnsescape(j.getString("title"));
                                 gi.posted = mAppContext.getDateFormat().format(Long.parseLong(j.getString("posted")) * 1000);
                                 gi.thumb = j.getString("thumb");
                                 gi.category = getType(j.getString("category"));

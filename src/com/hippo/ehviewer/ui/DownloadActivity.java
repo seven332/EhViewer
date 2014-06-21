@@ -20,8 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageGeterManager;
 import com.hippo.ehviewer.R;
@@ -89,7 +87,7 @@ public class DownloadActivity extends AbstractActivity {
                             mServiceConn.getService().cancel(Download.getKey(longClickItemIndex));
                             mDlAdapter.notifyDataSetChanged();
                             // TODO 有人反馈 Download.get(longClickItemIndex).title 为空，看来很有必要在正则抓取时检查是否为空
-                            File dir = new File(Config.getDownloadPath(), StringEscapeUtils.escapeHtml4(Download.get(longClickItemIndex).title));
+                            File dir = new File(Config.getDownloadPath(), Util.rightFileName(Download.get(longClickItemIndex).title));
                             try {
                                 Util.deleteContents(dir);
                             } catch (IOException e) {

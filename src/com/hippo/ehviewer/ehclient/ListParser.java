@@ -20,9 +20,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.util.Util;
 
 public class ListParser {
     
@@ -74,10 +73,10 @@ public class ListParser {
             if (m.group(3) == null) {
                 gi.thumb = "http://"
                         + m.group(5).replace('~', '/');
-                gi.title = m.group(6);
+                gi.title = Util.htmlUnsescape(m.group(6));
             } else {
                 gi.thumb = m.group(3);
-                gi.title = m.group(4);
+                gi.title = Util.htmlUnsescape(m.group(4));
             }
             
             Pattern pattern = Pattern

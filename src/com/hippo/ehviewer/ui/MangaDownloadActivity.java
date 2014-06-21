@@ -18,13 +18,12 @@ package com.hippo.ehviewer.ui;
 
 import java.io.File;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.DownloadImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Util;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -79,7 +78,7 @@ public class MangaDownloadActivity extends AbstractActivity {
         int endIndex = intent.getIntExtra(KEY_END_INDEX, 0);
         GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);
         
-        File folder = new File(Config.getDownloadPath(), StringEscapeUtils.escapeHtml4(title));
+        File folder = new File(Config.getDownloadPath(), Util.rightFileName(title));
         folder.mkdirs();
         mDownloadImageSet = new DownloadImageSet(this, gid, folder, size, 0, endIndex, null);
         GalleryView isv = new GalleryView(getApplicationContext(), mDownloadImageSet, 0);

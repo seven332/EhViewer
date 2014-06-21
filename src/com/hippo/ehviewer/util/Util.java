@@ -272,6 +272,11 @@ public class Util {
     public static String htmlUnsescape(String str) {
         return str.replace("&amp;", "&")
                 .replace("&lt;", "<")
-                .replace("&gt;", ">");
+                .replace("&gt;", ">")
+                .replace("&quot;", "\"");
+    }
+    
+    public static String rightFileName(String name) {
+        return name.replaceAll("[\\\\|/|:|*|?|\"|<|>|\\|]", "");
     }
 }
