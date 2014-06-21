@@ -22,8 +22,7 @@
         android:id="@+id/avatar"
         android:layout_width="64.0dp"
         android:layout_height="64.0dp"
-        android:layout_margin="8.0dp"
-        android:src="@drawable/default_avatar" />
+        android:layout_margin="8.0dp" />
     
     <RelativeLayout
         android:layout_width="fill_parent"

@@ -92,6 +92,7 @@ public class EhClient {
     public static final String APIKEY = "f4b5407ab1727b9d08d7";
     
     private static final String loginUrl = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
+    private static final String forumsUrl = "http://forums.e-hentai.org/index.php";
     
     public static final String G_HEADER = "http://g.e-hentai.org/";
     public static final String EX_HEADER = "http://exhentai.org/";
@@ -99,13 +100,14 @@ public class EhClient {
     
     private static final String EHVIEWER_API = "http://www.ehviewer.com/API";
     
-    private boolean mLogin = false;
-    private String mUsername;
-    private String mDisplayName;
-    private String mLogoutUrl;
+    /* Avatar get code */
+    public static final int GET_AVATAR_OK = 0x0;
+    public static final int GET_AVATAR_ERROR = 0x1;
+    public static final int NO_AVATAR = 0x2;
     
     private AppContext mAppContext;
     private ThreadPool mThreadPool;
+    private EhInfo mInfo;
     
     public static String getUrlHeader() {
         return getUrlHeader(Config.getMode());
@@ -189,16 +191,6 @@ public class EhClient {
         }
     }
     
-    public interface OnLogoutListener {
-        public void onSuccess();
-        public void onFailure(String eMsg);
-    }
-
-    public interface OnLoginListener {
-        public void onSuccess();
-        public void onFailure(String eMsg);
-    }
-
     public interface OnCheckLoginListener {
         public void onSuccess();
         public void onFailure(String eMsg);
@@ -237,20 +229,45 @@ public class EhClient {
     public EhClient(AppContext appContext) {
         mAppContext = appContext;
         mThreadPool = mAppContext.getNetworkThreadPool();
+        mInfo = EhInfo.getInstance(appContext);
     }
-
+    
+    /**
+     * True if Login
+     * @return
+     */
     public boolean isLogin() {
-        return mLogin;
+        return mInfo.isLogin();
     }
-
+    
+    /**
+     * Just remove cookie
+     */
+    public void logout() {
+        mInfo.logout();
+    }
+    
+    /**
+     * Return username, if not return default string
+     */
     public String getUsername() {
-        return mUsername;
+        return mInfo.getUsername();
     }
-
-    private static final int LOGIN = 0x0;
-    private static final int CHECK_LOGIN = 0x1;
-    private static final int LOGOUT = 0x2;
-    private static final int GET_MANGA_LIST = 0x3;
+    
+    /**
+     * Return displayname, if not return default string
+     */
+    public String getDisplayname() {
+        return mInfo.getDisplayname();
+    }
+    
+    /**
+     * Return avatar, if not return default avatar
+     */
+    public Bitmap getAvatar() {
+        return mInfo.getAvatar();
+    }
+    
     private static final int GET_MANGA_DETAIL = 0x4;
     private static final int GET_PAGE_LIST = 0x5;
     private static final int GET_MANGA_URL = 0x6;
@@ -261,45 +278,6 @@ public class EhClient {
         public void handleMessage(Message msg) {
             
             switch (msg.what) {
-            case LOGIN:
-                LoginPackage loginPackage = (LoginPackage) msg.obj;
-                OnLoginListener listener1 = loginPackage.listener;
-                if (loginPackage.ok)
-                    listener1.onSuccess();
-                else
-                    listener1.onFailure(loginPackage.eMsg);
-                break;
-                
-            case CHECK_LOGIN:
-                CheckLoginPackage checkLoginPackage = (CheckLoginPackage) msg.obj;
-                OnCheckLoginListener listener2 = checkLoginPackage.listener;
-                if (checkLoginPackage.ok)
-                    listener2.onSuccess();
-                else
-                    listener2.onFailure(checkLoginPackage.eMsg);
-                break;
-                
-            case LOGOUT:
-                LogoutPackage logoutPackage = (LogoutPackage) msg.obj;
-                OnLogoutListener listener3 = logoutPackage.listener;
-                if (logoutPackage.ok)
-                    listener3.onSuccess();
-                else
-                    listener3.onFailure(logoutPackage.eMsg);
-                break;
-                
-            case GET_MANGA_LIST:
-                GetMangaListPackage getMangaListPackage = (GetMangaListPackage) msg.obj;
-                OnGetMangaListListener listener4 = getMangaListPackage.listener;
-                if (getMangaListPackage.lmdArray != null)
-                    listener4.onSuccess(getMangaListPackage.checkFlag,
-                            getMangaListPackage.lmdArray,
-                            getMangaListPackage.indexPerPage,
-                            getMangaListPackage.maxPage);
-                else
-                    listener4.onFailure(getMangaListPackage.checkFlag,
-                            getMangaListPackage.eMsg);
-                break;
                 
             case GET_MANGA_DETAIL:
                 GetMangaDetailPackage getMangaDetailPackage = (GetMangaDetailPackage) msg.obj;
@@ -334,338 +312,130 @@ public class EhClient {
         };
     };
     
-    
-    // Login
-    private class LoginPackage {
-        public boolean ok;
-        public OnLoginListener listener;
-        public String eMsg;
-        
-        public LoginPackage(boolean ok, OnLoginListener listener, String eMsg) {
-            this.ok = ok;
-            this.listener = listener;
-            this.eMsg = eMsg;
-        }
-    }
-    
-    private class LoginRunnable implements Runnable {
-        
-        private String username;
-        private String password;
-        
-        public String eMsg;
-        public boolean ok;
-        
-        public LoginRunnable(String username, String password) {
-            this.username = username;
-            this.password = password;
-        }
-        
-        @Override
-        public void run() {
-            ok = false;
-            String[][] args = new String[][] {
-                    new String[] { "UserName", username },
-                    new String[] { "PassWord", password },
-                    new String[] { "submit", "Log+me+in" },
-                    new String[] { "CookieDate", "1" },
-                    new String[] { "temporary_https", "on" }};
-            HttpHelper hp = new HttpHelper(mAppContext);
-            String pageContent = hp.postForm(loginUrl, args);
-            if (pageContent != null) {
-                if (pageContent.contains("<p>You are now logged in as: "))
-                    ok = true;
-                else
-                    eMsg = mAppContext.getString(R.string.em_logout_error);
-            } else
-                eMsg = hp.getEMsg();
-        }
-    }
-    
-    public void login(String username, String password,
-            final OnLoginListener listener) {
-        
-        final LoginRunnable task = new LoginRunnable(username, password);
-        mThreadPool.submit(new Job<Object>() {
-            @Override
-            public Object run(JobContext jc) {
-                task.run();
-                return null;
-            }
-        }, new FutureListener<Object>() {
-            @Override
-            public void onFutureDone(Future<Object> future) {
-                Message msg = new Message();
-                msg.what = LOGIN;
-                msg.obj = new LoginPackage(task.ok, listener, task.eMsg);
-                mHandler.sendMessage(msg);
-            }
-        });
-    }
-
-    // Check login get info and logout url
-    private class CheckLoginPackage {
-        public boolean ok;
-        public OnCheckLoginListener listener;
-        public String eMsg;
-        
-        public CheckLoginPackage(boolean ok, OnCheckLoginListener listener, String eMsg) {
-            this.ok = ok;
-            this.listener = listener;
-            this.eMsg = eMsg;
-        }
-    }
-    
-    private class checkLoginRunnable implements Runnable {
-        
-        public String eMsg;
-        public boolean ok;
-        public String name;
-        public String logoutUrl;
-
-        @Override
-        public void run() {
-            ok = false;
-            HttpHelper hp = new HttpHelper(mAppContext);
-            String pageContent = hp.get(loginUrl);
-            if (pageContent != null) {
-                Pattern p = Pattern
-                        .compile("<p class=\"home\"><b>Logged in as:  <a href=\"[^<>\"]+\">([^<>]+)</a></b> \\( <a href=\"([^<>\"]+)\">Log Out</a> \\)</p>");
-                Matcher m = p.matcher(pageContent);
-                if (m.find() && m.groupCount() == 2) {
-                    ok = true;
-                    name = m.group(1);
-                    logoutUrl = StringEscapeUtils.unescapeHtml4(m.group(2));
-                } else
-                    eMsg = mAppContext.getString(R.string.em_check_login_error);
-            } else
-                eMsg = hp.getEMsg();
-        }
-    }
-
-    public void checkLogin(final OnCheckLoginListener listener) {
-        final checkLoginRunnable task = new checkLoginRunnable();
-        mThreadPool.submit(new Job<Object>() {
-            @Override
-            public Object run(JobContext jc) {
-                task.run();
-                return null;
-            }
-        }, new FutureListener<Object>() {
-            @Override
-            public void onFutureDone(Future<Object> future) {
-                if (task.ok) {
-                    mLogin = true;
-                    mUsername = task.name;
-                    mLogoutUrl = task.logoutUrl;
-                }
-                Message msg = new Message();
-                msg.what = CHECK_LOGIN;
-                msg.obj = new CheckLoginPackage(task.ok, listener, task.eMsg);
-                mHandler.sendMessage(msg);
-            }
-        });
-    }
-    
-    // Test Ex
-    
-    public interface OnTestExListener {
+    public interface OnLoginListener {
         public void onSuccess();
+        public void onGetAvatar(int code);
         public void onFailure(String eMsg);
     }
-    /*
-    public void testEx(final OnTestExListener listener) {
+    
+    public void login(final String username, final String password,
+            final OnLoginListener listener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpHelper hp = new HttpHelper(mAppContext);
+                final HttpHelper hp = new HttpHelper(mAppContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
-                    public void onSuccess(String pageContext) {
-                        if (pageContext.equals("image/gif"))
-                            listener.onFailure("Not login");
-                        else
+                    public void onSuccess(String body) {
+                        LoginParser parser = new LoginParser();
+                        if (parser.parser(body)) {
+                            mInfo.login(username, parser.displayname);
+                            getAvatar(listener);
+                            
                             listener.onSuccess();
+                        } else {
+                            listener.onFailure("parser error");
+                        }
                     }
                     @Override
                     public void onFailure(String eMsg) {
                         listener.onFailure(eMsg);
                     }
                 });
-                hp.contentType(EX_HEADER);
+                hp.postForm(loginUrl, new String[][] {
+                        new String[] { "UserName", username },
+                        new String[] { "PassWord", password },
+                        new String[] { "submit", "Log+me+in" },
+                        new String[] { "CookieDate", "1" },
+                        new String[] { "temporary_https", "on" }});
             }
         }).start();
     }
-    */
-    // Logout
-    private class LogoutPackage {
-        public boolean ok;
-        public OnLogoutListener listener;
-        public String eMsg;
-        
-        public LogoutPackage(boolean ok, OnLogoutListener listener, String eMsg) {
-            this.ok = ok;
-            this.listener = listener;
-            this.eMsg = eMsg;
-        }
+    
+    private void getAvatar(final OnLoginListener listener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String body;
+                Pattern p;
+                Matcher m;
+                // Get user profile url
+                HttpHelper hp = new HttpHelper(mAppContext);
+                body = hp.get(forumsUrl);
+                if (body == null) {
+                    listener.onGetAvatar(GET_AVATAR_ERROR);
+                    return;
+                }
+                p = Pattern.compile("<p class=\"home\">.+?<a href=\"(.+?)\">");
+                m = p.matcher(body);
+                if (!m.find()) {
+                    listener.onGetAvatar(GET_AVATAR_ERROR);
+                    return;
+                }
+                String profileUrl = Util.htmlUnsescape(m.group(1));
+                // Get avatar url
+                body = hp.get(profileUrl);
+                if (body == null) {
+                    listener.onGetAvatar(GET_AVATAR_ERROR);
+                    return;
+                }
+                p = Pattern.compile("<div><img src='(.+?)'[^<>]*/></div>");
+                m = p.matcher(body);
+                if (!m.find()) {
+                    listener.onGetAvatar(NO_AVATAR);
+                    return;
+                }
+                String avatarUrl = m.group(1);
+                // Get avatar
+                Bitmap avatar = hp.getImage(avatarUrl, null, null, null, true);
+                // Set avatar if not null
+                if (avatar != null)
+                    mInfo.setAvatar(avatar);
+                // notification
+                listener.onGetAvatar(GET_AVATAR_OK);
+            }
+        }).start();
     }
     
-    private class LogoutRunnable implements Runnable {
-
-        public String eMsg;
-        public boolean ok;
-
-        @Override
-        public void run() {
-            ok = false;
-            HttpHelper hp = new HttpHelper(mAppContext);
-            String pageContent = hp.get(mLogoutUrl);
-            if (pageContent != null) {
-                if (pageContent.contains("<p>You are now logged out<br />"))
-                    ok = true;
-                else
-                    eMsg = mAppContext.getString(R.string.em_logout_error);
-            } else
-                eMsg = hp.getEMsg();
-        }
-    }
-
-    public void logout(final OnLogoutListener listener) {
-        final LogoutRunnable task = new LogoutRunnable();
-        mThreadPool.submit(new Job<Object>() {
-            @Override
-            public Object run(JobContext jc) {
-                task.run();
-                return null;
-            }
-        }, new FutureListener<Object>() {
-            @Override
-            public void onFutureDone(Future<Object> future) {
-                if (task.ok)
-                    mLogin = false;
-                Message msg = new Message();
-                msg.what = LOGOUT;
-                msg.obj = new LogoutPackage(task.ok, listener, task.eMsg);
-                mHandler.sendMessage(msg);
-            }
-        });
-    }
-    
-    // Get Manga List
-    public interface OnGetMangaListListener {
+    // Get Gallery List
+    public interface OnGetGListListener {
         public void onSuccess(Object checkFlag, List<GalleryInfo> lmdArray,
                 int indexPerPage, int maxPage);
         public void onFailure(Object checkFlag, String eMsg);
     }
     
-    private class GetMangaListPackage {
-        public Object checkFlag;
-        public List<GalleryInfo> lmdArray;
-        public int indexPerPage;
-        public int maxPage;
-        public OnGetMangaListListener listener;
-        public String eMsg;
-        
-        public GetMangaListPackage(Object checkFlag, List<GalleryInfo> lmdArray, int indexPerPage,
-                int maxPage, OnGetMangaListListener listener, String eMsg) {
-            this.checkFlag = checkFlag;
-            this.lmdArray = lmdArray;
-            this.indexPerPage = indexPerPage;
-            this.maxPage = maxPage;
-            this.listener = listener;
-            this.eMsg = eMsg;
-        }
-    }
-    
-    private class GetMangaListRunnable implements Runnable {
-
-        private String url;
-        
-        public ArrayList<GalleryInfo> lmdArray;
-        public int indexPerPage;
-        public int maxPage;
-        public String eMsg;
-
-        public GetMangaListRunnable(String url) {
-            this.url = url;
-        }
-
-        @Override
-        public void run() {
-            lmdArray = null;
-            indexPerPage = 25;
-            maxPage = 0;
-
-            HttpHelper hp = new HttpHelper(mAppContext);
-            String pageContent = hp.get(url);
-
-            if (pageContent != null) {
-                ListParser parser = new ListParser();
-                switch (parser.parser(pageContent)) {
-                case ListParser.ALL:
-                    maxPage = parser.maxPage;
-                    indexPerPage = parser.indexPerPage;
-                    lmdArray = parser.giList;
-                    break;
-                case ListParser.NOT_FOUND:
-                    maxPage = 0;
-                    indexPerPage = parser.indexPerPage;
-                    lmdArray = new ArrayList<GalleryInfo>();
-                    break;
-                case ListParser.PARSER_ERROR:
-                    eMsg = "parser error";
-                }
-            } else
-                eMsg = hp.getEMsg();
-        }
-    }
-    
-    public void getMangaList(String url, final Object checkFlag,
-            final OnGetMangaListListener listener) {
-        
-        final GetMangaListRunnable task = new GetMangaListRunnable(url);
-        mThreadPool.submit(new Job<Object>() {
+    public void getGList(final String url, final Object checkFlag,
+            final OnGetGListListener listener) {
+        new Thread(new Runnable() {
             @Override
-            public Object run(JobContext jc) {
-                task.run();
-                return null;
+            public void run() {
+                HttpHelper hp = new HttpHelper(mAppContext);
+                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
+                    @Override
+                    public void onSuccess(String body) {
+                        ListParser parser = new ListParser();
+                        switch (parser.parser(body)) {
+                        case ListParser.ALL:
+                            listener.onSuccess(checkFlag, parser.giList, parser.indexPerPage, parser.maxPage);
+                            break;
+                        case ListParser.NOT_FOUND:
+                            listener.onSuccess(checkFlag, new ArrayList<GalleryInfo>(), parser.indexPerPage, 0);
+                            break;
+                        case ListParser.PARSER_ERROR:
+                            listener.onFailure(checkFlag, "parser error"); // TODO
+                            break;
+                        }
+                    }
+                    @Override
+                    public void onFailure(String eMsg) {
+                        listener.onFailure(checkFlag, eMsg);
+                    }
+                });
+                hp.get(url);
             }
-        }, new FutureListener<Object>() {
-            @Override
-            public void onFutureDone(Future<Object> future) {
-                Message msg = new Message();
-                msg.what = GET_MANGA_LIST;
-                msg.obj = new GetMangaListPackage(checkFlag, task.lmdArray, task.indexPerPage, task.maxPage, listener, task.eMsg);
-                mHandler.sendMessage(msg);
-            }
-        });
+        }).start();
     }
     
-    private static String getRate(String rawRate) {
-        Pattern p = Pattern.compile("\\d+px");
-        Matcher m = p.matcher(rawRate);
-        int num1;
-        int num2;
-        int rate = 5;
-        String re;
-        if (m.find())
-            num1 = Integer.parseInt(m.group().replace("px", ""));
-        else
-            return null;
-        if (m.find())
-            num2 = Integer.parseInt(m.group().replace("px", ""));
-        else
-            return null;
-        rate = rate - num1 / 16;
-        if (num2 == 21) {
-            rate--;
-            re = Integer.toString(rate);
-            re = re + ".5";
-        } else
-            re = Integer.toString(rate);
-        return re;
-    }
-
     // Get Manga Detail
     private class GetMangaDetailPackage {
         public boolean ok;

@@ -16,12 +16,22 @@
 
 package com.hippo.ehviewer.ehclient;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.util.List;
 
+import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Util;
+
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 /**
  * 
@@ -32,6 +42,10 @@ public class EhInfo {
     
     private static final String TAG = EhInfo.class.getSimpleName();
     private static final String PREF_NAME = "eh_info";
+    private static final String DIR_NAME = "file";
+    private static final String AVATAR_NAME = "avatar.png";
+    private static final Bitmap.CompressFormat AVATAR_FORMAT = Bitmap.CompressFormat.PNG;
+    private static Bitmap DEFAULT_AVATAR;
     
     public static final String[] COOKIABLE_HOSTS = {"exhentai.org",
         "g.e-hentai.org", "forums.e-hentai.org"};
@@ -81,19 +95,47 @@ public class EhInfo {
     private static final String KEY_LOGIN = "login";
     private static final boolean DEFAULT_LOGIN = false;
     private static final String KEY_USERNAME = "username";
-    private static final String DEFAULT_USERNAME = "Hippo";
+    private static final String KEY_DISPLAYNAME = "displayname";
+    private static final String DEFAULT_NAME = "Hippo";
     
     
     private Context mContext;
     private final SharedPreferences mInfoPref;
     private String mUconfig;
-    
+    private boolean mIsLogin;
+    private String mUsername;
+    private String mDisplayname;
+    private Bitmap mAvatar;
     private static EhInfo sInstance;
+    
+    private Bitmap getAvatarFromFile() {
+        File dir = mContext.getDir(DIR_NAME, 0);
+        File avatarFile = new File(dir, AVATAR_NAME);
+        if (!avatarFile.exists())
+            return null;
+        
+        InputStream is = null;
+        try {
+            is = new FileInputStream(avatarFile);
+            return BitmapFactory.decodeStream(is);
+        } catch (FileNotFoundException e) {
+            return null;
+        } finally {
+            Util.closeStreamQuietly(is);
+        }
+    }
     
     private EhInfo(final Context context){
         mContext = context;
         mInfoPref = mContext.getSharedPreferences(PREF_NAME, 0);
+        if (DEFAULT_AVATAR == null)
+            DEFAULT_AVATAR = BitmapFactory.decodeStream(
+                    context.getResources().openRawResource(R.drawable.default_avatar));
         
+        mIsLogin = mInfoPref.getBoolean(KEY_LOGIN, DEFAULT_LOGIN);
+        mUsername = mInfoPref.getString(KEY_USERNAME, DEFAULT_NAME);
+        mDisplayname = mInfoPref.getString(KEY_DISPLAYNAME, DEFAULT_NAME);
+        mAvatar = getAvatarFromFile();
         updateUconfig();
     };
     
@@ -152,22 +194,61 @@ public class EhInfo {
     }
     
     public boolean isLogin() {
-        return mInfoPref.getBoolean(KEY_LOGIN, DEFAULT_LOGIN);
+        return mIsLogin;
     }
     
-    public void login(String username) {
+    public void login(String username, String displayname) {
+        mIsLogin = true;
+        mUsername = username;
+        mDisplayname = displayname;
+        
         mInfoPref.edit().putBoolean(KEY_LOGIN, true)
-                .putString(KEY_USERNAME, username).apply();
+                .putString(KEY_USERNAME, username)
+                .putString(KEY_DISPLAYNAME, displayname).apply();
     }
     
     public void logout() {
+        mIsLogin = false;
+        // Remove avatar
+        if (mAvatar != null) {
+            mAvatar.recycle();
+            mAvatar = null;
+            File dir = mContext.getDir(DIR_NAME, 0);
+            File avatarFile = new File(dir, AVATAR_NAME);
+            avatarFile.delete();
+        }
+        
         mInfoPref.edit().putBoolean(KEY_LOGIN, false)
                 .putString("ipb_member_id", "ipb_member_id")
                 .putString("ipb_pass_hash", "ipb_pass_hash").apply();
     }
     
     public String getUsername() {
-        return mInfoPref.getString(KEY_USERNAME, DEFAULT_USERNAME);
+        return mUsername;
+    }
+    
+    public String getDisplayname() {
+        return mDisplayname;
+    }
+    
+    public Bitmap getAvatar() {
+        return isLogin() && mAvatar != null ? mAvatar : DEFAULT_AVATAR;
+    }
+    
+    public void setAvatar(Bitmap avatar) {
+        mAvatar = avatar;
+        
+        File dir = mContext.getDir(DIR_NAME, 0);
+        File avatarFile = new File(dir, AVATAR_NAME);
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(avatarFile);
+            avatar.compress(AVATAR_FORMAT, 100, os);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            Util.closeStreamQuietly(os);
+        }
     }
     
     public void setDefaultCat(int defaultCat) {

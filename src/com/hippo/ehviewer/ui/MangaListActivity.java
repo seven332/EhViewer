@@ -16,16 +16,11 @@
 
 package com.hippo.ehviewer.ui;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
-import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
@@ -39,7 +34,6 @@ import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Favorite;
-import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
@@ -47,11 +41,9 @@ import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.CheckTextView;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
-import com.hippo.ehviewer.widget.HfListView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.PrefixEditText;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
-import com.hippo.ehviewer.widget.SuperSwipeRefreshLayout;
 import com.hippo.ehviewer.widget.SuperToast;
 import com.hippo.ehviewer.widget.TagListView;
 import com.hippo.ehviewer.widget.TagsAdapter;
@@ -78,8 +70,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -148,6 +138,7 @@ public class MangaListActivity extends AbstractGalleryActivity
     private ListView itemListMenu;
     private TagListView tagListMenu;
     
+    private ImageView avatar;
     private TextView userView;
     private Button loginButton;
     private Button registerButton;
@@ -203,7 +194,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                         mEhClient.login(username, password, new EhClient.OnLoginListener() {
                             @Override
                             public void onSuccess() {
-                                checkLogin(true);
+                                setUserPanel();
                             }
                             @Override
                             public void onFailure(String eMsg) {
@@ -211,6 +202,26 @@ public class MangaListActivity extends AbstractGalleryActivity
                                 new SuperToast(MangaListActivity.this, eMsg).setIcon(R.drawable.ic_warning).show();
                                 if (!MangaListActivity.this.isFinishing())
                                     loginDialog.show();
+                            }
+                            @Override
+                            public void onGetAvatar(final int code) {
+                                MangaListActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        switch (code) {
+                                        case EhClient.GET_AVATAR_OK:
+                                            setUserPanel();
+                                            break;
+                                        case EhClient.NO_AVATAR:
+                                            new SuperToast(MangaListActivity.this, "无头像").show();
+                                            break;
+                                        case EhClient.GET_AVATAR_ERROR:
+                                        default:
+                                            new SuperToast(MangaListActivity.this, "获取头像失败", SuperToast.ERROR).show();
+                                            break;
+                                        }
+                                    }
+                                });
                             }
                         });
                     }
@@ -891,28 +902,13 @@ public class MangaListActivity extends AbstractGalleryActivity
     
     @Override
     public void onClick(View v) {
-        
         if (v == loginButton) {
             loginDialog.show();
         } else if (v == registerButton) {
             toRegister();
         } else if (v == logoutButton) {
-            setUserPanel(WAIT);
-            
-            mEhClient.logout(new EhClient.OnLogoutListener() {
-                @Override
-                public void onSuccess() {
-                    new SuperToast(MangaListActivity.this, R.string.toast_logout_succeeded).show();
-                    Config.logoutNow();
-                    setUserPanel();
-                }
-
-                @Override
-                public void onFailure(String eMsg) {
-                    new SuperToast(MangaListActivity.this, eMsg).setIcon(R.drawable.ic_warning).show();
-                    setUserPanel();
-                }
-            });
+            mEhClient.logout();
+            setUserPanel();
         }
     }
     
@@ -1006,6 +1002,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         itemListMenu = (ListView) findViewById(R.id.list_menu_item_list);
         tagListMenu = (TagListView) findViewById(R.id.list_menu_tag_list);
         
+        avatar = (ImageView)mUserPanel.findViewById(R.id.avatar);
         userView = (TextView)mUserPanel.findViewById(R.id.user);
         loginButton = (Button)mUserPanel.findViewById(R.id.login);
         registerButton = (Button)mUserPanel.findViewById(R.id.register);
@@ -1228,8 +1225,8 @@ public class MangaListActivity extends AbstractGalleryActivity
         if (Config.isAutoCheckForUpdate())
             checkUpdate();
         
-        // Check login and update user panel
-        checkLogin(false);
+        // Update user panel
+        setUserPanel();
         
         // get MangeList
         mTitle = mResources.getString(R.string.homepage);
@@ -1484,33 +1481,6 @@ public class MangaListActivity extends AbstractGalleryActivity
         }).autoCheckUpdate();
     }
     
-    private void checkLogin(final boolean force) {
-        
-        if ((Config.isLogin() || force)
-                && ! mEhClient.isLogin()) {
-            setUserPanel(WAIT);
-            mEhClient.checkLogin(new EhClient.OnCheckLoginListener() {
-                @Override
-                public void onSuccess() {
-                    Config.loginNow();
-                    new SuperToast(MangaListActivity.this).setMessage(R.string.toast_login_succeeded).show();
-                    setUserPanel();
-                }
-
-                @Override
-                public void onFailure(String eMsg) {
-                    if (force && !MangaListActivity.this.isFinishing())
-                        loginDialog.show();
-                    setUserPanel();
-                    new SuperToast(MangaListActivity.this, eMsg).setIcon(R.drawable.ic_warning).show();
-                }
-            });
-        } else {
-            setUserPanel();
-        }
-        
-    }
-    
     private static final int LOGIN = 0x0;
     private static final int LOGOUT = 0x1;
     private static final int WAIT = 0x2;
@@ -1526,6 +1496,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         
         switch (state) {
         case LOGIN:
+            avatar.setImageBitmap(mEhClient.getAvatar());
             userView.setVisibility(View.GONE);
             loginButton.setVisibility(View.VISIBLE);
             registerButton.setVisibility(View.VISIBLE);
@@ -1533,7 +1504,8 @@ public class MangaListActivity extends AbstractGalleryActivity
             waitloginoutView.setVisibility(View.GONE);
             break;
         case LOGOUT:
-            userView.setText(mEhClient.getUsername());
+            avatar.setImageBitmap(mEhClient.getAvatar());
+            userView.setText(mEhClient.getDisplayname());
             userView.setVisibility(View.VISIBLE);
             loginButton.setVisibility(View.GONE);
             registerButton.setVisibility(View.GONE);
@@ -1541,6 +1513,7 @@ public class MangaListActivity extends AbstractGalleryActivity
             waitloginoutView.setVisibility(View.GONE);
             break;
         case WAIT:
+            avatar.setImageBitmap(mEhClient.getAvatar());
             userView.setVisibility(View.GONE);
             loginButton.setVisibility(View.GONE);
             registerButton.setVisibility(View.GONE);
@@ -1550,10 +1523,6 @@ public class MangaListActivity extends AbstractGalleryActivity
         }
     }
     
-    public void buttonCheckLogin(View v) {
-        checkLogin(false);
-    }
-
     @Override
     protected String getTargetUrl(int targetPage) {
         lus.setPage(targetPage);
@@ -1581,7 +1550,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 }
             });
         } else {
-            mClient.getMangaList(url, null, new EhClient.OnGetMangaListListener() {
+            mClient.getGList(url, null, new EhClient.OnGetGListListener() {
                 @Override
                 public void onSuccess(Object checkFlag, List<GalleryInfo> lmdArray,
                         int indexPerPage, int maxPage) {

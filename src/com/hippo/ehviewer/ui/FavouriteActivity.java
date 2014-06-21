@@ -512,7 +512,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
     @Override
     protected void doGetGallerys(String url, final long taskStamp,
             final OnGetListListener listener) {
-        mClient.getMangaList(url, null, new EhClient.OnGetMangaListListener() {
+        mClient.getGList(url, null, new EhClient.OnGetGListListener() {
             @Override
             public void onSuccess(Object checkFlag, List<GalleryInfo> lmdArray,
                     int indexPerPage, int maxPage) {

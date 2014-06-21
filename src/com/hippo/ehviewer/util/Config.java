@@ -30,7 +30,6 @@ public class Config {
     
     private static final String KEY_ALLOWED = "allowed";
     private static final String KEY_FIRST = "first_time";
-    private static final String KEY_LOGIN = "login";
     private static final String KEY_UPDATE_DATE = "update_date";
     private static final String KEY_MODE = "mode";
     private static final int MODE_DEFAULT = 0;
@@ -132,23 +131,6 @@ public class Config {
      */
     public static void firstTime() {
         mConfigPre.edit().putBoolean(KEY_FIRST, false).apply();
-    }
-
-    /**
-     * Is login last time ?
-     * 
-     * @return
-     */
-    public static boolean isLogin() {
-        return mConfigPre.getBoolean(KEY_LOGIN, false);
-    }
-
-    public static void loginNow() {
-        mConfigPre.edit().putBoolean(KEY_LOGIN, true).apply();
-    }
-
-    public static void logoutNow() {
-        mConfigPre.edit().putBoolean(KEY_LOGIN, false).apply();
     }
     
     public static String getDownloadPath() {

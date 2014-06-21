@@ -267,5 +267,11 @@ public class Util {
         if (v.getLayerType() != View.LAYER_TYPE_SOFTWARE) {
             v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
-   }
+    }
+    
+    public static String htmlUnsescape(String str) {
+        return str.replace("&amp;", "&")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">");
+    }
 }

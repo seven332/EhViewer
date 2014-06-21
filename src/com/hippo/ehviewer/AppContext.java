@@ -67,7 +67,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         mData = new Data(this);
         mImageGeterManager = new ImageGeterManager(this, Cache.memoryCache, Cache.diskCache);
         LoadImageView.setImageGeterManager(mImageGeterManager);
-        
+        HttpHelper.createHandler();
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
         

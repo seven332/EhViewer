@@ -78,29 +78,35 @@ public class HttpHelper {
         String str;
     }
     
-    private static Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            Package p = (Package)msg.obj;
-            OnRespondListener listener = p.listener;
-            String str = p.str;
-            switch (msg.what) {
-            case Constants.TRUE:
-                listener.onSuccess(str);
-                break;
-            case Constants.FALSE:
-                listener.onFailure(str);
-                break;
-            }
-        }
-    };
+    private static Handler mHandler;
     
     private Context mContext;
     private Exception mException;
     private OnRespondListener mListener;
     
+    public static final void createHandler() {
+        if (mHandler != null)
+            return;
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                Package p = (Package)msg.obj;
+                OnRespondListener listener = p.listener;
+                String str = p.str;
+                switch (msg.what) {
+                case Constants.TRUE:
+                    listener.onSuccess(str);
+                    break;
+                case Constants.FALSE:
+                    listener.onFailure(str);
+                    break;
+                }
+            }
+        };
+    }
+    
     public interface OnRespondListener {
-        void onSuccess(String pageContext);
+        void onSuccess(String body);
         void onFailure(String eMsg);
     }
     
@@ -110,6 +116,8 @@ public class HttpHelper {
     
     public HttpHelper(Context context) {
         mContext = context;
+        
+        mContext.getApplicationContext();
     }
     
     /**
@@ -151,7 +159,7 @@ public class HttpHelper {
             return e.getMessage();
     }
     
-    private String getPageContext(HttpURLConnection conn)
+    private String getBody(HttpURLConnection conn)
             throws IOException {
         String pageContext = null;
         InputStream is = null;
@@ -240,7 +248,7 @@ public class HttpHelper {
                     // Get body if necessary
                     String body = rh.isNeedBody();
                     if (body == null)
-                        body = getPageContext(conn);
+                        body = getBody(conn);
                     // Send to UI thread if necessary
                     if (msg != null) {
                         Package p = new Package();
