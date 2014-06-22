@@ -16,8 +16,9 @@
 
 package com.hippo.ehviewer.widget;
 
-import com.hippo.ehviewer.ImageGeterManager;
+import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 
 import android.content.Context;
@@ -33,7 +34,6 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
 public class LoadImageView extends ImageView {
-    @SuppressWarnings("unused")
     private static final String TAG = "LoadImageView";
     
     public static final int NONE = 0x0;
@@ -50,8 +50,6 @@ public class LoadImageView extends ImageView {
     
     private String mUrl;
     private String mKey;
-    
-    private static ImageGeterManager mImageGeterManager;
     
     public LoadImageView(Context context) {
         super(context);
@@ -80,8 +78,7 @@ public class LoadImageView extends ImageView {
             public void onClick(View v) {
                 setClickable(false);
                 setImageDrawable(null);
-                mImageGeterManager.add(mUrl, mKey,
-                        ImageGeterManager.DISK_CACHE | ImageGeterManager.DOWNLOAD,
+                ImageLoader.getInstance(getContext()).add(mUrl, mKey,
                         new SimpleImageGetListener(LoadImageView.this));
             }
         });
@@ -129,17 +126,19 @@ public class LoadImageView extends ImageView {
         */
     }
     
-    public static void setImageGeterManager(ImageGeterManager i) {
-        mImageGeterManager = i;
-    }
-    
     public static class SimpleImageGetListener
-            implements ImageGeterManager.OnGetImageListener {
-        
+            implements ImageLoader.OnGetImageListener {
+        private boolean mIsTransitabled = true;
         private LoadImageView mLiv;
         
         public SimpleImageGetListener(LoadImageView liv) {
             mLiv = liv;
+            mLiv.setState(LoadImageView.LOADING);
+        }
+        
+        public SimpleImageGetListener setTransitabled(boolean isTransitabled) {
+            mIsTransitabled = isTransitabled;
+            return this;
         }
         
         public boolean isVaild(String key) {
@@ -148,31 +147,19 @@ public class LoadImageView extends ImageView {
         }
         
         @Override
-        public boolean onGetImageStart(String key) {
-            boolean re = isVaild(key) && (mLiv.getState() == LoadImageView.NONE ||
-                    mLiv.getState() == LoadImageView.FAIL);
-            if (re)
-                mLiv.setState(LoadImageView.LOADING);
-            return re;
-        }
-        @Override
-        public void onGetImageFail(String key) {
+        public void onGetImage(String key, Bitmap bmp) {
             if (isVaild(key) && mLiv.getState() == LoadImageView.LOADING) {
-                mLiv.setTouchImage();
-                mLiv.setOnClick();
-                mLiv.setState(LoadImageView.FAIL);
-            }
-        }
-        @Override
-        public void onGetImageSuccess(String key, Bitmap bmp, int mode) {
-            if (isVaild(key) && mLiv.getState() == LoadImageView.LOADING) {
-                if (mode == ImageGeterManager.MEMORY_CACHE
-                        || mode == ImageGeterManager.DISK_CACHE)
-                    mLiv.setImageBitmap(bmp);
-                else if (mode == ImageGeterManager.DOWNLOAD) {
-                    mLiv.setContextImage(bmp);
+                if (bmp != null) {
+                    if (mIsTransitabled)
+                        mLiv.setContextImage(bmp);
+                    else
+                        mLiv.setImageBitmap(bmp);
+                    mLiv.setState(LoadImageView.LOADED);
+                } else {
+                    mLiv.setTouchImage();
+                    mLiv.setOnClick();
+                    mLiv.setState(LoadImageView.FAIL);
                 }
-                mLiv.setState(LoadImageView.LOADED);
             }
         }
     }

@@ -48,12 +48,7 @@ import com.hippo.ehviewer.util.Util;
 public final class ImageCache {
 
     private static final String TAG = ImageCache.class.getSimpleName();
-
-    /**
-     * The {@link Uri} used to retrieve album art
-     */
-    private static final Uri mArtworkUri;
-
+    
     /**
      * Default memory cache size as a percent of device memory class
      */
@@ -96,11 +91,7 @@ public final class ImageCache {
      */
     public boolean mPauseDiskAccess = false;
     private Object mPauseLock = new Object();
-
-    static {
-        mArtworkUri = Uri.parse("content://media/external/audio/albumart");
-    }
-
+    
     /**
      * Constructor of <code>ImageCache</code>
      *
@@ -413,63 +404,7 @@ public final class ImageCache {
         }
         return null;
     }
-
-    /**
-     * Tries to return the album art from memory cache and disk cache, before
-     * calling {@code #getArtworkFromFile(Context, String)} again
-     *
-     * @param context The {@link Context} to use
-     * @param data The name of the album art
-     * @param id The ID of the album to find artwork for
-     * @return The artwork for an album
-     */
-    public final Bitmap getCachedArtwork(final Context context, final String data, final long id) {
-        if (context == null || data == null) {
-            return null;
-        }
-        Bitmap cachedImage = getCachedBitmap(data);
-        if (cachedImage == null && id >= 0) {
-            cachedImage = getArtworkFromFile(context, id);
-        }
-        if (cachedImage != null) {
-            addBitmapToMemCache(data, cachedImage);
-            return cachedImage;
-        }
-        return null;
-    }
-
-    /**
-     * Used to fetch the artwork for an album locally from the user's device
-     *
-     * @param context The {@link Context} to use
-     * @param albumID The ID of the album to find artwork for
-     * @return The artwork for an album
-     */
-    public final Bitmap getArtworkFromFile(final Context context, final long albumId) {
-        if (albumId < 0) {
-            return null;
-        }
-        Bitmap artwork = null;
-        waitUntilUnpaused();
-        try {
-            final Uri uri = ContentUris.withAppendedId(mArtworkUri, albumId);
-            final ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver()
-                    .openFileDescriptor(uri, "r");
-            if (parcelFileDescriptor != null) {
-                final FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-                artwork = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-            }
-        } catch (final IllegalStateException e) {
-            // Log.e(TAG, "IllegalStateExcetpion - getArtworkFromFile - ", e);
-        } catch (final FileNotFoundException e) {
-            // Log.e(TAG, "FileNotFoundException - getArtworkFromFile - ", e);
-        } catch (final OutOfMemoryError evict) {
-            // Log.e(TAG, "OutOfMemoryError - getArtworkFromFile - ", evict);
-            evictAll();
-        }
-        return artwork;
-    }
-
+    
     /**
      * flush() is called to synchronize up other methods that are accessing the
      * cache first

@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.util.Config;
 
 public abstract class AbstractFragmentActivity extends FragmentActivity {
@@ -53,5 +54,7 @@ public abstract class AbstractFragmentActivity extends FragmentActivity {
       super.onStop();
       if (Config.getAllowAnalyics())
           EasyTracker.getInstance(this).activityStop(this);
+      
+      ImageCache.getInstance(this).flush();
     }
 }

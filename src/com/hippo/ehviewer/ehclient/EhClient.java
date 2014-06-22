@@ -16,37 +16,27 @@
 
 package com.hippo.ehviewer.ehclient;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.GalleryPopular;
-import com.hippo.ehviewer.data.PreviewList;
+import com.hippo.ehviewer.data.NormalPreviewList;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.network.HttpHelper;
@@ -56,11 +46,8 @@ import com.hippo.ehviewer.util.ThreadPool.Job;
 import com.hippo.ehviewer.util.ThreadPool.JobContext;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Movie;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.util.LruCache;
 
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Download;
@@ -68,7 +55,6 @@ import com.hippo.ehviewer.util.Future;
 import com.hippo.ehviewer.util.FutureListener;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.ThreadPool;
-import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 
 public class EhClient {
@@ -188,11 +174,6 @@ public class EhClient {
         }
     }
     
-    public interface OnGetPageListListener {
-        public void onSuccess(Object checkFlag, PreviewList pageList);
-        public void onFailure(Object checkFlag, String eMsg);
-    }
-
     public interface OnGetMangaUrlListener {
         public void onSuccess(Object checkFlag, String[] arg);
         public void onFailure(Object checkFlag, String eMsg);
@@ -263,15 +244,6 @@ public class EhClient {
         public void handleMessage(Message msg) {
             
             switch (msg.what) {
-                
-            case GET_PAGE_LIST:
-                GetPageListPackage getPageListPackage = (GetPageListPackage) msg.obj;
-                OnGetPageListListener listener6 = getPageListPackage.listener;
-                if (getPageListPackage.pageList != null)
-                    listener6.onSuccess(getPageListPackage.checkFlag, getPageListPackage.pageList);
-                else
-                    listener6.onFailure(getPageListPackage.checkFlag, getPageListPackage.eMsg);
-                break;
                 
             case GET_MANGA_URL:
                 GetMangaUrlPackage getMangaUrlPackage = (GetMangaUrlPackage) msg.obj;
@@ -360,7 +332,7 @@ public class EhClient {
                 }
                 String avatarUrl = m.group(1);
                 // Get avatar
-                Bitmap avatar = hp.getImage(avatarUrl, null, null, null, true);
+                Bitmap avatar = hp.getImage(avatarUrl);
                 // Set avatar if not null
                 if (avatar != null)
                     mInfo.setAvatar(avatar);
@@ -409,7 +381,7 @@ public class EhClient {
         }).start();
     }
     
-    // Get Manga Detail
+    // Get gallery Detail
     public interface OnGetGDetailListener {
         public void onSuccess(GalleryDetail md);
         public void onFailure(String eMsg);
@@ -456,7 +428,7 @@ public class EhClient {
                             md.previewSum = parser.previewSum;
                             
                             md.tags = parser.tags;
-                            md.previewLists = new PreviewList[md.previewSum];
+                            md.previewLists = new NormalPreviewList[md.previewSum];
                             md.previewLists[0] = parser.previewList;
                             md.comments = parser.comments;
                             listener.onSuccess(md);
@@ -474,83 +446,39 @@ public class EhClient {
         }).start();
     }
     
-    // Get page list
-    private class GetPageListPackage {
-        public Object checkFlag;
-        public PreviewList pageList;
-        public OnGetPageListListener listener;
-        public String eMsg;
-        
-        public GetPageListPackage(Object checkFlag, PreviewList pageList, OnGetPageListListener listener,
-                String eMsg) {
-            this.checkFlag = checkFlag;
-            this.pageList = pageList;
-            this.listener = listener;
-            this.eMsg = eMsg;
-        }
+    // Get preview list
+    public interface OnGetPreviewListListener {
+        public void onSuccess(Object checkFlag, NormalPreviewList pageList);
+        public void onFailure(Object checkFlag, String eMsg);
     }
     
-    private class GetPageListRunnable implements Runnable {
-        private String url;
-        
-        public PreviewList pageList;
-        public String eMsg;
-
-        public GetPageListRunnable(String url) {
-            this.url = url;
-        }
-
-        @Override
-        public void run() {
-            pageList = null;
-            
-            HttpHelper hp = new HttpHelper(mAppContext);
-            String pageContent = hp.get(url);
-            if (pageContent != null) {
-                
-                pageList = getPageList(pageContent);
-                if (pageList == null)
-                    eMsg = mAppContext.getString(R.string.em_parser_error);
-            } else
-                eMsg = hp.getEMsg();
-        }
-    }
-
-    public void getPageList(String url, final Object checkFlag,
-            final OnGetPageListListener listener) {
-        
-        final GetPageListRunnable task = new GetPageListRunnable(url);
-        mThreadPool.submit(new Job<Object>() {
+    public void getPreviewList(final String url, final Object checkFlag,
+            final OnGetPreviewListListener listener) {
+        new Thread(new Runnable() {
             @Override
-            public Object run(JobContext jc) {
-                task.run();
-                return null;
+            public void run() {
+                HttpHelper hp = new HttpHelper(mAppContext);
+                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
+                    @Override
+                    public void onSuccess(String body) {
+                        DetailParser parser = new DetailParser();
+                        parser.setMode(DetailParser.PREVIEW);
+                        if (parser.parser(body) == DetailParser.PREVIEW) {
+                            listener.onSuccess(checkFlag, parser.previewList);
+                        } else {
+                            listener.onFailure(checkFlag, "Parser error");
+                        }
+                    }
+                    @Override
+                    public void onFailure(String eMsg) {
+                        listener.onFailure(checkFlag, eMsg);
+                    }
+                });
+                hp.get(url);
             }
-        }, new FutureListener<Object>() {
-            @Override
-            public void onFutureDone(Future<Object> future) {
-                Message msg = new Message();
-                msg.what = GET_PAGE_LIST;
-                msg.obj = new GetPageListPackage(checkFlag, task.pageList, listener, task.eMsg);
-                mHandler.sendMessage(msg);
-            }
-        });
+        }).start();
     }
-
-    private PreviewList getPageList(String pageContent) {
-        PreviewList pageList = null;
-        Pattern p = Pattern
-                .compile("<div[^<>]*class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*>");
-        Matcher m = p.matcher(pageContent);
-        while (m.find()) {
-            if (pageList == null)
-                pageList = new PreviewList();
-            pageList.addItem(m.group(3), m.group(4), "0", m.group(1),
-                    m.group(2), m.group(5));
-        }
-        return pageList;
-    }
-
+    
     // Get Manga url and next page
     private class GetMangaUrlPackage {
         public Object checkFlag;
@@ -624,162 +552,6 @@ public class EhClient {
             }
         });
     }
-
-    // Get image
-    private static class GetImagePackage {
-        public Object res;
-        public Object checkFlag;
-        public OnGetImageListener listener;
-
-        public GetImagePackage(Object res, Object checkFlag,
-                OnGetImageListener listener) {
-            this.res = res;
-            this.checkFlag = checkFlag;
-            this.listener = listener;
-        }
-    }
-
-    private static Handler getGetImageHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            OnGetImageListener listener = ((GetImagePackage) msg.obj).listener;
-            Object checkFlag = ((GetImagePackage) msg.obj).checkFlag;
-            Object res = ((GetImagePackage) msg.obj).res;
-            if (res == null) {
-                listener.onFailure(msg.what);
-            }
-            else
-                listener.onSuccess(checkFlag, res);
-        };
-    };
-
-    private static class GetImageRunnable implements Runnable {
-        private String url;
-        private String key;
-        private int type;
-        private LruCache<String, Bitmap> memoryCache;
-        private DiskCache diskCache;
-        private Object checkFlag;
-        private OnGetImageListener listener;
-
-        public GetImageRunnable(String url, String key, int type,
-                LruCache<String, Bitmap> memoryCache, DiskCache diskCache,
-                Object checkFlag, OnGetImageListener listener) {
-            this.url = url;
-            this.key = key;
-            this.type = type;
-            this.memoryCache = memoryCache;
-            this.diskCache = diskCache;
-            this.checkFlag = checkFlag;
-            this.listener = listener;
-        }
-
-        @Override
-        public void run() {
-            int errorMessageId = R.string.em_unknown_error;
-            Object res = null;
-            synchronized (url) {
-                // Check memory cache
-                if (type == Util.BITMAP && memoryCache != null
-                        && (res = memoryCache.get(key)) != null) {
-                    sendMessage(res, errorMessageId);
-                    return;
-                }
-                // If not find in memory cache or do not have memory cache
-                // Check disk cache
-                if (diskCache != null
-                        && (res = diskCache.get(key, type)) != null) {
-                    sendMessage(res, errorMessageId);
-                    if (memoryCache != null && res instanceof Bitmap)
-                        memoryCache.put(key, (Bitmap) res);
-                    return;
-                }
-                Log.d(TAG, "Download image " + url);
-
-                HttpURLConnection conn = null;
-                ByteArrayOutputStream baos = null;
-                try {
-                    URL url = new URL(this.url);
-                    conn = (HttpURLConnection) url.openConnection();
-                    conn.setConnectTimeout(5 * 1000);
-                    conn.setReadTimeout(5 * 1000);
-                    conn.connect();
-                    InputStream is = conn.getInputStream();
-                    if (diskCache != null) {
-                        
-                        int length = conn.getContentLength();
-                        if (length >= 0)
-                            baos = new ByteArrayOutputStream(length);
-                        else
-                            baos = new ByteArrayOutputStream();
-                        Util.copy(is, baos);
-                        byte[] bytes = baos.toByteArray();
-                        // To disk cache
-                        is = new ByteArrayInputStream(bytes);
-                        diskCache.put(key, is);
-                        // Read
-                        is = new ByteArrayInputStream(bytes);
-                        is.reset();
-                        if (type == Util.BITMAP) {
-                            res = BitmapFactory.decodeStream(is, null,
-                                    Ui.getBitmapOpt());
-                            if (memoryCache != null && res != null)
-                                memoryCache.put(key, (Bitmap) res);
-                        } else if (type == Util.MOVIE) {
-                            is = new BufferedInputStream(is, 16 * 1024);
-                            is.mark(16 * 1024);
-                            res = Movie.decodeStream(is);
-                        }
-                        is.close();
-                    } else {
-                        if (type == Util.BITMAP) {
-                            res = BitmapFactory.decodeStream(is, null,
-                                    Ui.getBitmapOpt());
-                            if (memoryCache != null && res != null)
-                                memoryCache.put(key, (Bitmap) res);
-                        } else if (type == Util.MOVIE) {
-                            is = new BufferedInputStream(is, 16 * 1024);
-                            is.mark(16 * 1024);
-                            res = Movie.decodeStream(is);
-                        }
-                    }
-                } catch (MalformedURLException e) {
-                    errorMessageId = R.string.em_url_error;
-                    e.printStackTrace();
-                } catch (ConnectTimeoutException e) {
-                    errorMessageId = R.string.em_timeout;
-                    e.printStackTrace();
-                } catch (UnknownHostException e) {
-                    errorMessageId = R.string.em_no_network_2;
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    errorMessageId = R.string.em_network_error;
-                    e.printStackTrace();
-                } finally {
-                    if (conn != null)
-                        conn.disconnect();
-                    if (baos != null)
-                        Util.closeStreamQuietly(baos);
-                }
-                sendMessage(res, errorMessageId);
-            }
-        }
-
-        private void sendMessage(Object res, int errorMessageId) {
-            Message msg = new Message();
-            msg.what = errorMessageId;
-            msg.obj = new GetImagePackage(res, checkFlag, listener);
-            getGetImageHandler.sendMessage(msg);
-        }
-    }
-
-    public static void getImage(String url, String key, int type,
-            LruCache<String, Bitmap> memoryCache, DiskCache diskCache,
-            Object checkFlag, OnGetImageListener listener) {
-        new Thread(new GetImageRunnable(url, key, type, memoryCache, diskCache,
-                checkFlag, listener)).start();
-    }
-    
     
     public interface OnDownloadMangaListener {
         public void onDownloadMangaStart(String id);

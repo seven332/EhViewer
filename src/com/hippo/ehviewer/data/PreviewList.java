@@ -16,66 +16,54 @@
 
 package com.hippo.ehviewer.data;
 
-import java.util.ArrayList;
+import android.app.Activity;
+import android.content.Context;
+import android.widget.TextView;
 
-public class PreviewList {
+import com.hippo.ehviewer.ui.DetailSectionFragment;
+import com.hippo.ehviewer.widget.AutoWrapLayout;
+
+/**
+ * This interface describe the previews in one page
+ * 
+ * @author Hippo
+ *
+ */
+public abstract class PreviewList {
     
-    public class Row {
+    protected PreviewHolder mHolder;
+    protected Activity mActivity;
+    protected GalleryDetail mGi;
+    protected int mTargetPage;
+    
+    /**
+     * Add preview to view group
+     * @param viewGroup
+     * @return
+     */
+    public abstract void addPreview(AutoWrapLayout viewGroup);
+    
+    public void setData(PreviewHolder holder, Activity activity, GalleryDetail gi, int targetPage) {
+        mHolder = holder;
+        mActivity = activity;
+        mGi = gi;
+        mTargetPage = targetPage;
+    }
+    
+    public void setTargetPage(int targetPage) {
+        mTargetPage = targetPage;
+    }
+    
+    protected class TextViewWithUrl extends TextView {
+        public String url;
         
-        public class Item {
-            public int xOffset;
-            public int yOffset;
-            public int width;
-            public int height;
-            public String url;
-
-            public Item(int xOffset, int yOffset, int width, int height, String url) {
-                this.xOffset = xOffset;
-                this.yOffset = yOffset;
-                this.width = width;
-                this.height = height;
-                this.url = url;
-            }
-        }
-        
-        public String imageUrl;
-        public ArrayList<Item> itemArray = new ArrayList<Item>();
-        public int startIndex;
-        public Row(String imageUrl) {
-            this.imageUrl = imageUrl;
-        }
-        
-        public void addItem(int xOffset, int yOffset, int width, int height,
-                String url) {
-            itemArray.add(new Item(xOffset, yOffset, width, height, url));
+        public TextViewWithUrl(Context context) {
+            super(context);
         }
     }
     
-    private Row curRow;
-    public ArrayList<Row> rowArray = new ArrayList<Row>();
-
-    public void addItem(String imageUrl, String xOffset, String yOffset, String width, String height,
-            String url) {
-        if (curRow == null) {
-            curRow = new Row(imageUrl);
-            curRow.startIndex = 0;
-            rowArray.add(curRow);
-        } else if (!curRow.imageUrl.equals(imageUrl)) {
-            Row lastRow = curRow;
-            curRow = new Row(imageUrl);
-            curRow.startIndex = lastRow.startIndex + lastRow.itemArray.size();
-            rowArray.add(curRow);
-        }
-        
-        curRow.addItem(Integer.parseInt(xOffset),
-                Integer.parseInt(yOffset), Integer.parseInt(width),
-                Integer.parseInt(height), url);
-    }
-    
-    public int getSum() {
-        int sum = 0;
-        for (Row row : rowArray)
-            sum += row.itemArray.size();
-        return sum;
+    public interface PreviewHolder {
+        public int getCurPreviewPage();
+        public void onGetPreviewImageFailure();
     }
 }

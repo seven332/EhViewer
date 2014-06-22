@@ -20,14 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.ImageGeterManager;
+import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.GalleryPopular;
 import com.hippo.ehviewer.ehclient.EhClient;
-import com.hippo.ehviewer.util.Cache;
-import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.HfListView;
@@ -35,7 +33,6 @@ import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.SuperToast;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -46,8 +43,6 @@ import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -67,7 +62,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     
     protected AppContext mAppContext;
     protected EhClient mClient;
-    protected ImageGeterManager mImageGeterManager;
+    private ImageLoader mImageLoader;
     
     private List<GalleryInfo> mGiList;
     private GalleryAdapter mGalleryAdapter;
@@ -273,7 +268,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         
         mAppContext = (AppContext)getApplication();
         mClient = mAppContext.getEhClient();
-        mImageGeterManager = mAppContext.getImageGeterManager();
+        mImageLoader = ImageLoader.getInstance(this);
         
         mGiList = new ArrayList<GalleryInfo>();
         
@@ -440,20 +435,10 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
             if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
                 
-                Bitmap bmp = null;
-                if (Cache.memoryCache != null &&
-                        (bmp = Cache.memoryCache.get(String.valueOf(gi.gid))) != null) {
-                    thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));
-                    thumb.setImageBitmap(bmp);
-                    thumb.setState(LoadImageView.LOADED);
-                } else {
-                    thumb.setImageDrawable(null);
-                    thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));
-                    thumb.setState(LoadImageView.NONE);
-                    mImageGeterManager.add(gi.thumb, String.valueOf(gi.gid),
-                            ImageGeterManager.DISK_CACHE | ImageGeterManager.DOWNLOAD,
-                            new LoadImageView.SimpleImageGetListener(thumb));
-                }
+                thumb.setImageDrawable(null);
+                thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));
+                mImageLoader.add(gi.thumb, String.valueOf(gi.gid),
+                        new LoadImageView.SimpleImageGetListener(thumb));
             }
             // Set manga name
             TextView name = (TextView) convertView.findViewById(R.id.name);
@@ -510,7 +495,16 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             }
         }
         @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {}
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            switch (scrollState) {
+            case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+                ImageCache.getInstance(mAppContext).setPauseDiskCache(true);
+                break;
+            case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+                ImageCache.getInstance(mAppContext).setPauseDiskCache(false);
+                break;
+            }
+        }
     }
     
     private void setListPosition(int position) {

@@ -171,9 +171,11 @@ public class EhInfo {
     public void storeCookie(HttpURLConnection conn) {
         String ipb_member_id;
         String ipb_pass_hash;
-        SharedPreferences.Editor editor = mInfoPref.edit();
         
         List<String> cookieList = conn.getHeaderFields().get("Set-Cookie");
+        if (cookieList == null)
+            return;
+        SharedPreferences.Editor editor = mInfoPref.edit();
         for (String str : cookieList) {
             ipb_member_id = getCookie(str, "ipb_member_id");
             ipb_pass_hash = getCookie(str, "ipb_pass_hash");

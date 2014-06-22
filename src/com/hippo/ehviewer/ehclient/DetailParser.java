@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.data.Comment;
-import com.hippo.ehviewer.data.PreviewList;
+import com.hippo.ehviewer.data.NormalPreviewList;
 import com.hippo.ehviewer.util.Log;
 
 public class DetailParser {
@@ -66,23 +66,23 @@ public class DetailParser {
     public int previewPerPage;
     public int previewSum;
     public LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>> tags;
-    public PreviewList previewList;
+    public NormalPreviewList previewList;
     public LinkedList<Comment> comments;
     
     public void setMode(int mode) {
         mMode = mode;
     }
     
-    public int parser(String pageContent) {
+    public int parser(String body) {
         int re = 0;
         Pattern p;
         Matcher m;
         
-        if (pageContent.contains(OFFENSIVE_STRING)) {
+        if (body.contains(OFFENSIVE_STRING)) {
             return OFFENSIVE;
         }
         
-        if (pageContent.contains(PINING_STRING)) {
+        if (body.contains(PINING_STRING)) {
             return PINING;
         }
         
@@ -111,7 +111,7 @@ public class DetailParser {
                             + "<tr><td[^<>]*>([^<>]+)</td>" // rating
                             + ".+"
                             + "<div id=\"gdt\"><div[^<>]*>(?:<div[^<>]*>)?<a[^<>]*href=\"([^<>\"]+)\"[^<>]*>"); // get firstPage
-            m = p.matcher(pageContent);
+            m = p.matcher(body);
             if (m.find()) {
                 re |= DETAIL;
                 
@@ -144,7 +144,7 @@ public class DetailParser {
             tags = new LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>>();
             p = Pattern
                     .compile("<tr><td[^<>]*>([^<>]+):</td><td>(?:<div[^<>]*><a[^<>]*>[^<>]*</a>[^<>]*<span[^<>]*>\\d+</span>[^<>]*</div>)+</td></tr>");
-            m = p.matcher(pageContent);
+            m = p.matcher(body);
             while (m.find()) {
                 re |= TAG;
                 String groupName = m.group(1);
@@ -158,7 +158,7 @@ public class DetailParser {
         // Get preview info
         if ((mMode & PREVIEW_INFO) != 0) {
             p = Pattern.compile("<p class=\"ip\">Showing ([\\d|,]+) - ([\\d|,]+) of ([\\d|,]+) images</p>");
-            m = p.matcher(pageContent);
+            m = p.matcher(body);
             if (m.find()) {
                 re |= PREVIEW_INFO;
                 previewPerPage = Integer.parseInt(m.group(2).replace(",",
@@ -173,11 +173,11 @@ public class DetailParser {
         if ((mMode & PREVIEW) != 0) {
             p = Pattern
                     .compile("<div[^<>]*class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*>");
-            m = p.matcher(pageContent);
+            m = p.matcher(body);
             while (m.find()) {
                 if (previewList == null) {
                     re |= PREVIEW;
-                    previewList = new PreviewList();
+                    previewList = new NormalPreviewList();
                 }
                 previewList.addItem(m.group(3), m.group(4), "0", m.group(1),
                         m.group(2), m.group(5));
@@ -187,7 +187,7 @@ public class DetailParser {
         if ((mMode & COMMENT) != 0) {
             p = Pattern
                     .compile("<div class=\"c3\">Posted on ([^<>]+) by <a[^<>]+>([^<>]+)</a>.*?<div class=\"c6\">(.*?)</div>");
-            m = p.matcher(pageContent);
+            m = p.matcher(body);
             comments = new LinkedList<Comment>();
             while (m.find()) {
                 re |= COMMENT;

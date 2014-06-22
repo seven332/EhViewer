@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.ui;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.AbstractMap.SimpleEntry;
@@ -24,21 +23,19 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.ImageGeterManager;
+import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.data.NormalPreviewList;
 import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.ehclient.DetailParser;
 import com.hippo.ehviewer.ehclient.EhClient;
-import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
 import com.hippo.ehviewer.widget.ButtonsDialogBuilder;
@@ -53,15 +50,10 @@ import com.hippo.ehviewer.widget.SuperToast;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Path;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.PathShape;
@@ -86,7 +78,7 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
 
 public class DetailSectionFragment extends Fragment
-        implements View.OnClickListener {
+        implements View.OnClickListener, PreviewList.PreviewHolder {
     private static final String TAG = "DetailSectionFragment";
     
     private AppContext mAppContext;
@@ -140,7 +132,6 @@ public class DetailSectionFragment extends Fragment
         }
         ShapeDrawable d = new ShapeDrawable(new PathShape(path, 50, 100));
         d.getPaint().setColor(color);
-        //d.setBounds(0, 0, Ui.dp2pix(24), Ui.dp2pix(48));
         return d;
     }
     
@@ -154,8 +145,18 @@ public class DetailSectionFragment extends Fragment
         sld.addState(new int[]{android.R.attr.state_enabled, android.R.attr.state_focused}, dark);
         sld.addState(new int[]{android.R.attr.state_enabled, android.R.attr.state_pressed}, dark);
         sld.addState(new int[]{}, normal);
-        //sld.setBounds(0, 0, Ui.dp2pix(24), Ui.dp2pix(48));
         return sld;
+    }
+    
+    @Override
+    public int getCurPreviewPage() {
+        return mCurPage;
+    }
+    
+    @Override
+    public void onGetPreviewImageFailure() {
+        mWaitPreviewList.setVisibility(View.GONE);
+        mPreviewRefreshButton.setVisibility(View.VISIBLE);
     }
     
     @SuppressWarnings("deprecation")
@@ -168,12 +169,7 @@ public class DetailSectionFragment extends Fragment
         mData = mAppContext.getData();
         
         GalleryInfo galleryInfo = mActivity.getGalleryInfo();
-        boolean getFromCache = true;
-        mActivity.mGalleryDetail = Cache.mdCache.get(String.valueOf(galleryInfo.gid));
-        if (mActivity.mGalleryDetail == null) {
-            getFromCache = false;
-            mActivity.mGalleryDetail = new GalleryDetail(galleryInfo);
-        }
+        mActivity.mGalleryDetail = new GalleryDetail(galleryInfo);
         mGalleryDetail = mActivity.mGalleryDetail;
         mUrl = EhClient.getDetailUrl(
                 mGalleryDetail.gid, mGalleryDetail.token);
@@ -257,20 +253,10 @@ public class DetailSectionFragment extends Fragment
         });
         
         LoadImageView thumb = (LoadImageView)mRootView.findViewById(R.id.detail_cover);
-        Bitmap bmp = null;
-        if (Cache.memoryCache != null &&
-                (bmp = Cache.memoryCache.get(String.valueOf(mGalleryDetail.gid))) != null) {
-            thumb.setLoadInfo(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid));
-            thumb.setImageBitmap(bmp);
-            thumb.setState(LoadImageView.LOADED);
-        } else {
-            thumb.setImageDrawable(null);
-            thumb.setLoadInfo(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid));
-            thumb.setState(LoadImageView.NONE);
-            mAppContext.getImageGeterManager().add(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid),
-                    ImageGeterManager.DISK_CACHE | ImageGeterManager.DOWNLOAD,
-                    new LoadImageView.SimpleImageGetListener(thumb));
-        }
+        thumb.setImageDrawable(null);
+        thumb.setLoadInfo(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid));
+        ImageLoader.getInstance(mActivity).add(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid),
+                new LoadImageView.SimpleImageGetListener(thumb).setTransitabled(false));
         
         TextView title = (TextView)mRootView.findViewById(R.id.detail_title);
         title.setText(mGalleryDetail.title);
@@ -296,103 +282,41 @@ public class DetailSectionFragment extends Fragment
         mReadButton.setEnabled(false);
         mRateButton.setEnabled(false);
         
-        // get from cache
-        if (getFromCache)
-            layout(mGalleryDetail);
-        else
-            mClient.getGDetail(mUrl, mGalleryDetail, new GDetailGetListener());
+        mClient.getGDetail(mUrl, mGalleryDetail, new GDetailGetListener());
         
         return mRootView;
     }
     
-    private void addPageItem(int page) {
-        if (mActivity.isFinishing())
-            return;
-        
-        if (page != mCurPage)
-            return;
-        
-        mWaitPreviewList.setVisibility(View.GONE);
-        mPreviewRefreshButton.setVisibility(View.GONE);
-        
-        PreviewList pageList = mGalleryDetail.previewLists[page];
-        if (pageList == null) {
-            Log.d(TAG, "WTF, I may check mangaDetail.pageLists[page] is not null");
-            new SuperToast(mActivity).setIcon(R.drawable.ic_warning)
-                     .setMessage("WTF, I may check mangaDetail.pageLists[page] is not null")
-                     .show();
-            return;
-        }
-        int index = page * mGalleryDetail.previewPerPage + 1;
-        int rowIndex = 0;
-        for (PreviewList.Row row : pageList.rowArray) {
-            for (PreviewList.Row.Item item : row.itemArray) {
-                TextViewWithUrl tvu = new TextViewWithUrl(mActivity,
-                        item.url);
-                tvu.setGravity(Gravity.CENTER);
-                tvu.setText(String.valueOf(index));
-                final int index1 = index;
-                tvu.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Add to read in Data
-                        mData.addRead(mGalleryDetail);
-                        
-                        Intent intent = new Intent(mActivity,
-                                MangaActivity.class);
-                        intent.putExtra("url", ((TextViewWithUrl) v).url);
-                        intent.putExtra("gid", mGalleryDetail.gid);
-                        intent.putExtra("title", mGalleryDetail.title);
-                        intent.putExtra("firstPage", index1 - 1);
-                        intent.putExtra("pageSum", mGalleryDetail.pages);
-                        startActivity(intent);
-                    }
-                });
-                // Set white drawable for temp
-                ColorDrawable white = new ColorDrawable(Color.TRANSPARENT);
-                white.setBounds(0, 0, item.width, item.height);
-                tvu.setCompoundDrawables(null, white, null, null);
-                
-                AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams();
-                lp.leftMargin = Ui.dp2pix(8);
-                lp.topMargin = Ui.dp2pix(8);
-                lp.rightMargin = Ui.dp2pix(8);
-                lp.bottomMargin = Ui.dp2pix(8);
-                
-                mPreviewListLayout.addView(tvu, lp);
-                index++;
-            }
-            // Download pic
-            EhClient.getImage(row.imageUrl, mGalleryDetail.gid + "-preview-"
-                    + mCurPage + "-" + rowIndex, Util.getResourcesType(row.imageUrl), Cache.memoryCache,
-                    Cache.diskCache, new int[]{page, rowIndex}, new PageImageGetListener());
-            rowIndex ++;
-        }
-    }
-    
     private void refreshPageList() {
         mPreviewListLayout.removeAllViews();
-        mWaitPreviewList.setVisibility(View.VISIBLE);
-        mPreviewRefreshButton.setVisibility(View.GONE);
-        
         mPreviewNumText.setText(String.format("%d / %d",
                 mCurPage+1, mGalleryDetail.previewSum));
-
+        
         PreviewList pageList = mGalleryDetail.previewLists[mCurPage];
-
+        
         if (pageList == null) {
+            // Update layout
+            mWaitPreviewList.setVisibility(View.VISIBLE);
+            mPreviewRefreshButton.setVisibility(View.GONE);
+            
             mUrl = EhClient.getDetailUrl(
                     mGalleryDetail.gid, mGalleryDetail.token, mCurPage);
-            mClient.getPageList(mUrl, mCurPage,
-                    new EhClient.OnGetPageListListener() {
+            mClient.getPreviewList(mUrl, mCurPage,
+                    new EhClient.OnGetPreviewListListener() {
                         @Override
-                        public void onSuccess(Object checkFlag, PreviewList pageList) {
+                        public void onSuccess(Object checkFlag, NormalPreviewList pageList) {
                             if (mActivity.isFinishing())
                                 return;
                             
+                            mWaitPreviewList.setVisibility(View.GONE);
+                            mPreviewRefreshButton.setVisibility(View.GONE);
+                            
                             int page = (Integer)checkFlag;
                             mGalleryDetail.previewLists[page] = pageList;
-                            addPageItem(page);
+                            mGalleryDetail.previewLists[page].setData(DetailSectionFragment.this, mActivity, mGalleryDetail, page);
+                            mGalleryDetail.previewLists[page].addPreview(mPreviewListLayout);
+                            
+                            
                             mShowPreview = true;
                         }
 
@@ -412,7 +336,11 @@ public class DetailSectionFragment extends Fragment
                         }
                     });
         } else {
-            addPageItem(mCurPage);
+            // Update layout
+            mWaitPreviewList.setVisibility(View.GONE);
+            mPreviewRefreshButton.setVisibility(View.GONE);
+            
+            mGalleryDetail.previewLists[mCurPage].addPreview(mPreviewListLayout);
             mShowPreview = true;
         }
     }
@@ -642,7 +570,8 @@ public class DetailSectionFragment extends Fragment
                 }
                 
                 mCurPage = 0;
-                addPageItem(0);
+                mGalleryDetail.previewLists[0].setData(this, mActivity, mGalleryDetail, 0);
+                mGalleryDetail.previewLists[0].addPreview(mPreviewListLayout);
             } else
                 new SuperToast(mActivity)
                         .setMessage(R.string.detail_preview_error)
@@ -797,20 +726,10 @@ public class DetailSectionFragment extends Fragment
             return mGalleryDetail.comments;
     }
     
-    private class TextViewWithUrl extends TextView {
-        private String url;
-
-        public TextViewWithUrl(Context context, String url) {
-            super(context);
-            this.url = url;
-        }
-    }
-    
     private class GDetailGetListener
             implements EhClient.OnGetGDetailListener {
         @Override
         public void onSuccess(GalleryDetail md) {
-            Cache.mdCache.put(String.valueOf(mGalleryDetail.gid), md);
             layout(md);
         }
         
@@ -821,62 +740,6 @@ public class DetailSectionFragment extends Fragment
             mWaitPb.setVisibility(View.GONE);
             mRefreshButton.setVisibility(View.VISIBLE);
             new SuperToast(mActivity).setIcon(R.drawable.ic_warning).setMessage(eMsg).show();
-        }
-    }
-    private class PageImageGetListener implements EhClient.OnGetImageListener {
-        @Override
-        public void onSuccess(Object checkFlag, Object res) {
-            if (res instanceof Bitmap && checkFlag instanceof int[]) {
-                int[] indexs = (int[])checkFlag;
-                addPageImage(indexs[0], indexs[1], (Bitmap) res);
-            } else {
-                Log.e(TAG, "WTF? PageImageGetListener is error !");
-                mWaitPreviewList.setVisibility(View.GONE);
-                mPreviewRefreshButton.setVisibility(View.VISIBLE);
-            }
-        }
-        @Override
-        public void onFailure(int errorMessageId) {
-            mWaitPreviewList.setVisibility(View.GONE);
-            mPreviewRefreshButton.setVisibility(View.VISIBLE);
-        }
-        
-        private void addPageImage(int page, int rowIndex, Bitmap bitmap) {
-            if (mActivity.isFinishing())
-                return;
-            
-            if (page != mCurPage)
-                return;
-            PreviewList pageList = mGalleryDetail.previewLists[page];
-            if (pageList == null) {
-                Log.d(TAG, "WTF, I may check mangaDetail.pageLists[page] is not null");
-                return;
-            }
-            
-            int maxWidth = bitmap.getWidth();
-            int maxHeight = bitmap.getHeight();
-            
-            PreviewList.Row row = pageList.rowArray.get(rowIndex);
-            ArrayList<PreviewList.Row.Item> items = row.itemArray;
-            
-            int startIndex = row.startIndex;
-            int endIndex = startIndex + items.size();
-            for(int i = startIndex ; i < endIndex; i++) {
-                PreviewList.Row.Item item = items.get(i - startIndex);
-                
-                if (item.xOffset + item.width > maxWidth)
-                    item.width = maxWidth - item.xOffset;
-                if (item.yOffset + item.height > maxHeight)
-                    item.height = maxHeight - item.yOffset;
-                
-                BitmapDrawable bitmapDrawable = new BitmapDrawable(
-                        getResources(), Bitmap.createBitmap(bitmap,
-                        item.xOffset, item.yOffset, item.width, item.height));
-                bitmapDrawable.setBounds(0, 0, item.width, item.height);
-                
-                TextViewWithUrl tvu = (TextViewWithUrl)mPreviewListLayout.getChildAt(i);
-                tvu.setCompoundDrawables(null, bitmapDrawable, null, null);
-            }
         }
     }
     

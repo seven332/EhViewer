@@ -22,10 +22,10 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.network.HttpHelper;
-import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.Download;
@@ -46,7 +46,6 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
     
     private Data mData;
     private EhClient mEhClient;
-    private ImageGeterManager mImageGeterManager;
     private ThreadPool mNetworkThreadPool;
     
     @Override
@@ -58,15 +57,13 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         
         Config.init(this);
         Ui.init(this);
-        Cache.init(this);
         Crash.init(this);
         mEhClient = new EhClient(this);
         Download.init(this);
         Favorite.init(this);
         
         mData = new Data(this);
-        mImageGeterManager = new ImageGeterManager(this, Cache.memoryCache, Cache.diskCache);
-        LoadImageView.setImageGeterManager(mImageGeterManager);
+        ImageLoader.createHandler();
         HttpHelper.createHandler();
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
@@ -96,12 +93,17 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         return mData;
     }
     
-    public ImageGeterManager getImageGeterManager() {
-        return mImageGeterManager;
-    }
-    
     public DateFormat getDateFormat() {
         return mFormatter;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onLowMemory() {
+        ImageCache.getInstance(this).evictAll();
+        super.onLowMemory();
     }
     
     @Override

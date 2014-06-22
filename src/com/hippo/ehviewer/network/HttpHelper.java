@@ -39,7 +39,6 @@ import java.util.zip.GZIPInputStream;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONObject;
 
-import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
@@ -55,7 +54,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.util.LruCache;
 
 import com.hippo.ehviewer.util.Log;
 
@@ -441,68 +439,29 @@ public class HttpHelper {
         return requst(new PostJsonHelper(json), url);
     }
     
-    public Bitmap getImage(String urlStr, String key,
-            LruCache<String, Bitmap> memoryCache,
-            DiskCache diskCache, boolean getImage) {
+    public Bitmap getImage(String urlStr) {
         mException = null;
         
         int redirectionCount = 0;
         URL url = null;
         HttpURLConnection conn = null;
-        ByteArrayOutputStream baos = null;
-        InputStream is = null;
         
         try {
-            
-            Log.d(TAG, "Http get bitmap " + urlStr);
-            
+            Log.d(TAG, "Http get image " + urlStr);
             url = new URL(urlStr);
             while (redirectionCount++ < Constant.MAX_REDIRECTS) {
                 conn = (HttpURLConnection)url.openConnection();
                 conn.setRequestProperty("User-Agent", Constant.userAgent);
                 conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
                 conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
-                conn.setRequestProperty("Connection", "close");
+                conn.setRequestMethod("GET");
                 conn.connect();
                 
                 final int responseCode = conn.getResponseCode();
                 switch (responseCode) {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
-                    
-                    Bitmap bitmap = null;
-                    is = conn.getInputStream();
-                    if (diskCache == null) {
-                        if (getImage
-                                && (bitmap = BitmapFactory.decodeStream(is, null, Ui.getBitmapOpt())) != null) {
-                            if (memoryCache != null)
-                                memoryCache.put(key, bitmap);
-                        }
-                    } else {
-                        boolean twice = memoryCache != null || getImage;
-                        if (twice) {
-                            baos = new ByteArrayOutputStream();
-                            Util.copy(is, baos);
-                            byte[] bytes = baos.toByteArray();
-                            // To disk cache
-                            is = new ByteArrayInputStream(bytes);
-                            diskCache.put(key, is);
-                            is.close();
-                            // 
-                            is = new ByteArrayInputStream(bytes);
-                            Bitmap bmp = BitmapFactory.decodeStream(is, null, Ui.getBitmapOpt());
-                            if (bmp != null) {
-                                if (memoryCache != null)
-                                    memoryCache.put(key, bmp);
-                                if (getImage)
-                                    bitmap = bmp;
-                            }
-                            is.close();
-                            baos.close();
-                        } else {
-                            diskCache.put(key, is);
-                        }
-                    }
+                    Bitmap bitmap = BitmapFactory.decodeStream(conn.getInputStream(), null, Ui.getBitmapOpt());
                     return bitmap;
                     
                 case HttpURLConnection.HTTP_MOVED_PERM:
@@ -522,10 +481,6 @@ public class HttpHelper {
             e.printStackTrace();
             return null;
         } finally {
-            if (baos != null)
-                Util.closeStreamQuietly(baos);
-            if (is != null)
-                Util.closeStreamQuietly(is);
             if (conn != null)
                 conn.disconnect();
         }

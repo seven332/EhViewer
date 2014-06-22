@@ -17,7 +17,6 @@
 package com.hippo.ehviewer;
 
 import com.hippo.ehviewer.ui.MangaListActivity;
-import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.widget.AlertButton;
@@ -252,7 +251,7 @@ public class StartActivity extends Activity {
                 return;
             }
         case CHECK_EXTERNAL_STORAGE:
-            if (!Cache.hasSdCard()) {
+            if (false) {
                 createNoSdCardDialog().show();
                 return;
             }

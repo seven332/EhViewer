@@ -21,11 +21,10 @@ import java.io.IOException;
 import java.util.List;
 
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.ImageGeterManager;
+import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
-import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.Ui;
@@ -63,7 +62,7 @@ public class DownloadActivity extends AbstractActivity {
     private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     
     private AppContext mAppContext;
-    private ImageGeterManager mImageGeterManager;
+    private ImageLoader mImageLoader;
     
     private List<DownloadInfo> mDownloadInfos;
     private DlAdapter mDlAdapter;
@@ -155,20 +154,10 @@ public class DownloadActivity extends AbstractActivity {
                     
                     LoadImageView thumb = (LoadImageView)view
                             .findViewById(R.id.thumb);
-                    Bitmap bmp = null;
-                    if (Cache.memoryCache != null &&
-                            (bmp = Cache.memoryCache.get(di.gid)) != null) {
-                        thumb.setLoadInfo(di.thumb, di.gid);
-                        thumb.setImageBitmap(bmp);
-                        thumb.setState(LoadImageView.LOADED);
-                    } else {
-                        thumb.setImageDrawable(null);
-                        thumb.setLoadInfo(di.thumb, di.gid);
-                        thumb.setState(LoadImageView.NONE);
-                        mImageGeterManager.add(di.thumb, di.gid,
-                                ImageGeterManager.DISK_CACHE | ImageGeterManager.DOWNLOAD,
-                                new LoadImageView.SimpleImageGetListener(thumb));
-                    }
+                    thumb.setImageDrawable(null);
+                    thumb.setLoadInfo(di.thumb, di.gid);
+                    mImageLoader.add(di.thumb, di.gid,
+                            new LoadImageView.SimpleImageGetListener(thumb));
                     
                     TextView title = (TextView)view.findViewById(R.id.title);
                     title.setText(di.title);
@@ -221,20 +210,10 @@ public class DownloadActivity extends AbstractActivity {
             
             LoadImageView thumb = (LoadImageView)view
                     .findViewById(R.id.thumb);
-            Bitmap bmp = null;
-            if (Cache.memoryCache != null &&
-                    (bmp = Cache.memoryCache.get(di.gid)) != null) {
-                thumb.setLoadInfo(di.thumb, di.gid);
-                thumb.setImageBitmap(bmp);
-                thumb.setState(LoadImageView.LOADED);
-            } else {
-                thumb.setImageDrawable(null);
-                thumb.setLoadInfo(di.thumb, di.gid);
-                thumb.setState(LoadImageView.NONE);
-                mImageGeterManager.add(di.thumb, di.gid,
-                        ImageGeterManager.DISK_CACHE | ImageGeterManager.DOWNLOAD,
-                        new LoadImageView.SimpleImageGetListener(thumb));
-            }
+            thumb.setImageDrawable(null);
+            thumb.setLoadInfo(di.thumb, di.gid);
+            mImageLoader.add(di.thumb, di.gid,
+                    new LoadImageView.SimpleImageGetListener(thumb));
             
             TextView title = (TextView)view.findViewById(R.id.title);
             title.setText(di.title);
@@ -375,7 +354,7 @@ public class DownloadActivity extends AbstractActivity {
         setContentView(R.layout.download);
         
         mAppContext = (AppContext)getApplication();
-        mImageGeterManager = mAppContext.getImageGeterManager();
+        mImageLoader = ImageLoader.getInstance(this);
         
         Ui.translucent(this);
         

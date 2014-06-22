@@ -19,6 +19,7 @@ package com.hippo.ehviewer.ui;
 import android.os.Bundle;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.util.Config;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
 
@@ -53,5 +54,7 @@ public class AbstractSlidingActivity extends SlidingActivity {
       super.onStop();
       if (Config.getAllowAnalyics())
           EasyTracker.getInstance(this).activityStop(this);
+      
+      ImageCache.getInstance(this).flush();
     }
 }

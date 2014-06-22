@@ -31,15 +31,14 @@ import java.net.UnknownHostException;
 import org.apache.http.conn.ConnectTimeoutException;
 
 import android.content.Context;
-import com.hippo.ehviewer.util.Log;
 
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.exception.FileException;
 import com.hippo.ehviewer.exception.NoSdCardException;
 import com.hippo.ehviewer.exception.RedirectionException;
 import com.hippo.ehviewer.exception.ResponseCodeException;
 import com.hippo.ehviewer.exception.StopRequestException;
-import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Util;
 
 // TODO 添加检查次磁盘空间
@@ -170,7 +169,7 @@ public class Downloader implements Runnable {
     @Override
     public void run() {
         int retryTimes = 0;
-        if (Cache.hasSdCard()) {
+        if (true) {
             
             boolean checkFolder = false;
             

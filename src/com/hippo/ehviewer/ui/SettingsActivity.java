@@ -24,10 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.DiskCache;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UpdateHelper;
-import com.hippo.ehviewer.util.Cache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Theme;
@@ -351,6 +349,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         }
         
         private void updateClearCacheSummary() {
+            /*
             if (Cache.diskCache != null) {
                 mClearCache.setSummary(String.format(
                         getString(R.string.clear_cache_summary_on),
@@ -362,12 +361,15 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                         .setSummary(getString(R.string.clear_cache_summary_off));
                 mClearCache.setEnabled(false);
             }
+            */
         }
         
         @Override
         public boolean onPreferenceChange(Preference preference, Object objValue) {
             final String key = preference.getKey();
             if (KEY_CACHE_SIZE.equals(key)) {
+                /*
+                
                 long cacheSize = 0;
                 try {
                     cacheSize = Integer.parseInt((String) objValue) * 1024 * 1024;
@@ -393,7 +395,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 } else
                     Cache.diskCache.setMaxSize(cacheSize);
                 updateClearCacheSummary();
-                
+                */
             } else if (KEY_MEDIA_SCAN.equals(key)) {
                 boolean value = (Boolean)objValue;
                 File nomedia = new File(Config.getDownloadPath(), ".nomedia");
@@ -413,9 +415,10 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         public boolean onPreferenceClick(Preference preference) {
             final String key = preference.getKey();
             if (KEY_CLEAR_CACHE.equals(key)) {
+                /*
                 Cache.diskCache.clear();
                 updateClearCacheSummary();
-                
+                */
             } else if (KEY_DOWNLOAD_PATH.equals(key)) {
                 View view = LayoutInflater.from(mActivity)
                         .inflate(R.layout.dir_selection, null);

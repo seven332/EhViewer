@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer;
+package com.hippo.ehviewer.exception;
 
 public class ParserException extends Exception{
     

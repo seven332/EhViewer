@@ -138,7 +138,6 @@ public class FavouriteActivity extends AbstractGalleryActivity
         mAppContext = (AppContext)getApplication();
         mData = mAppContext.getData();
         mResources =getResources();
-        mImageGeterManager = mAppContext.getImageGeterManager();
         mClient = mAppContext.getEhClient();
         
         final ActionBar actionBar = getActionBar();
