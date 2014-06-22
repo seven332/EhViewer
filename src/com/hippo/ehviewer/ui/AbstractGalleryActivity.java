@@ -31,6 +31,7 @@ import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.HfListView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
+import com.hippo.ehviewer.widget.RatingView;
 import com.hippo.ehviewer.widget.SuperToast;
 
 import android.graphics.Color;
@@ -453,8 +454,8 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                 category.setText(newText);
                 category.setBackgroundColor(Ui.getCategoryColor(gi.category));
             }
-            // Add star
-            RatingBar rate = (RatingBar) convertView
+            // Set star
+            RatingView rate = (RatingView) convertView
                     .findViewById(R.id.rate);
             rate.setRating(gi.rating);
             // set posted

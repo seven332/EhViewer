@@ -44,9 +44,8 @@
         android:layout_alignLeft="@id/name"
         android:layout_marginRight="4.0dip" />
     
-    <RatingBar
+    <com.hippo.ehviewer.widget.RatingView
         android:id="@+id/rate"
-        style="@style/RatingBarSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/uploader"
