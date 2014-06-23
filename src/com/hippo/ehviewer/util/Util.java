@@ -273,7 +273,8 @@ public class Util {
         return str.replace("&amp;", "&")
                 .replace("&lt;", "<")
                 .replace("&gt;", ">")
-                .replace("&quot;", "\"");
+                .replace("&quot;", "\"")
+                .replace("&#039;", "'");
     }
     
     public static String rightFileName(String name) {
