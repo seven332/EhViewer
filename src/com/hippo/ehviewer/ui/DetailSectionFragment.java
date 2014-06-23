@@ -29,7 +29,6 @@ import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
-import com.hippo.ehviewer.data.NormalPreviewList;
 import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.ehclient.DetailParser;
 import com.hippo.ehviewer.ehclient.EhClient;
@@ -42,9 +41,7 @@ import com.hippo.ehviewer.widget.ButtonsDialogBuilder;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.LoadImageView;
-import com.hippo.ehviewer.widget.OlScrollView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
-import com.hippo.ehviewer.widget.OnLayoutListener;
 import com.hippo.ehviewer.widget.ProgressiveRatingBar;
 import com.hippo.ehviewer.widget.SuperToast;
 
@@ -73,12 +70,14 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
 
 public class DetailSectionFragment extends Fragment
-        implements View.OnClickListener, PreviewList.PreviewHolder {
+        implements View.OnClickListener, PreviewList.PreviewHolder,
+        View.OnLayoutChangeListener {
     private static final String TAG = "DetailSectionFragment";
     
     private AppContext mAppContext;
@@ -89,7 +88,7 @@ public class DetailSectionFragment extends Fragment
     private String mUrl;
     
     private View mRootView;
-    private OlScrollView mScrollView;
+    private ScrollView mScrollView;
     private Button mReadButton;
     private Button mRateButton;
     private ProgressBar mWaitPb;
@@ -159,6 +158,17 @@ public class DetailSectionFragment extends Fragment
         mPreviewRefreshButton.setVisibility(View.VISIBLE);
     }
     
+    @Override
+    public void onLayoutChange(View v, int left, int top, int right,
+            int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        if (mShowPreview) {
+            mShowPreview = false;
+            mScrollView.smoothScrollTo(0,
+                    mNormalView.getTop() + mDivider.getTop());
+        }
+        
+    }
+    
     @SuppressWarnings("deprecation")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -176,7 +186,7 @@ public class DetailSectionFragment extends Fragment
         
         mRootView = inflater.inflate(
                 R.layout.detail, container, false);
-        mScrollView = (OlScrollView)mRootView.findViewById(R.id.manga_detail_scrollview);
+        mScrollView = (ScrollView)mRootView.findViewById(R.id.manga_detail_scrollview);
         mReadButton = (Button)mRootView.findViewById(R.id.detail_read);
         mRateButton = (Button)mRootView.findViewById(R.id.detail_do_rate);
         mWaitPb = (ProgressBar)mRootView.findViewById(R.id.detail_wait);
@@ -241,16 +251,7 @@ public class DetailSectionFragment extends Fragment
             }
         });
         
-        mScrollView.setOnLayoutListener(new OnLayoutListener() {
-            @Override
-            public void onLayout() {
-                if (mShowPreview) {
-                    mShowPreview = false;
-                    mScrollView.scrollTo(0,
-                            mNormalView.getTop() + mDivider.getTop());
-                }
-            }
-        });
+        mScrollView.addOnLayoutChangeListener(this);
         
         LoadImageView thumb = (LoadImageView)mRootView.findViewById(R.id.detail_cover);
         thumb.setImageDrawable(null);
