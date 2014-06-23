@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.hippo.ehviewer.ImageLoader;
+import com.hippo.ehviewer.drawable.StableBitmapDrawable;
 import com.hippo.ehviewer.ui.MangaActivity;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
@@ -139,12 +140,11 @@ public class LargePreviewList extends PreviewList {
             if (bmp == null) {
                 mHolder.onGetPreviewImageFailure();
             } else {
-                int itemHeight = mItemWidth * bmp.getHeight() / bmp.getWidth();
-                BitmapDrawable bitmapDrawable = new BitmapDrawable(mActivity.getResources(), bmp);
-                bitmapDrawable.setBounds(0, 0, mItemWidth, itemHeight);
+                StableBitmapDrawable sbd = new StableBitmapDrawable(mActivity.getResources(), bmp);
+                sbd.setBounds(0, 0, mItemWidth, mItemHeight);
                 
                 TextViewWithUrl tvu = (TextViewWithUrl)mViewGroup.getChildAt(mIndex);
-                tvu.setCompoundDrawables(null, bitmapDrawable, null, null);
+                tvu.setCompoundDrawables(null, sbd, null, null);
             }
         }
     }
