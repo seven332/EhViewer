@@ -36,6 +36,7 @@ import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FileExplorerView;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 import com.hippo.ehviewer.widget.SuperToast;
+import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.preference.AutoListPreference;
 import com.readystatesoftware.systembartint.SystemBarTintManager.SystemBarConfig;
@@ -179,12 +180,14 @@ public class SettingsActivity extends AbstractPreferenceActivity {
     
     private static final String[] ENTRY_FRAGMENTS = {
         DisplayFragment.class.getName(),
+        EhFragment.class.getName(),
         DataFragment.class.getName(),
         AboutFragment.class.getName()
     };
     
     private static final int[] FRAGMENT_ICONS = {
         R.drawable.ic_setting_display,
+        R.drawable.ic_action_panda,
         R.drawable.ic_setting_data,
         R.drawable.ic_action_info
     };
@@ -299,6 +302,49 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 mThemeColor.setEnabled(!(Boolean)newValue);
             }
             
+            return true;
+        }
+    }
+    
+    public static class EhFragment extends TranslucentPreferenceFragment
+            implements Preference.OnPreferenceChangeListener {
+        
+        private static final String KEY_PREVIEW_MODE = "preview_mode";
+        private static final String KEY_PREVIEW_PER_ROW = "preview_per_row";
+        
+        private AutoListPreference mPreviewMode;
+        private EditTextPreference mPreviewPerRow;
+        
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.eh_settings);
+            
+            mPreviewMode = (AutoListPreference)findPreference(KEY_PREVIEW_MODE);
+            mPreviewMode.setOnPreferenceChangeListener(this);
+            mPreviewPerRow = (EditTextPreference)findPreference(KEY_PREVIEW_PER_ROW);
+            mPreviewPerRow.setOnPreferenceChangeListener(this);
+            
+            mPreviewPerRow.setSummary(mPreviewPerRow.getText());
+        }
+        
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final String key = preference.getKey();
+            if (KEY_PREVIEW_MODE.equals(key)) {
+                EhInfo.getInstance(mActivity).setPreviewMode((String)newValue);
+            } else if (KEY_PREVIEW_PER_ROW.equals(key)) {
+                try {
+                    int value = Integer.parseInt((String)newValue);
+                    if (value <= 0)
+                        throw new Exception();
+                } catch (Exception e) {
+                    new SuperToast(mActivity, R.string.invalid_input, SuperToast.ERROR).show();
+                    return false;
+                }
+                
+                mPreviewPerRow.setSummary((String)newValue);
+            }
             return true;
         }
     }

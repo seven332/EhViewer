@@ -318,4 +318,75 @@ public class Config {
     public static int getListMode() {
         return Integer.parseInt(mConfigPre.getString(KEY_LIST_MODE, DEFAULT_LIST_MODE));
     }
+    
+    
+    
+    
+    /****** For Eh Config ******/
+    
+    private static final String KEY_DEFAULT_CAT = "default_cat";
+    private static final int DEFAULT_DEFAULT_CAT = 0;
+    
+    // m for normal, l for large
+    private static final String KEY_PREVIEW_MODE = "preview_mode";
+    private static final String DEFAULT_PREVIEW_MODE = "l";
+    
+    /**
+     * reclass   0x1
+     * language  0x2
+     * parody    0x4
+     * character 0x8
+     * group     0x10
+     * artist    0x20
+     * male      0x40
+     * female    0x80
+     */
+    private static final String KEY_EXCLUDE_TAG_GROUP = "exculde_tag_group";
+    private static final int DEFAULT_EXCLUDE_TAG_GROUP = 0;
+    
+    /**
+     *            Original   Translated    Rewrite    All
+     * Japanese                 1024        2048
+     * English       1          1025        2049
+     * Chinese       10         1034        2058
+     * Dutch         20         1044        2068
+     * French        30         1054        2078
+     * German        40         1064        2088
+     * Hungarian     50         1074        2098
+     * Italian       60         1084        2108
+     * Korean        70         1094        2118
+     * Polish        80         1104        2128
+     * Portuguese    90         1114        2138
+     * Russian       100        1124        2148
+     * Spanish       110        1134        2158
+     * Thai          120        1144        2168
+     * Vietnamese    130        1154        2178
+     * Other         255        1279        2303
+     */
+    private static final String KEY_EXCLUDE_LANGUAGE = "exculde_language";
+    private static final String DEFAULT_EXCLUDE_LANGUAGE = "";
+    
+    private static final String KEY_PREVIEW_PER_ROW = "preview_per_row";
+    private static final String DEFAULT_PREVIEW_PER_ROW = "3";
+    
+    public static int getDefaultCat() {
+        return mConfigPre.getInt(KEY_DEFAULT_CAT, DEFAULT_DEFAULT_CAT);
+    }
+    
+    public static String getPreviewMode() {
+        return mConfigPre.getString(KEY_PREVIEW_MODE, DEFAULT_PREVIEW_MODE);
+    }
+    
+    public static int getExculdeTagGroup() {
+        return mConfigPre.getInt(KEY_EXCLUDE_TAG_GROUP, DEFAULT_EXCLUDE_TAG_GROUP);
+    }
+    
+    public static String getExculdeLanguage() {
+        return mConfigPre.getString(KEY_EXCLUDE_LANGUAGE, DEFAULT_EXCLUDE_LANGUAGE);
+    }
+    
+    public static int getPreviewPerRow() {
+        return Integer.parseInt(mConfigPre.getString(KEY_PREVIEW_PER_ROW, DEFAULT_PREVIEW_PER_ROW));
+    }
+    
 }

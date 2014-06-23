@@ -98,6 +98,7 @@ public class NormalPreviewList extends PreviewList{
         if (mTargetPage != mHolder.getCurPreviewPage())
             return;
         
+        int margin = Ui.dp2pix(8);
         int index = mTargetPage * mGi.previewPerPage + 1; // it is display index
         int rowIndex = 0;
         for (NormalPreviewList.Row row : rowArray) {
@@ -127,15 +128,17 @@ public class NormalPreviewList extends PreviewList{
                 tvu.setCompoundDrawables(null, white, null, null);
                 
                 AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams();
-                lp.leftMargin = Ui.dp2pix(8);
-                lp.topMargin = Ui.dp2pix(8);
-                lp.rightMargin = Ui.dp2pix(8);
-                lp.bottomMargin = Ui.dp2pix(8);
+                lp.leftMargin = margin;
+                lp.topMargin = margin;
+                lp.rightMargin = margin;
+                lp.bottomMargin = margin;
                 viewGroup.addView(tvu, lp);
                 
                 index++;
             }
-            ImageLoader.getInstance(mActivity).add(row.imageUrl, mGi.gid + "preview" + "m" + rowIndex,
+            // TODO I need a better key
+            ImageLoader.getInstance(mActivity).add(row.imageUrl, mGi.gid +
+                    "-preview-" + mTargetPage + "-" + rowIndex,
                     new PreviewImageGetListener(viewGroup, rowIndex));
             rowIndex++;
         }

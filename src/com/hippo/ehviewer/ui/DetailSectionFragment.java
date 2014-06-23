@@ -304,7 +304,7 @@ public class DetailSectionFragment extends Fragment
             mClient.getPreviewList(mUrl, mCurPage,
                     new EhClient.OnGetPreviewListListener() {
                         @Override
-                        public void onSuccess(Object checkFlag, NormalPreviewList pageList) {
+                        public void onSuccess(Object checkFlag, PreviewList pageList) {
                             if (mActivity.isFinishing())
                                 return;
                             

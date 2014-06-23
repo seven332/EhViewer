@@ -187,6 +187,13 @@
     <string name="popular_display_settings_title">Popular</string>
     <string name="show_popular_update_time_title">Show popular update time</string>
     
+    <string name="eh_settings_title">EH (login required)</string>
+    <string name="detail_eh_settings_title">Detail</string>
+    <string name="preview_mode_title">Preview mode</string>
+    <string name="preview_mode_normal">Normal</string>
+    <string name="preview_mode_large">Large</string>
+    <string name="preview_per_row_title">Preview number per row（large preview mode）</string>
+    
     <string name="data_settings_title">Data</string>
     <string name="cache_data_settings_title">Cache</string>
     <string name="cache_size_title">Cache size</string>
@@ -344,6 +351,7 @@
     <string name="rating0">DISASTER</string>
     
     <!-- Util -->
+    <string name="invalid_input">Invalid Input</string>
     <string name="never_show">Never show me this dialog</string>
     <string name="retry">Retry</string>
     <string name="local">Local</string>

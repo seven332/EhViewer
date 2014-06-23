@@ -37,6 +37,7 @@ import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.GalleryPopular;
 import com.hippo.ehviewer.data.NormalPreviewList;
+import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.network.HttpHelper;
@@ -428,7 +429,7 @@ public class EhClient {
                             md.previewSum = parser.previewSum;
                             
                             md.tags = parser.tags;
-                            md.previewLists = new NormalPreviewList[md.previewSum];
+                            md.previewLists = new PreviewList[md.previewSum];
                             md.previewLists[0] = parser.previewList;
                             md.comments = parser.comments;
                             listener.onSuccess(md);
@@ -448,7 +449,7 @@ public class EhClient {
     
     // Get preview list
     public interface OnGetPreviewListListener {
-        public void onSuccess(Object checkFlag, NormalPreviewList pageList);
+        public void onSuccess(Object checkFlag, PreviewList pageList);
         public void onFailure(Object checkFlag, String eMsg);
     }
     

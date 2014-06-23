@@ -186,6 +186,13 @@
     <string name="popular_display_settings_title">热门</string>
     <string name="show_popular_update_time_title">显示热门更新时间</string>
     
+    <string name="eh_settings_title">EH 设置（需要登录）</string>
+    <string name="detail_eh_settings_title">详情</string>
+    <string name="preview_mode_title">预览图模式</string>
+    <string name="preview_mode_normal">正常预览图</string>
+    <string name="preview_mode_large">大预览图</string>
+    <string name="preview_per_row_title">每行预览图数量（大预览图模式）</string>
+    
     <string name="data_settings_title">数据</string>
     <string name="cache_data_settings_title">缓存</string>
     <string name="cache_size_title">缓存大小</string>
@@ -338,6 +345,7 @@
     <string name="rating0">感觉快要窒息了</string>
     
     <!-- Util -->
+    <string name="invalid_input">无效的输入</string>
     <string name="never_show">不再显示</string>
     <string name="retry">重试</string>
     <string name="local">本地</string>

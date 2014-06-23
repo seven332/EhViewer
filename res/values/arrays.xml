@@ -132,4 +132,13 @@
         <item>1</item>
     </string-array>
     
+    <string-array name="preview_mode_entries">
+        <item>@string/preview_mode_normal</item>
+        <item>@string/preview_mode_large</item>
+    </string-array>
+    
+    <string-array name="preview_mode_entry_values" translatable="false">
+        <item>m</item>
+        <item>l</item>
+    </string-array>
 </resources>

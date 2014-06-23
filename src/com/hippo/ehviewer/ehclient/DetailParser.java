@@ -26,7 +26,9 @@ import java.util.regex.Pattern;
 
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.data.Comment;
+import com.hippo.ehviewer.data.LargePreviewList;
 import com.hippo.ehviewer.data.NormalPreviewList;
+import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.util.Log;
 
 public class DetailParser {
@@ -66,7 +68,7 @@ public class DetailParser {
     public int previewPerPage;
     public int previewSum;
     public LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>> tags;
-    public NormalPreviewList previewList;
+    public PreviewList previewList;
     public LinkedList<Comment> comments;
     
     public void setMode(int mode) {
@@ -171,16 +173,31 @@ public class DetailParser {
         }
         // Get preview
         if ((mMode & PREVIEW) != 0) {
-            p = Pattern
-                    .compile("<div[^<>]*class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*>");
-            m = p.matcher(body);
-            while (m.find()) {
-                if (previewList == null) {
-                    re |= PREVIEW;
-                    previewList = new NormalPreviewList();
+            boolean isLargePreview = false;
+            if (body.contains("<div class=\"gdtl\""))
+                isLargePreview = true;
+            
+            if (isLargePreview) {
+                p = Pattern.compile("<div class=\"gdtl\".+?<a href=\"(.+?)\"><img.+?src=\"(.+?)\"");
+                m = p.matcher(body);
+                while (m.find()) {
+                    if (previewList == null) {
+                        re |= PREVIEW;
+                        previewList = new LargePreviewList();
+                    }
+                    ((LargePreviewList)previewList).addItem(m.group(2), m.group(1));
                 }
-                previewList.addItem(m.group(3), m.group(4), "0", m.group(1),
-                        m.group(2), m.group(5));
+            } else {
+                p = Pattern.compile("<div[^<>]*class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*>");
+                m = p.matcher(body);
+                while (m.find()) {
+                    if (previewList == null) {
+                        re |= PREVIEW;
+                        previewList = new NormalPreviewList();
+                    }
+                    ((NormalPreviewList)previewList).addItem(m.group(3), m.group(4), "0", m.group(1),
+                            m.group(2), m.group(5));
+                }
             }
         }
         // Get comment
