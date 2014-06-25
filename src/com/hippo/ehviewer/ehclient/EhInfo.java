@@ -56,6 +56,10 @@ public class EhInfo {
     private static final String KEY_USERNAME = "username";
     private static final String KEY_DISPLAYNAME = "displayname";
     private static final String DEFAULT_NAME = "Hippo";
+    private static final String KEY_MEMBER_ID = "ipb_member_id";
+    private static final String DEFAULT_MEMBER_ID = "1936857";
+    private static final String KEY_PASS_HASH = "ipb_pass_hash";
+    private static final String DEFAULT_PASS_HASH = "725e2726990bc34ae3852bb4f7c7879a";
     
     private Context mContext;
     private final SharedPreferences mInfoPref;
@@ -144,20 +148,20 @@ public class EhInfo {
             return;
         SharedPreferences.Editor editor = mInfoPref.edit();
         for (String str : cookieList) {
-            ipb_member_id = getCookie(str, "ipb_member_id");
-            ipb_pass_hash = getCookie(str, "ipb_pass_hash");
+            ipb_member_id = getCookie(str, KEY_MEMBER_ID);
+            ipb_pass_hash = getCookie(str, KEY_PASS_HASH);
             
             if (ipb_member_id != null)
-                editor.putString("ipb_member_id", ipb_member_id);
+                editor.putString(KEY_MEMBER_ID, ipb_member_id);
             if (ipb_pass_hash != null)
-                editor.putString("ipb_pass_hash", ipb_pass_hash);
+                editor.putString(KEY_PASS_HASH, ipb_pass_hash);
         }
         editor.apply();
     }
     
     public void setCookie(HttpURLConnection conn) {
-        String cookie = "ipb_member_id=" + mInfoPref.getString("ipb_member_id", "ipb_member_id") +
-                "; ipb_pass_hash=" + mInfoPref.getString("ipb_pass_hash", "ipb_pass_hash") +
+        String cookie = "ipb_member_id=" + mInfoPref.getString(KEY_MEMBER_ID, DEFAULT_MEMBER_ID) +
+                "; ipb_pass_hash=" + mInfoPref.getString(KEY_PASS_HASH, DEFAULT_PASS_HASH) +
                 "; uconfig="+ mUconfig;
         
         android.util.Log.d(TAG, cookie);
@@ -191,8 +195,8 @@ public class EhInfo {
         }
         
         mInfoPref.edit().putBoolean(KEY_LOGIN, false)
-                .putString("ipb_member_id", "ipb_member_id")
-                .putString("ipb_pass_hash", "ipb_pass_hash").apply();
+                .putString(KEY_MEMBER_ID, DEFAULT_MEMBER_ID)
+                .putString(KEY_PASS_HASH, DEFAULT_PASS_HASH).apply();
     }
     
     public String getUsername() {

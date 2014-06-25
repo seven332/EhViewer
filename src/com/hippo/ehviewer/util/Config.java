@@ -32,7 +32,7 @@ public class Config {
     private static final String KEY_FIRST = "first_time";
     private static final String KEY_UPDATE_DATE = "update_date";
     private static final String KEY_MODE = "mode";
-    private static final int MODE_DEFAULT = 0;
+    private static final int MODE_DEFAULT = EhClient.EX;
     
     private static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
     private static final String DEFAULT_SCREEN_ORIENTATION = "0";
