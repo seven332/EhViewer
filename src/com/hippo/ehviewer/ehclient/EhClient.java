@@ -332,6 +332,8 @@ public class EhClient {
                     return;
                 }
                 String avatarUrl = m.group(1);
+                if (!avatarUrl.startsWith("http"))
+                    avatarUrl = "http://forums.e-hentai.org/" + avatarUrl;
                 // Get avatar
                 Bitmap avatar = hp.getImage(avatarUrl);
                 // Set avatar if not null
