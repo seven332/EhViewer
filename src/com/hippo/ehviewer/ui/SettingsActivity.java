@@ -315,6 +315,14 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         private AutoListPreference mPreviewMode;
         private EditTextPreference mPreviewPerRow;
         
+        
+        private void setPPREnabled(String previewMode) {
+            if (previewMode.equals(Config.PREVIEW_MODE_LARGE))
+                mPreviewPerRow.setEnabled(true);
+            else
+                mPreviewPerRow.setEnabled(false);
+        }
+        
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -326,24 +334,28 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             mPreviewPerRow.setOnPreferenceChangeListener(this);
             
             mPreviewPerRow.setSummary(mPreviewPerRow.getText());
+            setPPREnabled(mPreviewMode.getValue());
         }
         
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final String key = preference.getKey();
             if (KEY_PREVIEW_MODE.equals(key)) {
-                EhInfo.getInstance(mActivity).setPreviewMode((String)newValue);
+                String newPreviewMode = (String)newValue;
+                EhInfo.getInstance(mActivity).setPreviewMode(newPreviewMode);
+                setPPREnabled(newPreviewMode);
+                
             } else if (KEY_PREVIEW_PER_ROW.equals(key)) {
                 try {
                     int value = Integer.parseInt((String)newValue);
                     if (value <= 0)
                         throw new Exception();
+                    mPreviewPerRow.setSummary((String)newValue);
                 } catch (Exception e) {
                     new SuperToast(mActivity, R.string.invalid_input, SuperToast.ERROR).show();
                     return false;
                 }
                 
-                mPreviewPerRow.setSummary((String)newValue);
             }
             return true;
         }

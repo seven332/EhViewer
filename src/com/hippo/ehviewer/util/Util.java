@@ -269,6 +269,11 @@ public class Util {
         }
     }
     
+    /**
+     * Mostly title and url need it
+     * @param str
+     * @return
+     */
     public static String htmlUnsescape(String str) {
         return str.replace("&amp;", "&")
                 .replace("&lt;", "<")
@@ -277,7 +282,13 @@ public class Util {
                 .replace("&#039;", "'");
     }
     
+    /**
+     * Make file name valid by removing invalid character and set max length
+     * @param name
+     * @return
+     */
     public static String rightFileName(String name) {
-        return name.replaceAll("[\\\\|/|:|*|?|\"|<|>|\\|]", "");
+        name = name.replaceAll("[\\\\|/|:|*|?|\"|<|>|\\|]", "");
+        return name.length() > 255 ? name.substring(0,  255) : name;
     }
 }

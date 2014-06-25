@@ -329,7 +329,9 @@ public class Config {
     
     // m for normal, l for large
     private static final String KEY_PREVIEW_MODE = "preview_mode";
-    private static final String DEFAULT_PREVIEW_MODE = "l";
+    public static final String PREVIEW_MODE_NORMAL = "m";
+    public static final String PREVIEW_MODE_LARGE = "l";
+    private static final String DEFAULT_PREVIEW_MODE = PREVIEW_MODE_LARGE;
     
     /**
      * reclass   0x1

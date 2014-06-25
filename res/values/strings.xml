@@ -192,7 +192,7 @@
     <string name="preview_mode_title">Preview mode</string>
     <string name="preview_mode_normal">Normal</string>
     <string name="preview_mode_large">Large</string>
-    <string name="preview_per_row_title">Preview number per row（large preview mode）</string>
+    <string name="preview_per_row_title">Preview number per row</string>
     
     <string name="data_settings_title">Data</string>
     <string name="cache_data_settings_title">Cache</string>

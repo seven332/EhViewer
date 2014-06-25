@@ -191,7 +191,7 @@
     <string name="preview_mode_title">预览图模式</string>
     <string name="preview_mode_normal">正常预览图</string>
     <string name="preview_mode_large">大预览图</string>
-    <string name="preview_per_row_title">每行预览图数量（大预览图模式）</string>
+    <string name="preview_per_row_title">每行预览图数量</string>
     
     <string name="data_settings_title">数据</string>
     <string name="cache_data_settings_title">缓存</string>

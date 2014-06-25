@@ -71,11 +71,11 @@ public class ListParser {
             gi.category = EhClient.getType(m.group(1));
             gi.posted = m.group(2);
             if (m.group(3) == null) {
-                gi.thumb = "http://"
-                        + m.group(5).replace('~', '/');
+                gi.thumb = Util.htmlUnsescape("http://"
+                        + m.group(5).replace('~', '/'));
                 gi.title = Util.htmlUnsescape(m.group(6));
             } else {
-                gi.thumb = m.group(3);
+                gi.thumb = Util.htmlUnsescape(m.group(3));
                 gi.title = Util.htmlUnsescape(m.group(4));
             }
             
