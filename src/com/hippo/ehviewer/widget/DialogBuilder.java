@@ -28,7 +28,6 @@ import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -132,6 +131,17 @@ public class DialogBuilder extends AlertDialog.Builder {
     public DialogBuilder setMessageSelectable() {
         TextView messageView = (TextView)mView.findViewById(R.id.message);
         messageView.setTextIsSelectable(true);
+        return this;
+    }
+    
+    /**
+     * Invoke it before set message
+     * @param mask
+     * @return
+     */
+    public DialogBuilder setMessageAutoLink(int mask) {
+        TextView messageView = (TextView)mView.findViewById(R.id.message);
+        messageView.setAutoLinkMask(mask);
         return this;
     }
     

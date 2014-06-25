@@ -54,6 +54,7 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -706,6 +707,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 
             } else if (KEY_ABOUT_ANALYICS.equals(key)) {
                 new DialogBuilder(mActivity).setTitle(R.string.about_analyics_title)
+                .setMessageAutoLink(Linkify.WEB_URLS)
                 .setLongMessage(R.string.about_analyics_comment)
                 .setSimpleNegativeButton()
                 .create().show();

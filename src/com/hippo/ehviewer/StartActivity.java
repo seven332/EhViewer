@@ -32,6 +32,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.util.Linkify;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -76,6 +77,7 @@ public class StartActivity extends Activity {
     private AlertDialog createAllowAnalyicsDialog() {
         return new DialogBuilder(this).setCancelable(false)
                 .setTitle(R.string.dailog_analyics_title)
+                .setMessageAutoLink(Linkify.WEB_URLS)
                 .setLongMessage(R.string.dailog_analyics_plain)
                 .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
                     @Override
