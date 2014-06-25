@@ -187,7 +187,7 @@
     <string name="popular_display_settings_title">Popular</string>
     <string name="show_popular_update_time_title">Show popular update time</string>
     
-    <string name="eh_settings_title">EH (login required)</string>
+    <string name="eh_settings_title">EH</string>
     <string name="detail_eh_settings_title">Detail</string>
     <string name="preview_mode_title">Preview mode</string>
     <string name="preview_mode_normal">Normal</string>

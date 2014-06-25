@@ -25,9 +25,7 @@
     <string-array name="mode_list"  translatable="false">
         <item>g.e-hentai.org</item>
         <item>exhentai.org</item>
-        <item>lofi.e-hentai.org (460x)</item>
-        <item>lofi.e-hentai.org (780x)</item>
-        <item>lofi.e-hentai.org (980x)</item>
+        <item>lofi.e-hentai.org</item>
     </string-array>
     
     <string-array name="comment_long_click">

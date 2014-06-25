@@ -65,6 +65,7 @@ import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -73,6 +74,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -239,36 +241,19 @@ public class MangaListActivity extends AbstractGalleryActivity
                 }).create();
     }
     
-    private void checkModeWarning(int mode, View warning) {
-        if (mode == 1 && !mEhClient.isLogin())
-            warning.setVisibility(View.VISIBLE);
-        else
-            warning.setVisibility(View.GONE);
-    }
-    
     private AlertDialog createModeDialog() {
-        LayoutInflater inflater = this.getLayoutInflater();
-        final View view = inflater.inflate(R.layout.mode, null);
-        final TextView warning = (TextView)view.findViewById(R.id.warning);
-        final Spinner modeSpinner = (Spinner)view.findViewById(R.id.mode);
-        int mode = Config.getMode();
-        modeSpinner.setSelection(mode);
-        checkModeWarning(mode, warning);
-        modeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                    int position, long id) {
-                checkModeWarning(position, warning);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                warning.setVisibility(View.GONE);
-            }
-        });
-        
+        final Spinner modeSpinner = new Spinner(this);
+        modeSpinner.setAdapter(new ArrayAdapter<CharSequence>(this,
+                android.R.layout.simple_spinner_dropdown_item,
+                this.getResources().getTextArray(R.array.mode_list)));
+        modeSpinner.setSelection(Config.getMode());
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.gravity = Gravity.CENTER;
+        lp.topMargin = Ui.dp2pix(12);
+        lp.bottomMargin = Ui.dp2pix(12);
         return new DialogBuilder(this).setTitle(R.string.mode)
-                .setView(view, true)
+                .setView(modeSpinner, lp)
                 .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -280,12 +265,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                             Config.setMode(mode);
                         }
                     }
-                }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                    }
-                }).create();
+                }).setSimpleNegativeButton().create();
     }
     
     private void handleSearchView(View view) {
