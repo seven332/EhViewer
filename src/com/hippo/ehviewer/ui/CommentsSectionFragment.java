@@ -22,6 +22,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
+import com.hippo.ehviewer.widget.LinkifyTextView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.SuperToast;
 
@@ -31,6 +32,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -43,7 +45,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class CommentsSectionFragment extends Fragment
-        implements AdapterView.OnItemLongClickListener {
+        implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener {
     
     @SuppressWarnings("unused")
     private static final String TAG = "CommentsSectionFragment";
@@ -93,6 +95,7 @@ public class CommentsSectionFragment extends Fragment
         });
         
         mList.setAdapter(adapter);
+        mList.setOnItemClickListener(this);
         mList.setOnItemLongClickListener(this);
         
         mComments = mActivity.getComments();
@@ -109,6 +112,20 @@ public class CommentsSectionFragment extends Fragment
         adapter.notifyDataSetChanged();
         if (mWaitView != null)
             mWaitView.setVisibility(View.GONE);
+    }
+    
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position,
+            long id) {
+        // Handler url here
+        LinkifyTextView comment = ((LinkifyTextView)view.findViewById(R.id.comment));
+        String url = comment.getTouchUrl();
+        if (url != null) {
+            comment.clearTouchUrl();
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        }
     }
     
     @Override
@@ -177,9 +194,10 @@ public class CommentsSectionFragment extends Fragment
             boolean isUserSame = true;
             boolean isTimeSame = true;
             
-            if (convertView == null)
+            if (convertView == null) {
                 convertView = LayoutInflater.from(mActivity)
                         .inflate(R.layout.comments_item, null);
+            }
             Comment c = mComments.get(position);
             
             TextView user = (TextView)convertView.findViewById(R.id.user);

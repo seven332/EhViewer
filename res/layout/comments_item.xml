@@ -36,7 +36,7 @@
         android:layout_marginLeft="12.0dp"
         android:layout_marginRight="12.0dp" />
 
-    <TextView
+    <com.hippo.ehviewer.widget.LinkifyTextView
         android:id="@+id/comment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,7 +44,6 @@
         android:layout_below="@id/user"
         android:layout_marginTop="8.0dp"
         android:layout_marginRight="12.0dp"
-        android:layout_marginBottom="8.0dp"
-        android:autoLink="web" />
+        android:layout_marginBottom="8.0dp" />
     
 </RelativeLayout>
