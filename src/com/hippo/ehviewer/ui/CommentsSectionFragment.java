@@ -119,9 +119,9 @@ public class CommentsSectionFragment extends Fragment
             long id) {
         // Handler url here
         LinkifyTextView comment = ((LinkifyTextView)view.findViewById(R.id.comment));
-        String url = comment.getTouchUrl();
+        String url = comment.getTouchedUrl();
         if (url != null) {
-            comment.clearTouchUrl();
+            comment.clearTouchedUrl();
             Uri uri = Uri.parse(url);
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);

@@ -46,27 +46,28 @@ public class LinkifyTextView extends TextView {
     }
     
     public void init() {
+        // Just make urls striking
+        // LinkifyTextView itself should not handle touch url event
         setAutoLinkMask(Linkify.WEB_URLS);
         setLinksClickable(false);
     }
     
-    public String getTouchUrl() {
+    public String getTouchedUrl() {
         return mUrl;
     }
     
     /**
      * Call it when you do not need the url any more
      */
-    public void clearTouchUrl() {
+    public void clearTouchedUrl() {
         mUrl = null;
     }
     
-    /**
-     * Get some code from android.text.method.LinkMovementMethod. Work fine !
-     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (getText() instanceof Spannable) {
+            // Get this code from android.text.method.LinkMovementMethod.
+            // Work fine !
             int x = (int) event.getX();
             int y = (int) event.getY();
             boolean isGetUrl = false;
