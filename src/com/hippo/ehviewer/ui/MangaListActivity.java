@@ -247,6 +247,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 android.R.layout.simple_spinner_dropdown_item,
                 this.getResources().getTextArray(R.array.mode_list)));
         modeSpinner.setSelection(Config.getMode());
+        modeSpinner.setMinimumWidth(Ui.dp2pix(200));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER;
