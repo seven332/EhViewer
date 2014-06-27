@@ -16,24 +16,20 @@
 
 package com.hippo.ehviewer.network;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
-import java.util.List;
-import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.conn.ConnectTimeoutException;
@@ -42,9 +38,7 @@ import org.json.JSONObject;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
-import com.hippo.ehviewer.exception.RedirectionException;
-import com.hippo.ehviewer.exception.ResponseCodeException;
-import com.hippo.ehviewer.exception.SadPandaException;
+import com.hippo.ehviewer.exception.StopRequestException;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
@@ -67,13 +61,18 @@ public class HttpHelper {
     private static final String TAG = "HttpHelper";
     public static final String SAD_PANDA_ERROR = "Sad Panda";
     public static final String HAPPY_PANDA_BODY = "Happy Panda";
-    
+    public static final String DOWNLOAD_STOP = "Stop";
+    public static final String DOWNLOAD_OK = "Download";
     private static String DEFAULT_CHARSET = "utf-8";
     private static String CHARSET_KEY = "charset=";
     
     class Package {
+        Object obj;
         OnRespondListener listener;
-        String str;
+        public Package(Object obj, OnRespondListener listener) {
+            this.obj = obj;
+            this.listener = listener;
+        }
     }
     
     private static Handler mHandler;
@@ -90,13 +89,13 @@ public class HttpHelper {
             public void handleMessage(Message msg) {
                 Package p = (Package)msg.obj;
                 OnRespondListener listener = p.listener;
-                String str = p.str;
+                Object obj = p.obj;
                 switch (msg.what) {
                 case Constants.TRUE:
-                    listener.onSuccess(str);
+                    listener.onSuccess(obj);
                     break;
                 case Constants.FALSE:
-                    listener.onFailure(str);
+                    listener.onFailure((String)obj);
                     break;
                 }
             }
@@ -104,7 +103,7 @@ public class HttpHelper {
     }
     
     public interface OnRespondListener {
-        void onSuccess(String body);
+        void onSuccess(Object body);
         void onFailure(String eMsg);
     }
     
@@ -114,7 +113,6 @@ public class HttpHelper {
     
     public HttpHelper(Context context) {
         mContext = context;
-        
         mContext.getApplicationContext();
     }
     
@@ -153,47 +151,11 @@ public class HttpHelper {
         else if (e instanceof SadPandaException)
             return SAD_PANDA_ERROR;
         
+        else if (e instanceof GetBodyException)
+            return "获取失败"; // TODO
+        
         else
             return e.getMessage();
-    }
-    
-    private String getBody(HttpURLConnection conn)
-            throws IOException {
-        String pageContext = null;
-        InputStream is = null;
-        ByteArrayOutputStream baos = null;
-        try {
-            is = conn.getInputStream();
-            String encoding = conn.getContentEncoding();
-            if (encoding != null && encoding.equals("gzip"))
-                is = new GZIPInputStream(is);
-            
-            int length = conn.getContentLength();
-            if (length >= 0)
-                baos = new ByteArrayOutputStream(length);
-            else
-                baos = new ByteArrayOutputStream();
-            
-            Util.copy(is, baos, Constant.BUFFER_SIZE);
-            
-            // Get charset
-            String charset = null;
-            String contentType = conn.getContentType();
-            int index = -1;
-            if (contentType != null
-                    && (index = contentType.indexOf(CHARSET_KEY)) != -1) {
-                charset = contentType.substring(index + CHARSET_KEY.length());
-            } else
-                charset = DEFAULT_CHARSET;
-            
-            pageContext = baos.toString(charset);
-        } catch (IOException e) {
-            throw e;
-        } finally {
-            Util.closeStreamQuietly(is);
-            Util.closeStreamQuietly(baos);
-        }
-        return pageContext;
     }
     
     private boolean isUrlCookiable(URL url) {
@@ -205,7 +167,7 @@ public class HttpHelper {
         return false;
     }
     
-    private String requst(RequestHelper rh, String urlStr) {
+    private Object requst(RequestHelper rh, String urlStr) {
         mException = null;
         int redirectionCount = 0;
         URL url = null;
@@ -221,7 +183,6 @@ public class HttpHelper {
             while (redirectionCount++ < Constant.MAX_REDIRECTS) {
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setInstanceFollowRedirects(true);
-                conn.addRequestProperty("Accept-Encoding", "gzip");
                 conn.setRequestProperty("User-Agent", Constant.userAgent);
                 conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
                 conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
@@ -237,32 +198,30 @@ public class HttpHelper {
                 case HttpURLConnection.HTTP_OK:
                 case HttpURLConnection.HTTP_PARTIAL:
                     // Test sad panda
-                    String contentType = conn.getHeaderField("Content-Type");
-                    if (contentType != null && contentType.equals("image/gif"))
-                        throw new SadPandaException();
+                    if (url.getHost().equals(EhInfo.EX_HOST)) {
+                        String contentType = conn.getHeaderField("Content-Type");
+                        if (contentType != null && contentType.equals("image/gif"))
+                            throw new SadPandaException();
+                    }
                     // Store cookie if necessary
                     if (isCookiable)
                         EhInfo.getInstance(mContext).storeCookie(conn);
-                    // Get body if necessary
-                    String body = rh.isNeedBody();
-                    if (body == null)
-                        body = getBody(conn);
+                    // Get object connection
+                    Object obj = rh.onAfterConnect(conn);
                     // Send to UI thread if necessary
                     if (msg != null) {
-                        Package p = new Package();
-                        p.listener = mListener;
-                        p.str = body;
-                        msg.obj = p;
+                        msg.obj = new Package(obj, mListener);
                         msg.what = Constants.TRUE;
                         mHandler.sendMessage(msg);
                     }
-                    return body;
+                    return obj;
                 // redirect
                 case HttpURLConnection.HTTP_MOVED_PERM:
                 case HttpURLConnection.HTTP_MOVED_TEMP:
                 case HttpURLConnection.HTTP_SEE_OTHER:
                 case Constant.HTTP_TEMP_REDIRECT:
                     final String location = conn.getHeaderField("Location");
+                    conn.disconnect();
                     url = new URL(url, location);
                     continue;
                     
@@ -270,15 +229,13 @@ public class HttpHelper {
                     throw new ResponseCodeException(responseCode);
                 }
             }
+            throw new RedirectionException();
         } catch (Exception e) {
             mException = e;
             e.printStackTrace();
             
             if (msg != null) {
-                Package p = new Package();
-                p.listener = mListener;
-                p.str = getEMsg();
-                msg.obj = p;
+                msg.obj = new Package(getEMsg(), mListener);
                 msg.what = Constants.FALSE;
                 mHandler.sendMessage(msg);
             }
@@ -287,17 +244,23 @@ public class HttpHelper {
             if (conn != null)
                 conn.disconnect();
         }
-        mException = new RedirectionException();
-        return null;
     }
     
-    interface RequestHelper {
+    private interface RequestHelper {
+        /**
+         * Add header or do something else for HttpURLConnection before connect
+         * @param conn
+         * @throws Exception
+         */
         public void onBeforeConnect(HttpURLConnection conn) throws Exception;
         /**
-         * If need body, return null, otherwise return a string used as body
+         * Get what do you need from HttpURLConnection after connect
+         * Return null means get error
+         * @param conn
          * @return
+         * @throws Exception
          */
-        public String isNeedBody();
+        public Object onAfterConnect(HttpURLConnection conn) throws Exception;
     }
     
     /**
@@ -306,35 +269,88 @@ public class HttpHelper {
     private class CheckSpHelper implements RequestHelper {
         @Override
         public void onBeforeConnect(HttpURLConnection conn)
-                throws ProtocolException {
+                throws Exception {
             conn.setRequestMethod("HEAD");
         }
         
         @Override
-        public String isNeedBody() {
+        public Object onAfterConnect(HttpURLConnection conn)
+                throws Exception {
             return HAPPY_PANDA_BODY;
+        }
+    }
+    
+    private abstract class GetStringHelper implements RequestHelper {
+        @Override
+        public void onBeforeConnect(HttpURLConnection conn)
+                throws Exception {
+            conn.addRequestProperty("Accept-Encoding", "gzip");
+        }
+        
+        private String getBody(HttpURLConnection conn)
+                throws Exception {
+            String body = null;
+            InputStream is = null;
+            ByteArrayOutputStream baos = null;
+            try {
+                is = conn.getInputStream();
+                String encoding = conn.getContentEncoding();
+                if (encoding != null && encoding.equals("gzip"))
+                    is = new GZIPInputStream(is);
+                
+                int length = conn.getContentLength();
+                if (length >= 0)
+                    baos = new ByteArrayOutputStream(length);
+                else
+                    baos = new ByteArrayOutputStream();
+                
+                Util.copy(is, baos, Constant.BUFFER_SIZE);
+                
+                // Get charset
+                String charset = null;
+                String contentType = conn.getContentType();
+                int index = -1;
+                if (contentType != null
+                        && (index = contentType.indexOf(CHARSET_KEY)) != -1) {
+                    charset = contentType.substring(index + CHARSET_KEY.length());
+                } else
+                    charset = DEFAULT_CHARSET;
+                
+                body = baos.toString(charset);
+                if (body == null)
+                    throw new GetBodyException();
+            } catch (Exception e) {
+                throw e;
+            } finally {
+                Util.closeStreamQuietly(is);
+                Util.closeStreamQuietly(baos);
+            }
+            return body;
+        }
+        
+        @Override
+        public Object onAfterConnect(HttpURLConnection conn)
+                throws Exception {
+            return getBody(conn);
         }
     }
     
     /**
      * RequstHelper for GET method
      */
-    private class GetHelper implements RequestHelper {
+    private class GetHelper extends GetStringHelper {
         @Override
         public void onBeforeConnect(HttpURLConnection conn)
-                throws ProtocolException {
+                throws Exception {
+            super.onBeforeConnect(conn);
             conn.setRequestMethod("GET");
-        }
-        @Override
-        public String isNeedBody() {
-            return null;
         }
     }
     
     /**
      * RequstHelper for post form data, use POST method
      */
-    private class PostFormHelper implements RequestHelper {
+    private class PostFormHelper extends GetStringHelper {
         private String[][] mArgs;
         
         public PostFormHelper(String[][] args) {
@@ -344,6 +360,7 @@ public class HttpHelper {
         @Override
         public void onBeforeConnect(HttpURLConnection conn)
                 throws Exception {
+            super.onBeforeConnect(conn);
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setUseCaches(false);
@@ -367,16 +384,12 @@ public class HttpHelper {
             out.flush();
             out.close();
         }
-        @Override
-        public String isNeedBody() {
-            return null;
-        }
     }
     
     /**
      * RequstHelper for post json, use POST method
      */
-    private class PostJsonHelper implements RequestHelper {
+    private class PostJsonHelper extends GetStringHelper {
         private JSONObject mJo;
         
         public PostJsonHelper(JSONObject jo) {
@@ -385,6 +398,7 @@ public class HttpHelper {
         
         @Override
         public void onBeforeConnect(HttpURLConnection conn) throws Exception {
+            super.onBeforeConnect(conn);
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setUseCaches(false);
@@ -396,18 +410,155 @@ public class HttpHelper {
             out.flush();
             out.close();
         }
+    }
+    
+    private class GetImageHelper implements RequestHelper {
         @Override
-        public String isNeedBody() {
-            return null;
+        public void onBeforeConnect(HttpURLConnection conn)
+                throws Exception {
+            conn.setRequestMethod("GET");
+        }
+        
+        @Override
+        public Object onAfterConnect(HttpURLConnection conn)
+                throws Exception {
+            Bitmap bmp = BitmapFactory.decodeStream(conn.getInputStream(), null, Ui.getBitmapOpt());
+            if (bmp == null)
+                throw new GetBodyException();
+            return bmp;
         }
     }
     
+    public interface OnDownloadListener {
+        public void onDownloadStartConnect();
+        /**
+         * If totalSize -1 for can't get length info
+         * @param totalSize
+         */
+        public void onDownloadStartDownload(int totalSize);
+        public void onDownloadStatusUpdate(int downloadSize, int totalSize);
+        /**
+         * FAILED or COMPLETED or STOPED
+         * @param status
+         */
+        public void onDownloadOver(int status, String eMsg);
+    }
+    
+    public class DownloadControlor {
+        private boolean mStop = false;
+        
+        public void stop() {
+            mStop = true; 
+        }
+        
+        public void reset() {
+            mStop = false; 
+        }
+        
+        public boolean isStop() {
+            return mStop; 
+        }
+    }
+    
+    private class DownloadHelper implements RequestHelper {
+        private File mDir;
+        private String mFileName;
+        private DownloadControlor mControlor;
+        private OnDownloadListener mListener;
+        private int mContentLength;
+        private int mReceivedSize;
+        
+        public DownloadHelper(File dir, String fileName, DownloadControlor controlor, OnDownloadListener listener) {
+            mDir = dir;
+            mFileName = fileName;
+            mControlor = controlor;
+            mListener = listener;
+        }
+        
+        @Override
+        public void onBeforeConnect(HttpURLConnection conn) throws Exception {
+            conn.setRequestMethod("GET");
+            conn.addRequestProperty("Range", "bytes=0-");
+            mListener.onDownloadStartConnect();
+        }
+        
+        private int getContentLength(HttpURLConnection conn) {
+            int contentLength = conn.getContentLength();
+            String range;
+            if (contentLength == -1 &&
+                    (range = conn.getHeaderField("Content-Range")) != null) {
+                // Content-Range looks like bytes 500-999/1234
+                contentLength = 0;
+                int step = 0;
+                boolean isNum = false;
+                char ch;
+                for (int i = 0; i < range.length(); i++) {
+                    ch = range.charAt(i);
+                    if (ch >= '0' && ch <= '9') {
+                        if (!isNum) {
+                            isNum = true;
+                            step++;
+                        }
+                    } else {
+                        isNum = false;
+                    }
+                    if (isNum && step == 3)
+                        contentLength = contentLength * 10 + ch - '0';
+                }
+            }
+            return contentLength;
+        }
+        
+        @Override
+        public Object onAfterConnect(HttpURLConnection conn) throws Exception {
+            mContentLength = getContentLength(conn);
+            mListener.onDownloadStartDownload(mContentLength);
+            
+            // Make sure parent exist
+            mDir.mkdirs();
+            File file = new File(mDir, mFileName);
+            try {
+                transferData(conn.getInputStream(), new FileOutputStream(file));
+                return DOWNLOAD_OK;
+            } catch (StopRequestException e) {
+                return DOWNLOAD_STOP;
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+        
+        private void transferData(InputStream in, OutputStream out)
+                throws Exception {
+            final byte data[] = new byte[Constant.BUFFER_SIZE];
+            mReceivedSize = 0;
+            
+            while (true) {
+                if (mControlor.isStop())
+                    throw new StopRequestException();
+                
+                int bytesRead = in.read(data);
+                if (bytesRead == -1)
+                    break;
+                out.write(data, 0, bytesRead);
+                mReceivedSize += bytesRead;
+                
+                mListener.onDownloadStatusUpdate(mReceivedSize, mContentLength);
+            }
+            
+            if (mContentLength != -1 && mReceivedSize != mContentLength)
+                throw new UncompletedException();
+        }
+        
+    }
+    
     /**
-     * Check Sad Panda
+     * Check Sad Panda.
+     * If get Sad Panda, return null,
+     * else return HttpHelper.HAPPY_PANDA_BODY
      * @return
      */
     public String checkSadPanda() {
-        return requst(new CheckSpHelper(), EhClient.EX_HEADER);
+        return (String)requst(new CheckSpHelper(), EhClient.EX_HEADER);
     }
     
     /**
@@ -416,7 +567,7 @@ public class HttpHelper {
      * @return
      */
     public String get(String url) {
-        return requst(new GetHelper(), url);
+        return (String)requst(new GetHelper(), url);
     }
     
     /**
@@ -426,7 +577,7 @@ public class HttpHelper {
      * @return
      */
     public String postForm(String url, String[][] args) {
-        return requst(new PostFormHelper(args), url);
+        return (String)requst(new PostFormHelper(args), url);
     }
     
     /**
@@ -436,55 +587,59 @@ public class HttpHelper {
      * @return
      */
     public String postJson(String url, JSONObject json) {
-        return requst(new PostJsonHelper(json), url);
+        return (String)requst(new PostJsonHelper(json), url);
     }
     
-    public Bitmap getImage(String urlStr) {
-        mException = null;
+    /**
+     * Get image
+     * @param url
+     * @return
+     */
+    public Bitmap getImage(String url) {
+        return (Bitmap)requst(new GetImageHelper(), url);
+    }
+    
+    public String download(String url, File dir, String file,
+            DownloadControlor controlor, OnDownloadListener listener) {
+        return (String)requst(new DownloadHelper(dir, file,
+                controlor, listener), url);
+    }
+    
+    /** Exceptions **/
+    
+    public class SadPandaException extends Exception {
+        private static final long serialVersionUID = 1L;
+    }
+    
+    public class GetBodyException extends Exception {
+        private static final long serialVersionUID = 1L;
+    }
+    
+    public class RedirectionException extends Exception {
+        private static final long serialVersionUID = 1L;
+    }
+    
+    public class UncompletedException extends Exception {
+        private static final long serialVersionUID = 1L;
+    }
+    
+    public class ResponseCodeException extends Exception {
         
-        int redirectionCount = 0;
-        URL url = null;
-        HttpURLConnection conn = null;
+        private static final long serialVersionUID = 1L;
+        private static final String eMsg = "Error response code";
+        private int mResponseCode;
         
-        try {
-            Log.d(TAG, "Http get image " + urlStr);
-            url = new URL(urlStr);
-            while (redirectionCount++ < Constant.MAX_REDIRECTS) {
-                conn = (HttpURLConnection)url.openConnection();
-                conn.setRequestProperty("User-Agent", Constant.userAgent);
-                conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
-                conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
-                conn.setRequestMethod("GET");
-                conn.connect();
-                
-                final int responseCode = conn.getResponseCode();
-                switch (responseCode) {
-                case HttpURLConnection.HTTP_OK:
-                case HttpURLConnection.HTTP_PARTIAL:
-                    Bitmap bitmap = BitmapFactory.decodeStream(conn.getInputStream(), null, Ui.getBitmapOpt());
-                    return bitmap;
-                    
-                case HttpURLConnection.HTTP_MOVED_PERM:
-                case HttpURLConnection.HTTP_MOVED_TEMP:
-                case HttpURLConnection.HTTP_SEE_OTHER:
-                case Constant.HTTP_TEMP_REDIRECT:
-                    final String location = conn.getHeaderField("Location");
-                    url = new URL(url, location);
-                    continue;
-                    
-                default:
-                    throw new ResponseCodeException(responseCode);
-                }
-            }
-        }  catch (Exception e) {
-            mException = e;
-            e.printStackTrace();
-            return null;
-        } finally {
-            if (conn != null)
-                conn.disconnect();
+        public ResponseCodeException(int responseCode) {
+            this(responseCode, eMsg);
         }
-        mException = new RedirectionException();
-        return null;
+        
+        public ResponseCodeException(int responseCode, String message) {
+            super(message);
+            mResponseCode = responseCode;
+        }
+        
+        public int getResponseCode() {
+            return mResponseCode;
+        }
     }
 }

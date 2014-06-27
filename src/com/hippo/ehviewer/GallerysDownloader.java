@@ -131,9 +131,4 @@ public class GallerysDownloader {
         void onGalleryDownloadFailed(DownloadInfo downloadInfo, String eMsg);
         void onGalleryDownloadCompleted(DownloadInfo downloadInfo);
     }
-    
-    
-    
-    
-    
 }

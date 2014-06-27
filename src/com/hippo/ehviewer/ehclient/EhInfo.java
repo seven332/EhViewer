@@ -48,6 +48,7 @@ public class EhInfo {
     private static final Bitmap.CompressFormat AVATAR_FORMAT = Bitmap.CompressFormat.PNG;
     private static Bitmap DEFAULT_AVATAR;
     
+    public static final String EX_HOST = "exhentai.org";
     public static final String[] COOKIABLE_HOSTS = {"exhentai.org",
         "g.e-hentai.org", "forums.e-hentai.org"};
     

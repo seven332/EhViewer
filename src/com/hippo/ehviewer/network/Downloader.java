@@ -36,8 +36,6 @@ import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.exception.FileException;
 import com.hippo.ehviewer.exception.NoSdCardException;
-import com.hippo.ehviewer.exception.RedirectionException;
-import com.hippo.ehviewer.exception.ResponseCodeException;
 import com.hippo.ehviewer.exception.StopRequestException;
 import com.hippo.ehviewer.util.Util;
 
@@ -145,13 +143,6 @@ public class Downloader implements Runnable {
         
         else if (mException instanceof UnknownHostException)
             return mContext.getString(R.string.em_unknown_host);
-        
-        else if (mException instanceof ResponseCodeException)
-            return String.format(mContext.getString(R.string.em_unexpected_response_code),
-                    ((ResponseCodeException)mException).getResponseCode());
-        
-        else if (mException instanceof RedirectionException)
-            return mContext.getString(R.string.em_redirection_error);
         
         else if (mException instanceof SocketException)
             return "SocketException : " + mException.getMessage();
@@ -267,7 +258,7 @@ public class Downloader implements Runnable {
                         continue;
 
                     default:
-                        throw new ResponseCodeException(responseCode);
+                        //throw new ResponseCodeException(responseCode);
                 }
             } catch (Exception e) {
                 throw e;
@@ -276,7 +267,7 @@ public class Downloader implements Runnable {
                     conn.disconnect();
             }
         }
-        throw new RedirectionException();
+        //throw new RedirectionException();
     }
     
     /**
@@ -287,7 +278,7 @@ public class Downloader implements Runnable {
     private void processResponseHeaders(HttpURLConnection conn) {
         mTotalSize = conn.getContentLength();
         
-        // bytes 500-999/1234
+        // 
         String range;
         if ((range = conn.getHeaderField("Content-Range")) != null) { // Support Content-Range
             boolean newNum = true;

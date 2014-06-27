@@ -272,7 +272,8 @@ public class EhClient {
                 final HttpHelper hp = new HttpHelper(mAppContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
-                    public void onSuccess(String body) {
+                    public void onSuccess(Object obj) {
+                        String body = (String)obj;
                         LoginParser parser = new LoginParser();
                         if (parser.parser(body)) {
                             mInfo.login(username, parser.displayname);
@@ -360,7 +361,8 @@ public class EhClient {
                 HttpHelper hp = new HttpHelper(mAppContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
-                    public void onSuccess(String body) {
+                    public void onSuccess(Object obj) {
+                        String body = (String)obj;
                         ListParser parser = new ListParser();
                         switch (parser.parser(body)) {
                         case ListParser.ALL:
@@ -398,7 +400,8 @@ public class EhClient {
                 HttpHelper hp = new HttpHelper(mAppContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
-                    public void onSuccess(String body) {
+                    public void onSuccess(Object obj) {
+                        String body = (String)obj;
                         DetailParser parser = new DetailParser();
                         int mode = DetailParser.DETAIL | DetailParser.TAG
                                 | DetailParser.PREVIEW_INFO | DetailParser.PREVIEW
@@ -463,7 +466,8 @@ public class EhClient {
                 HttpHelper hp = new HttpHelper(mAppContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
-                    public void onSuccess(String body) {
+                    public void onSuccess(Object obj) {
+                        String body = (String)obj;
                         DetailParser parser = new DetailParser();
                         parser.setMode(DetailParser.PREVIEW);
                         if (parser.parser(body) == DetailParser.PREVIEW) {
@@ -905,10 +909,11 @@ public class EhClient {
                 HttpHelper hp = new HttpHelper(mAppContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
-                    public void onSuccess(String pageContent) {
+                    public void onSuccess(Object obj) {
+                        String body = (String)obj;
                         DetailParser parser = new DetailParser();
                         parser.setMode(DetailParser.COMMENT);
-                        if (parser.parser(pageContent) == DetailParser.COMMENT) {
+                        if (parser.parser(body) == DetailParser.COMMENT) {
                             listener.onSuccess(parser.comments);
                         } else {
                             listener.onFailure("parser error");   // TODO
@@ -958,9 +963,10 @@ public class EhClient {
                 HttpHelper hp = new HttpHelper(mAppContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
-                    public void onSuccess(String pageContext) {
+                    public void onSuccess(Object obj) {
+                        String body = (String)obj;
                         RateParser parser = new RateParser();
-                        if (parser.parser(pageContext)) {
+                        if (parser.parser(body)) {
                             listener.onSuccess(parser.mRatingAvg, parser.mRatingCnt);
                         } else {
                             listener.onFailure("parser error");   // TODO
@@ -1008,9 +1014,10 @@ public class EhClient {
                 HttpHelper hp = new HttpHelper(mAppContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
-                    public void onSuccess(String pageContext) {
+                    public void onSuccess(Object obj) {
+                        String body = (String)obj;
                         VoteParser parser = new VoteParser();
-                        if (parser.parser(pageContext)) {
+                        if (parser.parser(body)) {
                             listener.onSuccess(parser.mTagPane);
                         } else {
                             listener.onFailure("parser error");   // TODO
@@ -1065,10 +1072,10 @@ public class EhClient {
                 HttpHelper hp = new HttpHelper(mAppContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
-                    public void onSuccess(String pageContext) {
-                        
+                    public void onSuccess(Object obj) {
+                        String body = (String)obj;
                         AddToFavoriteParser parser = new AddToFavoriteParser();
-                        if (parser.parser(pageContext)) {
+                        if (parser.parser(body)) {
                             listener.onSuccess();
                             // Analytics
                             Analytics.addToFavoriteGallery(mAppContext, gid, token);
@@ -1185,9 +1192,10 @@ public class EhClient {
                 HttpHelper hp = new HttpHelper(mAppContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
-                    public void onSuccess(String pageContext) {
+                    public void onSuccess(Object obj) {
+                        String body = (String)obj;
                         ListParser parser = new ListParser();
-                        int re = parser.parser(pageContext);
+                        int re = parser.parser(body);
                         if (re == ListParser.ALL) {
                             listener.onSuccess(parser.giList, parser.indexPerPage, parser.maxPage);
                         } else if (re == ListParser.NOT_FOUND) {
@@ -1240,10 +1248,11 @@ public class EhClient {
                 HttpHelper hp = new HttpHelper(mAppContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
-                    public void onSuccess(String pageContext) {
+                    public void onSuccess(Object obj) {
+                        String body = (String)obj;
                         try {
                             List<GalleryInfo> gis = new ArrayList<GalleryInfo>();
-                            JSONObject js = new JSONObject(pageContext);
+                            JSONObject js = new JSONObject(body);
                             js = js.getJSONObject("popular");
                             
                             if (!js.has("galleries")) {
