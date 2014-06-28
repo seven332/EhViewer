@@ -18,6 +18,7 @@ package com.hippo.ehviewer.ui;
 
 import java.util.List;
 
+import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.widget.DialogBuilder;
@@ -149,12 +150,12 @@ public class CommentsSectionFragment extends Fragment
                             break;
                             
                         case 1:
-                            Intent intent = new Intent();
-                            intent.putExtra(MangaListActivity.KEY_MODE,
-                                    MangaListActivity.MODE_UPLOADER);
-                            intent.putExtra(MangaListActivity.KEY_UPLOADER, c.user);
-                            mActivity.setResult(Activity.RESULT_OK, intent);  
                             mActivity.finish();
+                            Intent intent = new Intent(mActivity, MangaListActivity.class);
+                            intent.setAction(MangaListActivity.ACTION_GALLERY_LIST);
+                            intent.putExtra(MangaListActivity.KEY_MODE, ListUrls.POPULAR);
+                            intent.putExtra(MangaListActivity.KEY_UPLOADER, c.user);
+                            startActivity(intent);
                             break;
                         }
                     }

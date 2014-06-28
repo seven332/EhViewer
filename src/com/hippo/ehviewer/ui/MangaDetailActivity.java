@@ -16,7 +16,9 @@
 
 package com.hippo.ehviewer.ui;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,8 +77,8 @@ public class MangaDetailActivity extends AbstractFragmentActivity
     public static final String KEY_G_INFO = "gallery_info";
     
     private ViewPager mViewPager;
-    private GalleryInfo mGalleryInfo;
-    public GalleryDetail mGalleryDetail;
+    private Stack<GalleryDetail> mGdList;
+    private GalleryDetail mGalleryDetail;
     
     private DetailSectionFragment mDetailFragment;
     private CommentsSectionFragment mCommentsFragment;
@@ -96,39 +98,48 @@ public class MangaDetailActivity extends AbstractFragmentActivity
         unbindService(mServiceConn);
     }
     
-    private void handleIntent(Intent intent) { 
+    private GalleryDetail handleIntent(Intent intent) {
+        GalleryDetail gi = null;
         if (intent.getAction() == "android.intent.action.VIEW") {
-            
             DetailUrlParser parser = new DetailUrlParser();
             if (parser.parser(intent.getData().getPath())) {
-                mGalleryInfo = new GalleryInfo();
-                mGalleryInfo.gid = parser.gid;
-                mGalleryInfo.token = parser.token;
-                // TODO get all information from detail page
-                // then update all view
-                mGalleryInfo.title = "haha";
-                mGalleryInfo.uploader = "haha";
+                gi = new GalleryDetail();
+                gi.gid = parser.gid;
+                gi.token = parser.token;
             } else {
                 // TODO
             }
-            // TODO reset views
-            new SuperToast(this)
-            .setIcon(R.drawable.ic_warning)
-            .setMessage(R.string.unfinished).show();
-            
         } else {
-            mGalleryInfo = intent.getParcelableExtra(KEY_G_INFO);
+            gi = new GalleryDetail((GalleryInfo)
+                    (intent.getParcelableExtra(KEY_G_INFO)));
         }
         // Analytics
-        Analytics.openGallery(this, mGalleryInfo.gid, mGalleryInfo.token);
+        if (gi != null)
+            Analytics.openGallery(this, gi.gid, gi.token);
+        return gi;
     }
     
     @Override
-    protected void onNewIntent(Intent intent) { 
+    protected void onNewIntent(Intent intent) {
+        mGdList.push(mGalleryDetail);
         setIntent(intent);
-        handleIntent(intent);
-        // TODO set up a stack to store detail list
-        // override on back press
+        mGalleryDetail = handleIntent(intent);
+        loadDetail();
+    }
+    
+    public void loadDetail() {
+        mDetailFragment.handleDetail(mGalleryDetail);
+        getActionBar().setSelectedNavigationItem(0);
+    }
+    
+    @Override
+    public void onBackPressed() {
+        if (!mGdList.isEmpty()) {
+            mGalleryDetail = mGdList.pop();
+            loadDetail();
+        } else {
+            finish();
+        }
     }
     
     @Override
@@ -136,7 +147,8 @@ public class MangaDetailActivity extends AbstractFragmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.viewpager);
         
-        handleIntent(getIntent());
+        mGdList = new Stack<GalleryDetail>();
+        mGalleryDetail = handleIntent(getIntent());
         
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -170,7 +182,7 @@ public class MangaDetailActivity extends AbstractFragmentActivity
         Intent it = new Intent(MangaDetailActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
         
-        setTitle(String.valueOf(mGalleryInfo.gid));
+        setTitle(String.valueOf(mGalleryDetail.gid));
     }
     
     @Override
@@ -190,10 +202,6 @@ public class MangaDetailActivity extends AbstractFragmentActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.detail, menu);
         return true;
-    }
-    
-    public GalleryInfo getGalleryInfo() {
-        return mGalleryInfo;
     }
     
     public List<Comment> getComments() {
@@ -219,15 +227,15 @@ public class MangaDetailActivity extends AbstractFragmentActivity
             int defaultFavorite = Config.getDefaultFavorite();
             switch (defaultFavorite) {
             case -2:
-                Favorite.getAddToFavoriteDialog(this, mGalleryInfo).show();
+                Favorite.getAddToFavoriteDialog(this, mGalleryDetail).show();
                 break;
             case -1:
-                ((AppContext)getApplication()).getData().addLocalFavourite(mGalleryInfo);
+                ((AppContext)getApplication()).getData().addLocalFavourite(mGalleryDetail);
                 new SuperToast(this).setMessage(R.string.toast_add_favourite).show();
                 break;
             default:
-                ((AppContext)getApplication()).getEhClient().addToFavorite(mGalleryInfo.gid,
-                        mGalleryInfo.token, defaultFavorite, null, new EhClient.OnAddToFavoriteListener() {
+                ((AppContext)getApplication()).getEhClient().addToFavorite(mGalleryDetail.gid,
+                        mGalleryDetail.token, defaultFavorite, null, new EhClient.OnAddToFavoriteListener() {
                     @Override
                     public void onSuccess() {
                         new SuperToast(MangaDetailActivity.this).setMessage(R.string.toast_add_favourite).show();
@@ -298,7 +306,7 @@ public class MangaDetailActivity extends AbstractFragmentActivity
                             ((AlertButton)v).dialog.dismiss();
                             String comment = et.getText().toString();
                             ((AppContext)getApplication()).getEhClient()
-                                    .comment(EhClient.getDetailUrl(mGalleryInfo.gid, mGalleryInfo.token),
+                                    .comment(EhClient.getDetailUrl(mGalleryDetail.gid, mGalleryDetail.token),
                                             comment, new EhClient.OnCommentListener() {
                                                 @Override
                                                 public void onSuccess(List<Comment> comments) {

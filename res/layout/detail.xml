@@ -72,7 +72,8 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="10.0dp"
                     android:layout_marginLeft="12dp"
-                    android:layout_marginRight="12dp" />
+                    android:layout_marginRight="12dp"
+                    android:background="@android:color/transparent" />
                 
                 <!-- Need to make button do rate and read the same width
                      Disable is before make sure it is normal -->

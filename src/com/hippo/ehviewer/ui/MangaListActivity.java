@@ -34,6 +34,7 @@ import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Favorite;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
@@ -120,13 +121,10 @@ public class MangaListActivity extends AbstractGalleryActivity
     
     private static final String TAG = "MangaListActivity";
     
-    public static final int DETAIL_CODE = 0x123;
-    
-    public static final int MODE_TAG = 0x0;
-    public static final int MODE_UPLOADER = 0x1;
+    public static final String ACTION_GALLERY_LIST = "com.hippo.ehviewer.intent.action.GALLERY_LIST";
     
     public static final String KEY_MODE = "mode";
-    public static final String KEY_GROUP = "group";
+    public static final String KEY_CATEGORY = "category";
     public static final String KEY_TAG = "tag";
     public static final String KEY_UPLOADER = "uploader";
     
@@ -868,12 +866,40 @@ public class MangaListActivity extends AbstractGalleryActivity
     }
     
     private void handleIntent(Intent intent) { 
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+        String action = intent.getAction();
+        if (Intent.ACTION_SEARCH.equals(action)) {
            String query = 
                  intent.getStringExtra(SearchManager.QUERY); 
            mSearchView.setQuery(query, true);
-        } 
-     }
+        } else if (ACTION_GALLERY_LIST.equals(action)) {
+            int mode = intent.getIntExtra(MangaListActivity.KEY_MODE, -1);
+            switch(mode) {
+            case ListUrls.TAG:
+                lus = new ListUrls();
+                String tag = intent.getStringExtra(KEY_TAG);
+                lus.setTag(tag);
+                mTitle = tag;
+                setTitle(mTitle);
+                refresh(true);
+                break;
+                
+            case ListUrls.UPLOADER:
+                String uploader = "uploader:" + intent.getStringExtra(KEY_UPLOADER);
+                lus = new ListUrls(ListUrls.ALL_TYPE, uploader);
+                lus.setMode(ListUrls.UPLOADER);
+                mTitle = uploader;
+                setTitle(mTitle);
+                refresh(true);
+                break;
+                
+            default:
+                // TODO just do somthing
+                break;
+            }
+        } else {
+            // TODO just do somthing
+        }
+    }
     
     @Override
     protected void onNewIntent(Intent intent) { 
@@ -1164,8 +1190,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 GalleryInfo gi = getGalleryInfo(position);
                 intent.putExtra("url", EhClient.getDetailUrl(gi.gid, gi.token));
                 intent.putExtra(MangaDetailActivity.KEY_G_INFO, gi);
-                // Maybe shoud use other method
-                startActivityForResult(intent, DETAIL_CODE);
+                startActivity(intent);
             }
         });
         mList.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -1346,37 +1371,6 @@ public class MangaListActivity extends AbstractGalleryActivity
     
     private void jump() {
         createJumpDialog().show();
-    }
-    
-    
-    // TODO when it is refreshing
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode,  
-            Intent data) {
-        
-        if (requestCode == DETAIL_CODE 
-                && resultCode == RESULT_OK) {
-            switch (data.getIntExtra(KEY_MODE, -1)) {
-            case MODE_TAG:
-                lus = new ListUrls();
-                String tag = data.getStringExtra(KEY_GROUP)
-                        + ":" + data.getStringExtra(KEY_TAG);
-                lus.setTag(tag);
-                mTitle = tag;
-                setTitle(mTitle);
-                refresh(false);
-                break;
-                
-            case MODE_UPLOADER:
-                String uploader = "uploader:" + data.getStringExtra(KEY_UPLOADER);
-                lus = new ListUrls(ListUrls.ALL_TYPE, uploader);
-                lus.setMode(ListUrls.UPLOADER);
-                mTitle = uploader;
-                setTitle(mTitle);
-                refresh(false);
-                break;
-            }
-        }
     }
     
     @Override

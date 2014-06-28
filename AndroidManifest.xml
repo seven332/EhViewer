@@ -65,7 +65,8 @@
             android:name="com.hippo.ehviewer.ui.MangaDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|adjustUnspecified|stateHidden"
-            android:configChanges="orientation|screenSize" >
+            android:configChanges="orientation|screenSize"
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

@@ -40,6 +40,8 @@ public class GalleryDetail extends GalleryInfo{
     public PreviewList[] previewLists;
     public List<Comment> comments;
     
+    public GalleryDetail() {}
+    
     public GalleryDetail(GalleryInfo galleryInfo) {
         gid = galleryInfo.gid;
         token = galleryInfo.token;

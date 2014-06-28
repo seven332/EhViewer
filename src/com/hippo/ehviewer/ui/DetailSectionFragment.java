@@ -24,11 +24,11 @@ import java.util.Map.Entry;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageLoader;
+import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryDetail;
-import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.ehclient.DetailParser;
 import com.hippo.ehviewer.ehclient.EhClient;
@@ -73,12 +73,12 @@ import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
-import android.widget.ViewSwitcher.ViewFactory;
+import android.widget.ViewSwitcher;
 
 public class DetailSectionFragment extends Fragment
         implements View.OnClickListener, PreviewList.PreviewHolder,
-        View.OnLayoutChangeListener {
-    private static final String TAG = "DetailSectionFragment";
+        View.OnLayoutChangeListener, ViewSwitcher.ViewFactory {
+    private static final String TAG = DetailSectionFragment.class.getSimpleName();
     
     private AppContext mAppContext;
     private MangaDetailActivity mActivity;
@@ -89,6 +89,10 @@ public class DetailSectionFragment extends Fragment
     
     private View mRootView;
     private ScrollView mScrollView;
+    private LoadImageView mThumb;
+    private TextView mTitle;
+    private TextView mUploader;
+    private TextView mCategory;
     private Button mReadButton;
     private Button mRateButton;
     private ProgressBar mWaitPb;
@@ -115,6 +119,7 @@ public class DetailSectionFragment extends Fragment
     
     private int mCurPage;
     private boolean mShowPreview = false;
+    private boolean isSetViewFactory = false;
     
     private ShapeDrawable getArrowShapeDrawable(int color, boolean isToLeft) {
         Path path = new Path();
@@ -169,6 +174,65 @@ public class DetailSectionFragment extends Fragment
         
     }
     
+    @Override
+    public View makeView() {
+        LayoutInflater inflater = LayoutInflater.from(mActivity);
+        return inflater.inflate(R.layout.detail_avg_text, null);
+    }
+    
+    public void handleDetail(GalleryDetail gd) {
+        mGalleryDetail = gd;
+        mUrl = EhClient.getDetailUrl(
+                mGalleryDetail.gid, mGalleryDetail.token);
+        
+        mThumb.setImageDrawable(null);
+        if (mGalleryDetail.thumb != null) {
+            mThumb.setLoadInfo(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid));
+            ImageLoader.getInstance(mActivity).add(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid),
+                    new LoadImageView.SimpleImageGetListener(mThumb).setTransitabled(false));
+            mTitle.setText(mGalleryDetail.title);
+            mUploader.setText(mGalleryDetail.uploader);
+            mCategory.setText(Ui.getCategoryText(mGalleryDetail.category));
+            mCategory.setBackgroundColor(Ui.getCategoryColor(mGalleryDetail.category));
+        } else {
+            mThumb.setLoadInfo(null, null);
+            mTitle.setText(null);
+            mUploader.setText(null);
+            mCategory.setText(null);
+            mCategory.setBackgroundColor(0);
+        }
+        
+        // Make rate and read button same width
+        // Disable them for temp
+        Ui.measureView(mReadButton);
+        Ui.measureView(mRateButton);
+        int readbw = mReadButton.getMeasuredWidth();
+        int ratebw = mRateButton.getMeasuredWidth();
+        if (readbw > ratebw) {
+            mRateButton.setWidth(readbw);
+        } else if (ratebw > readbw) {
+            mReadButton.setWidth(ratebw);
+        }
+        mReadButton.setEnabled(false);
+        mRateButton.setEnabled(false);
+        
+        if (mGalleryDetail.size == null) {
+            mRefreshButton.setVisibility(View.GONE);
+            mWaitPb.setVisibility(View.VISIBLE);
+            mNormalView.setVisibility(View.GONE);
+            mOffensiveView.setVisibility(View.GONE);
+            mPiningView.setVisibility(View.GONE);
+            mClient.getGDetail(mUrl, mGalleryDetail, new GDetailGetListener());
+        } else {
+            mRefreshButton.setVisibility(View.GONE);
+            mWaitPb.setVisibility(View.GONE);
+            mNormalView.setVisibility(View.VISIBLE);
+            mOffensiveView.setVisibility(View.GONE);
+            mPiningView.setVisibility(View.GONE);
+            layout(mGalleryDetail);
+        }
+    }
+    
     @SuppressWarnings("deprecation")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -178,15 +242,13 @@ public class DetailSectionFragment extends Fragment
         mClient = mAppContext.getEhClient();
         mData = mAppContext.getData();
         
-        GalleryInfo galleryInfo = mActivity.getGalleryInfo();
-        mActivity.mGalleryDetail = new GalleryDetail(galleryInfo);
-        mGalleryDetail = mActivity.mGalleryDetail;
-        mUrl = EhClient.getDetailUrl(
-                mGalleryDetail.gid, mGalleryDetail.token);
-        
         mRootView = inflater.inflate(
                 R.layout.detail, container, false);
         mScrollView = (ScrollView)mRootView.findViewById(R.id.manga_detail_scrollview);
+        mThumb = (LoadImageView)mRootView.findViewById(R.id.detail_cover);
+        mTitle = (TextView)mRootView.findViewById(R.id.detail_title);
+        mUploader = (TextView)mRootView.findViewById(R.id.detail_uploader);
+        mCategory = (TextView)mRootView.findViewById(R.id.detail_category);
         mReadButton = (Button)mRootView.findViewById(R.id.detail_read);
         mRateButton = (Button)mRootView.findViewById(R.id.detail_do_rate);
         mWaitPb = (ProgressBar)mRootView.findViewById(R.id.detail_wait);
@@ -253,37 +315,8 @@ public class DetailSectionFragment extends Fragment
         
         mScrollView.addOnLayoutChangeListener(this);
         
-        LoadImageView thumb = (LoadImageView)mRootView.findViewById(R.id.detail_cover);
-        thumb.setImageDrawable(null);
-        thumb.setLoadInfo(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid));
-        ImageLoader.getInstance(mActivity).add(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid),
-                new LoadImageView.SimpleImageGetListener(thumb).setTransitabled(false));
-        
-        TextView title = (TextView)mRootView.findViewById(R.id.detail_title);
-        title.setText(mGalleryDetail.title);
-        
-        TextView uploader = (TextView)mRootView.findViewById(R.id.detail_uploader);
-        uploader.setText(mGalleryDetail.uploader);
-        
-        TextView category = (TextView)mRootView.findViewById(R.id.detail_category);
-        category.setText(Ui.getCategoryText(mGalleryDetail.category));
-        category.setBackgroundColor(Ui.getCategoryColor(mGalleryDetail.category));
-        
-        // Make rate and read button same width
-        // Disable them for temp
-        Ui.measureView(mReadButton);
-        Ui.measureView(mRateButton);
-        int readbw = mReadButton.getMeasuredWidth();
-        int ratebw = mRateButton.getMeasuredWidth();
-        if (readbw > ratebw) {
-            mRateButton.setWidth(readbw);
-        } else if (ratebw > readbw) {
-            mReadButton.setWidth(ratebw);
-        }
-        mReadButton.setEnabled(false);
-        mRateButton.setEnabled(false);
-        
-        mClient.getGDetail(mUrl, mGalleryDetail, new GDetailGetListener());
+        // Load first detail
+        mActivity.loadDetail();
         
         return mRootView;
     }
@@ -446,13 +479,13 @@ public class DetailSectionFragment extends Fragment
                             @Override
                             public void onClick(View v) {
                                 mTagDialog.dismiss();
-                                Intent intent = new Intent();
-                                intent.putExtra(MangaListActivity.KEY_MODE,
-                                        MangaListActivity.MODE_TAG);
-                                intent.putExtra(MangaListActivity.KEY_GROUP, groupName);
-                                intent.putExtra(MangaListActivity.KEY_TAG, tagText);
-                                mActivity.setResult(Activity.RESULT_OK, intent);  
                                 mActivity.finish();
+                                Intent intent = new Intent(mActivity,MangaListActivity.class);
+                                intent.setAction(MangaListActivity.ACTION_GALLERY_LIST);
+                                intent.putExtra(MangaListActivity.KEY_MODE,
+                                        ListUrls.TAG);
+                                intent.putExtra(MangaListActivity.KEY_TAG, groupName + ":" + tagText);
+                                startActivity(intent);
                             }
                         });
                         mTagDialog = new ButtonsDialogBuilder(mActivity).setTitle(tagText)
@@ -515,6 +548,17 @@ public class DetailSectionFragment extends Fragment
             mKnownButton.setOnClickListener(this);
         }
         else {
+            // Set unset info
+            if (mThumb.getUrl() == null) {
+                mThumb.setLoadInfo(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid));
+                ImageLoader.getInstance(mActivity).add(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid),
+                        new LoadImageView.SimpleImageGetListener(mThumb).setTransitabled(false));
+                mTitle.setText(mGalleryDetail.title);
+                mUploader.setText(mGalleryDetail.uploader);
+                mCategory.setText(Ui.getCategoryText(mGalleryDetail.category));
+                mCategory.setBackgroundColor(Ui.getCategoryColor(mGalleryDetail.category));
+            }
+            
             // Enable button
             mReadButton.setEnabled(true);
             mReadButton.setOnClickListener(this);
@@ -525,13 +569,10 @@ public class DetailSectionFragment extends Fragment
             rate.setRating(mGalleryDetail.rating);
             
             TextSwitcher averagePeople = (TextSwitcher)mRootView.findViewById(R.id.detail_average_people);
-            averagePeople.setFactory(new ViewFactory() {
-                @Override
-                public View makeView() {
-                    LayoutInflater inflater = LayoutInflater.from(mActivity);
-                    return inflater.inflate(R.layout.detail_avg_text, null);
-                }
-            });
+            if (!isSetViewFactory) {
+                averagePeople.setFactory(this);
+                isSetViewFactory = true;
+            }
             averagePeople.setCurrentText(String.format("%.2f (%d)",
                     mGalleryDetail.rating, mGalleryDetail.people));
             
@@ -571,12 +612,12 @@ public class DetailSectionFragment extends Fragment
                 }
                 
                 mCurPage = 0;
+                mPreviewListLayout.removeAllViews();
                 mGalleryDetail.previewLists[0].setData(this, mActivity, mGalleryDetail, 0);
                 mGalleryDetail.previewLists[0].addPreview(mPreviewListLayout);
-            } else
-                new SuperToast(mActivity)
-                        .setMessage(R.string.detail_preview_error)
-                        .show();
+            } else {
+                new SuperToast(mActivity, R.string.detail_preview_error, SuperToast.WARNING);
+            }
             
             // Set comments
             mActivity.setComments(mGalleryDetail.comments);

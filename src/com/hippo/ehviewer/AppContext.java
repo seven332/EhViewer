@@ -19,6 +19,9 @@ package com.hippo.ehviewer;
 import java.io.File;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -35,6 +38,7 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.LoadImageView;
 
 import android.app.Application;
+import android.widget.ScrollView;
 
 public class AppContext extends Application implements UncaughtExceptionHandler {
     
@@ -75,9 +79,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         } else {
             try {
                 nomedia.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            } catch (IOException e) {}
         }
     }
     
