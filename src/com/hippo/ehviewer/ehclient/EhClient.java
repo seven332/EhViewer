@@ -438,6 +438,8 @@ public class EhClient {
                             md.previewLists[0] = parser.previewList;
                             md.comments = parser.comments;
                             listener.onSuccess(md);
+                        } else if (result == DetailParser.ERROR) {
+                            listener.onFailure(parser.eMesg);
                         } else {
                             listener.onFailure(mAppContext.getString(R.string.em_parser_error));
                         }

@@ -24,12 +24,10 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.LargePreviewList;
 import com.hippo.ehviewer.data.NormalPreviewList;
 import com.hippo.ehviewer.data.PreviewList;
-import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Util;
 
 public class DetailParser {
@@ -46,11 +44,13 @@ public class DetailParser {
     public static final int COMMENT = 0x10;
     public static final int OFFENSIVE = 0x20;
     public static final int PINING = 0x40;
+    public static final int ERROR = 0x80;
     
     private static final CommentSort cs = new CommentSort();
     
     private int mMode;
     
+    public String eMesg;
     public String thumb;
     public String title;
     public String title_jpn;
@@ -80,6 +80,11 @@ public class DetailParser {
         int re = 0;
         Pattern p;
         Matcher m;
+        
+        if (!body.contains("<")) {
+            eMesg = body;
+            return ERROR;
+        }
         
         if (body.contains(OFFENSIVE_STRING)) {
             return OFFENSIVE;
