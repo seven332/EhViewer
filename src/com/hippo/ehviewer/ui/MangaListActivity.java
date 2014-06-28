@@ -865,6 +865,10 @@ public class MangaListActivity extends AbstractGalleryActivity
                 mResources.getDimensionPixelOffset(R.dimen.menu_offset));
     }
     
+    /**
+     * Get 
+     * @param intent
+     */
     private void handleIntent(Intent intent) { 
         String action = intent.getAction();
         if (Intent.ACTION_SEARCH.equals(action)) {
@@ -897,7 +901,9 @@ public class MangaListActivity extends AbstractGalleryActivity
                 break;
             }
         } else {
-            // TODO just do somthing
+            lus = new ListUrls();
+            mTitle = mResources.getString(R.string.homepage);
+            setTitle(mTitle);
         }
     }
     
@@ -954,11 +960,12 @@ public class MangaListActivity extends AbstractGalleryActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        handleIntent(getIntent());
         
         mData = mAppContext.getData();
         mEhClient = mAppContext.getEhClient();
         mResources =getResources();
+        
+        handleIntent(getIntent());
         
         setBehindContentView(R.layout.list_menu_left);
         setSlidingActionBarEnabled(false);
@@ -989,13 +996,6 @@ public class MangaListActivity extends AbstractGalleryActivity
         // Download service
         Intent it = new Intent(MangaListActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
-        
-        // Get url
-        Intent intent = getIntent();
-        int type = intent.getIntExtra("type", ListUrls.ALL_TYPE);
-        String search = intent.getStringExtra("search");
-        int page = intent.getIntExtra("page", 0);
-        lus = new ListUrls(type, search, page);
         
         // Init dialog
         loginDialog = createLoginDialog();
@@ -1235,8 +1235,6 @@ public class MangaListActivity extends AbstractGalleryActivity
         setUserPanel();
         
         // get MangeList
-        mTitle = mResources.getString(R.string.homepage);
-        setTitle(mTitle);
         firstTimeRefresh();
     }
     
