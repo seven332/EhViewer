@@ -21,38 +21,6 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.ListUrls;
-import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.UpdateHelper;
-import com.hippo.ehviewer.data.Data;
-import com.hippo.ehviewer.data.GalleryInfo;
-import com.hippo.ehviewer.data.Tag;
-import com.hippo.ehviewer.ehclient.EhClient;
-import com.hippo.ehviewer.network.Downloader;
-import com.hippo.ehviewer.service.DownloadService;
-import com.hippo.ehviewer.service.DownloadServiceConnection;
-import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Favorite;
-import com.hippo.ehviewer.util.Log;
-import com.hippo.ehviewer.util.Theme;
-import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.util.Util;
-import com.hippo.ehviewer.widget.AlertButton;
-import com.hippo.ehviewer.widget.CheckTextView;
-import com.hippo.ehviewer.widget.DialogBuilder;
-import com.hippo.ehviewer.widget.FswView;
-import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
-import com.hippo.ehviewer.widget.PrefixEditText;
-import com.hippo.ehviewer.widget.SuperDialogUtil;
-import com.hippo.ehviewer.widget.SuperToast;
-import com.hippo.ehviewer.widget.TagListView;
-import com.hippo.ehviewer.widget.TagsAdapter;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-
-import android.net.Uri;
-import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -63,6 +31,11 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceActivity;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -89,11 +62,39 @@ import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.hippo.ehviewer.AppContext;
+import com.hippo.ehviewer.ListUrls;
+import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.UpdateHelper;
+import com.hippo.ehviewer.data.Data;
+import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.data.Tag;
+import com.hippo.ehviewer.ehclient.EhClient;
+import com.hippo.ehviewer.network.Downloader;
+import com.hippo.ehviewer.service.DownloadService;
+import com.hippo.ehviewer.service.DownloadServiceConnection;
+import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Favorite;
+import com.hippo.ehviewer.util.Theme;
+import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.widget.AlertButton;
+import com.hippo.ehviewer.widget.CheckTextView;
+import com.hippo.ehviewer.widget.DialogBuilder;
+import com.hippo.ehviewer.widget.FswView;
+import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
+import com.hippo.ehviewer.widget.PrefixEditText;
+import com.hippo.ehviewer.widget.SuperDialogUtil;
+import com.hippo.ehviewer.widget.SuperToast;
+import com.hippo.ehviewer.widget.TagListView;
+import com.hippo.ehviewer.widget.TagsAdapter;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+
 // TODO check visiblePage is right or not
 // TODO http://lofi.e-hentai.org/
 
 /*
- * 
+ *
  *    Footer 显示产生的 refresh     手动 pull 显示产生的 refresh     按键或其他产生的 refresh
  *            |                                  |                             |
  *            |                                  |                             |
@@ -101,86 +102,86 @@ import android.widget.TextView;
  *     触发 onFootRefresh               触发 onRefreshStart          setHeaderRefresh(true)
  *            |                                  |                             |
  *            |<---------------------------------|-----------------------------|
- *            ∨                                 
+ *            ∨
  *        set listUrl
  *        set getMode
  *            |
  *            |
  *            ∨
- *          getList 
+ *          getList
  */
 
 
 /**
  * Make sure when getting list pulllistview is refreshing
- * 
+ *
  * @author Hippo
  */
 public class MangaListActivity extends AbstractGalleryActivity
         implements View.OnClickListener {
-    
+
     private static final String TAG = "MangaListActivity";
-    
+
     public static final String ACTION_GALLERY_LIST = "com.hippo.ehviewer.intent.action.GALLERY_LIST";
-    
+
     public static final String KEY_MODE = "mode";
     public static final String KEY_CATEGORY = "category";
     public static final String KEY_TAG = "tag";
     public static final String KEY_UPLOADER = "uploader";
-    
+
     private EhClient mEhClient;
     private Resources mResources;
-    
+
     private SlidingMenu mSlidingMenu;
     private View mMenuLeft;
     private LinearLayout mUserPanel;
     private SearchView mSearchView;
     private ListView itemListMenu;
     private TagListView tagListMenu;
-    
+
     private ImageView avatar;
     private TextView userView;
     private Button loginButton;
     private Button registerButton;
     private Button logoutButton;
     private View waitloginoutView;
-    
+
     private ListView mList;
-    
+
     private TagsAdapter tagsAdapter;
 
     private ListUrls lus;
-    private ArrayList<String> listMenuTag = new ArrayList<String>();
-    
+    private final ArrayList<String> listMenuTag = new ArrayList<String>();
+
     private Data mData;
-    
+
     private int longClickItemIndex;
-    
+
     private AlertDialog loginDialog;
     private AlertDialog filterDialog;
     private AlertDialog longClickDialog;
-    
+
     // Modify tag
     private String newTagName = null;
-    
+
     // Double click back exit
     private long curBackTime = 0;
     private static final int BACK_PRESSED_INTERVAL = 2000;
-    
+
     private String mTitle;
-    
-    private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
-    
+
+    private final DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
+
     private void toRegister() {
         Uri uri = Uri.parse("http://forums.e-hentai.org/index.php?act=Reg");
         Intent intent = new Intent(Intent.ACTION_VIEW,uri);
         startActivity(intent);
     }
-    
+
     private AlertDialog createLoginDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.login, null);
-        
+
         return new DialogBuilder(this).setCancelable(false)
                 .setTitle(R.string.login)
                 .setView(view, false)
@@ -235,10 +236,10 @@ public class MangaListActivity extends AbstractGalleryActivity
                     @Override
                     public void onClick(View v) {
                         toRegister();
-                    } 
+                    }
                 }).create();
     }
-    
+
     private AlertDialog createModeDialog() {
         final Spinner modeSpinner = new Spinner(this);
         modeSpinner.setAdapter(new ArrayAdapter<CharSequence>(this,
@@ -266,7 +267,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                     }
                 }).setSimpleNegativeButton().create();
     }
-    
+
     private void handleSearchView(View view) {
         final PrefixEditText pet = (PrefixEditText)view.findViewById(R.id.search_text);
         CheckBox uploaderCb = (CheckBox)view.findViewById(R.id.checkbox_uploader);
@@ -280,7 +281,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                     pet.setPrefix(null);
             }
         });
-        
+
         final View advance = view.findViewById(R.id.filter_advance);
         CheckBox cb = (CheckBox)view.findViewById(R.id.checkbox_advance);
         cb.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
@@ -294,14 +295,14 @@ public class MangaListActivity extends AbstractGalleryActivity
             }
         });
     }
-    
+
     private AlertDialog createFilterDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
         final View view = inflater.inflate(R.layout.search, null);
         final View searchNormal = view.findViewById(R.id.search_normal);
         final View searchTag = view.findViewById(R.id.search_tag);
         handleSearchView(view);
-        
+
         return new DialogBuilder(this).setTitle(android.R.string.search_go)
                 .setView(view, false)
                 .setAction(new View.OnClickListener() {
@@ -325,7 +326,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                         if (refresh(false)) {
                             ((AlertButton)v).dialog.dismiss();
                             showContent();
-                            
+
                             String search = lus.getSearch();
                             String t = null;
                             switch(lus.getMode()) {
@@ -371,15 +372,15 @@ public class MangaListActivity extends AbstractGalleryActivity
                     }
                 }).create();
     }
-    
+
     private ListUrls getLus(AlertDialog dialog) {
         return getLus(dialog.findViewById(R.id.custom));
     }
-    
+
     private ListUrls getLus(View view) {
-        
+
         ListUrls lus;
-        
+
         View search_normal = view.findViewById(R.id.search_normal);
         if (search_normal.getVisibility() == View.GONE) {
             EditText et = (EditText)view.findViewById(R.id.search_tag_text);
@@ -432,12 +433,12 @@ public class MangaListActivity extends AbstractGalleryActivity
             EditText et = (EditText)view.findViewById(R.id.search_text);
 
             lus = new ListUrls(type, et.getText().toString());
-            
+
             CheckBox uploaderCb = (CheckBox)view.findViewById(R.id.checkbox_uploader);
             if (uploaderCb.isChecked()) {
                 lus.setMode(ListUrls.UPLOADER);
             }
-            
+
             CheckBox cb = (CheckBox)view.findViewById(R.id.checkbox_advance);
             if (cb.isChecked()) {
                 CheckBox checkImageSname = (CheckBox) view
@@ -487,7 +488,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         }
         return lus;
     }
-    
+
     private AlertDialog createLongClickDialog() {
         return new DialogBuilder(this).setTitle(R.string.what_to_do)
                 .setItems(R.array.list_item_long_click,
@@ -526,7 +527,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                             gi = getGalleryInfo(longClickItemIndex);
                             Intent it = new Intent(MangaListActivity.this, DownloadService.class);
                             startService(it);
-                            mServiceConn.getService().add(String.valueOf(gi.gid), gi.thumb, 
+                            mServiceConn.getService().add(String.valueOf(gi.gid), gi.thumb,
                                     EhClient.getDetailUrl(gi.gid, gi.token), gi.title);
                             new SuperToast(MangaListActivity.this, R.string.toast_add_download).show();
                             break;
@@ -542,7 +543,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                     }
                 }).create();
     }
-    
+
     private AlertDialog createJumpDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.jump, null);
@@ -551,7 +552,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         tv = (TextView)view.findViewById(R.id.list_jump_to);
         tv.setText(R.string.jump_to);
         final EditText et = (EditText)view.findViewById(R.id.list_jump_edit);
-        
+
         return new DialogBuilder(this).setTitle(R.string.jump)
                 .setView(view, true)
                 .setPositiveButton(android.R.string.ok,
@@ -565,11 +566,11 @@ public class MangaListActivity extends AbstractGalleryActivity
                         } catch(Exception e) {
                             error = true;
                         }
-                        
+
                         if (!error) {
                             error = !jumpTo(targetPage, true);
                         }
-                        
+
                         if (error)
                             new SuperToast(MangaListActivity.this, R.string.toast_invalid_page,
                                     SuperToast.ERROR).show();
@@ -584,14 +585,14 @@ public class MangaListActivity extends AbstractGalleryActivity
                     }
                 }).create();
     }
-    
+
     private interface OnSetNameListener {
         public void onSetVaildName(String newName);
     }
-    
+
     /**
      * Create a set name dialog
-     * 
+     *
      * @param hint Text to set in edittext first
      * @param oldStr string can be oldstr, even it is in listMenuTitle
      * @param listener what to do when set right text
@@ -602,7 +603,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         final EditText et = (EditText)view.findViewById(R.id.set_name_edit);
         if (hint != null)
             et.setText(hint);
-            
+
         return new DialogBuilder(this).setTitle(R.string.add_tag)
                 .setView(view, true).setPositiveButton(android.R.string.ok,
                 new View.OnClickListener(){
@@ -628,17 +629,17 @@ public class MangaListActivity extends AbstractGalleryActivity
                     }
                 }).create();
     }
-    
+
     private AlertDialog createModifyTagDialog(final int position) {
         LayoutInflater inflater = this.getLayoutInflater();
         final View view = inflater.inflate(R.layout.search, null);
         final View searchNormal = view.findViewById(R.id.search_normal);
         final View searchTag = view.findViewById(R.id.search_tag);
         handleSearchView(view);
-        
+
         ListUrls listUrls = mData.getTag(position);
         setFilterView(view, listUrls);
-        
+
         return new DialogBuilder(this).setTitle(listMenuTag.get(position))
                 .setView(view, false)
                 .setAction(new View.OnClickListener() {
@@ -664,7 +665,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                             tagsAdapter.set(listMenuTag.get(position), newTagName);
                             listMenuTag.set(position, newTagName);
                             tagsAdapter.notifyDataSetChanged();
-                            
+
                             newTagName = null;
                         } else
                             mData.setTag(position, new Tag(listMenuTag.get(position), listUrls));
@@ -695,22 +696,22 @@ public class MangaListActivity extends AbstractGalleryActivity
                     }
                 }).create();
     }
-    
+
     private void setFilterView(View view, ListUrls listUrls) {
-        
+
         View searchNormal = view.findViewById(R.id.search_normal);
         View searchTag = view.findViewById(R.id.search_tag);
-        
+
         if (listUrls.getMode() == ListUrls.TAG) {
             searchNormal.setVisibility(View.GONE);
             searchTag.setVisibility(View.VISIBLE);
-            
+
             EditText et = (EditText)view.findViewById(R.id.search_tag_text);
             et.setText(listUrls.getTag());
         } else {
             searchNormal.setVisibility(View.VISIBLE);
             searchTag.setVisibility(View.GONE);
-            
+
             // Normal
             CheckTextView checkImageDoujinshi = (CheckTextView) view
                     .findViewById(R.id.button_doujinshi);
@@ -774,14 +775,14 @@ public class MangaListActivity extends AbstractGalleryActivity
                 checkImageMisc.setChecked(true);
             else
                 checkImageMisc.setChecked(false);
-            
+
             EditText et = (EditText)view.findViewById(R.id.search_text);
             et.setText(listUrls.getSearch());
-            
+
             // Advance
             CheckBox cb = (CheckBox)view.findViewById(R.id.checkbox_advance);
             cb.setChecked(listUrls.isAdvance());
-            
+
             CheckBox checkImageSname = (CheckBox) view
                     .findViewById(R.id.checkbox_sname);
             CheckBox checkImageStags = (CheckBox) view
@@ -833,7 +834,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                     checkImageSh.setChecked(false);
                 else
                     checkImageSh.setChecked(true);
-                
+
                 // MinRating
                 CheckBox checkImageSr = (CheckBox) view
                         .findViewById(R.id.checkbox_sr);
@@ -850,30 +851,30 @@ public class MangaListActivity extends AbstractGalleryActivity
                     index = listUrls.getMinRating() - 2;
                 spinnerMinRating.setSelection(index);
             }
-            
+
             // Show advance if need
             final View advance = view.findViewById(R.id.filter_advance);
             if (listUrls.isAdvance())
                 advance.setVisibility(View.VISIBLE);
         }
     }
-    
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mSlidingMenu.setBehindWidth(
                 mResources.getDimensionPixelOffset(R.dimen.menu_offset));
     }
-    
+
     /**
-     * Get 
+     * Get
      * @param intent
      */
-    private void handleIntent(Intent intent) { 
+    private void handleIntent(Intent intent) {
         String action = intent.getAction();
         if (Intent.ACTION_SEARCH.equals(action)) {
-           String query = 
-                 intent.getStringExtra(SearchManager.QUERY); 
+           String query =
+                 intent.getStringExtra(SearchManager.QUERY);
            mSearchView.setQuery(query, true);
         } else if (ACTION_GALLERY_LIST.equals(action)) {
             int mode = intent.getIntExtra(MangaListActivity.KEY_MODE, -1);
@@ -886,7 +887,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 setTitle(mTitle);
                 refresh(true);
                 break;
-                
+
             case ListUrls.UPLOADER:
                 String uploader = "uploader:" + intent.getStringExtra(KEY_UPLOADER);
                 lus = new ListUrls(ListUrls.ALL_TYPE, uploader);
@@ -895,7 +896,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 setTitle(mTitle);
                 refresh(true);
                 break;
-                
+
             default:
                 // TODO just do somthing
                 break;
@@ -906,13 +907,13 @@ public class MangaListActivity extends AbstractGalleryActivity
             setTitle(mTitle);
         }
     }
-    
+
     @Override
-    protected void onNewIntent(Intent intent) { 
-        setIntent(intent); 
-        handleIntent(intent); 
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        handleIntent(intent);
     }
-    
+
     @Override
     public void onClick(View v) {
         if (v == loginButton) {
@@ -924,7 +925,7 @@ public class MangaListActivity extends AbstractGalleryActivity
             setUserPanel();
         }
     }
-    
+
     private void showPopularWarningDialog() {
         DialogBuilder db = new DialogBuilder(MangaListActivity.this).
                 setCancelable(false).
@@ -938,7 +939,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 ((AlertButton)v).dialog.dismiss();
                 if (cb.isChecked())
                     Config.setPopularWarning(false);
-                
+
                 Intent intent = new Intent(MangaListActivity.this,
                         SettingsActivity.class);
                 intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, SettingsActivity.AboutFragment.class.getName());
@@ -956,17 +957,17 @@ public class MangaListActivity extends AbstractGalleryActivity
         });
         db.create().show();
     }
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         mData = mAppContext.getData();
         mEhClient = mAppContext.getEhClient();
         mResources =getResources();
-        
+
         handleIntent(getIntent());
-        
+
         setBehindContentView(R.layout.list_menu_left);
         setSlidingActionBarEnabled(false);
         mSlidingMenu = getSlidingMenu();
@@ -992,41 +993,41 @@ public class MangaListActivity extends AbstractGalleryActivity
                 invalidateOptionsMenu();
             }
         });
-        
+
         // Download service
         Intent it = new Intent(MangaListActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
-        
+
         // Init dialog
         loginDialog = createLoginDialog();
         filterDialog = createFilterDialog();
         longClickDialog = createLongClickDialog();
-        
-        
+
+
         // Get View
         mMenuLeft = findViewById(R.id.list_menu_left);
         mUserPanel = (LinearLayout)findViewById(R.id.user_panel);
         itemListMenu = (ListView) findViewById(R.id.list_menu_item_list);
         tagListMenu = (TagListView) findViewById(R.id.list_menu_tag_list);
-        
+
         avatar = (ImageView)mUserPanel.findViewById(R.id.avatar);
         userView = (TextView)mUserPanel.findViewById(R.id.user);
         loginButton = (Button)mUserPanel.findViewById(R.id.login);
         registerButton = (Button)mUserPanel.findViewById(R.id.register);
         logoutButton = (Button)mUserPanel.findViewById(R.id.logout);
         waitloginoutView = mUserPanel.findViewById(R.id.wait);
-        
+
         mList = getListView();
-        
+
         loginButton.setOnClickListener(this);
         registerButton.setOnClickListener(this);
         logoutButton.setOnClickListener(this);
         setNoneText(mResources.getString(R.string.no_found));
-        
+
         // Drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-        
+
         // leftDrawer
         final int[] data = {R.drawable.ic_action_home, R.string.homepage,
                 R.drawable.ic_action_panda, R.string.mode,
@@ -1035,7 +1036,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 R.drawable.ic_action_popular, R.string.popular,
                 R.drawable.ic_action_download, R.string.download,
                 R.drawable.ic_action_settings, R.string.action_settings};
-        
+
         itemListMenu.setClipToPadding(false);
         itemListMenu.setAdapter(new BaseAdapter() {
             @Override
@@ -1077,7 +1078,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                     if (refresh(false)) {
                         mTitle = mResources.getString(R.string.homepage);
                         setTitle(mTitle);
-                        
+
                         showContent();
                     } else {
                         new SuperToast(MangaListActivity.this, R.string.wait_for_last).show();
@@ -1090,13 +1091,13 @@ public class MangaListActivity extends AbstractGalleryActivity
                 case 2:
                     filterDialog.show();
                     break;
-                    
+
                 case 3: // Favourite
                     intent = new Intent(MangaListActivity.this,
                             FavouriteActivity.class);
                     startActivity(intent);
                     break;
-                    
+
                 case 4:
                     if (isRefreshing()) {
                         new SuperToast(MangaListActivity.this, R.string.wait_for_last).show();
@@ -1106,21 +1107,21 @@ public class MangaListActivity extends AbstractGalleryActivity
                         mTitle = mResources.getString(R.string.popular);
                         setTitle(mTitle);
                         refresh(true);
-                        
+
                         showContent();
-                        
+
                         // Show dialog
                         if (!Config.getAllowAnalyics() && Config.getPopularWarning())
                             showPopularWarningDialog();
                     }
                     break;
-                    
+
                 case 5: // Download
                     intent = new Intent(MangaListActivity.this,
                             DownloadActivity.class);
                     startActivity(intent);
                     break;
-                    
+
                 case 6: // Settings
                     intent = new Intent(MangaListActivity.this,
                             SettingsActivity.class);
@@ -1129,9 +1130,9 @@ public class MangaListActivity extends AbstractGalleryActivity
                 }
             }
         });
-        
+
         List<String> keys = mData.getAllTagNames();
-        
+
         for (int i = 0; i < keys.size(); i++)
             listMenuTag.add(keys.get(i));
         tagsAdapter = new TagsAdapter(this, R.layout.menu_tag, listMenuTag);
@@ -1179,7 +1180,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 tagsAdapter.notifyDataSetChanged();
             }
         });
-        
+
         // Listview
         mList.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -1202,7 +1203,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 return true;
             }
         });
-        
+
         FswView alignment = (FswView)findViewById(R.id.alignment);
         alignment.addOnFitSystemWindowsListener(new OnFitSystemWindowsListener() {
             @Override
@@ -1216,7 +1217,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                         tagListMenu.getPaddingRight(), paddingBottom);
             }
         });
-        
+
         // Set random color
         int color = Config.getRandomThemeColor() ? Theme.getRandomDeepColor() : Config.getThemeColor();
         color = color & 0x00ffffff | 0xdd000000;
@@ -1226,25 +1227,40 @@ public class MangaListActivity extends AbstractGalleryActivity
         Ui.translucent(this, color);
         mMenuLeft.setBackgroundColor(color);
         tagListMenu.setBackgroundColor(color);
-        
+
         // Check update
         if (Config.isAutoCheckForUpdate())
             checkUpdate();
-        
+
         // Update user panel
         setUserPanel();
-        
+
         // get MangeList
         firstTimeRefresh();
+
+        // Show left column if first
+        if (Config.isFirstTime()) {
+            Config.firstTime();
+
+            // TODO Can't invoke showMenu() immediately, but there might be a better way
+            Handler handler = new Handler();
+            Message m = Message.obtain(handler, new Runnable() {
+                @Override
+                public void run() {
+                    showMenu();
+                }
+            });
+            handler.sendMessageDelayed(m, 500L);
+        }
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (mSlidingMenu!= null && mSlidingMenu.isMenuShowing())
             return true;
-        
+
         getMenuInflater().inflate(R.menu.main, menu);
-        
+
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchView =
@@ -1264,7 +1280,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                     t = getString(android.R.string.search_go);
                 else
                     t = query;
-                
+
                 ListUrls backup = lus;
                 lus = new ListUrls(ListUrls.ALL_TYPE, query);
                 if (refresh(false)) {
@@ -1277,13 +1293,13 @@ public class MangaListActivity extends AbstractGalleryActivity
                 return true;
             }
         });
-        
+
         // Make search view custom look
         int searchTextID = mResources.getIdentifier("android:id/search_src_text", null, null);
         AutoCompleteTextView searchText = null;
         if (searchTextID > 0
                 && (searchText = (AutoCompleteTextView)mSearchView.findViewById(searchTextID)) != null) {
-            
+
             int searchCursorID = mResources.getIdentifier("android:drawable/text_cursor_holo_dark", null, null);
             if (searchCursorID > 0) {
                 try {
@@ -1301,10 +1317,10 @@ public class MangaListActivity extends AbstractGalleryActivity
                     e.printStackTrace();
                 }
             }
-            
+
             searchText.setTextColor(Color.WHITE);
             searchText.setHintTextColor(Color.WHITE);
-            
+
             int searchImageID = mResources.getIdentifier("android:drawable/ic_search", null, null);
             Drawable searchImage = null;
             if (searchImageID > 0
@@ -1317,21 +1333,21 @@ public class MangaListActivity extends AbstractGalleryActivity
                 searchText.setHint(ssb);
             }
         }
-        
+
         int plateViewID = mResources.getIdentifier("android:id/search_plate", null, null);
         View plateView = null;
         if (plateViewID > 0
-                && (plateView = (View)mSearchView.findViewById(plateViewID)) != null) {
+                && (plateView = mSearchView.findViewById(plateViewID)) != null) {
             plateView.setBackgroundResource(R.drawable.textfield_searchview);
         }
-        
+
         int plateRightViewID = mResources.getIdentifier("android:id/submit_area", null, null);
         View plateRightView = null;
         if (plateRightViewID > 0
-                && (plateRightView = (View)mSearchView.findViewById(plateRightViewID)) != null) {
+                && (plateRightView = mSearchView.findViewById(plateRightViewID)) != null) {
             plateRightView.setBackgroundResource(R.drawable.textfield_searchview_right);
         }
-        
+
         int closeViewID = mResources.getIdentifier("android:id/search_close_btn", null, null);
         ImageView closeView = null;
         int closeImageID = mResources.getIdentifier("android:drawable/ic_clear", null, null);
@@ -1342,7 +1358,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 && (closeImage = mResources.getDrawable(closeImageID)) != null) {
             closeView.setImageDrawable(closeImage);
         }
-        
+
         int voiceViewID = mResources.getIdentifier("android:id/search_voice_btn", null, null);
         ImageView voiceView = null;
         int voiceImageID = mResources.getIdentifier("android:drawable/ic_voice_search", null, null);
@@ -1353,10 +1369,10 @@ public class MangaListActivity extends AbstractGalleryActivity
                 && (voiceImage = mResources.getDrawable(voiceImageID)) != null) {
             voiceView.setImageDrawable(voiceImage);
         }
-        
+
         return true;
     }
-    
+
     // Double click back exit
     @Override
     public void onBackPressed() {
@@ -1366,11 +1382,11 @@ public class MangaListActivity extends AbstractGalleryActivity
         } else
             finish();
     }
-    
+
     private void jump() {
         createJumpDialog().show();
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -1393,12 +1409,12 @@ public class MangaListActivity extends AbstractGalleryActivity
             return super.onOptionsItemSelected(item);
         }
     }
-    
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mServiceConn);
-        
+
         /*
         List<GalleryInfo> reads = mData.getAllReads();
         for (GalleryInfo item : reads) {
@@ -1413,7 +1429,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         }*/
         mData.deleteAllReads();
     }
-    
+
     private void checkUpdate() {
         new UpdateHelper((AppContext)getApplication())
         .SetOnCheckUpdateListener(new UpdateHelper.OnCheckUpdateListener() {
@@ -1453,20 +1469,20 @@ public class MangaListActivity extends AbstractGalleryActivity
             }
         }).autoCheckUpdate();
     }
-    
+
     private static final int LOGIN = 0x0;
     private static final int LOGOUT = 0x1;
     private static final int WAIT = 0x2;
-    
+
     private void setUserPanel() {
         if (mEhClient.isLogin())
             setUserPanel(LOGOUT);
         else
             setUserPanel(LOGIN);
     }
-    
+
     private void setUserPanel(int state) {
-        
+
         switch (state) {
         case LOGIN:
             avatar.setImageBitmap(mEhClient.getAvatar());
@@ -1495,17 +1511,17 @@ public class MangaListActivity extends AbstractGalleryActivity
             break;
         }
     }
-    
+
     @Override
     protected String getTargetUrl(int targetPage) {
         lus.setPage(targetPage);
         return lus.getUrl();
     }
-    
+
     @Override
     protected void doGetGallerys(String url, final long taskStamp,
             final OnGetListListener listener) {
-        
+
         if (lus.getMode() == ListUrls.POPULAR) {
             mClient.getPopular(new EhClient.OnGetPopularListener() {
                 @Override

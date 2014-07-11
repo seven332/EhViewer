@@ -16,64 +16,63 @@
 
 package com.hippo.ehviewer.util;
 
-import com.hippo.ehviewer.ehclient.EhClient;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
+import com.hippo.ehviewer.ehclient.EhClient;
+
 public class Config {
     @SuppressWarnings("unused")
     private static final String TAG = "Config";
-    
-    private static final String KEY_ALLOWED = "allowed";
-    private static final String KEY_FIRST = "first_time";
+
+
     private static final String KEY_UPDATE_DATE = "update_date";
     private static final String KEY_MODE = "mode";
     private static final int MODE_DEFAULT = EhClient.EX;
-    
+
     private static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
     private static final String DEFAULT_SCREEN_ORIENTATION = "0";
     private static final String KEY_PAGE_SCALING = "page_scaling";
     private static final String DEFAULT_PAGE_SCALING = "3";
     private static final String KEY_START_POSITION = "start_position";
     private static final String DEFAULT_START_POSITION = "1";
-    
+
     private static final String KEY_CACHE_SIZE = "cache_size";
     private static final String DEFAULT_CACHE_SIZE = "25";
     private static final String KEY_DOWNLOAD_PATH = "download_path";
     private static final String DEFAULT_DOWNLOAD_PATH = Environment.getExternalStorageDirectory() + "/EhViewer/download/";
     private static final String KEY_MEDIA_SCAN = "media_scan";
     private static final boolean DEFAULT_MEDIA_SCAN = false;
-    
+
     private static final String KEY_AUTO_CHECK_FOR_UPDATE = "auto_check_for_update";
     private static final boolean DEFAULT_AUTO_CHECK_FOR_UPDATE = true;
     private static final String KEY_UPDATE_SERVER = "update_server";
     private static final String DEFAULT_UPDATE_SERVER = "2";
-    
+
     private static final String KEY_RANDOM_THEME_COLOR = "random_theme_color";
     private static final boolean DEFAULT_RANDOM_THEME_COLOR = true;
     private static final String KEY_THEME_COLOR = "theme_color";
     private static final int DEFAULT_THEME_COLOR = 0xff0099cc;
-    
+
     private static final String KEY_DEFAULT_FAVORITE = "default_favorite";
     private static final String DEFAULT_DEFAULT_FAVORITE = "-2";
-    
+
     private static final String KEY_SET_ANALYTICS = "set_analyics";
     private static final boolean DEFAULT_SET_ANALYTICS = false;
     private static final String KEY_ALLOW_ANALYTICS = "allow_analyics";
     private static final boolean DEFAULT_ALLOW_ANALYTICS = false;
     private static final String KEY_POPULAR_WARNING = "popular_warning";
     private static final boolean DEFAULT_POPULAR_WARNING = true;
-    
+
     private static final String KEY_SHOW_POPULAR_UPDATE_TIME = "show_popular_update_time";
     private static final boolean DEFAULT_SHOW_POPULAR_UPDATE_TIME = false;
-    
+
     private static final String KEY_LIST_MODE = "list_mode";
     private static final String DEFAULT_LIST_MODE = "0";
-    
+
     private static boolean mInit = false;
 
     private static Context mContext;
@@ -81,18 +80,18 @@ public class Config {
 
     /**
      * Init Config
-     * 
+     *
      * @param context Application context
      */
     public static void init(Context context) {
         if (mInit)
             return;
         mInit = true;
-        
+
         mContext = context;
         mConfigPre = PreferenceManager.getDefaultSharedPreferences(mContext);
     }
-    
+
     /**
      * Is init
      * @return True if init
@@ -100,26 +99,30 @@ public class Config {
     public static boolean isInit() {
         return mInit;
     }
-    
+
+    /****** For Normal Config ******/
+    private static final String KEY_ALLOWED = "allowed";
+    private static final String KEY_FIRST = "first_time";
+
     /**
      * Get is it allowed to launch
-     * 
+     *
      * @return True if allowed
      */
     public static boolean isAllowed() {
         return mConfigPre.getBoolean(KEY_ALLOWED, false);
     }
-    
+
     /**
      * Allowed the appliation to launch
      */
     public static void allowed() {
         mConfigPre.edit().putBoolean(KEY_ALLOWED, true).apply();
     }
-    
+
     /**
      * Check is it first time to launch the application
-     * 
+     *
      * @return
      */
     public static boolean isFirstTime() {
@@ -132,15 +135,15 @@ public class Config {
     public static void firstTime() {
         mConfigPre.edit().putBoolean(KEY_FIRST, false).apply();
     }
-    
+
     public static String getDownloadPath() {
         return mConfigPre.getString(KEY_DOWNLOAD_PATH, DEFAULT_DOWNLOAD_PATH);
     }
-    
+
     public static void setDownloadPath(String path) {
         mConfigPre.edit().putString(KEY_DOWNLOAD_PATH, path).apply();
     }
-    
+
     public static int getMode() {
         int mode = mConfigPre.getInt(KEY_MODE, MODE_DEFAULT);
         if (mode < EhClient.G || mode > EhClient.LOFI_980x) {
@@ -149,16 +152,16 @@ public class Config {
         }
         return mode;
     }
-    
+
     public static void setMode(int mode) {
         if (mode < EhClient.G || mode > EhClient.LOFI_980x)
             mode = MODE_DEFAULT;
         mConfigPre.edit().putInt(KEY_MODE, mode).apply();
     }
-    
+
     /**
      * Get cover cache size in MB
-     * 
+     *
      * @return
      */
     public static int getCoverDiskCacheSize() {
@@ -181,7 +184,7 @@ public class Config {
         }
         return pageScalingMode;
     }
-    
+
     public static int getStartPosition() {
         int startPosition = 1;
         try {
@@ -193,7 +196,7 @@ public class Config {
         }
         return startPosition;
     }
-    
+
     public static int getScreenOriMode() {
         int screenOriMode = 0;
         try {
@@ -205,7 +208,7 @@ public class Config {
         }
         return screenOriPre2Value(screenOriMode);
     }
-    
+
     public static int screenOriPre2Value(int screenOriModePre) {
         switch (screenOriModePre) {
         case 0:
@@ -218,31 +221,31 @@ public class Config {
             return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         }
     }
-    
+
     public static boolean isAutoCheckForUpdate() {
         return mConfigPre.getBoolean(KEY_AUTO_CHECK_FOR_UPDATE,
                 DEFAULT_AUTO_CHECK_FOR_UPDATE);
     }
-    
+
     public static void setAutoCheckForUpdate(boolean autoCheckForUpdate) {
         mConfigPre.edit().putBoolean(KEY_AUTO_CHECK_FOR_UPDATE,
                 autoCheckForUpdate).apply();
     }
-    
+
     public static int getUpdateDate() {
         return mConfigPre.getInt(KEY_UPDATE_DATE, 0);
     }
-    
+
     public static void setUpdateDate() {
         setUpdateDate(Util.getDate());
     }
-    
+
     public static void setUpdateDate(int date) {
         mConfigPre.edit().putInt(KEY_UPDATE_DATE, date).apply();
     }
-    
+
     public static String getUpdateServer() {
-        
+
         int value = 1;
         try {
             value = Integer.parseInt(mConfigPre.getString(KEY_UPDATE_SERVER, null));
@@ -260,79 +263,79 @@ public class Config {
             return "google";
         }
     }
-    
+
     public static boolean getMediaScan() {
         return mConfigPre.getBoolean(KEY_MEDIA_SCAN, DEFAULT_MEDIA_SCAN);
     }
-    
+
     public static boolean getRandomThemeColor() {
         return mConfigPre.getBoolean(KEY_RANDOM_THEME_COLOR, DEFAULT_RANDOM_THEME_COLOR);
     }
-    
+
     public static int getThemeColor() {
         return mConfigPre.getInt(KEY_THEME_COLOR, DEFAULT_THEME_COLOR);
     }
-    
+
     public static void setThemeColor(int themeColor) {
         mConfigPre.edit().putInt(KEY_THEME_COLOR, themeColor).apply();
     }
-    
+
     public static int getDefaultFavorite() {
         return Integer.parseInt(mConfigPre.getString(KEY_DEFAULT_FAVORITE, DEFAULT_DEFAULT_FAVORITE));
     }
-    
+
     public static void setDefaultFavorite(int defaultFavorite) {
         mConfigPre.edit().putString(KEY_DEFAULT_FAVORITE, String.valueOf(defaultFavorite)).apply();
     }
-    
+
     public static boolean getSetAnalyics() {
         return mConfigPre.getBoolean(KEY_SET_ANALYTICS, DEFAULT_SET_ANALYTICS);
     }
-    
+
     public static void setSetAnalyics(boolean setAnalyics) {
         mConfigPre.edit().putBoolean(KEY_SET_ANALYTICS, setAnalyics).apply();
     }
-    
+
     public static boolean getAllowAnalyics() {
         return mConfigPre.getBoolean(KEY_ALLOW_ANALYTICS, DEFAULT_ALLOW_ANALYTICS);
     }
-    
+
     public static void setAllowAnalyics(boolean setAnalyics) {
         mConfigPre.edit().putBoolean(KEY_ALLOW_ANALYTICS, setAnalyics).apply();
         if (!setAnalyics)
             setPopularWarning(true);
     }
-    
+
     public static boolean getPopularWarning() {
         return mConfigPre.getBoolean(KEY_POPULAR_WARNING, DEFAULT_POPULAR_WARNING);
     }
-    
+
     public static void setPopularWarning(boolean popularWarning) {
         mConfigPre.edit().putBoolean(KEY_POPULAR_WARNING, popularWarning).apply();
     }
-    
+
     public static boolean getShowPopularUpdateTime() {
         return mConfigPre.getBoolean(KEY_SHOW_POPULAR_UPDATE_TIME, DEFAULT_SHOW_POPULAR_UPDATE_TIME);
     }
-    
+
     public static int getListMode() {
         return Integer.parseInt(mConfigPre.getString(KEY_LIST_MODE, DEFAULT_LIST_MODE));
     }
-    
-    
-    
-    
+
+
+
+
     /****** For Eh Config ******/
-    
+
     private static final String KEY_DEFAULT_CAT = "default_cat";
     private static final int DEFAULT_DEFAULT_CAT = 0;
-    
+
     // m for normal, l for large
     public static final String KEY_PREVIEW_MODE = "preview_mode";
     public static final String PREVIEW_MODE_NORMAL = "m";
     public static final String PREVIEW_MODE_LARGE = "l";
     private static final String DEFAULT_PREVIEW_MODE = PREVIEW_MODE_LARGE;
-    
+
     /**
      * reclass   0x1
      * language  0x2
@@ -345,7 +348,7 @@ public class Config {
      */
     private static final String KEY_EXCLUDE_TAG_GROUP = "exculde_tag_group";
     private static final int DEFAULT_EXCLUDE_TAG_GROUP = 0;
-    
+
     /**
      *            Original   Translated    Rewrite    All
      * Japanese                 1024        2048
@@ -367,28 +370,28 @@ public class Config {
      */
     private static final String KEY_EXCLUDE_LANGUAGE = "exculde_language";
     private static final String DEFAULT_EXCLUDE_LANGUAGE = "";
-    
+
     private static final String KEY_PREVIEW_PER_ROW = "preview_per_row";
     private static final String DEFAULT_PREVIEW_PER_ROW = "3";
-    
+
     public static int getDefaultCat() {
         return mConfigPre.getInt(KEY_DEFAULT_CAT, DEFAULT_DEFAULT_CAT);
     }
-    
+
     public static String getPreviewMode() {
         return mConfigPre.getString(KEY_PREVIEW_MODE, DEFAULT_PREVIEW_MODE);
     }
-    
+
     public static int getExculdeTagGroup() {
         return mConfigPre.getInt(KEY_EXCLUDE_TAG_GROUP, DEFAULT_EXCLUDE_TAG_GROUP);
     }
-    
+
     public static String getExculdeLanguage() {
         return mConfigPre.getString(KEY_EXCLUDE_LANGUAGE, DEFAULT_EXCLUDE_LANGUAGE);
     }
-    
+
     public static int getPreviewPerRow() {
         return Integer.parseInt(mConfigPre.getString(KEY_PREVIEW_PER_ROW, DEFAULT_PREVIEW_PER_ROW));
     }
-    
+
 }
