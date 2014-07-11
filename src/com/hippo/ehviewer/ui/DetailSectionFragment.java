@@ -811,8 +811,8 @@ public class DetailSectionFragment extends Fragment
             new SuperToast(mActivity).setMessage(R.string.vote_succeeded).show();
             
             DetailParser parser = new DetailParser();
-            parser.setMode(DetailParser.TAG);
-            if (parser.parser(tagPane) == DetailParser.TAG) {
+            if (parser.parser(tagPane, DetailParser.TAG) ==
+                    DetailParser.TAG) {
                 mGalleryDetail.tags = parser.tags;
                 addTags();
             } else {

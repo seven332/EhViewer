@@ -403,11 +403,9 @@ public class EhClient {
                     public void onSuccess(Object obj) {
                         String body = (String)obj;
                         DetailParser parser = new DetailParser();
-                        int mode = DetailParser.DETAIL | DetailParser.TAG
+                        int result = parser.parser(body, DetailParser.DETAIL | DetailParser.TAG
                                 | DetailParser.PREVIEW_INFO | DetailParser.PREVIEW
-                                | DetailParser.COMMENT;
-                        parser.setMode(mode);
-                        int result = parser.parser(body);
+                                | DetailParser.COMMENT);
                         if (result == DetailParser.OFFENSIVE) {
                             md.firstPage = "offensive";
                             listener.onSuccess(md);
@@ -471,8 +469,8 @@ public class EhClient {
                     public void onSuccess(Object obj) {
                         String body = (String)obj;
                         DetailParser parser = new DetailParser();
-                        parser.setMode(DetailParser.PREVIEW);
-                        if (parser.parser(body) == DetailParser.PREVIEW) {
+                        if (parser.parser(body, DetailParser.PREVIEW) ==
+                                DetailParser.PREVIEW) {
                             listener.onSuccess(checkFlag, parser.previewList);
                         } else {
                             listener.onFailure(checkFlag, "Parser error");
@@ -914,8 +912,8 @@ public class EhClient {
                     public void onSuccess(Object obj) {
                         String body = (String)obj;
                         DetailParser parser = new DetailParser();
-                        parser.setMode(DetailParser.COMMENT);
-                        if (parser.parser(body) == DetailParser.COMMENT) {
+                        if (parser.parser(body, DetailParser.COMMENT) ==
+                                DetailParser.COMMENT) {
                             listener.onSuccess(parser.comments);
                         } else {
                             listener.onFailure("parser error");   // TODO

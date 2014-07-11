@@ -92,6 +92,15 @@ public class NormalPreviewList extends PreviewList{
         return sum;
     }
     
+    @Override
+    public String getPageUrl(int index) {
+        for (Row row : rowArray) {
+            if (index < row.startIndex + row.itemArray.size() && index >= row.startIndex)
+                return row.itemArray.get(index - row.startIndex).url;
+        }
+        return null;
+    }
+    
     // TODO reuse the TextView in AutoWrapLayout
     @Override
     public void addPreview(AutoWrapLayout viewGroup) {

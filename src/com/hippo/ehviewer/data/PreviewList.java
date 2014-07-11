@@ -54,6 +54,13 @@ public abstract class PreviewList {
         mTargetPage = targetPage;
     }
     
+    /**
+     * Return page url at target index, null for invalid index
+     * @param index
+     * @return
+     */
+    public abstract String getPageUrl(int index);
+    
     protected class TextViewWithUrl extends TextView {
         public String url;
         

@@ -328,7 +328,7 @@ public class Config {
     private static final int DEFAULT_DEFAULT_CAT = 0;
     
     // m for normal, l for large
-    private static final String KEY_PREVIEW_MODE = "preview_mode";
+    public static final String KEY_PREVIEW_MODE = "preview_mode";
     public static final String PREVIEW_MODE_NORMAL = "m";
     public static final String PREVIEW_MODE_LARGE = "l";
     private static final String DEFAULT_PREVIEW_MODE = PREVIEW_MODE_LARGE;

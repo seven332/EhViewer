@@ -64,6 +64,13 @@ public class LargePreviewList extends PreviewList {
     }
     
     @Override
+    public String getPageUrl(int index) {
+        if (index >= 0 && index < mItemList.size())
+            return mItemList.get(index).mPageUrl;
+        return null;
+    }
+    
+    @Override
     public void addPreview(AutoWrapLayout viewGroup) {
         if (mTargetPage != mHolder.getCurPreviewPage())
             return;

@@ -48,8 +48,6 @@ public class DetailParser {
     
     private static final CommentSort cs = new CommentSort();
     
-    private int mMode;
-    
     public String eMesg;
     public String thumb;
     public String title;
@@ -72,11 +70,31 @@ public class DetailParser {
     public PreviewList previewList;
     public LinkedList<Comment> comments;
     
-    public void setMode(int mode) {
-        mMode = mode;
+    public void reset() {
+        eMesg = null;
+        thumb = null;
+        title = null;
+        title_jpn = null;
+        category = 0;
+        uploader = null;
+        posted = null;
+        pages = 0;
+        size = null;
+        resized = null;
+        parent = null;
+        visible = null;
+        language = null;
+        people = 0;
+        rating = 0;
+        firstPage = null;
+        previewPerPage = 0;
+        previewSum = 0;
+        tags = null;
+        previewList = null;
+        comments = null;
     }
     
-    public int parser(String body) {
+    public int parser(String body, int mode) {
         int re = 0;
         Pattern p;
         Matcher m;
@@ -95,7 +113,7 @@ public class DetailParser {
         }
         
         // Get detail
-        if ((mMode & DETAIL) != 0) {
+        if ((mode & DETAIL) != 0) {
             p = Pattern
                     .compile("<div id=\"gd1\"><img src=\"([^\"]+)\"[^<>]+/></div>" //  thumb
                             + "</div>"
@@ -148,7 +166,7 @@ public class DetailParser {
             }
         }
         // Get tag
-        if ((mMode & TAG) != 0) {
+        if ((mode & TAG) != 0) {
             tags = new LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>>();
             p = Pattern
                     .compile("<tr><td[^<>]*>([^<>]+):</td><td>(?:<div[^<>]*><a[^<>]*>[^<>]*</a>[^<>]*<span[^<>]*>\\d+</span>[^<>]*</div>)+</td></tr>");
@@ -164,7 +182,7 @@ public class DetailParser {
         }
         
         // Get preview info
-        if ((mMode & PREVIEW_INFO) != 0) {
+        if ((mode & PREVIEW_INFO) != 0) {
             p = Pattern.compile("<p class=\"ip\">Showing ([\\d|,]+) - ([\\d|,]+) of ([\\d|,]+) images</p>");
             m = p.matcher(body);
             if (m.find()) {
@@ -178,7 +196,7 @@ public class DetailParser {
             }
         }
         // Get preview
-        if ((mMode & PREVIEW) != 0) {
+        if ((mode & PREVIEW) != 0) {
             boolean isLargePreview = false;
             if (body.contains("<div class=\"gdtl\""))
                 isLargePreview = true;
@@ -207,7 +225,7 @@ public class DetailParser {
             }
         }
         // Get comment
-        if ((mMode & COMMENT) != 0) {
+        if ((mode & COMMENT) != 0) {
             p = Pattern
                     .compile("<div class=\"c3\">Posted on ([^<>]+) by <a[^<>]+>([^<>]+)</a>.*?<div class=\"c6\">(.*?)</div>");
             m = p.matcher(body);

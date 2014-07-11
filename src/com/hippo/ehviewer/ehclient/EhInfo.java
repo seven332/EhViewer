@@ -111,12 +111,16 @@ public class EhInfo {
         updateUconfig();
     };
     
-    private void updateUconfig() {
-        mUconfig = "cats_" + mDefaultCat
-                + "-ts_" + mPreviewMode
+    private String getUconfigString(String previewMode) {
+        return "cats_" + mDefaultCat
+                + "-ts_" + (previewMode == null ? mPreviewMode : previewMode)
                 + "-xns_" + mExculdeTagGroup
                 + "-xl_" + mExculdeLanguage
                 + "-tl_m-uh_y-tr_2-prn_n-dm_l-ar_0-rc_0-rx_0-ry_0-sa_y-oi_n-qb_n-tf_n-hp_-hk_-ms_n-mt_n";
+    }
+    
+    private void updateUconfig() {
+        mUconfig = getUconfigString(null);
     }
     
     public final static EhInfo getInstance(final Context context) {
@@ -161,12 +165,13 @@ public class EhInfo {
     }
     
     public void setCookie(HttpURLConnection conn) {
+        setCookie(conn, null);
+    }
+    
+    public void setCookie(HttpURLConnection conn, String previewMode) {
         String cookie = "ipb_member_id=" + mInfoPref.getString(KEY_MEMBER_ID, DEFAULT_MEMBER_ID) +
                 "; ipb_pass_hash=" + mInfoPref.getString(KEY_PASS_HASH, DEFAULT_PASS_HASH) +
-                "; uconfig="+ mUconfig;
-        
-        android.util.Log.d(TAG, cookie);
-        
+                "; uconfig=" + (previewMode == null ? mUconfig : getUconfigString(previewMode));
         conn.setRequestProperty("Cookie", cookie);
     }
     
