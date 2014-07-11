@@ -16,15 +16,27 @@
 
 package com.hippo.ehviewer.ui;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
 import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
@@ -43,25 +55,6 @@ import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.SuperToast;
 
-import android.app.ActionBar;
-import android.app.ActionBar.Tab;
-import android.app.FragmentTransaction;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-
 // TODO I'm going to add an awesome feature.
 //       When views in ListView or ScrollView or some ViewGroup can
 //       scroll are under actionbar, They should be seen.
@@ -73,31 +66,31 @@ public class MangaDetailActivity extends AbstractFragmentActivity
 
     @SuppressWarnings("unused")
     private static final String TAG = "MangaDetailActivity";
-    
+
     public static final String KEY_G_INFO = "gallery_info";
-    
+
     private ViewPager mViewPager;
     private Stack<GalleryDetail> mGdList;
     private GalleryDetail mGalleryDetail;
-    
+
     private DetailSectionFragment mDetailFragment;
     private CommentsSectionFragment mCommentsFragment;
-    
+
     private int mTabIndex;
-    
-    private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
-    
+
+    private final DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
-    
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mServiceConn);
     }
-    
+
     private GalleryDetail handleIntent(Intent intent) {
         GalleryDetail gi = null;
         if (intent.getAction() == "android.intent.action.VIEW") {
@@ -118,7 +111,7 @@ public class MangaDetailActivity extends AbstractFragmentActivity
             Analytics.openGallery(this, gi.gid, gi.token);
         return gi;
     }
-    
+
     @Override
     protected void onNewIntent(Intent intent) {
         mGdList.push(mGalleryDetail);
@@ -126,12 +119,13 @@ public class MangaDetailActivity extends AbstractFragmentActivity
         mGalleryDetail = handleIntent(intent);
         loadDetail();
     }
-    
+
     public void loadDetail() {
+        setTitle(String.valueOf(mGalleryDetail.gid));
         mDetailFragment.handleDetail(mGalleryDetail);
         getActionBar().setSelectedNavigationItem(0);
     }
-    
+
     @Override
     public void onBackPressed() {
         if (!mGdList.isEmpty()) {
@@ -141,27 +135,27 @@ public class MangaDetailActivity extends AbstractFragmentActivity
             finish();
         }
     }
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.viewpager);
-        
+
         mGdList = new Stack<GalleryDetail>();
         mGalleryDetail = handleIntent(getIntent());
-        
+
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        
+
         // Set random color
         int color = Config.getRandomThemeColor() ? Theme.getRandomDeepColor() : Config.getThemeColor();
         color = color & 0x00ffffff | 0xdd000000;
         Drawable drawable = new ColorDrawable(color);
         actionBar.setBackgroundDrawable(drawable);
         Ui.translucent(this, color);
-        
-        SectionsPagerAdapter adapter = 
+
+        SectionsPagerAdapter adapter =
                 new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager)findViewById(R.id.pager);
         mViewPager.setAdapter(adapter);
@@ -177,14 +171,12 @@ public class MangaDetailActivity extends AbstractFragmentActivity
                             .setText(adapter.getPageTitle(i))
                             .setTabListener(this));
         }
-        
+
         // Download service
         Intent it = new Intent(MangaDetailActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
-        
-        setTitle(String.valueOf(mGalleryDetail.gid));
     }
-    
+
     @Override
     public void onTabSelected(Tab tab, FragmentTransaction ft) {
         mViewPager.setCurrentItem(tab.getPosition());
@@ -197,25 +189,25 @@ public class MangaDetailActivity extends AbstractFragmentActivity
 
     @Override
     public void onTabReselected(Tab tab, FragmentTransaction ft) {}
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.detail, menu);
         return true;
     }
-    
+
     public List<Comment> getComments() {
         if (mDetailFragment == null)
             return null;
         else
             return mDetailFragment.getComments();
     }
-    
+
     public void setComments(List<Comment> comments) {
         if (mCommentsFragment != null)
             mCommentsFragment.setComments(comments);
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -263,7 +255,7 @@ public class MangaDetailActivity extends AbstractFragmentActivity
             if (mGalleryDetail.language == null) {
                 new SuperToast(this, R.string.wait).show();
             } else {
-                
+
                 new DialogBuilder(this).setTitle(R.string.info)
                 .setLongMessage(
                         "gid : " + mGalleryDetail.gid + "\n\n" +
@@ -284,14 +276,14 @@ public class MangaDetailActivity extends AbstractFragmentActivity
                         "rating : " + mGalleryDetail.rating)
                         .setMessageSelectable()
                         .setSimpleNegativeButton().create().show();
-                
-                
+
+
             }
             return true;
         case R.id.action_reply:
             final EditText et = new EditText(this);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 
+                    LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             int x = Ui.dp2pix(8);
             lp.leftMargin = x;
@@ -327,13 +319,13 @@ public class MangaDetailActivity extends AbstractFragmentActivity
                             ((AlertButton)v).dialog.dismiss();
                         }
                     }).create().show();
-            
+
             return true;
         default:
             return super.onOptionsItemSelected(item);
         }
     }
-    
+
     @Override
     public boolean onPrepareOptionsMenu (Menu menu) {
         MenuItem info = menu.findItem(R.id.action_info);
@@ -347,7 +339,7 @@ public class MangaDetailActivity extends AbstractFragmentActivity
         }
         return true;
     }
-    
+
     private class SectionsPagerAdapter extends FragmentPagerAdapter {
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
