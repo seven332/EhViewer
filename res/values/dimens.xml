@@ -21,7 +21,7 @@
     <dimen name="dialog_title_height">64dip</dimen>
     
     <dimen name="shadow_width">12dp</dimen>
-    <dimen name="menu_offset">240dp</dimen>
+    <dimen name="menu_width">200dp</dimen>
     
     <dimen name="title_large">20.0sp</dimen>
     <dimen name="title_medium">18.0sp</dimen>

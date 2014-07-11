@@ -863,7 +863,7 @@ public class MangaListActivity extends AbstractGalleryActivity
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mSlidingMenu.setBehindWidth(
-                mResources.getDimensionPixelOffset(R.dimen.menu_offset));
+                mResources.getDimensionPixelOffset(R.dimen.menu_width));
     }
 
     /**
@@ -975,7 +975,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         mSlidingMenu.setMode(SlidingMenu.LEFT_RIGHT);
         mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
         mSlidingMenu.setBehindWidth(
-                mResources.getDimensionPixelOffset(R.dimen.menu_offset));
+                mResources.getDimensionPixelOffset(R.dimen.menu_width));
         mSlidingMenu.setShadowDrawable(R.drawable.shadow);
         mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
         mSlidingMenu.setSecondaryShadowDrawable(R.drawable.shadow_right);

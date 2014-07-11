@@ -37,28 +37,36 @@
             android:layout_marginLeft="8.0dp"
             android:layout_marginTop="8.0dp"
             android:textSize="16.0sp"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:singleLine="true" />
         
-        <Button
-            android:id="@+id/login"
-            style="@style/Button.Small.White"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="8.0dp"
+            android:layout_alignParentLeft="true"
             android:layout_marginBottom="8.0dp"
-            android:text="@string/login" />
-        
-        <Button
-            android:id="@+id/register"
-            style="@style/Button.Small.White"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/login"
-            android:layout_marginLeft="16.0dp"
-            android:layout_alignBottom="@id/login"
-            android:text="@string/register" />
+            android:layout_marginLeft="8.0dp"
+            android:orientation="vertical" >
+            
+            <Button
+                android:id="@+id/register"
+                style="@style/Button.Small.White"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10.0dp"
+                android:singleLine="true"
+                android:text="@string/register" />
+            
+            <Button
+                android:id="@+id/login"
+                style="@style/Button.Small.White"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/login"
+                android:singleLine="true" />
+            
+        </LinearLayout>
         
         <Button
             android:id="@+id/logout"
@@ -69,7 +77,8 @@
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="8.0dp"
             android:layout_marginBottom="8.0dp"
-            android:text="@string/logout" />
+            android:text="@string/logout"
+            android:singleLine="true" />
         
         <ProgressBar
             android:id="@+id/wait"

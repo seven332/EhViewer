@@ -16,9 +16,9 @@
 
 package com.hippo.ehviewer.ui;
 
-import java.util.List;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import android.app.ActionBar;
@@ -41,11 +41,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
@@ -54,17 +54,16 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
-import com.hippo.ehviewer.ui.AbstractGalleryActivity.OnGetListListener;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.ActionableToastBar;
+import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.HfListView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
-import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
 import com.hippo.ehviewer.widget.ProgressDialogBulider;
 import com.hippo.ehviewer.widget.SuperToast;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -74,37 +73,37 @@ public class FavouriteActivity extends AbstractGalleryActivity
         View.OnTouchListener {
     @SuppressWarnings("unused")
     private static final String TAG = "FavouriteActivity";
-    
+
     private Data mData;
     private Resources mResources;
     private EhClient mClient;
-    
+
     private RelativeLayout mMainView;
     private HfListView mHlv;
     private ListView mList;
-    
+
     private SlidingMenu mSlidingMenu;
     private ListView mMenuList;
     private ActionableToastBar mActionableToastBar;
-    
+
     private Set<GalleryInfo> mChoiceGiSet;
     private Set<GalleryInfo> mChoiceGiSetCopy; // Store selected GalleryInfo
     private Iterator<GalleryInfo> mSetIter; // For move from local to cloud
     private GalleryInfo mTargetGi;
     private int mMenuIndex;
     private int mTargetCat;
-    
+
     private AlertDialog mMoveDialog;
     private ProgressDialogBulider mPdb;
     private AlertDialog mProgressDialog;
-    
-    private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
-    
+
+    private final DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
-    
+
     @Override
     public void onBackPressed() {
         if (mActionableToastBar.isShown())
@@ -112,7 +111,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         else
             super.onBackPressed();
     }
-    
+
     private void initLocalFavorite() {
         mHlv.setEnabledHeader(false);
         mHlv.setEnabledFooter(false);
@@ -123,54 +122,54 @@ public class FavouriteActivity extends AbstractGalleryActivity
         else
             onlyShowList();
     }
-    
+
     private void initFavorite() {
         mHlv.setEnabledHeader(true);
         mHlv.setEnabledFooter(true);
         setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
         refresh(true);
     }
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         mAppContext = (AppContext)getApplication();
         mData = mAppContext.getData();
         mResources =getResources();
         mClient = mAppContext.getEhClient();
-        
+
         final ActionBar actionBar = getActionBar();
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        
+
         // Download service
         Intent it = new Intent(FavouriteActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
-        
+
         setBehindContentView(R.layout.favorite_menu);
         setSlidingActionBarEnabled(false);
         mSlidingMenu = getSlidingMenu();
         mSlidingMenu.setMode(SlidingMenu.RIGHT);
         mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
         mSlidingMenu.setBehindWidth(
-                mResources.getDimensionPixelOffset(R.dimen.menu_offset));
+                mResources.getDimensionPixelOffset(R.dimen.menu_width));
         mSlidingMenu.setShadowDrawable(R.drawable.shadow_right);
         mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
-        
+
         // Get View
         mMainView = getMainView();
         mHlv = getHlv();
         mList = getListView();
         mMenuList = (ListView)findViewById(R.id.favorite_menu_list);
-        
+
         mActionableToastBar = new ActionableToastBar(this);
         mActionableToastBar.setBackgroundColor(mResources.getColor(android.R.color.holo_purple));
         mMainView.addView(mActionableToastBar);
         mMainView.setOnTouchListener(this);
-        
+
         mMenuIndex = 0;
         initLocalFavorite();
-        
+
         mChoiceGiSet = new LinkedHashSet<GalleryInfo>();
         mChoiceGiSetCopy = new LinkedHashSet<GalleryInfo>();
         mList.setOnTouchListener(this);
@@ -188,7 +187,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         });
         mList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         mList.setMultiChoiceModeListener(this);
-        
+
         mMenuList.setClipToPadding(false);
         mMenuList.setAdapter(new BaseAdapter() {
             private ShapeDrawable d;
@@ -243,7 +242,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                 // If same index, do nothing
                 if (mMenuIndex == position)
                     return;
-                
+
                 mMenuIndex = position;
                 setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
                 if (mMenuIndex == 0)
@@ -252,7 +251,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                     initFavorite();
             }
         });
-        
+
         FswView alignment = (FswView)findViewById(R.id.alignment);
         alignment.addOnFitSystemWindowsListener(new OnFitSystemWindowsListener() {
             @Override
@@ -267,12 +266,12 @@ public class FavouriteActivity extends AbstractGalleryActivity
                 lp.leftMargin = magicSpacing;
                 lp.rightMargin = magicSpacing;
                 mActionableToastBar.setLayoutParams(lp);
-                
+
                 mMenuList.setPadding(mMenuList.getPaddingLeft(), paddingTop,
                         mMenuList.getPaddingRight(), paddingBottom);
             }
         });
-        
+
         // Set random color
         int color = Config.getRandomThemeColor() ? Theme.getRandomDeepColor() : Config.getThemeColor();
         color = color & 0x00ffffff | 0xdd000000;
@@ -280,7 +279,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         actionBar.setBackgroundDrawable(drawable);
         Ui.translucent(this, color);
         mMenuList.setBackgroundColor(color);
-        
+
         // Check login
         if (!mClient.isLogin()) {
             SuperToast superToast = new SuperToast(this, "未检测到登陆状态，仅可使用本地收藏。由于开发者的问题，本地收藏不可靠，请尽快登陆，将本地收藏转移至账户中的收藏。");
@@ -288,13 +287,13 @@ public class FavouriteActivity extends AbstractGalleryActivity
             superToast.show();
         }
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.favorite, menu);
         return true;
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -309,20 +308,20 @@ public class FavouriteActivity extends AbstractGalleryActivity
             return super.onOptionsItemSelected(item);
         }
     }
-    
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mServiceConn);
     }
-    
+
     private void showToastBar(final ActionClickedListener listener, int descriptionIconResourceId,
             CharSequence descriptionText, int actionIconResource, CharSequence actionText,
             boolean replaceVisibleToast) {
         mActionableToastBar.show(listener, descriptionIconResourceId,
                 descriptionText, actionIconResource, actionText, replaceVisibleToast);
     }
-    
+
     private void hideToastBar(MotionEvent event) {
         if (mActionableToastBar != null) {
             if (event != null && mActionableToastBar.isEventInToastBar(event)) {
@@ -332,15 +331,15 @@ public class FavouriteActivity extends AbstractGalleryActivity
             mActionableToastBar.hide(false);
         }
     }
-    
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         hideToastBar(event);
         return false;
     }
-    
+
     // ListView.MultiChoiceModeListener
-    
+
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -353,7 +352,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         return true;
     }
-    
+
     private int[] getGids(Set<GalleryInfo> giSet) {
         int[] gids = new int[giSet.size()];
         int i = 0;
@@ -361,7 +360,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
             gids[i++] = gi.gid;
         return gids;
     }
-    
+
     private void startMoveFromLocal2Cloud() {
         mPdb = new ProgressDialogBulider(FavouriteActivity.this);
         mPdb.setCancelable(false).setTitle(R.string.moving);
@@ -370,11 +369,11 @@ public class FavouriteActivity extends AbstractGalleryActivity
         mProgressDialog.show();
         moveFromLocal2Cloud();
     }
-    
+
     private void moveFromLocal2Cloud() {
         if (mSetIter == null)
             mSetIter = mChoiceGiSetCopy.iterator();
-        
+
         if (mSetIter.hasNext() || mTargetGi != null) {
             if (mTargetGi == null)
                 mTargetGi = mSetIter.next();
@@ -414,7 +413,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
             new SuperToast(this, R.string.move_successfully).show();
         }
     }
-    
+
     private AlertDialog createMoveDialog(final ActionMode mode) {
         return new DialogBuilder(this).setTitle(R.string.where_to_move)
                 .setItems(Favorite.FAVORITE_TITLES, new AdapterView.OnItemClickListener() {
@@ -426,18 +425,18 @@ public class FavouriteActivity extends AbstractGalleryActivity
                                     SuperToast.WARNING).show();
                             return;
                         }
-                        
+
                         mTargetCat = position - 1;
                         if (mMenuIndex == 0) { // From local favorite to cloud
                             mMoveDialog.dismiss();
                             mMoveDialog = null;
-                            
+
                             startMoveFromLocal2Cloud();
                         } else {
                             if (position == 0) { // From cloud to local favorite
                                 mMoveDialog.dismiss();
                                 mMoveDialog = null;
-                                
+
                                 mClient.modifyFavorite(getGids(mChoiceGiSetCopy), mTargetCat,
                                         mMenuIndex -1, new Modify(mResources.getString(R.string.move_successfully),
                                                 mResources.getString(R.string.failed_to_move), true));
@@ -445,7 +444,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                             } else { // change cloud dir
                                 mMoveDialog.dismiss();
                                 mMoveDialog = null;
-                                
+
                                 mClient.modifyFavorite(getGids(mChoiceGiSetCopy), mTargetCat,
                                         mMenuIndex -1, new Modify(mResources.getString(R.string.move_successfully),
                                                 mResources.getString(R.string.failed_to_move), false));
@@ -455,7 +454,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                     }
                 }).setSimpleNegativeButton().create();
     }
-    
+
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         // get a copy of mChoiceGiSet
@@ -463,7 +462,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         mChoiceGiSetCopy.clear();
         for (GalleryInfo gi : mChoiceGiSet)
             mChoiceGiSetCopy.add(gi);
-        
+
         switch (item.getItemId()) {
         case R.id.action_delete:
             if (mMenuIndex == 0) {
@@ -488,12 +487,12 @@ public class FavouriteActivity extends AbstractGalleryActivity
             return super.onOptionsItemSelected(item);
         }
     }
-    
+
     @Override
     public void onDestroyActionMode(ActionMode mode) {
         mChoiceGiSet.clear();
     }
-    
+
     @Override
     public void onItemCheckedStateChanged(ActionMode mode, int position,
             long id, boolean checked) {
@@ -502,12 +501,12 @@ public class FavouriteActivity extends AbstractGalleryActivity
         else
             mChoiceGiSet.remove(getGalleryInfo(position));
     }
-    
+
     @Override
     protected String getTargetUrl(int targetPage) {
         return EhClient.getFavoriteUrl(mMenuIndex-1, targetPage);
     }
-    
+
     @Override
     protected void doGetGallerys(String url, final long taskStamp,
             final OnGetListListener listener) {
@@ -523,25 +522,25 @@ public class FavouriteActivity extends AbstractGalleryActivity
             }
         });
     }
-    
+
     private class Modify implements EhClient.OnModifyFavoriteListener {
-        private String mSuccStr;
-        private String mFailStr;
-        private boolean mToLocal;
-        
+        private final String mSuccStr;
+        private final String mFailStr;
+        private final boolean mToLocal;
+
         public Modify(String succStr, String failStr, boolean toLocal) {
             mSuccStr = succStr;
             mFailStr = failStr;
             mToLocal = toLocal;
         }
-        
+
         @Override
         public void onSuccess(List<GalleryInfo> gis, int indexPerPage,
                 int maxPage) {
             setGalleryInfos(gis, maxPage);
             mHlv.setRefreshing(false);
             new SuperToast(FavouriteActivity.this, mSuccStr).show();
-            
+
             // add to local
             if (mToLocal)
                 for (GalleryInfo gi : mChoiceGiSetCopy)
@@ -554,23 +553,23 @@ public class FavouriteActivity extends AbstractGalleryActivity
                     R.drawable.ic_action_redo, mResources.getString(R.string.retry), true);
         }
     }
-    
+
     /**
      * Redelete when delete error
      * @author Hippo
      *
      */
     private class Remodify implements ActionableToastBar.ActionClickedListener {
-        private String mSuccStr;
-        private String mFailStr;
-        private boolean mToLocal;
-        
+        private final String mSuccStr;
+        private final String mFailStr;
+        private final boolean mToLocal;
+
         public Remodify(String succStr, String failStr, boolean toLocal) {
             mSuccStr = succStr;
             mFailStr = failStr;
             mToLocal = toLocal;
         }
-        
+
         @Override
         public void onActionClicked() {
             mClient.modifyFavorite(getGids(mChoiceGiSetCopy), -1, mMenuIndex -1, new Modify(mSuccStr, mFailStr, mToLocal));
