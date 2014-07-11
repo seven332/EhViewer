@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Hippo Seven
+<!--
+     Copyright (C) 2014 Hippo Seven
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -12,7 +13,7 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
- -->
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -23,11 +24,11 @@
         android:layout_width="64.0dp"
         android:layout_height="64.0dp"
         android:layout_margin="8.0dp" />
-    
+
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
-        
+
         <TextView
             android:id="@+id/user"
             android:layout_width="wrap_content"
@@ -36,10 +37,10 @@
             android:layout_alignParentTop="true"
             android:layout_marginLeft="8.0dp"
             android:layout_marginTop="8.0dp"
-            android:textSize="16.0sp"
+            android:singleLine="true"
             android:textColor="@android:color/white"
-            android:singleLine="true" />
-        
+            android:textSize="16.0sp" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,7 +49,7 @@
             android:layout_marginBottom="8.0dp"
             android:layout_marginLeft="8.0dp"
             android:orientation="vertical" >
-            
+
             <Button
                 android:id="@+id/register"
                 style="@style/Button.Small.White"
@@ -57,36 +58,34 @@
                 android:layout_marginBottom="10.0dp"
                 android:singleLine="true"
                 android:text="@string/register" />
-            
+
             <Button
                 android:id="@+id/login"
                 style="@style/Button.Small.White"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/login"
-                android:singleLine="true" />
-            
+                android:singleLine="true"
+                android:text="@string/login" />
         </LinearLayout>
-        
+
         <Button
             android:id="@+id/logout"
             style="@style/Button.Small.White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="8.0dp"
+            android:layout_alignParentLeft="true"
             android:layout_marginBottom="8.0dp"
-            android:text="@string/logout"
-            android:singleLine="true" />
-        
+            android:layout_marginLeft="8.0dp"
+            android:singleLine="true"
+            android:text="@string/logout" />
+
         <ProgressBar
             android:id="@+id/wait"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true" />
-        
     </RelativeLayout>
-    
+
 </LinearLayout>

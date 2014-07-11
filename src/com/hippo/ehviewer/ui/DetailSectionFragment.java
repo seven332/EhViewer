@@ -16,11 +16,41 @@
 
 package com.hippo.ehviewer.ui;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Map.Entry;
+
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.graphics.Path;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.StateListDrawable;
+import android.graphics.drawable.shapes.PathShape;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RatingBar;
+import android.widget.ScrollView;
+import android.widget.TextSwitcher;
+import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageLoader;
@@ -45,56 +75,28 @@ import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.ProgressiveRatingBar;
 import com.hippo.ehviewer.widget.SuperToast;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.content.res.Resources;
-import android.graphics.Path;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.StateListDrawable;
-import android.graphics.drawable.shapes.PathShape;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.TypedValue;
-import android.view.ContextThemeWrapper;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RatingBar;
-import android.widget.ScrollView;
-import android.widget.TextSwitcher;
-import android.widget.TextView;
-import android.widget.ViewSwitcher;
-
 public class DetailSectionFragment extends Fragment
         implements View.OnClickListener, PreviewList.PreviewHolder,
         View.OnLayoutChangeListener, ViewSwitcher.ViewFactory {
     private static final String TAG = DetailSectionFragment.class.getSimpleName();
-    
+
     private AppContext mAppContext;
     private MangaDetailActivity mActivity;
     private EhClient mClient;
     private Data mData;
     private GalleryDetail mGalleryDetail;
     private String mUrl;
-    
+
     private View mRootView;
     private ScrollView mScrollView;
+    private ViewGroup mHeaderView;
     private LoadImageView mThumb;
     private TextView mTitle;
     private TextView mUploader;
     private TextView mCategory;
     private Button mReadButton;
     private Button mRateButton;
+    private View mColorfulBar;
     private ProgressBar mWaitPb;
     private Button mRefreshButton;
     private ViewGroup mNormalView;
@@ -113,14 +115,14 @@ public class DetailSectionFragment extends Fragment
     private View mFrontButton;
     private View mKnownButton;
     private View mDivider;
-    
+
     private AlertDialog mGoToDialog;
     private AlertDialog mTagDialog;
-    
+
     private int mCurPage;
     private boolean mShowPreview = false;
     private boolean isSetViewFactory = false;
-    
+
     private ShapeDrawable getArrowShapeDrawable(int color, boolean isToLeft) {
         Path path = new Path();
         if (isToLeft) {
@@ -138,7 +140,7 @@ public class DetailSectionFragment extends Fragment
         d.getPaint().setColor(color);
         return d;
     }
-    
+
     private StateListDrawable getArrowClickDrawable(int color, boolean isToLeft) {
         StateListDrawable sld = new StateListDrawable();
         ShapeDrawable normal = getArrowShapeDrawable(color, isToLeft);
@@ -151,18 +153,18 @@ public class DetailSectionFragment extends Fragment
         sld.addState(new int[]{}, normal);
         return sld;
     }
-    
+
     @Override
     public int getCurPreviewPage() {
         return mCurPage;
     }
-    
+
     @Override
     public void onGetPreviewImageFailure() {
         mWaitPreviewList.setVisibility(View.GONE);
         mPreviewRefreshButton.setVisibility(View.VISIBLE);
     }
-    
+
     @Override
     public void onLayoutChange(View v, int left, int top, int right,
             int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
@@ -171,20 +173,21 @@ public class DetailSectionFragment extends Fragment
             mScrollView.smoothScrollTo(0,
                     mNormalView.getTop() + mDivider.getTop());
         }
-        
+
     }
-    
+
+    @SuppressLint("InflateParams")
     @Override
     public View makeView() {
         LayoutInflater inflater = LayoutInflater.from(mActivity);
         return inflater.inflate(R.layout.detail_avg_text, null);
     }
-    
+
     public void handleDetail(GalleryDetail gd) {
         mGalleryDetail = gd;
         mUrl = EhClient.getDetailUrl(
                 mGalleryDetail.gid, mGalleryDetail.token);
-        
+
         mThumb.setImageDrawable(null);
         if (mGalleryDetail.thumb != null) {
             mThumb.setLoadInfo(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid));
@@ -194,28 +197,16 @@ public class DetailSectionFragment extends Fragment
             mUploader.setText(mGalleryDetail.uploader);
             mCategory.setText(Ui.getCategoryText(mGalleryDetail.category));
             mCategory.setBackgroundColor(Ui.getCategoryColor(mGalleryDetail.category));
+            // Disable them for temp
+            mReadButton.setEnabled(false);
+            mRateButton.setEnabled(false);
         } else {
+            mHeaderView.setVisibility(View.GONE);
+            mColorfulBar.setVisibility(View.GONE);
             mThumb.setLoadInfo(null, null);
-            mTitle.setText(null);
-            mUploader.setText(null);
-            mCategory.setText(null);
-            mCategory.setBackgroundColor(0);
+            mThumb.setImageDrawable(null);
         }
-        
-        // Make rate and read button same width
-        // Disable them for temp
-        Ui.measureView(mReadButton);
-        Ui.measureView(mRateButton);
-        int readbw = mReadButton.getMeasuredWidth();
-        int ratebw = mRateButton.getMeasuredWidth();
-        if (readbw > ratebw) {
-            mRateButton.setWidth(readbw);
-        } else if (ratebw > readbw) {
-            mReadButton.setWidth(ratebw);
-        }
-        mReadButton.setEnabled(false);
-        mRateButton.setEnabled(false);
-        
+
         if (mGalleryDetail.size == null) {
             mRefreshButton.setVisibility(View.GONE);
             mWaitPb.setVisibility(View.VISIBLE);
@@ -232,7 +223,7 @@ public class DetailSectionFragment extends Fragment
             layout(mGalleryDetail);
         }
     }
-    
+
     @SuppressWarnings("deprecation")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -241,16 +232,18 @@ public class DetailSectionFragment extends Fragment
         mAppContext = (AppContext)mActivity.getApplication();
         mClient = mAppContext.getEhClient();
         mData = mAppContext.getData();
-        
+
         mRootView = inflater.inflate(
                 R.layout.detail, container, false);
         mScrollView = (ScrollView)mRootView.findViewById(R.id.manga_detail_scrollview);
-        mThumb = (LoadImageView)mRootView.findViewById(R.id.detail_cover);
-        mTitle = (TextView)mRootView.findViewById(R.id.detail_title);
-        mUploader = (TextView)mRootView.findViewById(R.id.detail_uploader);
-        mCategory = (TextView)mRootView.findViewById(R.id.detail_category);
-        mReadButton = (Button)mRootView.findViewById(R.id.detail_read);
-        mRateButton = (Button)mRootView.findViewById(R.id.detail_do_rate);
+        mHeaderView = (ViewGroup)mRootView.findViewById(R.id.detail_header);
+        mThumb = (LoadImageView)mHeaderView.findViewById(R.id.detail_cover);
+        mTitle = (TextView)mHeaderView.findViewById(R.id.detail_title);
+        mUploader = (TextView)mHeaderView.findViewById(R.id.detail_uploader);
+        mCategory = (TextView)mHeaderView.findViewById(R.id.detail_category);
+        mReadButton = (Button)mHeaderView.findViewById(R.id.detail_read);
+        mRateButton = (Button)mHeaderView.findViewById(R.id.detail_do_rate);
+        mColorfulBar = mRootView.findViewById(R.id.colorful_bar);
         mWaitPb = (ProgressBar)mRootView.findViewById(R.id.detail_wait);
         mRefreshButton = (Button)mRootView.findViewById(R.id.detail_refresh);
         mNormalView = (ViewGroup)mRootView.findViewById(R.id.manga_detail_normal);
@@ -260,7 +253,7 @@ public class DetailSectionFragment extends Fragment
         mPreviewListLayout = (AutoWrapLayout)mRootView.findViewById(R.id.paper_list_layout);
         mWaitPreviewList = (ProgressBar)mRootView.findViewById(R.id.paper_list_wait);
         mPreviewRefreshButton = (Button)mRootView.findViewById(R.id.preview_button_refresh);
-        mBottomPanel = (View)mRootView.findViewById(R.id.bottom_panel);
+        mBottomPanel = mRootView.findViewById(R.id.bottom_panel);
         mPreviewNumText = (TextView)mBottomPanel.findViewById(R.id.preview_num);
         mCancelButton = mOffensiveView.findViewById(R.id.detail_button_cancel);
         mOnceButton = mOffensiveView.findViewById(R.id.detail_button_once);
@@ -269,7 +262,7 @@ public class DetailSectionFragment extends Fragment
         mBackButton = mPreviewListMain.findViewById(R.id.back);
         mFrontButton = mPreviewListMain.findViewById(R.id.front);
         mDivider = mNormalView.findViewById(R.id.divider);
-        
+
         boolean isRandomColor = Config.getRandomThemeColor();
         int color = Config.getThemeColor();
         // Set random color
@@ -279,7 +272,7 @@ public class DetailSectionFragment extends Fragment
         mRateButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         if (isRandomColor)
             color = Theme.getRandomDeepColor();
-        mRootView.findViewById(R.id.crude_divider).setBackgroundColor(color);
+        mColorfulBar.setBackgroundColor(color);
         if (isRandomColor)
             color = Theme.getRandomDeepColor();
         mRefreshButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
@@ -292,9 +285,9 @@ public class DetailSectionFragment extends Fragment
         mPreviewNumText.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         mBackButton.setBackgroundDrawable(getArrowClickDrawable(color, true));
         mFrontButton.setBackgroundDrawable(getArrowClickDrawable(color, false));
-        
+
         mRefreshButton.setOnClickListener(this);
-        
+
         FswView align = (FswView)mActivity.findViewById(R.id.alignment);
         int paddingLeft = align.getPaddingLeft();
         int paddingTop = align.getPaddingTop();
@@ -312,27 +305,27 @@ public class DetailSectionFragment extends Fragment
                         paddingRight, paddingBottom);
             }
         });
-        
+
         mScrollView.addOnLayoutChangeListener(this);
-        
+
         // Load first detail
         mActivity.loadDetail();
-        
+
         return mRootView;
     }
-    
+
     private void refreshPageList() {
         mPreviewListLayout.removeAllViews();
         mPreviewNumText.setText(String.format("%d / %d",
                 mCurPage+1, mGalleryDetail.previewSum));
-        
+
         PreviewList pageList = mGalleryDetail.previewLists[mCurPage];
-        
+
         if (pageList == null) {
             // Update layout
             mWaitPreviewList.setVisibility(View.VISIBLE);
             mPreviewRefreshButton.setVisibility(View.GONE);
-            
+
             mUrl = EhClient.getDetailUrl(
                     mGalleryDetail.gid, mGalleryDetail.token, mCurPage);
             mClient.getPreviewList(mUrl, mCurPage,
@@ -341,16 +334,16 @@ public class DetailSectionFragment extends Fragment
                         public void onSuccess(Object checkFlag, PreviewList pageList) {
                             if (mActivity.isFinishing())
                                 return;
-                            
+
                             mWaitPreviewList.setVisibility(View.GONE);
                             mPreviewRefreshButton.setVisibility(View.GONE);
-                            
+
                             int page = (Integer)checkFlag;
                             mGalleryDetail.previewLists[page] = pageList;
                             mGalleryDetail.previewLists[page].setData(DetailSectionFragment.this, mActivity, mGalleryDetail, page);
                             mGalleryDetail.previewLists[page].addPreview(mPreviewListLayout);
-                            
-                            
+
+
                             mShowPreview = true;
                         }
 
@@ -358,14 +351,14 @@ public class DetailSectionFragment extends Fragment
                         public void onFailure(Object checkFlag, String eMsg) {
                             if (mActivity.isFinishing())
                                 return;
-                            
+
                             int page = (Integer)checkFlag;
                             if (page == mCurPage) {
                                 new SuperToast(mActivity).setIcon(R.drawable.ic_warning)
                                         .setMessage(eMsg)
                                         .show();
                                 mWaitPreviewList.setVisibility(View.GONE);
-                                mPreviewRefreshButton.setVisibility(View.VISIBLE);    
+                                mPreviewRefreshButton.setVisibility(View.VISIBLE);
                             }
                         }
                     });
@@ -373,12 +366,12 @@ public class DetailSectionFragment extends Fragment
             // Update layout
             mWaitPreviewList.setVisibility(View.GONE);
             mPreviewRefreshButton.setVisibility(View.GONE);
-            
+
             mGalleryDetail.previewLists[mCurPage].addPreview(mPreviewListLayout);
             mShowPreview = true;
         }
     }
-    
+
     private AlertDialog createGoToDialog() {
         return new DialogBuilder(mActivity).setTitle(R.string.jump)
                 .setAdapter(new BaseAdapter() {
@@ -394,11 +387,13 @@ public class DetailSectionFragment extends Fragment
                     public long getItemId(int position) {
                         return position;
                     }
+
+                    @SuppressLint({ "ViewHolder", "InflateParams" })
                     @Override
                     public View getView(int position, View convertView,
                             ViewGroup parent) {
                         LayoutInflater inflater = mActivity.getLayoutInflater();
-                        View view = (View)inflater.inflate(R.layout.list_item_text, null);
+                        View view = inflater.inflate(R.layout.list_item_text, null);
                         TextView tv = (TextView)view.findViewById(android.R.id.text1);
                         tv.setText(String.format(getString(R.string.some_page), position + 1));
                         return tv;
@@ -420,11 +415,11 @@ public class DetailSectionFragment extends Fragment
                     }
                 }).create();
     }
-    
+
     @SuppressWarnings("deprecation")
     private void addTags() {
         LinearLayout tagsLayout = (LinearLayout)mRootView.findViewById(R.id.tags_layout);
-        LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>> tagGroups = 
+        LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>> tagGroups =
                 mGalleryDetail.tags;
         tagsLayout.removeAllViews();
         int x = Ui.dp2pix(4);
@@ -433,7 +428,7 @@ public class DetailSectionFragment extends Fragment
         // color
         boolean isRandomColor = Config.getRandomThemeColor();
         int color = Config.getThemeColor();
-        
+
         // Get tag view resources
         int tagTextSize = resources.getDimensionPixelOffset(R.dimen.button_small_size);
         ColorStateList tagTextColor = resources.getColorStateList(R.color.blue_bn_text);
@@ -443,7 +438,7 @@ public class DetailSectionFragment extends Fragment
             LinearLayout tagGroupLayout = new LinearLayout(mActivity);
             tagGroupLayout.setOrientation(LinearLayout.HORIZONTAL);
             AutoWrapLayout tagLayout = new AutoWrapLayout(mActivity);
-            
+
             // Group name
             final String groupName = tagGroup.getKey();
             TextView groupNameView = new TextView(new ContextThemeWrapper(mActivity, R.style.TextTag));
@@ -451,7 +446,7 @@ public class DetailSectionFragment extends Fragment
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             lp.setMargins(x, y, x, y);
             tagGroupLayout.addView(groupNameView, lp);
-            
+
             // tags
             // get random color
             if (isRandomColor)
@@ -501,7 +496,7 @@ public class DetailSectionFragment extends Fragment
             tagGroupLayout.addView(tagLayout);
             tagsLayout.addView(tagGroupLayout);
         }
-        
+
         // Add tag
         if (isRandomColor)
             color = Theme.getRandomDeepColor();
@@ -527,11 +522,11 @@ public class DetailSectionFragment extends Fragment
         lp.setMargins(x, y, x, y);
         tagsLayout.addView(addtagView, lp);
     }
-    
+
     private void layout(GalleryDetail md) {
         if (mActivity.isFinishing())
             return;
-            
+
         // Delete progress bar
         mWaitPb.setVisibility(View.GONE);
 
@@ -550,6 +545,8 @@ public class DetailSectionFragment extends Fragment
         else {
             // Set unset info
             if (mThumb.getUrl() == null) {
+                mHeaderView.setVisibility(View.VISIBLE);
+                mColorfulBar.setVisibility(View.VISIBLE);
                 mThumb.setLoadInfo(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid));
                 ImageLoader.getInstance(mActivity).add(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid),
                         new LoadImageView.SimpleImageGetListener(mThumb).setTransitabled(false));
@@ -558,16 +555,16 @@ public class DetailSectionFragment extends Fragment
                 mCategory.setText(Ui.getCategoryText(mGalleryDetail.category));
                 mCategory.setBackgroundColor(Ui.getCategoryColor(mGalleryDetail.category));
             }
-            
+
             // Enable button
             mReadButton.setEnabled(true);
             mReadButton.setOnClickListener(this);
             mRateButton.setEnabled(true);
             mRateButton.setOnClickListener(this);
-            
+
             RatingBar rate = (RatingBar)mRootView.findViewById(R.id.detail_rate);
             rate.setRating(mGalleryDetail.rating);
-            
+
             TextSwitcher averagePeople = (TextSwitcher)mRootView.findViewById(R.id.detail_average_people);
             if (!isSetViewFactory) {
                 averagePeople.setFactory(this);
@@ -575,21 +572,21 @@ public class DetailSectionFragment extends Fragment
             }
             averagePeople.setCurrentText(String.format("%.2f (%d)",
                     mGalleryDetail.rating, mGalleryDetail.people));
-            
+
             TextView posted = (TextView)mRootView.findViewById(R.id.detail_posted);
             posted.setText(mGalleryDetail.posted);
-            
+
             TextView language = (TextView)mRootView.findViewById(R.id.detail_language);
             language.setText(String.format(getString(R.string.detail_language), mGalleryDetail.language));
-            
+
             TextView pagesSize = (TextView)mRootView.findViewById(R.id.detail_pages_size);
             pagesSize.setText(String.format(getString(R.string.detail_pages_size),
                     mGalleryDetail.pages, mGalleryDetail.size));
-            
+
             addTags();
-            
+
             mNormalView.setVisibility(View.VISIBLE);
-            
+
             // paper list
             if (mGalleryDetail.previewLists[0] != null) {
                 mPreviewListMain.setVisibility(View.VISIBLE);
@@ -598,7 +595,7 @@ public class DetailSectionFragment extends Fragment
                 mPreviewNumText.setText(String.format("%d / %d",
                         1, mGalleryDetail.previewSum));
                 mPreviewRefreshButton.setOnClickListener(this);
-                
+
                 // Init go to dialog or disable it
                 if (mGalleryDetail.previewSum > 1) {
                     mGoToDialog = createGoToDialog();
@@ -610,7 +607,7 @@ public class DetailSectionFragment extends Fragment
                     mBackButton.setClickable(false);
                     mFrontButton.setClickable(false);
                 }
-                
+
                 mCurPage = 0;
                 mPreviewListLayout.removeAllViews();
                 mGalleryDetail.previewLists[0].setData(this, mActivity, mGalleryDetail, 0);
@@ -618,20 +615,20 @@ public class DetailSectionFragment extends Fragment
             } else {
                 new SuperToast(mActivity, R.string.detail_preview_error, SuperToast.WARNING);
             }
-            
+
             // Set comments
             mActivity.setComments(mGalleryDetail.comments);
         }
     }
-    
+
     @Override
     public void onClick(View v) {
        if (v == mRateButton) {
            rate(mGalleryDetail.rating);
-           
+
        } else if (v == mReadButton) {
            mData.addRead(mGalleryDetail);
-           
+
            Intent intent = new Intent(mActivity,
                    MangaActivity.class);
            intent.putExtra("url", mGalleryDetail.firstPage);
@@ -640,7 +637,7 @@ public class DetailSectionFragment extends Fragment
            intent.putExtra("firstPage", 0);
            intent.putExtra("pageSum", mGalleryDetail.pages);
            startActivity(intent);
-           
+
        } else if (v == mRefreshButton) {
            GDetailGetListener listener = new GDetailGetListener();
            mClient.getGDetail(mUrl, mGalleryDetail, listener);
@@ -648,11 +645,11 @@ public class DetailSectionFragment extends Fragment
            mRefreshButton.setVisibility(View.GONE);
            // Add progressBar
            mWaitPb.setVisibility(View.VISIBLE);
-           
+
        } else if (v == mCancelButton
                | v == mKnownButton) {
            mActivity.finish();
-           
+
        } else if (v == mOnceButton) {
            // TODO create a class uri
            GDetailGetListener listener = new GDetailGetListener();
@@ -661,7 +658,7 @@ public class DetailSectionFragment extends Fragment
            mOffensiveView.setVisibility(View.GONE);
            // Add progressBar
            mWaitPb.setVisibility(View.VISIBLE);
-           
+
        } else if (v == mEveryButton) {
            GDetailGetListener listener = new GDetailGetListener();
            mClient.getGDetail(mUrl + "&nw=always", mGalleryDetail, listener);
@@ -669,32 +666,33 @@ public class DetailSectionFragment extends Fragment
            mOffensiveView.setVisibility(View.GONE);
            // Add progressBar
            mWaitPb.setVisibility(View.VISIBLE);
-           
+
        } else if (v == mBackButton) {
            if (mCurPage <= 0)
                return;
            mCurPage--;
            refreshPageList();
-           
+
        } else if (v == mFrontButton) {
            if (mCurPage >= mGalleryDetail.previewSum - 1)
                return;
            mCurPage++;
            refreshPageList();
-           
+
        } else if (v == mPreviewRefreshButton) {
            refreshPageList();
-           
+
        } else if (v == mPreviewNumText) {
            mGoToDialog.show();
        }
     }
-    
+
     private int getSendableRating(float ratingFloat) {
-        float dr = ratingFloat*2;        
+        float dr = ratingFloat*2;
         return (int)(dr + 0.5);
     }
-    
+
+    @SuppressLint("InflateParams")
     public void rate(float defaultRating) {
         View view = mActivity.getLayoutInflater().inflate(R.layout.rate, null);
         final TextView tv = (TextView)view.findViewById(R.id.rate_text);
@@ -734,7 +732,7 @@ public class DetailSectionFragment extends Fragment
                                                 //Reset start
                                                 RatingBar rate = (RatingBar)mRootView.findViewById(R.id.detail_rate);
                                                 rate.setRating(mGalleryDetail.rating);
-                                                
+
                                                 TextSwitcher averagePeople = (TextSwitcher)
                                                         mRootView.findViewById(R.id.detail_average_people);
                                                 averagePeople.setText(String.format("%.2f (%d)",
@@ -758,23 +756,23 @@ public class DetailSectionFragment extends Fragment
                     }
                 }).create().show();
     }
-    
-    
-    
+
+
+
     public List<Comment> getComments() {
         if (mGalleryDetail == null)
             return null;
         else
             return mGalleryDetail.comments;
     }
-    
+
     private class GDetailGetListener
             implements EhClient.OnGetGDetailListener {
         @Override
         public void onSuccess(GalleryDetail md) {
             layout(md);
         }
-        
+
         @Override
         public void onFailure(String eMsg) {
             // Delete progress bar
@@ -784,19 +782,19 @@ public class DetailSectionFragment extends Fragment
             new SuperToast(mActivity).setIcon(R.drawable.ic_warning).setMessage(eMsg).show();
         }
     }
-    
+
     private class SimpleVote implements View.OnClickListener {
-        
-        private String groupName;
-        private String tagText;
-        private boolean isUp;
-        
+
+        private final String groupName;
+        private final String tagText;
+        private final boolean isUp;
+
         public SimpleVote(String groupName, String tagText, boolean isUp) {
             this.groupName = groupName;
             this.tagText = tagText;
             this.isUp = isUp;
         }
-        
+
         @Override
         public void onClick(View v) {
             ((AlertButton)v).dialog.dismiss();
@@ -804,12 +802,12 @@ public class DetailSectionFragment extends Fragment
                     groupName, tagText, isUp, new SimpleVoteListener());
         }
     }
-    
+
     private class SimpleVoteListener implements EhClient.OnVoteListener {
         @Override
         public void onSuccess(String tagPane) {
             new SuperToast(mActivity).setMessage(R.string.vote_succeeded).show();
-            
+
             DetailParser parser = new DetailParser();
             if (parser.parser(tagPane, DetailParser.TAG) ==
                     DetailParser.TAG) {

@@ -32,83 +32,14 @@
             android:gravity="center"
             android:orientation="vertical" >
 
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/detail_thumb_height" >
-
-                <com.hippo.ehviewer.widget.LoadImageView
-                    android:id="@+id/detail_cover"
-                    android:layout_width="@dimen/detail_thumb_width"
-                    android:layout_height="@dimen/detail_thumb_height"
-                    android:scaleType="fitCenter" />
-
-                <TextView
-                    android:id="@+id/detail_title"
-                    style="@style/DetailTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_toRightOf="@id/detail_cover" />
-
-                <TextView
-                    android:id="@+id/detail_uploader"
-                    style="@style/DetailSubtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/detail_title"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_toRightOf="@id/detail_cover" />
-
-                <TextView
-                    android:id="@+id/detail_category"
-                    style="@style/TextTag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/detail_cover"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="10.0dp"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginRight="12dp"
-                    android:background="@android:color/transparent" />
-                
-                <!-- Need to make button do rate and read the same width
-                     Disable is before make sure it is normal -->
-                
-                <Button
-                    android:id="@+id/detail_do_rate"
-                    style="@style/Button.Small.Flat.Blue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="10.0dp"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginRight="12dp"
-                    android:text="@string/rate" />
-                
-                <Button
-                    android:id="@+id/detail_read"
-                    style="@style/Button.Small.Flat.Blue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@id/detail_do_rate"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginBottom="10.0dp"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginRight="12dp"
-                    android:text="@string/read"/>
-                
-            </RelativeLayout>
+            <include
+                android:id="@+id/detail_header"
+                layout="@layout/detail_header" />
 
             <View
-                android:id="@+id/crude_divider"
+                android:id="@+id/colorful_bar"
                 android:layout_width="fill_parent"
-                android:layout_height="2.0dp"
-                android:background="@android:color/holo_blue_light" />
+                android:layout_height="2.0dp" />
             
             <!-- TODO maybe viewstub and is better -->
             <include
