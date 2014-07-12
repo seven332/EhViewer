@@ -204,7 +204,6 @@ public class DetailSectionFragment extends Fragment
             mHeaderView.setVisibility(View.GONE);
             mColorfulBar.setVisibility(View.GONE);
             mThumb.setLoadInfo(null, null);
-            mThumb.setImageDrawable(null);
         }
 
         if (mGalleryDetail.size == null) {
@@ -286,6 +285,7 @@ public class DetailSectionFragment extends Fragment
         mBackButton.setBackgroundDrawable(getArrowClickDrawable(color, true));
         mFrontButton.setBackgroundDrawable(getArrowClickDrawable(color, false));
 
+        mUploader.setOnClickListener(this);
         mRefreshButton.setOnClickListener(this);
 
         FswView align = (FswView)mActivity.findViewById(R.id.alignment);
@@ -623,68 +623,76 @@ public class DetailSectionFragment extends Fragment
 
     @Override
     public void onClick(View v) {
-       if (v == mRateButton) {
-           rate(mGalleryDetail.rating);
+        if (v == mUploader) {
+            mActivity.finish();
+            Intent intent = new Intent(mActivity, MangaListActivity.class);
+            intent.setAction(MangaListActivity.ACTION_GALLERY_LIST);
+            intent.putExtra(MangaListActivity.KEY_MODE, ListUrls.UPLOADER);
+            intent.putExtra(MangaListActivity.KEY_UPLOADER, mUploader.getText());
+            startActivity(intent);
 
-       } else if (v == mReadButton) {
-           mData.addRead(mGalleryDetail);
+        } else if (v == mRateButton) {
+            rate(mGalleryDetail.rating);
 
-           Intent intent = new Intent(mActivity,
-                   MangaActivity.class);
-           intent.putExtra("url", mGalleryDetail.firstPage);
-           intent.putExtra("gid", mGalleryDetail.gid);
-           intent.putExtra("title", mGalleryDetail.title);
-           intent.putExtra("firstPage", 0);
-           intent.putExtra("pageSum", mGalleryDetail.pages);
-           startActivity(intent);
+        } else if (v == mReadButton) {
+            mData.addRead(mGalleryDetail);
 
-       } else if (v == mRefreshButton) {
-           GDetailGetListener listener = new GDetailGetListener();
-           mClient.getGDetail(mUrl, mGalleryDetail, listener);
-           // Delete refresh button
-           mRefreshButton.setVisibility(View.GONE);
-           // Add progressBar
-           mWaitPb.setVisibility(View.VISIBLE);
+            Intent intent = new Intent(mActivity,
+                    MangaActivity.class);
+            intent.putExtra("url", mGalleryDetail.firstPage);
+            intent.putExtra("gid", mGalleryDetail.gid);
+            intent.putExtra("title", mGalleryDetail.title);
+            intent.putExtra("firstPage", 0);
+            intent.putExtra("pageSum", mGalleryDetail.pages);
+            startActivity(intent);
 
-       } else if (v == mCancelButton
-               | v == mKnownButton) {
-           mActivity.finish();
+        } else if (v == mRefreshButton) {
+            GDetailGetListener listener = new GDetailGetListener();
+            mClient.getGDetail(mUrl, mGalleryDetail, listener);
+            // Delete refresh button
+            mRefreshButton.setVisibility(View.GONE);
+            // Add progressBar
+            mWaitPb.setVisibility(View.VISIBLE);
 
-       } else if (v == mOnceButton) {
-           // TODO create a class uri
-           GDetailGetListener listener = new GDetailGetListener();
-           mClient.getGDetail(mUrl + "&nw=session", mGalleryDetail, listener);
-           // Delete offensiveView
-           mOffensiveView.setVisibility(View.GONE);
-           // Add progressBar
-           mWaitPb.setVisibility(View.VISIBLE);
+        } else if (v == mCancelButton
+                | v == mKnownButton) {
+            mActivity.finish();
 
-       } else if (v == mEveryButton) {
-           GDetailGetListener listener = new GDetailGetListener();
-           mClient.getGDetail(mUrl + "&nw=always", mGalleryDetail, listener);
-           // Delete offensiveView
-           mOffensiveView.setVisibility(View.GONE);
-           // Add progressBar
-           mWaitPb.setVisibility(View.VISIBLE);
+        } else if (v == mOnceButton) {
+            // TODO create a class uri
+            GDetailGetListener listener = new GDetailGetListener();
+            mClient.getGDetail(mUrl + "&nw=session", mGalleryDetail, listener);
+            // Delete offensiveView
+            mOffensiveView.setVisibility(View.GONE);
+            // Add progressBar
+            mWaitPb.setVisibility(View.VISIBLE);
 
-       } else if (v == mBackButton) {
-           if (mCurPage <= 0)
-               return;
-           mCurPage--;
-           refreshPageList();
+        } else if (v == mEveryButton) {
+            GDetailGetListener listener = new GDetailGetListener();
+            mClient.getGDetail(mUrl + "&nw=always", mGalleryDetail, listener);
+            // Delete offensiveView
+            mOffensiveView.setVisibility(View.GONE);
+            // Add progressBar
+            mWaitPb.setVisibility(View.VISIBLE);
 
-       } else if (v == mFrontButton) {
-           if (mCurPage >= mGalleryDetail.previewSum - 1)
-               return;
-           mCurPage++;
-           refreshPageList();
+        } else if (v == mBackButton) {
+            if (mCurPage <= 0)
+                return;
+            mCurPage--;
+            refreshPageList();
 
-       } else if (v == mPreviewRefreshButton) {
-           refreshPageList();
+        } else if (v == mFrontButton) {
+            if (mCurPage >= mGalleryDetail.previewSum - 1)
+                return;
+            mCurPage++;
+            refreshPageList();
 
-       } else if (v == mPreviewNumText) {
-           mGoToDialog.show();
-       }
+        } else if (v == mPreviewRefreshButton) {
+            refreshPageList();
+
+        } else if (v == mPreviewNumText) {
+            mGoToDialog.show();
+        }
     }
 
     private int getSendableRating(float ratingFloat) {

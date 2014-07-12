@@ -35,7 +35,7 @@
         android:layout_marginTop="2dp"
         android:layout_toRightOf="@id/detail_cover" />
 
-    <TextView
+    <Button
         android:id="@+id/detail_uploader"
         style="@style/DetailSubtitle"
         android:layout_width="wrap_content"
@@ -43,7 +43,15 @@
         android:layout_below="@id/detail_title"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
-        android:layout_toRightOf="@id/detail_cover" />
+        android:layout_marginTop="4dp"
+        android:layout_toRightOf="@id/detail_cover"
+        android:paddingLeft="4dp"
+        android:paddingTop="2dp"
+        android:paddingRight="4dp"
+        android:paddingBottom="2dp"
+        android:background="@drawable/clickable_bg_blue"
+        android:textColor="@color/blue_bn_text" />
+
 
     <TextView
         android:id="@+id/detail_category"
