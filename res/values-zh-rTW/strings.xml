@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     strings.xml generated with OpenCC
+-->
+<resources>
+
+    <string name="drawer_open">開啟側邊欄</string>
+    <string name="drawer_close">關閉側邊欄</string>
+
+    <!-- Warning -->
+    <string name="dailog_waring_title">警告</string>
+    <string name="dailog_waring_plain">該應用內容來自網際網路，部分內容可能對您的生理及心理造成難以恢復的傷害。該應用作者不會對由該應用造成的後果負責。您是否願意繼續使用該應用？</string>
+    <string name="dailog_waring_yes">我願意</string>
+    <string name="dailog_waring_no">不！</string>
+
+    <!-- Analyics -->
+    <string name="dailog_analyics_title">資料統計</string>
+    <string name="dailog_analyics_plain">您是否願意將使用情況發送給開發者？這對開發者維護該應用有很大幫助。在發送使用情況的同時也會發送部分裝置資訊（譬如裝置型號、系統版本）。開發者承諾不收集任何個人身份資訊資料（譬如姓名、電話號碼、電郵地址）。\n\n資料收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies\n\n您以後可以在設定中修改選擇</string>
+
+    <!-- Network -->
+    <string name="dailog_check_network">檢查網路</string>
+    <string name="dailog_network_error_yes">我不在意</string>
+    <string name="dailog_network_error_no">成</string>
+
+    <!-- Exit -->
+    <string name="exit_tip">再按一次退出</string>
+
+    <!-- Login -->
+    <string name="check_login">檢查登陸狀態</string>
+    <string name="toast_login_succeeded">登陸成功</string>
+    <string name="toast_login_failed">登陸失敗</string>
+    <string name="dialog_title_login_or_not">是否登陸</string>
+    <string name="dialog_messgae_login_or_not">登陸以後好處都有啥？</string>
+    <string name="not_login">不登陸</string>
+    <string name="toast_logout_succeeded">退出成功</string>
+    <string name="toast_logout_failed">退出失敗</string>
+
+    <!-- Search -->
+    <string name="hint_no_keyword">沒關鍵字也行</string>
+    <string name="checkbox_uploader">指定上傳者</string>
+    <string name="checkbox_advance">高階選項</string>
+    <string name="checkbox_sname">搜索本子</string>
+    <string name="checkbox_stags">搜索本子標籤</string>
+    <string name="checkbox_sdesc">搜索本子描述</string>
+    <string name="checkbox_storr">搜索種子檔名</string>
+    <string name="checkbox_sto">僅搜索有種子的本子</string>
+    <string name="checkbox_sdt1">搜索 Low-Power 標籤</string>
+    <string name="checkbox_sdt2">搜索 Downvoted 標籤</string>
+    <string name="checkbox_sh">搜索被刪除的本子</string>
+    <string name="checkbox_sr">最低評分：</string>
+    <string name="toast_normal_mode">切換至普通搜索模式</string>
+    <string name="toast_tag_mode">切換至標籤搜索模式</string>
+
+    <!-- Jump -->
+    <string name="jump_summary" formatted="false">第 %d 頁，共 %d 頁</string>
+    <string name="jump_to">跳至：</string>
+    <string name="toast_invalid_page">非法頁面</string>
+
+    <!-- Send Crash -->
+    <string name="dialog_send_crash_title">這很重要</string>
+    <string name="dialog_send_crash_plain">上次該應用崩潰了。你願意把日誌發送給開發者以便以後得到更好的使用者體驗麼？</string>
+    <string name="dialog_send_crash_yes">我願意</string>
+    <string name="dialog_send_crash_no">門兒都沒有</string>
+    <string name="dialog_wait_send_crash_msg">請在發送完日誌後關閉該視窗</string>
+
+    <!-- List item long click -->
+    <string name="toast_add_favourite">已添加到收藏</string>
+    <string name="toast_add_download">已添加到下載列表</string>
+
+    <!-- MangaListActivity -->
+    <string name="no_found">未找到</string>
+    <string name="none">無</string>
+    <string name="list_title" formatted="false">%s 第 %d 頁</string>
+
+    <!-- Update -->
+    <string name="update_message" formatted="false">發現新版本：%s\n大小：%s\n%s\n\n是否更新？</string>
+    <string name="tap_update">點選檢查更新</string>
+    <string name="checking_update">正在檢查更新</string>
+    <string name="up_to_date">已是最新版</string>
+    <string name="found_update">發現新版本</string>
+    <string name="start_update">開始下載更新</string>
+    <string name="download_update">正在下載更新</string>
+    <string name="update_failed">下載更新失敗</string>
+
+    <!-- MangaDetialActivity -->
+    <string name="detail_pages_size" formatted="false">頁數 : %s (%s)</string>
+    <string name="detail_language">語言 : %s</string>
+    <string name="detail_average">平均得分：%s</string>
+    <string name="detail_people">投票人數：%s</string>
+    <string name="detail_offensive_title">內容警告</string>
+    <string name="detail_offensive">這個本子被所有人標記為瞎眼。所以任何人都不應該看。\n\n（如果你忽略了這個警告，你就失去了抱怨的權利。）</string>
+    <string name="detail_button_cancel">算了，不看了</string>
+    <string name="detail_button_once">就看這一次</string>
+    <string name="detail_button_every">別再煩我了</string>
+    <string name="detail_pining">This gallery is pining for the fjords.</string>
+    <string name="detail_button_known">我知道了</string>
+    <string name="detail_preview_error">獲取預覽失敗</string>
+    <string name="detail_not_rated">暫無人投票</string>
+    <string name="vote_up">頂</string>
+    <string name="vote_down">踩</string>
+    <string name="show_tagged">相同標籤</string>
+
+    <!-- MangaActivity -->
+    <string name="load_pre">載入上一頁</string>
+    <string name="first_page">已是第一頁</string>
+    <string name="start_reloading">開始繼續載入</string>
+    <string name="retry_max_pre">已達重試上限，滑至最左側繼續載入</string>
+    <string name="retry_max_next">已達重試上限，滑至最右側繼續載入</string>
+
+    <!-- ErrorMessage -->
+    <string name="em_network_error">網路錯誤</string>
+    <string name="em_timeout">超時</string>
+    <string name="em_response_code_error">響應碼錯誤</string>
+    <string name="em_parser_error">網頁分析錯誤</string>
+    <string name="em_open_input_stream_error">開啟輸入流錯誤</string>
+    <string name="em_read_input_stream_error">讀取輸入流錯誤</string>
+    <string name="em_client_protocol">無效的請求或無效的響應</string>
+    <string name="em_put_cache_error">存入快取錯誤</string>
+    <string name="em_url_format_error">網址錯誤</string>
+    <string name="em_login_error">使用者名或密碼錯誤</string>
+    <string name="em_check_login_error">獲取使用者資訊錯誤</string>
+    <string name="em_logout_error">退出錯誤</string>
+    <string name="em_url_error">網址錯誤</string>
+    <string name="em_retry">重試</string>
+    <string name="em_retry_times">重試次數：%d</string>
+    <string name="em_unknown_error">未知錯誤</string>
+    <string name="em_no_network">無網路連線</string>
+    <string name="em_can_not_reach">你所在的網路無法連線到 e-hentai</string>
+    <string name="em_no_network_2">無網路連線？</string>
+    <string name="em_request_error">請求錯誤</string>
+    <string name="em_unknown_host">無法解析主機</string>
+    <string name="em_unexpected_response_code">非預期的響應碼：%d</string>
+    <string name="em_redirection_error">太多重定向</string>
+    <string name="em_host_error">主機錯誤</string>
+    <string name="em_get_body_error">獲取正文失敗</string>
+    <string name="em_invalid_request">無效的請求</string>
+    <string name="em_no_sdcard">未掛載 SD卡</string>
+
+    <!-- Action -->
+    <string name="action_refresh">重新整理</string>
+    <string name="action_settings">設定</string>
+
+    <!-- Favorite -->
+    <string name="local_favorite">本地收藏</string>
+    <string name="select_item">選擇項目</string>
+    <string name="where_to_add">添加至何處？</string>
+    <string name="failed_to_add">添加失敗</string>
+    <string name="where_to_move">移動至何處？</string>
+    <string name="moving">正在移動…</string>
+    <string name="move_successfully">移動成功</string>
+    <string name="failed_to_move">移動失敗</string>
+    <string name="dst_src_same">目標與源相同</string>
+    <string name="delete_successfully">刪除成功</string>
+    <string name="failed_to_delete">刪除失敗</string>
+    <string name="set_default_favorite">設為默認收藏夾</string>
+
+    <!-- Popular -->
+    <string name="popular_warning_message">該頁面中的內容基於資料統計，您尚未開啟資料統計。若開啟資料統計，您的行為將對該頁面產生影響。是否現在開啟資料統計？</string>
+    <string name="popular_update_time">更新時間 %s</string>
+
+    <!-- Settings -->
+    <string name="display_settings_title">顯示</string>
+    <string name="theme_display_settings_title">主題</string>
+    <string name="random_theme_color_title">隨機主題顏色</string>
+    <string name="random_theme_color_summary_on">色彩斑斕！</string>
+    <string name="random_theme_color_summary_off">在下方指定主題顏色</string>
+    <string name="theme_color_title">主題顏色</string>
+    <string name="screen_display_settings_title">螢幕</string>
+    <string name="screen_orientation_title">螢幕方向</string>
+    <string name="read_display_settings_title">閱讀</string>
+    <string name="page_scaling_title">頁面縮放</string>
+    <string name="start_position_title">開頁位置</string>
+    <string name="list_display_settings_title">列表</string>
+    <string name="list_mode_title">列表模式</string>
+    <string name="popular_display_settings_title">熱門</string>
+    <string name="show_popular_update_time_title">顯示熱門更新時間</string>
+    <string name="eh_settings_title">EH</string>
+    <string name="detail_eh_settings_title">詳情</string>
+    <string name="preview_mode_title">預覽圖模式</string>
+    <string name="preview_mode_normal">正常預覽圖</string>
+    <string name="preview_mode_large">大預覽圖</string>
+    <string name="preview_per_row_title">每行預覽圖數量</string>
+    <string name="data_settings_title">資料</string>
+    <string name="cache_data_settings_title">快取</string>
+    <string name="cache_size_title">快取大小</string>
+    <string name="clear_cache_title">清除快取</string>
+    <string name="clear_cache_summary_on" formatted="false">大小 : %.2f / %d MB</string>
+    <string name="clear_cache_summary_off">無快取</string>
+    <string name="download_data_settings_title">下載</string>
+    <string name="download_path_title">下載路徑</string>
+    <string name="media_scan_title">允許媒體掃描</string>
+    <string name="media_scan_summary_on">請避免他人翻看你的圖庫應用</string>
+    <string name="media_scan_summary_off">大多數圖庫應用將不會顯示下載目錄中的圖片</string>
+    <string name="favorite_data_settings_title">收藏</string>
+    <string name="default_favorite">默認收藏夾</string>
+    <string name="about_settings_title">關於</string>
+    <string name="author_title">作者</string>
+    <string name="changelog_title">日誌</string>
+    <string name="thanks_title">感謝</string>
+    <string name="website_title">網站</string>
+    <string name="source_title">源碼</string>
+    <string name="update_about_settings_title">更新</string>
+    <string name="auto_check_for_update_title">自動檢查更新</string>
+    <string name="auto_check_for_update_summary_on">每日第一次啟動時檢查更新</string>
+    <string name="auto_check_for_update_summary_off">從不自動檢查更新</string>
+    <string name="check_for_update_title">檢查更新</string>
+    <string name="check_for_update_summary">點選檢查更新</string>
+    <string name="update_server_title">更新伺服器</string>
+    <string name="analytics_about_settings_title">資料統計</string>
+    <string name="allow_analyics_title">啟用資料統計</string>
+    <string name="allow_analyics_summary_on">感謝您對本應用的支援</string>
+    <string name="allow_analyics_summary_off">感謝您使用本應用</string>
+    <string name="about_analyics_title">關於資料統計</string>
+    <string name="about_analyics_comment">若您啟用了資料統計，本應用會將您的使用情況發送給開發者。這對開發者維護該應用有很大幫助。在發送使用情況的同時也會發送部分裝置資訊（譬如裝置型號、系統版本）。開發者承諾不收集任何個人身份資訊資料（譬如姓名、電話號碼、電郵地址）。\n\n資料收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies</string>
+    <string name="preference_category_display">顯示</string>
+    <string name="preference_screen_ori">螢幕方向</string>
+    <string name="portrait">豎屏</string>
+    <string name="landscape">橫屏</string>
+    <string name="preference_page_scaling">頁面縮放</string>
+    <string name="preference_start_position">開頁位置</string>
+    <string name="preference_settings_title">設定</string>
+    <string name="preference_category_cache">快取</string>
+    <string name="preference_cache_summary" formatted="false">大小 : %.2f / %d MB</string>
+    <string name="preference_cache_summary_no">無快取</string>
+    <string name="preference_auto_page_cache">自動清理頁面快取</string>
+    <string name="preference_auto_page_cache_summary_on">當應用關閉時清除頁面快取</string>
+    <string name="preference_auto_page_cache_summary_off">啥都不做</string>
+    <string name="preference_update_server">更新伺服器</string>
+    <string name="preference_category_about">關於</string>
+    <string name="preference_author">作者</string>
+    <string name="cache_large">快取太大了！</string>
+    <string name="input_error">輸入錯誤</string>
+    <string name="create_cache_error">創建快取錯誤</string>
+    <string name="list_mode_detail">詳情</string>
+    <string name="list_mode_thumb">縮圖</string>
+    <string name="new_folder">新建資料夾</string>
+    <string name="_new">新建</string>
+    <string name="color_picker_title">配色方案</string>
+    <string name="current_color">當前</string>
+    <string name="new_color">新的</string>
+
+    <!-- server -->
+    <string name="update_server_google">Google</string>
+    <string name="update_server_qiniu">七牛</string>
+    <string name="update_server_gokuai">夠快</string>
+
+    <!-- Tag -->
+    <string name="add_tag">添加標籤</string>
+    <string name="tag_name">標簽名稱：</string>
+    <string name="tag_name_empty">標簽名稱不能為空</string>
+    <string name="tag_name_exist">標簽名稱已存在</string>
+    <string name="tag_change_name">修改名稱</string>
+    <string name="new_tag_name">新名稱：%s</string>
+
+    <!-- Pull -->
+    <string name="pull_refresh_pull">下拉重新整理…</string>
+    <string name="pull_refresh_release">釋放重新整理…</string>
+    <string name="pull_refresh_doing">正在重新整理…</string>
+    <string name="pull_refresh_done">完成重新整理</string>
+    <string name="pull_refresh_cancel">取消重新整理</string>
+    <string name="pull_pre_pull">下拉讀取上一頁…</string>
+    <string name="pull_pre_release">釋放讀取上一頁…</string>
+    <string name="pull_pre_doing">正在讀取上一頁…</string>
+    <string name="pull_pre_done">完成讀取上一頁</string>
+    <string name="pull_pre_cancel">取消讀取上一頁</string>
+    <string name="pull_load_pull">下拉載入…</string>
+    <string name="pull_load_release">釋放載入…</string>
+    <string name="pull_load_doing">正在載入…</string>
+    <string name="pull_load_done">完成載入</string>
+    <string name="pull_load_cancel">取消載入</string>
+    <string name="footer_loading">正在載入更多…</string>
+    <string name="footer_loaded">已全部載入</string>
+    <string name="footer_fail">載入失敗，點選繼續載入</string>
+
+    <!-- Download -->
+    <string name="start_download_task">開始下載任務</string>
+    <string name="download_task_finished">完成下載任務</string>
+    <string name="downloading">正在下載</string>
+    <string name="download_successfully">下載成功</string>
+    <string name="download_unsuccessfully">下載失敗</string>
+    <string name="not_started">未啟動</string>
+    <string name="waiting">等待中</string>
+    <string name="wait_for_last">等待上個操作結束</string>
+
+    <!-- GalleryView -->
+    <string name="pre_page">上一頁</string>
+    <string name="next_page">下一頁</string>
+    <string name="zoom_in">放大</string>
+    <string name="zoom_out">縮小</string>
+    <string name="menu">選單</string>
+
+    <!-- Mode Dialog -->
+    <string name="select_mode_warning">請登入以避免 Sad Panda</string>
+
+    <!-- Vote -->
+    <string name="vote_succeeded">投票成功</string>
+    <string name="vote_failed">投票失敗</string>
+
+    <!-- Rate -->
+    <string name="invalid_rating">非法評分</string>
+    <string name="rate_succeeded">評價成功</string>
+    <string name="rate_failed">評價失敗</string>
+    <string name="uploader_others">該使用者上傳的其他內容</string>
+
+    <!-- rating -->
+    <string name="rating10">根本把持不住</string>
+    <string name="rating9">好極了</string>
+    <string name="rating8">很棒</string>
+    <string name="rating7">不錯</string>
+    <string name="rating6">還行</string>
+    <string name="rating5">一般般</string>
+    <string name="rating4">不行</string>
+    <string name="rating3">糟糕</string>
+    <string name="rating2">瞎眼</string>
+    <string name="rating1">以頭搶地</string>
+    <string name="rating0">感覺快要窒息了</string>
+
+    <!-- Util -->
+    <string name="invalid_input">無效的輸入</string>
+    <string name="never_show">不再顯示</string>
+    <string name="retry">重試</string>
+    <string name="local">本地</string>
+    <string name="tag">標籤</string>
+    <string name="copyed">已複製</string>
+    <string name="send">發送</string>
+    <string name="detail">詳情</string>
+    <string name="comment">評論</string>
+    <string name="info">資訊</string>
+    <string name="reply">回覆</string>
+    <string name="read">閱讀</string>
+    <string name="rate">評價</string>
+    <string name="last_page">最後一頁</string>
+    <string name="unfinished">未完成的功能</string>
+    <string name="period">。</string>
+    <string name="refresh">重新整理</string>
+    <string name="error">錯誤</string>
+    <string name="changelog">日誌</string>
+    <string name="register">註冊</string>
+    <string name="login">登陸</string>
+    <string name="logout">退出</string>
+    <string name="wait">請稍後</string>
+    <string name="username">使用者名</string>
+    <string name="password">密碼</string>
+    <string name="add">添加</string>
+    <string name="what_to_do">你想做什麼？</string>
+    <string name="jump">跳頁</string>
+    <string name="some_page">第 %d 頁</string>
+    <string name="_default">默認</string>
+    <string name="delete">刪除</string>
+    <string name="move">移動</string>
+    <string name="list">列表</string>
+    <string name="homepage">首頁</string>
+    <string name="mode">模式</string>
+    <string name="favourite">收藏</string>
+    <string name="popular">熱門</string>
+    <string name="download">下載</string>
+    <string name="star_2">2 星</string>
+    <string name="star_3">3 星</string>
+    <string name="star_4">4 星</string>
+    <string name="star_5">5 星</string>
+    <string name="actual_size">原始尺寸</string>
+    <string name="fit_to_width">匹配寬度</string>
+    <string name="fit_to_height">匹配長度</string>
+    <string name="fit_to_screen">匹配螢幕</string>
+    <string name="fixed_scale">固定縮放</string>
+    <string name="top_left">左上角</string>
+    <string name="top_right">右上角</string>
+    <string name="bottom_left">左下角</string>
+    <string name="bottom_right">右下角</string>
+    <string name="center">中心</string>
+    <string name="add_to_favourite">收藏</string>
+    <string name="remove">移除</string>
+    <string name="remove_info_data">移除資訊與資料</string>
+    <string name="update">更新</string>
+    <string name="thanks">感謝</string>
+    <string name="develop">開發</string>
+    <string name="advance_search_left">左劃更多</string>
+    <string name="restart_to_take_effect">重啟應用以便生效</string>
+    <string name="cur_dir_not_writable">當前資料夾不可寫</string>
+
+</resources>

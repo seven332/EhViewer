@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
@@ -1242,6 +1243,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         if (Config.isFirstTime()) {
             Config.firstTime();
 
+            // Show left menu
             // TODO Can't invoke showMenu() immediately, but there might be a better way
             Handler handler = new Handler();
             Message m = Message.obtain(handler, new Runnable() {
@@ -1251,6 +1253,14 @@ public class MangaListActivity extends AbstractGalleryActivity
                 }
             });
             handler.sendMessageDelayed(m, 500L);
+
+            // Show translate warning
+            String country = Locale.getDefault().getCountry();
+            if (country.equals("HK") || country.equals("TW")) {
+                new DialogBuilder(this).setTitle("注意")
+                .setMessage("正體中文的翻譯由 OpenCC 自動完成，若有任何錯誤或不妥之處歡迎指出。")
+                .setSimpleNegativeButton().create().show();
+            }
         }
     }
 

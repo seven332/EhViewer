@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Hippo Seven
+<!--
+     Copyright (C) 2014 Hippo Seven
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -12,33 +13,32 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
- -->
+-->
 <resources>
 
     <string name="app_name" translatable="false">EhViewer</string>
-    
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    
+
     <!-- Warning -->
     <string name="dailog_waring_title">Waring</string>
     <string name="dailog_waring_plain">该应用内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。该应用作者不会对由该应用造成的后果负责。您是否愿意继续使用该应用？</string>
     <string name="dailog_waring_yes">Yes, I would</string>
     <string name="dailog_waring_no">NO !</string>
-    
+
     <!-- Analyics -->
     <string name="dailog_analyics_title">Usage statistics</string>
     <string name="dailog_analyics_plain">您是否愿意将使用情况发送给开发者？这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/us.html\nGoogle隐私权和条款：http://www.google.com/intl/us/policies\n\n您以后可以在设置中修改选择</string>
-    
+
     <!-- Network -->
     <string name="dailog_check_network">Checking network</string>
     <string name="dailog_network_error_yes">I don\'t care</string>
     <string name="dailog_network_error_no">Fine</string>
     <string name="dialog_wait_send_crash_msg">Please close the dialog after sending logcat</string>
-    
+
     <!-- Exit -->
     <string name="exit_tip">Click again to exit</string>
-    
+
     <!-- Login -->
     <string name="check_login">Checking login status</string>
     <string name="toast_login_succeeded">Login succeedfully</string>
@@ -46,7 +46,6 @@
     <string name="dialog_title_login_or_not">Login or not</string>
     <string name="dialog_messgae_login_or_not">What are the benefits of login ?</string>
     <string name="not_login">Do not login</string>
-    
     <string name="toast_logout_succeeded">Logout succeedfully</string>
     <string name="toast_logout_failed">Failed to logout</string>
 
@@ -65,27 +64,27 @@
     <string name="checkbox_sr">Minimum Rating:</string>
     <string name="toast_normal_mode">Switch To Normal Search Mode</string>
     <string name="toast_tag_mode">Switch To Tag Search Mode</string>
-    
+
     <!-- Jump -->
     <string name="jump_summary" formatted="false">Page %d, %d pages in total</string>
     <string name="jump_to">Jump to : </string>
     <string name="toast_invalid_page">Invalid page</string>
-    
+
     <!-- Send Crash -->
     <string name="dialog_send_crash_title">It is important</string>
     <string name="dialog_send_crash_plain">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ?</string>
     <string name="dialog_send_crash_yes">Never mind</string>
     <string name="dialog_send_crash_no">Yes, I would</string>
-    
+
     <!-- List item long click -->
     <string name="toast_add_favourite">Add to favourite</string>
     <string name="toast_add_download">Add to download list</string>
-    
+
     <!-- MangaListActivity -->
     <string name="no_found">No hits found</string>
     <string name="none">None</string>
     <string name="list_title" formatted="false">%s Page %d</string>
-    
+
     <!-- Update -->
     <string name="update_message" formatted="false">Found new version : %s\nSize : %s\n%s\n\nUpdate ?</string>
     <string name="tap_update">Tap to check update</string>
@@ -95,7 +94,7 @@
     <string name="start_update">Start downloading the update</string>
     <string name="download_update">Downloading the update</string>
     <string name="update_failed">Download the update Failed</string>
-    
+
     <!-- MangaDetialActivity -->
     <string name="detail_pages_size" formatted="false">Pages : %s (%s)</string>
     <string name="detail_language">Language : %s</string>
@@ -111,14 +110,13 @@
     <string name="vote_up">Vote up</string>
     <string name="vote_down">Vote down</string>
     <string name="show_tagged">Show tagged</string>
-    
+
     <!-- MangaActivity -->
     <string name="load_pre">Load previous page</string>
     <string name="first_page">First page !</string>
     <string name="start_reloading">Start reloading</string>
     <string name="retry_max_pre">Reached retry limit, scroll to leftmost side to reload</string>
     <string name="retry_max_next">Reached retry limit, scroll to rightmost side to reload</string>
-    
 
     <!-- ErrorMessage -->
     <string name="em_network_error">Network Error</string>
@@ -148,11 +146,11 @@
     <string name="em_get_body_error">Get body error</string>
     <string name="em_invalid_request">Invalid request</string>
     <string name="em_no_sdcard">SD card is Unmounted</string>
-    
+
     <!-- Action -->
     <string name="action_refresh">Refresh</string>
     <string name="action_settings">Settings</string>
-    
+
     <!-- Favorite -->
     <string name="local_favorite">Local Favorite</string>
     <string name="select_item">Select item</string>
@@ -166,11 +164,11 @@
     <string name="delete_successfully">Delete successfully</string>
     <string name="failed_to_delete">Failed to delete</string>
     <string name="set_default_favorite">Set it as default favorite</string>
-    
+
     <!-- Popular -->
     <string name="popular_warning_message">该页面中的内容基于数据统计，您尚未开启数据统计。若开启了数据统计，您的行为将对该页面产生影响。是否现在开启数据统计？</string>
     <string name="popular_update_time">Update at %s</string>
-    
+
     <!-- Settings -->
     <string name="display_settings_title">Display</string>
     <string name="theme_display_settings_title">Theme</string>
@@ -187,14 +185,12 @@
     <string name="list_mode_title">List mode</string>
     <string name="popular_display_settings_title">Popular</string>
     <string name="show_popular_update_time_title">Show popular update time</string>
-    
     <string name="eh_settings_title">EH</string>
     <string name="detail_eh_settings_title">Detail</string>
     <string name="preview_mode_title">Preview mode</string>
     <string name="preview_mode_normal">Normal</string>
     <string name="preview_mode_large">Large</string>
     <string name="preview_per_row_title">Preview number per row</string>
-    
     <string name="data_settings_title">Data</string>
     <string name="cache_data_settings_title">Cache</string>
     <string name="cache_size_title">Cache size</string>
@@ -208,7 +204,6 @@
     <string name="media_scan_summary_off">Most gallery apps will ignore pictures in download path</string>
     <string name="favorite_data_settings_title">Favorite</string>
     <string name="default_favorite">Default Favorite</string>
-    
     <string name="about_settings_title">About</string>
     <string name="author_title">Author</string>
     <string name="author_summary" translatable="false">Hippo &lt;ehviewersu@gmail.com&gt;</string>
@@ -231,37 +226,29 @@
     <string name="allow_analyics_summary_off">Anyway, thanks being my little hippo</string>
     <string name="about_analyics_title">About statistics</string>
     <string name="about_analyics_comment">若您启用了数据统计，本应用会将您的使用情况发送给开发者。这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/cn.html\nGoogle隐私权和条款：http://www.google.com/intl/zh-CN/policies</string>
-    
     <string name="portrait">Portrait</string>
     <string name="landscape">Landscape</string>
-    
     <string name="preference_settings_title">Settings</string>
-    
     <string name="preference_auto_page_cache">Auto clear page cache</string>
     <string name="preference_auto_page_cache_summary_on">Clean page cache when the application close</string>
     <string name="preference_auto_page_cache_summary_off">Leave page cache alone</string>
-    
-    
     <string name="cache_large">Cache size is too larger !</string>
     <string name="input_error">Input error</string>
     <string name="create_cache_error">Create cache error</string>
-    
     <string name="list_mode_detail">Detail</string>
     <string name="list_mode_thumb">Thumb</string>
-    
     <string name="new_folder">New folder</string>
     <string name="_new">New</string>
-    
     <string name="color_picker_title">Color scheme</string>
     <string name="current_color">Current</string>
     <string name="new_color">New</string>
     <string name="hex" translatable="false">#</string>
-    
+
     <!-- server -->
     <string name="update_server_google">Google</string>
     <string name="update_server_qiniu">Qiniu</string>
     <string name="update_server_gokuai">Gokuai</string>
-    
+
     <!-- Tag -->
     <string name="add_tag">Add tag</string>
     <string name="tag_name">Tag name : </string>
@@ -269,30 +256,27 @@
     <string name="tag_name_exist">Tag name already existed</string>
     <string name="tag_change_name">Change name</string>
     <string name="new_tag_name">New name : %s</string>
-    
+
     <!-- Pull -->
     <string name="pull_refresh_pull">Pull to refresh…</string>
     <string name="pull_refresh_release">Release to refresh…</string>
     <string name="pull_refresh_doing">Refreshing…</string>
     <string name="pull_refresh_done">Refreshed</string>
     <string name="pull_refresh_cancel">Cancel refresh</string>
-    
     <string name="pull_pre_pull">Pull to load previous page…</string>
     <string name="pull_pre_release">Release to load previous page…</string>
     <string name="pull_pre_doing">Loading previous page…</string>
     <string name="pull_pre_done">Loaded previous page…</string>
     <string name="pull_pre_cancel">Cancel previous page…</string>
-    
     <string name="pull_load_pull">Pull to load…</string>
     <string name="pull_load_release">Release to load…</string>
     <string name="pull_load_doing">Loading…</string>
     <string name="pull_load_done">Loaded</string>
     <string name="pull_load_cancel">Cancel load</string>
-    
     <string name="footer_loading">Loading more…</string>
     <string name="footer_loaded">All loaded</string>
     <string name="footer_fail">Load fail，click to reload</string>
-    
+
     <!-- Download -->
     <string name="start_download_task">Start download task</string>
     <string name="download_task_finished">Download task finished</string>
@@ -302,29 +286,27 @@
     <string name="not_started">Not started</string>
     <string name="waiting">Waiting</string>
     <string name="wait_for_last">Please wait for the last operation</string>
-    
+
     <!-- GalleryView -->
     <string name="pre_page">Previous page</string>
     <string name="next_page">Next page</string>
     <string name="zoom_in">Zoom in</string>
     <string name="zoom_out">Zoom out</string>
     <string name="menu">Menu</string>
-    
+
     <!-- Mode Dialog -->
     <string name="select_mode_warning">Please login to avoid Sad Panda.</string>
-    
+
     <!-- Vote -->
     <string name="vote_succeeded">Vote successfully</string>
     <string name="vote_failed">Failed to vote</string>
-    
+
     <!-- Rate -->
     <string name="invalid_rating">Invalid rating</string>
     <string name="rate_succeeded">Rate successfully</string>
     <string name="rate_failed">Failed to rate</string>
-    
-    
     <string name="uploader_others">该用户上传的其他内容</string>
-    
+
     <!-- Category -->
     <string name="doujinshi" translatable="false">DOUJINSHI</string>
     <string name="manga" translatable="false">MANGA</string>
@@ -337,7 +319,7 @@
     <string name="asian_porn" translatable="false">ASIAN PORN</string>
     <string name="misc" translatable="false">MISC</string>
     <string name="unknown" translatable="false">UNKNOWN</string>
-    
+
     <!-- rating -->
     <string name="rating10">MASTERPIECE</string>
     <string name="rating9">AMAZING</string>
@@ -350,7 +332,7 @@
     <string name="rating2">PAINFUL</string>
     <string name="rating1">UNBEARABLE</string>
     <string name="rating0">DISASTER</string>
-    
+
     <!-- Util -->
     <string name="invalid_input">Invalid Input</string>
     <string name="never_show">Never show me this dialog</string>
@@ -386,39 +368,33 @@
     <string name="delete">Delete</string>
     <string name="move">Move</string>
     <string name="list">List</string>
-    
     <string name="homepage">Homepage</string>
     <string name="mode">Mode</string>
     <string name="favourite">Favourite</string>
     <string name="popular">Popular</string>
     <string name="download">Download</string>
-    
     <string name="star_2">2 stars</string>
     <string name="star_3">3 stars</string>
     <string name="star_4">4 stars</string>
     <string name="star_5">5 stars</string>
-    
     <string name="actual_size">Actual size</string>
     <string name="fit_to_width">Fit to width</string>
     <string name="fit_to_height">Fit to height</string>
     <string name="fit_to_screen">Fit to screen</string>
     <string name="fixed_scale">Fixed</string>
-    
     <string name="top_left">Top left</string>
     <string name="top_right">Top right</string>
     <string name="bottom_left">Bottom left</string>
     <string name="bottom_right">Bottom right</string>
     <string name="center">Center</string>
-    
     <string name="add_to_favourite">Add to favourite</string>
     <string name="remove">Remove</string>
     <string name="remove_info_data">Remove information and data</string>
-    
     <string name="update">Update</string>
     <string name="thanks">Thanks</string>
     <string name="develop">Develop</string>
     <string name="advance_search_left">Swipe left</string>
-    
     <string name="restart_to_take_effect">Restart the application to take effect</string>
     <string name="cur_dir_not_writable">Current directory is not writable</string>
+
 </resources>
