@@ -47,7 +47,6 @@
     
     <include
         layout="@layout/preview_list_panel"
-        android:id="@+id/bottom_panel"
-        android:layout_gravity="center" />
+        android:id="@+id/bottom_panel" />
     
 </LinearLayout>

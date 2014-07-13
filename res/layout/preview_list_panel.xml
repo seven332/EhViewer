@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Hippo Seven
+<!--
+     Copyright (C) 2014 Hippo Seven
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -12,32 +13,45 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
- -->
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center" >
+    android:orientation="horizontal" >
 
-    <View
-        android:id="@+id/back"
-        android:layout_width="24.0dp"
-        android:layout_height="48.0dp" />
-    
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <View
+            android:id="@+id/back"
+            android:layout_width="24.0dp"
+            android:layout_height="48.0dp"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/preview_num"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="48.0dp"
-        android:layout_marginRight="48.0dp"
+        android:clickable="true"
         android:padding="12dp"
-        android:textSize="14sp"
         android:textColor="@android:color/white"
-        android:background="@drawable/clickable_bg_blue"
-        android:clickable="true" />
+        android:textSize="14sp" />
 
-    <View
-        android:id="@+id/front"
-        android:layout_width="24.0dp"
-        android:layout_height="48.0dp" />
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <View
+            android:id="@+id/front"
+            android:layout_width="24.0dp"
+            android:layout_height="48.0dp"
+            android:layout_gravity="center" />
+    </LinearLayout>
 
 </LinearLayout>
