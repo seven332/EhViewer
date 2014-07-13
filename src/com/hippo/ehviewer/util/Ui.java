@@ -16,33 +16,26 @@
 
 package com.hippo.ehviewer.util;
 
-import com.hippo.ehviewer.ListUrls;
-import com.hippo.ehviewer.R;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
-import com.readystatesoftware.systembartint.SystemBarTintManager.SystemBarConfig;
-
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Movie;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.View.MeasureSpec;
-import android.widget.ImageView;
+
+import com.hippo.ehviewer.ListUrls;
+import com.hippo.ehviewer.R;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
+import com.readystatesoftware.systembartint.SystemBarTintManager.SystemBarConfig;
 
 public class Ui {
     @SuppressWarnings("unused")
@@ -50,12 +43,12 @@ public class Ui {
     private static Context mContext;
     private static Resources mResources;
     private static final BitmapFactory.Options opt = new BitmapFactory.Options();
-    
+
     private static float mDensity;
-    
+
     public static int HOLO_BLUE_DARK;
     public static int LIST_MAIN_BG;
-    
+
     public static int DOUJINSHI_BG_COLOR;
     public static int MANGA_BG_COLOR;
     public static int ARTIST_CG_BG_COLOR;
@@ -67,35 +60,35 @@ public class Ui {
     public static int ASIAN_PORN_BG_COLOR;
     public static int MISC_BG_COLOR;
     public static int UNKNOWN_BG_COLOR;
-    
+
     public static Drawable transparentDrawable;
-    
+
     private static boolean mInit = false;
-    
+
     /**
      * Init Crash
-     * 
+     *
      * @param context Application context
      */
     public static void init(Context context) {
         if (mInit)
             return;
         mInit = true;
-        
+
         mContext = context;
-        
+
         opt.inPreferredConfig = Bitmap.Config.RGB_565;
         opt.inPurgeable = true;
         opt.inInputShareable = true;
-        
+
         mResources = mContext.getResources();
-        
+
         mDensity = mResources.getDisplayMetrics().density;
-        
+
         // init color
         HOLO_BLUE_DARK = mResources.getColor(android.R.color.holo_blue_dark);
         LIST_MAIN_BG = mResources.getColor(R.color.list_main_bg);
-        
+
         DOUJINSHI_BG_COLOR = mResources.getColor(R.color.doujinshi_bg);
         MANGA_BG_COLOR = mResources.getColor(R.color.manga_bg);
         ARTIST_CG_BG_COLOR = mResources.getColor(R.color.artist_cg_bg);
@@ -107,11 +100,11 @@ public class Ui {
         ASIAN_PORN_BG_COLOR = mResources.getColor(R.color.asian_porn_bg);
         MISC_BG_COLOR = mResources.getColor(R.color.misc_bg);
         UNKNOWN_BG_COLOR = mResources.getColor(R.color.unknown_bg);
-        
+
         // init drawable
         transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
     }
-    
+
     /**
      * Is init
      * @return True if init
@@ -119,7 +112,7 @@ public class Ui {
     public static boolean isInit() {
         return mInit;
     }
-    
+
     public static String getCategoryText(int category) {
         switch (category) {
         case ListUrls.DOUJINSHI:
@@ -146,7 +139,7 @@ public class Ui {
             return mResources.getString(R.string.unknown);
         }
     }
-    
+
     public static int getCategoryColor(int category) {
         switch (category) {
         case ListUrls.DOUJINSHI:
@@ -173,30 +166,30 @@ public class Ui {
             return UNKNOWN_BG_COLOR;
         }
     }
-    
+
     /**
      * dp conversion to pix
-     * 
+     *
      * @param dp The value you want to conversion
      * @return value in pix
      */
     public static int dp2pix(float dp) {
         return (int) (mDensity * dp + 0.5f);
     }
-    
+
     public static float pix2dp(int pix) {
         return pix/mDensity;
     }
-    
+
     /**
      * Get default BitmapFactory.Options
-     * 
+     *
      * @return
      */
     public static BitmapFactory.Options getBitmapOpt() {
         return opt;
     }
-    
+
     /**
      * Check has navigation bar or not
      * @return
@@ -205,12 +198,12 @@ public class Ui {
         boolean hasNavigationBar = false;
         boolean hasMenuKey = ViewConfiguration.get(mContext).hasPermanentMenuKey();
         boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
-        
+
         if(!hasMenuKey && !hasBackKey)
             hasNavigationBar = true;
         return hasNavigationBar;
     }
-    
+
     /**
      * Get height of status bar
      * @return
@@ -223,7 +216,7 @@ public class Ui {
             return resources.getDimensionPixelSize(sbhResourceId);
         else return 0;
     }
-    
+
     /**
      * Get height of navigation bar
      * @param force If false, alway return 0 if the device has no navigation bar
@@ -239,7 +232,7 @@ public class Ui {
         else
             return 0;
     }
-    
+
     public static void measureView(View child) {
         ViewGroup.LayoutParams p = child.getLayoutParams();
         if (p == null) {
@@ -258,10 +251,10 @@ public class Ui {
         }
         child.measure(childWidthSpec, childHeightSpec);
     }
-    
+
     public static final int ORIENTATION_PORTRAIT = 0x0;
     public static final int ORIENTATION_LANDSCAPE = 0x1;
-    
+
     public static int getOrientation(Activity activity) {
         DisplayMetrics dm = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -271,18 +264,24 @@ public class Ui {
             return ORIENTATION_LANDSCAPE;
         }
     }
-    
+
+    public static void adjustOrientation(Activity activity) {
+        int screenOri = Config.getScreenOriMode();
+        if (screenOri != activity.getRequestedOrientation())
+            activity.setRequestedOrientation(screenOri);
+    }
+
     public static SystemBarConfig translucent(
             Activity activity) {
         return translucentColor(activity,
                 mResources.getColor(android.R.color.holo_blue_dark));
     }
-    
+
     public static SystemBarConfig translucentColor(
             Activity activity, int color) {
         return translucent(activity, color);
     }
-    
+
     public static SystemBarConfig translucent(
             Activity activity, int color) {
         SystemBarTintManager tintManager = new SystemBarTintManager(activity);
