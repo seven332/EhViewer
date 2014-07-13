@@ -18,77 +18,62 @@ package com.hippo.ehviewer;
 
 import java.util.Stack;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Message;
+
 import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.network.HttpHelper;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Message;
-
 public class ImageLoader {
     private static final String TAG = ImageLoader.class.getSimpleName();
-    
+
     private static ImageLoader sInstance;
-    private static Handler mHandler;
-    
-    private class LoadTask {
+
+    class LoadTask {
         public String url;
         public String key;
         public OnGetImageListener listener;
         public Bitmap bitmap;
-        
+
         public LoadTask(String url, String key, OnGetImageListener listener) {
             this.url = url;
             this.key = key;
             this.listener = listener;
         }
     }
-    
-    private Context mContext;
+
+    private final Context mContext;
     private final Stack<LoadTask> mLoadTasks;
-    private ImageCache mImageCache;
-    private ImageDownloader mImageDownloader;
-    private Object mLock;
-    
-    
-    public static final void createHandler() {
-        if (mHandler != null)
-            return;
-        mHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                LoadTask task = (LoadTask)msg.obj;
-                task.listener.onGetImage(task.key, task.bitmap);
-            }
-        };
-    }
-    
+    private final ImageCache mImageCache;
+    private final ImageDownloader mImageDownloader;
+    private final Object mLock;
+
     public ImageLoader(Context context) {
         mLoadTasks = new Stack<LoadTask>();
         mImageDownloader = new ImageDownloader();
-        
+
         mContext = context;
         mImageCache = ImageCache.getInstance(mContext);
-        
+
         mLock = new Object();
         new Thread(new LoadFromCacheTask()).start();
     }
-    
+
     public final static ImageLoader getInstance(final Context context) {
         if (sInstance == null) {
             sInstance = new ImageLoader(context.getApplicationContext());
         }
         return sInstance;
     }
-    
+
     public void add(String url, String key, OnGetImageListener listener) {
         synchronized (mLock) {
             mLoadTasks.push(new LoadTask(url, key, listener));
             mLock.notify();
         }
     }
-    
+
     private class LoadFromCacheTask implements Runnable {
         @Override
         public void run() {
@@ -103,32 +88,30 @@ public class ImageLoader {
                     }
                     loadTask = mLoadTasks.pop();
                 }
-                
+
                 String key = loadTask.key;
                 loadTask.bitmap = mImageCache.getCachedBitmap(key);
-                
-                if (loadTask.bitmap != null) {
-                    Message msg = new Message();
-                    msg.obj = loadTask;
-                    mHandler.sendMessage(msg);
-                } else {
+
+                if (loadTask.bitmap != null)
+                    AppHandler.getInstance().sendMessage(
+                            Message.obtain(null, AppHandler.IMAGE_LOADER_TAG, loadTask));
+                else
                     mImageDownloader.add(loadTask);
-                }
             }
         }
     }
-    
+
     private class ImageDownloader {
         private static final int MAX_DOWNLOAD_THREADS = 3;
         private final Stack<LoadTask> mDownloadTasks;
         private int mWorkingThreadNum = 0;
-        private Object mLock;
-        
+        private final Object mLock;
+
         public ImageDownloader() {
             mLock = new Object();
             mDownloadTasks = new Stack<LoadTask>();
         }
-        
+
         public void add(LoadTask loadTask) {
             synchronized (mLock) {
                 mDownloadTasks.push(loadTask);
@@ -138,7 +121,7 @@ public class ImageLoader {
                 }
             }
         }
-        
+
         private class DownloadImageTask implements Runnable {
             @Override
             public void run() {
@@ -153,18 +136,17 @@ public class ImageLoader {
                         }
                         loadTask = mDownloadTasks.pop();
                     }
-                    
+
                     loadTask.bitmap = httpHelper.getImage(loadTask.url);
                     mImageCache.addBitmapToCache(loadTask.key, loadTask.bitmap);
-                    
-                    Message msg = new Message();
-                    msg.obj = loadTask;
-                    mHandler.sendMessage(msg);
+
+                    AppHandler.getInstance().sendMessage(
+                            Message.obtain(null, AppHandler.IMAGE_LOADER_TAG, loadTask));
                 }
             }
         }
     }
-    
+
     public interface OnGetImageListener {
         /**
          * bmp is null for fail

@@ -19,59 +19,52 @@ package com.hippo.ehviewer;
 import java.io.File;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
+import android.app.Application;
 
 import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.ehclient.EhClient;
-import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.widget.LoadImageView;
-
-import android.app.Application;
-import android.widget.ScrollView;
 
 public class AppContext extends Application implements UncaughtExceptionHandler {
-    
+
     @SuppressWarnings("unused")
     private static final String TAG = "AppContext";
-    private DateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    
+    private final DateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
     private Thread.UncaughtExceptionHandler mDefaultHandler;
-    
+
     private Data mData;
     private EhClient mEhClient;
     private ThreadPool mNetworkThreadPool;
-    
+
     @Override
     public void onCreate() {
         super.onCreate();
-        
+
         // Init everything
         mNetworkThreadPool = new ThreadPool(2, 4);
-        
+
+        AppHandler.init();
         Config.init(this);
         Ui.init(this);
         Crash.init(this);
         mEhClient = new EhClient(this);
         Download.init(this);
         Favorite.init(this);
-        
+
         mData = new Data(this);
-        ImageLoader.createHandler();
-        HttpHelper.createHandler();
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
-        
+
         // Add .nomedia or delete it
         File nomedia = new File(Config.getDownloadPath(), ".nomedia");
         if (Config.getMediaScan()) {
@@ -82,23 +75,23 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
             } catch (IOException e) {}
         }
     }
-    
+
     public EhClient getEhClient() {
         return mEhClient;
     }
-    
+
     public ThreadPool getNetworkThreadPool() {
         return mNetworkThreadPool;
     }
-    
+
     public Data getData() {
         return mData;
     }
-    
+
     public DateFormat getDateFormat() {
         return mFormatter;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -107,7 +100,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         ImageCache.getInstance(this).evictAll();
         super.onLowMemory();
     }
-    
+
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
         if (!handleException(ex) && mDefaultHandler != null) {
@@ -116,7 +109,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(1);
     }
-    
+
     private boolean handleException(Throwable ex) {
         if (ex == null)
             return false;

@@ -34,7 +34,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceActivity;
 import android.text.Spannable;
@@ -64,6 +63,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.AppContext;
+import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UpdateHelper;
@@ -1243,16 +1243,14 @@ public class MangaListActivity extends AbstractGalleryActivity
         if (Config.isFirstTime()) {
             Config.firstTime();
 
-            // Show left menu
-            // TODO Can't invoke showMenu() immediately, but there might be a better way
-            Handler handler = new Handler();
-            Message m = Message.obtain(handler, new Runnable() {
+            // Show left menu, Can't invoke showMenu() immediately
+            Message m = Message.obtain(null, new Runnable() {
                 @Override
                 public void run() {
                     showMenu();
                 }
             });
-            handler.sendMessageDelayed(m, 500L);
+            AppHandler.getInstance().sendMessageDelayed(m, 500L);
 
             // Show translate warning
             String country = Locale.getDefault().getCountry();

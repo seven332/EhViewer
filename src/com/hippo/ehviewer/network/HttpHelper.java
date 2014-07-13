@@ -35,25 +35,24 @@ import java.util.zip.GZIPInputStream;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Message;
+
+import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.exception.StopRequestException;
 import com.hippo.ehviewer.util.Constants;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Handler;
-import android.os.Message;
-
-import com.hippo.ehviewer.util.Log;
-
 /**
  * It is not thread safe
- * 
+ *
  * @author Hippo
  *
  */
@@ -61,83 +60,60 @@ public class HttpHelper {
     private static final String TAG = "HttpHelper";
     public static final String SAD_PANDA_ERROR = "Sad Panda";
     public static final String HAPPY_PANDA_BODY = "Happy Panda";
-    
+
     public static final String DOWNLOAD_OK_STR = "OK";
-    
+
     public static final int DOWNLOAD_OK_CODE = 0x0;
     public static final int DOWNLOAD_FAIL_CODE = 0x1;
     public static final int DOWNLOAD_STOP_CODE = 0x2;
-    
+
     private static final String DEFAULT_CHARSET = "utf-8";
     private static final String CHARSET_KEY = "charset=";
     private static int sProxyIndex;
     private static Object sProxyIndexLock;
-    
+
     static {
         // from 1 to 8
         Random rdm = new Random(System.currentTimeMillis());
         sProxyIndex = rdm.nextInt(7) + 1;
-        
+
         sProxyIndexLock = new Object();
     }
-    
-    class Package {
-        Object obj;
-        OnRespondListener listener;
+
+    public class Package {
+        public Object obj;
+        public OnRespondListener listener;
         public Package(Object obj, OnRespondListener listener) {
             this.obj = obj;
             this.listener = listener;
         }
     }
-    
-    private static Handler mHandler;
-    
-    private Context mContext;
+
+    private final Context mContext;
     private Exception mException;
     private OnRespondListener mListener;
     private String mPreviewMode;
-    
-    public static final void createHandler() {
-        if (mHandler != null)
-            return;
-        mHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                Package p = (Package)msg.obj;
-                OnRespondListener listener = p.listener;
-                Object obj = p.obj;
-                switch (msg.what) {
-                case Constants.TRUE:
-                    listener.onSuccess(obj);
-                    break;
-                case Constants.FALSE:
-                    listener.onFailure((String)obj);
-                    break;
-                }
-            }
-        };
-    }
-    
+
     public interface OnRespondListener {
         void onSuccess(Object body);
         void onFailure(String eMsg);
     }
-    
+
     public void reset() {
         mListener = null;
         mException = null;
         mPreviewMode = null;
     }
-    
+
     public void setOnRespondListener(OnRespondListener l) {
         mListener = l;
     }
-    
+
     public HttpHelper(Context context) {
         mContext = context;
         mContext.getApplicationContext();
     }
-    
+
     /**
      * Get last error message
      * @return
@@ -145,41 +121,41 @@ public class HttpHelper {
     public String getEMsg() {
         return getEMsg(mContext, mException);
     }
-    
+
     public static String getEMsg(Context c, Exception e) {
         if (e == null)
             return c.getString(R.string.em_unknown_error);
-        
+
         else if (e instanceof MalformedURLException)
             return c.getString(R.string.em_url_format_error);
-        
+
         else if (e instanceof ConnectTimeoutException ||
                 e instanceof SocketTimeoutException)
             return c.getString(R.string.em_timeout);
-        
+
         else if (e instanceof UnknownHostException)
             return c.getString(R.string.em_unknown_host);
-        
+
         else if (e instanceof ResponseCodeException)
             return String.format(c.getString(R.string.em_unexpected_response_code),
                     ((ResponseCodeException)e).getResponseCode());
-        
+
         else if (e instanceof RedirectionException)
             return c.getString(R.string.em_redirection_error);
-        
+
         else if (e instanceof SocketException)
             return "SocketException : " + e.getMessage();
-        
+
         else if (e instanceof SadPandaException)
             return SAD_PANDA_ERROR;
-        
+
         else if (e instanceof GetBodyException)
             return "获取失败"; // TODO
-        
+
         else
             return e.getMessage();
     }
-    
+
     private boolean isUrlCookiable(URL url) {
         String host = url.getHost();
         for (String h : EhInfo.COOKIABLE_HOSTS) {
@@ -188,20 +164,17 @@ public class HttpHelper {
         }
         return false;
     }
-    
+
     public void setPreviewMode(String previewMode) {
         mPreviewMode = previewMode;
     }
-    
+
     private Object requst(RequestHelper rh) {
         mException = null;
         int redirectionCount = 0;
         URL url = null;
         HttpURLConnection conn = null;
-        Message msg = null;
-        
-        if (mListener != null)
-            msg = new Message();
+
         try {
             url = rh.getUrl();
             Log.d(TAG, "Requst " + url.toString());
@@ -217,7 +190,7 @@ public class HttpHelper {
                     EhInfo.getInstance(mContext).setCookie(conn, mPreviewMode);
                 // Do custom staff
                 rh.onBeforeConnect(conn);
-                
+
                 conn.connect();
                 final int responseCode = conn.getResponseCode();
                 switch (responseCode) {
@@ -235,11 +208,10 @@ public class HttpHelper {
                     // Get object connection
                     Object obj = rh.onAfterConnect(conn);
                     // Send to UI thread if necessary
-                    if (msg != null) {
-                        msg.obj = new Package(obj, mListener);
-                        msg.what = Constants.TRUE;
-                        mHandler.sendMessage(msg);
-                    }
+                    if (mListener != null)
+                        AppHandler.getInstance().sendMessage(
+                                Message.obtain(null, AppHandler.HTTP_HELPER_TAG,
+                                        Constants.TRUE, 0, new Package(obj, mListener)));
                     return obj;
                 // redirect
                 case HttpURLConnection.HTTP_MOVED_PERM:
@@ -250,7 +222,7 @@ public class HttpHelper {
                     conn.disconnect();
                     url = new URL(url, location);
                     continue;
-                    
+
                 default:
                     throw new ResponseCodeException(responseCode);
                 }
@@ -259,12 +231,11 @@ public class HttpHelper {
         } catch (Exception e) {
             mException = e;
             e.printStackTrace();
-            
-            if (msg != null) {
-                msg.obj = new Package(getEMsg(), mListener);
-                msg.what = Constants.FALSE;
-                mHandler.sendMessage(msg);
-            }
+            // Send to UI thread if necessary
+            if (mListener != null)
+                AppHandler.getInstance().sendMessage(
+                        Message.obtain(null, AppHandler.HTTP_HELPER_TAG,
+                                Constants.FALSE, 0, new Package(getEMsg(), mListener)));
             // Send exception to helper
             rh.onGetException(e);
             return null;
@@ -273,23 +244,23 @@ public class HttpHelper {
                 conn.disconnect();
         }
     }
-    
+
     private interface RequestHelper {
-        
+
         /**
          * Get the URL to connect
          * @return
          */
         public URL getUrl() throws MalformedURLException;
-        
+
         /**
          * Add header or do something else for HttpURLConnection before connect
          * @param conn
          * @throws Exception
          */
-        
+
         public void onBeforeConnect(HttpURLConnection conn) throws Exception;
-        
+
         /**
          * Get what do you need from HttpURLConnection after connect
          * Return null means get error
@@ -298,14 +269,14 @@ public class HttpHelper {
          * @throws Exception
          */
         public Object onAfterConnect(HttpURLConnection conn) throws Exception;
-        
+
         /**
          * Handle exception
          * @param e
          */
         public void onGetException(Exception e);
     }
-    
+
     /**
      * RequstHelper for check sad panda, use HEAD method
      */
@@ -314,41 +285,41 @@ public class HttpHelper {
         public URL getUrl() throws MalformedURLException {
             return new URL(EhClient.EX_HEADER);
         }
-        
+
         @Override
         public void onBeforeConnect(HttpURLConnection conn)
                 throws Exception {
             conn.setRequestMethod("HEAD");
         }
-        
+
         @Override
         public Object onAfterConnect(HttpURLConnection conn)
                 throws Exception {
             return HAPPY_PANDA_BODY;
         }
-        
+
         @Override
         public void onGetException(Exception e) {}
     }
-    
+
     private abstract class GetStringHelper implements RequestHelper {
-        private String mUrl;
-        
+        private final String mUrl;
+
         public GetStringHelper(String url) {
             mUrl = url;
         }
-        
+
         @Override
         public URL getUrl() throws MalformedURLException {
             return new URL(mUrl);
         }
-        
+
         @Override
         public void onBeforeConnect(HttpURLConnection conn)
                 throws Exception {
             conn.addRequestProperty("Accept-Encoding", "gzip");
         }
-        
+
         private String getBody(HttpURLConnection conn)
                 throws Exception {
             String body = null;
@@ -359,15 +330,15 @@ public class HttpHelper {
                 String encoding = conn.getContentEncoding();
                 if (encoding != null && encoding.equals("gzip"))
                     is = new GZIPInputStream(is);
-                
+
                 int length = conn.getContentLength();
                 if (length >= 0)
                     baos = new ByteArrayOutputStream(length);
                 else
                     baos = new ByteArrayOutputStream();
-                
+
                 Util.copy(is, baos, Constant.BUFFER_SIZE);
-                
+
                 // Get charset
                 String charset = null;
                 String contentType = conn.getContentType();
@@ -377,7 +348,7 @@ public class HttpHelper {
                     charset = contentType.substring(index + CHARSET_KEY.length());
                 } else
                     charset = DEFAULT_CHARSET;
-                
+
                 body = baos.toString(charset);
                 if (body == null)
                     throw new GetBodyException();
@@ -389,22 +360,22 @@ public class HttpHelper {
             }
             return body;
         }
-        
+
         @Override
         public Object onAfterConnect(HttpURLConnection conn)
                 throws Exception {
             return getBody(conn);
         }
-        
+
         @Override
         public void onGetException(Exception e) {}
     }
-    
+
     /**
      * RequstHelper for GET method
      */
     private class GetHelper extends GetStringHelper {
-        
+
         public GetHelper(String url) {
             super(url);
         }
@@ -416,18 +387,18 @@ public class HttpHelper {
             conn.setRequestMethod("GET");
         }
     }
-    
+
     /**
      * RequstHelper for post form data, use POST method
      */
     private class PostFormHelper extends GetStringHelper {
-        private String[][] mArgs;
-        
+        private final String[][] mArgs;
+
         public PostFormHelper(String url, String[][] args) {
             super(url);
             mArgs = args;
         }
-        
+
         @Override
         public void onBeforeConnect(HttpURLConnection conn)
                 throws Exception {
@@ -438,7 +409,7 @@ public class HttpHelper {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded");
-            
+
             DataOutputStream out = new DataOutputStream(conn.getOutputStream());
             StringBuilder sb = new StringBuilder();
             int i = 0;
@@ -456,18 +427,18 @@ public class HttpHelper {
             out.close();
         }
     }
-    
+
     /**
      * RequstHelper for post json, use POST method
      */
     private class PostJsonHelper extends GetStringHelper {
-        private JSONObject mJo;
-        
+        private final JSONObject mJo;
+
         public PostJsonHelper(String url, JSONObject jo) {
             super(url);
             mJo = jo;
         }
-        
+
         @Override
         public void onBeforeConnect(HttpURLConnection conn) throws Exception {
             super.onBeforeConnect(conn);
@@ -476,32 +447,32 @@ public class HttpHelper {
             conn.setUseCaches(false);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
-            
+
             DataOutputStream out = new DataOutputStream(conn.getOutputStream());
             out.writeBytes(mJo.toString());
             out.flush();
             out.close();
         }
     }
-    
+
     private class GetImageHelper implements RequestHelper {
-        private String mUrl;
-        
+        private final String mUrl;
+
         public GetImageHelper(String url) {
             mUrl = url;
         }
-        
+
         @Override
         public URL getUrl() throws MalformedURLException {
             return new URL(mUrl);
         }
-        
+
         @Override
         public void onBeforeConnect(HttpURLConnection conn)
                 throws Exception {
             conn.setRequestMethod("GET");
         }
-        
+
         @Override
         public Object onAfterConnect(HttpURLConnection conn)
                 throws Exception {
@@ -510,11 +481,11 @@ public class HttpHelper {
                 throw new GetBodyException();
             return bmp;
         }
-        
+
         @Override
         public void onGetException(Exception e) {}
     }
-    
+
     public interface OnDownloadListener {
         public void onDownloadStartConnect();
         /**
@@ -525,34 +496,34 @@ public class HttpHelper {
         public void onDownloadStatusUpdate(int downloadSize, int totalSize);
         public void onDownloadOver(int status, String eMsg);
     }
-    
+
     public static class DownloadControlor {
         private boolean mStop = false;
-        
+
         public void stop() {
-            mStop = true; 
+            mStop = true;
         }
-        
+
         public void reset() {
-            mStop = false; 
+            mStop = false;
         }
-        
+
         public boolean isStop() {
-            return mStop; 
+            return mStop;
         }
     }
-    
+
     private class DownloadHelper implements RequestHelper {
-        private String mUrl;
-        private File mDir;
-        private String mFileName;
+        private final String mUrl;
+        private final File mDir;
+        private final String mFileName;
         private File mFile;
-        private boolean mIsProxy;
-        private DownloadControlor mControlor;
-        private OnDownloadListener mListener;
+        private final boolean mIsProxy;
+        private final DownloadControlor mControlor;
+        private final OnDownloadListener mListener;
         private int mContentLength;
         private int mReceivedSize;
-        
+
         public DownloadHelper(String url, File dir, String fileName, boolean isProxy,
                 DownloadControlor controlor, OnDownloadListener listener) {
             mUrl = url;
@@ -562,7 +533,7 @@ public class HttpHelper {
             mControlor = controlor;
             mListener = listener;
         }
-        
+
         public String getProxyUrl() {
             String proxyUrl = null;
             synchronized(sProxyIndexLock) {
@@ -572,12 +543,12 @@ public class HttpHelper {
             }
             return proxyUrl;
         }
-        
+
         @Override
         public URL getUrl() throws MalformedURLException {
             return new URL(mIsProxy? getProxyUrl() : mUrl);
         }
-        
+
         @Override
         public void onBeforeConnect(HttpURLConnection conn) throws Exception {
             if (mIsProxy) {
@@ -585,7 +556,7 @@ public class HttpHelper {
                 conn.setDoInput(true);
                 conn.setUseCaches(false);
                 conn.setRequestMethod("POST");
-                
+
                 DataOutputStream out = new DataOutputStream(conn.getOutputStream());
                 out.writeBytes("{\"url\":\"" + mUrl + "\"}");
                 out.flush();
@@ -596,7 +567,7 @@ public class HttpHelper {
             }
             mListener.onDownloadStartConnect();
         }
-        
+
         private int getContentLength(HttpURLConnection conn) {
             int contentLength = conn.getContentLength();
             String range;
@@ -623,12 +594,12 @@ public class HttpHelper {
             }
             return contentLength;
         }
-        
+
         @Override
         public Object onAfterConnect(HttpURLConnection conn) throws Exception {
             mContentLength = getContentLength(conn);
             mListener.onDownloadStartDownload(mContentLength);
-            
+
             // Make sure parent exist
             mDir.mkdirs();
             mFile = new File(mDir, mFileName);
@@ -638,7 +609,7 @@ public class HttpHelper {
             mListener.onDownloadOver(DOWNLOAD_OK_CODE, null);
             return DOWNLOAD_OK_STR;
         }
-        
+
         @Override
         public void onGetException(Exception e) {
             // Delete unfinished file
@@ -650,31 +621,31 @@ public class HttpHelper {
             else
                 mListener.onDownloadOver(DOWNLOAD_STOP_CODE, getEMsg());
         }
-        
+
         private void transferData(InputStream in, OutputStream out)
                 throws Exception {
             final byte data[] = new byte[Constant.BUFFER_SIZE];
             mReceivedSize = 0;
-            
+
             while (true) {
                 if (mControlor.isStop())
                     throw new StopRequestException();
-                
+
                 int bytesRead = in.read(data);
                 if (bytesRead == -1)
                     break;
                 out.write(data, 0, bytesRead);
                 mReceivedSize += bytesRead;
-                
+
                 mListener.onDownloadStatusUpdate(mReceivedSize, mContentLength);
             }
-            
+
             if (mContentLength != -1 && mReceivedSize != mContentLength)
                 throw new UncompletedException();
         }
-        
+
     }
-    
+
     /**
      * Check Sad Panda.
      * If get Sad Panda, return null,
@@ -684,7 +655,7 @@ public class HttpHelper {
     public String checkSadPanda() {
         return (String)requst(new CheckSpHelper());
     }
-    
+
     /**
      * Http GET method
      * @param url
@@ -693,7 +664,7 @@ public class HttpHelper {
     public String get(String url) {
         return (String)requst(new GetHelper(url));
     }
-    
+
     /**
      * Post form data
      * @param url
@@ -703,7 +674,7 @@ public class HttpHelper {
     public String postForm(String url, String[][] args) {
         return (String)requst(new PostFormHelper(url, args));
     }
-    
+
     /**
      * Post json data
      * @param url
@@ -713,7 +684,7 @@ public class HttpHelper {
     public String postJson(String url, JSONObject json) {
         return (String)requst(new PostJsonHelper(url, json));
     }
-    
+
     /**
      * Get image
      * @param url
@@ -722,46 +693,46 @@ public class HttpHelper {
     public Bitmap getImage(String url) {
         return (Bitmap)requst(new GetImageHelper(url));
     }
-    
+
     public String download(String url, File dir, String file, boolean isProxy,
             DownloadControlor controlor, OnDownloadListener listener) {
         return (String)requst(new DownloadHelper(url, dir, file, isProxy,
                 controlor, listener));
     }
-    
+
     /** Exceptions **/
-    
+
     public class SadPandaException extends Exception {
         private static final long serialVersionUID = 1L;
     }
-    
+
     public class GetBodyException extends Exception {
         private static final long serialVersionUID = 1L;
     }
-    
+
     public class RedirectionException extends Exception {
         private static final long serialVersionUID = 1L;
     }
-    
+
     public class UncompletedException extends Exception {
         private static final long serialVersionUID = 1L;
     }
-    
+
     public class ResponseCodeException extends Exception {
-        
+
         private static final long serialVersionUID = 1L;
         private static final String eMsg = "Error response code";
-        private int mResponseCode;
-        
+        private final int mResponseCode;
+
         public ResponseCodeException(int responseCode) {
             this(responseCode, eMsg);
         }
-        
+
         public ResponseCodeException(int responseCode, String message) {
             super(message);
             mResponseCode = responseCode;
         }
-        
+
         public int getResponseCode() {
             return mResponseCode;
         }
