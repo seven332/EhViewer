@@ -19,18 +19,18 @@ package com.hippo.ehviewer.util;
 import java.util.Random;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 
 public class Theme {
-    
+
     private static final Random random =
             new Random(System.currentTimeMillis());
     public static final int GREY_COLOR = 0xffaaaaaa;
     public static final ColorDrawable GREY_DRAWABLE =
             new ColorDrawable(0xffaaaaaa);
-    
+
     /**
      * Ignore alpha
      * @param color
@@ -44,7 +44,7 @@ public class Theme {
         else
             return false;
     }
-    
+
     /**
      * Get random color, alpha is 0xff
      * @return
@@ -52,7 +52,7 @@ public class Theme {
     public static int getRandomColor() {
         return random.nextInt() | 0xff000000;
     }
-    
+
     /**
      * Get random deep color, alpha is 0xff
      * @return
@@ -62,7 +62,7 @@ public class Theme {
         while(!isDeepColor(deepColor = getRandomColor()));
         return deepColor;
     }
-    
+
     /**
      * get darker color of target color, alpha not change
      * @param color
@@ -74,11 +74,35 @@ public class Theme {
                 | (((color & 0xff) >> 1) & 0xff)
                 | (color & 0xff000000);
     }
-    
+
     public static StateListDrawable getClickDrawable(Context context, int color) {
         StateListDrawable sld = new StateListDrawable();
         ColorDrawable normal = new ColorDrawable(color);
         ColorDrawable dark = new ColorDrawable(getDarkerColor(color));
+
+        sld.addState(new int[]{-android.R.attr.state_enabled}, GREY_DRAWABLE);
+        sld.addState(new int[]{android.R.attr.state_enabled, android.R.attr.state_selected}, dark);
+        sld.addState(new int[]{android.R.attr.state_enabled, android.R.attr.state_focused}, dark);
+        sld.addState(new int[]{android.R.attr.state_enabled, android.R.attr.state_pressed}, dark);
+        sld.addState(new int[]{}, normal);
+        return sld;
+    }
+
+    public static StateListDrawable getRadiiClickDrawable(Context context, int color) {
+        int corner = Ui.dp2pix(2);
+        float[] cornerRadii = new float[]{
+                corner, corner, corner, corner, corner, corner, corner, corner};
+
+        StateListDrawable sld = new StateListDrawable();
+        GradientDrawable normal = new GradientDrawable();
+        normal.setShape(GradientDrawable.RECTANGLE);
+        normal.setCornerRadii(cornerRadii);
+        normal.setColor(color);
+        GradientDrawable dark = new GradientDrawable();
+        dark.setShape(GradientDrawable.RECTANGLE);
+        dark.setCornerRadii(cornerRadii);
+        dark.setColor(getDarkerColor(color));
+
         sld.addState(new int[]{-android.R.attr.state_enabled}, GREY_DRAWABLE);
         sld.addState(new int[]{android.R.attr.state_enabled, android.R.attr.state_selected}, dark);
         sld.addState(new int[]{android.R.attr.state_enabled, android.R.attr.state_focused}, dark);
