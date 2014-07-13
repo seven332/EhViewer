@@ -455,7 +455,7 @@ public class DetailSectionFragment extends Fragment
                 final String tagText = tag.getKey();
                 Button tagView = new Button(mActivity);
                 tagView.setTextSize(TypedValue.COMPLEX_UNIT_PX, tagTextSize);
-                tagView.setText(String.format("%s (%d)", tagText, tag.getValue()));
+                tagView.setText(tagText);
                 tagView.setTextColor(tagTextColor);
                 tagView.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
                 tagView.setPadding(tagPaddingX, tagPaddingY, tagPaddingX, tagPaddingY);
