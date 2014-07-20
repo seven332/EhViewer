@@ -28,6 +28,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Message;
+
 import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ListUrls;
@@ -36,67 +40,61 @@ import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.GalleryPopular;
-import com.hippo.ehviewer.data.NormalPreviewList;
 import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.ui.DownloadInfo;
-import com.hippo.ehviewer.util.ThreadPool.Job;
-import com.hippo.ehviewer.util.ThreadPool.JobContext;
-
-import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Message;
-
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.Future;
 import com.hippo.ehviewer.util.FutureListener;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.ThreadPool;
+import com.hippo.ehviewer.util.ThreadPool.Job;
+import com.hippo.ehviewer.util.ThreadPool.JobContext;
 import com.hippo.ehviewer.util.Util;
 
 public class EhClient {
-    
+
     private static final String TAG = "EhClient";
-    
+
     public static final int FAVORITE_SLOT_NUM = 10;
-    
+
     public static final int G = 0x0;
     public static final int EX = 0x1;
     public static final int LOFI_460x = 0x2;
     public static final int LOFI_780x = 0x3;
     public static final int LOFI_980x = 0x4;
-    
+
     public static final String G_API = "http://g.e-hentai.org/api.php";
     public static final String EX_API = "http://exhentai.org/api.php";
     public static final long APIUID = 1363542;
     public static final String APIKEY = "f4b5407ab1727b9d08d7";
-    
+
     private static final String loginUrl = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
     private static final String forumsUrl = "http://forums.e-hentai.org/index.php";
-    
+
     public static final String G_HEADER = "http://g.e-hentai.org/";
     public static final String EX_HEADER = "http://exhentai.org/";
     public static final String LOFI_HEADER = "http://lofi.e-hentai.org/";
-    
+
     private static final String EHVIEWER_API = "http://www.ehviewer.com/API";
-    
+
     /* Avatar get code */
     public static final int GET_AVATAR_OK = 0x0;
     public static final int GET_AVATAR_ERROR = 0x1;
     public static final int NO_AVATAR = 0x2;
-    
-    private AppContext mAppContext;
-    private ThreadPool mThreadPool;
-    private EhInfo mInfo;
-    
+
+    private final AppContext mAppContext;
+    private final ThreadPool mThreadPool;
+    private final EhInfo mInfo;
+
     public static String getUrlHeader() {
         return getUrlHeader(Config.getMode());
     }
-    
+
     public static String getUrlHeader(int mode) {
         switch (mode) {
         case EX:
@@ -109,16 +107,16 @@ public class EhClient {
             return G_HEADER;
         }
     }
-    
+
     public static String getDetailUrl(int gid, String token) {
         return getDetailUrl(gid, token, 0, Config.getMode());
     }
-    
-    
+
+
     public static String getDetailUrl(int gid, String token, int pageNum) {
         return getDetailUrl(gid, token, pageNum, Config.getMode());
     }
-    
+
     public static String getDetailUrl(int gid, String token, int pageNum, int mode) {
         switch (mode) {
         case EX:
@@ -131,11 +129,11 @@ public class EhClient {
             return G_HEADER + "g/" + gid + "/" + token + "/?p=" + pageNum;
         }
     }
-    
+
     public static String getPageUrl(String gid, String token, int pageNum) {
         return getPageUrl(gid, token, pageNum, Config.getMode());
     }
-    
+
     public static String getPageUrl(String gid, String token, int pageNum, int mode) {
         switch (mode) {
         case EX:
@@ -148,11 +146,11 @@ public class EhClient {
             return G_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
         }
     }
-    
+
     public static String getApiUrl() {
         return getApiUrl(Config.getMode());
     }
-    
+
     public static String getApiUrl(int mode) {
         switch (mode) {
         case EX:
@@ -161,11 +159,11 @@ public class EhClient {
             return G_API;
         }
     }
-    
+
     public static String getFavoriteUrl(int index, int page) {
         return getFavoriteUrl(Config.getMode(), index, page);
     }
-    
+
     public static String getFavoriteUrl(int mode, int index, int page) {
         switch (mode) {
         case EX:
@@ -174,7 +172,7 @@ public class EhClient {
             return G_HEADER  + "favorites.php?favcat=" + index + "&page=" + page;
         }
     }
-    
+
     public interface OnGetMangaUrlListener {
         public void onSuccess(Object checkFlag, String[] arg);
         public void onFailure(Object checkFlag, String eMsg);
@@ -184,23 +182,23 @@ public class EhClient {
         public void onSuccess(Object checkFlag, Object res);
         public void onFailure(int eMsgId);
     }
-    
+
     public interface OnGetGalleryMetadataListener {
         public void onSuccess(Map<String, GalleryInfo> lmds);
         public void onFailure(String eMsg);
     }
-    
+
     public interface OnGetGalleryTokensListener {
         public void onSuccess(Map<String, String> tokens);
         public void onFailure(String eMsg);
     }
-    
+
     public EhClient(AppContext appContext) {
         mAppContext = appContext;
         mThreadPool = mAppContext.getNetworkThreadPool();
         mInfo = EhInfo.getInstance(appContext);
     }
-    
+
     /**
      * True if Login
      * @return
@@ -208,44 +206,44 @@ public class EhClient {
     public boolean isLogin() {
         return mInfo.isLogin();
     }
-    
+
     /**
      * Just remove cookie
      */
     public void logout() {
         mInfo.logout();
     }
-    
+
     /**
      * Return username, if not return default string
      */
     public String getUsername() {
         return mInfo.getUsername();
     }
-    
+
     /**
      * Return displayname, if not return default string
      */
     public String getDisplayname() {
         return mInfo.getDisplayname();
     }
-    
+
     /**
      * Return avatar, if not return default avatar
      */
     public Bitmap getAvatar() {
         return mInfo.getAvatar();
     }
-    
+
     private static final int GET_PAGE_LIST = 0x5;
     private static final int GET_MANGA_URL = 0x6;
-    
+
     private static Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            
+
             switch (msg.what) {
-                
+
             case GET_MANGA_URL:
                 GetMangaUrlPackage getMangaUrlPackage = (GetMangaUrlPackage) msg.obj;
                 OnGetMangaUrlListener listener7 = getMangaUrlPackage.listener;
@@ -257,13 +255,13 @@ public class EhClient {
             }
         };
     };
-    
+
     public interface OnLoginListener {
         public void onSuccess();
         public void onGetAvatar(int code);
         public void onFailure(String eMsg);
     }
-    
+
     public void login(final String username, final String password,
             final OnLoginListener listener) {
         new Thread(new Runnable() {
@@ -278,7 +276,7 @@ public class EhClient {
                         if (parser.parser(body)) {
                             mInfo.login(username, parser.displayname);
                             getAvatar(listener);
-                            
+
                             listener.onSuccess();
                         } else {
                             listener.onFailure(parser.eMesg);
@@ -298,7 +296,7 @@ public class EhClient {
             }
         }).start();
     }
-    
+
     private void getAvatar(final OnLoginListener listener) {
         new Thread(new Runnable() {
             @Override
@@ -345,14 +343,14 @@ public class EhClient {
             }
         }).start();
     }
-    
+
     // Get Gallery List
     public interface OnGetGListListener {
         public void onSuccess(Object checkFlag, List<GalleryInfo> lmdArray,
                 int indexPerPage, int maxPage);
         public void onFailure(Object checkFlag, String eMsg);
     }
-    
+
     public void getGList(final String url, final Object checkFlag,
             final OnGetGListListener listener) {
         new Thread(new Runnable() {
@@ -363,6 +361,11 @@ public class EhClient {
                     @Override
                     public void onSuccess(Object obj) {
                         String body = (String)obj;
+                        // If no element, it might be a notice
+                        if (!body.contains("<")) {
+                            listener.onFailure(checkFlag, body);
+                            return;
+                        }
                         ListParser parser = new ListParser();
                         switch (parser.parser(body)) {
                         case ListParser.ALL:
@@ -372,7 +375,7 @@ public class EhClient {
                             listener.onSuccess(checkFlag, new ArrayList<GalleryInfo>(), parser.indexPerPage, 0);
                             break;
                         case ListParser.PARSER_ERROR:
-                            listener.onFailure(checkFlag, "parser error"); // TODO
+                                listener.onFailure(checkFlag, "parser error"); // TODO
                             break;
                         }
                     }
@@ -385,13 +388,13 @@ public class EhClient {
             }
         }).start();
     }
-    
+
     // Get gallery Detail
     public interface OnGetGDetailListener {
         public void onSuccess(GalleryDetail md);
         public void onFailure(String eMsg);
     }
-    
+
     public void getGDetail(final String url, final GalleryDetail md,
             final OnGetGDetailListener listener) {
         new Thread(new Runnable() {
@@ -430,7 +433,7 @@ public class EhClient {
                             md.firstPage = parser.firstPage;
                             md.previewPerPage = parser.previewPerPage;
                             md.previewSum = parser.previewSum;
-                            
+
                             md.tags = parser.tags;
                             md.previewLists = new PreviewList[md.previewSum];
                             md.previewLists[0] = parser.previewList;
@@ -451,13 +454,13 @@ public class EhClient {
             }
         }).start();
     }
-    
+
     // Get preview list
     public interface OnGetPreviewListListener {
         public void onSuccess(Object checkFlag, PreviewList pageList);
         public void onFailure(Object checkFlag, String eMsg);
     }
-    
+
     public void getPreviewList(final String url, final Object checkFlag,
             final OnGetPreviewListListener listener) {
         new Thread(new Runnable() {
@@ -485,14 +488,14 @@ public class EhClient {
             }
         }).start();
     }
-    
+
     // Get Manga url and next page
     private class GetMangaUrlPackage {
         public Object checkFlag;
         public String[] strs;
         public OnGetMangaUrlListener listener;
         public String eMsg;
-        
+
         public GetMangaUrlPackage(Object checkFlag, String[] strs, OnGetMangaUrlListener listener,
                 String eMsg) {
             this.checkFlag = checkFlag;
@@ -501,10 +504,10 @@ public class EhClient {
             this.eMsg = eMsg;
         }
     }
-    
+
     private class GetMangaUrlRunnable implements Runnable {
-        private String url;
-        
+        private final String url;
+
         public String[] strs;
         public String eMsg;
 
@@ -515,7 +518,7 @@ public class EhClient {
         @Override
         public void run() {
             strs = null;
-            
+
             HttpHelper hp = new HttpHelper(mAppContext);
             String pageContent = hp.get(url);
             if (pageContent != null) {
@@ -541,7 +544,7 @@ public class EhClient {
     }
 
     public void getMangaUrl(String url, final Object checkFlag, final OnGetMangaUrlListener listener) {
-        
+
         final GetMangaUrlRunnable task = new GetMangaUrlRunnable(url);
         mThreadPool.submit(new Job<Object>() {
             @Override
@@ -559,50 +562,50 @@ public class EhClient {
             }
         });
     }
-    
+
     public interface OnDownloadMangaListener {
         public void onDownloadMangaStart(String id);
         public void onDownloadMangaStart(String id, int pageSum, int startIndex);
         public void onDownloadMangaStop(String id);
         public void onDownloadMangaOver(String id, boolean ok);
-        
+
         public void onDownloadPage(String id, int pageSum, int index);
         public void onDownloadPageProgress(String id, int pageSum,
                 int index, float totalSize, float downloadSize);
-        
+
         public void onDownloadMangaAllStart();
         public void onDownloadMangaAllOver();
     }
-    
+
     // TODO 下载前检查文件是否已存在
-    
+
     /****** DownloadMangaManager ******/
     public class DownloadMangaManager {
         private DownloadInfo curDownloadInfo = null;
         private Downloader.Controlor curControlor = null;
-        
-        private ArrayList<DownloadInfo> mDownloadQueue = new ArrayList<DownloadInfo>();
-        private Object taskLock = new Object();
+
+        private final ArrayList<DownloadInfo> mDownloadQueue = new ArrayList<DownloadInfo>();
+        private final Object taskLock = new Object();
         private OnDownloadMangaListener listener;
         private DownloadService mService;
-        
-        private boolean mStop = false;
-        
+
+        private final boolean mStop = false;
+
         public void init() {
 
         }
-        
+
         public void setOnDownloadMangaListener(OnDownloadMangaListener listener) {
             this.listener = listener;
         }
-        
+
         public void setDownloadService(DownloadService service) {
             this.mService = service;
         }
-        
+
         /**
          * Add a download task to task queue
-         * 
+         *
          * @param detailUrlStr
          * @param foldName
          * @return
@@ -614,7 +617,7 @@ public class EhClient {
                     start();
             }
         }
-        
+
         public void cancel(String id) {
             synchronized (taskLock) {
                 DownloadInfo di = Download.get(id);
@@ -630,7 +633,7 @@ public class EhClient {
                 }
             }
         }
-        
+
         public String getCurDownloadId() {
             synchronized (taskLock) {
                 if (curDownloadInfo == null)
@@ -639,7 +642,7 @@ public class EhClient {
                     return curDownloadInfo.gid;
             }
         }
-        
+
         public boolean isWaiting(String str) {
             synchronized (taskLock) {
                 for (DownloadInfo di : mDownloadQueue) {
@@ -649,26 +652,26 @@ public class EhClient {
             }
             return false;
         }
-        
+
         private void start(){
             if(curDownloadInfo != null){
                 return;
             }
-            
+
             new Thread(new Runnable(){
                 @Override
                 public void run() {
                     listener.onDownloadMangaAllStart();
-                    
+
                     Parser parser = new Parser();
                     Downloader imageDownloader = new Downloader(mAppContext);
                     imageDownloader.setOnDownloadListener(new Downloader.OnDownloadListener() {
                         @Override
                         public void onDownloadStartConnect() {
-                            
+
                         }
-                        
-                        
+
+
                         @Override
                         public void onDownloadStartDownload(int totalSize) {
                             if (curDownloadInfo != null) {
@@ -701,7 +704,7 @@ public class EhClient {
                             mDownloadQueue.remove(0);
                         }
                         Download.notify(String.valueOf(curDownloadInfo.gid));
-                        
+
                         if (curDownloadInfo.type == DownloadInfo.DETAIL_URL) {
                             listener.onDownloadMangaStart(curDownloadInfo.gid);
                             mService.notifyUpdate();
@@ -711,7 +714,7 @@ public class EhClient {
                                 curDownloadInfo.pageSum = parser.getPageSum();
                                 curDownloadInfo.pageUrlStr = parser.getFirstPage();
                                 Download.notify(curDownloadInfo.gid);
-                                
+
                             } else { // If get info error
                                 listener.onDownloadMangaOver(curDownloadInfo.gid, false);
                                 curDownloadInfo.status = DownloadInfo.FAILED;
@@ -720,7 +723,7 @@ public class EhClient {
                                 continue;
                             }
                         }
-                        
+
                         //Create folder
                         File folder = new File(Config.getDownloadPath() + File.separatorChar + Util.rightFileName(curDownloadInfo.title)); // TODO For  title contain invailed char
                         if (!folder.mkdirs() && !folder.isDirectory()) {
@@ -730,7 +733,7 @@ public class EhClient {
                             Download.notify(String.valueOf(curDownloadInfo.gid));
                             continue;
                         }
-                        
+
                         String nextPage = curDownloadInfo.pageUrlStr;
                         curDownloadInfo.pageUrlStr = null;
                         String imageUrlStr = null;
@@ -742,11 +745,11 @@ public class EhClient {
                             Download.notify(String.valueOf(curDownloadInfo.gid));
                             listener.onDownloadPage(curDownloadInfo.gid, curDownloadInfo.pageSum, curDownloadInfo.lastStartIndex);
                             mService.notifyUpdate();
-                            
+
                             if (parser.getPageInfoSumForPage(curDownloadInfo.pageUrlStr)) {
                                 nextPage = parser.getNextPage();
                                 imageUrlStr = parser.getImageUrlStr();
-                                
+
                                 // Check stop
                                 if (curDownloadInfo.status == DownloadInfo.STOP) {
                                     listener.onDownloadMangaStop(curDownloadInfo.gid);
@@ -756,20 +759,20 @@ public class EhClient {
                                     mStop = true;
                                     break;
                                 }
-                                
+
                                 try {
                                     // TODO
-                                    
+
                                     Log.d(TAG, folder.getPath());
-                                    
+
                                     curControlor = imageDownloader.resetData(folder.getPath(),
                                             String.format("%05d", curDownloadInfo.lastStartIndex + 1) + "." + Util.getExtension(imageUrlStr),
                                             imageUrlStr);
                                     imageDownloader.run();
-                                    
+
                                     curDownloadInfo.downloadSize = 0;
                                     curDownloadInfo.totalSize = 0;
-                                    
+
                                     int downloadStatus = imageDownloader.getStatus();
                                     if (downloadStatus == Downloader.STOPED) { // If stop by user
                                         listener.onDownloadMangaStop(curDownloadInfo.gid);
@@ -813,52 +816,52 @@ public class EhClient {
                 }
             }).start();
         }
-        
+
         public boolean isEmpty() {
             synchronized (taskLock) {
                 return curDownloadInfo == null;
             }
         }
     }
-    
+
     private class Parser {
-        
+
         private int errorMegId;
-        
+
         private int pageSum;
         private String firstPage;
-        
+
         private String prePage;
         private String nextPage;
         private String imageUrlStr;
-        
-        
+
+
         public int getPageSum() {
             return pageSum;
         }
-        
+
         public String getFirstPage() {
             return firstPage;
         }
-        
+
         public String getPrePage() {
             return prePage;
         }
-        
+
         public String getNextPage() {
             return nextPage;
         }
-        
+
         public String getImageUrlStr() {
             return imageUrlStr;
         }
-        
+
         public boolean getFirstPagePageSumForDetail(String detailUrlStr) {
             HttpHelper hp = new HttpHelper(mAppContext);
             String pageContent = hp.get(detailUrlStr);
             if (pageContent == null)
                 return false;
-            
+
             Pattern p = Pattern.compile("<p class=\"ip\">Showing [\\d|,]+ - [\\d|,]+ of ([\\d|,]+) images</p>.+<div id=\"gdt\"><div[^<>]*>(?:<div[^<>]*>)?<a[^<>]*href=\"([^<>\"]+)\"[^<>]*>");
             Matcher m = p.matcher(pageContent);
             if (m.find()) {
@@ -868,10 +871,10 @@ public class EhClient {
             }
             return false;
         }
-        
+
         /**
          * Get page info, previous page, next page, image url
-         * 
+         *
          * @param pageUrlStr
          * @return True if get
          */
@@ -880,7 +883,7 @@ public class EhClient {
             String pageContent = hp.get(pageUrlStr);
             if (pageContent == null)
                 return false;
-            
+
             Pattern p = Pattern.compile("<a[^<>]*id=\"prev\"[^<>]*href=\"([^<>\"]+)\"><img[^<>]*/></a>.+<a[^<>]id=\"next\"[^<>]*href=\"([^<>\"]+)\"><img[^<>]*/></a>.+<img[^<>]*src=\"([^<>\"]+?)\"[^<>]*style=\"[^<>\"]*\"[^<>]*/>");
             Matcher m = p.matcher(pageContent);
             if (m.find()) {
@@ -891,16 +894,16 @@ public class EhClient {
             }
             return false;
         }
-        
-        
+
+
     }
-    
+
     // Post comment
     public interface OnCommentListener {
         void onSuccess(List<Comment> comments);
         void onFailure(String eMsg);
     }
-    
+
     public void comment(final String detailUrl, final String comment,
             final OnCommentListener listener) {
         new Thread(new Runnable() {
@@ -931,17 +934,17 @@ public class EhClient {
             }
         }).start();
     }
-    
+
     // TODO
-    
+
     /********** Use E-hentai API ************/
-    
+
     // rate for gallery
     public interface OnRateListener {
         void onSuccess(float ratingAvg, int ratingCnt);
         void onFailure(String eMsg);
     }
-    
+
     public void rate(final int gid, final String token,
             final int rating, final OnRateListener listener) {
         final JSONObject json = new JSONObject();
@@ -956,7 +959,7 @@ public class EhClient {
             listener.onFailure(e.getMessage());
             return;
         }
-        
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -981,13 +984,13 @@ public class EhClient {
             }
         }).start();
     }
-    
+
     // vote for tag
     public interface OnVoteListener {
         void onSuccess(String tagPane);
         void onFailure(String eMsg);
     }
-    
+
     public void vote(final int gid, final String token,
             final String group, final String tag,
             final boolean isUp, final OnVoteListener listener) {
@@ -1007,7 +1010,7 @@ public class EhClient {
             listener.onFailure(e.getMessage());
             return;
         }
-        
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -1032,17 +1035,17 @@ public class EhClient {
             }
         }).start();
     }
-    
+
     // Add to favorite
     public interface OnAddToFavoriteListener {
         void onSuccess();
         void onFailure(String eMsg);
     }
-    
+
     public String getAddFavouriteUrl(int gid, String token) {
         return getAddFavouriteUrl(gid, token, Config.getMode());
     }
-    
+
     public String getAddFavouriteUrl(int gid, String token, int mode) {
         switch (mode) {
         case EX:
@@ -1053,9 +1056,9 @@ public class EhClient {
                     + gid + "&t=" + token + "&act=addfav";
         }
     }
-    
+
     /**
-     * 
+     *
      * @param gid
      * @param token
      * @param cat -1 for delete, number bigger than 9 or smaller than -1 go to 0
@@ -1065,7 +1068,7 @@ public class EhClient {
     public void addToFavorite(final int gid, final String token,
             final int cat, final String note,
             final OnAddToFavoriteListener listener) {
-        
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -1088,7 +1091,7 @@ public class EhClient {
                         listener.onFailure(eMsg);
                     }
                 });
-                
+
                 String catStr;
                 if (cat == -1)
                     catStr = "favdel";
@@ -1096,7 +1099,7 @@ public class EhClient {
                     catStr = String.valueOf(cat);
                 else
                     catStr = "0";
-                
+
                 // submit=Add+to+Favorites is not necessary, just use submit=Apply+Changes all the time
                 hp.postForm(getAddFavouriteUrl(gid, token), new String[][]{
                         new String[]{"favcat", catStr},
@@ -1105,7 +1108,7 @@ public class EhClient {
             }
         }).start();
     }
-    
+
     private static int CATEGORY_VALUES[] = {
         ListUrls.MISC,
         ListUrls.DOUJINSHI,
@@ -1119,7 +1122,7 @@ public class EhClient {
         ListUrls.WESTERN,
         ListUrls.UNKNOWN
     };
-    
+
     private static String CATEGORY_STRINGS[][] = {
         new String[]{"misc"},
         new String[]{"doujinshi"},
@@ -1133,7 +1136,7 @@ public class EhClient {
         new String[]{"western"},
         new String[]{"unknown"}
     };
-    
+
     public static int getType(String type) {
         int i;
         for (i = 0; i < CATEGORY_STRINGS.length - 1; i++) {
@@ -1141,10 +1144,10 @@ public class EhClient {
                 if (str.equalsIgnoreCase(type))
                     return CATEGORY_VALUES[i];
         }
-        
+
         return CATEGORY_VALUES[i];
     }
-    
+
     public static String getType(int type) {
         int i;
         for (i = 0; i < CATEGORY_VALUES.length - 1; i++) {
@@ -1153,19 +1156,19 @@ public class EhClient {
         }
         return CATEGORY_STRINGS[i][0];
     }
-    
-    
+
+
     // modifyFavorite
     public interface OnModifyFavoriteListener {
         void onSuccess(List<GalleryInfo> gis,
                 int indexPerPage, int maxPage);
         void onFailure(String eMsg);
     }
-    
+
     public String getModifyFavoriteUrl() {
         return getModifyFavoriteUrl(Config.getMode());
     }
-    
+
     public String getModifyFavoriteUrl(int mode) {
         switch (mode) {
         case EX:
@@ -1174,9 +1177,9 @@ public class EhClient {
             return G_HEADER + "favorites.php";
         }
     }
-    
+
     /**
-     * 
+     *
      * @param gids
      * @param dstCat -1 for delete
      * @param srcCat
@@ -1188,7 +1191,7 @@ public class EhClient {
             @Override
             public void run() {
                 int i;
-                
+
                 HttpHelper hp = new HttpHelper(mAppContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
@@ -1209,7 +1212,7 @@ public class EhClient {
                         listener.onFailure(eMsg);
                     }
                 });
-                
+
                 String catStr;
                 if (dstCat == -1)
                     catStr = "delete";
@@ -1217,23 +1220,23 @@ public class EhClient {
                     catStr = "fav" + String.valueOf(dstCat);
                 else
                     catStr = "fav0";
-                
+
                 String[][] args = new String[gids.length + 2][];
                 args[0] = new String[]{"ddact", catStr};
                 for (i = 1; i <= gids.length; i++)
                     args[i] = new String[]{"modifygids[]", String.valueOf(gids[i-1])};
                 args[i] = new String[]{"apply", "Apply"};
-                
+
                 hp.postForm(getFavoriteUrl(srcCat, 0), args);
             }
         }).start();
     }
-    
+
     public interface OnGetPopularListener {
         void onSuccess(List<GalleryInfo> gis, long timeStamp);
         void onFailure(String eMsg);
     }
-    
+
     public void getPopular(final OnGetPopularListener listener) {
         final JSONObject json = new JSONObject();
         try {
@@ -1254,12 +1257,12 @@ public class EhClient {
                             List<GalleryInfo> gis = new ArrayList<GalleryInfo>();
                             JSONObject js = new JSONObject(body);
                             js = js.getJSONObject("popular");
-                            
+
                             if (!js.has("galleries")) {
                                 listener.onFailure(js.getString("error"));
                                 return;
                             }
-                            
+
                             JSONArray ja = js.getJSONArray("galleries");
                             for (int i = 0; i < ja.length(); i++) {
                                 JSONObject j = ja.getJSONObject(i);
@@ -1278,13 +1281,13 @@ public class EhClient {
                                 gi.rating = Float.parseFloat(j.getString("rating"));
                                 gis.add(gi);
                             }
-                            
+
                             long timeStamp;
                             if (js.has("time"))
                                 timeStamp = js.getLong("time");
                             else
                                 timeStamp = -1;
-                            
+
                             listener.onSuccess(gis, timeStamp);
                         } catch (JSONException e) {
                             listener.onFailure(e.getMessage());
@@ -1299,8 +1302,8 @@ public class EhClient {
             }
         }).start();
     }
-    
-    
+
+
     /*
     private static class GetGalleryMetadataPackage {
         public Map<String, ListMangaDetail> lmds;
@@ -1326,7 +1329,7 @@ public class EhClient {
                 listener.onSuccess(lmds);
         };
     };
-    
+
     private static class GetGalleryMetadataRunnable implements Runnable {
         private String[][] gidTokens;
         private OnGetGalleryMetadataListener listener;
@@ -1336,12 +1339,12 @@ public class EhClient {
             this.gidTokens = gidTokens;
             this.listener = listener;
         }
-        
+
         @Override
         public void run() {
             int errorMessageId = R.string.em_unknown_error;
             Map<String, ListMangaDetail> lmds = new HashMap<String, ListMangaDetail>();
-            
+
             // Create post string
             StringBuffer strBuf = new StringBuffer();
             strBuf.append("{\"method\": \"gdata\",\"gidlist\": [");
@@ -1382,7 +1385,7 @@ public class EhClient {
                         lmd.tags[0][0] = "all";
                         for (int j = 1; j < length+1; j++)
                             lmd.tags[0][j] = ja.getString(j);
-                        
+
                         lmds.put(lmd.gid, lmd);
                     }
                 } catch (JSONException e) {
@@ -1396,15 +1399,15 @@ public class EhClient {
             getGalleryMetadataHandler.sendMessage(msg);
         }
     }
-    
+
     public static void getGalleryMetadata(String[][] gidTokens,
             OnGetGalleryMetadataListener listener) {
         new Thread(new GetGalleryMetadataRunnable(gidTokens,
                 listener)).start();
     }
-    
-    
-    
+
+
+
     private static class GetGalleryTokensPackage {
         public Map<String, String> tokens;
         public OnGetGalleryTokensListener listener;
@@ -1429,8 +1432,8 @@ public class EhClient {
                 listener.onSuccess(tokens);
         };
     };
-    
-    
+
+
     private static class GetGalleryTokensRunnable implements Runnable {
         private String gid;
         private String token;
@@ -1444,12 +1447,12 @@ public class EhClient {
             this.pages = pages;
             this.listener = listener;
         }
-        
+
         @Override
         public void run() {
             int errorMessageId = R.string.em_unknown_error;
             Map<String, String> tokens = new HashMap<String, String>();
-            
+
             // Create post string
             StringBuffer strBuf = new StringBuffer();
             strBuf.append("{\"method\": \"gtoken\",\"pagelist\": [");
@@ -1457,9 +1460,9 @@ public class EhClient {
                 strBuf.append("[" + gid + ",\"" + token + "\"," + item + "],");
             strBuf.delete(strBuf.length()-1, strBuf.length());
             strBuf.append("]}");
-            
+
             Log.i(TAG, strBuf.toString());
-            
+
             StringBuffer sb = new StringBuffer();
             errorMessageId = postJson(API_URL, strBuf.toString(),sb);
             if (sb.length() != 0) {
@@ -1468,15 +1471,15 @@ public class EhClient {
             }
         }
     }
-    
-    
+
+
     */
-    
+
     /*
     private static void getGalleryTokens(String gid, String token, String[] pages,
             OnGetGalleryMetadataListener listener) {
         new Thread(new GetGalleryTokensRunnable(gid, token, pages,
                 listener)).start();
     }*/
-    
+
 }

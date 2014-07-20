@@ -224,7 +224,14 @@ public class HttpHelper {
                     continue;
 
                 default:
-                    throw new ResponseCodeException(responseCode);
+                    String body;
+                    // Get pure text error
+                    if (rh instanceof GetStringHelper
+                            && (body = (String)rh.onAfterConnect(conn)) != null
+                            && !body.contains("<"))
+                        throw new Exception(body);
+                    else
+                        throw new ResponseCodeException(responseCode);
                 }
             }
             throw new RedirectionException();
