@@ -28,33 +28,13 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
     
-    <ProgressBar
-        android:id="@+id/wait"
-        style="@style/ProgressBar.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
-
-    <Button
-        android:id="@+id/refresh"
+    <com.hippo.ehviewer.widget.RefreshTextView
+        android:id="@+id/refresh_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/refresh" />
-
-    <ImageView
-        android:id="@+id/sadpanda"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:src="@drawable/sadpanda" />
-
-    <TextView
-        android:id="@+id/none"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="@string/none"
+        android:gravity="center_horizontal"
+        android:textColor="@android:color/holo_blue_dark"
         android:textSize="24sp" />
 
 </RelativeLayout>

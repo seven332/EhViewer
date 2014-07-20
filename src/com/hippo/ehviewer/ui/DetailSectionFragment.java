@@ -243,8 +243,10 @@ public class DetailSectionFragment extends Fragment
         mReadButton = (Button)mHeaderView.findViewById(R.id.detail_read);
         mRateButton = (Button)mHeaderView.findViewById(R.id.detail_do_rate);
         mColorfulBar = mRootView.findViewById(R.id.colorful_bar);
+
         mWaitPb = (ProgressBar)mRootView.findViewById(R.id.detail_wait);
         mRefreshButton = (Button)mRootView.findViewById(R.id.detail_refresh);
+
         mNormalView = (ViewGroup)mRootView.findViewById(R.id.manga_detail_normal);
         mOffensiveView = (ViewGroup)mRootView.findViewById(R.id.manga_detail_offensive);
         mPiningView = (ViewGroup)mRootView.findViewById(R.id.manga_detail_pining);

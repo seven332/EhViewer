@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Hippo Seven
+<!--
+     Copyright (C) 2014 Hippo Seven
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -12,66 +13,68 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
- -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/manga_detail_scrollview"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:clipToPadding="false"
+    android:fadingEdge="vertical"
+    android:scrollbars="vertical" >
 
-    <ScrollView
-        android:id="@+id/manga_detail_scrollview"
+    <LinearLayout
+        android:id="@+id/manga_detail"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:fadingEdge="vertical"
-        android:scrollbars="vertical"
-        android:clipToPadding="false" >
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical" >
 
-        <LinearLayout
-            android:id="@+id/manga_detail"
+        <include
+            android:id="@+id/detail_header"
+            layout="@layout/detail_header" />
+
+        <View
+            android:id="@+id/colorful_bar"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical" >
+            android:layout_height="2.0dp" />
 
-            <include
-                android:id="@+id/detail_header"
-                layout="@layout/detail_header" />
+        <!-- TODO maybe viewstub and is better -->
 
-            <View
-                android:id="@+id/colorful_bar"
-                android:layout_width="fill_parent"
-                android:layout_height="2.0dp" />
-            
-            <!-- TODO maybe viewstub and is better -->
-            <include
-                android:id="@+id/manga_detail_normal"
-                layout="@layout/detail_normal"
-                android:visibility="gone" />
+        <include
+            android:id="@+id/manga_detail_normal"
+            layout="@layout/detail_normal"
+            android:visibility="gone" />
 
-            <include
-                android:id="@+id/manga_detail_offensive"
-                layout="@layout/detail_offensive"
-                android:visibility="gone" />
+        <include
+            android:id="@+id/manga_detail_offensive"
+            layout="@layout/detail_offensive"
+            android:visibility="gone" />
 
-            <include
-                android:id="@+id/manga_detail_pining"
-                layout="@layout/detail_pining"
-                android:visibility="gone" />
-        </LinearLayout>
-    </ScrollView>
+        <include
+            android:id="@+id/manga_detail_pining"
+            layout="@layout/detail_pining"
+            android:visibility="gone" />
 
-    <ProgressBar
-        android:id="@+id/detail_wait"
-        style="@style/ProgressBar.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1" >
 
-    <Button
-        android:id="@+id/detail_refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="@string/refresh"
-        android:visibility="gone" />
+            <ProgressBar
+                android:id="@+id/detail_wait"
+                style="@style/ProgressBar.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
 
-</RelativeLayout>
+            <Button
+                android:id="@+id/detail_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/refresh"
+                android:visibility="gone"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</ScrollView>
