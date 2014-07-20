@@ -17,6 +17,7 @@
 package com.hippo.ehviewer;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 
 import com.hippo.ehviewer.network.HttpHelper;
@@ -29,11 +30,13 @@ public class AppHandler extends Handler {
 
     private static Handler sInstance;
 
-    public static void init() {
-        sInstance = new AppHandler();
+    public AppHandler(Looper mainLooper) {
+        super(mainLooper);
     }
 
     public final static Handler getInstance() {
+        if (sInstance == null)
+            sInstance = new AppHandler(Looper.getMainLooper());
         return sInstance;
     }
 
