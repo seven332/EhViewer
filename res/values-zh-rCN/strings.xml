@@ -64,7 +64,7 @@
     <string name="toast_tag_mode">切换至标签搜索模式</string>
 
     <!-- Jump -->
-    <string name="jump_summary" formatted="false">第 %d 页，共 %d 页</string>
+    <string name="jump_summary" formatted="false">第 %d 页，共 %s 页</string>
     <string name="jump_to">跳至：</string>
     <string name="toast_invalid_page">非法页面</string>
 

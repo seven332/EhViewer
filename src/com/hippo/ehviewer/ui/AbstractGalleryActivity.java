@@ -38,6 +38,7 @@ import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.GalleryPopular;
 import com.hippo.ehviewer.ehclient.EhClient;
+import com.hippo.ehviewer.ehclient.ListParser;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.HfListView;
@@ -45,6 +46,7 @@ import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.RatingView;
 import com.hippo.ehviewer.widget.RefreshTextView;
+import com.hippo.ehviewer.widget.SuperToast;
 
 public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         implements HfListView.OnFooterRefreshListener,
@@ -76,7 +78,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     private int mCurPage;
     private int mFirstPage = 0;
     private int mLastPage = 0;
-    private int mMaxPage;
+    private int mPageNum;
     private int mItemPerPage;
     private int mGetMode;
     private boolean mIsKeepPosition;
@@ -157,7 +159,16 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         }
     }
 
+    protected boolean retry(boolean force) {
+        if (!force && isRefreshing())
+            return false;
+
+        getGallerys();
+        return true;
+    }
+
     /**
+     * Go to page 0
      * If can't refresh return false,
      * if force is true, must return true
      *
@@ -205,7 +216,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     protected boolean getNextPage(boolean isKeepPosition, boolean force) {
         if (!force && isRefreshing())
             return false;
-        if (mLastPage >= mMaxPage - 1)
+        if (mLastPage >= mPageNum - 1) // If last page is the end of the page or more laster, error
             return false;
 
         mGetMode = NEXT_PAGE;
@@ -219,7 +230,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     protected boolean getSomewhere(int page, boolean force) {
         if (!force && isRefreshing())
             return false;
-        if (page >= mMaxPage || page < 0)
+        if (page >= mPageNum || page < 0)
             return false;
 
         mGetMode = SOMEWHERE;
@@ -233,7 +244,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     public boolean jumpTo(int page, boolean force) {
         if (!force && isRefreshing())
             return false;
-        if (page >= mMaxPage || page < 0)
+        if (page >= mPageNum || page < 0)
             return false;
 
         if (page >= mFirstPage && page <= mLastPage) {
@@ -295,11 +306,11 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         mList.setSelector(new ColorDrawable(Color.TRANSPARENT));
         mList.setClipToPadding(false);
 
-        mRefreshTextView.setOnRefreshListener(new RefreshTextView.OnRefreshListener() {
+        mRefreshTextView.setDefaultRefresh("点击重试", new RefreshTextView.OnRefreshListener() { // TODO
             @Override
             public void onRefresh() {
                 mRefreshTextView.setRefreshing(true);
-                refresh(true);
+                retry(true);
             }
         });
     }
@@ -331,7 +342,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     }
 
     public int getMaxPage() {
-        return mMaxPage;
+        return mPageNum;
     }
 
     public int getCurPage() {
@@ -346,7 +357,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         setGalleryInfos(gis, 1);
     }
 
-    public void setGalleryInfos(List<GalleryInfo> gis, int maxPage) {
+    public void setGalleryInfos(List<GalleryInfo> gis, int pageNum) {
         mGiList = gis;
         mGalleryAdapter.notifyDataSetChanged();
 
@@ -355,7 +366,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         mCurPage = 0;
         mFirstPage = 0;
         mLastPage = 0;
-        mMaxPage = maxPage;
+        mPageNum = pageNum;
         mItemPerPage = mGiList.size();
 
         if (mItemPerPage == 0)
@@ -377,7 +388,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         }
         @Override
         public Object getItem(int position) {
-            return mGiList.get(position);
+            return mGiList == null ? 0 : mGiList.get(position);
         }
         @Override
         public long getItemId(int position) {
@@ -499,27 +510,32 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     }
 
     public interface OnGetListListener {
-        public void onSuccess(long taskStamp, List<GalleryInfo> gis, int itemPerPage, int maxPage);
+        public void onSuccess(long taskStamp, List<GalleryInfo> gis, int maxPage);
         public void onFailure(long taskStamp, String eMsg);
     }
 
     private final OnGetListListener mListener = new OnGetListListener() {
         @Override
         public void onSuccess(long taskStamp,
-                List<GalleryInfo> gis, int itemPerPage, int maxPage) {
+                List<GalleryInfo> gis, int pageNum) {
             if (mTaskStamp != taskStamp)
                 return;
 
-            mMaxPage = maxPage;
+            if (pageNum == ListParser.TARGET_PAGE_IS_LAST)
+                mPageNum = mTargetPage + 1;
+            else
+                mPageNum = pageNum;
+
+            int itemPerPage = gis == null ? 0 : gis.size();
             if (mItemPerPage < itemPerPage)
                 mItemPerPage = itemPerPage;
 
-            if (mMaxPage == 0) {
+            if (mPageNum == 0) {
                 onlyShowNone();
 
                 mFirstPage = 0;
                 mLastPage = 0;
-                mGiList = new ArrayList<GalleryInfo>();
+                mGiList = gis;
                 mGalleryAdapter.notifyDataSetChanged();
             } else {
                 onlyShowList();
@@ -592,13 +608,25 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
 
             switch (mGetMode) {
             case REFRESH:
+            case SOMEWHERE:
                 mHlv.setVisibility(View.GONE);
                 mRefreshTextView.setVisibility(View.VISIBLE);
-                mRefreshTextView.setEmesg(eMsg, true);
+                if (eMsg.equals("index error")) {
+                    mRefreshTextView.setEmesg(eMsg, "点击回第一页", new RefreshTextView.OnRefreshListener() {
+                        @Override
+                        public void onRefresh() {
+                            mRefreshTextView.setRefreshing(true);
+                            refresh(true);
+                        }
+                    });
+                } else {
+                    mRefreshTextView.setEmesg(eMsg, true);
+                }
                 break;
             default:
                 mRefreshTextView.setRefreshing(false);
                 mRefreshTextView.setVisibility(View.GONE);
+                new SuperToast(AbstractGalleryActivity.this, "错误的页面数",SuperToast.ERROR).show(); // TODO
             }
             mHlv.setAnyRefreshComplete(false);
         }

@@ -55,12 +55,6 @@ import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.SuperToast;
 
-// TODO I'm going to add an awesome feature.
-//       When views in ListView or ScrollView or some ViewGroup can
-//       scroll are under actionbar, They should be seen.
-//       At that time actionbar's background must be translucent,
-//       statusbar too in 4.4. When no view under them, just normal.
-
 public class MangaDetailActivity extends AbstractFragmentActivity
         implements ActionBar.TabListener {
 
@@ -246,7 +240,7 @@ public class MangaDetailActivity extends AbstractFragmentActivity
                 Intent it = new Intent(MangaDetailActivity.this, DownloadService.class);
                 startService(it);
                 mServiceConn.getService().add(String.valueOf(mGalleryDetail.gid), mGalleryDetail.thumb,
-                        EhClient.getDetailUrl(mGalleryDetail.gid, mGalleryDetail.token),
+                        EhClient.getDetailUrl(mGalleryDetail.gid, mGalleryDetail.token, 0, Config.getMode()),
                         mGalleryDetail.title);
                 new SuperToast(this, R.string.toast_add_download).show();
             }
@@ -298,7 +292,7 @@ public class MangaDetailActivity extends AbstractFragmentActivity
                             ((AlertButton)v).dialog.dismiss();
                             String comment = et.getText().toString();
                             ((AppContext)getApplication()).getEhClient()
-                                    .comment(EhClient.getDetailUrl(mGalleryDetail.gid, mGalleryDetail.token),
+                                    .comment(EhClient.getDetailUrl(mGalleryDetail.gid, mGalleryDetail.token, 0, Config.getMode()),
                                             comment, new EhClient.OnCommentListener() {
                                                 @Override
                                                 public void onSuccess(List<Comment> comments) {

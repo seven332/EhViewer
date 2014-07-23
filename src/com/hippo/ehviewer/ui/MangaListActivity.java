@@ -71,6 +71,7 @@ import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.Tag;
 import com.hippo.ehviewer.ehclient.EhClient;
+import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
@@ -130,7 +131,7 @@ public class MangaListActivity extends AbstractGalleryActivity
     public static final String KEY_TAG = "tag";
     public static final String KEY_UPLOADER = "uploader";
 
-    private EhClient mEhClient;
+    private EhClient mClient;
     private Resources mResources;
 
     private SlidingMenu mSlidingMenu;
@@ -193,7 +194,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                         setUserPanel(WAIT);
                         String username = ((EditText) loginDialog.findViewById(R.id.username)).getText().toString();
                         String password = ((EditText) loginDialog.findViewById(R.id.password)).getText().toString();
-                        mEhClient.login(username, password, new EhClient.OnLoginListener() {
+                        mClient.login(username, password, new EhClient.OnLoginListener() {
                             @Override
                             public void onSuccess() {
                                 setUserPanel();
@@ -215,11 +216,11 @@ public class MangaListActivity extends AbstractGalleryActivity
                                             setUserPanel();
                                             break;
                                         case EhClient.NO_AVATAR:
-                                            new SuperToast(MangaListActivity.this, "无头像").show();
+                                            new SuperToast(MangaListActivity.this, "无头像").show(); // TODO
                                             break;
                                         case EhClient.GET_AVATAR_ERROR:
                                         default:
-                                            new SuperToast(MangaListActivity.this, "获取头像失败", SuperToast.ERROR).show();
+                                            new SuperToast(MangaListActivity.this, "获取头像失败", SuperToast.ERROR).show();  // TODO
                                             break;
                                         }
                                     }
@@ -258,13 +259,10 @@ public class MangaListActivity extends AbstractGalleryActivity
                 .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        ((AlertButton)v).dialog.dismiss();
                         int mode = modeSpinner.getSelectedItemPosition();
-                        if (mode > 1) {
-                            new SuperToast(MangaListActivity.this, R.string.unfinished).show();
-                        } else {
-                            ((AlertButton)v).dialog.dismiss();
-                            Config.setMode(mode);
-                        }
+                        Config.setMode(mode);
+                        EhInfo.getInstance(MangaListActivity.this).setMode(mode);
                     }
                 }).setSimpleNegativeButton().create();
     }
@@ -529,7 +527,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                             Intent it = new Intent(MangaListActivity.this, DownloadService.class);
                             startService(it);
                             mServiceConn.getService().add(String.valueOf(gi.gid), gi.thumb,
-                                    EhClient.getDetailUrl(gi.gid, gi.token), gi.title);
+                                    mClient.getDetailUrl(gi.gid, gi.token), gi.title);
                             new SuperToast(MangaListActivity.this, R.string.toast_add_download).show();
                             break;
                         default:
@@ -549,7 +547,9 @@ public class MangaListActivity extends AbstractGalleryActivity
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.jump, null);
         TextView tv = (TextView)view.findViewById(R.id.list_jump_sum);
-        tv.setText(String.format(getString(R.string.jump_summary), getCurPage() + 1, getMaxPage()));
+        // For lofi, can not get page num, so use Integer.MAX_VALUE
+        tv.setText(String.format(getString(R.string.jump_summary), getCurPage() + 1,
+                getMaxPage() == Integer.MAX_VALUE ? "未知" : String.valueOf(getMaxPage()))); // TODO
         tv = (TextView)view.findViewById(R.id.list_jump_to);
         tv.setText(R.string.jump_to);
         final EditText et = (EditText)view.findViewById(R.id.list_jump_edit);
@@ -922,7 +922,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         } else if (v == registerButton) {
             toRegister();
         } else if (v == logoutButton) {
-            mEhClient.logout();
+            mClient.logout();
             setUserPanel();
         }
     }
@@ -964,7 +964,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         super.onCreate(savedInstanceState);
 
         mData = mAppContext.getData();
-        mEhClient = mAppContext.getEhClient();
+        mClient = mAppContext.getEhClient();
         mResources =getResources();
 
         handleIntent(getIntent());
@@ -1190,7 +1190,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 Intent intent = new Intent(MangaListActivity.this,
                         MangaDetailActivity.class);
                 GalleryInfo gi = getGalleryInfo(position);
-                intent.putExtra("url", EhClient.getDetailUrl(gi.gid, gi.token));
+                intent.putExtra("url", mClient.getDetailUrl(gi.gid, gi.token));
                 intent.putExtra(MangaDetailActivity.KEY_G_INFO, gi);
                 startActivity(intent);
             }
@@ -1483,7 +1483,7 @@ public class MangaListActivity extends AbstractGalleryActivity
     private static final int WAIT = 0x2;
 
     private void setUserPanel() {
-        if (mEhClient.isLogin())
+        if (mClient.isLogin())
             setUserPanel(LOGOUT);
         else
             setUserPanel(LOGIN);
@@ -1493,7 +1493,7 @@ public class MangaListActivity extends AbstractGalleryActivity
 
         switch (state) {
         case LOGIN:
-            avatar.setImageBitmap(mEhClient.getAvatar());
+            avatar.setImageBitmap(mClient.getAvatar());
             userView.setVisibility(View.GONE);
             loginButton.setVisibility(View.VISIBLE);
             registerButton.setVisibility(View.VISIBLE);
@@ -1501,8 +1501,8 @@ public class MangaListActivity extends AbstractGalleryActivity
             waitloginoutView.setVisibility(View.GONE);
             break;
         case LOGOUT:
-            avatar.setImageBitmap(mEhClient.getAvatar());
-            userView.setText(mEhClient.getDisplayname());
+            avatar.setImageBitmap(mClient.getAvatar());
+            userView.setText(mClient.getDisplayname());
             userView.setVisibility(View.VISIBLE);
             loginButton.setVisibility(View.GONE);
             registerButton.setVisibility(View.GONE);
@@ -1510,7 +1510,7 @@ public class MangaListActivity extends AbstractGalleryActivity
             waitloginoutView.setVisibility(View.GONE);
             break;
         case WAIT:
-            avatar.setImageBitmap(mEhClient.getAvatar());
+            avatar.setImageBitmap(mClient.getAvatar());
             userView.setVisibility(View.GONE);
             loginButton.setVisibility(View.GONE);
             registerButton.setVisibility(View.GONE);
@@ -1534,7 +1534,7 @@ public class MangaListActivity extends AbstractGalleryActivity
             mClient.getPopular(new EhClient.OnGetPopularListener() {
                 @Override
                 public void onSuccess(List<GalleryInfo> gis, long timeStamp) {
-                    listener.onSuccess(taskStamp, gis, gis.size(), gis.size() == 0 ? 0 : 1);
+                    listener.onSuccess(taskStamp, gis, gis.size() == 0 ? 0 : 1);
                     // Show update time
                     if (timeStamp != -1 && Config.getShowPopularUpdateTime())
                         new SuperToast(MangaListActivity.this,
@@ -1550,8 +1550,8 @@ public class MangaListActivity extends AbstractGalleryActivity
             mClient.getGList(url, null, new EhClient.OnGetGListListener() {
                 @Override
                 public void onSuccess(Object checkFlag, List<GalleryInfo> lmdArray,
-                        int indexPerPage, int maxPage) {
-                    listener.onSuccess(taskStamp, lmdArray, indexPerPage, maxPage);
+                        int pageNum) {
+                    listener.onSuccess(taskStamp, lmdArray, pageNum);
                 }
                 @Override
                 public void onFailure(Object checkFlag, String eMsg) {

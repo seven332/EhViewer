@@ -180,7 +180,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                 Intent intent = new Intent(FavouriteActivity.this,
                         MangaDetailActivity.class);
                 GalleryInfo gi = getGalleryInfo(position);
-                intent.putExtra("url", EhClient.getDetailUrl(gi.gid, gi.token));
+                intent.putExtra("url", mClient.getDetailUrl(gi.gid, gi.token));
                 intent.putExtra(MangaDetailActivity.KEY_G_INFO, gi);
                 startActivity(intent);
             }
@@ -504,7 +504,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
 
     @Override
     protected String getTargetUrl(int targetPage) {
-        return EhClient.getFavoriteUrl(mMenuIndex-1, targetPage);
+        return mClient.getFavoriteUrl(mMenuIndex-1, targetPage);
     }
 
     @Override
@@ -512,9 +512,9 @@ public class FavouriteActivity extends AbstractGalleryActivity
             final OnGetListListener listener) {
         mClient.getGList(url, null, new EhClient.OnGetGListListener() {
             @Override
-            public void onSuccess(Object checkFlag, List<GalleryInfo> lmdArray,
-                    int indexPerPage, int maxPage) {
-                listener.onSuccess(taskStamp, lmdArray, indexPerPage, maxPage);
+            public void onSuccess(Object checkFlag, List<GalleryInfo> giList,
+                    int maxPage) {
+                listener.onSuccess(taskStamp, giList, maxPage);
             }
             @Override
             public void onFailure(Object checkFlag, String eMsg) {
@@ -535,8 +535,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         }
 
         @Override
-        public void onSuccess(List<GalleryInfo> gis, int indexPerPage,
-                int maxPage) {
+        public void onSuccess(List<GalleryInfo> gis, int maxPage) {
             setGalleryInfos(gis, maxPage);
             mHlv.setRefreshing(false);
             new SuperToast(FavouriteActivity.this, mSuccStr).show();

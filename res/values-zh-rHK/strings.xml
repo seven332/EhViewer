@@ -52,7 +52,7 @@
     <string name="toast_tag_mode">切換至標籤搜索模式</string>
 
     <!-- Jump -->
-    <string name="jump_summary" formatted="false">第 %d 頁，共 %d 頁</string>
+    <string name="jump_summary" formatted="false">第 %d 頁，共 %s 頁</string>
     <string name="jump_to">跳至：</string>
     <string name="toast_invalid_page">非法頁面</string>
 

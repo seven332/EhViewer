@@ -34,6 +34,7 @@ import android.os.Message;
 
 import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.AppContext;
+import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Comment;
@@ -62,25 +63,23 @@ public class EhClient {
 
     public static final int FAVORITE_SLOT_NUM = 10;
 
-    public static final int G = 0x0;
-    public static final int EX = 0x1;
-    public static final int LOFI_460x = 0x2;
-    public static final int LOFI_780x = 0x3;
-    public static final int LOFI_980x = 0x4;
+    public static final int MODE_G = 0x0;
+    public static final int MODE_EX = 0x1;
+    public static final int MODE_LOFI = 0x2;
 
-    public static final String G_API = "http://g.e-hentai.org/api.php";
-    public static final String EX_API = "http://exhentai.org/api.php";
+    public static final String API_G = "http://g.e-hentai.org/api.php";
+    public static final String API_EX = "http://exhentai.org/api.php";
     public static final long APIUID = 1363542;
     public static final String APIKEY = "f4b5407ab1727b9d08d7";
 
-    private static final String loginUrl = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
-    private static final String forumsUrl = "http://forums.e-hentai.org/index.php";
+    private static final String LOGIN_URL = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
+    private static final String FORUMS_URL = "http://forums.e-hentai.org/index.php";
 
-    public static final String G_HEADER = "http://g.e-hentai.org/";
-    public static final String EX_HEADER = "http://exhentai.org/";
-    public static final String LOFI_HEADER = "http://lofi.e-hentai.org/";
+    public static final String HEADER_G = "http://g.e-hentai.org/";
+    public static final String HEADER_EX = "http://exhentai.org/";
+    public static final String HEADER_LOFI = "http://lofi.e-hentai.org/";
 
-    private static final String EHVIEWER_API = "http://www.ehviewer.com/API";
+    private static final String API_EHVIEWER = "http://www.ehviewer.com/API";
 
     /* Avatar get code */
     public static final int GET_AVATAR_OK = 0x0;
@@ -89,6 +88,7 @@ public class EhClient {
 
     private final AppContext mAppContext;
     private final ThreadPool mThreadPool;
+    private final Handler mHandler;
     private final EhInfo mInfo;
 
     public static String getUrlHeader() {
@@ -97,80 +97,113 @@ public class EhClient {
 
     public static String getUrlHeader(int mode) {
         switch (mode) {
-        case EX:
-            return EX_HEADER;
-        case LOFI_460x:
-        case LOFI_780x:
-        case LOFI_980x:
-            return LOFI_HEADER;
+        case MODE_EX:
+            return HEADER_EX;
+        case MODE_LOFI:
+            return HEADER_LOFI;
+        case MODE_G:
         default:
-            return G_HEADER;
+            return HEADER_G;
         }
     }
 
-    public static String getDetailUrl(int gid, String token) {
-        return getDetailUrl(gid, token, 0, Config.getMode());
+    /**
+     * Get gellary detail url in default mode
+     * @param gid
+     * @param token
+     * @return
+     */
+    public String getDetailUrl(int gid, String token) {
+        return getDetailUrl(gid, token, 0, mInfo.getMode());
     }
 
-
-    public static String getDetailUrl(int gid, String token, int pageNum) {
-        return getDetailUrl(gid, token, pageNum, Config.getMode());
+    /**
+     * Get gellary detail url in default mode
+     * @param gid
+     * @param token
+     * @return
+     */
+    public String getDetailUrl(int gid, String token, int pageNum) {
+        return getDetailUrl(gid, token, pageNum, mInfo.getMode());
     }
 
+    /**
+     * Get gellary detail url in target mode
+     * @param gid
+     * @param token
+     * @return
+     */
     public static String getDetailUrl(int gid, String token, int pageNum, int mode) {
+        StringBuilder sb = new StringBuilder();
         switch (mode) {
-        case EX:
-            return EX_HEADER + "g/" + gid + "/" + token + "/?p=" + pageNum;
-        case LOFI_460x:
-        case LOFI_780x:
-        case LOFI_980x:
-            return LOFI_HEADER + "g/" + gid + "/" + token + "/?p=" + pageNum;
+        case MODE_EX:
+            sb.append(HEADER_EX);
+            break;
+        case MODE_LOFI:
+            sb.append(HEADER_LOFI);
+            break;
+        case MODE_G:
         default:
-            return G_HEADER + "g/" + gid + "/" + token + "/?p=" + pageNum;
+            sb.append(HEADER_G);
+            break;
         }
+        return sb.append("g/").append(gid).append("/").append(token)
+                .append("/?p=").append(pageNum).toString();
     }
 
-    public static String getPageUrl(String gid, String token, int pageNum) {
-        return getPageUrl(gid, token, pageNum, Config.getMode());
+    public String getPageUrl(String gid, String token, int pageNum) {
+        return getPageUrl(gid, token, pageNum, mInfo.getMode());
     }
 
     public static String getPageUrl(String gid, String token, int pageNum, int mode) {
+        StringBuilder sb = new StringBuilder();
         switch (mode) {
-        case EX:
-            return EX_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
-        case LOFI_460x:
-        case LOFI_780x:
-        case LOFI_980x:
-            return LOFI_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
+        case MODE_EX:
+            sb.append(HEADER_EX);
+            break;
+        case MODE_LOFI:
+            sb.append(HEADER_LOFI);
+            break;
+        case MODE_G:
         default:
-            return G_HEADER + "s/" + token + "/" + gid + "-" + pageNum;
+            sb.append(HEADER_G);
+            break;
         }
+        return sb.append("s/").append(token).append("/").append(gid)
+                .append("-").append(pageNum).toString();
     }
 
-    public static String getApiUrl() {
-        return getApiUrl(Config.getMode());
+    public String getApiUrl() {
+        return getApiUrl(mInfo.getAPIMode());
     }
 
     public static String getApiUrl(int mode) {
         switch (mode) {
-        case EX:
-            return EX_API;
+        case MODE_EX:
+            return API_EX;
+        case MODE_G:
         default:
-            return G_API;
+            return API_G;
         }
     }
 
-    public static String getFavoriteUrl(int index, int page) {
-        return getFavoriteUrl(Config.getMode(), index, page);
+    public String getFavoriteUrl(int index, int page) {
+        return getFavoriteUrl(mInfo.getAPIMode(), index, page);
     }
 
     public static String getFavoriteUrl(int mode, int index, int page) {
+        StringBuilder sb = new StringBuilder();
         switch (mode) {
-        case EX:
-            return EX_HEADER + "favorites.php?favcat=" + index + "&page=" + page;
+        case MODE_EX:
+            sb.append(HEADER_EX);
+            break;
+        case MODE_G:
         default:
-            return G_HEADER  + "favorites.php?favcat=" + index + "&page=" + page;
+            sb.append(HEADER_G);
+            break;
         }
+        return sb.append("favorites.php?favcat=").append(index).append("&page=")
+                .append(page).toString();
     }
 
     public interface OnGetMangaUrlListener {
@@ -196,6 +229,7 @@ public class EhClient {
     public EhClient(AppContext appContext) {
         mAppContext = appContext;
         mThreadPool = mAppContext.getNetworkThreadPool();
+        mHandler = AppHandler.getInstance();
         mInfo = EhInfo.getInstance(appContext);
     }
 
@@ -235,10 +269,9 @@ public class EhClient {
         return mInfo.getAvatar();
     }
 
-    private static final int GET_PAGE_LIST = 0x5;
     private static final int GET_MANGA_URL = 0x6;
 
-    private static Handler mHandler = new Handler() {
+    private static Handler mHandler1 = new Handler() {
         @Override
         public void handleMessage(Message msg) {
 
@@ -287,7 +320,7 @@ public class EhClient {
                         listener.onFailure(eMsg);
                     }
                 });
-                hp.postForm(loginUrl, new String[][] {
+                hp.postForm(LOGIN_URL, new String[][] {
                         new String[] { "UserName", username },
                         new String[] { "PassWord", password },
                         new String[] { "submit", "Log me in" },
@@ -306,7 +339,7 @@ public class EhClient {
                 Matcher m;
                 // Get user profile url
                 HttpHelper hp = new HttpHelper(mAppContext);
-                body = hp.get(forumsUrl);
+                body = hp.get(FORUMS_URL);
                 if (body == null) {
                     listener.onGetAvatar(GET_AVATAR_ERROR);
                     return;
@@ -346,45 +379,91 @@ public class EhClient {
 
     // Get Gallery List
     public interface OnGetGListListener {
-        public void onSuccess(Object checkFlag, List<GalleryInfo> lmdArray,
-                int indexPerPage, int maxPage);
+        public void onSuccess(Object checkFlag, List<GalleryInfo> giList,
+                int maxPage);
         public void onFailure(Object checkFlag, String eMsg);
     }
 
-    public void getGList(final String url, final Object checkFlag,
+    private class GetGListResponder implements Runnable {
+
+        private final boolean isOk;
+        private final OnGetGListListener listener;
+        private final Object checkFlag;
+        private final List<GalleryInfo> giList;
+        private final int maxPage;
+        private final String eMesg;
+
+        public GetGListResponder(OnGetGListListener listener, Object checkFlag,
+                List<GalleryInfo> giList, int maxPage) {
+            this.isOk = true;
+            this.listener = listener;
+            this.checkFlag = checkFlag;
+            this.giList = giList;
+            this.maxPage = maxPage;
+            this.eMesg = null;
+        }
+
+        public GetGListResponder(OnGetGListListener listener, Object checkFlag, String eMesg) {
+            this.isOk = false;
+            this.listener = listener;
+            this.checkFlag = checkFlag;
+            this.giList = null;
+            this.maxPage = 0;
+            this.eMesg = eMesg;
+        }
+
+        @Override
+        public void run() {
+            if (isOk)
+                listener.onSuccess(checkFlag, giList, maxPage);
+            else
+                listener.onFailure(checkFlag, eMesg);
+        }
+    }
+
+    public void getGList(String url, Object checkFlag,
+            OnGetGListListener listener) {
+        getGList(url, mInfo.getMode(), checkFlag, listener);
+    }
+
+    public void getGList(final String url, final int mode, final Object checkFlag,
             final OnGetGListListener listener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 HttpHelper hp = new HttpHelper(mAppContext);
-                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
-                    @Override
-                    public void onSuccess(Object obj) {
-                        String body = (String)obj;
-                        // If no element, it might be a notice
-                        if (!body.contains("<")) {
-                            listener.onFailure(checkFlag, body);
-                            return;
-                        }
-                        ListParser parser = new ListParser();
-                        switch (parser.parser(body)) {
+                String body = hp.get(url);
+                GetGListResponder responder;
+                if (body != null) { // Get ok
+                    // If no element, it might be a notice
+                    if (!body.contains("<")) {
+                        responder = new GetGListResponder(listener, checkFlag, body);
+                    } else {
+                        final ListParser parser = new ListParser();
+                        switch (parser.parser(body, mode)) {
                         case ListParser.ALL:
-                            listener.onSuccess(checkFlag, parser.giList, parser.indexPerPage, parser.maxPage);
+                            responder = new GetGListResponder(listener, checkFlag,
+                                    parser.giList, parser.pageNum);
                             break;
                         case ListParser.NOT_FOUND:
-                            listener.onSuccess(checkFlag, new ArrayList<GalleryInfo>(), parser.indexPerPage, 0);
+                            responder = new GetGListResponder(listener, checkFlag,
+                                    parser.giList, 0);
+                            break;
+                        case ListParser.INDEX_ERROR:
+                            responder = new GetGListResponder(listener, checkFlag,
+                                    "index error"); // TODO
                             break;
                         case ListParser.PARSER_ERROR:
-                                listener.onFailure(checkFlag, "parser error"); // TODO
+                        default:
+                            responder = new GetGListResponder(listener, checkFlag, "parser error"); // TODO
                             break;
                         }
                     }
-                    @Override
-                    public void onFailure(String eMsg) {
-                        listener.onFailure(checkFlag, eMsg);
-                    }
-                });
-                hp.get(url);
+                } else {
+                    responder = new GetGListResponder(listener, checkFlag, hp.getEMsg());
+                }
+
+                mHandler.post(responder);
             }
         }).start();
     }
@@ -558,7 +637,7 @@ public class EhClient {
                 Message msg = new Message();
                 msg.what = GET_MANGA_URL;
                 msg.obj = new GetMangaUrlPackage(checkFlag, task.strs, listener, task.eMsg);
-                mHandler.sendMessage(msg);
+                mHandler1.sendMessage(msg);
             }
         });
     }
@@ -1043,18 +1122,22 @@ public class EhClient {
     }
 
     public String getAddFavouriteUrl(int gid, String token) {
-        return getAddFavouriteUrl(gid, token, Config.getMode());
+        return getAddFavouriteUrl(gid, token, mInfo.getAPIMode());
     }
 
-    public String getAddFavouriteUrl(int gid, String token, int mode) {
+    public static String getAddFavouriteUrl(int gid, String token, int mode) {
+        StringBuilder sb = new StringBuilder();
         switch (mode) {
-        case EX:
-            return EX_HEADER + "gallerypopups.php?gid="
-                    + gid + "&t=" + token + "&act=addfav";
+        case MODE_EX:
+            sb.append(HEADER_EX);
+            break;
+        case MODE_G:
         default:
-            return G_HEADER + "gallerypopups.php?gid="
-                    + gid + "&t=" + token + "&act=addfav";
+            sb.append(HEADER_G);
+            break;
         }
+        return sb.append("gallerypopups.php?gid=").append(gid).append("&t=")
+                .append(token).append("&act=addfav").toString();
     }
 
     /**
@@ -1123,6 +1206,7 @@ public class EhClient {
         ListUrls.UNKNOWN
     };
 
+    // TODO How about "Private"
     private static String CATEGORY_STRINGS[][] = {
         new String[]{"misc"},
         new String[]{"doujinshi"},
@@ -1130,8 +1214,8 @@ public class EhClient {
         new String[]{"artistcg", "Artist CG Sets"},
         new String[]{"gamecg", "Game CG Sets"},
         new String[]{"imageset", "Image Sets"},
-        new String[]{"cosplay", "Asian Porn"},
-        new String[]{"asianporn"},
+        new String[]{"cosplay"},
+        new String[]{"asianporn", "Asian Porn"},
         new String[]{"non-h"},
         new String[]{"western"},
         new String[]{"unknown"}
@@ -1160,22 +1244,26 @@ public class EhClient {
 
     // modifyFavorite
     public interface OnModifyFavoriteListener {
-        void onSuccess(List<GalleryInfo> gis,
-                int indexPerPage, int maxPage);
+        void onSuccess(List<GalleryInfo> gis, int maxPage);
         void onFailure(String eMsg);
     }
 
     public String getModifyFavoriteUrl() {
-        return getModifyFavoriteUrl(Config.getMode());
+        return getModifyFavoriteUrl(mInfo.getMode());
     }
 
-    public String getModifyFavoriteUrl(int mode) {
+    public static String getModifyFavoriteUrl(int mode) {
+        StringBuilder sb = new StringBuilder();
         switch (mode) {
-        case EX:
-            return EX_HEADER + "favorites.php";
+        case MODE_EX:
+            sb.append(HEADER_EX);
+            break;
+        case MODE_G:
         default:
-            return G_HEADER + "favorites.php";
+            sb.append(HEADER_G);
+            break;
         }
+        return sb.append("favorites.php").toString();
     }
 
     /**
@@ -1198,11 +1286,11 @@ public class EhClient {
                     public void onSuccess(Object obj) {
                         String body = (String)obj;
                         ListParser parser = new ListParser();
-                        int re = parser.parser(body);
+                        int re = parser.parser(body, MODE_G); // Only MODE_G and MODE_EX
                         if (re == ListParser.ALL) {
-                            listener.onSuccess(parser.giList, parser.indexPerPage, parser.maxPage);
+                            listener.onSuccess(parser.giList, parser.pageNum);
                         } else if (re == ListParser.NOT_FOUND) {
-                            listener.onSuccess(parser.giList, parser.indexPerPage, parser.maxPage);
+                            listener.onSuccess(parser.giList, parser.pageNum);
                         } else if (re == ListParser.PARSER_ERROR) {
                             listener.onFailure("parser error"); // TODO
                         }
@@ -1298,7 +1386,7 @@ public class EhClient {
                         listener.onFailure(eMsg);
                     }
                 });
-                hp.postJson(EHVIEWER_API, json);
+                hp.postJson(API_EHVIEWER, json);
             }
         }).start();
     }

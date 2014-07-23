@@ -290,7 +290,7 @@ public class HttpHelper {
     private class CheckSpHelper implements RequestHelper {
         @Override
         public URL getUrl() throws MalformedURLException {
-            return new URL(EhClient.EX_HEADER);
+            return new URL(EhClient.HEADER_EX);
         }
 
         @Override

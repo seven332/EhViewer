@@ -185,7 +185,7 @@ public class DetailSectionFragment extends Fragment
 
     public void handleDetail(GalleryDetail gd) {
         mGalleryDetail = gd;
-        mUrl = EhClient.getDetailUrl(
+        mUrl = mClient.getDetailUrl(
                 mGalleryDetail.gid, mGalleryDetail.token);
 
         mThumb.setImageDrawable(null);
@@ -328,7 +328,7 @@ public class DetailSectionFragment extends Fragment
             mWaitPreviewList.setVisibility(View.VISIBLE);
             mPreviewRefreshButton.setVisibility(View.GONE);
 
-            mUrl = EhClient.getDetailUrl(
+            mUrl = mClient.getDetailUrl(
                     mGalleryDetail.gid, mGalleryDetail.token, mCurPage);
             mClient.getPreviewList(mUrl, mCurPage,
                     new EhClient.OnGetPreviewListListener() {

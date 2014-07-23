@@ -96,7 +96,7 @@ public class GallerysDownloader implements Runnable {
             dp.reset();
             // For get more page url one time
             hh.setPreviewMode(Config.PREVIEW_MODE_NORMAL);
-            String body = hh.get(EhClient.getDetailUrl(mGalleryInfo.gid, mGalleryInfo.token, page));
+            String body = hh.get(EhClient.getDetailUrl(mGalleryInfo.gid, mGalleryInfo.token, page, Config.getMode()));
             if (body == null)
                 continue;
 

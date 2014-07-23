@@ -66,7 +66,7 @@
     <string name="toast_tag_mode">Switch To Tag Search Mode</string>
 
     <!-- Jump -->
-    <string name="jump_summary" formatted="false">Page %d, %d pages in total</string>
+    <string name="jump_summary" formatted="false">Page %d, %s pages in total</string>
     <string name="jump_to">Jump to : </string>
     <string name="toast_invalid_page">Invalid page</string>
 

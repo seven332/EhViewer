@@ -29,7 +29,8 @@ public class RefreshTextView extends TextView
         implements View.OnClickListener{
 
     private volatile boolean mIsRefreshing = false;
-    private volatile boolean mCanRefreshing;
+    private String mDefaultTip;
+    private OnRefreshListener mDefaultListener;
     private OnRefreshListener mListener;
 
     private static final String[] REFRESHING_STRINGS = {
@@ -61,13 +62,14 @@ public class RefreshTextView extends TextView
         setOnClickListener(this);
     }
 
-    public void setOnRefreshListener(OnRefreshListener listener) {
-        mListener = listener;
+    public void setDefaultRefresh(String tip, OnRefreshListener listener) {
+        mDefaultTip = tip;
+        mDefaultListener = listener;
     }
 
     @Override
     public void onClick(View v) {
-        if (!mIsRefreshing && mCanRefreshing && mListener != null)
+        if (!mIsRefreshing && mListener != null)
             mListener.onRefresh();
     }
 
@@ -88,17 +90,35 @@ public class RefreshTextView extends TextView
     }
 
     public void setEmesg(CharSequence emseg, boolean canRefresh) {
+        if (canRefresh)
+            setEmesg(emseg, mDefaultTip, mDefaultListener);
+        else
+            setEmesg(emseg, null, null);
+    }
+
+    public void setEmesg(CharSequence emseg, String tip,
+            OnRefreshListener listener) {
         mIsRefreshing = false;
-        mCanRefreshing = canRefresh;
+        boolean canRefresh = listener == null ? false : true;
 
         StringBuilder sb = new StringBuilder("==█  \n(>π<)\n\n");
         sb.append(emseg);
-        if (mCanRefreshing)
-            sb.append("点击重试"); // TODO;
+        if (canRefresh) {
+            sb.append("\n\n").append(tip);
+            mListener = listener;
+        } else {
+            mListener = null;
+        }
 
         setText(sb.toString());
     }
 
+    /**
+     * The thread to control refreshing animate
+     *
+     * @author Hippo
+     *
+     */
     private class RefreshingThread extends Thread {
         int mIndex;
         @Override

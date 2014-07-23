@@ -28,10 +28,7 @@ public class Config {
     @SuppressWarnings("unused")
     private static final String TAG = "Config";
 
-
     private static final String KEY_UPDATE_DATE = "update_date";
-    private static final String KEY_MODE = "mode";
-    private static final int MODE_DEFAULT = EhClient.EX;
 
     private static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
     private static final String DEFAULT_SCREEN_ORIENTATION = "0";
@@ -142,21 +139,6 @@ public class Config {
 
     public static void setDownloadPath(String path) {
         mConfigPre.edit().putString(KEY_DOWNLOAD_PATH, path).apply();
-    }
-
-    public static int getMode() {
-        int mode = mConfigPre.getInt(KEY_MODE, MODE_DEFAULT);
-        if (mode < EhClient.G || mode > EhClient.LOFI_980x) {
-            mode = MODE_DEFAULT;
-            setMode(mode);
-        }
-        return mode;
-    }
-
-    public static void setMode(int mode) {
-        if (mode < EhClient.G || mode > EhClient.LOFI_980x)
-            mode = MODE_DEFAULT;
-        mConfigPre.edit().putInt(KEY_MODE, mode).apply();
     }
 
     /**
@@ -322,8 +304,29 @@ public class Config {
         return Integer.parseInt(mConfigPre.getString(KEY_LIST_MODE, DEFAULT_LIST_MODE));
     }
 
+    /****** For Mode an API Mode ******/
 
+    private static final String KEY_MODE = "mode";
+    private static final int DEFAULT_MODE = EhClient.MODE_G;
 
+    private static final String KEY_API_MODE = "api_mode";
+    private static final int DEFAULT_API_MODE = EhClient.MODE_G;
+
+    public static int getMode() {
+        return mConfigPre.getInt(KEY_MODE, DEFAULT_MODE);
+    }
+
+    public static void setMode(int mode) {
+        mConfigPre.edit().putInt(KEY_MODE, mode).apply();
+    }
+
+    public static int getAPIMode() {
+        return mConfigPre.getInt(KEY_API_MODE, DEFAULT_API_MODE);
+    }
+
+    public static void setAPIMode(int apiMode) {
+        mConfigPre.edit().putInt(KEY_API_MODE, apiMode).apply();
+    }
 
     /****** For Eh Config ******/
 
@@ -393,5 +396,4 @@ public class Config {
     public static int getPreviewPerRow() {
         return Integer.parseInt(mConfigPre.getString(KEY_PREVIEW_PER_ROW, DEFAULT_PREVIEW_PER_ROW));
     }
-
 }

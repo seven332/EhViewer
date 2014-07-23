@@ -19,22 +19,20 @@ package com.hippo.ehviewer.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class GalleryInfo implements Parcelable {
+public class LofiGalleryInfo extends GalleryInfo {
 
-    public int gid;
-    public String token;
-    public String title;
-    public String posted;
-    public int category;
-    public String thumb;
-    public String uploader;
-    public float rating;
+    /**
+     * It could be null, please check before use.
+     */
+    public String[] lofiTags;
 
-    public static final Parcelable.Creator<GalleryInfo> CREATOR =
-            new Parcelable.Creator<GalleryInfo>() {
+    public static final Parcelable.Creator<LofiGalleryInfo> CREATOR =
+            new Parcelable.Creator<LofiGalleryInfo>() {
                 @Override
-                public GalleryInfo createFromParcel(Parcel source) {
-                    GalleryInfo p = new GalleryInfo();
+                public LofiGalleryInfo createFromParcel(Parcel source) {
+                    int length;
+
+                    LofiGalleryInfo p = new LofiGalleryInfo();
                     p.gid = source.readInt();
                     p.token = source.readString();
                     p.title = source.readString();
@@ -43,29 +41,30 @@ public class GalleryInfo implements Parcelable {
                     p.thumb = source.readString();
                     p.uploader = source.readString();
                     p.rating = source.readFloat();
+
+                    length = source.readInt();
+                    if (length > 0) {
+                        p.lofiTags = new String[length];
+                        for (int i = 0; i < length; i++)
+                            p.lofiTags[i] = source.readString();
+                    }
+
                     return p;
                 }
 
                 @Override
-                public GalleryInfo[] newArray(int size) {
-                    return new GalleryInfo[size];
+                public LofiGalleryInfo[] newArray(int size) {
+                    return new LofiGalleryInfo[size];
                 }
     };
 
     @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(gid);
-        dest.writeString(token);
-        dest.writeString(title);
-        dest.writeString(posted);
-        dest.writeInt(category);
-        dest.writeString(thumb);
-        dest.writeString(uploader);
-        dest.writeFloat(rating);
+        super.writeToParcel(dest, flags);
+
+        int length = lofiTags == null ? 0 : lofiTags.length;
+        dest.writeInt(length);
+        for (int i = 0; i < length; i++)
+            dest.writeString(lofiTags[i]);
     }
 }
