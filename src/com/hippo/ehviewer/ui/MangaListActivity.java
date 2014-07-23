@@ -676,7 +676,7 @@ public class MangaListActivity extends AbstractGalleryActivity
             searchNormal.setVisibility(View.VISIBLE);
             searchTag.setVisibility(View.GONE);
 
-            int category = listUrls.getType();
+            int category = listUrls.getCategory();
             CategoryTable ct = (CategoryTable) view
                     .findViewById(R.id.category_table);
             ct.setCategory(category);
@@ -795,7 +795,7 @@ public class MangaListActivity extends AbstractGalleryActivity
 
             case ListUrls.UPLOADER:
                 String uploader = "uploader:" + intent.getStringExtra(KEY_UPLOADER);
-                lus = new ListUrls(ListUrls.ALL_TYPE, uploader);
+                lus = new ListUrls(ListUrls.NONE, uploader);
                 lus.setMode(ListUrls.UPLOADER);
                 mTitle = uploader;
                 setTitle(mTitle);
@@ -979,7 +979,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 switch (position) {
                 case 0: // Home page
                     ListUrls backup = lus;
-                    lus = new ListUrls(ListUrls.ALL_TYPE, null, 0);
+                    lus = new ListUrls(ListUrls.NONE, null, 0);
                     if (refresh(false)) {
                         mTitle = mResources.getString(R.string.homepage);
                         setTitle(mTitle);
@@ -1194,7 +1194,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                     t = query;
 
                 ListUrls backup = lus;
-                lus = new ListUrls(ListUrls.ALL_TYPE, query);
+                lus = new ListUrls(ListUrls.NONE, query);
                 if (refresh(false)) {
                     mTitle = t;
                     setTitle(mTitle);

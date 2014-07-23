@@ -61,6 +61,7 @@ import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.widget.AlertButton;
+import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FileExplorerView;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
@@ -370,8 +371,30 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         public boolean onPreferenceClick(Preference preference) {
             final String key = preference.getKey();
             if (KEY_LIST_DEFAULT_CATEGORY.equals(key)) {
-                DialogBuilder dialogBuilder = new DialogBuilder(mActivity)
-                .setTitle("");
+                int defaultCat = Config.getDefaultCat();
+                final CategoryTable ct = new CategoryTable(mActivity);
+                ct.setCategory(defaultCat);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                int margin = Ui.dp2pix(12);
+                lp.leftMargin = margin;
+                lp.topMargin = margin;
+                lp.rightMargin = margin;
+                lp.bottomMargin = margin;
+
+                new DialogBuilder(mActivity)
+                .setTitle(R.string.list_default_category)
+                .setView(ct, lp).setSimpleNegativeButton()
+                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((AlertButton)v).dialog.dismiss();
+                        int defaultCat = ct.getCategory();
+                        Config.setDefaultCat(defaultCat);
+                        EhInfo.getInstance(mActivity).setDefaultCat(defaultCat);
+                    }
+                }).create().show();
             }
             return true;
         }

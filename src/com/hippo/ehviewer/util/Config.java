@@ -22,6 +22,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
+import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.ehclient.EhClient;
 
 public class Config {
@@ -331,7 +332,7 @@ public class Config {
     /****** For Eh Config ******/
 
     private static final String KEY_DEFAULT_CAT = "default_cat";
-    private static final int DEFAULT_DEFAULT_CAT = 0;
+    private static final int DEFAULT_DEFAULT_CAT = ListUrls.ALL_CATEGORT;
 
     // m for normal, l for large
     public static final String KEY_PREVIEW_MODE = "preview_mode";
@@ -379,6 +380,10 @@ public class Config {
 
     public static int getDefaultCat() {
         return mConfigPre.getInt(KEY_DEFAULT_CAT, DEFAULT_DEFAULT_CAT);
+    }
+
+    public static void setDefaultCat(int defaultCat) {
+        mConfigPre.edit().putInt(KEY_DEFAULT_CAT, defaultCat).apply();
     }
 
     public static String getPreviewMode() {

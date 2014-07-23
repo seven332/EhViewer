@@ -37,23 +37,23 @@ import android.view.View;
 public class Util {
     @SuppressWarnings("unused")
     private static String TAG = "Util";
-    
+
     /**
      * Put InputStream to File, default bufferSize is 512 * 1024
-     * 
+     *
      * @param is
      * @param file
-     * @throws IOException 
+     * @throws IOException
      */
     public static void inputStream2File(InputStream is, File file) throws IOException {
         OutputStream os = new FileOutputStream(file);
         copy(is, os);
     }
-    
+
     public static void copy(InputStream is, OutputStream os) throws IOException {
         copy(is, os, 512 * 1024);
     }
-    
+
     public static void copy(InputStream is, OutputStream os, int size) throws IOException {
         byte[] buffer = new byte[size];
         int bytesRead;
@@ -64,10 +64,10 @@ public class Util {
         os.close();
         buffer = null;
     }
-    
+
     public static final int BITMAP = 0x0;
     public static final int MOVIE = 0x1;
-    
+
     public static int getResourcesType(String url) {
         int type = BITMAP;
         int index = url.lastIndexOf('.');
@@ -75,7 +75,7 @@ public class Util {
             type = MOVIE;
         return type;
     }
-    
+
     public static String getExtension(String url) {
         int index = url.lastIndexOf('.');
         if (index != -1)
@@ -83,7 +83,7 @@ public class Util {
         else
             return "png";
     }
-    
+
     public static String getName(String fileName) {
         int index = fileName.lastIndexOf('.');
         if (index != -1)
@@ -91,7 +91,7 @@ public class Util {
         else
             return "png";
     }
-    
+
     public static boolean isNumber(String str) {
         for (int i = 0; i < str.length(); i++) {
             char ch = str.charAt(i);
@@ -100,7 +100,7 @@ public class Util {
         }
         return true;
     }
-    
+
     public static String byteArrayToHexString(byte[] b) {
         StringBuilder sb = new StringBuilder(b.length * 2);
         for (byte element : b) {
@@ -122,10 +122,10 @@ public class Util {
         }
         return data;
     }
-    
+
     /**
      * Convernt context in stream to string
-     * 
+     *
      * @param is
      * @param charset
      * @return
@@ -143,7 +143,7 @@ public class Util {
         }
         return str;
     }
-    
+
     public static String getFileForUrl(String url) {
         String file = null;
         int index = url.lastIndexOf("/");
@@ -152,14 +152,14 @@ public class Util {
         else
             return url.substring(index + 1);
     }
-    
+
     public static String[] getStrings(SharedPreferences shaper, String key) {
         String str = shaper.getString(key, null);
         if (str == null || str.length() == 0)
             return null;
         return new String(Util.hexStringToByteArray(str)).split("\n");
     }
-    
+
     public static void putStrings(SharedPreferences shaper, String key, List<String> strs) {
         StringBuffer sb = new StringBuffer();
         for (String item : strs) {
@@ -171,7 +171,7 @@ public class Util {
             sb.delete(length - 1, length);
         shaper.edit().putString(key, byteArrayToHexString(sb.toString().getBytes())).apply();
     }
-    
+
     public static void closeStreamQuietly (Closeable is) {
         try {
             if (is != null)
@@ -179,10 +179,10 @@ public class Util {
         } catch (IOException e) {
         }
     }
-    
+
     /**
      * Delete dir and it child file and dir
-     * 
+     *
      * @param dir
      * The dir to deleted
      * @throws IOException
@@ -201,7 +201,7 @@ public class Util {
           }
         }
       }
-    
+
     @SuppressLint("SimpleDateFormat")
     public static int getDate() {
         int time = 0;
@@ -210,14 +210,14 @@ public class Util {
         } catch (NumberFormatException e) {}
         return time;
     }
-    
-    
+
+
     private static String[] SIZE_UNIT = {"%.2f B", "%.2f KB", "%.2f MB", "%.2f GB"};
-    
+
     public static String sizeToString(long size) {
         int length = SIZE_UNIT.length;
-        
-        float sizeFloat = (float)size;
+
+        float sizeFloat = size;
         for (int i = 0; i < length; i++) {
             if (sizeFloat < 1024 || i == length - 1) {
                 return String.format(SIZE_UNIT[i], sizeFloat);
@@ -226,10 +226,10 @@ public class Util {
         }
         return null;
     }
-    
+
     /**
      * Execute an {@link AsyncTask} on a thread pool
-     * 
+     *
      * @param forceSerial True to force the task to run in serial order
      * @param task Task to execute
      * @param args Optional arguments to pass to
@@ -249,7 +249,7 @@ public class Util {
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, args);
         }
     }
-    
+
     /**
      * Method that removes the support for HardwareAcceleration from a {@link View}.<br/>
      * <br/>
@@ -268,7 +268,7 @@ public class Util {
             v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
     }
-    
+
     /**
      * Mostly title and url need it
      * @param str
@@ -281,7 +281,7 @@ public class Util {
                 .replace("&quot;", "\"")
                 .replace("&#039;", "'");
     }
-    
+
     /**
      * Make file name valid by removing invalid character and set max length
      * @param name
@@ -290,5 +290,24 @@ public class Util {
     public static String rightFileName(String name) {
         name = name.replaceAll("[\\\\|/|:|*|?|\"|<|>|\\|]", "");
         return name.length() > 255 ? name.substring(0,  255) : name;
+    }
+
+    /**
+     * Joins the elements of the provided array into a single String
+     * containing the provided list of elements.
+     *
+     * @param array
+     * @param separator
+     * @return
+     */
+    public static String join(final String[] array,
+            final Object separator) {
+        final StringBuilder sb = new StringBuilder(array.length * 16);
+        for (int i = 0; i < array.length; i++) {
+            if (i != 0)
+                sb.append(separator);
+            sb.append(array[i]);
+        }
+        return sb.toString();
     }
 }
