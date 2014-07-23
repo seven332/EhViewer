@@ -626,7 +626,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             default:
                 mRefreshTextView.setRefreshing(false);
                 mRefreshTextView.setVisibility(View.GONE);
-                new SuperToast(AbstractGalleryActivity.this, "错误的页面数",SuperToast.ERROR).show(); // TODO
+                new SuperToast(AbstractGalleryActivity.this, eMsg, SuperToast.ERROR).show(); // TODO
             }
             mHlv.setAnyRefreshComplete(false);
         }

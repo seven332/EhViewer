@@ -187,6 +187,10 @@
     <string name="popular_display_settings_title">热门</string>
     <string name="show_popular_update_time_title">显示热门更新时间</string>
     <string name="eh_settings_title">EH</string>
+    
+    <string name="list_eh_settings_title">列表</string>
+    <string name="list_default_category">列表默认分类</string>
+    
     <string name="detail_eh_settings_title">详情</string>
     <string name="preview_mode_title">预览图模式</string>
     <string name="preview_mode_normal">正常预览图</string>

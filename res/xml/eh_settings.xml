@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Hippo Seven
+<!--
+     Copyright (C) 2014 Hippo Seven
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -12,27 +13,28 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
- -->
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    
-    <PreferenceCategory
-        android:title="@string/detail_eh_settings_title">
-        
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/list_eh_settings_title" >
+        <Preference
+            android:key="list_default_category"
+            android:title="@string/list_default_category" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/detail_eh_settings_title" >
         <com.hippo.ehviewer.preference.AutoListPreference
-            android:key="preview_mode"
-            android:title="@string/preview_mode_title"
+            android:defaultValue="l"
             android:entries="@array/preview_mode_entries"
             android:entryValues="@array/preview_mode_entry_values"
-            android:defaultValue="l"
-            android:summary="%s" />
-        
+            android:key="preview_mode"
+            android:summary="%s"
+            android:title="@string/preview_mode_title" />
+
         <EditTextPreference
-            android:key="preview_per_row"
-            android:title="@string/preview_per_row_title" 
+            android:defaultValue="3"
             android:inputType="number"
-            android:defaultValue="3" />
-        
+            android:key="preview_per_row"
+            android:title="@string/preview_per_row_title" />
     </PreferenceCategory>
-    
+
 </PreferenceScreen>

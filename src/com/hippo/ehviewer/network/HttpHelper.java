@@ -144,16 +144,16 @@ public class HttpHelper {
             return c.getString(R.string.em_redirection_error);
 
         else if (e instanceof SocketException)
-            return "SocketException : " + e.getMessage();
+            return "SocketException: " + e.getMessage();
 
         else if (e instanceof SadPandaException)
             return SAD_PANDA_ERROR;
 
         else if (e instanceof GetBodyException)
-            return "获取失败"; // TODO
+            return "Sad Panda"; // TODO
 
         else
-            return e.getMessage();
+            return e.getClass().getSimpleName() + ": " +e.getMessage();
     }
 
     private boolean isUrlCookiable(URL url) {

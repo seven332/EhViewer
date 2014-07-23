@@ -23,24 +23,6 @@ import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.UpdateHelper;
-import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Favorite;
-import com.hippo.ehviewer.util.Theme;
-import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.util.Util;
-import com.hippo.ehviewer.widget.AlertButton;
-import com.hippo.ehviewer.widget.DialogBuilder;
-import com.hippo.ehviewer.widget.FileExplorerView;
-import com.hippo.ehviewer.widget.SuperDialogUtil;
-import com.hippo.ehviewer.widget.SuperToast;
-import com.hippo.ehviewer.ehclient.EhInfo;
-import com.hippo.ehviewer.network.Downloader;
-import com.hippo.ehviewer.preference.AutoListPreference;
-import com.readystatesoftware.systembartint.SystemBarTintManager.SystemBarConfig;
-
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -67,35 +49,53 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.hippo.ehviewer.AppContext;
+import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.UpdateHelper;
+import com.hippo.ehviewer.ehclient.EhInfo;
+import com.hippo.ehviewer.network.Downloader;
+import com.hippo.ehviewer.preference.AutoListPreference;
+import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Favorite;
+import com.hippo.ehviewer.util.Theme;
+import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.widget.AlertButton;
+import com.hippo.ehviewer.widget.DialogBuilder;
+import com.hippo.ehviewer.widget.FileExplorerView;
+import com.hippo.ehviewer.widget.SuperDialogUtil;
+import com.hippo.ehviewer.widget.SuperToast;
+import com.readystatesoftware.systembartint.SystemBarTintManager.SystemBarConfig;
+
 public class SettingsActivity extends AbstractPreferenceActivity {
     @SuppressWarnings("unused")
     private static String TAG = "Settings";
-    
+
     public static final String KEY_FRAGMENT = "FRAGMENT";
     public static final int DEFAULT = -0x1;
     public static final int DISPLAY = 0x0;
     public static final int DATA = 0x1;
     public static final int ABOUT = 0x2;
-    
+
     private SystemBarConfig mSystemBarConfig;
     private List<TranslucentPreferenceFragment> mFragments;
     private ListView mListView;
     private int originPaddingRight;
     private int originPaddingBottom;
-    
+
     public void adjustPadding() {
         if (mListView != null && mSystemBarConfig != null) {
-            
+
             switch (Ui.getOrientation(this)) {
             case Ui.ORIENTATION_PORTRAIT:
-                
+
                 mListView.setPadding(mListView.getPaddingLeft(),
                         mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
                         originPaddingRight,
                         mSystemBarConfig.getNavigationBarHeight());
                 break;
             case Ui.ORIENTATION_LANDSCAPE:
-                
+
                 mListView.setPadding(mListView.getPaddingLeft(),
                         mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
                         originPaddingRight + mSystemBarConfig.getNavigationBarWidth(),
@@ -104,26 +104,26 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             }
         }
     }
-    
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        
+
         for (TranslucentPreferenceFragment f : mFragments) {
             if (f.isVisible()) {
                 f.adjustPadding();
                 return;
             }
         }
-        
+
         // If no fragment is visible, just headers is shown
         adjustPadding();
     }
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         // Set random color
         int color = Config.getRandomThemeColor() ? Theme.getRandomDeepColor() : Config.getThemeColor();
         color = color & 0x00ffffff | 0xdd000000;
@@ -131,18 +131,18 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         final ActionBar actionBar = getActionBar();
         actionBar.setBackgroundDrawable(drawable);
         mSystemBarConfig = Ui.translucent(this, color);
-        
+
         actionBar.setDisplayHomeAsUpEnabled(true);
-        
+
         mFragments = new LinkedList<TranslucentPreferenceFragment>();
-        
+
         mListView = getListView();
         mListView.setClipToPadding(false);
         originPaddingRight = mListView.getPaddingRight();
         originPaddingBottom = mListView.getPaddingBottom();
-        
+
         adjustPadding();
-        
+
         /*
         switch (savedInstanceState.getInt(KEY_FRAGMENT, DEFAULT)) {
         case DISPLAY:
@@ -154,7 +154,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             break;
         }*/
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -162,37 +162,37 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             finish();
             return true;
         }
-        
+
         return super.onOptionsItemSelected(item);
     }
-    
+
     public SystemBarConfig getSystemBarConfig() {
         return mSystemBarConfig;
     }
-    
+
     public List<TranslucentPreferenceFragment> getFragments() {
         return mFragments;
     }
-    
+
     @Override
     public void onBuildHeaders(List<Header> target) {
         loadHeadersFromResource(R.xml.settings_headers, target);
     }
-    
+
     private static final String[] ENTRY_FRAGMENTS = {
         DisplayFragment.class.getName(),
         EhFragment.class.getName(),
         DataFragment.class.getName(),
         AboutFragment.class.getName()
     };
-    
+
     private static final int[] FRAGMENT_ICONS = {
         R.drawable.ic_setting_display,
         R.drawable.ic_action_panda,
         R.drawable.ic_setting_data,
         R.drawable.ic_action_info
     };
-    
+
     @Override
     protected boolean isValidFragment(String fragmentName) {
         for (int i = 0; i < ENTRY_FRAGMENTS.length; i++) {
@@ -200,20 +200,20 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         }
         return false;
     }
-    
+
     public static abstract class TranslucentPreferenceFragment extends PreferenceFragment {
-        
+
         protected SettingsActivity mActivity;
         private SystemBarConfig mSystemBarConfig;
         private ListView mListView;
         private int originPaddingRight;
         private int originPaddingBottom;
-        
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             mActivity = (SettingsActivity)getActivity();
-            
+
             String fragmentName = getClass().getName();
             int fragmentIndex = -1;
             for (int i = 0; i < ENTRY_FRAGMENTS.length; i++) {
@@ -226,12 +226,12 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 mActivity.getActionBar().setIcon(
                         FRAGMENT_ICONS[fragmentIndex]);
         }
-        
+
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             SettingsActivity activity = (SettingsActivity)getActivity();
             activity.getFragments().add(this);
-            
+
             View child;
             if (view instanceof ViewGroup
                     && (child = ((ViewGroup)view).getChildAt(0)) != null
@@ -244,7 +244,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 adjustPadding();
             }
         }
-        
+
         public void adjustPadding() {
             if (mListView != null && mSystemBarConfig != null) {
                 switch (Ui.getOrientation(getActivity())) {
@@ -254,7 +254,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                             originPaddingRight,
                             mSystemBarConfig.getNavigationBarHeight());
                     break;
-                    
+
                 case Ui.ORIENTATION_LANDSCAPE:
                     mListView.setPadding(mListView.getPaddingLeft(),
                             mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
@@ -265,29 +265,29 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             }
         }
     }
-    
+
     public static class DisplayFragment extends TranslucentPreferenceFragment
             implements Preference.OnPreferenceChangeListener {
-        
+
         private static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
         private static final String KEY_RANDOM_THEME_COLOR = "random_theme_color";
         private static final String KEY_THEME_COLOR = "theme_color";
-        
+
         private AutoListPreference mScreenOrientation;
         private CheckBoxPreference mRandomThemeColor;
         private Preference mThemeColor;
-        
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.display_settings);
-            
+
             mScreenOrientation = (AutoListPreference)findPreference(KEY_SCREEN_ORIENTATION);
             mScreenOrientation.setOnPreferenceChangeListener(this);
             mRandomThemeColor = (CheckBoxPreference)findPreference(KEY_RANDOM_THEME_COLOR);
             mRandomThemeColor.setOnPreferenceChangeListener(this);
-            mThemeColor = (Preference)findPreference(KEY_THEME_COLOR);
-            
+            mThemeColor = findPreference(KEY_THEME_COLOR);
+
             mThemeColor.setEnabled(!mRandomThemeColor.isChecked());
         }
 
@@ -297,47 +297,52 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             if (KEY_SCREEN_ORIENTATION.equals(key)) {
                 mActivity.setRequestedOrientation(
                         Config.screenOriPre2Value(Integer.parseInt((String) newValue)));
-                
+
             } else if (KEY_RANDOM_THEME_COLOR.equals(key)) {
                 new SuperToast(mActivity, R.string.restart_to_take_effect).show();
                 mThemeColor.setEnabled(!(Boolean)newValue);
             }
-            
+
             return true;
         }
     }
-    
+
     public static class EhFragment extends TranslucentPreferenceFragment
-            implements Preference.OnPreferenceChangeListener {
-        
+            implements Preference.OnPreferenceChangeListener,
+            Preference.OnPreferenceClickListener {
+
+        private static final String KEY_LIST_DEFAULT_CATEGORY = "list_default_category";
         private static final String KEY_PREVIEW_MODE = "preview_mode";
         private static final String KEY_PREVIEW_PER_ROW = "preview_per_row";
-        
+
+        private Preference mListDefaultCategory;
         private AutoListPreference mPreviewMode;
         private EditTextPreference mPreviewPerRow;
-        
-        
+
+
         private void setPPREnabled(String previewMode) {
             if (previewMode.equals(Config.PREVIEW_MODE_LARGE))
                 mPreviewPerRow.setEnabled(true);
             else
                 mPreviewPerRow.setEnabled(false);
         }
-        
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.eh_settings);
-            
+
+            mListDefaultCategory = findPreference(KEY_LIST_DEFAULT_CATEGORY);
+            mListDefaultCategory.setOnPreferenceClickListener(this);
             mPreviewMode = (AutoListPreference)findPreference(KEY_PREVIEW_MODE);
             mPreviewMode.setOnPreferenceChangeListener(this);
             mPreviewPerRow = (EditTextPreference)findPreference(KEY_PREVIEW_PER_ROW);
             mPreviewPerRow.setOnPreferenceChangeListener(this);
-            
+
             mPreviewPerRow.setSummary(mPreviewPerRow.getText());
             setPPREnabled(mPreviewMode.getValue());
         }
-        
+
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final String key = preference.getKey();
@@ -345,7 +350,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 String newPreviewMode = (String)newValue;
                 EhInfo.getInstance(mActivity).setPreviewMode(newPreviewMode);
                 setPPREnabled(newPreviewMode);
-                
+
             } else if (KEY_PREVIEW_PER_ROW.equals(key)) {
                 try {
                     int value = Integer.parseInt((String)newValue);
@@ -356,49 +361,59 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                     new SuperToast(mActivity, R.string.invalid_input, SuperToast.ERROR).show();
                     return false;
                 }
-                
+
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            final String key = preference.getKey();
+            if (KEY_LIST_DEFAULT_CATEGORY.equals(key)) {
+                DialogBuilder dialogBuilder = new DialogBuilder(mActivity)
+                .setTitle("");
             }
             return true;
         }
     }
-    
+
     public static class DataFragment extends TranslucentPreferenceFragment
             implements Preference.OnPreferenceChangeListener,
             Preference.OnPreferenceClickListener {
-        
+
         private static final String KEY_CACHE_SIZE = "cache_size";
         private static final String KEY_CLEAR_CACHE = "clear_cache";
         private static final String KEY_DOWNLOAD_PATH = "download_path";
         private static final String KEY_MEDIA_SCAN = "media_scan";
         private static final String KEY_DEFAULT_FAVORITE = "default_favorite";
-        
+
         private AlertDialog mDirSelectDialog;
-        
+
         private EditTextPreference mCacheSize;
         private Preference mClearCache;
         private Preference mDownloadPath;
         private CheckBoxPreference mMediaScan;
         private ListPreference mDefaultFavorite;
-        
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.data_settings);
-            
+
             mCacheSize = (EditTextPreference)findPreference(KEY_CACHE_SIZE);
             mCacheSize.setOnPreferenceChangeListener(this);
-            mClearCache = (Preference)findPreference(KEY_CLEAR_CACHE);
+            mClearCache = findPreference(KEY_CLEAR_CACHE);
             mClearCache.setOnPreferenceClickListener(this);
-            mDownloadPath = (Preference)findPreference(KEY_DOWNLOAD_PATH);
+            mDownloadPath = findPreference(KEY_DOWNLOAD_PATH);
             mDownloadPath.setOnPreferenceClickListener(this);
             mMediaScan = (CheckBoxPreference)findPreference(KEY_MEDIA_SCAN);
             mMediaScan.setOnPreferenceChangeListener(this);
             mDefaultFavorite = (ListPreference)findPreference(KEY_DEFAULT_FAVORITE);
-            
+
             // Set summary
             updateClearCacheSummary();
             mDownloadPath.setSummary(Config.getDownloadPath());
-            
+
             int i = 0;
             String[] entrise = new String[Favorite.FAVORITE_TITLES.length + 1];
             entrise[i++] = getString(R.string.none);
@@ -406,7 +421,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 entrise[i++] = str;
             mDefaultFavorite.setEntries(entrise);
         }
-        
+
         private void updateClearCacheSummary() {
             /*
             if (Cache.diskCache != null) {
@@ -422,13 +437,13 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             }
             */
         }
-        
+
         @Override
         public boolean onPreferenceChange(Preference preference, Object objValue) {
             final String key = preference.getKey();
             if (KEY_CACHE_SIZE.equals(key)) {
                 /*
-                
+
                 long cacheSize = 0;
                 try {
                     cacheSize = Integer.parseInt((String) objValue) * 1024 * 1024;
@@ -437,7 +452,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                             .setMessage(R.string.input_error).show();
                     return false;
                 }
-                
+
                 if (cacheSize <= 0 && Cache.diskCache != null) {
                     Cache.diskCache.clear();
                     Cache.diskCache.close();
@@ -466,7 +481,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                     } catch (IOException e) {}
                 }
             }
-            
+
             return true;
         }
 
@@ -481,11 +496,11 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             } else if (KEY_DOWNLOAD_PATH.equals(key)) {
                 View view = LayoutInflater.from(mActivity)
                         .inflate(R.layout.dir_selection, null);
-                final FileExplorerView fileExplorerView = 
+                final FileExplorerView fileExplorerView =
                         (FileExplorerView)view.findViewById(R.id.file_list);
                 final TextView warning =
                         (TextView)view.findViewById(R.id.warning);
-                
+
                 String downloadPath = Config.getDownloadPath();
                 DialogBuilder dialogBuilder = new DialogBuilder(mActivity)
                 .setView(view, new LinearLayout.LayoutParams(
@@ -498,7 +513,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                         final EditText et = new EditText(mActivity);
                         et.setText("New folder");
                         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT, 
+                                LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT);
                         int x = Ui.dp2pix(8);
                         lp.leftMargin = x;
@@ -528,7 +543,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                                     .setMessage(R.string.cur_dir_not_writable).show();
                         else {
                             String downloadPath = fileExplorerView.getCurPath();
-                            
+
                             // Update .nomedia file
                             // TODO Should I delete .nomedia in old download dir ?
                             if (!Config.getMediaScan()) {
@@ -538,7 +553,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                                     e.printStackTrace();
                                 }
                             }
-                            
+
                             Config.setDownloadPath(downloadPath);
                             mDownloadPath.setSummary(downloadPath);
                             ((AlertButton)v).dialog.dismiss();
@@ -546,12 +561,12 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                     }
                 }).setSimpleNegativeButton();
                 final TextView title = dialogBuilder.getTitleView();
-                
+
                 if (fileExplorerView.canWrite())
                     warning.setVisibility(View.GONE);
                 else
                     warning.setVisibility(View.VISIBLE);
-                
+
                 fileExplorerView.setPath(downloadPath);
                 fileExplorerView.setOnItemClickListener(
                         new AdapterView.OnItemClickListener() {
@@ -566,19 +581,19 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                             warning.setVisibility(View.VISIBLE);
                     }
                 });
-                
+
                 mDirSelectDialog = dialogBuilder.create();
                 mDirSelectDialog.show();
             }
-            
+
             return true;
         }
     }
-    
+
     public static class AboutFragment extends TranslucentPreferenceFragment
             implements Preference.OnPreferenceClickListener,
             Preference.OnPreferenceChangeListener {
-        
+
         private static final String KEY_AUTHOR = "author";
         private static final String KEY_CHANGELOG = "changelog";
         private static final String KEY_THANKS = "thanks";
@@ -587,7 +602,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         private static final String KEY_CHECK_UPDATE = "check_for_update";
         private static final String KEY_ALLOW_ANALYICS = "allow_analyics";
         private static final String KEY_ABOUT_ANALYICS = "about_analyics";
-        
+
         private Preference mAuthor;
         private Preference mChangelog;
         private Preference mThanks;
@@ -596,27 +611,27 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         private Preference mCheckUpdate;
         private CheckBoxPreference mAllowAnalyics;
         private Preference mAboutAnalyics;
-        
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.about_settings);
-            
-            mAuthor = (Preference)findPreference(KEY_AUTHOR);
+
+            mAuthor = findPreference(KEY_AUTHOR);
             mAuthor.setOnPreferenceClickListener(this);
-            mChangelog = (Preference)findPreference(KEY_CHANGELOG);
+            mChangelog = findPreference(KEY_CHANGELOG);
             mChangelog.setOnPreferenceClickListener(this);
-            mThanks = (Preference)findPreference(KEY_THANKS);
+            mThanks = findPreference(KEY_THANKS);
             mThanks.setOnPreferenceClickListener(this);
-            mWebsite = (Preference)findPreference(KEY_WEBSITE);
+            mWebsite = findPreference(KEY_WEBSITE);
             mWebsite.setOnPreferenceClickListener(this);
-            mSource = (Preference)findPreference(KEY_SOURCE);
+            mSource = findPreference(KEY_SOURCE);
             mSource.setOnPreferenceClickListener(this);
-            mCheckUpdate = (Preference)findPreference(KEY_CHECK_UPDATE);
+            mCheckUpdate = findPreference(KEY_CHECK_UPDATE);
             mCheckUpdate.setOnPreferenceClickListener(this);
             mAllowAnalyics = (CheckBoxPreference)findPreference(KEY_ALLOW_ANALYICS);
             mAllowAnalyics.setOnPreferenceChangeListener(this);
-            mAboutAnalyics = (Preference)findPreference(KEY_ABOUT_ANALYICS);
+            mAboutAnalyics = findPreference(KEY_ABOUT_ANALYICS);
             mAboutAnalyics.setOnPreferenceClickListener(this);
         }
 
@@ -628,14 +643,14 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 i.setData(Uri.parse("mailto:ehviewersu@gmail.com"));
                 i.putExtra(Intent.EXTRA_SUBJECT, "About EhViewer");
                 startActivity(i);
-                
+
             } else if (KEY_CHANGELOG.equals(key)) {
                 InputStream is = mActivity.getResources()
                         .openRawResource(R.raw.change_log);
                 new DialogBuilder(mActivity).setTitle(R.string.changelog)
                         .setLongMessage(Util.InputStream2String(is, "utf-8"))
                         .setSimpleNegativeButton().create().show();
-                
+
             } else if (KEY_THANKS.equals(key)) {
                 InputStream is = mActivity.getResources()
                         .openRawResource(R.raw.thanks);
@@ -644,17 +659,17 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 new DialogBuilder(mActivity).setTitle(R.string.thanks)
                         .setView(webView, false).setSimpleNegativeButton()
                         .create().show();
-                
+
             } else if (KEY_WEBSITE.equals(key)) {
                 Uri uri = Uri.parse("http://www.ehviewer.com");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
-                
+
             } else if (KEY_SOURCE.equals(key)) {
                 Uri uri = Uri.parse("https://github.com/seven332/EhViewer");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
-                
+
             } else if (KEY_CHECK_UPDATE.equals(key)) {
                 mCheckUpdate.setSummary(R.string.checking_update);
                 mCheckUpdate.setEnabled(false);
@@ -704,7 +719,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                                 UpdateHelper.setEnabled(true);
                             }
                         }).checkUpdate();
-                
+
             } else if (KEY_ABOUT_ANALYICS.equals(key)) {
                 new DialogBuilder(mActivity).setTitle(R.string.about_analyics_title)
                 .setMessageAutoLink(Linkify.WEB_URLS)

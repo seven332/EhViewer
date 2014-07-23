@@ -81,7 +81,7 @@ import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Util;
 import com.hippo.ehviewer.widget.AlertButton;
-import com.hippo.ehviewer.widget.CheckTextView;
+import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
@@ -386,48 +386,11 @@ public class MangaListActivity extends AbstractGalleryActivity
             lus = new ListUrls();
             lus.setTag(et.getText().toString());
         } else {
-            CheckTextView checkImageDoujinshi = (CheckTextView) view
-                    .findViewById(R.id.button_doujinshi);
-            CheckTextView checkImageManga = (CheckTextView) view
-                    .findViewById(R.id.button_manga);
-            CheckTextView checkImageArtistcg = (CheckTextView) view
-                    .findViewById(R.id.button_artistcg);
-            CheckTextView checkImageGamecg = (CheckTextView) view
-                    .findViewById(R.id.button_gamecg);
-            CheckTextView checkImageWestern = (CheckTextView) view
-                    .findViewById(R.id.button_western);
-            CheckTextView checkImageNonH = (CheckTextView) view
-                    .findViewById(R.id.button_non_h);
-            CheckTextView checkImageImageset = (CheckTextView) view
-                    .findViewById(R.id.button_imageset);
-            CheckTextView checkImageCosplay = (CheckTextView) view
-                    .findViewById(R.id.button_cosplay);
-            CheckTextView checkImageAsianporn = (CheckTextView) view
-                    .findViewById(R.id.button_asianporn);
-            CheckTextView checkImageMisc = (CheckTextView) view
-                    .findViewById(R.id.button_misc);
+            int type;
 
-            int type = 0;
-            if (!checkImageDoujinshi.isPressed())
-                type |= ListUrls.DOUJINSHI;
-            if (!checkImageManga.isPressed())
-                type |= ListUrls.MANGA;
-            if (!checkImageArtistcg.isPressed())
-                type |= ListUrls.ARTIST_CG;
-            if (!checkImageGamecg.isPressed())
-                type |= ListUrls.GAME_CG;
-            if (!checkImageWestern.isPressed())
-                type |= ListUrls.WESTERN;
-            if (!checkImageNonH.isPressed())
-                type |= ListUrls.NON_H;
-            if (!checkImageImageset.isPressed())
-                type |= ListUrls.IMAGE_SET;
-            if (!checkImageCosplay.isPressed())
-                type |= ListUrls.COSPLAY;
-            if (!checkImageAsianporn.isPressed())
-                type |= ListUrls.ASIAN_PORN;
-            if (!checkImageMisc.isPressed())
-                type |= ListUrls.MISC;
+            CategoryTable ct = (CategoryTable) view
+                    .findViewById(R.id.category_table);
+            type = ct.getCategory();
 
             EditText et = (EditText)view.findViewById(R.id.search_text);
 
@@ -713,69 +676,10 @@ public class MangaListActivity extends AbstractGalleryActivity
             searchNormal.setVisibility(View.VISIBLE);
             searchTag.setVisibility(View.GONE);
 
-            // Normal
-            CheckTextView checkImageDoujinshi = (CheckTextView) view
-                    .findViewById(R.id.button_doujinshi);
-            CheckTextView checkImageManga = (CheckTextView) view
-                    .findViewById(R.id.button_manga);
-            CheckTextView checkImageArtistcg = (CheckTextView) view
-                    .findViewById(R.id.button_artistcg);
-            CheckTextView checkImageGamecg = (CheckTextView) view
-                    .findViewById(R.id.button_gamecg);
-            CheckTextView checkImageWestern = (CheckTextView) view
-                    .findViewById(R.id.button_western);
-            CheckTextView checkImageNonH = (CheckTextView) view
-                    .findViewById(R.id.button_non_h);
-            CheckTextView checkImageImageset = (CheckTextView) view
-                    .findViewById(R.id.button_imageset);
-            CheckTextView checkImageCosplay = (CheckTextView) view
-                    .findViewById(R.id.button_cosplay);
-            CheckTextView checkImageAsianporn = (CheckTextView) view
-                    .findViewById(R.id.button_asianporn);
-            CheckTextView checkImageMisc = (CheckTextView) view
-                    .findViewById(R.id.button_misc);
-
-            int type = listUrls.getType();
-            if ((type & ListUrls.DOUJINSHI) == 0)
-                checkImageDoujinshi.setChecked(true);
-            else
-                checkImageDoujinshi.setChecked(false);
-            if ((type & ListUrls.MANGA) == 0)
-                checkImageManga.setChecked(true);
-            else
-                checkImageManga.setChecked(false);
-            if ((type & ListUrls.ARTIST_CG) == 0)
-                checkImageArtistcg.setChecked(true);
-            else
-                checkImageArtistcg.setChecked(false);
-            if ((type & ListUrls.GAME_CG) == 0)
-                checkImageGamecg.setChecked(true);
-            else
-                checkImageGamecg.setChecked(false);
-            if ((type & ListUrls.WESTERN) == 0)
-                checkImageWestern.setChecked(true);
-            else
-                checkImageWestern.setChecked(false);
-            if ((type & ListUrls.NON_H) == 0)
-                checkImageNonH.setChecked(true);
-            else
-                checkImageNonH.setChecked(false);
-            if ((type & ListUrls.IMAGE_SET) == 0)
-                checkImageImageset.setChecked(true);
-            else
-                checkImageImageset.setChecked(false);
-            if ((type & ListUrls.COSPLAY) == 0)
-                checkImageCosplay.setChecked(true);
-            else
-                checkImageCosplay.setChecked(false);
-            if ((type & ListUrls.ASIAN_PORN) == 0)
-                checkImageAsianporn.setChecked(true);
-            else
-                checkImageAsianporn.setChecked(false);
-            if ((type & ListUrls.MISC) == 0)
-                checkImageMisc.setChecked(true);
-            else
-                checkImageMisc.setChecked(false);
+            int category = listUrls.getType();
+            CategoryTable ct = (CategoryTable) view
+                    .findViewById(R.id.category_table);
+            ct.setCategory(category);
 
             EditText et = (EditText)view.findViewById(R.id.search_text);
             et.setText(listUrls.getSearch());
