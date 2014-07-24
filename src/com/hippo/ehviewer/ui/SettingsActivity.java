@@ -44,9 +44,11 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.AppContext;
@@ -312,11 +314,28 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             implements Preference.OnPreferenceChangeListener,
             Preference.OnPreferenceClickListener {
 
+        private static final int[] EXCULDE_TAG_GROUP_RESID = {
+            R.id.tag_group_reclass,
+            R.id.tag_group_language,
+            R.id.tag_group_parody,
+            R.id.tag_group_character,
+            R.id.tag_group_group,
+            R.id.tag_group_artist,
+            R.id.tag_group_male,
+            R.id.tag_group_female
+        };
+
+        private static final int[] EXCULDE_TAG_GROUP_ID = {
+            0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80
+        };
+
         private static final String KEY_LIST_DEFAULT_CATEGORY = "list_default_category";
+        private static final String KEY_EXCULDE_TAG_GROUP = "exculde_tag_group";
         private static final String KEY_PREVIEW_MODE = "preview_mode";
         private static final String KEY_PREVIEW_PER_ROW = "preview_per_row";
 
         private Preference mListDefaultCategory;
+        private Preference mExculdeTagGroup;
         private AutoListPreference mPreviewMode;
         private EditTextPreference mPreviewPerRow;
 
@@ -335,6 +354,8 @@ public class SettingsActivity extends AbstractPreferenceActivity {
 
             mListDefaultCategory = findPreference(KEY_LIST_DEFAULT_CATEGORY);
             mListDefaultCategory.setOnPreferenceClickListener(this);
+            mExculdeTagGroup = findPreference(KEY_EXCULDE_TAG_GROUP);
+            mExculdeTagGroup.setOnPreferenceClickListener(this);
             mPreviewMode = (AutoListPreference)findPreference(KEY_PREVIEW_MODE);
             mPreviewMode.setOnPreferenceChangeListener(this);
             mPreviewPerRow = (EditTextPreference)findPreference(KEY_PREVIEW_PER_ROW);
@@ -374,18 +395,10 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 int defaultCat = Config.getDefaultCat();
                 final CategoryTable ct = new CategoryTable(mActivity);
                 ct.setCategory(defaultCat);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT);
-                int margin = Ui.dp2pix(12);
-                lp.leftMargin = margin;
-                lp.topMargin = margin;
-                lp.rightMargin = margin;
-                lp.bottomMargin = margin;
 
                 new DialogBuilder(mActivity)
-                .setTitle(R.string.list_default_category)
-                .setView(ct, lp).setSimpleNegativeButton()
+                .setTitle(R.string.list_default_category_title)
+                .setView(ct, 12).setSimpleNegativeButton()
                 .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -395,8 +408,42 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                         EhInfo.getInstance(mActivity).setDefaultCat(defaultCat);
                     }
                 }).create().show();
+
+            } else if (KEY_EXCULDE_TAG_GROUP.equals(key)) {
+                LayoutInflater inflater = LayoutInflater.from(mActivity);
+                final TableLayout tl = (TableLayout)inflater.inflate(R.layout.exculde_tag_group, null);
+                setExculdeTagGroup(tl, Config.getExculdeTagGroup());
+
+                new DialogBuilder(mActivity)
+                .setTitle(R.string.exculde_tag_group_title)
+                .setView(tl, 12).setSimpleNegativeButton()
+                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((AlertButton)v).dialog.dismiss();
+                        int newValue = getExculdeTagGroup(tl);
+                        Config.setExculdeTagGroup(newValue);
+                        EhInfo.getInstance(mActivity).setExculdeTagGroup(newValue);
+                    }
+                }).create().show();
             }
             return true;
+        }
+
+        private static void setExculdeTagGroup(TableLayout tl, int value) {
+            for (int i = 0; i < EXCULDE_TAG_GROUP_RESID.length; i++) {
+                CheckBox cb = (CheckBox)tl.findViewById(EXCULDE_TAG_GROUP_RESID[i]);
+                cb.setChecked(Util.int2boolean(value & EXCULDE_TAG_GROUP_ID[i]));
+            }
+        }
+
+        private static int getExculdeTagGroup(TableLayout tl) {
+            int newValue = 0;
+            for (int i = 0; i < EXCULDE_TAG_GROUP_RESID.length; i++) {
+                CheckBox cb = (CheckBox)tl.findViewById(EXCULDE_TAG_GROUP_RESID[i]);
+                if (cb.isChecked()) newValue |= EXCULDE_TAG_GROUP_ID[i];
+            }
+            return newValue;
         }
     }
 

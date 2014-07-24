@@ -19,7 +19,14 @@
     <PreferenceCategory android:title="@string/list_eh_settings_title" >
         <Preference
             android:key="list_default_category"
-            android:title="@string/list_default_category" />
+            android:summary="@string/list_default_category_summary"
+            android:title="@string/list_default_category_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/search_eh_settings_title" >
+        <Preference
+            android:key="exculde_tag_group"
+            android:summary="@string/exculde_tag_group_summary"
+            android:title="@string/exculde_tag_group_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/detail_eh_settings_title" >
         <com.hippo.ehviewer.preference.AutoListPreference

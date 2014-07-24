@@ -1192,7 +1192,7 @@ public class EhClient {
         }).start();
     }
 
-    private static int CATEGORY_VALUES[] = {
+    private static final int[] CATEGORY_VALUES = {
         ListUrls.MISC,
         ListUrls.DOUJINSHI,
         ListUrls.MANGA,
@@ -1207,7 +1207,7 @@ public class EhClient {
     };
 
     // TODO How about "Private"
-    private static String CATEGORY_STRINGS[][] = {
+    private static final String[][] CATEGORY_STRINGS = {
         new String[]{"misc"},
         new String[]{"doujinshi"},
         new String[]{"manga"},

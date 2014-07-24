@@ -225,7 +225,7 @@ public class ListUrls {
             if (search != null) {
                 isNeedFooter = true;
                 url.append("f_search=");
-                String[] tag = mTag.split("\\s+");
+                String[] tag = search.split("\\s+");
                 try {
                     for (int i = 0; i < tag.length; i++)
                         tag[i] = URLEncoder.encode(tag[i], "UTF-8");

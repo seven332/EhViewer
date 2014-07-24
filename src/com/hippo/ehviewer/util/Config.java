@@ -394,6 +394,10 @@ public class Config {
         return mConfigPre.getInt(KEY_EXCLUDE_TAG_GROUP, DEFAULT_EXCLUDE_TAG_GROUP);
     }
 
+    public static void setExculdeTagGroup(int exculdeTagGroup) {
+        mConfigPre.edit().putInt(KEY_EXCLUDE_TAG_GROUP, exculdeTagGroup).apply();
+    }
+
     public static String getExculdeLanguage() {
         return mConfigPre.getString(KEY_EXCLUDE_LANGUAGE, DEFAULT_EXCLUDE_LANGUAGE);
     }

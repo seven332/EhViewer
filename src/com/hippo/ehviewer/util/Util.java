@@ -274,7 +274,7 @@ public class Util {
      * @param str
      * @return
      */
-    public static String htmlUnsescape(String str) {
+    public static final String htmlUnsescape(String str) {
         return str.replace("&amp;", "&")
                 .replace("&lt;", "<")
                 .replace("&gt;", ">")
@@ -287,7 +287,7 @@ public class Util {
      * @param name
      * @return
      */
-    public static String rightFileName(String name) {
+    public static final String rightFileName(String name) {
         name = name.replaceAll("[\\\\|/|:|*|?|\"|<|>|\\|]", "");
         return name.length() > 255 ? name.substring(0,  255) : name;
     }
@@ -300,7 +300,7 @@ public class Util {
      * @param separator
      * @return
      */
-    public static String join(final String[] array,
+    public static final String join(final Object[] array,
             final Object separator) {
         final StringBuilder sb = new StringBuilder(array.length * 16);
         for (int i = 0; i < array.length; i++) {
@@ -309,5 +309,9 @@ public class Util {
             sb.append(array[i]);
         }
         return sb.toString();
+    }
+
+    public static final boolean int2boolean(int integer) {
+        return integer == 0 ? false : true;
     }
 }

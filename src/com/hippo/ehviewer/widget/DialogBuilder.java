@@ -18,11 +18,8 @@ package com.hippo.ehviewer.widget;
 
 import java.util.List;
 
-import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Theme;
-
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
@@ -39,14 +36,19 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Theme;
+import com.hippo.ehviewer.util.Ui;
+
 public class DialogBuilder extends AlertDialog.Builder {
-    
-    private View mView;
+
+    private final View mView;
     private LinearLayout mCustomLayout;
-    private Context mContext;
-    
-    private int mThemeColor;
-    
+    private final Context mContext;
+
+    private final int mThemeColor;
+
     public DialogBuilder(Context context) {
         super(context);
         mContext = context;
@@ -54,10 +56,10 @@ public class DialogBuilder extends AlertDialog.Builder {
                 Context.LAYOUT_INFLATER_SERVICE);
         mView = inflater.inflate(R.layout.dialog, null);
         super.setView(mView);
-        
+
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDeepColor() : Config.getThemeColor();
     }
-    
+
     /**
      * Set the title using the given resource id.
      *
@@ -68,7 +70,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         setTitle(mContext.getText(titleId));
         return this;
     }
-    
+
     /**
      * Set the title displayed in the {@link Dialog}.
      *
@@ -83,7 +85,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         mView.findViewById(R.id.title_layout).setBackgroundColor(mThemeColor);
         return this;
     }
-    
+
     /**
      * Set the message to display using the given resource id.
      *
@@ -94,7 +96,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         setMessage(mContext.getText(messageId));
         return this;
     }
-    
+
     /**
      * Set the message to display.
       *
@@ -109,12 +111,12 @@ public class DialogBuilder extends AlertDialog.Builder {
         messageView.setText(message);
         return this;
     }
-    
+
     public DialogBuilder setLongMessage(int messageId) {
         setLongMessage(mContext.getText(messageId));
         return this;
     }
-    
+
     public DialogBuilder setLongMessage(CharSequence message) {
         ScrollView scrollView = (ScrollView)mView.findViewById(R.id.scroll_view);
         scrollView.setVisibility(View.VISIBLE);
@@ -127,13 +129,13 @@ public class DialogBuilder extends AlertDialog.Builder {
                 lp.rightMargin, lp.bottomMargin/3);
         return this;
     }
-    
+
     public DialogBuilder setMessageSelectable() {
         TextView messageView = (TextView)mView.findViewById(R.id.message);
         messageView.setTextIsSelectable(true);
         return this;
     }
-    
+
     /**
      * Invoke it before set message
      * @param mask
@@ -144,10 +146,10 @@ public class DialogBuilder extends AlertDialog.Builder {
         messageView.setAutoLinkMask(mask);
         return this;
     }
-    
+
     /**
      * Set the view to display in that dialog.
-     * @return 
+     * @return
      */
     public DialogBuilder setView(View view, boolean center) {
         LinearLayout.LayoutParams lp;
@@ -162,26 +164,41 @@ public class DialogBuilder extends AlertDialog.Builder {
         setView(view, lp);
         return this;
     }
-    
+
+    public DialogBuilder setView(View view, int margin) {
+        return setView(view, margin, true);
+    }
+
+    public DialogBuilder setView(View view, int marginInDp, boolean isSroll) {
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        int margin = Ui.dp2pix(marginInDp);
+        lp.leftMargin = margin;
+        lp.topMargin = margin;
+        lp.rightMargin = margin;
+        lp.bottomMargin = margin;
+
+        return setView(view, lp, true);
+    }
+
     public DialogBuilder setView(View view, LinearLayout.LayoutParams lp) {
-        ScrollView scrollView = (ScrollView)mView.findViewById(R.id.scroll_view);
-        scrollView.setVisibility(View.VISIBLE);
-        mCustomLayout = (LinearLayout)mView.findViewById(R.id.custom);
-        mCustomLayout.setVisibility(View.VISIBLE);
-        mCustomLayout.addView(view, lp);
-        return this;
+        return setView(view, lp, true);
     }
-    
+
     public DialogBuilder setView(View view, LinearLayout.LayoutParams lp, boolean isSroll) {
-        if (isSroll)
+        if (isSroll) {
+            ScrollView scrollView = (ScrollView)mView.findViewById(R.id.scroll_view);
+            scrollView.setVisibility(View.VISIBLE);
             mCustomLayout = (LinearLayout)mView.findViewById(R.id.custom);
-        else
+        } else {
             mCustomLayout = (LinearLayout)mView.findViewById(R.id.custom_no_scroll);
+        }
         mCustomLayout.setVisibility(View.VISIBLE);
         mCustomLayout.addView(view, lp);
         return this;
     }
-    
+
     public DialogBuilder setView(int resId, boolean isSroll) {
         if (isSroll)
             mCustomLayout = (LinearLayout)mView.findViewById(R.id.custom);
@@ -193,11 +210,11 @@ public class DialogBuilder extends AlertDialog.Builder {
         inflater.inflate(resId, mCustomLayout);
         return this;
     }
-    
+
     public LinearLayout getCustomLayout() {
         return mCustomLayout;
     }
-    
+
     /**
      * Set a listener to be invoked when the positive button of the dialog is pressed.
      * @param textId The resource id of the text to display in the positive button
@@ -209,7 +226,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         setPositiveButton(mContext.getText(textId), listener);
         return this;
     }
-    
+
     /**
      * Set a listener to be invoked when the positive button of the dialog is pressed.
      * @param text The text to display in the positive button
@@ -227,7 +244,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         button.setBackgroundDrawable(Theme.getClickDrawable(mContext, mThemeColor));
         return this;
     }
-    
+
     /**
      * Set a listener to be invoked when the negative button of the dialog is pressed.
      * @param textId The resource id of the text to display in the negative button
@@ -239,7 +256,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         setNegativeButton(mContext.getText(textId), listener);
         return this;
     }
-    
+
     /**
      * Set a listener to be invoked when the negative button of the dialog is pressed.
      * @param text The text to display in the negative button
@@ -257,7 +274,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         button.setBackgroundDrawable(Theme.getClickDrawable(mContext, mThemeColor));
         return this;
     }
-    
+
     public DialogBuilder setSimpleNegativeButton() {
         setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
             @Override
@@ -267,7 +284,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         });
         return this;
     }
-    
+
     /**
      * Set a listener to be invoked when the neutral button of the dialog is pressed.
      * @param textId The resource id of the text to display in the neutral button
@@ -279,7 +296,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         setNeutralButton(mContext.getText(textId), listener);
         return this;
     }
-    
+
     /**
      * Set a listener to be invoked when the neutral button of the dialog is pressed.
      * @param text The text to display in the neutral button
@@ -297,7 +314,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         button.setBackgroundDrawable(Theme.getClickDrawable(mContext, mThemeColor));
         return this;
     }
-    
+
     /**
      * Sets whether the dialog is cancelable or not.  Default is true.
      *
@@ -308,7 +325,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         super.setCancelable(cancelable);
         return this;
     }
-    
+
     /**
      * Set a list of items to be displayed in the dialog as the content, you will be notified of the
      * selected item via the supplied listener. This should be an array type i.e. R.array.foo
@@ -319,7 +336,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         setItems(mContext.getResources().getTextArray(itemsId), listener);
         return this;
     }
-    
+
     /**
      * Set a list of items to be displayed in the dialog as the content, you will be notified of the
      * selected item via the supplied listener.
@@ -331,7 +348,7 @@ public class DialogBuilder extends AlertDialog.Builder {
                 R.layout.list_item_text, items), listener);
         return this;
     }
-    
+
     /**
      * Set a list of items to be displayed in the dialog as the content, you will be notified of the
      * selected item via the supplied listener.
@@ -343,12 +360,12 @@ public class DialogBuilder extends AlertDialog.Builder {
                 R.layout.list_item_text, items), listener);
         return this;
     }
-    
+
     /**
      * Set a list of items, which are supplied by the given {@link ListAdapter}, to be
      * displayed in the dialog as the content, you will be notified of the
      * selected item via the supplied listener.
-     * 
+     *
      * @param adapter The {@link ListAdapter} to supply the list of items
      * @param listener The listener that will be called when an item is clicked.
      *
@@ -361,17 +378,17 @@ public class DialogBuilder extends AlertDialog.Builder {
         listView.setOnItemClickListener(listener);
         return this;
     }
-    
+
     public DialogBuilder setAction(View.OnClickListener listener) {
         setAction(null, listener);
         return this;
     }
-    
+
     public DialogBuilder setAction(int resId, View.OnClickListener listener) {
         setAction(mContext.getResources().getDrawable(resId), listener);
         return this;
     }
-    
+
     @SuppressWarnings("deprecation")
     public DialogBuilder setAction(Drawable drawable, View.OnClickListener listener) {
         ImageView actionView = (ImageView)mView.findViewById(R.id.action);
@@ -383,11 +400,11 @@ public class DialogBuilder extends AlertDialog.Builder {
         actionView.setBackgroundDrawable(Theme.getClickDrawable(mContext, mThemeColor));
         return this;
     }
-    
+
     public TextView getTitleView() {
         return (TextView)mView.findViewById(R.id.title);
     }
-    
+
     @Override
     public AlertDialog create() {
         AlertDialog dialog = super.create();

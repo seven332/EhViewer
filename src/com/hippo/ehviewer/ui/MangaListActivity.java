@@ -310,11 +310,9 @@ public class MangaListActivity extends AbstractGalleryActivity
                         if (searchNormal.getVisibility() == View.GONE) {
                             searchNormal.setVisibility(View.VISIBLE);
                             searchTag.setVisibility(View.GONE);
-                            new SuperToast(MangaListActivity.this, R.string.toast_normal_mode).show();
                         } else {
                             searchNormal.setVisibility(View.GONE);
                             searchTag.setVisibility(View.VISIBLE);
-                            new SuperToast(MangaListActivity.this, R.string.toast_tag_mode).show();
                         }
                     }
                 }).setPositiveButton(android.R.string.ok, new View.OnClickListener() {

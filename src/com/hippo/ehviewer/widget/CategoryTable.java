@@ -23,6 +23,7 @@ import android.widget.TableLayout;
 
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Util;
 
 public class CategoryTable extends TableLayout {
 
@@ -66,10 +67,6 @@ public class CategoryTable extends TableLayout {
         mMisc = (CheckTextView)findViewById(R.id.button_misc);
     }
 
-    private final boolean int2boolean(int integer) {
-        return integer == 0 ? false : true;
-    }
-
     /**
      * Set each button checked or not according to category.
      *
@@ -79,16 +76,16 @@ public class CategoryTable extends TableLayout {
 
         System.out.println("category = " + category);
 
-        mDoujinshi.setChecked(!int2boolean(category & ListUrls.DOUJINSHI));
-        mManga.setChecked(!int2boolean(category & ListUrls.MANGA));
-        mArtistCG.setChecked(!int2boolean(category & ListUrls.ARTIST_CG));
-        mGameCG.setChecked(!int2boolean(category & ListUrls.GAME_CG));
-        mWestern.setChecked(!int2boolean(category & ListUrls.WESTERN));
-        mNonH.setChecked(!int2boolean(category & ListUrls.NON_H));
-        mImageSets.setChecked(!int2boolean(category & ListUrls.IMAGE_SET));
-        mCosplay.setChecked(!int2boolean(category & ListUrls.COSPLAY));
-        mAsianPorn.setChecked(!int2boolean(category & ListUrls.ASIAN_PORN));
-        mMisc.setChecked(!int2boolean(category & ListUrls.MISC));
+        mDoujinshi.setChecked(!Util.int2boolean(category & ListUrls.DOUJINSHI));
+        mManga.setChecked(!Util.int2boolean(category & ListUrls.MANGA));
+        mArtistCG.setChecked(!Util.int2boolean(category & ListUrls.ARTIST_CG));
+        mGameCG.setChecked(!Util.int2boolean(category & ListUrls.GAME_CG));
+        mWestern.setChecked(!Util.int2boolean(category & ListUrls.WESTERN));
+        mNonH.setChecked(!Util.int2boolean(category & ListUrls.NON_H));
+        mImageSets.setChecked(!Util.int2boolean(category & ListUrls.IMAGE_SET));
+        mCosplay.setChecked(!Util.int2boolean(category & ListUrls.COSPLAY));
+        mAsianPorn.setChecked(!Util.int2boolean(category & ListUrls.ASIAN_PORN));
+        mMisc.setChecked(!Util.int2boolean(category & ListUrls.MISC));
     }
 
     /**

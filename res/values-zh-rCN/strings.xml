@@ -189,7 +189,13 @@
     <string name="eh_settings_title">EH</string>
     
     <string name="list_eh_settings_title">列表</string>
-    <string name="list_default_category">列表默认分类</string>
+    <string name="list_default_category_title">列表默认分类</string>
+    <string name="list_default_category_summary">首页显示的默认分类</string>
+    
+    <string name="search_eh_settings_title">搜索</string>
+    <string name="exculde_tag_group_title">排除标签类别</string>
+    <string name="exculde_tag_group_summary">在标签搜索中排除特定标签类别</string>
+    
     
     <string name="detail_eh_settings_title">详情</string>
     <string name="preview_mode_title">预览图模式</string>

@@ -189,8 +189,12 @@
     
     
     <string name="list_eh_settings_title">List</string>
-    <string name="list_default_category">List default category</string>
+    <string name="list_default_category_title">List default categories</string>
+    <string name="list_default_category_summary">The categories to view as default on the front page</string>
     
+    <string name="search_eh_settings_title">Search</string>
+    <string name="exculde_tag_group_title">Exculde tag groups</string>
+    <string name="exculde_tag_group_summary">Exclude certain tag groups from a default tag search</string>
     
     <string name="detail_eh_settings_title">Detail</string>
     <string name="preview_mode_title">Preview mode</string>
