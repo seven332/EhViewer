@@ -39,7 +39,6 @@ import android.preference.PreferenceActivity;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,7 +47,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -71,7 +69,6 @@ import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.Tag;
 import com.hippo.ehviewer.ehclient.EhClient;
-import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
@@ -243,28 +240,22 @@ public class MangaListActivity extends AbstractGalleryActivity
     }
 
     private AlertDialog createModeDialog() {
-        final Spinner modeSpinner = new Spinner(this);
-        modeSpinner.setAdapter(new ArrayAdapter<CharSequence>(this,
-                android.R.layout.simple_spinner_dropdown_item,
-                this.getResources().getTextArray(R.array.mode_list)));
+        DialogBuilder db = new DialogBuilder(this);
+        db.setTitle(R.string.mode).setView(R.layout.select_mode, true);
+        LinearLayout customLayout = db.getCustomLayout();
+        final Spinner modeSpinner = (Spinner)customLayout.findViewById(R.id.mode_list);
         modeSpinner.setSelection(Config.getMode());
-        modeSpinner.setMinimumWidth(Ui.dp2pix(200));
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.gravity = Gravity.CENTER;
-        lp.topMargin = Ui.dp2pix(12);
-        lp.bottomMargin = Ui.dp2pix(12);
-        return new DialogBuilder(this).setTitle(R.string.mode)
-                .setView(modeSpinner, lp)
+        final Spinner apiModeSpinner = (Spinner)customLayout.findViewById(R.id.api_mode_list);
+        apiModeSpinner.setSelection(Config.getApiMode());
+        return db.setSimpleNegativeButton()
                 .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         ((AlertButton)v).dialog.dismiss();
-                        int mode = modeSpinner.getSelectedItemPosition();
-                        Config.setMode(mode);
-                        EhInfo.getInstance(MangaListActivity.this).setMode(mode);
+                        Config.setMode(modeSpinner.getSelectedItemPosition());
+                        Config.setApiMode(apiModeSpinner.getSelectedItemPosition());
                     }
-                }).setSimpleNegativeButton().create();
+                }).create();
     }
 
     private void handleSearchView(View view) {

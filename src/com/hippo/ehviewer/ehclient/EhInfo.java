@@ -64,8 +64,6 @@ public class EhInfo {
 
     private final Context mContext;
     private final SharedPreferences mInfoPref;
-    private int mMode;
-    private int mAPIMode;
     private String mUconfig;
     private boolean mIsLogin;
     private String mUsername;
@@ -100,9 +98,6 @@ public class EhInfo {
         if (DEFAULT_AVATAR == null)
             DEFAULT_AVATAR = BitmapFactory.decodeStream(
                     context.getResources().openRawResource(R.drawable.default_avatar));
-
-        mMode = Config.getMode();
-        mAPIMode = Config.getAPIMode();
 
         mIsLogin = mInfoPref.getBoolean(KEY_LOGIN, DEFAULT_LOGIN);
         mUsername = mInfoPref.getString(KEY_USERNAME, DEFAULT_NAME);
@@ -178,22 +173,6 @@ public class EhInfo {
                 "; ipb_pass_hash=" + mInfoPref.getString(KEY_PASS_HASH, DEFAULT_PASS_HASH) +
                 "; uconfig=" + (previewMode == null ? mUconfig : getUconfigString(previewMode));
         conn.setRequestProperty("Cookie", cookie);
-    }
-
-    public int getMode() {
-        return mMode;
-    }
-
-    public void setMode(int mode) {
-        mMode = mode;
-    }
-
-    public int getAPIMode() {
-        return mAPIMode;
-    }
-
-    public void setAPIMode(int apiMode) {
-        mAPIMode = apiMode;
     }
 
     public boolean isLogin() {

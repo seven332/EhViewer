@@ -114,7 +114,7 @@ public class EhClient {
      * @return
      */
     public String getDetailUrl(int gid, String token) {
-        return getDetailUrl(gid, token, 0, mInfo.getMode());
+        return getDetailUrl(gid, token, 0, Config.getMode());
     }
 
     /**
@@ -124,7 +124,7 @@ public class EhClient {
      * @return
      */
     public String getDetailUrl(int gid, String token, int pageNum) {
-        return getDetailUrl(gid, token, pageNum, mInfo.getMode());
+        return getDetailUrl(gid, token, pageNum, Config.getMode());
     }
 
     /**
@@ -152,7 +152,7 @@ public class EhClient {
     }
 
     public String getPageUrl(String gid, String token, int pageNum) {
-        return getPageUrl(gid, token, pageNum, mInfo.getMode());
+        return getPageUrl(gid, token, pageNum, Config.getMode());
     }
 
     public static String getPageUrl(String gid, String token, int pageNum, int mode) {
@@ -174,7 +174,7 @@ public class EhClient {
     }
 
     public String getApiUrl() {
-        return getApiUrl(mInfo.getAPIMode());
+        return getApiUrl(Config.getApiMode());
     }
 
     public static String getApiUrl(int mode) {
@@ -188,7 +188,7 @@ public class EhClient {
     }
 
     public String getFavoriteUrl(int index, int page) {
-        return getFavoriteUrl(mInfo.getAPIMode(), index, page);
+        return getFavoriteUrl(Config.getApiMode(), index, page);
     }
 
     public static String getFavoriteUrl(int mode, int index, int page) {
@@ -423,7 +423,7 @@ public class EhClient {
 
     public void getGList(String url, Object checkFlag,
             OnGetGListListener listener) {
-        getGList(url, mInfo.getMode(), checkFlag, listener);
+        getGList(url, Config.getMode(), checkFlag, listener);
     }
 
     public void getGList(final String url, final int mode, final Object checkFlag,
@@ -1122,7 +1122,7 @@ public class EhClient {
     }
 
     public String getAddFavouriteUrl(int gid, String token) {
-        return getAddFavouriteUrl(gid, token, mInfo.getAPIMode());
+        return getAddFavouriteUrl(gid, token, Config.getApiMode());
     }
 
     public static String getAddFavouriteUrl(int gid, String token, int mode) {
@@ -1249,7 +1249,7 @@ public class EhClient {
     }
 
     public String getModifyFavoriteUrl() {
-        return getModifyFavoriteUrl(mInfo.getMode());
+        return getModifyFavoriteUrl(Config.getMode());
     }
 
     public static String getModifyFavoriteUrl(int mode) {

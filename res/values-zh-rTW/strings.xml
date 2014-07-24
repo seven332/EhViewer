@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-     strings.xml generated with OpenCC
--->
+<!--      strings.xml generated with OpenCC -->
 <resources>
 
     <string name="drawer_open">開啟側邊欄</string>
@@ -34,6 +32,9 @@
     <string name="not_login">不登陸</string>
     <string name="toast_logout_succeeded">退出成功</string>
     <string name="toast_logout_failed">退出失敗</string>
+
+    <!-- Mode -->
+    <string name="content">內容</string>
 
     <!-- Search -->
     <string name="hint_no_keyword">沒關鍵字也行</string>

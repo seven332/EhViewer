@@ -200,10 +200,13 @@ public class DialogBuilder extends AlertDialog.Builder {
     }
 
     public DialogBuilder setView(int resId, boolean isSroll) {
-        if (isSroll)
+        if (isSroll) {
+            ScrollView scrollView = (ScrollView)mView.findViewById(R.id.scroll_view);
+            scrollView.setVisibility(View.VISIBLE);
             mCustomLayout = (LinearLayout)mView.findViewById(R.id.custom);
-        else
+        } else {
             mCustomLayout = (LinearLayout)mView.findViewById(R.id.custom_no_scroll);
+        }
         mCustomLayout.setVisibility(View.VISIBLE);
         LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);

@@ -321,11 +321,11 @@ public class Config {
         mConfigPre.edit().putInt(KEY_MODE, mode).apply();
     }
 
-    public static int getAPIMode() {
+    public static int getApiMode() {
         return mConfigPre.getInt(KEY_API_MODE, DEFAULT_API_MODE);
     }
 
-    public static void setAPIMode(int apiMode) {
+    public static void setApiMode(int apiMode) {
         mConfigPre.edit().putInt(KEY_API_MODE, apiMode).apply();
     }
 

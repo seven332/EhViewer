@@ -49,6 +49,10 @@
     <string name="toast_logout_succeeded">Logout succeedfully</string>
     <string name="toast_logout_failed">Failed to logout</string>
 
+    <!-- Mode -->
+    <string name="content">Content</string>
+    <string name="api" translatable="false">API</string>
+
     <!-- Search -->
     <string name="hint_no_keyword">No keyword is OK</string>
     <string name="checkbox_uploader">Specify Uploader</string>
