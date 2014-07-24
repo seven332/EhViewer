@@ -187,16 +187,13 @@
     <string name="popular_display_settings_title">热门</string>
     <string name="show_popular_update_time_title">显示热门更新时间</string>
     <string name="eh_settings_title">EH</string>
-    
     <string name="list_eh_settings_title">列表</string>
     <string name="list_default_category_title">列表默认分类</string>
     <string name="list_default_category_summary">首页显示的默认分类</string>
-    
-    <string name="search_eh_settings_title">搜索</string>
     <string name="exculde_tag_group_title">排除标签类别</string>
     <string name="exculde_tag_group_summary">在标签搜索中排除特定标签类别</string>
-    
-    
+    <string name="exculde_language_title">排除语言</string>
+    <string name="exculde_language_summary">在列表与搜索中排除特定语言</string>
     <string name="detail_eh_settings_title">详情</string>
     <string name="preview_mode_title">预览图模式</string>
     <string name="preview_mode_normal">正常预览图</string>
@@ -260,6 +257,24 @@
     <string name="color_picker_title">配色方案</string>
     <string name="current_color">当前</string>
     <string name="new_color">新的</string>
+
+    <!-- Language -->
+    <string name="language_japanese">日语</string>
+    <string name="language_english">英语</string>
+    <string name="language_chinese">汉语</string>
+    <string name="language_dutch">荷兰语</string>
+    <string name="language_french">法语</string>
+    <string name="language_german">德语</string>
+    <string name="language_hungarian">匈牙利语</string>
+    <string name="language_italian">意大利语</string>
+    <string name="language_korean">韩语</string>
+    <string name="language_polish">波兰语</string>
+    <string name="language_portuguese">葡萄牙语</string>
+    <string name="language_russian">俄语</string>
+    <string name="language_spanish">西班牙语</string>
+    <string name="language_thai">泰语</string>
+    <string name="language_vietnamese">越南语</string>
+    <string name="language_other">其他</string>
 
     <!-- server -->
     <string name="update_server_google">Google</string>

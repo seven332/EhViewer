@@ -329,13 +329,42 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80
         };
 
+        private static final int[] EXCULDE_LANGUAGE_RESID = {
+            R.id.el_japanese_translated, R.id.el_japanese_rewrite,
+            R.id.el_english_original, R.id.el_english_translated, R.id.el_english_rewrite,
+            R.id.el_chinese_original, R.id.el_chinese_translated, R.id.el_chinese_rewrite,
+            R.id.el_dutch_original, R.id.el_dutch_translated, R.id.el_dutch_rewrite,
+            R.id.el_french_original, R.id.el_french_translated, R.id.el_french_rewrite,
+            R.id.el_german_original, R.id.el_german_translated, R.id.el_german_rewrite,
+            R.id.el_hungarian_original, R.id.el_hungarian_translated, R.id.el_hungarian_rewrite,
+            R.id.el_italian_original, R.id.el_italian_translated, R.id.el_italian_rewrite,
+            R.id.el_korean_original, R.id.el_korean_translated, R.id.el_korean_rewrite,
+            R.id.el_polish_original, R.id.el_polish_translated, R.id.el_polish_rewrite,
+            R.id.el_portuguese_original, R.id.el_portuguese_translated, R.id.el_portuguese_rewrite,
+            R.id.el_russian_original, R.id.el_russian_translated, R.id.el_russian_rewrite,
+            R.id.el_spanish_original, R.id.el_spanish_translated, R.id.el_spanish_rewrite,
+            R.id.el_thai_original, R.id.el_thai_translated, R.id.el_thai_rewrite,
+            R.id.el_vietnamese_original, R.id.el_vietnamese_translated, R.id.el_vietnamese_rewrite,
+            R.id.el_other_original, R.id.el_other_translated, R.id.el_other_rewrite,
+        };
+
+        private static final String[] EXCULDE_LANGUAGE_ID = {
+            "1024", "2048", "1", "1025", "2049", "10", "1034", "2058", "20", "1044", "2068",
+            "30", "1054", "2078", "40", "1064", "2088", "50", "1074", "2098",
+            "60", "1084", "2108", "70", "1094", "2118", "80", "1104", "2128",
+            "90", "1114", "2138", "100", "1124", "2148", "110", "1134", "2158",
+            "120", "1144", "2168", "130", "1154", "2178", "255", "1279", "2303"
+        };
+
         private static final String KEY_LIST_DEFAULT_CATEGORY = "list_default_category";
         private static final String KEY_EXCULDE_TAG_GROUP = "exculde_tag_group";
+        private static final String KEY_EXCULDE_LANGUAGE = "exculde_language";
         private static final String KEY_PREVIEW_MODE = "preview_mode";
         private static final String KEY_PREVIEW_PER_ROW = "preview_per_row";
 
         private Preference mListDefaultCategory;
         private Preference mExculdeTagGroup;
+        private Preference mExculdeLanguage;
         private AutoListPreference mPreviewMode;
         private EditTextPreference mPreviewPerRow;
 
@@ -356,6 +385,8 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             mListDefaultCategory.setOnPreferenceClickListener(this);
             mExculdeTagGroup = findPreference(KEY_EXCULDE_TAG_GROUP);
             mExculdeTagGroup.setOnPreferenceClickListener(this);
+            mExculdeLanguage = findPreference(KEY_EXCULDE_LANGUAGE);
+            mExculdeLanguage.setOnPreferenceClickListener(this);
             mPreviewMode = (AutoListPreference)findPreference(KEY_PREVIEW_MODE);
             mPreviewMode.setOnPreferenceChangeListener(this);
             mPreviewPerRow = (EditTextPreference)findPreference(KEY_PREVIEW_PER_ROW);
@@ -426,6 +457,24 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                         EhInfo.getInstance(mActivity).setExculdeTagGroup(newValue);
                     }
                 }).create().show();
+
+            } else if (KEY_EXCULDE_LANGUAGE.equals(key)) {
+                LayoutInflater inflater = LayoutInflater.from(mActivity);
+                final TableLayout tl = (TableLayout)inflater.inflate(R.layout.exculde_language, null);
+                setExculdeLanguage(tl, Config.getExculdeLanguage());
+
+                new DialogBuilder(mActivity)
+                .setTitle(R.string.exculde_language_title)
+                .setView(tl, 12).setSimpleNegativeButton()
+                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((AlertButton)v).dialog.dismiss();
+                        String newValue = getExculdeLanguage(tl);
+                        Config.setExculdeLanguage(newValue);
+                        EhInfo.getInstance(mActivity).setExculdeLanguage(newValue);
+                    }
+                }).create().show();
             }
             return true;
         }
@@ -444,6 +493,34 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 if (cb.isChecked()) newValue |= EXCULDE_TAG_GROUP_ID[i];
             }
             return newValue;
+        }
+
+        private static int getLanguage(String id) {
+            for (int i = 0; i < EXCULDE_LANGUAGE_ID.length; i++) {
+                if (EXCULDE_LANGUAGE_ID[i].equals(id))
+                    return EXCULDE_LANGUAGE_RESID[i];
+            }
+            return 0;
+        }
+
+        private static void setExculdeLanguage(TableLayout tl, String value) {
+            String[] items = value.split("x");
+            for (String item : items) {
+                int resId = getLanguage(item);
+                if (resId != 0) ((CheckBox)tl.findViewById(resId)).setChecked(true);
+            }
+        }
+
+        private static String getExculdeLanguage(TableLayout tl) {
+            StringBuilder sb = new StringBuilder();
+            boolean isFirst = true;
+            for (int i = 0; i < EXCULDE_LANGUAGE_RESID.length; i++) {
+                if (((CheckBox)tl.findViewById(EXCULDE_LANGUAGE_RESID[i])).isChecked()) {
+                    if (isFirst) isFirst = false; else sb.append('x');
+                    sb.append(EXCULDE_LANGUAGE_ID[i]);
+                }
+            }
+            return sb.toString();
         }
     }
 

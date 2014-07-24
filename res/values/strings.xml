@@ -186,16 +186,13 @@
     <string name="popular_display_settings_title">Popular</string>
     <string name="show_popular_update_time_title">Show popular update time</string>
     <string name="eh_settings_title">EH</string>
-    
-    
     <string name="list_eh_settings_title">List</string>
     <string name="list_default_category_title">List default categories</string>
     <string name="list_default_category_summary">The categories to view as default on the front page</string>
-    
-    <string name="search_eh_settings_title">Search</string>
     <string name="exculde_tag_group_title">Exculde tag groups</string>
     <string name="exculde_tag_group_summary">Exclude certain tag groups from a default tag search</string>
-    
+    <string name="exculde_language_title">Exculde language</string>
+    <string name="exculde_language_summary">To hide galleries in certain languages from the gallery list and searches</string>
     <string name="detail_eh_settings_title">Detail</string>
     <string name="preview_mode_title">Preview mode</string>
     <string name="preview_mode_normal">Normal</string>
@@ -253,6 +250,24 @@
     <string name="current_color">Current</string>
     <string name="new_color">New</string>
     <string name="hex" translatable="false">#</string>
+
+    <!-- Language -->
+    <string name="language_japanese">Japanese</string>
+    <string name="language_english">English</string>
+    <string name="language_chinese">Chinese</string>
+    <string name="language_dutch">Dutch</string>
+    <string name="language_french">French</string>
+    <string name="language_german">German</string>
+    <string name="language_hungarian">Hungarian</string>
+    <string name="language_italian">Italian</string>
+    <string name="language_korean">Korean</string>
+    <string name="language_polish">Polish</string>
+    <string name="language_portuguese">Portuguese</string>
+    <string name="language_russian">Russian</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_thai">Thai</string>
+    <string name="language_vietnamese">Vietnamese</string>
+    <string name="language_other">Other</string>
 
     <!-- server -->
     <string name="update_server_google">Google</string>

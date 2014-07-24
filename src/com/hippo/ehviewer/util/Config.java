@@ -402,6 +402,10 @@ public class Config {
         return mConfigPre.getString(KEY_EXCLUDE_LANGUAGE, DEFAULT_EXCLUDE_LANGUAGE);
     }
 
+    public static void setExculdeLanguage(String exculdeLanguage) {
+        mConfigPre.edit().putString(KEY_EXCLUDE_LANGUAGE, exculdeLanguage).apply();
+    }
+
     public static int getPreviewPerRow() {
         return Integer.parseInt(mConfigPre.getString(KEY_PREVIEW_PER_ROW, DEFAULT_PREVIEW_PER_ROW));
     }
