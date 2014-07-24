@@ -57,7 +57,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         mView = inflater.inflate(R.layout.dialog, null);
         super.setView(mView);
 
-        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDeepColor() : Config.getThemeColor();
+        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
     }
 
     /**

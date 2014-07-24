@@ -273,7 +273,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         });
 
         // Set random color
-        int color = Config.getRandomThemeColor() ? Theme.getRandomDeepColor() : Config.getThemeColor();
+        int color = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
         color = color & 0x00ffffff | 0xdd000000;
         Drawable drawable = new ColorDrawable(color);
         actionBar.setBackgroundDrawable(drawable);

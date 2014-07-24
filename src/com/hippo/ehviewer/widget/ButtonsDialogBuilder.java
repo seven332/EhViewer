@@ -19,11 +19,8 @@ package com.hippo.ehviewer.widget;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Theme;
-
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -31,18 +28,22 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Theme;
+
 public class ButtonsDialogBuilder extends AlertDialog.Builder {
-    
+
     private static final float WEIGHT = 1.0f;
-    
-    private Context mContext;
-    private View mView;
-    private LinearLayout mRootView;
-    private LinearLayout mContainer;
-    
-    private List<AlertButton> mButtonList;
-    private int mThemeColor;
-    
+
+    private final Context mContext;
+    private final View mView;
+    private final LinearLayout mRootView;
+    private final LinearLayout mContainer;
+
+    private final List<AlertButton> mButtonList;
+    private final int mThemeColor;
+
     public ButtonsDialogBuilder(Context context) {
         super(context);
         mContext = context;
@@ -57,10 +58,10 @@ public class ButtonsDialogBuilder extends AlertDialog.Builder {
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         mRootView.addView(mContainer, lp);
         super.setView(mView);
-        
-        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDeepColor() : Config.getThemeColor();
+
+        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
     }
-    
+
     /**
      * Set the title using the given resource id.
      *
@@ -71,7 +72,7 @@ public class ButtonsDialogBuilder extends AlertDialog.Builder {
         setTitle(mContext.getText(titleId));
         return this;
     }
-    
+
     /**
      * Set the title displayed in the {@link Dialog}.
      *
@@ -86,7 +87,7 @@ public class ButtonsDialogBuilder extends AlertDialog.Builder {
         mView.findViewById(R.id.title_layout).setBackgroundColor(mThemeColor);
         return this;
     }
-    
+
     public ButtonsDialogBuilder addButton(AlertButton button) {
         button.setBackgroundResource(R.drawable.clickable_bg_white);
         button.setTextColor(Color.BLACK);
@@ -97,7 +98,7 @@ public class ButtonsDialogBuilder extends AlertDialog.Builder {
         mContainer.addView(button, lp);
         return this;
     }
-    
+
     @Override
     public AlertDialog create() {
         AlertDialog dialog = super.create();

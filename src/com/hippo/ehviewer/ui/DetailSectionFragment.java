@@ -268,21 +268,21 @@ public class DetailSectionFragment extends Fragment
         int color = Config.getThemeColor();
         // Set random color
         if (isRandomColor)
-            color = Theme.getRandomDeepColor();
+            color = Theme.getRandomDarkColor();
         mReadButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         mRateButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         if (isRandomColor)
-            color = Theme.getRandomDeepColor();
+            color = Theme.getRandomDarkColor();
         mColorfulBar.setBackgroundColor(color);
         if (isRandomColor)
-            color = Theme.getRandomDeepColor();
+            color = Theme.getRandomDarkColor();
         mRefreshButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         mCancelButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         mOnceButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         mEveryButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         mKnownButton.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         if (isRandomColor)
-            color = Theme.getRandomDeepColor();
+            color = Theme.getRandomDarkColor();
         mPreviewNumText.setBackgroundDrawable(Theme.getClickDrawable(mActivity, color));
         mBackButton.setBackgroundDrawable(getArrowClickDrawable(color, true));
         mFrontButton.setBackgroundDrawable(getArrowClickDrawable(color, false));
@@ -452,7 +452,7 @@ public class DetailSectionFragment extends Fragment
             // tags
             // get random color
             if (isRandomColor)
-                color = Theme.getRandomDeepColor();
+                color = Theme.getRandomDarkColor();
             for (SimpleEntry<String, Integer> tag : tagGroup.getValue()) {
                 final String tagText = tag.getKey();
                 Button tagView = new Button(mActivity);
@@ -501,7 +501,7 @@ public class DetailSectionFragment extends Fragment
 
         // Add tag
         if (isRandomColor)
-            color = Theme.getRandomDeepColor();
+            color = Theme.getRandomDarkColor();
         Button addtagView = new Button(mActivity);
         addtagView.setTextSize(TypedValue.COMPLEX_UNIT_PX, tagTextSize);
         addtagView.setText("+");

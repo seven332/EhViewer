@@ -23,7 +23,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 
-public class Theme {
+public final class Theme {
 
     private static final Random random =
             new Random(System.currentTimeMillis());
@@ -32,35 +32,40 @@ public class Theme {
             new ColorDrawable(0xffaaaaaa);
 
     /**
-     * Ignore alpha
-     * @param color
-     * @return
+     *  Colors from colors_material.xml
+     *
+     *  material_red_300, material_red_500, material_red_700,
+     *  material_red_A200, material_blue_500, material_blue_700,
+     *  material_blue_A200, material_blue_A400, material_teal_700,
+     *  material_green_500, material_green_700, material_lime_700,
+     *  material_yellow_500, material_yellow_700, material_orange_500,
+     *  material_orange_700, material_orange_A400, material_deep_orange_500,
+     *  material_deep_orange_700, material_deep_orange_A200,
+     *  material_deep_orange_A400, material_grey_600, material_grey_700,
+     *  material_blue_grey_500, material_blue_grey_600,
+     *  material_blue_grey_700, material_blue_grey_800,
+     *  material_brown_500, material_brown_700
      */
-    public static boolean isDeepColor(int color) {
-        int grayLevel = (int)(((color >> 16) & 0xff) * 0.299
-                + ((color >> 8) & 0xff) * 0.587 + (color & 0xff) * 0.114);
-        if (grayLevel < 128) // I think 128 is better than 192
-            return true;
-        else
-            return false;
-    }
-
-    /**
-     * Get random color, alpha is 0xff
-     * @return
-     */
-    public static int getRandomColor() {
-        return random.nextInt() | 0xff000000;
-    }
+    private static final int[] DARK_COLOR_TABLE = {
+        0xffe67c73, 0xffdb4437, 0xffc53929, 0xffff5252,
+        0xff4285f4, 0xff3367d6, 0xff448aff, 0xff2979ff,
+        0xff0097a7,
+        0xff0f9d58, 0xff0b8043,
+        0xffafb42b,
+        0xfff4b400, 0xfff09300,
+        0xffff9800, 0xfff57c00, 0xffff9100,
+        0xffff5722, 0xffc53929, 0xffff5252, 0xffff1744,
+        0xff757575, 0xff717171,
+        0xff607d8b, 0xff546e7a, 0xff455a64, 0xff37474f,
+        0xff795548, 0xff5d4037
+    };
 
     /**
      * Get random deep color, alpha is 0xff
      * @return
      */
-    public static int getRandomDeepColor() {
-        int deepColor;
-        while(!isDeepColor(deepColor = getRandomColor()));
-        return deepColor;
+    public static int getRandomDarkColor() {
+        return DARK_COLOR_TABLE[Math.abs(random.nextInt()) % DARK_COLOR_TABLE.length];
     }
 
     /**

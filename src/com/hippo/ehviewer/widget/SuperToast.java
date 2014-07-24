@@ -16,10 +16,6 @@
 
 package com.hippo.ehviewer.widget;
 
-import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Theme;
-
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -30,13 +26,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Theme;
+
 public class SuperToast extends Toast {
 
     public static final int NONE = 0;
     public static final int WARNING = 1;
     public static final int ERROR = 2;
 
-    private Context mContext;
+    private final Context mContext;
 
     private LinearLayout mMainView;
     private ImageView mIcon;
@@ -45,7 +45,7 @@ public class SuperToast extends Toast {
     public SuperToast(Context context) {
         super(context);
         mContext = context;
-        
+
         init();
     }
 
@@ -75,12 +75,12 @@ public class SuperToast extends Toast {
         FrameLayout view = (FrameLayout)inflate.inflate(R.layout.super_toast, null);
         mMainView = (LinearLayout)view.getChildAt(0);
         // Set random color
-        mMainView.setBackgroundColor(Config.getRandomThemeColor() ? Theme.getRandomDeepColor() : Config.getThemeColor());
+        mMainView.setBackgroundColor(Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor());
         mIcon = (ImageView)mMainView.findViewById(R.id.icon);
         mMessage = (TextView)mMainView.findViewById(R.id.message);
-        
+
         mIcon.setVisibility(View.GONE);
-        
+
         setDuration(Toast.LENGTH_SHORT);
         setView(view);
     }
