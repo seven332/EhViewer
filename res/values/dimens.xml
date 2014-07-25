@@ -32,8 +32,8 @@
     <dimen name="text_large">16.0sp</dimen>
     <dimen name="text_medium">13.0sp</dimen>
     
-    <dimen name="list_thumb_width">66.7dp</dimen>
-    <dimen name="list_thumb_height">100.0dp</dimen>
+    <dimen name="list_thumb_width">80dp</dimen>
+    <dimen name="list_thumb_height">120dp</dimen>
     
     <dimen name="detail_thumb_width">100.0dp</dimen>
     <dimen name="detail_thumb_height">150.0dp</dimen>

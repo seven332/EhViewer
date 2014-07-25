@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Hippo Seven
+<!--
+     Copyright (C) 2014 Hippo Seven
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -12,22 +13,24 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
- -->
+-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
-    
+
     <com.hippo.ehviewer.widget.FswView
         android:id="@+id/alignment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    
+        android:layout_height="match_parent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="8dp" />
+
     <com.hippo.ehviewer.widget.HfListView
         android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
-    
+
     <com.hippo.ehviewer.widget.RefreshTextView
         android:id="@+id/refresh_text"
         android:layout_width="wrap_content"

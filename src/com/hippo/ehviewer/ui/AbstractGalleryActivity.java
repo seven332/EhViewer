@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -379,13 +380,21 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             GalleryInfo gi= mGiList.get(position);
-            if (convertView == null || !(convertView instanceof RelativeLayout)) {
+            if (convertView == null || !(convertView instanceof LinearLayout)) {
                 convertView = LayoutInflater.from(AbstractGalleryActivity.this)
-                        .inflate(R.layout.list_item, null);
+                        .inflate(R.layout.list_item, parent, false);
             }
             final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
             if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
+                // Set margin top 8dp if position is 0, otherwise 4dp
+                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)
+                        convertView.findViewById(R.id.card_view).getLayoutParams();
+                if (position == 0)
+                    lp.topMargin = Ui.dp2pix(8);
+                else
+                    lp.topMargin = Ui.dp2pix(4);
 
+                // Set new thumb
                 thumb.setImageDrawable(null);
                 thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));
                 mImageLoader.add(gi.thumb, String.valueOf(gi.gid),

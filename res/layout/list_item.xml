@@ -14,74 +14,84 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="@dimen/list_thumb_height" >
+    android:layout_height="wrap_content" >
 
-    <com.hippo.ehviewer.widget.LoadImageView
-        android:id="@+id/cover"
-        android:layout_width="@dimen/list_thumb_width"
-        android:layout_height="@dimen/list_thumb_height"
-        android:scaleType="fitCenter" />
-
-    <TextView
-        android:id="@+id/name"
-        style="@style/CardTitle"
-        android:layout_width="wrap_content"
+    <com.hippo.ehviewer.widget.cardview.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="8.0dip"
-        android:layout_marginRight="8.0dip"
-        android:layout_marginTop="1.0dip"
-        android:layout_toRightOf="@id/cover" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        card_view:cardCornerRadius="2dp" >
 
-    <TextView
-        android:id="@+id/uploader"
-        style="@style/CardSubtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/name"
-        android:layout_below="@id/name"
-        android:layout_marginRight="4.0dip" />
-
-    <com.hippo.ehviewer.widget.RatingView
-        android:id="@+id/rate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/name"
-        android:layout_below="@id/uploader"
-        android:layout_marginRight="4.0dip"
-        android:layout_marginTop="2.0dip" />
-
-    <!-- RelativeLayout layout_marginBottom layout_below -->
-
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/name"
-        android:layout_alignParentBottom="true" >
+        <com.hippo.ehviewer.widget.LoadImageView
+            android:id="@+id/cover"
+            android:layout_width="@dimen/list_thumb_width"
+            android:layout_height="@dimen/list_thumb_height" />
 
         <TextView
-            android:id="@+id/category"
+            android:id="@+id/name"
+            style="@style/CardTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_toRightOf="@id/cover" />
+
+        <TextView
+            android:id="@+id/uploader"
             style="@style/CardSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5.0dp"
-            android:paddingBottom="2.0dp"
-            android:paddingLeft="8.0dp"
-            android:paddingRight="8.0dp"
-            android:paddingTop="2.0dp"
-            android:textColor="@android:color/white" />
-    </FrameLayout>
+            android:layout_marginTop="2dp"
+            android:layout_alignLeft="@id/name"
+            android:layout_below="@id/name" />
 
-    <TextView
-        android:id="@+id/posted"
-        style="@style/CardSubtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="4.0dip"
-        android:paddingBottom="1.0dp" />
+        <com.hippo.ehviewer.widget.RatingView
+            android:id="@+id/rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_alignLeft="@id/name"
+            android:layout_below="@id/uploader" />
 
-</android.support.v7.widget.CardView>
+        <!-- RelativeLayout layout_marginBottom layout_below -->
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/name"
+            android:layout_alignParentBottom="true" >
+
+            <TextView
+                android:id="@+id/category"
+                style="@style/CardSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:paddingBottom="2dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="2dp"
+                android:textColor="@android:color/white" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/posted"
+            style="@style/CardSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="4dp" />
+    </com.hippo.ehviewer.widget.cardview.CardView>
+
+</LinearLayout>
