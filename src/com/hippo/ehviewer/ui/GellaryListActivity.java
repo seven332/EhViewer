@@ -116,7 +116,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
  *
  * @author Hippo
  */
-public class MangaListActivity extends AbstractGalleryActivity
+public class GellaryListActivity extends AbstractGalleryActivity
         implements View.OnClickListener {
 
     private static final String TAG = "MangaListActivity";
@@ -199,13 +199,13 @@ public class MangaListActivity extends AbstractGalleryActivity
                             @Override
                             public void onFailure(String eMsg) {
                                 setUserPanel();
-                                new SuperToast(MangaListActivity.this, eMsg).setIcon(R.drawable.ic_warning).show();
-                                if (!MangaListActivity.this.isFinishing())
+                                new SuperToast(GellaryListActivity.this, eMsg).setIcon(R.drawable.ic_warning).show();
+                                if (!GellaryListActivity.this.isFinishing())
                                     loginDialog.show();
                             }
                             @Override
                             public void onGetAvatar(final int code) {
-                                MangaListActivity.this.runOnUiThread(new Runnable() {
+                                GellaryListActivity.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         switch (code) {
@@ -213,11 +213,11 @@ public class MangaListActivity extends AbstractGalleryActivity
                                             setUserPanel();
                                             break;
                                         case EhClient.NO_AVATAR:
-                                            new SuperToast(MangaListActivity.this, "无头像").show(); // TODO
+                                            new SuperToast(GellaryListActivity.this, "无头像").show(); // TODO
                                             break;
                                         case EhClient.GET_AVATAR_ERROR:
                                         default:
-                                            new SuperToast(MangaListActivity.this, "获取头像失败", SuperToast.ERROR).show();  // TODO
+                                            new SuperToast(GellaryListActivity.this, "获取头像失败", SuperToast.ERROR).show();  // TODO
                                             break;
                                         }
                                     }
@@ -335,7 +335,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                             setTitle(mTitle);
                         } else {
                             lus = backup;
-                            new SuperToast(MangaListActivity.this, R.string.wait_for_last).show();
+                            new SuperToast(GellaryListActivity.this, R.string.wait_for_last).show();
                         }
                     }
                 }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
@@ -454,33 +454,33 @@ public class MangaListActivity extends AbstractGalleryActivity
                             int defaultFavorite = Config.getDefaultFavorite();
                             switch (defaultFavorite) {
                             case -2:
-                                Favorite.getAddToFavoriteDialog(MangaListActivity.this, gi).show();
+                                Favorite.getAddToFavoriteDialog(GellaryListActivity.this, gi).show();
                                 break;
                             case -1:
                                 ((AppContext)getApplication()).getData().addLocalFavourite(gi);
-                                new SuperToast(MangaListActivity.this).setMessage(R.string.toast_add_favourite).show();
+                                new SuperToast(GellaryListActivity.this).setMessage(R.string.toast_add_favourite).show();
                                 break;
                             default:
                                 ((AppContext)getApplication()).getEhClient().addToFavorite(gi.gid,
                                         gi.token, defaultFavorite, null, new EhClient.OnAddToFavoriteListener() {
                                     @Override
                                     public void onSuccess() {
-                                        new SuperToast(MangaListActivity.this).setMessage(R.string.toast_add_favourite).show();
+                                        new SuperToast(GellaryListActivity.this).setMessage(R.string.toast_add_favourite).show();
                                     }
                                     @Override
                                     public void onFailure(String eMsg) {
-                                        new SuperToast(MangaListActivity.this).setMessage(R.string.failed_to_add).show();
+                                        new SuperToast(GellaryListActivity.this).setMessage(R.string.failed_to_add).show();
                                     }
                                 });
                             }
                             break;
                         case 1:
                             gi = getGalleryInfo(longClickItemIndex);
-                            Intent it = new Intent(MangaListActivity.this, DownloadService.class);
+                            Intent it = new Intent(GellaryListActivity.this, DownloadService.class);
                             startService(it);
                             mServiceConn.getService().add(String.valueOf(gi.gid), gi.thumb,
                                     mClient.getDetailUrl(gi.gid, gi.token), gi.title);
-                            new SuperToast(MangaListActivity.this, R.string.toast_add_download).show();
+                            new SuperToast(GellaryListActivity.this, R.string.toast_add_download).show();
                             break;
                         default:
                             break;
@@ -525,7 +525,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                         }
 
                         if (error)
-                            new SuperToast(MangaListActivity.this, R.string.toast_invalid_page,
+                            new SuperToast(GellaryListActivity.this, R.string.toast_invalid_page,
                                     SuperToast.ERROR).show();
                         else
                             ((AlertButton)v).dialog.dismiss();
@@ -564,9 +564,9 @@ public class MangaListActivity extends AbstractGalleryActivity
                     public void onClick(View v) {
                         String key = et.getText().toString();
                         if (key.length() == 0)
-                            new SuperToast(MangaListActivity.this, R.string.tag_name_empty).setIcon(R.drawable.ic_warning).show();
+                            new SuperToast(GellaryListActivity.this, R.string.tag_name_empty).setIcon(R.drawable.ic_warning).show();
                         else if (listMenuTag.contains(key) && !key.equals(oldStr))
-                            new SuperToast(MangaListActivity.this, R.string.tag_name_empty).setIcon(R.drawable.ic_warning).show();
+                            new SuperToast(GellaryListActivity.this, R.string.tag_name_empty).setIcon(R.drawable.ic_warning).show();
                         else {
                             ((AlertButton)v).dialog.dismiss();
                             if (listener != null) {
@@ -601,11 +601,11 @@ public class MangaListActivity extends AbstractGalleryActivity
                         if (searchNormal.getVisibility() == View.GONE) {
                             searchNormal.setVisibility(View.VISIBLE);
                             searchTag.setVisibility(View.GONE);
-                            new SuperToast(MangaListActivity.this, R.string.toast_normal_mode).show();
+                            new SuperToast(GellaryListActivity.this, R.string.toast_normal_mode).show();
                         } else {
                             searchNormal.setVisibility(View.GONE);
                             searchTag.setVisibility(View.VISIBLE);
-                            new SuperToast(MangaListActivity.this, R.string.toast_tag_mode).show();
+                            new SuperToast(GellaryListActivity.this, R.string.toast_tag_mode).show();
                         }
                     }
                 }).setPositiveButton(android.R.string.ok, new View.OnClickListener() {
@@ -771,7 +771,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                  intent.getStringExtra(SearchManager.QUERY);
            mSearchView.setQuery(query, true);
         } else if (ACTION_GALLERY_LIST.equals(action)) {
-            int mode = intent.getIntExtra(MangaListActivity.KEY_MODE, -1);
+            int mode = intent.getIntExtra(GellaryListActivity.KEY_MODE, -1);
             switch(mode) {
             case ListUrls.TAG:
                 lus = new ListUrls();
@@ -821,7 +821,7 @@ public class MangaListActivity extends AbstractGalleryActivity
     }
 
     private void showPopularWarningDialog() {
-        DialogBuilder db = new DialogBuilder(MangaListActivity.this).
+        DialogBuilder db = new DialogBuilder(GellaryListActivity.this).
                 setCancelable(false).
                 setView(R.layout.popular_warning, false);
         db.setTitle(R.string.about_analyics_title);
@@ -834,7 +834,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                 if (cb.isChecked())
                     Config.setPopularWarning(false);
 
-                Intent intent = new Intent(MangaListActivity.this,
+                Intent intent = new Intent(GellaryListActivity.this,
                         SettingsActivity.class);
                 intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, SettingsActivity.AboutFragment.class.getName());
                 intent.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
@@ -889,7 +889,7 @@ public class MangaListActivity extends AbstractGalleryActivity
         });
 
         // Download service
-        Intent it = new Intent(MangaListActivity.this, DownloadService.class);
+        Intent it = new Intent(GellaryListActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
 
         // Init dialog
@@ -950,7 +950,7 @@ public class MangaListActivity extends AbstractGalleryActivity
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                LayoutInflater li= LayoutInflater.from(MangaListActivity.this);
+                LayoutInflater li= LayoutInflater.from(GellaryListActivity.this);
                 Drawable d = mResources.getDrawable(data[position * 2]);
                 d.setBounds(0, 0, Ui.dp2pix(36), Ui.dp2pix(36));
                 TextView tv = (TextView)li.inflate(R.layout.menu_item, null);
@@ -975,7 +975,7 @@ public class MangaListActivity extends AbstractGalleryActivity
 
                         showContent();
                     } else {
-                        new SuperToast(MangaListActivity.this, R.string.wait_for_last).show();
+                        new SuperToast(GellaryListActivity.this, R.string.wait_for_last).show();
                         lus = backup;
                     }
                     break;
@@ -987,14 +987,14 @@ public class MangaListActivity extends AbstractGalleryActivity
                     break;
 
                 case 3: // Favourite
-                    intent = new Intent(MangaListActivity.this,
+                    intent = new Intent(GellaryListActivity.this,
                             FavouriteActivity.class);
                     startActivity(intent);
                     break;
 
                 case 4:
                     if (isRefreshing()) {
-                        new SuperToast(MangaListActivity.this, R.string.wait_for_last).show();
+                        new SuperToast(GellaryListActivity.this, R.string.wait_for_last).show();
                     } else {
                         lus = new ListUrls();
                         lus.setMode(ListUrls.POPULAR);
@@ -1011,13 +1011,13 @@ public class MangaListActivity extends AbstractGalleryActivity
                     break;
 
                 case 5: // Download
-                    intent = new Intent(MangaListActivity.this,
+                    intent = new Intent(GellaryListActivity.this,
                             DownloadActivity.class);
                     startActivity(intent);
                     break;
 
                 case 6: // Settings
-                    intent = new Intent(MangaListActivity.this,
+                    intent = new Intent(GellaryListActivity.this,
                             SettingsActivity.class);
                     startActivity(intent);
                     break;
@@ -1044,7 +1044,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                     setTitle(mTitle);
                     showContent();
                 } else {
-                    new SuperToast(MangaListActivity.this, R.string.wait_for_last).show();
+                    new SuperToast(GellaryListActivity.this, R.string.wait_for_last).show();
                     lus = backup;
                 }
             }
@@ -1080,11 +1080,11 @@ public class MangaListActivity extends AbstractGalleryActivity
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
-                Intent intent = new Intent(MangaListActivity.this,
-                        MangaDetailActivity.class);
+                Intent intent = new Intent(GellaryListActivity.this,
+                        GellaryDetailActivity.class);
                 GalleryInfo gi = getGalleryInfo(position);
                 intent.putExtra("url", mClient.getDetailUrl(gi.gid, gi.token));
-                intent.putExtra(MangaDetailActivity.KEY_G_INFO, gi);
+                intent.putExtra(GellaryDetailActivity.KEY_G_INFO, gi);
                 startActivity(intent);
             }
         });
@@ -1188,7 +1188,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                     mTitle = t;
                     setTitle(mTitle);
                 } else {
-                    new SuperToast(MangaListActivity.this, R.string.wait_for_last).show();
+                    new SuperToast(GellaryListActivity.this, R.string.wait_for_last).show();
                     lus = backup;
                 }
                 return true;
@@ -1279,7 +1279,7 @@ public class MangaListActivity extends AbstractGalleryActivity
     public void onBackPressed() {
         if (System.currentTimeMillis() - curBackTime > BACK_PRESSED_INTERVAL) {
             curBackTime = System.currentTimeMillis();
-            new SuperToast(MangaListActivity.this, R.string.exit_tip).show();
+            new SuperToast(GellaryListActivity.this, R.string.exit_tip).show();
         } else
             finish();
     }
@@ -1300,7 +1300,7 @@ public class MangaListActivity extends AbstractGalleryActivity
             return true;
         case R.id.action_refresh:
             if (!refresh(false))
-                new SuperToast(MangaListActivity.this, R.string.wait).show();
+                new SuperToast(GellaryListActivity.this, R.string.wait).show();
             return true;
         case R.id.action_jump:
             if (!isRefreshing() && isGetGalleryOk())
@@ -1338,7 +1338,7 @@ public class MangaListActivity extends AbstractGalleryActivity
             public void onSuccess(String version, long size,
                     final String url, final String fileName, String info) {
                 String sizeStr = Util.sizeToString(size);
-                AlertDialog dialog = SuperDialogUtil.createUpdateDialog(MangaListActivity.this,
+                AlertDialog dialog = SuperDialogUtil.createUpdateDialog(GellaryListActivity.this,
                         version, sizeStr, info,
                         new View.OnClickListener() {
                             @Override
@@ -1346,10 +1346,10 @@ public class MangaListActivity extends AbstractGalleryActivity
                                 ((AlertButton)v).dialog.dismiss();
                                 // TODO
                                 try {
-                                    Downloader downloader = new Downloader(MangaListActivity.this);
+                                    Downloader downloader = new Downloader(GellaryListActivity.this);
                                     downloader.resetData(Config.getDownloadPath(), fileName, url);
                                     downloader.setOnDownloadListener(
-                                            new UpdateHelper.UpdateListener(MangaListActivity.this,
+                                            new UpdateHelper.UpdateListener(GellaryListActivity.this,
                                                     fileName));
                                     new Thread(downloader).start();
                                 } catch (MalformedURLException e) {
@@ -1357,7 +1357,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                                 }
                             }
                         });
-                if (!MangaListActivity.this.isFinishing())
+                if (!GellaryListActivity.this.isFinishing())
                     dialog.show();
             }
             @Override
@@ -1430,7 +1430,7 @@ public class MangaListActivity extends AbstractGalleryActivity
                     listener.onSuccess(taskStamp, gis, gis.size() == 0 ? 0 : 1);
                     // Show update time
                     if (timeStamp != -1 && Config.getShowPopularUpdateTime())
-                        new SuperToast(MangaListActivity.this,
+                        new SuperToast(GellaryListActivity.this,
                                 String.format(getString(R.string.popular_update_time),
                                         mAppContext.getDateFormat().format(timeStamp))).show();
                 }

@@ -49,7 +49,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
-public class MangaActivity extends AbstractActivity {
+public class GellaryActivity extends AbstractActivity {
     private String TAG = "MangaActivity";
     
     private AppContext mAppContext;
@@ -120,7 +120,7 @@ public class MangaActivity extends AbstractActivity {
             
             final String imageName = String.format("%05d", index + 1) + "." + Util.getExtension(imageUrl);
             
-            final Downloader downloader = new Downloader(MangaActivity.this);
+            final Downloader downloader = new Downloader(GellaryActivity.this);
             try {
                 downloader.resetData(mFolder.getPath(),
                         imageName,
@@ -199,7 +199,7 @@ public class MangaActivity extends AbstractActivity {
             retryTimes++;
             int targetPage = (Integer)checkFlag;
             if (retryTimes < maxRetry) {
-                new SuperToast(MangaActivity.this)
+                new SuperToast(GellaryActivity.this)
                 .setIcon(R.drawable.ic_warning)
                 .setMessage(eMsg + " " + 
                         String.format(getString(R.string.em_retry_times), retryTimes))
@@ -217,12 +217,12 @@ public class MangaActivity extends AbstractActivity {
                 if (targetPage == firstPage - 1 &&
                         getPrePage == true) {
                     getPrePage = false;
-                    new SuperToast(MangaActivity.this)
+                    new SuperToast(GellaryActivity.this)
                     .setIcon(R.drawable.ic_warning)
                     .setMessage(R.string.retry_max_pre).show();
                 }
                 else {
-                    new SuperToast(MangaActivity.this)
+                    new SuperToast(GellaryActivity.this)
                     .setIcon(R.drawable.ic_warning)
                     .setMessage(R.string.retry_max_next).show();
                     mStop = true;
@@ -294,12 +294,12 @@ public class MangaActivity extends AbstractActivity {
         isv.setOnEdgeListener(new GalleryView.OnEdgeListener() {
             @Override
             public void onLastPageEdge() {
-                new SuperToast(MangaActivity.this)
+                new SuperToast(GellaryActivity.this)
                 .setMessage(R.string.last_page).show();
             }
             @Override
             public void onFirstPageEdge() {
-                new SuperToast(MangaActivity.this)
+                new SuperToast(GellaryActivity.this)
                 .setMessage(R.string.first_page).show();
             }
         });

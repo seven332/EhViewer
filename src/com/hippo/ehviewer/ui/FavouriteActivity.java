@@ -178,10 +178,10 @@ public class FavouriteActivity extends AbstractGalleryActivity
             public void onItemClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
                 Intent intent = new Intent(FavouriteActivity.this,
-                        MangaDetailActivity.class);
+                        GellaryDetailActivity.class);
                 GalleryInfo gi = getGalleryInfo(position);
                 intent.putExtra("url", mClient.getDetailUrl(gi.gid, gi.token));
-                intent.putExtra(MangaDetailActivity.KEY_G_INFO, gi);
+                intent.putExtra(GellaryDetailActivity.KEY_G_INFO, gi);
                 startActivity(intent);
             }
         });

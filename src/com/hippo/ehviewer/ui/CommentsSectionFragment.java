@@ -50,7 +50,7 @@ public class CommentsSectionFragment extends Fragment
     @SuppressWarnings("unused")
     private static final String TAG = "CommentsSectionFragment";
 
-    private MangaDetailActivity mActivity;
+    private GellaryDetailActivity mActivity;
 
     private View mRootView;
     private ListView mList;
@@ -66,7 +66,7 @@ public class CommentsSectionFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        mActivity = (MangaDetailActivity)getActivity();
+        mActivity = (GellaryDetailActivity)getActivity();
 
         mRootView = inflater.inflate(
                 R.layout.comments, container, false);
@@ -150,10 +150,10 @@ public class CommentsSectionFragment extends Fragment
 
                         case 1:
                             mActivity.finish();
-                            Intent intent = new Intent(mActivity, MangaListActivity.class);
-                            intent.setAction(MangaListActivity.ACTION_GALLERY_LIST);
-                            intent.putExtra(MangaListActivity.KEY_MODE, ListUrls.UPLOADER);
-                            intent.putExtra(MangaListActivity.KEY_UPLOADER, c.user);
+                            Intent intent = new Intent(mActivity, GellaryListActivity.class);
+                            intent.setAction(GellaryListActivity.ACTION_GALLERY_LIST);
+                            intent.putExtra(GellaryListActivity.KEY_MODE, ListUrls.UPLOADER);
+                            intent.putExtra(GellaryListActivity.KEY_UPLOADER, c.user);
                             startActivity(intent);
                             break;
                         }

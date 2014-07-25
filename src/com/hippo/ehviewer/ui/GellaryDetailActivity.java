@@ -55,7 +55,7 @@ import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.SuperToast;
 
-public class MangaDetailActivity extends AbstractFragmentActivity
+public class GellaryDetailActivity extends AbstractFragmentActivity
         implements ActionBar.TabListener {
 
     @SuppressWarnings("unused")
@@ -167,7 +167,7 @@ public class MangaDetailActivity extends AbstractFragmentActivity
         }
 
         // Download service
-        Intent it = new Intent(MangaDetailActivity.this, DownloadService.class);
+        Intent it = new Intent(GellaryDetailActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
     }
 
@@ -224,11 +224,11 @@ public class MangaDetailActivity extends AbstractFragmentActivity
                         mGalleryDetail.token, defaultFavorite, null, new EhClient.OnAddToFavoriteListener() {
                     @Override
                     public void onSuccess() {
-                        new SuperToast(MangaDetailActivity.this).setMessage(R.string.toast_add_favourite).show();
+                        new SuperToast(GellaryDetailActivity.this).setMessage(R.string.toast_add_favourite).show();
                     }
                     @Override
                     public void onFailure(String eMsg) {
-                        new SuperToast(MangaDetailActivity.this).setMessage(R.string.failed_to_add).show();
+                        new SuperToast(GellaryDetailActivity.this).setMessage(R.string.failed_to_add).show();
                     }
                 });
             }
@@ -237,7 +237,7 @@ public class MangaDetailActivity extends AbstractFragmentActivity
             if (mGalleryDetail.language == null) {
                 new SuperToast(this).setMessage(R.string.wait).show();
             } else {
-                Intent it = new Intent(MangaDetailActivity.this, DownloadService.class);
+                Intent it = new Intent(GellaryDetailActivity.this, DownloadService.class);
                 startService(it);
                 mServiceConn.getService().add(String.valueOf(mGalleryDetail.gid), mGalleryDetail.thumb,
                         EhClient.getDetailUrl(mGalleryDetail.gid, mGalleryDetail.token, 0, Config.getMode()),
@@ -301,7 +301,7 @@ public class MangaDetailActivity extends AbstractFragmentActivity
                                                 }
                                                 @Override
                                                 public void onFailure(String eMsg) {
-                                                    new SuperToast(MangaDetailActivity.this, eMsg)
+                                                    new SuperToast(GellaryDetailActivity.this, eMsg)
                                                     .setIcon(R.drawable.ic_warning).show();
                                                 }
                                             });

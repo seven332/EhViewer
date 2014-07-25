@@ -81,7 +81,7 @@ public class DetailSectionFragment extends Fragment
     private static final String TAG = DetailSectionFragment.class.getSimpleName();
 
     private AppContext mAppContext;
-    private MangaDetailActivity mActivity;
+    private GellaryDetailActivity mActivity;
     private EhClient mClient;
     private Data mData;
     private GalleryDetail mGalleryDetail;
@@ -227,7 +227,7 @@ public class DetailSectionFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        mActivity = (MangaDetailActivity)getActivity();
+        mActivity = (GellaryDetailActivity)getActivity();
         mAppContext = (AppContext)mActivity.getApplication();
         mClient = mAppContext.getEhClient();
         mData = mAppContext.getData();
@@ -477,11 +477,11 @@ public class DetailSectionFragment extends Fragment
                             public void onClick(View v) {
                                 mTagDialog.dismiss();
                                 mActivity.finish();
-                                Intent intent = new Intent(mActivity,MangaListActivity.class);
-                                intent.setAction(MangaListActivity.ACTION_GALLERY_LIST);
-                                intent.putExtra(MangaListActivity.KEY_MODE,
+                                Intent intent = new Intent(mActivity,GellaryListActivity.class);
+                                intent.setAction(GellaryListActivity.ACTION_GALLERY_LIST);
+                                intent.putExtra(GellaryListActivity.KEY_MODE,
                                         ListUrls.TAG);
-                                intent.putExtra(MangaListActivity.KEY_TAG, groupName + ":" + tagText);
+                                intent.putExtra(GellaryListActivity.KEY_TAG, groupName + ":" + tagText);
                                 startActivity(intent);
                             }
                         });
@@ -627,10 +627,10 @@ public class DetailSectionFragment extends Fragment
     public void onClick(View v) {
         if (v == mUploader) {
             mActivity.finish();
-            Intent intent = new Intent(mActivity, MangaListActivity.class);
-            intent.setAction(MangaListActivity.ACTION_GALLERY_LIST);
-            intent.putExtra(MangaListActivity.KEY_MODE, ListUrls.UPLOADER);
-            intent.putExtra(MangaListActivity.KEY_UPLOADER, mUploader.getText());
+            Intent intent = new Intent(mActivity, GellaryListActivity.class);
+            intent.setAction(GellaryListActivity.ACTION_GALLERY_LIST);
+            intent.putExtra(GellaryListActivity.KEY_MODE, ListUrls.UPLOADER);
+            intent.putExtra(GellaryListActivity.KEY_UPLOADER, mUploader.getText());
             startActivity(intent);
 
         } else if (v == mRateButton) {
@@ -640,7 +640,7 @@ public class DetailSectionFragment extends Fragment
             mData.addRead(mGalleryDetail);
 
             Intent intent = new Intent(mActivity,
-                    MangaActivity.class);
+                    GellaryActivity.class);
             intent.putExtra("url", mGalleryDetail.firstPage);
             intent.putExtra("gid", mGalleryDetail.gid);
             intent.putExtra("title", mGalleryDetail.title);

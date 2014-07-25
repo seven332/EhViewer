@@ -31,7 +31,7 @@ import android.view.View.OnClickListener;
 
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.drawable.StableBitmapDrawable;
-import com.hippo.ehviewer.ui.MangaActivity;
+import com.hippo.ehviewer.ui.GellaryActivity;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
@@ -95,7 +95,7 @@ public class LargePreviewList extends PreviewList {
                 public void onClick(View v) {
                     // Add to read in Data
                     Intent intent = new Intent(mActivity,
-                            MangaActivity.class);
+                            GellaryActivity.class);
                     intent.putExtra("url", ((TextViewWithUrl)v).url);
                     intent.putExtra("gid", mGi.gid);
                     intent.putExtra("title", mGi.title);
