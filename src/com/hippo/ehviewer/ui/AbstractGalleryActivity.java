@@ -36,7 +36,6 @@ import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.GalleryInfo;
-import com.hippo.ehviewer.data.GalleryPopular;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.ListParser;
 import com.hippo.ehviewer.util.Ui;
@@ -395,31 +394,6 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             return position;
         }
 
-        public String getCountStr(long count) {
-            String str = null;
-            if (count < 0) {
-                str = "WEB";
-            } else if (count < 1000) {
-                str = String.valueOf(count);
-            } else if (count < 1E10) {
-                double pDouble = Math.log10(count);
-                int p = (int)pDouble;
-                int b = (int)Math.round(count / Math.pow(10, p));
-                if (b > 9) {
-                    if (p == 9) {
-                        b = 9;
-                    } else {
-                        b = 1;
-                        p++;
-                    }
-                }
-                str = b + "E" + p;
-            } else {
-                str = "***";
-            }
-            return str;
-        }
-
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             GalleryInfo gi= mGiList.get(position);
@@ -455,14 +429,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             // set posted
             TextView posted = (TextView) convertView.findViewById(R.id.posted);
             posted.setText(gi.posted);
-            // Show count if possible
-            TextView count = (TextView) convertView.findViewById(R.id.count);
-            if (gi instanceof GalleryPopular) {
-                count.setVisibility(View.VISIBLE);
-                count.setText(getCountStr(((GalleryPopular)gi).count));
-            } else {
-                count.setVisibility(View.GONE);
-            }
+
             return convertView;
         }
     }

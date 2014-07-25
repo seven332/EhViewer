@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Hippo Seven
+<!--
+     Copyright (C) 2014 Hippo Seven
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -12,7 +13,7 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
- -->
+-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="@dimen/list_thumb_height"
@@ -23,75 +24,65 @@
         android:layout_width="@dimen/list_thumb_width"
         android:layout_height="@dimen/list_thumb_height"
         android:scaleType="fitCenter" />
-    
+
     <TextView
         android:id="@+id/name"
         style="@style/CardTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/cover"
         android:layout_marginLeft="8.0dip"
+        android:layout_marginRight="8.0dip"
         android:layout_marginTop="1.0dip"
-        android:layout_marginRight="32.0dip" />
-    
+        android:layout_toRightOf="@id/cover" />
+
     <TextView
         android:id="@+id/uploader"
         style="@style/CardSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/name"
         android:layout_alignLeft="@id/name"
+        android:layout_below="@id/name"
         android:layout_marginRight="4.0dip" />
-    
+
     <com.hippo.ehviewer.widget.RatingView
         android:id="@+id/rate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/uploader"
         android:layout_alignLeft="@id/name"
-        android:layout_marginTop="2.0dip"
-        android:layout_marginRight="4.0dip" />
-    
+        android:layout_below="@id/uploader"
+        android:layout_marginRight="4.0dip"
+        android:layout_marginTop="2.0dip" />
+
     <!-- RelativeLayout layout_marginBottom layout_below -->
+
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@id/name" >
-        
+        android:layout_alignLeft="@id/name"
+        android:layout_alignParentBottom="true" >
+
         <TextView
             android:id="@+id/category"
             style="@style/CardSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5.0dp"
-            android:paddingTop="2.0dp"
             android:paddingBottom="2.0dp"
             android:paddingLeft="8.0dp"
             android:paddingRight="8.0dp"
+            android:paddingTop="2.0dp"
             android:textColor="@android:color/white" />
-        
     </FrameLayout>
-    
+
     <TextView
         android:id="@+id/posted"
         style="@style/CardSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:layout_marginRight="4.0dip"
         android:paddingBottom="1.0dp" />
-    
-    <TextView
-        android:id="@+id/count"
-        style="@style/CardSubtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="1.0dip"
-        android:layout_marginRight="5.0dip"
-        android:visibility="gone" />
-    
+
 </RelativeLayout>
