@@ -309,34 +309,29 @@ public class GellaryListActivity extends AbstractGalleryActivity
                 }).setPositiveButton(android.R.string.ok, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ListUrls backup = lus;
                         lus = getLus(filterDialog);
-                        if (refresh(false)) {
-                            ((AlertButton)v).dialog.dismiss();
-                            showContent();
+                        refresh();
+                        showContent();
 
-                            String search = lus.getSearch();
-                            String t = null;
-                            switch(lus.getMode()) {
-                            case ListUrls.NORMAL:
-                                if (search == null || search.isEmpty())
-                                    t = getString(android.R.string.search_go);
-                                else
-                                    t = search;
-                                break;
-                            case ListUrls.UPLOADER:
-                                t = search;
-                                break;
-                            case ListUrls.TAG:
-                                t = lus.getTag();
-                                break;
-                            }
-                            mTitle = t;
-                            setTitle(mTitle);
-                        } else {
-                            lus = backup;
-                            new SuperToast(GellaryListActivity.this, R.string.wait_for_last).show();
+                        String search = lus.getSearch();
+                        switch(lus.getMode()) {
+                        case ListUrls.UPLOADER:
+                            mTitle = search;
+                            break;
+                        case ListUrls.TAG:
+                            mTitle = lus.getTag();
+                            break;
+                        case ListUrls.POPULAR:
+                            mTitle = getString(R.string.popular);
+                        case ListUrls.NORMAL:
+                        default:
+                            if (search == null || search.isEmpty())
+                                mTitle = getString(android.R.string.search_go);
+                            else
+                                mTitle = search;
+                            break;
                         }
+                        setTitle(mTitle);
                     }
                 }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
                     @Override
@@ -512,23 +507,17 @@ public class GellaryListActivity extends AbstractGalleryActivity
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        boolean error = false;
-                        int targetPage = 0;
+                        int targetPage;
                         try{
                             targetPage = Integer.parseInt(et.getText().toString()) - 1;
                         } catch(Exception e) {
-                            error = true;
-                        }
-
-                        if (!error) {
-                            error = !jumpTo(targetPage, true);
-                        }
-
-                        if (error)
                             new SuperToast(GellaryListActivity.this, R.string.toast_invalid_page,
                                     SuperToast.ERROR).show();
-                        else
-                            ((AlertButton)v).dialog.dismiss();
+                            return;
+                        }
+
+                        ((AlertButton)v).dialog.dismiss();
+                        jumpTo(targetPage);
                     }
                 }).setNegativeButton(android.R.string.cancel,
                 new View.OnClickListener() {
@@ -779,7 +768,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
                 lus.setTag(tag);
                 mTitle = tag;
                 setTitle(mTitle);
-                refresh(true);
+                refresh();
                 break;
 
             case ListUrls.UPLOADER:
@@ -788,7 +777,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
                 lus.setMode(ListUrls.UPLOADER);
                 mTitle = uploader;
                 setTitle(mTitle);
-                refresh(true);
+                refresh();
                 break;
 
             default:
@@ -967,22 +956,18 @@ public class GellaryListActivity extends AbstractGalleryActivity
                 Intent intent;
                 switch (position) {
                 case 0: // Home page
-                    ListUrls backup = lus;
                     lus = new ListUrls(ListUrls.NONE, null, 0);
-                    if (refresh(false)) {
-                        mTitle = mResources.getString(R.string.homepage);
-                        setTitle(mTitle);
-
-                        showContent();
-                    } else {
-                        new SuperToast(GellaryListActivity.this, R.string.wait_for_last).show();
-                        lus = backup;
-                    }
+                    refresh();
+                    showContent();
+                    mTitle = mResources.getString(R.string.homepage);
+                    setTitle(mTitle);
                     break;
-                case 1:
+
+                case 1: // Mode
                     createModeDialog().show();
                     break;
-                case 2:
+
+                case 2: // Search
                     filterDialog.show();
                     break;
 
@@ -992,22 +977,13 @@ public class GellaryListActivity extends AbstractGalleryActivity
                     startActivity(intent);
                     break;
 
-                case 4:
-                    if (isRefreshing()) {
-                        new SuperToast(GellaryListActivity.this, R.string.wait_for_last).show();
-                    } else {
-                        lus = new ListUrls();
-                        lus.setMode(ListUrls.POPULAR);
-                        mTitle = mResources.getString(R.string.popular);
-                        setTitle(mTitle);
-                        refresh(true);
-
-                        showContent();
-
-                        // Show dialog
-                        if (!Config.getAllowAnalyics() && Config.getPopularWarning())
-                            showPopularWarningDialog();
-                    }
+                case 4: // Popular
+                    lus = new ListUrls();
+                    lus.setMode(ListUrls.POPULAR);
+                    mTitle = mResources.getString(R.string.popular);
+                    setTitle(mTitle);
+                    refresh();
+                    showContent();
                     break;
 
                 case 5: // Download
@@ -1037,16 +1013,11 @@ public class GellaryListActivity extends AbstractGalleryActivity
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
-                ListUrls backup = lus;
                 lus = mData.getTag(position);
-                if (lus != null && refresh(false)) {
-                    mTitle = listMenuTag.get(position);
-                    setTitle(mTitle);
-                    showContent();
-                } else {
-                    new SuperToast(GellaryListActivity.this, R.string.wait_for_last).show();
-                    lus = backup;
-                }
+                refresh();
+                showContent();
+                mTitle = listMenuTag.get(position);
+                setTitle(mTitle);
             }
         });
         tagListMenu.setOnModifyListener(new TagListView.OnModifyListener(){
@@ -1182,15 +1153,10 @@ public class GellaryListActivity extends AbstractGalleryActivity
                 else
                     t = query;
 
-                ListUrls backup = lus;
                 lus = new ListUrls(ListUrls.NONE, query);
-                if (refresh(false)) {
-                    mTitle = t;
-                    setTitle(mTitle);
-                } else {
-                    new SuperToast(GellaryListActivity.this, R.string.wait_for_last).show();
-                    lus = backup;
-                }
+                refresh();
+                mTitle = t;
+                setTitle(mTitle);
                 return true;
             }
         });
@@ -1299,8 +1265,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
                 showMenu();
             return true;
         case R.id.action_refresh:
-            if (!refresh(false))
-                new SuperToast(GellaryListActivity.this, R.string.wait).show();
+            refresh();
             return true;
         case R.id.action_jump:
             if (!isRefreshing() && isGetGalleryOk())

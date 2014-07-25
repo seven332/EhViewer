@@ -53,10 +53,10 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     @SuppressWarnings("unused")
     private static final String TAG = AbstractGalleryActivity.class.getSimpleName();
 
-    private static final int REFRESH = 0x0;
-    private static final int NEXT_PAGE = 0x1;
-    private static final int PRE_PAGE = 0x2;
-    private static final int SOMEWHERE = 0x3;
+    private static final int MODE_REFRESH = 0x0;
+    private static final int MODE_NEXT_PAGE = 0x1;
+    private static final int MODE_PRE_PAGE = 0x2;
+    private static final int MODE_SOMEWHERE = 0x3;
 
     protected AppContext mAppContext;
     protected EhClient mClient;
@@ -80,7 +80,12 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     private int mPageNum;
     private int mItemPerPage;
     private int mGetMode;
+
+    /**
+     * If true, list will make showed item not changed after get
+     */
     private boolean mIsKeepPosition;
+
     private int mTargetPage;
     private String mTargetUrl;
     private int mPaddingTop;
@@ -108,21 +113,25 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     }
 
     @Override
-    public void onRefresh() {
-        if (mFirstPage != 0) {
-            getPrePage(true, true);
+    public void onHeaderRefresh() {
+        // It is invokened by user pull, so no need to
+        if (mFirstPage > 0) {
+            getPrePage(true);
         } else {
-            refresh(true);
+            refresh();
         }
     }
 
     @Override
     public boolean onFooterRefresh() {
-        boolean re;
-        isFootRefresh = true;
-        re = getNextPage(true, true);
-        isFootRefresh = false;
-        return re;
+        if (!isRefreshing() && mLastPage < mPageNum - 1) {
+            isFootRefresh = true;
+            getNextPage(true);
+            isFootRefresh = false;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void onlyShowList() {
@@ -143,7 +152,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         mRefreshTextView.setVisibility(View.VISIBLE);
         mRefreshTextView.setRefreshing(true);
 
-        refresh(true);
+        refresh();
     }
 
     private void setGallerysLayout() {
@@ -158,104 +167,77 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         }
     }
 
-    protected boolean retry(boolean force) {
-        if (!force && isRefreshing())
-            return false;
-
+    protected boolean retry() {
+        // Need to update url, because mode may be changed
+        mTargetUrl = getTargetUrl(mTargetPage);
         getGallerys();
         return true;
     }
 
     /**
-     * Go to page 0
-     * If can't refresh return false,
-     * if force is true, must return true
-     *
-     * @param force
-     * @return
+     * Go to page 0.<br>
+     * You should know you can refresh or not.
      */
-    protected boolean refresh(boolean force) {
-        if (!force && isRefreshing())
-            return false;
-
-        mGetMode = REFRESH;
+    protected void refresh() {
+        mGetMode = MODE_REFRESH;
         mTargetPage = 0;
         mTargetUrl = getTargetUrl(mTargetPage);
         mIsKeepPosition = false;
         getGallerys();
-        return true;
     }
 
     /**
-     * If force is true, will get page when refrshing
+     * Get previous page.<br>
+     * You should know you can get previous page or not
+     *
      * @param isKeepPosition
-     * @param force
-     * @return
      */
-    protected boolean getPrePage(boolean isKeepPosition, boolean force) {
-        if (!force && isRefreshing())
-            return false;
-        if (mFirstPage == 0)
-            return false;
-
-        mGetMode = PRE_PAGE;
+    protected void getPrePage(boolean isKeepPosition) {
+        mGetMode = MODE_PRE_PAGE;
         mTargetPage = mFirstPage - 1;
         mTargetUrl = getTargetUrl(mTargetPage);
         mIsKeepPosition = isKeepPosition;
         getGallerys();
-        return true;
     }
 
     /**
-     * If force is true, will get page when refrshing
+     * Get next page.<br>
+     * You should know you can get next page or not
+     *
      * @param isKeepPosition
-     * @param force
-     * @return
      */
-    protected boolean getNextPage(boolean isKeepPosition, boolean force) {
-        if (!force && isRefreshing())
-            return false;
-        if (mLastPage >= mPageNum - 1) // If last page is the end of the page or more laster, error
-            return false;
-
-        mGetMode = NEXT_PAGE;
+    protected void getNextPage(boolean isKeepPosition) {
+        mGetMode = MODE_NEXT_PAGE;
         mTargetPage = mLastPage + 1;
         mTargetUrl = getTargetUrl(mTargetPage);
         mIsKeepPosition = isKeepPosition;
         getGallerys();
-        return true;
     }
 
-    protected boolean getSomewhere(int page, boolean force) {
-        if (!force && isRefreshing())
-            return false;
-        if (page >= mPageNum || page < 0)
-            return false;
-
-        mGetMode = SOMEWHERE;
+    /**
+     * Get some page.<br>
+     * You should know you can get that page or not
+     *
+     * @param page
+     */
+    protected void getSomewhere(int page) {
+        mGetMode = MODE_SOMEWHERE;
         mTargetPage = page;
         mTargetUrl = getTargetUrl(mTargetPage);
         mIsKeepPosition = false;
         getGallerys();
-        return true;
     }
 
-    public boolean jumpTo(int page, boolean force) {
-        if (!force && isRefreshing())
-            return false;
-        if (page >= mPageNum || page < 0)
-            return false;
-
+    public void jumpTo(int page) {
         if (page >= mFirstPage && page <= mLastPage) {
             int position = (page - mFirstPage) * mItemPerPage;
             setListPosition(position);
-            return true;
         } else if (page == mFirstPage - 1) {
-            return getPrePage(false, force);
+            getPrePage(false);
         } else if (page == mLastPage + 1) {
-            return getNextPage(false, force);
+            getNextPage(false);
         } else {
-            return getSomewhere(page, force);
+            getSomewhere(page);
         }
     }
 
@@ -309,7 +291,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             @Override
             public void onRefresh() {
                 mRefreshTextView.setRefreshing(true);
-                retry(true);
+                retry();
             }
         });
     }
@@ -508,7 +490,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                 onlyShowList();
 
                 switch (mGetMode) {
-                case REFRESH:
+                case MODE_REFRESH:
                     mFirstPage = 0;
                     mLastPage = 0;
                     mGiList = gis;
@@ -521,7 +503,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                     setListPosition(0);
                     break;
 
-                case PRE_PAGE:
+                case MODE_PRE_PAGE:
                     mFirstPage--;
                     mGiList.addAll(0, gis);
                     mGalleryAdapter.notifyDataSetChanged();
@@ -540,7 +522,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                     }
                     break;
 
-                case NEXT_PAGE:
+                case MODE_NEXT_PAGE:
                     mLastPage++;
                     mGiList.addAll(gis);
                     mGalleryAdapter.notifyDataSetChanged();
@@ -552,7 +534,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                     }
                     break;
 
-                case SOMEWHERE:
+                case MODE_SOMEWHERE:
                     mFirstPage = mTargetPage;
                     mLastPage = mTargetPage;
                     mGiList = gis;
@@ -574,8 +556,8 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                 return;
 
             switch (mGetMode) {
-            case REFRESH:
-            case SOMEWHERE:
+            case MODE_REFRESH:
+            case MODE_SOMEWHERE:
                 mHlv.setVisibility(View.GONE);
                 mRefreshTextView.setVisibility(View.VISIBLE);
                 if (eMsg.equals("index error")) {
@@ -583,7 +565,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                         @Override
                         public void onRefresh() {
                             mRefreshTextView.setRefreshing(true);
-                            refresh(true);
+                            refresh();
                         }
                     });
                 } else {

@@ -42,7 +42,7 @@ public class SuperSwipeRefreshLayout extends ViewGroup {
     private static final float MAX_SWIPE_DISTANCE_FACTOR = .6f;
     private static final int REFRESH_TRIGGER_DISTANCE = 120;
 
-    private SwipeProgressBar mProgressBar; //the thing that shows progress is going
+    private final SwipeProgressBar mProgressBar; //the thing that shows progress is going
     private boolean mIsProgressBarVisible = true;
     private boolean mIsAgainstToChildPadding = false;
     private View mTarget; //the content that gets pulled down
@@ -51,13 +51,13 @@ public class SuperSwipeRefreshLayout extends ViewGroup {
     private MotionEvent mDownEvent;
     private int mFrom;
     private boolean mRefreshing = false;
-    private int mTouchSlop;
+    private final int mTouchSlop;
     private float mDistanceToTriggerSync = -1;
     private float mPrevY;
-    private int mMediumAnimationDuration;
+    private final int mMediumAnimationDuration;
     private float mFromPercentage = 0;
     private float mCurrPercentage = 0;
-    private int mProgressBarHeight;
+    private final int mProgressBarHeight;
     private int mCurrentTargetOffsetTop;
     // Target is returning to its start offset because it was cancelled or a
     // refresh was triggered.
@@ -84,7 +84,7 @@ public class SuperSwipeRefreshLayout extends ViewGroup {
         }
     };
 
-    private Animation mShrinkTrigger = new Animation() {
+    private final Animation mShrinkTrigger = new Animation() {
         @Override
         public void applyTransformation(float interpolatedTime, Transformation t) {
             float percent = mFromPercentage + ((0 - mFromPercentage) * interpolatedTime);
@@ -302,7 +302,7 @@ public class SuperSwipeRefreshLayout extends ViewGroup {
     /**
      * If set true, refresh action will be triggered when
      * the first item reaches the paddingTop of AbsListView.
-     * 
+     *
      * @param againstToChildPadding
      */
     public void setAgainstToChildPadding(boolean againstToChildPadding) {
@@ -314,7 +314,7 @@ public class SuperSwipeRefreshLayout extends ViewGroup {
 
     private void setProgressBarBounds() {
         final int width =  getMeasuredWidth();
-        
+
         if (mIsAgainstToChildPadding && getChildCount() != 0) {
             final View child = getChildAt(0);
             mProgressBar.setBounds(0, child.getPaddingTop(), width, mProgressBarHeight + child.getPaddingTop());
@@ -328,7 +328,7 @@ public class SuperSwipeRefreshLayout extends ViewGroup {
         if (getChildCount() != 0) {
             final int width =  getMeasuredWidth();
             final int height = getMeasuredHeight();
-            
+
             final View child = getChildAt(0);
             final int childLeft = getPaddingLeft();
             final int childTop = mCurrentTargetOffsetTop + getPaddingTop();
@@ -336,7 +336,7 @@ public class SuperSwipeRefreshLayout extends ViewGroup {
             final int childHeight = height - getPaddingTop() - getPaddingBottom();
             child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
         }
-        
+
         setProgressBarBounds();
     }
 
@@ -450,7 +450,7 @@ public class SuperSwipeRefreshLayout extends ViewGroup {
         removeCallbacks(mCancel);
         mReturnToStartPosition.run();
         setRefreshing(true);
-        mListener.onRefresh();
+        mListener.onHeaderRefresh();
     }
 
     private void updateContentOffsetTop(int targetTop) {
@@ -478,7 +478,7 @@ public class SuperSwipeRefreshLayout extends ViewGroup {
      * triggers a refresh should implement this interface.
      */
     public interface OnRefreshListener {
-        public void onRefresh();
+        public void onHeaderRefresh();
     }
 
     /**

@@ -127,7 +127,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         mHlv.setEnabledHeader(true);
         mHlv.setEnabledFooter(true);
         setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
-        refresh(true);
+        refresh();
     }
 
     @Override
