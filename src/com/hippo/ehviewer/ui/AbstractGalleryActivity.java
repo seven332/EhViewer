@@ -143,7 +143,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     public void onlyShowNone() {
         mHlv.setVisibility(View.GONE);
         mRefreshTextView.setVisibility(View.VISIBLE);
-        mRefreshTextView.setEmesg(R.string.none, false); // TODO
+        mRefreshTextView.setEmesg(R.string.none, false);
     }
 
     protected void firstTimeRefresh() {
@@ -561,7 +561,8 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                 mHlv.setVisibility(View.GONE);
                 mRefreshTextView.setVisibility(View.VISIBLE);
                 if (eMsg.equals("index error")) {
-                    mRefreshTextView.setEmesg(eMsg, "点击回第一页", new RefreshTextView.OnRefreshListener() {
+                    mRefreshTextView.setEmesg(eMsg, "点击回第一页", // TODO
+                            new RefreshTextView.OnRefreshListener() {
                         @Override
                         public void onRefresh() {
                             mRefreshTextView.setRefreshing(true);
@@ -575,7 +576,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             default:
                 mRefreshTextView.setRefreshing(false);
                 mRefreshTextView.setVisibility(View.GONE);
-                new SuperToast(AbstractGalleryActivity.this, eMsg, SuperToast.ERROR).show(); // TODO
+                new SuperToast(AbstractGalleryActivity.this, eMsg, SuperToast.ERROR).show();
             }
             mHlv.setAnyRefreshComplete(false);
         }
