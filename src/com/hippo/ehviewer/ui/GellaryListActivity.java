@@ -309,6 +309,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
                 }).setPositiveButton(android.R.string.ok, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        ((AlertButton)v).dialog.dismiss();
                         lus = getLus(filterDialog);
                         refresh();
                         showContent();
@@ -333,12 +334,8 @@ public class GellaryListActivity extends AbstractGalleryActivity
                         }
                         setTitle(mTitle);
                     }
-                }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                    }
-                }).setNeutralButton(R.string.add, new View.OnClickListener() {
+                }).setSimpleNegativeButton()
+                .setNeutralButton(R.string.add, new View.OnClickListener() {
                     @Override
                     public void onClick(final View v) {
                         createSetNameDialog(null, null, new OnSetNameListener() {
