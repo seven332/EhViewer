@@ -35,7 +35,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
-import android.preference.PreferenceActivity;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -804,38 +803,6 @@ public class GalleryListActivity extends AbstractGalleryActivity
             mClient.logout();
             setUserPanel();
         }
-    }
-
-    private void showPopularWarningDialog() {
-        DialogBuilder db = new DialogBuilder(GalleryListActivity.this).
-                setCancelable(false).
-                setView(R.layout.popular_warning, false);
-        db.setTitle(R.string.about_analyics_title);
-        ViewGroup vg = db.getCustomLayout();
-        final CheckBox cb = (CheckBox)vg.findViewById(R.id.set_default);
-        db.setPositiveButton(android.R.string.ok, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((AlertButton)v).dialog.dismiss();
-                if (cb.isChecked())
-                    Config.setPopularWarning(false);
-
-                Intent intent = new Intent(GalleryListActivity.this,
-                        SettingsActivity.class);
-                intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, SettingsActivity.AboutFragment.class.getName());
-                intent.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
-                startActivity(intent);
-            }
-        });
-        db.setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((AlertButton)v).dialog.dismiss();
-                if (cb.isChecked())
-                    Config.setPopularWarning(false);
-            }
-        });
-        db.create().show();
     }
 
     @Override

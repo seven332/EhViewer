@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.util;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -24,6 +25,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -31,6 +33,8 @@ import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
@@ -265,10 +269,32 @@ public class Ui {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public static void updateTranslucent(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int screenOri = getOrientation(activity);
+            Window w = activity.getWindow();
+
+            w.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            if (screenOri == ORIENTATION_PORTRAIT)
+                w.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            else if (screenOri == ORIENTATION_LANDSCAPE)
+                w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
+    }
+
     public static void adjustOrientation(Activity activity) {
+        adjustOrientation(activity, false);
+    }
+
+    public static void adjustOrientation(Activity activity,
+            boolean updateTranslucent) {
         int screenOri = Config.getScreenOriMode();
         if (screenOri != activity.getRequestedOrientation())
             activity.setRequestedOrientation(screenOri);
+
+        if (updateTranslucent)
+            updateTranslucent(activity);
     }
 
     public static SystemBarConfig translucent(

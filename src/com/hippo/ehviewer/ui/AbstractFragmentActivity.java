@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.content.res.Configuration;
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -26,10 +28,24 @@ import com.hippo.ehviewer.util.Ui;
 public abstract class AbstractFragmentActivity extends FragmentActivity {
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Ui.adjustOrientation(this, true);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        Ui.updateTranslucent(this);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
-        Ui.adjustOrientation(this);
+        Ui.adjustOrientation(this, true);
     }
 
     @Override
@@ -38,8 +54,6 @@ public abstract class AbstractFragmentActivity extends FragmentActivity {
 
       if (Config.getAllowAnalyics())
           EasyTracker.getInstance(this).activityStart(this);
-
-      Ui.adjustOrientation(this);
     }
 
     @Override

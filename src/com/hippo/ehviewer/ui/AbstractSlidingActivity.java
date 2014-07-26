@@ -16,6 +16,9 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.content.res.Configuration;
+import android.os.Bundle;
+
 import com.google.analytics.tracking.android.EasyTracker;
 import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.util.Config;
@@ -25,10 +28,24 @@ import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
 public class AbstractSlidingActivity extends SlidingActivity {
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Ui.adjustOrientation(this, true);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        Ui.updateTranslucent(this);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
-        Ui.adjustOrientation(this);
+        Ui.adjustOrientation(this, true);
     }
 
     @Override
@@ -37,8 +54,6 @@ public class AbstractSlidingActivity extends SlidingActivity {
 
       if (Config.getAllowAnalyics())
           EasyTracker.getInstance(this).activityStart(this);
-
-      Ui.adjustOrientation(this);
     }
 
     @Override
@@ -47,7 +62,6 @@ public class AbstractSlidingActivity extends SlidingActivity {
 
       if (Config.getAllowAnalyics())
           EasyTracker.getInstance(this).activityStop(this);
-
       ImageCache.getInstance(this).flush();
     }
 }
