@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hippo.ehviewer.widget.cardview;
+package com.hippo.ehviewer.cardview;
 
 import android.graphics.drawable.Drawable;
 

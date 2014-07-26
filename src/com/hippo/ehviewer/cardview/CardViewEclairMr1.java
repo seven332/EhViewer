@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hippo.ehviewer.widget.cardview;
+package com.hippo.ehviewer.cardview;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.StateListDrawable;
+import android.view.View;
+
+import com.hippo.ehviewer.R;
 
 class CardViewEclairMr1 implements CardViewImpl {
 
@@ -65,25 +67,25 @@ class CardViewEclairMr1 implements CardViewImpl {
         };
     }
 
-    // TODO It is too bad
     @Override
-    public void initialize(CardViewDelegate cardView, Context context, int backgroundColor,
-            float radius) {
+    @SuppressWarnings("deprecation")
+    public void reform(Resources resources, View view, int backgroundColor) {
+        view.setBackgroundDrawable(new RoundRectDrawableWithShadow(
+                resources, backgroundColor,
+                resources.getDimension(R.dimen.cardview_radius)));
+    }
 
-        Resources resources = context.getResources();
+    @Override
+    @SuppressWarnings("deprecation")
+    public void reform(Resources resources, View view, int[][] stateSets,
+            int[] backgroundColors) {
         StateListDrawable background = new StateListDrawable();
-
-        background.addState(new int[]{android.R.attr.state_activated},
-                new RoundRectDrawableWithShadow(
-                resources, 0xff33b5e5, radius));
-
-        background.addState(new int[]{android.R.attr.state_pressed},
-                new RoundRectDrawableWithShadow(
-                resources, 0xff89cce5, radius));
-
-        background.addState(new int[]{}, new RoundRectDrawableWithShadow(
-                resources, 0xFFFAFAFA, radius));
-
-        cardView.setBackgroundDrawable(background);
+        for (int i = 0; i < stateSets.length; i++) {
+            RoundRectDrawableWithShadow part = new RoundRectDrawableWithShadow(
+                    resources, backgroundColors[i],
+                    resources.getDimension(R.dimen.cardview_radius));
+            background.addState(stateSets[i], part);
+        }
+        view.setBackgroundDrawable(background);
     }
 }

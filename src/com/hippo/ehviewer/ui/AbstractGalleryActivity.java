@@ -36,6 +36,7 @@ import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.cache.ImageCache;
+import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.ListParser;
@@ -383,6 +384,12 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             if (convertView == null || !(convertView instanceof LinearLayout)) {
                 convertView = LayoutInflater.from(AbstractGalleryActivity.this)
                         .inflate(R.layout.list_item, parent, false);
+                CardViewSalon.reform(AbstractGalleryActivity.this.getResources(),
+                        ((ViewGroup)convertView).getChildAt(0), new int[][]{
+                                new int[]{android.R.attr.state_pressed},
+                                new int[]{android.R.attr.state_activated},
+                                new int[]{}},
+                                new int[]{0xff84cae4, 0xff33b5e5, 0xFFFAFAFA});
             }
             final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
             if (!String.valueOf(gi.gid).equals(thumb.getKey())) {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hippo.ehviewer.widget.cardview;
+package com.hippo.ehviewer.cardview;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -67,6 +67,7 @@ class RoundRectDrawableWithShadow extends Drawable {
         mShadowStartColor = resources.getColor(R.color.cardview_shadow_start_color);
         mShadowEndColor = resources.getColor(R.color.cardview_shadow_end_color);
         mShadowSize = resources.getDimension(R.dimen.cardview_shadow_size) * SHADOW_MULTIPLIER;
+
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
         mPaint.setColor(backgroundColor);

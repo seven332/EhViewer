@@ -18,17 +18,14 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" >
 
-    <com.hippo.ehviewer.widget.cardview.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <RelativeLayout
         android:id="@+id/card_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        card_view:cardCornerRadius="2dp" >
+        android:layout_marginBottom="4dp" >
 
         <com.hippo.ehviewer.widget.LoadImageView
             android:id="@+id/cover"
@@ -92,6 +89,6 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="4dp" />
-    </com.hippo.ehviewer.widget.cardview.CardView>
+    </RelativeLayout>
 
 </LinearLayout>

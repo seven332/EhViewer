@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hippo.ehviewer.widget.cardview;
+package com.hippo.ehviewer.cardview;
 
-import android.content.Context;
+import android.content.res.Resources;
+import android.view.View;
 
-class CardViewApi21 implements CardViewImpl {
+/**
+ * Interface for platform specific CardView implementations.
+ */
+interface CardViewImpl {
+    void initStatic();
 
-    @Override
-    public void initialize(CardViewDelegate cardView, Context context, int backgroundColor,
-            float radius) {
-        cardView.setBackgroundDrawable(new RoundRectDrawable(backgroundColor, radius));
-        // TODO Release it when L is OK
-        //View view = (View) cardView;
-        //view.setClipToOutline(true);
-        //view.setElevation(context.getResources().getDimension(R.dimen.cardview_elevation));
-    }
+    void reform(Resources resources, View view, int backgroundColor);
 
-    @Override
-    public void initStatic() {
-    }
+    void reform(Resources resources, View view, int[][] stateSets, int[] backgroundColors);
 }
