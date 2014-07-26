@@ -28,7 +28,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.hippo.ehviewer.ImageLoader;
-import com.hippo.ehviewer.ui.GellaryActivity;
+import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
 
@@ -122,7 +122,7 @@ public class NormalPreviewList extends PreviewList{
                     public void onClick(View v) {
                         // Add to read in Data
                         Intent intent = new Intent(mActivity,
-                                GellaryActivity.class);
+                                GalleryActivity.class);
                         intent.putExtra("url", ((TextViewWithUrl)v).url);
                         intent.putExtra("gid", mGi.gid);
                         intent.putExtra("title", mGi.title);

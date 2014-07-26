@@ -116,7 +116,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
  *
  * @author Hippo
  */
-public class GellaryListActivity extends AbstractGalleryActivity
+public class GalleryListActivity extends AbstractGalleryActivity
         implements View.OnClickListener {
 
     private static final String TAG = "MangaListActivity";
@@ -199,13 +199,13 @@ public class GellaryListActivity extends AbstractGalleryActivity
                             @Override
                             public void onFailure(String eMsg) {
                                 setUserPanel();
-                                new SuperToast(GellaryListActivity.this, eMsg).setIcon(R.drawable.ic_warning).show();
-                                if (!GellaryListActivity.this.isFinishing())
+                                new SuperToast(GalleryListActivity.this, eMsg).setIcon(R.drawable.ic_warning).show();
+                                if (!GalleryListActivity.this.isFinishing())
                                     loginDialog.show();
                             }
                             @Override
                             public void onGetAvatar(final int code) {
-                                GellaryListActivity.this.runOnUiThread(new Runnable() {
+                                GalleryListActivity.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         switch (code) {
@@ -213,11 +213,11 @@ public class GellaryListActivity extends AbstractGalleryActivity
                                             setUserPanel();
                                             break;
                                         case EhClient.NO_AVATAR:
-                                            new SuperToast(GellaryListActivity.this, "无头像").show(); // TODO
+                                            new SuperToast(GalleryListActivity.this, "无头像").show(); // TODO
                                             break;
                                         case EhClient.GET_AVATAR_ERROR:
                                         default:
-                                            new SuperToast(GellaryListActivity.this, "获取头像失败", SuperToast.ERROR).show();  // TODO
+                                            new SuperToast(GalleryListActivity.this, "获取头像失败", SuperToast.ERROR).show();  // TODO
                                             break;
                                         }
                                     }
@@ -446,33 +446,33 @@ public class GellaryListActivity extends AbstractGalleryActivity
                             int defaultFavorite = Config.getDefaultFavorite();
                             switch (defaultFavorite) {
                             case -2:
-                                Favorite.getAddToFavoriteDialog(GellaryListActivity.this, gi).show();
+                                Favorite.getAddToFavoriteDialog(GalleryListActivity.this, gi).show();
                                 break;
                             case -1:
                                 ((AppContext)getApplication()).getData().addLocalFavourite(gi);
-                                new SuperToast(GellaryListActivity.this).setMessage(R.string.toast_add_favourite).show();
+                                new SuperToast(GalleryListActivity.this).setMessage(R.string.toast_add_favourite).show();
                                 break;
                             default:
                                 ((AppContext)getApplication()).getEhClient().addToFavorite(gi.gid,
                                         gi.token, defaultFavorite, null, new EhClient.OnAddToFavoriteListener() {
                                     @Override
                                     public void onSuccess() {
-                                        new SuperToast(GellaryListActivity.this).setMessage(R.string.toast_add_favourite).show();
+                                        new SuperToast(GalleryListActivity.this).setMessage(R.string.toast_add_favourite).show();
                                     }
                                     @Override
                                     public void onFailure(String eMsg) {
-                                        new SuperToast(GellaryListActivity.this).setMessage(R.string.failed_to_add).show();
+                                        new SuperToast(GalleryListActivity.this).setMessage(R.string.failed_to_add).show();
                                     }
                                 });
                             }
                             break;
                         case 1:
                             gi = getGalleryInfo(longClickItemIndex);
-                            Intent it = new Intent(GellaryListActivity.this, DownloadService.class);
+                            Intent it = new Intent(GalleryListActivity.this, DownloadService.class);
                             startService(it);
                             mServiceConn.getService().add(String.valueOf(gi.gid), gi.thumb,
                                     mClient.getDetailUrl(gi.gid, gi.token), gi.title);
-                            new SuperToast(GellaryListActivity.this, R.string.toast_add_download).show();
+                            new SuperToast(GalleryListActivity.this, R.string.toast_add_download).show();
                             break;
                         default:
                             break;
@@ -508,7 +508,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
                         try{
                             targetPage = Integer.parseInt(et.getText().toString()) - 1;
                         } catch(Exception e) {
-                            new SuperToast(GellaryListActivity.this, R.string.toast_invalid_page,
+                            new SuperToast(GalleryListActivity.this, R.string.toast_invalid_page,
                                     SuperToast.ERROR).show();
                             return;
                         }
@@ -550,9 +550,9 @@ public class GellaryListActivity extends AbstractGalleryActivity
                     public void onClick(View v) {
                         String key = et.getText().toString();
                         if (key.length() == 0)
-                            new SuperToast(GellaryListActivity.this, R.string.tag_name_empty).setIcon(R.drawable.ic_warning).show();
+                            new SuperToast(GalleryListActivity.this, R.string.tag_name_empty).setIcon(R.drawable.ic_warning).show();
                         else if (listMenuTag.contains(key) && !key.equals(oldStr))
-                            new SuperToast(GellaryListActivity.this, R.string.tag_name_empty).setIcon(R.drawable.ic_warning).show();
+                            new SuperToast(GalleryListActivity.this, R.string.tag_name_empty).setIcon(R.drawable.ic_warning).show();
                         else {
                             ((AlertButton)v).dialog.dismiss();
                             if (listener != null) {
@@ -587,11 +587,11 @@ public class GellaryListActivity extends AbstractGalleryActivity
                         if (searchNormal.getVisibility() == View.GONE) {
                             searchNormal.setVisibility(View.VISIBLE);
                             searchTag.setVisibility(View.GONE);
-                            new SuperToast(GellaryListActivity.this, R.string.toast_normal_mode).show();
+                            new SuperToast(GalleryListActivity.this, R.string.toast_normal_mode).show();
                         } else {
                             searchNormal.setVisibility(View.GONE);
                             searchTag.setVisibility(View.VISIBLE);
-                            new SuperToast(GellaryListActivity.this, R.string.toast_tag_mode).show();
+                            new SuperToast(GalleryListActivity.this, R.string.toast_tag_mode).show();
                         }
                     }
                 }).setPositiveButton(android.R.string.ok, new View.OnClickListener() {
@@ -757,7 +757,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
                  intent.getStringExtra(SearchManager.QUERY);
            mSearchView.setQuery(query, true);
         } else if (ACTION_GALLERY_LIST.equals(action)) {
-            int mode = intent.getIntExtra(GellaryListActivity.KEY_MODE, -1);
+            int mode = intent.getIntExtra(GalleryListActivity.KEY_MODE, -1);
             switch(mode) {
             case ListUrls.TAG:
                 lus = new ListUrls();
@@ -807,7 +807,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
     }
 
     private void showPopularWarningDialog() {
-        DialogBuilder db = new DialogBuilder(GellaryListActivity.this).
+        DialogBuilder db = new DialogBuilder(GalleryListActivity.this).
                 setCancelable(false).
                 setView(R.layout.popular_warning, false);
         db.setTitle(R.string.about_analyics_title);
@@ -820,7 +820,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
                 if (cb.isChecked())
                     Config.setPopularWarning(false);
 
-                Intent intent = new Intent(GellaryListActivity.this,
+                Intent intent = new Intent(GalleryListActivity.this,
                         SettingsActivity.class);
                 intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, SettingsActivity.AboutFragment.class.getName());
                 intent.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
@@ -875,7 +875,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
         });
 
         // Download service
-        Intent it = new Intent(GellaryListActivity.this, DownloadService.class);
+        Intent it = new Intent(GalleryListActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
 
         // Init dialog
@@ -936,7 +936,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                LayoutInflater li= LayoutInflater.from(GellaryListActivity.this);
+                LayoutInflater li= LayoutInflater.from(GalleryListActivity.this);
                 Drawable d = mResources.getDrawable(data[position * 2]);
                 d.setBounds(0, 0, Ui.dp2pix(36), Ui.dp2pix(36));
                 TextView tv = (TextView)li.inflate(R.layout.menu_item, null);
@@ -969,7 +969,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
                     break;
 
                 case 3: // Favourite
-                    intent = new Intent(GellaryListActivity.this,
+                    intent = new Intent(GalleryListActivity.this,
                             FavouriteActivity.class);
                     startActivity(intent);
                     break;
@@ -984,13 +984,13 @@ public class GellaryListActivity extends AbstractGalleryActivity
                     break;
 
                 case 5: // Download
-                    intent = new Intent(GellaryListActivity.this,
+                    intent = new Intent(GalleryListActivity.this,
                             DownloadActivity.class);
                     startActivity(intent);
                     break;
 
                 case 6: // Settings
-                    intent = new Intent(GellaryListActivity.this,
+                    intent = new Intent(GalleryListActivity.this,
                             SettingsActivity.class);
                     startActivity(intent);
                     break;
@@ -1048,11 +1048,11 @@ public class GellaryListActivity extends AbstractGalleryActivity
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
-                Intent intent = new Intent(GellaryListActivity.this,
-                        GellaryDetailActivity.class);
+                Intent intent = new Intent(GalleryListActivity.this,
+                        GalleryDetailActivity.class);
                 GalleryInfo gi = getGalleryInfo(position);
                 intent.putExtra("url", mClient.getDetailUrl(gi.gid, gi.token));
-                intent.putExtra(GellaryDetailActivity.KEY_G_INFO, gi);
+                intent.putExtra(GalleryDetailActivity.KEY_G_INFO, gi);
                 startActivity(intent);
             }
         });
@@ -1242,7 +1242,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
     public void onBackPressed() {
         if (System.currentTimeMillis() - curBackTime > BACK_PRESSED_INTERVAL) {
             curBackTime = System.currentTimeMillis();
-            new SuperToast(GellaryListActivity.this, R.string.exit_tip).show();
+            new SuperToast(GalleryListActivity.this, R.string.exit_tip).show();
         } else
             finish();
     }
@@ -1300,7 +1300,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
             public void onSuccess(String version, long size,
                     final String url, final String fileName, String info) {
                 String sizeStr = Util.sizeToString(size);
-                AlertDialog dialog = SuperDialogUtil.createUpdateDialog(GellaryListActivity.this,
+                AlertDialog dialog = SuperDialogUtil.createUpdateDialog(GalleryListActivity.this,
                         version, sizeStr, info,
                         new View.OnClickListener() {
                             @Override
@@ -1308,10 +1308,10 @@ public class GellaryListActivity extends AbstractGalleryActivity
                                 ((AlertButton)v).dialog.dismiss();
                                 // TODO
                                 try {
-                                    Downloader downloader = new Downloader(GellaryListActivity.this);
+                                    Downloader downloader = new Downloader(GalleryListActivity.this);
                                     downloader.resetData(Config.getDownloadPath(), fileName, url);
                                     downloader.setOnDownloadListener(
-                                            new UpdateHelper.UpdateListener(GellaryListActivity.this,
+                                            new UpdateHelper.UpdateListener(GalleryListActivity.this,
                                                     fileName));
                                     new Thread(downloader).start();
                                 } catch (MalformedURLException e) {
@@ -1319,7 +1319,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
                                 }
                             }
                         });
-                if (!GellaryListActivity.this.isFinishing())
+                if (!GalleryListActivity.this.isFinishing())
                     dialog.show();
             }
             @Override
@@ -1392,7 +1392,7 @@ public class GellaryListActivity extends AbstractGalleryActivity
                     listener.onSuccess(taskStamp, gis, gis.size() == 0 ? 0 : 1);
                     // Show update time
                     if (timeStamp != -1 && Config.getShowPopularUpdateTime())
-                        new SuperToast(GellaryListActivity.this,
+                        new SuperToast(GalleryListActivity.this,
                                 String.format(getString(R.string.popular_update_time),
                                         mAppContext.getDateFormat().format(timeStamp))).show();
                 }

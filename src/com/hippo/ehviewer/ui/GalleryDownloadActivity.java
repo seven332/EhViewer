@@ -36,7 +36,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
-public class GellaryDownloadActivity extends AbstractActivity {
+public class GalleryDownloadActivity extends AbstractActivity {
     private static final String TAG = "MangaDownloadActivity";
     
     public static final String KEY_TITLE = "title";
@@ -85,11 +85,11 @@ public class GellaryDownloadActivity extends AbstractActivity {
         isv.setOnEdgeListener(new GalleryView.OnEdgeListener() {
             @Override
             public void onLastPageEdge() {
-                new SuperToast(GellaryDownloadActivity.this, R.string.last_page).show();
+                new SuperToast(GalleryDownloadActivity.this, R.string.last_page).show();
             }
             @Override
             public void onFirstPageEdge() {
-                new SuperToast(GellaryDownloadActivity.this, R.string.first_page).show();
+                new SuperToast(GalleryDownloadActivity.this, R.string.first_page).show();
             }
         });
         glrv.setContentPane(isv);

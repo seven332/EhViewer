@@ -21,7 +21,7 @@ import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
-import com.hippo.ehviewer.ui.GellaryDetailActivity;
+import com.hippo.ehviewer.ui.GalleryDetailActivity;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.SuperToast;
 

@@ -49,7 +49,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
-public class GellaryActivity extends AbstractActivity {
+public class GalleryActivity extends AbstractActivity {
     private String TAG = "MangaActivity";
     
     private AppContext mAppContext;
@@ -120,7 +120,7 @@ public class GellaryActivity extends AbstractActivity {
             
             final String imageName = String.format("%05d", index + 1) + "." + Util.getExtension(imageUrl);
             
-            final Downloader downloader = new Downloader(GellaryActivity.this);
+            final Downloader downloader = new Downloader(GalleryActivity.this);
             try {
                 downloader.resetData(mFolder.getPath(),
                         imageName,
@@ -199,7 +199,7 @@ public class GellaryActivity extends AbstractActivity {
             retryTimes++;
             int targetPage = (Integer)checkFlag;
             if (retryTimes < maxRetry) {
-                new SuperToast(GellaryActivity.this)
+                new SuperToast(GalleryActivity.this)
                 .setIcon(R.drawable.ic_warning)
                 .setMessage(eMsg + " " + 
                         String.format(getString(R.string.em_retry_times), retryTimes))
@@ -217,12 +217,12 @@ public class GellaryActivity extends AbstractActivity {
                 if (targetPage == firstPage - 1 &&
                         getPrePage == true) {
                     getPrePage = false;
-                    new SuperToast(GellaryActivity.this)
+                    new SuperToast(GalleryActivity.this)
                     .setIcon(R.drawable.ic_warning)
                     .setMessage(R.string.retry_max_pre).show();
                 }
                 else {
-                    new SuperToast(GellaryActivity.this)
+                    new SuperToast(GalleryActivity.this)
                     .setIcon(R.drawable.ic_warning)
                     .setMessage(R.string.retry_max_next).show();
                     mStop = true;
@@ -294,12 +294,12 @@ public class GellaryActivity extends AbstractActivity {
         isv.setOnEdgeListener(new GalleryView.OnEdgeListener() {
             @Override
             public void onLastPageEdge() {
-                new SuperToast(GellaryActivity.this)
+                new SuperToast(GalleryActivity.this)
                 .setMessage(R.string.last_page).show();
             }
             @Override
             public void onFirstPageEdge() {
-                new SuperToast(GellaryActivity.this)
+                new SuperToast(GalleryActivity.this)
                 .setMessage(R.string.first_page).show();
             }
         });

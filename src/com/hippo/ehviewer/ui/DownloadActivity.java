@@ -98,11 +98,11 @@ public class DownloadActivity extends AbstractActivity {
                         case 2:
                             DownloadInfo di= mDownloadInfos.get(longClickItemIndex);
                             Intent intent = new Intent(DownloadActivity.this,
-                                    GellaryDownloadActivity.class);
-                            intent.putExtra(GellaryDownloadActivity.KEY_TITLE, di.title);
-                            intent.putExtra(GellaryDownloadActivity.KEY_SIZE, di.pageSum);
-                            intent.putExtra(GellaryDownloadActivity.KEY_GID, Integer.parseInt(di.gid));
-                            intent.putExtra(GellaryDownloadActivity.KEY_END_INDEX, di.lastStartIndex);
+                                    GalleryDownloadActivity.class);
+                            intent.putExtra(GalleryDownloadActivity.KEY_TITLE, di.title);
+                            intent.putExtra(GalleryDownloadActivity.KEY_SIZE, di.pageSum);
+                            intent.putExtra(GalleryDownloadActivity.KEY_GID, Integer.parseInt(di.gid));
+                            intent.putExtra(GalleryDownloadActivity.KEY_END_INDEX, di.lastStartIndex);
                             startActivity(intent);
                         default:
                             break;
@@ -305,11 +305,11 @@ public class DownloadActivity extends AbstractActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(DownloadActivity.this,
-                                GellaryDownloadActivity.class);
-                        intent.putExtra(GellaryDownloadActivity.KEY_TITLE, di.title);
-                        intent.putExtra(GellaryDownloadActivity.KEY_SIZE, di.pageSum);
-                        intent.putExtra(GellaryDownloadActivity.KEY_GID, Integer.parseInt(di.gid));
-                        intent.putExtra(GellaryDownloadActivity.KEY_END_INDEX, di.lastStartIndex);
+                                GalleryDownloadActivity.class);
+                        intent.putExtra(GalleryDownloadActivity.KEY_TITLE, di.title);
+                        intent.putExtra(GalleryDownloadActivity.KEY_SIZE, di.pageSum);
+                        intent.putExtra(GalleryDownloadActivity.KEY_GID, Integer.parseInt(di.gid));
+                        intent.putExtra(GalleryDownloadActivity.KEY_END_INDEX, di.lastStartIndex);
                         startActivity(intent);
                     }
                 });

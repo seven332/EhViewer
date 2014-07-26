@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer;
 
-import com.hippo.ehviewer.ui.GellaryListActivity;
+import com.hippo.ehviewer.ui.GalleryListActivity;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.widget.AlertButton;
@@ -277,7 +277,7 @@ public class StartActivity extends Activity {
     }
     
     private void redirectTo(){        
-        Intent intent = new Intent(this, GellaryListActivity.class);
+        Intent intent = new Intent(this, GalleryListActivity.class);
         startActivity(intent);
         finish();
     }
