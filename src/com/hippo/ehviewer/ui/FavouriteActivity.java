@@ -23,6 +23,7 @@ import java.util.Set;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -43,12 +44,15 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.AppContext;
+import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
@@ -62,9 +66,11 @@ import com.hippo.ehviewer.widget.ActionableToastBar;
 import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
-import com.hippo.ehviewer.widget.HfListView;
+import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.ProgressDialogBulider;
+import com.hippo.ehviewer.widget.PullViewGroup;
+import com.hippo.ehviewer.widget.RatingView;
 import com.hippo.ehviewer.widget.SuperToast;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
@@ -74,13 +80,16 @@ public class FavouriteActivity extends AbstractGalleryActivity
     @SuppressWarnings("unused")
     private static final String TAG = "FavouriteActivity";
 
+    private static final String LOCAL_FAVORITE_URL = "local_favorite://all";
+
     private Data mData;
     private Resources mResources;
     private EhClient mClient;
 
     private RelativeLayout mMainView;
-    private HfListView mHlv;
+    private PullViewGroup mPullViewGroup;
     private ListView mList;
+    private BaseAdapter mAdapter;
 
     private SlidingMenu mSlidingMenu;
     private ListView mMenuList;
@@ -96,6 +105,9 @@ public class FavouriteActivity extends AbstractGalleryActivity
     private AlertDialog mMoveDialog;
     private ProgressDialogBulider mPdb;
     private AlertDialog mProgressDialog;
+
+    private List<GalleryInfo> mLastModifyGiList = null;
+    private int mLastModifyPageNum = 0;
 
     private final DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
 
@@ -113,21 +125,22 @@ public class FavouriteActivity extends AbstractGalleryActivity
     }
 
     private void initLocalFavorite() {
-        mHlv.setEnabledHeader(false);
-        mHlv.setEnabledFooter(false);
+        mPullViewGroup.setEnabledHeader(false);
+        mPullViewGroup.setEnabledFooter(false);
         setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
-        setGalleryInfos(mData.getAllLocalFavourites());
-        if (mData.getAllLocalFavourites().isEmpty())
-            onlyShowNone();
-        else
-            onlyShowList();
+        refresh();
     }
 
     private void initFavorite() {
-        mHlv.setEnabledHeader(true);
-        mHlv.setEnabledFooter(true);
+        mPullViewGroup.setEnabledHeader(true);
+        mPullViewGroup.setEnabledFooter(true);
         setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
         refresh();
+    }
+
+    @Override
+    protected int getLayoutRes() {
+        return R.layout.favorite_list;
     }
 
     @Override
@@ -158,8 +171,8 @@ public class FavouriteActivity extends AbstractGalleryActivity
 
         // Get View
         mMainView = getMainView();
-        mHlv = getHlv();
-        mList = getListView();
+        mPullViewGroup = getPullViewGroup();
+        mList = (ListView)getContentView();
         mMenuList = (ListView)findViewById(R.id.favorite_menu_list);
 
         mActionableToastBar = new ActionableToastBar(this);
@@ -167,11 +180,10 @@ public class FavouriteActivity extends AbstractGalleryActivity
         mMainView.addView(mActionableToastBar);
         mMainView.setOnTouchListener(this);
 
-        mMenuIndex = 0;
-        initLocalFavorite();
-
         mChoiceGiSet = new LinkedHashSet<GalleryInfo>();
         mChoiceGiSetCopy = new LinkedHashSet<GalleryInfo>();
+
+        mList.setDivider(null);
         mList.setOnTouchListener(this);
         mList.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -187,6 +199,8 @@ public class FavouriteActivity extends AbstractGalleryActivity
         });
         mList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         mList.setMultiChoiceModeListener(this);
+        mAdapter = new ListAdapter(this, getGalleryList());
+        mList.setAdapter(mAdapter);
 
         mMenuList.setClipToPadding(false);
         mMenuList.setAdapter(new BaseAdapter() {
@@ -286,6 +300,10 @@ public class FavouriteActivity extends AbstractGalleryActivity
             superToast.setDuration(SuperToast.LENGTH_LONG);
             superToast.show();
         }
+
+        // TODO Should show default favourite
+        mMenuIndex = 0;
+        initLocalFavorite();
     }
 
     @Override
@@ -391,7 +409,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                 }
                 @Override
                 public void onFailure(String eMsg) {
-                    notifyDataSetChanged();
+                    mAdapter.notifyDataSetChanged();
                     mPdb = null;
                     mProgressDialog.dismiss();
                     mProgressDialog = null;
@@ -405,7 +423,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                 }
             });
         } else {
-            notifyDataSetChanged();
+            mAdapter.notifyDataSetChanged();
             mSetIter = null;
             mPdb = null;
             mProgressDialog.dismiss();
@@ -440,7 +458,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                                 mClient.modifyFavorite(getGids(mChoiceGiSetCopy), mTargetCat,
                                         mMenuIndex -1, new Modify(mResources.getString(R.string.move_successfully),
                                                 mResources.getString(R.string.failed_to_move), true));
-                                mHlv.setRefreshing(true);
+                                mPullViewGroup.setRefreshing(true);
                             } else { // change cloud dir
                                 mMoveDialog.dismiss();
                                 mMoveDialog = null;
@@ -448,7 +466,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                                 mClient.modifyFavorite(getGids(mChoiceGiSetCopy), mTargetCat,
                                         mMenuIndex -1, new Modify(mResources.getString(R.string.move_successfully),
                                                 mResources.getString(R.string.failed_to_move), false));
-                                mHlv.setRefreshing(true);
+                                mPullViewGroup.setRefreshing(true);
                             }
                         }
                     }
@@ -468,13 +486,13 @@ public class FavouriteActivity extends AbstractGalleryActivity
             if (mMenuIndex == 0) {
                 for (GalleryInfo gi : mChoiceGiSet)
                     mData.deleteLocalFavourite(gi.gid);
-                notifyDataSetChanged();
+                refresh();
             } else {
                 mTargetCat = -1;
                 mClient.modifyFavorite(getGids(mChoiceGiSet), mTargetCat,
                         mMenuIndex -1, new Modify(mResources.getString(R.string.delete_successfully),
                                 mResources.getString(R.string.failed_to_delete), false));
-                mHlv.setRefreshing(true);
+                mPullViewGroup.setRefreshing(true);
             }
             mode.finish();
             return true;
@@ -504,23 +522,39 @@ public class FavouriteActivity extends AbstractGalleryActivity
 
     @Override
     protected String getTargetUrl(int targetPage) {
-        return mClient.getFavoriteUrl(mMenuIndex-1, targetPage);
+        if (mMenuIndex == 0)
+            return LOCAL_FAVORITE_URL;
+        else
+            return mClient.getFavoriteUrl(mMenuIndex-1, targetPage);
     }
 
     @Override
     protected void doGetGallerys(String url, final long taskStamp,
             final OnGetListListener listener) {
-        mClient.getGList(url, Config.getApiMode(), null, new EhClient.OnGetGListListener() {
-            @Override
-            public void onSuccess(Object checkFlag, List<GalleryInfo> giList,
-                    int maxPage) {
-                listener.onSuccess(taskStamp, giList, maxPage);
-            }
-            @Override
-            public void onFailure(Object checkFlag, String eMsg) {
-                listener.onFailure(taskStamp, eMsg);
-            }
-        });
+        // If get local favorite
+        if (mLastModifyGiList != null) {
+            listener.onSuccess(mAdapter, taskStamp, mLastModifyGiList, mLastModifyPageNum);
+            mLastModifyGiList = null;
+            mLastModifyPageNum = 0;
+        } else if (LOCAL_FAVORITE_URL.equals(url)) {
+            List<GalleryInfo> giList = mData.getAllLocalFavourites();
+            if (giList == null || giList.size() == 0)
+                listener.onSuccess(mAdapter, taskStamp, giList, 0);
+            else
+                listener.onSuccess(mAdapter, taskStamp, giList, 1);
+        } else { // If get cloud favorite
+            mClient.getGList(url, Config.getApiMode(), null, new EhClient.OnGetGListListener() {
+                @Override
+                public void onSuccess(Object checkFlag, List<GalleryInfo> giList,
+                        int maxPage) {
+                    listener.onSuccess(mAdapter, taskStamp, giList, maxPage);
+                }
+                @Override
+                public void onFailure(Object checkFlag, String eMsg) {
+                    listener.onFailure(mAdapter, taskStamp, eMsg);
+                }
+            });
+        }
     }
 
     private class Modify implements EhClient.OnModifyFavoriteListener {
@@ -535,9 +569,10 @@ public class FavouriteActivity extends AbstractGalleryActivity
         }
 
         @Override
-        public void onSuccess(List<GalleryInfo> gis, int maxPage) {
-            setGalleryInfos(gis, maxPage);
-            mHlv.setRefreshing(false);
+        public void onSuccess(List<GalleryInfo> gis, int pageNum) {
+            mLastModifyGiList = gis;
+            mLastModifyPageNum = pageNum;
+            refresh();
             new SuperToast(FavouriteActivity.this, mSuccStr).show();
 
             // add to local
@@ -547,7 +582,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         }
         @Override
         public void onFailure(String eMsg) {
-            mHlv.setRefreshing(false);
+            mPullViewGroup.setRefreshing(false);
             showToastBar(new Remodify(mSuccStr, mFailStr, mToLocal), 0, mFailStr + ": " + eMsg,
                     R.drawable.ic_action_redo, mResources.getString(R.string.retry), true);
         }
@@ -572,6 +607,82 @@ public class FavouriteActivity extends AbstractGalleryActivity
         @Override
         public void onActionClicked() {
             mClient.modifyFavorite(getGids(mChoiceGiSetCopy), -1, mMenuIndex -1, new Modify(mSuccStr, mFailStr, mToLocal));
+        }
+    }
+
+    public class ListAdapter extends BaseAdapter {
+        private final List<GalleryInfo> mGiList;
+        private final ImageLoader mImageLoader;
+
+        public ListAdapter(Context context, List<GalleryInfo> gilist) {
+            mGiList = gilist;
+            mImageLoader =ImageLoader.getInstance(FavouriteActivity.this);
+        }
+
+        @Override
+        public int getCount() {
+            return mGiList.size();
+        }
+        @Override
+        public Object getItem(int position) {
+            return mGiList == null ? 0 : mGiList.get(position);
+        }
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            GalleryInfo gi= mGiList.get(position);
+            if (convertView == null || !(convertView instanceof LinearLayout)) {
+                convertView = LayoutInflater.from(FavouriteActivity.this)
+                        .inflate(R.layout.favorite_list_item, parent, false);
+                CardViewSalon.reform(FavouriteActivity.this.getResources(),
+                        ((ViewGroup)convertView).getChildAt(0), new int[][]{
+                                new int[]{android.R.attr.state_pressed},
+                                new int[]{android.R.attr.state_activated},
+                                new int[]{}},
+                                new int[]{0xff84cae4, 0xff33b5e5, 0xFFFAFAFA});
+            }
+            final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
+            if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
+                // Set margin top 8dp if position is 0, otherwise 4dp
+                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)
+                        convertView.findViewById(R.id.card_view).getLayoutParams();
+                if (position == 0)
+                    lp.topMargin = Ui.dp2pix(8);
+                else
+                    lp.topMargin = Ui.dp2pix(4);
+
+                // Set new thumb
+                thumb.setImageDrawable(null);
+                thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));
+                mImageLoader.add(gi.thumb, String.valueOf(gi.gid),
+                        new LoadImageView.SimpleImageGetListener(thumb).setFixScaleType(true));
+            }
+            // Set manga name
+            TextView name = (TextView) convertView.findViewById(R.id.name);
+            name.setText(gi.title);
+            // Set uploder
+            TextView uploader = (TextView) convertView.findViewById(R.id.uploader);
+            uploader.setText(gi.uploader);
+            // Set category
+            TextView category = (TextView) convertView.findViewById(R.id.category);
+            String newText = Ui.getCategoryText(gi.category);
+            if (!newText.equals(category.getText())) {
+                category.setText(newText);
+                category.setBackgroundColor(Ui.getCategoryColor(gi.category));
+            }
+            // Set star
+            RatingView rate = (RatingView) convertView
+                    .findViewById(R.id.rate);
+            rate.setRating(gi.rating);
+            // set posted
+            TextView posted = (TextView) convertView.findViewById(R.id.posted);
+            posted.setText(gi.posted);
+
+            return convertView;
         }
     }
 }

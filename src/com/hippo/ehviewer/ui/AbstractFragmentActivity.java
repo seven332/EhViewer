@@ -31,7 +31,8 @@ public abstract class AbstractFragmentActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Ui.adjustOrientation(this, true);
+        Ui.adjustOrientation(this);
+        Ui.updateTranslucent(this);
     }
 
     @Override
@@ -45,7 +46,8 @@ public abstract class AbstractFragmentActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
 
-        Ui.adjustOrientation(this, true);
+        Ui.adjustOrientation(this);
+        Ui.updateTranslucent(this);
     }
 
     @Override

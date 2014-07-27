@@ -284,17 +284,9 @@ public class Ui {
     }
 
     public static void adjustOrientation(Activity activity) {
-        adjustOrientation(activity, false);
-    }
-
-    public static void adjustOrientation(Activity activity,
-            boolean updateTranslucent) {
         int screenOri = Config.getScreenOriMode();
         if (screenOri != activity.getRequestedOrientation())
             activity.setRequestedOrientation(screenOri);
-
-        if (updateTranslucent)
-            updateTranslucent(activity);
     }
 
     public static SystemBarConfig translucent(

@@ -30,7 +30,8 @@ public class AbstractPreferenceActivity extends PreferenceActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Ui.adjustOrientation(this, true);
+        Ui.adjustOrientation(this);
+        Ui.updateTranslucent(this);
     }
 
     @Override
@@ -44,7 +45,8 @@ public class AbstractPreferenceActivity extends PreferenceActivity {
     protected void onResume() {
         super.onResume();
 
-        Ui.adjustOrientation(this, true);
+        Ui.adjustOrientation(this);
+        Ui.updateTranslucent(this);
     }
 
     @Override

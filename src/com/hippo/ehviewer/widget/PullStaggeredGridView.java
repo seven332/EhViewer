@@ -16,46 +16,49 @@
 
 package com.hippo.ehviewer.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.ListView;
 
-public class PullListView extends PullViewGroup {
+import com.etsy.android.grid.StaggeredGridView;
 
-    private ListView mListView;
+public class PullStaggeredGridView extends PullViewGroup {
 
-    public PullListView(Context context) {
+    private StaggeredGridView mStaggeredGridView;
+
+    public PullStaggeredGridView(Context context) {
         super(context);
     }
 
-    public PullListView(Context context, AttributeSet attrs) {
+    public PullStaggeredGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
     protected AbsListView initContentView(Context context) {
-        return mListView = new ListView(context);
+        return mStaggeredGridView = new StaggeredGridView(context);
     }
 
     @Override
     protected AbsListView initContentView(Context context, AttributeSet attrs) {
-        return mListView = new ListView(context, attrs);
+        return mStaggeredGridView = new StaggeredGridView(context, attrs);
     }
 
     @Override
     protected void addFooterView(View view) {
-        mListView.addFooterView(view);
+        mStaggeredGridView.addFooterView(view);
     }
 
     @Override
     protected void removeFooterView(View view) {
-        mListView.removeFooterView(view);
+        mStaggeredGridView.removeFooterView(view);
     }
 
+    @SuppressLint("NewApi")
     @Override
     public void setSelectionFromTop(int position, int y) {
-        mListView.setSelectionFromTop(position, y);
+        mStaggeredGridView.setSelectionFromTop(position, y);
     }
 }

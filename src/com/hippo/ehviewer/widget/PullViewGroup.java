@@ -16,64 +16,81 @@
 
 package com.hippo.ehviewer.widget;
 
-import com.hippo.ehviewer.R;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class HfListView extends SuperSwipeRefreshLayout
-        implements AbsListView.OnScrollListener {
-    
+import com.hippo.ehviewer.R;
+
+public abstract class PullViewGroup extends SuperSwipeRefreshLayout
+        implements AbsListView.OnScrollListener{
+
     private final static int FOOTER_REFRESHING = 0;
     private final static int FOOTER_SUCCESS = 1;
     private final static int FOOTER_FAIL = 2;
-    
-    private Context mContext;
-    private ListView mListView;
-    
+
+    private final Context mContext;
+    private final AbsListView mContentView;
+
     private View mFooter;
     private TextView mFooterTipTextView;
     private ProgressBar mFooterProgressBar;
     private int footerState = FOOTER_SUCCESS;
     private OnFooterRefreshListener mFooterRefreshListener;
-    
+
     // Footer String to show
     private String mFooterRefreshStr;
     private String mFooterSuccessStr;
     private String mFooterFailStr;
-    
+
     private boolean mIsEnabledHeader = true;
     private boolean mIsEnabledFooter = true;
-    
-    public HfListView(Context context) {
+
+    public PullViewGroup(Context context) {
         super(context);
         mContext = context;
+        mContentView = initContentView(context);
         init();
     }
-    
-    public HfListView(Context context, AttributeSet attrs) {
+
+    public PullViewGroup(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
+        mContentView = initContentView(context, attrs);
         init();
     }
-    
+
+    /**
+     * Init content view here
+     * @param context
+     */
+    protected abstract AbsListView initContentView(Context context);
+
+    /**
+     * Init content view here
+     * @param context
+     */
+    protected abstract AbsListView initContentView(Context context, AttributeSet attrs);
+
+    protected abstract void addFooterView(View view);
+
+    protected abstract void removeFooterView(View view);
+
+    public abstract void setSelectionFromTop(int position, int y);
+
     private void init() {
-        mListView = new ListView(mContext);
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        addView(mListView, lp);
-        
-        mListView.setOnScrollListener(this);
-        mFooter = (LinearLayout)LayoutInflater.from(mContext)
+        addView(mContentView, lp);
+
+        mContentView.setOnScrollListener(this);
+        mFooter = LayoutInflater.from(mContext)
                 .inflate(R.layout.pull_list_view_footer, null);
         mFooterTipTextView = (TextView)mFooter.findViewById(R.id.footer_tip_text);
         mFooterProgressBar = (ProgressBar)mFooter.findViewById(R.id.footer_progressBar);
@@ -85,39 +102,39 @@ public class HfListView extends SuperSwipeRefreshLayout
             }
         });
         changeFooterViewByState();
-        mListView.addFooterView(mFooter);
+        addFooterView(mFooter);
     }
-    
-    public ListView getListView() {
-        return mListView;
+
+    public AbsListView getContentView() {
+        return mContentView;
     }
-    
+
     /**
      * Just a alias
      * @param l
      */
-    public void setOnHeaderRefreshListener(HfListView.OnRefreshListener l) {
+    public void setOnHeaderRefreshListener(OnRefreshListener l) {
         super.setOnRefreshListener(l);
     }
-    
+
     public void setOnFooterRefreshListener(OnFooterRefreshListener l) {
         mFooterRefreshListener = l;
     }
-    
+
     private void footerRefresh() {
         if (mFooterRefreshListener.onFooterRefresh()) {
             footerState = FOOTER_REFRESHING;
             changeFooterViewByState();
-            
+
             // Disable header refresh
             if (mIsEnabledHeader)
                 setEnabled(false);
         }
     }
-    
+
     /**
      * Set footer UI String
-     * 
+     *
      * @param refreshStr
      * @param successStr
      * @param failStr
@@ -126,7 +143,7 @@ public class HfListView extends SuperSwipeRefreshLayout
         mFooterRefreshStr = refreshStr;
         mFooterSuccessStr = successStr;
         mFooterFailStr = failStr;
-        
+
         switch (footerState) {
         case FOOTER_REFRESHING:
             mFooterTipTextView.setText(mFooterRefreshStr);
@@ -139,7 +156,7 @@ public class HfListView extends SuperSwipeRefreshLayout
             break;
         }
     }
-    
+
     /**
      * Refresh footer UI
      */
@@ -159,54 +176,55 @@ public class HfListView extends SuperSwipeRefreshLayout
             break;
         }
     }
-    
+
     public void setHeaderRefreshComplete() {
         super.setRefreshing(false);
     }
-    
+
     public void setFooterRefreshComplete(boolean isSuccess) {
         if (isSuccess)
             footerState = FOOTER_SUCCESS;
         else
             footerState = FOOTER_FAIL;
         changeFooterViewByState();
-        
+
         // enable header refresh
         if (mIsEnabledHeader)
             setEnabled(true);
     }
-    
+
     public void setAnyRefreshComplete() {
         setAnyRefreshComplete(true);
     }
-    
+
     public void setAnyRefreshComplete(boolean isSuccess) {
         setHeaderRefreshComplete();
         setFooterRefreshComplete(isSuccess);
     }
-    
+
     /**
      * @return True if actionbar is refreshing
      */
     public boolean isHeaderRefreshing() {
         return super.isRefreshing();
     }
-    
+
     /**
      * @return True if footer is refreshing
      */
     public boolean isFooterRefreshing() {
         return footerState == FOOTER_REFRESHING;
     }
-    
+
     /**
      * @return True if actionbar or footer is refreshing
      */
+    @Override
     public boolean isRefreshing() {
         return (mIsEnabledHeader ? isHeaderRefreshing() : false)
                 | (mIsEnabledFooter ? isFooterRefreshing() : false);
     }
-    
+
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {}
 
@@ -219,25 +237,25 @@ public class HfListView extends SuperSwipeRefreshLayout
                 && footerState != FOOTER_FAIL)
             footerRefresh();
     }
-    
+
     public void setEnabledHeader(boolean enabled) {
         if (mIsEnabledHeader == enabled)
             return;
-        
+
         mIsEnabledHeader = enabled;
         setEnabled(enabled);
     }
-    
+
     public void setEnabledFooter(boolean enabled) {
         if (mIsEnabledFooter == enabled)
             return;
-        
+
         if (mIsEnabledFooter = enabled)
-            mListView.addFooterView(mFooter);
+            addFooterView(mFooter);
         else
-            mListView.removeFooterView(mFooter);
+            removeFooterView(mFooter);
     }
-    
+
     public interface OnFooterRefreshListener {
         /**
          * @return True if this refresh action is vaild

@@ -26,7 +26,7 @@ import android.view.View;
 
 public class FswView extends View {
     private List<OnFitSystemWindowsListener> mListeners;
-    
+
     public FswView(Context context) {
         super(context);
         init();
@@ -38,17 +38,16 @@ public class FswView extends View {
         super(context, attrs, defStyle);
         init();
     }
-    
+
     public void init() {
         mListeners = new LinkedList<OnFitSystemWindowsListener>();
         setFitsSystemWindows(true);
-        setVisibility(View.GONE);
     }
-    
+
     public void addOnFitSystemWindowsListener(OnFitSystemWindowsListener l) {
         mListeners.add(l);
     }
-    
+
     @Override
     protected boolean fitSystemWindows(Rect insets) {
         boolean re = super.fitSystemWindows(insets);

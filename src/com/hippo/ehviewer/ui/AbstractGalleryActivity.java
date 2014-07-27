@@ -22,36 +22,27 @@ import java.util.List;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.cache.ImageCache;
-import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.ListParser;
-import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.FswView;
-import com.hippo.ehviewer.widget.HfListView;
-import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
-import com.hippo.ehviewer.widget.RatingView;
+import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RefreshTextView;
 import com.hippo.ehviewer.widget.SuperToast;
 
 public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
-        implements HfListView.OnFooterRefreshListener,
-                HfListView.OnRefreshListener {
+        implements PullViewGroup.OnFooterRefreshListener,
+        PullViewGroup.OnRefreshListener {
     @SuppressWarnings("unused")
     private static final String TAG = AbstractGalleryActivity.class.getSimpleName();
 
@@ -62,14 +53,12 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
 
     protected AppContext mAppContext;
     protected EhClient mClient;
-    private ImageLoader mImageLoader;
 
     private List<GalleryInfo> mGiList;
-    private GalleryAdapter mGalleryAdapter;
 
     private RelativeLayout mMainView;
-    private HfListView mHlv;
-    private ListView mList;
+    private PullViewGroup mPullViewGroup;
+    private AbsListView mContentView;
     private RefreshTextView mRefreshTextView;
 
     private long mTaskStamp;
@@ -105,7 +94,22 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
      * @return
      */
     protected abstract String getTargetUrl(int targetPage);
+
+    /**
+     * Do get gallarys here, you shuold invoke the onSuccess or
+     * onFailure of listener when over
+     *
+     * @param url
+     * @param taskStamp
+     * @param listener
+     */
     protected abstract void doGetGallerys(String url, long taskStamp, OnGetListListener listener);
+
+    /**
+     * Get the layout resources
+     * @return
+     */
+    protected abstract int getLayoutRes();
 
     private void getGallerys() {
         setGallerysLayout();
@@ -137,20 +141,20 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     }
 
     public void onlyShowList() {
-        mHlv.setVisibility(View.VISIBLE);
+        mPullViewGroup.setVisibility(View.VISIBLE);
         mRefreshTextView.setRefreshing(false);
         mRefreshTextView.setVisibility(View.GONE);
     }
 
     public void onlyShowNone() {
-        mHlv.setVisibility(View.GONE);
+        mPullViewGroup.setVisibility(View.GONE);
         mRefreshTextView.setVisibility(View.VISIBLE);
         mRefreshTextView.setEmesg(R.string.none, false);
     }
 
     protected void firstTimeRefresh() {
-        // set mHlv gone, make wait view show
-        mHlv.setVisibility(View.GONE);
+        // set mPullViewGroup gone, make wait view show
+        mPullViewGroup.setVisibility(View.GONE);
         mRefreshTextView.setVisibility(View.VISIBLE);
         mRefreshTextView.setRefreshing(true);
 
@@ -158,12 +162,12 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     }
 
     private void setGallerysLayout() {
-        if (mHlv.getVisibility() == View.VISIBLE) {
+        if (mPullViewGroup.getVisibility() == View.VISIBLE) {
             if (!isFootRefresh)
-                mHlv.setRefreshing(true);
+                mPullViewGroup.setRefreshing(true);
             mRefreshTextView.setVisibility(View.GONE);
         } else {
-            mHlv.setVisibility(View.GONE);
+            mPullViewGroup.setVisibility(View.GONE);
             mRefreshTextView.setVisibility(View.VISIBLE);
             mRefreshTextView.setRefreshing(true);
         }
@@ -246,18 +250,17 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.list);
+        setContentView(getLayoutRes());
 
         mAppContext = (AppContext)getApplication();
         mClient = mAppContext.getEhClient();
-        mImageLoader = ImageLoader.getInstance(this);
 
         mGiList = new ArrayList<GalleryInfo>();
 
         mMainView = (RelativeLayout)findViewById(R.id.main);
-        mHlv = (HfListView)findViewById(R.id.list);
-        mHlv.setAgainstToChildPadding(true);
-        mList = mHlv.getListView();
+        mPullViewGroup = (PullViewGroup)findViewById(R.id.list);
+        mPullViewGroup.setAgainstToChildPadding(true);
+        mContentView = mPullViewGroup.getContentView();
         mRefreshTextView = (RefreshTextView)findViewById(R.id.refresh_text);
 
         FswView alignment = (FswView)findViewById(R.id.alignment);
@@ -267,27 +270,24 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             public void onfitSystemWindows(int paddingLeft, int paddingTop,
                     int paddingRight, int paddingBottom) {
                 mPaddingTop = paddingTop;
-                mList.setPadding(mList.getPaddingLeft(), paddingTop,
-                        mList.getPaddingRight(), paddingBottom);
+                mContentView.setPadding(mContentView.getPaddingLeft(), paddingTop,
+                        mContentView.getPaddingRight(), paddingBottom);
             }
         });
 
-        mHlv.setColorScheme(R.color.refresh_color_1,
+        mPullViewGroup.setColorScheme(R.color.refresh_color_1,
                 R.color.refresh_color_2,
                 R.color.refresh_color_3,
                 R.color.refresh_color_4);
-        mHlv.setOnHeaderRefreshListener(this);
-        mHlv.setOnFooterRefreshListener(this);
-        mHlv.setFooterString(getString(R.string.footer_loading),
+        mPullViewGroup.setOnHeaderRefreshListener(this);
+        mPullViewGroup.setOnFooterRefreshListener(this);
+        mPullViewGroup.setFooterString(getString(R.string.footer_loading),
                 getString(R.string.footer_loaded),
                 getString(R.string.footer_fail));
 
-        mGalleryAdapter = new GalleryAdapter();
-        mList.setAdapter(mGalleryAdapter);
-        mList.setOnScrollListener(new ScrollListener());
-        mList.setDivider(null);
-        mList.setSelector(new ColorDrawable(Color.TRANSPARENT));
-        mList.setClipToPadding(false);
+        mContentView.setOnScrollListener(new ScrollListener());
+        mContentView.setSelector(new ColorDrawable(Color.TRANSPARENT));
+        mContentView.setClipToPadding(false);
 
         mRefreshTextView.setDefaultRefresh("点击重试", new RefreshTextView.OnRefreshListener() { // TODO
             @Override
@@ -301,30 +301,30 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
     /**
      * @return list view
      */
-    public ListView getListView() {
-        return mList;
+    public AbsListView getContentView() {
+        return mContentView;
     }
 
     public RelativeLayout getMainView() {
         return mMainView;
     }
 
-    public HfListView getHlv() {
-        return mHlv;
+    public PullViewGroup getPullViewGroup() {
+        return mPullViewGroup;
     }
 
     /**
      * @return True if actionbar or footer is refreshing
      */
     public boolean isRefreshing() {
-        return mHlv.isRefreshing();
+        return mPullViewGroup.isRefreshing();
     }
 
     public boolean isGetGalleryOk() {
-        return mHlv.getVisibility() == View.VISIBLE;
+        return mPullViewGroup.getVisibility() == View.VISIBLE;
     }
 
-    public int getMaxPage() {
+    public int getPageNum() {
         return mPageNum;
     }
 
@@ -332,111 +332,19 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         return mCurPage;
     }
 
+    public List<GalleryInfo> getGalleryList() {
+        return mGiList;
+    }
+
     public GalleryInfo getGalleryInfo(int position) {
         return mGiList.get(position);
-    }
-
-    public void setGalleryInfos(List<GalleryInfo> gis) {
-        setGalleryInfos(gis, 1);
-    }
-
-    public void setGalleryInfos(List<GalleryInfo> gis, int pageNum) {
-        mGiList = gis;
-        mGalleryAdapter.notifyDataSetChanged();
-
-        mFirstIndex = 0;
-        mLastIndex = mGiList.size() - 1;
-        mCurPage = 0;
-        mFirstPage = 0;
-        mLastPage = 0;
-        mPageNum = pageNum;
-        mItemPerPage = mGiList.size();
-
-        if (mItemPerPage == 0)
-            onlyShowNone();
-        else
-            onlyShowList();
-    }
-
-    public void notifyDataSetChanged() {
-        mGalleryAdapter.notifyDataSetChanged();
-        if (mGiList.isEmpty())
-            onlyShowNone();
-    }
-
-    protected class GalleryAdapter extends BaseAdapter {
-        @Override
-        public int getCount() {
-            return mGiList.size();
-        }
-        @Override
-        public Object getItem(int position) {
-            return mGiList == null ? 0 : mGiList.get(position);
-        }
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            GalleryInfo gi= mGiList.get(position);
-            if (convertView == null || !(convertView instanceof LinearLayout)) {
-                convertView = LayoutInflater.from(AbstractGalleryActivity.this)
-                        .inflate(R.layout.list_item, parent, false);
-                CardViewSalon.reform(AbstractGalleryActivity.this.getResources(),
-                        ((ViewGroup)convertView).getChildAt(0), new int[][]{
-                                new int[]{android.R.attr.state_pressed},
-                                new int[]{android.R.attr.state_activated},
-                                new int[]{}},
-                                new int[]{0xff84cae4, 0xff33b5e5, 0xFFFAFAFA});
-            }
-            final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
-            if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
-                // Set margin top 8dp if position is 0, otherwise 4dp
-                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)
-                        convertView.findViewById(R.id.card_view).getLayoutParams();
-                if (position == 0)
-                    lp.topMargin = Ui.dp2pix(8);
-                else
-                    lp.topMargin = Ui.dp2pix(4);
-
-                // Set new thumb
-                thumb.setImageDrawable(null);
-                thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));
-                mImageLoader.add(gi.thumb, String.valueOf(gi.gid),
-                        new LoadImageView.SimpleImageGetListener(thumb));
-            }
-            // Set manga name
-            TextView name = (TextView) convertView.findViewById(R.id.name);
-            name.setText(gi.title);
-            // Set uploder
-            TextView uploader = (TextView) convertView.findViewById(R.id.uploader);
-            uploader.setText(gi.uploader);
-            // Set category
-            TextView category = (TextView) convertView.findViewById(R.id.category);
-            String newText = Ui.getCategoryText(gi.category);
-            if (!newText.equals(category.getText())) {
-                category.setText(newText);
-                category.setBackgroundColor(Ui.getCategoryColor(gi.category));
-            }
-            // Set star
-            RatingView rate = (RatingView) convertView
-                    .findViewById(R.id.rate);
-            rate.setRating(gi.rating);
-            // set posted
-            TextView posted = (TextView) convertView.findViewById(R.id.posted);
-            posted.setText(gi.posted);
-
-            return convertView;
-        }
     }
 
     private class ScrollListener implements ListView.OnScrollListener {
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem,
                 int visibleItemCount, int totalItemCount) {
-            mHlv.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+            mPullViewGroup.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
 
             if (visibleItemCount < 2 || mItemPerPage == 0)
                 return;
@@ -469,19 +377,19 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
 
     private void setListPosition(int position) {
         if (position == 0)
-            mList.setSelectionFromTop(position, mPaddingTop);
+            mPullViewGroup.setSelectionFromTop(position, mPaddingTop);
         else
-            mList.setSelectionFromTop(position, 0);
+            mPullViewGroup.setSelectionFromTop(position, 0);
     }
 
     public interface OnGetListListener {
-        public void onSuccess(long taskStamp, List<GalleryInfo> gis, int maxPage);
-        public void onFailure(long taskStamp, String eMsg);
+        public void onSuccess(BaseAdapter adapter, long taskStamp, List<GalleryInfo> gis, int maxPage);
+        public void onFailure(BaseAdapter adapter, long taskStamp, String eMsg);
     }
 
     private final OnGetListListener mListener = new OnGetListListener() {
         @Override
-        public void onSuccess(long taskStamp,
+        public void onSuccess(BaseAdapter adapter, long taskStamp,
                 List<GalleryInfo> gis, int pageNum) {
             if (mTaskStamp != taskStamp)
                 return;
@@ -495,13 +403,13 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             if (mItemPerPage < itemPerPage)
                 mItemPerPage = itemPerPage;
 
-            if (mPageNum == 0) {
+            if (mPageNum == 0) { // Get none
                 onlyShowNone();
 
                 mFirstPage = 0;
                 mLastPage = 0;
-                mGiList = gis;
-                mGalleryAdapter.notifyDataSetChanged();
+                mGiList.clear();
+                adapter.notifyDataSetChanged();
             } else {
                 onlyShowList();
 
@@ -509,8 +417,9 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                 case MODE_REFRESH:
                     mFirstPage = 0;
                     mLastPage = 0;
-                    mGiList = gis;
-                    mGalleryAdapter.notifyDataSetChanged();
+                    mGiList.clear();
+                    mGiList.addAll(gis);
+                    adapter.notifyDataSetChanged();
                     // For current page
                     mFirstIndex = 0;
                     mLastIndex = gis.size() - 1;
@@ -522,14 +431,14 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                 case MODE_PRE_PAGE:
                     mFirstPage--;
                     mGiList.addAll(0, gis);
-                    mGalleryAdapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
 
                     if (mIsKeepPosition) {
                         mFirstIndex += gis.size();
                         mLastIndex += gis.size();
-                        int position = mList.getFirstVisiblePosition() + gis.size();
+                        int position = mContentView.getFirstVisiblePosition() + gis.size();
                         setListPosition(position);
-                        mList.smoothScrollToPosition(position -1);
+                        mContentView.smoothScrollToPosition(position -1);
                     } else {
                         mFirstIndex = 0;
                         mLastIndex = gis.size()-1;
@@ -541,7 +450,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                 case MODE_NEXT_PAGE:
                     mLastPage++;
                     mGiList.addAll(gis);
-                    mGalleryAdapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
                     if (!mIsKeepPosition) {
                         mFirstIndex = mGiList.size() - gis.size();
                         mLastIndex = mGiList.size() - 1;
@@ -553,8 +462,9 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                 case MODE_SOMEWHERE:
                     mFirstPage = mTargetPage;
                     mLastPage = mTargetPage;
-                    mGiList = gis;
-                    mGalleryAdapter.notifyDataSetChanged();
+                    mGiList.clear();
+                    mGiList.addAll(gis);
+                    adapter.notifyDataSetChanged();
                     // For current page
                     mFirstIndex = 0;
                     mLastIndex = gis.size() - 1;
@@ -564,17 +474,17 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                 }
             }
 
-            mHlv.setAnyRefreshComplete(true);
+            mPullViewGroup.setAnyRefreshComplete(true);
         }
         @Override
-        public void onFailure(long taskStamp, String eMsg) {
+        public void onFailure(BaseAdapter adapter, long taskStamp, String eMsg) {
             if (mTaskStamp != taskStamp)
                 return;
 
             switch (mGetMode) {
             case MODE_REFRESH:
             case MODE_SOMEWHERE:
-                mHlv.setVisibility(View.GONE);
+                mPullViewGroup.setVisibility(View.GONE);
                 mRefreshTextView.setVisibility(View.VISIBLE);
                 if (eMsg.equals("index error")) {
                     mRefreshTextView.setEmesg(eMsg, "点击回第一页", // TODO
@@ -594,7 +504,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
                 mRefreshTextView.setVisibility(View.GONE);
                 new SuperToast(AbstractGalleryActivity.this, eMsg, SuperToast.ERROR).show();
             }
-            mHlv.setAnyRefreshComplete(false);
+            mPullViewGroup.setAnyRefreshComplete(false);
         }
     };
 }

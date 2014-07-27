@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -43,6 +44,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -55,15 +57,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.etsy.android.grid.StaggeredGridView;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.AppHandler;
+import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UpdateHelper;
+import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.Tag;
@@ -71,6 +77,7 @@ import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
+import com.hippo.ehviewer.tile.TileSalon;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Theme;
@@ -80,16 +87,15 @@ import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
+import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.PrefixEditText;
+import com.hippo.ehviewer.widget.RatingView;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 import com.hippo.ehviewer.widget.SuperToast;
 import com.hippo.ehviewer.widget.TagListView;
 import com.hippo.ehviewer.widget.TagsAdapter;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-
-// TODO check visiblePage is right or not
-// TODO http://lofi.e-hentai.org/
 
 /*
  *
@@ -118,7 +124,8 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 public class GalleryListActivity extends AbstractGalleryActivity
         implements View.OnClickListener {
 
-    private static final String TAG = "MangaListActivity";
+    @SuppressWarnings("unused")
+    private static final String TAG = GalleryListActivity.class.getSimpleName();
 
     public static final String ACTION_GALLERY_LIST = "com.hippo.ehviewer.intent.action.GALLERY_LIST";
 
@@ -126,6 +133,9 @@ public class GalleryListActivity extends AbstractGalleryActivity
     public static final String KEY_CATEGORY = "category";
     public static final String KEY_TAG = "tag";
     public static final String KEY_UPLOADER = "uploader";
+
+    public static final int LIST_MODE_DETAIL = 0x0;
+    public static final int LIST_MODE_THUMB = 0x1;
 
     private EhClient mClient;
     private Resources mResources;
@@ -144,7 +154,8 @@ public class GalleryListActivity extends AbstractGalleryActivity
     private Button logoutButton;
     private View waitloginoutView;
 
-    private ListView mList;
+    private StaggeredGridView mStaggeredGridView;
+    private BaseAdapter mAdapter;
 
     private TagsAdapter tagsAdapter;
 
@@ -169,6 +180,9 @@ public class GalleryListActivity extends AbstractGalleryActivity
     private String mTitle;
 
     private final DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
+
+    private int mListMode;
+    private int mListModeThumbHeight;
 
     private void toRegister() {
         Uri uri = Uri.parse("http://forums.e-hentai.org/index.php?act=Reg");
@@ -492,7 +506,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
         TextView tv = (TextView)view.findViewById(R.id.list_jump_sum);
         // For lofi, can not get page num, so use Integer.MAX_VALUE
         tv.setText(String.format(getString(R.string.jump_summary), getCurPage() + 1,
-                getMaxPage() == Integer.MAX_VALUE ? "未知" : String.valueOf(getMaxPage()))); // TODO
+                getPageNum() == Integer.MAX_VALUE ? "未知" : String.valueOf(getPageNum()))); // TODO
         tv = (TextView)view.findViewById(R.id.list_jump_to);
         tv.setText(R.string.jump_to);
         final EditText et = (EditText)view.findViewById(R.id.list_jump_edit);
@@ -506,6 +520,8 @@ public class GalleryListActivity extends AbstractGalleryActivity
                         int targetPage;
                         try{
                             targetPage = Integer.parseInt(et.getText().toString()) - 1;
+                            if (targetPage < 0 || targetPage >= getPageNum())
+                                throw new Exception();
                         } catch(Exception e) {
                             new SuperToast(GalleryListActivity.this, R.string.toast_invalid_page,
                                     SuperToast.ERROR).show();
@@ -739,6 +755,12 @@ public class GalleryListActivity extends AbstractGalleryActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        tryUpdateGridView();
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mSlidingMenu.setBehindWidth(
@@ -806,6 +828,11 @@ public class GalleryListActivity extends AbstractGalleryActivity
     }
 
     @Override
+    protected int getLayoutRes() {
+        return R.layout.gallery_list;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -864,7 +891,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
         logoutButton = (Button)mUserPanel.findViewById(R.id.logout);
         waitloginoutView = mUserPanel.findViewById(R.id.wait);
 
-        mList = getListView();
+        mStaggeredGridView = (StaggeredGridView)getContentView();
 
         loginButton.setOnClickListener(this);
         registerButton.setOnClickListener(this);
@@ -901,6 +928,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 return position;
             }
 
+            @SuppressLint({ "InflateParams", "ViewHolder" })
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 LayoutInflater li= LayoutInflater.from(GalleryListActivity.this);
@@ -1011,7 +1039,9 @@ public class GalleryListActivity extends AbstractGalleryActivity
         });
 
         // Listview
-        mList.setOnItemClickListener(new OnItemClickListener() {
+        mAdapter = new ListAdapter(this, getGalleryList());
+        mStaggeredGridView.setAdapter(mAdapter);
+        mStaggeredGridView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
@@ -1023,13 +1053,23 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 startActivity(intent);
             }
         });
-        mList.setOnItemLongClickListener(new OnItemLongClickListener() {
+        mStaggeredGridView.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                     int position, long arg3) {
                 longClickItemIndex = position;
                 longClickDialog.show();
                 return true;
+            }
+        });
+        mStaggeredGridView.setOnChangeColumnListener(new StaggeredGridView.OnChangeColumnListener() {
+            @Override
+            public void onChangeColumn(int columnCount, int width) {
+                // Here to get thumb height, width is fixed by column count
+                if (width == 0)
+                    width = GalleryListActivity.this.getWindow()
+                            .findViewById(Window.ID_ANDROID_CONTENT).getWidth();
+                mListModeThumbHeight = (width - ((columnCount + 1) * Ui.dp2pix(8))) / columnCount / 2 * 3;
             }
         });
 
@@ -1064,6 +1104,18 @@ public class GalleryListActivity extends AbstractGalleryActivity
         // Update user panel
         setUserPanel();
 
+        // Get list mode
+        mListMode = Config.getListMode();
+        switch (mListMode) {
+        case LIST_MODE_DETAIL:
+            mStaggeredGridView.setColumnCountPortraitBefore(1); // TODO
+            mStaggeredGridView.setColumnCountLandscapeBefore(2);
+            break;
+        case LIST_MODE_THUMB:
+            mStaggeredGridView.setColumnCountPortraitBefore(3);
+            mStaggeredGridView.setColumnCountLandscapeBefore(5);
+        }
+
         // get MangeList
         firstTimeRefresh();
 
@@ -1090,8 +1142,34 @@ public class GalleryListActivity extends AbstractGalleryActivity
         }
     }
 
+    /**
+     * Update gird view if necessary
+     */
+    private void tryUpdateGridView() {
+        int newListMode = Config.getListMode();
+        if (mListMode == newListMode) {
+            return;
+        } else {
+            mListMode = newListMode;
+            updateGridView();
+        }
+    }
+
+    private void updateGridView() {
+        switch (mListMode) {
+        case LIST_MODE_DETAIL:
+            mStaggeredGridView.setColumnCountPortrait(1); // TODO
+            mStaggeredGridView.setColumnCountLandscape(2);
+            break;
+        case LIST_MODE_THUMB:
+            mStaggeredGridView.setColumnCountPortrait(3);
+            mStaggeredGridView.setColumnCountLandscape(5);
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Do not show menu when mSlidingMenu is shown
         if (mSlidingMenu!= null && mSlidingMenu.isMenuShowing())
             return true;
 
@@ -1138,15 +1216,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
                             .getDeclaredField("mCursorDrawableRes");
                     f.setAccessible(true);
                     f.setInt(searchText, searchCursorID);
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
+                } catch (Exception e) {}
             }
 
             searchText.setTextColor(Color.WHITE);
@@ -1201,6 +1271,12 @@ public class GalleryListActivity extends AbstractGalleryActivity
             voiceView.setImageDrawable(voiceImage);
         }
 
+        // Hide some menu item
+        if (mListMode == LIST_MODE_DETAIL)
+            menu.removeItem(R.id.action_detail);
+        else if (mListMode == LIST_MODE_THUMB)
+            menu.removeItem(R.id.action_thumb);
+
         return true;
     }
 
@@ -1234,6 +1310,18 @@ public class GalleryListActivity extends AbstractGalleryActivity
         case R.id.action_jump:
             if (!isRefreshing() && isGetGalleryOk())
                 jump();
+            return true;
+        case R.id.action_detail:
+            mListMode = LIST_MODE_DETAIL;
+            Config.setListMode(mListMode);
+            updateGridView();
+            invalidateOptionsMenu();
+            return true;
+        case R.id.action_thumb:
+            mListMode = LIST_MODE_THUMB;
+            Config.setListMode(mListMode);
+            updateGridView();
+            invalidateOptionsMenu();
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -1356,7 +1444,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
             mClient.getPopular(new EhClient.OnGetPopularListener() {
                 @Override
                 public void onSuccess(List<GalleryInfo> gis, long timeStamp) {
-                    listener.onSuccess(taskStamp, gis, gis.size() == 0 ? 0 : 1);
+                    listener.onSuccess(mAdapter, taskStamp, gis, gis.size() == 0 ? 0 : 1);
                     // Show update time
                     if (timeStamp != -1 && Config.getShowPopularUpdateTime())
                         new SuperToast(GalleryListActivity.this,
@@ -1365,7 +1453,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 }
                 @Override
                 public void onFailure(String eMsg) {
-                    listener.onFailure(taskStamp, eMsg);
+                    listener.onFailure(mAdapter, taskStamp, eMsg);
                 }
             });
         } else {
@@ -1373,13 +1461,104 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 @Override
                 public void onSuccess(Object checkFlag, List<GalleryInfo> lmdArray,
                         int pageNum) {
-                    listener.onSuccess(taskStamp, lmdArray, pageNum);
+                    listener.onSuccess(mAdapter, taskStamp, lmdArray, pageNum);
                 }
                 @Override
                 public void onFailure(Object checkFlag, String eMsg) {
-                    listener.onFailure(taskStamp, eMsg);
+                    listener.onFailure(mAdapter, taskStamp, eMsg);
                 }
             });
+        }
+    }
+
+    public class ListAdapter extends BaseAdapter {
+        private final List<GalleryInfo> mGiList;
+        private final ImageLoader mImageLoader;
+
+        public ListAdapter(Context context, List<GalleryInfo> gilist) {
+            mGiList = gilist;
+            mImageLoader =ImageLoader.getInstance(GalleryListActivity.this);
+        }
+
+        @Override
+        public int getCount() {
+            return mGiList.size();
+        }
+        @Override
+        public Object getItem(int position) {
+            return mGiList == null ? 0 : mGiList.get(position);
+        }
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            GalleryInfo gi= mGiList.get(position);
+
+            if (convertView == null ||
+                    (mListMode == LIST_MODE_DETAIL && !(convertView instanceof RelativeLayout)) ||
+                    (mListMode == LIST_MODE_THUMB && !(convertView instanceof LinearLayout))) {
+                // Get new view
+                switch (mListMode) {
+                case LIST_MODE_DETAIL:
+                    convertView = LayoutInflater.from(GalleryListActivity.this)
+                    .inflate(R.layout.gallery_list_detail_item, parent, false);
+                    CardViewSalon.reform(GalleryListActivity.this.getResources(),
+                            convertView, new int[][]{
+                                    new int[]{android.R.attr.state_pressed},
+                                    new int[]{android.R.attr.state_activated},
+                                    new int[]{}},
+                                    new int[]{0xff84cae4, 0xff33b5e5, 0xFFFAFAFA}); // TODO
+                    break;
+                case LIST_MODE_THUMB:
+                    convertView = LayoutInflater.from(GalleryListActivity.this)
+                    .inflate(R.layout.gallery_list_thumb_item, parent, false);
+                    TileSalon.reform(convertView, 0xFFFAFAFA); // TODO
+                    break;
+                }
+            }
+
+            final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.thumb);
+            if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
+                // Set height
+                if (mListMode == LIST_MODE_THUMB)
+                    thumb.getLayoutParams().height = mListModeThumbHeight;
+
+                // Set new thumb
+                thumb.setImageDrawable(null);
+                thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));
+                mImageLoader.add(gi.thumb, String.valueOf(gi.gid),
+                        new LoadImageView.SimpleImageGetListener(thumb).setFixScaleType(true));
+            }
+            // Set category
+            TextView category = (TextView) convertView.findViewById(R.id.category);
+            String newText = Ui.getCategoryText(gi.category);
+            if (!newText.equals(category.getText())) {
+                category.setText(newText);
+                category.setBackgroundColor(Ui.getCategoryColor(gi.category));
+            }
+
+            // For detail mode
+            if (mListMode == LIST_MODE_DETAIL) {
+                // Set manga name
+                TextView name = (TextView) convertView.findViewById(R.id.name);
+                name.setText(gi.title);
+                // Set uploder
+                TextView uploader = (TextView) convertView.findViewById(R.id.uploader);
+                uploader.setText(gi.uploader);
+
+                // Set star
+                RatingView rate = (RatingView) convertView
+                        .findViewById(R.id.rate);
+                rate.setRating(gi.rating);
+                // set posted
+                TextView posted = (TextView) convertView.findViewById(R.id.posted);
+                posted.setText(gi.posted);
+            }
+
+            return convertView;
         }
     }
 }

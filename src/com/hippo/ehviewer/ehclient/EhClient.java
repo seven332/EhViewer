@@ -1244,7 +1244,7 @@ public class EhClient {
 
     // modifyFavorite
     public interface OnModifyFavoriteListener {
-        void onSuccess(List<GalleryInfo> gis, int maxPage);
+        void onSuccess(List<GalleryInfo> gis, int pageNum);
         void onFailure(String eMsg);
     }
 

@@ -18,20 +18,20 @@
 
     <PreferenceCategory
         android:title="@string/theme_display_settings_title">
-        
+
         <CheckBoxPreference
             android:key="random_theme_color"
             android:title="@string/random_theme_color_title"
             android:summaryOn="@string/random_theme_color_summary_on"
             android:summaryOff="@string/random_theme_color_summary_off"
             android:defaultValue="true" />
-        
+
         <com.hippo.ehviewer.preference.ColorPreference
             android:key="theme_color"
             android:title="@string/theme_color_title" />
-        
+
     </PreferenceCategory>
-    
+
     <PreferenceCategory
         android:title="@string/screen_display_settings_title">
 
@@ -42,9 +42,9 @@
             android:entryValues="@array/screen_orientation_entry_values"
             android:defaultValue="0"
             android:summary="%s" />
-        
+
     </PreferenceCategory>
-    
+
     <PreferenceCategory
         android:title="@string/read_display_settings_title">
 
@@ -55,7 +55,7 @@
             android:entryValues="@array/page_scaling_entry_values"
             android:defaultValue="3"
             android:summary="%s" />
-        
+
         <com.hippo.ehviewer.preference.AutoListPreference
             android:key="start_position"
             android:title="@string/start_position_title"
@@ -63,12 +63,12 @@
             android:entryValues="@array/start_position_values"
             android:defaultValue="1"
             android:summary="%s" />
-        
+
     </PreferenceCategory>
-    
+
     <PreferenceCategory
         android:title="@string/list_display_settings_title">
-        
+
         <com.hippo.ehviewer.preference.AutoListPreference
             android:key="list_mode"
             android:title="@string/list_mode_title"
@@ -76,17 +76,17 @@
             android:entryValues="@array/list_mode_entry_values"
             android:defaultValue="0"
             android:summary="%s" />
-        
+
     </PreferenceCategory>
-    
+
     <PreferenceCategory
         android:title="@string/popular_display_settings_title">
-        
+
         <CheckBoxPreference
             android:key="show_popular_update_time"
             android:title="@string/show_popular_update_time_title"
             android:defaultValue="false" />
-        
+
     </PreferenceCategory>
-    
+
 </PreferenceScreen>

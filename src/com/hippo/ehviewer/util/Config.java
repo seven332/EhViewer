@@ -68,9 +68,6 @@ public class Config {
     private static final String KEY_SHOW_POPULAR_UPDATE_TIME = "show_popular_update_time";
     private static final boolean DEFAULT_SHOW_POPULAR_UPDATE_TIME = false;
 
-    private static final String KEY_LIST_MODE = "list_mode";
-    private static final String DEFAULT_LIST_MODE = "0";
-
     private static boolean mInit = false;
 
     private static Context mContext;
@@ -301,11 +298,22 @@ public class Config {
         return mConfigPre.getBoolean(KEY_SHOW_POPULAR_UPDATE_TIME, DEFAULT_SHOW_POPULAR_UPDATE_TIME);
     }
 
+
+
+    /****** Display ******/
+
+    private static final String KEY_LIST_MODE = "list_mode";
+    private static final String DEFAULT_LIST_MODE = "1";
+
     public static int getListMode() {
         return Integer.parseInt(mConfigPre.getString(KEY_LIST_MODE, DEFAULT_LIST_MODE));
     }
 
-    /****** For Mode an API Mode ******/
+    public static void setListMode(int listMode) {
+        mConfigPre.edit().putString(KEY_LIST_MODE, String.valueOf(listMode)).apply();
+    }
+
+    /****** Mode an API Mode ******/
 
     private static final String KEY_MODE = "mode";
     private static final int DEFAULT_MODE = EhClient.MODE_G;
@@ -329,7 +337,7 @@ public class Config {
         mConfigPre.edit().putInt(KEY_API_MODE, apiMode).apply();
     }
 
-    /****** For Eh Config ******/
+    /****** Eh Config ******/
 
     private static final String KEY_DEFAULT_CAT = "default_cat";
     private static final int DEFAULT_DEFAULT_CAT = ListUrls.ALL_CATEGORT;
