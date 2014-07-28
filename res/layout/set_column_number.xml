@@ -27,15 +27,15 @@
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/content" />
+            android:text="@string/portrait" />
 
-        <Spinner
-            android:id="@+id/mode_list"
+        <EditText
+            android:id="@+id/portrait"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
-            android:layout_weight="4"
-            android:entries="@array/mode_list" />
+            android:layout_weight="1"
+            android:inputType="number" />
     </LinearLayout>
 
     <LinearLayout
@@ -49,15 +49,15 @@
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/api" />
+            android:text="@string/landscape" />
 
-        <Spinner
-            android:id="@+id/api_mode_list"
+        <EditText
+            android:id="@+id/landscape"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
-            android:layout_weight="4"
-            android:entries="@array/api_mode_list" />
+            android:layout_weight="1"
+            android:inputType="number" />
     </LinearLayout>
 
 </merge>

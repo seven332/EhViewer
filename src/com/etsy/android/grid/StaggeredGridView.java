@@ -224,31 +224,46 @@ public class StaggeredGridView extends ExtendableListView {
     }
 
     public void setColumnCountPortrait(int columnCountPortrait) {
-        mColumnCountPortrait = columnCountPortrait;
-        onSizeChanged(getWidth(), getHeight());
-        requestLayoutChildren();
+        if (columnCountPortrait > 0 &&
+                mColumnCountPortrait != columnCountPortrait) {
+            mColumnCountPortrait = columnCountPortrait;
+            if (!isLandscape() && getWidth() != 0) {
+                onSizeChanged(getWidth(), getHeight());
+                requestLayoutChildren();
+            }
+        }
     }
 
     public void setColumnCountLandscape(int columnCountLandscape) {
-        mColumnCountLandscape = columnCountLandscape;
-        onSizeChanged(getWidth(), getHeight());
-        requestLayoutChildren();
+        if (columnCountLandscape > 0 &&
+                mColumnCountLandscape != columnCountLandscape) {
+            mColumnCountLandscape = columnCountLandscape;
+            if (isLandscape() && getWidth() != 0) {
+                onSizeChanged(getWidth(), getHeight());
+                requestLayoutChildren();
+            }
+        }
     }
 
     public void setColumnCount(int columnCount) {
-        mColumnCountPortrait = columnCount;
-        mColumnCountLandscape = columnCount;
-        // mColumnCount set onSizeChanged();
+        if (columnCount > 0) {
+            boolean needRequestLayout =
+                    isLandscape() ? (mColumnCountLandscape != columnCount ? true : false) :
+                        (mColumnCountPortrait != columnCount ? true : false);
+
+            mColumnCountPortrait = columnCount;
+            mColumnCountLandscape = columnCount;
+            // mColumnCount set onSizeChanged();
+            if (needRequestLayout && getWidth() != 0) {
+                onSizeChanged(getWidth(), getHeight());
+                requestLayoutChildren();
+            }
+        }
+    }
+
+    public void invalidateChildren() {
         onSizeChanged(getWidth(), getHeight());
         requestLayoutChildren();
-    }
-
-    public void setColumnCountPortraitBefore(int columnCountPortrait) {
-        mColumnCountPortrait = columnCountPortrait;
-    }
-
-    public void setColumnCountLandscapeBefore(int columnCountLandscape) {
-        mColumnCountLandscape = columnCountLandscape;
     }
 
     // //////////////////////////////////////////////////////////////////////////////////////////

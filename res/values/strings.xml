@@ -187,6 +187,11 @@
     <string name="start_position_title">Start position</string>
     <string name="list_display_settings_title">List</string>
     <string name="list_mode_title">List mode</string>
+    
+    <string name="list_thumb_columns">Number of List thumb columns</string>
+    <string name="preview_display_settings_title">Preview</string>
+    <string name="preview_columns">Number of preview columns</string>
+    
     <string name="popular_display_settings_title">Popular</string>
     <string name="show_popular_update_time_title">Show popular update time</string>
     <string name="eh_settings_title">EH</string>

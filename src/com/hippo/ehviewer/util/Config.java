@@ -27,7 +27,7 @@ import com.hippo.ehviewer.ehclient.EhClient;
 
 public class Config {
     @SuppressWarnings("unused")
-    private static final String TAG = "Config";
+    private static final String TAG = Config.class.getSimpleName();
 
     private static final String KEY_UPDATE_DATE = "update_date";
 
@@ -94,6 +94,15 @@ public class Config {
     public static boolean isInit() {
         return mInit;
     }
+
+    public static int getInt(String key, int defValue) {
+        return mConfigPre.getInt(key, defValue);
+    }
+
+    public static void setInt(String key, int value) {
+        mConfigPre.edit().putInt(key, value).apply();
+    }
+
 
     /****** For Normal Config ******/
     private static final String KEY_ALLOWED = "allowed";
@@ -305,12 +314,44 @@ public class Config {
     private static final String KEY_LIST_MODE = "list_mode";
     private static final String DEFAULT_LIST_MODE = "1";
 
+    private static final String KEY_LIST_THUMB_COLUMNS_PORTRAIT = "list_thumb_columns_portrait";
+    private static final int DEFAULT_LIST_THUMB_COLUMNS_PORTRAIT = 3;
+
+    private static final String KEY_LIST_THUMB_COLUMNS_LANDSCAPE = "list_thumb_columns_landscape";
+    private static final int DEFAULT_LIST_THUMB_COLUMNS_LANDSCAPE = 5;
+
+    private static final String KEY_PREVIEW_COLUMNS_PORTRAIT = "preview_columns_portrait";
+    private static final int DEFAULT_PREVIEW_COLUMNS_PORTRAIT = 3;
+
+    private static final String KEY_PREVIEW_COLUMNS_LANDSCAPE = "preview_columns_landscape";
+    private static final int DEFAULT_PREVIEW_COLUMNS_LANDSCAPE = 5;
+
     public static int getListMode() {
         return Integer.parseInt(mConfigPre.getString(KEY_LIST_MODE, DEFAULT_LIST_MODE));
     }
 
     public static void setListMode(int listMode) {
         mConfigPre.edit().putString(KEY_LIST_MODE, String.valueOf(listMode)).apply();
+    }
+
+    public static int getListThumbColumnsPortrait() {
+        return mConfigPre.getInt(
+                KEY_LIST_THUMB_COLUMNS_PORTRAIT, DEFAULT_LIST_THUMB_COLUMNS_PORTRAIT);
+    }
+
+    public static int getListThumbColumnsLandscape() {
+        return mConfigPre.getInt(
+                KEY_LIST_THUMB_COLUMNS_LANDSCAPE, DEFAULT_LIST_THUMB_COLUMNS_LANDSCAPE);
+    }
+
+    public static int getPreviewColumnsPortrait() {
+        return mConfigPre.getInt(
+                KEY_PREVIEW_COLUMNS_PORTRAIT, DEFAULT_PREVIEW_COLUMNS_PORTRAIT);
+    }
+
+    public static int getPreviewColumnsLandscape() {
+        return mConfigPre.getInt(
+                KEY_PREVIEW_COLUMNS_LANDSCAPE, DEFAULT_PREVIEW_COLUMNS_LANDSCAPE);
     }
 
     /****** Mode an API Mode ******/

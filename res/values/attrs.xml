@@ -65,4 +65,11 @@
         <attr name="aspect" format="float" />
     </declare-styleable>
 
+    <declare-styleable name="NumberOfColumnsPreference">
+        <attr name="keyPortrait" format="string" />
+        <attr name="keyLandscape" format="string" />
+        <attr name="defValuePortrait" format="integer" />
+        <attr name="defValueLandscape" format="integer" />
+    </declare-styleable>
+
 </resources>

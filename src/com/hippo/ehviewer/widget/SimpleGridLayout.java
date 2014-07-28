@@ -88,14 +88,21 @@ public class SimpleGridLayout extends ViewGroup {
 
     public void setColumnCount(int columnCount) {
         if (columnCount > 0) {
+            boolean needRequestLayout =
+                    isLandscape() ? (mColumnCountLandscape != columnCount ? true : false) :
+                        (mColumnCountPortrait != columnCount ? true : false);
+
             mColumnCountPortrait = columnCount;
             mColumnCountLandscape = columnCount;
-            requestLayout();
+
+            if (needRequestLayout)
+                requestLayout();
         }
     }
 
     public void setColumnCountPortrait(int columnCountPortrait) {
-        if (columnCountPortrait > 0) {
+        if (columnCountPortrait > 0 &&
+                mColumnCountPortrait != columnCountPortrait) {
             mColumnCountPortrait = columnCountPortrait;
             if (!isLandscape())
                 requestLayout();
@@ -103,8 +110,10 @@ public class SimpleGridLayout extends ViewGroup {
     }
 
     public void setColumnCountLandscape(int columnCountLandscape) {
-        if (columnCountLandscape > 0) {
+        if (columnCountLandscape > 0 &&
+                mColumnCountLandscape != columnCountLandscape) {
             mColumnCountLandscape = columnCountLandscape;
+
             if (isLandscape())
                 requestLayout();
         }

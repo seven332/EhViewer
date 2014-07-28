@@ -756,7 +756,8 @@ public class GalleryListActivity extends AbstractGalleryActivity
     @Override
     protected void onResume() {
         super.onResume();
-        tryUpdateGridView();
+        mListMode = Config.getListMode();
+        updateGridView();
     }
 
     @Override
@@ -1104,17 +1105,9 @@ public class GalleryListActivity extends AbstractGalleryActivity
         // Update user panel
         setUserPanel();
 
-        // Get list mode
+        // Set list mode
         mListMode = Config.getListMode();
-        switch (mListMode) {
-        case LIST_MODE_DETAIL:
-            mStaggeredGridView.setColumnCountPortraitBefore(1); // TODO
-            mStaggeredGridView.setColumnCountLandscapeBefore(2);
-            break;
-        case LIST_MODE_THUMB:
-            mStaggeredGridView.setColumnCountPortraitBefore(3);
-            mStaggeredGridView.setColumnCountLandscapeBefore(5);
-        }
+        updateGridView();
 
         // get MangeList
         firstTimeRefresh();
@@ -1142,28 +1135,17 @@ public class GalleryListActivity extends AbstractGalleryActivity
         }
     }
 
-    /**
-     * Update gird view if necessary
-     */
-    private void tryUpdateGridView() {
-        int newListMode = Config.getListMode();
-        if (mListMode == newListMode) {
-            return;
-        } else {
-            mListMode = newListMode;
-            updateGridView();
-        }
-    }
-
     private void updateGridView() {
-        switch (mListMode) {
-        case LIST_MODE_DETAIL:
-            mStaggeredGridView.setColumnCountPortrait(1); // TODO
-            mStaggeredGridView.setColumnCountLandscape(2);
-            break;
-        case LIST_MODE_THUMB:
-            mStaggeredGridView.setColumnCountPortrait(3);
-            mStaggeredGridView.setColumnCountLandscape(5);
+        if (mStaggeredGridView != null) {
+            switch (mListMode) {
+            case LIST_MODE_DETAIL:
+                mStaggeredGridView.setColumnCountPortrait(1); // TODO
+                mStaggeredGridView.setColumnCountLandscape(2);
+                break;
+            case LIST_MODE_THUMB:
+                mStaggeredGridView.setColumnCountPortrait(Config.getListThumbColumnsPortrait());
+                mStaggeredGridView.setColumnCountLandscape(Config.getListThumbColumnsLandscape());
+            }
         }
     }
 
@@ -1315,12 +1297,16 @@ public class GalleryListActivity extends AbstractGalleryActivity
             mListMode = LIST_MODE_DETAIL;
             Config.setListMode(mListMode);
             updateGridView();
+            if (mStaggeredGridView != null)
+                mStaggeredGridView.invalidateChildren();
             invalidateOptionsMenu();
             return true;
         case R.id.action_thumb:
             mListMode = LIST_MODE_THUMB;
             Config.setListMode(mListMode);
             updateGridView();
+            if (mStaggeredGridView != null)
+                mStaggeredGridView.invalidateChildren();
             invalidateOptionsMenu();
             return true;
         default:

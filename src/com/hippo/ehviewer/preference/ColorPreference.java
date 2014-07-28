@@ -18,15 +18,7 @@ package com.hippo.ehviewer.preference;
 
 import java.util.Locale;
 
-import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.util.Util;
-import com.hippo.ehviewer.widget.AlertButton;
-import com.hippo.ehviewer.widget.ColorPickerView;
-import com.hippo.ehviewer.widget.DialogBuilder;
-import com.hippo.ehviewer.widget.SuperToast;
-
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -41,75 +33,84 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.widget.AlertButton;
+import com.hippo.ehviewer.widget.ColorPickerView;
+import com.hippo.ehviewer.widget.DialogBuilder;
+import com.hippo.ehviewer.widget.SuperToast;
+
 public class ColorPreference extends Preference implements Preference.OnPreferenceClickListener {
-    
-    private Context mContext;
+
+    private final Context mContext;
     private View mColorBrick;
-    
+
     public ColorPreference(Context context) {
         this(context, null);
     }
-    
+
     public ColorPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         setOnPreferenceClickListener(this);
     }
-    
+
     public ColorPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mContext = context;
         setOnPreferenceClickListener(this);
     }
-    
+
     @Override
     protected void onBindView(View view) {
         super.onBindView(view);
-        
+
         View ll = view.findViewById(android.R.id.widget_frame);
         if (ll != null && ll instanceof LinearLayout) {
             LinearLayout widgetFrame = (LinearLayout)ll;
             widgetFrame.setVisibility(View.VISIBLE);
-            
+
             mColorBrick = new View(mContext);
             mColorBrick.setBackgroundColor(Config.getThemeColor());
             widgetFrame.addView(mColorBrick, new LinearLayout.LayoutParams(Ui.dp2pix(24), Ui.dp2pix(24)));
         }
     }
-    
+
     @Override
     public boolean onPreferenceClick(Preference preference) {
         new ColorSchemeDialogBuilder(mContext).show();
         return true;
     }
-    
+
     public void setColor(int color) {
         if (mColorBrick != null)
             mColorBrick.setBackgroundColor(color);
     }
-    
+
     public class ColorSchemeDialogBuilder extends DialogBuilder implements
             ColorPickerView.OnColorChangedListener {
-        
+
         private final int mCurrentColor;
-        
+
         private final ColorPickerView.OnColorChangedListener mListener = this;;
-        
+
         private LayoutInflater mInflater;
-        
+
         private ColorPickerView mColorPicker;
-        
+
         private Button mOldColor;
-        
+
         private Button mNewColor;
-        
+
         private View mRootView;
-        
+
         private EditText mHexValue;
-        
+
         /**
          * Constructor of <code>ColorSchemeDialog</code>
-         * 
+         *
          * @param context The {@link Contxt} to use.
          */
         public ColorSchemeDialogBuilder(final Context context) {
@@ -117,7 +118,7 @@ public class ColorPreference extends Preference implements Preference.OnPreferen
             mCurrentColor = Config.getThemeColor();
             setUp(context, mCurrentColor);
         }
-        
+
         /*
          * (non-Javadoc)
          * @see com.andrew.apollo.widgets.ColorPickerView.OnColorChangedListener#
@@ -131,7 +132,7 @@ public class ColorPreference extends Preference implements Preference.OnPreferen
             }
             mNewColor.setBackgroundColor(color);
         }
-        
+
         private String padLeft(final String string, final char padChar, final int size) {
             if (string.length() >= size) {
                 return string;
@@ -143,16 +144,17 @@ public class ColorPreference extends Preference implements Preference.OnPreferen
             result.append(string);
             return result.toString();
         }
-        
+
         /**
          * Initialzes the presets and color picker
-         * 
+         *
          * @param color The color to use.
          */
+        @SuppressLint("InflateParams")
         private void setUp(final Context context, final int color) {
             mInflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             mRootView = mInflater.inflate(R.layout.color_scheme_dialog, null);
-        
+
             mColorPicker = (ColorPickerView)mRootView.findViewById(R.id.color_picker_view);
             mOldColor = (Button)mRootView.findViewById(R.id.color_scheme_dialog_old_color);
             mOldColor.setOnClickListener(mPresetListener);
@@ -167,7 +169,7 @@ public class ColorPreference extends Preference implements Preference.OnPreferen
             setUpPresets(R.id.color_scheme_dialog_preset_eight);
             mHexValue = (EditText)mRootView.findViewById(R.id.color_scheme_dialog_hex_value);
             mHexValue.addTextChangedListener(new TextWatcher() {
-        
+
                 @Override
                 public void onTextChanged(final CharSequence s, final int start, final int before,
                         final int count) {
@@ -179,23 +181,23 @@ public class ColorPreference extends Preference implements Preference.OnPreferen
                     } catch (final Exception ignored) {
                     }
                 }
-        
+
                 @Override
                 public void beforeTextChanged(final CharSequence s, final int start, final int count,
                         final int after) {
                     /* Nothing to do */
                 }
-        
+
                 @Override
                 public void afterTextChanged(final Editable s) {
                     /* Nothing to do */
                 }
             });
-        
+
             mColorPicker.setOnColorChangedListener(this);
             mOldColor.setBackgroundColor(color);
             mColorPicker.setColor(color, true);
-            
+
             setTitle(R.string.color_picker_title);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -207,14 +209,14 @@ public class ColorPreference extends Preference implements Preference.OnPreferen
                 public void onClick(View v) {
                     ((AlertButton)v).dialog.dismiss();
                     new SuperToast(context, R.string.restart_to_take_effect).show();
-                    
+
                     int color = getColor() | 0xff000000;
                     Config.setThemeColor(color);
                     setColor(color);
                 }
             });
         }
-        
+
         /**
          * @param color The color resource.
          * @return A new color from Apollo's resources.
@@ -222,14 +224,14 @@ public class ColorPreference extends Preference implements Preference.OnPreferen
         private int getColor(final int color) {
             return getContext().getResources().getColor(color);
         }
-        
+
         /**
          * @return {@link ColorPickerView}'s current color
          */
         public int getColor() {
             return mColorPicker.getColor();
         }
-        
+
         /**
          * @param which The Id of the preset color
          */
@@ -239,12 +241,12 @@ public class ColorPreference extends Preference implements Preference.OnPreferen
                 preset.setOnClickListener(mPresetListener);
             }
         }
-        
+
         /**
          * Sets up the preset buttons
          */
         private final View.OnClickListener mPresetListener = new View.OnClickListener() {
-        
+
             @Override
             public void onClick(final View v) {
                 switch (v.getId()) {
@@ -283,7 +285,7 @@ public class ColorPreference extends Preference implements Preference.OnPreferen
                 }
             }
         };
-        
+
         @Override
         public AlertDialog create() {
             AlertDialog dialog = super.create();

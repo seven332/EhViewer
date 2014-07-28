@@ -74,11 +74,34 @@
             android:title="@string/list_mode_title"
             android:entries="@array/list_mode_entries"
             android:entryValues="@array/list_mode_entry_values"
-            android:defaultValue="0"
+            android:defaultValue="1"
             android:summary="%s" />
+
+        <com.hippo.ehviewer.preference.NumberOfColumnsPreference
+            xmlns:auto="http://schemas.android.com/apk/res-auto"
+            android:key="list_thumb_columns"
+            android:title="@string/list_thumb_columns"
+            auto:keyPortrait="list_thumb_columns_portrait"
+            auto:keyLandscape="list_thumb_columns_landscape"
+            auto:defValuePortrait="3"
+            auto:defValueLandscape="5" />
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/preview_display_settings_title">
+
+        <com.hippo.ehviewer.preference.NumberOfColumnsPreference
+            xmlns:auto="http://schemas.android.com/apk/res-auto"
+            android:key="preview_columns"
+            android:title="@string/preview_columns"
+            auto:keyPortrait="preview_columns_portrait"
+            auto:keyLandscape="preview_columns_landscape"
+            auto:defValuePortrait="3"
+            auto:defValueLandscape="5" />
+
+    </PreferenceCategory>
+    
     <PreferenceCategory
         android:title="@string/popular_display_settings_title">
 

@@ -310,8 +310,10 @@ public class DetailSectionFragment extends Fragment
         });
 
         mScrollView.addOnLayoutChangeListener(this);
-        mPreviewListLayout.setColumnCountPortrait(3); // TODO add it to config
-        mPreviewListLayout.setColumnCountLandscape(5);
+        mPreviewListLayout.setColumnCountPortrait(
+                Config.getPreviewColumnsPortrait());
+        mPreviewListLayout.setColumnCountLandscape(
+                Config.getPreviewColumnsLandscape());
 
         // Load first detail
         mActivity.loadDetail();
