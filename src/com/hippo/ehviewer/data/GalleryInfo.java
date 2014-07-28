@@ -21,6 +21,14 @@ import android.os.Parcelable;
 
 public class GalleryInfo implements Parcelable {
 
+    /**
+     * ISO 639-1
+     */
+    public static final String[] S_LANGS = {
+        "ja", "en", "zh", "nl", "fr", "de", "hu",
+        "it", "ko", "pl", "pt", "ru", "es", "th", "vi"
+    };
+
     public int gid;
     public String token;
     public String title;
@@ -29,6 +37,10 @@ public class GalleryInfo implements Parcelable {
     public String thumb;
     public String uploader;
     public float rating;
+    /**
+     * language get from title
+     */
+    public String SimpleLanguage;
 
     public static final Parcelable.Creator<GalleryInfo> CREATOR =
             new Parcelable.Creator<GalleryInfo>() {
@@ -43,6 +55,7 @@ public class GalleryInfo implements Parcelable {
                     p.thumb = source.readString();
                     p.uploader = source.readString();
                     p.rating = source.readFloat();
+                    p.SimpleLanguage = source.readString();
                     return p;
                 }
 
@@ -67,5 +80,10 @@ public class GalleryInfo implements Parcelable {
         dest.writeString(thumb);
         dest.writeString(uploader);
         dest.writeFloat(rating);
+        dest.writeString(SimpleLanguage);
+    }
+
+    public final void generateSLang() {
+
     }
 }

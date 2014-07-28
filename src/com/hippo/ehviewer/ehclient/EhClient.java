@@ -1367,6 +1367,7 @@ public class EhClient {
                                 gi.category = getType(j.getString("category"));
                                 gi.uploader = j.getString("uploader");
                                 gi.rating = Float.parseFloat(j.getString("rating"));
+                                gi.generateSLang();
                                 gis.add(gi);
                             }
 

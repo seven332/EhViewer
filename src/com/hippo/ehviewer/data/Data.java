@@ -124,6 +124,7 @@ public class Data {
                 galleryInfo.thumb = cursor.getString(5);
                 galleryInfo.uploader = cursor.getString(6);
                 galleryInfo.rating = cursor.getFloat(7);
+                galleryInfo.generateSLang();
 
                 // add to map
                 mGallerys.put(gid, galleryInfo);

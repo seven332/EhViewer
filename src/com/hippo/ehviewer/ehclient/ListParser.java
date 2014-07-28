@@ -92,6 +92,7 @@ public class ListParser {
                     lgi.rating = Float.NaN;
                 else
                     lgi.rating = getStartNum(rating);
+                lgi.generateSLang();
 
                 giList.add(lgi);
             }
@@ -165,6 +166,8 @@ public class ListParser {
 
                 gi.rating = Float.parseFloat(getRate(m.group(9)));
                 gi.uploader = m.group(10);
+                gi.generateSLang();
+
                 giList.add(gi);
             }
             return ALL;

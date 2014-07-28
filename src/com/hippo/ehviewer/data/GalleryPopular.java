@@ -21,7 +21,7 @@ import android.os.Parcelable;
 
 public class GalleryPopular extends GalleryInfo {
     public long count;
-    
+
     public static final Parcelable.Creator<GalleryPopular> CREATOR =
             new Parcelable.Creator<GalleryPopular>() {
                 @Override
@@ -35,6 +35,7 @@ public class GalleryPopular extends GalleryInfo {
                     p.thumb = source.readString();
                     p.uploader = source.readString();
                     p.rating = source.readFloat();
+                    p.SimpleLanguage = source.readString();
                     p.count = source.readLong();
                     return p;
                 }
@@ -44,22 +45,15 @@ public class GalleryPopular extends GalleryInfo {
                     return new GalleryPopular[size];
                 }
     };
-    
+
     @Override
     public int describeContents() {
         return 0;
     }
-    
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(gid);
-        dest.writeString(token);
-        dest.writeString(title);
-        dest.writeString(posted);
-        dest.writeInt(category);
-        dest.writeString(thumb);
-        dest.writeString(uploader);
-        dest.writeFloat(rating);
+        super.writeToParcel(dest, flags);
         dest.writeLong(count);
     }
 }

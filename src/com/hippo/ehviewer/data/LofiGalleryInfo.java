@@ -41,6 +41,7 @@ public class LofiGalleryInfo extends GalleryInfo {
                     p.thumb = source.readString();
                     p.uploader = source.readString();
                     p.rating = source.readFloat();
+                    p.SimpleLanguage = source.readString();
 
                     length = source.readInt();
                     if (length > 0) {

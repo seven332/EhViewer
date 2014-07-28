@@ -17,20 +17,25 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory android:title="@string/list_eh_settings_title" >
+
         <Preference
             android:key="list_default_category"
             android:summary="@string/list_default_category_summary"
             android:title="@string/list_default_category_title" />
+
         <Preference
             android:key="exculde_tag_group"
             android:summary="@string/exculde_tag_group_summary"
             android:title="@string/exculde_tag_group_title" />
+
         <Preference
             android:key="exculde_language"
             android:summary="@string/exculde_language_summary"
             android:title="@string/exculde_language_title" />
     </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/detail_eh_settings_title" >
+
         <com.hippo.ehviewer.preference.AutoListPreference
             android:defaultValue="l"
             android:entries="@array/preview_mode_entries"
@@ -39,11 +44,6 @@
             android:summary="%s"
             android:title="@string/preview_mode_title" />
 
-        <EditTextPreference
-            android:defaultValue="3"
-            android:inputType="number"
-            android:key="preview_per_row"
-            android:title="@string/preview_per_row_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

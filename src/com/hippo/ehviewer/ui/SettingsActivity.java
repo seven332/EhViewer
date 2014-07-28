@@ -360,21 +360,11 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         private static final String KEY_EXCULDE_TAG_GROUP = "exculde_tag_group";
         private static final String KEY_EXCULDE_LANGUAGE = "exculde_language";
         private static final String KEY_PREVIEW_MODE = "preview_mode";
-        private static final String KEY_PREVIEW_PER_ROW = "preview_per_row";
 
         private Preference mListDefaultCategory;
         private Preference mExculdeTagGroup;
         private Preference mExculdeLanguage;
         private AutoListPreference mPreviewMode;
-        private EditTextPreference mPreviewPerRow;
-
-
-        private void setPPREnabled(String previewMode) {
-            if (previewMode.equals(Config.PREVIEW_MODE_LARGE))
-                mPreviewPerRow.setEnabled(true);
-            else
-                mPreviewPerRow.setEnabled(false);
-        }
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -389,11 +379,6 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             mExculdeLanguage.setOnPreferenceClickListener(this);
             mPreviewMode = (AutoListPreference)findPreference(KEY_PREVIEW_MODE);
             mPreviewMode.setOnPreferenceChangeListener(this);
-            mPreviewPerRow = (EditTextPreference)findPreference(KEY_PREVIEW_PER_ROW);
-            mPreviewPerRow.setOnPreferenceChangeListener(this);
-
-            mPreviewPerRow.setSummary(mPreviewPerRow.getText());
-            setPPREnabled(mPreviewMode.getValue());
         }
 
         @Override
@@ -402,19 +387,6 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             if (KEY_PREVIEW_MODE.equals(key)) {
                 String newPreviewMode = (String)newValue;
                 EhInfo.getInstance(mActivity).setPreviewMode(newPreviewMode);
-                setPPREnabled(newPreviewMode);
-
-            } else if (KEY_PREVIEW_PER_ROW.equals(key)) {
-                try {
-                    int value = Integer.parseInt((String)newValue);
-                    if (value <= 0)
-                        throw new Exception();
-                    mPreviewPerRow.setSummary((String)newValue);
-                } catch (Exception e) {
-                    new SuperToast(mActivity, R.string.invalid_input, SuperToast.ERROR).show();
-                    return false;
-                }
-
             }
             return true;
         }

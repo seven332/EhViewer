@@ -75,6 +75,13 @@ public class NumberOfColumnsPreference extends Preference
         a.recycle();
 
         setOnPreferenceClickListener(this);
+        updateSummary(Config.getInt(keyPortrait, defValuePortrait),
+                Config.getInt(keyLandscape, defValueLandscape));
+    }
+
+    private void updateSummary(int portrait, int landscape) {
+        setSummary(String.format("%s: %d, %s: %d", mContext.getString(R.string.portrait),
+                portrait, mContext.getString(R.string.landscape), landscape));
     }
 
     @Override
@@ -101,6 +108,7 @@ public class NumberOfColumnsPreference extends Preference
                             newLandscape > 0 && newLandscape < 100) { // TODO Need a better range
                         Config.setInt(keyPortrait, newPortrait);
                         Config.setInt(keyLandscape, newLandscape);
+                        updateSummary(newPortrait, newLandscape);
                         ((AlertButton)v).dialog.dismiss();
                     } else {
                         throw new Exception();
