@@ -16,38 +16,20 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_marginBottom="12dp"
-    android:layout_marginTop="12dp"
-    android:gravity="center_horizontal"
+    android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <com.hippo.ehviewer.widget.SimpleGridLayout
+    <com.hippo.ehviewer.widget.FixedAspectImageView
         xmlns:auto="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/preview_list_layout"
-        android:layout_width="wrap_content"
+        android:id="@+id/image"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        auto:sgl_item_margin="16dp" >
-    </com.hippo.ehviewer.widget.SimpleGridLayout>
+        auto:aspect="0.667" />
 
-    <ProgressBar
-        android:id="@+id/paper_list_wait"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/preview_button_refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        android:text="@string/refresh"
-        android:visibility="gone" />
-
-    <include
-        android:id="@+id/bottom_panel"
-        layout="@layout/preview_list_panel" />
+        android:gravity="center" />
 
 </LinearLayout>

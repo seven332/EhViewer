@@ -29,8 +29,9 @@ import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Ui;
 
-public class LoadImageView extends ImageView {
-    private static final String TAG = "LoadImageView";
+public class LoadImageView extends FixedAspectImageView {
+    @SuppressWarnings("unused")
+    private static final String TAG = LoadImageView.class.getSimpleName();
 
     public static final int NONE = 0x0;
     public static final int LOADING = 0x1;

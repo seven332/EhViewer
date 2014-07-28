@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Hippo Seven
+<!--
+     Copyright (C) 2014 Hippo Seven
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -12,14 +13,11 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
- -->
-<resources>  
-  
+-->
+<resources>
+
     <declare-styleable name="SuperImageView">
-        <!-- Sets a drawable as the content of this ImageView. -->
         <attr name="src" format="reference|color" />
-        <!-- Controls how the image should be resized or moved to match the size
-             of this ImageView. -->
         <attr name="scaleType">
             <enum name="matrix" value="0" />
             <enum name="fitXY" value="1" />
@@ -30,30 +28,16 @@
             <enum name="centerCrop" value="6" />
             <enum name="centerInside" value="7" />
         </attr>
-        <!-- Set this to true if you want the ImageView to adjust its bounds
-             to preserve the aspect ratio of its drawable. -->
         <attr name="adjustViewBounds" format="boolean" />
-        <!-- An optional argument to supply a maximum width for this view.
-             See {see android.widget.ImageView#setMaxWidth} for details. -->
         <attr name="maxWidth" format="dimension" />
-        <!-- An optional argument to supply a maximum height for this view.
-             See {see android.widget.ImageView#setMaxHeight} for details. -->
         <attr name="maxHeight" format="dimension" />
-        <!-- Set a tinting color for the image. -->
         <attr name="tint" format="color" />
-        <!-- If true, the image view will be baseline aligned with based on its
-             bottom edge. -->
         <attr name="baselineAlignBottom" format="boolean" />
-         <!-- If true, the image will be cropped to fit within its padding. -->
         <attr name="cropToPadding" format="boolean" />
-        <!-- The offset of the baseline within this view. See {see android.view.View#getBaseline}
-             for details -->
         <attr name="baseline" format="dimension" />
-        <!-- @hide The alpha value (0-255) set on the ImageView's drawable. Equivalent
-             to calling ImageView.setAlpha(int), not the same as View.setAlpha(float). -->
         <attr name="drawableAlpha" format="integer" />
     </declare-styleable>
-    
+
     <declare-styleable name="AutoWrapLayout">
         <attr name="alignment">
             <enum name="top" value="0" />
@@ -61,7 +45,7 @@
             <enum name="bottom" value="2" />
         </attr>
     </declare-styleable>
-    
+
     <declare-styleable name="FileExplorerView">
         <attr name="path" format="string" />
         <attr name="filter">
@@ -69,5 +53,16 @@
             <enum name="dir" value="1" />
         </attr>
     </declare-styleable>
-    
-</resources> 
+
+    <declare-styleable name="SimpleGridLayout">
+        <attr name="sgl_column_count" format="integer" />
+        <attr name="sgl_column_count_portrait" format="integer" />
+        <attr name="sgl_column_count_landscape" format="integer" />
+        <attr name="sgl_item_margin" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="FixedAspectImageView">
+        <attr name="aspect" format="float" />
+    </declare-styleable>
+
+</resources>

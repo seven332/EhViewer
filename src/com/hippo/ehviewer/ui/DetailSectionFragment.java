@@ -73,6 +73,7 @@ import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.ProgressiveRatingBar;
+import com.hippo.ehviewer.widget.SimpleGridLayout;
 import com.hippo.ehviewer.widget.SuperToast;
 
 public class DetailSectionFragment extends Fragment
@@ -103,7 +104,7 @@ public class DetailSectionFragment extends Fragment
     private ViewGroup mOffensiveView;
     private ViewGroup mPiningView;
     private ViewGroup mPreviewListMain;
-    private AutoWrapLayout mPreviewListLayout;
+    private SimpleGridLayout mPreviewListLayout;
     private ProgressBar mWaitPreviewList;
     private Button mPreviewRefreshButton;
     private View mBottomPanel;
@@ -251,7 +252,7 @@ public class DetailSectionFragment extends Fragment
         mOffensiveView = (ViewGroup)mRootView.findViewById(R.id.manga_detail_offensive);
         mPiningView = (ViewGroup)mRootView.findViewById(R.id.manga_detail_pining);
         mPreviewListMain = (ViewGroup)mRootView.findViewById(R.id.page_list);
-        mPreviewListLayout = (AutoWrapLayout)mRootView.findViewById(R.id.paper_list_layout);
+        mPreviewListLayout = (SimpleGridLayout)mRootView.findViewById(R.id.preview_list_layout);
         mWaitPreviewList = (ProgressBar)mRootView.findViewById(R.id.paper_list_wait);
         mPreviewRefreshButton = (Button)mRootView.findViewById(R.id.preview_button_refresh);
         mBottomPanel = mRootView.findViewById(R.id.bottom_panel);
@@ -309,6 +310,8 @@ public class DetailSectionFragment extends Fragment
         });
 
         mScrollView.addOnLayoutChangeListener(this);
+        mPreviewListLayout.setColumnCountPortrait(3); // TODO add it to config
+        mPreviewListLayout.setColumnCountLandscape(5);
 
         // Load first detail
         mActivity.loadDetail();
@@ -344,7 +347,6 @@ public class DetailSectionFragment extends Fragment
                             mGalleryDetail.previewLists[page] = pageList;
                             mGalleryDetail.previewLists[page].setData(DetailSectionFragment.this, mActivity, mGalleryDetail, page);
                             mGalleryDetail.previewLists[page].addPreview(mPreviewListLayout);
-
 
                             mShowPreview = true;
                         }

@@ -44,7 +44,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -182,7 +181,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
     private final DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
 
     private int mListMode;
-    private int mListModeThumbHeight;
+    //private int mListModeThumbHeight;
 
     private void toRegister() {
         Uri uri = Uri.parse("http://forums.e-hentai.org/index.php?act=Reg");
@@ -1062,6 +1061,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 return true;
             }
         });
+        /*
         mStaggeredGridView.setOnChangeColumnListener(new StaggeredGridView.OnChangeColumnListener() {
             @Override
             public void onChangeColumn(int columnCount, int width) {
@@ -1071,7 +1071,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
                             .findViewById(Window.ID_ANDROID_CONTENT).getWidth();
                 mListModeThumbHeight = (width - ((columnCount + 1) * Ui.dp2pix(8))) / columnCount / 2 * 3;
             }
-        });
+        });*/
 
         FswView alignment = (FswView)findViewById(R.id.alignment);
         alignment.addOnFitSystemWindowsListener(new OnFitSystemWindowsListener() {
@@ -1522,10 +1522,6 @@ public class GalleryListActivity extends AbstractGalleryActivity
 
             final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.thumb);
             if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
-                // Set height
-                if (mListMode == LIST_MODE_THUMB)
-                    thumb.getLayoutParams().height = mListModeThumbHeight;
-
                 // Set new thumb
                 thumb.setImageDrawable(null);
                 thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));

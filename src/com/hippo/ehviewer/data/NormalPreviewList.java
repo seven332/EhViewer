@@ -18,22 +18,21 @@ package com.hippo.ehviewer.data;
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.hippo.ehviewer.ImageLoader;
+import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.GalleryActivity;
-import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.widget.AutoWrapLayout;
+import com.hippo.ehviewer.widget.SimpleGridLayout;
 
 public class NormalPreviewList extends PreviewList{
-    
+
     public class Item {
         public int xOffset;
         public int yOffset;
@@ -49,7 +48,7 @@ public class NormalPreviewList extends PreviewList{
             this.url = url;
         }
     }
-    
+
     public class Row {
         public String imageUrl;
         public ArrayList<Item> itemArray = new ArrayList<Item>();
@@ -57,13 +56,13 @@ public class NormalPreviewList extends PreviewList{
         public Row(String imageUrl) {
             this.imageUrl = imageUrl;
         }
-        
+
         public void addItem(int xOffset, int yOffset, int width, int height,
                 String url) {
             itemArray.add(new Item(xOffset, yOffset, width, height, url));
         }
     }
-    
+
     private Row curRow;
     public ArrayList<Row> rowArray = new ArrayList<Row>();
 
@@ -79,19 +78,19 @@ public class NormalPreviewList extends PreviewList{
             curRow.startIndex = lastRow.startIndex + lastRow.itemArray.size();
             rowArray.add(curRow);
         }
-        
+
         curRow.addItem(Integer.parseInt(xOffset),
                 Integer.parseInt(yOffset), Integer.parseInt(width),
                 Integer.parseInt(height), url);
     }
-    
+
     public int getSum() {
         int sum = 0;
         for (Row row : rowArray)
             sum += row.itemArray.size();
         return sum;
     }
-    
+
     @Override
     public String getPageUrl(int index) {
         for (Row row : rowArray) {
@@ -100,49 +99,41 @@ public class NormalPreviewList extends PreviewList{
         }
         return null;
     }
-    
+
     // TODO reuse the TextView in AutoWrapLayout
+    @SuppressLint("InflateParams")
     @Override
-    public void addPreview(AutoWrapLayout viewGroup) {
+    public void addPreview(SimpleGridLayout viewGroup) {
         if (mTargetPage != mHolder.getCurPreviewPage())
             return;
-        
-        int margin = Ui.dp2pix(8);
-        int index = mTargetPage * mGi.previewPerPage + 1; // it is display index
+
+        LayoutInflater inflater = LayoutInflater.from(mActivity);
+        int index = mTargetPage * mGi.previewPerPage; // it is display index
         int rowIndex = 0;
         for (NormalPreviewList.Row row : rowArray) {
             for (NormalPreviewList.Item item : row.itemArray) {
-                TextViewWithUrl tvu = new TextViewWithUrl(mActivity);
-                tvu.url = item.url;
-                tvu.setGravity(Gravity.CENTER);
-                tvu.setText(String.valueOf(index));
+                View view = inflater.inflate(R.layout.preview_item, null);
+
+                ((TextView)view.findViewById(R.id.text)).setText(String.valueOf(index + 1));
+
                 final int finalIndex = index;
-                tvu.setOnClickListener(new OnClickListener() {
+                final String url = item.url;
+                view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         // Add to read in Data
                         Intent intent = new Intent(mActivity,
                                 GalleryActivity.class);
-                        intent.putExtra("url", ((TextViewWithUrl)v).url);
+                        intent.putExtra("url", url);
                         intent.putExtra("gid", mGi.gid);
                         intent.putExtra("title", mGi.title);
-                        intent.putExtra("firstPage", finalIndex - 1);
+                        intent.putExtra("firstPage", finalIndex);
                         intent.putExtra("pageSum", mGi.pages);
                         mActivity.startActivity(intent);
                     }
                 });
-                // Set transport drawable for temp
-                ColorDrawable white = new ColorDrawable(Color.TRANSPARENT);
-                white.setBounds(0, 0, item.width, item.height);
-                tvu.setCompoundDrawables(null, white, null, null);
-                
-                AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams();
-                lp.leftMargin = margin;
-                lp.topMargin = margin;
-                lp.rightMargin = margin;
-                lp.bottomMargin = margin;
-                viewGroup.addView(tvu, lp);
-                
+
+                viewGroup.addView(view);
                 index++;
             }
             // TODO I need a better key
@@ -152,42 +143,39 @@ public class NormalPreviewList extends PreviewList{
             rowIndex++;
         }
     }
-    
+
     private class PreviewImageGetListener implements ImageLoader.OnGetImageListener {
-        private AutoWrapLayout mViewGroup;
-        private int mRowIndex;
-        
-        public PreviewImageGetListener(AutoWrapLayout viewGroup, int rowIndex) {
+        private final SimpleGridLayout mViewGroup;
+        private final int mRowIndex;
+
+        public PreviewImageGetListener(SimpleGridLayout viewGroup, int rowIndex) {
             mViewGroup = viewGroup;
             mRowIndex = rowIndex;
         }
-        
+
         @Override
         public void onGetImage(String key, Bitmap bmp) {
             if (mTargetPage != mHolder.getCurPreviewPage())
                 return;
-            
+
             if (bmp == null) {
                 mHolder.onGetPreviewImageFailure();
             } else {
                 int maxWidth = bmp.getWidth();
                 int maxHeight = bmp.getHeight();
-                
+
                 NormalPreviewList.Row row = rowArray.get(mRowIndex);
-                
                 int i = row.startIndex;
                 for(Item item : row.itemArray) {
+
                     if (item.xOffset + item.width > maxWidth)
                         item.width = maxWidth - item.xOffset;
                     if (item.yOffset + item.height > maxHeight)
                         item.height = maxHeight - item.yOffset;
-                    BitmapDrawable bitmapDrawable = new BitmapDrawable(
-                            mActivity.getResources(), Bitmap.createBitmap(bmp,
-                            item.xOffset, item.yOffset, item.width, item.height));
-                    bitmapDrawable.setBounds(0, 0, item.width, item.height);
-                    
-                    TextViewWithUrl tvu = (TextViewWithUrl)mViewGroup.getChildAt(i);
-                    tvu.setCompoundDrawables(null, bitmapDrawable, null, null);
+                    Bitmap bitmap = Bitmap.createBitmap(bmp, item.xOffset, item.yOffset, item.width, item.height);
+
+                    ((ImageView)mViewGroup.getChildAt(i).findViewById(R.id.image)).setImageBitmap(bitmap);
+
                     i++;
                 }
             }

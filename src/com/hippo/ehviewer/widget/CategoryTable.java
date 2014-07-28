@@ -73,9 +73,6 @@ public class CategoryTable extends TableLayout {
      * @param category
      */
     public void setCategory(int category) {
-
-        System.out.println("category = " + category);
-
         mDoujinshi.setChecked(!Util.int2boolean(category & ListUrls.DOUJINSHI));
         mManga.setChecked(!Util.int2boolean(category & ListUrls.MANGA));
         mArtistCG.setChecked(!Util.int2boolean(category & ListUrls.ARTIST_CG));

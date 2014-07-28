@@ -54,10 +54,6 @@ public class StaggeredGridView extends ExtendableListView {
     private int mColumnCountPortrait = DEFAULT_COLUMNS_PORTRAIT;
     private int mColumnCountLandscape = DEFAULT_COLUMNS_LANDSCAPE;
 
-    private OnChangeColumnListener mOnChangeColumnListener;
-    private int mLastColumnCount = -1;
-    private int mLastWidth = -1;
-
     /**
      * A key-value collection where the key is the position and the
      * {@link GridItemRecord} with some info about that position
@@ -255,10 +251,6 @@ public class StaggeredGridView extends ExtendableListView {
         mColumnCountLandscape = columnCountLandscape;
     }
 
-    public void setOnChangeColumnListener(OnChangeColumnListener l) {
-        mOnChangeColumnListener = l;
-    }
-
     // //////////////////////////////////////////////////////////////////////////////////////////
     // MEASUREMENT
     //
@@ -274,15 +266,6 @@ public class StaggeredGridView extends ExtendableListView {
             boolean isLandscape = isLandscape();
             mColumnCount = isLandscape ? mColumnCountLandscape : mColumnCountPortrait;
         }
-
-        // on change column
-        int width = getWidth();
-        if ((mLastColumnCount != mColumnCount || mLastWidth != width) &&
-                mOnChangeColumnListener != null)
-            mOnChangeColumnListener.onChangeColumn(mColumnCount, width);
-
-        mLastColumnCount = mColumnCount;
-        mLastWidth = width;
 
         // our column width is the width of the listview
         // minus it's padding
@@ -1332,9 +1315,5 @@ public class StaggeredGridView extends ExtendableListView {
         mPositionData = ss.positionData;
         mNeedSync = true;
         super.onRestoreInstanceState(ss);
-    }
-
-    public interface OnChangeColumnListener {
-        void onChangeColumn(int columnCount, int width);
     }
 }

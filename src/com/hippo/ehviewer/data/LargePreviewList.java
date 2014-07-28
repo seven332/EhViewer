@@ -19,84 +19,67 @@ package com.hippo.ehviewer.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.util.DisplayMetrics;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.hippo.ehviewer.ImageLoader;
-import com.hippo.ehviewer.drawable.StableBitmapDrawable;
+import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.GalleryActivity;
-import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.widget.AutoWrapLayout;
+import com.hippo.ehviewer.widget.SimpleGridLayout;
 
 public class LargePreviewList extends PreviewList {
-    
-    /*
-     * 推荐 large preview width 为 240dip, height 为 320 dip
-     */
-    
-    private static final float HDivW = 4.0f/3;
-    
-    private int mItemWidth;
-    private int mItemHeight;
-    
+
     private class Item {
         public String mImageUrl;
         public String mPageUrl;
-        
+
         public Item(String imageUrl, String pageUrl) {
             mImageUrl = imageUrl;
             mPageUrl = pageUrl;
         }
     }
-    
+
     public List<Item> mItemList = new ArrayList<Item>();
-    
+
     public void addItem(String imageUrl, String pageUrl) {
         mItemList.add(new Item(imageUrl, pageUrl));
     }
-    
+
     @Override
     public String getPageUrl(int index) {
         if (index >= 0 && index < mItemList.size())
             return mItemList.get(index).mPageUrl;
         return null;
     }
-    
+
+    @SuppressLint("InflateParams")
     @Override
-    public void addPreview(AutoWrapLayout viewGroup) {
+    public void addPreview(SimpleGridLayout viewGroup) {
         if (mTargetPage != mHolder.getCurPreviewPage())
             return;
-        
-        int margin = Ui.dp2pix(8);
-        DisplayMetrics metric = new DisplayMetrics();
-        mActivity.getWindowManager().getDefaultDisplay().getMetrics(metric);
-        int screenWidth = metric.widthPixels;
-        mItemWidth = (screenWidth / Config.getPreviewPerRow()) - 2 * margin;
-        mItemHeight = (int)(mItemWidth * HDivW);
-        
+
+        LayoutInflater inflater = LayoutInflater.from(mActivity);
         int startIndex = mTargetPage * mGi.previewPerPage;
         int index = startIndex;
         for (Item item : mItemList) {
-            TextViewWithUrl tvu = new TextViewWithUrl(mActivity);
-            tvu.url = item.mPageUrl;
-            tvu.setGravity(Gravity.CENTER);
-            tvu.setText(String.valueOf(index + 1)); // Start from 1 here
+            View view = inflater.inflate(R.layout.preview_item, null);
+
+            ((TextView)view.findViewById(R.id.text)).setText(String.valueOf(index + 1));
+
             final int finalIndex = index;
-            tvu.setOnClickListener(new OnClickListener() {
+            final String url = item.mPageUrl;
+            view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // Add to read in Data
                     Intent intent = new Intent(mActivity,
                             GalleryActivity.class);
-                    intent.putExtra("url", ((TextViewWithUrl)v).url);
+                    intent.putExtra("url", url);
                     intent.putExtra("gid", mGi.gid);
                     intent.putExtra("title", mGi.title);
                     intent.putExtra("firstPage", finalIndex);
@@ -104,55 +87,39 @@ public class LargePreviewList extends PreviewList {
                     mActivity.startActivity(intent);
                 }
             });
-            
-            // Set transport drawable for temp
-            ColorDrawable white = new ColorDrawable(Color.TRANSPARENT);
-            white.setBounds(0, 0, mItemWidth, mItemHeight);
-            tvu.setCompoundDrawables(null, white, null, null);
-            
-            AutoWrapLayout.LayoutParams lp = new AutoWrapLayout.LayoutParams();
-            lp.leftMargin = margin;
-            lp.topMargin = margin;
-            lp.rightMargin = margin;
-            lp.bottomMargin = margin;
-            viewGroup.addView(tvu, lp);
-            
+            viewGroup.addView(view);
+            // TODO I need a better key
             ImageLoader.getInstance(mActivity).add(item.mImageUrl, mGi.gid +
                     "-preview-" + index,
                     new PreviewImageGetListener(viewGroup, index - startIndex));
-            
+
             index++;
         }
     }
-    
+
     private class PreviewImageGetListener implements ImageLoader.OnGetImageListener {
-        private AutoWrapLayout mViewGroup;
-        private int mIndex;
-        
+        private final SimpleGridLayout mViewGroup;
+        private final int mIndex;
+
         /**
          * index is view index in viewgroup
          * @param viewGroup
          * @param index
          */
-        public PreviewImageGetListener(AutoWrapLayout viewGroup, int index) {
+        public PreviewImageGetListener(SimpleGridLayout viewGroup, int index) {
             mViewGroup = viewGroup;
             mIndex = index;
         }
-        
+
         @Override
         public void onGetImage(String key, Bitmap bmp) {
             if (mTargetPage != mHolder.getCurPreviewPage())
                 return;
-            
-            if (bmp == null) {
+
+            if (bmp == null)
                 mHolder.onGetPreviewImageFailure();
-            } else {
-                StableBitmapDrawable sbd = new StableBitmapDrawable(mActivity.getResources(), bmp);
-                sbd.setBounds(0, 0, mItemWidth, mItemHeight);
-                
-                TextViewWithUrl tvu = (TextViewWithUrl)mViewGroup.getChildAt(mIndex);
-                tvu.setCompoundDrawables(null, sbd, null, null);
-            }
+            else
+                ((ImageView)mViewGroup.getChildAt(mIndex).findViewById(R.id.image)).setImageBitmap(bmp);
         }
     }
 }

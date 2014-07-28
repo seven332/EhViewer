@@ -20,55 +20,54 @@ import android.app.Activity;
 import android.content.Context;
 import android.widget.TextView;
 
-import com.hippo.ehviewer.ui.DetailSectionFragment;
-import com.hippo.ehviewer.widget.AutoWrapLayout;
+import com.hippo.ehviewer.widget.SimpleGridLayout;
 
 /**
  * This interface describe the previews in one page
- * 
+ *
  * @author Hippo
  *
  */
 public abstract class PreviewList {
-    
+
     protected PreviewHolder mHolder;
     protected Activity mActivity;
     protected GalleryDetail mGi;
     protected int mTargetPage;
-    
+
     /**
      * Add preview to view group
      * @param viewGroup
      * @return
      */
-    public abstract void addPreview(AutoWrapLayout viewGroup);
-    
+    public abstract void addPreview(SimpleGridLayout viewGroup);
+
     public void setData(PreviewHolder holder, Activity activity, GalleryDetail gi, int targetPage) {
         mHolder = holder;
         mActivity = activity;
         mGi = gi;
         mTargetPage = targetPage;
     }
-    
+
     public void setTargetPage(int targetPage) {
         mTargetPage = targetPage;
     }
-    
+
     /**
      * Return page url at target index, null for invalid index
      * @param index
      * @return
      */
     public abstract String getPageUrl(int index);
-    
+
     protected class TextViewWithUrl extends TextView {
         public String url;
-        
+
         public TextViewWithUrl(Context context) {
             super(context);
         }
     }
-    
+
     public interface PreviewHolder {
         public int getCurPreviewPage();
         public void onGetPreviewImageFailure();
