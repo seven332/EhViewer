@@ -56,7 +56,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -1485,8 +1484,8 @@ public class GalleryListActivity extends AbstractGalleryActivity
             GalleryInfo gi= mGiList.get(position);
 
             if (convertView == null ||
-                    (mListMode == LIST_MODE_DETAIL && !(convertView instanceof RelativeLayout)) ||
-                    (mListMode == LIST_MODE_THUMB && !(convertView instanceof LinearLayout))) {
+                    (mListMode == LIST_MODE_DETAIL && convertView.getId() != R.id.gallery_list_detail) ||
+                    (mListMode == LIST_MODE_THUMB && convertView.getId() != R.id.gallery_list_thumb)) {
                 // Get new view
                 switch (mListMode) {
                 case LIST_MODE_DETAIL:
@@ -1539,6 +1538,16 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 // set posted
                 TextView posted = (TextView) convertView.findViewById(R.id.posted);
                 posted.setText(gi.posted);
+
+            } else if (mListMode == LIST_MODE_THUMB){
+                // Set simple language
+                TextView simpleLanguage = (TextView) convertView.findViewById(R.id.simple_language);
+                if (gi.simpleLanguage == null) {
+                    simpleLanguage.setVisibility(View.GONE);
+                } else {
+                    simpleLanguage.setVisibility(View.VISIBLE);
+                    simpleLanguage.setText(gi.simpleLanguage);
+                }
             }
 
             return convertView;

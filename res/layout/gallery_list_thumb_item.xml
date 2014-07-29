@@ -14,16 +14,16 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/gallery_list_thumb"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:layout_height="fill_parent" >
 
     <com.hippo.ehviewer.widget.LoadImageView
         xmlns:auto="http://schemas.android.com/apk/res-auto"
         android:id="@+id/thumb"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         auto:aspect="0.667" />
 
     <TextView
@@ -31,7 +31,19 @@
         style="@style/CardSubtitle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/thumb"
         android:gravity="center"
         android:textColor="@android:color/white" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/simple_language"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:background="@android:color/holo_blue_light"
+        android:textColor="@android:color/white" />
+
+</RelativeLayout>

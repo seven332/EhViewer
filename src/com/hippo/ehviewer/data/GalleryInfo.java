@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.data;
 
+import java.util.regex.Pattern;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -24,10 +26,56 @@ public class GalleryInfo implements Parcelable {
     /**
      * ISO 639-1
      */
+    public static final String S_LANG_JA = "JA";
+    public static final String S_LANG_EN = "EN";
+    public static final String S_LANG_ZH = "ZH";
+    public static final String S_LANG_NL = "NL";
+    public static final String S_LANG_FR = "FR";
+    public static final String S_LANG_DE = "DE";
+    public static final String S_LANG_HU = "HU";
+    public static final String S_LANG_IT = "IT";
+    public static final String S_LANG_KO = "KO";
+    public static final String S_LANG_PL = "PL";
+    public static final String S_LANG_PT = "PT";
+    public static final String S_LANG_RU = "RU";
+    public static final String S_LANG_ES = "ES";
+    public static final String S_LANG_TH = "TH";
+    public static final String S_LANG_VI = "VI";
+
     public static final String[] S_LANGS = {
-        "ja", "en", "zh", "nl", "fr", "de", "hu",
-        "it", "ko", "pl", "pt", "ru", "es", "th", "vi"
+        S_LANG_EN,
+        S_LANG_ZH,
+        S_LANG_ES,
+        S_LANG_KO,
+        S_LANG_RU,
+        S_LANG_FR,
+        S_LANG_PT,
+        S_LANG_TH,
+        S_LANG_DE,
+        S_LANG_IT,
+        S_LANG_VI,
+        S_LANG_PL,
+        S_LANG_HU,
+        S_LANG_NL,
     };
+
+    public static final String[] S_LANG_PATTERNS = {
+        "[(\\[]eng(?:lish)?[)\\]]",
+        "[(（\\[]chinese[)）\\]]|[汉漢]化",
+        "[(\\[]spanish[)\\]]|[(\\[]Español[)\\]]",
+        "[(\\[]korean[)\\]]",
+        "[(\\[]rus(?:sian)?[)\\]]",
+        "[(\\[]fr(?:ench)?[)\\]]",
+        "[(\\[]portuguese",
+        "[(\\[]thai(?: ภาษาไทย)?[)\\]]",
+        "[(\\[]german[)\\]]",
+        "[(\\[]italiano?[)\\]]",
+        "[(\\[]vietnamese(?: Tiếng Việt)?[)\\]]",
+        "[(\\[]polish[)\\]]",
+        "[(\\[]hun(?:garian)?[)\\]]",
+        "[(\\[]dutch[)\\]]",
+    };
+
 
     public int gid;
     public String token;
@@ -40,7 +88,7 @@ public class GalleryInfo implements Parcelable {
     /**
      * language get from title
      */
-    public String SimpleLanguage;
+    public String simpleLanguage;
 
     public static final Parcelable.Creator<GalleryInfo> CREATOR =
             new Parcelable.Creator<GalleryInfo>() {
@@ -55,7 +103,7 @@ public class GalleryInfo implements Parcelable {
                     p.thumb = source.readString();
                     p.uploader = source.readString();
                     p.rating = source.readFloat();
-                    p.SimpleLanguage = source.readString();
+                    p.simpleLanguage = source.readString();
                     return p;
                 }
 
@@ -80,10 +128,16 @@ public class GalleryInfo implements Parcelable {
         dest.writeString(thumb);
         dest.writeString(uploader);
         dest.writeFloat(rating);
-        dest.writeString(SimpleLanguage);
+        dest.writeString(simpleLanguage);
     }
 
     public final void generateSLang() {
-
+        for (int i = 0; i < S_LANGS.length; i++) {
+            if (Pattern.compile(S_LANG_PATTERNS[i], Pattern.CASE_INSENSITIVE).matcher(title).find()) {
+                simpleLanguage = S_LANGS[i];
+                return;
+            }
+        }
+        simpleLanguage = null;
     }
 }

@@ -35,7 +35,7 @@ public class GalleryPopular extends GalleryInfo {
                     p.thumb = source.readString();
                     p.uploader = source.readString();
                     p.rating = source.readFloat();
-                    p.SimpleLanguage = source.readString();
+                    p.simpleLanguage = source.readString();
                     p.count = source.readLong();
                     return p;
                 }
