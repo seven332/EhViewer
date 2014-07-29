@@ -74,7 +74,7 @@
             android:title="@string/list_mode_title"
             android:entries="@array/list_mode_entries"
             android:entryValues="@array/list_mode_entry_values"
-            android:defaultValue="1"
+            android:defaultValue="0"
             android:summary="%s" />
 
         <com.hippo.ehviewer.preference.NumberOfColumnsPreference

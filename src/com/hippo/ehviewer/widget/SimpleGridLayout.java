@@ -48,6 +48,7 @@ public class SimpleGridLayout extends ViewGroup {
 
     public SimpleGridLayout(Context context) {
         super(context);
+        init();
     }
 
     public SimpleGridLayout(Context context, AttributeSet attrs) {
@@ -56,6 +57,7 @@ public class SimpleGridLayout extends ViewGroup {
 
     public SimpleGridLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init();
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SimpleGridLayout, defStyle, 0);
 
@@ -81,9 +83,15 @@ public class SimpleGridLayout extends ViewGroup {
         typedArray.recycle();
     }
 
+    public void init() {
+        setWillNotDraw(true);
+    }
+
     public void setItemMargin(int itemMargin) {
-        mItemMargin = itemMargin;
-        requestLayout();
+        if (mItemMargin != itemMargin) {
+            mItemMargin = itemMargin;
+            requestLayout();
+        }
     }
 
     public void setColumnCount(int columnCount) {

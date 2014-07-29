@@ -19,7 +19,9 @@ package com.hippo.ehviewer.network;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -27,8 +29,11 @@ import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.zip.GZIPInputStream;
 
@@ -181,7 +186,7 @@ public class HttpHelper {
             boolean isCookiable = isUrlCookiable(url);
             while (redirectionCount++ < Constant.MAX_REDIRECTS) {
                 conn = (HttpURLConnection) url.openConnection();
-                conn.setInstanceFollowRedirects(true);
+                //conn.setInstanceFollowRedirects(true);
                 conn.setRequestProperty("User-Agent", Constant.userAgent);
                 conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
                 conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
@@ -219,6 +224,7 @@ public class HttpHelper {
                 case HttpURLConnection.HTTP_SEE_OTHER:
                 case Constant.HTTP_TEMP_REDIRECT:
                     final String location = conn.getHeaderField("Location");
+                    Log.d(TAG, "New location " + location);
                     conn.disconnect();
                     url = new URL(url, location);
                     continue;
@@ -462,6 +468,123 @@ public class HttpHelper {
         }
     }
 
+    public abstract static class FormData {
+        private final Map<String, String> mProperties;
+
+        public FormData() {
+            mProperties = new LinkedHashMap<String, String>();
+        }
+
+        public void setProperty(String key, String value) {
+            mProperties.put(key, value);
+        }
+
+        public void clearProperty(String key) {
+            mProperties.remove(key);
+        }
+
+        public void clearAllProperties() {
+            mProperties.clear();
+        }
+
+        /**
+         * Put information to target OutputStream.
+         *
+         * @param os Target OutputStream
+         * @throws IOException
+         */
+        public abstract void output(OutputStream os) throws IOException;
+
+        public void doOutPut(OutputStream os) throws IOException {
+            StringBuilder sb = new StringBuilder();
+            for (String key : mProperties.keySet())
+                sb.append(key).append(": ").append(mProperties.get(key)).append("\r\n");
+            sb.append("\r\n");
+            os.write(sb.toString().getBytes());
+            output(os);
+        }
+    }
+
+    public static class StringData extends FormData {
+        private final String mStr;
+
+        public StringData(String str) {
+            mStr = str;
+        }
+
+        @Override
+        public void output(OutputStream os) throws IOException {
+            os.write(mStr.getBytes());
+            os.write("\r\n".getBytes());
+        }
+    }
+
+    public static class BitmapData extends FormData {
+        private final Bitmap mBitmap;
+
+        public BitmapData(Bitmap bmp) {
+            mBitmap = bmp;
+            setProperty("Content-Type", "image/jpeg");
+        }
+
+        @Override
+        public void output(OutputStream os) throws IOException {
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 80, os); //TODO I need a better quality
+            os.write("\r\n".getBytes());
+        }
+    }
+
+    public static class FileData extends FormData {
+        private final File mFile;
+
+        public FileData(File file) {
+            mFile = file;
+            setProperty("Content-Type",
+                    URLConnection.guessContentTypeFromName(file.getName()));
+        }
+
+        @Override
+        public void output(OutputStream os) throws IOException {
+            Util.copy(new FileInputStream(mFile), os, 1024);
+            os.write("\r\n".getBytes());
+        }
+    }
+
+    private class PostFormDataHelper extends GetStringHelper {
+        private static final String BOUNDARY = "------WebKitFormBoundary7eDB0hDQ91s22Tkf";
+
+        private final FormData[] mDatas;
+
+
+        public PostFormDataHelper(String url, FormData[] datas) {
+            super(url);
+            mDatas = datas;
+        }
+
+        @Override
+        public void onBeforeConnect(HttpURLConnection conn) throws Exception {
+            super.onBeforeConnect(conn);
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=----WebKitFormBoundary7eDB0hDQ91s22Tkf");
+
+            DataOutputStream out = new DataOutputStream(conn.getOutputStream());
+
+            for (FormData data : mDatas) {
+                out.write(BOUNDARY.getBytes());
+                out.write("\r\n".getBytes());
+                data.doOutPut(out);
+            }
+            out.write(BOUNDARY.getBytes());
+            out.write("--".getBytes());
+
+            out.flush();
+            out.close();
+        }
+    }
+
     private class GetImageHelper implements RequestHelper {
         private final String mUrl;
 
@@ -690,6 +813,16 @@ public class HttpHelper {
      */
     public String postJson(String url, JSONObject json) {
         return (String)requst(new PostJsonHelper(url, json));
+    }
+
+    /**
+     * Post form data, multipart/form-data
+     * @param url
+     * @param datas
+     * @return
+     */
+    public String postFormData(String url, FormData[] datas) {
+        return (String)requst(new PostFormDataHelper(url, datas));
     }
 
     /**

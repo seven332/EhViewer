@@ -72,7 +72,7 @@ import com.readystatesoftware.systembartint.SystemBarTintManager.SystemBarConfig
 
 public class SettingsActivity extends AbstractPreferenceActivity {
     @SuppressWarnings("unused")
-    private static String TAG = "Settings";
+    private static String TAG = SettingsActivity.class.getSimpleName();
 
     public static final String KEY_FRAGMENT = "FRAGMENT";
     public static final int DEFAULT = -0x1;
@@ -101,7 +101,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
 
                 mListView.setPadding(mListView.getPaddingLeft(),
                         mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
-                        originPaddingRight + mSystemBarConfig.getNavigationBarWidth(),
+                        originPaddingRight,
                         originPaddingBottom);
                 break;
             }
@@ -145,17 +145,6 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         originPaddingBottom = mListView.getPaddingBottom();
 
         adjustPadding();
-
-        /*
-        switch (savedInstanceState.getInt(KEY_FRAGMENT, DEFAULT)) {
-        case DISPLAY:
-            this.star.startPreferenceFragment(fragment, true);
-            break;
-        case DATA:
-            break;
-        case ABOUT:
-            break;
-        }*/
     }
 
     @Override
@@ -261,7 +250,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 case Ui.ORIENTATION_LANDSCAPE:
                     mListView.setPadding(mListView.getPaddingLeft(),
                             mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
-                            originPaddingRight + mSystemBarConfig.getNavigationBarWidth(),
+                            originPaddingRight,
                             originPaddingBottom);
                     break;
                 }

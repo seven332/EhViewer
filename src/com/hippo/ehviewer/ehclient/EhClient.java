@@ -468,6 +468,119 @@ public class EhClient {
         }).start();
     }
 
+    // Get Gallery List from file search
+
+    public static final int FILE_SEARCH_USE_SIMILARITY_SCAN = 0x1;
+    public static final int FILE_SEARCH_ONLY_SEARCH_COVERS = 0x2;
+    public static final int FILE_SEARCH_SHOW_EXPUNGED = 0x4;
+
+    public static String getFileSearchUrl(int apiMode) {
+        switch (apiMode) {
+        case MODE_EX:
+            return "http://ul.exhentai.org/image_lookup.php";
+        case MODE_G:
+        default:
+            return "http://ul.e-hentai.org/image_lookup.php";
+        }
+    }
+
+    public void getGListFromFileSearch(File file, int searchMode,
+            Object checkFlag, OnGetGListListener listener) {
+        getGListFromFileSearch(file, null, searchMode,
+                Config.getApiMode(), checkFlag, listener);
+    }
+
+    public void getGListFromFileSearch(Bitmap bmp, int searchMode,
+            Object checkFlag, OnGetGListListener listener) {
+        getGListFromFileSearch(null, bmp, searchMode,
+                Config.getApiMode(), checkFlag, listener);
+    }
+
+    private void getGListFromFileSearch(final File file, final Bitmap bitmap,
+            final int searchMode, final int apiMode, final Object checkFlag,
+            final OnGetGListListener listener) {
+        if (file == null && bitmap == null)
+            listener.onFailure(checkFlag, "All null"); // TODO
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpHelper hp = new HttpHelper(mAppContext);
+                HttpHelper.FormData[] datas = new HttpHelper.FormData[5];
+                HttpHelper.FormData data;
+                // Add file or bitmap
+                if (file != null) {
+                    data = new HttpHelper.FileData(file);
+                    data.setProperty("Content-Disposition", "form-data; name=\"sfile\"; filename=\"file\"");
+                    datas[0] = data;
+                } else {
+                    data = new HttpHelper.BitmapData(bitmap);
+                    data.setProperty("Content-Disposition", "form-data; name=\"sfile\"; filename=\"hehe.jpg\"");
+                    datas[0] = data;
+                }
+                // Add
+                data = new HttpHelper.StringData("File Search");
+                data.setProperty("Content-Disposition", "form-data; name=\"f_sfile\"");
+                datas[1] = data;
+                // Add FILE_SEARCH_USE_SIMILARITY_SCAN
+                if ((searchMode & FILE_SEARCH_USE_SIMILARITY_SCAN) != 0)
+                    data = new HttpHelper.StringData("on");
+                else
+                    data = new HttpHelper.StringData("off");
+                data.setProperty("Content-Disposition", "form-data; name=\"fs_similar\"");
+                datas[2] = data;
+                // Add FILE_SEARCH_ONLY_SEARCH_COVERS
+                if ((searchMode & FILE_SEARCH_ONLY_SEARCH_COVERS) != 0)
+                    data = new HttpHelper.StringData("on");
+                else
+                    data = new HttpHelper.StringData("off");
+                data.setProperty("Content-Disposition", "form-data; name=\"fs_covers\"");
+                datas[3] = data;
+                // Add FILE_SEARCH_SHOW_EXPUNGED
+                if ((searchMode & FILE_SEARCH_SHOW_EXPUNGED) != 0)
+                    data = new HttpHelper.StringData("on");
+                else
+                    data = new HttpHelper.StringData("off");
+                data.setProperty("Content-Disposition", "form-data; name=\"fs_exp\"");
+                datas[4] = data;
+
+                String body = hp.postFormData(getFileSearchUrl(apiMode), datas);
+                GetGListResponder responder;
+                if (body != null) { // Get ok
+                    // If no element, it might be a notice
+                    if (!body.contains("<")) {
+                        responder = new GetGListResponder(listener, checkFlag, body);
+                    } else {
+                        final ListParser parser = new ListParser();
+                        switch (parser.parser(body, apiMode)) {
+                        case ListParser.ALL:
+                            responder = new GetGListResponder(listener, checkFlag,
+                                    parser.giList, parser.pageNum);
+                            break;
+                        case ListParser.NOT_FOUND:
+                            responder = new GetGListResponder(listener, checkFlag,
+                                    parser.giList, 0);
+                            break;
+                        case ListParser.INDEX_ERROR:
+                            responder = new GetGListResponder(listener, checkFlag,
+                                    "index error"); // TODO
+                            break;
+                        case ListParser.PARSER_ERROR:
+                        default:
+                            responder = new GetGListResponder(listener, checkFlag, "parser error"); // TODO
+                            break;
+                        }
+                    }
+                } else {
+                    responder = new GetGListResponder(listener, checkFlag, hp.getEMsg());
+                }
+
+                mHandler.post(responder);
+            }
+        }).start();
+    }
+
+
     // Get gallery Detail
     public interface OnGetGDetailListener {
         public void onSuccess(GalleryDetail md);

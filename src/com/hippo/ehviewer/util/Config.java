@@ -312,7 +312,7 @@ public class Config {
     /****** Display ******/
 
     private static final String KEY_LIST_MODE = "list_mode";
-    private static final String DEFAULT_LIST_MODE = "1";
+    private static final String DEFAULT_LIST_MODE = "0";
 
     private static final String KEY_LIST_THUMB_COLUMNS_PORTRAIT = "list_thumb_columns_portrait";
     private static final int DEFAULT_LIST_THUMB_COLUMNS_PORTRAIT = 3;
