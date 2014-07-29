@@ -17,17 +17,21 @@
 
 package com.hippo.ehviewer.widget;
 
+import java.util.ArrayList;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.v4.util.LongSparseArray;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
@@ -36,9 +40,6 @@ import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * The dynamic listview is an extension of listview that supports cell dragging
@@ -62,15 +63,16 @@ import java.util.HashMap;
  * listview also scrolls on its own so as to reveal additional content.
  */
 public class TagListView extends ListView {
-    
-    private static final String TAG = "TagListView";
-    
+
+    @SuppressWarnings("unused")
+    private static final String TAG = TagListView.class.getSimpleName();
+
     private final int SMOOTH_SCROLL_AMOUNT_AT_EDGE = 15;
     private final int MOVE_DURATION = 150;
     private final int SENSITY = 5;
-    
+
     //public ArrayList<String> mItemList;
-    
+
     private int mLastEventX = -1;
     private int mLastEventY = -1;
 
@@ -87,18 +89,18 @@ public class TagListView extends ListView {
     private long mAboveItemId = INVALID_ID;
     private long mMobileItemId = INVALID_ID;
     private long mBelowItemId = INVALID_ID;
-    
+
     private int mStableItemCount = 0;
-    
+
     private BitmapDrawable mHoverCell;
     private BitmapDrawable mDeleteCell;
     private BitmapDrawable mModifyCell;
     private Rect mHoverCellCurrentBounds;
     private Rect mHoverCellOriginalBounds;
-    
+
     private boolean mIsDelete = false;
     private boolean mIsModify = false;
-    
+
     private final int INVALID_POINTER_ID = -1;
     private int mActivePointerId = INVALID_POINTER_ID;
 
@@ -109,7 +111,7 @@ public class TagListView extends ListView {
     private OnMoveLister mMovelistener = null;
     private OnDeleteListener mOnDeleteListener = null;
     private OnSwapListener mOnSwapListener = null;
-    
+
     public TagListView(Context context) {
         super(context);
         init(context);
@@ -136,17 +138,18 @@ public class TagListView extends ListView {
      * Listens for long clicks on any items in the listview. When a cell has
      * been selected, the hover cell is created and set up.
      */
-    private AdapterView.OnItemLongClickListener mOnItemLongClickListener =
+    private final AdapterView.OnItemLongClickListener mOnItemLongClickListener =
             new AdapterView.OnItemLongClickListener() {
+                @Override
                 public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
                     if (pos < mStableItemCount)
                         return true;
-                    
+
                     if (mMovelistener != null)
                         mMovelistener.onMoveStart();
-                    
+
                     mTotalOffset = 0;
-                    
+
                     int position = pointToPosition(mDownX, mDownY);
                     int itemNum = position - getFirstVisiblePosition();
 
@@ -188,57 +191,57 @@ public class TagListView extends ListView {
 
         return drawable;
     }
-    
+
     private BitmapDrawable getDeleteView(View v) {
         Bitmap b = getDeleteBitmap(v);
         BitmapDrawable drawable = new BitmapDrawable(getResources(), b);
         drawable.setBounds(mHoverCellCurrentBounds);
-        
+
         return drawable;
     }
-    
+
     private Bitmap getDeleteBitmap(View v) {
         Bitmap bitmap = getBitmapFromView(v);
         Canvas can = new Canvas(bitmap);
-        
+
         Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         Paint paint = new Paint();
         paint.setColor(0x8fff0000);
         can.drawRect(rect, paint);
-        
+
         return bitmap;
     }
-    
+
     private BitmapDrawable getModifyView(View v) {
         Bitmap b = getModifyBitmap(v);
         BitmapDrawable drawable = new BitmapDrawable(getResources(), b);
         drawable.setBounds(mHoverCellCurrentBounds);
-        
+
         return drawable;
     }
-    
+
     private Bitmap getModifyBitmap(View v) {
         Bitmap bitmap = getBitmapFromView(v);
         Canvas can = new Canvas(bitmap);
-        
+
         Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         Paint paint = new Paint();
         paint.setColor(0x8faa00ff);
         can.drawRect(rect, paint);
-        
+
         return bitmap;
     }
-    
+
     /** Draws a black border over the screenshot of the view passed in. */
     private Bitmap getHoverBitmap(View v) {
         Bitmap bitmap = getBitmapFromView(v);
         Canvas can = new Canvas(bitmap);
-        
+
         Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         Paint paint = new Paint();
         paint.setColor(0x8f00aadd);
         can.drawRect(rect, paint);
-        
+
         return bitmap;
     }
 
@@ -287,44 +290,44 @@ public class TagListView extends ListView {
             return getPositionForView(v);
         }
     }
-    
+
     public void setStableItemCount(int stableItemCount) {
         mStableItemCount = stableItemCount;
     }
-    
+
     public interface OnModifyListener {
         public void onModify(int position);
     }
-    
+
     public void setOnModifyListener(OnModifyListener listener) {
         this.mModifylistener = listener;
     }
-    
+
     public interface OnMoveLister {
         public void onMoveStart();
         public void onMoveOver();
     }
-    
+
     public void setOnMoveLister(OnMoveLister listener) {
         this.mMovelistener = listener;
     }
-    
+
     public interface OnDeleteListener {
         public void onDelete(int position);
     }
-    
+
     public void setOnDeleteListener(OnDeleteListener listener) {
         mOnDeleteListener = listener;
     }
-    
+
     public interface OnSwapListener {
         public void onSwap(int positionOne, int positionTwo);
     }
-    
+
     public void setOnSwapListener(OnSwapListener listener) {
         mOnSwapListener = listener;
     }
-    
+
     /**
      *  dispatchDraw gets invoked when all the child views are about to be drawn.
      *  By overriding this method, the hover cell (BitmapDrawable) can be drawn
@@ -346,6 +349,7 @@ public class TagListView extends ListView {
     }
 
     @Override
+    @SuppressLint("ClickableViewAccessibility")
     public boolean onTouchEvent (MotionEvent event) {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
@@ -359,7 +363,7 @@ public class TagListView extends ListView {
                 }
 
                 int pointerIndex = event.findPointerIndex(mActivePointerId);
-                
+
                 mLastEventX = (int) event.getX(pointerIndex);
                 mLastEventY = (int) event.getY(pointerIndex);
                 int deltaX = mLastEventX - mDownX;
@@ -370,12 +374,12 @@ public class TagListView extends ListView {
                         mIsDelete = true;
                     else
                         mIsDelete = false;
-                    
+
                     if (deltaX < -mHoverCellOriginalBounds.width() / SENSITY)
                         mIsModify = true;
                     else
                         mIsModify = false;
-                    
+
                     mHoverCellCurrentBounds.offsetTo(mHoverCellOriginalBounds.left + deltaX,
                             mHoverCellOriginalBounds.top + deltaY + mTotalOffset);
                     //mHoverCell.setBounds(mHoverCellCurrentBounds);
@@ -450,13 +454,13 @@ public class TagListView extends ListView {
                 updateNeighborViewsForID(mMobileItemId);
                 return;
             }
-            
+
             if (mOnSwapListener != null) {
                 mOnSwapListener.onSwap(originalItem, getPositionForView(switchView));
             }
-            
+
             mDownY = mLastEventY;
-            
+
             final int switchViewStartTop = switchView.getTop();
 
             mobileView.setVisibility(View.VISIBLE);
@@ -466,36 +470,37 @@ public class TagListView extends ListView {
 
             final ViewTreeObserver observer = getViewTreeObserver();
             observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
                 public boolean onPreDraw() {
                     observer.removeOnPreDrawListener(this);
 
                     View switchView = getViewForID(switchItemID);
 
                     mTotalOffset += deltaY;
-                    
+
                     int switchViewNewTop = switchView.getTop();
                     int delta = switchViewStartTop - switchViewNewTop;
 
                     switchView.setTranslationY(delta);
-                    
+
                     ObjectAnimator animator = ObjectAnimator.ofFloat(switchView,
                             View.TRANSLATION_Y, 0);
                     animator.setDuration(MOVE_DURATION);
                     animator.start();
-                    
+
                     return true;
                 }
             });
         }
     }
-    
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+
+    @SuppressWarnings({ "rawtypes", "unchecked", "unused" })
     private void swapElements(ArrayList arrayList, int indexOne, int indexTwo) {
         Object temp = arrayList.get(indexOne);
         arrayList.set(indexOne, arrayList.get(indexTwo));
         arrayList.set(indexTwo, temp);
     }
-    
+
     /**
      * Resets all the appropriate fields to a default state while also animating
      * the hover cell back to its correct location.
@@ -507,7 +512,7 @@ public class TagListView extends ListView {
             mIsWaitingForScrollFinish = false;
             mIsMobileScrolling = false;
             mActivePointerId = INVALID_POINTER_ID;
-            
+
             if (mIsDelete) {
                 animateRemoval(mobileView);
                 mIsDelete = false;
@@ -521,14 +526,14 @@ public class TagListView extends ListView {
                 invalidate();
                 return;
             }
-            
+
             if (mIsModify) {
                 mIsModify = false;
                 if (mModifylistener != null) {
                     mModifylistener.onModify(getPositionForID(mMobileItemId));
                 }
             }
-            
+
             // If the autoscroller has not completed scrolling, we need to wait for it to
             // finish in order to determine the final location of where the hover cell
             // should be animated to.
@@ -536,7 +541,7 @@ public class TagListView extends ListView {
                 mIsWaitingForScrollFinish = true;
                 return;
             }
-            
+
             mHoverCellCurrentBounds.offsetTo(mHoverCellOriginalBounds.left, mobileView.getTop());
 
             ObjectAnimator hoverViewAnimator = ObjectAnimator.ofObject(mHoverCell, "bounds",
@@ -571,12 +576,12 @@ public class TagListView extends ListView {
             touchEventsCancelled();
         }
     }
-    
+
     private void animateRemoval(View viewToRemove) {
         int firstVisiblePosition = getFirstVisiblePosition();
         final TagsAdapter mAdapter = (TagsAdapter)getAdapter();
-        final HashMap<Long, Integer> mItemIdTopMap = new HashMap<Long, Integer>();
-        
+        final LongSparseArray<Integer> mItemIdTopMap = new LongSparseArray<Integer>();
+
         for (int i = 0; i < getChildCount(); ++i) {
             View child = getChildAt(i);
             if (child != viewToRemove) {
@@ -589,9 +594,10 @@ public class TagListView extends ListView {
         int position = getPositionForView(viewToRemove);
         if (mOnDeleteListener != null)
             mOnDeleteListener.onDelete(position);
-        
+
         final ViewTreeObserver observer = getViewTreeObserver();
         observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
             public boolean onPreDraw() {
                 observer.removeOnPreDrawListener(this);
                 boolean firstAnimation = true;
@@ -633,7 +639,7 @@ public class TagListView extends ListView {
                         startTop = top + (i > 0 ? childHeight : -childHeight);
                         int delta = startTop - top;
                         child.setTranslationY(delta);
-                        
+
                         ObjectAnimator animator = ObjectAnimator.ofFloat(child,
                                 View.TRANSLATION_Y, 0);
                         animator.setDuration(MOVE_DURATION);
@@ -659,8 +665,8 @@ public class TagListView extends ListView {
             }
         });
     }
-    
-    
+
+
 
     /**
      * Resets all the appropriate fields to a default state.
@@ -690,6 +696,7 @@ public class TagListView extends ListView {
      * BitmapDrawable's bounds.
      */
     private final static TypeEvaluator<Rect> sBoundEvaluator = new TypeEvaluator<Rect>() {
+        @Override
         public Rect evaluate(float fraction, Rect startValue, Rect endValue) {
             return new Rect(interpolate(startValue.left, endValue.left, fraction),
                     interpolate(startValue.top, endValue.top, fraction),
@@ -735,7 +742,7 @@ public class TagListView extends ListView {
 
         return false;
     }
-    
+
     /**
      * This scroll listener is added to the listview in order to handle cell swapping
      * when the cell is either at the top or bottom edge of the listview. If the hover
@@ -743,7 +750,7 @@ public class TagListView extends ListView {
      * scrolling takes place, the listview continuously checks if new cells became visible
      * and determines whether they are potential candidates for a cell swap.
      */
-    private AbsListView.OnScrollListener mScrollListener = new AbsListView.OnScrollListener () {
+    private final AbsListView.OnScrollListener mScrollListener = new AbsListView.OnScrollListener () {
 
         private int mPreviousFirstVisibleItem = -1;
         private int mPreviousVisibleItemCount = -1;
@@ -751,6 +758,7 @@ public class TagListView extends ListView {
         private int mCurrentVisibleItemCount;
         private int mCurrentScrollState;
 
+        @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
                              int totalItemCount) {
             mCurrentFirstVisibleItem = firstVisibleItem;

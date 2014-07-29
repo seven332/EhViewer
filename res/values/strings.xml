@@ -84,10 +84,11 @@
     <string name="toast_add_favourite">Add to favourite</string>
     <string name="toast_add_download">Add to download list</string>
 
-    <!-- MangaListActivity -->
+    <!-- GalleryListActivity -->
     <string name="no_found">No hits found</string>
     <string name="none">None</string>
     <string name="list_title" formatted="false">%s Page %d</string>
+    <string name="quick_search_tip">Quick search can be added via search in left drawer</string>
 
     <!-- Update -->
     <string name="update_message" formatted="false">Found new version : %s\nSize : %s\n%s\n\nUpdate ?</string>
@@ -99,7 +100,7 @@
     <string name="download_update">Downloading the update</string>
     <string name="update_failed">Download the update Failed</string>
 
-    <!-- MangaDetialActivity -->
+    <!-- GalleryDetialActivity -->
     <string name="detail_pages_size" formatted="false">Pages : %s (%s)</string>
     <string name="detail_language">Language : %s</string>
     <string name="detail_offensive_title">Content Warning</string>
@@ -115,7 +116,7 @@
     <string name="vote_down">Vote down</string>
     <string name="show_tagged">Show tagged</string>
 
-    <!-- MangaActivity -->
+    <!-- GalleryActivity -->
     <string name="load_pre">Load previous page</string>
     <string name="first_page">First page !</string>
     <string name="start_reloading">Start reloading</string>

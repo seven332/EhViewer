@@ -82,10 +82,11 @@
     <string name="toast_add_favourite">已添加到收藏</string>
     <string name="toast_add_download">已添加到下载列表</string>
 
-    <!-- MangaListActivity -->
+    <!-- GalleryListActivity -->
     <string name="no_found">未找到</string>
     <string name="none">无</string>
     <string name="list_title" formatted="false">%s 第 %d 页</string>
+    <string name="quick_search_tip">您可以再左侧栏搜索项中添加快速搜索</string>
 
     <!-- Update -->
     <string name="update_message" formatted="false">发现新版本：%s\n大小：%s\n%s\n\n是否更新？</string>
@@ -97,7 +98,7 @@
     <string name="download_update">正在下载更新</string>
     <string name="update_failed">下载更新失败</string>
 
-    <!-- MangaDetialActivity -->
+    <!-- GalleryDetialActivity -->
     <string name="detail_pages_size" formatted="false">页数 : %s (%s)</string>
     <string name="detail_language">语言 : %s</string>
     <string name="detail_average">平均得分：%s</string>
@@ -115,7 +116,7 @@
     <string name="vote_down">踩</string>
     <string name="show_tagged">相同标签</string>
 
-    <!-- MangaActivity -->
+    <!-- GalleryActivity -->
     <string name="load_pre">载入上一页</string>
     <string name="first_page">已是第一页</string>
     <string name="start_reloading">开始继续载入</string>

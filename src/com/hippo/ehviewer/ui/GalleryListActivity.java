@@ -152,6 +152,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
     private Button registerButton;
     private Button logoutButton;
     private View waitloginoutView;
+    private View mQuickSearchTip;
 
     private StaggeredGridView mStaggeredGridView;
     private BaseAdapter mAdapter;
@@ -883,14 +884,13 @@ public class GalleryListActivity extends AbstractGalleryActivity
         mUserPanel = (LinearLayout)findViewById(R.id.user_panel);
         itemListMenu = (ListView) findViewById(R.id.list_menu_item_list);
         tagListMenu = (TagListView) findViewById(R.id.list_menu_tag_list);
-
         avatar = (ImageView)mUserPanel.findViewById(R.id.avatar);
         userView = (TextView)mUserPanel.findViewById(R.id.user);
         loginButton = (Button)mUserPanel.findViewById(R.id.login);
         registerButton = (Button)mUserPanel.findViewById(R.id.register);
         logoutButton = (Button)mUserPanel.findViewById(R.id.logout);
         waitloginoutView = mUserPanel.findViewById(R.id.wait);
-
+        mQuickSearchTip = findViewById(R.id.tip_text);
         mStaggeredGridView = (StaggeredGridView)getContentView();
 
         loginButton.setOnClickListener(this);
@@ -998,6 +998,19 @@ public class GalleryListActivity extends AbstractGalleryActivity
         for (int i = 0; i < keys.size(); i++)
             listMenuTag.add(keys.get(i));
         tagsAdapter = new TagsAdapter(this, R.layout.menu_tag, listMenuTag);
+        tagsAdapter.setOnDataSetChangedListener(new TagsAdapter.OnDataSetChangedListener() {
+            @Override
+            public void OnDataSetChanged() {
+                if (listMenuTag.size() == 0)
+                    mQuickSearchTip.setVisibility(View.VISIBLE);
+                else
+                    mQuickSearchTip.setVisibility(View.GONE);
+            }
+        });
+        if (listMenuTag.size() == 0)
+            mQuickSearchTip.setVisibility(View.VISIBLE);
+        else
+            mQuickSearchTip.setVisibility(View.GONE);
         tagListMenu.setClipToPadding(false);
         tagListMenu.setAdapter(tagsAdapter);
         tagListMenu.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -1062,17 +1075,6 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 return true;
             }
         });
-        /*
-        mStaggeredGridView.setOnChangeColumnListener(new StaggeredGridView.OnChangeColumnListener() {
-            @Override
-            public void onChangeColumn(int columnCount, int width) {
-                // Here to get thumb height, width is fixed by column count
-                if (width == 0)
-                    width = GalleryListActivity.this.getWindow()
-                            .findViewById(Window.ID_ANDROID_CONTENT).getWidth();
-                mListModeThumbHeight = (width - ((columnCount + 1) * Ui.dp2pix(8))) / columnCount / 2 * 3;
-            }
-        });*/
 
         FswView alignment = (FswView)findViewById(R.id.alignment);
         alignment.addOnFitSystemWindowsListener(new OnFitSystemWindowsListener() {
@@ -1112,7 +1114,6 @@ public class GalleryListActivity extends AbstractGalleryActivity
         // get MangeList
         firstTimeRefresh();
 
-        // Show left column if first
         if (Config.isFirstTime()) {
             Config.firstTime();
 
