@@ -33,6 +33,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.zip.GZIPInputStream;
@@ -96,6 +97,7 @@ public class HttpHelper {
 
     private final Context mContext;
     private Exception mException;
+    private String mLastUrl;
     private OnRespondListener mListener;
     private String mPreviewMode;
 
@@ -161,6 +163,10 @@ public class HttpHelper {
             return e.getClass().getSimpleName() + ": " +e.getMessage();
     }
 
+    public String getLastUrl() {
+        return mLastUrl;
+    }
+
     private boolean isUrlCookiable(URL url) {
         String host = url.getHost();
         for (String h : EhInfo.COOKIABLE_HOSTS) {
@@ -179,6 +185,7 @@ public class HttpHelper {
         int redirectionCount = 0;
         URL url = null;
         HttpURLConnection conn = null;
+        boolean firstTime = true;
 
         try {
             url = rh.getUrl();
@@ -186,7 +193,7 @@ public class HttpHelper {
             boolean isCookiable = isUrlCookiable(url);
             while (redirectionCount++ < Constant.MAX_REDIRECTS) {
                 conn = (HttpURLConnection) url.openConnection();
-                //conn.setInstanceFollowRedirects(true);
+                conn.setInstanceFollowRedirects(false);
                 conn.setRequestProperty("User-Agent", Constant.userAgent);
                 conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
                 conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
@@ -194,7 +201,10 @@ public class HttpHelper {
                 if (isCookiable)
                     EhInfo.getInstance(mContext).setCookie(conn, mPreviewMode);
                 // Do custom staff
-                rh.onBeforeConnect(conn);
+                if (firstTime) {
+                    rh.onBeforeConnect(conn);
+                    firstTime = false;
+                }
 
                 conn.connect();
                 final int responseCode = conn.getResponseCode();
@@ -225,6 +235,7 @@ public class HttpHelper {
                 case Constant.HTTP_TEMP_REDIRECT:
                     final String location = conn.getHeaderField("Location");
                     Log.d(TAG, "New location " + location);
+                    mLastUrl = location;
                     conn.disconnect();
                     url = new URL(url, location);
                     continue;
@@ -529,7 +540,7 @@ public class HttpHelper {
 
         @Override
         public void output(OutputStream os) throws IOException {
-            mBitmap.compress(Bitmap.CompressFormat.JPEG, 80, os); //TODO I need a better quality
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 98, os); //TODO I need a better quality
             os.write("\r\n".getBytes());
         }
     }
@@ -545,7 +556,13 @@ public class HttpHelper {
 
         @Override
         public void output(OutputStream os) throws IOException {
-            Util.copy(new FileInputStream(mFile), os, 1024);
+            InputStream is = new FileInputStream(mFile);
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while((bytesRead = is.read(buffer)) !=-1)
+                os.write(buffer, 0, bytesRead);
+            is.close();
+
             os.write("\r\n".getBytes());
         }
     }
@@ -553,12 +570,12 @@ public class HttpHelper {
     private class PostFormDataHelper extends GetStringHelper {
         private static final String BOUNDARY = "------WebKitFormBoundary7eDB0hDQ91s22Tkf";
 
-        private final FormData[] mDatas;
+        private final List<FormData> mDataList;
 
 
-        public PostFormDataHelper(String url, FormData[] datas) {
+        public PostFormDataHelper(String url, List<FormData> dataList) {
             super(url);
-            mDatas = datas;
+            mDataList = dataList;
         }
 
         @Override
@@ -571,8 +588,9 @@ public class HttpHelper {
             conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=----WebKitFormBoundary7eDB0hDQ91s22Tkf");
 
             DataOutputStream out = new DataOutputStream(conn.getOutputStream());
+            //OutputStream out = new FileOutputStream(new File("/sdcard/a.txt"));
 
-            for (FormData data : mDatas) {
+            for (FormData data : mDataList) {
                 out.write(BOUNDARY.getBytes());
                 out.write("\r\n".getBytes());
                 data.doOutPut(out);
@@ -821,8 +839,8 @@ public class HttpHelper {
      * @param datas
      * @return
      */
-    public String postFormData(String url, FormData[] datas) {
-        return (String)requst(new PostFormDataHelper(url, datas));
+    public String postFormData(String url, List<FormData> dataList) {
+        return (String)requst(new PostFormDataHelper(url, dataList));
     }
 
     /**

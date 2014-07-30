@@ -19,6 +19,7 @@ package com.hippo.ehviewer.ehclient;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -470,9 +471,56 @@ public class EhClient {
 
     // Get Gallery List from file search
 
-    public static final int FILE_SEARCH_USE_SIMILARITY_SCAN = 0x1;
-    public static final int FILE_SEARCH_ONLY_SEARCH_COVERS = 0x2;
-    public static final int FILE_SEARCH_SHOW_EXPUNGED = 0x4;
+    public static final int IMAGE_SEARCH_USE_SIMILARITY_SCAN = 0x1;
+    public static final int IMAGE_SEARCH_ONLY_SEARCH_COVERS = 0x2;
+    public static final int IMAGE_SEARCH_SHOW_EXPUNGED = 0x4;
+
+    public interface OnGetGListFromImageSearchListener {
+        public void onSuccess(Object checkFlag, List<GalleryInfo> giList,
+                int maxPage, String newUrl);
+        public void onFailure(Object checkFlag, String eMsg);
+    }
+
+    private class GetGListFromImageSearchResponder implements Runnable {
+
+        private final boolean isOk;
+        private final OnGetGListFromImageSearchListener listener;
+        private final Object checkFlag;
+        private final List<GalleryInfo> giList;
+        private final int maxPage;
+        private final String newUrl;
+        private final String eMesg;
+
+        public GetGListFromImageSearchResponder(OnGetGListFromImageSearchListener listener,
+                Object checkFlag, List<GalleryInfo> giList, int maxPage, String newUrl) {
+            this.isOk = true;
+            this.listener = listener;
+            this.checkFlag = checkFlag;
+            this.giList = giList;
+            this.maxPage = maxPage;
+            this.newUrl = newUrl;
+            this.eMesg = null;
+        }
+
+        public GetGListFromImageSearchResponder(OnGetGListFromImageSearchListener listener,
+                Object checkFlag, String eMesg) {
+            this.isOk = false;
+            this.listener = listener;
+            this.checkFlag = checkFlag;
+            this.giList = null;
+            this.maxPage = 0;
+            this.newUrl = null;
+            this.eMesg = eMesg;
+        }
+
+        @Override
+        public void run() {
+            if (isOk)
+                listener.onSuccess(checkFlag, giList, maxPage, newUrl);
+            else
+                listener.onFailure(checkFlag, eMesg);
+        }
+    }
 
     public static String getFileSearchUrl(int apiMode) {
         switch (apiMode) {
@@ -484,21 +532,21 @@ public class EhClient {
         }
     }
 
-    public void getGListFromFileSearch(File file, int searchMode,
-            Object checkFlag, OnGetGListListener listener) {
-        getGListFromFileSearch(file, null, searchMode,
+    public void getGListFromImageSearch(File file, int searchMode,
+            Object checkFlag, OnGetGListFromImageSearchListener listener) {
+        getGListFromImageSearch(file, null, searchMode,
                 Config.getApiMode(), checkFlag, listener);
     }
 
-    public void getGListFromFileSearch(Bitmap bmp, int searchMode,
-            Object checkFlag, OnGetGListListener listener) {
-        getGListFromFileSearch(null, bmp, searchMode,
+    public void getGListFromImageSearch(Bitmap bmp, int searchMode,
+            Object checkFlag, OnGetGListFromImageSearchListener listener) {
+        getGListFromImageSearch(null, bmp, searchMode,
                 Config.getApiMode(), checkFlag, listener);
     }
 
-    private void getGListFromFileSearch(final File file, final Bitmap bitmap,
+    private void getGListFromImageSearch(final File file, final Bitmap bitmap,
             final int searchMode, final int apiMode, final Object checkFlag,
-            final OnGetGListListener listener) {
+            final OnGetGListFromImageSearchListener listener) {
         if (file == null && bitmap == null)
             listener.onFailure(checkFlag, "All null"); // TODO
 
@@ -506,80 +554,80 @@ public class EhClient {
             @Override
             public void run() {
                 HttpHelper hp = new HttpHelper(mAppContext);
-                HttpHelper.FormData[] datas = new HttpHelper.FormData[5];
+
+                List<HttpHelper.FormData> dataList = new LinkedList<HttpHelper.FormData>();
                 HttpHelper.FormData data;
                 // Add file or bitmap
                 if (file != null) {
                     data = new HttpHelper.FileData(file);
-                    data.setProperty("Content-Disposition", "form-data; name=\"sfile\"; filename=\"file\"");
-                    datas[0] = data;
+                    data.setProperty("Content-Disposition", "form-data; name=\"sfile\"; filename=\"" + file.getName() + "\"");
+                    dataList.add(data);
                 } else {
                     data = new HttpHelper.BitmapData(bitmap);
                     data.setProperty("Content-Disposition", "form-data; name=\"sfile\"; filename=\"hehe.jpg\"");
-                    datas[0] = data;
+                    dataList.add(data);
                 }
                 // Add
                 data = new HttpHelper.StringData("File Search");
                 data.setProperty("Content-Disposition", "form-data; name=\"f_sfile\"");
-                datas[1] = data;
+                dataList.add(data);
                 // Add FILE_SEARCH_USE_SIMILARITY_SCAN
-                if ((searchMode & FILE_SEARCH_USE_SIMILARITY_SCAN) != 0)
+                if ((searchMode & IMAGE_SEARCH_USE_SIMILARITY_SCAN) != 0) {
                     data = new HttpHelper.StringData("on");
-                else
-                    data = new HttpHelper.StringData("off");
-                data.setProperty("Content-Disposition", "form-data; name=\"fs_similar\"");
-                datas[2] = data;
+                    data.setProperty("Content-Disposition", "form-data; name=\"fs_similar\"");
+                    dataList.add(data);
+                }
                 // Add FILE_SEARCH_ONLY_SEARCH_COVERS
-                if ((searchMode & FILE_SEARCH_ONLY_SEARCH_COVERS) != 0)
+                if ((searchMode & IMAGE_SEARCH_ONLY_SEARCH_COVERS) != 0) {
                     data = new HttpHelper.StringData("on");
-                else
-                    data = new HttpHelper.StringData("off");
-                data.setProperty("Content-Disposition", "form-data; name=\"fs_covers\"");
-                datas[3] = data;
+                    data.setProperty("Content-Disposition", "form-data; name=\"fs_covers\"");
+                    dataList.add(data);
+                }
                 // Add FILE_SEARCH_SHOW_EXPUNGED
-                if ((searchMode & FILE_SEARCH_SHOW_EXPUNGED) != 0)
+                if ((searchMode & IMAGE_SEARCH_SHOW_EXPUNGED) != 0) {
                     data = new HttpHelper.StringData("on");
-                else
-                    data = new HttpHelper.StringData("off");
-                data.setProperty("Content-Disposition", "form-data; name=\"fs_exp\"");
-                datas[4] = data;
+                    data.setProperty("Content-Disposition", "form-data; name=\"fs_exp\"");
+                    dataList.add(data);
+                }
 
-                String body = hp.postFormData(getFileSearchUrl(apiMode), datas);
-                GetGListResponder responder;
+                String body = hp.postFormData(getFileSearchUrl(apiMode), dataList);
+                GetGListFromImageSearchResponder responder;
                 if (body != null) { // Get ok
                     // If no element, it might be a notice
-                    if (!body.contains("<")) {
-                        responder = new GetGListResponder(listener, checkFlag, body);
+                    String newUrl = hp.getLastUrl();
+                    if (newUrl == null) {
+                        responder = new GetGListFromImageSearchResponder(listener, checkFlag, "Location is null");
+                    } else if (!body.contains("<")) {
+                        responder = new GetGListFromImageSearchResponder(listener, checkFlag, body);
                     } else {
                         final ListParser parser = new ListParser();
                         switch (parser.parser(body, apiMode)) {
                         case ListParser.ALL:
-                            responder = new GetGListResponder(listener, checkFlag,
-                                    parser.giList, parser.pageNum);
+                            responder = new GetGListFromImageSearchResponder(listener, checkFlag,
+                                    parser.giList, parser.pageNum, newUrl);
                             break;
                         case ListParser.NOT_FOUND:
-                            responder = new GetGListResponder(listener, checkFlag,
-                                    parser.giList, 0);
+                            responder = new GetGListFromImageSearchResponder(listener, checkFlag,
+                                    parser.giList, 0, newUrl);
                             break;
                         case ListParser.INDEX_ERROR:
-                            responder = new GetGListResponder(listener, checkFlag,
+                            responder = new GetGListFromImageSearchResponder(listener, checkFlag,
                                     "index error"); // TODO
                             break;
                         case ListParser.PARSER_ERROR:
                         default:
-                            responder = new GetGListResponder(listener, checkFlag, "parser error"); // TODO
+                            responder = new GetGListFromImageSearchResponder(listener, checkFlag, "parser error"); // TODO
                             break;
                         }
                     }
                 } else {
-                    responder = new GetGListResponder(listener, checkFlag, hp.getEMsg());
+                    responder = new GetGListFromImageSearchResponder(listener, checkFlag, hp.getEMsg());
                 }
 
                 mHandler.post(responder);
             }
         }).start();
     }
-
 
     // Get gallery Detail
     public interface OnGetGDetailListener {

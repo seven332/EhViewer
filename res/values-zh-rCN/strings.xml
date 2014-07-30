@@ -60,7 +60,7 @@
     <string name="checkbox_storr">搜索种子文件名</string>
     <string name="checkbox_sto">仅搜索有种子的本子</string>
     <string name="checkbox_sdt1">搜索 Low-Power 标签</string>
-    <string name="checkbox_sdt2">搜索 Downvoted 标签</string>
+    <string name="checkbox_sdt2">搜索差评标签</string>
     <string name="checkbox_sh">搜索被删除的本子</string>
     <string name="checkbox_sr">最低评分：</string>
     <string name="toast_normal_mode">切换至普通搜索模式</string>

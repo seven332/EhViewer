@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.ui;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -30,12 +31,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -125,6 +128,8 @@ public class GalleryListActivity extends AbstractGalleryActivity
     @SuppressWarnings("unused")
     private static final String TAG = GalleryListActivity.class.getSimpleName();
 
+    private static int RESULT_LOAD_SEARCH_IMAGE = 1;
+
     public static final String ACTION_GALLERY_LIST = "com.hippo.ehviewer.intent.action.GALLERY_LIST";
 
     public static final String KEY_MODE = "mode";
@@ -152,6 +157,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
     private Button logoutButton;
     private View waitloginoutView;
     private View mQuickSearchTip;
+    private TextView mSearchImageText;
 
     private StaggeredGridView mStaggeredGridView;
     private BaseAdapter mAdapter;
@@ -166,7 +172,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
     private int longClickItemIndex;
 
     private AlertDialog loginDialog;
-    private AlertDialog filterDialog;
+    private AlertDialog mSearchDialog;
     private AlertDialog longClickDialog;
 
     // Modify tag
@@ -270,6 +276,28 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 }).create();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RESULT_LOAD_SEARCH_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String ImagePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            mSearchImageText.setVisibility(View.VISIBLE);
+            mSearchImageText.setText(ImagePath);
+        }
+
+    }
+
     private void handleSearchView(View view) {
         final PrefixEditText pet = (PrefixEditText)view.findViewById(R.id.search_text);
         CheckBox uploaderCb = (CheckBox)view.findViewById(R.id.checkbox_uploader);
@@ -296,13 +324,26 @@ public class GalleryListActivity extends AbstractGalleryActivity
                     advance.setVisibility(View.GONE);
             }
         });
+
+        final Button selectImage = (Button)view.findViewById(R.id.select_image);
+        selectImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i, RESULT_LOAD_SEARCH_IMAGE);
+            }
+        });
     }
 
-    private AlertDialog createFilterDialog() {
+    @SuppressLint("InflateParams")
+    private AlertDialog createSearchDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
         final View view = inflater.inflate(R.layout.search, null);
         final View searchNormal = view.findViewById(R.id.search_normal);
         final View searchTag = view.findViewById(R.id.search_tag);
+        final View searchImage = view.findViewById(R.id.search_image);
+        mSearchImageText = (TextView)view.findViewById(R.id.target_image);
         handleSearchView(view);
 
         return new DialogBuilder(this).setTitle(android.R.string.search_go)
@@ -310,33 +351,44 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 .setAction(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (searchNormal.getVisibility() == View.GONE) {
-                            searchNormal.setVisibility(View.VISIBLE);
-                            searchTag.setVisibility(View.GONE);
-                        } else {
+                        if (searchNormal.getVisibility() == View.VISIBLE) {
                             searchNormal.setVisibility(View.GONE);
                             searchTag.setVisibility(View.VISIBLE);
+                        } else if (searchTag.getVisibility() == View.VISIBLE) {
+                            searchTag.setVisibility(View.GONE);
+                            searchImage.setVisibility(View.VISIBLE);
+                        } else if (searchImage.getVisibility() == View.VISIBLE) {
+                            searchImage.setVisibility(View.GONE);
+                            searchNormal.setVisibility(View.VISIBLE);
                         }
                     }
                 }).setPositiveButton(android.R.string.ok, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        ListUrls listUrls = getLus(mSearchDialog);
+                        if (listUrls == null)
+                            return;
+
                         ((AlertButton)v).dialog.dismiss();
-                        lus = getLus(filterDialog);
+                        lus = listUrls;
                         refresh();
                         showContent();
 
+                        // Get title
                         String search = lus.getSearch();
                         switch(lus.getMode()) {
-                        case ListUrls.UPLOADER:
+                        case ListUrls.MODE_IMAGE_SEARCH:
+                            mTitle = "图片搜索"; // TODO
+                            break;
+                        case ListUrls.MODE_UPLOADER:
                             mTitle = search;
                             break;
-                        case ListUrls.TAG:
+                        case ListUrls.MODE_TAG:
                             mTitle = lus.getTag();
                             break;
-                        case ListUrls.POPULAR:
+                        case ListUrls.MODE_POPULAR:
                             mTitle = getString(R.string.popular);
-                        case ListUrls.NORMAL:
+                        case ListUrls.MODE_NORMAL:
                         default:
                             if (search == null || search.isEmpty())
                                 mTitle = getString(android.R.string.search_go);
@@ -350,17 +402,18 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 .setNeutralButton(R.string.add, new View.OnClickListener() {
                     @Override
                     public void onClick(final View v) {
+                        if (searchImage.getVisibility() == View.VISIBLE)
+                            return;
                         createSetNameDialog(null, null, new OnSetNameListener() {
                             @Override
                             public void onSetVaildName(String newName) {
                                 ((AlertButton)v).dialog.dismiss();
-                                mData.addTag(new Tag(newName, getLus(filterDialog)));
+                                mData.addTag(new Tag(newName, getLus(mSearchDialog)));
                                 listMenuTag.add(newName);
                                 tagsAdapter.addId(newName);
                                 tagsAdapter.notifyDataSetChanged();
                             }
-                        })
-                        .show();
+                        }).show();
                     }
                 }).create();
     }
@@ -370,28 +423,23 @@ public class GalleryListActivity extends AbstractGalleryActivity
     }
 
     private ListUrls getLus(View view) {
+        ListUrls lus = null;
 
-        ListUrls lus;
+        View searchNormal = view.findViewById(R.id.search_normal);
+        View searchTag = view.findViewById(R.id.search_tag);
+        View searchImage = view.findViewById(R.id.search_image);
 
-        View search_normal = view.findViewById(R.id.search_normal);
-        if (search_normal.getVisibility() == View.GONE) {
-            EditText et = (EditText)view.findViewById(R.id.search_tag_text);
-            lus = new ListUrls();
-            lus.setTag(et.getText().toString());
-        } else {
+        if (searchNormal.getVisibility() == View.VISIBLE) {
             int type;
-
             CategoryTable ct = (CategoryTable) view
                     .findViewById(R.id.category_table);
             type = ct.getCategory();
-
             EditText et = (EditText)view.findViewById(R.id.search_text);
-
             lus = new ListUrls(type, et.getText().toString());
 
             CheckBox uploaderCb = (CheckBox)view.findViewById(R.id.checkbox_uploader);
             if (uploaderCb.isChecked()) {
-                lus.setMode(ListUrls.UPLOADER);
+                lus.setMode(ListUrls.MODE_UPLOADER);
             }
 
             CheckBox cb = (CheckBox)view.findViewById(R.id.checkbox_advance);
@@ -440,7 +488,36 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 } else
                     lus.setAdvance(advType);
             }
+
+            // For tag search
+        } else if (searchTag.getVisibility() == View.VISIBLE) {
+            EditText et = (EditText)view.findViewById(R.id.search_tag_text);
+            lus = new ListUrls();
+            lus.setTag(et.getText().toString());
+
+            // For image search
+        } else if (searchImage.getVisibility() == View.VISIBLE) {
+            String filePath = (String)mSearchImageText.getText();
+            File file = new File(filePath);
+            if (!file.exists()) {
+                new SuperToast(this, "图片不存在", SuperToast.ERROR).show();
+            } else {
+                if (!file.canRead()) {
+                    new SuperToast(this, "图片不可读", SuperToast.ERROR).show();
+                } else {
+
+                    CheckBox similar = (CheckBox)view.findViewById(R.id.checkboxSimilar);
+                    CheckBox covers = (CheckBox)view.findViewById(R.id.checkboxCovers);
+                    CheckBox exp = (CheckBox)view.findViewById(R.id.checkboxExp);
+
+                    lus = new ListUrls();
+                    lus.setSearchFile(file, (similar.isChecked() ? EhClient.IMAGE_SEARCH_USE_SIMILARITY_SCAN : 0) |
+                            (covers.isChecked() ? EhClient.IMAGE_SEARCH_ONLY_SEARCH_COVERS : 0) |
+                            (exp.isChecked() ? EhClient.IMAGE_SEARCH_SHOW_EXPUNGED : 0));
+                }
+            }
         }
+
         return lus;
     }
 
@@ -655,7 +732,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
         View searchNormal = view.findViewById(R.id.search_normal);
         View searchTag = view.findViewById(R.id.search_tag);
 
-        if (listUrls.getMode() == ListUrls.TAG) {
+        if (listUrls.getMode() == ListUrls.MODE_TAG) {
             searchNormal.setVisibility(View.GONE);
             searchTag.setVisibility(View.VISIBLE);
 
@@ -780,7 +857,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
         } else if (ACTION_GALLERY_LIST.equals(action)) {
             int mode = intent.getIntExtra(GalleryListActivity.KEY_MODE, -1);
             switch(mode) {
-            case ListUrls.TAG:
+            case ListUrls.MODE_TAG:
                 lus = new ListUrls();
                 String tag = intent.getStringExtra(KEY_TAG);
                 lus.setTag(tag);
@@ -789,10 +866,10 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 refresh();
                 break;
 
-            case ListUrls.UPLOADER:
+            case ListUrls.MODE_UPLOADER:
                 String uploader = "uploader:" + intent.getStringExtra(KEY_UPLOADER);
                 lus = new ListUrls(ListUrls.NONE, uploader);
-                lus.setMode(ListUrls.UPLOADER);
+                lus.setMode(ListUrls.MODE_UPLOADER);
                 mTitle = uploader;
                 setTitle(mTitle);
                 refresh();
@@ -874,9 +951,8 @@ public class GalleryListActivity extends AbstractGalleryActivity
 
         // Init dialog
         loginDialog = createLoginDialog();
-        filterDialog = createFilterDialog();
+        mSearchDialog = createSearchDialog();
         longClickDialog = createLongClickDialog();
-
 
         // Get View
         mMenuLeft = findViewById(R.id.list_menu_left);
@@ -959,7 +1035,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
                     break;
 
                 case 2: // Search
-                    filterDialog.show();
+                    mSearchDialog.show();
                     break;
 
                 case 3: // Favourite
@@ -970,7 +1046,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
 
                 case 4: // Popular
                     lus = new ListUrls();
-                    lus.setMode(ListUrls.POPULAR);
+                    lus.setMode(ListUrls.MODE_POPULAR);
                     mTitle = mResources.getString(R.string.popular);
                     setTitle(mTitle);
                     refresh();
@@ -1425,8 +1501,37 @@ public class GalleryListActivity extends AbstractGalleryActivity
     @Override
     protected void doGetGallerys(String url, final long taskStamp,
             final OnGetListListener listener) {
-
-        if (lus.getMode() == ListUrls.POPULAR) {
+        if (lus.getMode() == ListUrls.MODE_IMAGE_SEARCH) {
+            if (url == null) {
+                // No result url
+                mClient.getGListFromImageSearch(lus.getSearchFile(), lus.getImageSearchMode(), taskStamp,
+                        new EhClient.OnGetGListFromImageSearchListener() {
+                    @Override
+                    public void onSuccess(Object checkFlag, List<GalleryInfo> giList,
+                            int maxPage, String newUrl) {
+                        lus.setSearchResult(newUrl);
+                        listener.onSuccess(mAdapter, taskStamp, giList, maxPage);
+                    }
+                    @Override
+                    public void onFailure(Object checkFlag, String eMsg) {
+                        listener.onFailure(mAdapter, taskStamp, eMsg);
+                    }
+                });
+            } else {
+                // Get result url
+                mClient.getGList(url, null, new EhClient.OnGetGListListener() {
+                    @Override
+                    public void onSuccess(Object checkFlag, List<GalleryInfo> lmdArray,
+                            int pageNum) {
+                        listener.onSuccess(mAdapter, taskStamp, lmdArray, pageNum);
+                    }
+                    @Override
+                    public void onFailure(Object checkFlag, String eMsg) {
+                        listener.onFailure(mAdapter, taskStamp, eMsg);
+                    }
+                });
+            }
+        } else if (lus.getMode() == ListUrls.MODE_POPULAR) {
             mClient.getPopular(new EhClient.OnGetPopularListener() {
                 @Override
                 public void onSuccess(List<GalleryInfo> gis, long timeStamp) {

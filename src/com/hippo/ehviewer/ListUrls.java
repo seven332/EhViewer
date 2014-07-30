@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -28,10 +29,11 @@ public class ListUrls {
     public static final boolean NUM_CATEGORY = false;
 
     // Mode
-    public static final int NORMAL = 0x0;
-    public static final int UPLOADER = 0x1;
-    public static final int TAG = 0x2;
-    public static final int POPULAR = 0x3;
+    public static final int MODE_NORMAL = 0x0;
+    public static final int MODE_UPLOADER = 0x1;
+    public static final int MODE_TAG = 0x2;
+    public static final int MODE_POPULAR = 0x3;
+    public static final int MODE_IMAGE_SEARCH = 0x4;
 
     // Category
     public static final int NONE = -1; // Use it for homepage
@@ -63,7 +65,7 @@ public class ListUrls {
     public static final int DEFAULT_ADVANCE = SNAME | STAGS;
     public static final int DEFAULT_MIN_RATING = 2;
 
-    private int mMode = NORMAL;
+    private int mMode = MODE_NORMAL;
 
     private int page = 0;
     private int category = NONE;
@@ -72,8 +74,11 @@ public class ListUrls {
     private int minRating = -1;
 
     private String search = null;
-
     private String mTag = null;
+
+    private int mImageSearchMode;
+    private File mSearchFile;
+    private String mResultUrl = null;
 
     public ListUrls() {}
 
@@ -157,14 +162,35 @@ public class ListUrls {
         mMode = mode;
     }
 
+    // For tag mode
     public void setTag(String tag) {
-        mMode = TAG;
+        mMode = MODE_TAG;
         mTag = tag;
     }
 
     public String getTag() {
         return mTag;
     }
+
+    // For image search mode
+    public void setSearchFile(File searchFile, int imageSearchMode) {
+        mMode = MODE_IMAGE_SEARCH;
+        mSearchFile = searchFile;
+        mImageSearchMode = imageSearchMode;
+    }
+
+    public void setSearchResult(String resultUrl) {
+        mResultUrl = resultUrl;
+    }
+
+    public File getSearchFile() {
+        return mSearchFile;
+    }
+
+    public int getImageSearchMode() {
+        return mImageSearchMode;
+    }
+
 
     public String getUrl() {
         return getUrl(Config.getMode());
@@ -174,7 +200,17 @@ public class ListUrls {
         StringBuilder url = new StringBuilder(EhClient.getUrlHeader(mode));
 
         switch (mMode) {
-        case TAG:
+        case MODE_POPULAR:
+            return null;
+
+        case MODE_IMAGE_SEARCH:
+            if (mResultUrl == null) {
+                return null;
+            } else {
+                return mResultUrl + "&page=" + page;
+            }
+
+        case MODE_TAG:
             // Add tag
             url.append("tag/");
             if (mTag != null) {
@@ -192,11 +228,8 @@ public class ListUrls {
             }
             break;
 
-        case POPULAR:
-            break;
-
-        case NORMAL:
-        case UPLOADER:
+        case MODE_NORMAL:
+        case MODE_UPLOADER:
         default:
             boolean isNeedFooter = false;
             // Add category

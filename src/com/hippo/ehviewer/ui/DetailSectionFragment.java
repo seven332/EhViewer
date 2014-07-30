@@ -222,6 +222,28 @@ public class DetailSectionFragment extends Fragment
             mPiningView.setVisibility(View.GONE);
             layout(mGalleryDetail);
         }
+
+
+/*
+        ImageLoader.getInstance(mActivity).add(mGalleryDetail.thumb, String.valueOf(mGalleryDetail.gid),
+                new ImageLoader.OnGetImageListener() {
+                    @Override
+                    public void onGetImage(String key, Bitmap bmp) {
+                        mClient.getGListFromImageSearch(bmp, EhClient.IMAGE_SEARCH_USE_SIMILARITY_SCAN,
+                                null, new EhClient.OnGetGListListener() {
+                            @Override
+                            public void onSuccess(Object checkFlag, List<GalleryInfo> giList,
+                                    int maxPage) {
+                                Log.d(TAG, "giList.size() = " + giList.size());
+                            }
+
+                            @Override
+                            public void onFailure(Object checkFlag, String eMsg) {
+                                Log.d(TAG, eMsg);
+                            }
+                        });
+                    }
+                });*/
     }
 
     @SuppressWarnings("deprecation")
@@ -484,7 +506,7 @@ public class DetailSectionFragment extends Fragment
                                 Intent intent = new Intent(mActivity,GalleryListActivity.class);
                                 intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
                                 intent.putExtra(GalleryListActivity.KEY_MODE,
-                                        ListUrls.TAG);
+                                        ListUrls.MODE_TAG);
                                 intent.putExtra(GalleryListActivity.KEY_TAG, groupName + ":" + tagText);
                                 startActivity(intent);
                             }
@@ -633,7 +655,7 @@ public class DetailSectionFragment extends Fragment
             mActivity.finish();
             Intent intent = new Intent(mActivity, GalleryListActivity.class);
             intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
-            intent.putExtra(GalleryListActivity.KEY_MODE, ListUrls.UPLOADER);
+            intent.putExtra(GalleryListActivity.KEY_MODE, ListUrls.MODE_UPLOADER);
             intent.putExtra(GalleryListActivity.KEY_UPLOADER, mUploader.getText());
             startActivity(intent);
 

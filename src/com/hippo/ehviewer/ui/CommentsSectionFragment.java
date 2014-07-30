@@ -152,7 +152,7 @@ public class CommentsSectionFragment extends Fragment
                             mActivity.finish();
                             Intent intent = new Intent(mActivity, GalleryListActivity.class);
                             intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
-                            intent.putExtra(GalleryListActivity.KEY_MODE, ListUrls.UPLOADER);
+                            intent.putExtra(GalleryListActivity.KEY_MODE, ListUrls.MODE_UPLOADER);
                             intent.putExtra(GalleryListActivity.KEY_UPLOADER, c.user);
                             startActivity(intent);
                             break;
