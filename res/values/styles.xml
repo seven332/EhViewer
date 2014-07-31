@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Hippo Seven
+<!--
+     Copyright (C) 2014 Hippo Seven
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,7 +15,7 @@
      limitations under the License.
  -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    
+
     <style name="ActionBar" parent="@android:style/Widget.Holo.ActionBar">
         <item name="android:background">@android:color/holo_blue_dark</item>
         <item name="android:backgroundStacked">@color/tag_bg</item>
@@ -26,77 +27,69 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
-    
+
     <style name="ActionBarTabStyle" parent="@android:style/Widget.Holo.Light.ActionBar.TabView">
         <item name="android:background">@drawable/ab_tab_indicator</item>
     </style>
-    
+
     <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_action_core_overflow</item>
     </style>
-    
+
     <style name="PopupMenu" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
     </style>
-    
-    
-    <!-- Button -->
-    <style name="Button" parent="@android:style/Widget.Button">
-        <item name="android:textSize">18sp</item>
-        <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingRight">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
+
+    <!-- SuperButton -->
+    <style name="TextAppearance">
+        <item name="@android:textColor">@color/primary_text_dark</item>
+        <item name="@android:textColorHint">@color/secondary_text_dark</item>
+        <item name="@android:textColorHighlight">#6640c4ff</item>
+        <item name="@android:textColorLink">#ff00bcd4</item>
+        <item name="@android:textSize">14sp</item>
+        <item name="@android:fontFamily">sans-serif</item>
+        <item name="@android:textStyle">normal</item>
     </style>
-    
-    <style name="Button.Blue">
-        <item name="android:background">@drawable/clickable_bg_blue</item>
-        <item name="android:textColor">@color/blue_bn_text</item>
+
+    <style name="TextAppearance.Button">
+        <item name="@android:fontFamily">sans-serif-medium</item>
+        <item name="@android:textAllCaps">true</item>
+        <item name="@android:singleLine">true</item>
     </style>
-    
-    <style name="Button.White">
-        <item name="android:background">@drawable/clickable_bg_white</item>
-        <item name="android:textColor">@android:color/black</item>
+
+    <style name="TextAppearance.Button.Small">
+        <item name="@android:textSize">13sp</item>
     </style>
-    
+
+    <style name="Button" parent="@android:Widget.Button">
+        <item name="backgroundColor">@color/background_light</item>
+        <item name="@android:textAppearance">@style/TextAppearance.Button</item>
+        <item name="@android:minHeight">0dp</item>
+        <item name="@android:minWidth">0dp</item>
+        <item name="@android:paddingTop">12dp</item>
+        <item name="@android:paddingBottom">14dp</item>
+        <item name="@android:paddingLeft">24dp</item>
+        <item name="@android:paddingRight">24dp</item>
+    </style>
+
     <style name="Button.Small">
-        <item name="android:textSize">14sp</item>
-        <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingTop">2dp</item>
-        <item name="android:paddingRight">12dp</item>
-        <item name="android:paddingBottom">2dp</item>
+        <item name="@android:textAppearance">@style/TextAppearance.Button.Small</item>
+        <item name="@android:paddingTop">2dp</item>
+        <item name="@android:paddingBottom">4dp</item>
+        <item name="@android:paddingLeft">18dp</item>
+        <item name="@android:paddingRight">18dp</item>
     </style>
-    
-    <style name="Button.Small.Blue">
-        <item name="android:background">@drawable/clickable_bg_blue</item>
-        <item name="android:textColor">@color/blue_bn_text</item>
+
+    <style name="SuperButton" parent="Button">
+        <item name="backgroundColor">@color/background_light</item>
     </style>
-    
-    <style name="Button.Small.White">
-        <item name="android:background">@drawable/clickable_bg_white</item>
-        <item name="android:textColor">@android:color/black</item>
+
+    <style name="SuperButton.Small" parent="Button.Small">
+        <item name="backgroundColor">@color/background_light</item>
     </style>
-    
-    <style name="Button.Small.Flat">
-        <item name="android:textSize">14sp</item>
-        <item name="android:paddingLeft">18dp</item>
-        <item name="android:paddingTop">2dp</item>
-        <item name="android:paddingRight">18dp</item>
-        <item name="android:paddingBottom">2dp</item>
-    </style>
-    
-    <style name="Button.Small.Flat.Blue">
-        <item name="android:background">@drawable/clickable_bg_blue</item>
-        <item name="android:textColor">@color/blue_bn_text</item>
-    </style>
-    
-    <style name="Button.Small.Flat.White">
-        <item name="android:background">@drawable/clickable_bg_white</item>
-        <item name="android:textColor">@android:color/black</item>
-    </style>
-    
+
     <style name="ProgressBar" parent="@android:Widget.Holo.ProgressBar">
     </style>
-    
+
     <style name="ProgressBar.Small">
         <item name="android:indeterminateDrawable">@drawable/progress_small</item>
         <item name="android:minWidth">16dip</item>
@@ -104,7 +97,7 @@
         <item name="android:minHeight">16dip</item>
         <item name="android:maxHeight">16dip</item>
     </style>
-    
+
         <style name="ProgressBar.Large">
         <item name="android:indeterminateDrawable">@drawable/progress_large</item>
         <item name="android:minWidth">76dip</item>
@@ -112,7 +105,7 @@
         <item name="android:minHeight">76dip</item>
         <item name="android:maxHeight">76dip</item>
     </style>
-        
+
     <!-- Text -->
     <style name="CardTitle">
         <item name="android:textColor">@color/title_primary</item>
@@ -121,7 +114,7 @@
         <item name="android:singleLine">false</item>
         <item name="android:lineSpacingExtra">0.0sp</item>
     </style>
-    
+
     <style name="CardSubtitle">
         <item name="android:textSize">@dimen/text_medium</item>
         <item name="android:textColor">@color/title_secondary</item>
@@ -131,7 +124,7 @@
         <item name="android:drawablePadding">4.0dip</item>
         <item name="android:lineSpacingExtra">0.0sp</item>
     </style>
-    
+
     <style name="DetailTitle">
         <item name="android:textSize">@dimen/detail_title_size</item>
         <item name="android:textColor">@color/title_primary</item>
@@ -140,14 +133,14 @@
         <item name="android:singleLine">false</item>
         <item name="android:lineSpacingExtra">0.0sp</item>
     </style>
-    
+
     <style name="DetailSubtitle">
         <item name="android:textSize">@dimen/detail_subtitle_size</item>
         <item name="android:textColor">@color/detail_title_secondary</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:singleLine">true</item>
     </style>
-    
+
     <style name="TextTag">
         <item name="android:textSize">@dimen/detail_subtitle_size</item>
         <item name="android:textColor">@android:color/white</item>
@@ -159,14 +152,14 @@
         <item name="android:paddingLeft">8.0dp</item>
         <item name="android:paddingRight">8.0dp</item>
     </style>
-    
+
     <style name="SearchCategory">
         <item name="android:gravity">center</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
-    
+
     <style name="RatingBarSmall">
         <item name="android:background">@null</item>
         <item name="android:layout_width">wrap_content</item>

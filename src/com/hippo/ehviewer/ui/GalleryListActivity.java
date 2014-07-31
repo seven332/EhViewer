@@ -1003,13 +1003,15 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 return position;
             }
 
-            @SuppressLint({ "InflateParams", "ViewHolder" })
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                LayoutInflater li= LayoutInflater.from(GalleryListActivity.this);
+                TextView tv;
+                if (convertView == null)
+                    tv = (TextView)LayoutInflater.from(GalleryListActivity.this).inflate(R.layout.menu_item, parent, false);
+                else
+                    tv = (TextView)convertView;
                 Drawable d = mResources.getDrawable(data[position * 2]);
                 d.setBounds(0, 0, Ui.dp2pix(36), Ui.dp2pix(36));
-                TextView tv = (TextView)li.inflate(R.layout.menu_item, null);
                 tv.setCompoundDrawables(d, null, null, null);
                 tv.setCompoundDrawablePadding(Ui.dp2pix(8));
                 tv.setText(data[position * 2 + 1]);

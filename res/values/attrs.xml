@@ -72,4 +72,8 @@
         <attr name="defValueLandscape" format="integer" />
     </declare-styleable>
 
+    <declare-styleable name="SuperButton">
+        <attr name="backgroundColor" format="color" />
+    </declare-styleable>
+
 </resources>

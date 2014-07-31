@@ -24,7 +24,7 @@ import android.view.View;
 interface CardViewImpl {
     void initStatic();
 
-    void reform(Resources resources, View view, int backgroundColor);
+    void reform(Resources resources, View view, boolean keepPadding, int backgroundColor);
 
-    void reform(Resources resources, View view, int[][] stateSets, int[] backgroundColors);
+    void reform(Resources resources, View view, boolean keepPadding, int[][] stateSets, int[] backgroundColors);
 }

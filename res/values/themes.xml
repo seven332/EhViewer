@@ -26,7 +26,7 @@
         <item name="@android:windowActionBarOverlay">true</item>
         
         <!-- Button -->
-        <item name="@android:buttonStyle">@style/Button.Blue</item>
+        <!-- <item name="@android:buttonStyle">@style/Button.Blue</item> -->
         
         <!-- Scrollbar attributes -->
         <item name="@android:scrollbarThumbVertical">@drawable/scrollbar_blue</item>

@@ -77,7 +77,6 @@
 
         <Button
             android:id="@+id/detail_do_rate"
-            style="@style/Button.Small.Flat.Blue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10.0dp"
@@ -85,7 +84,6 @@
 
         <Button
             android:id="@+id/detail_read"
-            style="@style/Button.Small.Flat.Blue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/read" />

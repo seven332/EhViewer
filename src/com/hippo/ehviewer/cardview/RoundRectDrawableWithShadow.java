@@ -59,6 +59,8 @@ class RoundRectDrawableWithShadow extends Drawable {
 
     private boolean mDirty = true;
 
+    private boolean mKeepPadding = false;
+
     private final int mShadowStartColor;
 
     private final int mShadowEndColor;
@@ -90,12 +92,20 @@ class RoundRectDrawableWithShadow extends Drawable {
         mDirty = true;
     }
 
+    public void setKeepPadding(boolean keepPadding) {
+        mKeepPadding = keepPadding;
+    }
+
     @Override
     public boolean getPadding(Rect padding) {
-        final int topShadow = (int) Math.ceil(mShadowSize * (1 / (SHADOW_MULTIPLIER * 2)));
-        final int sideShadow = (int) Math.ceil(mShadowSize - topShadow);
-        padding.set(sideShadow, topShadow, sideShadow, (int) Math.ceil(mShadowSize));
-        return true;
+        if (mKeepPadding) {
+            return false;
+        } else {
+            final int topShadow = (int) Math.ceil(mShadowSize * (1 / (SHADOW_MULTIPLIER * 2)));
+            final int sideShadow = (int) Math.ceil(mShadowSize - topShadow);
+            padding.set(sideShadow, topShadow, sideShadow, (int) Math.ceil(mShadowSize));
+            return true;
+        }
     }
 
     @Override

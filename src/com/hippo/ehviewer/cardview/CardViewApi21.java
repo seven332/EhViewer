@@ -30,7 +30,8 @@ class CardViewApi21 implements CardViewImpl {
 
     @Override
     @SuppressWarnings("deprecation")
-    public void reform(Resources resources, View view, int backgroundColor) {
+    public void reform(Resources resources, View view, boolean keepPadding,
+            int backgroundColor) {
         view.setBackgroundDrawable(new RoundRectDrawable(backgroundColor,
                 resources.getDimension(R.dimen.cardview_radius)));
         // TODO Release it when L is OK
@@ -41,8 +42,8 @@ class CardViewApi21 implements CardViewImpl {
 
     @Override
     @SuppressWarnings("deprecation")
-    public void reform(Resources resources, View view, int[][] stateSets,
-            int[] backgroundColors) {
+    public void reform(Resources resources, View view, boolean keepPadding,
+            int[][] stateSets, int[] backgroundColors) {
         StateListDrawable background = new StateListDrawable();
         for (int i = 0; i < stateSets.length; i++) {
             RoundRectDrawable part = new RoundRectDrawable(backgroundColors[i],

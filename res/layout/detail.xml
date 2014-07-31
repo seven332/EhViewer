@@ -71,9 +71,9 @@
                 android:id="@+id/detail_refresh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:text="@string/refresh"
-                android:visibility="gone"
-                android:layout_centerInParent="true" />
+                android:visibility="gone" />
         </RelativeLayout>
     </LinearLayout>
 

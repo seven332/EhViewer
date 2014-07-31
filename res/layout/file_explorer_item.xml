@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Hippo Seven
+<!--
+     Copyright (C) 2014 Hippo Seven
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -12,7 +13,7 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
- -->
+-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -26,14 +27,14 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="8dp"
         android:src="@drawable/ic_dir_dark" />
-    
+
     <TextView
         android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/icon"
         android:layout_centerVertical="true"
         android:layout_margin="8.0dp"
+        android:layout_toRightOf="@id/icon"
         android:textColor="@android:color/black" />
-    
+
 </RelativeLayout>

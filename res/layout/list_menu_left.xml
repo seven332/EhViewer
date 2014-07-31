@@ -19,16 +19,16 @@
     android:layout_height="match_parent"
     android:background="@android:color/holo_blue_dark"
     android:orientation="vertical" >
-    
+
     <include
         layout="@layout/user_panel"
         android:id="@+id/user_panel" />
-    
+
     <View
         android:layout_width="fill_parent"
         android:layout_height="1.0dp"
         android:background="@color/detail_divider" />
-    
+
     <ListView
         android:id="@+id/list_menu_item_list"
         android:layout_width="match_parent"

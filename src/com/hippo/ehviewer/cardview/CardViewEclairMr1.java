@@ -69,21 +69,25 @@ class CardViewEclairMr1 implements CardViewImpl {
 
     @Override
     @SuppressWarnings("deprecation")
-    public void reform(Resources resources, View view, int backgroundColor) {
-        view.setBackgroundDrawable(new RoundRectDrawableWithShadow(
+    public void reform(Resources resources, View view, boolean keepPadding,
+            int backgroundColor) {
+        RoundRectDrawableWithShadow background = new RoundRectDrawableWithShadow(
                 resources, backgroundColor,
-                resources.getDimension(R.dimen.cardview_radius)));
+                resources.getDimension(R.dimen.cardview_radius));
+        background.setKeepPadding(keepPadding);
+        view.setBackgroundDrawable(background);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public void reform(Resources resources, View view, int[][] stateSets,
-            int[] backgroundColors) {
+    public void reform(Resources resources, View view, boolean keepPadding,
+            int[][] stateSets, int[] backgroundColors) {
         StateListDrawable background = new StateListDrawable();
         for (int i = 0; i < stateSets.length; i++) {
             RoundRectDrawableWithShadow part = new RoundRectDrawableWithShadow(
                     resources, backgroundColors[i],
                     resources.getDimension(R.dimen.cardview_radius));
+            part.setKeepPadding(keepPadding);
             background.addState(stateSets[i], part);
         }
         view.setBackgroundDrawable(background);

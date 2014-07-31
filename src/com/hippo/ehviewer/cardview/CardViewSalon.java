@@ -41,10 +41,18 @@ public final class CardViewSalon {
     }
 
     public static void reform(Resources resources, View view, int backgroundColor) {
-        IMPL.reform(resources, view, backgroundColor);
+        IMPL.reform(resources, view, false, backgroundColor);
+    }
+
+    public static void reform(Resources resources, View view, boolean keepPadding, int backgroundColor) {
+        IMPL.reform(resources, view, keepPadding, backgroundColor);
     }
 
     public static void reform(Resources resources, View view, int[][] stateSets, int[] backgroundColors) {
-        IMPL.reform(resources, view, stateSets, backgroundColors);
+        IMPL.reform(resources, view, false, stateSets, backgroundColors);
+    }
+
+    public static void reform(Resources resources, View view, boolean keepPadding, int[][] stateSets, int[] backgroundColors) {
+        IMPL.reform(resources, view, keepPadding, stateSets, backgroundColors);
     }
 }

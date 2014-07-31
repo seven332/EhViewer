@@ -50,34 +50,33 @@
             android:layout_marginLeft="8.0dp"
             android:orientation="vertical" >
 
-            <Button
+            <com.hippo.ehviewer.widget.SuperButton
                 android:id="@+id/register"
-                style="@style/Button.Small.White"
+                style="@style/SuperButton.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10.0dp"
                 android:singleLine="true"
                 android:text="@string/register" />
 
-            <Button
+            <com.hippo.ehviewer.widget.SuperButton
                 android:id="@+id/login"
-                style="@style/Button.Small.White"
+                style="@style/SuperButton.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:text="@string/login" />
         </LinearLayout>
 
-        <Button
+        <com.hippo.ehviewer.widget.SuperButton
             android:id="@+id/logout"
-            style="@style/Button.Small.White"
+            style="@style/SuperButton.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_marginBottom="8.0dp"
             android:layout_marginLeft="8.0dp"
-            android:singleLine="true"
             android:text="@string/logout" />
 
         <ProgressBar

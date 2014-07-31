@@ -39,11 +39,11 @@
         android:id="@+id/simple_language"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/holo_blue_light"
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
-        android:background="@android:color/holo_blue_light"
         android:textColor="@android:color/white" />
 
 </RelativeLayout>
