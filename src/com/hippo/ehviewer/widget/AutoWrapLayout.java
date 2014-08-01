@@ -19,34 +19,33 @@ package com.hippo.ehviewer.widget;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hippo.ehviewer.R;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import com.hippo.ehviewer.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hippo.ehviewer.R;
+
 /**
  * A ViewGroup that can layout views in line and auto wrap
- * 
+ *
  * @author Hippo
  *
  */
 public class AutoWrapLayout extends ViewGroup {
     @SuppressWarnings("unused")
     private final static String TAG = "AutoWrapLayout";
-    private List<Rect> rectList = new ArrayList<Rect>();
-    
+    private final List<Rect> rectList = new ArrayList<Rect>();
+
     private Alignment mAlignment;
-    
+
     private static final Alignment[] sBaseLineArray = { Alignment.TOP,
         Alignment.CENTER, Alignment.BOTTOM };
-    
-    
+
+
     public enum Alignment {
         TOP(0),
         CENTER(1),
@@ -58,7 +57,7 @@ public class AutoWrapLayout extends ViewGroup {
 
         final int nativeInt;
     }
-    
+
     public AutoWrapLayout(Context context) {
         super(context);
     }
@@ -67,17 +66,17 @@ public class AutoWrapLayout extends ViewGroup {
     }
     public AutoWrapLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        
+
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.AutoWrapLayout, defStyle, 0);
-        
+
         int index = a.getInt(R.styleable.AutoWrapLayout_alignment, -1);
         if (index >= 0)
             setAlignment(sBaseLineArray[index]);
-        
+
         a.recycle();
     }
-    
+
     public void setAlignment(Alignment baseLine) {
         if (baseLine == null)
             return;
@@ -89,15 +88,15 @@ public class AutoWrapLayout extends ViewGroup {
             invalidate();
         }
     }
-    
+
     public Alignment getScaleType() {
         return mAlignment;
     }
-    
+
     private void adjustBaseLine(int lineHeight, int startIndex, int endIndex) {
         if (mAlignment == Alignment.TOP)
             return;
-        
+
         for (int index = startIndex; index < endIndex; index++) {
             final View child = getChildAt(index);
             final AutoWrapLayout.LayoutParams lp =
@@ -110,12 +109,12 @@ public class AutoWrapLayout extends ViewGroup {
                 rect.offset(0, offsetRaw);
         }
     }
-    
-    
+
+
     // TODO Take vertical mode
     /**
      * each row or line at least show one child
-     * 
+     *
      * horizontal only show child can show or partly show in parent
      */
     @SuppressLint("DrawAllocation")
@@ -123,23 +122,23 @@ public class AutoWrapLayout extends ViewGroup {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        
+
         int maxWidth = MeasureSpec.getSize(widthMeasureSpec);
         int maxHeight = MeasureSpec.getSize(heightMeasureSpec);
-        
+
         if (widthMode == MeasureSpec.UNSPECIFIED)
             maxWidth = Integer.MAX_VALUE;
         if (heightMode == MeasureSpec.UNSPECIFIED)
             maxHeight = Integer.MAX_VALUE;
-        
+
         int paddingLeft = getPaddingLeft();
         int paddingTop = getPaddingTop();
         int paddingRight = getPaddingRight();
         int paddingBottom = getPaddingBottom();
-        
+
         int maxRightBound = maxWidth - paddingRight;
         int maxBottomBound = maxHeight - paddingBottom;
-        
+
         int left;
         int top;
         int right;
@@ -151,10 +150,10 @@ public class AutoWrapLayout extends ViewGroup {
         int maxBottom = lastMaxBottom;
         int childWidth;
         int childHeight;
-        
+
         int lineStartIndex = 0;
         int lineEndIndex = 0; // endIndex + 1
-        
+
         rectList.clear();
         int childCount = getChildCount();
         for (int index = 0; index < childCount; index++) {
@@ -166,7 +165,7 @@ public class AutoWrapLayout extends ViewGroup {
                     (AutoWrapLayout.LayoutParams)child.getLayoutParams();
             childWidth = child.getMeasuredWidth();
             childHeight = child.getMeasuredHeight();
-            
+
             left = rightBound + lp.leftMargin;
             right = left + childWidth;
             rightBound = right + lp.rightMargin;
@@ -174,19 +173,29 @@ public class AutoWrapLayout extends ViewGroup {
                 lineEndIndex = index;
                 // Adjust child position base on baseline
                 adjustBaseLine(maxBottom - lastMaxBottom, lineStartIndex, lineEndIndex);
-                
+
                 // If child can't show in parent begin this line
                 if (maxBottom >= maxBottomBound)
                     break;
+
+                // If it is first item in line, try to show it all
+                if (lineEndIndex == lineStartIndex) {
+                    child.measure(MeasureSpec.makeMeasureSpec(
+                            maxWidth - paddingLeft - paddingRight
+                            - lp.leftMargin - lp.rightMargin, MeasureSpec.AT_MOST),
+                            MeasureSpec.UNSPECIFIED);
+                    childWidth = child.getMeasuredWidth();
+                    childHeight = child.getMeasuredHeight();
+                }
                 left = paddingLeft + lp.leftMargin;
                 right = left + childWidth;
                 rightBound = right + lp.rightMargin;
-                
+
                 lastMaxBottom = maxBottom;
                 top = lastMaxBottom + lp.topMargin;
                 bottom = top + childHeight;
                 bottomBound = bottom + lp.bottomMargin;
-                
+
                 lineStartIndex = index;
             } else {
                 top = lastMaxBottom + lp.topMargin;
@@ -205,13 +214,13 @@ public class AutoWrapLayout extends ViewGroup {
             rect.bottom = bottom;
             rectList.add(rect);
         }
-        
+
         // Handle last line baseline
         adjustBaseLine(maxBottom - lastMaxBottom, lineStartIndex, rectList.size());
-        
+
         int measuredWidth;
         int measuredHeight;
-        
+
         if (widthMode == MeasureSpec.EXACTLY)
             measuredWidth = maxWidth;
         else
@@ -223,7 +232,7 @@ public class AutoWrapLayout extends ViewGroup {
             if (heightMode == MeasureSpec.AT_MOST)
                 measuredHeight = measuredHeight > maxHeight ? maxHeight : measuredHeight;
         }
-        
+
         setMeasuredDimension(measuredWidth, measuredHeight);
     }
 
@@ -238,7 +247,7 @@ public class AutoWrapLayout extends ViewGroup {
             child.layout(rect.left, rect.top, rect.right, rect.bottom);
         }
     }
-    
+
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new AutoWrapLayout.LayoutParams(getContext(), attrs);
@@ -253,7 +262,7 @@ public class AutoWrapLayout extends ViewGroup {
     protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
         return new LayoutParams(p);
     }
-    
+
     public static class LayoutParams extends ViewGroup.MarginLayoutParams {
         public LayoutParams() {
             this(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
