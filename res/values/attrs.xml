@@ -73,7 +73,13 @@
     </declare-styleable>
 
     <declare-styleable name="SuperButton">
+        <attr name="backgroundType">
+            <enum name="round" value="0" />
+            <enum name="tile" value="1" />
+        </attr>
         <attr name="backgroundColor" format="color" />
+        <attr name="boundColor" format="color" />
+        <attr name="withShadow" format="boolean" />
     </declare-styleable>
 
 </resources>

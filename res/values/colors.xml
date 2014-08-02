@@ -37,16 +37,16 @@
     <color name="light_gray">#aaa</color>
     <color name="lighter_gray">#ddd</color>
 
-    <color name="doujinshi_bg">#fff02d2d</color>
-    <color name="manga_bg">#ffffa037</color>
-    <color name="artist_cg_bg">#ffffd84f</color>
-    <color name="game_cg_bg">#ff00b26f</color>
-    <color name="western_bg">#ffa2df86</color>
-    <color name="non_h_bg">#ff4ec8f7</color>
-    <color name="image_set_bg">#ff4272d7</color>
-    <color name="cosplay_bg">#ff8058bd</color>
-    <color name="asian_porn_bg">#ffdda0f6</color>
-    <color name="misc_bg">#ffeaccf3</color>
+    <color name="doujinshi_bg">#ffff2d2d</color>
+    <color name="manga_bg">#ffff9933</color>
+    <color name="artist_cg_bg">#ffffcc55</color>
+    <color name="game_cg_bg">#ff009966</color>
+    <color name="western_bg">#ff99cc99</color>
+    <color name="non_h_bg">#ff66ccff</color>
+    <color name="image_set_bg">#ff3366cc</color>
+    <color name="cosplay_bg">#ff9966cc</color>
+    <color name="asian_porn_bg">#ffcc99ff</color>
+    <color name="misc_bg">#ffffaaff</color>
     <color name="unknown_bg">@android:color/black</color>
 
     <color name="fav0">#ff616161</color>
@@ -72,18 +72,12 @@
     <color name="btn_white_default">#fff0f0f0</color>
 
 
-
-
-
-
-
+    <color name="background_light">#fffafafa</color>
+    <color name="background_dark">#ff212121</color>
 
     <color name="primary_text_dark">#de000000</color>
     <color name="secondary_text_dark">#8a000000</color>
-
     <color name="primary_text_light">#deffffff</color>
     <color name="secondary_text_light">#61ffffff</color>
-
-    <color name="background_light">#deffffff</color>
 
 </resources>

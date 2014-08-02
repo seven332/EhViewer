@@ -19,13 +19,46 @@ package com.hippo.ehviewer.tile;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
+import android.util.StateSet;
 
 public class RectDrawable extends Drawable {
 
-    private final int mColor;
+    private final int[][] mStateSets;
+    private final int[] mColors;
+    private int mColor;
+    private int mLastIndex = -1;
 
     public RectDrawable(int color) {
+        mStateSets = null;
+        mColors = null;
         mColor = color;
+    }
+
+    public RectDrawable(int[][] stateSets, int[] colors) {
+        mStateSets = stateSets;
+        mColors = colors;
+    }
+
+    @Override
+    public boolean isStateful() {
+        return mStateSets != null;
+    }
+
+    @Override
+    protected boolean onStateChange(int[] stateSet) {
+        final int N = mStateSets.length;
+        for (int i = 0; i < N; i++) {
+            if (StateSet.stateSetMatches(mStateSets[i], stateSet)) {
+                if (mLastIndex == i)
+                    return false;
+                mLastIndex = i;
+
+                mColor = mColors[i];
+                invalidateSelf();
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

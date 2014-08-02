@@ -50,19 +50,19 @@
         <item name="@android:textStyle">normal</item>
     </style>
 
-    <style name="TextAppearance.Button">
+    <style name="TextAppearance.SuperButton">
         <item name="@android:fontFamily">sans-serif-medium</item>
         <item name="@android:textAllCaps">true</item>
         <item name="@android:singleLine">true</item>
     </style>
 
-    <style name="TextAppearance.Button.Small">
+    <style name="TextAppearance.SuperButton.Small">
         <item name="@android:textSize">13sp</item>
     </style>
 
-    <style name="Button" parent="@android:Widget.Button">
+    <style name="SuperButton" parent="@android:Widget.Button">
         <item name="backgroundColor">@color/background_light</item>
-        <item name="@android:textAppearance">@style/TextAppearance.Button</item>
+        <item name="@android:textAppearance">@style/TextAppearance.SuperButton</item>
         <item name="@android:minHeight">0dp</item>
         <item name="@android:minWidth">0dp</item>
         <item name="@android:paddingTop">12dp</item>
@@ -71,20 +71,12 @@
         <item name="@android:paddingRight">24dp</item>
     </style>
 
-    <style name="Button.Small">
-        <item name="@android:textAppearance">@style/TextAppearance.Button.Small</item>
+    <style name="SuperButton.Small">
+        <item name="@android:textAppearance">@style/TextAppearance.SuperButton.Small</item>
         <item name="@android:paddingTop">2dp</item>
         <item name="@android:paddingBottom">4dp</item>
         <item name="@android:paddingLeft">18dp</item>
         <item name="@android:paddingRight">18dp</item>
-    </style>
-
-    <style name="SuperButton" parent="Button">
-        <item name="backgroundColor">@color/background_light</item>
-    </style>
-
-    <style name="SuperButton.Small" parent="Button.Small">
-        <item name="backgroundColor">@color/background_light</item>
     </style>
 
     <style name="ProgressBar" parent="@android:Widget.Holo.ProgressBar">

@@ -1598,12 +1598,11 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 case LIST_MODE_DETAIL:
                     convertView = LayoutInflater.from(GalleryListActivity.this)
                     .inflate(R.layout.gallery_list_detail_item, parent, false);
-                    CardViewSalon.reform(GalleryListActivity.this.getResources(),
-                            convertView, new int[][]{
+                    CardViewSalon.reformWithShadow(convertView, new int[][]{
                                     new int[]{android.R.attr.state_pressed},
                                     new int[]{android.R.attr.state_activated},
                                     new int[]{}},
-                                    new int[]{0xff84cae4, 0xff33b5e5, 0xFFFAFAFA}); // TODO
+                                    new int[]{0xff84cae4, 0xff33b5e5, 0xFFFAFAFA}, null, false); // TODO
                     break;
                 case LIST_MODE_THUMB:
                     convertView = LayoutInflater.from(GalleryListActivity.this)

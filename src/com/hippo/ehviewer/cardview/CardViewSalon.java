@@ -16,8 +16,6 @@
 
 package com.hippo.ehviewer.cardview;
 
-import android.content.res.Resources;
-import android.os.Build;
 import android.view.View;
 
 /**
@@ -27,32 +25,30 @@ import android.view.View;
  */
 public final class CardViewSalon {
 
-    private final static CardViewImpl IMPL;
-    static {
-        // TODO Release it when L is OK
-        /*if ("L".equals(Build.VERSION.CODENAME) || Build.VERSION.SDK_INT >= 21) {
-            IMPL = new CardViewApi21();
-        } else*/ if (Build.VERSION.SDK_INT >= 17) {
-            IMPL = new CardViewJellybeanMr1();
-        } else {
-            IMPL = new CardViewEclairMr1();
-        }
-        IMPL.initStatic();
+    @SuppressWarnings("deprecation")
+    public static void reform(View view, int bgColor, int boundColor) {
+        view.setBackgroundDrawable(new RoundRectDrawable(
+                bgColor, boundColor));
     }
 
-    public static void reform(Resources resources, View view, int backgroundColor) {
-        IMPL.reform(resources, view, false, backgroundColor);
+    @SuppressWarnings("deprecation")
+    public static void reform(View view, int[][] stateSets, int[] bgColors,
+            int[] boundColors) {
+        view.setBackgroundDrawable(new RoundRectDrawable(
+                stateSets, bgColors, boundColors));
     }
 
-    public static void reform(Resources resources, View view, boolean keepPadding, int backgroundColor) {
-        IMPL.reform(resources, view, keepPadding, backgroundColor);
+    @SuppressWarnings("deprecation")
+    public static void reformWithShadow(View view, int bgColor, int boundColor,
+            boolean keepPadding) {
+        view.setBackgroundDrawable(new RoundRectDrawableWithShadow(
+                bgColor, boundColor, keepPadding));
     }
 
-    public static void reform(Resources resources, View view, int[][] stateSets, int[] backgroundColors) {
-        IMPL.reform(resources, view, false, stateSets, backgroundColors);
-    }
-
-    public static void reform(Resources resources, View view, boolean keepPadding, int[][] stateSets, int[] backgroundColors) {
-        IMPL.reform(resources, view, keepPadding, stateSets, backgroundColors);
+    @SuppressWarnings("deprecation")
+    public static void reformWithShadow(View view, int[][] stateSets, int[] bgColors,
+            int[] boundColors, boolean keepPadding) {
+        view.setBackgroundDrawable(new RoundRectDrawableWithShadow(
+                stateSets, bgColors, boundColors, keepPadding));
     }
 }

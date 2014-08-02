@@ -16,23 +16,17 @@
 
 package com.hippo.ehviewer.tile;
 
-import android.graphics.drawable.StateListDrawable;
 import android.view.View;
 
 public class TileSalon {
 
     @SuppressWarnings("deprecation")
-    public static void reform(View view, int backgroundColor) {
-        view.setBackgroundDrawable(new RectDrawable(backgroundColor));
+    public static void reform(View view, int bgColor) {
+        view.setBackgroundDrawable(new RectDrawable(bgColor));
     }
 
     @SuppressWarnings("deprecation")
-    public static void reform(View view, int[][] stateSets, int[] backgroundColors) {
-        StateListDrawable background = new StateListDrawable();
-        for (int i = 0; i < stateSets.length; i++) {
-            RectDrawable part = new RectDrawable(backgroundColors[i]);
-            background.addState(stateSets[i], part);
-        }
-        view.setBackgroundDrawable(background);
+    public static void reform(View view, int[][] stateSets, int[] bgColors) {
+        view.setBackgroundDrawable(new RectDrawable(stateSets, bgColors));
     }
 }

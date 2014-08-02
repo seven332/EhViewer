@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2014 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,87 +13,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.hippo.ehviewer.cardview;
 
-import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.ColorFilter;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PixelFormat;
 import android.graphics.RadialGradient;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
 
-import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Ui;
 
-/**
- * A rounded rectangle drawable which also includes a shadow around.
- */
-class RoundRectDrawableWithShadow extends Drawable {
-    final static float SHADOW_MULTIPLIER = 1.5f;
-    /*
-    * This helper is set by CardView implementations.
-    * <p>
-    * Prior to API 17, canvas.drawRoundRect is expensive; which is why we need this interface
-    * to draw efficient rounded rectangles before 17.
-    * */
-    static RoundRectHelper sRoundRectHelper;
+// Get most code from android.support.v7.widget.RoundRectDrawableWithShadow
+public class RoundRectDrawableWithShadow extends RoundRectDrawable {
+    private final static float SHADOW_MULTIPLIER = 1.5f;
 
-    Paint mPaint;
+    private int mShadowStartColor;
+    private int mShadowEndColor;
+    private float mShadowSize;
 
-    Paint mCornerShadowPaint;
+    private Paint mCornerShadowPaint;
+    private Paint mEdgeShadowPaint;
 
-    Paint mEdgeShadowPaint;
-
-    final RectF mPreShadowBounds;
-
-    float mCornerRadius;
-
-    Path mCornerShadowPath;
-
-    float mShadowSize;
+    private final RectF mPreShadowBounds = new RectF();
+    private final Path mCornerShadowPath = new Path();
 
     private boolean mDirty = true;
+    private final boolean mKeepPadding;
 
-    private boolean mKeepPadding = false;
+    public RoundRectDrawableWithShadow(int bgColor, int boundColor,
+            boolean keepPadding) {
+        super(bgColor, boundColor);
+        mKeepPadding = keepPadding;
+        init();
+    }
 
-    private final int mShadowStartColor;
+    public RoundRectDrawableWithShadow(int[][] stateSets,
+            int[] bgColors, int[] boundColors, boolean keepPadding) {
+        super(stateSets, bgColors, boundColors);
+        mKeepPadding = keepPadding;
+        init();
+    }
 
-    private final int mShadowEndColor;
+    private void init() {
+        mShadowStartColor = 0x37000000;
+        mShadowEndColor = 0x03000000;
+        mShadowSize = Ui.dp2pix(2) * SHADOW_MULTIPLIER;
 
-    RoundRectDrawableWithShadow(Resources resources, int backgroundColor, float radius) {
-        mShadowStartColor = resources.getColor(R.color.cardview_shadow_start_color);
-        mShadowEndColor = resources.getColor(R.color.cardview_shadow_end_color);
-        mShadowSize = resources.getDimension(R.dimen.cardview_shadow_size) * SHADOW_MULTIPLIER;
-
-
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
-        mPaint.setColor(backgroundColor);
         mCornerShadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
         mCornerShadowPaint.setStyle(Paint.Style.FILL);
         mCornerShadowPaint.setDither(true);
-        mCornerRadius = radius;
-        mPreShadowBounds = new RectF();
         mEdgeShadowPaint = new Paint(mCornerShadowPaint);
-    }
-
-    @Override
-    public void setAlpha(int alpha) {
-        // not supported
     }
 
     @Override
     protected void onBoundsChange(Rect bounds) {
         super.onBoundsChange(bounds);
         mDirty = true;
-    }
-
-    public void setKeepPadding(boolean keepPadding) {
-        mKeepPadding = keepPadding;
     }
 
     @Override
@@ -108,23 +87,40 @@ class RoundRectDrawableWithShadow extends Drawable {
         }
     }
 
-    @Override
-    public void setColorFilter(ColorFilter cf) {
-        // not supported
+    private void buildShadowCorners() {
+        RectF innerBounds = new RectF(-mCornerRadius, -mCornerRadius, mCornerRadius, mCornerRadius);
+        RectF outerBounds = new RectF(innerBounds);
+        outerBounds.inset(-mShadowSize, -mShadowSize);
+
+        mCornerShadowPath.reset();
+        mCornerShadowPath.setFillType(Path.FillType.EVEN_ODD);
+        mCornerShadowPath.moveTo(-mCornerRadius, 0);
+        mCornerShadowPath.rLineTo(-mShadowSize, 0);
+        // outer arc
+        mCornerShadowPath.arcTo(outerBounds, 180f, 90f, false);
+        // inner arc
+        mCornerShadowPath.arcTo(innerBounds, 270f, -90f, false);
+        mCornerShadowPath.close();
+
+        float startRatio = mCornerRadius / (mCornerRadius + mShadowSize);
+        mCornerShadowPaint.setShader(new RadialGradient(0, 0, mCornerRadius + mShadowSize,
+                new int[]{mShadowStartColor, mShadowStartColor, mShadowEndColor},
+                new float[]{0f, startRatio, 1f}
+                , Shader.TileMode.CLAMP));
+
+        // we offset the content shadowSize/2 pixels up to make it more realistic.
+        // this is why edge shadow shader has some extra space
+        // When drawing bottom edge shadow, we use that extra space.
+        mEdgeShadowPaint.setShader(new LinearGradient(0, -mCornerRadius + mShadowSize, 0,
+                -mCornerRadius - mShadowSize,
+                new int[]{mShadowStartColor, mShadowStartColor, mShadowEndColor},
+                new float[]{0f, .5f, 1f}, Shader.TileMode.CLAMP));
     }
 
-    @Override
-    public int getOpacity() {
-        return PixelFormat.OPAQUE;
-    }
-
-    void setCornerRadius(float radius) {
-        if (mCornerRadius == radius) {
-            return;
-        }
-        mCornerRadius = radius;
-        mDirty = true;
-        invalidateSelf();
+    private void buildComponents(Rect bounds) {
+        mPreShadowBounds.set(bounds.left + mShadowSize, bounds.top + mShadowSize,
+                bounds.right - mShadowSize, bounds.bottom - mShadowSize);
+        buildShadowCorners();
     }
 
     @Override
@@ -140,7 +136,7 @@ class RoundRectDrawableWithShadow extends Drawable {
         mPreShadowBounds.bottom += offset;
         mPreShadowBounds.left -= horizontalOffset;
         mPreShadowBounds.right += horizontalOffset;
-        sRoundRectHelper.drawRoundRect(canvas, mPreShadowBounds, mCornerRadius, mPaint);
+        drawBody(canvas, mPreShadowBounds);
         mPreShadowBounds.bottom -= offset;
         mPreShadowBounds.left += horizontalOffset;
         mPreShadowBounds.right -= horizontalOffset;
@@ -186,53 +182,5 @@ class RoundRectDrawableWithShadow extends Drawable {
                 mEdgeShadowPaint);
 
         canvas.restoreToCount(saved);
-    }
-
-    private void buildShadowCorners() {
-        RectF innerBounds = new RectF(-mCornerRadius, -mCornerRadius, mCornerRadius, mCornerRadius);
-        RectF outerBounds = new RectF(innerBounds);
-        outerBounds.inset(-mShadowSize, -mShadowSize);
-
-        if (mCornerShadowPath == null) {
-            mCornerShadowPath = new Path();
-        } else {
-            mCornerShadowPath.reset();
-        }
-        mCornerShadowPath.setFillType(Path.FillType.EVEN_ODD);
-        mCornerShadowPath.moveTo(-mCornerRadius, 0);
-        mCornerShadowPath.rLineTo(-mShadowSize, 0);
-        // outer arc
-        mCornerShadowPath.arcTo(outerBounds, 180f, 90f, false);
-        // inner arc
-        mCornerShadowPath.arcTo(innerBounds, 270f, -90f, false);
-        mCornerShadowPath.close();
-
-        float startRatio = mCornerRadius / (mCornerRadius + mShadowSize);
-        mCornerShadowPaint.setShader(new RadialGradient(0, 0, mCornerRadius + mShadowSize,
-                new int[]{mShadowStartColor, mShadowStartColor, mShadowEndColor},
-                new float[]{0f, startRatio, 1f}
-                , Shader.TileMode.CLAMP));
-
-        // we offset the content shadowSize/2 pixels up to make it more realistic.
-        // this is why edge shadow shader has some extra space
-        // When drawing bottom edge shadow, we use that extra space.
-        mEdgeShadowPaint.setShader(new LinearGradient(0, -mCornerRadius + mShadowSize, 0,
-                -mCornerRadius - mShadowSize,
-                new int[]{mShadowStartColor, mShadowStartColor, mShadowEndColor},
-                new float[]{0f, .5f, 1f}, Shader.TileMode.CLAMP));
-    }
-
-    private void buildComponents(Rect bounds) {
-        mPreShadowBounds.set(bounds.left + mShadowSize, bounds.top + mShadowSize,
-                bounds.right - mShadowSize, bounds.bottom - mShadowSize);
-        buildShadowCorners();
-    }
-
-    public float getCornerRadius() {
-        return mCornerRadius;
-    }
-
-    static interface RoundRectHelper {
-        void drawRoundRect(Canvas canvas, RectF bounds, float cornerRadius, Paint paint);
     }
 }

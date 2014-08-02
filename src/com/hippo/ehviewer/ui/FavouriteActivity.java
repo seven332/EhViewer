@@ -638,12 +638,11 @@ public class FavouriteActivity extends AbstractGalleryActivity
             if (convertView == null || !(convertView instanceof LinearLayout)) {
                 convertView = LayoutInflater.from(FavouriteActivity.this)
                         .inflate(R.layout.favorite_list_item, parent, false);
-                CardViewSalon.reform(FavouriteActivity.this.getResources(),
-                        ((ViewGroup)convertView).getChildAt(0), new int[][]{
+                CardViewSalon.reformWithShadow(((ViewGroup)convertView).getChildAt(0), new int[][]{
                                 new int[]{android.R.attr.state_pressed},
                                 new int[]{android.R.attr.state_activated},
                                 new int[]{}},
-                                new int[]{0xff84cae4, 0xff33b5e5, 0xFFFAFAFA});
+                                new int[]{0xff84cae4, 0xff33b5e5, 0xFFFAFAFA}, null, false);
             }
             final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
             if (!String.valueOf(gi.gid).equals(thumb.getKey())) {

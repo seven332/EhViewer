@@ -35,7 +35,7 @@
         android:layout_marginTop="2dp"
         android:layout_toRightOf="@id/detail_cover" />
 
-    <Button
+    <TextView
         android:id="@+id/detail_uploader"
         style="@style/DetailSubtitle"
         android:layout_width="wrap_content"
