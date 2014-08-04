@@ -45,7 +45,7 @@
         <item name="@android:textColorHint">@color/secondary_text_dark</item>
         <item name="@android:textColorHighlight">#6640c4ff</item>
         <item name="@android:textColorLink">#ff00bcd4</item>
-        <item name="@android:textSize">14sp</item>
+        <item name="@android:textSize">@dimen/text_medium</item>
         <item name="@android:fontFamily">sans-serif</item>
         <item name="@android:textStyle">normal</item>
     </style>
@@ -99,38 +99,48 @@
     </style>
 
     <!-- Text -->
-    <style name="CardTitle">
-        <item name="android:textColor">@color/title_primary</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:maxLines">2</item>
-        <item name="android:singleLine">false</item>
-        <item name="android:lineSpacingExtra">0.0sp</item>
+
+    <style name="TextAppearance.CardTitle">
+        <item name="android:textSize">@dimen/text_little_large</item>
     </style>
 
-    <style name="CardSubtitle">
-        <item name="android:textSize">@dimen/text_medium</item>
-        <item name="android:textColor">@color/title_secondary</item>
+    <style name="CardTitle">
+        <item name="@android:textAppearance">@style/TextAppearance.CardTitle</item>
         <item name="android:ellipsize">end</item>
-        <item name="android:maxLines">1</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:lineSpacingExtra">0sp</item>
+    </style>
+
+    <style name="TextAppearance.CardMessage">
+        <item name="android:textColor">@color/secondary_text_dark</item>
+    </style>
+
+    <style name="CardMessage">
+        <item name="@android:textAppearance">@style/TextAppearance.CardMessage</item>
+        <item name="android:ellipsize">end</item>
         <item name="android:singleLine">true</item>
-        <item name="android:drawablePadding">4.0dip</item>
-        <item name="android:lineSpacingExtra">0.0sp</item>
+    </style>
+
+    <style name="TextAppearance.DetailTitle">
+        <item name="android:textSize">@dimen/text_large</item>
+        <item name="android:textColor">@color/primary_text_dark</item>
     </style>
 
     <style name="DetailTitle">
-        <item name="android:textSize">@dimen/detail_title_size</item>
-        <item name="android:textColor">@color/title_primary</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:maxLines">2</item>
-        <item name="android:singleLine">false</item>
-        <item name="android:lineSpacingExtra">0.0sp</item>
+        <item name="@android:textAppearance">@style/TextAppearance.DetailTitle</item>
+        <item name="@android:maxLines">6</item>
+        <item name="@android:ellipsize">end</item>
+    </style>
+
+    <style name="TextAppearance.DetailSubtitle">
+        <item name="android:textSize">@dimen/text_little_large</item>
+        <item name="android:textColor">@color/secondary_text_dark</item>
     </style>
 
     <style name="DetailSubtitle">
-        <item name="android:textSize">@dimen/detail_subtitle_size</item>
-        <item name="android:textColor">@color/detail_title_secondary</item>
-        <item name="android:ellipsize">marquee</item>
-        <item name="android:singleLine">true</item>
+        <item name="@android:textAppearance">@style/TextAppearance.DetailSubtitle</item>
+        <item name="@android:singleLine">true</item>
+        <item name="@android:ellipsize">marquee</item>
     </style>
 
     <style name="TextTag">

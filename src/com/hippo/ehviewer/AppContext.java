@@ -22,6 +22,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import com.hippo.ehviewer.cache.ImageCache;
@@ -33,12 +34,14 @@ import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.widget.SuperToast;
 
 public class AppContext extends Application implements UncaughtExceptionHandler {
 
     @SuppressWarnings("unused")
     private static final String TAG = "AppContext";
-    private final DateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    @SuppressLint("SimpleDateFormat")
+    public static final DateFormat sFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private Thread.UncaughtExceptionHandler mDefaultHandler;
 
@@ -52,15 +55,16 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
 
         // Init everything
         mNetworkThreadPool = new ThreadPool(2, 4);
-
         Config.init(this);
         Ui.init(this);
         Crash.init(this);
-        mEhClient = new EhClient(this);
+        EhClient.createInstance(this);
         Download.init(this);
         Favorite.init(this);
+        Data.createInstance(this);
+        SuperToast.setContext(this);
 
-        mData = new Data(this);
+        // Do catch error prepare
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
 
@@ -75,20 +79,8 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         }
     }
 
-    public EhClient getEhClient() {
-        return mEhClient;
-    }
-
     public ThreadPool getNetworkThreadPool() {
         return mNetworkThreadPool;
-    }
-
-    public Data getData() {
-        return mData;
-    }
-
-    public DateFormat getDateFormat() {
-        return mFormatter;
     }
 
     /**

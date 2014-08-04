@@ -38,7 +38,7 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Future;
 import com.hippo.ehviewer.util.FutureListener;
 import com.hippo.ehviewer.util.ThreadPool;
-import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.util.ThreadPool.Job;
 import com.hippo.ehviewer.util.ThreadPool.JobContext;
 
@@ -75,7 +75,7 @@ public class UpdateHelper {
     }
     
     public void autoCheckUpdate() {
-        if (Config.getUpdateDate() < Util.getDate())
+        if (Config.getUpdateDate() < Utils.getDate())
             checkUpdate();
     }
     

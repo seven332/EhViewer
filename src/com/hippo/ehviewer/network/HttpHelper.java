@@ -54,7 +54,7 @@ import com.hippo.ehviewer.exception.StopRequestException;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.Utils;
 
 /**
  * It is not thread safe
@@ -191,12 +191,12 @@ public class HttpHelper {
             url = rh.getUrl();
             Log.d(TAG, "Requst " + url.toString());
             boolean isCookiable = isUrlCookiable(url);
-            while (redirectionCount++ < Constant.MAX_REDIRECTS) {
+            while (redirectionCount++ < Constants.MAX_REDIRECTS) {
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setInstanceFollowRedirects(false);
-                conn.setRequestProperty("User-Agent", Constant.userAgent);
-                conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
-                conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
+                conn.setRequestProperty("User-Agent", Constants.userAgent);
+                conn.setConnectTimeout(Constants.DEFAULT_TIMEOUT);
+                conn.setReadTimeout(Constants.DEFAULT_TIMEOUT);
                 // Set cookie if necessary
                 if (isCookiable)
                     EhInfo.getInstance(mContext).setCookie(conn, mPreviewMode);
@@ -232,7 +232,7 @@ public class HttpHelper {
                 case HttpURLConnection.HTTP_MOVED_PERM:
                 case HttpURLConnection.HTTP_MOVED_TEMP:
                 case HttpURLConnection.HTTP_SEE_OTHER:
-                case Constant.HTTP_TEMP_REDIRECT:
+                case Constants.HTTP_TEMP_REDIRECT:
                     final String location = conn.getHeaderField("Location");
                     Log.d(TAG, "New location " + location);
                     mLastUrl = location;
@@ -361,7 +361,7 @@ public class HttpHelper {
                 else
                     baos = new ByteArrayOutputStream();
 
-                Util.copy(is, baos, Constant.BUFFER_SIZE);
+                Utils.copy(is, baos, Constants.BUFFER_SIZE);
 
                 // Get charset
                 String charset = null;
@@ -379,8 +379,8 @@ public class HttpHelper {
             } catch (Exception e) {
                 throw e;
             } finally {
-                Util.closeStreamQuietly(is);
-                Util.closeStreamQuietly(baos);
+                Utils.closeStreamQuietly(is);
+                Utils.closeStreamQuietly(baos);
             }
             return body;
         }
@@ -772,7 +772,7 @@ public class HttpHelper {
 
         private void transferData(InputStream in, OutputStream out)
                 throws Exception {
-            final byte data[] = new byte[Constant.BUFFER_SIZE];
+            final byte data[] = new byte[Constants.BUFFER_SIZE];
             mReceivedSize = 0;
 
             while (true) {

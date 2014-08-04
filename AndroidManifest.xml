@@ -47,7 +47,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.hippo.ehviewer.ui.GalleryListActivity"
+            android:name=".ui.GalleryListActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTask"
@@ -62,9 +62,8 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name="com.hippo.ehviewer.ui.GalleryDetailActivity"
+            android:name=".ui.GalleryDetailActivity"
             android:configChanges="orientation|screenSize"
-            android:launchMode="singleTask"
             android:screenOrientation="behind"
             android:windowSoftInputMode="adjustPan|adjustUnspecified|stateHidden" >
             <intent-filter>
@@ -81,19 +80,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.hippo.ehviewer.ui.GalleryActivity"
+            android:name=".ui.GalleryActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="behind" >
         </activity>
         <activity
-            android:name="com.hippo.ehviewer.ui.SettingsActivity"
+            android:name=".ui.SettingsActivity"
             android:configChanges="orientation|screenSize"
             android:icon="@drawable/ic_action_settings"
             android:label="@string/preference_settings_title"
             android:screenOrientation="behind" >
         </activity>
         <activity
-            android:name="com.hippo.ehviewer.ui.FavouriteActivity"
+            android:name=".ui.FavouriteActivity"
             android:configChanges="orientation|screenSize"
             android:icon="@drawable/ic_action_favorite"
             android:label="@string/favourite"
@@ -101,7 +100,7 @@
             android:theme="@style/AppTheme.ListActivity" >
         </activity>
         <activity
-            android:name="com.hippo.ehviewer.ui.DownloadActivity"
+            android:name=".ui.DownloadActivity"
             android:configChanges="orientation|screenSize"
             android:icon="@drawable/ic_action_download"
             android:label="@string/download"

@@ -28,7 +28,7 @@ import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.DownloadItemLayout;
@@ -86,9 +86,9 @@ public class DownloadActivity extends AbstractActivity {
                             mServiceConn.getService().cancel(Download.getKey(longClickItemIndex));
                             mDlAdapter.notifyDataSetChanged();
                             // TODO 有人反馈 Download.get(longClickItemIndex).title 为空，看来很有必要在正则抓取时检查是否为空
-                            File dir = new File(Config.getDownloadPath(), Util.rightFileName(Download.get(longClickItemIndex).title));
+                            File dir = new File(Config.getDownloadPath(), Utils.rightFileName(Download.get(longClickItemIndex).title));
                             try {
-                                Util.deleteContents(dir);
+                                Utils.deleteContents(dir);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

@@ -16,19 +16,9 @@
 
 package com.hippo.ehviewer.util;
 
-import com.hippo.ehviewer.Analytics;
-import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.data.GalleryInfo;
-import com.hippo.ehviewer.ehclient.EhClient;
-import com.hippo.ehviewer.ui.GalleryDetailActivity;
-import com.hippo.ehviewer.widget.DialogBuilder;
-import com.hippo.ehviewer.widget.SuperToast;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.Resources;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -36,26 +26,58 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
+import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.data.Data;
+import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.ehclient.EhClient;
+import com.hippo.ehviewer.widget.DialogBuilder;
+import com.hippo.ehviewer.widget.SuperToast;
+
 public class Favorite {
-    
+
     private static Context mContext;
     private static Resources mResources;
-    
+
     private static AlertDialog lastAddToFavoriteDialog;
-    
+
     public static String[] FAVORITE_TITLES;
-    
+
     public static void init(Context context) {
         mContext = context;
         mResources = mContext.getResources();
-        
+
         FAVORITE_TITLES = new String[EhClient.FAVORITE_SLOT_NUM + 1];
         FAVORITE_TITLES[0] = mResources.getString(R.string.local_favorite);
         for (int i = 1; i < EhClient.FAVORITE_SLOT_NUM + 1; i++) {
             FAVORITE_TITLES[i] = mResources.getString(R.string.favourite) + " "+ (i - 1);
         }
     }
-    
+
+    public static void addToFavorite(final Context context, GalleryInfo gi) {
+        int defaultFavorite = Config.getDefaultFavorite();
+        switch (defaultFavorite) {
+        case -2:
+            Favorite.getAddToFavoriteDialog(context, gi).show();
+            break;
+        case -1:
+            Data.getInstance().addLocalFavourite(gi);
+            new SuperToast(R.string.toast_add_favourite).show();
+            break;
+        default:
+            EhClient.getInstance().addToFavorite(gi.gid,
+                    gi.token, defaultFavorite, null, new EhClient.OnAddToFavoriteListener() {
+                @Override
+                public void onSuccess() {
+                    new SuperToast(R.string.toast_add_favourite).show();
+                }
+                @Override
+                public void onFailure(String eMsg) {
+                    new SuperToast(R.string.failed_to_add).show();
+                }
+            });
+        }
+    }
+
     public static AlertDialog getAddToFavoriteDialog(final Context context, final GalleryInfo gi) {
         DialogBuilder db = new DialogBuilder(context).setView(R.layout.add_to_favorite, false);
         db.setTitle(R.string.where_to_add);
@@ -71,25 +93,25 @@ public class Favorite {
                     int position, long id) {
                 lastAddToFavoriteDialog.dismiss();
                 lastAddToFavoriteDialog = null;
-                
+
                 if (cb.isChecked())
                     Config.setDefaultFavorite(position - 1);
-                
+
                 switch (position) {
                 case 0:
-                    ((AppContext)mContext).getData().addLocalFavourite(gi);
-                    new SuperToast(context).setMessage(R.string.toast_add_favourite).show();
+                    Data.getInstance().addLocalFavourite(gi);
+                    new SuperToast(R.string.toast_add_favourite).show();
                     break;
                 default:
-                    ((AppContext)mContext).getEhClient().addToFavorite(gi.gid,
+                    EhClient.getInstance().addToFavorite(gi.gid,
                             gi.token, position - 1, null, new EhClient.OnAddToFavoriteListener() {
                         @Override
                         public void onSuccess() {
-                            new SuperToast(context).setMessage(R.string.toast_add_favourite).show();
+                            new SuperToast(R.string.toast_add_favourite).show();
                         }
                         @Override
                         public void onFailure(String eMsg) {
-                            new SuperToast(context).setMessage(R.string.failed_to_add).show();
+                            new SuperToast(R.string.failed_to_add).show();
                         }
                     });
                 }

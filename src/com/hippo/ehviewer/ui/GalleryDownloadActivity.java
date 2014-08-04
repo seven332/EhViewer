@@ -18,41 +18,39 @@ package com.hippo.ehviewer.ui;
 
 import java.io.File;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.RelativeLayout;
+
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.DownloadImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Util;
-
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
-
+import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.SuperToast;
-
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.RelativeLayout;
 
 public class GalleryDownloadActivity extends AbstractActivity {
     private static final String TAG = "MangaDownloadActivity";
-    
+
     public static final String KEY_TITLE = "title";
     public static final String KEY_GID= "gid";
     public static final String KEY_SIZE = "size";
     public static final String KEY_END_INDEX = "endIndex";
-    
+
     private RelativeLayout mainView;
     private DownloadImageSet mDownloadImageSet;
-    
+
     @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gl_root_group);
-        
+
         getActionBar().hide();
         // For API < 16 Fullscreen
         if (Build.VERSION.SDK_INT < 19) {
@@ -70,34 +68,34 @@ public class GalleryDownloadActivity extends AbstractActivity {
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
-        
+
         Intent intent = getIntent();
         String title = intent.getStringExtra(KEY_TITLE);
         int gid = intent.getIntExtra(KEY_GID, 0);
         int size = intent.getIntExtra(KEY_SIZE, 1);
         int endIndex = intent.getIntExtra(KEY_END_INDEX, 0);
         GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);
-        
-        File folder = new File(Config.getDownloadPath(), Util.rightFileName(title));
+
+        File folder = new File(Config.getDownloadPath(), Utils.rightFileName(title));
         folder.mkdirs();
         mDownloadImageSet = new DownloadImageSet(this, gid, folder, size, 0, endIndex, null);
         GalleryView isv = new GalleryView(getApplicationContext(), mDownloadImageSet, 0);
         isv.setOnEdgeListener(new GalleryView.OnEdgeListener() {
             @Override
             public void onLastPageEdge() {
-                new SuperToast(GalleryDownloadActivity.this, R.string.last_page).show();
+                new SuperToast(R.string.last_page).show();
             }
             @Override
             public void onFirstPageEdge() {
-                new SuperToast(GalleryDownloadActivity.this, R.string.first_page).show();
+                new SuperToast(R.string.first_page).show();
             }
         });
         glrv.setContentPane(isv);
-        
+
         // Avoid error when use Movie
         //glrv.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
-    
+
     @SuppressLint("NewApi")
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -111,7 +109,7 @@ public class GalleryDownloadActivity extends AbstractActivity {
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
     }
-    
+
     @Override
     public void onDestroy() {
         super.onDestroy();

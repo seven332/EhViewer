@@ -24,6 +24,7 @@ import android.widget.Button;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.tile.TileSalon;
+import com.hippo.ehviewer.util.Theme;
 
 public class SuperButton extends Button {
 
@@ -43,13 +44,6 @@ public class SuperButton extends Button {
     public SuperButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context, attrs, defStyle);
-    }
-
-    public static int getDarkerColor(int color) {
-        return ((int)((color & 0xff0000) * 0.8) & 0xff0000)
-                | ((int)((color & 0xff00) * 0.8) & 0xff00)
-                | ((int)((color & 0xff) * 0.8) & 0xff)
-                | (color & 0xff000000);
     }
 
     public void init(Context context, AttributeSet attrs, int defStyle) {
@@ -92,8 +86,8 @@ public class SuperButton extends Button {
         setRoundBackground(withShadow, new int[][]{
                 new int[]{-android.R.attr.state_enabled},
                 new int[]{android.R.attr.state_enabled, android.R.attr.state_pressed},
-                new int[]{}}, new int[]{0xffcccccc, getDarkerColor(bgColor), bgColor},
-                boundColor == 0 ? null : new int[]{0xffcccccc, getDarkerColor(boundColor), boundColor}); // TODO
+                new int[]{}}, new int[]{0xffcccccc, Theme.getDarkerColor(bgColor), bgColor},
+                boundColor == 0 ? null : new int[]{0xffcccccc, Theme.getDarkerColor(boundColor), boundColor}); // TODO
     }
 
     private void setTileBackground(int[][] stateSets, int[] bgColors) {
@@ -104,6 +98,6 @@ public class SuperButton extends Button {
         setTileBackground(new int[][]{
                 new int[]{-android.R.attr.state_enabled},
                 new int[]{android.R.attr.state_enabled, android.R.attr.state_pressed},
-                new int[]{}}, new int[]{0xffcccccc, getDarkerColor(bgColor), bgColor});
+                new int[]{}}, new int[]{0xffcccccc, Theme.getDarkerColor(bgColor), bgColor});
     }
 }

@@ -20,6 +20,6 @@
     android:layout_height="match_parent"
     android:background="@android:color/holo_blue_dark"
     android:clickable="true"
-    android:divider="@color/detail_divider"
+    android:divider="@color/divider"
     android:dividerHeight="1.0dp"
     android:scrollbarThumbVertical="@drawable/scrollbar_white" />

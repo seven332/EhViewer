@@ -36,7 +36,7 @@ import android.widget.LinearLayout;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.ColorPickerView;
 import com.hippo.ehviewer.widget.DialogBuilder;
@@ -208,7 +208,7 @@ public class ColorPreference extends Preference implements Preference.OnPreferen
                 @Override
                 public void onClick(View v) {
                     ((AlertButton)v).dialog.dismiss();
-                    new SuperToast(context, R.string.restart_to_take_effect).show();
+                    new SuperToast(R.string.restart_to_take_effect).show();
 
                     int color = getColor() | 0xff000000;
                     Config.setThemeColor(color);
@@ -251,28 +251,28 @@ public class ColorPreference extends Preference implements Preference.OnPreferen
             public void onClick(final View v) {
                 switch (v.getId()) {
                     case R.id.color_scheme_dialog_preset_one:
-                        mColorPicker.setColor(getColor(android.R.color.holo_blue_light));
+                        mColorPicker.setColor(getColor(R.color.theme_red));
                         break;
                     case R.id.color_scheme_dialog_preset_two:
-                        mColorPicker.setColor(getColor(android.R.color.holo_green_light));
+                        mColorPicker.setColor(getColor(R.color.theme_orange));
                         break;
                     case R.id.color_scheme_dialog_preset_three:
-                        mColorPicker.setColor(getColor(android.R.color.holo_orange_dark));
+                        mColorPicker.setColor(getColor(R.color.theme_lime));
                         break;
                     case R.id.color_scheme_dialog_preset_four:
-                        mColorPicker.setColor(getColor(android.R.color.holo_orange_light));
+                        mColorPicker.setColor(getColor(R.color.theme_green));
                         break;
                     case R.id.color_scheme_dialog_preset_five:
-                        mColorPicker.setColor(getColor(android.R.color.holo_purple));
+                        mColorPicker.setColor(getColor(R.color.theme_teal));
                         break;
                     case R.id.color_scheme_dialog_preset_six:
-                        mColorPicker.setColor(getColor(android.R.color.holo_red_light));
+                        mColorPicker.setColor(getColor(R.color.theme_blue));
                         break;
                     case R.id.color_scheme_dialog_preset_seven:
-                        mColorPicker.setColor(getColor(android.R.color.darker_gray));
+                        mColorPicker.setColor(getColor(R.color.theme_purple));
                         break;
                     case R.id.color_scheme_dialog_preset_eight:
-                        mColorPicker.setColor(getColor(android.R.color.black));
+                        mColorPicker.setColor(getColor(R.color.theme_brown));
                         break;
                     case R.id.color_scheme_dialog_old_color:
                         mColorPicker.setColor(mCurrentColor);
@@ -290,7 +290,7 @@ public class ColorPreference extends Preference implements Preference.OnPreferen
         public AlertDialog create() {
             AlertDialog dialog = super.create();
             dialog.getWindow().setFormat(PixelFormat.RGBA_8888);
-            Util.removeHardwareAccelerationSupport(mColorPicker);
+            Utils.removeHardwareAccelerationSupport(mColorPicker);
             return dialog;
         }
     }

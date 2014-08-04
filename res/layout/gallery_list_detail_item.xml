@@ -24,7 +24,7 @@
         android:id="@+id/thumb"
         android:layout_width="@dimen/list_thumb_width"
         android:layout_height="@dimen/list_thumb_height" />
-
+    
     <TextView
         android:id="@+id/name"
         style="@style/CardTitle"
@@ -38,7 +38,7 @@
 
     <TextView
         android:id="@+id/uploader"
-        style="@style/CardSubtitle"
+        style="@style/CardMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/name"
@@ -63,7 +63,7 @@
 
         <TextView
             android:id="@+id/category"
-            style="@style/CardSubtitle"
+            style="@style/CardMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -76,7 +76,7 @@
 
     <TextView
         android:id="@+id/posted"
-        style="@style/CardSubtitle"
+        style="@style/CardMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

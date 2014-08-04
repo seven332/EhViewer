@@ -32,24 +32,25 @@ import org.apache.http.conn.ConnectTimeoutException;
 
 import android.content.Context;
 
-import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.exception.FileException;
 import com.hippo.ehviewer.exception.NoSdCardException;
 import com.hippo.ehviewer.exception.StopRequestException;
-import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.Constants;
+import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.util.Utils;
 
 // TODO 添加检查次磁盘空间
 
 /**
  * Thread unsafe
- * 
+ *
  * @author Hippo
  *
  */
 public class Downloader implements Runnable {
     private static final String TAG = "Downloader";
-    
+
     public static final int NONE = 0x0;
     public static final int READY = 0x1;
     public static final int CONNECTING = 0x2;
@@ -57,28 +58,28 @@ public class Downloader implements Runnable {
     public static final int FAILED = 0x4;
     public static final int COMPLETED = 0x5;
     public static final int STOPED = 0x6;
-    
+
     private static final int MAX_RETRY = 3;
-    
-    private Context mContext;
-    
+
+    private final Context mContext;
+
     private File mFile;
     private File mFolder;
     private String mPath;
     private String mFileName;
     private URL mUrl;
-    private Controlor mContorlor;
-    
+    private final Controlor mContorlor;
+
     private int mTotalSize;
     // If support Content-Range, start from it
     private int mDownloadSize = 0;
     private int mRedirectionCount = 0;
-    
+
     private int status = NONE;
     private OnDownloadListener mListener;
-    
+
     private Exception mException;
-    
+
     public interface OnDownloadListener {
         public void onDownloadStartConnect();
         public void onDownloadStartDownload(int totalSize);
@@ -89,81 +90,81 @@ public class Downloader implements Runnable {
          */
         public void onDownloadOver(int status, String eMsg);
     }
-    
+
     public class Controlor {
         private boolean mStop = false;
-        
+
         public synchronized void stop() {
-            mStop = true; 
+            mStop = true;
         }
-        
+
         public synchronized void reset() {
-            mStop = false; 
+            mStop = false;
         }
-        
+
         public synchronized boolean isStop() {
-            return mStop; 
+            return mStop;
         }
     }
-    
+
     public Controlor resetData(String path, String fileName, String urlStr) throws MalformedURLException {
         mPath = path;
         mFileName = fileName;
         mUrl = new URL(urlStr);
         mException = null;
-        
+
         mDownloadSize = 0;
         mRedirectionCount = 0;
         status = READY;
-        
+
         mContorlor.reset();
         return mContorlor;
     }
-    
+
     public void setOnDownloadListener(OnDownloadListener listener) {
         mListener = listener;
     }
-    
+
     public Downloader(Context context) {
         mContext = context;
         mContorlor = new Controlor();
     }
-    
-    
+
+
     public String getEMsg() {
         if (mException == null)
             return mContext.getString(R.string.em_unknown_error);
-        
+
         else if (mException instanceof MalformedURLException)
             return mContext.getString(R.string.em_url_format_error);
-        
+
         else if (mException instanceof ConnectTimeoutException ||
                 mException instanceof SocketTimeoutException)
             return mContext.getString(R.string.em_timeout);
-        
+
         else if (mException instanceof UnknownHostException)
             return mContext.getString(R.string.em_unknown_host);
-        
+
         else if (mException instanceof SocketException)
             return "SocketException : " + mException.getMessage();
-        
+
         else if (mException instanceof NoSdCardException)
             return mContext.getString(R.string.em_no_sdcard);
-        
+
         else if (mException instanceof FileException)
             return ((FileException)mException).getMessage();
-        
+
         else
             return mException.getMessage();
     }
-    
+
     @Override
     public void run() {
         int retryTimes = 0;
         if (true) {
-            
+
             boolean checkFolder = false;
-            
+
             try {
                 initFolder();
                 checkFolder = true;
@@ -171,7 +172,7 @@ public class Downloader implements Runnable {
                 mException = e;
                 e.printStackTrace();
             }
-            
+
             while(checkFolder) {
                 try {
                     if (mContorlor.isStop())
@@ -193,50 +194,50 @@ public class Downloader implements Runnable {
             }
         } else
             mException = new NoSdCardException();
-        
+
         if (mContorlor.isStop())
             status = STOPED;
-        
+
         if (status != COMPLETED && mFile != null)
             mFile.delete();
-        
+
         if (mListener != null)
             mListener.onDownloadOver(status, getEMsg());
     }
-    
+
     public int getStatus() {
         return status;
     }
-    
+
     private void initFolder() throws Exception {
         mFolder = new File(mPath);
-        
+
         if (!mFolder.exists()) {
             if (!mFolder.mkdirs())
                 throw new FileException(FileException.MKDIR_ERROR);
         } else if (!mFolder.isDirectory()){
             throw new FileException(FileException.NOT_DIR);
         }
-        
+
         if (!mFolder.canWrite())
             throw new FileException(FileException.CANNOT_WRITE);
     }
-    
+
     private void executeDownload() throws Exception {
-        while (mRedirectionCount++ < Constant.MAX_REDIRECTS) {
+        while (mRedirectionCount++ < Constants.MAX_REDIRECTS) {
             HttpURLConnection conn = null;
             try {
                 Log.d(TAG, "Get file " + mUrl.toString());
-                
+
                 status = CONNECTING;
                 if (mListener != null)
                     mListener.onDownloadStartConnect();
-                
+
                 conn = (HttpURLConnection)mUrl.openConnection();
                 conn.setInstanceFollowRedirects(false);
                 conn.addRequestProperty("Range", "bytes=" + mDownloadSize + "-");
-                conn.setConnectTimeout(Constant.DEFAULT_TIMEOUT);
-                conn.setReadTimeout(Constant.DEFAULT_TIMEOUT);
+                conn.setConnectTimeout(Constants.DEFAULT_TIMEOUT);
+                conn.setReadTimeout(Constants.DEFAULT_TIMEOUT);
                 conn.connect();
                 final int responseCode = conn.getResponseCode();
                 switch (responseCode) {
@@ -252,7 +253,7 @@ public class Downloader implements Runnable {
                     case HttpURLConnection.HTTP_MOVED_PERM:
                     case HttpURLConnection.HTTP_MOVED_TEMP:
                     case HttpURLConnection.HTTP_SEE_OTHER:
-                    case Constant.HTTP_TEMP_REDIRECT:
+                    case Constants.HTTP_TEMP_REDIRECT:
                         final String location = conn.getHeaderField("Location");
                         mUrl = new URL(mUrl, location);
                         continue;
@@ -269,16 +270,16 @@ public class Downloader implements Runnable {
         }
         //throw new RedirectionException();
     }
-    
+
     /**
      * Get Response Headers Info
-     * 
+     *
      * @param conn
      */
     private void processResponseHeaders(HttpURLConnection conn) {
         mTotalSize = conn.getContentLength();
-        
-        // 
+
+        //
         String range;
         if ((range = conn.getHeaderField("Content-Range")) != null) { // Support Content-Range
             boolean newNum = true;
@@ -311,17 +312,17 @@ public class Downloader implements Runnable {
             mDownloadSize = 0;
         }
     }
-    
+
     /**
      * Transfer data from the given connection to the destination file.
      */
     private void transferData(HttpURLConnection conn) throws Exception {
         InputStream in = null;
         RandomAccessFile raf = null;
-        
+
         if (mContorlor.isStop())
             throw new StopRequestException();
-        
+
         try {
             try {
                 in = conn.getInputStream();
@@ -342,7 +343,7 @@ public class Downloader implements Runnable {
             transferData(in, raf);
         } finally {
             if (in != null)
-                Util.closeStreamQuietly(in);
+                Utils.closeStreamQuietly(in);
             if (raf != null)
                 try {
                     raf.close();
@@ -351,8 +352,8 @@ public class Downloader implements Runnable {
                 }
         }
     }
-    
-    
+
+
     /**
      * Transfer as much data as possible from the HTTP response to the
      * destination file.
@@ -360,48 +361,48 @@ public class Downloader implements Runnable {
     @SuppressWarnings("unused")
     private void transferData(InputStream in, OutputStream out)
             throws Exception {
-        final byte data[] = new byte[Constant.BUFFER_SIZE];
+        final byte data[] = new byte[Constants.BUFFER_SIZE];
         while (true) {
-            
+
             if (mContorlor.isStop())
                 throw new StopRequestException();
-            
+
             int bytesRead = readFromResponse(data, in);
             if (bytesRead == -1) { // success, end of stream already reached
                 return;
             }
-            
+
             writeDataToDestination(data, bytesRead, out);
             mDownloadSize += bytesRead;
             if (mListener != null)
                 mListener.onDownloadStatusUpdate(mDownloadSize, mTotalSize);
-            
+
         }
     }
-    
+
     /**
      * Transfer as much data as possible from the HTTP response to the
      * destination file.
      */
     private void transferData(InputStream in, RandomAccessFile raf)
             throws Exception {
-        final byte data[] = new byte[Constant.BUFFER_SIZE];
+        final byte data[] = new byte[Constants.BUFFER_SIZE];
         while (true) {
             if (mContorlor.isStop())
                 throw new StopRequestException();
-            
+
             int bytesRead = readFromResponse(data, in);
             if (bytesRead == -1) { // success, end of stream already reached
                 return;
             }
-            
+
             writeDataToDestination(data, bytesRead, raf);
             mDownloadSize += bytesRead;
             if (mListener != null)
                 mListener.onDownloadStatusUpdate(mDownloadSize, mTotalSize);
         }
     }
-    
+
     /**
      * Read some data from the HTTP response stream, handling I/O errors.
      * @param data buffer to use to read data
@@ -417,8 +418,8 @@ public class Downloader implements Runnable {
             throw e;
         }
     }
-    
-    
+
+
     /**
      * Write a data buffer to the destination file.
      * @param data buffer containing the data to write
@@ -435,7 +436,7 @@ public class Downloader implements Runnable {
             throw e;
         }
     }
-    
+
     /**
      * Write a data buffer to the destination file.
      * @param data buffer containing the data to write

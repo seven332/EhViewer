@@ -24,6 +24,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.RelativeLayout;
+
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ehclient.EhClient;
@@ -32,56 +43,43 @@ import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Util;
-
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Build;
-import android.os.Bundle;
-
 import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.SuperToast;
 
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.RelativeLayout;
-
 public class GalleryActivity extends AbstractActivity {
-    private String TAG = "MangaActivity";
-    
+    private final String TAG = "MangaActivity";
+
     private AppContext mAppContext;
     private EhClient mEhClient;
-    
+
     private RelativeLayout mainView;
-    
+
     private int gid;
     private String title;
-    
+
     private int retryTimes = 0;
     private static final int maxRetry = 3;
     private boolean stopFlag = false;
-    
+
     // [firstPage, lastPage)
     // last 是目前已下载的最后一页的 index + 1
     private int pageSum;
     private int firstPage;
     private int lastPage;
-    
+
     private String allPrePageUrl;
     private String allNextPageUrl;
-    
+
     private boolean getPrePage = false;
     private boolean mStop = false;
-    
+
     private File mFolder;
     private ImageSet mImageSet;
-    
+
     // two element, first is web url, second is image url
     private List<String[]> imagesUrl;
-    
+
     // TODO use downloader to download image
     // TODO combine it with MangaDownloadActivity
     private class MangaUrlGetListener implements EhClient.OnGetMangaUrlListener {
@@ -93,12 +91,12 @@ public class GalleryActivity extends AbstractActivity {
                 return;
             }
             retryTimes = 0;
-            
+
             final int index = (Integer)checkFlag;
             final String prePageUrl = arg[0];
             final String nextPageUrl = arg[1];
             final String imageUrl = arg[2];
-            
+
             String[] urls = imagesUrl.get(index);
             if (urls == null) {
                 imagesUrl.set(index, urls = new String[2]);
@@ -117,9 +115,9 @@ public class GalleryActivity extends AbstractActivity {
             if (index != firstPage - 1 && (index == firstPage && allPrePageUrl == null) && index != lastPage) {
                 Log.e(TAG, "targetPage != firstPage - 1 && (targetPage == firstPage && allPrePageUrl == null) && targetPage != lastPage");
             }
-            
-            final String imageName = String.format("%05d", index + 1) + "." + Util.getExtension(imageUrl);
-            
+
+            final String imageName = String.format("%05d", index + 1) + "." + Utils.getExtension(imageUrl);
+
             final Downloader downloader = new Downloader(GalleryActivity.this);
             try {
                 downloader.resetData(mFolder.getPath(),
@@ -129,7 +127,7 @@ public class GalleryActivity extends AbstractActivity {
                 onFailure(checkFlag, mAppContext.getString(R.string.em_url_format_error));
                 e.printStackTrace();
             }
-            
+
             // TODO threadpool
             new Thread() {
                 @Override
@@ -138,14 +136,14 @@ public class GalleryActivity extends AbstractActivity {
                     if (testImage(mFolder.getPath(), imageName)) {
                         onGetImage(index, Downloader.COMPLETED, nextPageUrl);
                     } else {
-                        
+
                         downloader.run();
                         onGetImage(index, downloader.getStatus(), nextPageUrl);
                     }
                 }
             }.start();
         }
-        
+
         // TODO only test bitmap here
         private boolean testImage(String path, String name) {
             boolean isImage = false;
@@ -168,11 +166,11 @@ public class GalleryActivity extends AbstractActivity {
                 e.printStackTrace();
             } finally {
                 if (fis != null)
-                    Util.closeStreamQuietly(fis);
+                    Utils.closeStreamQuietly(fis);
             }
             return isImage;
         }
-        
+
         private void onGetImage(int index, int state, String nextPageUrl) {
             if (state == Downloader.COMPLETED) {
                 mImageSet.changeState(index, ImageSet.STATE_LOADED);
@@ -189,7 +187,7 @@ public class GalleryActivity extends AbstractActivity {
                 mImageSet.changeState(lastPage, ImageSet.STATE_LOADING);
             }
         }
-        
+
         @Override
         public void onFailure(Object checkFlag, String eMsg) {
             if (stopFlag) {
@@ -199,11 +197,9 @@ public class GalleryActivity extends AbstractActivity {
             retryTimes++;
             int targetPage = (Integer)checkFlag;
             if (retryTimes < maxRetry) {
-                new SuperToast(GalleryActivity.this)
-                .setIcon(R.drawable.ic_warning)
-                .setMessage(eMsg + " " + 
-                        String.format(getString(R.string.em_retry_times), retryTimes))
-                        .show(); // TODO
+                new SuperToast(eMsg + " " +
+                        String.format(getString(R.string.em_retry_times), retryTimes),
+                        SuperToast.WARNING).show(); // TODO
                 if (targetPage == firstPage - 1 &&
                         getPrePage == true) {
                     mEhClient.getMangaUrl(allPrePageUrl, targetPage, new MangaUrlGetListener());
@@ -217,21 +213,17 @@ public class GalleryActivity extends AbstractActivity {
                 if (targetPage == firstPage - 1 &&
                         getPrePage == true) {
                     getPrePage = false;
-                    new SuperToast(GalleryActivity.this)
-                    .setIcon(R.drawable.ic_warning)
-                    .setMessage(R.string.retry_max_pre).show();
+                    new SuperToast(R.string.retry_max_pre, SuperToast.WARNING).show();
                 }
                 else {
-                    new SuperToast(GalleryActivity.this)
-                    .setIcon(R.drawable.ic_warning)
-                    .setMessage(R.string.retry_max_next).show();
+                    new SuperToast(R.string.retry_max_next, SuperToast.WARNING).show();
                     mStop = true;
                 }
                 mImageSet.changeState(targetPage, ImageSet.STATE_FAIL);
             }
         }
     }
-    
+
     @SuppressLint("NewApi")
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -245,21 +237,21 @@ public class GalleryActivity extends AbstractActivity {
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
     }
-    
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
-    
+
     @SuppressLint("NewApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gl_root_group);
-        
+
         mAppContext = (AppContext)getApplication();
-        mEhClient = mAppContext.getEhClient();
-        
+        mEhClient = EhClient.getInstance();
+
         getActionBar().hide();
         // For API < 16 Fullscreen
         if (Build.VERSION.SDK_INT < 19) {
@@ -277,33 +269,31 @@ public class GalleryActivity extends AbstractActivity {
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
-        
+
         Intent intent = getIntent();
         firstPage = intent.getIntExtra("firstPage", 0);
         lastPage = firstPage;
         gid = intent.getIntExtra("gid", 0);
         title = intent.getStringExtra("title");
-        mFolder = new File(Config.getDownloadPath(), Util.rightFileName(title));
+        mFolder = new File(Config.getDownloadPath(), Utils.rightFileName(title));
         if (mFolder.isFile())
             mFolder.delete();
         mFolder.mkdirs();
         pageSum = intent.getIntExtra("pageSum", 0);
-        
+
         mImageSet = new ImageSet(this, gid, mFolder, pageSum, firstPage, lastPage, null);
         GalleryView isv = new GalleryView(getApplicationContext(), mImageSet, firstPage);
         isv.setOnEdgeListener(new GalleryView.OnEdgeListener() {
             @Override
             public void onLastPageEdge() {
-                new SuperToast(GalleryActivity.this)
-                .setMessage(R.string.last_page).show();
+                new SuperToast(R.string.last_page).show();
             }
             @Override
             public void onFirstPageEdge() {
-                new SuperToast(GalleryActivity.this)
-                .setMessage(R.string.first_page).show();
+                new SuperToast(R.string.first_page).show();
             }
         });
-        
+
         isv.setOnTapTextListener(new GalleryView.OnTapTextListener() {
             @Override
             public void onTapText(int index) {
@@ -318,7 +308,7 @@ public class GalleryActivity extends AbstractActivity {
             @Override
             public void onTapDoubleText(int index) {
                 // TODO Auto-generated method stub
-                
+
             }
         });
         isv.setOnScrollPageListener(new GalleryView.OnScrollPageListener() {
@@ -329,7 +319,7 @@ public class GalleryActivity extends AbstractActivity {
                     mEhClient.getMangaUrl(allNextPageUrl, lastPage, new MangaUrlGetListener());
                     mImageSet.changeState(lastPage, ImageSet.STATE_LOADING);
                 }
-                
+
                 if (!getPrePage && allPrePageUrl != null
                         && !allPrePageUrl.equals("first")
                         && index == firstPage - 1) {
@@ -341,24 +331,24 @@ public class GalleryActivity extends AbstractActivity {
         });
         GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);
         glrv.setContentPane(isv);
-        
+
         String url = intent.getStringExtra("url");
         allNextPageUrl = url;
         allPrePageUrl = null;
-        
+
         if (firstPage == 0)
             allPrePageUrl = "first";
         if (firstPage == pageSum - 1)
             allNextPageUrl = "last";
-        
+
         imagesUrl = new ArrayList<String[]>(Collections.nCopies(pageSum, (String[])null));
         imagesUrl.set(lastPage, new String[]{url, null});
-        
+
         // Get image and next page
         mEhClient.getMangaUrl(url, lastPage, new MangaUrlGetListener());
         mImageSet.changeState(lastPage, ImageSet.STATE_LOADING);
     }
-    
+
     @Override
     protected void onDestroy () {
         stopFlag = true;

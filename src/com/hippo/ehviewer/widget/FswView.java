@@ -60,4 +60,9 @@ public class FswView extends View {
                     paddingRight, paddingBottom);
         return re;
     }
+
+    public interface OnFitSystemWindowsListener {
+        void onfitSystemWindows(int paddingLeft,
+                int paddingTop, int paddingRight, int paddingBottom);
+    }
 }

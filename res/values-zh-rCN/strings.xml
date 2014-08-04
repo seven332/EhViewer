@@ -358,8 +358,8 @@
     <string name="rating4">不行</string>
     <string name="rating3">糟糕</string>
     <string name="rating2">瞎眼</string>
-    <string name="rating1">以头抢地</string>
-    <string name="rating0">感觉快要窒息了</string>
+    <string name="rating1">快要窒息了</string>
+    <string name="rating0">…</string>
 
     <!-- Util -->
     <string name="invalid_input">无效的输入</string>

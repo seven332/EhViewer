@@ -27,7 +27,7 @@ import com.hippo.ehviewer.util.FutureListener;
 import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.ThreadPool.Job;
 import com.hippo.ehviewer.util.ThreadPool.JobContext;
-import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.Utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -209,7 +209,7 @@ public class ImageSet {
                         e.printStackTrace();
                     } finally {
                         if (fis != null)
-                            Util.closeStreamQuietly(fis);
+                            Utils.closeStreamQuietly(fis);
                     }
                     return res;
                 }
@@ -231,9 +231,9 @@ public class ImageSet {
     public boolean getFileForName(String name, ImageData imageData) {
         String[] list = mFolder.list();
         for (String item : list) {
-            if(name.equals(Util.getName(item))) {
+            if(name.equals(Utils.getName(item))) {
                 imageData.fileName = item;
-                if (Util.getExtension(item).toLowerCase().equals(GIF_EXTENSION))
+                if (Utils.getExtension(item).toLowerCase().equals(GIF_EXTENSION))
                     imageData.type = TYPE_MOVIE;
                 else
                     imageData.type = TYPE_BITMAP;

@@ -35,7 +35,6 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.ListParser;
 import com.hippo.ehviewer.widget.FswView;
-import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RefreshTextView;
 import com.hippo.ehviewer.widget.SuperToast;
@@ -253,19 +252,19 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         setContentView(getLayoutRes());
 
         mAppContext = (AppContext)getApplication();
-        mClient = mAppContext.getEhClient();
+        mClient = EhClient.getInstance();
 
         mGiList = new ArrayList<GalleryInfo>();
 
         mMainView = (RelativeLayout)findViewById(R.id.main);
-        mPullViewGroup = (PullViewGroup)findViewById(R.id.list);
+        mPullViewGroup = (PullViewGroup)findViewById(R.id.gallery_list);
         mPullViewGroup.setAgainstToChildPadding(true);
         mContentView = mPullViewGroup.getContentView();
         mRefreshTextView = (RefreshTextView)findViewById(R.id.refresh_text);
 
         FswView alignment = (FswView)findViewById(R.id.alignment);
         alignment.addOnFitSystemWindowsListener(
-                new OnFitSystemWindowsListener() {
+                new FswView.OnFitSystemWindowsListener() {
             @Override
             public void onfitSystemWindows(int paddingLeft, int paddingTop,
                     int paddingRight, int paddingBottom) {
@@ -502,7 +501,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             default:
                 mRefreshTextView.setRefreshing(false);
                 mRefreshTextView.setVisibility(View.GONE);
-                new SuperToast(AbstractGalleryActivity.this, eMsg, SuperToast.ERROR).show();
+                new SuperToast(eMsg, SuperToast.ERROR).show();
             }
             mPullViewGroup.setAnyRefreshComplete(false);
         }

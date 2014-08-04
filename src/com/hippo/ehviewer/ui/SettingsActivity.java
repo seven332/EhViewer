@@ -61,7 +61,7 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.DialogBuilder;
@@ -291,7 +291,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                         Config.screenOriPre2Value(Integer.parseInt((String) newValue)));
 
             } else if (KEY_RANDOM_THEME_COLOR.equals(key)) {
-                new SuperToast(mActivity, R.string.restart_to_take_effect).show();
+                new SuperToast(R.string.restart_to_take_effect).show();
                 mThemeColor.setEnabled(!(Boolean)newValue);
             }
 
@@ -443,7 +443,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         private static void setExculdeTagGroup(TableLayout tl, int value) {
             for (int i = 0; i < EXCULDE_TAG_GROUP_RESID.length; i++) {
                 CheckBox cb = (CheckBox)tl.findViewById(EXCULDE_TAG_GROUP_RESID[i]);
-                cb.setChecked(Util.int2boolean(value & EXCULDE_TAG_GROUP_ID[i]));
+                cb.setChecked(Utils.int2boolean(value & EXCULDE_TAG_GROUP_ID[i]));
             }
         }
 
@@ -647,8 +647,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                     @Override
                     public void onClick(View v) {
                         if (!fileExplorerView.canWrite())
-                            new SuperToast(mActivity).setIcon(R.drawable.ic_warning)
-                                    .setMessage(R.string.cur_dir_not_writable).show();
+                            new SuperToast(R.string.cur_dir_not_writable, SuperToast.WARNING).show();
                         else {
                             String downloadPath = fileExplorerView.getCurPath();
 
@@ -756,14 +755,14 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                 InputStream is = mActivity.getResources()
                         .openRawResource(R.raw.change_log);
                 new DialogBuilder(mActivity).setTitle(R.string.changelog)
-                        .setLongMessage(Util.InputStream2String(is, "utf-8"))
+                        .setLongMessage(Utils.InputStream2String(is, "utf-8"))
                         .setSimpleNegativeButton().create().show();
 
             } else if (KEY_THANKS.equals(key)) {
                 InputStream is = mActivity.getResources()
                         .openRawResource(R.raw.thanks);
                 final WebView webView = new WebView(mActivity);
-                webView.loadData(Util.InputStream2String(is, "utf-8"), "text/html; charset=UTF-8", null);
+                webView.loadData(Utils.InputStream2String(is, "utf-8"), "text/html; charset=UTF-8", null);
                 new DialogBuilder(mActivity).setTitle(R.string.thanks)
                         .setView(webView, false).setSimpleNegativeButton()
                         .create().show();
@@ -787,7 +786,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                             public void onSuccess(String version, long size,
                                     final String url, final String fileName, String info) {
                                 mCheckUpdate.setSummary(R.string.found_update);
-                                String sizeStr = Util.sizeToString(size);
+                                String sizeStr = Utils.sizeToString(size);
                                 AlertDialog dialog = SuperDialogUtil.createUpdateDialog(
                                         mActivity, version, sizeStr, info,
                                         new View.OnClickListener() {

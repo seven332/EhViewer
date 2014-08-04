@@ -43,15 +43,14 @@ import com.readystatesoftware.systembartint.SystemBarTintManager.SystemBarConfig
 
 public class Ui {
     @SuppressWarnings("unused")
-    private static final String TAG = "Ui";
+    private static final String TAG = Ui.class.getSimpleName();
     private static Context mContext;
     private static Resources mResources;
     private static final BitmapFactory.Options opt = new BitmapFactory.Options();
 
-    private static float mDensity;
+    public static float mDensity;
 
     public static int HOLO_BLUE_DARK;
-    public static int LIST_MAIN_BG;
 
     public static int DOUJINSHI_BG_COLOR;
     public static int MANGA_BG_COLOR;
@@ -91,7 +90,6 @@ public class Ui {
 
         // init color
         HOLO_BLUE_DARK = mResources.getColor(android.R.color.holo_blue_dark);
-        LIST_MAIN_BG = mResources.getColor(R.color.list_main_bg);
 
         DOUJINSHI_BG_COLOR = mResources.getColor(R.color.doujinshi_bg);
         MANGA_BG_COLOR = mResources.getColor(R.color.manga_bg);

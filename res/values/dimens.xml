@@ -28,10 +28,6 @@
     
     <dimen name="tab_text">16.0sp</dimen>
     
-    <dimen name="text_xlarge">18.0sp</dimen>
-    <dimen name="text_large">16.0sp</dimen>
-    <dimen name="text_medium">13.0sp</dimen>
-    
     <dimen name="list_thumb_width">80dp</dimen>
     <dimen name="list_thumb_height">120dp</dimen>
     
@@ -56,4 +52,13 @@
     
     <!-- Color scheme dialog -->
     <dimen name="color_scheme_dialog_row_padding">8.0dip</dimen>
+
+    
+    <dimen name="text_super_large">20.0sp</dimen>
+    <dimen name="text_large">18.0sp</dimen>
+    <dimen name="text_little_large">16.0sp</dimen>
+    <dimen name="text_medium">14.0sp</dimen>
+    <dimen name="text_little_small">12.0sp</dimen>
+    <dimen name="text_small">10.0sp</dimen>
+    <dimen name="text_super_small">8.0sp</dimen>
 </resources>

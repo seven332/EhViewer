@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="8.0dp"
-        android:textSize="@dimen/text_xlarge" />
+        android:textSize="@dimen/text_large" />
 
     <com.hippo.ehviewer.widget.ProgressiveRatingBar
         android:id="@+id/rate"

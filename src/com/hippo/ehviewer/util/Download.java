@@ -65,7 +65,7 @@ public class Download {
     }
     
     private static void getDownloadInfo() {
-        String[] allOrder = Util.getStrings(mDownloadInfoPre, LIST_ORDER);
+        String[] allOrder = Utils.getStrings(mDownloadInfoPre, LIST_ORDER);
         
         if (allOrder == null)
             return;
@@ -87,7 +87,7 @@ public class Download {
             mDownloadInfos.add(di);
         }
         if (errorFlag)
-            Util.putStrings(mDownloadInfoPre, LIST_ORDER, mListOrder);
+            Utils.putStrings(mDownloadInfoPre, LIST_ORDER, mListOrder);
     }
     
     /**
@@ -102,7 +102,7 @@ public class Download {
         if (mListOrder.indexOf(key) == -1) {
             mListOrder.add(key);
             mDownloadInfos.add(di);
-            Util.putStrings(mDownloadInfoPre, LIST_ORDER, mListOrder);
+            Utils.putStrings(mDownloadInfoPre, LIST_ORDER, mListOrder);
             mDownloadInfoPre.edit().putString(key, encode(di)).apply();
             return true;
         } else
@@ -127,7 +127,7 @@ public class Download {
         String temp1 = mListOrder.get(indexOne);
         mListOrder.set(indexOne, mListOrder.get(indexTwo));
         mListOrder.set(indexTwo, temp1);
-        Util.putStrings(mDownloadInfoPre, LIST_ORDER, mListOrder);
+        Utils.putStrings(mDownloadInfoPre, LIST_ORDER, mListOrder);
         
         DownloadInfo temp2 = mDownloadInfos.get(indexOne);
         mDownloadInfos.set(indexOne, mDownloadInfos.get(indexTwo));
@@ -151,7 +151,7 @@ public class Download {
             mListOrder.remove(index);
             mDownloadInfos.remove(index);
             mDownloadInfoPre.edit().remove(key).apply();
-            Util.putStrings(mDownloadInfoPre, LIST_ORDER, mListOrder);
+            Utils.putStrings(mDownloadInfoPre, LIST_ORDER, mListOrder);
             return true;
         } else
             return false;
@@ -167,7 +167,7 @@ public class Download {
         mDownloadInfos.remove(index);
         String key = mListOrder.remove(index);
         mDownloadInfoPre.edit().remove(key).apply();
-        Util.putStrings(mDownloadInfoPre, LIST_ORDER, mListOrder);
+        Utils.putStrings(mDownloadInfoPre, LIST_ORDER, mListOrder);
         return true;
     }
     
@@ -221,11 +221,11 @@ public class Download {
                 e.printStackTrace();
             }
         }
-        return Util.byteArrayToHexString(os.toByteArray());
+        return Utils.byteArrayToHexString(os.toByteArray());
     }
 
     protected static DownloadInfo decode(String strDi) {
-        byte[] bytes = Util.hexStringToByteArray(strDi);
+        byte[] bytes = Utils.hexStringToByteArray(strDi);
         ByteArrayInputStream is = new ByteArrayInputStream(bytes);
         DownloadInfo di = null;
         try {

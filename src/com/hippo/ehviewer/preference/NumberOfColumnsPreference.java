@@ -114,7 +114,7 @@ public class NumberOfColumnsPreference extends Preference
                         throw new Exception();
                     }
                 } catch (Exception e) {
-                    new SuperToast(mContext, R.string.invalid_input, SuperToast.ERROR).show();
+                    new SuperToast(R.string.invalid_input, SuperToast.ERROR).show();
                 }
             }
         }).create().show();

@@ -31,33 +31,19 @@ public final class Theme {
     public static final ColorDrawable GREY_DRAWABLE =
             new ColorDrawable(0xffaaaaaa);
 
-    /**
-     *  Colors from colors_material.xml
-     *
-     *  material_red_300, material_red_500, material_red_700,
-     *  material_red_A200, material_blue_500, material_blue_700,
-     *  material_blue_A200, material_blue_A400, material_teal_700,
-     *  material_green_500, material_green_700, material_lime_700,
-     *  material_yellow_500, material_yellow_700, material_orange_500,
-     *  material_orange_700, material_orange_A400, material_deep_orange_500,
-     *  material_deep_orange_700, material_deep_orange_A200,
-     *  material_deep_orange_A400, material_grey_600, material_grey_700,
-     *  material_blue_grey_500, material_blue_grey_600,
-     *  material_blue_grey_700, material_blue_grey_800,
-     *  material_brown_500, material_brown_700
+    /*
+     * 赤 0xffc53929
+     * 橙 0xffff9100
+     * Lime 0xffafb42b;
+     * 绿 0xff0b8043
+     * 青 0xff0097a7
+     * 蓝 0xff3367d6
+     * 紫 0xff9c27b0
+     * 棕 0xff795548
      */
     private static final int[] DARK_COLOR_TABLE = {
-        0xffe67c73, 0xffdb4437, 0xffc53929, 0xffff5252,
-        0xff4285f4, 0xff3367d6, 0xff448aff, 0xff2979ff,
-        0xff0097a7,
-        0xff0f9d58, 0xff0b8043,
-        0xffafb42b,
-        0xfff4b400, 0xfff09300,
-        0xffff9800, 0xfff57c00, 0xffff9100,
-        0xffff5722, 0xffc53929, 0xffff5252, 0xffff1744,
-        0xff757575, 0xff717171,
-        0xff607d8b, 0xff546e7a, 0xff455a64, 0xff37474f,
-        0xff795548, 0xff5d4037
+        0xffc53929, 0xffff9100, 0xffafb42b, 0xff0b8043,
+        0xff0097a7, 0xff3367d6, 0xff9c27b0, 0xff795548
     };
 
     /**
@@ -74,9 +60,9 @@ public final class Theme {
      * @return
      */
     public static int getDarkerColor(int color) {
-        return (((color & 0xff0000) >> 1) & 0xff0000)
-                | (((color & 0xff00) >> 1) & 0xff00)
-                | (((color & 0xff) >> 1) & 0xff)
+        return ((int)((color & 0xff0000) * 0.8) & 0xff0000)
+                | ((int)((color & 0xff00) * 0.8) & 0xff00)
+                | ((int)((color & 0xff) * 0.8) & 0xff)
                 | (color & 0xff000000);
     }
 

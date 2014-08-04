@@ -28,7 +28,7 @@ import com.hippo.ehviewer.ehclient.DetailParser;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.Utils;
 
 /**
  * Download a gallery
@@ -72,7 +72,7 @@ public class GallerysDownloader implements Runnable {
         mGalleryInfo = galleryInfo;
         mPageIndex = startIndex;
         mDownloadDir = new File(Config.getDownloadPath(),
-                Util.rightFileName(mGalleryInfo.gid + '-' + mGalleryInfo.title));
+                Utils.rightFileName(mGalleryInfo.gid + '-' + mGalleryInfo.title));
         mDownloadDir.mkdirs();
         // TODO What if these is a file with the same name
 

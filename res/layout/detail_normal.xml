@@ -81,7 +81,7 @@
     <View
         android:layout_width="fill_parent"
         android:layout_height="1.0dp"
-        android:background="@color/detail_divider" />
+        android:background="@color/divider" />
 
     <LinearLayout
         android:id="@+id/tags_layout"
@@ -95,7 +95,7 @@
         android:id="@+id/divider"
         android:layout_width="fill_parent"
         android:layout_height="1.0dp"
-        android:background="@color/detail_divider" />
+        android:background="@color/divider" />
 
     <include
         android:id="@+id/page_list"

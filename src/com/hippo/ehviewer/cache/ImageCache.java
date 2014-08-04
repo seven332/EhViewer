@@ -40,7 +40,7 @@ import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.Utils;
 
 /**
  * This class holds the memory and disk bitmap caches.
@@ -121,7 +121,7 @@ public final class ImageCache {
      * @param cacheParams The cache parameters to initialize the cache
      */
     private void init(final Context context) {
-        Util.execute(false, new AsyncTask<Void, Void, Void>() {
+        Utils.execute(false, new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(final Void... unused) {
@@ -410,7 +410,7 @@ public final class ImageCache {
      * cache first
      */
     public void flush() {
-        Util.execute(false, new AsyncTask<Void, Void, Void>() {
+        Utils.execute(false, new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(final Void... unused) {
@@ -432,7 +432,7 @@ public final class ImageCache {
      * Clears the disk and memory caches
      */
     public void clearCaches() {
-        Util.execute(false, new AsyncTask<Void, Void, Void>() {
+        Utils.execute(false, new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(final Void... unused) {
@@ -458,7 +458,7 @@ public final class ImageCache {
      * thread.
      */
     public void close() {
-        Util.execute(false, new AsyncTask<Void, Void, Void>() {
+        Utils.execute(false, new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(final Void... unused) {

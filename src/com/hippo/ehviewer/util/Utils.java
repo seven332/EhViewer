@@ -33,8 +33,9 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.view.View;
+import android.view.ViewParent;
 
-public class Util {
+public class Utils {
     @SuppressWarnings("unused")
     private static String TAG = "Util";
 
@@ -134,12 +135,12 @@ public class Util {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         String str = null;
         try {
-            Util.copy(is, baos, 1024);
+            Utils.copy(is, baos, 1024);
             str = baos.toString(charset);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            Util.closeStreamQuietly(baos);
+            Utils.closeStreamQuietly(baos);
         }
         return str;
     }
@@ -157,7 +158,7 @@ public class Util {
         String str = shaper.getString(key, null);
         if (str == null || str.length() == 0)
             return null;
-        return new String(Util.hexStringToByteArray(str)).split("\n");
+        return new String(Utils.hexStringToByteArray(str)).split("\n");
     }
 
     public static void putStrings(SharedPreferences shaper, String key, List<String> strs) {
@@ -313,5 +314,41 @@ public class Util {
 
     public static final boolean int2boolean(int integer) {
         return integer == 0 ? false : true;
+    }
+
+    public static void getCenterInWindows(View view, int[] location) {
+        getLocationInWindow(view, location);
+        location[0] += view.getWidth() / 2;
+        location[1] += view.getHeight() / 2;
+    }
+
+    public static void getLocationInWindow(View view, int[] location) {
+        if (location == null || location.length < 2) {
+            throw new IllegalArgumentException("location must be an array of two integers");
+        }
+
+        float[] position = new float[2];
+
+        position[0] = view.getLeft();
+        position[1] = view.getTop();
+
+        ViewParent viewParent = view.getParent();
+        while (viewParent instanceof View) {
+            view = (View)viewParent;
+            if (view.getId() == android.R.id.content) {
+                break;
+            }
+
+            position[0] -= view.getScrollX();
+            position[1] -= view.getScrollY();
+
+            position[0] += view.getLeft();
+            position[1] += view.getTop();
+
+            viewParent = view.getParent();
+         }
+
+        location[0] = (int) (position[0] + 0.5f);
+        location[1] = (int) (position[1] + 0.5f);
     }
 }

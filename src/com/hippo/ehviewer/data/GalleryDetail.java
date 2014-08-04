@@ -51,5 +51,6 @@ public class GalleryDetail extends GalleryInfo {
         thumb = galleryInfo.thumb;
         uploader = galleryInfo.uploader;
         rating = galleryInfo.rating;
+        simpleLanguage = galleryInfo.simpleLanguage;
     }
 }

@@ -32,7 +32,7 @@ import android.graphics.BitmapFactory;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.Utils;
 
 /**
  *
@@ -89,7 +89,7 @@ public class EhInfo {
         } catch (FileNotFoundException e) {
             return null;
         } finally {
-            Util.closeStreamQuietly(is);
+            Utils.closeStreamQuietly(is);
         }
     }
 
@@ -230,7 +230,7 @@ public class EhInfo {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
-            Util.closeStreamQuietly(os);
+            Utils.closeStreamQuietly(os);
         }
     }
 

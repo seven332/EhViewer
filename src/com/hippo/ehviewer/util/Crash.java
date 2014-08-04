@@ -34,35 +34,34 @@ import android.os.Build;
 import android.os.Environment;
 
 import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.util.Log;
 
 public class Crash {
     private static final String TAG = "Crash";
-    
+
     private static Context mContext;
-    
+
     private static String externalCrashFilePath = "/EhViewer/crash";
     private static String internalCrashFilePath = "/crash";
-    
+
     private static final String NEW_CRAHS = "new_crash";
     private static final String LAST_CRASH_POSITION = "last_crash_position";
     private static final String LAST_CRASH_NAME = "last_crash_name";
-    
+
     private static boolean mInit = false;
-    
+
     /**
      * Init Crash
-     * 
+     *
      * @param context Application context
      */
     public static void init(Context context) {
         if (mInit)
             return;
         mInit = true;
-        
+
         mContext = context;
     }
-    
+
     /**
      * Is init
      * @return True if init
@@ -70,16 +69,16 @@ public class Crash {
     public static boolean isInit() {
         return mInit;
     }
-    
+
     /**
      * Save throwable infomation to file
-     * 
+     *
      * @param ex The throwable to store
      */
     public static void saveCrashInfo2File(Throwable ex) {
         StringBuffer sb = new StringBuffer();
         collectDeviceInfo(sb);
-        
+
         Writer writer = new StringWriter();
         PrintWriter printWriter = new PrintWriter(writer);
         ex.printStackTrace(printWriter);
@@ -95,7 +94,7 @@ public class Crash {
         sb.append(result);
         try {
             long timestamp = System.currentTimeMillis();
-            String time = ((AppContext)mContext).getDateFormat().format(new Date());
+            String time = AppContext.sFormatter.format(new Date());
             String fileName = "crash-" + time + "-" + timestamp + ".log";
             String path = null;
             boolean position = false;
@@ -125,7 +124,7 @@ public class Crash {
             Log.e(TAG, "An error occured while writing crash file...", e);
         }
     }
-    
+
     private static void collectDeviceInfo(StringBuffer sb) {
         try {
             PackageManager pm = mContext.getPackageManager();
@@ -167,22 +166,22 @@ public class Crash {
         sb.append("SDK=" + Build.VERSION.SDK_INT + "\n");
         sb.append("\n");
     }
-    
+
     /**
      * Check is there last crash
-     * 
+     *
      * @return Return the crash String or null if there is no
      */
     public static String getLastCrash() {
         SharedPreferences configPre = mContext.getSharedPreferences("config", 0);
         if (!configPre.getBoolean(NEW_CRAHS, false))
             return null;
-        
+
         boolean position = configPre.getBoolean(LAST_CRASH_POSITION, false);
         String lastCrashName;
         if ((lastCrashName = configPre.getString(LAST_CRASH_NAME, null)) == null)
             return null;
-        
+
         File lastCrashFile;
         if (position) {
             if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
@@ -194,7 +193,7 @@ public class Crash {
         }
         if (!lastCrashFile.isFile())
             return null;
-        
+
         try {
             byte[] buffer = new byte[(int) lastCrashFile.length()];
             DataInputStream din = new DataInputStream(new FileInputStream(lastCrashFile));

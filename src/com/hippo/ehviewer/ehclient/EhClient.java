@@ -56,7 +56,7 @@ import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.ThreadPool.Job;
 import com.hippo.ehviewer.util.ThreadPool.JobContext;
-import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.Utils;
 
 public class EhClient {
 
@@ -91,6 +91,23 @@ public class EhClient {
     private final ThreadPool mThreadPool;
     private final Handler mHandler;
     private final EhInfo mInfo;
+
+    private static EhClient sInstance;
+
+    public static void createInstance(AppContext appContext) {
+        sInstance = new EhClient(appContext);
+    }
+
+    public static EhClient getInstance() {
+        return sInstance;
+    }
+
+    public EhClient(AppContext appContext) {
+        mAppContext = appContext;
+        mThreadPool = mAppContext.getNetworkThreadPool();
+        mHandler = AppHandler.getInstance();
+        mInfo = EhInfo.getInstance(appContext);
+    }
 
     public static String getUrlHeader() {
         return getUrlHeader(Config.getMode());
@@ -227,13 +244,6 @@ public class EhClient {
         public void onFailure(String eMsg);
     }
 
-    public EhClient(AppContext appContext) {
-        mAppContext = appContext;
-        mThreadPool = mAppContext.getNetworkThreadPool();
-        mHandler = AppHandler.getInstance();
-        mInfo = EhInfo.getInstance(appContext);
-    }
-
     /**
      * True if Login
      * @return
@@ -351,7 +361,7 @@ public class EhClient {
                     listener.onGetAvatar(GET_AVATAR_ERROR);
                     return;
                 }
-                String profileUrl = Util.htmlUnsescape(m.group(1));
+                String profileUrl = Utils.htmlUnsescape(m.group(1));
                 // Get avatar url
                 body = hp.get(profileUrl);
                 if (body == null) {
@@ -775,7 +785,7 @@ public class EhClient {
                         strs[1] = "last";
                     else
                         strs[1] = m.group(2);
-                    strs[2] = Util.htmlUnsescape(m.group(3));
+                    strs[2] = Utils.htmlUnsescape(m.group(3));
                 } else
                     eMsg = mAppContext.getString(R.string.em_parser_error);
             } else
@@ -965,7 +975,7 @@ public class EhClient {
                         }
 
                         //Create folder
-                        File folder = new File(Config.getDownloadPath() + File.separatorChar + Util.rightFileName(curDownloadInfo.title)); // TODO For  title contain invailed char
+                        File folder = new File(Config.getDownloadPath() + File.separatorChar + Utils.rightFileName(curDownloadInfo.title)); // TODO For  title contain invailed char
                         if (!folder.mkdirs() && !folder.isDirectory()) {
                             listener.onDownloadMangaOver(curDownloadInfo.gid, false);
                             curDownloadInfo.status = DownloadInfo.FAILED;
@@ -1006,7 +1016,7 @@ public class EhClient {
                                     Log.d(TAG, folder.getPath());
 
                                     curControlor = imageDownloader.resetData(folder.getPath(),
-                                            String.format("%05d", curDownloadInfo.lastStartIndex + 1) + "." + Util.getExtension(imageUrlStr),
+                                            String.format("%05d", curDownloadInfo.lastStartIndex + 1) + "." + Utils.getExtension(imageUrlStr),
                                             imageUrlStr);
                                     imageDownloader.run();
 
@@ -1129,7 +1139,7 @@ public class EhClient {
             if (m.find()) {
                 prePage = m.group(1);
                 nextPage = m.group(2);
-                imageUrlStr = Util.htmlUnsescape(m.group(3));
+                imageUrlStr = Utils.htmlUnsescape(m.group(3));
                 return true;
             }
             return false;
@@ -1522,8 +1532,8 @@ public class EhClient {
                                     gi.count = -1;
                                 gi.gid = j.getInt("gid");
                                 gi.token = j.getString("token");
-                                gi.title = Util.htmlUnsescape(j.getString("title"));
-                                gi.posted = mAppContext.getDateFormat().format(Long.parseLong(j.getString("posted")) * 1000);
+                                gi.title = Utils.htmlUnsescape(j.getString("title"));
+                                gi.posted = AppContext.sFormatter.format(Long.parseLong(j.getString("posted")) * 1000);
                                 gi.thumb = j.getString("thumb");
                                 gi.category = getType(j.getString("category"));
                                 gi.uploader = j.getString("uploader");

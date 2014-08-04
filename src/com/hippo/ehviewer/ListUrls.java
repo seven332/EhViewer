@@ -22,7 +22,7 @@ import java.net.URLEncoder;
 
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.Utils;
 
 public class ListUrls {
 
@@ -219,7 +219,7 @@ public class ListUrls {
                     for (int i = 0; i < tag.length; i++)
                         tag[i] = URLEncoder.encode(tag[i], "UTF-8");
                 } catch (UnsupportedEncodingException e) {}
-                url.append(Util.join(tag, '+'));
+                url.append(Utils.join(tag, '+'));
 
                 // Add page
                 url.append("/").append(page);
@@ -263,7 +263,7 @@ public class ListUrls {
                     for (int i = 0; i < tag.length; i++)
                         tag[i] = URLEncoder.encode(tag[i], "UTF-8");
                 } catch (UnsupportedEncodingException e) {}
-                url.append(Util.join(tag, '+')).append("&");
+                url.append(Utils.join(tag, '+')).append("&");
             }
 
             // Add page

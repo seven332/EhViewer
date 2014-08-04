@@ -30,7 +30,6 @@
     <color name="holo_purple_light_light">#ffd7a2e6</color>
 
     <color name="ab_bg">@android:color/holo_blue_dark</color>
-    <color name="list_main_bg">#ffe5e5e5</color>
     <color name="tag_bg">#bbffffff</color>
     <color name="holo_blue_light_light">#ff81d3f7</color>
 
@@ -49,35 +48,31 @@
     <color name="misc_bg">#ffffaaff</color>
     <color name="unknown_bg">@android:color/black</color>
 
-    <color name="fav0">#ff616161</color>
-    <color name="fav1">#ffff3e3e</color>
-    <color name="fav2">#ffff923e</color>
-    <color name="fav3">#fffff43e</color>
-    <color name="fav4">#ff3eff6b</color>
-    <color name="fav5">#ffb1ff3e</color>
-    <color name="fav6">#ff3efeff</color>
-    <color name="fav7">#ff4b3eff</color>
-    <color name="fav8">#ffa23eff</color>
-    <color name="fav9">#ffff3ec4</color>
-
-    <color name="title_primary">#ff333333</color>
-    <color name="title_secondary">#ffaaaaaa</color>
-
     <color name="detail_title_secondary">#ff777777</color>
 
-    <color name="detail_divider">#22000000</color>
+    
 
     <color name="btn_bg_color_default">#ff2196f3</color>
 
     <color name="btn_white_default">#fff0f0f0</color>
 
+    <color name="divider">#22000000</color>
 
     <color name="background_light">#fffafafa</color>
     <color name="background_dark">#ff212121</color>
+    <color name="background_little_light">#ffe5e5e5</color>
 
     <color name="primary_text_dark">#de000000</color>
     <color name="secondary_text_dark">#8a000000</color>
     <color name="primary_text_light">#deffffff</color>
     <color name="secondary_text_light">#61ffffff</color>
 
+    <color name="theme_red">#ffc53929</color>
+    <color name="theme_orange">#ffff9100</color>
+    <color name="theme_lime">#ffafb42b</color>
+    <color name="theme_green">#ff0b8043</color>
+    <color name="theme_teal">#ff0097a7</color>
+    <color name="theme_blue">#ff3367d6</color>
+    <color name="theme_purple">#ff9c27b0</color>
+    <color name="theme_brown">#ff795548</color>
 </resources>

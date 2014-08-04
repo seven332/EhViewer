@@ -28,12 +28,12 @@
 
     <TextView
         android:id="@+id/category"
-        style="@style/CardSubtitle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/thumb"
         android:gravity="center"
-        android:textColor="@android:color/white" />
+        android:singleLine="true"
+        android:textColor="@color/primary_text_light" />
 
     <TextView
         android:id="@+id/simple_language"

@@ -23,7 +23,7 @@ import android.widget.TableLayout;
 
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.Utils;
 
 public class CategoryTable extends TableLayout {
 
@@ -73,16 +73,16 @@ public class CategoryTable extends TableLayout {
      * @param category
      */
     public void setCategory(int category) {
-        mDoujinshi.setChecked(!Util.int2boolean(category & ListUrls.DOUJINSHI));
-        mManga.setChecked(!Util.int2boolean(category & ListUrls.MANGA));
-        mArtistCG.setChecked(!Util.int2boolean(category & ListUrls.ARTIST_CG));
-        mGameCG.setChecked(!Util.int2boolean(category & ListUrls.GAME_CG));
-        mWestern.setChecked(!Util.int2boolean(category & ListUrls.WESTERN));
-        mNonH.setChecked(!Util.int2boolean(category & ListUrls.NON_H));
-        mImageSets.setChecked(!Util.int2boolean(category & ListUrls.IMAGE_SET));
-        mCosplay.setChecked(!Util.int2boolean(category & ListUrls.COSPLAY));
-        mAsianPorn.setChecked(!Util.int2boolean(category & ListUrls.ASIAN_PORN));
-        mMisc.setChecked(!Util.int2boolean(category & ListUrls.MISC));
+        mDoujinshi.setChecked(!Utils.int2boolean(category & ListUrls.DOUJINSHI));
+        mManga.setChecked(!Utils.int2boolean(category & ListUrls.MANGA));
+        mArtistCG.setChecked(!Utils.int2boolean(category & ListUrls.ARTIST_CG));
+        mGameCG.setChecked(!Utils.int2boolean(category & ListUrls.GAME_CG));
+        mWestern.setChecked(!Utils.int2boolean(category & ListUrls.WESTERN));
+        mNonH.setChecked(!Utils.int2boolean(category & ListUrls.NON_H));
+        mImageSets.setChecked(!Utils.int2boolean(category & ListUrls.IMAGE_SET));
+        mCosplay.setChecked(!Utils.int2boolean(category & ListUrls.COSPLAY));
+        mAsianPorn.setChecked(!Utils.int2boolean(category & ListUrls.ASIAN_PORN));
+        mMisc.setChecked(!Utils.int2boolean(category & ListUrls.MISC));
     }
 
     /**

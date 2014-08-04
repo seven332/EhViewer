@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.LofiGalleryInfo;
-import com.hippo.ehviewer.util.Util;
+import com.hippo.ehviewer.util.Utils;
 
 public class ListParser {
 
@@ -73,8 +73,8 @@ public class ListParser {
                 } else {
                     continue;
                 }
-                lgi.thumb = Util.htmlUnsescape(m.group(2));
-                lgi.title = Util.htmlUnsescape(m.group(3));
+                lgi.thumb = Utils.htmlUnsescape(m.group(2));
+                lgi.title = Utils.htmlUnsescape(m.group(3));
                 if (getPostedAndUploader(m.group(4), pau)) {
                     lgi.posted = pau[0];
                     lgi.uploader = pau[1];
@@ -147,12 +147,12 @@ public class ListParser {
                 gi.category = EhClient.getType(m.group(1));
                 gi.posted = m.group(2);
                 if (m.group(3) == null) {
-                    gi.thumb = Util.htmlUnsescape("http://"
+                    gi.thumb = Utils.htmlUnsescape("http://"
                             + m.group(5).replace('~', '/'));
-                    gi.title = Util.htmlUnsescape(m.group(6));
+                    gi.title = Utils.htmlUnsescape(m.group(6));
                 } else {
-                    gi.thumb = Util.htmlUnsescape(m.group(3));
-                    gi.title = Util.htmlUnsescape(m.group(4));
+                    gi.thumb = Utils.htmlUnsescape(m.group(3));
+                    gi.title = Utils.htmlUnsescape(m.group(4));
                 }
 
                 Pattern pattern = Pattern

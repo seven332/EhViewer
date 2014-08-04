@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -36,43 +37,46 @@ public class SuperToast extends Toast {
     public static final int WARNING = 1;
     public static final int ERROR = 2;
 
-    private final Context mContext;
-
     private LinearLayout mMainView;
     private ImageView mIcon;
     private TextView mMessage;
 
-    public SuperToast(Context context) {
-        super(context);
-        mContext = context;
+    private static Context sContext;
+
+    public static void setContext(Context context) {
+        sContext = context;
+    }
+
+    public SuperToast() {
+        super(sContext);
 
         init();
     }
 
-    public SuperToast(Context context, int strResId) {
-        this(context);
+    public SuperToast(int strResId) {
+        this();
         setMessage(strResId);
     }
 
-    public SuperToast(Context context, String mesg) {
-        this(context);
+    public SuperToast(String mesg) {
+        this();
         setMessage(mesg);
     }
 
-    public SuperToast(Context context, int strResId, int type) {
-        this(context, strResId);
+    public SuperToast(int strResId, int type) {
+        this(strResId);
         setTypeIcon(type);
     }
 
-    public SuperToast(Context context, String mesg, int type) {
-        this(context, mesg);
+    public SuperToast(String mesg, int type) {
+        this(mesg);
         setTypeIcon(type);
     }
 
+    @SuppressLint("InflateParams")
     private void init() {
-        LayoutInflater inflate = (LayoutInflater)
-                mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        FrameLayout view = (FrameLayout)inflate.inflate(R.layout.super_toast, null);
+        FrameLayout view = (FrameLayout)LayoutInflater.from(sContext)
+                .inflate(R.layout.super_toast, null);
         mMainView = (LinearLayout)view.getChildAt(0);
         // Set random color
         mMainView.setBackgroundColor(Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor());
@@ -102,7 +106,7 @@ public class SuperToast extends Toast {
     }
 
     public SuperToast setIcon(int resId) {
-        return setIcon(mContext.getResources().getDrawable(resId));
+        return setIcon(sContext.getResources().getDrawable(resId));
     }
 
     public SuperToast setIcon(Drawable drawable) {
@@ -112,7 +116,7 @@ public class SuperToast extends Toast {
     }
 
     public SuperToast setMessage(int resId) {
-        return setMessage(mContext.getResources().getString(resId));
+        return setMessage(sContext.getResources().getString(resId));
     }
 
     public SuperToast setMessage(CharSequence text) {

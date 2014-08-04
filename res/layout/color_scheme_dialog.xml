@@ -39,7 +39,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@android:color/holo_blue_light" />
+            android:background="@color/theme_red" />
 
         <Button
             android:id="@+id/color_scheme_dialog_preset_two"
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/color_scheme_dialog_row_padding"
             android:layout_weight="1"
-            android:background="@android:color/holo_green_light" />
+            android:background="@color/theme_orange" />
 
         <Button
             android:id="@+id/color_scheme_dialog_preset_three"
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/color_scheme_dialog_row_padding"
             android:layout_weight="1"
-            android:background="@android:color/holo_orange_dark" />
+            android:background="@color/theme_lime" />
 
         <Button
             android:id="@+id/color_scheme_dialog_preset_four"
@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/color_scheme_dialog_row_padding"
             android:layout_weight="1"
-            android:background="@android:color/holo_orange_light" />
+            android:background="@color/theme_green" />
 
         <Button
             android:id="@+id/color_scheme_dialog_old_color"
@@ -101,7 +101,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@android:color/holo_purple" />
+            android:background="@color/theme_teal" />
 
         <Button
             android:id="@+id/color_scheme_dialog_preset_six"
@@ -109,7 +109,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/color_scheme_dialog_row_padding"
             android:layout_weight="1"
-            android:background="@android:color/holo_red_light" />
+            android:background="@color/theme_blue" />
 
         <Button
             android:id="@+id/color_scheme_dialog_preset_seven"
@@ -117,7 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/color_scheme_dialog_row_padding"
             android:layout_weight="1"
-            android:background="@android:color/darker_gray" />
+            android:background="@color/theme_purple" />
 
         <Button
             android:id="@+id/color_scheme_dialog_preset_eight"
@@ -125,7 +125,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/color_scheme_dialog_row_padding"
             android:layout_weight="1"
-            android:background="@android:color/black" />
+            android:background="@color/theme_brown" />
 
         <LinearLayout
             android:layout_width="0dp"

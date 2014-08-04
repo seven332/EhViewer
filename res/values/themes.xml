@@ -14,67 +14,50 @@
      limitations under the License.
  -->
 <resources>
-    
+
     <!-- Application theme. -->
     <style name="AppTheme" parent="@android:Theme.Holo.Light">
-        
+
+        <item name="@android:textAppearance">@style/TextAppearance</item>
+        <item name="@android:windowBackground">@color/background_light</item>
+
         <!-- ActionBar -->
         <item name="@android:actionBarStyle">@style/ActionBar</item>
         <item name="@android:actionBarTabStyle">@style/ActionBarTabStyle</item>
         <item name="@android:actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="@android:homeAsUpIndicator">@drawable/ic_ab_back</item>
         <item name="@android:windowActionBarOverlay">true</item>
-        
-        <!-- Button -->
-        <!-- <item name="@android:buttonStyle">@style/Button.Blue</item> -->
-        
-        <!-- Scrollbar attributes -->
-        <item name="@android:scrollbarThumbVertical">@drawable/scrollbar_blue</item>
-        
-        <!-- List attributes -->
-        <!-- item name="@android:listDivider">@drawable/list_divider</item -->
-        
-        <!-- No action bar shadow -->
-        <!-- item name="android:windowContentOverlay">@drawable/shadow</item -->
-        
-        <!-- Dialog -->
-        <!-- item name="@android:dialogTitleDecorLayout">@layout/dialog_title</item -->
-        
-        <!-- item name="@android:searchViewVoiceIcon">@android:drawable/ic_voice_search_api_holo_light</item -->
-        
-        <!-- Dialog attributes -->
-        
-        <!-- AlertDialog attributes -->
-        <!-- item name="@android:alertDialogStyle">@style/AlertDialogStyle</item -->
+
     </style>
-    
+
     <style name="AppTheme.Normal">
         <!-- nop -->
     </style>
-    
+
     <style name="AppTheme.Main">
         <item name="@android:homeAsUpIndicator">@drawable/ic_navigation_drawer</item>
     </style>
-    
+
     <style name="AppTheme.Main.ListActivity">
-        <item name="android:windowBackground">@color/list_main_bg</item>
+        <item name="@android:windowBackground">@color/background_little_light</item>
     </style>
-    
+
     <style name="AppTheme.NoActionBar">
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
+        <item name="@android:windowActionBar">false</item>
+        <item name="@android:windowNoTitle">true</item>
     </style>
-    
+
     <!-- For activity whose main view is list, make background darker to match white list -->
     <style name="AppTheme.ListActivity">
-        <item name="android:windowBackground">@color/list_main_bg</item>
+        <item name="@android:windowBackground">@color/background_little_light</item>
     </style>
-    
+
     <!-- Theme for start activity -->
     <style name="AppTheme.NoActionBar.Transparent">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+        <item name="@android:windowBackground">@android:color/transparent</item>
+        <item name="@android:colorBackgroundCacheHint">@null</item>
+        <item name="@android:windowIsTranslucent">true</item>
+        <item name="@android:windowAnimationStyle">@android:style/Animation</item>
     </style>
+
 </resources>

@@ -226,7 +226,7 @@ public class Config {
     }
 
     public static void setUpdateDate() {
-        setUpdateDate(Util.getDate());
+        setUpdateDate(Utils.getDate());
     }
 
     public static void setUpdateDate(int date) {

@@ -83,6 +83,16 @@ public class Data {
     private final DBHelper mDBHelper;
     private final SQLiteDatabase mDatabase;
 
+    private static Data sInstance;
+
+    public static void createInstance(Context context) {
+        sInstance = new Data(context);
+    }
+
+    public static Data getInstance() {
+        return sInstance;
+    }
+
     public Data(Context context) {
         mContext = context;
         mDBHelper = new DBHelper(mContext);

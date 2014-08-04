@@ -20,37 +20,58 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.RatingBar;
 
-public class ProgressiveRatingBar extends RatingBar {
+@SuppressLint("ClickableViewAccessibility")
+public class ProgressiveRatingBar extends RatingBar
+        implements View.OnTouchListener {
 
-    private OnDrawListener mListener;
+    private boolean mEnableRate = true;
+    private OnUserRateListener mListener;
 
     public ProgressiveRatingBar(Context context) {
         super(context);
+        setOnTouchListener(this);
     }
     public ProgressiveRatingBar(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setOnTouchListener(this);
     }
     public ProgressiveRatingBar(Context context, AttributeSet attrs,
             int defStyle) {
         super(context, attrs, defStyle);
+        setOnTouchListener(this);
     }
 
-    @SuppressLint("WrongCall")
+    public void setEnableRate(boolean enableRate) {
+        mEnableRate = enableRate;
+    }
+
     @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (mEnableRate)
+            return false;
+        else
+            return true;
+    }
+
+    @Override
+    @SuppressLint("WrongCall")
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (mListener != null)
-            mListener.onDraw(getRating());
+        if (isPressed() && mListener != null) {
+            mListener.onUserRate(getRating());
+        }
     }
 
-    public void setOnDrawListener(OnDrawListener l) {
+    public void setOnUserRateListener(OnUserRateListener l) {
         mListener = l;
     }
 
-    public interface OnDrawListener {
-        void onDraw(float rating);
+    public interface OnUserRateListener {
+        void onUserRate(float rating);
     }
 }

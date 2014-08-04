@@ -67,7 +67,6 @@ import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.LoadImageView;
-import com.hippo.ehviewer.widget.OnFitSystemWindowsListener;
 import com.hippo.ehviewer.widget.ProgressDialogBulider;
 import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RatingView;
@@ -148,9 +147,9 @@ public class FavouriteActivity extends AbstractGalleryActivity
         super.onCreate(savedInstanceState);
 
         mAppContext = (AppContext)getApplication();
-        mData = mAppContext.getData();
+        mData = Data.getInstance();
         mResources =getResources();
-        mClient = mAppContext.getEhClient();
+        mClient = EhClient.getInstance();
 
         final ActionBar actionBar = getActionBar();
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -267,7 +266,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
         });
 
         FswView alignment = (FswView)findViewById(R.id.alignment);
-        alignment.addOnFitSystemWindowsListener(new OnFitSystemWindowsListener() {
+        alignment.addOnFitSystemWindowsListener(new FswView.OnFitSystemWindowsListener() {
             @Override
             public void onfitSystemWindows(int paddingLeft, int paddingTop,
                     int paddingRight, int paddingBottom) {
@@ -296,7 +295,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
 
         // Check login
         if (!mClient.isLogin()) {
-            SuperToast superToast = new SuperToast(this, "未检测到登陆状态，仅可使用本地收藏。由于开发者的问题，本地收藏不可靠，请尽快登陆，将本地收藏转移至账户中的收藏。");
+            SuperToast superToast = new SuperToast("未检测到登陆状态，仅可使用本地收藏。由于开发者的问题，本地收藏不可靠，请尽快登陆，将本地收藏转移至账户中的收藏。"); // TODO
             superToast.setDuration(SuperToast.LENGTH_LONG);
             superToast.show();
         }
@@ -428,7 +427,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
             mPdb = null;
             mProgressDialog.dismiss();
             mProgressDialog = null;
-            new SuperToast(this, R.string.move_successfully).show();
+            new SuperToast(R.string.move_successfully).show();
         }
     }
 
@@ -439,8 +438,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                     public void onItemClick(AdapterView<?> parent, View view,
                             int position, long id) {
                         if (mMenuIndex == position) {
-                            new SuperToast(FavouriteActivity.this, R.string.dst_src_same,
-                                    SuperToast.WARNING).show();
+                            new SuperToast(R.string.dst_src_same, SuperToast.WARNING).show();
                             return;
                         }
 
@@ -573,7 +571,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
             mLastModifyGiList = gis;
             mLastModifyPageNum = pageNum;
             refresh();
-            new SuperToast(FavouriteActivity.this, mSuccStr).show();
+            new SuperToast(mSuccStr).show();
 
             // add to local
             if (mToLocal)
