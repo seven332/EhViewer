@@ -18,18 +18,23 @@ package com.hippo.ehviewer.windowsanimate;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.AbsoluteLayout;
 
+import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.drawable.OvalDrawable;
 import com.hippo.ehviewer.util.Utils;
 
 @SuppressWarnings("deprecation")
-public final class WindowsAnimate {
+public final class WindowsAnimate
+        implements View.OnTouchListener {
+
     private Context mContext;
     private ViewGroup mContentViewGroup;
     private AnimateCanvas mAnimateCanvas;
@@ -59,8 +64,27 @@ public final class WindowsAnimate {
         return mRunningAnimateNum != 0;
     }
 
+    @Override
+    @SuppressLint("ClickableViewAccessibility")
+    public boolean onTouch(View v, MotionEvent event) {
+        v.setTag(R.id.position_x, event.getX());
+        v.setTag(R.id.position_y, event.getY());
+        return false;
+    }
+
+    /**
+     * Add ripple effecr when pressed, focus, just like in Android-L
+     *
+     * @param view
+     * @param keepBound If true, ripple will not out of view's area,
+     *        and ripple start where you pressed. Attention, it will
+     *        setOnTouchListener, to get position.
+     */
     public void addRippleEffect(View view, boolean keepBound) {
         new RippleHelpDrawable(this, view, keepBound);
+        if (keepBound) {
+            view.setOnTouchListener(this);
+        }
     }
 
     public void removeRippleEffect(View view) {

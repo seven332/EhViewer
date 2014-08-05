@@ -17,14 +17,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_marginBottom="12dp"
-    android:layout_marginTop="12dp"
+    android:paddingBottom="12dp"
+    android:paddingTop="12dp"
     android:gravity="center_horizontal"
     android:orientation="vertical" >
 
     <com.hippo.ehviewer.widget.SimpleGridLayout
         xmlns:auto="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/preview_list_layout"
+        android:id="@+id/preview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

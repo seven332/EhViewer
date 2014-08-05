@@ -32,7 +32,7 @@
             android:layout_gravity="center" />
     </LinearLayout>
 
-    <TextView
+    <com.hippo.ehviewer.widget.SuperButton
         android:id="@+id/preview_num"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

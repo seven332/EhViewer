@@ -26,23 +26,29 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.hippo.ehviewer.ImageLoader;
+import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.ApiGalleryDetail;
+import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.LofiGalleryDetail;
 import com.hippo.ehviewer.data.LofiGalleryInfo;
+import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.drawable.OvalDrawable;
 import com.hippo.ehviewer.ehclient.DetailUrlParser;
 import com.hippo.ehviewer.ehclient.EhClient;
@@ -55,6 +61,7 @@ import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.ProgressiveRatingBar;
 import com.hippo.ehviewer.widget.RefreshTextView;
+import com.hippo.ehviewer.widget.SimpleGridLayout;
 import com.hippo.ehviewer.widget.SuperButton;
 import com.hippo.ehviewer.widget.SuperToast;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
@@ -62,7 +69,7 @@ import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 public class GalleryDetailActivity extends AbstractActivity
         implements View.OnClickListener, FswView.OnFitSystemWindowsListener,
         View.OnTouchListener , ViewSwitcher.ViewFactory,
-        ProgressiveRatingBar.OnUserRateListener {
+        ProgressiveRatingBar.OnUserRateListener, PreviewList.PreviewHolder {
 
     @SuppressWarnings("unused")
     private static final String TAG = GalleryDetailActivity.class.getSimpleName();
@@ -87,11 +94,13 @@ public class GalleryDetailActivity extends AbstractActivity
     private TextView mCategory;
     private TextView mMoreOfUploader;
     private TextView mSimilar;
-
     private TextSwitcher mRatingText;
     private ProgressiveRatingBar mRating;
     private TextView mFavorite;
     private TextView mRate;
+    private TextView mCommentMoreText;
+    private SimpleGridLayout mPreview;
+    private SuperButton mPerviewPage;
 
     private ScrollView mDetailScroll;
     private ScrollView mMoreDetailScroll;
@@ -104,10 +113,16 @@ public class GalleryDetailActivity extends AbstractActivity
     private View mDetailMore;
     private View mDividerMR;
     private View mDetailRate;
+    private View mDividerRC;
+    private LinearLayout mDetailComment;
+    private View mDividerCP;
+    private LinearLayout mDetailPreview;
 
     private OvalDrawable mCategoryDrawable;
     private Drawable mRateDrawable;
     private Drawable mCheckmarkDrawable;
+
+    private int mCurPreviewPage;
 
     private GalleryInfo handleIntent(Intent intent) {
         GalleryInfo gi = null;
@@ -198,6 +213,10 @@ public class GalleryDetailActivity extends AbstractActivity
         mDetailMore = findViewById(R.id.detail_more);
         mDividerMR = findViewById(R.id.detail_divider_m_r);
         mDetailRate = findViewById(R.id.detail_rate);
+        mDividerRC = findViewById(R.id.detail_divider_r_c);
+        mDetailComment = (LinearLayout)findViewById(R.id.detail_comment);
+        mDividerCP = findViewById(R.id.detail_divider_c_p);
+        mDetailPreview = (LinearLayout)findViewById(R.id.detail_preview);
 
         mThumb = (LoadImageView)findViewById(R.id.thumb);
         mTitle = (TextView)findViewById(R.id.title);
@@ -207,11 +226,13 @@ public class GalleryDetailActivity extends AbstractActivity
         mCategory = (TextView)findViewById(R.id.category);
         mMoreOfUploader = (TextView)findViewById(R.id.more_of_uploader);
         mSimilar = (TextView)findViewById(R.id.similar);
-
         mRatingText = (TextSwitcher)mDetailRate.findViewById(R.id.rating_text);
         mRating = (ProgressiveRatingBar)mDetailRate.findViewById(R.id.rating);
         mFavorite = (TextView)findViewById(R.id.favorite);
         mRate = (TextView)findViewById(R.id.rate);
+        mCommentMoreText = (TextView)findViewById(R.id.comment_more_text);
+        mPreview = (SimpleGridLayout)findViewById(R.id.preview);
+        mPerviewPage = (SuperButton)findViewById(R.id.preview_num);
 
         // Get temp view
         FswView alignment = (FswView)findViewById(R.id.alignment);
@@ -236,12 +257,6 @@ public class GalleryDetailActivity extends AbstractActivity
         mCheckmarkDrawable.setBounds(rect);
         mRate.setCompoundDrawables(null, mRateDrawable, null, null);
 
-        // Set ripple
-        mWindowsAnimate.addRippleEffect(mCategory, false);
-        mWindowsAnimate.addRippleEffect(mMoreOfUploader, false);
-        mWindowsAnimate.addRippleEffect(mSimilar, false);
-        mWindowsAnimate.addRippleEffect(mFavorite, false);
-
         // Init
         mRatingText.setFactory(this);
 
@@ -251,10 +266,21 @@ public class GalleryDetailActivity extends AbstractActivity
         Drawable drawable = new ColorDrawable(actionBarColor);
         actionBar.setBackgroundDrawable(drawable);
         Ui.translucent(this, actionBarColor);
-        mDownloadButton.setRoundBackground(true, mResources.getColor(R.color.background_light), color);
+        mDownloadButton.setRoundBackground(true, false, mResources.getColor(R.color.background_light), color);
         mDownloadButton.setTextColor(color);
         mReadButton.setRoundBackground(true, color, 0);
         ((TextView)findViewById(R.id.detail_more_text)).setTextColor(color);
+        mCommentMoreText.setTextColor(color);
+        mPerviewPage.setRoundBackground(true, false, mResources.getColor(R.color.background_light), color);
+        mPerviewPage.setTextColor(color);
+
+        // Set ripple
+        mWindowsAnimate.addRippleEffect(mDownloadButton, true);
+        //mWindowsAnimate.addRippleEffect(mCategory, false);
+        //mWindowsAnimate.addRippleEffect(mMoreOfUploader, false);
+        //mWindowsAnimate.addRippleEffect(mSimilar, false);
+        mWindowsAnimate.addRippleEffect(mFavorite, false);
+        mWindowsAnimate.addRippleEffect(mRate, false);
 
         // Set listener
         mDownloadButton.setOnClickListener(this);
@@ -362,6 +388,8 @@ public class GalleryDetailActivity extends AbstractActivity
         mDetailMore.setVisibility(View.VISIBLE);
         mDividerMR.setVisibility(View.VISIBLE);
         mDetailRate.setVisibility(View.VISIBLE);
+        mDividerRC.setVisibility(View.VISIBLE);
+        mDetailComment.setVisibility(View.VISIBLE);
 
         mCategory.setText(Ui.getCategoryText(mGalleryInfo.category));
         mCategoryDrawable.setColor(Ui.getCategoryColor(mGalleryInfo.category));
@@ -369,7 +397,6 @@ public class GalleryDetailActivity extends AbstractActivity
         if (mGalleryInfo instanceof GalleryDetail) {
             GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
 
-            // TODO set language
             ((TextView)mDetailMore.findViewById(R.id.language)).setText("语言: " + galleryDetail.language); // TODO
             ((TextView)mDetailMore.findViewById(R.id.posted)).setText(galleryDetail.posted);
             ((TextView)mDetailMore.findViewById(R.id.pages)).setText("页面: " + String.valueOf(galleryDetail.pages));
@@ -396,11 +423,52 @@ public class GalleryDetailActivity extends AbstractActivity
             mRating.setRating(galleryDetail.rating);
             mRating.setEnableRate(false);
 
+            // Add comments
+            int commentNum = galleryDetail.comments.size();
+            if (commentNum == 0)
+                mCommentMoreText.setText("暂无评论，就等你了");
+            else if (commentNum <= 2)
+                mCommentMoreText.setText("没有更多评论");
+            else
+                mCommentMoreText.setText("点击查看更多");
+            int maxShown = Math.min(2, commentNum);
+            for (int i = 0; i < maxShown; i++) {
+                mDetailComment.addView(getCommentView(null, galleryDetail.comments.get(i), true),
+                        i, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT));
+            }
+
+            // Add preview
+            if (galleryDetail.previewLists[0] != null) {
+                mDividerCP.setVisibility(View.VISIBLE);
+                mDetailPreview.setVisibility(View.VISIBLE);
+
+                mCurPreviewPage = 0;
+                mPerviewPage.setText(mCurPreviewPage + "/" + galleryDetail.previewSum);
+                galleryDetail.previewLists[0].setData(this, this, galleryDetail, 0);
+                galleryDetail.previewLists[0].addPreview(mPreview);
+            }
         } else if (mGalleryInfo instanceof GalleryDetail) {
 
         } else if (mGalleryInfo instanceof ApiGalleryDetail) {
 
         }
+    }
+
+    @SuppressLint("InflateParams")
+    private View getCommentView(View contentView, Comment comment, boolean restrict) {
+        if (contentView == null)
+            contentView = LayoutInflater.from(this).inflate(R.layout.comments_item, null);
+        ((TextView)contentView.findViewById(R.id.user)).setText(comment.user);
+        ((TextView)contentView.findViewById(R.id.time)).setText(comment.time);
+        TextView commentText = (TextView)contentView.findViewById(R.id.comment);
+        if (restrict) {
+            commentText.setMaxLines(3);
+            // Cancel auto link
+            commentText.setAutoLinkMask(0);
+        }
+        commentText.setText(Html.fromHtml(comment.comment));
+        return contentView;
     }
 
     @Override
@@ -462,6 +530,13 @@ public class GalleryDetailActivity extends AbstractActivity
             } else {
                 // TODO
             }
+        } else if (v == mCategory) {
+            finish();
+            Intent intent = new Intent(this, GalleryListActivity.class);
+            intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
+            intent.putExtra(GalleryListActivity.KEY_MODE, ListUrls.MODE_NORMAL);
+            intent.putExtra(GalleryListActivity.KEY_CATEGORY, mGalleryInfo.category);
+            startActivity(intent);
         } else if (v == mFavorite) {
             Favorite.addToFavorite(this, mGalleryInfo);
         } else if (v == mRate) {
@@ -540,8 +615,9 @@ public class GalleryDetailActivity extends AbstractActivity
     @SuppressLint("ClickableViewAccessibility")
     public boolean onTouch(View v, MotionEvent event) {
         if (v == mDetailMore) {
+            // TODO bad idea to check click
             if (event.getAction() == MotionEvent.ACTION_UP &&
-                    System.nanoTime() / 1000000 - event.getDownTime() < 100) {
+                    System.nanoTime() / 1000000 - event.getDownTime() < 200) {
                 mWindowsAnimate.addCircleTransitions(mDetailMore, (int)event.getX(),
                         (int)event.getY(), mResources.getColor(R.color.background_light),
                         new WindowsAnimate.OnAnimationEndListener() {
@@ -570,6 +646,16 @@ public class GalleryDetailActivity extends AbstractActivity
         TextView tv = new TextView(this);
         tv.setGravity(Gravity.CENTER);
         return tv;
+    }
+
+    @Override
+    public int getCurPreviewPage() {
+        return mCurPreviewPage;
+    }
+
+    @Override
+    public void onGetPreviewImageFailure() {
+        // TODO Auto-generated method stub
     }
 
     private class GDetailGetListener

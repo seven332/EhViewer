@@ -269,6 +269,42 @@
                 </LinearLayout>
             </RelativeLayout>
 
+            <View
+                android:id="@+id/detail_divider_r_c"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:visibility="gone" />
+
+            <!-- Comments -->
+            <LinearLayout
+                android:id="@+id/detail_comment"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/comment_more_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/detail_divider_c_p"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:visibility="gone" />
+
+            <include
+                android:id="@+id/detail_preview"
+                layout="@layout/preview_list"
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 

@@ -73,7 +73,7 @@ public class SuperButton extends Button {
 
     }
 
-    private void setRoundBackground(boolean withShadow,
+    private void setStatefulRoundBackground(boolean withShadow,
             int[][] stateSets, int[] bgColors, int[] boundColors) {
         if (withShadow) {
             CardViewSalon.reformWithShadow(this, stateSets, bgColors, boundColors, true);
@@ -82,12 +82,28 @@ public class SuperButton extends Button {
         }
     }
 
+    private void setNotStatefulRoundBackground(boolean withShadow,
+            int bgColors, int boundColors) {
+        if (withShadow) {
+            CardViewSalon.reformWithShadow(this, bgColors, boundColors, true);
+        } else {
+            CardViewSalon.reform(this, bgColors, boundColors);
+        }
+    }
+
     public void setRoundBackground(boolean withShadow, int bgColor, int boundColor) {
-        setRoundBackground(withShadow, new int[][]{
-                new int[]{-android.R.attr.state_enabled},
-                new int[]{android.R.attr.state_enabled, android.R.attr.state_pressed},
-                new int[]{}}, new int[]{0xffcccccc, Theme.getDarkerColor(bgColor), bgColor},
-                boundColor == 0 ? null : new int[]{0xffcccccc, Theme.getDarkerColor(boundColor), boundColor}); // TODO
+        setRoundBackground(withShadow, true, bgColor, boundColor);
+    }
+
+    public void setRoundBackground(boolean withShadow, boolean stateful, int bgColor, int boundColor) {
+        if (stateful)
+            setStatefulRoundBackground(withShadow, new int[][]{
+                    new int[]{-android.R.attr.state_enabled},
+                    new int[]{android.R.attr.state_enabled, android.R.attr.state_pressed},
+                    new int[]{}}, new int[]{0xffcccccc, Theme.getDarkerColor(bgColor), bgColor},
+                    boundColor == 0 ? null : new int[]{0xffcccccc, Theme.getDarkerColor(boundColor), boundColor}); // TODO
+        else
+            setNotStatefulRoundBackground(withShadow, bgColor, boundColor);
     }
 
     private void setTileBackground(int[][] stateSets, int[] bgColors) {

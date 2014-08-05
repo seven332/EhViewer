@@ -28,6 +28,7 @@ import android.os.Build;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
+import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
@@ -42,11 +43,8 @@ public class Ripple {
     private static final TimeInterpolator DECEL_INTERPOLATOR = new LogInterpolator();
 
     private static final float GLOBAL_SPEED = 1.0F;
-
     private static final float WAVE_TOUCH_DOWN_ACCELERATION = 1024.0F;
-
     private static final float WAVE_TOUCH_UP_ACCELERATION = 3400.0F;
-
     private static final float WAVE_OPACITY_DECAY_VELOCITY = 3.0F;
     private static final float WAVE_OUTER_OPACITY_VELOCITY_MAX = 4.5F;
     private static final float WAVE_OUTER_OPACITY_VELOCITY_MIN = 1.5F;
@@ -57,9 +55,15 @@ public class Ripple {
     private final WindowsAnimate mWindowsAnimate;
     private final View mView;
     private final Rect mBounds;
-    private final boolean mkeepBound;
+    private final Rect mPadding;
+    private final boolean mKeepBound;
     private float mOuterRadius;
-    private final int[] mStartPosition = new int[2];
+    private final int[] mViewPosition = new int[2];
+
+    private float mStartingX;
+    private float mStartingY;
+    private float mClampedStartingX;
+    private float mClampedStartingY;
 
     private ObjectAnimator mAnimRadius;
     private ObjectAnimator mAnimOpacity;
@@ -72,6 +76,8 @@ public class Ripple {
     private float mTweenX = 0.0F;
     private float mTweenY = 0.0F;
 
+    private boolean isRunning = false;
+
     private static Paint mPaint;
 
     static {
@@ -79,16 +85,21 @@ public class Ripple {
         mPaint.setColor(0x20444444);
     }
 
-    public Ripple(WindowsAnimate windowsAnimate, View view, Rect bounds, boolean keepBound) {
+    public Ripple(WindowsAnimate windowsAnimate, View view, Rect bounds, Rect padding, boolean keepBound) {
         mWindowsAnimate = windowsAnimate;
         mView = view;
         mBounds = new Rect(bounds);
-        mkeepBound = keepBound;
+        mPadding = padding;
+        mKeepBound = keepBound;
 
         float halfWidth = mBounds.width() / 2.0F;
         float halfHeight = mBounds.height() / 2.0F;
         mOuterRadius = ((float) Math.sqrt(halfWidth * halfWidth
                 + halfHeight * halfHeight));
+
+        mStartingX = mBounds.exactCenterX();
+        mStartingY = mBounds.exactCenterY();
+        clampStartingPosition();
     }
 
     public void onBoundsChanged(Rect bounds) {
@@ -97,6 +108,24 @@ public class Ripple {
         float halfHeight = mBounds.height() / 2.0F;
         mOuterRadius = ((float) Math.sqrt(halfWidth * halfWidth
                 + halfHeight * halfHeight));
+
+        mStartingX = mBounds.exactCenterX();
+        mStartingY = mBounds.exactCenterY();
+        clampStartingPosition();
+    }
+
+    private void clampStartingPosition() {
+        float dX = mStartingX - mBounds.exactCenterX();
+        float dY = mStartingY - mBounds.exactCenterY();
+        float r = mOuterRadius;
+        if (dX * dX + dY * dY > r * r) {
+            double angle = Math.atan2(dY, dX);
+            mClampedStartingX = ((float)(Math.cos(angle) * r));
+            mClampedStartingY = ((float)(Math.sin(angle) * r));
+        } else {
+            mClampedStartingX = mStartingX;
+            mClampedStartingY = mStartingY;
+        }
     }
 
     public void setOpacity(float a) {
@@ -144,13 +173,26 @@ public class Ripple {
         return mTweenY;
     }
 
-    // TODO make mkeepBound work, ripple only show int view's area, just use clipPath
     public void draw(Canvas c) {
-        Utils.getCenterInWindows(mView, mStartPosition);
+        Utils.getCenterInWindows(mView, mViewPosition);
 
-        c.translate(mStartPosition[0], mStartPosition[1]);
+        int saved = c.save();
+        c.translate(mViewPosition[0], mViewPosition[1]);
+        if (mKeepBound) {
+            int halfWidth = mBounds.width() / 2;
+            int halfHeight = mBounds.height() / 2;
+
+            if (mPadding != null) {
+                c.clipRect(-halfWidth + mPadding.left, -halfHeight + mPadding.top,
+                        halfWidth - mPadding.right, halfHeight - mPadding.bottom);
+            } else
+                c.clipRect(-halfWidth, -halfHeight,
+                        halfWidth, halfHeight);
+        }
+
         drawSoftware(c, mPaint);
-        c.translate(-mStartPosition[0], -mStartPosition[1]);
+
+        c.restoreToCount(saved);
     }
 
     private void drawSoftware(Canvas c, Paint p) {
@@ -167,18 +209,42 @@ public class Ripple {
         float radius = MathUtils.lerp(0.0F, mOuterRadius,
                 mTweenRadius);
         if ((alpha > 0) && (radius > 0.0F)) {
+            float x = MathUtils.lerp(
+                    this.mClampedStartingX - this.mBounds.exactCenterX(),
+                    0.0F, this.mTweenX);
+            float y = MathUtils.lerp(
+                    this.mClampedStartingY - this.mBounds.exactCenterY(),
+                    0.0F, this.mTweenY);
             p.setAlpha(alpha);
             p.setStyle(Paint.Style.FILL);
-            c.drawCircle(0.0F, 0.0F, radius, p);
+            c.drawCircle(x, y, radius, p);
         }
 
         p.setAlpha(paintAlpha);
     }
 
-    // TODO Can't enter before exit end
+    public void setStartPosition(float x, float y) {
+        mStartingX = x;
+        mStartingY = y;
+
+        clampStartingPosition();
+    }
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void enter() {
+        if (isRunning)
+            return;
+        isRunning = true;
+
         addSelf();
+
+        // If keepBound, set position
+        if (mKeepBound) {
+            Float x = (Float)mView.getTag(R.id.position_x);
+            Float y = (Float)mView.getTag(R.id.position_y);
+            if (x != null && y != null)
+                setStartPosition(x, y);
+        }
 
         mOuterOpacity = 0.0F;
         mOpacity = 1.0F;
@@ -233,6 +299,9 @@ public class Ripple {
     }
 
     public void exit() {
+        if (!isRunning)
+            return;
+
         cancelSoftwareAnimations();
         float radius = MathUtils.lerp(0.0F, mOuterRadius,
                 mTweenRadius);
@@ -249,11 +318,11 @@ public class Ripple {
         int opacityDuration = (int) (1000.0F * mOpacity / 3.0F + 0.5F);
 
         float outerSizeInfluence = MathUtils.constrain(
-                (mOuterRadius - 40.0F * Ui.mDensity)
-                        / (200.0F * Ui.mDensity), 0.0F, 1.0F);
+                (mOuterRadius - WAVE_OUTER_SIZE_INFLUENCE_MIN * Ui.mDensity)
+                        / (WAVE_OUTER_SIZE_INFLUENCE_MAX * Ui.mDensity), 0.0F, 1.0F);
 
-        float outerOpacityVelocity = MathUtils.lerp(1.5F, 4.5F,
-                outerSizeInfluence);
+        float outerOpacityVelocity = MathUtils.lerp(WAVE_OUTER_OPACITY_VELOCITY_MIN,
+                WAVE_OUTER_OPACITY_VELOCITY_MAX, outerSizeInfluence);
 
         int outerInflection = Math.max(0, (int) (1000.0F
                 * (mOpacity - mOuterOpacity)
@@ -310,9 +379,9 @@ public class Ripple {
                         outerFadeOutAnim
                                 .setInterpolator(Ripple.LINEAR_INTERPOLATOR);
                         outerFadeOutAnim
-                                .addListener(Ripple.this.mAnimationListener);
+                                .addListener(mAnimationListener);
 
-                        Ripple.this.mAnimOuterOpacity = outerFadeOutAnim;
+                        mAnimOuterOpacity = outerFadeOutAnim;
 
                         outerFadeOutAnim.start();
                     }
@@ -394,7 +463,8 @@ public class Ripple {
     private final AnimatorListenerAdapter mAnimationListener = new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
-            Ripple.this.removeSelf();
+            removeSelf();
+            isRunning = false;
         }
     };
 

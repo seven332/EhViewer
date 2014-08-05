@@ -16,26 +16,26 @@
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp" >
 
     <TextView
         android:id="@+id/user"
-        style="@style/DetailSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="12.0dp"
-        android:layout_marginRight="12.0dp"
-        android:layout_marginTop="8.0dp" />
+        android:textSize="@dimen/text_medium"
+        android:textColor="@color/secondary_text_dark" />
 
     <TextView
         android:id="@+id/time"
-        style="@style/DetailSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginLeft="12.0dp"
-        android:layout_marginRight="12.0dp"
-        android:layout_marginTop="8.0dp" />
+        android:textSize="@dimen/text_medium"
+        android:textColor="@color/secondary_text_dark" />
 
     <com.hippo.ehviewer.widget.LinkifyTextView
         android:id="@+id/comment"
@@ -43,8 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/user"
         android:layout_below="@id/user"
-        android:layout_marginBottom="8.0dp"
-        android:layout_marginRight="12.0dp"
-        android:layout_marginTop="8.0dp" />
+        android:layout_marginTop="8.0dp"
+        android:ellipsize="end" />
 
 </RelativeLayout>

@@ -63,6 +63,7 @@ public class LargePreviewList extends PreviewList {
         if (mTargetPage != mHolder.getCurPreviewPage())
             return;
 
+        viewGroup.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(mActivity);
         int startIndex = mTargetPage * mGi.previewPerPage;
         int index = startIndex;

@@ -107,6 +107,7 @@ public class NormalPreviewList extends PreviewList{
         if (mTargetPage != mHolder.getCurPreviewPage())
             return;
 
+        viewGroup.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(mActivity);
         int index = mTargetPage * mGi.previewPerPage; // it is display index
         int rowIndex = 0;

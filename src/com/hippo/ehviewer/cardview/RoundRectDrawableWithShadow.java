@@ -80,11 +80,17 @@ public class RoundRectDrawableWithShadow extends RoundRectDrawable {
         if (mKeepPadding) {
             return false;
         } else {
-            final int topShadow = (int) Math.ceil(mShadowSize * (1 / (SHADOW_MULTIPLIER * 2)));
-            final int sideShadow = (int) Math.ceil(mShadowSize - topShadow);
-            padding.set(sideShadow, topShadow, sideShadow, (int) Math.ceil(mShadowSize));
+            padding.set(getSuggestionPadding());
             return true;
         }
+    }
+
+    public Rect getSuggestionPadding() {
+        Rect padding = new Rect();
+        final int topShadow = (int) Math.ceil(mShadowSize * (1 / (SHADOW_MULTIPLIER * 2)));
+        final int sideShadow = (int) Math.ceil(mShadowSize - topShadow);
+        padding.set(sideShadow, topShadow, sideShadow, (int) Math.ceil(mShadowSize));
+        return padding;
     }
 
     private void buildShadowCorners() {

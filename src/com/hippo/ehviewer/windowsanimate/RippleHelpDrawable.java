@@ -23,6 +23,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import com.hippo.ehviewer.cardview.RoundRectDrawableWithShadow;
+
 /**
  * @author Hippo
  *
@@ -31,12 +33,16 @@ import android.view.View;
 public class RippleHelpDrawable extends Drawable {
 
     private final Ripple mRipple;
+    private final Drawable mActualDrawable;
 
     private boolean mActive = false;
 
     @SuppressWarnings("deprecation")
     public RippleHelpDrawable(WindowsAnimate windowsAnimate, View view, boolean keepBound) {
-        mRipple = new Ripple(windowsAnimate, view, getBounds(), keepBound);
+        mActualDrawable = view.getBackground();
+        Rect padding = mActualDrawable == null || !(mActualDrawable instanceof RoundRectDrawableWithShadow) ?
+                null : ((RoundRectDrawableWithShadow)mActualDrawable).getSuggestionPadding();
+        mRipple = new Ripple(windowsAnimate, view, getBounds(), padding, keepBound);
         view.setBackgroundDrawable(this);
     }
 
@@ -62,7 +68,10 @@ public class RippleHelpDrawable extends Drawable {
 
         setActive((active) && (enabled));
 
-        return false;
+        if (mActualDrawable != null && mActualDrawable.isStateful())
+            return mActualDrawable.setState(stateSet);
+        else
+            return false;
     }
 
     private void setActive(boolean active) {
@@ -79,25 +88,33 @@ public class RippleHelpDrawable extends Drawable {
     @Override
     protected void onBoundsChange(Rect bounds) {
         mRipple.onBoundsChanged(bounds);
+        if (mActualDrawable != null)
+            mActualDrawable.setBounds(bounds);
     }
 
     @Override
     public void draw(Canvas canvas) {
-        // None
+        if (mActualDrawable != null)
+            mActualDrawable.draw(canvas);
     }
 
     @Override
     public void setAlpha(int alpha) {
-        // None
+        if (mActualDrawable != null)
+            mActualDrawable.setAlpha(alpha);
     }
 
     @Override
     public void setColorFilter(ColorFilter cf) {
-        // None
+        if (mActualDrawable != null)
+            mActualDrawable.setColorFilter(cf);
     }
 
     @Override
     public int getOpacity() {
-        return PixelFormat.TRANSPARENT;
+        if (mActualDrawable != null)
+            return mActualDrawable.getOpacity();
+        else
+            return PixelFormat.TRANSPARENT;
     }
 }

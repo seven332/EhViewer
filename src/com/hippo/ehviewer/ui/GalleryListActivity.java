@@ -95,6 +95,7 @@ import com.hippo.ehviewer.widget.SuperDialogUtil;
 import com.hippo.ehviewer.widget.SuperToast;
 import com.hippo.ehviewer.widget.TagListView;
 import com.hippo.ehviewer.widget.TagsAdapter;
+import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 /*
@@ -141,6 +142,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
 
     private EhClient mClient;
     private Resources mResources;
+    private WindowsAnimate mWindowsAnimate;
 
     private SlidingMenu mSlidingMenu;
     private View mMenuLeft;
@@ -843,9 +845,18 @@ public class GalleryListActivity extends AbstractGalleryActivity
 
             case ListUrls.MODE_UPLOADER:
                 String uploader = "uploader:" + intent.getStringExtra(KEY_UPLOADER);
-                lus = new ListUrls(ListUrls.NONE, uploader);
+                lus = new ListUrls(ListUrls.ALL_CATEGORT, uploader);
                 lus.setMode(ListUrls.MODE_UPLOADER);
                 mTitle = uploader;
+                setTitle(mTitle);
+                refresh();
+                break;
+
+            case ListUrls.MODE_NORMAL:
+                // Target is category
+                int category = intent.getIntExtra(KEY_CATEGORY, ListUrls.ALL_CATEGORT);
+                lus = new ListUrls(category);
+                mTitle = Ui.getCategoryText(category);
                 setTitle(mTitle);
                 refresh();
                 break;
@@ -890,7 +901,9 @@ public class GalleryListActivity extends AbstractGalleryActivity
 
         mData = Data.getInstance();
         mClient = EhClient.getInstance();
-        mResources =getResources();
+        mResources = getResources();
+        mWindowsAnimate = new WindowsAnimate();
+        mWindowsAnimate.init(this);
 
         handleIntent(getIntent());
 
@@ -961,6 +974,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 R.drawable.ic_action_download, R.string.download,
                 R.drawable.ic_action_settings, R.string.action_settings};
 
+        itemListMenu.setSelector(new ColorDrawable(Color.TRANSPARENT));
         itemListMenu.setClipToPadding(false);
         itemListMenu.setAdapter(new BaseAdapter() {
             @Override
@@ -981,10 +995,12 @@ public class GalleryListActivity extends AbstractGalleryActivity
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 TextView tv;
-                if (convertView == null)
+                if (convertView == null) {
                     tv = (TextView)LayoutInflater.from(GalleryListActivity.this).inflate(R.layout.menu_item, parent, false);
-                else
+                    mWindowsAnimate.addRippleEffect(tv, true);
+                } else {
                     tv = (TextView)convertView;
+                }
                 Drawable d = mResources.getDrawable(data[position * 2]);
                 d.setBounds(0, 0, Ui.dp2pix(36), Ui.dp2pix(36));
                 tv.setCompoundDrawables(d, null, null, null);
@@ -1385,6 +1401,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
             }
         }*/
         mData.deleteAllReads();
+        mWindowsAnimate.free();
     }
 
     private void checkUpdate() {
