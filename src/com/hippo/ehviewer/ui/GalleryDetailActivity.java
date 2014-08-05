@@ -31,7 +31,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -69,7 +68,8 @@ import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 public class GalleryDetailActivity extends AbstractActivity
         implements View.OnClickListener, FswView.OnFitSystemWindowsListener,
         View.OnTouchListener , ViewSwitcher.ViewFactory,
-        ProgressiveRatingBar.OnUserRateListener, PreviewList.PreviewHolder {
+        ProgressiveRatingBar.OnUserRateListener, PreviewList.PreviewHolder,
+        View.OnLayoutChangeListener {
 
     @SuppressWarnings("unused")
     private static final String TAG = GalleryDetailActivity.class.getSimpleName();
@@ -292,6 +292,8 @@ public class GalleryDetailActivity extends AbstractActivity
         mFavorite.setOnClickListener(this);
         mRate.setOnClickListener(this);
         mDetailMore.setOnTouchListener(this);
+        mDetailPreview.setOnTouchListener(this);
+        mMoreDetailScroll.addOnLayoutChangeListener(this);
         alignment.addOnFitSystemWindowsListener(this);
 
         doPreLayout();
@@ -480,32 +482,7 @@ public class GalleryDetailActivity extends AbstractActivity
             super.onBackPressed();
         } else if (mMoreDetailScroll.getVisibility() == View.VISIBLE) {
             mDetailScroll.setVisibility(View.VISIBLE);
-
-            ValueAnimator animation = ValueAnimator.ofInt(mMoreDetailScroll.getLeft(), mMoreDetailScroll.getRight());
-            animation.setDuration(Constants.ANIMATE_TIME);
-            animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    int left = (Integer)animation.getAnimatedValue();
-                    mMoreDetailScroll.setLeft(left);
-                }
-            });
-            animation.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {}
-                @Override
-                public void onAnimationRepeat(Animator animation) {}
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mMoreDetailScroll.setVisibility(View.GONE);
-                    mRunningAnimateNum--;
-                }
-                @Override
-                public void onAnimationCancel(Animator animation) {}
-            });
-            animation.setInterpolator(new  AccelerateInterpolator());
-            animation.start();
-            mRunningAnimateNum++;
+            mWindowsAnimate.addMoveTransitions(mMoreDetailScroll, null);
         }
     }
 
@@ -625,13 +602,14 @@ public class GalleryDetailActivity extends AbstractActivity
                             public void onAnimationEnd() {
                                 mDetailScroll.setVisibility(View.GONE);
                                 mMoreDetailScroll.setVisibility(View.VISIBLE);
-                                mMoreDetailScroll.scrollTo(0, 0);
                                 AlphaAnimation aa = new AlphaAnimation(0.0f,1.0f);
                                 aa.setDuration(Constants.ANIMATE_TIME);
                                 mMoreDetailScroll.startAnimation(aa);
                             }
                         });
             }
+        } else if (v == mDetailPreview) {
+            // TODO
         }
         return true;
     }
@@ -670,5 +648,13 @@ public class GalleryDetailActivity extends AbstractActivity
             // TODO
             new SuperToast(eMsg, SuperToast.ERROR).show();
        }
+    }
+
+    @Override
+    public void onLayoutChange(View v, int left, int top, int right,
+            int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        if (v == mMoreDetailScroll) {
+            mMoreDetailScroll.scrollTo(0, 0);
+        }
     }
 }

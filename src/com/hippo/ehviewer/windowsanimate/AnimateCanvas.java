@@ -27,6 +27,7 @@ import android.widget.AbsoluteLayout;
 public class AnimateCanvas extends AbsoluteLayout {
 
     private final List<Ripple> mRippleList = new LinkedList<Ripple>();
+    private final List<WindowsAnimate.AnimateBitmap> mAnimateBitmapList = new LinkedList<WindowsAnimate.AnimateBitmap>();
 
     public AnimateCanvas(Context context) {
         super(context);
@@ -42,11 +43,21 @@ public class AnimateCanvas extends AbsoluteLayout {
         mRippleList.remove(ripple);
     }
 
+    void addAnimateBitmap(WindowsAnimate.AnimateBitmap ab) {
+        mAnimateBitmapList.add(ab);
+    }
+
+    void removeAnimateBitmap(WindowsAnimate.AnimateBitmap ab) {
+        mAnimateBitmapList.remove(ab);
+    }
 
     @Override
     public void onDraw(Canvas canvas) {
         for (Ripple ripple : mRippleList) {
             ripple.draw(canvas);
+        }
+        for (WindowsAnimate.AnimateBitmap ab : mAnimateBitmapList) {
+            ab.draw(canvas);
         }
     }
 }

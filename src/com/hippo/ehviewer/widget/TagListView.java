@@ -41,6 +41,8 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.hippo.ehviewer.util.Utils;
+
 /**
  * The dynamic listview is an extension of listview that supports cell dragging
  * and swapping.
@@ -201,7 +203,7 @@ public class TagListView extends ListView {
     }
 
     private Bitmap getDeleteBitmap(View v) {
-        Bitmap bitmap = getBitmapFromView(v);
+        Bitmap bitmap = Utils.getBitmapFromView(v);
         Canvas can = new Canvas(bitmap);
 
         Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
@@ -221,7 +223,7 @@ public class TagListView extends ListView {
     }
 
     private Bitmap getModifyBitmap(View v) {
-        Bitmap bitmap = getBitmapFromView(v);
+        Bitmap bitmap = Utils.getBitmapFromView(v);
         Canvas can = new Canvas(bitmap);
 
         Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
@@ -234,7 +236,7 @@ public class TagListView extends ListView {
 
     /** Draws a black border over the screenshot of the view passed in. */
     private Bitmap getHoverBitmap(View v) {
-        Bitmap bitmap = getBitmapFromView(v);
+        Bitmap bitmap = Utils.getBitmapFromView(v);
         Canvas can = new Canvas(bitmap);
 
         Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
@@ -242,14 +244,6 @@ public class TagListView extends ListView {
         paint.setColor(0x8f00aadd);
         can.drawRect(rect, paint);
 
-        return bitmap;
-    }
-
-    /** Returns a bitmap showing a screenshot of the view passed in. */
-    private Bitmap getBitmapFromView(View v) {
-        Bitmap bitmap = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas (bitmap);
-        v.draw(canvas);
         return bitmap;
     }
 

@@ -30,6 +30,8 @@ import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.view.View;
@@ -350,5 +352,19 @@ public class Utils {
 
         location[0] = (int) (position[0] + 0.5f);
         location[1] = (int) (position[1] + 0.5f);
+    }
+
+    /**
+     * Returns a bitmap showing a screenshot of the view passed in.
+     * @param v
+     * @return
+     */
+    public static Bitmap getBitmapFromView(View v) {
+        Bitmap bitmap = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        // TODO I need to know why I need it, when ScrollView
+        canvas.translate(-v.getScrollX(), -v.getScrollY());
+        v.draw(canvas);
+        return bitmap;
     }
 }
