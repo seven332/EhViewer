@@ -30,12 +30,9 @@ import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.view.View;
-import android.view.ViewParent;
 
 public class Utils {
     @SuppressWarnings("unused")
@@ -316,55 +313,5 @@ public class Utils {
 
     public static final boolean int2boolean(int integer) {
         return integer == 0 ? false : true;
-    }
-
-    public static void getCenterInWindows(View view, int[] location) {
-        getLocationInWindow(view, location);
-        location[0] += view.getWidth() / 2;
-        location[1] += view.getHeight() / 2;
-    }
-
-    public static void getLocationInWindow(View view, int[] location) {
-        if (location == null || location.length < 2) {
-            throw new IllegalArgumentException("location must be an array of two integers");
-        }
-
-        float[] position = new float[2];
-
-        position[0] = view.getLeft();
-        position[1] = view.getTop();
-
-        ViewParent viewParent = view.getParent();
-        while (viewParent instanceof View) {
-            view = (View)viewParent;
-            if (view.getId() == android.R.id.content) {
-                break;
-            }
-
-            position[0] -= view.getScrollX();
-            position[1] -= view.getScrollY();
-
-            position[0] += view.getLeft();
-            position[1] += view.getTop();
-
-            viewParent = view.getParent();
-         }
-
-        location[0] = (int) (position[0] + 0.5f);
-        location[1] = (int) (position[1] + 0.5f);
-    }
-
-    /**
-     * Returns a bitmap showing a screenshot of the view passed in.
-     * @param v
-     * @return
-     */
-    public static Bitmap getBitmapFromView(View v) {
-        Bitmap bitmap = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        // TODO I need to know why I need it, when ScrollView
-        canvas.translate(-v.getScrollX(), -v.getScrollY());
-        v.draw(canvas);
-        return bitmap;
     }
 }

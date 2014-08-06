@@ -26,14 +26,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Constants;
-import com.hippo.ehviewer.util.Utils;
+import com.hippo.ehviewer.util.ViewUtils;
 
 public final class WindowsAnimate
         implements View.OnTouchListener {
     private static final TimeInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
+    private static final TimeInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator();
 
     private Context mContext;
     private ViewGroup mContentViewGroup;
@@ -114,7 +116,7 @@ public final class WindowsAnimate
             throw new RuntimeException("Call init(Activity) first, or call it after call free()");
 
         int[] loaction = new int[2];
-        Utils.getCenterInWindows(view, loaction);
+        ViewUtils.getCenterInWindows(view, loaction);
         addCircleTransitions(loaction[0], loaction[1], color, listener);
     }
 
@@ -132,7 +134,7 @@ public final class WindowsAnimate
             throw new RuntimeException("Call init(Activity) first, or call it after call free()");
 
         int[] loaction = new int[2];
-        Utils.getLocationInWindow(view, loaction);
+        ViewUtils.getLocationInWindow(view, loaction);
         addCircleTransitions(loaction[0] + x, loaction[1] + y, color, listener);
     }
 
@@ -187,10 +189,10 @@ public final class WindowsAnimate
      * @param listener
      */
     // TODO not just from left to right
-    public void addMoveTransitions(final View view, final OnAnimationEndListener listener) {
+    public void addMoveExitTransitions(final View view, final OnAnimationEndListener listener) {
         int[] location = new int[2];
-        Utils.getLocationInWindow(view, location);
-        final BitmapSprite bs = new BitmapSprite(this, Utils.getBitmapFromView(view), location[0], location[1]);
+        ViewUtils.getLocationInWindow(view, location);
+        final BitmapSprite bs = new BitmapSprite(this, ViewUtils.getBitmapFromView(view), location[0], location[1]);
 
         ObjectAnimator oa = ObjectAnimator.ofInt(bs, "x",
                 new int[] {location[0], mAnimateCanvas.getWidth()});
@@ -208,6 +210,40 @@ public final class WindowsAnimate
             public void onAnimationEnd(Animator animation) {
                 bs.removeSelf();
                 bs.free();
+                if (listener != null)
+                    listener.onAnimationEnd();
+
+                mRunningAnimateNum--;
+            }
+            @Override
+            public void onAnimationCancel(Animator animation) {}
+        });
+        oa.start();
+
+        mRunningAnimateNum++;
+    }
+
+    public void addOvershootEnterTransitions(final View view, final OnAnimationEndListener listener) {
+        int[] location = new int[2];
+        ViewUtils.getLocationInWindow(view, location);
+        final BitmapSprite bs = new BitmapSprite(this, ViewUtils.getBitmapFromView(view), location[0], mAnimateCanvas.getHeight());
+
+        ObjectAnimator oa = ObjectAnimator.ofInt(bs, "y",
+                new int[] {mAnimateCanvas.getHeight(), location[1]});
+        oa.setDuration(Constants.ANIMATE_TIME);
+        oa.setInterpolator(OVERSHOOT_INTERPOLATOR);
+        oa.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                bs.addSelf();
+            }
+            @Override
+            public void onAnimationRepeat(Animator animation) {}
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                bs.removeSelf();
+                bs.free();
+                view.setVisibility(View.VISIBLE);
                 if (listener != null)
                     listener.onAnimationEnd();
 

@@ -41,7 +41,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.hippo.ehviewer.util.Utils;
+import com.hippo.ehviewer.util.ViewUtils;
 
 /**
  * The dynamic listview is an extension of listview that supports cell dragging
@@ -203,7 +203,7 @@ public class TagListView extends ListView {
     }
 
     private Bitmap getDeleteBitmap(View v) {
-        Bitmap bitmap = Utils.getBitmapFromView(v);
+        Bitmap bitmap = ViewUtils.getBitmapFromView(v);
         Canvas can = new Canvas(bitmap);
 
         Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
@@ -223,7 +223,7 @@ public class TagListView extends ListView {
     }
 
     private Bitmap getModifyBitmap(View v) {
-        Bitmap bitmap = Utils.getBitmapFromView(v);
+        Bitmap bitmap = ViewUtils.getBitmapFromView(v);
         Canvas can = new Canvas(bitmap);
 
         Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
@@ -236,7 +236,7 @@ public class TagListView extends ListView {
 
     /** Draws a black border over the screenshot of the view passed in. */
     private Bitmap getHoverBitmap(View v) {
-        Bitmap bitmap = Utils.getBitmapFromView(v);
+        Bitmap bitmap = ViewUtils.getBitmapFromView(v);
         Canvas can = new Canvas(bitmap);
 
         Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());

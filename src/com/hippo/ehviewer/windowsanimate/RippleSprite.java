@@ -31,7 +31,7 @@ import android.view.animation.LinearInterpolator;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.util.Utils;
+import com.hippo.ehviewer.util.ViewUtils;
 
 /**
  * @author Hippo
@@ -176,7 +176,7 @@ public class RippleSprite extends Sprite {
 
     @Override
     public void draw(Canvas c) {
-        Utils.getCenterInWindows(mView, mViewPosition);
+        ViewUtils.getCenterInWindows(mView, mViewPosition);
 
         int saved = c.save();
         c.translate(mViewPosition[0], mViewPosition[1]);

@@ -38,6 +38,7 @@
             android:padding="16dp" >
 
             <!-- Header -->
+
             <RelativeLayout
                 android:id="@+id/detail_header"
                 android:layout_width="fill_parent"
@@ -68,13 +69,14 @@
             </RelativeLayout>
 
             <!-- Bottons -->
+
             <LinearLayout
                 android:id="@+id/detail_buttons"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="16dp"
                 android:paddingBottom="16dp"
+                android:paddingTop="16dp"
                 android:visibility="gone" >
 
                 <com.hippo.ehviewer.widget.SuperButton
@@ -98,6 +100,7 @@
             </LinearLayout>
 
             <!-- Waring text can be shown here -->
+
             <TextView
                 android:id="@+id/warning"
                 android:layout_width="fill_parent"
@@ -106,14 +109,15 @@
                 android:visibility="gone" />
 
             <!-- Actions -->
+
             <LinearLayout
                 android:id="@+id/detail_actions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp"
                 android:orientation="horizontal"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
                 android:visibility="gone" >
 
                 <TextView
@@ -158,6 +162,7 @@
                 android:visibility="gone" />
 
             <!-- More detail -->
+
             <RelativeLayout
                 android:id="@+id/detail_more"
                 android:layout_width="fill_parent"
@@ -181,26 +186,27 @@
                     android:id="@+id/pages"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
                     android:layout_below="@id/language"
-                    android:layout_marginTop="8dp"
-                    android:layout_alignParentLeft="true" />
+                    android:layout_marginTop="8dp" />
 
                 <TextView
                     android:id="@+id/size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
                     android:layout_below="@id/posted"
-                    android:layout_marginTop="8dp"
-                    android:layout_alignParentRight="true" />
+                    android:layout_marginTop="8dp" />
 
                 <!-- Theme color -->
+
                 <TextView
                     android:id="@+id/detail_more_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/pages"
-                    android:layout_marginTop="8dp"
                     android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
                     android:text="点击查看更多" />
             </RelativeLayout>
 
@@ -215,8 +221,8 @@
                 android:id="@+id/detail_rate"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
                 android:paddingBottom="16dp"
+                android:paddingTop="16dp"
                 android:visibility="gone" >
 
                 <TextSwitcher
@@ -277,6 +283,7 @@
                 android:visibility="gone" />
 
             <!-- Comments -->
+
             <LinearLayout
                 android:id="@+id/detail_comment"
                 android:layout_width="fill_parent"
@@ -291,7 +298,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center" />
-
             </LinearLayout>
 
             <View
@@ -325,6 +331,32 @@
             android:textSize="@dimen/text_little_large" />
     </ScrollView>
 
+    <FrameLayout
+        android:id="@+id/more_comment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_light"
+        android:visibility="gone" >
+
+        <ListView
+            android:id="@+id/comment_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:listSelector="@android:color/transparent" >
+        </ListView>
+
+        <com.faizmalkani.floatingactionbutton.FloatingActionButton
+            xmlns:auto="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/reply"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            auto:drawable="@drawable/ic_reply" />
+    </FrameLayout>
+
     <com.hippo.ehviewer.widget.RefreshTextView
         android:id="@+id/refresh_text"
         android:layout_width="wrap_content"
@@ -333,7 +365,6 @@
         android:layout_margin="12dp"
         android:gravity="center"
         android:textColor="@android:color/holo_blue_dark"
-        android:textSize="24sp"
-        android:visibility="gone" />
+        android:textSize="24sp" />
 
 </FrameLayout>

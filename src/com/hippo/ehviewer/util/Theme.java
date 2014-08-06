@@ -19,6 +19,7 @@ package com.hippo.ehviewer.util;
 import java.util.Random;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -60,10 +61,10 @@ public final class Theme {
      * @return
      */
     public static int getDarkerColor(int color) {
-        return ((int)((color & 0xff0000) * 0.8) & 0xff0000)
-                | ((int)((color & 0xff00) * 0.8) & 0xff00)
-                | ((int)((color & 0xff) * 0.8) & 0xff)
-                | (color & 0xff000000);
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= 0.8f;
+        return Color.HSVToColor(hsv);
     }
 
     public static StateListDrawable getClickDrawable(Context context, int color) {

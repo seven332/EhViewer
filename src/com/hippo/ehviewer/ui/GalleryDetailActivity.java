@@ -16,28 +16,43 @@
 
 package com.hippo.ehviewer.ui;
 
+import java.util.List;
+
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.faizmalkani.floatingactionbutton.FloatingActionButton;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
@@ -56,7 +71,11 @@ import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.util.ViewUtils;
+import com.hippo.ehviewer.widget.AlertButton;
+import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FswView;
+import com.hippo.ehviewer.widget.LinkifyTextView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.ProgressiveRatingBar;
 import com.hippo.ehviewer.widget.RefreshTextView;
@@ -69,7 +88,8 @@ public class GalleryDetailActivity extends AbstractActivity
         implements View.OnClickListener, FswView.OnFitSystemWindowsListener,
         View.OnTouchListener , ViewSwitcher.ViewFactory,
         ProgressiveRatingBar.OnUserRateListener, PreviewList.PreviewHolder,
-        View.OnLayoutChangeListener {
+        View.OnLayoutChangeListener, AdapterView.OnItemClickListener,
+        AdapterView.OnItemLongClickListener {
 
     @SuppressWarnings("unused")
     private static final String TAG = GalleryDetailActivity.class.getSimpleName();
@@ -104,6 +124,7 @@ public class GalleryDetailActivity extends AbstractActivity
 
     private ScrollView mDetailScroll;
     private ScrollView mMoreDetailScroll;
+    private View mMoreComment;
 
     private View mDetailHeader;
     private View mDetailButtons;
@@ -118,9 +139,16 @@ public class GalleryDetailActivity extends AbstractActivity
     private View mDividerCP;
     private LinearLayout mDetailPreview;
 
+    private ListView mCommentList;
+    private FloatingActionButton mReply;
+
     private OvalDrawable mCategoryDrawable;
     private Drawable mRateDrawable;
     private Drawable mCheckmarkDrawable;
+
+    private Dialog mCommentLongClickDialog;
+
+    private CommentAdapter mCommentAdapter;
 
     private int mCurPreviewPage;
 
@@ -203,6 +231,7 @@ public class GalleryDetailActivity extends AbstractActivity
         // Get view
         mDetailScroll = (ScrollView)findViewById(R.id.detail_scroll);
         mMoreDetailScroll = (ScrollView)findViewById(R.id.more_detail_scroll);
+        mMoreComment = findViewById(R.id.more_comment);
         mRefreshText = (RefreshTextView)findViewById(R.id.refresh_text);
 
         mDetailHeader = findViewById(R.id.detail_header);
@@ -233,6 +262,9 @@ public class GalleryDetailActivity extends AbstractActivity
         mCommentMoreText = (TextView)findViewById(R.id.comment_more_text);
         mPreview = (SimpleGridLayout)findViewById(R.id.preview);
         mPerviewPage = (SuperButton)findViewById(R.id.preview_num);
+
+        mCommentList = (ListView)findViewById(R.id.comment_list);
+        mReply = (FloatingActionButton)findViewById(R.id.reply);
 
         // Get temp view
         FswView alignment = (FswView)findViewById(R.id.alignment);
@@ -273,6 +305,7 @@ public class GalleryDetailActivity extends AbstractActivity
         mCommentMoreText.setTextColor(color);
         mPerviewPage.setRoundBackground(true, false, mResources.getColor(R.color.background_light), color);
         mPerviewPage.setTextColor(color);
+        mReply.setColor(color);
 
         // Set ripple
         mWindowsAnimate.addRippleEffect(mDownloadButton, true);
@@ -292,8 +325,10 @@ public class GalleryDetailActivity extends AbstractActivity
         mFavorite.setOnClickListener(this);
         mRate.setOnClickListener(this);
         mDetailMore.setOnTouchListener(this);
-        mDetailPreview.setOnTouchListener(this);
+        mDetailComment.setOnTouchListener(this);
         mMoreDetailScroll.addOnLayoutChangeListener(this);
+        mCommentList.addOnLayoutChangeListener(this);
+        mReply.setOnClickListener(this);
         alignment.addOnFitSystemWindowsListener(this);
 
         doPreLayout();
@@ -303,11 +338,13 @@ public class GalleryDetailActivity extends AbstractActivity
         String detailUrl = mClient.getDetailUrl(
                 mGalleryInfo.gid, mGalleryInfo.token);
 
+        mRefreshText.setRefreshing(true);
+
         if (mGalleryInfo instanceof GalleryDetail) {
             GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
             if (galleryDetail.title == null) {
-                // TODO
                 // We should get info from detail page
+                mClient.getGDetail(detailUrl, galleryDetail, new GDetailGetListener());
             } else {
                 mDetailScroll.setVisibility(View.VISIBLE);
                 mDetailHeader.setVisibility(View.VISIBLE);
@@ -373,12 +410,13 @@ public class GalleryDetailActivity extends AbstractActivity
      * ApiGalleryDetail
      */
     private void doLayout() {
-        if (mDetailHeader.getVisibility() == View.GONE) {
+        if (mDetailScroll.getVisibility() == View.GONE) {
             // If not set header in doPreLayout
+            mDetailScroll.setVisibility(View.VISIBLE);
             mDetailHeader.setVisibility(View.VISIBLE);
             mThumb.setLoadInfo(mGalleryInfo.thumb, String.valueOf(mGalleryInfo.gid));
             ImageLoader.getInstance(this).add(mGalleryInfo.thumb, String.valueOf(mGalleryInfo.gid),
-                    new LoadImageView.SimpleImageGetListener(mThumb).setTransitabled(false));
+                    new LoadImageView.SimpleImageGetListener(mThumb));
             mTitle.setText(mGalleryInfo.title);
             mUploader.setText(mGalleryInfo.uploader);
         }
@@ -439,6 +477,10 @@ public class GalleryDetailActivity extends AbstractActivity
                         i, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT));
             }
+            mCommentAdapter = new CommentAdapter();
+            mCommentList.setAdapter(mCommentAdapter);
+            mCommentList.setOnItemClickListener(this);
+            mCommentList.setOnItemLongClickListener(this);
 
             // Add preview
             if (galleryDetail.previewLists[0] != null) {
@@ -459,8 +501,12 @@ public class GalleryDetailActivity extends AbstractActivity
 
     @SuppressLint("InflateParams")
     private View getCommentView(View contentView, Comment comment, boolean restrict) {
-        if (contentView == null)
+        if (contentView == null) {
             contentView = LayoutInflater.from(this).inflate(R.layout.comments_item, null);
+            if (!restrict) {
+                mWindowsAnimate.addRippleEffect(contentView, true);
+            }
+        }
         ((TextView)contentView.findViewById(R.id.user)).setText(comment.user);
         ((TextView)contentView.findViewById(R.id.time)).setText(comment.time);
         TextView commentText = (TextView)contentView.findViewById(R.id.comment);
@@ -482,7 +528,10 @@ public class GalleryDetailActivity extends AbstractActivity
             super.onBackPressed();
         } else if (mMoreDetailScroll.getVisibility() == View.VISIBLE) {
             mDetailScroll.setVisibility(View.VISIBLE);
-            mWindowsAnimate.addMoveTransitions(mMoreDetailScroll, null);
+            mWindowsAnimate.addMoveExitTransitions(mMoreDetailScroll, null);
+        } else if (mMoreComment.getVisibility() == View.VISIBLE) {
+            mDetailScroll.setVisibility(View.VISIBLE);
+            mWindowsAnimate.addMoveExitTransitions(mMoreComment, null);
         }
     }
 
@@ -578,6 +627,41 @@ public class GalleryDetailActivity extends AbstractActivity
             });
             animation.start();
             mRunningAnimateNum++;
+        } else if (v == mReply) {
+            final EditText et = new EditText(this);
+            et.setGravity(Gravity.TOP);
+            et.setBackgroundDrawable(null);
+            new DialogBuilder(this).setTitle(R.string.reply).setView(et, new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 600), true).setSimpleNegativeButton()
+                    .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((AlertButton)v).dialog.dismiss();
+                            mClient.comment(EhClient.getDetailUrl(mGalleryInfo.gid,
+                                    mGalleryInfo.token, 0, Config.getApiMode()), et.getText().toString(),
+                                    new EhClient.OnCommentListener() {
+                                        @Override
+                                        public void onSuccess(List<Comment> comments) {
+                                            ((GalleryDetail)mGalleryInfo).comments = comments;
+                                            mCommentAdapter.notifyDataSetChanged();
+                                        }
+                                        @Override
+                                        public void onFailure(String eMsg) {
+                                            new SuperToast(eMsg, SuperToast.WARNING).show();
+                                        }
+                                    });
+                        }
+                    }).create().show();
+        }
+    }
+
+    @Override
+    public void onLayoutChange(View v, int left, int top, int right,
+            int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        if (v == mMoreDetailScroll) {
+            mMoreDetailScroll.scrollTo(0, 0);
+        } else if (v == mCommentList) {
+            mCommentList.setSelection(0);
         }
     }
 
@@ -586,15 +670,16 @@ public class GalleryDetailActivity extends AbstractActivity
             int paddingRight, int paddingBottom) {
         mDetailScroll.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
         mMoreDetailScroll.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        mCommentList.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+
+        ((FrameLayout.LayoutParams)mReply.getLayoutParams()).bottomMargin = Ui.dp2pix(16) + paddingBottom;
     }
 
     @Override
     @SuppressLint("ClickableViewAccessibility")
     public boolean onTouch(View v, MotionEvent event) {
         if (v == mDetailMore) {
-            // TODO bad idea to check click
-            if (event.getAction() == MotionEvent.ACTION_UP &&
-                    System.nanoTime() / 1000000 - event.getDownTime() < 200) {
+            if (ViewUtils.isClickAction(event)) {
                 mWindowsAnimate.addCircleTransitions(mDetailMore, (int)event.getX(),
                         (int)event.getY(), mResources.getColor(R.color.background_light),
                         new WindowsAnimate.OnAnimationEndListener() {
@@ -608,8 +693,33 @@ public class GalleryDetailActivity extends AbstractActivity
                             }
                         });
             }
-        } else if (v == mDetailPreview) {
-            // TODO
+        } else if (v == mDetailComment) {
+            if (ViewUtils.isClickAction(event)) {
+                mWindowsAnimate.addCircleTransitions(mDetailComment, (int)event.getX(),
+                        (int)event.getY(), mResources.getColor(R.color.background_light),
+                        new WindowsAnimate.OnAnimationEndListener() {
+                            @Override
+                            public void onAnimationEnd() {
+                                mDetailScroll.setVisibility(View.GONE);
+                                mMoreComment.setVisibility(View.VISIBLE);
+                                // Add reply icon animation
+                                mReply.setVisibility(View.INVISIBLE);
+                                AlphaAnimation aa = new AlphaAnimation(0.0f,1.0f);
+                                aa.setDuration(Constants.ANIMATE_TIME);
+                                aa.setAnimationListener(new Animation.AnimationListener() {
+                                    @Override
+                                    public void onAnimationStart(Animation animation) {}
+                                    @Override
+                                    public void onAnimationRepeat(Animation animation) {}
+                                    @Override
+                                    public void onAnimationEnd(Animation animation) {
+                                        mWindowsAnimate.addOvershootEnterTransitions(mReply, null);
+                                    }
+                                });
+                                mMoreComment.startAnimation(aa);
+                            }
+                        });
+            }
         }
         return true;
     }
@@ -617,6 +727,53 @@ public class GalleryDetailActivity extends AbstractActivity
     @Override
     public void onUserRate(float rating) {
         mRatingText.setText(getRatingText(rating));
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position,
+            long id) {
+        // Handler url here
+        LinkifyTextView comment = ((LinkifyTextView)view.findViewById(R.id.comment));
+        String url = comment.getTouchedUrl();
+        if (url != null) {
+            comment.clearTouchedUrl();
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view,
+            int position, long id) {
+        final Comment c = (Comment)parent.getItemAtPosition(position);
+        mCommentLongClickDialog = new DialogBuilder(this)
+                .setTitle(R.string.what_to_do).setItems(R.array.comment_long_click,
+                        new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+                        mCommentLongClickDialog.dismiss();
+                        switch (position) {
+                        case 0:
+                            ClipboardManager cm = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+                            cm.setPrimaryClip(ClipData.newPlainText(null, c.comment));
+                            new SuperToast(R.string.copyed).show();
+                            break;
+
+                        case 1:
+                            finish();
+                            Intent intent = new Intent(GalleryDetailActivity.this, GalleryListActivity.class);
+                            intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
+                            intent.putExtra(GalleryListActivity.KEY_MODE, ListUrls.MODE_UPLOADER);
+                            intent.putExtra(GalleryListActivity.KEY_UPLOADER, c.user);
+                            startActivity(intent);
+                            break;
+                        }
+                    }
+                }).setSimpleNegativeButton().create();
+        mCommentLongClickDialog.show();
+        return true;
     }
 
     @Override
@@ -640,6 +797,7 @@ public class GalleryDetailActivity extends AbstractActivity
             implements EhClient.OnGetGDetailListener {
         @Override
         public void onSuccess(GalleryDetail md) {
+            mRefreshText.setRefreshing(false);
             doLayout();
         }
 
@@ -650,11 +808,35 @@ public class GalleryDetailActivity extends AbstractActivity
        }
     }
 
-    @Override
-    public void onLayoutChange(View v, int left, int top, int right,
-            int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-        if (v == mMoreDetailScroll) {
-            mMoreDetailScroll.scrollTo(0, 0);
+    private class CommentAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            if (mGalleryInfo instanceof GalleryDetail) {
+                GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
+                if (galleryDetail.comments == null)
+                    return 0;
+                else
+                    return galleryDetail.comments.size();
+            } else {
+                return 0;
+            }
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return ((GalleryDetail)mGalleryInfo).comments.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = getCommentView(convertView,
+                    ((GalleryDetail)mGalleryInfo).comments.get(position), false);
+            return view;
         }
     }
 }
