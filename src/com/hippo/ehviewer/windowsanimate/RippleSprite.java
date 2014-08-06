@@ -38,7 +38,7 @@ import com.hippo.ehviewer.util.Utils;
  *
  * Get lots of code from android.graphics.drawable.Ripple
  */
-public class Ripple {
+public class RippleSprite extends Sprite {
     private static final TimeInterpolator LINEAR_INTERPOLATOR = new LinearInterpolator();
     private static final TimeInterpolator DECEL_INTERPOLATOR = new LogInterpolator();
 
@@ -52,7 +52,7 @@ public class Ripple {
     private static final float WAVE_OUTER_SIZE_INFLUENCE_MIN = 40.0F;
     private static final long RIPPLE_ENTER_DELAY = 80L;
 
-    private final WindowsAnimate mWindowsAnimate;
+    private final WindowsAnimate mHolder;
     private final View mView;
     private final Rect mBounds;
     private final Rect mPadding;
@@ -85,8 +85,9 @@ public class Ripple {
         mPaint.setColor(0x20444444);
     }
 
-    public Ripple(WindowsAnimate windowsAnimate, View view, Rect bounds, Rect padding, boolean keepBound) {
-        mWindowsAnimate = windowsAnimate;
+    public RippleSprite(WindowsAnimate holder, View view, Rect bounds, Rect padding, boolean keepBound) {
+        super(holder);
+        mHolder = holder;
         mView = view;
         mBounds = new Rect(bounds);
         mPadding = padding;
@@ -130,7 +131,7 @@ public class Ripple {
 
     public void setOpacity(float a) {
         mOpacity = a;
-        invalidateSelf();
+        updateCanvas();
     }
 
     public float getOpacity() {
@@ -139,7 +140,7 @@ public class Ripple {
 
     public void setOuterOpacity(float a) {
         mOuterOpacity = a;
-        invalidateSelf();
+        updateCanvas();
     }
 
     public float getOuterOpacity() {
@@ -148,7 +149,7 @@ public class Ripple {
 
     public void setRadiusGravity(float r) {
         mTweenRadius = r;
-        invalidateSelf();
+        updateCanvas();
     }
 
     public float getRadiusGravity() {
@@ -157,7 +158,7 @@ public class Ripple {
 
     public void setXGravity(float x) {
         mTweenX = x;
-        invalidateSelf();
+        updateCanvas();
     }
 
     public float getXGravity() {
@@ -166,13 +167,14 @@ public class Ripple {
 
     public void setYGravity(float y) {
         mTweenY = y;
-        invalidateSelf();
+        updateCanvas();
     }
 
     public float getYGravity() {
         return mTweenY;
     }
 
+    @Override
     public void draw(Canvas c) {
         Utils.getCenterInWindows(mView, mViewPosition);
 
@@ -371,13 +373,13 @@ public class Ripple {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         ObjectAnimator outerFadeOutAnim = ObjectAnimator
-                                .ofFloat(Ripple.this, "outerOpacity",
+                                .ofFloat(RippleSprite.this, "outerOpacity",
                                         new float[] { 0.0F });
                         if (Build.VERSION.SDK_INT >= 18)
                             outerFadeOutAnim.setAutoCancel(true);
                         outerFadeOutAnim.setDuration(outerDuration);
                         outerFadeOutAnim
-                                .setInterpolator(Ripple.LINEAR_INTERPOLATOR);
+                                .setInterpolator(RippleSprite.LINEAR_INTERPOLATOR);
                         outerFadeOutAnim
                                 .addListener(mAnimationListener);
 
@@ -446,18 +448,6 @@ public class Ripple {
         if (mAnimY != null) {
             mAnimY.cancel();
         }
-    }
-
-    private void addSelf() {
-        mWindowsAnimate.addRenderingRipple(this);
-    }
-
-    private void removeSelf() {
-        mWindowsAnimate.removeRenderingRipple(this);
-    }
-
-    private void invalidateSelf() {
-        mWindowsAnimate.updateCanvas();
     }
 
     private final AnimatorListenerAdapter mAnimationListener = new AnimatorListenerAdapter() {

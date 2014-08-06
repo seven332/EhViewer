@@ -16,33 +16,31 @@
 
 package com.hippo.ehviewer.windowsanimate;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import android.content.Context;
 import android.graphics.Canvas;
-import android.view.View;
+import android.graphics.Paint;
 
-public class AnimateCanvas extends View {
+public class RoundSprite extends Sprite {
 
-    private final List<Sprite> mSpriteList = new LinkedList<Sprite>();
+    private final int startX;
+    private final int startY;
+    private float radius;
+    private final Paint mPaint;
 
-    public AnimateCanvas(Context context) {
-        super(context);
+    public RoundSprite(WindowsAnimate holder, int startX, int startY, int color) {
+        super(holder);
+        this.startX = startX;
+        this.startY = startY;
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint.setColor(color);
     }
 
-    void addSprite(Sprite sprite) {
-        mSpriteList.add(sprite);
-    }
-
-    void removeSprite(Sprite sprite) {
-        mSpriteList.remove(sprite);
+    public void setRadius(float radius) {
+        this.radius = radius;
+        updateCanvas();
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
-        for (Sprite sprite : mSpriteList) {
-            sprite.draw(canvas);
-        }
+    void draw(Canvas canvas) {
+        canvas.drawCircle(startX, startY, radius, mPaint);
     }
 }

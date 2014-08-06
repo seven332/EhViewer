@@ -16,33 +16,27 @@
 
 package com.hippo.ehviewer.windowsanimate;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import android.content.Context;
 import android.graphics.Canvas;
-import android.view.View;
 
-public class AnimateCanvas extends View {
+public abstract class Sprite {
 
-    private final List<Sprite> mSpriteList = new LinkedList<Sprite>();
+    private final WindowsAnimate mHolder;
 
-    public AnimateCanvas(Context context) {
-        super(context);
+    public Sprite(WindowsAnimate holder) {
+        mHolder = holder;
     }
 
-    void addSprite(Sprite sprite) {
-        mSpriteList.add(sprite);
+    public void addSelf() {
+        mHolder.addRenderingSprite(this);
     }
 
-    void removeSprite(Sprite sprite) {
-        mSpriteList.remove(sprite);
+    public void removeSelf() {
+        mHolder.removeRenderingSprite(this);
     }
 
-    @Override
-    public void onDraw(Canvas canvas) {
-        for (Sprite sprite : mSpriteList) {
-            sprite.draw(canvas);
-        }
+    protected void updateCanvas() {
+        mHolder.updateCanvas();
     }
+
+    abstract void draw(Canvas canvas);
 }

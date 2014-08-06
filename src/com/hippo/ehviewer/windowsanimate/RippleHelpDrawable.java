@@ -32,7 +32,7 @@ import com.hippo.ehviewer.cardview.RoundRectDrawableWithShadow;
  */
 public class RippleHelpDrawable extends Drawable {
 
-    private final Ripple mRipple;
+    private final RippleSprite mRipple;
     private final Drawable mActualDrawable;
 
     private boolean mActive = false;
@@ -42,7 +42,7 @@ public class RippleHelpDrawable extends Drawable {
         mActualDrawable = view.getBackground();
         Rect padding = mActualDrawable == null || !(mActualDrawable instanceof RoundRectDrawableWithShadow) ?
                 null : ((RoundRectDrawableWithShadow)mActualDrawable).getSuggestionPadding();
-        mRipple = new Ripple(windowsAnimate, view, getBounds(), padding, keepBound);
+        mRipple = new RippleSprite(windowsAnimate, view, getBounds(), padding, keepBound);
         view.setBackgroundDrawable(this);
     }
 

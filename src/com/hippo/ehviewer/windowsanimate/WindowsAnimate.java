@@ -19,24 +19,18 @@ package com.hippo.ehviewer.windowsanimate;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
-import android.widget.AbsoluteLayout;
 
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.drawable.OvalDrawable;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Utils;
 
-@SuppressWarnings("deprecation")
 public final class WindowsAnimate
         implements View.OnTouchListener {
     private static final TimeInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
@@ -98,16 +92,23 @@ public final class WindowsAnimate
         }
     }
 
-    void addRenderingRipple(Ripple ripple) {
+    void addRenderingSprite(Sprite sprite) {
         if (mAnimateCanvas != null)
-            mAnimateCanvas.addRenderingRipple(ripple);
+            mAnimateCanvas.addSprite(sprite);
     }
 
-    void removeRenderingRipple(Ripple ripple) {
+    void removeRenderingSprite(Sprite sprite) {
         if (mAnimateCanvas != null)
-            mAnimateCanvas.removeRenderingRipple(ripple);
+            mAnimateCanvas.removeSprite(sprite);
     }
 
+    /**
+     * Show a circle transitions at view center
+     *
+     * @param view
+     * @param color
+     * @param listener
+     */
     public void addCircleTransitions(View view, int color, OnAnimationEndListener listener) {
         if (mContentViewGroup == null)
             throw new RuntimeException("Call init(Activity) first, or call it after call free()");
@@ -117,6 +118,15 @@ public final class WindowsAnimate
         addCircleTransitions(loaction[0], loaction[1], color, listener);
     }
 
+    /**
+     * Show a circle transitions at specific position in view
+     *
+     * @param view
+     * @param x
+     * @param y
+     * @param color
+     * @param listener
+     */
     public void addCircleTransitions(View view, int x, int y, int color, OnAnimationEndListener listener) {
         if (mContentViewGroup == null)
             throw new RuntimeException("Call init(Activity) first, or call it after call free()");
@@ -126,42 +136,38 @@ public final class WindowsAnimate
         addCircleTransitions(loaction[0] + x, loaction[1] + y, color, listener);
     }
 
+    /**
+     * Show a circle transitions at specific position in window
+     *
+     * @param x
+     * @param y
+     * @param color
+     * @param listener
+     */
     public void addCircleTransitions(final int x, final int y, int color, final OnAnimationEndListener listener) {
         if (mContentViewGroup == null)
             throw new RuntimeException("Call init(Activity) first, or call it after call free()");
 
+        // Get max radius
         int maxWidth = mAnimateCanvas.getWidth();
         int maxHeight = mAnimateCanvas.getHeight();
-        final double maxLength = Math.sqrt(maxWidth * maxWidth + maxHeight * maxHeight);
+        float maxRadius = (float)Math.sqrt(maxWidth * maxWidth + maxHeight * maxHeight);
 
-        final View animateView = new View(mContext);
-        animateView.setClickable(true);
-        animateView.setBackgroundDrawable(new OvalDrawable(color));
-        final AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(0, 0, x, y);
-        mAnimateCanvas.addView(animateView, lp);
-
-        ValueAnimator animation = ValueAnimator.ofFloat(0.0f, 1.0f);
-        animation.setDuration(Constants.ANIMATE_TIME);
-        animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        final Sprite sprite = new RoundSprite(this, x, y, color);
+        ObjectAnimator oa = ObjectAnimator.ofFloat(sprite, "radius",
+                new float[] {0, maxRadius});
+        oa.setDuration(Constants.ANIMATE_TIME);
+        oa.setInterpolator(ACCELERATE_INTERPOLATOR);
+        oa.addListener(new Animator.AnimatorListener() {
             @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float scale = (Float)animation.getAnimatedValue();
-                lp.x = (int)(x - maxLength * scale);
-                lp.y = (int)(y - maxLength * scale);
-                lp.width = (int)(2 * maxLength * scale);
-                lp.height = (int)(2 * maxLength * scale);
-                animateView.requestLayout();
+            public void onAnimationStart(Animator animation) {
+                sprite.addSelf();
             }
-        });
-        animation.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {}
             @Override
             public void onAnimationRepeat(Animator animation) {}
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (mAnimateCanvas != null)
-                    mAnimateCanvas.removeView(animateView);
+                sprite.removeSelf();
                 if (listener != null)
                     listener.onAnimationEnd();
 
@@ -170,14 +176,13 @@ public final class WindowsAnimate
             @Override
             public void onAnimationCancel(Animator animation) {}
         });
-        animation.setInterpolator(ACCELERATE_INTERPOLATOR);
-        animation.start();
+        oa.start();
 
         mRunningAnimateNum++;
     }
 
     /**
-     * Move view out of screen, view will set View.GONE
+     * Move view out of window, view will set View.GONE
      * @param view
      * @param listener
      */
@@ -185,25 +190,24 @@ public final class WindowsAnimate
     public void addMoveTransitions(final View view, final OnAnimationEndListener listener) {
         int[] location = new int[2];
         Utils.getLocationInWindow(view, location);
-        final AnimateBitmap ab = new AnimateBitmap(Utils.getBitmapFromView(view), location[0], location[1]);
-        mAnimateCanvas.addAnimateBitmap(ab);
+        final BitmapSprite bs = new BitmapSprite(this, Utils.getBitmapFromView(view), location[0], location[1]);
 
-        ObjectAnimator oa = ObjectAnimator.ofInt(ab, "x",
+        ObjectAnimator oa = ObjectAnimator.ofInt(bs, "x",
                 new int[] {location[0], mAnimateCanvas.getWidth()});
         oa.setDuration(Constants.ANIMATE_TIME);
         oa.setInterpolator(ACCELERATE_INTERPOLATOR);
         oa.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
+                bs.addSelf();
                 view.setVisibility(View.GONE);
             }
             @Override
             public void onAnimationRepeat(Animator animation) {}
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (mAnimateCanvas != null)
-                    mAnimateCanvas.removeAnimateBitmap(ab);
-                ab.free();
+                bs.removeSelf();
+                bs.free();
                 if (listener != null)
                     listener.onAnimationEnd();
 
@@ -219,36 +223,5 @@ public final class WindowsAnimate
 
     public interface OnAnimationEndListener {
         public void onAnimationEnd();
-    }
-
-    class AnimateBitmap {
-        private int x;
-        private int y;
-        private Bitmap mBitmap;
-
-        public AnimateBitmap(Bitmap bmp, int startX, int startY) {
-            mBitmap = bmp;
-            x = startX;
-            y = startY;
-        }
-
-        public void setX(int x) {
-            this.x = x;
-            updateCanvas();
-        }
-
-        public void setY(int y) {
-            this.y = y;
-            updateCanvas();
-        }
-
-        public void draw(Canvas canvas) {
-            canvas.drawBitmap(mBitmap, x, y, null);
-        }
-
-        public void free() {
-            mBitmap.recycle();
-            mBitmap = null;
-        }
     }
 }
