@@ -22,6 +22,7 @@
         <item name="@android:windowBackground">@color/background_light</item>
 
         <!-- ActionBar -->
+        <item name="@android:actionBarSize">@dimen/action_bar_height</item>
         <item name="@android:actionBarStyle">@style/ActionBar</item>
         <item name="@android:actionBarTabStyle">@style/ActionBarTabStyle</item>
         <item name="@android:actionOverflowButtonStyle">@style/OverFlow</item>

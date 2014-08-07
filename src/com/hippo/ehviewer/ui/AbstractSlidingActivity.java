@@ -25,7 +25,10 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
 
-public class AbstractSlidingActivity extends SlidingActivity {
+public abstract class AbstractSlidingActivity extends SlidingActivity
+        implements OnOrientationChangedListener {
+
+    private static final int[] padding = new int[2];
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,10 @@ public class AbstractSlidingActivity extends SlidingActivity {
         super.onConfigurationChanged(newConfig);
 
         Ui.updateTranslucent(this);
+
+        // Set window padding
+        Ui.getWindowPadding(getResources(), padding);
+        onOrientationChanged(padding[0], padding[1]);
     }
 
     @Override
@@ -56,6 +63,10 @@ public class AbstractSlidingActivity extends SlidingActivity {
 
       if (Config.getAllowAnalyics())
           EasyTracker.getInstance(this).activityStart(this);
+
+      // Set window padding
+      Ui.getWindowPadding(getResources(), padding);
+      onOrientationChanged(padding[0], padding[1]);
     }
 
     @Override

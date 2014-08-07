@@ -20,6 +20,25 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
@@ -34,42 +53,21 @@ import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.DownloadItemLayout;
 import com.hippo.ehviewer.widget.LoadImageView;
 
-import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.os.Bundle;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-
 public class DownloadActivity extends AbstractActivity {
-    
+
     private static final String TAG = "DownloadActivity";
-    
-    private DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
-    
+
+    private final DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
+
     private AppContext mAppContext;
     private ImageLoader mImageLoader;
-    
+
     private List<DownloadInfo> mDownloadInfos;
     private DlAdapter mDlAdapter;
     private int longClickItemIndex;
-    
+
     private AlertDialog longClickDialog;
-    
+
     private AlertDialog setLongClickDialog() {
         return new DialogBuilder(this).setTitle(R.string.what_to_do)
                 .setItems(R.array.download_item_long_click, new OnItemClickListener() {
@@ -85,7 +83,6 @@ public class DownloadActivity extends AbstractActivity {
                         case 1: // Remove info item
                             mServiceConn.getService().cancel(Download.getKey(longClickItemIndex));
                             mDlAdapter.notifyDataSetChanged();
-                            // TODO 有人反馈 Download.get(longClickItemIndex).title 为空，看来很有必要在正则抓取时检查是否为空
                             File dir = new File(Config.getDownloadPath(), Utils.rightFileName(Download.get(longClickItemIndex).title));
                             try {
                                 Utils.deleteContents(dir);
@@ -116,14 +113,14 @@ public class DownloadActivity extends AbstractActivity {
                     }
                 }).create();
     }
-    
+
     private class DlAdapter extends BaseAdapter {
-        private LayoutInflater mInflater;
-        
+        private final LayoutInflater mInflater;
+
         public DlAdapter() {
             mInflater = LayoutInflater.from(DownloadActivity.this);
         }
-        
+
         @Override
         public int getCount() {
             return mDownloadInfos.size();
@@ -138,7 +135,7 @@ public class DownloadActivity extends AbstractActivity {
         public long getItemId(int position) {
             return 0;
         }
-        
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             DownloadInfo di= mDownloadInfos.get(position);
@@ -151,17 +148,17 @@ public class DownloadActivity extends AbstractActivity {
                     view.lastStartIndex = di.lastStartIndex;
                     view.downloadSize = di.downloadSize;
                     view.isWait = false;
-                    
+
                     LoadImageView thumb = (LoadImageView)view
                             .findViewById(R.id.thumb);
                     thumb.setImageDrawable(null);
                     thumb.setLoadInfo(di.thumb, di.gid);
                     mImageLoader.add(di.thumb, di.gid,
                             new LoadImageView.SimpleImageGetListener(thumb));
-                    
+
                     TextView title = (TextView)view.findViewById(R.id.title);
                     title.setText(di.title);
-                    
+
                     setDownloadInfo(view, di);
                 } else if (view.status != di.status || view.isWait) {
                     view.status = di.status;
@@ -169,7 +166,7 @@ public class DownloadActivity extends AbstractActivity {
                     view.lastStartIndex = di.lastStartIndex;
                     view.downloadSize = di.downloadSize;
                     view.isWait = false;
-                    
+
                     setDownloadInfo(view, di);
                 } else if (view.status == DownloadInfo.DOWNLOADING &&
                         (view.type != di.type
@@ -178,10 +175,10 @@ public class DownloadActivity extends AbstractActivity {
                     view.type = di.type;
                     view.lastStartIndex = di.lastStartIndex;
                     view.downloadSize = di.downloadSize;
-                    
+
                     ProgressBar pb = (ProgressBar)view.findViewById(R.id.progressBar);
                     TextView info = (TextView)view.findViewById(R.id.info);
-                    
+
                     if (di.type == DownloadInfo.DETAIL_URL) {
                         pb.setIndeterminate(true);
                         info.setText(R.string.downloading);
@@ -199,7 +196,7 @@ public class DownloadActivity extends AbstractActivity {
                 }
                 return view;
             }
-            
+
             DownloadItemLayout view = (DownloadItemLayout)mInflater.inflate(R.layout.download_item, null);
             view.gid = di.gid;
             view.status = di.status;
@@ -207,25 +204,25 @@ public class DownloadActivity extends AbstractActivity {
             view.lastStartIndex = di.lastStartIndex;
             view.downloadSize = di.downloadSize;
             view.isWait = false;
-            
+
             LoadImageView thumb = (LoadImageView)view
                     .findViewById(R.id.thumb);
             thumb.setImageDrawable(null);
             thumb.setLoadInfo(di.thumb, di.gid);
             mImageLoader.add(di.thumb, di.gid,
                     new LoadImageView.SimpleImageGetListener(thumb));
-            
+
             TextView title = (TextView)view.findViewById(R.id.title);
             title.setText(di.title);
-            
+
             setDownloadInfo(view, di);
-            
+
             return view;
         }
-        
+
         /**
          * For clickable button, when click change message to "Please wait", then when action over change message
-         * 
+         *
          * @param view
          * @param di
          * @param position
@@ -234,7 +231,7 @@ public class DownloadActivity extends AbstractActivity {
             final ProgressBar pb = (ProgressBar)view.findViewById(R.id.progressBar);
             final TextView info = (TextView)view.findViewById(R.id.info);
             final ImageView action = (ImageView)view.findViewById(R.id.action);
-            
+
             if (di.status == DownloadInfo.STOP) {
                 pb.setVisibility(View.GONE);
                 String meg = getString(R.string.not_started) + (di.type == DownloadInfo.DETAIL_URL ? ""
@@ -248,7 +245,7 @@ public class DownloadActivity extends AbstractActivity {
                         info.setText(R.string.wait);
                         action.setClickable(false);
                         view.isWait = true;
-                        
+
                         Intent it = new Intent(DownloadActivity.this, DownloadService.class);
                         startService(it);
                         mServiceConn.getService().add(di);
@@ -278,7 +275,7 @@ public class DownloadActivity extends AbstractActivity {
                         info.setText(R.string.wait);
                         action.setClickable(false);
                         view.isWait = true;
-                        
+
                         mServiceConn.getService().cancel(di.gid);
                     }
                 });
@@ -293,7 +290,7 @@ public class DownloadActivity extends AbstractActivity {
                         info.setText(R.string.wait);
                         action.setClickable(false);
                         view.isWait = true;
-                        
+
                         mServiceConn.getService().cancel(di.gid);
                     }
                 });
@@ -326,7 +323,7 @@ public class DownloadActivity extends AbstractActivity {
                         info.setText(R.string.wait);
                         action.setClickable(false);
                         view.isWait = true;
-                        
+
                         Intent it = new Intent(DownloadActivity.this, DownloadService.class);
                         startService(it);
                         mServiceConn.getService().add(di);
@@ -335,41 +332,41 @@ public class DownloadActivity extends AbstractActivity {
             }
         }
     }
-    
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
-    
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver);
         unbindService(mServiceConn);
     }
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.download);
-        
+
         mAppContext = (AppContext)getApplication();
         mImageLoader = ImageLoader.getInstance(this);
-        
-        Ui.translucent(this);
-        
+
+        Ui.translucent(this, Ui.HOLO_BLUE_DARK);
+
         // Download service
         Intent it = new Intent(this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
-        
+
         IntentFilter filter = new IntentFilter();
         filter.addAction(DownloadService.ACTION_UPDATE);
         registerReceiver(mReceiver, filter);
-        
+
         longClickDialog = setLongClickDialog();
-        
+
         mDownloadInfos = Download.getDownloadInfoList();
-        
+
         ListView listView = (ListView)findViewById(R.id.download);
         mDlAdapter = new DlAdapter();
         listView.setAdapter(mDlAdapter);
@@ -383,12 +380,18 @@ public class DownloadActivity extends AbstractActivity {
             }
         });
     }
-    
-    private BroadcastReceiver mReceiver = new BroadcastReceiver(){
+
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction().equals(DownloadService.ACTION_UPDATE))
                 mDlAdapter.notifyDataSetChanged();
         }
     };
+
+    @Override
+    public void onOrientationChanged(int paddingTop, int paddingBottom) {
+        // TODO Auto-generated method stub
+
+    }
 }

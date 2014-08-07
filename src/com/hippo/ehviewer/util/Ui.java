@@ -16,9 +16,12 @@
 
 package com.hippo.ehviewer.util;
 
+import java.lang.reflect.Method;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,6 +30,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
@@ -35,11 +40,10 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout.LayoutParams;
 
 import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
-import com.readystatesoftware.systembartint.SystemBarTintManager.SystemBarConfig;
 
 public class Ui {
     @SuppressWarnings("unused")
@@ -66,7 +70,27 @@ public class Ui {
 
     public static Drawable transparentDrawable;
 
-    private static boolean mInit = false;
+    private static String sNavBarOverride;
+    public static int STATUS_BAR_HEIGHT;
+    public static int ACTION_BAR_HEIGHT_P;
+    public static int ACTION_BAR_HEIGHT_L;
+    public static int NAV_BAR_HEIGHT;
+
+    static {
+        // Android allows a system property to override the presence of the navigation bar.
+        // Used by the emulator.
+        // See https://github.com/android/platform_frameworks_base/blob/master/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java#L1076
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                Class<?> c = Class.forName("android.os.SystemProperties");
+                Method m = c.getDeclaredMethod("get", String.class);
+                m.setAccessible(true);
+                sNavBarOverride = (String)m.invoke(null, "qemu.hw.mainkeys");
+            } catch (Throwable e) {
+                sNavBarOverride = null;
+            }
+        }
+    }
 
     /**
      * Init Crash
@@ -74,10 +98,6 @@ public class Ui {
      * @param context Application context
      */
     public static void init(Context context) {
-        if (mInit)
-            return;
-        mInit = true;
-
         mContext = context;
 
         opt.inPreferredConfig = Bitmap.Config.RGB_565;
@@ -105,14 +125,52 @@ public class Ui {
 
         // init drawable
         transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
+
+        // Get height info
+        STATUS_BAR_HEIGHT = getInternalDimensionSize(mResources, "status_bar_height");
+        if ("L".equals(Build.VERSION.CODENAME) || Build.VERSION.SDK_INT >= 21) {
+            ACTION_BAR_HEIGHT_P = Ui.dp2pix(56);
+            ACTION_BAR_HEIGHT_L = Ui.dp2pix(48);
+        } else {
+            ACTION_BAR_HEIGHT_P = Ui.dp2pix(48);
+            ACTION_BAR_HEIGHT_L = Ui.dp2pix(40);
+        }
+        if (hasNavBar(mContext))
+            NAV_BAR_HEIGHT = getInternalDimensionSize(mResources, "navigation_bar_height");
+        else
+            NAV_BAR_HEIGHT = 0;
     }
 
-    /**
-     * Is init
-     * @return True if init
-     */
-    public static boolean isInit() {
-        return mInit;
+    public static int getInternalDimensionSize(Resources res, String key) {
+        int result = 0;
+        int resourceId = res.getIdentifier(key, "dimen", "android");
+        if (resourceId > 0) {
+            result = res.getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
+    public static int getThemeDimensionPixelSize(android.content.res.Resources.Theme theme, int attrId) {
+        TypedValue tv = new TypedValue();
+        theme.resolveAttribute(attrId, tv, true);
+        return TypedValue.complexToDimensionPixelSize(tv.data, mContext.getResources().getDisplayMetrics());
+    }
+
+    private static boolean hasNavBar(Context context) {
+        Resources res = context.getResources();
+        int resourceId = res.getIdentifier("config_showNavigationBar", "bool", "android");
+        if (resourceId != 0) {
+            boolean hasNav = res.getBoolean(resourceId);
+            // check override flag (see static block)
+            if ("1".equals(sNavBarOverride)) {
+                hasNav = false;
+            } else if ("0".equals(sNavBarOverride)) {
+                hasNav = true;
+            }
+            return hasNav;
+        } else { // fallback
+            return !ViewConfiguration.get(context).hasPermanentMenuKey();
+        }
     }
 
     public static String getCategoryText(int category) {
@@ -267,6 +325,11 @@ public class Ui {
         }
     }
 
+    /**
+     * Update translucent state for API >= 19, KK or more powerful
+     *
+     * @param activity
+     */
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static void updateTranslucent(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -281,30 +344,45 @@ public class Ui {
         }
     }
 
+    /**
+     * Set config Orientation
+     *
+     * @param activity
+     */
     public static void adjustOrientation(Activity activity) {
         int screenOri = Config.getScreenOriMode();
         if (screenOri != activity.getRequestedOrientation())
             activity.setRequestedOrientation(screenOri);
     }
 
-    public static SystemBarConfig translucent(
-            Activity activity) {
-        return translucentColor(activity,
-                mResources.getColor(android.R.color.holo_blue_dark));
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public static void translucent(
+            Activity activity, int color) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            ViewGroup decorViewGroup = (ViewGroup)activity.getWindow().getDecorView();
+            View statusBarBgView = new View(activity);
+            statusBarBgView.setBackgroundColor(color);
+            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, STATUS_BAR_HEIGHT);
+            lp.gravity = Gravity.TOP;
+            decorViewGroup.addView(statusBarBgView, lp);
+        }
     }
 
-    public static SystemBarConfig translucentColor(
-            Activity activity, int color) {
-        return translucent(activity, color);
-    }
-
-    public static SystemBarConfig translucent(
-            Activity activity, int color) {
-        SystemBarTintManager tintManager = new SystemBarTintManager(activity);
-        tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintColor(color);
-        tintManager.setNavigationBarTintEnabled(true);
-        tintManager.setNavigationBarAlpha(0.0f);
-        return tintManager.getConfig();
+    /**
+     * Get paddingTop and paddingBottom
+     *
+     * @param resources
+     * @param padding
+     */
+    public static void getWindowPadding(Resources resources, int[] padding) {
+        if (resources.getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
+            padding[0] = ACTION_BAR_HEIGHT_P;
+            padding[1] = NAV_BAR_HEIGHT;
+        } else {
+            padding[0] = ACTION_BAR_HEIGHT_L;
+            padding[1] = 0;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            padding[0] += STATUS_BAR_HEIGHT;
     }
 }

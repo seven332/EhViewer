@@ -25,7 +25,10 @@ import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 
-public abstract class AbstractActivity extends Activity {
+public abstract class AbstractActivity extends Activity
+        implements OnOrientationChangedListener {
+
+    private static final int[] padding = new int[2];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,10 @@ public abstract class AbstractActivity extends Activity {
         super.onConfigurationChanged(newConfig);
 
         Ui.updateTranslucent(this);
+
+        // Set window padding
+        Ui.getWindowPadding(getResources(), padding);
+        onOrientationChanged(padding[0], padding[1]);
     }
 
     @Override
@@ -56,6 +63,10 @@ public abstract class AbstractActivity extends Activity {
 
       if (Config.getAllowAnalyics())
           EasyTracker.getInstance(this).activityStart(this);
+
+      // Set window padding
+      Ui.getWindowPadding(getResources(), padding);
+      onOrientationChanged(padding[0], padding[1]);
     }
 
     @Override

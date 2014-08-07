@@ -21,6 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -65,7 +66,6 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.ActionableToastBar;
 import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
 import com.hippo.ehviewer.widget.DialogBuilder;
-import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.ProgressDialogBulider;
 import com.hippo.ehviewer.widget.PullViewGroup;
@@ -230,8 +230,9 @@ public class FavouriteActivity extends AbstractGalleryActivity
             }
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                LayoutInflater li= LayoutInflater.from(FavouriteActivity.this);
-                TextView tv = (TextView)li.inflate(R.layout.menu_item, null);
+                if (convertView == null)
+                    convertView = LayoutInflater.from(FavouriteActivity.this).inflate(R.layout.menu_item, parent, false);
+                TextView tv = (TextView)convertView;
                 tv.setText(Favorite.FAVORITE_TITLES[position]);
                 if (position == 0) {
                     Drawable dr = mResources.getDrawable(R.drawable.ic_action_panda);
@@ -244,7 +245,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                     tv.setCompoundDrawables(d, null, null, null);
                     tv.setCompoundDrawablePadding(Ui.dp2pix(8));
                 }
-                return tv;
+                return convertView;
             }
         });
         mMenuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -262,26 +263,6 @@ public class FavouriteActivity extends AbstractGalleryActivity
                     initLocalFavorite();
                 else
                     initFavorite();
-            }
-        });
-
-        FswView alignment = (FswView)findViewById(R.id.alignment);
-        alignment.addOnFitSystemWindowsListener(new FswView.OnFitSystemWindowsListener() {
-            @Override
-            public void onfitSystemWindows(int paddingLeft, int paddingTop,
-                    int paddingRight, int paddingBottom) {
-                int magicSpacing = Ui.dp2pix(20);
-                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                        RelativeLayout.LayoutParams.MATCH_PARENT, Ui.dp2pix(60));
-                lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                // Make sure actionable is above navigation bar
-                lp.bottomMargin = paddingBottom + magicSpacing;
-                lp.leftMargin = magicSpacing;
-                lp.rightMargin = magicSpacing;
-                mActionableToastBar.setLayoutParams(lp);
-
-                mMenuList.setPadding(mMenuList.getPaddingLeft(), paddingTop,
-                        mMenuList.getPaddingRight(), paddingBottom);
             }
         });
 
@@ -303,6 +284,25 @@ public class FavouriteActivity extends AbstractGalleryActivity
         // TODO Should show default favourite
         mMenuIndex = 0;
         initLocalFavorite();
+    }
+
+    @Override
+    public void onOrientationChanged(int paddingTop, int paddingBottom) {
+        int magicSpacing = Ui.dp2pix(20);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT, Ui.dp2pix(60));
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        // Make sure actionable is above navigation bar
+        lp.bottomMargin = paddingBottom + magicSpacing;
+        lp.leftMargin = magicSpacing;
+        lp.rightMargin = magicSpacing;
+        mActionableToastBar.setLayoutParams(lp);
+
+        mMenuList.setPadding(mMenuList.getPaddingLeft(), paddingTop,
+                mMenuList.getPaddingRight(), paddingBottom);
+
+        mList.setPadding(mList.getPaddingLeft(), paddingTop,
+                mList.getPaddingRight(), paddingBottom);
     }
 
     @Override
@@ -350,9 +350,10 @@ public class FavouriteActivity extends AbstractGalleryActivity
     }
 
     @Override
+    @SuppressLint("ClickableViewAccessibility")
     public boolean onTouch(View v, MotionEvent event) {
         hideToastBar(event);
-        return false;
+        return super.onTouchEvent(event);
     }
 
     // ListView.MultiChoiceModeListener

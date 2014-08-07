@@ -23,10 +23,10 @@ import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -68,59 +68,30 @@ import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FileExplorerView;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 import com.hippo.ehviewer.widget.SuperToast;
-import com.readystatesoftware.systembartint.SystemBarTintManager.SystemBarConfig;
 
 public class SettingsActivity extends AbstractPreferenceActivity {
     @SuppressWarnings("unused")
     private static String TAG = SettingsActivity.class.getSimpleName();
 
-    public static final String KEY_FRAGMENT = "FRAGMENT";
-    public static final int DEFAULT = -0x1;
-    public static final int DISPLAY = 0x0;
-    public static final int DATA = 0x1;
-    public static final int ABOUT = 0x2;
-
-    private SystemBarConfig mSystemBarConfig;
     private List<TranslucentPreferenceFragment> mFragments;
     private ListView mListView;
-    private int originPaddingRight;
-    private int originPaddingBottom;
 
-    public void adjustPadding() {
-        if (mListView != null && mSystemBarConfig != null) {
-
-            switch (Ui.getOrientation(this)) {
-            case Ui.ORIENTATION_PORTRAIT:
-
-                mListView.setPadding(mListView.getPaddingLeft(),
-                        mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
-                        originPaddingRight,
-                        mSystemBarConfig.getNavigationBarHeight());
-                break;
-            case Ui.ORIENTATION_LANDSCAPE:
-
-                mListView.setPadding(mListView.getPaddingLeft(),
-                        mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
-                        originPaddingRight,
-                        originPaddingBottom);
-                break;
-            }
-        }
+    public void adjustPadding(int paddingTop, int paddingBottom) {
+        mListView.setPadding(mListView.getPaddingLeft(), paddingTop,
+                mListView.getPaddingRight(), paddingBottom);
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
+    public void onOrientationChanged(int paddingTop, int paddingBottom) {
         for (TranslucentPreferenceFragment f : mFragments) {
             if (f.isVisible()) {
-                f.adjustPadding();
+                f.adjustPadding(paddingTop, paddingBottom);
                 return;
             }
         }
 
         // If no fragment is visible, just headers is shown
-        adjustPadding();
+        adjustPadding(paddingTop, paddingBottom);
     }
 
     @Override
@@ -133,7 +104,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         Drawable drawable = new ColorDrawable(color);
         final ActionBar actionBar = getActionBar();
         actionBar.setBackgroundDrawable(drawable);
-        mSystemBarConfig = Ui.translucent(this, color);
+        Ui.translucent(this, color);
 
         actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -141,10 +112,6 @@ public class SettingsActivity extends AbstractPreferenceActivity {
 
         mListView = getListView();
         mListView.setClipToPadding(false);
-        originPaddingRight = mListView.getPaddingRight();
-        originPaddingBottom = mListView.getPaddingBottom();
-
-        adjustPadding();
     }
 
     @Override
@@ -156,10 +123,6 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public SystemBarConfig getSystemBarConfig() {
-        return mSystemBarConfig;
     }
 
     public List<TranslucentPreferenceFragment> getFragments() {
@@ -196,10 +159,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
     public static abstract class TranslucentPreferenceFragment extends PreferenceFragment {
 
         protected SettingsActivity mActivity;
-        private SystemBarConfig mSystemBarConfig;
         private ListView mListView;
-        private int originPaddingRight;
-        private int originPaddingBottom;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -230,31 +190,16 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                     && child instanceof ListView) {
                 mListView = (ListView)child;
                 mListView.setClipToPadding(false);
-                originPaddingRight = mListView.getPaddingRight();
-                originPaddingBottom = mListView.getPaddingBottom();
-                mSystemBarConfig = activity.getSystemBarConfig();
-                adjustPadding();
+
+                int[] padding = new int[2];
+                Ui.getWindowPadding(mActivity.getResources(), padding);
+                adjustPadding(padding[0], padding[1]);
             }
         }
 
-        public void adjustPadding() {
-            if (mListView != null && mSystemBarConfig != null) {
-                switch (Ui.getOrientation(getActivity())) {
-                case Ui.ORIENTATION_PORTRAIT:
-                    mListView.setPadding(mListView.getPaddingLeft(),
-                            mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
-                            originPaddingRight,
-                            mSystemBarConfig.getNavigationBarHeight());
-                    break;
-
-                case Ui.ORIENTATION_LANDSCAPE:
-                    mListView.setPadding(mListView.getPaddingLeft(),
-                            mSystemBarConfig.getStatusBarHeight() + mSystemBarConfig.getActionBarHeight(),
-                            originPaddingRight,
-                            originPaddingBottom);
-                    break;
-                }
-            }
+        public void adjustPadding(int paddingTop, int paddingBottom) {
+            mListView.setPadding(mListView.getPaddingLeft(), paddingTop,
+                    mListView.getPaddingRight(), paddingBottom);
         }
     }
 
@@ -380,6 +325,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             return true;
         }
 
+        @SuppressLint("InflateParams")
         @Override
         public boolean onPreferenceClick(Preference preference) {
             final String key = preference.getKey();
@@ -593,6 +539,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             return true;
         }
 
+        @SuppressLint("InflateParams")
         @Override
         public boolean onPreferenceClick(Preference preference) {
             final String key = preference.getKey();

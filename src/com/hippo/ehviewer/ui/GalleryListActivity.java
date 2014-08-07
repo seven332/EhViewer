@@ -87,7 +87,6 @@ import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.DialogBuilder;
-import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.PrefixEditText;
 import com.hippo.ehviewer.widget.RatingView;
@@ -1144,20 +1143,6 @@ public class GalleryListActivity extends AbstractGalleryActivity
             }
         });
 
-        FswView alignment = (FswView)findViewById(R.id.alignment);
-        alignment.addOnFitSystemWindowsListener(new FswView.OnFitSystemWindowsListener() {
-            @Override
-            public void onfitSystemWindows(int paddingLeft, int paddingTop,
-                    int paddingRight, int paddingBottom) {
-                mUserPanel.setPadding(mUserPanel.getPaddingLeft(), paddingTop,
-                        mUserPanel.getPaddingRight(), mUserPanel.getPaddingBottom());
-                itemListMenu.setPadding(itemListMenu.getPaddingLeft(), itemListMenu.getPaddingTop(),
-                        itemListMenu.getPaddingRight(), paddingBottom);
-                tagListMenu.setPadding(tagListMenu.getPaddingLeft(), paddingTop,
-                        tagListMenu.getPaddingRight(), paddingBottom);
-            }
-        });
-
         // Set random color
         int color = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
         color = color & 0x00ffffff | 0xdd000000;
@@ -1216,6 +1201,18 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 mStaggeredGridView.setColumnCountLandscape(Config.getListThumbColumnsLandscape());
             }
         }
+    }
+
+    @Override
+    public void onOrientationChanged(int paddingTop, int paddingBottom) {
+        mUserPanel.setPadding(mUserPanel.getPaddingLeft(), paddingTop,
+                mUserPanel.getPaddingRight(), mUserPanel.getPaddingBottom());
+        itemListMenu.setPadding(itemListMenu.getPaddingLeft(), itemListMenu.getPaddingTop(),
+                itemListMenu.getPaddingRight(), paddingBottom);
+        tagListMenu.setPadding(tagListMenu.getPaddingLeft(), paddingTop,
+                tagListMenu.getPaddingRight(), paddingBottom);
+        mStaggeredGridView.setPadding(mStaggeredGridView.getPaddingLeft(), paddingTop,
+                mStaggeredGridView.getPaddingRight(), paddingBottom);
     }
 
     @Override

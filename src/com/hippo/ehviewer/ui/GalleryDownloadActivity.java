@@ -115,4 +115,9 @@ public class GalleryDownloadActivity extends AbstractActivity {
         super.onDestroy();
         mDownloadImageSet.unregisterReceiver();
     }
+
+    @Override
+    public void onOrientationChanged(int paddingTop, int paddingBottom) {
+        // Empty
+    }
 }

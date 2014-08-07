@@ -354,4 +354,9 @@ public class GalleryActivity extends AbstractActivity {
         stopFlag = true;
         super.onDestroy();
     }
+
+    @Override
+    public void onOrientationChanged(int paddingTop, int paddingBottom) {
+        // Empty
+    }
 }

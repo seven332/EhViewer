@@ -34,7 +34,6 @@ import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.ListParser;
-import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RefreshTextView;
 import com.hippo.ehviewer.widget.SuperToast;
@@ -78,7 +77,6 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
 
     private int mTargetPage;
     private String mTargetUrl;
-    private int mPaddingTop;
     private boolean isFootRefresh = false;
 
     public void setNoneText(CharSequence text) {
@@ -262,18 +260,6 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         mContentView = mPullViewGroup.getContentView();
         mRefreshTextView = (RefreshTextView)findViewById(R.id.refresh_text);
 
-        FswView alignment = (FswView)findViewById(R.id.alignment);
-        alignment.addOnFitSystemWindowsListener(
-                new FswView.OnFitSystemWindowsListener() {
-            @Override
-            public void onfitSystemWindows(int paddingLeft, int paddingTop,
-                    int paddingRight, int paddingBottom) {
-                mPaddingTop = paddingTop;
-                mContentView.setPadding(mContentView.getPaddingLeft(), paddingTop,
-                        mContentView.getPaddingRight(), paddingBottom);
-            }
-        });
-
         mPullViewGroup.setColorScheme(R.color.refresh_color_1,
                 R.color.refresh_color_2,
                 R.color.refresh_color_3,
@@ -376,7 +362,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
 
     private void setListPosition(int position) {
         if (position == 0)
-            mPullViewGroup.setSelectionFromTop(position, mPaddingTop);
+            mPullViewGroup.setSelectionFromTop(position, Integer.MAX_VALUE);
         else
             mPullViewGroup.setSelectionFromTop(position, 0);
     }

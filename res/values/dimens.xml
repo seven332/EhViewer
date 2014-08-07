@@ -15,45 +15,43 @@
  -->
 <resources>
 
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    
+    <dimen name="action_bar_height">48dip</dimen>
+
     <dimen name="dialog_title_height">64dip</dimen>
-    
+
     <dimen name="shadow_width">12dp</dimen>
     <dimen name="menu_width">200dp</dimen>
-    
+
     <dimen name="title_large">20.0sp</dimen>
     <dimen name="title_medium">18.0sp</dimen>
-    
+
     <dimen name="tab_text">16.0sp</dimen>
-    
+
     <dimen name="list_thumb_width">80dp</dimen>
     <dimen name="list_thumb_height">120dp</dimen>
-    
+
     <dimen name="detail_thumb_width">100.0dp</dimen>
     <dimen name="detail_thumb_height">150.0dp</dimen>
-    
+
     <dimen name="detail_title_size">18.0sp</dimen>
     <dimen name="detail_subtitle_size">14.0sp</dimen>
-    
+
     <!-- Button -->
     <dimen name="button_size">18.0sp</dimen>
     <dimen name="button_small_size">14.0sp</dimen>
     <dimen name="button_small_padding_x">12.0dp</dimen>
     <dimen name="button_small_padding_y">2.0dp</dimen>
-    
+
     <dimen name="button_tag_padding_x">8.0dp</dimen>
     <dimen name="button_tag_padding_y">2.0dp</dimen>
-    
+
     <!-- Rating bar -->
     <dimen name="rating_bar_small_height">14.0dip</dimen>
     <dimen name="rating_bar_large_height">57.0dip</dimen>
-    
+
     <!-- Color scheme dialog -->
     <dimen name="color_scheme_dialog_row_padding">8.0dip</dimen>
 
-    
     <dimen name="text_super_large">20.0sp</dimen>
     <dimen name="text_large">18.0sp</dimen>
     <dimen name="text_little_large">16.0sp</dimen>
@@ -61,4 +59,5 @@
     <dimen name="text_little_small">12.0sp</dimen>
     <dimen name="text_small">10.0sp</dimen>
     <dimen name="text_super_small">8.0sp</dimen>
+
 </resources>

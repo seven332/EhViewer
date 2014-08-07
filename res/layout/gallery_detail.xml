@@ -19,11 +19,6 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <com.hippo.ehviewer.widget.FswView
-        android:id="@+id/alignment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <ScrollView
         android:id="@+id/detail_scroll"
         android:layout_width="fill_parent"

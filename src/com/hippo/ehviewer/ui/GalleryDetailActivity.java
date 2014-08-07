@@ -74,7 +74,6 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
-import com.hippo.ehviewer.widget.FswView;
 import com.hippo.ehviewer.widget.LinkifyTextView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.ProgressiveRatingBar;
@@ -85,7 +84,7 @@ import com.hippo.ehviewer.widget.SuperToast;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 
 public class GalleryDetailActivity extends AbstractActivity
-        implements View.OnClickListener, FswView.OnFitSystemWindowsListener,
+        implements View.OnClickListener,
         View.OnTouchListener , ViewSwitcher.ViewFactory,
         ProgressiveRatingBar.OnUserRateListener, PreviewList.PreviewHolder,
         View.OnLayoutChangeListener, AdapterView.OnItemClickListener,
@@ -266,9 +265,6 @@ public class GalleryDetailActivity extends AbstractActivity
         mCommentList = (ListView)findViewById(R.id.comment_list);
         mReply = (FloatingActionButton)findViewById(R.id.reply);
 
-        // Get temp view
-        FswView alignment = (FswView)findViewById(R.id.alignment);
-
         // Set Drawable
         Rect rect = new Rect(0, 0, Ui.dp2pix(48), Ui.dp2pix(48));
         mCategoryDrawable = new OvalDrawable(0);
@@ -329,7 +325,6 @@ public class GalleryDetailActivity extends AbstractActivity
         mMoreDetailScroll.addOnLayoutChangeListener(this);
         mCommentList.addOnLayoutChangeListener(this);
         mReply.setOnClickListener(this);
-        alignment.addOnFitSystemWindowsListener(this);
 
         doPreLayout();
     }
@@ -524,14 +519,14 @@ public class GalleryDetailActivity extends AbstractActivity
         if (mRunningAnimateNum != 0 || mWindowsAnimate.isRunningAnimate())
             return;
 
-        if (mDetailScroll.getVisibility() == View.VISIBLE) {
-            super.onBackPressed();
-        } else if (mMoreDetailScroll.getVisibility() == View.VISIBLE) {
+        if (mMoreDetailScroll.getVisibility() == View.VISIBLE) {
             mDetailScroll.setVisibility(View.VISIBLE);
             mWindowsAnimate.addMoveExitTransitions(mMoreDetailScroll, null);
         } else if (mMoreComment.getVisibility() == View.VISIBLE) {
             mDetailScroll.setVisibility(View.VISIBLE);
             mWindowsAnimate.addMoveExitTransitions(mMoreComment, null);
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -666,12 +661,13 @@ public class GalleryDetailActivity extends AbstractActivity
     }
 
     @Override
-    public void onfitSystemWindows(int paddingLeft, int paddingTop,
-            int paddingRight, int paddingBottom) {
-        mDetailScroll.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-        mMoreDetailScroll.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-        mCommentList.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-
+    public void onOrientationChanged(int paddingTop, int paddingBottom) {
+        mDetailScroll.setPadding(mDetailScroll.getPaddingLeft(), paddingTop,
+                mDetailScroll.getPaddingRight(), paddingBottom);
+        mMoreDetailScroll.setPadding(mMoreDetailScroll.getPaddingLeft(), paddingTop,
+                mMoreDetailScroll.getPaddingRight(), paddingBottom);
+        mCommentList.setPadding(mCommentList.getPaddingLeft(), paddingTop,
+                mCommentList.getPaddingRight(), paddingBottom);
         ((FrameLayout.LayoutParams)mReply.getLayoutParams()).bottomMargin = Ui.dp2pix(16) + paddingBottom;
     }
 
