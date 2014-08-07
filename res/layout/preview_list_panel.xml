@@ -25,19 +25,20 @@
         android:layout_weight="1"
         android:orientation="vertical" >
 
-        <View
+        <com.hippo.ehviewer.widget.SuperButton
             android:id="@+id/back"
-            android:layout_width="24.0dp"
-            android:layout_height="48.0dp"
-            android:layout_gravity="center" />
+            style="@style/SuperButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="&#9664;" />
     </LinearLayout>
 
     <com.hippo.ehviewer.widget.SuperButton
         android:id="@+id/preview_num"
+        style="@style/SuperButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:padding="12dp"
         android:textColor="@android:color/white"
         android:textSize="14sp" />
 
@@ -47,11 +48,13 @@
         android:layout_weight="1"
         android:orientation="vertical" >
 
-        <View
+        <com.hippo.ehviewer.widget.SuperButton
             android:id="@+id/front"
-            android:layout_width="24.0dp"
-            android:layout_height="48.0dp"
-            android:layout_gravity="center" />
+            style="@style/SuperButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="&#9654;" />
     </LinearLayout>
 
 </LinearLayout>

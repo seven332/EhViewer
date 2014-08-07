@@ -82,4 +82,12 @@
         <attr name="withShadow" format="boolean" />
     </declare-styleable>
 
+    <declare-styleable name="MaterialProgress">
+        <attr name="mpWidth" format="dimension" />
+        <attr name="mpHeight" format="dimension" />
+        <attr name="mpColor" format="color" />
+        <attr name="mpThickness" format="dimension" />
+        <attr name="mpInnerRadius" format="dimension" />
+    </declare-styleable>
+    
 </resources>

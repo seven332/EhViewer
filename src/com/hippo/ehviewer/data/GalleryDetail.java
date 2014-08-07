@@ -21,7 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class GalleryDetail extends GalleryInfo {
+public class GalleryDetail extends GalleryInfo
+        implements PreviewImpl {
 
     public String title_jpn;
     public int pages;
@@ -52,5 +53,20 @@ public class GalleryDetail extends GalleryInfo {
         uploader = galleryInfo.uploader;
         rating = galleryInfo.rating;
         simpleLanguage = galleryInfo.simpleLanguage;
+    }
+
+    @Override
+    public int getPreviewSum() {
+        return previewSum;
+    }
+
+    @Override
+    public int getPreviewPerPage() {
+        return previewPerPage;
+    }
+
+    @Override
+    public PreviewList[] getPreview() {
+        return previewLists;
     }
 }

@@ -68,10 +68,9 @@ public class LargePreviewList extends PreviewList {
         int startIndex = mTargetPage * mGi.previewPerPage;
         int index = startIndex;
         for (Item item : mItemList) {
+
             View view = inflater.inflate(R.layout.preview_item, null);
-
             ((TextView)view.findViewById(R.id.text)).setText(String.valueOf(index + 1));
-
             final int finalIndex = index;
             final String url = item.mPageUrl;
             view.setOnClickListener(new View.OnClickListener() {

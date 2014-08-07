@@ -79,6 +79,16 @@
         <item name="@android:paddingRight">18dp</item>
     </style>
 
+    <style name="MaterialProgress">
+        <item name="@android:layout_width">48dip</item>
+        <item name="@android:layout_height">48dip</item>
+        <item name="mpWidth">48dip</item>
+        <item name="mpHeight">48dip</item>
+        <item name="mpColor">@color/material_progress_blue</item>
+        <item name="mpThickness">4dp</item>
+        <item name="mpInnerRadius">19dp</item>
+    </style>
+
     <style name="ProgressBar" parent="@android:Widget.Holo.ProgressBar">
     </style>
 
@@ -149,13 +159,15 @@
         <item name="android:background">@android:color/black</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:singleLine">true</item>
-        <item name="android:paddingTop">2.0dp</item>
-        <item name="android:paddingBottom">2.0dp</item>
-        <item name="android:paddingLeft">8.0dp</item>
-        <item name="android:paddingRight">8.0dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
     </style>
 
     <style name="SearchCategory">
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
         <item name="android:gravity">center</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">marquee</item>

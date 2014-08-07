@@ -22,6 +22,7 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -36,6 +37,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,6 +64,7 @@ import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.LofiGalleryDetail;
 import com.hippo.ehviewer.data.LofiGalleryInfo;
+import com.hippo.ehviewer.data.PreviewImpl;
 import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.drawable.OvalDrawable;
 import com.hippo.ehviewer.ehclient.DetailUrlParser;
@@ -76,6 +79,7 @@ import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.LinkifyTextView;
 import com.hippo.ehviewer.widget.LoadImageView;
+import com.hippo.ehviewer.widget.MaterialProgress;
 import com.hippo.ehviewer.widget.ProgressiveRatingBar;
 import com.hippo.ehviewer.widget.RefreshTextView;
 import com.hippo.ehviewer.widget.SimpleGridLayout;
@@ -119,7 +123,11 @@ public class GalleryDetailActivity extends AbstractActivity
     private TextView mRate;
     private TextView mCommentMoreText;
     private SimpleGridLayout mPreview;
-    private SuperButton mPerviewPage;
+    private SuperButton mPreviewPage;
+    private SuperButton mPreviewBack;
+    private SuperButton mPreviewFront;
+    private MaterialProgress mPreviewWait;
+    private SuperButton mPreviewRefresh;
 
     private ScrollView mDetailScroll;
     private ScrollView mMoreDetailScroll;
@@ -146,10 +154,55 @@ public class GalleryDetailActivity extends AbstractActivity
     private Drawable mCheckmarkDrawable;
 
     private Dialog mCommentLongClickDialog;
+    private Dialog mGoToDialog;
 
     private CommentAdapter mCommentAdapter;
 
     private int mCurPreviewPage;
+    private boolean mShowPreview = false;
+
+    private AlertDialog createGoToDialog() {
+        return new DialogBuilder(this).setTitle(R.string.jump)
+                .setAdapter(new BaseAdapter() {
+                    @Override
+                    public int getCount() {
+                        return ((PreviewImpl)mGalleryInfo).getPreviewSum();
+                    }
+                    @Override
+                    public Object getItem(int position) {
+                        return position;
+                    }
+                    @Override
+                    public long getItemId(int position) {
+                        return position;
+                    }
+                    @SuppressLint({ "ViewHolder", "InflateParams" })
+                    @Override
+                    public View getView(int position, View convertView,
+                            ViewGroup parent) {
+                        View view = LayoutInflater.from(GalleryDetailActivity.this)
+                                .inflate(R.layout.list_item_text, null);
+                        TextView tv = (TextView)view.findViewById(android.R.id.text1);
+                        tv.setText(String.format(getString(R.string.some_page), position + 1));
+                        return tv;
+                    }
+                }, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View arg1,
+                            int position, long arg3) {
+                        mGoToDialog.dismiss();
+                        if (position != mCurPreviewPage) {
+                            mCurPreviewPage = position;
+                            refreshPreview();
+                        }
+                    }
+                }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View paramView) {
+                        mGoToDialog.dismiss();
+                    }
+                }).create();
+    }
 
     private GalleryInfo handleIntent(Intent intent) {
         GalleryInfo gi = null;
@@ -227,6 +280,9 @@ public class GalleryDetailActivity extends AbstractActivity
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        // Create dialog
+        mGoToDialog = createGoToDialog();
+
         // Get view
         mDetailScroll = (ScrollView)findViewById(R.id.detail_scroll);
         mMoreDetailScroll = (ScrollView)findViewById(R.id.more_detail_scroll);
@@ -260,7 +316,11 @@ public class GalleryDetailActivity extends AbstractActivity
         mRate = (TextView)findViewById(R.id.rate);
         mCommentMoreText = (TextView)findViewById(R.id.comment_more_text);
         mPreview = (SimpleGridLayout)findViewById(R.id.preview);
-        mPerviewPage = (SuperButton)findViewById(R.id.preview_num);
+        mPreviewPage = (SuperButton)findViewById(R.id.preview_num);
+        mPreviewBack = (SuperButton)findViewById(R.id.back);
+        mPreviewFront = (SuperButton)findViewById(R.id.front);
+        mPreviewWait = (MaterialProgress)findViewById(R.id.preview_wait);
+        mPreviewRefresh = (SuperButton)findViewById(R.id.preview_refresh);
 
         mCommentList = (ListView)findViewById(R.id.comment_list);
         mReply = (FloatingActionButton)findViewById(R.id.reply);
@@ -299,17 +359,21 @@ public class GalleryDetailActivity extends AbstractActivity
         mReadButton.setRoundBackground(true, color, 0);
         ((TextView)findViewById(R.id.detail_more_text)).setTextColor(color);
         mCommentMoreText.setTextColor(color);
-        mPerviewPage.setRoundBackground(true, false, mResources.getColor(R.color.background_light), color);
-        mPerviewPage.setTextColor(color);
+        mPreviewPage.setRoundBackground(true, false, mResources.getColor(R.color.background_light), color);
+        mPreviewPage.setTextColor(color);
+        mPreviewBack.setRoundBackground(true, false, mResources.getColor(R.color.background_light), color);
+        mPreviewBack.setTextColor(color);
+        mPreviewFront.setRoundBackground(true, false, mResources.getColor(R.color.background_light), color);
+        mPreviewFront.setTextColor(color);
+        mPreviewWait.setColor(color);
         mReply.setColor(color);
 
         // Set ripple
         mWindowsAnimate.addRippleEffect(mDownloadButton, true);
-        //mWindowsAnimate.addRippleEffect(mCategory, false);
-        //mWindowsAnimate.addRippleEffect(mMoreOfUploader, false);
-        //mWindowsAnimate.addRippleEffect(mSimilar, false);
         mWindowsAnimate.addRippleEffect(mFavorite, false);
         mWindowsAnimate.addRippleEffect(mRate, false);
+        mWindowsAnimate.addRippleEffect(mPreviewBack, true);
+        mWindowsAnimate.addRippleEffect(mPreviewFront, true);
 
         // Set listener
         mDownloadButton.setOnClickListener(this);
@@ -323,10 +387,26 @@ public class GalleryDetailActivity extends AbstractActivity
         mDetailMore.setOnTouchListener(this);
         mDetailComment.setOnTouchListener(this);
         mMoreDetailScroll.addOnLayoutChangeListener(this);
+        mDetailScroll.addOnLayoutChangeListener(this);
         mCommentList.addOnLayoutChangeListener(this);
+        mPreviewPage.setOnClickListener(this);
+        mPreviewBack.setOnClickListener(this);
+        mPreviewFront.setOnClickListener(this);
+        mPreviewRefresh.setOnClickListener(this);
         mReply.setOnClickListener(this);
 
         doPreLayout();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void doPreLayout() {
@@ -483,14 +563,44 @@ public class GalleryDetailActivity extends AbstractActivity
                 mDetailPreview.setVisibility(View.VISIBLE);
 
                 mCurPreviewPage = 0;
-                mPerviewPage.setText(mCurPreviewPage + "/" + galleryDetail.previewSum);
-                galleryDetail.previewLists[0].setData(this, this, galleryDetail, 0);
+                mPreviewPage.setText((mCurPreviewPage + 1) + "/" + galleryDetail.previewSum);
+                galleryDetail.previewLists[0].setData(this, this,
+                        galleryDetail, mCurPreviewPage);
+
+                System.out.println("previewLists");
                 galleryDetail.previewLists[0].addPreview(mPreview);
             }
-        } else if (mGalleryInfo instanceof GalleryDetail) {
+        } else if (mGalleryInfo instanceof LofiGalleryDetail) {
 
         } else if (mGalleryInfo instanceof ApiGalleryDetail) {
 
+        }
+    }
+
+    private void refreshPreview() {
+        if (!(mGalleryInfo instanceof PreviewImpl))
+            return;
+
+        PreviewImpl previewImpl = (PreviewImpl)mGalleryInfo;
+        mPreview.removeAllViews();
+        mPreviewPage.setText((mCurPreviewPage + 1) + "/" + previewImpl.getPreviewSum());
+
+        PreviewList[] previewLists = previewImpl.getPreview();
+        PreviewList pageList = previewLists[mCurPreviewPage];
+        if (pageList == null) {
+            mPreviewWait.setVisibility(View.VISIBLE);
+            mPreviewRefresh.setVisibility(View.GONE);
+
+            String url = mClient.getDetailUrl(
+                    mGalleryInfo.gid, mGalleryInfo.token, mCurPreviewPage);
+            mClient.getPreviewList(url, mCurPreviewPage,
+                    new PListGetListener());
+        } else {
+            mPreviewWait.setVisibility(View.GONE);
+            mPreviewRefresh.setVisibility(View.GONE);
+            previewLists[mCurPreviewPage].addPreview(mPreview);
+
+            mShowPreview = true;
         }
     }
 
@@ -531,6 +641,7 @@ public class GalleryDetailActivity extends AbstractActivity
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onClick(View v) {
         if (mRunningAnimateNum != 0 || mWindowsAnimate.isRunningAnimate())
             return;
@@ -647,6 +758,29 @@ public class GalleryDetailActivity extends AbstractActivity
                                     });
                         }
                     }).create().show();
+        } else if (v == mPreviewPage) {
+            if (mGalleryInfo instanceof PreviewImpl &&
+                    ((PreviewImpl)mGalleryInfo).getPreviewSum() != Integer.MAX_VALUE &&
+                    ((PreviewImpl)mGalleryInfo).getPreviewSum() > 1)
+                mGoToDialog.show();
+        } else if (v == mPreviewBack) {
+            if (!(mGalleryInfo instanceof PreviewImpl))
+                return;
+
+            if (mCurPreviewPage <= 0)
+                return;
+            mCurPreviewPage--;
+            refreshPreview();
+        } else if (v == mPreviewFront) {
+            if (!(mGalleryInfo instanceof PreviewImpl))
+                return;
+
+            if (mCurPreviewPage >= ((PreviewImpl)mGalleryInfo).getPreviewSum() - 1)
+                return;
+            mCurPreviewPage++;
+            refreshPreview();
+        } else if (v == mPreviewRefresh) {
+            refreshPreview();
         }
     }
 
@@ -657,6 +791,11 @@ public class GalleryDetailActivity extends AbstractActivity
             mMoreDetailScroll.scrollTo(0, 0);
         } else if (v == mCommentList) {
             mCommentList.setSelection(0);
+        } else if (v == mDetailScroll) {
+            if (mShowPreview) {
+                mShowPreview = false;
+                mDetailScroll.smoothScrollTo(0, mDividerCP.getTop());
+            }
         }
     }
 
@@ -786,7 +925,8 @@ public class GalleryDetailActivity extends AbstractActivity
 
     @Override
     public void onGetPreviewImageFailure() {
-        // TODO Auto-generated method stub
+        mPreviewWait.setVisibility(View.GONE);
+        mPreviewRefresh.setVisibility(View.VISIBLE);
     }
 
     private class GDetailGetListener
@@ -802,6 +942,45 @@ public class GalleryDetailActivity extends AbstractActivity
             // TODO
             new SuperToast(eMsg, SuperToast.ERROR).show();
        }
+    }
+
+    private class PListGetListener
+            implements EhClient.OnGetPreviewListListener {
+        @Override
+        public void onSuccess(Object checkFlag, PreviewList pageList) {
+            if (isFinishing())
+                return;
+            if (!(mGalleryInfo instanceof PreviewImpl))
+                return;
+
+            mPreviewWait.setVisibility(View.GONE);
+            mPreviewRefresh.setVisibility(View.GONE);
+
+            PreviewImpl previewImpl = (PreviewImpl)mGalleryInfo;
+            PreviewList[] previewLists = previewImpl.getPreview();
+            int page = (Integer)checkFlag;
+            previewLists[page] = pageList;
+            previewLists[page].setData(GalleryDetailActivity.this,
+                    GalleryDetailActivity.this, (GalleryDetail)mGalleryInfo, page); // TODO how about LofiGalleryDetail
+            previewLists[page].addPreview(mPreview);
+
+            mShowPreview = true;
+        }
+
+        @Override
+        public void onFailure(Object checkFlag, String eMsg) {
+            if (isFinishing())
+                return;
+            if (!(mGalleryInfo instanceof PreviewImpl))
+                return;
+
+            int page = (Integer)checkFlag;
+            if (page == mCurPreviewPage) {
+                new SuperToast(eMsg, SuperToast.WARNING).show();
+                mPreviewWait.setVisibility(View.GONE);
+                mPreviewRefresh.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     private class CommentAdapter extends BaseAdapter {

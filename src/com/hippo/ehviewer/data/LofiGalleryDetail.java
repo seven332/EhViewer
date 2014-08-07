@@ -16,7 +16,8 @@
 
 package com.hippo.ehviewer.data;
 
-public class LofiGalleryDetail extends LofiGalleryInfo {
+public class LofiGalleryDetail extends LofiGalleryInfo
+        implements PreviewImpl {
     public int previewSum;
     public int previewPerPage;
     public PreviewList[] previewLists;
@@ -32,5 +33,22 @@ public class LofiGalleryDetail extends LofiGalleryInfo {
         rating = lofiGalleryInfo.rating;
         simpleLanguage = lofiGalleryInfo.simpleLanguage;
         lofiTags = lofiGalleryInfo.lofiTags;
+
+        previewSum = Integer.MAX_VALUE;
+    }
+
+    @Override
+    public int getPreviewSum() {
+        return previewSum;
+    }
+
+    @Override
+    public int getPreviewPerPage() {
+        return previewPerPage;
+    }
+
+    @Override
+    public PreviewList[] getPreview() {
+        return previewLists;
     }
 }

@@ -75,4 +75,6 @@
     <color name="theme_blue">#ff3367d6</color>
     <color name="theme_purple">#ff9c27b0</color>
     <color name="theme_brown">#ff795548</color>
+    
+    <color name="material_progress_blue">#ff40c4ff</color>
 </resources>

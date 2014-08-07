@@ -16,7 +16,7 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:paddingBottom="12dp"
     android:paddingTop="12dp"
     android:gravity="center_horizontal"
@@ -25,21 +25,20 @@
     <com.hippo.ehviewer.widget.SimpleGridLayout
         xmlns:auto="http://schemas.android.com/apk/res-auto"
         android:id="@+id/preview"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         auto:sgl_item_margin="16dp" >
     </com.hippo.ehviewer.widget.SimpleGridLayout>
 
-    <ProgressBar
-        android:id="@+id/paper_list_wait"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <com.hippo.ehviewer.widget.MaterialProgress
+        android:id="@+id/preview_wait"
+        style="@style/MaterialProgress"
         android:layout_margin="12dp"
         android:visibility="gone" />
 
-    <Button
-        android:id="@+id/preview_button_refresh"
+    <com.hippo.ehviewer.widget.SuperButton
+        android:id="@+id/preview_refresh"
+        style="@style/SuperButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"

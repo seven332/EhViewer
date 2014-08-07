@@ -66,6 +66,11 @@ public final class WindowsAnimate
         return mRunningAnimateNum != 0;
     }
 
+    private void ensureCanvas() {
+        if (mContentViewGroup == null)
+            throw new RuntimeException("Call init(Activity) first, or call it after call free()");
+    }
+
     @Override
     @SuppressLint("ClickableViewAccessibility")
     public boolean onTouch(View v, MotionEvent event) {
@@ -88,6 +93,8 @@ public final class WindowsAnimate
      *        setOnTouchListener, to get position.
      */
     public void addRippleEffect(View view, boolean keepBound) {
+        ensureCanvas();
+
         new RippleHelpDrawable(this, view, keepBound);
         if (keepBound) {
             view.setOnTouchListener(this);
@@ -112,8 +119,7 @@ public final class WindowsAnimate
      * @param listener
      */
     public void addCircleTransitions(View view, int color, OnAnimationEndListener listener) {
-        if (mContentViewGroup == null)
-            throw new RuntimeException("Call init(Activity) first, or call it after call free()");
+        ensureCanvas();
 
         int[] loaction = new int[2];
         ViewUtils.getCenterInWindows(view, loaction);
@@ -130,8 +136,7 @@ public final class WindowsAnimate
      * @param listener
      */
     public void addCircleTransitions(View view, int x, int y, int color, OnAnimationEndListener listener) {
-        if (mContentViewGroup == null)
-            throw new RuntimeException("Call init(Activity) first, or call it after call free()");
+        ensureCanvas();
 
         int[] loaction = new int[2];
         ViewUtils.getLocationInWindow(view, loaction);
@@ -147,8 +152,7 @@ public final class WindowsAnimate
      * @param listener
      */
     public void addCircleTransitions(final int x, final int y, int color, final OnAnimationEndListener listener) {
-        if (mContentViewGroup == null)
-            throw new RuntimeException("Call init(Activity) first, or call it after call free()");
+        ensureCanvas();
 
         // Get max radius
         int maxWidth = mAnimateCanvas.getWidth();
@@ -190,6 +194,8 @@ public final class WindowsAnimate
      */
     // TODO not just from left to right
     public void addMoveExitTransitions(final View view, final OnAnimationEndListener listener) {
+        ensureCanvas();
+
         int[] location = new int[2];
         ViewUtils.getLocationInWindow(view, location);
         final BitmapSprite bs = new BitmapSprite(this, ViewUtils.getBitmapFromView(view), location[0], location[1]);
@@ -224,6 +230,8 @@ public final class WindowsAnimate
     }
 
     public void addOvershootEnterTransitions(final View view, final OnAnimationEndListener listener) {
+        ensureCanvas();
+
         int[] location = new int[2];
         ViewUtils.getLocationInWindow(view, location);
         final BitmapSprite bs = new BitmapSprite(this, ViewUtils.getBitmapFromView(view), location[0], mAnimateCanvas.getHeight());
