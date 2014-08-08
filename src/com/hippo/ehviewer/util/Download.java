@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.hippo.ehviewer.ListUrls;
+import com.hippo.ehviewer.data.ListUrls;
 import com.hippo.ehviewer.ui.DownloadInfo;
 
 public class Download {

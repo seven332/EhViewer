@@ -22,7 +22,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
-import com.hippo.ehviewer.ListUrls;
+import com.hippo.ehviewer.data.ListUrls;
 import com.hippo.ehviewer.ehclient.EhClient;
 
 public class Config {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer;
+package com.hippo.ehviewer.data;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;

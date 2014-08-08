@@ -16,7 +16,10 @@
 
 package com.hippo.ehviewer.ui;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -35,6 +38,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -56,12 +60,12 @@ import android.widget.ViewSwitcher;
 
 import com.faizmalkani.floatingactionbutton.FloatingActionButton;
 import com.hippo.ehviewer.ImageLoader;
-import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.ApiGalleryDetail;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.data.ListUrls;
 import com.hippo.ehviewer.data.LofiGalleryDetail;
 import com.hippo.ehviewer.data.LofiGalleryInfo;
 import com.hippo.ehviewer.data.PreviewImpl;
@@ -76,6 +80,7 @@ import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.AlertButton;
+import com.hippo.ehviewer.widget.AutoWrapLayout;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.LinkifyTextView;
 import com.hippo.ehviewer.widget.LoadImageView;
@@ -141,7 +146,9 @@ public class GalleryDetailActivity extends AbstractActivity
     private View mDetailMore;
     private View mDividerMR;
     private View mDetailRate;
-    private View mDividerRC;
+    private View mDividerRT;
+    private LinearLayout mDetailTag;
+    private View mDividerTC;
     private LinearLayout mDetailComment;
     private View mDividerCP;
     private LinearLayout mDetailPreview;
@@ -158,11 +165,12 @@ public class GalleryDetailActivity extends AbstractActivity
 
     private CommentAdapter mCommentAdapter;
 
+    private int mThemeColor;
     private int mCurPreviewPage;
     private boolean mShowPreview = false;
 
     private AlertDialog createGoToDialog() {
-        return new DialogBuilder(this).setTitle(R.string.jump)
+        return new DialogBuilder(this, mThemeColor).setTitle(R.string.jump)
                 .setAdapter(new BaseAdapter() {
                     @Override
                     public int getCount() {
@@ -280,9 +288,6 @@ public class GalleryDetailActivity extends AbstractActivity
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        // Create dialog
-        mGoToDialog = createGoToDialog();
-
         // Get view
         mDetailScroll = (ScrollView)findViewById(R.id.detail_scroll);
         mMoreDetailScroll = (ScrollView)findViewById(R.id.more_detail_scroll);
@@ -297,7 +302,9 @@ public class GalleryDetailActivity extends AbstractActivity
         mDetailMore = findViewById(R.id.detail_more);
         mDividerMR = findViewById(R.id.detail_divider_m_r);
         mDetailRate = findViewById(R.id.detail_rate);
-        mDividerRC = findViewById(R.id.detail_divider_r_c);
+        mDividerRT = findViewById(R.id.detail_divider_r_t);
+        mDetailTag = (LinearLayout)findViewById(R.id.detail_tag);
+        mDividerTC = findViewById(R.id.detail_divider_t_c);
         mDetailComment = (LinearLayout)findViewById(R.id.detail_comment);
         mDividerCP = findViewById(R.id.detail_divider_c_p);
         mDetailPreview = (LinearLayout)findViewById(R.id.detail_preview);
@@ -349,24 +356,28 @@ public class GalleryDetailActivity extends AbstractActivity
         mRatingText.setFactory(this);
 
         // Set random color
-        int color = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
-        int actionBarColor = color & 0x00ffffff | 0xdd000000;
+        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
+        int actionBarColor = mThemeColor & 0x00ffffff | 0xdd000000;
         Drawable drawable = new ColorDrawable(actionBarColor);
         actionBar.setBackgroundDrawable(drawable);
         Ui.translucent(this, actionBarColor);
-        mDownloadButton.setRoundBackground(true, false, mResources.getColor(R.color.background_light), color);
-        mDownloadButton.setTextColor(color);
-        mReadButton.setRoundBackground(true, color, 0);
-        ((TextView)findViewById(R.id.detail_more_text)).setTextColor(color);
-        mCommentMoreText.setTextColor(color);
-        mPreviewPage.setRoundBackground(true, false, mResources.getColor(R.color.background_light), color);
-        mPreviewPage.setTextColor(color);
-        mPreviewBack.setRoundBackground(true, false, mResources.getColor(R.color.background_light), color);
-        mPreviewBack.setTextColor(color);
-        mPreviewFront.setRoundBackground(true, false, mResources.getColor(R.color.background_light), color);
-        mPreviewFront.setTextColor(color);
-        mPreviewWait.setColor(color);
-        mReply.setColor(color);
+        mDownloadButton.setRoundBackground(true, false, mResources.getColor(R.color.background_light), mThemeColor);
+        mDownloadButton.setTextColor(mThemeColor);
+        mReadButton.setRoundBackground(true, mThemeColor, 0);
+        ((TextView)findViewById(R.id.detail_more_text)).setTextColor(mThemeColor);
+        mCommentMoreText.setTextColor(mThemeColor);
+        mPreviewPage.setRoundBackground(true, false, mResources.getColor(R.color.background_light), mThemeColor);
+        mPreviewPage.setTextColor(mThemeColor);
+        mPreviewBack.setRoundBackground(true, false, mResources.getColor(R.color.background_light), mThemeColor);
+        mPreviewBack.setTextColor(mThemeColor);
+        mPreviewFront.setRoundBackground(true, false, mResources.getColor(R.color.background_light), mThemeColor);
+        mPreviewFront.setTextColor(mThemeColor);
+        mPreviewWait.setColor(mThemeColor);
+        mPreviewRefresh.setRoundBackground(true, mThemeColor, 0);
+        mReply.setColor(mThemeColor);
+
+        // Create dialog
+        mGoToDialog = createGoToDialog();
 
         // Set ripple
         mWindowsAnimate.addRippleEffect(mDownloadButton, true);
@@ -503,7 +514,9 @@ public class GalleryDetailActivity extends AbstractActivity
         mDetailMore.setVisibility(View.VISIBLE);
         mDividerMR.setVisibility(View.VISIBLE);
         mDetailRate.setVisibility(View.VISIBLE);
-        mDividerRC.setVisibility(View.VISIBLE);
+        mDividerRT.setVisibility(View.VISIBLE);
+        mDetailTag.setVisibility(View.VISIBLE);
+        mDividerTC.setVisibility(View.VISIBLE);
         mDetailComment.setVisibility(View.VISIBLE);
 
         mCategory.setText(Ui.getCategoryText(mGalleryInfo.category));
@@ -537,6 +550,51 @@ public class GalleryDetailActivity extends AbstractActivity
             mRatingText.setCurrentText(getAllRatingText(galleryDetail.rating, galleryDetail.people));
             mRating.setRating(galleryDetail.rating);
             mRating.setEnableRate(false);
+
+            // Add tags
+            for (Entry<String, LinkedList<SimpleEntry<String, Integer>>> tagGroup : galleryDetail.tags.entrySet()) {
+                ContextThemeWrapper ctw = new ContextThemeWrapper(this, R.style.TextTag);
+                LinearLayout tagGroupLayout = new LinearLayout(this);
+                tagGroupLayout.setOrientation(LinearLayout.HORIZONTAL);
+                AutoWrapLayout tagLayout = new AutoWrapLayout(this);
+                int x = Ui.dp2pix(2);
+                int y = Ui.dp2pix(4);
+
+                // Group name
+                final String groupName = tagGroup.getKey();
+                TextView groupNameView = new TextView(ctw);
+                groupNameView.setText(groupName);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                lp.setMargins(x, y, x, y);
+                tagGroupLayout.addView(groupNameView, lp);
+
+                for (SimpleEntry<String, Integer> tag : tagGroup.getValue()) {
+                    final String tagText = tag.getKey();
+                    TextView tagView = new TextView(ctw);
+                    tagView.setText(tagText);
+                    tagView.setBackgroundColor(mThemeColor);
+                    tagView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            finish();
+                            Intent intent = new Intent(GalleryDetailActivity.this,
+                                    GalleryListActivity.class);
+                            intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
+                            intent.putExtra(GalleryListActivity.KEY_MODE,
+                                    ListUrls.MODE_TAG);
+                            intent.putExtra(GalleryListActivity.KEY_TAG, groupName + ":" + tagText);
+                            startActivity(intent);
+                        }
+                    });
+                    AutoWrapLayout.LayoutParams alp = new AutoWrapLayout.LayoutParams();
+                    alp.setMargins(x, y, x, y);
+                    tagLayout.addView(tagView, alp);
+                }
+                tagGroupLayout.addView(tagLayout);
+                mDetailTag.addView(tagGroupLayout);
+            }
 
             // Add comments
             int commentNum = galleryDetail.comments.size();
@@ -737,7 +795,7 @@ public class GalleryDetailActivity extends AbstractActivity
             final EditText et = new EditText(this);
             et.setGravity(Gravity.TOP);
             et.setBackgroundDrawable(null);
-            new DialogBuilder(this).setTitle(R.string.reply).setView(et, new LinearLayout.LayoutParams(
+            new DialogBuilder(this, mThemeColor).setTitle(R.string.reply).setView(et, new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, 600), true).setSimpleNegativeButton()
                     .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
                         @Override
@@ -882,7 +940,7 @@ public class GalleryDetailActivity extends AbstractActivity
     public boolean onItemLongClick(AdapterView<?> parent, View view,
             int position, long id) {
         final Comment c = (Comment)parent.getItemAtPosition(position);
-        mCommentLongClickDialog = new DialogBuilder(this)
+        mCommentLongClickDialog = new DialogBuilder(this, mThemeColor)
                 .setTitle(R.string.what_to_do).setItems(R.array.comment_long_click,
                         new AdapterView.OnItemClickListener() {
                     @Override

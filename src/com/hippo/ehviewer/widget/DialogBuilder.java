@@ -50,6 +50,11 @@ public class DialogBuilder extends AlertDialog.Builder {
     private final int mThemeColor;
 
     public DialogBuilder(Context context) {
+        this(context,Config.getRandomThemeColor() ?
+                Theme.getRandomDarkColor() : Config.getThemeColor());
+    }
+
+    public DialogBuilder(Context context, int color) {
         super(context);
         mContext = context;
         LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(
@@ -57,7 +62,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         mView = inflater.inflate(R.layout.dialog, null);
         super.setView(mView);
 
-        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
+        mThemeColor = color;
     }
 
     /**

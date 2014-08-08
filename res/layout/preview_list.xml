@@ -43,6 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
         android:text="@string/refresh"
+        android:textColor="@color/primary_text_light"
         android:visibility="gone" />
 
     <include

@@ -271,14 +271,31 @@
             </RelativeLayout>
 
             <View
-                android:id="@+id/detail_divider_r_c"
+                android:id="@+id/detail_divider_r_t"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:visibility="gone" />
+
+            <!-- Tags -->
+            <LinearLayout
+                android:id="@+id/detail_tag"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                android:orientation="vertical"
+                android:visibility="gone" >
+            </LinearLayout>
+
+            <View
+                android:id="@+id/detail_divider_t_c"
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:background="@color/divider"
                 android:visibility="gone" />
 
             <!-- Comments -->
-
             <LinearLayout
                 android:id="@+id/detail_comment"
                 android:layout_width="fill_parent"

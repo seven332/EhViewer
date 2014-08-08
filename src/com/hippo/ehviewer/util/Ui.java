@@ -42,8 +42,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout.LayoutParams;
 
-import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.data.ListUrls;
 
 public class Ui {
     @SuppressWarnings("unused")

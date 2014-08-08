@@ -67,12 +67,12 @@ import com.etsy.android.grid.StaggeredGridView;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.ImageLoader;
-import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.data.ListUrls;
 import com.hippo.ehviewer.data.Tag;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.network.Downloader;
@@ -850,6 +850,9 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 setTitle(mTitle);
                 refresh();
                 break;
+
+            case ListUrls.MODE_IMAGE_SEARCH:
+                // TODO
 
             case ListUrls.MODE_NORMAL:
                 // Target is category

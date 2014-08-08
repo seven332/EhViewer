@@ -154,13 +154,13 @@
     </style>
 
     <style name="TextTag">
-        <item name="android:textSize">@dimen/detail_subtitle_size</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:background">@android:color/black</item>
+        <item name="android:textSize">@dimen/text_medium</item>
+        <item name="android:textColor">@color/primary_text_light</item>
+        <item name="android:background">@color/background_dark</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:singleLine">true</item>
-        <item name="android:paddingTop">2dp</item>
-        <item name="android:paddingBottom">2dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
         <item name="android:paddingLeft">8dp</item>
         <item name="android:paddingRight">8dp</item>
     </style>
@@ -171,7 +171,7 @@
         <item name="android:gravity">center</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">marquee</item>
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">@color/primary_text_light</item>
     </style>
 
     <style name="RatingBarSmall">

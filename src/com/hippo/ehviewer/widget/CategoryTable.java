@@ -21,8 +21,8 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.TableLayout;
 
-import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.data.ListUrls;
 import com.hippo.ehviewer.util.Utils;
 
 public class CategoryTable extends TableLayout {

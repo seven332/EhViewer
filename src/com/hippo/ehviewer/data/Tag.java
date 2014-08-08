@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.data;
 
-import com.hippo.ehviewer.ListUrls;
 
 public class Tag extends ListUrls {
     private String mName;
