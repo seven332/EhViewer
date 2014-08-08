@@ -57,7 +57,9 @@ public class ImageLoader {
         mImageCache = ImageCache.getInstance(mContext);
 
         mLock = new Object();
-        new Thread(new LoadFromCacheTask()).start();
+        Thread thread = new Thread(new LoadFromCacheTask());
+        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
     }
 
     public final static ImageLoader getInstance(final Context context) {
@@ -116,7 +118,9 @@ public class ImageLoader {
             synchronized (mLock) {
                 mDownloadTasks.push(loadTask);
                 if (mWorkingThreadNum < MAX_DOWNLOAD_THREADS) {
-                    new Thread(new DownloadImageTask()).start();
+                    Thread thread = new Thread(new DownloadImageTask());
+                    thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+                    thread.start();
                     mWorkingThreadNum++;
                 }
             }

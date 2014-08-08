@@ -439,7 +439,7 @@ public class EhClient {
 
     public void getGList(final String url, final int mode, final Object checkFlag,
             final OnGetGListListener listener) {
-        new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 HttpHelper hp = new HttpHelper(mAppContext);
@@ -476,7 +476,9 @@ public class EhClient {
 
                 mHandler.post(responder);
             }
-        }).start();
+        });
+        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
     }
 
     // Get Gallery List from file search
@@ -560,10 +562,10 @@ public class EhClient {
         if (file == null && bitmap == null)
             listener.onFailure(checkFlag, "All null"); // TODO
 
-        new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpHelper hp = new HttpHelper(mAppContext);
+                HttpHelper hh = new HttpHelper(mAppContext);
 
                 List<HttpHelper.FormData> dataList = new LinkedList<HttpHelper.FormData>();
                 HttpHelper.FormData data;
@@ -600,11 +602,11 @@ public class EhClient {
                     dataList.add(data);
                 }
 
-                String body = hp.postFormData(getFileSearchUrl(apiMode), dataList);
+                String body = hh.postFormData(getFileSearchUrl(apiMode), dataList);
                 GetGListFromImageSearchResponder responder;
                 if (body != null) { // Get ok
                     // If no element, it might be a notice
-                    String newUrl = hp.getLastUrl();
+                    String newUrl = hh.getLastUrl();
                     if (newUrl == null) {
                         responder = new GetGListFromImageSearchResponder(listener, checkFlag, "Location is null");
                     } else if (!body.contains("<")) {
@@ -631,12 +633,14 @@ public class EhClient {
                         }
                     }
                 } else {
-                    responder = new GetGListFromImageSearchResponder(listener, checkFlag, hp.getEMsg());
+                    responder = new GetGListFromImageSearchResponder(listener, checkFlag, hh.getEMsg());
                 }
 
                 mHandler.post(responder);
             }
-        }).start();
+        });
+        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
     }
 
     // Get gallery Detail
@@ -645,64 +649,93 @@ public class EhClient {
         public void onFailure(String eMsg);
     }
 
+    private class GetGDetaiResponder implements Runnable {
+        private final boolean isOk;
+        private final OnGetGDetailListener listener;
+        private final GalleryDetail gd;
+        private final String eMesg;
+
+        public GetGDetaiResponder(OnGetGDetailListener listener, GalleryDetail gd) {
+            this.isOk = true;
+            this.listener = listener;
+            this.gd = gd;
+            this.eMesg = null;
+        }
+
+        public GetGDetaiResponder(OnGetGDetailListener listener, String eMsg) {
+            this.isOk = false;
+            this.listener = listener;
+            this.gd = null;
+            this.eMesg = eMsg;
+        }
+
+        @Override
+        public void run() {
+            if (isOk)
+                listener.onSuccess(gd);
+            else
+                listener.onFailure(eMesg);
+        }
+    }
+
     public void getGDetail(final String url, final GalleryDetail md,
             final OnGetGDetailListener listener) {
-        new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpHelper hp = new HttpHelper(mAppContext);
-                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
-                    @Override
-                    public void onSuccess(Object obj) {
-                        String body = (String)obj;
-                        DetailParser parser = new DetailParser();
-                        int result = parser.parser(body, DetailParser.DETAIL | DetailParser.TAG
-                                | DetailParser.PREVIEW_INFO | DetailParser.PREVIEW
-                                | DetailParser.COMMENT);
-                        if (result == DetailParser.OFFENSIVE) {
-                            md.firstPage = "offensive";
-                            listener.onSuccess(md);
-                        } else if (result == DetailParser.PINING) {
-                            md.firstPage = "pining";
-                            listener.onSuccess(md);
-                        } else if ((result & (DetailParser.DETAIL | DetailParser.PREVIEW_INFO)) != 0) {
-                            md.thumb = parser.thumb;
-                            md.title = parser.title;
-                            md.title_jpn = parser.title_jpn;
-                            md.category = parser.category;
-                            md.uploader = parser.uploader;
-                            md.posted = parser.posted;
-                            md.pages = parser.pages;
-                            md.size = parser.size;
-                            md.resized = parser.resized;
-                            md.parent = parser.parent;
-                            md.visible = parser.visible;
-                            md.language = parser.language;
-                            md.people = parser.people;
-                            md.rating = parser.rating;
-                            md.firstPage = parser.firstPage;
-                            md.previewPerPage = parser.previewPerPage;
-                            md.previewSum = parser.previewSum;
+                HttpHelper hh = new HttpHelper(mAppContext);
+                String body = hh.get(url);
+                GetGDetaiResponder responder;
+                if (body != null) {
+                    DetailParser parser = new DetailParser();
+                    int result = parser.parser(body, DetailParser.DETAIL | DetailParser.TAG
+                            | DetailParser.PREVIEW_INFO | DetailParser.PREVIEW
+                            | DetailParser.COMMENT);
+                    if (result == DetailParser.OFFENSIVE) {
+                        md.firstPage = "offensive";
+                        responder = new GetGDetaiResponder(listener, md);
+                    } else if (result == DetailParser.PINING) {
+                        md.firstPage = "pining";
+                        responder = new GetGDetaiResponder(listener, md);
+                    } else if ((result & (DetailParser.DETAIL | DetailParser.PREVIEW_INFO)) != 0) {
+                        md.thumb = parser.thumb;
+                        md.title = parser.title;
+                        md.title_jpn = parser.title_jpn;
+                        md.category = parser.category;
+                        md.uploader = parser.uploader;
+                        md.posted = parser.posted;
+                        md.pages = parser.pages;
+                        md.size = parser.size;
+                        md.resized = parser.resized;
+                        md.parent = parser.parent;
+                        md.visible = parser.visible;
+                        md.language = parser.language;
+                        md.people = parser.people;
+                        md.rating = parser.rating;
+                        md.firstPage = parser.firstPage;
+                        md.previewPerPage = parser.previewPerPage;
+                        md.previewSum = parser.previewSum;
 
-                            md.tags = parser.tags;
-                            md.previewLists = new PreviewList[md.previewSum];
-                            md.previewLists[0] = parser.previewList;
-                            md.comments = parser.comments;
-                            listener.onSuccess(md);
-                        } else if (result == DetailParser.ERROR) {
-                            listener.onFailure(parser.eMesg);
-                        } else {
-                            listener.onFailure(mAppContext.getString(R.string.em_parser_error));
-                        }
+                        md.tags = parser.tags;
+                        md.previewLists = new PreviewList[md.previewSum];
+                        md.previewLists[0] = parser.previewList;
+                        md.comments = parser.comments;
+                        responder = new GetGDetaiResponder(listener, md);
+                    } else if (result == DetailParser.ERROR) {
+                        responder = new GetGDetaiResponder(listener, parser.eMesg);
+                    } else {
+                        responder = new GetGDetaiResponder(listener,
+                                mAppContext.getString(R.string.em_parser_error));
                     }
-                    @Override
-                    public void onFailure(String eMsg) {
-                        listener.onFailure(eMsg);
-                    }
-                });
-                hp.get(url);
+                } else {
+                    responder = new GetGDetaiResponder(listener, hh.getEMsg());
+                }
+
+                mHandler.post(responder);
             }
-        }).start();
+        });
+        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
     }
 
     // Get preview list

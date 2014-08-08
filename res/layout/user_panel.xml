@@ -15,6 +15,7 @@
      limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:auto="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
@@ -52,7 +53,7 @@
 
             <com.hippo.ehviewer.widget.SuperButton
                 android:id="@+id/register"
-                style="@style/SuperButton.Small"
+                style="@style/SuperButton.Tile.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10.0dp"
@@ -61,7 +62,7 @@
 
             <com.hippo.ehviewer.widget.SuperButton
                 android:id="@+id/login"
-                style="@style/SuperButton.Small"
+                style="@style/SuperButton.Tile.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
@@ -70,7 +71,7 @@
 
         <com.hippo.ehviewer.widget.SuperButton
             android:id="@+id/logout"
-            style="@style/SuperButton.Small"
+            style="@style/SuperButton.Tile.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

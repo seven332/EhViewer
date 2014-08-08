@@ -19,7 +19,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <ScrollView
+    <com.hippo.ehviewer.widget.ResponedScrollView
         android:id="@+id/detail_scroll"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -324,7 +324,7 @@
                 layout="@layout/preview_list"
                 android:visibility="gone" />
         </LinearLayout>
-    </ScrollView>
+    </com.hippo.ehviewer.widget.ResponedScrollView>
 
     <ScrollView
         android:id="@+id/more_detail_scroll"

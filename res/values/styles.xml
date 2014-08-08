@@ -79,6 +79,12 @@
         <item name="@android:paddingRight">18dp</item>
     </style>
 
+    <style name="SuperButton.Tile.Small" parent="@style/SuperButton.Small">
+        <item name="@android:paddingTop">2dp</item>
+        <item name="@android:paddingBottom">2dp</item>
+        <item name="backgroundType">tile</item>
+    </style>
+
     <style name="MaterialProgress">
         <item name="@android:layout_width">48dip</item>
         <item name="@android:layout_height">48dip</item>

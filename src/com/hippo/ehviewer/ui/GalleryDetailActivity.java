@@ -61,6 +61,7 @@ import android.widget.ViewSwitcher;
 import com.faizmalkani.floatingactionbutton.FloatingActionButton;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.ApiGalleryDetail;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.GalleryDetail;
@@ -87,6 +88,7 @@ import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialProgress;
 import com.hippo.ehviewer.widget.ProgressiveRatingBar;
 import com.hippo.ehviewer.widget.RefreshTextView;
+import com.hippo.ehviewer.widget.ResponedScrollView;
 import com.hippo.ehviewer.widget.SimpleGridLayout;
 import com.hippo.ehviewer.widget.SuperButton;
 import com.hippo.ehviewer.widget.SuperToast;
@@ -94,6 +96,7 @@ import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 
 public class GalleryDetailActivity extends AbstractActivity
         implements View.OnClickListener,
+        ResponedScrollView.OnScrollStateChangedListener,
         View.OnTouchListener , ViewSwitcher.ViewFactory,
         ProgressiveRatingBar.OnUserRateListener, PreviewList.PreviewHolder,
         View.OnLayoutChangeListener, AdapterView.OnItemClickListener,
@@ -134,7 +137,7 @@ public class GalleryDetailActivity extends AbstractActivity
     private MaterialProgress mPreviewWait;
     private SuperButton mPreviewRefresh;
 
-    private ScrollView mDetailScroll;
+    private ResponedScrollView mDetailScroll;
     private ScrollView mMoreDetailScroll;
     private View mMoreComment;
 
@@ -289,7 +292,7 @@ public class GalleryDetailActivity extends AbstractActivity
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Get view
-        mDetailScroll = (ScrollView)findViewById(R.id.detail_scroll);
+        mDetailScroll = (ResponedScrollView)findViewById(R.id.detail_scroll);
         mMoreDetailScroll = (ScrollView)findViewById(R.id.more_detail_scroll);
         mMoreComment = findViewById(R.id.more_comment);
         mRefreshText = (RefreshTextView)findViewById(R.id.refresh_text);
@@ -399,6 +402,7 @@ public class GalleryDetailActivity extends AbstractActivity
         mDetailComment.setOnTouchListener(this);
         mMoreDetailScroll.addOnLayoutChangeListener(this);
         mDetailScroll.addOnLayoutChangeListener(this);
+        mDetailScroll.setOnScrollStateChangedListener(this);
         mCommentList.addOnLayoutChangeListener(this);
         mPreviewPage.setOnClickListener(this);
         mPreviewBack.setOnClickListener(this);
@@ -985,6 +989,17 @@ public class GalleryDetailActivity extends AbstractActivity
     public void onGetPreviewImageFailure() {
         mPreviewWait.setVisibility(View.GONE);
         mPreviewRefresh.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onScrollStateChanged(ResponedScrollView view, int state) {
+        if (view == mDetailScroll) {
+            ImageCache imageCache = ImageCache.getInstance(this);
+            if (state == ResponedScrollView.SCROLL_START)
+                imageCache.setPauseDiskCache(true);
+            else
+                imageCache.setPauseDiskCache(false);
+        }
     }
 
     private class GDetailGetListener
