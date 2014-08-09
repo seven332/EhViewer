@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.data;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +32,7 @@ public class GalleryDetail extends GalleryInfo
     public String language;
     public int people;
     public String firstPage;
-    public LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>> tags;
+    public LinkedHashMap<String, LinkedList<String>> tags;
 
     // For Preview
     public int previewSum;

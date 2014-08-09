@@ -32,19 +32,11 @@ public final class Theme {
     public static final ColorDrawable GREY_DRAWABLE =
             new ColorDrawable(0xffaaaaaa);
 
-    /*
-     * 赤 0xffc53929
-     * 橙 0xffff9100
-     * Lime 0xffafb42b;
-     * 绿 0xff0b8043
-     * 青 0xff0097a7
-     * 蓝 0xff3367d6
-     * 紫 0xff9c27b0
-     * 棕 0xff795548
-     */
     private static final int[] DARK_COLOR_TABLE = {
-        0xffc53929, 0xffff9100, 0xffafb42b, 0xff0b8043,
-        0xff0097a7, 0xff3367d6, 0xff9c27b0, 0xff795548
+        0xffe51c23, 0xffe91e63, 0xff9c27b0,
+        0xff673ab7, 0xff3f51b5, 0xff5677fc,
+        0xff03a9f4, 0xff009688, 0xff259b24,
+        0xff8bc34a, 0xff795548, 0xff607d8b
     };
 
     /**

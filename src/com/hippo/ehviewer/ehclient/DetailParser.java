@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.ehclient;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -66,7 +65,7 @@ public class DetailParser {
     public String firstPage;
     public int previewPerPage;
     public int previewSum;
-    public LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>> tags;
+    public LinkedHashMap<String, LinkedList<String>> tags;
     public PreviewList previewList;
     /**
      * If no comment, just an empty list
@@ -170,14 +169,14 @@ public class DetailParser {
         }
         // Get tag
         if ((mode & TAG) != 0) {
-            tags = new LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>>();
+            tags = new LinkedHashMap<String, LinkedList<String>>();
             p = Pattern
-                    .compile("<tr><td[^<>]*>([^<>]+):</td><td>(?:<div[^<>]*><a[^<>]*>[^<>]*</a>[^<>]*<span[^<>]*>\\d+</span>[^<>]*</div>)+</td></tr>");
+                    .compile("<tr><td[^<>]+>([\\w\\s]+):</td><td>(?:<div[^<>]+><a[^<>]+>[\\w\\s]+</a></div>)+</td></tr>");
             m = p.matcher(body);
             while (m.find()) {
                 re |= TAG;
                 String groupName = m.group(1);
-                LinkedList<SimpleEntry<String, Integer>> group = getTagGroup(m.group(0));
+                LinkedList<String> group = getTagGroup(m.group(0));
                 if (group != null) {
                     tags.put(groupName, group);
                 }
@@ -186,18 +185,14 @@ public class DetailParser {
 
         // Get preview info
         if ((mode & PREVIEW_INFO) != 0) {
-            p = Pattern.compile("<p class=\"ip\">Showing ([\\d|,]+) - ([\\d|,]+) of ([\\d|,]+) images</p>");
+            p = Pattern.compile("<td[^>]+><a[^>]+>([\\d,]+)</a></td><td[^>]+>(?:<a[^>]+>)?&gt;(?:</a>)?</td>");
             m = p.matcher(body);
             if (m.find()) {
                 re |= PREVIEW_INFO;
-                previewPerPage = Integer.parseInt(m.group(2).replace(",",
-                        ""))
-                        - Integer.parseInt(m.group(1).replace(",", ""))
-                        + 1;
-                int total = Integer.parseInt(m.group(3).replace(",", ""));
-                previewSum = (total + previewPerPage - 1) / previewPerPage;
+                previewSum = Integer.valueOf(m.group(1).replace(",", ""));
             }
         }
+
         // Get preview
         if ((mode & PREVIEW) != 0) {
             boolean isLargePreview = false;
@@ -226,6 +221,9 @@ public class DetailParser {
                             m.group(2), m.group(5));
                 }
             }
+            // Set previewPerPage
+            if (previewList != null)
+                previewPerPage = previewList.size();
         }
         // Get comment
         if ((mode & COMMENT) != 0) {
@@ -242,15 +240,12 @@ public class DetailParser {
         return re;
     }
 
-    private LinkedList<SimpleEntry<String, Integer>> getTagGroup(String pageContent) {
-        LinkedList<SimpleEntry<String, Integer>> list =
-                new LinkedList<SimpleEntry<String, Integer>>();
-        Pattern p = Pattern.compile("<a[^<>]*>([^<>]+)</a> \\(<span[^<>]*>([\\d|,]+)</span>\\)");
+    private LinkedList<String> getTagGroup(String pageContent) {
+        LinkedList<String> list = new LinkedList<String>();
+        Pattern p = Pattern.compile("<div[^<>]+><a[^<>]+>([\\w\\s]+)</a></div>");
         Matcher m = p.matcher(pageContent);
         while (m.find())
-            list.add(new SimpleEntry<String, Integer>(m.group(1),
-                    Integer.parseInt(m.group(2).replace(",", ""))));
-
+            list.add(m.group(1));
         if (list.size() == 0)
             return null;
         else

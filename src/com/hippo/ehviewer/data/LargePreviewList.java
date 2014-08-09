@@ -57,6 +57,11 @@ public class LargePreviewList extends PreviewList {
         return null;
     }
 
+    @Override
+    public int size() {
+        return mItemList.size();
+    }
+
     @SuppressLint("InflateParams")
     @Override
     public void addPreview(SimpleGridLayout viewGroup) {

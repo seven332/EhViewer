@@ -84,7 +84,8 @@ public class NormalPreviewList extends PreviewList{
                 Integer.parseInt(height), url);
     }
 
-    public int getSum() {
+    @Override
+    public int size() {
         int sum = 0;
         for (Row row : rowArray)
             sum += row.itemArray.size();

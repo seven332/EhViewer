@@ -77,6 +77,8 @@ public class ListUrls {
     private String mTag = null;
 
     private int mImageSearchMode;
+    private String mImageKey;
+    private String mImageUrl;
     private File mSearchFile;
     private String mResultUrl = null;
 
@@ -173,6 +175,13 @@ public class ListUrls {
     }
 
     // For image search mode
+    public void setSearchImage(String key, String url, int imageSearchMode) {
+        mMode = MODE_IMAGE_SEARCH;
+        mImageKey = key;
+        mImageUrl = url;
+        mImageSearchMode = imageSearchMode;
+    }
+
     public void setSearchFile(File searchFile, int imageSearchMode) {
         mMode = MODE_IMAGE_SEARCH;
         mSearchFile = searchFile;
@@ -185,6 +194,14 @@ public class ListUrls {
 
     public File getSearchFile() {
         return mSearchFile;
+    }
+
+    public String getSearchImageKey() {
+        return mImageKey;
+    }
+
+    public String getSearchImageUrl() {
+        return mImageUrl;
     }
 
     public int getImageSearchMode() {

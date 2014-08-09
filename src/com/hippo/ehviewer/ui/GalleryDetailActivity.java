@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.ui;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -556,7 +555,7 @@ public class GalleryDetailActivity extends AbstractActivity
             mRating.setEnableRate(false);
 
             // Add tags
-            for (Entry<String, LinkedList<SimpleEntry<String, Integer>>> tagGroup : galleryDetail.tags.entrySet()) {
+            for (Entry<String, LinkedList<String>> tagGroup : galleryDetail.tags.entrySet()) {
                 ContextThemeWrapper ctw = new ContextThemeWrapper(this, R.style.TextTag);
                 LinearLayout tagGroupLayout = new LinearLayout(this);
                 tagGroupLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -574,10 +573,9 @@ public class GalleryDetailActivity extends AbstractActivity
                 lp.setMargins(x, y, x, y);
                 tagGroupLayout.addView(groupNameView, lp);
 
-                for (SimpleEntry<String, Integer> tag : tagGroup.getValue()) {
-                    final String tagText = tag.getKey();
+                for (final String tag : tagGroup.getValue()) {
                     TextView tagView = new TextView(ctw);
-                    tagView.setText(tagText);
+                    tagView.setText(tag);
                     tagView.setBackgroundColor(mThemeColor);
                     tagView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -588,7 +586,7 @@ public class GalleryDetailActivity extends AbstractActivity
                             intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
                             intent.putExtra(GalleryListActivity.KEY_MODE,
                                     ListUrls.MODE_TAG);
-                            intent.putExtra(GalleryListActivity.KEY_TAG, groupName + ":" + tagText);
+                            intent.putExtra(GalleryListActivity.KEY_TAG, groupName + ":" + tag);
                             startActivity(intent);
                         }
                     });
@@ -730,6 +728,21 @@ public class GalleryDetailActivity extends AbstractActivity
             intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
             intent.putExtra(GalleryListActivity.KEY_MODE, ListUrls.MODE_NORMAL);
             intent.putExtra(GalleryListActivity.KEY_CATEGORY, mGalleryInfo.category);
+            startActivity(intent);
+        } else if (v == mMoreOfUploader) {
+            finish();
+            Intent intent = new Intent(this, GalleryListActivity.class);
+            intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
+            intent.putExtra(GalleryListActivity.KEY_MODE, ListUrls.MODE_UPLOADER);
+            intent.putExtra(GalleryListActivity.KEY_UPLOADER, mGalleryInfo.uploader);
+            startActivity(intent);
+        } else if (v == mSimilar) {
+            finish();
+            Intent intent = new Intent(this, GalleryListActivity.class);
+            intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
+            intent.putExtra(GalleryListActivity.KEY_MODE, ListUrls.MODE_IMAGE_SEARCH);
+            intent.putExtra(GalleryListActivity.KEY_IMAGE_KEY, String.valueOf(mGalleryInfo.gid));
+            intent.putExtra(GalleryListActivity.KEY_IMAGE_URL, mGalleryInfo.thumb);
             startActivity(intent);
         } else if (v == mFavorite) {
             Favorite.addToFavorite(this, mGalleryInfo);

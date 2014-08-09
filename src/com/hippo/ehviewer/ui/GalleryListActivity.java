@@ -32,6 +32,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -135,6 +136,8 @@ public class GalleryListActivity extends AbstractGalleryActivity
     public static final String KEY_CATEGORY = "category";
     public static final String KEY_TAG = "tag";
     public static final String KEY_UPLOADER = "uploader";
+    public static final String KEY_IMAGE_KEY = "image_key";
+    public static final String KEY_IMAGE_URL = "image_url";
 
     public static final int LIST_MODE_DETAIL = 0x0;
     public static final int LIST_MODE_THUMB = 0x1;
@@ -852,7 +855,14 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 break;
 
             case ListUrls.MODE_IMAGE_SEARCH:
-                // TODO
+                lus = new ListUrls();
+                lus.setSearchImage(intent.getStringExtra(KEY_IMAGE_KEY),
+                        intent.getStringExtra(KEY_IMAGE_URL),
+                        EhClient.IMAGE_SEARCH_USE_SIMILARITY_SCAN | EhClient.IMAGE_SEARCH_SHOW_EXPUNGED); // TODO
+                mTitle = "类似内容"; // TODO
+                setTitle(mTitle);
+                refresh();
+                break;
 
             case ListUrls.MODE_NORMAL:
                 // Target is category
@@ -1498,19 +1508,53 @@ public class GalleryListActivity extends AbstractGalleryActivity
         if (lus.getMode() == ListUrls.MODE_IMAGE_SEARCH) {
             if (url == null) {
                 // No result url
-                mClient.getGListFromImageSearch(lus.getSearchFile(), lus.getImageSearchMode(), taskStamp,
-                        new EhClient.OnGetGListFromImageSearchListener() {
-                    @Override
-                    public void onSuccess(Object checkFlag, List<GalleryInfo> giList,
-                            int maxPage, String newUrl) {
-                        lus.setSearchResult(newUrl);
-                        listener.onSuccess(mAdapter, taskStamp, giList, maxPage);
-                    }
-                    @Override
-                    public void onFailure(Object checkFlag, String eMsg) {
-                        listener.onFailure(mAdapter, taskStamp, eMsg);
-                    }
-                });
+                if (lus.getSearchFile() == null) {
+                    ImageLoader.getInstance(GalleryListActivity.this).add(lus.getSearchImageUrl(),
+                            lus.getSearchImageKey(), new ImageLoader.OnGetImageListener() {
+                        @Override
+                        public void onGetImage(String key, Bitmap bmp) {
+                            if (bmp != null) {
+                                mClient.getGListFromImageSearch(bmp, lus.getImageSearchMode(), taskStamp,
+                                        new EhClient.OnGetGListFromImageSearchListener() {
+                                            @Override
+                                            public void onSuccess(
+                                                    Object checkFlag,
+                                                    List<GalleryInfo> giList,
+                                                    int maxPage, String newUrl) {
+
+                                                System.out.println(giList.size());
+
+                                                lus.setSearchResult(newUrl);
+                                                listener.onSuccess(mAdapter, taskStamp, giList, maxPage);
+                                            }
+                                            @Override
+                                            public void onFailure(
+                                                    Object checkFlag,
+                                                    String eMsg) {
+                                                listener.onFailure(mAdapter, taskStamp, eMsg); // TODO
+                                            }
+                                });
+                            } else {
+                                listener.onFailure(mAdapter, taskStamp, "~~~~~~~~~~"); // TODO
+                            }
+                        }
+                    });
+                } else {
+                    // File search
+                    mClient.getGListFromImageSearch(lus.getSearchFile(), lus.getImageSearchMode(), taskStamp,
+                            new EhClient.OnGetGListFromImageSearchListener() {
+                        @Override
+                        public void onSuccess(Object checkFlag, List<GalleryInfo> giList,
+                                int maxPage, String newUrl) {
+                            lus.setSearchResult(newUrl);
+                            listener.onSuccess(mAdapter, taskStamp, giList, maxPage);
+                        }
+                        @Override
+                        public void onFailure(Object checkFlag, String eMsg) {
+                            listener.onFailure(mAdapter, taskStamp, eMsg);
+                        }
+                    });
+                }
             } else {
                 // Get result url
                 mClient.getGList(url, null, new EhClient.OnGetGListListener() {
@@ -1635,7 +1679,14 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 // set posted
                 TextView posted = (TextView) convertView.findViewById(R.id.posted);
                 posted.setText(gi.posted);
-
+                // Set simple language
+                TextView simpleLanguage = (TextView) convertView.findViewById(R.id.simple_language);
+                if (gi.simpleLanguage == null) {
+                    simpleLanguage.setVisibility(View.GONE);
+                } else {
+                    simpleLanguage.setVisibility(View.VISIBLE);
+                    simpleLanguage.setText(gi.simpleLanguage);
+                }
             } else if (mListMode == LIST_MODE_THUMB){
                 // Set simple language
                 TextView simpleLanguage = (TextView) convertView.findViewById(R.id.simple_language);

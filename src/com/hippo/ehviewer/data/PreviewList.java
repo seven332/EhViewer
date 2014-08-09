@@ -42,6 +42,8 @@ public abstract class PreviewList {
      */
     public abstract void addPreview(SimpleGridLayout viewGroup);
 
+    public abstract int size();
+
     public void setData(PreviewHolder holder, Activity activity, GalleryDetail gi, int targetPage) {
         mHolder = holder;
         mActivity = activity;
