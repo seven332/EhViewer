@@ -19,23 +19,20 @@ package com.hippo.ehviewer.ehclient;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.hippo.ehviewer.ListUrls;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.PreviewList;
-import com.hippo.ehviewer.util.Log;
 
 public class DetailParser {
-    
+
     private static final String OFFENSIVE_STRING =
             "<p>(And if you choose to ignore this warning, you lose all rights to complain about it in the future.)</p>";
     private static final String PINING_STRING =
             "<p>This gallery is pining for the fjords.</p>";
-    
+
     public static final int DETAIL = 0x1;
     public static final int TAG = 0x2;
     public static final int PREVIEW_INFO = 0x4;
@@ -43,11 +40,11 @@ public class DetailParser {
     public static final int COMMENT = 0x10;
     public static final int OFFENSIVE = 0x20;
     public static final int PINING = 0x40;
-    
+
     private static final CommentSort cs = new CommentSort();
-    
+
     private int mMode;
-    
+
     public String thumb;
     public String title;
     public String title_jpn;
@@ -65,27 +62,27 @@ public class DetailParser {
     public String firstPage;
     public int previewPerPage;
     public int previewSum;
-    public LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>> tags;
+    public LinkedHashMap<String, LinkedList<String>> tags;
     public PreviewList previewList;
     public LinkedList<Comment> comments;
-    
+
     public void setMode(int mode) {
         mMode = mode;
     }
-    
+
     public int parser(String pageContent) {
         int re = 0;
         Pattern p;
         Matcher m;
-        
+
         if (pageContent.contains(OFFENSIVE_STRING)) {
             return OFFENSIVE;
         }
-        
+
         if (pageContent.contains(PINING_STRING)) {
             return PINING;
         }
-        
+
         // Get detail
         if ((mMode & DETAIL) != 0) {
             p = Pattern
@@ -114,7 +111,7 @@ public class DetailParser {
             m = p.matcher(pageContent);
             if (m.find()) {
                 re |= DETAIL;
-                
+
                 thumb = m.group(1);
                 title = m.group(2);
                 title_jpn = m.group(3);
@@ -128,45 +125,40 @@ public class DetailParser {
                 visible = m.group(11);
                 language = m.group(12);
                 people = Integer.parseInt(m.group(13).replace(",", ""));
-                
+
                 Pattern pattern = Pattern.compile("([\\d|\\.]+)");
                 Matcher matcher = pattern.matcher(m.group(14));
                 if (matcher.find())
                     rating = Float.parseFloat(matcher.group(1));
                 else
                     rating = Float.NaN;
-                
+
                 firstPage = m.group(15);
             }
         }
         // Get tag
         if ((mMode & TAG) != 0) {
-            tags = new LinkedHashMap<String, LinkedList<SimpleEntry<String, Integer>>>();
+            tags = new LinkedHashMap<String, LinkedList<String>>();
             p = Pattern
-                    .compile("<tr><td[^<>]*>([^<>]+):</td><td>(?:<div[^<>]*><a[^<>]*>[^<>]*</a>[^<>]*<span[^<>]*>\\d+</span>[^<>]*</div>)+</td></tr>");
+                    .compile("<tr><td[^<>]+>([\\w\\s]+):</td><td>(?:<div[^<>]+><a[^<>]+>[\\w\\s]+</a></div>)+</td></tr>");
             m = p.matcher(pageContent);
             while (m.find()) {
                 re |= TAG;
                 String groupName = m.group(1);
-                LinkedList<SimpleEntry<String, Integer>> group = getTagGroup(m.group(0));
+                LinkedList<String> group = getTagGroup(m.group(0));
                 if (group != null) {
                     tags.put(groupName, group);
                 }
             }
         }
-        
+
         // Get preview info
         if ((mMode & PREVIEW_INFO) != 0) {
-            p = Pattern.compile("<p class=\"ip\">Showing ([\\d|,]+) - ([\\d|,]+) of ([\\d|,]+) images</p>");
+            p = Pattern.compile("<td[^>]+><a[^>]+>([\\d,]+)</a></td><td[^>]+>(?:<a[^>]+>)?&gt;(?:</a>)?</td>");
             m = p.matcher(pageContent);
             if (m.find()) {
                 re |= PREVIEW_INFO;
-                previewPerPage = Integer.parseInt(m.group(2).replace(",",
-                        ""))
-                        - Integer.parseInt(m.group(1).replace(",", ""))
-                        + 1;
-                int total = Integer.parseInt(m.group(3).replace(",", ""));
-                previewSum = (total + previewPerPage - 1) / previewPerPage;
+                previewSum = Integer.valueOf(m.group(1).replace(",", ""));
             }
         }
         // Get preview
@@ -182,6 +174,9 @@ public class DetailParser {
                 previewList.addItem(m.group(3), m.group(4), "0", m.group(1),
                         m.group(2), m.group(5));
             }
+            // Set previewPerPage
+            if (previewList != null)
+                previewPerPage = previewList.size();
         }
         // Get comment
         if ((mMode & COMMENT) != 0) {
@@ -197,24 +192,21 @@ public class DetailParser {
         }
         return re;
     }
-    
-    private LinkedList<SimpleEntry<String, Integer>> getTagGroup(String pageContent) {
-        LinkedList<SimpleEntry<String, Integer>> list =
-                new LinkedList<SimpleEntry<String, Integer>>();
-        Pattern p = Pattern.compile("<a[^<>]*>([^<>]+)</a> \\(<span[^<>]*>([\\d|,]+)</span>\\)");
+
+    private LinkedList<String> getTagGroup(String pageContent) {
+        LinkedList<String> list = new LinkedList<String>();
+        Pattern p = Pattern.compile("<div[^<>]+><a[^<>]+>([\\w\\s]+)</a></div>");
         Matcher m = p.matcher(pageContent);
         while (m.find())
-            list.add(new SimpleEntry<String, Integer>(m.group(1),
-                    Integer.parseInt(m.group(2).replace(",", ""))));
-        
+            list.add(m.group(1));
         if (list.size() == 0)
             return null;
         else
             return list;
     }
-    
-    
-    
+
+
+
     static class CommentSort implements Comparator<Comment> {
         private int compareNum(String n1, String n2, int median) {
             int re = 0;
@@ -252,7 +244,7 @@ public class DetailParser {
             else
                 return 0;
         }
-        
+
         @Override
         public int compare(Comment c1, Comment c2) {
             int re = 0;

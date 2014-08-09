@@ -19,9 +19,9 @@ package com.hippo.ehviewer.data;
 import java.util.ArrayList;
 
 public class PreviewList {
-    
+
     public class Row {
-        
+
         public class Item {
             public int xOffset;
             public int yOffset;
@@ -37,20 +37,20 @@ public class PreviewList {
                 this.url = url;
             }
         }
-        
+
         public String imageUrl;
         public ArrayList<Item> itemArray = new ArrayList<Item>();
         public int startIndex;
         public Row(String imageUrl) {
             this.imageUrl = imageUrl;
         }
-        
+
         public void addItem(int xOffset, int yOffset, int width, int height,
                 String url) {
             itemArray.add(new Item(xOffset, yOffset, width, height, url));
         }
     }
-    
+
     private Row curRow;
     public ArrayList<Row> rowArray = new ArrayList<Row>();
 
@@ -66,13 +66,13 @@ public class PreviewList {
             curRow.startIndex = lastRow.startIndex + lastRow.itemArray.size();
             rowArray.add(curRow);
         }
-        
+
         curRow.addItem(Integer.parseInt(xOffset),
                 Integer.parseInt(yOffset), Integer.parseInt(width),
                 Integer.parseInt(height), url);
     }
-    
-    public int getSum() {
+
+    public int size() {
         int sum = 0;
         for (Row row : rowArray)
             sum += row.itemArray.size();
