@@ -70,7 +70,7 @@ public class LargePreviewList extends PreviewList {
 
         viewGroup.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(mActivity);
-        int startIndex = mTargetPage * mGi.previewPerPage;
+        int startIndex = mTargetPage * mPi.getPreviewPerPage();
         int index = startIndex;
         for (Item item : mItemList) {
 
@@ -85,16 +85,16 @@ public class LargePreviewList extends PreviewList {
                     Intent intent = new Intent(mActivity,
                             GalleryActivity.class);
                     intent.putExtra("url", url);
-                    intent.putExtra("gid", mGi.gid);
-                    intent.putExtra("title", mGi.title);
+                    intent.putExtra("gid", mPi.getGid());
+                    intent.putExtra("title", mPi.getTitle());
                     intent.putExtra("firstPage", finalIndex);
-                    intent.putExtra("pageSum", mGi.pages);
+                    //intent.putExtra("pageSum", mPi.pages);
                     mActivity.startActivity(intent);
                 }
             });
             viewGroup.addView(view);
             // TODO I need a better key
-            ImageLoader.getInstance(mActivity).add(item.mImageUrl, mGi.gid +
+            ImageLoader.getInstance(mActivity).add(item.mImageUrl, mPi.getGid() +
                     "-preview-" + index,
                     new PreviewImageGetListener(viewGroup, index - startIndex));
 

@@ -16,11 +16,18 @@
 
 package com.hippo.ehviewer.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LofiGalleryDetail extends LofiGalleryInfo
-        implements PreviewImpl {
-    public int previewSum;
+        implements LofiDetailImpl {
+    public int previewPageNum;
     public int previewPerPage;
-    public PreviewList[] previewLists;
+    private final List<PreviewList> previewLists = new ArrayList<PreviewList>();
+
+    public LofiGalleryDetail(GalleryInfo galleryInfo) {
+        this(new LofiGalleryInfo(galleryInfo));
+    }
 
     public LofiGalleryDetail(LofiGalleryInfo lofiGalleryInfo) {
         gid = lofiGalleryInfo.gid;
@@ -34,12 +41,32 @@ public class LofiGalleryDetail extends LofiGalleryInfo
         simpleLanguage = lofiGalleryInfo.simpleLanguage;
         lofiTags = lofiGalleryInfo.lofiTags;
 
-        previewSum = Integer.MAX_VALUE;
+        previewPageNum = Integer.MAX_VALUE;
     }
 
     @Override
-    public int getPreviewSum() {
-        return previewSum;
+    public int getGid() {
+        return gid;
+    }
+
+    @Override
+    public String getToken() {
+        return token;
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public int getPreviewPageNum() {
+        return previewPageNum;
+    }
+
+    @Override
+    public void setPreviewPageNum(int pageNum) {
+        previewPageNum = pageNum;
     }
 
     @Override
@@ -48,7 +75,25 @@ public class LofiGalleryDetail extends LofiGalleryInfo
     }
 
     @Override
-    public PreviewList[] getPreview() {
-        return previewLists;
+    public PreviewList getPreview(int page) {
+        if (page >= 0 && page < previewLists.size())
+            return previewLists.get(page);
+        else
+            return null;
+    }
+
+    @Override
+    public void setPreview(int page, PreviewList previewList) {
+        if (page >= 0 && page < previewLists.size())
+            previewLists.set(page, previewList);
+        else if (page == previewLists.size())
+            previewLists.add(previewList);
+        else
+            ; // Do nothing
+    }
+
+    @Override
+    public String[] getTags() {
+        return lofiTags;
     }
 }

@@ -110,7 +110,7 @@ public class NormalPreviewList extends PreviewList{
 
         viewGroup.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(mActivity);
-        int index = mTargetPage * mGi.previewPerPage; // it is display index
+        int index = mTargetPage * mPi.getPreviewPerPage(); // it is display index
         int rowIndex = 0;
         for (NormalPreviewList.Row row : rowArray) {
             for (NormalPreviewList.Item item : row.itemArray) {
@@ -127,10 +127,10 @@ public class NormalPreviewList extends PreviewList{
                         Intent intent = new Intent(mActivity,
                                 GalleryActivity.class);
                         intent.putExtra("url", url);
-                        intent.putExtra("gid", mGi.gid);
-                        intent.putExtra("title", mGi.title);
+                        intent.putExtra("gid", mPi.getGid());
+                        intent.putExtra("title", mPi.getTitle());
                         intent.putExtra("firstPage", finalIndex);
-                        intent.putExtra("pageSum", mGi.pages);
+                        //intent.putExtra("pageSum", mGi.pages);
                         mActivity.startActivity(intent);
                     }
                 });
@@ -139,7 +139,7 @@ public class NormalPreviewList extends PreviewList{
                 index++;
             }
             // TODO I need a better key
-            ImageLoader.getInstance(mActivity).add(row.imageUrl, mGi.gid +
+            ImageLoader.getInstance(mActivity).add(row.imageUrl, mPi.getGid() +
                     "-preview-" + mTargetPage + "-" + rowIndex,
                     new PreviewImageGetListener(viewGroup, rowIndex));
             rowIndex++;

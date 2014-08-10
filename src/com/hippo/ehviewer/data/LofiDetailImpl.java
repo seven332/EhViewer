@@ -16,35 +16,15 @@
 
 package com.hippo.ehviewer.data;
 
-public interface PreviewImpl {
+public interface LofiDetailImpl extends PreviewImpl {
 
-    public int getGid();
-
-    public String getToken();
-
-    public String getTitle();
+    public void setPreviewPageNum(int pageNum);
 
     /**
-     * If it is unkonwn, return Integer.MAX_VALUE
+     * Check null and empty before use
      *
      * @return
      */
-    public int getPreviewPageNum();
-
-    public int getPreviewPerPage();
-
-    /**
-     * If page is error, return null
-     *
-     * @param page
-     * @return
-     */
-    public PreviewList getPreview(int page);
-
-    /**
-     *
-     * @param previewList
-     */
-    public void setPreview(int page, PreviewList previewList);
+    public String[] getTags();
 
 }

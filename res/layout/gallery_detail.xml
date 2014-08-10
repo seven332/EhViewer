@@ -199,7 +199,7 @@
                     android:id="@+id/detail_more_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/pages"
+                    android:layout_below="@id/posted"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"
                     android:text="点击查看更多" />
@@ -212,6 +212,7 @@
                 android:background="@color/divider"
                 android:visibility="gone" />
 
+            <!-- Rate -->
             <RelativeLayout
                 android:id="@+id/detail_rate"
                 android:layout_width="fill_parent"

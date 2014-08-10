@@ -16,10 +16,14 @@
 
 package com.hippo.ehviewer.data;
 
-public class ApiGalleryDetail extends ApiGalleryInfo {
-    public int previewSum;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ApiGalleryDetail extends ApiGalleryInfo
+        implements LofiDetailImpl {
+    public int previewPageNum;
     public int previewPerPage;
-    public PreviewList[] previewLists;
+    private final List<PreviewList> previewLists = new ArrayList<PreviewList>();
 
     public ApiGalleryDetail() {}
 
@@ -40,5 +44,58 @@ public class ApiGalleryDetail extends ApiGalleryInfo {
         expunged = apiGalleryInfo.expunged;
         torrentcount = apiGalleryInfo.torrentcount;
         apiTags = apiGalleryInfo.apiTags;
+    }
+
+    @Override
+    public int getGid() {
+        return gid;
+    }
+
+    @Override
+    public String getToken() {
+        return token;
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public int getPreviewPageNum() {
+        return previewPageNum;
+    }
+
+    @Override
+    public void setPreviewPageNum(int pageNum) {
+        previewPageNum = pageNum;
+    }
+
+    @Override
+    public int getPreviewPerPage() {
+        return previewPerPage;
+    }
+
+    @Override
+    public PreviewList getPreview(int page) {
+        if (page >= 0 && page < previewLists.size())
+            return previewLists.get(page);
+        else
+            return null;
+    }
+
+    @Override
+    public void setPreview(int page, PreviewList previewList) {
+        if (page >= 0 && page < previewLists.size())
+            previewLists.set(page, previewList);
+        else if (page == previewLists.size())
+            previewLists.add(previewList);
+        else
+            ; // Do nothing
+    }
+
+    @Override
+    public String[] getTags() {
+        return apiTags;
     }
 }

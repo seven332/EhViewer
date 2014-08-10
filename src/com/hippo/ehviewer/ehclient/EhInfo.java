@@ -51,7 +51,7 @@ public class EhInfo {
     public static final String EX_HOST = "exhentai.org";
     public static final String[] COOKIABLE_HOSTS = {"exhentai.org",
         "g.e-hentai.org", "forums.e-hentai.org", "ul.exhentai.org",
-        "ul.e-hentai.org"};
+        "ul.e-hentai.org", "lofi.e-hentai.org"};
 
     private static final String KEY_LOGIN = "login";
     private static final boolean DEFAULT_LOGIN = false;

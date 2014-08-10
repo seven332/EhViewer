@@ -42,6 +42,7 @@ import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.GalleryPopular;
 import com.hippo.ehviewer.data.ListUrls;
+import com.hippo.ehviewer.data.LofiGalleryDetail;
 import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.network.Downloader;
@@ -739,38 +740,148 @@ public class EhClient {
         thread.start();
     }
 
+    // Get lofi gallery Detail
+    public interface OnGetLGDetailListener {
+        public void onSuccess(LofiGalleryDetail md, boolean isLastPage);
+        public void onFailure(String eMsg);
+    }
+
+    private class GetLGDetaiResponder implements Runnable {
+        private final boolean isOk;
+        private final OnGetLGDetailListener listener;
+        private final LofiGalleryDetail gd;
+        private final boolean isLastPage;
+        private final String eMesg;
+
+        public GetLGDetaiResponder(OnGetLGDetailListener listener, LofiGalleryDetail gd, boolean isLastPage) {
+            this.isOk = true;
+            this.listener = listener;
+            this.gd = gd;
+            this.isLastPage = isLastPage;
+            this.eMesg = null;
+        }
+
+        public GetLGDetaiResponder(OnGetLGDetailListener listener, String eMsg) {
+            this.isOk = false;
+            this.listener = listener;
+            this.gd = null;
+            this.isLastPage = false;
+            this.eMesg = eMsg;
+        }
+
+        @Override
+        public void run() {
+            if (isOk)
+                listener.onSuccess(gd, isLastPage);
+            else
+                listener.onFailure(eMesg);
+        }
+    }
+
+    public void getLGDetail(final String url, final LofiGalleryDetail lgd,
+            final OnGetLGDetailListener listener) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpHelper hh = new HttpHelper(mAppContext);
+                String body = hh.get(url);
+                GetLGDetaiResponder responder;
+                if (body != null) {
+                    LofiDetailParser parser = new LofiDetailParser();
+                    if (parser.parser(body)) {
+                        lgd.setPreview(0, parser.preview);
+                        lgd.previewPerPage = parser.preview.size();
+                        responder = new GetLGDetaiResponder(listener, lgd, parser.isLastPage);
+                    } else {
+                        responder = new GetLGDetaiResponder(listener,
+                                mAppContext.getString(R.string.em_parser_error));
+                    }
+                } else {
+                    responder = new GetLGDetaiResponder(listener, hh.getEMsg());
+                }
+
+                mHandler.post(responder);
+            }
+        });
+        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
+    }
+
+
     // Get preview list
     public interface OnGetPreviewListListener {
-        public void onSuccess(Object checkFlag, PreviewList pageList);
+        public void onSuccess(Object checkFlag, PreviewList pageList, boolean isLastPage);
         public void onFailure(Object checkFlag, String eMsg);
     }
 
-    public void getPreviewList(final String url, final Object checkFlag,
+    private class GetPreviewListResponder implements Runnable {
+        private final boolean isOk;
+        private final OnGetPreviewListListener listener;
+        private final Object checkFlag;
+        private final PreviewList pageList;
+        private final boolean isLastPage;
+        private final String eMesg;
+
+        public GetPreviewListResponder(OnGetPreviewListListener listener,
+                Object checkFlag, PreviewList pageList, boolean isLastPage) {
+            this.isOk = true;
+            this.listener = listener;
+            this.checkFlag = checkFlag;
+            this.pageList = pageList;
+            this.isLastPage = isLastPage;
+            this.eMesg = null;
+        }
+
+        public GetPreviewListResponder(OnGetPreviewListListener listener,
+                Object checkFlag, String eMsg) {
+            this.isOk = false;
+            this.listener = listener;
+            this.checkFlag = null;
+            this.pageList = null;
+            this.isLastPage = false;
+            this.eMesg = eMsg;
+        }
+
+        @Override
+        public void run() {
+            if (isOk)
+                listener.onSuccess(checkFlag, pageList, isLastPage);
+            else
+                listener.onFailure(checkFlag, eMesg);
+        }
+    }
+
+    public void getPreviewList(final String url, final int mode, final Object checkFlag,
             final OnGetPreviewListListener listener) {
-        new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpHelper hp = new HttpHelper(mAppContext);
-                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
-                    @Override
-                    public void onSuccess(Object obj) {
-                        String body = (String)obj;
+                HttpHelper hh = new HttpHelper(mAppContext);
+                String body = hh.get(url);
+                GetPreviewListResponder responder;
+                if (body != null) {
+                    if (mode != EhClient.MODE_LOFI) {
                         DetailParser parser = new DetailParser();
                         if (parser.parser(body, DetailParser.PREVIEW) ==
-                                DetailParser.PREVIEW) {
-                            listener.onSuccess(checkFlag, parser.previewList);
-                        } else {
-                            listener.onFailure(checkFlag, "Parser error");
-                        }
+                                DetailParser.PREVIEW)
+                            responder = new GetPreviewListResponder(listener, checkFlag, parser.previewList, false);
+                        else
+                            responder = new GetPreviewListResponder(listener, checkFlag, "Parser error");
+                    } else {
+                        LofiDetailParser parser = new LofiDetailParser();
+                        if (parser.parser(body))
+                            responder = new GetPreviewListResponder(listener, checkFlag, parser.preview, parser.isLastPage);
+                        else
+                            responder = new GetPreviewListResponder(listener, checkFlag, "Parser error");
                     }
-                    @Override
-                    public void onFailure(String eMsg) {
-                        listener.onFailure(checkFlag, eMsg);
-                    }
-                });
-                hp.get(url);
+                } else {
+                    responder = new GetPreviewListResponder(listener, checkFlag, hh.getEMsg());
+                }
+                mHandler.post(responder);
             }
-        }).start();
+        });
+        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
     }
 
     // Get Manga url and next page

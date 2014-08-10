@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.ui;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -66,6 +67,7 @@ import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.ListUrls;
+import com.hippo.ehviewer.data.LofiDetailImpl;
 import com.hippo.ehviewer.data.LofiGalleryDetail;
 import com.hippo.ehviewer.data.LofiGalleryInfo;
 import com.hippo.ehviewer.data.PreviewImpl;
@@ -73,6 +75,8 @@ import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.drawable.OvalDrawable;
 import com.hippo.ehviewer.ehclient.DetailUrlParser;
 import com.hippo.ehviewer.ehclient.EhClient;
+import com.hippo.ehviewer.service.DownloadService;
+import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Favorite;
@@ -110,6 +114,8 @@ public class GalleryDetailActivity extends AbstractActivity
     private EhClient mClient;
     private WindowsAnimate mWindowsAnimate;
     private GalleryInfo mGalleryInfo;
+    private final DownloadServiceConnection mServiceConn =
+            new DownloadServiceConnection();
 
     private int mRunningAnimateNum = 0;
     private boolean isCheckmark = false;
@@ -168,15 +174,16 @@ public class GalleryDetailActivity extends AbstractActivity
     private CommentAdapter mCommentAdapter;
 
     private int mThemeColor;
-    private int mCurPreviewPage;
+    private int mCurPreviewPage = 0;
     private boolean mShowPreview = false;
+    private boolean mGetPreview = false;
 
     private AlertDialog createGoToDialog() {
         return new DialogBuilder(this, mThemeColor).setTitle(R.string.jump)
                 .setAdapter(new BaseAdapter() {
                     @Override
                     public int getCount() {
-                        return ((PreviewImpl)mGalleryInfo).getPreviewSum();
+                        return ((PreviewImpl)mGalleryInfo).getPreviewPageNum();
                     }
                     @Override
                     public Object getItem(int position) {
@@ -234,12 +241,22 @@ public class GalleryDetailActivity extends AbstractActivity
                 // If can not parser url, just keep it null
             }
         } else {
+            //
             gi = (GalleryInfo)(intent.getParcelableExtra(KEY_G_INFO));
             if (gi != null) {
-                if (gi instanceof LofiGalleryInfo)
-                    gi = new LofiGalleryDetail((LofiGalleryInfo)gi);
-                else
-                    gi = new GalleryDetail(gi);
+                if (gi instanceof LofiGalleryInfo) {
+                    if (Config.getMode() == EhClient.MODE_LOFI) {
+                        gi = new LofiGalleryDetail((LofiGalleryInfo)gi);
+                    } else {
+                        gi = new GalleryDetail(gi);
+                    }
+                } else {
+                    if (Config.getMode() == EhClient.MODE_LOFI) {
+                        gi = new LofiGalleryDetail(gi); // TAG is null
+                    } else {
+                        gi = new GalleryDetail(gi);
+                    }
+                }
             }
         }
         return gi;
@@ -268,6 +285,7 @@ public class GalleryDetailActivity extends AbstractActivity
     protected void onDestroy() {
         super.onDestroy();
         mWindowsAnimate.free();
+        unbindService(mServiceConn);
     }
 
     @Override
@@ -356,6 +374,10 @@ public class GalleryDetailActivity extends AbstractActivity
 
         // Init
         mRatingText.setFactory(this);
+        mPreview.setColumnCountPortrait(
+                Config.getPreviewColumnsPortrait());
+        mPreview.setColumnCountLandscape(
+                Config.getPreviewColumnsLandscape());
 
         // Set random color
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
@@ -385,6 +407,7 @@ public class GalleryDetailActivity extends AbstractActivity
         mWindowsAnimate.addRippleEffect(mDownloadButton, true);
         mWindowsAnimate.addRippleEffect(mFavorite, false);
         mWindowsAnimate.addRippleEffect(mRate, false);
+        mWindowsAnimate.addRippleEffect(mPreviewPage, true);
         mWindowsAnimate.addRippleEffect(mPreviewBack, true);
         mWindowsAnimate.addRippleEffect(mPreviewFront, true);
 
@@ -410,6 +433,10 @@ public class GalleryDetailActivity extends AbstractActivity
         mReply.setOnClickListener(this);
 
         doPreLayout();
+
+        // Download service
+        Intent it = new Intent(GalleryDetailActivity.this, DownloadService.class);
+        bindService(it, mServiceConn, BIND_AUTO_CREATE);
     }
 
     @Override
@@ -429,26 +456,24 @@ public class GalleryDetailActivity extends AbstractActivity
 
         mRefreshText.setRefreshing(true);
 
-        if (mGalleryInfo instanceof GalleryDetail) {
-            GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
-            if (galleryDetail.title == null) {
-                // We should get info from detail page
-                mClient.getGDetail(detailUrl, galleryDetail, new GDetailGetListener());
-            } else {
-                mDetailScroll.setVisibility(View.VISIBLE);
-                mDetailHeader.setVisibility(View.VISIBLE);
+        if (mGalleryInfo.title != null) {
+            // Not from url
+            mDetailScroll.setVisibility(View.VISIBLE);
+            mDetailHeader.setVisibility(View.VISIBLE);
 
-                mThumb.setLoadInfo(galleryDetail.thumb, String.valueOf(galleryDetail.gid));
-                ImageLoader.getInstance(this).add(galleryDetail.thumb, String.valueOf(galleryDetail.gid),
-                        new LoadImageView.SimpleImageGetListener(mThumb).setTransitabled(false));
-                mTitle.setText(galleryDetail.title);
-                mUploader.setText(galleryDetail.uploader);
-
-                mClient.getGDetail(detailUrl, galleryDetail, new GDetailGetListener());
-            }
-        } else {
-
+            mThumb.setLoadInfo(mGalleryInfo.thumb, String.valueOf(mGalleryInfo.gid));
+            ImageLoader.getInstance(this).add(mGalleryInfo.thumb, String.valueOf(mGalleryInfo.gid),
+                    new LoadImageView.SimpleImageGetListener(mThumb).setTransitabled(false));
+            mTitle.setText(mGalleryInfo.title);
+            mUploader.setText(mGalleryInfo.uploader);
         }
+
+        if (mGalleryInfo instanceof GalleryDetail)
+            mClient.getGDetail(detailUrl, (GalleryDetail)mGalleryInfo, new GDetailGetListener());
+        else if (mGalleryInfo instanceof LofiGalleryDetail)
+            mClient.getLGDetail(detailUrl, (LofiGalleryDetail)mGalleryInfo, new GLDetailGetListener());
+        else if (mGalleryInfo instanceof ApiGalleryDetail)
+            ; // TODO
     }
 
     private String getRatingText(float rating) {
@@ -488,9 +513,81 @@ public class GalleryDetailActivity extends AbstractActivity
     }
 
     private String getAllRatingText(float rating, int people) {
-        return new StringBuilder().append("大家觉得").append(" ") // TODO
+        StringBuilder sb = new StringBuilder().append("大家觉得").append(" ") // TODO
                 .append(getRatingText(rating))
-                .append(" (").append(rating).append(", ").append(people).append(")").toString();
+                .append(" (").append(rating);
+        if (people != -1)
+            sb.append(", ").append(people).append(")").toString();
+        else
+            sb.append(")");
+        return sb.toString();
+    }
+
+    private void addTag(LinkedHashMap<String, LinkedList<String>> tags) {
+        int x = Ui.dp2pix(2);
+        int y = Ui.dp2pix(4);
+        ContextThemeWrapper ctw = new ContextThemeWrapper(this, R.style.TextTag);
+        for (Entry<String, LinkedList<String>> tagGroup : tags.entrySet()) {
+
+            LinearLayout tagGroupLayout = new LinearLayout(this);
+            tagGroupLayout.setOrientation(LinearLayout.HORIZONTAL);
+            AutoWrapLayout tagLayout = new AutoWrapLayout(this);
+
+
+            // Group name
+            final String groupName = tagGroup.getKey();
+            TextView groupNameView = new TextView(ctw);
+            groupNameView.setText(groupName);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(x, y, x, y);
+            tagGroupLayout.addView(groupNameView, lp);
+
+            for (final String tag : tagGroup.getValue()) {
+                TextView tagView = new TextView(ctw);
+                tagView.setText(tag);
+                tagView.setBackgroundColor(mThemeColor);
+                tagView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                        Intent intent = new Intent(GalleryDetailActivity.this,
+                                GalleryListActivity.class);
+                        intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
+                        intent.putExtra(GalleryListActivity.KEY_MODE,
+                                ListUrls.MODE_TAG);
+                        intent.putExtra(GalleryListActivity.KEY_TAG, groupName + ":" + tag);
+                        startActivity(intent);
+                    }
+                });
+                AutoWrapLayout.LayoutParams alp = new AutoWrapLayout.LayoutParams();
+                alp.setMargins(x, y, x, y);
+                tagLayout.addView(tagView, alp);
+            }
+            tagGroupLayout.addView(tagLayout);
+            mDetailTag.addView(tagGroupLayout);
+        }
+    }
+
+    private void addLofiTag(String[] tags) {
+        int x = Ui.dp2pix(2);
+        int y = Ui.dp2pix(4);
+        ContextThemeWrapper ctw = new ContextThemeWrapper(this, R.style.TextTag);
+        AutoWrapLayout tagLayout = new AutoWrapLayout(this);
+        for (String tag : tags) {
+            TextView tagView = new TextView(ctw);
+            tagView.setText(tag);
+            tagView.setBackgroundColor(mThemeColor);
+            AutoWrapLayout.LayoutParams alp = new AutoWrapLayout.LayoutParams();
+            alp.setMargins(x, y, x, y);
+            tagLayout.addView(tagView, alp);
+        }
+        mDetailTag.addView(tagLayout);
+    }
+
+    private String getPreviewPageNum(int pageNum) {
+        return pageNum == Integer.MAX_VALUE ? "??" : String.valueOf(pageNum);
     }
 
     /**
@@ -510,24 +607,22 @@ public class GalleryDetailActivity extends AbstractActivity
             mUploader.setText(mGalleryInfo.uploader);
         }
 
+        // Button
         mDetailButtons.setVisibility(View.VISIBLE);
-        mWarning.setVisibility(View.VISIBLE);
-        mDetailActions.setVisibility(View.VISIBLE);
-        mDividerAM.setVisibility(View.VISIBLE);
-        mDetailMore.setVisibility(View.VISIBLE);
-        mDividerMR.setVisibility(View.VISIBLE);
-        mDetailRate.setVisibility(View.VISIBLE);
-        mDividerRT.setVisibility(View.VISIBLE);
-        mDetailTag.setVisibility(View.VISIBLE);
-        mDividerTC.setVisibility(View.VISIBLE);
-        mDetailComment.setVisibility(View.VISIBLE);
 
+        // waring
+        mWarning.setVisibility(View.VISIBLE);
+
+        // Action
+        mDetailActions.setVisibility(View.VISIBLE);
         mCategory.setText(Ui.getCategoryText(mGalleryInfo.category));
         mCategoryDrawable.setColor(Ui.getCategoryColor(mGalleryInfo.category));
 
+        // Detail
+        mDividerAM.setVisibility(View.VISIBLE);
+        mDetailMore.setVisibility(View.VISIBLE);
         if (mGalleryInfo instanceof GalleryDetail) {
             GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
-
             ((TextView)mDetailMore.findViewById(R.id.language)).setText("语言: " + galleryDetail.language); // TODO
             ((TextView)mDetailMore.findViewById(R.id.posted)).setText(galleryDetail.posted);
             ((TextView)mDetailMore.findViewById(R.id.pages)).setText("页面: " + String.valueOf(galleryDetail.pages));
@@ -550,55 +645,59 @@ public class GalleryDetailActivity extends AbstractActivity
                     .append("people: ").append(galleryDetail.people).append("\n\n")
                     .append("rating: ").append(galleryDetail.rating);
             ((TextView)mMoreDetailScroll.findViewById(R.id.more_detail)).setText(sb.toString());
-            mRatingText.setCurrentText(getAllRatingText(galleryDetail.rating, galleryDetail.people));
-            mRating.setRating(galleryDetail.rating);
-            mRating.setEnableRate(false);
+        } else if (mGalleryInfo instanceof LofiGalleryDetail) {
+            LofiGalleryDetail lofiGalleryDetail = (LofiGalleryDetail)mGalleryInfo;
+            ((TextView)mDetailMore.findViewById(R.id.language)).setVisibility(View.GONE);
+            ((TextView)mDetailMore.findViewById(R.id.posted)).setText(lofiGalleryDetail.posted);
+            ((TextView)mDetailMore.findViewById(R.id.pages)).setVisibility(View.GONE);
+            ((TextView)mDetailMore.findViewById(R.id.size)).setVisibility(View.GONE);
+            StringBuilder sb = new StringBuilder();
+            sb.append("gid: ").append(lofiGalleryDetail.gid).append("\n\n")
+                    .append("token: ").append(lofiGalleryDetail.token).append("\n\n")
+                    .append("title: ").append(lofiGalleryDetail.title).append("\n\n")
+                    .append("thumb: ").append(lofiGalleryDetail.thumb).append("\n\n")
+                    .append("category: ").append(Ui.getCategoryText(lofiGalleryDetail.category)).append("\n\n")
+                    .append("uploader: ").append(lofiGalleryDetail.uploader).append("\n\n")
+                    .append("posted: ").append(lofiGalleryDetail.posted).append("\n\n")
+                    .append("simpleLanguage: ").append(lofiGalleryDetail.simpleLanguage).append("\n\n")
+                    .append("rating: ").append(lofiGalleryDetail.rating).append("\n\n");
+            ((TextView)mMoreDetailScroll.findViewById(R.id.more_detail)).setText(sb.toString());
+        } else if (mGalleryInfo instanceof ApiGalleryDetail) {
+            // TODO
+        }
 
-            // Add tags
-            for (Entry<String, LinkedList<String>> tagGroup : galleryDetail.tags.entrySet()) {
-                ContextThemeWrapper ctw = new ContextThemeWrapper(this, R.style.TextTag);
-                LinearLayout tagGroupLayout = new LinearLayout(this);
-                tagGroupLayout.setOrientation(LinearLayout.HORIZONTAL);
-                AutoWrapLayout tagLayout = new AutoWrapLayout(this);
-                int x = Ui.dp2pix(2);
-                int y = Ui.dp2pix(4);
+        // Rate
+        mDividerMR.setVisibility(View.VISIBLE);
+        mDetailRate.setVisibility(View.VISIBLE);
+        int people = mGalleryInfo instanceof GalleryDetail ? ((GalleryDetail)mGalleryInfo).people : -1;
+        mRatingText.setCurrentText(getAllRatingText(mGalleryInfo.rating, people));
+        mRating.setRating(mGalleryInfo.rating);
+        mRating.setEnableRate(false);
 
-                // Group name
-                final String groupName = tagGroup.getKey();
-                TextView groupNameView = new TextView(ctw);
-                groupNameView.setText(groupName);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT);
-                lp.setMargins(x, y, x, y);
-                tagGroupLayout.addView(groupNameView, lp);
-
-                for (final String tag : tagGroup.getValue()) {
-                    TextView tagView = new TextView(ctw);
-                    tagView.setText(tag);
-                    tagView.setBackgroundColor(mThemeColor);
-                    tagView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            finish();
-                            Intent intent = new Intent(GalleryDetailActivity.this,
-                                    GalleryListActivity.class);
-                            intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
-                            intent.putExtra(GalleryListActivity.KEY_MODE,
-                                    ListUrls.MODE_TAG);
-                            intent.putExtra(GalleryListActivity.KEY_TAG, groupName + ":" + tag);
-                            startActivity(intent);
-                        }
-                    });
-                    AutoWrapLayout.LayoutParams alp = new AutoWrapLayout.LayoutParams();
-                    alp.setMargins(x, y, x, y);
-                    tagLayout.addView(tagView, alp);
-                }
-                tagGroupLayout.addView(tagLayout);
-                mDetailTag.addView(tagGroupLayout);
+        // Tag
+        if (mGalleryInfo instanceof GalleryDetail) {
+            GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
+            if (galleryDetail.tags != null && galleryDetail.tags.size() > 0) {
+                mDividerRT.setVisibility(View.VISIBLE);
+                mDetailTag.setVisibility(View.VISIBLE);
+                addTag(galleryDetail.tags);
             }
+        } else if (mGalleryInfo instanceof LofiDetailImpl) {
+            LofiDetailImpl lofiDetailImpl = (LofiDetailImpl)mGalleryInfo;
+            String[] tags = lofiDetailImpl.getTags();
+            if (tags != null && tags.length > 0) {
+                mDividerRT.setVisibility(View.VISIBLE);
+                mDetailTag.setVisibility(View.VISIBLE);
+                addLofiTag(tags);
+            }
+        }
 
-            // Add comments
+        // Comment
+        if (mGalleryInfo instanceof GalleryDetail) {
+            GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
+            mDividerTC.setVisibility(View.VISIBLE);
+            mDetailComment.setVisibility(View.VISIBLE);
+
             int commentNum = galleryDetail.comments.size();
             if (commentNum == 0)
                 mCommentMoreText.setText("暂无评论，就等你了");
@@ -616,24 +715,21 @@ public class GalleryDetailActivity extends AbstractActivity
             mCommentList.setAdapter(mCommentAdapter);
             mCommentList.setOnItemClickListener(this);
             mCommentList.setOnItemLongClickListener(this);
+        }
 
-            // Add preview
-            if (galleryDetail.previewLists[0] != null) {
+        // Add preview
+        if (mGalleryInfo instanceof PreviewImpl) {
+            PreviewImpl previewImpl = (PreviewImpl)mGalleryInfo;
+            PreviewList pl = previewImpl.getPreview(0);
+            if (pl != null) {
                 mDividerCP.setVisibility(View.VISIBLE);
                 mDetailPreview.setVisibility(View.VISIBLE);
 
-                mCurPreviewPage = 0;
-                mPreviewPage.setText((mCurPreviewPage + 1) + "/" + galleryDetail.previewSum);
-                galleryDetail.previewLists[0].setData(this, this,
-                        galleryDetail, mCurPreviewPage);
-
-                System.out.println("previewLists");
-                galleryDetail.previewLists[0].addPreview(mPreview);
+                mPreviewPage.setText((mCurPreviewPage + 1) + "/" +
+                            getPreviewPageNum(previewImpl.getPreviewPageNum()));
+                pl.setData(this, this, previewImpl, mCurPreviewPage);
+                pl.addPreview(mPreview);
             }
-        } else if (mGalleryInfo instanceof LofiGalleryDetail) {
-
-        } else if (mGalleryInfo instanceof ApiGalleryDetail) {
-
         }
     }
 
@@ -643,22 +739,23 @@ public class GalleryDetailActivity extends AbstractActivity
 
         PreviewImpl previewImpl = (PreviewImpl)mGalleryInfo;
         mPreview.removeAllViews();
-        mPreviewPage.setText((mCurPreviewPage + 1) + "/" + previewImpl.getPreviewSum());
+        mPreviewPage.setText((mCurPreviewPage + 1) + "/" + getPreviewPageNum(previewImpl.getPreviewPageNum()));
 
-        PreviewList[] previewLists = previewImpl.getPreview();
-        PreviewList pageList = previewLists[mCurPreviewPage];
-        if (pageList == null) {
+        PreviewList previewList = previewImpl.getPreview(mCurPreviewPage);
+        if (previewList == null) {
             mPreviewWait.setVisibility(View.VISIBLE);
             mPreviewRefresh.setVisibility(View.GONE);
 
             String url = mClient.getDetailUrl(
                     mGalleryInfo.gid, mGalleryInfo.token, mCurPreviewPage);
-            mClient.getPreviewList(url, mCurPreviewPage,
+            mClient.getPreviewList(url, Config.getMode(), mCurPreviewPage,
                     new PListGetListener());
+
+            mGetPreview = true;
         } else {
             mPreviewWait.setVisibility(View.GONE);
             mPreviewRefresh.setVisibility(View.GONE);
-            previewLists[mCurPreviewPage].addPreview(mPreview);
+            previewList.addPreview(mPreview);
 
             mShowPreview = true;
         }
@@ -707,6 +804,12 @@ public class GalleryDetailActivity extends AbstractActivity
             return;
 
         if (v == mDownloadButton) {
+            Intent it = new Intent(GalleryDetailActivity.this, DownloadService.class);
+            startService(it);
+            mServiceConn.getService().add(String.valueOf(mGalleryInfo.gid), mGalleryInfo.thumb,
+                    EhClient.getDetailUrl(mGalleryInfo.gid, mGalleryInfo.token, 0, Config.getMode()),
+                    mGalleryInfo.title);
+            new SuperToast(R.string.toast_add_download).show();
         } else if (v == mReadButton) {
             //mData.addRead(mGalleryInfo);
             if (mGalleryInfo instanceof GalleryDetail) {
@@ -757,7 +860,6 @@ public class GalleryDetailActivity extends AbstractActivity
                     @Override
                     public void onSuccess(float ratingAvg, int ratingCnt) {
                         mGalleryInfo.rating = ratingAvg;
-                        // TODO mGalleryInfo.people = ratingCnt;
                         mRatingText.setText(getAllRatingText(mGalleryInfo.rating, ratingCnt));
                         mRating.setRating(mGalleryInfo.rating);
                     }
@@ -835,11 +937,12 @@ public class GalleryDetailActivity extends AbstractActivity
                     }).create().show();
         } else if (v == mPreviewPage) {
             if (mGalleryInfo instanceof PreviewImpl &&
-                    ((PreviewImpl)mGalleryInfo).getPreviewSum() != Integer.MAX_VALUE &&
-                    ((PreviewImpl)mGalleryInfo).getPreviewSum() > 1)
+                    ((PreviewImpl)mGalleryInfo).getPreviewPageNum() != Integer.MAX_VALUE &&
+                    ((PreviewImpl)mGalleryInfo).getPreviewPageNum() > 1)
                 mGoToDialog.show();
         } else if (v == mPreviewBack) {
-            if (!(mGalleryInfo instanceof PreviewImpl))
+            if (!(mGalleryInfo instanceof PreviewImpl) ||
+                    (mGalleryInfo instanceof LofiGalleryDetail && mGetPreview))
                 return;
 
             if (mCurPreviewPage <= 0)
@@ -847,10 +950,11 @@ public class GalleryDetailActivity extends AbstractActivity
             mCurPreviewPage--;
             refreshPreview();
         } else if (v == mPreviewFront) {
-            if (!(mGalleryInfo instanceof PreviewImpl))
+            if (!(mGalleryInfo instanceof PreviewImpl) ||
+                    (mGalleryInfo instanceof LofiGalleryDetail && mGetPreview))
                 return;
 
-            if (mCurPreviewPage >= ((PreviewImpl)mGalleryInfo).getPreviewSum() - 1)
+            if (mCurPreviewPage >= ((PreviewImpl)mGalleryInfo).getPreviewPageNum() - 1)
                 return;
             mCurPreviewPage++;
             refreshPreview();
@@ -1030,10 +1134,27 @@ public class GalleryDetailActivity extends AbstractActivity
        }
     }
 
+    private class GLDetailGetListener
+            implements EhClient.OnGetLGDetailListener {
+        @Override
+        public void onSuccess(LofiGalleryDetail md, boolean isLastPage) {
+            if (isLastPage)
+                ((LofiDetailImpl)mGalleryInfo).setPreviewPageNum(mCurPreviewPage + 1);
+            mRefreshText.setRefreshing(false);
+            doLayout();
+        }
+
+        @Override
+        public void onFailure(String eMsg) {
+            // TODO
+            new SuperToast(eMsg, SuperToast.ERROR).show();
+        }
+    }
+
     private class PListGetListener
             implements EhClient.OnGetPreviewListListener {
         @Override
-        public void onSuccess(Object checkFlag, PreviewList pageList) {
+        public void onSuccess(Object checkFlag, PreviewList pageList, boolean isLastPage) {
             if (isFinishing())
                 return;
             if (!(mGalleryInfo instanceof PreviewImpl))
@@ -1042,14 +1163,20 @@ public class GalleryDetailActivity extends AbstractActivity
             mPreviewWait.setVisibility(View.GONE);
             mPreviewRefresh.setVisibility(View.GONE);
 
-            PreviewImpl previewImpl = (PreviewImpl)mGalleryInfo;
-            PreviewList[] previewLists = previewImpl.getPreview();
             int page = (Integer)checkFlag;
-            previewLists[page] = pageList;
-            previewLists[page].setData(GalleryDetailActivity.this,
-                    GalleryDetailActivity.this, (GalleryDetail)mGalleryInfo, page); // TODO how about LofiGalleryDetail
-            previewLists[page].addPreview(mPreview);
+            PreviewImpl previewImpl = (PreviewImpl)mGalleryInfo;
+            previewImpl.setPreview(page, pageList);
+            pageList.setData(GalleryDetailActivity.this,
+                    GalleryDetailActivity.this, previewImpl, page); // TODO how about LofiGalleryDetail
+            pageList.addPreview(mPreview);
 
+            if (isLastPage && mGalleryInfo instanceof LofiDetailImpl) {
+                ((LofiDetailImpl)mGalleryInfo).setPreviewPageNum(mCurPreviewPage + 1);
+                mPreviewPage.setText((mCurPreviewPage + 1) + "/" +
+                        getPreviewPageNum(previewImpl.getPreviewPageNum()));
+            }
+
+            mGetPreview = false;
             mShowPreview = true;
         }
 
@@ -1066,6 +1193,8 @@ public class GalleryDetailActivity extends AbstractActivity
                 mPreviewWait.setVisibility(View.GONE);
                 mPreviewRefresh.setVisibility(View.VISIBLE);
             }
+
+            // TODO what to do with mGetPreview
         }
     }
 

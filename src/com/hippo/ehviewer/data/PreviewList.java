@@ -32,7 +32,7 @@ public abstract class PreviewList {
 
     protected PreviewHolder mHolder;
     protected Activity mActivity;
-    protected GalleryDetail mGi;
+    protected PreviewImpl mPi;
     protected int mTargetPage;
 
     /**
@@ -44,10 +44,10 @@ public abstract class PreviewList {
 
     public abstract int size();
 
-    public void setData(PreviewHolder holder, Activity activity, GalleryDetail gi, int targetPage) {
+    public void setData(PreviewHolder holder, Activity activity, PreviewImpl pi, int targetPage) {
         mHolder = holder;
         mActivity = activity;
-        mGi = gi;
+        mPi = pi;
         mTargetPage = targetPage;
     }
 

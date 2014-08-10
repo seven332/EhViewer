@@ -32,6 +32,9 @@ public class GalleryDetail extends GalleryInfo
     public String language;
     public int people;
     public String firstPage;
+    /**
+     * Can't be null, just can be empty
+     */
     public LinkedHashMap<String, LinkedList<String>> tags;
 
     // For Preview
@@ -55,7 +58,22 @@ public class GalleryDetail extends GalleryInfo
     }
 
     @Override
-    public int getPreviewSum() {
+    public int getGid() {
+        return gid;
+    }
+
+    @Override
+    public String getToken() {
+        return token;
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public int getPreviewPageNum() {
         return previewSum;
     }
 
@@ -65,7 +83,16 @@ public class GalleryDetail extends GalleryInfo
     }
 
     @Override
-    public PreviewList[] getPreview() {
-        return previewLists;
+    public PreviewList getPreview(int page) {
+        if (page >= 0 && page < previewLists.length)
+            return previewLists[page];
+        else
+            return null;
+    }
+
+    @Override
+    public void setPreview(int page, PreviewList previewList) {
+        if (page >= 0 && page < previewLists.length)
+            previewLists[page] = previewList;
     }
 }

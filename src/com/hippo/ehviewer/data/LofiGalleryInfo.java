@@ -59,6 +59,21 @@ public class LofiGalleryInfo extends GalleryInfo {
                 }
     };
 
+    public LofiGalleryInfo() {}
+
+    public LofiGalleryInfo(GalleryInfo galleryInfo) {
+        gid = galleryInfo.gid;
+        token = galleryInfo.token;
+        title = galleryInfo.title;
+        posted = galleryInfo.posted;
+        category = galleryInfo.category;
+        thumb = galleryInfo.thumb;
+        uploader = galleryInfo.uploader;
+        rating = galleryInfo.rating;
+        simpleLanguage = galleryInfo.simpleLanguage;
+        lofiTags = null;
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
