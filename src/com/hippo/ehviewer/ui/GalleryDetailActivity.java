@@ -648,9 +648,9 @@ public class GalleryDetailActivity extends AbstractActivity
         } else if (mGalleryInfo instanceof LofiGalleryDetail) {
             LofiGalleryDetail lofiGalleryDetail = (LofiGalleryDetail)mGalleryInfo;
             ((TextView)mDetailMore.findViewById(R.id.language)).setVisibility(View.GONE);
-            ((TextView)mDetailMore.findViewById(R.id.posted)).setText(lofiGalleryDetail.posted);
+            ((TextView)mDetailMore.findViewById(R.id.posted)).setVisibility(View.GONE);
             ((TextView)mDetailMore.findViewById(R.id.pages)).setVisibility(View.GONE);
-            ((TextView)mDetailMore.findViewById(R.id.size)).setVisibility(View.GONE);
+            ((TextView)mDetailMore.findViewById(R.id.size)).setText(lofiGalleryDetail.posted);
             StringBuilder sb = new StringBuilder();
             sb.append("gid: ").append(lofiGalleryDetail.gid).append("\n\n")
                     .append("token: ").append(lofiGalleryDetail.token).append("\n\n")

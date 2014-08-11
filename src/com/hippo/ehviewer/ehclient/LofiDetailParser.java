@@ -26,6 +26,7 @@ public class LofiDetailParser {
 
     public boolean isLastPage;
     public LargePreviewList preview;
+    public String emesg;
 
     public boolean parser(String body) {
         Pattern p;

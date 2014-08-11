@@ -304,46 +304,72 @@ public class EhClient {
     public interface OnLoginListener {
         public void onSuccess();
         public void onGetAvatar(int code);
-        public void onFailure(String eMsg);
+        public void onFailure(String eMesg);
+    }
+
+    private class LoginResponder implements Runnable {
+        private final boolean isOk;
+        private final OnLoginListener listener;
+        private final String eMesg;
+
+        public LoginResponder(OnLoginListener listener) {
+            this.isOk = true;
+            this.listener = listener;
+            this.eMesg = null;
+        }
+
+        public LoginResponder(OnLoginListener listener, String eMesg) {
+            this.isOk = false;
+            this.listener = listener;
+            this.eMesg = eMesg;
+        }
+
+        @Override
+        public void run() {
+            if (isOk) {
+                listener.onSuccess();
+            } else {
+                listener.onFailure(eMesg);
+            }
+        }
     }
 
     public void login(final String username, final String password,
             final OnLoginListener listener) {
-        new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                final HttpHelper hp = new HttpHelper(mAppContext);
-                hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
-                    @Override
-                    public void onSuccess(Object obj) {
-                        String body = (String)obj;
-                        LoginParser parser = new LoginParser();
-                        if (parser.parser(body)) {
-                            mInfo.login(username, parser.displayname);
-                            getAvatar(listener);
-
-                            listener.onSuccess();
-                        } else {
-                            listener.onFailure(parser.eMesg);
-                        }
-                    }
-                    @Override
-                    public void onFailure(String eMsg) {
-                        listener.onFailure(eMsg);
-                    }
-                });
-                hp.postForm(LOGIN_URL, new String[][] {
+                final HttpHelper hh = new HttpHelper(mAppContext);
+                String body = hh.postForm(LOGIN_URL, new String[][] {
                         new String[] { "UserName", username },
                         new String[] { "PassWord", password },
                         new String[] { "submit", "Log me in" },
                         new String[] { "CookieDate", "1" },
                         new String[] { "temporary_https", "on" }});
+                LoginResponder responder;
+                if (body == null) {
+                    responder = new LoginResponder(listener, hh.getEMsg());
+                } else if (!body.contains("<")) {
+                    responder = new LoginResponder(listener, body);
+                } else {
+                    LoginParser parser = new LoginParser();
+                    if (parser.parser(body)) {
+                        mInfo.login(username, parser.displayname);
+                        getAvatar(listener);
+                        responder = new LoginResponder(listener);
+                    } else {
+                        responder = new LoginResponder(listener, parser.eMesg);
+                    }
+                }
+                mHandler.post(responder);
             }
-        }).start();
+        });
+        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
     }
 
     private void getAvatar(final OnLoginListener listener) {
-        new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 String body;
@@ -386,7 +412,9 @@ public class EhClient {
                 // notification
                 listener.onGetAvatar(GET_AVATAR_OK);
             }
-        }).start();
+        });
+        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
     }
 
     // Get Gallery List
@@ -397,7 +425,6 @@ public class EhClient {
     }
 
     private class GetGListResponder implements Runnable {
-
         private final boolean isOk;
         private final OnGetGListListener listener;
         private final Object checkFlag;
@@ -446,35 +473,31 @@ public class EhClient {
                 HttpHelper hp = new HttpHelper(mAppContext);
                 String body = hp.get(url);
                 GetGListResponder responder;
-                if (body != null) { // Get ok
-                    // If no element, it might be a notice
-                    if (!body.contains("<")) {
-                        responder = new GetGListResponder(listener, checkFlag, body);
-                    } else {
-                        final ListParser parser = new ListParser();
-                        switch (parser.parser(body, mode)) {
-                        case ListParser.ALL:
-                            responder = new GetGListResponder(listener, checkFlag,
-                                    parser.giList, parser.pageNum);
-                            break;
-                        case ListParser.NOT_FOUND:
-                            responder = new GetGListResponder(listener, checkFlag,
-                                    parser.giList, 0);
-                            break;
-                        case ListParser.INDEX_ERROR:
-                            responder = new GetGListResponder(listener, checkFlag,
-                                    "index error"); // TODO
-                            break;
-                        case ListParser.PARSER_ERROR:
-                        default:
-                            responder = new GetGListResponder(listener, checkFlag, "parser error"); // TODO
-                            break;
-                        }
-                    }
-                } else {
+                if (body == null) {
                     responder = new GetGListResponder(listener, checkFlag, hp.getEMsg());
+                } else if (!body.contains("<")) {
+                    responder = new GetGListResponder(listener, checkFlag, body);
+                } else {
+                    final ListParser parser = new ListParser();
+                    switch (parser.parser(body, mode)) {
+                    case ListParser.ALL:
+                        responder = new GetGListResponder(listener, checkFlag,
+                                parser.giList, parser.pageNum);
+                        break;
+                    case ListParser.NOT_FOUND:
+                        responder = new GetGListResponder(listener, checkFlag,
+                                parser.giList, 0);
+                        break;
+                    case ListParser.INDEX_ERROR:
+                        responder = new GetGListResponder(listener, checkFlag,
+                                "index error"); // TODO
+                        break;
+                    case ListParser.PARSER_ERROR:
+                    default:
+                        responder = new GetGListResponder(listener, checkFlag, "parser error"); // TODO
+                        break;
+                    }
                 }
-
                 mHandler.post(responder);
             }
         });
@@ -605,13 +628,14 @@ public class EhClient {
 
                 String body = hh.postFormData(getFileSearchUrl(apiMode), dataList);
                 GetGListFromImageSearchResponder responder;
-                if (body != null) { // Get ok
-                    // If no element, it might be a notice
+                if (body == null) {
+                    responder = new GetGListFromImageSearchResponder(listener, checkFlag, hh.getEMsg());
+                } else if (!body.contains("<")) {
+                    responder = new GetGListFromImageSearchResponder(listener, checkFlag, body);
+                } else {
                     String newUrl = hh.getLastUrl();
                     if (newUrl == null) {
                         responder = new GetGListFromImageSearchResponder(listener, checkFlag, "Location is null");
-                    } else if (!body.contains("<")) {
-                        responder = new GetGListFromImageSearchResponder(listener, checkFlag, body);
                     } else {
                         final ListParser parser = new ListParser();
                         switch (parser.parser(body, apiMode)) {
@@ -633,10 +657,7 @@ public class EhClient {
                             break;
                         }
                     }
-                } else {
-                    responder = new GetGListFromImageSearchResponder(listener, checkFlag, hh.getEMsg());
                 }
-
                 mHandler.post(responder);
             }
         });
@@ -687,7 +708,11 @@ public class EhClient {
                 HttpHelper hh = new HttpHelper(mAppContext);
                 String body = hh.get(url);
                 GetGDetaiResponder responder;
-                if (body != null) {
+                if (body == null) {
+                    responder = new GetGDetaiResponder(listener, hh.getEMsg());
+                } else if (!body.contains("<")) {
+                    responder = new GetGDetaiResponder(listener, body);
+                } else {
                     DetailParser parser = new DetailParser();
                     int result = parser.parser(body, DetailParser.DETAIL | DetailParser.TAG
                             | DetailParser.PREVIEW_INFO | DetailParser.PREVIEW
@@ -729,10 +754,7 @@ public class EhClient {
                         responder = new GetGDetaiResponder(listener,
                                 mAppContext.getString(R.string.em_parser_error));
                     }
-                } else {
-                    responder = new GetGDetaiResponder(listener, hh.getEMsg());
                 }
-
                 mHandler.post(responder);
             }
         });
@@ -786,7 +808,11 @@ public class EhClient {
                 HttpHelper hh = new HttpHelper(mAppContext);
                 String body = hh.get(url);
                 GetLGDetaiResponder responder;
-                if (body != null) {
+                if (body == null) {
+                    responder = new GetLGDetaiResponder(listener, hh.getEMsg());
+                } else if (!body.contains("<")) {
+                    responder = new GetLGDetaiResponder(listener, body);
+                } else {
                     LofiDetailParser parser = new LofiDetailParser();
                     if (parser.parser(body)) {
                         lgd.setPreview(0, parser.preview);
@@ -796,10 +822,7 @@ public class EhClient {
                         responder = new GetLGDetaiResponder(listener,
                                 mAppContext.getString(R.string.em_parser_error));
                     }
-                } else {
-                    responder = new GetLGDetaiResponder(listener, hh.getEMsg());
                 }
-
                 mHandler.post(responder);
             }
         });
