@@ -1599,6 +1599,16 @@ public class GalleryListActivity extends AbstractGalleryActivity
         }
     }
 
+    private class ViewHolder {
+        public LoadImageView thumb;
+        public TextView category;
+        public TextView simpleLanguage;
+        public TextView title;
+        public TextView uploader;
+        public RatingView rate;
+        public TextView posted;
+    }
+
     public class ListAdapter extends BaseAdapter {
         private final List<GalleryInfo> mGiList;
         private final ImageLoader mImageLoader;
@@ -1629,25 +1639,39 @@ public class GalleryListActivity extends AbstractGalleryActivity
                     (mListMode == LIST_MODE_DETAIL && convertView.getId() != R.id.gallery_list_detail) ||
                     (mListMode == LIST_MODE_THUMB && convertView.getId() != R.id.gallery_list_thumb)) {
                 // Get new view
+                ViewHolder viewHolder = new ViewHolder();
                 switch (mListMode) {
                 case LIST_MODE_DETAIL:
                     convertView = LayoutInflater.from(GalleryListActivity.this)
-                    .inflate(R.layout.gallery_list_detail_item, parent, false);
+                            .inflate(R.layout.gallery_list_detail_item, parent, false);
                     CardViewSalon.reformWithShadow(convertView, new int[][]{
                                     new int[]{android.R.attr.state_pressed},
                                     new int[]{android.R.attr.state_activated},
                                     new int[]{}},
                                     new int[]{0xff84cae4, 0xff33b5e5, 0xFFFAFAFA}, null, false); // TODO
+                    viewHolder.thumb = (LoadImageView)convertView.findViewById(R.id.thumb);
+                    viewHolder.category = (TextView)convertView.findViewById(R.id.category);
+                    viewHolder.simpleLanguage = (TextView)convertView.findViewById(R.id.simple_language);
+                    viewHolder.title = (TextView)convertView.findViewById(R.id.title);
+                    viewHolder.uploader = (TextView)convertView.findViewById(R.id.uploader);
+                    viewHolder.rate = (RatingView)convertView.findViewById(R.id.rate);
+                    viewHolder.posted = (TextView) convertView.findViewById(R.id.posted);
+                    convertView.setTag(viewHolder);
                     break;
                 case LIST_MODE_THUMB:
                     convertView = LayoutInflater.from(GalleryListActivity.this)
-                    .inflate(R.layout.gallery_list_thumb_item, parent, false);
+                            .inflate(R.layout.gallery_list_thumb_item, parent, false);
                     TileSalon.reform(convertView, 0xFFFAFAFA); // TODO
+                    viewHolder.thumb = (LoadImageView)convertView.findViewById(R.id.thumb);
+                    viewHolder.category = (TextView)convertView.findViewById(R.id.category);
+                    viewHolder.simpleLanguage = (TextView)convertView.findViewById(R.id.simple_language);
+                    convertView.setTag(viewHolder);
                     break;
                 }
             }
 
-            final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.thumb);
+            ViewHolder viewHolder = (ViewHolder)convertView.getTag();
+            final LoadImageView thumb = viewHolder.thumb;
             if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
                 // Set new thumb
                 thumb.setImageDrawable(null);
@@ -1656,46 +1680,35 @@ public class GalleryListActivity extends AbstractGalleryActivity
                         new LoadImageView.SimpleImageGetListener(thumb).setFixScaleType(true));
             }
             // Set category
-            TextView category = (TextView) convertView.findViewById(R.id.category);
+            TextView category = viewHolder.category;
             String newText = Ui.getCategoryText(gi.category);
             if (!newText.equals(category.getText())) {
                 category.setText(newText);
                 category.setBackgroundColor(Ui.getCategoryColor(gi.category));
             }
+            // Set simple language
+            TextView simpleLanguage = viewHolder.simpleLanguage;
+            if (gi.simpleLanguage == null) {
+                simpleLanguage.setVisibility(View.GONE);
+            } else {
+                simpleLanguage.setVisibility(View.VISIBLE);
+                simpleLanguage.setText(gi.simpleLanguage);
+            }
 
             // For detail mode
             if (mListMode == LIST_MODE_DETAIL) {
-                // Set manga name
-                TextView name = (TextView) convertView.findViewById(R.id.name);
-                name.setText(gi.title);
+                // Set manga title
+                TextView title = viewHolder.title;
+                title.setText(gi.title);
                 // Set uploder
-                TextView uploader = (TextView) convertView.findViewById(R.id.uploader);
+                TextView uploader = viewHolder.uploader;
                 uploader.setText(gi.uploader);
-
                 // Set star
-                RatingView rate = (RatingView) convertView
-                        .findViewById(R.id.rate);
+                RatingView rate = viewHolder.rate;
                 rate.setRating(gi.rating);
                 // set posted
-                TextView posted = (TextView) convertView.findViewById(R.id.posted);
+                TextView posted = viewHolder.posted;
                 posted.setText(gi.posted);
-                // Set simple language
-                TextView simpleLanguage = (TextView) convertView.findViewById(R.id.simple_language);
-                if (gi.simpleLanguage == null) {
-                    simpleLanguage.setVisibility(View.GONE);
-                } else {
-                    simpleLanguage.setVisibility(View.VISIBLE);
-                    simpleLanguage.setText(gi.simpleLanguage);
-                }
-            } else if (mListMode == LIST_MODE_THUMB){
-                // Set simple language
-                TextView simpleLanguage = (TextView) convertView.findViewById(R.id.simple_language);
-                if (gi.simpleLanguage == null) {
-                    simpleLanguage.setVisibility(View.GONE);
-                } else {
-                    simpleLanguage.setVisibility(View.VISIBLE);
-                    simpleLanguage.setText(gi.simpleLanguage);
-                }
             }
 
             return convertView;
