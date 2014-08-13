@@ -80,11 +80,9 @@
             android:layout_marginLeft="8.0dp"
             android:text="@string/logout" />
 
-        <ProgressBar
+        <com.hippo.ehviewer.widget.MaterialProgress
             android:id="@+id/wait"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/MaterialProgress"
             android:layout_centerInParent="true" />
     </RelativeLayout>
 

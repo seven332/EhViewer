@@ -1143,7 +1143,7 @@ public class EhClient {
                         }
 
                         //Create folder
-                        File folder = new File(Config.getDownloadPath() + File.separatorChar + Utils.rightFileName(curDownloadInfo.title)); // TODO For  title contain invailed char
+                        File folder = new File(Config.getDownloadPath() + File.separatorChar + Utils.standardizeFilename(curDownloadInfo.title)); // TODO For  title contain invailed char
                         if (!folder.mkdirs() && !folder.isDirectory()) {
                             listener.onDownloadMangaOver(curDownloadInfo.gid, false);
                             curDownloadInfo.status = DownloadInfo.FAILED;

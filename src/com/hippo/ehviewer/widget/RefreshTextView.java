@@ -69,8 +69,13 @@ public class RefreshTextView extends TextView
 
     @Override
     public void onClick(View v) {
-        if (!mIsRefreshing && mListener != null)
+        if (mIsRefreshing)
+            return;
+
+        if (mListener != null)
             mListener.onRefresh();
+
+        setRefreshing(true);
     }
 
     public void setRefreshing(boolean refreshing) {

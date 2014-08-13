@@ -35,8 +35,7 @@ public final class Theme {
     private static final int[] DARK_COLOR_TABLE = {
         0xffe51c23, 0xffe91e63, 0xff9c27b0,
         0xff673ab7, 0xff3f51b5, 0xff5677fc,
-        0xff03a9f4, 0xff009688, 0xff259b24,
-        0xff8bc34a, 0xff795548, 0xff607d8b
+        0xff03a9f4, 0xff009688, 0xff259b24
     };
 
     /**

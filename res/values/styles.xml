@@ -115,7 +115,6 @@
     </style>
 
     <!-- Text -->
-
     <style name="TextAppearance.CardTitle">
         <item name="android:textSize">@dimen/text_little_large</item>
     </style>
@@ -171,26 +170,24 @@
         <item name="android:paddingRight">8dp</item>
     </style>
 
-    <style name="SearchCategory">
-        <item name="android:paddingTop">2dp</item>
-        <item name="android:paddingBottom">2dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:ellipsize">marquee</item>
-        <item name="android:textColor">@color/primary_text_light</item>
+    <style name="TextAppearance.SearchCategory">
+        <item name="@android:textColor">@color/primary_text_light</item>
+        <item name="@android:textStyle">bold</item>
+        <item name="@android:singleLine">true</item>
     </style>
 
-    <style name="RatingBarSmall">
-        <item name="android:background">@null</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:button">@null</item>
-        <item name="android:maxHeight">@dimen/rating_bar_small_height</item>
-        <item name="android:progressDrawable">@drawable/ratingbar_small</item>
-        <item name="android:minHeight">@dimen/rating_bar_small_height</item>
-        <item name="android:thumb">@null</item>
-        <item name="android:numStars">5</item>
-        <item name="android:stepSize">0.5</item>
-        <item name="android:isIndicator">true</item>
+    <style name="SearchCategory">
+        <item name="@android:textAppearance">@style/TextAppearance.SearchCategory</item>
+        <item name="@android:paddingTop">4dp</item>
+        <item name="@android:paddingBottom">4dp</item>
+        <item name="@android:gravity">center</item>
+        <item name="@android:ellipsize">marquee</item>
     </style>
+
+    <style name="TextAppearance.Toast">
+        <item name="@android:textSize">@dimen/text_little_large</item>
+        <item name="@android:textStyle">normal</item>
+        <item name="@android:fontFamily">sans-serif-condensed</item>
+    </style>
+
 </resources>

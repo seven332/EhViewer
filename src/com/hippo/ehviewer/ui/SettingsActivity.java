@@ -66,8 +66,8 @@ import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FileExplorerView;
+import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
-import com.hippo.ehviewer.widget.SuperToast;
 
 public class SettingsActivity extends AbstractPreferenceActivity {
     @SuppressWarnings("unused")
@@ -236,7 +236,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                         Config.screenOriPre2Value(Integer.parseInt((String) newValue)));
 
             } else if (KEY_RANDOM_THEME_COLOR.equals(key)) {
-                new SuperToast(R.string.restart_to_take_effect).show();
+                MaterialToast.showToast(R.string.restart_to_take_effect);
                 mThemeColor.setEnabled(!(Boolean)newValue);
             }
 
@@ -594,7 +594,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                     @Override
                     public void onClick(View v) {
                         if (!fileExplorerView.canWrite())
-                            new SuperToast(R.string.cur_dir_not_writable, SuperToast.WARNING).show();
+                            MaterialToast.showToast(R.string.cur_dir_not_writable);
                         else {
                             String downloadPath = fileExplorerView.getCurPath();
 

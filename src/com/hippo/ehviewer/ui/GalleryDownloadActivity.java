@@ -32,7 +32,6 @@ import com.hippo.ehviewer.gallery.data.DownloadImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Utils;
-import com.hippo.ehviewer.widget.SuperToast;
 
 public class GalleryDownloadActivity extends AbstractActivity {
     private static final String TAG = "MangaDownloadActivity";
@@ -76,20 +75,10 @@ public class GalleryDownloadActivity extends AbstractActivity {
         int endIndex = intent.getIntExtra(KEY_END_INDEX, 0);
         GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);
 
-        File folder = new File(Config.getDownloadPath(), Utils.rightFileName(title));
+        File folder = new File(Config.getDownloadPath(), Utils.standardizeFilename(title));
         folder.mkdirs();
         mDownloadImageSet = new DownloadImageSet(this, gid, folder, size, 0, endIndex, null);
         GalleryView isv = new GalleryView(getApplicationContext(), mDownloadImageSet, 0);
-        isv.setOnEdgeListener(new GalleryView.OnEdgeListener() {
-            @Override
-            public void onLastPageEdge() {
-                new SuperToast(R.string.last_page).show();
-            }
-            @Override
-            public void onFirstPageEdge() {
-                new SuperToast(R.string.first_page).show();
-            }
-        });
         glrv.setContentPane(isv);
 
         // Avoid error when use Movie

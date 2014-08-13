@@ -34,9 +34,9 @@ import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.ListParser;
+import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RefreshTextView;
-import com.hippo.ehviewer.widget.SuperToast;
 
 public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         implements PullViewGroup.OnFooterRefreshListener,
@@ -277,7 +277,6 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
         mRefreshTextView.setDefaultRefresh("点击重试", new RefreshTextView.OnRefreshListener() { // TODO
             @Override
             public void onRefresh() {
-                mRefreshTextView.setRefreshing(true);
                 retry();
             }
         });
@@ -487,7 +486,7 @@ public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
             default:
                 mRefreshTextView.setRefreshing(false);
                 mRefreshTextView.setVisibility(View.GONE);
-                new SuperToast(eMsg, SuperToast.ERROR).show();
+                MaterialToast.showToast(eMsg);
             }
             mPullViewGroup.setAnyRefreshComplete(false);
         }

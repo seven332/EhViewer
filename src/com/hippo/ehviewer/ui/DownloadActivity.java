@@ -83,7 +83,7 @@ public class DownloadActivity extends AbstractActivity {
                         case 1: // Remove info item
                             mServiceConn.getService().cancel(Download.getKey(longClickItemIndex));
                             mDlAdapter.notifyDataSetChanged();
-                            File dir = new File(Config.getDownloadPath(), Utils.rightFileName(Download.get(longClickItemIndex).title));
+                            File dir = new File(Config.getDownloadPath(), Utils.standardizeFilename(Download.get(longClickItemIndex).title));
                             try {
                                 Utils.deleteContents(dir);
                             } catch (IOException e) {

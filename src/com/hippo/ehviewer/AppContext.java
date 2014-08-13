@@ -34,7 +34,7 @@ import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.widget.SuperToast;
+import com.hippo.ehviewer.widget.MaterialToast;
 
 public class AppContext extends Application implements UncaughtExceptionHandler {
 
@@ -62,7 +62,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         Download.init(this);
         Favorite.init(this);
         Data.createInstance(this);
-        SuperToast.setContext(this);
+        MaterialToast.setContext(this);
 
         // Do catch error prepare
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();

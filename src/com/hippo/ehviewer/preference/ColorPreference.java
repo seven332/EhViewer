@@ -40,7 +40,7 @@ import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.ColorPickerView;
 import com.hippo.ehviewer.widget.DialogBuilder;
-import com.hippo.ehviewer.widget.SuperToast;
+import com.hippo.ehviewer.widget.MaterialToast;
 
 public class ColorPreference extends Preference implements Preference.OnPreferenceClickListener {
 
@@ -208,8 +208,7 @@ public class ColorPreference extends Preference implements Preference.OnPreferen
                 @Override
                 public void onClick(View v) {
                     ((AlertButton)v).dialog.dismiss();
-                    new SuperToast(R.string.restart_to_take_effect).show();
-
+                    MaterialToast.showToast(R.string.restart_to_take_effect);
                     int color = getColor() | 0xff000000;
                     Config.setThemeColor(color);
                     setColor(color);

@@ -71,8 +71,11 @@ public class GallerysDownloader implements Runnable {
         mContext = context;
         mGalleryInfo = galleryInfo;
         mPageIndex = startIndex;
+
+
+
         mDownloadDir = new File(Config.getDownloadPath(),
-                Utils.rightFileName(mGalleryInfo.gid + '-' + mGalleryInfo.title));
+                Utils.standardizeFilename(mGalleryInfo.gid + '-' + mGalleryInfo.title));
         mDownloadDir.mkdirs();
         // TODO What if these is a file with the same name
 
@@ -80,6 +83,9 @@ public class GallerysDownloader implements Runnable {
         mRequstDetailPage = new LinkedList<Integer>();
         mRequstPage = new LinkedList<Integer>();
     }
+
+
+
 
     public void start() {
         mMainThread.start();

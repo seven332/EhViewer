@@ -31,7 +31,7 @@ import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.widget.DialogBuilder;
-import com.hippo.ehviewer.widget.SuperToast;
+import com.hippo.ehviewer.widget.MaterialToast;
 
 public class Favorite {
 
@@ -61,18 +61,18 @@ public class Favorite {
             break;
         case -1:
             Data.getInstance().addLocalFavourite(gi);
-            new SuperToast(R.string.toast_add_favourite).show();
+            MaterialToast.showToast(R.string.toast_add_favourite);
             break;
         default:
             EhClient.getInstance().addToFavorite(gi.gid,
                     gi.token, defaultFavorite, null, new EhClient.OnAddToFavoriteListener() {
                 @Override
                 public void onSuccess() {
-                    new SuperToast(R.string.toast_add_favourite).show();
+                    MaterialToast.showToast(R.string.toast_add_favourite);
                 }
                 @Override
                 public void onFailure(String eMsg) {
-                    new SuperToast(R.string.failed_to_add).show();
+                    MaterialToast.showToast(R.string.failed_to_add);
                 }
             });
         }
@@ -100,18 +100,18 @@ public class Favorite {
                 switch (position) {
                 case 0:
                     Data.getInstance().addLocalFavourite(gi);
-                    new SuperToast(R.string.toast_add_favourite).show();
+                    MaterialToast.showToast(R.string.toast_add_favourite);
                     break;
                 default:
                     EhClient.getInstance().addToFavorite(gi.gid,
                             gi.token, position - 1, null, new EhClient.OnAddToFavoriteListener() {
                         @Override
                         public void onSuccess() {
-                            new SuperToast(R.string.toast_add_favourite).show();
+                            MaterialToast.showToast(R.string.toast_add_favourite);
                         }
                         @Override
                         public void onFailure(String eMsg) {
-                            new SuperToast(R.string.failed_to_add).show();
+                            MaterialToast.showToast(R.string.failed_to_add);
                         }
                     });
                 }

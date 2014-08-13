@@ -28,7 +28,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
-import com.hippo.ehviewer.widget.SuperToast;
+import com.hippo.ehviewer.widget.MaterialToast;
 
 public class NumberOfColumnsPreference extends Preference
         implements Preference.OnPreferenceClickListener {
@@ -114,7 +114,7 @@ public class NumberOfColumnsPreference extends Preference
                         throw new Exception();
                     }
                 } catch (Exception e) {
-                    new SuperToast(R.string.invalid_input, SuperToast.ERROR).show();
+                    MaterialToast.showToast(R.string.invalid_input);
                 }
             }
         }).create().show();

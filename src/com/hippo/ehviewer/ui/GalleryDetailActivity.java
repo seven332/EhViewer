@@ -89,12 +89,12 @@ import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.LinkifyTextView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialProgress;
+import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.ProgressiveRatingBar;
 import com.hippo.ehviewer.widget.RefreshTextView;
 import com.hippo.ehviewer.widget.ResponedScrollView;
 import com.hippo.ehviewer.widget.SimpleGridLayout;
 import com.hippo.ehviewer.widget.SuperButton;
-import com.hippo.ehviewer.widget.SuperToast;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 
 public class GalleryDetailActivity extends AbstractActivity
@@ -103,7 +103,7 @@ public class GalleryDetailActivity extends AbstractActivity
         View.OnTouchListener , ViewSwitcher.ViewFactory,
         ProgressiveRatingBar.OnUserRateListener, PreviewList.PreviewHolder,
         View.OnLayoutChangeListener, AdapterView.OnItemClickListener,
-        AdapterView.OnItemLongClickListener {
+        AdapterView.OnItemLongClickListener, RefreshTextView.OnRefreshListener {
 
     @SuppressWarnings("unused")
     private static final String TAG = GalleryDetailActivity.class.getSimpleName();
@@ -431,6 +431,7 @@ public class GalleryDetailActivity extends AbstractActivity
         mPreviewFront.setOnClickListener(this);
         mPreviewRefresh.setOnClickListener(this);
         mReply.setOnClickListener(this);
+        mRefreshText.setDefaultRefresh("点击重试", this);
 
         doPreLayout();
 
@@ -450,10 +451,18 @@ public class GalleryDetailActivity extends AbstractActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void doPreLayout() {
+    private void getDetailInfo() {
         String detailUrl = mClient.getDetailUrl(
                 mGalleryInfo.gid, mGalleryInfo.token);
+        if (mGalleryInfo instanceof GalleryDetail)
+            mClient.getGDetail(detailUrl, (GalleryDetail)mGalleryInfo, new GDetailGetListener());
+        else if (mGalleryInfo instanceof LofiGalleryDetail)
+            mClient.getLGDetail(detailUrl, (LofiGalleryDetail)mGalleryInfo, new GLDetailGetListener());
+        else if (mGalleryInfo instanceof ApiGalleryDetail)
+            ; // TODO
+    }
 
+    private void doPreLayout() {
         mRefreshText.setRefreshing(true);
 
         if (mGalleryInfo.title != null) {
@@ -468,12 +477,7 @@ public class GalleryDetailActivity extends AbstractActivity
             mUploader.setText(mGalleryInfo.uploader);
         }
 
-        if (mGalleryInfo instanceof GalleryDetail)
-            mClient.getGDetail(detailUrl, (GalleryDetail)mGalleryInfo, new GDetailGetListener());
-        else if (mGalleryInfo instanceof LofiGalleryDetail)
-            mClient.getLGDetail(detailUrl, (LofiGalleryDetail)mGalleryInfo, new GLDetailGetListener());
-        else if (mGalleryInfo instanceof ApiGalleryDetail)
-            ; // TODO
+        getDetailInfo();
     }
 
     private String getRatingText(float rating) {
@@ -798,6 +802,11 @@ public class GalleryDetailActivity extends AbstractActivity
     }
 
     @Override
+    public void onRefresh() {
+        getDetailInfo();
+    }
+
+    @Override
     @SuppressWarnings("deprecation")
     public void onClick(View v) {
         if (mRunningAnimateNum != 0 || mWindowsAnimate.isRunningAnimate())
@@ -809,7 +818,7 @@ public class GalleryDetailActivity extends AbstractActivity
             mServiceConn.getService().add(String.valueOf(mGalleryInfo.gid), mGalleryInfo.thumb,
                     EhClient.getDetailUrl(mGalleryInfo.gid, mGalleryInfo.token, 0, Config.getMode()),
                     mGalleryInfo.title);
-            new SuperToast(R.string.toast_add_download).show();
+            MaterialToast.showToast(R.string.toast_add_download);
         } else if (v == mReadButton) {
             //mData.addRead(mGalleryInfo);
             if (mGalleryInfo instanceof GalleryDetail) {
@@ -853,7 +862,7 @@ public class GalleryDetailActivity extends AbstractActivity
             if (isCheckmark) {
                 int rating = (int)(mRating.getRating() * 2 + 0.5);
                 if (rating <= 0 || rating > 10) {
-                    new SuperToast(R.string.invalid_rating, SuperToast.ERROR).show();
+                    MaterialToast.showToast(R.string.invalid_rating);
                     return;
                 }
                 mClient.rate(mGalleryInfo.gid, mGalleryInfo.token, rating, new EhClient.OnRateListener() {
@@ -866,7 +875,7 @@ public class GalleryDetailActivity extends AbstractActivity
                     @Override
                     public void onFailure(String eMsg) {
                         mRatingText.setText("评分失败"); // TODO
-                        new SuperToast(eMsg, SuperToast.WARNING).show();
+                        MaterialToast.showToast(eMsg);
                     }
                 });
                 mRatingText.setText("感谢评分"); // TODO
@@ -930,7 +939,7 @@ public class GalleryDetailActivity extends AbstractActivity
                                         }
                                         @Override
                                         public void onFailure(String eMsg) {
-                                            new SuperToast(eMsg, SuperToast.WARNING).show();
+                                            MaterialToast.showToast(eMsg);
                                         }
                                     });
                         }
@@ -1072,7 +1081,7 @@ public class GalleryDetailActivity extends AbstractActivity
                         case 0:
                             ClipboardManager cm = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
                             cm.setPrimaryClip(ClipData.newPlainText(null, c.comment));
-                            new SuperToast(R.string.copyed).show();
+                            MaterialToast.showToast(R.string.copyed);
                             break;
 
                         case 1:
@@ -1129,8 +1138,7 @@ public class GalleryDetailActivity extends AbstractActivity
 
         @Override
         public void onFailure(String eMsg) {
-            // TODO
-            new SuperToast(eMsg, SuperToast.ERROR).show();
+            mRefreshText.setEmesg(eMsg, true);
        }
     }
 
@@ -1146,8 +1154,7 @@ public class GalleryDetailActivity extends AbstractActivity
 
         @Override
         public void onFailure(String eMsg) {
-            // TODO
-            new SuperToast(eMsg, SuperToast.ERROR).show();
+            mRefreshText.setEmesg(eMsg, true);
         }
     }
 
@@ -1189,7 +1196,7 @@ public class GalleryDetailActivity extends AbstractActivity
 
             int page = (Integer)checkFlag;
             if (page == mCurPreviewPage) {
-                new SuperToast(eMsg, SuperToast.WARNING).show();
+                MaterialToast.showToast(eMsg);
                 mPreviewWait.setVisibility(View.GONE);
                 mPreviewRefresh.setVisibility(View.VISIBLE);
             }

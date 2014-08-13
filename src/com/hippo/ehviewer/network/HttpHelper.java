@@ -157,7 +157,7 @@ public class HttpHelper {
             return SAD_PANDA_ERROR;
 
         else if (e instanceof GetBodyException)
-            return "Sad Panda"; // TODO
+            return "Null"; // TODO
 
         else
             return e.getClass().getSimpleName() + ": " +e.getMessage();
@@ -624,6 +624,7 @@ public class HttpHelper {
         @Override
         public Object onAfterConnect(HttpURLConnection conn)
                 throws Exception {
+            // TODO If read out of time, bitmap might be incomplete.
             Bitmap bmp = BitmapFactory.decodeStream(conn.getInputStream(), null, Ui.getBitmapOpt());
             if (bmp == null)
                 throw new GetBodyException();

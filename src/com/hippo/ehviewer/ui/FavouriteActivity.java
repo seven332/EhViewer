@@ -67,10 +67,10 @@ import com.hippo.ehviewer.widget.ActionableToastBar;
 import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.LoadImageView;
+import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.ProgressDialogBulider;
 import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RatingView;
-import com.hippo.ehviewer.widget.SuperToast;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 public class FavouriteActivity extends AbstractGalleryActivity
@@ -276,9 +276,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
 
         // Check login
         if (!mClient.isLogin()) {
-            SuperToast superToast = new SuperToast("未检测到登陆状态，仅可使用本地收藏。由于开发者的问题，本地收藏不可靠，请尽快登陆，将本地收藏转移至账户中的收藏。"); // TODO
-            superToast.setDuration(SuperToast.LENGTH_LONG);
-            superToast.show();
+            MaterialToast.showToast("未检测到登陆状态，仅可使用本地收藏。由于开发者的问题，本地收藏不可靠，请尽快登陆，将本地收藏转移至账户中的收藏。");// TODO
         }
 
         // TODO Should show default favourite
@@ -428,7 +426,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
             mPdb = null;
             mProgressDialog.dismiss();
             mProgressDialog = null;
-            new SuperToast(R.string.move_successfully).show();
+            MaterialToast.showToast(R.string.move_successfully);
         }
     }
 
@@ -439,7 +437,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
                     public void onItemClick(AdapterView<?> parent, View view,
                             int position, long id) {
                         if (mMenuIndex == position) {
-                            new SuperToast(R.string.dst_src_same, SuperToast.WARNING).show();
+                            MaterialToast.showToast(R.string.dst_src_same);
                             return;
                         }
 
@@ -572,7 +570,7 @@ public class FavouriteActivity extends AbstractGalleryActivity
             mLastModifyGiList = gis;
             mLastModifyPageNum = pageNum;
             refresh();
-            new SuperToast(mSuccStr).show();
+            MaterialToast.showToast(mSuccStr);
 
             // add to local
             if (mToLocal)

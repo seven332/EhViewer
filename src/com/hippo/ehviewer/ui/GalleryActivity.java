@@ -45,7 +45,7 @@ import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Utils;
-import com.hippo.ehviewer.widget.SuperToast;
+import com.hippo.ehviewer.widget.MaterialToast;
 
 public class GalleryActivity extends AbstractActivity {
     private final String TAG = "MangaActivity";
@@ -197,9 +197,8 @@ public class GalleryActivity extends AbstractActivity {
             retryTimes++;
             int targetPage = (Integer)checkFlag;
             if (retryTimes < maxRetry) {
-                new SuperToast(eMsg + " " +
-                        String.format(getString(R.string.em_retry_times), retryTimes),
-                        SuperToast.WARNING).show(); // TODO
+                MaterialToast.showToast(eMsg + " " +
+                        String.format(getString(R.string.em_retry_times), retryTimes)); // TODO
                 if (targetPage == firstPage - 1 &&
                         getPrePage == true) {
                     mEhClient.getMangaUrl(allPrePageUrl, targetPage, new MangaUrlGetListener());
@@ -213,10 +212,10 @@ public class GalleryActivity extends AbstractActivity {
                 if (targetPage == firstPage - 1 &&
                         getPrePage == true) {
                     getPrePage = false;
-                    new SuperToast(R.string.retry_max_pre, SuperToast.WARNING).show();
+                    MaterialToast.showToast(R.string.retry_max_pre);
                 }
                 else {
-                    new SuperToast(R.string.retry_max_next, SuperToast.WARNING).show();
+                    MaterialToast.showToast(R.string.retry_max_next);
                     mStop = true;
                 }
                 mImageSet.changeState(targetPage, ImageSet.STATE_FAIL);
@@ -275,7 +274,7 @@ public class GalleryActivity extends AbstractActivity {
         lastPage = firstPage;
         gid = intent.getIntExtra("gid", 0);
         title = intent.getStringExtra("title");
-        mFolder = new File(Config.getDownloadPath(), Utils.rightFileName(title));
+        mFolder = new File(Config.getDownloadPath(), Utils.standardizeFilename(title));
         if (mFolder.isFile())
             mFolder.delete();
         mFolder.mkdirs();
@@ -283,17 +282,6 @@ public class GalleryActivity extends AbstractActivity {
 
         mImageSet = new ImageSet(this, gid, mFolder, pageSum, firstPage, lastPage, null);
         GalleryView isv = new GalleryView(getApplicationContext(), mImageSet, firstPage);
-        isv.setOnEdgeListener(new GalleryView.OnEdgeListener() {
-            @Override
-            public void onLastPageEdge() {
-                new SuperToast(R.string.last_page).show();
-            }
-            @Override
-            public void onFirstPageEdge() {
-                new SuperToast(R.string.first_page).show();
-            }
-        });
-
         isv.setOnTapTextListener(new GalleryView.OnTapTextListener() {
             @Override
             public void onTapText(int index) {

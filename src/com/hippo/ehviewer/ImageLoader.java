@@ -104,7 +104,7 @@ public class ImageLoader {
     }
 
     private class ImageDownloader {
-        private static final int MAX_DOWNLOAD_THREADS = 3;
+        private static final int MAX_DOWNLOAD_THREADS = 5;
         private final Stack<LoadTask> mDownloadTasks;
         private int mWorkingThreadNum = 0;
         private final Object mLock;

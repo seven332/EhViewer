@@ -89,10 +89,10 @@ import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.LoadImageView;
+import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.PrefixEditText;
 import com.hippo.ehviewer.widget.RatingView;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
-import com.hippo.ehviewer.widget.SuperToast;
 import com.hippo.ehviewer.widget.TagListView;
 import com.hippo.ehviewer.widget.TagsAdapter;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
@@ -220,7 +220,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
                             @Override
                             public void onFailure(String eMsg) {
                                 setUserPanel();
-                                new SuperToast(eMsg, SuperToast.ERROR).show();
+                                MaterialToast.showToast(eMsg);
                                 if (!GalleryListActivity.this.isFinishing())
                                     loginDialog.show();
                             }
@@ -234,11 +234,11 @@ public class GalleryListActivity extends AbstractGalleryActivity
                                             setUserPanel();
                                             break;
                                         case EhClient.NO_AVATAR:
-                                            new SuperToast("无头像").show(); // TODO
+                                            MaterialToast.showToast("无头像"); // TODO
                                             break;
                                         case EhClient.GET_AVATAR_ERROR:
                                         default:
-                                            new SuperToast("获取头像失败", SuperToast.ERROR).show();  // TODO
+                                            MaterialToast.showToast("获取头像失败"); // TODO
                                             break;
                                         }
                                     }
@@ -503,10 +503,10 @@ public class GalleryListActivity extends AbstractGalleryActivity
             String filePath = (String)mSearchImageText.getText();
             File file = new File(filePath);
             if (!file.exists()) {
-                new SuperToast("图片不存在", SuperToast.ERROR).show();
+                MaterialToast.showToast("图片不存在");
             } else {
                 if (!file.canRead()) {
-                    new SuperToast("图片不可读", SuperToast.ERROR).show();
+                    MaterialToast.showToast("图片不可读");
                 } else {
 
                     CheckBox similar = (CheckBox)view.findViewById(R.id.checkboxSimilar);
@@ -543,7 +543,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
                             startService(it);
                             mServiceConn.getService().add(String.valueOf(gi.gid), gi.thumb,
                                     mClient.getDetailUrl(gi.gid, gi.token), gi.title);
-                            new SuperToast(R.string.toast_add_download).show();
+                            MaterialToast.showToast(R.string.toast_add_download);
                             break;
                         default:
                             break;
@@ -581,7 +581,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
                             if (targetPage < 0 || targetPage >= getPageNum())
                                 throw new Exception();
                         } catch(Exception e) {
-                            new SuperToast(R.string.toast_invalid_page, SuperToast.ERROR).show();
+                            MaterialToast.showToast(R.string.toast_invalid_page);
                             return;
                         }
 
@@ -622,9 +622,9 @@ public class GalleryListActivity extends AbstractGalleryActivity
                     public void onClick(View v) {
                         String key = et.getText().toString();
                         if (key.length() == 0)
-                            new SuperToast(R.string.tag_name_empty, SuperToast.WARNING).show();
+                            MaterialToast.showToast(R.string.tag_name_empty);
                         else if (listMenuTag.contains(key) && !key.equals(oldStr))
-                            new SuperToast(R.string.tag_name_empty, SuperToast.WARNING).show();
+                            MaterialToast.showToast(R.string.tag_name_empty);
                         else {
                             ((AlertButton)v).dialog.dismiss();
                             if (listener != null) {
@@ -1346,7 +1346,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
     public void onBackPressed() {
         if (System.currentTimeMillis() - curBackTime > BACK_PRESSED_INTERVAL) {
             curBackTime = System.currentTimeMillis();
-            new SuperToast(R.string.exit_tip).show();
+            MaterialToast.showToast(R.string.exit_tip);
         } else
             finish();
     }
@@ -1576,8 +1576,8 @@ public class GalleryListActivity extends AbstractGalleryActivity
                     listener.onSuccess(mAdapter, taskStamp, gis, gis.size() == 0 ? 0 : 1);
                     // Show update time
                     if (timeStamp != -1 && Config.getShowPopularUpdateTime())
-                        new SuperToast(String.format(getString(R.string.popular_update_time),
-                                AppContext.sFormatter.format(timeStamp))).show();
+                        MaterialToast.showToast(String.format(getString(R.string.popular_update_time),
+                                AppContext.sFormatter.format(timeStamp)));
                 }
                 @Override
                 public void onFailure(String eMsg) {
