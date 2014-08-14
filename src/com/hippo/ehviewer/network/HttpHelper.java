@@ -52,6 +52,7 @@ import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.exception.StopRequestException;
 import com.hippo.ehviewer.util.Constants;
+import com.hippo.ehviewer.util.FastByteArrayOutputStream;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
@@ -63,7 +64,10 @@ import com.hippo.ehviewer.util.Utils;
  *
  */
 public class HttpHelper {
-    private static final String TAG = "HttpHelper";
+    private static final String TAG = HttpHelper.class.getSimpleName();
+
+    private static final int HTTP_RETRY_TIMES = 3;
+
     public static final String SAD_PANDA_ERROR = "Sad Panda";
     public static final String HAPPY_PANDA_BODY = "Happy Panda";
 
@@ -185,88 +189,92 @@ public class HttpHelper {
         int redirectionCount = 0;
         URL url = null;
         HttpURLConnection conn = null;
-        boolean firstTime = true;
 
-        try {
-            url = rh.getUrl();
-            Log.d(TAG, "Requst " + url.toString());
-            boolean isCookiable = isUrlCookiable(url);
-            while (redirectionCount++ < Constants.MAX_REDIRECTS) {
-                conn = (HttpURLConnection) url.openConnection();
-                conn.setInstanceFollowRedirects(false);
-                conn.setRequestProperty("User-Agent", Constants.userAgent);
-                conn.setConnectTimeout(Constants.DEFAULT_TIMEOUT);
-                conn.setReadTimeout(Constants.DEFAULT_TIMEOUT);
-                // Set cookie if necessary
-                if (isCookiable)
-                    EhInfo.getInstance(mContext).setCookie(conn, mPreviewMode);
-                // Do custom staff
-                if (firstTime) {
-                    rh.onBeforeConnect(conn);
-                    firstTime = false;
-                }
-
-                conn.connect();
-                final int responseCode = conn.getResponseCode();
-                switch (responseCode) {
-                case HttpURLConnection.HTTP_OK:
-                case HttpURLConnection.HTTP_PARTIAL:
-                    // Test sad panda
-                    if (url.getHost().equals(EhInfo.EX_HOST)) {
-                        String contentType = conn.getHeaderField("Content-Type");
-                        if (contentType != null && contentType.equals("image/gif"))
-                            throw new SadPandaException();
-                    }
-                    // Store cookie if necessary
+        for (int times = 0; times < HTTP_RETRY_TIMES; times++) {
+            boolean firstTime = true;
+            try {
+                url = rh.getUrl();
+                Log.d(TAG, "Requst " + url.toString());
+                boolean isCookiable = isUrlCookiable(url);
+                while (redirectionCount++ < Constants.MAX_REDIRECTS) {
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setInstanceFollowRedirects(false);
+                    conn.setRequestProperty("User-Agent", Constants.userAgent);
+                    conn.setConnectTimeout(Constants.DEFAULT_TIMEOUT);
+                    conn.setReadTimeout(Constants.DEFAULT_TIMEOUT);
+                    // Set cookie if necessary
                     if (isCookiable)
-                        EhInfo.getInstance(mContext).storeCookie(conn);
-                    // Get object connection
-                    Object obj = rh.onAfterConnect(conn);
-                    // Send to UI thread if necessary
-                    if (mListener != null)
-                        AppHandler.getInstance().sendMessage(
-                                Message.obtain(null, AppHandler.HTTP_HELPER_TAG,
-                                        Constants.TRUE, 0, new Package(obj, mListener)));
-                    return obj;
-                // redirect
-                case HttpURLConnection.HTTP_MOVED_PERM:
-                case HttpURLConnection.HTTP_MOVED_TEMP:
-                case HttpURLConnection.HTTP_SEE_OTHER:
-                case Constants.HTTP_TEMP_REDIRECT:
-                    final String location = conn.getHeaderField("Location");
-                    Log.d(TAG, "New location " + location);
-                    mLastUrl = location;
-                    conn.disconnect();
-                    url = new URL(url, location);
-                    continue;
+                        EhInfo.getInstance(mContext).setCookie(conn, mPreviewMode);
+                    // Do custom staff
+                    if (firstTime) {
+                        rh.onBeforeConnect(conn);
+                        firstTime = false;
+                    }
 
-                default:
-                    String body;
-                    // Get pure text error
-                    if (rh instanceof GetStringHelper
-                            && (body = (String)rh.onAfterConnect(conn)) != null
-                            && !body.contains("<"))
-                        throw new Exception(body);
-                    else
-                        throw new ResponseCodeException(responseCode);
+                    conn.connect();
+                    final int responseCode = conn.getResponseCode();
+                    switch (responseCode) {
+                    case HttpURLConnection.HTTP_OK:
+                    case HttpURLConnection.HTTP_PARTIAL:
+                        // Test sad panda
+                        if (url.getHost().equals(EhInfo.EX_HOST)) {
+                            String contentType = conn.getHeaderField("Content-Type");
+                            if (contentType != null && contentType.equals("image/gif"))
+                                throw new SadPandaException();
+                        }
+                        // Store cookie if necessary
+                        if (isCookiable)
+                            EhInfo.getInstance(mContext).storeCookie(conn);
+                        // Get object connection
+                        Object obj = rh.onAfterConnect(conn);
+                        // Send to UI thread if necessary
+                        if (mListener != null)
+                            AppHandler.getInstance().sendMessage(
+                                    Message.obtain(null, AppHandler.HTTP_HELPER_TAG,
+                                            Constants.TRUE, 0, new Package(obj, mListener)));
+                        return obj;
+                    // redirect
+                    case HttpURLConnection.HTTP_MOVED_PERM:
+                    case HttpURLConnection.HTTP_MOVED_TEMP:
+                    case HttpURLConnection.HTTP_SEE_OTHER:
+                    case Constants.HTTP_TEMP_REDIRECT:
+                        final String location = conn.getHeaderField("Location");
+                        Log.d(TAG, "New location " + location);
+                        mLastUrl = location;
+                        conn.disconnect();
+                        url = new URL(url, location);
+                        continue;
+
+                    default:
+                        String body;
+                        // Get pure text error
+                        if (rh instanceof GetStringHelper
+                                && (body = (String)rh.onAfterConnect(conn)) != null
+                                && !body.contains("<"))
+                            throw new Exception(body);
+                        else
+                            throw new ResponseCodeException(responseCode);
+                    }
                 }
+                throw new RedirectionException();
+            } catch (Exception e) {
+                mException = e;
+                e.printStackTrace();
+            } finally {
+                if (conn != null)
+                    conn.disconnect();
             }
-            throw new RedirectionException();
-        } catch (Exception e) {
-            mException = e;
-            e.printStackTrace();
-            // Send to UI thread if necessary
-            if (mListener != null)
-                AppHandler.getInstance().sendMessage(
-                        Message.obtain(null, AppHandler.HTTP_HELPER_TAG,
-                                Constants.FALSE, 0, new Package(getEMsg(), mListener)));
-            // Send exception to helper
-            rh.onGetException(e);
-            return null;
-        } finally {
-            if (conn != null)
-                conn.disconnect();
         }
+
+        // Send to UI thread if necessary
+        if (mListener != null)
+            AppHandler.getInstance().sendMessage(
+                    Message.obtain(null, AppHandler.HTTP_HELPER_TAG,
+                            Constants.FALSE, 0, new Package(getEMsg(), mListener)));
+        // Send exception to helper
+        if (mException != null)
+            rh.onGetException(mException);
+        return null;
     }
 
     private interface RequestHelper {
@@ -624,8 +632,13 @@ public class HttpHelper {
         @Override
         public Object onAfterConnect(HttpURLConnection conn)
                 throws Exception {
-            // TODO If read out of time, bitmap might be incomplete.
-            Bitmap bmp = BitmapFactory.decodeStream(conn.getInputStream(), null, Ui.getBitmapOpt());
+            // If just
+            // Bitmap bmp = BitmapFactory.decodeStream(conn.getInputStream(), null, Ui.getBitmapOpt());
+            // bitmap might be incomplete.
+            FastByteArrayOutputStream fbaos = new FastByteArrayOutputStream(24 * 1024); // 24K
+            Utils.copy(conn.getInputStream(), fbaos);
+            Bitmap bmp = BitmapFactory.decodeByteArray(fbaos.getBuffer(), 0, fbaos.size(), Ui.getBitmapOpt());
+
             if (bmp == null)
                 throw new GetBodyException();
             return bmp;

@@ -859,7 +859,7 @@ public class EhClient {
                 Object checkFlag, String eMsg) {
             this.isOk = false;
             this.listener = listener;
-            this.checkFlag = null;
+            this.checkFlag = checkFlag;
             this.pageList = null;
             this.isLastPage = false;
             this.eMesg = eMsg;
