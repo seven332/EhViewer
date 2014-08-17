@@ -32,6 +32,7 @@ import org.json.JSONObject;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Process;
 
 import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.AppContext;
@@ -103,7 +104,7 @@ public class EhClient {
         return sInstance;
     }
 
-    public EhClient(AppContext appContext) {
+    private EhClient(AppContext appContext) {
         mAppContext = appContext;
         mThreadPool = mAppContext.getNetworkThreadPool();
         mHandler = AppHandler.getInstance();
@@ -170,11 +171,11 @@ public class EhClient {
                 .append("/?p=").append(pageNum).toString();
     }
 
-    public String getPageUrl(String gid, String token, int pageNum) {
+    public String getPageUrl(int gid, String token, int pageNum) {
         return getPageUrl(gid, token, pageNum, Config.getMode());
     }
 
-    public static String getPageUrl(String gid, String token, int pageNum, int mode) {
+    public static String getPageUrl(int gid, String token, int pageNum, int mode) {
         StringBuilder sb = new StringBuilder();
         switch (mode) {
         case MODE_EX:
@@ -364,7 +365,7 @@ public class EhClient {
                 mHandler.post(responder);
             }
         });
-        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
     }
 
@@ -388,7 +389,7 @@ public class EhClient {
                     listener.onGetAvatar(GET_AVATAR_ERROR);
                     return;
                 }
-                String profileUrl = Utils.htmlUnsescape(m.group(1));
+                String profileUrl = Utils.unescapeXml(m.group(1));
                 // Get avatar url
                 body = hp.get(profileUrl);
                 if (body == null) {
@@ -413,7 +414,7 @@ public class EhClient {
                 listener.onGetAvatar(GET_AVATAR_OK);
             }
         });
-        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
     }
 
@@ -501,7 +502,7 @@ public class EhClient {
                 mHandler.post(responder);
             }
         });
-        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
     }
 
@@ -661,7 +662,7 @@ public class EhClient {
                 mHandler.post(responder);
             }
         });
-        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
     }
 
@@ -758,7 +759,7 @@ public class EhClient {
                 mHandler.post(responder);
             }
         });
-        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
     }
 
@@ -826,7 +827,7 @@ public class EhClient {
                 mHandler.post(responder);
             }
         });
-        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
     }
 
@@ -903,7 +904,7 @@ public class EhClient {
                 mHandler.post(responder);
             }
         });
-        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
     }
 
@@ -953,7 +954,7 @@ public class EhClient {
                         strs[1] = "last";
                     else
                         strs[1] = m.group(2);
-                    strs[2] = Utils.htmlUnsescape(m.group(3));
+                    strs[2] = Utils.unescapeXml(m.group(3));
                 } else
                     eMsg = mAppContext.getString(R.string.em_parser_error);
             } else
@@ -1307,7 +1308,7 @@ public class EhClient {
             if (m.find()) {
                 prePage = m.group(1);
                 nextPage = m.group(2);
-                imageUrlStr = Utils.htmlUnsescape(m.group(3));
+                imageUrlStr = Utils.unescapeXml(m.group(3));
                 return true;
             }
             return false;
@@ -1700,7 +1701,7 @@ public class EhClient {
                                     gi.count = -1;
                                 gi.gid = j.getInt("gid");
                                 gi.token = j.getString("token");
-                                gi.title = Utils.htmlUnsescape(j.getString("title"));
+                                gi.title = Utils.unescapeXml(j.getString("title"));
                                 gi.posted = AppContext.sFormatter.format(Long.parseLong(j.getString("posted")) * 1000);
                                 gi.thumb = j.getString("thumb");
                                 gi.category = getType(j.getString("category"));

@@ -19,8 +19,14 @@ package com.hippo.ehviewer.gallery.data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Set;
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Movie;
+import android.util.SparseArray;
 
 import com.hippo.ehviewer.util.Future;
 import com.hippo.ehviewer.util.FutureListener;
@@ -29,19 +35,11 @@ import com.hippo.ehviewer.util.ThreadPool.Job;
 import com.hippo.ehviewer.util.ThreadPool.JobContext;
 import com.hippo.ehviewer.util.Utils;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Movie;
-import com.hippo.ehviewer.util.Log;
-import android.util.SparseArray;
-
 // TODO 初期建立一个线程检索文件夹中所有文件以寻找到所有图片文件
 
 /**
  * @author Hippo
- * 
+ *
  * ImageSet 用于记录漫画的下载信息
  * 对于已完成下载的则无特殊之处。
  * 对于未完成下载的要记录，开始下载之处，目前下载截止之处，
@@ -49,67 +47,67 @@ import android.util.SparseArray;
  * 同时拥有检查该目录识别图片文件。
  */
 public class ImageSet {
-    
+
     @SuppressWarnings("unused")
     private static final String TAG = "ImageSet";
-    
+
     private static final String GIF_EXTENSION = "gif";
-    
+
     public static final int TYPE_NONE = 0x0;
     public static final int TYPE_BITMAP = 0x1;
     public static final int TYPE_MOVIE = 0x2;
-    
+
     public static final int INVALID_ID = -1;
-    
+
     public static final int STATE_NONE = 0;
     public static final int STATE_LOADING = 1;
     public static final int STATE_LOADED = 2;
     public static final int STATE_FAIL = 3;
-    
+
     protected Context mContext;
     protected int mGid;
     protected File mFolder;
     protected int mSize;
-    
-    private SparseArray<ImageData> mImagesDate;
-    
-    private ThreadPool mThreadPool;
+
+    private final SparseArray<ImageData> mImagesDate;
+
+    private final ThreadPool mThreadPool;
     private OnStateChangeListener mOnStateChangeListener;
-    
+
     public interface OnStateChangeListener {
         void onStateChange(int index, int state);
     }
-    
+
     public interface OnDecodeOverListener {
         /**
          * May return Bitmap or Movie
-         * 
+         *
          * @param res
          * @param index
          */
         void onDecodeOver(Object res, int index);
     }
-    
+
     private class ImageData {
         int state;
         String fileName;
         int type;
-        
+
         public ImageData() {
             state = STATE_NONE;
             fileName = null;
             type = TYPE_NONE;
         }
     }
-    
+
     // [startIndex, endIndex)
     public ImageSet(Context context, int gid, File folder, int size, int startIndex, int endIndex,
             Set<Integer> failIndexSet) {
-        
+
         if (folder == null || !folder.isDirectory())
             size = 0;
-        
-        
+
+
         // TODO
         /*
         if (folder == null)
@@ -117,7 +115,7 @@ public class ImageSet {
         if (!folder.isDirectory())
             throw new IllegalArgumentException("Folder is not directory, path is " + folder.getPath());
         */
-        
+
         if (size < 0)
             size = 0;
         if (endIndex > size)
@@ -126,7 +124,7 @@ public class ImageSet {
             startIndex = 0;
         if (startIndex > endIndex)
             startIndex = endIndex;
-        
+
         // TODO
         /*
         if (size < 0 || startIndex < 0
@@ -135,12 +133,12 @@ public class ImageSet {
                 + size + ", startIndex = " + startIndex
                 + ", endIndex = " + endIndex + ", path is " + folder.getPath());
         */
-        
+
         mContext = context;
         mGid = gid;
         mFolder = folder;
         mSize = size;
-        
+
         // TODO sometimes size is too large
         mImagesDate = new SparseArray<ImageData>(mSize);
         int i = 0;
@@ -163,18 +161,18 @@ public class ImageSet {
         for (; i < size; i++) {
             mImagesDate.append(i, new ImageData());
         }
-        
+
         mThreadPool = new ThreadPool(1, 1);
     }
 
     public int getSize() {
         return mSize;
     }
-    
+
     public void setOnStateChangeListener(OnStateChangeListener l) {
         mOnStateChangeListener = l;
     }
-    
+
     public int getImage(final int index, final OnDecodeOverListener listener) {
         final ImageData imageData = mImagesDate.get(index);
         int state;
@@ -190,7 +188,7 @@ public class ImageSet {
                     if (imageData.fileName == null
                             && !getFileForName(getFileNameForIndex(index), imageData))
                         return null;
-                    
+
                     File file = new File(mFolder, imageData.fileName);
                     FileInputStream fis = null;
                     try {
@@ -209,7 +207,7 @@ public class ImageSet {
                         e.printStackTrace();
                     } finally {
                         if (fis != null)
-                            Utils.closeStreamQuietly(fis);
+                            Utils.closeQuietly(fis);
                     }
                     return res;
                 }
@@ -222,12 +220,12 @@ public class ImageSet {
         }
         return state;
     }
-    
+
     @SuppressLint("DefaultLocale")
     public String getFileNameForIndex(int index) {
         return String.format("%05d", index + 1);
     }
-    
+
     public boolean getFileForName(String name, ImageData imageData) {
         String[] list = mFolder.list();
         for (String item : list) {
@@ -242,7 +240,7 @@ public class ImageSet {
         }
         return false;
     }
-    
+
     public void changeState(int index, int state) {
         final ImageData imageData = mImagesDate.get(index);
         if(imageData != null) {
@@ -252,11 +250,11 @@ public class ImageSet {
             }
         }
     }
-    
-    
+
+
     /**
      * mSize is faithful
-     * 
+     *
      */
     public void scan() {
         String[] fileList = mFolder.list();

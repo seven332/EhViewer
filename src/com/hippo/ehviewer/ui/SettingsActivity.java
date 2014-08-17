@@ -32,7 +32,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
-import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -54,7 +53,10 @@ import android.widget.TextView;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UpdateHelper;
+import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
+import com.hippo.ehviewer.ehclient.ExDownloadManager;
+import com.hippo.ehviewer.ehclient.ExDownloader;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.preference.AutoListPreference;
 import com.hippo.ehviewer.util.Config;
@@ -112,6 +114,13 @@ public class SettingsActivity extends AbstractPreferenceActivity {
 
         mListView = getListView();
         mListView.setClipToPadding(false);
+
+
+        // Test here
+
+        ExDownloadManager edm = ExDownloadManager.getInstance();
+        ExDownloader ed = edm.getExDownloader(728773, "1f90a6e00c", "[BaseSon] Shiki to Hitsuji to Urau Tsuki", EhClient.MODE_EX);
+        ed.setStartIndex(0);
     }
 
     @Override
@@ -443,8 +452,6 @@ public class SettingsActivity extends AbstractPreferenceActivity {
 
         private AlertDialog mDirSelectDialog;
 
-        private EditTextPreference mCacheSize;
-        private Preference mClearCache;
         private Preference mDownloadPath;
         private CheckBoxPreference mMediaScan;
         private ListPreference mDefaultFavorite;
@@ -454,18 +461,12 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.data_settings);
 
-            mCacheSize = (EditTextPreference)findPreference(KEY_CACHE_SIZE);
-            mCacheSize.setOnPreferenceChangeListener(this);
-            mClearCache = findPreference(KEY_CLEAR_CACHE);
-            mClearCache.setOnPreferenceClickListener(this);
             mDownloadPath = findPreference(KEY_DOWNLOAD_PATH);
             mDownloadPath.setOnPreferenceClickListener(this);
             mMediaScan = (CheckBoxPreference)findPreference(KEY_MEDIA_SCAN);
             mMediaScan.setOnPreferenceChangeListener(this);
             mDefaultFavorite = (ListPreference)findPreference(KEY_DEFAULT_FAVORITE);
 
-            // Set summary
-            updateClearCacheSummary();
             mDownloadPath.setSummary(Config.getDownloadPath());
 
             int i = 0;
@@ -476,55 +477,10 @@ public class SettingsActivity extends AbstractPreferenceActivity {
             mDefaultFavorite.setEntries(entrise);
         }
 
-        private void updateClearCacheSummary() {
-            /*
-            if (Cache.diskCache != null) {
-                mClearCache.setSummary(String.format(
-                        getString(R.string.clear_cache_summary_on),
-                        Cache.diskCache.size() / 1024 / 1024f,
-                        Cache.diskCache.maxSize() / 1024 / 1024));
-                mClearCache.setEnabled(true);
-            } else {
-                mClearCache
-                        .setSummary(getString(R.string.clear_cache_summary_off));
-                mClearCache.setEnabled(false);
-            }
-            */
-        }
-
         @Override
         public boolean onPreferenceChange(Preference preference, Object objValue) {
             final String key = preference.getKey();
-            if (KEY_CACHE_SIZE.equals(key)) {
-                /*
-
-                long cacheSize = 0;
-                try {
-                    cacheSize = Integer.parseInt((String) objValue) * 1024 * 1024;
-                } catch (Exception e) {
-                    new SuperToast(mActivity).setIcon(R.drawable.ic_warning)
-                            .setMessage(R.string.input_error).show();
-                    return false;
-                }
-
-                if (cacheSize <= 0 && Cache.diskCache != null) {
-                    Cache.diskCache.clear();
-                    Cache.diskCache.close();
-                    Cache.diskCache = null;
-                } else if (Cache.diskCache == null) {
-                    try {
-                        Cache.diskCache = new DiskCache(mActivity,
-                                Cache.cpCachePath, cacheSize);
-                    } catch (Exception e) {
-                        new SuperToast(mActivity).setIcon(R.drawable.ic_warning)
-                                .setMessage(R.string.create_cache_error).show();
-                        e.printStackTrace();
-                    }
-                } else
-                    Cache.diskCache.setMaxSize(cacheSize);
-                updateClearCacheSummary();
-                */
-            } else if (KEY_MEDIA_SCAN.equals(key)) {
+            if (KEY_MEDIA_SCAN.equals(key)) {
                 boolean value = (Boolean)objValue;
                 File nomedia = new File(Config.getDownloadPath(), ".nomedia");
                 if (value) {
@@ -543,12 +499,7 @@ public class SettingsActivity extends AbstractPreferenceActivity {
         @Override
         public boolean onPreferenceClick(Preference preference) {
             final String key = preference.getKey();
-            if (KEY_CLEAR_CACHE.equals(key)) {
-                /*
-                Cache.diskCache.clear();
-                updateClearCacheSummary();
-                */
-            } else if (KEY_DOWNLOAD_PATH.equals(key)) {
+            if (KEY_DOWNLOAD_PATH.equals(key)) {
                 View view = LayoutInflater.from(mActivity)
                         .inflate(R.layout.dir_selection, null);
                 final FileExplorerView fileExplorerView =

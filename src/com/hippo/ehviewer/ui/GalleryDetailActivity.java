@@ -977,6 +977,7 @@ public class GalleryDetailActivity extends AbstractActivity
             int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
         if (v == mMoreDetailScroll) {
             mMoreDetailScroll.scrollTo(0, 0);
+            System.out.print("sssss");
         } else if (v == mCommentList) {
             mCommentList.setSelection(0);
         } else if (v == mDetailScroll) {

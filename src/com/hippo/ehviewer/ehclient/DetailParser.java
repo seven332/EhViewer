@@ -143,9 +143,9 @@ public class DetailParser {
             if (m.find()) {
                 re |= DETAIL;
 
-                thumb = Utils.htmlUnsescape(m.group(1));
-                title = Utils.htmlUnsescape(m.group(2));
-                title_jpn = Utils.htmlUnsescape(m.group(3));
+                thumb = Utils.unescapeXml(m.group(1));
+                title = Utils.unescapeXml(m.group(2));
+                title_jpn = Utils.unescapeXml(m.group(3));
                 category = EhClient.getType(m.group(4));
                 uploader = m.group(5);
                 posted = m.group(6);

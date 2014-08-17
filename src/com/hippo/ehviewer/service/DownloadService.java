@@ -18,7 +18,6 @@ package com.hippo.ehviewer.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +28,6 @@ import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhClient.DownloadMangaManager;
-import com.hippo.ehviewer.ui.DownloadActivity;
 import com.hippo.ehviewer.ui.DownloadInfo;
 import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.Log;
@@ -167,9 +165,10 @@ public class DownloadService extends Service {
 
         builder.setSmallIcon(R.drawable.ic_launcher);
 
-        Intent intent = new Intent(DownloadService.this,DownloadActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendingIntent);
+        // TODO
+        //Intent intent = new Intent(DownloadService.this,DownloadActivity.class);
+        //PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        //builder.setContentIntent(pendingIntent);
     }
 
     @Override

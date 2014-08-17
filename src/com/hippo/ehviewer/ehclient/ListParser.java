@@ -73,8 +73,8 @@ public class ListParser {
                 } else {
                     continue;
                 }
-                lgi.thumb = Utils.htmlUnsescape(m.group(2));
-                lgi.title = Utils.htmlUnsescape(m.group(3));
+                lgi.thumb = Utils.unescapeXml(m.group(2));
+                lgi.title = Utils.unescapeXml(m.group(3));
                 if (getPostedAndUploader(m.group(4), pau)) {
                     lgi.posted = pau[0];
                     lgi.uploader = pau[1];
@@ -147,12 +147,12 @@ public class ListParser {
                 gi.category = EhClient.getType(m.group(1));
                 gi.posted = m.group(2);
                 if (m.group(3) == null) {
-                    gi.thumb = Utils.htmlUnsescape("http://"
+                    gi.thumb = Utils.unescapeXml("http://"
                             + m.group(5).replace('~', '/'));
-                    gi.title = Utils.htmlUnsescape(m.group(6));
+                    gi.title = Utils.unescapeXml(m.group(6));
                 } else {
-                    gi.thumb = Utils.htmlUnsescape(m.group(3));
-                    gi.title = Utils.htmlUnsescape(m.group(4));
+                    gi.thumb = Utils.unescapeXml(m.group(3));
+                    gi.title = Utils.unescapeXml(m.group(4));
                 }
 
                 Pattern pattern = Pattern

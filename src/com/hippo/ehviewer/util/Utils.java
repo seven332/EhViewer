@@ -18,6 +18,7 @@ package com.hippo.ehviewer.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -139,7 +140,7 @@ public final class Utils {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            Utils.closeStreamQuietly(baos);
+            Utils.closeQuietly(baos);
         }
         return str;
     }
@@ -172,7 +173,7 @@ public final class Utils {
         shaper.edit().putString(key, byteArrayToHexString(sb.toString().getBytes())).apply();
     }
 
-    public static void closeStreamQuietly (Closeable is) {
+    public static void closeQuietly (Closeable is) {
         try {
             if (is != null)
                 is.close();
@@ -292,7 +293,7 @@ public final class Utils {
      * @param str
      * @return
      */
-    public static String htmlUnsescape(String str) {
+    public static String unescapeXml(String str) {
         return replaceEach(str, ESCAPE_CHARATER_LIST, UNESCAPE_CHARATER_LIST);
     }
 
@@ -545,7 +546,39 @@ public final class Utils {
         return replaceEach(result, searchList, replacementList, repeat, timeToLive - 1);
     }
 
+    /**
+     * 0 for false, Non 0 for true
+     *
+     * @param integer
+     * @return
+     */
     public static boolean int2boolean(int integer) {
         return integer == 0 ? false : true;
+    }
+
+    /**
+     * Returns the ASCII characters up to but not including the next "\r\n", or
+     * "\n".
+     *
+     * @throws java.io.EOFException if the stream is exhausted before the next
+     *             newline character.
+     */
+    public static String readAsciiLine(final InputStream in) throws IOException {
+        final StringBuilder result = new StringBuilder(80);
+        while (true) {
+            final int c = in.read();
+            if (c == -1) {
+                throw new EOFException();
+            } else if (c == '\n') {
+                break;
+            }
+
+            result.append((char)c);
+        }
+        final int length = result.length();
+        if (length > 0 && result.charAt(length - 1) == '\r') {
+            result.setLength(length - 1);
+        }
+        return result.toString();
     }
 }

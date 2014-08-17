@@ -35,7 +35,6 @@ import java.net.UnknownHostException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.conn.ConnectTimeoutException;
@@ -54,6 +53,7 @@ import com.hippo.ehviewer.exception.StopRequestException;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.FastByteArrayOutputStream;
 import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 
@@ -66,7 +66,7 @@ import com.hippo.ehviewer.util.Utils;
 public class HttpHelper {
     private static final String TAG = HttpHelper.class.getSimpleName();
 
-    private static final int HTTP_RETRY_TIMES = 3;
+    private static final int HTTP_RETRY_TIMES = 5;
 
     public static final String SAD_PANDA_ERROR = "Sad Panda";
     public static final String HAPPY_PANDA_BODY = "Happy Panda";
@@ -79,16 +79,18 @@ public class HttpHelper {
 
     private static final String DEFAULT_CHARSET = "utf-8";
     private static final String CHARSET_KEY = "charset=";
-    private static int sProxyIndex;
-    private static Object sProxyIndexLock;
 
-    static {
-        // from 1 to 8
-        Random rdm = new Random(System.currentTimeMillis());
-        sProxyIndex = rdm.nextInt(7) + 1;
-
-        sProxyIndexLock = new Object();
-    }
+    private static final String[] PROXY_URLS = {
+        "http://proxyy0000.appsp0t.com/proxy",
+        "http://proxyy0001.appsp0t.com/proxy",
+        "http://proxyy0002.appsp0t.com/proxy",
+        "http://proxyy0003.appsp0t.com/proxy",
+        "http://proxyy0004.appsp0t.com/proxy",
+        "http://proxyy0005.appsp0t.com/proxy",
+        "http://proxyy0006.appsp0t.com/proxy"
+    };
+    private static int sProxyIndex = MathUtils.random(0, PROXY_URLS.length);
+    private static Object sProxyIndexLock = new Object();
 
     public class Package {
         public Object obj;
@@ -110,9 +112,18 @@ public class HttpHelper {
         void onFailure(String eMsg);
     }
 
+    public String getProxyUrl() {
+        synchronized(sProxyIndexLock) {
+            if (sProxyIndex < 0 || sProxyIndex >= PROXY_URLS.length)
+                sProxyIndex = 0;
+            return PROXY_URLS[sProxyIndex++];
+        }
+    }
+
     public void reset() {
         mListener = null;
         mException = null;
+        mLastUrl = null;
         mPreviewMode = null;
     }
 
@@ -387,8 +398,8 @@ public class HttpHelper {
             } catch (Exception e) {
                 throw e;
             } finally {
-                Utils.closeStreamQuietly(is);
-                Utils.closeStreamQuietly(baos);
+                Utils.closeQuietly(is);
+                Utils.closeQuietly(baos);
             }
             return body;
         }
@@ -696,16 +707,6 @@ public class HttpHelper {
             mListener = listener;
         }
 
-        public String getProxyUrl() {
-            String proxyUrl = null;
-            synchronized(sProxyIndexLock) {
-                proxyUrl = "http://proxy000" + sProxyIndex + ".herokuapp.com/proxy";
-                if (++sProxyIndex > 8)
-                    sProxyIndex = 1;
-            }
-            return proxyUrl;
-        }
-
         @Override
         public URL getUrl() throws MalformedURLException {
             return new URL(mIsProxy? getProxyUrl() : mUrl);
@@ -727,7 +728,8 @@ public class HttpHelper {
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Range", "bytes=0-");
             }
-            mListener.onDownloadStartConnect();
+            if (mListener != null)
+                mListener.onDownloadStartConnect();
         }
 
         private int getContentLength(HttpURLConnection conn) {
@@ -760,7 +762,8 @@ public class HttpHelper {
         @Override
         public Object onAfterConnect(HttpURLConnection conn) throws Exception {
             mContentLength = getContentLength(conn);
-            mListener.onDownloadStartDownload(mContentLength);
+            if (mListener != null)
+                mListener.onDownloadStartDownload(mContentLength);
 
             // Make sure parent exist
             mDir.mkdirs();
@@ -768,7 +771,8 @@ public class HttpHelper {
             // Transfer
             transferData(conn.getInputStream(), new FileOutputStream(mFile));
             // Callback
-            mListener.onDownloadOver(DOWNLOAD_OK_CODE, null);
+            if (mListener != null)
+                mListener.onDownloadOver(DOWNLOAD_OK_CODE, null);
             return DOWNLOAD_OK_STR;
         }
 
@@ -778,10 +782,12 @@ public class HttpHelper {
             if (mFile != null)
                 mFile.delete();
             // Callback
-            if (e instanceof StopRequestException)
-                mListener.onDownloadOver(DOWNLOAD_STOP_CODE, getEMsg());
-            else
-                mListener.onDownloadOver(DOWNLOAD_STOP_CODE, getEMsg());
+            if (mListener != null) {
+                if (e instanceof StopRequestException)
+                    mListener.onDownloadOver(DOWNLOAD_STOP_CODE, getEMsg());
+                else
+                    mListener.onDownloadOver(DOWNLOAD_STOP_CODE, getEMsg());
+            }
         }
 
         private void transferData(InputStream in, OutputStream out)
@@ -790,7 +796,7 @@ public class HttpHelper {
             mReceivedSize = 0;
 
             while (true) {
-                if (mControlor.isStop())
+                if (mControlor != null && mControlor.isStop())
                     throw new StopRequestException();
 
                 int bytesRead = in.read(data);
@@ -798,8 +804,8 @@ public class HttpHelper {
                     break;
                 out.write(data, 0, bytesRead);
                 mReceivedSize += bytesRead;
-
-                mListener.onDownloadStatusUpdate(mReceivedSize, mContentLength);
+                if (mListener != null)
+                    mListener.onDownloadStatusUpdate(mReceivedSize, mContentLength);
             }
 
             if (mContentLength != -1 && mReceivedSize != mContentLength)

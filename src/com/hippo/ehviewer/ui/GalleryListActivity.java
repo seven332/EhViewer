@@ -1009,7 +1009,6 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 TextView tv;
                 if (convertView == null) {
                     tv = (TextView)LayoutInflater.from(GalleryListActivity.this).inflate(R.layout.menu_item, parent, false);
-                    mWindowsAnimate.addRippleEffect(tv, true);
                 } else {
                     tv = (TextView)convertView;
                 }
@@ -1059,9 +1058,10 @@ public class GalleryListActivity extends AbstractGalleryActivity
                     break;
 
                 case 5: // Download
-                    intent = new Intent(GalleryListActivity.this,
-                            DownloadActivity.class);
-                    startActivity(intent);
+                    // TODO Download Activity
+                    //intent = new Intent(GalleryListActivity.this,
+                            //DownloadActivity.class);
+                    //startActivity(intent);
                     break;
 
                 case 6: // Settings

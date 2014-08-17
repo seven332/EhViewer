@@ -343,7 +343,7 @@ public class Downloader implements Runnable {
             transferData(in, raf);
         } finally {
             if (in != null)
-                Utils.closeStreamQuietly(in);
+                Utils.closeQuietly(in);
             if (raf != null)
                 try {
                     raf.close();

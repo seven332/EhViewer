@@ -19,16 +19,16 @@ package com.hippo.ehviewer.ehclient;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.hippo.ehviewer.util.Utils;
+
 public class ImagePageParser {
 
     public String imageUrl;
-    public String fullImageUrl;
     public int gid;
     public String token;
 
     public void reset() {
         imageUrl = null;
-        fullImageUrl = null;
         gid = 0;
         token = null;
     }
@@ -36,14 +36,13 @@ public class ImagePageParser {
     public boolean parser(String body) {
         Pattern p = Pattern.compile("<div id=\"i3\">.+?<img id=\"img\" src=\"(.+?)\""
                 + ".+?"
-                + "<div id=\"i5\"><div class=\"sb\"><a href=\"(?:http|https)://.+?/g/(\\d+)/(\\w+)"
-                + "(?:.+?<div id=\"i7\" class=\"if\">.+?<a href=\"(.+?)\">)?");
+                + "<div id=\"i5\"><div class=\"sb\"><a href=\"(?:http|https)://.+?/g/(\\d+)/(\\w+)");
         Matcher m = p.matcher(body);
-        if (m.matches()) {
-            imageUrl = m.group(1);
+
+        if (m.find()) {
+            imageUrl = Utils.unescapeXml(m.group(1));
             gid = Integer.parseInt(m.group(2));
             token = m.group(3);
-            fullImageUrl = m.group(4);
             return true;
         } else {
             return false;

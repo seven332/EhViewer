@@ -1,0 +1,548 @@
+/*
+ * Copyright (C) 2014 Hippo Seven
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.hippo.ehviewer.ehclient;
+
+import java.io.BufferedInputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import android.content.Context;
+import android.os.Process;
+
+import com.hippo.ehviewer.AppContext;
+import com.hippo.ehviewer.network.HttpHelper;
+import com.hippo.ehviewer.util.AutoExpandArray;
+import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.util.Utils;
+
+public class ExDownloader implements Runnable {
+
+    private static final String TAG = ExDownloader.class.getSimpleName();
+
+    private static final int WORKER_NUM = 3;
+
+    private final Context mContext;
+    private final ExDownloadManager mManager;
+
+    private final int mGid;
+    private final String mToken;
+    private final String mTitle;
+    private final int mMode;
+    private int mPreviewPageNum = -1;
+    private int mPreviewPerPage = -1;
+    private int mImageNum = -1;
+    private final AutoExpandArray<String> mPageTokeArray = new AutoExpandArray<String>();
+
+    private volatile int mOwnerNum = 0;
+    private Thread mMainThread = null;
+    /** Only work for EhClient.MODE_LOFI **/
+    private int mCurMaxPreviewPage = -1;
+
+    private volatile int mStartIndex = 0;
+    private final Queue<Integer> mRequestIndexArray = new ConcurrentLinkedQueue<Integer>();
+    private final Queue<Integer> mNoTokenIndexArray = new ConcurrentLinkedQueue<Integer>();
+    private final Queue<Integer> mRequestPageIndexArray = new ConcurrentLinkedQueue<Integer>();
+    private volatile int mCurRequestPageIndex = -1;
+
+    private final Worker[] mWorkerArray = new Worker[WORKER_NUM];
+
+    private final Object mPageTokenLock = new Object();
+    private final Object mWorkerLock = new Object();
+    private final Object mWorkerGetIndexLock = new Object();
+
+    private final File mDir;
+
+    private static final int IO_BUFFER_SIZE = 8 * 1024;
+
+    ExDownloader(int gid, String token, String title, int mode) {
+        mContext = AppContext.getInstance();
+        mManager = ExDownloadManager.getInstance();
+        mGid = gid;
+        mToken = token;
+        mTitle = title;
+        mMode = mode;
+
+        // Make sure dir
+        mDir = new File(Config.getDownloadPath(),
+                Utils.standardizeFilename(mGid + "-" + mTitle));
+        if (!mDir.exists()) {
+            mDir.mkdirs();
+        } else if (mDir.isFile()) {
+            mDir.delete();
+            mDir.mkdirs();
+        }
+    }
+
+    void occupy() {
+        mOwnerNum++;
+    }
+
+    void free() {
+        mOwnerNum--;
+    }
+
+    boolean isOrphans() {
+        return mOwnerNum == 0;
+    }
+
+    public int getGid() {
+        return mGid;
+    }
+
+    public String getToken() {
+        return mToken;
+    }
+
+    public void setStartIndex(int startIndex) {
+        if (mImageNum != -1 && mStartIndex >= mImageNum)
+            mStartIndex = 0;
+        else
+            mStartIndex = startIndex;
+
+        ensureStart();
+        ensureWorkers();
+    }
+
+    public void setTargetIndex(int startIndex) {
+        if (mImageNum != -1 && mStartIndex >= mImageNum) {
+            mRequestIndexArray.offer(startIndex);
+            ensureStart();
+            ensureWorkers();
+        }
+    }
+
+    private synchronized void ensureStart() {
+        if (mMainThread != null)
+            return;
+
+        mMainThread = new Thread(this);
+        mMainThread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
+        mMainThread.start();
+    }
+
+    private File getExDownloadInfoFile() {
+        return new File(mManager.getExDownloadInfoDir(), String.valueOf(mGid));
+    }
+
+    private boolean checkMode(int samlpe, int target) {
+        return samlpe <= EhClient.MODE_EX && target <= EhClient.MODE_EX
+                || samlpe == EhClient.MODE_LOFI && target == EhClient.MODE_LOFI;
+    }
+
+    /**
+     * This function parser the download info file.<br>
+     * The file look like this:<br>
+     * <code>
+     * 728874<br>
+     * 306429c222<br>
+     * 1<br>
+     * 4<br>
+     * 40<br>
+     * 128<br>
+     * 1 43a64e6e79<br>
+     * </code><br>
+     * Fist line is gid, a integer.
+     * Second line is token, a ten-character string.
+     * Third line is mode.
+     * Fourth line is preview page num.
+     * Fifth line is preview per page.
+     *
+     * @param ediFile
+     * @return
+     */
+    private boolean parserEdiFile(File ediFile) {
+        if (!ediFile.exists() || !ediFile.isFile() || !ediFile.canRead()
+                || !ediFile.canWrite())
+            return false;
+
+        InputStream is = null;
+        try {
+            is = new BufferedInputStream(new FileInputStream(ediFile),
+                    IO_BUFFER_SIZE);
+            if (mGid != Integer.valueOf(Utils.readAsciiLine(is)) ||
+                    !mToken.equals(Utils.readAsciiLine(is)))
+                return false;
+
+            if (!checkMode(Integer.valueOf(Utils.readAsciiLine(is)), mMode)) {
+                // If preview info is not same
+                // skip preview page num and preview per page
+                Utils.readAsciiLine(is);
+                Utils.readAsciiLine(is);
+            } else {
+                mPreviewPageNum = Integer.valueOf(Utils.readAsciiLine(is));
+                mPreviewPerPage = Integer.valueOf(Utils.readAsciiLine(is));
+            }
+
+            mImageNum = Integer.parseInt(Utils.readAsciiLine(is));
+            if (mImageNum != -1)
+                mPageTokeArray.setCapacity(mImageNum);
+            else if (mPreviewPageNum != -1 && mPreviewPerPage != -1)
+                mPageTokeArray.setCapacity(mPreviewPageNum * mPreviewPerPage);
+
+            // read page token info
+            try {
+                while(true) {
+                    String line = Utils.readAsciiLine(is);
+                    int pos = line.indexOf(" ");
+                    if (pos == -1 && line.length() - pos != 11)
+                        continue;
+                    try {
+                        int index = Integer.parseInt(line.substring(0, pos));
+                        String token = line.substring(pos + 1);
+                        mPageTokeArray.set(index, token);
+                    } catch (NumberFormatException e) {
+                        continue;
+                    }
+                }
+            } catch (EOFException e) {
+                // Empty
+            }
+            return true;
+        } catch (Throwable e) {
+            // If read error
+            return false;
+        } finally {
+            Utils.closeQuietly(is);
+        }
+    }
+
+    private void writeEdiFile(File ediFile) {
+        try {
+            FileWriter writer = new FileWriter(ediFile);
+            writer.write(String.valueOf(mGid));
+            writer.write("\n");
+            writer.write(mToken);
+            writer.write("\n");
+            writer.write(mMode + '0');
+            writer.write("\n");
+            writer.write(String.valueOf(mPreviewPageNum));
+            writer.write("\n");
+            writer.write(String.valueOf(mPreviewPerPage));
+            writer.write("\n");
+            writer.write(String.valueOf(mImageNum));
+            writer.write("\n");
+            for (int i = 0; i < mPageTokeArray.length(); i++) {
+                String pageToken = mPageTokeArray.get(i);
+                if (pageToken != null) {
+                    writer.write(String.valueOf(i));
+                    writer.write(" ");
+                    writer.write(pageToken);
+                    writer.write("\n");
+                }
+            }
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getDetailInfo(int pageIndex, File ediFile, boolean needPreviewInfo) {
+        HttpHelper hh = new HttpHelper(mContext);
+        EdDetailParser edp = new EdDetailParser();
+        String url = EhClient.getDetailUrl(mGid, mToken, pageIndex, mMode);
+        hh.setPreviewMode("m");
+        String body = hh.get(url);
+        if (body == null)
+            return hh.getEMsg() != null ? hh.getEMsg() : "Http error";
+        if (!edp.parser(body, mMode, needPreviewInfo))
+            return edp.emsg != null ? edp.emsg : "Parser error"; // TODO
+        if (edp.previewStartIndex != pageIndex * mPreviewPerPage)
+            return "预测与实际不匹配"; // TODO
+
+        List<String> pageTokenArray = edp.pageTokenArray;
+        if (needPreviewInfo)
+            mPreviewPerPage = pageTokenArray.size();
+        if (mMode == EhClient.MODE_LOFI) {
+            // update mCurMaxPreviewPage
+            if (edp.isLastPage) {
+                mPreviewPageNum = pageIndex + 1;
+                mImageNum = pageIndex * mPreviewPerPage + pageTokenArray.size();
+            } else if (!edp.isLastPage && mPreviewPageNum == -1) {
+                mCurMaxPreviewPage = Math.max(mCurMaxPreviewPage, pageIndex + 1);
+            }
+        } else {
+            if (needPreviewInfo) {
+                mPreviewPageNum = edp.previewPageNum;
+                mImageNum = edp.imageNum;
+                mPageTokeArray.setCapacity(mPreviewPageNum * mPreviewPerPage);
+            }
+        }
+        for (int i = 0; i < pageTokenArray.size(); i++)
+            mPageTokeArray.set(i + edp.previewStartIndex, pageTokenArray.get(i));
+
+        if (!needPreviewInfo)
+            ; // TODO add loader page
+
+        writeEdiFile(ediFile);
+        return null;
+    }
+
+    private void ensureWorkers() {
+        synchronized(mWorkerArray) {
+            for (int i = 0; i < mWorkerArray.length; i++) {
+                if (mWorkerArray[i] == null) {
+                    Worker worker = new Worker();
+                    worker.start();
+                    mWorkerArray[i] = worker;
+                }
+            }
+        }
+    }
+
+    public int getMaxEnsureIndex() {
+        if (mImageNum != -1) {
+            return mImageNum;
+        } else {
+            return Math.max(Math.max(mStartIndex - 1,
+                    Math.max(mCurMaxPreviewPage, mPreviewPageNum - 1) * mPreviewPerPage),
+                    mPageTokeArray.maxValidIndex());
+        }
+    }
+
+    // TODO for download , when to claim download completed
+    @Override
+    public void run() {
+        // Try to get info from file
+        try {
+            File ediFile = getExDownloadInfoFile();
+            if (!parserEdiFile(ediFile) || mPreviewPerPage == -1 ||
+                    (mMode == EhClient.MODE_EX && mImageNum == -1)) {
+                getDetailInfo(0, ediFile, true);
+            }
+
+            ensureWorkers();
+
+            // A loop to get page token
+            while (true) {
+                Log.d(TAG, "A new loop to get page token");
+
+                int noTokenIndex = -1;
+                int pageIndex = -1;
+                synchronized(mPageTokenLock) {
+                    if (mNoTokenIndexArray.isEmpty()) {
+                        if (mRequestPageIndexArray.isEmpty()) {
+                            try {
+                                mPageTokenLock.wait();
+                            } catch (InterruptedException e) {}
+                            continue;
+                        } else {
+                            pageIndex = mRequestPageIndexArray.poll();
+                            mCurRequestPageIndex = pageIndex;
+                        }
+                    } else {
+                        noTokenIndex = mNoTokenIndexArray.poll();
+                    }
+                }
+
+                if (noTokenIndex != -1) {
+                    if (mPageTokeArray.get(noTokenIndex) == null) {
+                        getDetailInfo(noTokenIndex / mPreviewPerPage, ediFile, false);
+                    } else {
+                        // The token is already got, no need to re
+                    }
+                } else if (noTokenIndex == -1){
+                    getDetailInfo(pageIndex, ediFile, false);
+                    mCurRequestPageIndex = -1;
+                }
+
+                synchronized(mWorkerGetIndexLock) {mWorkerGetIndexLock.notifyAll();}
+                synchronized(mWorkerLock) {mWorkerLock.notifyAll();}
+            }
+        } catch (Throwable e) {
+            // TODO handle error here
+
+        } finally {
+            synchronized (this) {
+                mMainThread = null;
+            }
+        }
+    }
+
+    private class Worker extends Thread {
+
+        public Worker() {
+            super();
+            setPriority(Process.THREAD_PRIORITY_BACKGROUND);
+        }
+
+        private void addNoTokenIndex(int index) {
+            synchronized(mPageTokenLock) {
+                mNoTokenIndexArray.offer(index);
+                mPageTokenLock.notify();
+            }
+        }
+
+        private void addRequstPageIndex(int pageIndex) {
+            synchronized(mPageTokenLock) {
+                if (mCurRequestPageIndex != pageIndex &&
+                        !mRequestPageIndexArray.contains(pageIndex)) {
+                    mRequestPageIndexArray.offer(pageIndex);
+                    mPageTokenLock.notify();
+                }
+            }
+        }
+
+        private int getTargetIndex() {
+            synchronized(mWorkerGetIndexLock) {
+                while (true) {
+                    if (!mRequestIndexArray.isEmpty()) {
+                        return mRequestIndexArray.poll();
+                    } else if (mImageNum != -1 && mStartIndex == mImageNum) {
+                        return -1;
+                    } else if (mImageNum == -1 && mStartIndex > getMaxEnsureIndex()) {
+                        // If do not sure the index is valid
+                        addRequstPageIndex(getMaxEnsureIndex() / mPreviewPerPage);
+                        try {
+                            mWorkerGetIndexLock.wait();
+                        } catch (InterruptedException e) {}
+                    } else {
+                        return mStartIndex++;
+                    }
+                }
+            }
+        }
+
+        private String getExtension(String name, String defautl) {
+            int index = name.lastIndexOf('.');
+            if (index == -1 || index == name.length() - 1)
+                return defautl;
+            else
+                return name.substring(index + 1);
+        }
+
+        private String getImageName(int index, String url) {
+            return String.format("%08d.%s", index + 1, getExtension(url, "jpg"));
+        }
+
+        private String[] getPossibleFilenames(int index) {
+            String prefix = String.format("%08d.", index + 1);
+            return new String[]{prefix + "jpg", prefix + "jpeg", prefix + "png", prefix + "gif"};
+        }
+
+        @Override
+        public void run() {
+            HttpHelper hh = new HttpHelper(mContext);
+            ImagePageParser ipp = new ImagePageParser();
+
+            while (true) {
+                int targetIndex = getTargetIndex();
+                if (targetIndex == -1)
+                    break;
+
+                // Check is this already downloaded
+                boolean isAlreadyDownloaded = false;
+                for (String possibleFilename : getPossibleFilenames(targetIndex)) {
+                    File file = new File(mDir, possibleFilename);
+                    if (file.exists()) {
+                        isAlreadyDownloaded = true;
+                        break;
+                    }
+                }
+                if (isAlreadyDownloaded)
+                    continue;
+
+                String pageToken;
+                while (true) {
+                    pageToken = mPageTokeArray.get(targetIndex);
+                    if (pageToken == null) {
+                        addNoTokenIndex(targetIndex);
+                        synchronized(mWorkerLock) {
+                            try {mWorkerLock.wait();}
+                            catch (InterruptedException e) {}
+                        }
+                    } else {
+                        // Jump out of loop
+                        break;
+                    }
+                }
+
+                for (int i = 0; i < 2; i++) {
+                    // i == 1, add "?nl=48"
+                    hh.reset();
+                    ipp.reset();
+                    String body = hh.get(EhClient.getPageUrl(mGid, pageToken, targetIndex + 1, mMode)
+                            + (i == 1 ? "?nl=48" : ""));
+                    if (ipp.parser(body)) {
+                        String imageUrl = ipp.imageUrl;
+                        String filename = getImageName(targetIndex, imageUrl);
+                        for (int j = 0; j < 2; j++) {
+                            // j == 0, use proxy
+
+                        }
+                    } else {
+                        // TODO parser error, Do somthing
+                        break;
+                    }
+                }
+
+
+
+                // Parser image page
+                for (int i = 0; i < 2; i++) {
+                    hh.reset();
+                    ipp.reset();
+                    String body = hh.get(EhClient.getPageUrl(mGid, pageToken, targetIndex + 1, mMode)
+                            + (i == 1 ? "?nl=48" : ""));
+                    if (ipp.parser(body)) {
+                        // Download image
+                        String imageUrl = ipp.imageUrl;
+                        String filename = getImageName(targetIndex, imageUrl);
+                        hh.reset();
+                        if (hh.download(imageUrl, mDir, filename, false, null, null) == null) {
+                            hh.reset();
+                            if (hh.download(imageUrl, mDir, filename, true, null, null) == null) {
+                                if (i == 1) {
+                                    // TODO download error
+                                }
+                            } else {
+                                // download ok
+                                break;
+                            }
+                        } else {
+                            // download ok
+                            break;
+                        }
+                    } else {
+                        // TODO parser error, Do somthing
+                        break;
+                    }
+                }
+            }
+
+            // Worker over
+            synchronized(mWorkerArray) {
+                // Remove from mWorkerArray
+                for (int i = 0; i < mWorkerArray.length; i++) {
+                    if (mWorkerArray[i] == this) {
+                        mWorkerArray[i] = null;
+                        break;
+                    }
+                }
+            }
+            Log.d(TAG, "Worker over");
+        }
+    }
+}

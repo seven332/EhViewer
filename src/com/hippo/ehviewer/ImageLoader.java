@@ -26,6 +26,7 @@ import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.network.HttpHelper;
 
 public class ImageLoader {
+    @SuppressWarnings("unused")
     private static final String TAG = ImageLoader.class.getSimpleName();
 
     private static ImageLoader sInstance;
@@ -47,7 +48,6 @@ public class ImageLoader {
     private final Stack<LoadTask> mLoadTasks;
     private final ImageCache mImageCache;
     private final ImageDownloader mImageDownloader;
-    private final Object mLock;
 
     public ImageLoader(Context context) {
         mLoadTasks = new Stack<LoadTask>();
@@ -56,7 +56,6 @@ public class ImageLoader {
         mContext = context;
         mImageCache = ImageCache.getInstance(mContext);
 
-        mLock = new Object();
         Thread thread = new Thread(new LoadFromCacheTask());
         thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
@@ -70,9 +69,9 @@ public class ImageLoader {
     }
 
     public void add(String url, String key, OnGetImageListener listener) {
-        synchronized (mLock) {
+        synchronized (mLoadTasks) {
             mLoadTasks.push(new LoadTask(url, key, listener));
-            mLock.notify();
+            mLoadTasks.notify();
         }
     }
 
@@ -81,10 +80,10 @@ public class ImageLoader {
         public void run() {
             LoadTask loadTask;
             while (true) {
-                synchronized (mLock) {
+                synchronized (mLoadTasks) {
                     if (mLoadTasks.isEmpty()) {
                         try {
-                            mLock.wait();
+                            mLoadTasks.wait();
                         } catch (InterruptedException e) {}
                         continue;
                     }
@@ -107,15 +106,13 @@ public class ImageLoader {
         private static final int MAX_DOWNLOAD_THREADS = 5;
         private final Stack<LoadTask> mDownloadTasks;
         private int mWorkingThreadNum = 0;
-        private final Object mLock;
 
         public ImageDownloader() {
-            mLock = new Object();
             mDownloadTasks = new Stack<LoadTask>();
         }
 
         public void add(LoadTask loadTask) {
-            synchronized (mLock) {
+            synchronized (mDownloadTasks) {
                 mDownloadTasks.push(loadTask);
                 if (mWorkingThreadNum < MAX_DOWNLOAD_THREADS) {
                     Thread thread = new Thread(new DownloadImageTask());
@@ -132,7 +129,7 @@ public class ImageLoader {
                 LoadTask loadTask;
                 HttpHelper httpHelper = new HttpHelper(mContext);
                 while (true) {
-                    synchronized (mLock) {
+                    synchronized (mDownloadTasks) {
                         if (mDownloadTasks.isEmpty()) {
                             loadTask = null;
                             mWorkingThreadNum--;

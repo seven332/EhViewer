@@ -89,7 +89,7 @@ public class EhInfo {
         } catch (FileNotFoundException e) {
             return null;
         } finally {
-            Utils.closeStreamQuietly(is);
+            Utils.closeQuietly(is);
         }
     }
 
@@ -113,11 +113,12 @@ public class EhInfo {
     };
 
     private String getUconfigString(String previewMode) {
-        return "cats_" + mDefaultCat
-                + "-ts_" + (previewMode == null ? mPreviewMode : previewMode)
-                + "-xns_" + mExculdeTagGroup
-                + "-xl_" + mExculdeLanguage
-                + "-tl_m-uh_y-tr_2-prn_n-dm_l-ar_0-rc_0-rx_0-ry_0-sa_y-oi_n-qb_n-tf_n-hp_-hk_-ms_n-mt_n";
+        return new StringBuilder().append("cats_").append(mDefaultCat)
+                .append("-ts_").append(previewMode == null ? mPreviewMode : previewMode)
+                .append("-xns_").append(mExculdeTagGroup)
+                .append("-xl_").append(mExculdeLanguage)
+                .append("-tl_m-uh_y-tr_2-prn_n-dm_l-ar_0-rc_0-rx_0-ry_0-sa_y-oi_n-qb_n-tf_n-hp_-hk_-ms_n-mt_n")
+                .toString();
     }
 
     private void updateUconfig() {
@@ -230,7 +231,7 @@ public class EhInfo {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
-            Utils.closeStreamQuietly(os);
+            Utils.closeQuietly(os);
         }
     }
 
