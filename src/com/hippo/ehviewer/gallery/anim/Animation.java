@@ -18,7 +18,7 @@ package com.hippo.ehviewer.gallery.anim;
 
 import android.view.animation.Interpolator;
 
-import com.hippo.ehviewer.gallery.common.Utils;
+import com.hippo.ehviewer.util.MathUtils;
 
 // Animation calculates a value according to the current input time.
 //
@@ -81,7 +81,7 @@ abstract public class Animation {
         if (mStartTime == NO_ANIMATION) return false;
         if (mStartTime == ANIMATION_START) mStartTime = currentTimeMillis;
         int elapse = (int) (currentTimeMillis - mStartTime);
-        float x = Utils.clamp((float) elapse / mDuration, 0f, 1f);
+        float x = MathUtils.clamp((float) elapse / mDuration, 0f, 1f);
         Interpolator i = mInterpolator;
         onCalculate(i != null ? i.getInterpolation(x) : x);
         if (elapse >= mDuration) mStartTime = NO_ANIMATION;

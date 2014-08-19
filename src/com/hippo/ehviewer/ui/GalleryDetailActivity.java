@@ -821,19 +821,13 @@ public class GalleryDetailActivity extends AbstractActivity
             MaterialToast.showToast(R.string.toast_add_download);
         } else if (v == mReadButton) {
             //mData.addRead(mGalleryInfo);
-            if (mGalleryInfo instanceof GalleryDetail) {
-                GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
-                Intent intent = new Intent(this,
-                        GalleryActivity.class);
-                intent.putExtra("url", galleryDetail.firstPage);
-                intent.putExtra("gid", mGalleryInfo.gid);
-                intent.putExtra("title", mGalleryInfo.title);
-                intent.putExtra("firstPage", 0);
-                intent.putExtra("pageSum", galleryDetail.pages);
-                startActivity(intent);
-            } else {
-                // TODO
-            }
+            Intent intent = new Intent(this,
+                    GalleryActivity.class);
+            intent.putExtra(GalleryActivity.KEY_GID, mGalleryInfo.gid);
+            intent.putExtra(GalleryActivity.KEY_TOKEN, mGalleryInfo.token);
+            intent.putExtra(GalleryActivity.KEY_TITLE, mGalleryInfo.title);
+            intent.putExtra(GalleryActivity.KEY_START_INDEX, 0);
+            startActivity(intent);
         } else if (v == mCategory) {
             finish();
             Intent intent = new Intent(this, GalleryListActivity.class);
@@ -1175,7 +1169,7 @@ public class GalleryDetailActivity extends AbstractActivity
             PreviewImpl previewImpl = (PreviewImpl)mGalleryInfo;
             previewImpl.setPreview(page, pageList);
             pageList.setData(GalleryDetailActivity.this,
-                    GalleryDetailActivity.this, previewImpl, page); // TODO how about LofiGalleryDetail
+                    GalleryDetailActivity.this, previewImpl, page);
             pageList.addPreview(mPreview);
 
             if (isLastPage && mGalleryInfo instanceof LofiDetailImpl) {

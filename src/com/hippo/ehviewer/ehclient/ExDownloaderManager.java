@@ -23,25 +23,25 @@ import android.util.SparseArray;
 
 import com.hippo.ehviewer.AppContext;
 
-public class ExDownloadManager {
+public class ExDownloaderManager {
 
-    private static final String TAG = ExDownloadManager.class.getSimpleName();
+    private static final String TAG = ExDownloaderManager.class.getSimpleName();
 
     private final Context mContext;
     private final SparseArray<ExDownloader> mExDownloadList;
     private final File mExDownloadInfoDir;
 
-    private static ExDownloadManager sInstance;
+    private static ExDownloaderManager sInstance;
 
     public static void createInstance() {
-        sInstance = new ExDownloadManager();
+        sInstance = new ExDownloaderManager();
     }
 
-    public static ExDownloadManager getInstance() {
+    public static ExDownloaderManager getInstance() {
         return sInstance;
     }
 
-    private ExDownloadManager() {
+    private ExDownloaderManager() {
         mContext = AppContext.getInstance();
         mExDownloadList = new SparseArray<ExDownloader>();
         // Init download info dir
@@ -70,7 +70,9 @@ public class ExDownloadManager {
 
     public synchronized void freeExDownloader(ExDownloader exDownloader) {
         exDownloader.free();
-        if (exDownloader.isOrphans())
+        if (exDownloader.isOrphans()) {
+            exDownloader.stop();
             mExDownloadList.remove(exDownloader.getGid());
+        }
     }
 }

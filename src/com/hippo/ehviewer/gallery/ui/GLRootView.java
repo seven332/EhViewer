@@ -16,6 +16,15 @@
 
 package com.hippo.ehviewer.gallery.ui;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -26,15 +35,11 @@ import android.os.Build;
 import android.os.Process;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import com.hippo.ehviewer.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
-import android.view.View;
 
-import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.anim.CanvasAnimation;
 import com.hippo.ehviewer.gallery.common.ApiHelper;
-import com.hippo.ehviewer.gallery.common.Utils;
 import com.hippo.ehviewer.gallery.glrenderer.BasicTexture;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLES11Canvas;
@@ -42,15 +47,8 @@ import com.hippo.ehviewer.gallery.glrenderer.GLES20Canvas;
 import com.hippo.ehviewer.gallery.glrenderer.UploadedTexture;
 import com.hippo.ehviewer.gallery.util.GalleryUtils;
 import com.hippo.ehviewer.gallery.util.MotionEventHelper;
-
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL11;
+import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.util.Utils;
 
 // The root component of all <code>GLView</code>s. The rendering is done in GL
 // thread while the event handling is done in the main thread.  To synchronize
@@ -89,7 +87,7 @@ public class GLRootView extends GLSurfaceView
     private int mCompensation;
     // mCompensationMatrix maps the coordinates of touch events. It is kept sync
     // with mCompensation.
-    private Matrix mCompensationMatrix = new Matrix();
+    private final Matrix mCompensationMatrix = new Matrix();
     private int mDisplayRotation;
 
     private int mFlags = FLAG_NEED_LAYOUT;
@@ -198,7 +196,7 @@ public class GLRootView extends GLSurfaceView
         }
     }
 
-    private Runnable mRequestRenderOnAnimationFrame = new Runnable() {
+    private final Runnable mRequestRenderOnAnimationFrame = new Runnable() {
         @Override
         public void run() {
             superRequestRender();

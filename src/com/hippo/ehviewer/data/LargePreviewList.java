@@ -76,19 +76,17 @@ public class LargePreviewList extends PreviewList {
 
             View view = inflater.inflate(R.layout.preview_item, null);
             ((TextView)view.findViewById(R.id.text)).setText(String.valueOf(index + 1));
-            final int finalIndex = index;
-            final String url = item.mPageUrl;
+            final int _index = index;
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // Add to read in Data
                     Intent intent = new Intent(mActivity,
                             GalleryActivity.class);
-                    intent.putExtra("url", url);
-                    intent.putExtra("gid", mPi.getGid());
-                    intent.putExtra("title", mPi.getTitle());
-                    intent.putExtra("firstPage", finalIndex);
-                    //intent.putExtra("pageSum", mPi.pages);
+                    intent.putExtra(GalleryActivity.KEY_GID, mPi.getGid());
+                    intent.putExtra(GalleryActivity.KEY_TOKEN, mPi.getToken());
+                    intent.putExtra(GalleryActivity.KEY_TITLE, mPi.getTitle());
+                    intent.putExtra(GalleryActivity.KEY_START_INDEX, _index);
                     mActivity.startActivity(intent);
                 }
             });

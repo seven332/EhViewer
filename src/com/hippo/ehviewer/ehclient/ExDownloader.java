@@ -23,8 +23,10 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.content.Context;
@@ -33,7 +35,7 @@ import android.os.Process;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.AutoExpandArray;
-import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Utils;
 
@@ -44,55 +46,74 @@ public class ExDownloader implements Runnable {
     private static final int WORKER_NUM = 3;
 
     private final Context mContext;
-    private final ExDownloadManager mManager;
+    private final ExDownloaderManager mManager;
 
     private final int mGid;
     private final String mToken;
     private final String mTitle;
     private final int mMode;
-    private int mPreviewPageNum = -1;
-    private int mPreviewPerPage = -1;
-    private int mImageNum = -1;
+    private volatile int mPreviewPageNum = -1;
+    private volatile int mPreviewPerPage = -1;
+    private volatile int mImageNum = -1;
     private final AutoExpandArray<String> mPageTokeArray = new AutoExpandArray<String>();
+    private final AutoExpandArray<String> mImageFilenameArray = new AutoExpandArray<String>();
 
     private volatile int mOwnerNum = 0;
     private Thread mMainThread = null;
-    /** Only work for EhClient.MODE_LOFI **/
+    /** Only work for EhClient.MODE_LOFI when do not know image number **/
     private int mCurMaxPreviewPage = -1;
 
     private volatile int mStartIndex = 0;
     private final Queue<Integer> mRequestIndexArray = new ConcurrentLinkedQueue<Integer>();
     private final Queue<Integer> mNoTokenIndexArray = new ConcurrentLinkedQueue<Integer>();
     private final Queue<Integer> mRequestPageIndexArray = new ConcurrentLinkedQueue<Integer>();
+
+    /** The set contains the requsting index **/
+    private final Set<Integer> mRequstingIndexSet = new HashSet<Integer>();
+
     private volatile int mCurRequestPageIndex = -1;
 
     private final Worker[] mWorkerArray = new Worker[WORKER_NUM];
+    private final HttpHelper.DownloadControlor[] mControlorArray = new HttpHelper.DownloadControlor[WORKER_NUM];
 
     private final Object mPageTokenLock = new Object();
     private final Object mWorkerLock = new Object();
     private final Object mWorkerGetIndexLock = new Object();
 
+    private volatile boolean mPauseWork = false;
+    private volatile boolean mStopWork = false;
+
     private final File mDir;
+    private ListenerForImageSet mLfis;
 
     private static final int IO_BUFFER_SIZE = 8 * 1024;
 
+    public interface ListenerForImageSet {
+        public void onDownloadStart(int index);
+        public void onDownloading(int index, float percent);
+        public void onDownloadComplete(int index);
+        public void onDownloadFail(int index);
+    }
+
+    public interface ListenerForDownload {
+        public void onDownloading(int index);
+    }
+
     ExDownloader(int gid, String token, String title, int mode) {
         mContext = AppContext.getInstance();
-        mManager = ExDownloadManager.getInstance();
+        mManager = ExDownloaderManager.getInstance();
         mGid = gid;
         mToken = token;
         mTitle = title;
         mMode = mode;
 
         // Make sure dir
-        mDir = new File(Config.getDownloadPath(),
-                Utils.standardizeFilename(mGid + "-" + mTitle));
-        if (!mDir.exists()) {
-            mDir.mkdirs();
-        } else if (mDir.isFile()) {
-            mDir.delete();
-            mDir.mkdirs();
-        }
+        mDir = EhUtils.getGalleryDir(mGid, mTitle);
+        Utils.ensureDir(mDir, true);
+    }
+
+    public void setListenerForImageSet(ListenerForImageSet l) {
+        mLfis = l;
     }
 
     void occupy() {
@@ -107,6 +128,39 @@ public class ExDownloader implements Runnable {
         return mOwnerNum == 0;
     }
 
+    void stop() {
+        // TODO stop all thread, release all resources
+        mStopWork = true;
+        // Stop download
+        for (HttpHelper.DownloadControlor c : mControlorArray) {
+            if (c != null)
+                c.stop();
+        }
+        // Wake all thread
+        synchronized(mPageTokenLock) {mPageTokenLock.notifyAll();}
+        synchronized(mWorkerGetIndexLock) {mWorkerGetIndexLock.notifyAll();}
+        synchronized(mWorkerLock) {mWorkerLock.notifyAll();}
+    }
+
+    void pause(boolean pause) {
+        mPauseWork = pause;
+        if (mPauseWork) {
+            // Stop download
+            for (HttpHelper.DownloadControlor c : mControlorArray)
+                if (c != null) c.stop();
+            // Wake all thread
+            synchronized(mPageTokenLock) {mPageTokenLock.notifyAll();}
+            synchronized(mWorkerGetIndexLock) {mWorkerGetIndexLock.notifyAll();}
+            synchronized(mWorkerLock) {mWorkerLock.notifyAll();}
+        } else {
+            // Reset download
+            for (HttpHelper.DownloadControlor c : mControlorArray)
+                if (c != null) c.reset();
+            ensureStart();
+            ensureWorkers();
+        }
+    }
+
     public int getGid() {
         return mGid;
     }
@@ -116,7 +170,7 @@ public class ExDownloader implements Runnable {
     }
 
     public void setStartIndex(int startIndex) {
-        if (mImageNum != -1 && mStartIndex >= mImageNum)
+        if (mImageNum != -1 && startIndex >= mImageNum)
             mStartIndex = 0;
         else
             mStartIndex = startIndex;
@@ -125,12 +179,47 @@ public class ExDownloader implements Runnable {
         ensureWorkers();
     }
 
-    public void setTargetIndex(int startIndex) {
-        if (mImageNum != -1 && mStartIndex >= mImageNum) {
-            mRequestIndexArray.offer(startIndex);
-            ensureStart();
-            ensureWorkers();
+    public void setTargetIndex(int index) {
+        if (mImageNum != -1 && index >= mImageNum)
+            return;
+
+        mRequestIndexArray.offer(index);
+        ensureStart();
+        ensureWorkers();
+    }
+
+    public int getMaxEnsureIndex() {
+        if (mImageNum != -1) {
+            return mImageNum;
+        } else {
+            return Math.max(Math.max(mStartIndex - 1,
+                    Math.max(mCurMaxPreviewPage, mPreviewPageNum - 1) * mPreviewPerPage),
+                    mPageTokeArray.maxValidIndex());
         }
+    }
+
+    /**
+     * If do not know image num, return -1.
+     * You should call getMaxEnsureIndex().
+     *
+     * @return
+     */
+    public int getImageNum() {
+        return mImageNum;
+    }
+
+    public AutoExpandArray<String> getImageFilenameArray() {
+        return mImageFilenameArray;
+    }
+
+    /**
+     * If targer index image is downloading, return true
+     *
+     * @param index
+     * @return
+     */
+    public boolean isDownloading(int index) {
+        return mRequstingIndexSet.contains(index);
     }
 
     private synchronized void ensureStart() {
@@ -196,10 +285,14 @@ public class ExDownloader implements Runnable {
             }
 
             mImageNum = Integer.parseInt(Utils.readAsciiLine(is));
-            if (mImageNum != -1)
+            if (mImageNum != -1) {
                 mPageTokeArray.setCapacity(mImageNum);
-            else if (mPreviewPageNum != -1 && mPreviewPerPage != -1)
+                mImageFilenameArray.setCapacity(mImageNum);
+            }
+            else if (mPreviewPageNum != -1 && mPreviewPerPage != -1) {
                 mPageTokeArray.setCapacity(mPreviewPageNum * mPreviewPerPage);
+                mImageFilenameArray.setCapacity(mPreviewPageNum * mPreviewPerPage);
+            }
 
             // read page token info
             try {
@@ -288,6 +381,7 @@ public class ExDownloader implements Runnable {
                 mPreviewPageNum = edp.previewPageNum;
                 mImageNum = edp.imageNum;
                 mPageTokeArray.setCapacity(mPreviewPageNum * mPreviewPerPage);
+                mImageFilenameArray.setCapacity(mPreviewPageNum * mPreviewPerPage);
             }
         }
         for (int i = 0; i < pageTokenArray.size(); i++)
@@ -301,24 +395,18 @@ public class ExDownloader implements Runnable {
     }
 
     private void ensureWorkers() {
+        if (mPreviewPerPage == -1)
+            return;
+
         synchronized(mWorkerArray) {
             for (int i = 0; i < mWorkerArray.length; i++) {
                 if (mWorkerArray[i] == null) {
-                    Worker worker = new Worker();
+                    Worker worker = new Worker(i);
                     worker.start();
                     mWorkerArray[i] = worker;
+                    mControlorArray[i] = new HttpHelper.DownloadControlor();
                 }
             }
-        }
-    }
-
-    public int getMaxEnsureIndex() {
-        if (mImageNum != -1) {
-            return mImageNum;
-        } else {
-            return Math.max(Math.max(mStartIndex - 1,
-                    Math.max(mCurMaxPreviewPage, mPreviewPageNum - 1) * mPreviewPerPage),
-                    mPageTokeArray.maxValidIndex());
         }
     }
 
@@ -337,7 +425,10 @@ public class ExDownloader implements Runnable {
 
             // A loop to get page token
             while (true) {
-                Log.d(TAG, "A new loop to get page token");
+
+                // Check stop
+                if (mStopWork)
+                    break;
 
                 int noTokenIndex = -1;
                 int pageIndex = -1;
@@ -357,6 +448,9 @@ public class ExDownloader implements Runnable {
                     }
                 }
 
+                Log.d(TAG, "noTokenIndex = " + noTokenIndex);
+                Log.d(TAG, "pageIndex = " + pageIndex);
+
                 if (noTokenIndex != -1) {
                     if (mPageTokeArray.get(noTokenIndex) == null) {
                         getDetailInfo(noTokenIndex / mPreviewPerPage, ediFile, false);
@@ -373,18 +467,22 @@ public class ExDownloader implements Runnable {
             }
         } catch (Throwable e) {
             // TODO handle error here
-
         } finally {
             synchronized (this) {
                 mMainThread = null;
             }
         }
+
+        Log.d(TAG, "ExDownloader over");
     }
 
     private class Worker extends Thread {
 
-        public Worker() {
+        private final int mIndex;
+
+        public Worker(int index) {
             super();
+            mIndex = index;
             setPriority(Process.THREAD_PRIORITY_BACKGROUND);
         }
 
@@ -408,12 +506,20 @@ public class ExDownloader implements Runnable {
         private int getTargetIndex() {
             synchronized(mWorkerGetIndexLock) {
                 while (true) {
+
+                    // Check stop
+                    if (mStopWork || mPauseWork)
+                        return -1;
+
                     if (!mRequestIndexArray.isEmpty()) {
                         return mRequestIndexArray.poll();
                     } else if (mImageNum != -1 && mStartIndex == mImageNum) {
                         return -1;
                     } else if (mImageNum == -1 && mStartIndex > getMaxEnsureIndex()) {
                         // If do not sure the index is valid
+
+                        Log.d(TAG, "mPreviewPerPage = " + mPreviewPerPage);
+
                         addRequstPageIndex(getMaxEnsureIndex() / mPreviewPerPage);
                         try {
                             mWorkerGetIndexLock.wait();
@@ -425,47 +531,57 @@ public class ExDownloader implements Runnable {
             }
         }
 
-        private String getExtension(String name, String defautl) {
-            int index = name.lastIndexOf('.');
-            if (index == -1 || index == name.length() - 1)
-                return defautl;
-            else
-                return name.substring(index + 1);
-        }
-
-        private String getImageName(int index, String url) {
-            return String.format("%08d.%s", index + 1, getExtension(url, "jpg"));
-        }
-
-        private String[] getPossibleFilenames(int index) {
-            String prefix = String.format("%08d.", index + 1);
-            return new String[]{prefix + "jpg", prefix + "jpeg", prefix + "png", prefix + "gif"};
-        }
-
         @Override
         public void run() {
+            HttpDownloadListener listener = new HttpDownloadListener();
             HttpHelper hh = new HttpHelper(mContext);
             ImagePageParser ipp = new ImagePageParser();
 
             while (true) {
+                // Check stop
+                if (mStopWork || mPauseWork)
+                    break;
+
                 int targetIndex = getTargetIndex();
                 if (targetIndex == -1)
                     break;
 
+                // Check is the index is requsted
+                if (mRequstingIndexSet.contains(targetIndex))
+                    continue;
+
                 // Check is this already downloaded
                 boolean isAlreadyDownloaded = false;
-                for (String possibleFilename : getPossibleFilenames(targetIndex)) {
-                    File file = new File(mDir, possibleFilename);
-                    if (file.exists()) {
+                // First check mImageFilenameArray
+                String imageFilename = mImageFilenameArray.get(targetIndex);
+                if (imageFilename != null) {
+                    File file = new File(mDir, imageFilename);
+                    if (file.exists())
                         isAlreadyDownloaded = true;
-                        break;
+                } else {
+                    // Can not find image file name, just guess
+                    for (String possibleFilename : EhUtils.getPossibleImageFilenames(targetIndex)) {
+                        File file = new File(mDir, possibleFilename);
+                        if (file.exists()) {
+                            isAlreadyDownloaded = true;
+                            mImageFilenameArray.set(targetIndex, possibleFilename);
+                            break;
+                        }
                     }
                 }
                 if (isAlreadyDownloaded)
                     continue;
 
-                String pageToken;
+                mRequstingIndexSet.add(targetIndex);
+
+                listener.index = targetIndex;
+
+                String pageToken = null;
                 while (true) {
+                    // Check stop
+                    if (mStopWork || mPauseWork)
+                        break;
+
                     pageToken = mPageTokeArray.get(targetIndex);
                     if (pageToken == null) {
                         addNoTokenIndex(targetIndex);
@@ -474,75 +590,106 @@ public class ExDownloader implements Runnable {
                             catch (InterruptedException e) {}
                         }
                     } else {
-                        // Jump out of loop
+                        // Get valid page token, jump out of loop
                         break;
                     }
                 }
-
-                for (int i = 0; i < 2; i++) {
-                    // i == 1, add "?nl=48"
-                    hh.reset();
-                    ipp.reset();
-                    String body = hh.get(EhClient.getPageUrl(mGid, pageToken, targetIndex + 1, mMode)
-                            + (i == 1 ? "?nl=48" : ""));
-                    if (ipp.parser(body)) {
-                        String imageUrl = ipp.imageUrl;
-                        String filename = getImageName(targetIndex, imageUrl);
-                        for (int j = 0; j < 2; j++) {
-                            // j == 0, use proxy
-
-                        }
-                    } else {
-                        // TODO parser error, Do somthing
-                        break;
-                    }
-                }
-
-
 
                 // Parser image page
-                for (int i = 0; i < 2; i++) {
+                for (int i = 0; i < 2 && !mStopWork && !mPauseWork; i++) {
                     hh.reset();
                     ipp.reset();
                     String body = hh.get(EhClient.getPageUrl(mGid, pageToken, targetIndex + 1, mMode)
                             + (i == 1 ? "?nl=48" : ""));
-                    if (ipp.parser(body)) {
+                    if (ipp.parser(body, mMode)) {
                         // Download image
+                        HttpHelper.DownloadControlor c = mControlorArray[mIndex];
                         String imageUrl = ipp.imageUrl;
-                        String filename = getImageName(targetIndex, imageUrl);
+                        String filename = EhUtils.getImageFilename(targetIndex, Utils.getExtension(imageUrl, "jpg"));
+                        // Just put filename to mImageFilenameArray
+                        mImageFilenameArray.set(targetIndex, filename);
                         hh.reset();
-                        if (hh.download(imageUrl, mDir, filename, false, null, null) == null) {
+                        if (hh.download(imageUrl, mDir, filename, false, c, listener) == null) {
                             hh.reset();
-                            if (hh.download(imageUrl, mDir, filename, true, null, null) == null) {
+                            if (hh.download(imageUrl, mDir, filename, true, c, listener) == null) {
                                 if (i == 1) {
                                     // TODO download error
+                                    Log.d(TAG, "download error");
                                 }
                             } else {
                                 // download ok
+                                Log.d(TAG, "download ok proxy");
                                 break;
                             }
                         } else {
                             // download ok
+                            Log.d(TAG, "download ok");
                             break;
                         }
                     } else {
                         // TODO parser error, Do somthing
+                        Log.d(TAG, "parser error");
                         break;
                     }
                 }
+
+                // Remove from requsting set
+                mRequstingIndexSet.remove(targetIndex);
             }
 
             // Worker over
             synchronized(mWorkerArray) {
                 // Remove from mWorkerArray
-                for (int i = 0; i < mWorkerArray.length; i++) {
-                    if (mWorkerArray[i] == this) {
-                        mWorkerArray[i] = null;
-                        break;
-                    }
-                }
+                mWorkerArray[mIndex] = null;
+                mControlorArray[mIndex] = null;
             }
-            Log.d(TAG, "Worker over");
+            Log.d(TAG, "ExDownloader Worker over");
+        }
+    }
+
+    public class HttpDownloadListener implements HttpHelper.OnDownloadListener {
+
+        public int index;
+        private float lastPercent;
+
+        @Override
+        public void onDownloadStartConnect() {
+            lastPercent = 0.0f;
+
+            if (mLfis != null)
+                mLfis.onDownloadStart(index);
+        }
+
+        @Override
+        public void onDownloadStartDownload(int totalSize) {
+            lastPercent = 0.0f;
+        }
+
+        @Override
+        public void onDownloadStatusUpdate(int downloadSize, int totalSize) {
+            if (totalSize == -1)
+                return;
+
+            float percent = (float)downloadSize / totalSize;
+            if (percent - lastPercent >= 0.05f) {
+                lastPercent = percent;
+
+                if (mLfis != null)
+                    mLfis.onDownloading(index, percent);
+            }
+        }
+
+        @Override
+        public void onDownloadOver(int status, String eMsg) {
+            if (status == HttpHelper.DOWNLOAD_OK_CODE)
+                mRequstingIndexSet.remove(index);
+
+            if (mLfis != null && status == HttpHelper.DOWNLOAD_OK_CODE)
+                mLfis.onDownloadComplete(index);
+            else if (mLfis != null && status == HttpHelper.DOWNLOAD_FAIL_CODE)
+                mLfis.onDownloadFail(index);
+
+            lastPercent = 0.0f;
         }
     }
 }

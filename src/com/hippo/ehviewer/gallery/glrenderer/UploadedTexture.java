@@ -16,15 +16,14 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.opengl.GLUtils;
-import com.hippo.ehviewer.util.Log;
-import junit.framework.Assert;
-
 import java.util.HashMap;
 
 import javax.microedition.khronos.opengles.GL11;
+
+import junit.framework.Assert;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.opengl.GLUtils;
 
 // UploadedTextures use a Bitmap for the content of the texture.
 //
@@ -211,12 +210,10 @@ public abstract class UploadedTexture extends BasicTexture {
     private void uploadToCanvas(GLCanvas canvas) {
 
         Bitmap bitmap = getBitmap();
-        if (bitmap != null) {
+        if (bitmap != null && !bitmap.isRecycled()) {
             try {
                 int bWidth = bitmap.getWidth();
                 int bHeight = bitmap.getHeight();
-                int width = bWidth + mBorder * 2;
-                int height = bHeight + mBorder * 2;
                 int texWidth = getTextureWidth();
                 int texHeight = getTextureHeight();
 
@@ -232,7 +229,7 @@ public abstract class UploadedTexture extends BasicTexture {
                     int format = GLUtils.getInternalFormat(bitmap);
                     int type = GLUtils.getType(bitmap);
                     Config config = bitmap.getConfig();
-                    
+
                     canvas.initializeTextureSize(this, format, type);
                     canvas.texSubImage2D(this, mBorder, mBorder, bitmap, format, type);
 

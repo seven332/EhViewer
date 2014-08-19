@@ -15,22 +15,22 @@
  */
 package com.hippo.ehviewer.gallery.glrenderer;
 
-import android.graphics.Bitmap;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.opengl.GLES20;
-import android.opengl.GLUtils;
-import android.opengl.Matrix;
-import com.hippo.ehviewer.util.Log;
-
-import com.hippo.ehviewer.util.IntArray;
-
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import android.graphics.Bitmap;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.opengl.GLES20;
+import android.opengl.GLUtils;
+import android.opengl.Matrix;
+
+import com.hippo.ehviewer.util.IntArray;
+import com.hippo.ehviewer.util.Log;
 
 public class GLES20Canvas implements GLCanvas {
     // ************** Constants **********************
@@ -138,7 +138,7 @@ public class GLES20Canvas implements GLCanvas {
     // Keep track of restore state
     private float[] mMatrices = new float[INITIAL_RESTORE_STATE_SIZE * MATRIX_SIZE];
     private float[] mAlphas = new float[INITIAL_RESTORE_STATE_SIZE];
-    private IntArray mSaveFlags = new IntArray();
+    private final IntArray mSaveFlags = new IntArray();
 
     private int mCurrentAlphaIndex = 0;
     private int mCurrentMatrixIndex = 0;
@@ -148,20 +148,20 @@ public class GLES20Canvas implements GLCanvas {
     private int mHeight;
 
     // Projection matrix
-    private float[] mProjectionMatrix = new float[MATRIX_SIZE];
+    private final float[] mProjectionMatrix = new float[MATRIX_SIZE];
 
     // Screen size for when we aren't bound to a texture
     private int mScreenWidth;
     private int mScreenHeight;
 
     // GL programs
-    private int mDrawProgram;
-    private int mTextureProgram;
-    private int mOesTextureProgram;
-    private int mMeshProgram;
+    private final int mDrawProgram;
+    private final int mTextureProgram;
+    private final int mOesTextureProgram;
+    private final int mMeshProgram;
 
     // GL buffer containing BOX_COORDINATES
-    private int mBoxCoordinates;
+    private final int mBoxCoordinates;
 
     // Handle indices -- common
     private static final int INDEX_POSITION = 0;
@@ -251,10 +251,10 @@ public class GLES20Canvas implements GLCanvas {
 
     // Buffer for framebuffer IDs -- we keep track so we can switch the attached
     // texture.
-    private int[] mFrameBuffer = new int[1];
+    private final int[] mFrameBuffer = new int[1];
 
     // Bound textures.
-    private ArrayList<RawTexture> mTargetTextures = new ArrayList<RawTexture>();
+    private final ArrayList<RawTexture> mTargetTextures = new ArrayList<RawTexture>();
 
     // Temporary variables used within calculations
     private final float[] mTempMatrix = new float[32];
@@ -935,9 +935,11 @@ public class GLES20Canvas implements GLCanvas {
         int target = texture.getTarget();
         GLES20.glBindTexture(target, texture.getId());
         checkError();
-        GLUtils.texSubImage2D(target, 0, xOffset, yOffset, bitmap, format, type);
+        // TODO Maybe multi-thread error
+        if (!bitmap.isRecycled())
+            GLUtils.texSubImage2D(target, 0, xOffset, yOffset, bitmap, format, type);
     }
-    
+
     @Override
     public void texSubImage2D(BasicTexture texture, int xOffset, int yOffset, Bitmap bitmap) {
         int target = texture.getTarget();

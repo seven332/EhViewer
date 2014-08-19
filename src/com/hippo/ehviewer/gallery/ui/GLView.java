@@ -16,17 +16,17 @@
 
 package com.hippo.ehviewer.gallery.ui;
 
+import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.os.SystemClock;
-import com.hippo.ehviewer.util.Log;
 import android.view.MotionEvent;
 
 import com.hippo.ehviewer.gallery.anim.CanvasAnimation;
-import com.hippo.ehviewer.gallery.common.Utils;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
-
-import java.util.ArrayList;
+import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.util.Utils;
 
 // GLView is a UI component. It can render to a GLCanvas and accept touch
 // events. A GLView may have zero or more child GLView and they form a tree

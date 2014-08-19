@@ -53,10 +53,7 @@ import android.widget.TextView;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UpdateHelper;
-import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
-import com.hippo.ehviewer.ehclient.ExDownloadManager;
-import com.hippo.ehviewer.ehclient.ExDownloader;
 import com.hippo.ehviewer.network.Downloader;
 import com.hippo.ehviewer.preference.AutoListPreference;
 import com.hippo.ehviewer.util.Config;
@@ -114,13 +111,6 @@ public class SettingsActivity extends AbstractPreferenceActivity {
 
         mListView = getListView();
         mListView.setClipToPadding(false);
-
-
-        // Test here
-
-        ExDownloadManager edm = ExDownloadManager.getInstance();
-        ExDownloader ed = edm.getExDownloader(728773, "1f90a6e00c", "[BaseSon] Shiki to Hitsuji to Urau Tsuki", EhClient.MODE_EX);
-        ed.setStartIndex(0);
     }
 
     @Override

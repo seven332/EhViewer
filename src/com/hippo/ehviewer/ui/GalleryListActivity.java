@@ -1059,9 +1059,9 @@ public class GalleryListActivity extends AbstractGalleryActivity
 
                 case 5: // Download
                     // TODO Download Activity
-                    //intent = new Intent(GalleryListActivity.this,
-                            //DownloadActivity.class);
-                    //startActivity(intent);
+                    intent = new Intent(GalleryListActivity.this,
+                            GalleryActivity.class);
+                    startActivity(intent);
                     break;
 
                 case 6: // Settings

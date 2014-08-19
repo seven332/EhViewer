@@ -19,244 +19,252 @@ package com.hippo.ehviewer.gallery.data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Set;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Movie;
 import android.util.SparseArray;
 
-import com.hippo.ehviewer.util.Future;
-import com.hippo.ehviewer.util.FutureListener;
-import com.hippo.ehviewer.util.ThreadPool;
-import com.hippo.ehviewer.util.ThreadPool.Job;
-import com.hippo.ehviewer.util.ThreadPool.JobContext;
+import com.hippo.ehviewer.AppHandler;
+import com.hippo.ehviewer.ehclient.ExDownloader;
+import com.hippo.ehviewer.ehclient.ExDownloaderManager;
+import com.hippo.ehviewer.util.AutoExpandArray;
+import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.EhUtils;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Utils;
 
-// TODO 初期建立一个线程检索文件夹中所有文件以寻找到所有图片文件
-
-/**
- * @author Hippo
- *
- * ImageSet 用于记录漫画的下载信息
- * 对于已完成下载的则无特殊之处。
- * 对于未完成下载的要记录，开始下载之处，目前下载截止之处，
- * 以及下载失败之处。
- * 同时拥有检查该目录识别图片文件。
- */
-public class ImageSet {
+public class ImageSet implements ExDownloader.ListenerForImageSet {
 
     @SuppressWarnings("unused")
-    private static final String TAG = "ImageSet";
+    private static final String TAG = ImageSet.class.getSimpleName();
 
-    private static final String GIF_EXTENSION = "gif";
+    /**
+     * These are code reture by getImage()
+     */
+    public static final int RESULT_NONE = 0x0;
+    public static final int RESULT_DOWNLOADING = 0x1;
+    public static final int RESULT_DECODE = 0x2;
 
-    public static final int TYPE_NONE = 0x0;
-    public static final int TYPE_BITMAP = 0x1;
-    public static final int TYPE_MOVIE = 0x2;
+    private final ExDownloaderManager mEdManager;
+    private final ExDownloader mExDownloader;
 
-    public static final int INVALID_ID = -1;
+    private final File mDir;
+    private final AutoExpandArray<String> mImageFilenameArray;
+    private ImageListener mListener;
+    private final Queue<DecodeInfo> mDecodeQueue = new ConcurrentLinkedQueue<DecodeInfo>();
+    private final SparseArray<Float> mPercentMap = new SparseArray<Float>(5);
+    private final DecodeWorker mDecodeWorker;
+    /** If true, then wake Worker, worker will stop **/
+    private volatile boolean mStopWork = false;
 
-    public static final int STATE_NONE = 0;
-    public static final int STATE_LOADING = 1;
-    public static final int STATE_LOADED = 2;
-    public static final int STATE_FAIL = 3;
+    public class DecodeInfo {
+        public int index;
+        public String filename;
 
-    protected Context mContext;
-    protected int mGid;
-    protected File mFolder;
-    protected int mSize;
-
-    private final SparseArray<ImageData> mImagesDate;
-
-    private final ThreadPool mThreadPool;
-    private OnStateChangeListener mOnStateChangeListener;
-
-    public interface OnStateChangeListener {
-        void onStateChange(int index, int state);
+        public DecodeInfo(int index, String filename) {
+            this.index = index;
+            this.filename = filename;
+        }
     }
 
-    public interface OnDecodeOverListener {
+    public interface ImageListener {
         /**
-         * May return Bitmap or Movie
+         * It will be invoke when ExDownloader download successful
          *
-         * @param res
          * @param index
          */
-        void onDecodeOver(Object res, int index);
+        void onGetImage(int index);
+
+        void onDownloading(int index, float percent);
+
+        /**
+         * It will be invoke when decode image over
+         *
+         * @param index
+         * @param res
+         */
+        void onDecodeOver(int index, Object res);
     }
 
-    private class ImageData {
-        int state;
-        String fileName;
-        int type;
+    public ImageSet(int gid, String token, String title, int startIndex) {
 
-        public ImageData() {
-            state = STATE_NONE;
-            fileName = null;
-            type = TYPE_NONE;
-        }
+        mDir = EhUtils.getGalleryDir(gid, title);
+        Utils.ensureDir(mDir, true);
+
+        // Init ExDownloader
+        mEdManager = ExDownloaderManager.getInstance();
+        mExDownloader = mEdManager.getExDownloader(gid, token, title, Config.getMode());
+        mExDownloader.setStartIndex(startIndex);
+        mExDownloader.setListenerForImageSet(this);
+
+        mImageFilenameArray = mExDownloader.getImageFilenameArray();
+
+        // Start decode worker
+        mDecodeWorker = new DecodeWorker();
+        mDecodeWorker.start();
     }
 
-    // [startIndex, endIndex)
-    public ImageSet(Context context, int gid, File folder, int size, int startIndex, int endIndex,
-            Set<Integer> failIndexSet) {
-
-        if (folder == null || !folder.isDirectory())
-            size = 0;
-
-
-        // TODO
-        /*
-        if (folder == null)
-            throw new IllegalArgumentException("Folder is null");
-        if (!folder.isDirectory())
-            throw new IllegalArgumentException("Folder is not directory, path is " + folder.getPath());
-        */
-
-        if (size < 0)
-            size = 0;
-        if (endIndex > size)
-            endIndex = size;
-        if (startIndex < 0)
-            startIndex = 0;
-        if (startIndex > endIndex)
-            startIndex = endIndex;
-
-        // TODO
-        /*
-        if (size < 0 || startIndex < 0
-                || startIndex > endIndex || endIndex > size)
-            throw new IllegalArgumentException("size or index value error, size = "
-                + size + ", startIndex = " + startIndex
-                + ", endIndex = " + endIndex + ", path is " + folder.getPath());
-        */
-
-        mContext = context;
-        mGid = gid;
-        mFolder = folder;
-        mSize = size;
-
-        // TODO sometimes size is too large
-        mImagesDate = new SparseArray<ImageData>(mSize);
-        int i = 0;
-        for (; i < startIndex; i++) {
-            mImagesDate.append(i, new ImageData());
-        }
-        for (; i < endIndex; i++) {
-            if (failIndexSet != null && failIndexSet.contains(i)) {
-                ImageData imageData = new ImageData();
-                imageData.state = STATE_FAIL;
-                mImagesDate.append(i, imageData);
-            }
-            else {
-                // Get file name only when you need it
-                ImageData imageData = new ImageData();
-                imageData.state = STATE_LOADED;
-                mImagesDate.append(i, imageData);
-            }
-        }
-        for (; i < size; i++) {
-            mImagesDate.append(i, new ImageData());
-        }
-
-        mThreadPool = new ThreadPool(1, 1);
+    public boolean isStop() {
+        return mStopWork;
     }
 
     public int getSize() {
-        return mSize;
+        return mExDownloader.getImageNum();
     }
 
-    public void setOnStateChangeListener(OnStateChangeListener l) {
-        mOnStateChangeListener = l;
+    public int getEnsureSize() {
+        return mExDownloader.getMaxEnsureIndex() + 1;
     }
 
-    public int getImage(final int index, final OnDecodeOverListener listener) {
-        final ImageData imageData = mImagesDate.get(index);
-        int state;
-        if (imageData == null)
-            state = INVALID_ID;
-        else
-            state = imageData.state;
-        if (state == STATE_LOADED && listener != null) {
-            mThreadPool.submit(new Job<Object>() {
-                @Override
-                public Object run(JobContext jc) {
-                    Object res = null;
-                    if (imageData.fileName == null
-                            && !getFileForName(getFileNameForIndex(index), imageData))
-                        return null;
+    public void setImageListener(ImageListener l) {
+        mListener = l;
+    }
 
-                    File file = new File(mFolder, imageData.fileName);
-                    FileInputStream fis = null;
-                    try {
-                        fis = new FileInputStream(file);
-                        if (imageData.type == TYPE_BITMAP) {
-                            BitmapFactory.Options opt = new BitmapFactory.Options();
-                            // TODO why only ARGB_8888 always work well, other may slit image
-                            opt.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                            res = BitmapFactory.decodeStream(fis, null, opt);
-                        } else if (imageData.type == TYPE_MOVIE) {
-                            res = Movie.decodeStream(fis);
-                        } else {
-                            // TYPE_NONE or something else, get error
-                        }
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } finally {
-                        if (fis != null)
-                            Utils.closeQuietly(fis);
-                    }
-                    return res;
+    public void setTargetIndex(int index) {
+        mExDownloader.setTargetIndex(index);
+    }
+
+    public Object getImage(int index) {
+        // Try to get file name
+        String filename = mImageFilenameArray.get(index);
+        if (filename == null) {
+            // Just guess filename
+            for (String possibleFilename : EhUtils.getPossibleImageFilenames(index)) {
+                File file = new File(mDir, possibleFilename);
+                if (file.exists()) {
+                    // Get filename
+                    filename = possibleFilename;
+                    mImageFilenameArray.set(index, filename);
+                    break;
                 }
-            }, new FutureListener<Object>() {
-                @Override
-                public void onFutureDone(Future<Object> future) {
-                    listener.onDecodeOver(future.get(), index);
-                }
-            });
-        }
-        return state;
-    }
-
-    @SuppressLint("DefaultLocale")
-    public String getFileNameForIndex(int index) {
-        return String.format("%05d", index + 1);
-    }
-
-    public boolean getFileForName(String name, ImageData imageData) {
-        String[] list = mFolder.list();
-        for (String item : list) {
-            if(name.equals(Utils.getName(item))) {
-                imageData.fileName = item;
-                if (Utils.getExtension(item).toLowerCase().equals(GIF_EXTENSION))
-                    imageData.type = TYPE_MOVIE;
-                else
-                    imageData.type = TYPE_BITMAP;
-                return true;
             }
         }
-        return false;
-    }
 
-    public void changeState(int index, int state) {
-        final ImageData imageData = mImagesDate.get(index);
-        if(imageData != null) {
-            imageData.state = state;
-            if (mOnStateChangeListener != null) {
-                mOnStateChangeListener.onStateChange(index, state);
-            }
+        Float percent;
+        if ((percent = mPercentMap.get(index)) != null) {
+            return percent;
+        } else if (mExDownloader.isDownloading(index)) {
+            // downloading
+            return RESULT_DOWNLOADING;
+        } else if (filename == null || !new File(mDir, filename).exists()) {
+            // Target index has not being downloading
+            return RESULT_NONE;
+        } else {
+            mDecodeQueue.offer(new DecodeInfo(index, filename));
+            // wake decode worker
+            synchronized(mDecodeQueue) {mDecodeQueue.notify();}
+            return RESULT_DECODE;
         }
     }
-
 
     /**
-     * mSize is faithful
-     *
+     * You must call it when you do not need it any more
      */
-    public void scan() {
-        String[] fileList = mFolder.list();
+    public void free() {
+        mStopWork = true;
+        // wake decode worker to wash wash sleep
+        synchronized(mDecodeQueue) {mDecodeQueue.notify();}
+
+        // Remove listener for ImageSet
+        mExDownloader.setListenerForImageSet(null);
+        // Free ExDownloader
+        mEdManager.freeExDownloader(mExDownloader);
+    }
+
+    private class DecodeWorker extends Thread {
+        @Override
+        public void run() {
+            DecodeInfo decodeInfo;
+            while (true) {
+                // Check stop work or not
+                if (mStopWork)
+                    break;
+
+                // Get decode task
+                synchronized (mDecodeQueue) {
+                    if (mDecodeQueue.isEmpty()) {
+                        try {
+                            mDecodeQueue.wait();
+                        } catch (InterruptedException e) {}
+                        continue;
+                    }
+                    decodeInfo = mDecodeQueue.poll();
+                }
+
+                // do decode
+                final int index = decodeInfo.index;
+                String filename = decodeInfo.filename;
+                boolean isGif = Utils.getExtension(filename, "jpg").equals("gif");
+                FileInputStream fis;
+                Object res = null;
+                try {
+                    fis = new FileInputStream(new File(mDir, filename));
+                    if (isGif) {
+                        res = Movie.decodeStream(fis);
+                    } else {
+                        BitmapFactory.Options opt = new BitmapFactory.Options();
+                        // TODO why only ARGB_8888 always work well, other may slit image
+                        opt.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                        res = BitmapFactory.decodeStream(fis, null, opt);
+                    }
+                } catch (FileNotFoundException e) {}
+
+                final Object _res = res;
+                // Post to UI thread
+                AppHandler.getInstance().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mListener != null)
+                            mListener.onDecodeOver(index, _res);
+                    }
+                });
+            }
+            Log.d(TAG, "DecodeWorker stop working");
+        }
+    }
+
+    @Override
+    public void onDownloadStart(final int index) {
+        AppHandler.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+                if (mListener != null)
+                    mListener.onDownloading(index, 0.0f);
+            }
+        });
+    }
+
+    @Override
+    public void onDownloading(final int index, final float percent) {
+        mPercentMap.append(index, percent);
+
+        AppHandler.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+                if (mListener != null)
+                    mListener.onDownloading(index, percent);
+            }
+        });
+    }
+
+    @Override
+    public void onDownloadComplete(final int index) {
+        mPercentMap.remove(index);
+
+        AppHandler.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+                if (mListener != null)
+                    mListener.onGetImage(index);
+            }
+        });
+    }
+
+    @Override
+    public void onDownloadFail(int index) {
+        mPercentMap.remove(index);
     }
 }

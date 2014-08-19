@@ -67,7 +67,7 @@ public class AutoExpandArray<E> {
 
     @SuppressWarnings("unchecked")
     public synchronized E get(int index) {
-        if (index >= array.length) {
+        if (index >= array.length || index < 0) {
             return null;
         }
         return (E)array[index];

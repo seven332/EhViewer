@@ -153,6 +153,67 @@ public final class MathUtils {
                 * ((value - minStart) / (minStop - minStart));
     }
 
+    /**
+     * Returns the input value x clamped to the range [min, max].
+     *
+     * @param x
+     * @param min
+     * @param max
+     * @return
+     */
+    public static int clamp(int x, int min, int max) {
+        if (x > max) return max;
+        if (x < min) return min;
+        return x;
+    }
+
+    /**
+     * Returns the input value x clamped to the range [min, max].
+     *
+     * @param x
+     * @param min
+     * @param max
+     * @return
+     */
+    public static float clamp(float x, float min, float max) {
+        if (x > max) return max;
+        if (x < min) return min;
+        return x;
+    }
+
+    /**
+     * Returns the input value x clamped to the range [min, max].
+     * @param x
+     * @param min
+     * @param max
+     * @return
+     */
+    public static long clamp(long x, long min, long max) {
+        if (x > max) return max;
+        if (x < min) return min;
+        return x;
+    }
+
+    /**
+     * Returns the next power of two.
+     * Returns the input if it is already power of 2.
+     * Throws IllegalArgumentException if the input is <= 0 or
+     * the answer overflows.
+     *
+     * @param n
+     * @return
+     */
+    public static int nextPowerOf2(int n) {
+        if (n <= 0 || n > (1 << 30)) throw new IllegalArgumentException("n is invalid: " + n);
+        n -= 1;
+        n |= n >> 16;
+        n |= n >> 8;
+        n |= n >> 4;
+        n |= n >> 2;
+        n |= n >> 1;
+        return n + 1;
+    }
+
     public static int random(int howbig) {
         return (int) (sRandom.nextFloat() * howbig);
     }

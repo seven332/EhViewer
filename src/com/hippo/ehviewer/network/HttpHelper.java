@@ -271,6 +271,9 @@ public class HttpHelper {
             } catch (Exception e) {
                 mException = e;
                 e.printStackTrace();
+                // For download, if need stop, just stop
+                if (mException instanceof StopRequestException)
+                    break;
             } finally {
                 if (conn != null)
                     conn.disconnect();
@@ -464,7 +467,6 @@ public class HttpHelper {
                 sb.append(URLEncoder.encode(arg[1], "UTF-8"));
                 i++;
             }
-            Log.d(TAG, sb.toString());
             out.writeBytes(sb.toString());
             out.flush();
             out.close();
@@ -646,7 +648,8 @@ public class HttpHelper {
             // If just
             // Bitmap bmp = BitmapFactory.decodeStream(conn.getInputStream(), null, Ui.getBitmapOpt());
             // bitmap might be incomplete.
-            FastByteArrayOutputStream fbaos = new FastByteArrayOutputStream(24 * 1024); // 24K
+            int size = conn.getContentLength();
+            FastByteArrayOutputStream fbaos = new FastByteArrayOutputStream(size == -1 ? 24 * 1024 : (size + 100));
             Utils.copy(conn.getInputStream(), fbaos);
             Bitmap bmp = BitmapFactory.decodeByteArray(fbaos.getBuffer(), 0, fbaos.size(), Ui.getBitmapOpt());
 
@@ -659,13 +662,17 @@ public class HttpHelper {
         public void onGetException(Exception e) {}
     }
 
-    public interface OnDownloadListener {
+    public static interface OnDownloadListener {
         public void onDownloadStartConnect();
         /**
          * If totalSize -1 for can't get length info
          * @param totalSize
          */
         public void onDownloadStartDownload(int totalSize);
+        /**
+         * If totalSize -1 for can't get length info
+         * @param totalSize
+         */
         public void onDownloadStatusUpdate(int downloadSize, int totalSize);
         public void onDownloadOver(int status, String eMsg);
     }
@@ -714,6 +721,9 @@ public class HttpHelper {
 
         @Override
         public void onBeforeConnect(HttpURLConnection conn) throws Exception {
+            if (mControlor != null && mControlor.isStop())
+                throw new StopRequestException();
+
             if (mIsProxy) {
                 conn.setDoOutput(true);
                 conn.setDoInput(true);
@@ -761,6 +771,10 @@ public class HttpHelper {
 
         @Override
         public Object onAfterConnect(HttpURLConnection conn) throws Exception {
+            // Check stop
+            if (mControlor != null && mControlor.isStop())
+                throw new StopRequestException();
+
             mContentLength = getContentLength(conn);
             if (mListener != null)
                 mListener.onDownloadStartDownload(mContentLength);
@@ -786,7 +800,7 @@ public class HttpHelper {
                 if (e instanceof StopRequestException)
                     mListener.onDownloadOver(DOWNLOAD_STOP_CODE, getEMsg());
                 else
-                    mListener.onDownloadOver(DOWNLOAD_STOP_CODE, getEMsg());
+                    mListener.onDownloadOver(DOWNLOAD_FAIL_CODE, getEMsg());
             }
         }
 
@@ -796,6 +810,7 @@ public class HttpHelper {
             mReceivedSize = 0;
 
             while (true) {
+                // Check stop first
                 if (mControlor != null && mControlor.isStop())
                     throw new StopRequestException();
 

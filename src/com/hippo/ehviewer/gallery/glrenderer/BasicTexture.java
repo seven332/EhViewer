@@ -16,12 +16,12 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
-import android.graphics.RectF;
-import com.hippo.ehviewer.util.Log;
-
-import com.hippo.ehviewer.gallery.common.Utils;
-
 import java.util.WeakHashMap;
+
+import android.graphics.RectF;
+
+import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.util.MathUtils;
 
 // BasicTexture is a Texture corresponds to a real GL texture.
 // The state of a BasicTexture indicates whether its data is loaded to GL memory.
@@ -79,8 +79,8 @@ public abstract class BasicTexture implements Texture {
     public void setSize(int width, int height) {
         mWidth = width;
         mHeight = height;
-        mTextureWidth = width > 0 ? Utils.nextPowerOf2(width) : 0;
-        mTextureHeight = height > 0 ? Utils.nextPowerOf2(height) : 0;
+        mTextureWidth = width > 0 ? MathUtils.nextPowerOf2(width) : 0;
+        mTextureHeight = height > 0 ? MathUtils.nextPowerOf2(height) : 0;
         if (mTextureWidth > MAX_TEXTURE_SIZE || mTextureHeight > MAX_TEXTURE_SIZE) {
             Log.w(TAG, String.format("texture is too large: %d x %d",
                     mTextureWidth, mTextureHeight), new Exception());
@@ -138,16 +138,16 @@ public abstract class BasicTexture implements Texture {
     public void draw(GLCanvas canvas, int x, int y) {
         canvas.drawTexture(this, x, y, getWidth(), getHeight());
     }
-    
+
     @Override
     public void draw(GLCanvas canvas, int x, int y, int w, int h) {
         canvas.drawTexture(this, x, y, w, h);
     }
-    
+
     public void draw(GLCanvas canvas, RectF source, RectF target) {
         canvas.drawTexture(this, source, target);
     }
-    
+
     // onBind is called before GLCanvas binds this texture.
     // It should make sure the data is uploaded to GL memory.
     abstract protected boolean onBind(GLCanvas canvas);

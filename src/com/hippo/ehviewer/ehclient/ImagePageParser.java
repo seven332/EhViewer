@@ -33,19 +33,42 @@ public class ImagePageParser {
         token = null;
     }
 
-    public boolean parser(String body) {
-        Pattern p = Pattern.compile("<div id=\"i3\">.+?<img id=\"img\" src=\"(.+?)\""
-                + ".+?"
-                + "<div id=\"i5\"><div class=\"sb\"><a href=\"(?:http|https)://.+?/g/(\\d+)/(\\w+)");
-        Matcher m = p.matcher(body);
+    public boolean parser(String body, int mode) {
+        Pattern p;
+        Matcher m;
 
-        if (m.find()) {
-            imageUrl = Utils.unescapeXml(m.group(1));
-            gid = Integer.parseInt(m.group(2));
-            token = m.group(3);
-            return true;
+        if (mode ==EhClient.MODE_LOFI) {
+            p = Pattern.compile("<img id=\"sm\" src=\"([^\"]+)\"[^>]+>");
+            m = p.matcher(body);
+            if (m.find())
+                imageUrl = Utils.unescapeXml(m.group(1));
+            else
+                return false;
+
+            p = Pattern.compile("<a href=\"(?:http|https)://.+?/g/(\\d+)/(\\w+)/?\">Back</a>");
+            m = p.matcher(body);
+            if (m.find()) {
+                gid = Integer.parseInt(m.group(1));
+                token = m.group(2);
+                return true;
+            } else {
+                return false;
+            }
+
         } else {
-            return false;
+            p = Pattern.compile("<div id=\"i3\">.+?<img id=\"img\" src=\"(.+?)\""
+                    + ".+?"
+                    + "<div id=\"i5\"><div class=\"sb\"><a href=\"(?:http|https)://.+?/g/(\\d+)/(\\w+)");
+            m = p.matcher(body);
+
+            if (m.find()) {
+                imageUrl = Utils.unescapeXml(m.group(1));
+                gid = Integer.parseInt(m.group(2));
+                token = m.group(3);
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 }

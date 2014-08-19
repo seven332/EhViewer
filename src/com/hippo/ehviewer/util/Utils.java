@@ -30,9 +30,11 @@ import java.util.List;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Vibrator;
 import android.view.View;
 
 public final class Utils {
@@ -580,5 +582,75 @@ public final class Utils {
             result.setLength(length - 1);
         }
         return result.toString();
+    }
+
+    /**
+     * Try to make dir exists
+     *
+     * @param dir
+     * @param force
+     */
+    public static void ensureDir(File dir, boolean force) {
+        if (!dir.exists()) {
+            dir.mkdirs();
+        } else if (force && dir.isFile()) {
+            dir.delete();
+            dir.mkdirs();
+        }
+    }
+
+    /**
+     * Get extension from target string, int lower case
+     *
+     * @param name
+     * @param defautl
+     * @return
+     */
+    public static String getExtension(String name, String defautl) {
+        int index = name.lastIndexOf('.');
+        if (index == -1 || index == name.length() - 1)
+            return defautl;
+        else
+            return name.substring(index + 1).toLowerCase();
+    }
+
+    /**
+     * Return true if point is in the rect
+     *
+     * @param area
+     * @param x
+     * @param y
+     * @return
+     */
+    public static boolean isInArea(int[] area, int x, int y) {
+        if (area.length != 4)
+            throw new IllegalArgumentException(
+                    "area's length should be 4, but it's length is " + area.length);
+        if (x >= area[0] && x < area[2] && y >= area[1] && y < area[3])
+            return true;
+        else
+            return false;
+    }
+
+    public static boolean isOpaque(int color) {
+        return color >>> 24 == 0xFF;
+    }
+
+    /**
+     * Throws AssertionError if the input is false.
+     * @param cond
+     */
+    public static void assertTrue(boolean cond) {
+        if (!cond) {
+            throw new AssertionError();
+        }
+    }
+
+    /**
+     * vibrator
+     */
+    public static void vibrator(Context context, long milliseconds) {
+        Vibrator v = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(milliseconds);
     }
 }

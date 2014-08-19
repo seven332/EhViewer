@@ -138,6 +138,7 @@ public class ImageLoader {
                         loadTask = mDownloadTasks.pop();
                     }
 
+                    // TODO use proxy to get image
                     loadTask.bitmap = httpHelper.getImage(loadTask.url);
                     mImageCache.addBitmapToCache(loadTask.key, loadTask.bitmap);
 

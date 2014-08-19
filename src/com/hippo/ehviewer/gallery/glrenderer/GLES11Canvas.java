@@ -16,19 +16,6 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
-import android.graphics.Bitmap;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.opengl.GLU;
-import android.opengl.GLUtils;
-import android.opengl.Matrix;
-import com.hippo.ehviewer.util.Log;
-
-import com.hippo.ehviewer.gallery.common.Utils;
-import com.hippo.ehviewer.util.IntArray;
-
-import junit.framework.Assert;
-
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -39,6 +26,18 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 import javax.microedition.khronos.opengles.GL11ExtensionPack;
+
+import junit.framework.Assert;
+import android.graphics.Bitmap;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.opengl.GLU;
+import android.opengl.GLUtils;
+import android.opengl.Matrix;
+
+import com.hippo.ehviewer.util.IntArray;
+import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.util.Utils;
 
 public class GLES11Canvas implements GLCanvas {
     @SuppressWarnings("unused")
@@ -54,7 +53,7 @@ public class GLES11Canvas implements GLCanvas {
             0, 0, 1, 1,              // used for drawing a line
             0, 0, 0, 1, 1, 1, 1, 0}; // used for drawing the outline of a rectangle
 
-    private GL11 mGL;
+    private final GL11 mGL;
 
     private final float mMatrixValues[] = new float[16];
     private final float mTextureMatrixValues[] = new float[16];
@@ -65,9 +64,9 @@ public class GLES11Canvas implements GLCanvas {
 
     private final float mTextureColor[] = new float[4];
 
-    private int mBoxCoords;
+    private final int mBoxCoords;
 
-    private GLState mGLState;
+    private final GLState mGLState;
     private final ArrayList<RawTexture> mTargetStack = new ArrayList<RawTexture>();
 
     private float mAlpha;
@@ -81,8 +80,8 @@ public class GLES11Canvas implements GLCanvas {
     private final IntArray mDeleteBuffers = new IntArray();
     private int mScreenWidth;
     private int mScreenHeight;
-    private boolean mBlendEnabled = true;
-    private int mFrameBuffer[] = new int[1];
+    private final boolean mBlendEnabled = true;
+    private final int mFrameBuffer[] = new int[1];
     private static float[] sCropRect = new float[4];
 
     private RawTexture mTargetTexture;
@@ -592,7 +591,7 @@ public class GLES11Canvas implements GLCanvas {
         private int mTextureTarget = GL11.GL_TEXTURE_2D;
         private boolean mBlendEnabled = true;
         private float mLineWidth = 1.0f;
-        private boolean mLineSmooth = false;
+        private final boolean mLineSmooth = false;
 
         public GLState(GL11 gl) {
             mGL = gl;
@@ -959,7 +958,7 @@ public class GLES11Canvas implements GLCanvas {
         mGL.glBindTexture(target, texture.getId());
         GLUtils.texSubImage2D(target, 0, xOffset, yOffset, bitmap, format, type);
     }
-    
+
     @Override
     public void texSubImage2D(BasicTexture texture, int xOffset, int yOffset, Bitmap bitmap) {
         int target = texture.getTarget();

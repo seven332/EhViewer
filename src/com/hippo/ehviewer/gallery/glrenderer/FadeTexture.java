@@ -16,8 +16,8 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
-import com.hippo.ehviewer.gallery.common.Utils;
 import com.hippo.ehviewer.gallery.ui.AnimationTime;
+import com.hippo.ehviewer.util.MathUtils;
 
 // FadeTexture is a texture which fades the given texture along the time.
 public abstract class FadeTexture implements Texture {
@@ -72,7 +72,7 @@ public abstract class FadeTexture implements Texture {
 
     protected float getRatio() {
         float r = (float)(now() - mStartTime) / DURATION;
-        return Utils.clamp(1.0f - r, 0.0f, 1.0f);
+        return MathUtils.clamp(1.0f - r, 0.0f, 1.0f);
     }
 
     private long now() {

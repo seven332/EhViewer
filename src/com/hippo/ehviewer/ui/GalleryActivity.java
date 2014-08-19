@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -24,12 +25,23 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.gallery.GalleryView;
+import com.hippo.ehviewer.gallery.data.ImageSet;
+import com.hippo.ehviewer.gallery.ui.GLRootView;
+import com.hippo.ehviewer.widget.AlertButton;
+import com.hippo.ehviewer.widget.DialogBuilder;
 
 public class GalleryActivity extends AbstractActivity {
     @SuppressWarnings("unused")
-    private final String TAG = GalleryActivity.class.getSimpleName();
+    private final static String TAG = GalleryActivity.class.getSimpleName();
+
+    public final static String KEY_GID = "gid";
+    public final static String KEY_TOKEN = "token";
+    public final static String KEY_TITLE = "title";
+    public final static String KEY_START_INDEX = "start_index";
 
     private RelativeLayout mainView;
+    private ImageSet mImageSet;
 
     @Override
     public void onOrientationChanged(int paddingTop, int paddingBottom) {
@@ -70,5 +82,35 @@ public class GalleryActivity extends AbstractActivity {
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
+
+        Intent intent = getIntent();
+        int gid = intent.getIntExtra(KEY_GID, -1);
+        String token = intent.getStringExtra(KEY_TOKEN);
+        String title = intent.getStringExtra(KEY_TITLE);
+        int startIndex = intent.getIntExtra(KEY_START_INDEX, 0);
+
+        if (gid == -1 || token == null || title == null) {
+            new DialogBuilder(this).setTitle(R.string.error)
+                    .setMessage("数据错误！").setPositiveButton("关闭",
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((AlertButton)v).dialog.dismiss();
+                            finish();
+                        }
+                    }).create().show();
+        } else {
+            mImageSet = new ImageSet(gid, token, title, startIndex);
+            GalleryView isv = new GalleryView(getApplicationContext(), mImageSet, startIndex);
+            GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);
+            glrv.setContentPane(isv);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mImageSet.free();
     }
 }

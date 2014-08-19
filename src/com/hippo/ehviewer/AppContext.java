@@ -28,7 +28,7 @@ import android.app.Application;
 import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.ehclient.EhClient;
-import com.hippo.ehviewer.ehclient.ExDownloadManager;
+import com.hippo.ehviewer.ehclient.ExDownloaderManager;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.Download;
@@ -71,7 +71,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         Download.init(this);
         Favorite.init(this);
         Data.createInstance(this);
-        ExDownloadManager.createInstance();
+        ExDownloaderManager.createInstance();
         MaterialToast.setContext(this);
 
         // Do catch error prepare

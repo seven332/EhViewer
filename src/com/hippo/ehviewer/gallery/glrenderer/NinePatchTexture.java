@@ -16,16 +16,16 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 
-import com.hippo.ehviewer.gallery.common.Utils;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
+import com.hippo.ehviewer.util.MathUtils;
 
 // NinePatchTexture is a texture backed by a NinePatch resource.
 //
@@ -36,7 +36,7 @@ public class NinePatchTexture extends ResourceTexture {
     @SuppressWarnings("unused")
     private static final String TAG = "NinePatchTexture";
     private NinePatchChunk mChunk;
-    private SmallCache<NinePatchInstance> mInstanceCache
+    private final SmallCache<NinePatchInstance> mInstanceCache
             = new SmallCache<NinePatchInstance>();
 
     public NinePatchTexture(Context context, int resId) {
@@ -80,8 +80,8 @@ public class NinePatchTexture extends ResourceTexture {
     private static class SmallCache<V> {
         private static final int CACHE_SIZE = 16;
         private static final int CACHE_SIZE_START_MOVE = CACHE_SIZE / 2;
-        private int[] mKey = new int[CACHE_SIZE];
-        private V[] mValue = (V[]) new Object[CACHE_SIZE];
+        private final int[] mKey = new int[CACHE_SIZE];
+        private final V[] mValue = (V[]) new Object[CACHE_SIZE];
         private int mCount;  // number of items in this cache
 
         // Puts a value into the cache. If the cache is full, also returns
@@ -262,7 +262,7 @@ class NinePatchInstance {
      */
     private static int stretch(
             float x[], float u[], int div[], int source, int target) {
-        int textureSize = Utils.nextPowerOf2(source);
+        int textureSize = MathUtils.nextPowerOf2(source);
         float textureBound = (float) source / textureSize;
 
         float stretch = 0;

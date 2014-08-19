@@ -16,8 +16,8 @@
 
 package com.hippo.ehviewer.gallery.anim;
 
-import com.hippo.ehviewer.gallery.common.Utils;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
+import com.hippo.ehviewer.util.MathUtils;
 
 public class AlphaAnimation extends CanvasAnimation {
     private final float mStartAlpha;
@@ -42,7 +42,7 @@ public class AlphaAnimation extends CanvasAnimation {
 
     @Override
     protected void onCalculate(float progress) {
-        mCurrentAlpha = Utils.clamp(mStartAlpha
+        mCurrentAlpha = MathUtils.clamp(mStartAlpha
                 + (mEndAlpha - mStartAlpha) * progress, 0f, 1f);
     }
 }

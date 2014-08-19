@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
-import com.hippo.ehviewer.gallery.common.Utils;
+import com.hippo.ehviewer.util.Utils;
 
 // ColorTexture is a texture which fills the rectangle with the specified color.
 public class ColorTexture implements Texture {

@@ -26,8 +26,6 @@ import android.os.IBinder;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.ehclient.EhClient;
-import com.hippo.ehviewer.ehclient.EhClient.DownloadMangaManager;
 import com.hippo.ehviewer.ui.DownloadInfo;
 import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.Log;
@@ -46,7 +44,7 @@ public class DownloadService extends Service {
 
     private NotificationManager mNotifyManager;
 
-    private DownloadMangaManager downloadMangaManager;
+    //private DownloadMangaManager downloadMangaManager;
 
     @Override
     public void onCreate() {
@@ -58,6 +56,7 @@ public class DownloadService extends Service {
         mNotifyManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);
 
+        /*
         downloadMangaManager = EhClient.getInstance().new DownloadMangaManager();
 
         downloadMangaManager.setDownloadService(this);
@@ -159,6 +158,7 @@ public class DownloadService extends Service {
 
             }
         });
+        */
     }
 
     private void setNotification(Notification.Builder builder) {
@@ -237,11 +237,11 @@ public class DownloadService extends Service {
                 || di.status == DownloadInfo.WAITING)
             return;
         di.status = DownloadInfo.WAITING;
-        downloadMangaManager.add(di);
+        //downloadMangaManager.add(di);
     }
 
     public void cancel(String id) {
-        downloadMangaManager.cancel(id);
+        //downloadMangaManager.cancel(id);
     }
 
     public void notifyUpdate(){
