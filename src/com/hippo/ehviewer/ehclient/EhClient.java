@@ -30,7 +30,6 @@ import org.json.JSONObject;
 
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.os.Message;
 import android.os.Process;
 
 import com.hippo.ehviewer.Analytics;
@@ -46,16 +45,11 @@ import com.hippo.ehviewer.data.LofiGalleryDetail;
 import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Future;
-import com.hippo.ehviewer.util.FutureListener;
-import com.hippo.ehviewer.util.ThreadPool;
-import com.hippo.ehviewer.util.ThreadPool.Job;
-import com.hippo.ehviewer.util.ThreadPool.JobContext;
 import com.hippo.ehviewer.util.Utils;
 
 public class EhClient {
-
-    private static final String TAG = "EhClient";
+    @SuppressWarnings("unused")
+    private static final String TAG = EhClient.class.getSimpleName();
 
     public static final int FAVORITE_SLOT_NUM = 10;
 
@@ -83,7 +77,6 @@ public class EhClient {
     public static final int NO_AVATAR = 0x2;
 
     private final AppContext mAppContext;
-    private final ThreadPool mThreadPool;
     private final Handler mHandler;
     private final EhInfo mInfo;
 
@@ -99,7 +92,6 @@ public class EhClient {
 
     private EhClient(AppContext appContext) {
         mAppContext = appContext;
-        mThreadPool = mAppContext.getNetworkThreadPool();
         mHandler = AppHandler.getInstance();
         mInfo = EhInfo.getInstance(appContext);
     }
@@ -274,26 +266,6 @@ public class EhClient {
     public Bitmap getAvatar() {
         return mInfo.getAvatar();
     }
-
-    private static final int GET_MANGA_URL = 0x6;
-
-    private static Handler mHandler1 = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-
-            switch (msg.what) {
-
-            case GET_MANGA_URL:
-                GetMangaUrlPackage getMangaUrlPackage = (GetMangaUrlPackage) msg.obj;
-                OnGetMangaUrlListener listener7 = getMangaUrlPackage.listener;
-                if (getMangaUrlPackage.strs != null)
-                    listener7.onSuccess(getMangaUrlPackage.checkFlag, getMangaUrlPackage.strs);
-                else
-                    listener7.onFailure(getMangaUrlPackage.checkFlag, getMangaUrlPackage.eMsg);
-                break;
-            }
-        };
-    };
 
     public interface OnLoginListener {
         public void onSuccess();
@@ -899,80 +871,6 @@ public class EhClient {
         });
         thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
-    }
-
-    // Get Manga url and next page
-    private class GetMangaUrlPackage {
-        public Object checkFlag;
-        public String[] strs;
-        public OnGetMangaUrlListener listener;
-        public String eMsg;
-
-        public GetMangaUrlPackage(Object checkFlag, String[] strs, OnGetMangaUrlListener listener,
-                String eMsg) {
-            this.checkFlag = checkFlag;
-            this.strs = strs;
-            this.listener = listener;
-            this.eMsg = eMsg;
-        }
-    }
-
-    private class GetMangaUrlRunnable implements Runnable {
-        private final String url;
-
-        public String[] strs;
-        public String eMsg;
-
-        public GetMangaUrlRunnable(String url) {
-            this.url = url;
-        }
-
-        @Override
-        public void run() {
-            strs = null;
-
-            HttpHelper hp = new HttpHelper(mAppContext);
-            String pageContent = hp.get(url);
-            if (pageContent != null) {
-                Pattern p = Pattern.compile("<a[^<>]*id=\"prev\"[^<>]*href=\"([^<>\"]+)\"><img[^<>]*/></a>.+<a[^<>]id=\"next\"[^<>]*href=\"([^<>\"]+)\"><img[^<>]*/></a>.+<img[^<>]*src=\"([^<>\"]+?)\"[^<>]*style=\"[^<>\"]*\"[^<>]*/>");
-                        //.compile("<a[^<>]*href=\"([^<>\"]+?)\"[^<>]*><img[^<>]*src=\"([^<>\"]+?)\"[^<>]*style=\"[^<>\"]*\"[^<>]*/></a>");
-                Matcher m = p.matcher(pageContent);
-                if (m.find() && m.groupCount() == 3) {
-                    strs = new String[3];
-                    if (url.equals(m.group(1)))
-                        strs[0] = "first";
-                    else
-                        strs[0] = m.group(1);
-                    if (url.equals(m.group(2)))
-                        strs[1] = "last";
-                    else
-                        strs[1] = m.group(2);
-                    strs[2] = Utils.unescapeXml(m.group(3));
-                } else
-                    eMsg = mAppContext.getString(R.string.em_parser_error);
-            } else
-                eMsg = hp.getEMsg();
-        }
-    }
-
-    public void getMangaUrl(String url, final Object checkFlag, final OnGetMangaUrlListener listener) {
-
-        final GetMangaUrlRunnable task = new GetMangaUrlRunnable(url);
-        mThreadPool.submit(new Job<Object>() {
-            @Override
-            public Object run(JobContext jc) {
-                task.run();
-                return null;
-            }
-        }, new FutureListener<Object>() {
-            @Override
-            public void onFutureDone(Future<Object> future) {
-                Message msg = new Message();
-                msg.what = GET_MANGA_URL;
-                msg.obj = new GetMangaUrlPackage(checkFlag, task.strs, listener, task.eMsg);
-                mHandler1.sendMessage(msg);
-            }
-        });
     }
 
     // Post comment

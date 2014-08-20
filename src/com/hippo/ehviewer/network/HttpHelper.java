@@ -44,6 +44,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Message;
+import android.os.Process;
 
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
@@ -891,6 +892,19 @@ public class HttpHelper {
             DownloadControlor controlor, OnDownloadListener listener) {
         return (String)requst(new DownloadHelper(url, dir, file, isProxy,
                 controlor, listener));
+    }
+
+    public void downloadInThread(final String url, final File dir,
+            final String file, final boolean isProxy,
+            final DownloadControlor controlor, final OnDownloadListener listener) {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                download(url, dir, file, isProxy, controlor, listener);
+            }
+        };
+        thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
     }
 
     /** Exceptions **/

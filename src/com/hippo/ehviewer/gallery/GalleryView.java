@@ -24,6 +24,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
@@ -1002,7 +1003,7 @@ public class GalleryView extends GLView
 
         public MyGestureListener() {
             mDoubleTapRunner.setDuration(Constants.ANIMATE_TIME);
-            //mDoubleTapRunner.setInterpolator(new OvershootInterpolator());
+            mDoubleTapRunner.setInterpolator(new OvershootInterpolator());
         }
 
         @Override

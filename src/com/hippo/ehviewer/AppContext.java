@@ -33,7 +33,6 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.Favorite;
-import com.hippo.ehviewer.util.ThreadPool;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.MaterialToast;
 
@@ -45,8 +44,6 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
     public static final DateFormat sFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private Thread.UncaughtExceptionHandler mDefaultHandler;
-
-    private ThreadPool mNetworkThreadPool;
 
     private static AppContext sInstance;
 
@@ -63,7 +60,6 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         super.onCreate();
 
         // Init everything
-        mNetworkThreadPool = new ThreadPool(2, 4);
         Config.init(this);
         Ui.init(this);
         Crash.init(this);
@@ -87,10 +83,6 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
                 nomedia.createNewFile();
             } catch (IOException e) {}
         }
-    }
-
-    public ThreadPool getNetworkThreadPool() {
-        return mNetworkThreadPool;
     }
 
     /**

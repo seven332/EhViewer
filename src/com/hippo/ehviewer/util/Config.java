@@ -245,8 +245,6 @@ public class Config {
         switch (value) {
         case 1:
             return "qiniu";
-        case 2:
-            return "gokuai";
         case 0:
         default:
             return "google";

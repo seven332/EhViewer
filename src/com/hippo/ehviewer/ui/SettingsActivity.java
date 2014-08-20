@@ -19,7 +19,6 @@ package com.hippo.ehviewer.ui;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,7 +53,7 @@ import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.ehclient.EhInfo;
-import com.hippo.ehviewer.network.Downloader;
+import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.preference.AutoListPreference;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Favorite;
@@ -682,17 +681,9 @@ public class SettingsActivity extends AbstractPreferenceActivity {
                                             public void onClick(View v) {
                                                 ((AlertButton)v).dialog.dismiss();
                                                 // TODO
-                                                try {
-                                                    Downloader downloader = new Downloader(mActivity);
-                                                    downloader.resetData(Config.getDownloadPath(), fileName, url);
-                                                    downloader.setOnDownloadListener(
-                                                            new UpdateHelper.UpdateListener(mActivity,
-                                                                    fileName));
-                                                    new Thread(downloader).start();
-                                                } catch (MalformedURLException e) {
-                                                    mCheckUpdate.setSummary(R.string.em_url_format_error);
-                                                    UpdateHelper.setEnabled(true);
-                                                }
+                                                HttpHelper hh = new HttpHelper(mActivity);
+                                                hh.downloadInThread(url, new File(Config.getDownloadPath()), fileName, false, null,
+                                                        new UpdateHelper.UpdateListener(mActivity, fileName));
                                                 mCheckUpdate.setEnabled(true);
                                             }
                                         });

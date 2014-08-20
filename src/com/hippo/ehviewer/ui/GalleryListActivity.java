@@ -18,7 +18,6 @@ package com.hippo.ehviewer.ui;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -76,7 +75,7 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.ListUrls;
 import com.hippo.ehviewer.data.Tag;
 import com.hippo.ehviewer.ehclient.EhClient;
-import com.hippo.ehviewer.network.Downloader;
+import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.tile.TileSalon;
@@ -1430,17 +1429,9 @@ public class GalleryListActivity extends AbstractGalleryActivity
                             @Override
                             public void onClick(View v) {
                                 ((AlertButton)v).dialog.dismiss();
-                                // TODO
-                                try {
-                                    Downloader downloader = new Downloader(GalleryListActivity.this);
-                                    downloader.resetData(Config.getDownloadPath(), fileName, url);
-                                    downloader.setOnDownloadListener(
-                                            new UpdateHelper.UpdateListener(GalleryListActivity.this,
-                                                    fileName));
-                                    new Thread(downloader).start();
-                                } catch (MalformedURLException e) {
-                                    UpdateHelper.setEnabled(true);
-                                }
+                                HttpHelper hh = new HttpHelper(GalleryListActivity.this);
+                                hh.downloadInThread(url, new File(Config.getDownloadPath()), fileName, false, null,
+                                        new UpdateHelper.UpdateListener(GalleryListActivity.this, fileName));
                             }
                         });
                 if (!GalleryListActivity.this.isFinishing())
