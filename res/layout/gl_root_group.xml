@@ -14,7 +14,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,4 +25,70 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</RelativeLayout>
+    <com.hippo.ehviewer.widget.TextClock
+        android:id="@+id/clock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="12dp"
+        android:textColor="@color/secondary_text_light" />
+
+    <LinearLayout
+        android:id="@+id/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="top"
+        android:background="@color/background_little_dark"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="24.0dp"
+            android:layout_marginRight="24.0dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/secondary_text_light"
+            android:textSize="@dimen/text_large" />
+
+    </LinearLayout>
+
+   <LinearLayout
+        android:id="@+id/nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom"
+        android:background="@color/background_little_dark"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:visibility="gone" >
+
+        <SeekBar
+            android:id="@+id/page_seeker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_gravity="center" />
+
+   </LinearLayout>
+
+   <TextView
+        android:id="@+id/seeker_bubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="52dp"
+        android:ellipsize="start"
+        android:singleLine="true"
+        android:textColor="@color/secondary_text_light"
+        android:textSize="@dimen/text_large"
+        android:visibility="gone"
+        android:background="@drawable/seeker_bubble" />
+
+</FrameLayout>

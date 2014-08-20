@@ -354,6 +354,21 @@ public class Config {
                 KEY_PREVIEW_COLUMNS_LANDSCAPE, DEFAULT_PREVIEW_COLUMNS_LANDSCAPE);
     }
 
+    /****** GalleryActivity ******/
+
+    private static final String KEY_GALLERY_FIRST = "gallery_first";
+    private static final boolean DEFAULT_GALLERY_FIRST = true;
+
+    public static boolean getGalleryFirst() {
+        return mConfigPre.getBoolean(KEY_GALLERY_FIRST, DEFAULT_GALLERY_FIRST);
+    }
+
+    public static void setGalleryFirst(boolean galleryFirst) {
+        mConfigPre.edit().putBoolean(KEY_GALLERY_FIRST, galleryFirst).apply();
+    }
+
+
+
     /****** Mode an API Mode ******/
 
     private static final String KEY_MODE = "mode";
@@ -361,6 +376,9 @@ public class Config {
 
     private static final String KEY_API_MODE = "api_mode";
     private static final int DEFAULT_API_MODE = EhClient.MODE_G;
+
+    private static final String KEY_LOFI_RESOLUTION = "lofi_resolution";
+    private static final int DEFAULT_LOFI_RESOLUTION = 1;
 
     public static int getMode() {
         return mConfigPre.getInt(KEY_MODE, DEFAULT_MODE);
@@ -376,6 +394,14 @@ public class Config {
 
     public static void setApiMode(int apiMode) {
         mConfigPre.edit().putInt(KEY_API_MODE, apiMode).apply();
+    }
+
+    public static int getLofiResolution() {
+        return mConfigPre.getInt(KEY_LOFI_RESOLUTION, DEFAULT_LOFI_RESOLUTION);
+    }
+
+    public static void setLofiResolution(int lofiResolution) {
+        mConfigPre.edit().putInt(KEY_LOFI_RESOLUTION, lofiResolution).apply();
     }
 
     /****** Eh Config ******/

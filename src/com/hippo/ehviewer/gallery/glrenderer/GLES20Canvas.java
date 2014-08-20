@@ -935,9 +935,7 @@ public class GLES20Canvas implements GLCanvas {
         int target = texture.getTarget();
         GLES20.glBindTexture(target, texture.getId());
         checkError();
-        // TODO Maybe multi-thread error
-        if (!bitmap.isRecycled())
-            GLUtils.texSubImage2D(target, 0, xOffset, yOffset, bitmap, format, type);
+        GLUtils.texSubImage2D(target, 0, xOffset, yOffset, bitmap, format, type);
     }
 
     @Override

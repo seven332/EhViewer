@@ -192,9 +192,9 @@ public class ExDownloader implements Runnable {
         if (mImageNum != -1) {
             return mImageNum;
         } else {
-            return Math.max(Math.max(mStartIndex - 1,
+            return Math.max(Math.max(Math.max(mStartIndex - 1,
                     Math.max(mCurMaxPreviewPage, mPreviewPageNum - 1) * mPreviewPerPage),
-                    mPageTokeArray.maxValidIndex());
+                    mPageTokeArray.maxValidIndex()), 0);
         }
     }
 
@@ -425,7 +425,6 @@ public class ExDownloader implements Runnable {
 
             // A loop to get page token
             while (true) {
-
                 // Check stop
                 if (mStopWork)
                     break;
@@ -448,9 +447,6 @@ public class ExDownloader implements Runnable {
                     }
                 }
 
-                Log.d(TAG, "noTokenIndex = " + noTokenIndex);
-                Log.d(TAG, "pageIndex = " + pageIndex);
-
                 if (noTokenIndex != -1) {
                     if (mPageTokeArray.get(noTokenIndex) == null) {
                         getDetailInfo(noTokenIndex / mPreviewPerPage, ediFile, false);
@@ -461,6 +457,8 @@ public class ExDownloader implements Runnable {
                     getDetailInfo(pageIndex, ediFile, false);
                     mCurRequestPageIndex = -1;
                 }
+
+                ensureWorkers();
 
                 synchronized(mWorkerGetIndexLock) {mWorkerGetIndexLock.notifyAll();}
                 synchronized(mWorkerLock) {mWorkerLock.notifyAll();}

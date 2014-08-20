@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="1"
+            android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/content" />
 
@@ -35,6 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="4"
+            android:layout_gravity="center"
             android:entries="@array/mode_list" />
     </LinearLayout>
 
@@ -48,6 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="1"
+            android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/api" />
 
@@ -57,7 +60,31 @@
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="4"
+            android:layout_gravity="center"
             android:entries="@array/api_mode_list" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0.0dip"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Lofi 分辨率" />
+
+        <Spinner
+            android:id="@+id/lofi_resolution_list"
+            android:layout_width="0.0dip"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_weight="4"
+            android:layout_gravity="center"
+            android:entries="@array/lofi_resolution_list" />
+    </LinearLayout>
 </merge>

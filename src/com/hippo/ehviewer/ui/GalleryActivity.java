@@ -16,32 +16,64 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.RelativeLayout;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
+import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
+import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Constants;
+import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 
-public class GalleryActivity extends AbstractActivity {
+public class GalleryActivity extends AbstractActivity
+        implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener {
     @SuppressWarnings("unused")
     private final static String TAG = GalleryActivity.class.getSimpleName();
+
+    private static final Interpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
+    private static final int ACTION_BAR_HEIGHT = 48;
+    private static final int NAV_BAR_HEIGHT = 48;
 
     public final static String KEY_GID = "gid";
     public final static String KEY_TOKEN = "token";
     public final static String KEY_TITLE = "title";
     public final static String KEY_START_INDEX = "start_index";
 
-    private RelativeLayout mainView;
+    private View mainView;
+    private View mActionBar;
+    private View mNavBar;
+    private TextView mTitleView;
+    private TextView mSeekerBubble;
+
+    /** It store index, start from 0, so max is samller than size **/
+    private SeekBar mPageSeeker;
     private ImageSet mImageSet;
+
+    private GalleryView mGalleryView;
+
+    private int mGid;
+    private String mTitle;
+
+    private ValueAnimator mShowAnimator;
+    private ValueAnimator mHideAnimator;
+    private long mHideTaskTimeStamp;
 
     @Override
     public void onOrientationChanged(int paddingTop, int paddingBottom) {
@@ -63,17 +95,83 @@ public class GalleryActivity extends AbstractActivity {
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
     }
 
+    private void initAnimator() {
+        mShowAnimator = ValueAnimator.ofFloat(1.0f, 0.0f);
+        mShowAnimator.setDuration(Constants.ANIMATE_TIME);
+        mShowAnimator.setInterpolator(ACCELERATE_INTERPOLATOR);
+        mShowAnimator.addUpdateListener(new AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (Float)animation.getAnimatedValue();
+                mActionBar.setY(- value * Ui.dp2pix(ACTION_BAR_HEIGHT));
+                mNavBar.setY(mainView.getHeight() - (1.0f - value) * Ui.dp2pix(NAV_BAR_HEIGHT));
+                mActionBar.requestLayout();
+                mNavBar.requestLayout();
+            }
+        });
+        mShowAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                mActionBar.setVisibility(View.VISIBLE);
+                mNavBar.setVisibility(View.VISIBLE);
+            }
+            @Override
+            public void onAnimationEnd(Animator animation) {}
+            @Override
+            public void onAnimationCancel(Animator animation) {}
+            @Override
+            public void onAnimationRepeat(Animator animation) {}
+        });
+
+        mHideAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
+        mHideAnimator.setDuration(Constants.ANIMATE_TIME);
+        mHideAnimator.setInterpolator(ACCELERATE_INTERPOLATOR);
+        mHideAnimator.addUpdateListener(new AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (Float)animation.getAnimatedValue();
+                mActionBar.setY(- value * Ui.dp2pix(ACTION_BAR_HEIGHT));
+                mNavBar.setY(mainView.getHeight() - (1.0f - value) * Ui.dp2pix(NAV_BAR_HEIGHT));
+                mActionBar.requestLayout();
+                mNavBar.requestLayout();
+            }
+        });
+        mHideAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                mActionBar.setVisibility(View.VISIBLE);
+                mNavBar.setVisibility(View.VISIBLE);
+            }
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mActionBar.setVisibility(View.GONE);
+                mNavBar.setVisibility(View.GONE);
+            }
+            @Override
+            public void onAnimationCancel(Animator animation) {}
+            @Override
+            public void onAnimationRepeat(Animator animation) {}
+        });
+    }
+
     @Override
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gl_root_group);
+
+        mainView = findViewById(R.id.main);
+        mActionBar = findViewById(R.id.action_bar);
+        mNavBar = findViewById(R.id.nav_bar);
+        mTitleView = (TextView)findViewById(R.id.title);
+        mPageSeeker = (SeekBar)findViewById(R.id.page_seeker);
+        mSeekerBubble = (TextView)findViewById(R.id.seeker_bubble);
 
         // FullScreen
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         } else {
-            mainView = (RelativeLayout)findViewById(R.id.main);
             mainView.setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -84,12 +182,12 @@ public class GalleryActivity extends AbstractActivity {
         }
 
         Intent intent = getIntent();
-        int gid = intent.getIntExtra(KEY_GID, -1);
+        mGid = intent.getIntExtra(KEY_GID, -1);
         String token = intent.getStringExtra(KEY_TOKEN);
-        String title = intent.getStringExtra(KEY_TITLE);
+        mTitle = intent.getStringExtra(KEY_TITLE);
         int startIndex = intent.getIntExtra(KEY_START_INDEX, 0);
 
-        if (gid == -1 || token == null || title == null) {
+        if (mGid == -1 || token == null || mTitle == null) {
             new DialogBuilder(this).setTitle(R.string.error)
                     .setMessage("数据错误！").setPositiveButton("关闭",
                     new View.OnClickListener() {
@@ -100,17 +198,128 @@ public class GalleryActivity extends AbstractActivity {
                         }
                     }).create().show();
         } else {
-            mImageSet = new ImageSet(gid, token, title, startIndex);
-            GalleryView isv = new GalleryView(getApplicationContext(), mImageSet, startIndex);
+            mImageSet = new ImageSet(mGid, token, mTitle, startIndex);
+            mGalleryView = new GalleryView(getApplicationContext(), mImageSet, startIndex);
             GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);
-            glrv.setContentPane(isv);
+            glrv.setContentPane(mGalleryView);
+
+            initAnimator();
+
+            // Set listener
+            mGalleryView.setGalleryViewListener(this);
+            mPageSeeker.setOnSeekBarChangeListener(this);
+
+            updateTitle();
+            mPageSeeker.setMax(mGalleryView.getSize() - 1);
+            mPageSeeker.setProgress(startIndex);
+
+            // Show first tip
+            if (Config.getGalleryFirst()) {
+                Config.setGalleryFirst(false);
+                new DialogBuilder(this).setTitle("提示")
+                        .setMessage("长按屏幕，可使下载从当前页面开始") // TODO
+                        .setSimpleNegativeButton().create().show();
+            }
         }
+    }
+
+    private void updateTitle() {
+        StringBuilder sb = new StringBuilder(30);
+        sb.append(mGalleryView.getCurIndex() + 1).append("/")
+                .append(mGalleryView.getSize())
+                .append(" - ").append(mGid);
+        mTitleView.setText(sb.toString());
+    }
+
+    private void startHideTask() {
+        mHideTaskTimeStamp = System.currentTimeMillis();
+        AppHandler.getInstance().postDelayed(new HideTask(mHideTaskTimeStamp), 2000);
+    }
+
+    private void cancelHideTask() {
+        mHideTaskTimeStamp = 0;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        mImageSet.free();
+        if (mImageSet != null)
+            mImageSet.free();
+    }
+
+    @Override
+    public void onTapCenter() {
+        if (mShowAnimator.isRunning() || mHideAnimator.isRunning())
+            return;
+
+        if (mActionBar.getVisibility() == View.GONE) {
+            mShowAnimator.start();
+            startHideTask();
+        } else if (mActionBar.getVisibility() == View.VISIBLE) {
+            mHideAnimator.start();
+        }
+    }
+
+    // The task to hide actionbar
+    private class HideTask implements Runnable {
+        private final long mTimeStamp;
+
+        public HideTask(long timeStamp) {
+            mTimeStamp = timeStamp;
+        }
+
+        @Override
+        public void run() {
+            if (mTimeStamp == mHideTaskTimeStamp &&!mShowAnimator.isRunning() &&
+                    !mHideAnimator.isRunning() && mActionBar.getVisibility() == View.VISIBLE)
+                mHideAnimator.start();
+        }
+    }
+
+    @Override
+    public void onPageChanged(int index) {
+        updateTitle();
+        mPageSeeker.setProgress(index);
+    }
+
+    @Override
+    public void onSizeUpdate(int size) {
+        updateTitle();
+        mPageSeeker.setMax(size - 1);
+    }
+
+    private void showSeekBubble() {
+        mSeekerBubble.setVisibility(View.VISIBLE);
+    }
+
+    private void hideSeekBubble() {
+        mSeekerBubble.setVisibility(View.GONE);
+    }
+
+    public void updateSeekBubble(int progress, int max, int thumbOffset) {
+        thumbOffset = thumbOffset + Ui.dp2pix(12);
+        int x = (mainView.getWidth() - 2 * thumbOffset) * progress / max + thumbOffset;
+        mSeekerBubble.setX(x);
+        mSeekerBubble.setText(String.valueOf(progress + 1));
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress,
+            boolean fromUser) {
+        updateSeekBubble(progress, seekBar.getMax(), seekBar.getThumbOffset());
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        cancelHideTask();
+        showSeekBubble();
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        startHideTask();
+        hideSeekBubble();
+        mGalleryView.goToPage(seekBar.getProgress());
     }
 }

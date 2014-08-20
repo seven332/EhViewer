@@ -43,6 +43,7 @@ import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.TimeRunner;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
+import com.hippo.ehviewer.widget.MaterialToast;
 
 // TODO 双击加载该页
 // TODO 长按从该页开始加载
@@ -126,11 +127,8 @@ public class GalleryView extends GLView
     private int scrollXOffset = 0;
     private int scrollYOffset = 0;
     private int stopScrollXOffset = 0;
-    @SuppressWarnings("unused")
     private int stopScrollYOffset = 0;
     private float mScale = 1;
-
-    private boolean mShowEdegTip = true;
 
     private int mWidth = -1;
     private int mHeight = -1;
@@ -157,13 +155,16 @@ public class GalleryView extends GLView
     private boolean mShowTapArea = false;
     private boolean mShowTapAreaTurn = false;
 
-    private OnEdgeListener mOnEdgeListener;
-    private OnTapTextListener mOnTapTextListener;
-    private OnScrollPageListener mOnScrollPageListener;
+    //private boolean mLocked = false;
+    //private boolean mLocked = false;
 
-    public interface OnEdgeListener {
-        public void onFirstPageEdge();
-        public void onLastPageEdge();
+    private OnTapTextListener mOnTapTextListener;
+    private GalleryViewListener mGalleryViewListener;
+
+    public interface GalleryViewListener {
+        public void onTapCenter();
+        public void onPageChanged(int index);
+        public void onSizeUpdate(int size);
     }
 
     public interface OnTapTextListener {
@@ -171,20 +172,12 @@ public class GalleryView extends GLView
         public void onTapDoubleText(int index);
     }
 
-    public interface OnScrollPageListener {
-        public void onScrollPage(int index);
-    }
-
-    public void setOnEdgeListener(OnEdgeListener l) {
-        mOnEdgeListener = l;
-    }
-
     public void setOnTapTextListener(OnTapTextListener l) {
         mOnTapTextListener = l;
     }
 
-    public void setOnScrollPageListener(OnScrollPageListener l) {
-        mOnScrollPageListener = l;
+    public void setGalleryViewListener(GalleryViewListener l) {
+        mGalleryViewListener = l;
     }
 
     public GalleryView(Context context, ImageSet imageSet, int startIndex) {
@@ -224,6 +217,7 @@ public class GalleryView extends GLView
     @Override
     public void run() {
         checkSize();
+        setState();
         if (!isEnsureSize && !mImageSet.isStop())
             AppHandler.getInstance().postDelayed(this, 500);
     }
@@ -232,6 +226,7 @@ public class GalleryView extends GLView
      * Check size
      */
     private void checkSize() {
+        int oldSize = mSize;
         int size = mImageSet.getSize();
         if (size == -1) {
             isEnsureSize = false;
@@ -240,6 +235,9 @@ public class GalleryView extends GLView
             isEnsureSize = true;
             mSize = size;
         }
+
+        if (mSize != oldSize && mGalleryViewListener != null)
+            mGalleryViewListener.onSizeUpdate(mSize);
     }
 
     /**
@@ -253,28 +251,31 @@ public class GalleryView extends GLView
             mState = STATE_LAST;
     }
 
-    private boolean checkIndex(int index) {
+    private boolean isIndexLoadable(int index) {
         int targetIndex = index - mCurIndex + 1;
         return targetIndex == CUR_TARGET_INDEX ||
                 (mState != STATE_FIRST && targetIndex == PRE_TARGET_INDEX) ||
                 (mState != STATE_LAST && targetIndex == NEXT_TARGET_INDEX);
     }
 
+    private boolean isIndexValid(int index) {
+        return index >= 0 && index < mSize;
+    }
+
     @Override
     public void onGetImage(int index) {
-        if (checkIndex(index)) {
+        if (isIndexLoadable(index)) {
             loadImage(index);
         }
     }
 
     @Override
-    public void onDownloading(int index, float percent) {
+    public synchronized void onDownloading(int index, float percent) {
         int targetIndex = index - mCurIndex + 1;
-        if (checkIndex(index)) {
+        if (isIndexLoadable(index)) {
             // Free what do not need
-            ShowItem showItem = showItems[targetIndex];
-            if (showItem != null)
-                showItem.recycle();
+            if (showItems[targetIndex] != null)
+                showItems[targetIndex].recycle();
 
             showItems[targetIndex] = new Text(
                     String.format("正在加载 %d%%", Math.round(percent * 100)));
@@ -283,18 +284,17 @@ public class GalleryView extends GLView
     }
 
     @Override
-    public void onDecodeOver(int index, Object res) {
+    public synchronized void onDecodeOver(int index, Object res) {
         int targetIndex = index - mCurIndex + 1;
 
-        if (!checkIndex(index)) {
+        if (!isIndexLoadable(index)) {
             // If it do not need any more, free
             if (res != null && res instanceof Bitmap)
                 ((Bitmap)res).recycle();
         } else {
             // Free what do not need
-            ShowItem showItem = showItems[targetIndex];
-            if (showItem != null)
-                showItem.recycle();
+            if (showItems[targetIndex] != null)
+                showItems[targetIndex].recycle();
 
             if (res == null) {
                 showItems[targetIndex] = new Text("读取图片错误"); // TODO
@@ -311,6 +311,14 @@ public class GalleryView extends GLView
             }
             resetSizePosition(targetIndex);
         }
+    }
+
+    public int getCurIndex() {
+        return mCurIndex;
+    }
+
+    public int getSize() {
+        return mSize;
     }
 
     private void drawTapArea(GLCanvas canvas) {
@@ -344,7 +352,8 @@ public class GalleryView extends GLView
     }
 
     @Override
-    protected void render(GLCanvas canvas) {
+    protected synchronized void render(GLCanvas canvas) {
+        // If it is not render thread, do not render
         super.render(canvas);
 
         boolean hasMovie = false;
@@ -622,8 +631,8 @@ public class GalleryView extends GLView
      *
      * @param index
      */
-    private void loadImage(int index) {
-        if (!checkIndex(index))
+    private synchronized void loadImage(int index) {
+        if (!isIndexLoadable(index))
             return;
 
         int targetIndex = index - mCurIndex + 1;
@@ -715,14 +724,13 @@ public class GalleryView extends GLView
      * You'd better resetSizePosition(PRE_TARGET_INDEX) before
      * @return
      */
-    private boolean goToPrePage() {
+    private synchronized boolean goToPrePage() {
         if (isFirstPage())
             return false;
 
         ShowItem showItem;
-        showItem = showItems[NEXT_TARGET_INDEX];
-        if (showItem != null)
-            showItem.recycle();
+        if (showItems[NEXT_TARGET_INDEX] != null)
+            showItems[NEXT_TARGET_INDEX].recycle();
         showItems[NEXT_TARGET_INDEX] = showItems[CUR_TARGET_INDEX];
         showItems[CUR_TARGET_INDEX] = showItems[PRE_TARGET_INDEX];
         showItems[PRE_TARGET_INDEX] = null;
@@ -741,8 +749,8 @@ public class GalleryView extends GLView
         setState();
         loadImage(mCurIndex-1);
 
-        if (mOnScrollPageListener != null) {
-            mOnScrollPageListener.onScrollPage(mCurIndex);
+        if (mGalleryViewListener != null) {
+            mGalleryViewListener.onPageChanged(mCurIndex);
         }
 
         invalidate();
@@ -753,14 +761,13 @@ public class GalleryView extends GLView
      * You'd better resetSizePosition(NEXT_TARGET_INDEX) before
      * @return
      */
-    private boolean goToNextPage() {
+    private synchronized boolean goToNextPage() {
         if (isLastPage())
             return false;
 
         ShowItem showItem;
-        showItem = showItems[PRE_TARGET_INDEX];
-        if (showItem != null)
-            showItem.recycle();
+        if (showItems[PRE_TARGET_INDEX] != null)
+            showItems[PRE_TARGET_INDEX].recycle();
         showItems[PRE_TARGET_INDEX] = showItems[CUR_TARGET_INDEX];
         showItems[CUR_TARGET_INDEX] = showItems[NEXT_TARGET_INDEX];
         showItems[NEXT_TARGET_INDEX] = null;
@@ -778,18 +785,56 @@ public class GalleryView extends GLView
         setState();
         loadImage(mCurIndex+1);
 
-        if (mOnScrollPageListener != null) {
-            mOnScrollPageListener.onScrollPage(mCurIndex);
+        if (mGalleryViewListener != null) {
+            mGalleryViewListener.onPageChanged(mCurIndex);
         }
 
         invalidate();
         return true;
     }
 
+    public synchronized boolean goToPage(int index) {
+        if (!isIndexValid(index))
+            return false;
+
+        if (index == mCurIndex) {
+            return true;
+        } else if (index == mCurIndex - 1) {
+            return goToPrePage();
+        } else if (index == mCurIndex + 1) {
+            return goToNextPage();
+        } else {
+            // Free
+            if (showItems[PRE_TARGET_INDEX] != null)
+                showItems[PRE_TARGET_INDEX].recycle();
+            if (showItems[CUR_TARGET_INDEX] != null)
+                showItems[CUR_TARGET_INDEX].recycle();
+            if (showItems[NEXT_TARGET_INDEX] != null)
+                showItems[NEXT_TARGET_INDEX].recycle();
+
+            mCurIndex = index;
+            setState();
+            loadImage(mCurIndex-1);
+            loadImage(mCurIndex);
+            loadImage(mCurIndex+1);
+
+            if (mGalleryViewListener != null) {
+                mGalleryViewListener.onPageChanged(mCurIndex);
+            }
+
+            invalidate();
+            return true;
+        }
+    }
+
     @Override
     protected boolean onTouch(MotionEvent event) {
         mGestureRecognizer.onTouchEvent(event);
         return true;
+    }
+
+    private void setTouchLocked(boolean locked) {
+
     }
 
     private class MyGestureListener implements GestureRecognizer.Listener {
@@ -880,21 +925,28 @@ public class GalleryView extends GLView
             if (Utils.isInArea(leftArea, (int)x, (int)y)) {
                 // TODO goto bottom first the to pre page
                 resetSizePosition(PRE_TARGET_INDEX);
-                if (!goToPrePage() && mOnEdgeListener != null)
-                    mOnEdgeListener.onFirstPageEdge();
+                if (!goToPrePage()) {
+                    // Get to first page
+                    MaterialToast.showToast("第一页"); // TODO
+                }
             } else if (Utils.isInArea(topArea, (int)x, (int)y)) {
                 zoom(true);
             } else if (Utils.isInArea(rightArea, (int)x, (int)y)) {
                 // TODO goto bottom first the to pre page
                 resetSizePosition(NEXT_TARGET_INDEX);
-                if (!goToNextPage() && mOnEdgeListener != null)
-                    mOnEdgeListener.onLastPageEdge();
+                if (!goToNextPage()) {
+                    // Get to last page
+                    MaterialToast.showToast(isEnsureSize ? "最后一页" : "等待获取后续页面"); // TODO
+                }
             } else if (Utils.isInArea(bottomArea, (int)x, (int)y)) {
                 zoom(false);
             } else if (Utils.isInArea(centerArea, (int)x, (int)y)) {
-                mShowTapArea = true;
-                mShowTapAreaTurn = true;
-                invalidate();
+                if (mGalleryViewListener != null)
+                    mGalleryViewListener.onTapCenter();
+
+                //mShowTapArea = true;
+                //mShowTapAreaTurn = true;
+                //invalidate();
             } else {
                 // Can't catch tap
             }
@@ -914,7 +966,7 @@ public class GalleryView extends GLView
                 return;
 
             Utils.vibrator(mContext, 100);
-            mImageSet.setTargetIndex(mCurIndex);
+            mImageSet.setStartIndex(mCurIndex);
         }
 
         @Override
@@ -960,11 +1012,6 @@ public class GalleryView extends GLView
                             resetSizePosition(PRE_TARGET_INDEX);
                         } else {
                             changePage = false;
-                            if (mShowEdegTip) { // First page
-                                mShowEdegTip = false;
-                                if (mOnEdgeListener != null)
-                                    mOnEdgeListener.onFirstPageEdge();
-                            }
                         }
                     }
                     else { // Go to righ
@@ -974,11 +1021,6 @@ public class GalleryView extends GLView
                             resetSizePosition(NEXT_TARGET_INDEX);
                         } else {
                             changePage = false;
-                            if (mShowEdegTip) { // last page
-                                mShowEdegTip = false;
-                                if (mOnEdgeListener != null)
-                                    mOnEdgeListener.onLastPageEdge();
-                            }
                         }
                     }
                 }
@@ -1054,6 +1096,11 @@ public class GalleryView extends GLView
                     mReturnTimeRunner.start();
                 }
                 break;
+            case SCROLL_NONE:
+                if (isFirstPage())
+                    MaterialToast.showToast("第一页");
+                else if (isLastPage())
+                    MaterialToast.showToast(isEnsureSize ? "最后一页" : "等待获取后续页面"); // TODO
             }
             return true;
         }
@@ -1123,7 +1170,6 @@ public class GalleryView extends GLView
 
         @Override
         public void onUp() {
-            mShowEdegTip = true;
 
 
             //  if use onSingleTapUp, use below

@@ -173,7 +173,8 @@ public class EhInfo {
     public void setCookie(HttpURLConnection conn, String previewMode) {
         String cookie = "ipb_member_id=" + mInfoPref.getString(KEY_MEMBER_ID, DEFAULT_MEMBER_ID) +
                 "; ipb_pass_hash=" + mInfoPref.getString(KEY_PASS_HASH, DEFAULT_PASS_HASH) +
-                "; uconfig=" + (previewMode == null ? mUconfig : getUconfigString(previewMode));
+                "; uconfig=" + (previewMode == null ? mUconfig : getUconfigString(previewMode)) +
+                "; xres=" + Config.getLofiResolution();
         conn.setRequestProperty("Cookie", cookie);
     }
 

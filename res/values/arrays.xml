@@ -33,6 +33,12 @@
         <item>exhentai.org</item>
     </string-array>
 
+    <string-array name="lofi_resolution_list"  translatable="false">
+        <item>460x</item>
+        <item>780x</item>
+        <item>980x</item>
+    </string-array>
+
     <string-array name="comment_long_click">
         <item>@android:string/copy</item>
         <item>@string/uploader_others</item>

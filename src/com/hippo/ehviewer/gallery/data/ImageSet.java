@@ -127,6 +127,10 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
         mExDownloader.setTargetIndex(index);
     }
 
+    public void setStartIndex(int startIndex) {
+        mExDownloader.setStartIndex(startIndex);
+    }
+
     public Object getImage(int index) {
         // Try to get file name
         String filename = mImageFilenameArray.get(index);

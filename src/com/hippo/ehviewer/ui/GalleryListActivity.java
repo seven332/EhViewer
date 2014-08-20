@@ -268,6 +268,8 @@ public class GalleryListActivity extends AbstractGalleryActivity
         modeSpinner.setSelection(Config.getMode());
         final Spinner apiModeSpinner = (Spinner)customLayout.findViewById(R.id.api_mode_list);
         apiModeSpinner.setSelection(Config.getApiMode());
+        final Spinner lofiResolutionSpinner = (Spinner)customLayout.findViewById(R.id.lofi_resolution_list);
+        lofiResolutionSpinner.setSelection(Config.getLofiResolution() - 1);
         return db.setSimpleNegativeButton()
                 .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
                     @Override
@@ -275,6 +277,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
                         ((AlertButton)v).dialog.dismiss();
                         Config.setMode(modeSpinner.getSelectedItemPosition());
                         Config.setApiMode(apiModeSpinner.getSelectedItemPosition());
+                        Config.setLofiResolution(lofiResolutionSpinner.getSelectedItemPosition() + 1);
                     }
                 }).create();
     }

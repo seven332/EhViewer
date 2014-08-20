@@ -61,6 +61,7 @@
     <color name="background_light">#fffafafa</color>
     <color name="background_dark">#ff212121</color>
     <color name="background_little_light">#ffe5e5e5</color>
+    <color name="background_little_dark">#ff353535</color>
 
     <color name="primary_text_dark">#de000000</color>
     <color name="secondary_text_dark">#8a000000</color>
