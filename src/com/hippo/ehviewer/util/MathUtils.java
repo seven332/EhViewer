@@ -214,6 +214,27 @@ public final class MathUtils {
         return n + 1;
     }
 
+    public static boolean isSameSide(float a, float b, float standard) {
+        float offset1 = standard - a;
+        float offset2 = standard - b;
+        return (offset1 >= 0 && offset2 >= 0) || (offset1 >= 0 && offset2 >= 0);
+    }
+
+    public static boolean closer(float a, float b, float standard) {
+        float offset1 = standard - a;
+        float offset2 = standard - b;
+        if ((offset1 >= 0 && offset2 >= 0) ||
+                (offset1 >= 0 && offset2 >= 0)) {
+            return Math.abs(offset1) < Math.abs(offset2);
+        } else {
+            float aa = a / standard;
+            float bb = b / standard;
+            aa = aa > 1.0f ? 1 / aa : aa;
+            bb = bb > 1.0f ? 1 / bb : bb;
+            return aa > bb;
+        }
+    }
+
     public static int random(int howbig) {
         return (int) (sRandom.nextFloat() * howbig);
     }

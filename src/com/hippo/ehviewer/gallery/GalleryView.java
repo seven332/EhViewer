@@ -19,6 +19,7 @@ package com.hippo.ehviewer.gallery;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Movie;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.MotionEvent;
@@ -38,7 +39,7 @@ import com.hippo.ehviewer.gallery.ui.GLView;
 import com.hippo.ehviewer.gallery.ui.GestureRecognizer;
 import com.hippo.ehviewer.gallery.util.GalleryUtils;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.TimeRunner;
 import com.hippo.ehviewer.util.Ui;
@@ -98,9 +99,7 @@ public class GalleryView extends GLView
 
     private static final float MILLSEC_PER_DIX = 0.2f;
     private static final float CHANGE_PAGE_PROPORTION = 0.05f;
-
-    // TODO in dip
-    private static final float CHANGE_PAGE_OFFSET = 20;
+    private static final float CHANGE_PAGE_OFFSET = Ui.dp2pix(12);
 
     // TODO 根据界面的大小调整缩放界限
     private static final float SCALE_MIN = 1/4.0f;
@@ -130,11 +129,11 @@ public class GalleryView extends GLView
     private int stopScrollYOffset = 0;
     private float mScale = 1;
 
-    private int mWidth = -1;
-    private int mHeight = -1;
+    private int mScreenWidth = -1;
+    private int mScreenHeight = -1;
 
     // at most keep three item
-    private final ShowItem[] showItems;
+    private volatile ShowItem[] showItems;
     private int mCurIndex;
     private int mSize;
     private boolean isEnsureSize;
@@ -151,6 +150,8 @@ public class GalleryView extends GLView
     private Text rightText;
     private Text bottomText;
     private Text centerText;
+
+    private boolean mDoubleTapAnimating = false;
 
     private boolean mShowTapArea = false;
     private boolean mShowTapAreaTurn = false;
@@ -323,7 +324,7 @@ public class GalleryView extends GLView
 
     private void drawTapArea(GLCanvas canvas) {
         // Background
-        canvas.fillRect(0, 0, mWidth, mHeight, TAP_AREA_MASK_COLOR);
+        canvas.fillRect(0, 0, mScreenWidth, mScreenHeight, TAP_AREA_MASK_COLOR);
 
         drawRect(canvas, leftArea);
         drawRect(canvas, topArea);
@@ -403,7 +404,7 @@ public class GalleryView extends GLView
             drawTapArea(canvas);
 
         // TODO Mask to reduce brightness
-        //canvas.fillRect(0, 0, mWidth, mHeight, MASK_COLOR);
+        //canvas.fillRect(0, 0, mScreenWidth, mScreenHeight, MASK_COLOR);
 
         if (hasMovie)
             invalidate();
@@ -423,10 +424,10 @@ public class GalleryView extends GLView
         int sumXOffset;
         switch (targeIndex) {
         case PRE_TARGET_INDEX:
-            sumXOffset = -mWidth;
+            sumXOffset = -mScreenWidth;
             break;
         case NEXT_TARGET_INDEX:
-            sumXOffset = mWidth;
+            sumXOffset = mScreenWidth;
             break;
         case CUR_TARGET_INDEX:
         default:
@@ -439,8 +440,8 @@ public class GalleryView extends GLView
             int xOffset;
             int yOffset;
             Rect rect = text.mRect;
-            xOffset = (mWidth - text.width)/2;
-            yOffset = (mHeight - text.height)/2;
+            xOffset = (mScreenWidth - text.width)/2;
+            yOffset = (mScreenHeight - text.height)/2;
             rect.left = sumXOffset + xOffset;
             rect.top = yOffset;
             rect.right = rect.left + text.width;
@@ -459,26 +460,26 @@ public class GalleryView extends GLView
                 showHeight = image.height;
                 break;
             case FIT_WIDTH:
-                image.imageScale = (float)mWidth/image.width;
-                showWidth = mWidth;
+                image.imageScale = (float)mScreenWidth/image.width;
+                showWidth = mScreenWidth;
                 showHeight = (int)(image.height * image.imageScale);
                 break;
             case FIT_HEIGHT:
-                image.imageScale = (float)mHeight/image.height;
+                image.imageScale = (float)mScreenHeight/image.height;
                 showWidth = (int)(image.width * image.imageScale);
-                showHeight = mHeight;
+                showHeight = mScreenHeight;
                 break;
             case FIT:
-                float scaleX = (float)mWidth/image.width;
-                float scaleY = (float)mHeight/image.height;
+                float scaleX = (float)mScreenWidth/image.width;
+                float scaleY = (float)mScreenHeight/image.height;
                 if (scaleX < scaleY) {
                     image.imageScale = scaleX;
-                    showWidth = mWidth;
+                    showWidth = mScreenWidth;
                     showHeight = (int)(image.height * image.imageScale);
                 } else {
                     image.imageScale = scaleY;
                     showWidth = (int)(image.width * image.imageScale);
-                    showHeight = mHeight;
+                    showHeight = mScreenHeight;
                     break;
                 }
                 break;
@@ -510,21 +511,21 @@ public class GalleryView extends GLView
                 yOffset = 0;
                 break;
             case TOP_RIGHT:
-                xOffset = mWidth - showWidth;
+                xOffset = mScreenWidth - showWidth;
                 yOffset = 0;
                 break;
             case BOTTOM_LEFT:
                 xOffset = 0;
-                yOffset = mHeight - showHeight;
+                yOffset = mScreenHeight - showHeight;
                 break;
             case BOTTOM_RIGHT:
-                xOffset = mWidth - showWidth;
-                yOffset = mHeight - showHeight;
+                xOffset = mScreenWidth - showWidth;
+                yOffset = mScreenHeight - showHeight;
                 break;
             case CENTER:
             default:
-                xOffset = (mWidth - showWidth)/2;
-                yOffset = (mHeight - showHeight)/2;
+                xOffset = (mScreenWidth - showWidth)/2;
+                yOffset = (mScreenHeight - showHeight)/2;
                 break;
             }
 
@@ -554,30 +555,30 @@ public class GalleryView extends GLView
 
     private void setTapArea() {
         leftArea = new int[]{
-                (int)(LEFT_AREA_SCALE[0] * mWidth),
-                (int)(LEFT_AREA_SCALE[1] * mHeight),
-                (int)(LEFT_AREA_SCALE[2] * mWidth),
-                (int)(LEFT_AREA_SCALE[3] * mHeight)};
+                (int)(LEFT_AREA_SCALE[0] * mScreenWidth),
+                (int)(LEFT_AREA_SCALE[1] * mScreenHeight),
+                (int)(LEFT_AREA_SCALE[2] * mScreenWidth),
+                (int)(LEFT_AREA_SCALE[3] * mScreenHeight)};
         topArea = new int[]{
-                (int)(TOP_AREA_SCALE[0] * mWidth),
-                (int)(TOP_AREA_SCALE[1] * mHeight),
-                (int)(TOP_AREA_SCALE[2] * mWidth),
-                (int)(TOP_AREA_SCALE[3] * mHeight)};
+                (int)(TOP_AREA_SCALE[0] * mScreenWidth),
+                (int)(TOP_AREA_SCALE[1] * mScreenHeight),
+                (int)(TOP_AREA_SCALE[2] * mScreenWidth),
+                (int)(TOP_AREA_SCALE[3] * mScreenHeight)};
         rightArea = new int[]{
-                (int)(RIGHT_AREA_SCALE[0] * mWidth),
-                (int)(RIGHT_AREA_SCALE[1] * mHeight),
-                (int)(RIGHT_AREA_SCALE[2] * mWidth),
-                (int)(RIGHT_AREA_SCALE[3] * mHeight)};
+                (int)(RIGHT_AREA_SCALE[0] * mScreenWidth),
+                (int)(RIGHT_AREA_SCALE[1] * mScreenHeight),
+                (int)(RIGHT_AREA_SCALE[2] * mScreenWidth),
+                (int)(RIGHT_AREA_SCALE[3] * mScreenHeight)};
         bottomArea = new int[]{
-                (int)(BOTTOM_AREA_SCALE[0] * mWidth),
-                (int)(BOTTOM_AREA_SCALE[1] * mHeight),
-                (int)(BOTTOM_AREA_SCALE[2] * mWidth),
-                (int)(BOTTOM_AREA_SCALE[3] * mHeight)};
+                (int)(BOTTOM_AREA_SCALE[0] * mScreenWidth),
+                (int)(BOTTOM_AREA_SCALE[1] * mScreenHeight),
+                (int)(BOTTOM_AREA_SCALE[2] * mScreenWidth),
+                (int)(BOTTOM_AREA_SCALE[3] * mScreenHeight)};
         centerArea = new int[]{
-                (int)(CENTER_AREA_SCALE[0] * mWidth),
-                (int)(CENTER_AREA_SCALE[1] * mHeight),
-                (int)(CENTER_AREA_SCALE[2] * mWidth),
-                (int)(CENTER_AREA_SCALE[3] * mHeight)};
+                (int)(CENTER_AREA_SCALE[0] * mScreenWidth),
+                (int)(CENTER_AREA_SCALE[1] * mScreenHeight),
+                (int)(CENTER_AREA_SCALE[2] * mScreenWidth),
+                (int)(CENTER_AREA_SCALE[3] * mScreenHeight)};
 
         if (leftText == null)
             leftText = new Text(mContext.getString(R.string.pre_page),
@@ -606,8 +607,8 @@ public class GalleryView extends GLView
     protected void onLayout(
             boolean changeSize, int left, int top, int right, int bottom) {
         // Get View size
-        mWidth = right - left;
-        mHeight = bottom - top;
+        mScreenWidth = right - left;
+        mScreenHeight = bottom - top;
 
         if (!mInit) {
             mInit = true;
@@ -645,7 +646,7 @@ public class GalleryView extends GLView
             int state = (Integer)obj;
             if (state == ImageSet.RESULT_DECODE) {
                 // TODO maybe i should show a decode text
-                showItems[targetIndex] = new EmptyItem();
+                showItems[targetIndex] = null;
             } else if (state == ImageSet.RESULT_DOWNLOADING) {
                 showItems[targetIndex] = new Text("正在下载"); // TODO
             } else if (state == ImageSet.RESULT_NONE) {
@@ -738,11 +739,11 @@ public class GalleryView extends GLView
         // adjust rect
         showItem = showItems[NEXT_TARGET_INDEX];
         if (showItem != null) {
-            showItem.mRect.offset(mWidth, 0);
+            showItem.mRect.offset(mScreenWidth, 0);
         }
         showItem = showItems[CUR_TARGET_INDEX];
         if (showItem != null) {
-            showItem.mRect.offset(mWidth, 0);
+            showItem.mRect.offset(mScreenWidth, 0);
         }
 
         mCurIndex--;
@@ -774,11 +775,11 @@ public class GalleryView extends GLView
         // adjust rect
         showItem = showItems[PRE_TARGET_INDEX];
         if (showItem != null) {
-            showItem.mRect.offset(-mWidth, 0);
+            showItem.mRect.offset(-mScreenWidth, 0);
         }
         showItem = showItems[CUR_TARGET_INDEX];
         if (showItem != null) {
-            showItem.mRect.offset(-mWidth, 0);
+            showItem.mRect.offset(-mScreenWidth, 0);
         }
 
         mCurIndex++;
@@ -843,59 +844,165 @@ public class GalleryView extends GLView
 
         private final TimeRunner mToPreTimeRunner = new TimeRunner() {
             @Override
-            protected void run(float interpolatedTime, int runningTime) {
-                scrollXOffset = (int)(stopScrollXOffset + ((mWidth - stopScrollXOffset) * interpolatedTime));
+            protected void onStart() {}
+
+            @Override
+            protected void onRun(float interpolatedTime, int runningTime) {
+                scrollXOffset = (int)(stopScrollXOffset + ((mScreenWidth - stopScrollXOffset) * interpolatedTime));
                 invalidate();
             }
+
+            @Override
+            protected void onEnd() {
+                scrollXOffset = 0;
+                goToPrePage();
+                mScrollState = SCROLL_NONE;
+            }
+
+            @Override
+            protected void onCancel() {}
         };
 
         private final TimeRunner mToNextTimeRunner = new TimeRunner() {
             @Override
-            protected void run(float interpolatedTime, int runningTime) {
-                scrollXOffset = (int)(stopScrollXOffset + ((-mWidth - stopScrollXOffset) * interpolatedTime));
+            protected void onStart() {}
+
+            @Override
+            protected void onRun(float interpolatedTime, int runningTime) {
+                scrollXOffset = (int)(stopScrollXOffset + ((-mScreenWidth - stopScrollXOffset) * interpolatedTime));
                 invalidate();
             }
+
+            @Override
+            protected void onEnd() {
+                scrollXOffset = 0;
+                goToNextPage();
+                mScrollState = SCROLL_NONE;
+            }
+
+            @Override
+            protected void onCancel() {}
         };
 
         private final TimeRunner mReturnTimeRunner = new TimeRunner() {
             @Override
-            protected void run(float interpolatedTime, int runningTime) {
+            protected void onStart() {}
+
+            @Override
+            protected void onRun(float interpolatedTime, int runningTime) {
                 scrollXOffset = (int)((1 - interpolatedTime) * stopScrollXOffset);
                 invalidate();
+            }
+
+            @Override
+            protected void onEnd() {
+                scrollXOffset = 0;
+                mScrollState = SCROLL_NONE;
+                invalidate();
+            }
+
+            @Override
+            protected void onCancel() {}
+        };
+
+        private final TimeRunner mDoubleTapRunner = new TimeRunner() {
+
+            private Image image;
+            private float startScale;
+            private float endScale;
+            private final Point startPosition = new Point();
+            private final Point endPosition = new Point();
+
+            private boolean chooseFirst(float a, float b, float standard) {
+                float offset1 = standard - a;
+                float offset2 = standard - b;
+                if ((offset1 > 0.0f && offset2 > 0.0f) ||
+                        (offset1 < 0.0f && offset2 < 0.0f)) {
+                    return Math.abs(offset1) < Math.abs(offset2);
+                } else {
+                    float aa = a / standard;
+                    float bb = b / standard;
+                    aa = aa > 1.0f ? 1 / aa : aa;
+                    bb = bb > 1.0f ? 1 / bb : bb;
+                    return aa < bb;
+                }
+            }
+
+            @Override
+            protected void onStart() {
+                ShowItem showItem = showItems[CUR_TARGET_INDEX];
+                if (showItem == null || !(showItem instanceof Image)) {
+                    mDoubleTapRunner.cancel();
+                    return;
+                }
+                image = (Image)showItem;
+                int width = image.getWidth();
+                int height = image.getHeight();
+                if (width == -1 || height == -1) {
+                    mDoubleTapRunner.cancel();
+                    return;
+                }
+
+                // Init start info
+                Rect rect = image.mRect;
+                startScale = image.imageScale;
+                startPosition.x = (rect.left + rect.right) / 2;
+                startPosition.y = (rect.top + rect.bottom) / 2;
+
+                float fitScreenScale;
+                float scaleX = (float)mScreenWidth/width;
+                float scaleY = (float)mScreenHeight/height;
+                if (scaleX < scaleY)
+                    fitScreenScale = scaleX;
+                else
+                    fitScreenScale = scaleY;
+
+                if (chooseFirst(fitScreenScale, 1, startScale))
+                    // To fix screen
+                    endScale = fitScreenScale;
+                else
+                    // To origin
+                    endScale = 1;
+                endPosition.x = mScreenWidth / 2;
+                endPosition.y = mScreenHeight / 2;
+            }
+
+            @Override
+            protected void onRun(float interpolatedTime, int runningTime) {
+                int x = (int)(startPosition.x + (endPosition.x - startPosition.x) * interpolatedTime);
+                int y = (int)(startPosition.y + (endPosition.y - startPosition.y) * interpolatedTime);
+                float scale = startScale + (endScale - startScale) * interpolatedTime;
+                setImageRect(x, y, scale);
+                invalidate();
+            }
+
+            @Override
+            protected void onEnd() {
+                mDoubleTapAnimating = false;
+                setImageRect(mScreenWidth / 2, mScreenHeight / 2, endScale);
+                invalidate();
+            }
+
+            @Override
+            protected void onCancel() {
+                mDoubleTapAnimating = false;
+            }
+
+            private void setImageRect(int x, int y, float scale) {
+                image.imageScale = scale;
+                int showWidth = (int)(image.width * scale);
+                int showHeight = (int)(image.height * scale);
+                Rect rect = image.mRect;
+                rect.left = x - showWidth / 2;
+                rect.top = y - showHeight / 2;
+                rect.right = x + showWidth / 2;
+                rect.bottom = y + showHeight / 2;
             }
         };
 
         public MyGestureListener() {
-            mToPreTimeRunner.setOnTimerListener(new TimeRunner.OnTimeListener() {
-                @Override
-                public void onStart() {}
-                @Override
-                public void onEnd() {
-                    scrollXOffset = 0;
-                    goToPrePage();
-                    mScrollState = SCROLL_NONE;
-                }
-            });
-            mToNextTimeRunner.setOnTimerListener(new TimeRunner.OnTimeListener() {
-                @Override
-                public void onStart() {}
-                @Override
-                public void onEnd() {
-                    scrollXOffset = 0;
-                    goToNextPage();
-                    mScrollState = SCROLL_NONE;
-                }
-            });
-            mReturnTimeRunner.setOnTimerListener(new TimeRunner.OnTimeListener() {
-                @Override
-                public void onStart() {}
-                @Override
-                public void onEnd() {
-                    scrollXOffset = 0;
-                    mScrollState = SCROLL_NONE;
-                    invalidate();
-                }
-            });
+            mDoubleTapRunner.setDuration(Constants.ANIMATE_TIME);
+            //mDoubleTapRunner.setInterpolator(new OvershootInterpolator());
         }
 
         @Override
@@ -907,8 +1014,10 @@ public class GalleryView extends GLView
                 mShowTapAreaTurn = false;
                 return false;
             }
+            if (mDoubleTapAnimating)
+                return false;
 
-            if ( showItems[CUR_TARGET_INDEX] == null
+            if (showItems[CUR_TARGET_INDEX] == null
                     || showItems[CUR_TARGET_INDEX] instanceof Text) {
                 if (mOnTapTextListener != null)
                     mOnTapTextListener.onTapText(mCurIndex);
@@ -956,7 +1065,12 @@ public class GalleryView extends GLView
 
         @Override
         public boolean onDoubleTap(float x, float y) {
-            Log.d(TAG, "onDoubleTap");
+            ShowItem curShowItem = showItems[CUR_TARGET_INDEX];
+            if (curShowItem == null || !(curShowItem instanceof Image))
+                return true;
+
+            mDoubleTapAnimating = true;
+            mDoubleTapRunner.start();
             return true;
         }
 
@@ -988,6 +1102,9 @@ public class GalleryView extends GLView
             if (curShowItem == null) // If not load now
                 return true;
 
+            if (mDoubleTapAnimating)
+                return false;
+
             switch(mScrollState) {
             case SCROLL_ANIME_LEFT:
             case SCROLL_ANIME_RIGHT:
@@ -1001,7 +1118,7 @@ public class GalleryView extends GLView
                     changePage = true;
                 else{
                     if ( Math.abs(totalX/totalY) > 1 && ((totalX > CHANGE_PAGE_OFFSET && dx < 0 && rect.left >= 0)
-                            || (totalX < -CHANGE_PAGE_OFFSET && dx > 0 && rect.right <= mWidth)))
+                            || (totalX < -CHANGE_PAGE_OFFSET && dx > 0 && rect.right <= mScreenWidth)))
                         changePage = true;
                 }
                 if (changePage) { // If change page
@@ -1027,9 +1144,9 @@ public class GalleryView extends GLView
                 if (!changePage){ // Move cur image
                     int actDx = -(int)dx;
                     int actDy = -(int)dy;
-                    if (rect.width() <= mWidth)
+                    if (rect.width() <= mScreenWidth)
                         actDx = 0;
-                    if (rect.height() <= mHeight)
+                    if (rect.height() <= mScreenHeight)
                         actDy = 0;
                     rect.offset(actDx, actDy);
 
@@ -1064,6 +1181,8 @@ public class GalleryView extends GLView
 
             if (isScale)
                 return false;
+            if (mDoubleTapAnimating)
+                return false;
 
             switch(mScrollState) {
             case SCROLL_ANIME_LEFT:
@@ -1075,8 +1194,8 @@ public class GalleryView extends GLView
                 stopScrollYOffset = scrollYOffset;
 
                 mScrollState = SCROLL_ANIME_LEFT;
-                if (stopScrollXOffset > mWidth * CHANGE_PAGE_PROPORTION) { // Go to pre page
-                    mToPreTimeRunner.setDuration((int)(MILLSEC_PER_DIX * (mWidth-stopScrollXOffset)));
+                if (stopScrollXOffset > mScreenWidth * CHANGE_PAGE_PROPORTION) { // Go to pre page
+                    mToPreTimeRunner.setDuration((int)(MILLSEC_PER_DIX * (mScreenWidth-stopScrollXOffset)));
                     mToPreTimeRunner.start();
                 } else {
                     mReturnTimeRunner.setDuration((int)(MILLSEC_PER_DIX * stopScrollXOffset));
@@ -1088,8 +1207,8 @@ public class GalleryView extends GLView
                 stopScrollYOffset = scrollYOffset;
 
                 mScrollState = SCROLL_ANIME_RIGHT;
-                if (-stopScrollXOffset > mWidth * CHANGE_PAGE_PROPORTION) { // Go to next page
-                    mToNextTimeRunner.setDuration((int)(MILLSEC_PER_DIX * (mWidth+stopScrollXOffset)));
+                if (-stopScrollXOffset > mScreenWidth * CHANGE_PAGE_PROPORTION) { // Go to next page
+                    mToNextTimeRunner.setDuration((int)(MILLSEC_PER_DIX * (mScreenWidth+stopScrollXOffset)));
                     mToNextTimeRunner.start();
                 } else {
                     mReturnTimeRunner.setDuration((int)(MILLSEC_PER_DIX * -stopScrollXOffset));
@@ -1097,10 +1216,13 @@ public class GalleryView extends GLView
                 }
                 break;
             case SCROLL_NONE:
-                if (isFirstPage())
-                    MaterialToast.showToast("第一页");
-                else if (isLastPage())
-                    MaterialToast.showToast(isEnsureSize ? "最后一页" : "等待获取后续页面"); // TODO
+                ShowItem showItem = showItems[CUR_TARGET_INDEX];
+                if (showItem != null) {
+                    if (isFirstPage() && showItem.mRect.left >= 0)
+                        MaterialToast.showToast("第一页");
+                    else if (isLastPage() && showItem.mRect.right <= mScreenWidth)
+                        MaterialToast.showToast(isEnsureSize ? "最后一页" : "等待获取后续页面"); // TODO
+                }
             }
             return true;
         }
@@ -1119,6 +1241,9 @@ public class GalleryView extends GLView
 
         @Override
         public boolean onScale(float focusX, float focusY, float scale) {
+            if (mDoubleTapAnimating)
+                return false;
+
             if (mScrollState == SCROLL_ANIME_LEFT || mScrollState == SCROLL_ANIME_RIGHT)
                 return true;
 
@@ -1197,40 +1322,40 @@ public class GalleryView extends GLView
         int targetIndex = getTargetIndex(showItem);
         switch (targetIndex) {
         case PRE_TARGET_INDEX:
-            sumXOffset = -mWidth;
+            sumXOffset = -mScreenWidth;
             break;
         case NEXT_TARGET_INDEX:
-            sumXOffset = mWidth;
+            sumXOffset = mScreenWidth;
             break;
         case CUR_TARGET_INDEX:
         default:
             sumXOffset = 0;
         }
 
-        if (showWidth > mWidth) {
+        if (showWidth > mScreenWidth) {
             int fixXOffset = rect.left - sumXOffset;
             if (fixXOffset > 0) {
                 rect.left -= fixXOffset;
                 rect.right -= fixXOffset;
-            } else if ((fixXOffset = sumXOffset + mWidth - rect.right) > 0) {
+            } else if ((fixXOffset = sumXOffset + mScreenWidth - rect.right) > 0) {
                 rect.left += fixXOffset;
                 rect.right += fixXOffset;
             }
         } else {
-            int left = sumXOffset + (mWidth - showWidth) / 2;
+            int left = sumXOffset + (mScreenWidth - showWidth) / 2;
             rect.offsetTo(left, rect.top);
         }
-        if (showHeight > mHeight) {
+        if (showHeight > mScreenHeight) {
             int fixYOffset = rect.top - sumYOffset;
             if (fixYOffset > 0) {
                 rect.top -= fixYOffset;
                 rect.bottom -= fixYOffset;
-            } else if ((fixYOffset = sumYOffset + mHeight - rect.bottom) > 0) {
+            } else if ((fixYOffset = sumYOffset + mScreenHeight - rect.bottom) > 0) {
                 rect.top += fixYOffset;
                 rect.bottom += fixYOffset;
             }
         } else {
-            int top = sumYOffset + (mHeight - showHeight) / 2;
+            int top = sumYOffset + (mScreenHeight - showHeight) / 2;
             rect.offsetTo(rect.left, top);
         }
     }
@@ -1246,14 +1371,36 @@ public class GalleryView extends GLView
     }
 
     private abstract class ShowItem {
-        protected int width = 1;
-        protected int height = 1;
+        protected int width = -1;
+        protected int height = -1;
         public Rect mRect = new Rect();
         public void draw(GLCanvas canvas) {
             this.draw(canvas, 0, 0);
         }
         public abstract void draw(GLCanvas canvas, int xOffset, int yOffset);
         public abstract void recycle();
+
+        public int getWidth() {
+            return width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void getShowRect(Rect rect) {
+            rect.left = mRect.left;
+            rect.top = mRect.top;
+            rect.right = mRect.right;
+            rect.bottom = mRect.bottom;
+        }
+
+        public void setShowRect(Rect rect) {
+            mRect.left = rect.left;
+            mRect.top = rect.top;
+            mRect.right = rect.right;
+            mRect.bottom = rect.bottom;
+        }
     }
 
     private class EmptyItem extends ShowItem{
@@ -1299,10 +1446,10 @@ public class GalleryView extends GLView
             if ((targetIndex = getTargetIndex(this)) == INVALID_ID)
                 mTexture.draw(canvas, mRect.left + xOffset, mRect.top + yOffset, mRect.width(), mRect.height());
             else {
-                int leftBound = mWidth;
+                int leftBound = mScreenWidth;
                 int topBound = 0;
-                int rightBound = 2 * mWidth;
-                int bottomBound = mHeight;
+                int rightBound = 2 * mScreenWidth;
+                int bottomBound = mScreenHeight;
 
                 switch (targetIndex) {
                 case PRE_TARGET_INDEX:
@@ -1439,7 +1586,7 @@ public class GalleryView extends GLView
         }
 
         public void load(String str) {
-            load(str, 100, -1);
+            load(str, 100, 0xdeffffff);
         }
 
         public void load(String str, float size, int color) {
