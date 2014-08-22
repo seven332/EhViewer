@@ -20,12 +20,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class VoteParser {
-    
+
     public String mTagPane;
-    
-    boolean parser(String pageContext) {
+
+    boolean parser(String body) {
+        if (body == null)
+            return false;
+
         try {
-            JSONObject jsonObject = new JSONObject(pageContext);
+            JSONObject jsonObject = new JSONObject(body);
             mTagPane = jsonObject.getString("tagpane");
             return true;
         } catch (JSONException e) {

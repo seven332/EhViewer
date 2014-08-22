@@ -101,6 +101,9 @@ public class DetailParser {
         Pattern p;
         Matcher m;
 
+        if (body == null)
+            return 0;
+
         if (!body.contains("<")) {
             eMesg = body;
             return ERROR;
@@ -228,7 +231,7 @@ public class DetailParser {
         // Get comment
         if ((mode & COMMENT) != 0) {
             p = Pattern
-                    .compile("<div class=\"c3\">Posted on ([^<>]+) by <a[^<>]+>([^<>]+)</a>.*?<div class=\"c6\">(.*?)</div>");
+                    .compile("<div class=\"c3\">Posted on ([^<>]+) by <a[^<>]+>([^<>]+)</a>.+?<div class=\"c6\"[^>]*>(.+?)</div><div class=\"c7\"");
             m = p.matcher(body);
             comments = new LinkedList<Comment>();
             while (m.find()) {

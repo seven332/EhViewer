@@ -22,18 +22,21 @@ import android.animation.TimeInterpolator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.PointF;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
-import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Constants;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.ViewUtils;
 
 public final class WindowsAnimate
         implements View.OnTouchListener {
+    private static final String TAG = WindowsAnimate.class.getSimpleName();
+
     private static final TimeInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
     private static final TimeInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator();
 
@@ -74,8 +77,18 @@ public final class WindowsAnimate
     @Override
     @SuppressLint("ClickableViewAccessibility")
     public boolean onTouch(View v, MotionEvent event) {
-        v.setTag(R.id.position_x, event.getX());
-        v.setTag(R.id.position_y, event.getY());
+
+        Log.d(TAG, "onTouch");
+
+        Object obj = v.getTag();
+        if (obj == null) {
+            PointF p = new PointF();
+            p.set(event.getX(), event.getY());
+            v.setTag(p);
+        } else {
+            PointF p = (PointF)obj;
+            p.set(event.getX(), event.getY());
+        }
         return false;
     }
 

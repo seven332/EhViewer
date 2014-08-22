@@ -17,12 +17,15 @@
 package com.hippo.ehviewer.ehclient;
 
 public class AddToFavoriteParser {
-    
-    public boolean parser(String pageContent) {
-        if (pageContent.contains("Close Window"))
+
+    public boolean parser(String body) {
+        if (body == null)
+            return false;
+
+        if (body.contains("Close Window"))
             return true;
         else
             return false;
     }
-    
+
 }

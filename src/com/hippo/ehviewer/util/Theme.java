@@ -16,8 +16,6 @@
 
 package com.hippo.ehviewer.util;
 
-import java.util.Random;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -26,16 +24,14 @@ import android.graphics.drawable.StateListDrawable;
 
 public final class Theme {
 
-    private static final Random random =
-            new Random(System.currentTimeMillis());
     public static final int GREY_COLOR = 0xffaaaaaa;
     public static final ColorDrawable GREY_DRAWABLE =
             new ColorDrawable(0xffaaaaaa);
 
     private static final int[] DARK_COLOR_TABLE = {
-        0xffe51c23, 0xffe91e63, 0xff9c27b0,
-        0xff673ab7, 0xff3f51b5, 0xff5677fc,
-        0xff03a9f4, 0xff009688, 0xff259b24
+        0xffe91e63, 0xff9c27b0, 0xff673ab7,
+        0xff3f51b5, 0xff5677fc, 0xff03a9f4,
+        0xff009688, 0xff259b24
     };
 
     /**
@@ -43,7 +39,7 @@ public final class Theme {
      * @return
      */
     public static int getRandomDarkColor() {
-        return DARK_COLOR_TABLE[Math.abs(random.nextInt()) % DARK_COLOR_TABLE.length];
+        return DARK_COLOR_TABLE[Math.abs(MathUtils.random(DARK_COLOR_TABLE.length))];
     }
 
     /**

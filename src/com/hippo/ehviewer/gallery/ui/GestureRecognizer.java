@@ -31,6 +31,7 @@ public class GestureRecognizer {
     public interface Listener {
         boolean onSingleTapConfirmed(float x, float y);
         boolean onDoubleTap(float x, float y);
+        boolean onDoubleTapConfirmed(float x, float y);
         void onLongPress(MotionEvent e);
         boolean onScrollBegin(float dx, float dy, float totalX, float totalY);
         boolean onScroll(float dx, float dy, float totalX, float totalY);
@@ -47,15 +48,15 @@ public class GestureRecognizer {
     private final ScaleGestureDetector mScaleDetector;
     private final DownUpDetector mDownUpDetector;
     private final Listener mListener;
-    
+
     private boolean mStillScroll = false;
 
     public GestureRecognizer(Context context, Listener listener) {
         mListener = listener;
-        mGestureDetector = new GestureDetector(context, new MyGestureListener(),
-                null, true /* ignoreMultitouch */);
         mScaleDetector = new ScaleGestureDetector(
                 context, new MyScaleListener());
+        mGestureDetector = new GestureDetector(context, new MyGestureListener(),
+                null, true /* ignoreMultitouch */);
         mDownUpDetector = new DownUpDetector(new MyDownUpListener());
     }
 
@@ -90,12 +91,21 @@ public class GestureRecognizer {
         public boolean onDoubleTap(MotionEvent e) {
             return mListener.onDoubleTap(e.getX(), e.getY());
         }
-        
+
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            if (e.getAction() == MotionEvent.ACTION_UP ||
+                    e.getAction() == MotionEvent.ACTION_CANCEL)
+                return mListener.onDoubleTapConfirmed(e.getX(), e.getY());
+            else
+                return super.onDoubleTapEvent(e);
+        }
+
         @Override
         public void onLongPress(MotionEvent e) {
             mListener.onLongPress(e);
         }
-        
+
         @Override
         public boolean onScroll(
                 MotionEvent e1, MotionEvent e2, float dx, float dy) {

@@ -25,6 +25,9 @@ public class DetailUrlParser {
     public String token;
 
     public boolean parser(String url) {
+        if (url == null)
+            return false;
+
         Pattern p = Pattern.compile("/(\\d+)/(\\w+)");
         Matcher m = p.matcher(url);
         if (m.find()) {

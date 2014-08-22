@@ -73,7 +73,7 @@ import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RatingView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
-public class FavouriteActivity extends AbstractGalleryActivity
+public class FavouriteActivity extends AbsGalleryActivity
         implements ListView.MultiChoiceModeListener,
         View.OnTouchListener {
     @SuppressWarnings("unused")

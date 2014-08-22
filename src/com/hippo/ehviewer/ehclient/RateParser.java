@@ -20,13 +20,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RateParser {
-    
+
     public float mRatingAvg;
     public int mRatingCnt;
-    
-    boolean parser(String pageContext) {
+
+    boolean parser(String body) {
+        if (body == null)
+            return false;
+
         try {
-            JSONObject jsonObject = new JSONObject(pageContext);
+            JSONObject jsonObject = new JSONObject(body);
             mRatingAvg = (float)jsonObject.getDouble("rating_avg");
             mRatingCnt = jsonObject.getInt("rating_cnt");
             return true;

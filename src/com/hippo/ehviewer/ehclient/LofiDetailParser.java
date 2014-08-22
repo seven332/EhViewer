@@ -32,6 +32,9 @@ public class LofiDetailParser {
         Pattern p;
         Matcher m;
 
+        if (body == null)
+            return false;
+
         // Get preview
         p = Pattern.compile("<div class=\"gi\"[^>]+><a[^>]+href=\"([^>\"]+)\"[^>]+><img[^>]+src=\"([^>\"]+)\"[^>]+>");
         m = p.matcher(body);

@@ -23,12 +23,12 @@ import android.animation.TimeInterpolator;
 import android.annotation.TargetApi;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Build;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
-import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
@@ -39,6 +39,8 @@ import com.hippo.ehviewer.util.ViewUtils;
  * Get lots of code from android.graphics.drawable.Ripple
  */
 public class RippleSprite extends Sprite {
+    private static final String TAG = RippleSprite.class.getSimpleName();
+
     private static final TimeInterpolator LINEAR_INTERPOLATOR = new LinearInterpolator();
     private static final TimeInterpolator DECEL_INTERPOLATOR = new LogInterpolator();
 
@@ -110,8 +112,8 @@ public class RippleSprite extends Sprite {
         mOuterRadius = ((float) Math.sqrt(halfWidth * halfWidth
                 + halfHeight * halfHeight));
 
-        mStartingX = mBounds.exactCenterX();
-        mStartingY = mBounds.exactCenterY();
+        //mStartingX = mBounds.exactCenterX();
+        //mStartingY = mBounds.exactCenterY();
         clampStartingPosition();
     }
 
@@ -228,7 +230,6 @@ public class RippleSprite extends Sprite {
     public void setStartPosition(float x, float y) {
         mStartingX = x;
         mStartingY = y;
-
         clampStartingPosition();
     }
 
@@ -242,10 +243,10 @@ public class RippleSprite extends Sprite {
 
         // If keepBound, set position
         if (mKeepBound) {
-            Float x = (Float)mView.getTag(R.id.position_x);
-            Float y = (Float)mView.getTag(R.id.position_y);
-            if (x != null && y != null)
-                setStartPosition(x, y);
+            Object obj = mView.getTag();
+            if (obj != null && obj instanceof PointF) {
+                setStartPosition(((PointF)obj).x, ((PointF)obj).y);
+            }
         }
 
         mOuterOpacity = 0.0F;

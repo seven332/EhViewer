@@ -68,33 +68,6 @@ public final class Utils {
         buffer = null;
     }
 
-    public static final int BITMAP = 0x0;
-    public static final int MOVIE = 0x1;
-
-    public static int getResourcesType(String url) {
-        int type = BITMAP;
-        int index = url.lastIndexOf('.');
-        if (index != -1 && getExtension(url).equals("gif"))
-            type = MOVIE;
-        return type;
-    }
-
-    public static String getExtension(String url) {
-        int index = url.lastIndexOf('.');
-        if (index != -1)
-            return url.substring(index + 1).toLowerCase();
-        else
-            return "png";
-    }
-
-    public static String getName(String fileName) {
-        int index = fileName.lastIndexOf('.');
-        if (index != -1)
-            return fileName.substring(0, index).toLowerCase();
-        else
-            return "png";
-    }
-
     public static boolean isNumber(String str) {
         for (int i = 0; i < str.length(); i++) {
             char ch = str.charAt(i);
@@ -147,15 +120,6 @@ public final class Utils {
         return str;
     }
 
-    public static String getFileForUrl(String url) {
-        String file = null;
-        int index = url.lastIndexOf("/");
-        if (index == -1)
-            return url;
-        else
-            return url.substring(index + 1);
-    }
-
     public static String[] getStrings(SharedPreferences shaper, String key) {
         String str = shaper.getString(key, null);
         if (str == null || str.length() == 0)
@@ -184,26 +148,31 @@ public final class Utils {
     }
 
     /**
-     * Delete dir and it child file and dir
+     * Try to delete file, dir and it's children
      *
      * @param dir
      * The dir to deleted
-     * @throws IOException
      */
-    public static void deleteContents(File dir) throws IOException {
-        File[] files = dir.listFiles();
-        if (files == null) {
-          throw new IOException("not a readable directory: " + dir);
+    public static void deleteFile(File file) {
+        File[] files = file.listFiles();
+        if (files != null) {
+            for (File f : files)
+                deleteFile(f);
         }
-        for (File file : files) {
-          if (file.isDirectory()) {
-            deleteContents(file);
-          }
-          if (!file.delete()) {
-            throw new IOException("failed to delete file: " + file);
-          }
-        }
-      }
+        file.delete();
+    }
+
+    /**
+     * Start a new thread to delete dir
+     */
+    public static void deleteDirInThread(final File file) {
+        new BgThread() {
+            @Override
+            public void run() {
+                deleteFile(file);
+            }
+        }.start();
+    }
 
     @SuppressLint("SimpleDateFormat")
     public static int getDate() {

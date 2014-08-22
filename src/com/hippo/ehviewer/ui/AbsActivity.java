@@ -16,21 +16,22 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 
-public abstract class AbstractPreferenceActivity extends PreferenceActivity
+public abstract class AbsActivity extends Activity
         implements OnOrientationChangedListener {
 
     private static final int[] padding = new int[2];
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Ui.adjustOrientation(this);
@@ -57,7 +58,7 @@ public abstract class AbstractPreferenceActivity extends PreferenceActivity
     }
 
     @Override
-    public void onStart() {
+    protected void onStart() {
       super.onStart();
 
       if (Config.getAllowAnalyics())
@@ -69,10 +70,12 @@ public abstract class AbstractPreferenceActivity extends PreferenceActivity
     }
 
     @Override
-    public void onStop() {
+    protected void onStop() {
       super.onStop();
 
       if (Config.getAllowAnalyics())
           EasyTracker.getInstance(this).activityStop(this);
+
+      ImageCache.getInstance(this).flush();
     }
 }

@@ -24,7 +24,7 @@
         android:id="@+id/thumb"
         android:layout_width="@dimen/list_thumb_width"
         android:layout_height="@dimen/list_thumb_height" />
-    
+
     <TextView
         android:id="@+id/title"
         style="@style/CardTitle"

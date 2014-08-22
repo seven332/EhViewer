@@ -34,6 +34,9 @@ public class EdDetailParser {
         Pattern p;
         Matcher m;
 
+        if (body == null)
+            return false;
+
         if (!body.contains("<"))
             emsg = body;
 

@@ -20,6 +20,8 @@ import java.io.File;
 
 public final class EhUtils {
 
+    public static final String EH_DOWNLOAD_FILENAME = ".ehviewer";
+
     /**
      * Get gallery for read and download
      * @param gid

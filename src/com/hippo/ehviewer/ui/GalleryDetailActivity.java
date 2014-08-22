@@ -97,7 +97,7 @@ import com.hippo.ehviewer.widget.SimpleGridLayout;
 import com.hippo.ehviewer.widget.SuperButton;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 
-public class GalleryDetailActivity extends AbstractActivity
+public class GalleryDetailActivity extends AbsActivity
         implements View.OnClickListener,
         ResponedScrollView.OnScrollStateChangedListener,
         View.OnTouchListener , ViewSwitcher.ViewFactory,
@@ -815,9 +815,7 @@ public class GalleryDetailActivity extends AbstractActivity
         if (v == mDownloadButton) {
             Intent it = new Intent(GalleryDetailActivity.this, DownloadService.class);
             startService(it);
-            mServiceConn.getService().add(String.valueOf(mGalleryInfo.gid), mGalleryInfo.thumb,
-                    EhClient.getDetailUrl(mGalleryInfo.gid, mGalleryInfo.token, 0, Config.getMode()),
-                    mGalleryInfo.title);
+            mServiceConn.getService().add(mGalleryInfo);
             MaterialToast.showToast(R.string.toast_add_download);
         } else if (v == mReadButton) {
             //mData.addRead(mGalleryInfo);

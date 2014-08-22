@@ -43,6 +43,7 @@ public class ExDownloader implements Runnable {
 
     private static final String TAG = ExDownloader.class.getSimpleName();
 
+    private static final int IO_BUFFER_SIZE = 8 * 1024;
     private static final int WORKER_NUM = 3;
 
     private final Context mContext;
@@ -80,14 +81,24 @@ public class ExDownloader implements Runnable {
     private final Object mWorkerLock = new Object();
     private final Object mWorkerGetIndexLock = new Object();
 
+    private volatile boolean mDownloadMode = false;
     private volatile boolean mPauseWork = false;
     private volatile boolean mStopWork = false;
 
     private final File mDir;
     private ListenerForImageSet mLfis;
+    private ListenerForDownload mLfd;
 
-    private static final int IO_BUFFER_SIZE = 8 * 1024;
+    private static final long UPDATE_SPEED_INTERVAL = 500;
+    private volatile long mLastUpdateSpeedTime = 0;
+    private volatile long mAccumulateSize;
+    private volatile HashSet<Integer> mDownloadIndexSet;
+    private volatile Object mDownloadLock = new Object();
 
+    /**
+     * Do no work in UI thread
+     * @author Hippo
+     */
     public interface ListenerForImageSet {
         public void onDownloadStart(int index);
         public void onDownloading(int index, float percent);
@@ -95,8 +106,15 @@ public class ExDownloader implements Runnable {
         public void onDownloadFail(int index);
     }
 
+    /**
+     * Do no work in UI thread
+     * @author Hippo
+     */
     public interface ListenerForDownload {
-        public void onDownloading(int index);
+        public void onStart(int gid);
+        public void onDownload(int gid, int downloadSize, int totalSize);
+        public void onUpdateSpeed(int gid, int speed);
+        public void onDownloadOver(int gid, int legacy);
     }
 
     ExDownloader(int gid, String token, String title, int mode) {
@@ -110,10 +128,19 @@ public class ExDownloader implements Runnable {
         // Make sure dir
         mDir = EhUtils.getGalleryDir(mGid, mTitle);
         Utils.ensureDir(mDir, true);
+        // Create mark file
+        File makeFile = new File(mDir, EhUtils.EH_DOWNLOAD_FILENAME);
+        try {
+            makeFile.createNewFile();
+        } catch (IOException e) {}
     }
 
     public void setListenerForImageSet(ListenerForImageSet l) {
         mLfis = l;
+    }
+
+    public void setListenerDownload(ListenerForDownload l) {
+        mLfd = l;
     }
 
     void occupy() {
@@ -142,7 +169,10 @@ public class ExDownloader implements Runnable {
         synchronized(mWorkerLock) {mWorkerLock.notifyAll();}
     }
 
-    void pause(boolean pause) {
+    boolean pause(boolean pause) {
+        if (mOwnerNum > 1)
+            return false;
+
         mPauseWork = pause;
         if (mPauseWork) {
             // Stop download
@@ -159,6 +189,7 @@ public class ExDownloader implements Runnable {
             ensureStart();
             ensureWorkers();
         }
+        return true;
     }
 
     public int getGid() {
@@ -169,14 +200,33 @@ public class ExDownloader implements Runnable {
         return mToken;
     }
 
-    public void setStartIndex(int startIndex) {
-        if (mImageNum != -1 && startIndex >= mImageNum)
-            mStartIndex = 0;
-        else
-            mStartIndex = startIndex;
+    public void setDownloadMode(boolean downloadMode) {
+        synchronized (mDownloadLock) {
+            if (downloadMode) {
+                setStartIndex(0);
+                if (mDownloadIndexSet == null)
+                    mDownloadIndexSet = new HashSet<Integer>();
+                if (mLfd != null)
+                    mLfd.onStart(mGid);
+            } else {
+                mDownloadIndexSet = null;
+            }
+            mDownloadMode = downloadMode;
+        }
+    }
 
-        ensureStart();
-        ensureWorkers();
+    public void setStartIndex(int startIndex) {
+        if (mDownloadMode) {
+            setTargetIndex(startIndex);
+        } else {
+            if (mImageNum != -1 && startIndex >= mImageNum)
+                mStartIndex = 0;
+            else
+                mStartIndex = startIndex;
+
+            ensureStart();
+            ensureWorkers();
+        }
     }
 
     public void setTargetIndex(int index) {
@@ -190,7 +240,7 @@ public class ExDownloader implements Runnable {
 
     public int getMaxEnsureIndex() {
         if (mImageNum != -1) {
-            return mImageNum;
+            return mImageNum - 1;
         } else {
             return Math.max(Math.max(Math.max(mStartIndex - 1,
                     Math.max(mCurMaxPreviewPage, mPreviewPageNum - 1) * mPreviewPerPage),
@@ -352,18 +402,18 @@ public class ExDownloader implements Runnable {
         }
     }
 
-    private String getDetailInfo(int pageIndex, File ediFile, boolean needPreviewInfo) {
+    private void getDetailInfo(int pageIndex, File ediFile, boolean needPreviewInfo) throws Exception {
         HttpHelper hh = new HttpHelper(mContext);
         EdDetailParser edp = new EdDetailParser();
         String url = EhClient.getDetailUrl(mGid, mToken, pageIndex, mMode);
         hh.setPreviewMode("m");
         String body = hh.get(url);
         if (body == null)
-            return hh.getEMsg() != null ? hh.getEMsg() : "Http error";
+            throw new Exception(hh.getEMsg() != null ? hh.getEMsg() : "Http error");
         if (!edp.parser(body, mMode, needPreviewInfo))
-            return edp.emsg != null ? edp.emsg : "Parser error"; // TODO
+            throw new Exception(edp.emsg != null ? edp.emsg : "Parser error");
         if (edp.previewStartIndex != pageIndex * mPreviewPerPage)
-            return "预测与实际不匹配"; // TODO
+            throw new Exception("预测与实际不匹配");
 
         List<String> pageTokenArray = edp.pageTokenArray;
         if (needPreviewInfo)
@@ -387,11 +437,7 @@ public class ExDownloader implements Runnable {
         for (int i = 0; i < pageTokenArray.size(); i++)
             mPageTokeArray.set(i + edp.previewStartIndex, pageTokenArray.get(i));
 
-        if (!needPreviewInfo)
-            ; // TODO add loader page
-
         writeEdiFile(ediFile);
-        return null;
     }
 
     private void ensureWorkers() {
@@ -406,6 +452,16 @@ public class ExDownloader implements Runnable {
                     mWorkerArray[i] = worker;
                     mControlorArray[i] = new HttpHelper.DownloadControlor();
                 }
+            }
+        }
+    }
+
+    private void updateDownload(int index) {
+        synchronized (mDownloadLock) {
+            if (mDownloadIndexSet != null && !mDownloadIndexSet.contains(index)) {
+                mDownloadIndexSet.add(index);
+                if (mDownloadMode && mLfd != null)
+                    mLfd.onDownload(mGid, mDownloadIndexSet.size(), getMaxEnsureIndex() + 1);
             }
         }
     }
@@ -463,8 +519,17 @@ public class ExDownloader implements Runnable {
                 synchronized(mWorkerGetIndexLock) {mWorkerGetIndexLock.notifyAll();}
                 synchronized(mWorkerLock) {mWorkerLock.notifyAll();}
             }
-        } catch (Throwable e) {
-            // TODO handle error here
+        } catch (Exception e) {
+
+            // TODO get error
+
+            synchronized (mDownloadLock) {
+                if (mDownloadMode && mLfd != null && mDownloadIndexSet != null) {
+                    mLfd.onDownloadOver(mGid,
+                            getMaxEnsureIndex() + 1 - mDownloadIndexSet.size());
+                }
+            }
+
         } finally {
             synchronized (this) {
                 mMainThread = null;
@@ -567,8 +632,12 @@ public class ExDownloader implements Runnable {
                         }
                     }
                 }
-                if (isAlreadyDownloaded)
+
+                if (isAlreadyDownloaded) {
+                    Log.d(TAG, "isAlreadyDownloaded");
+                    updateDownload(targetIndex);
                     continue;
+                }
 
                 mRequstingIndexSet.add(targetIndex);
 
@@ -640,6 +709,17 @@ public class ExDownloader implements Runnable {
                 // Remove from mWorkerArray
                 mWorkerArray[mIndex] = null;
                 mControlorArray[mIndex] = null;
+
+                boolean allNull = true;
+                for (Worker w : mWorkerArray)
+                    if (w != null) {allNull = false; break;}
+
+                synchronized (mDownloadLock) {
+                    if (allNull && mDownloadMode && mLfd != null && mDownloadIndexSet != null) {
+                        mLfd.onDownloadOver(mGid,
+                                getMaxEnsureIndex() + 1 - mDownloadIndexSet.size());
+                    }
+                }
             }
             Log.d(TAG, "ExDownloader Worker over");
         }
@@ -649,10 +729,12 @@ public class ExDownloader implements Runnable {
 
         public int index;
         private float lastPercent;
+        private int lastDownloadSize;
 
         @Override
         public void onDownloadStartConnect() {
             lastPercent = 0.0f;
+            lastDownloadSize = 0;
 
             if (mLfis != null)
                 mLfis.onDownloadStart(index);
@@ -661,6 +743,7 @@ public class ExDownloader implements Runnable {
         @Override
         public void onDownloadStartDownload(int totalSize) {
             lastPercent = 0.0f;
+            lastDownloadSize = 0;
         }
 
         @Override
@@ -675,12 +758,28 @@ public class ExDownloader implements Runnable {
                 if (mLfis != null)
                     mLfis.onDownloading(index, percent);
             }
+
+            // Update download size
+            int accumulateSize = downloadSize - lastDownloadSize;
+            lastDownloadSize = downloadSize;
+            mAccumulateSize += accumulateSize;
+            long curTime = System.currentTimeMillis();
+            long interval = curTime - mLastUpdateSpeedTime;
+            if (interval > UPDATE_SPEED_INTERVAL) {
+                if (mDownloadMode && mLfd != null)
+                    mLfd.onUpdateSpeed(mGid, (int)(mAccumulateSize * 1000 / interval));
+                mLastUpdateSpeedTime = curTime;
+                mAccumulateSize = 0;
+            }
         }
 
         @Override
         public void onDownloadOver(int status, String eMsg) {
-            if (status == HttpHelper.DOWNLOAD_OK_CODE)
+            if (status == HttpHelper.DOWNLOAD_OK_CODE) {
                 mRequstingIndexSet.remove(index);
+
+                updateDownload(index);
+            }
 
             if (mLfis != null && status == HttpHelper.DOWNLOAD_OK_CODE)
                 mLfis.onDownloadComplete(index);
@@ -688,6 +787,7 @@ public class ExDownloader implements Runnable {
                 mLfis.onDownloadFail(index);
 
             lastPercent = 0.0f;
+            lastDownloadSize = 0;
         }
     }
 }

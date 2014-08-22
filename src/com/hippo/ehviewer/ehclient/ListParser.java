@@ -50,6 +50,9 @@ public class ListParser {
         Pattern p;
         Matcher m;
 
+        if (body == null)
+            return 0;
+
         giList = new ArrayList<GalleryInfo>(25);
 
         switch (mode) {

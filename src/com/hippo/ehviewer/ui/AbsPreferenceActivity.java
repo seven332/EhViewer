@@ -18,14 +18,13 @@ package com.hippo.ehviewer.ui;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 
 import com.google.analytics.tracking.android.EasyTracker;
-import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
-import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivity;
 
-public abstract class AbstractSlidingActivity extends SlidingActivity
+public abstract class AbsPreferenceActivity extends PreferenceActivity
         implements OnOrientationChangedListener {
 
     private static final int[] padding = new int[2];
@@ -75,6 +74,5 @@ public abstract class AbstractSlidingActivity extends SlidingActivity
 
       if (Config.getAllowAnalyics())
           EasyTracker.getInstance(this).activityStop(this);
-      ImageCache.getInstance(this).flush();
     }
 }

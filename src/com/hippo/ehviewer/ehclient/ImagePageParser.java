@@ -37,6 +37,9 @@ public class ImagePageParser {
         Pattern p;
         Matcher m;
 
+        if (body == null)
+            return false;
+
         if (mode ==EhClient.MODE_LOFI) {
             p = Pattern.compile("<img id=\"sm\" src=\"([^\"]+)\"[^>]+>");
             m = p.matcher(body);

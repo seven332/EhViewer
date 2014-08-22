@@ -23,14 +23,12 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.MotionEvent;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.gallery.glrenderer.BitmapTexture;
-import com.hippo.ehviewer.gallery.glrenderer.ColorTexture;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLPaint;
 import com.hippo.ehviewer.gallery.glrenderer.MovieTexture;
@@ -47,17 +45,10 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.MaterialToast;
 
-// TODO 双击加载该页
-// TODO 长按从该页开始加载
-
-
-// TODO 手动触屏滑动可能闪烁
 public class GalleryView extends GLView
         implements ImageSet.ImageListener, Runnable {
     @SuppressWarnings("unused")
     private static final String TAG = GalleryView.class.getSimpleName();
-
-    private static final AccelerateDecelerateInterpolator SCROLL_INTERPOLATOR = new AccelerateDecelerateInterpolator();
 
     public static final int INVALID_ID = -1;
 
@@ -113,6 +104,7 @@ public class GalleryView extends GLView
     private static final int TAP_AREA_MASK_COLOR = 0x88000000;
 
     private static final int BACKGROUND_COLOR = 0xff212121;
+    @SuppressWarnings("unused")
     private static final int MASK_COLOR = 0x88000000;
 
     private final GestureRecognizer mGestureRecognizer;
@@ -127,6 +119,7 @@ public class GalleryView extends GLView
     private int scrollXOffset = 0;
     private int scrollYOffset = 0;
     private int stopScrollXOffset = 0;
+    @SuppressWarnings("unused")
     private int stopScrollYOffset = 0;
     private float mScale = 1;
 
@@ -646,7 +639,6 @@ public class GalleryView extends GLView
         if (obj instanceof Integer) {
             int state = (Integer)obj;
             if (state == ImageSet.RESULT_DECODE) {
-                // TODO maybe i should show a decode text
                 showItems[targetIndex] = null;
             } else if (state == ImageSet.RESULT_DOWNLOADING) {
                 showItems[targetIndex] = new Text("正在下载"); // TODO
@@ -937,8 +929,8 @@ public class GalleryView extends GLView
                     return;
                 }
                 image = (Image)showItem;
-                int width = image.getWidth();
-                int height = image.getHeight();
+                int width = image.width;
+                int height = image.height;
                 if (width == -1 || height == -1) {
                     mDoubleTapRunner.cancel();
                     return;
@@ -1066,6 +1058,14 @@ public class GalleryView extends GLView
 
         @Override
         public boolean onDoubleTap(float x, float y) {
+            return false;
+        }
+
+        @Override
+        public boolean onDoubleTapConfirmed(float x, float y) {
+            if (isScale)
+                return true;
+
             ShowItem curShowItem = showItems[CUR_TARGET_INDEX];
             if (curShowItem == null || !(curShowItem instanceof Image))
                 return true;
@@ -1236,6 +1236,9 @@ public class GalleryView extends GLView
 
         @Override
         public boolean onScaleBegin(float focusX, float focusY) {
+            if (mDoubleTapAnimating)
+                return false;
+
             isScale = true;
             return true;
         }
@@ -1380,50 +1383,7 @@ public class GalleryView extends GLView
         }
         public abstract void draw(GLCanvas canvas, int xOffset, int yOffset);
         public abstract void recycle();
-
-        public int getWidth() {
-            return width;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public void getShowRect(Rect rect) {
-            rect.left = mRect.left;
-            rect.top = mRect.top;
-            rect.right = mRect.right;
-            rect.bottom = mRect.bottom;
-        }
-
-        public void setShowRect(Rect rect) {
-            mRect.left = rect.left;
-            mRect.top = rect.top;
-            mRect.right = rect.right;
-            mRect.bottom = rect.bottom;
-        }
     }
-
-    private class EmptyItem extends ShowItem{
-
-        private ColorTexture mTexture;
-
-        public EmptyItem() {
-            mTexture = new ColorTexture(BACKGROUND_COLOR);
-        }
-
-        @Override
-        public void recycle() {
-            mTexture = null;
-        }
-
-        @Override
-        public void draw(GLCanvas canvas, int xOffset, int yOffset) {
-            if (mTexture != null)
-                mTexture.draw(canvas, xOffset, yOffset);
-        }
-    }
-
 
     private abstract class Image extends ShowItem{
         private UploadedTexture mTexture;

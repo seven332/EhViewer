@@ -31,7 +31,6 @@ import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.ExDownloaderManager;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
-import com.hippo.ehviewer.util.Download;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.MaterialToast;
@@ -64,7 +63,6 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         Ui.init(this);
         Crash.init(this);
         EhClient.createInstance(this);
-        Download.init(this);
         Favorite.init(this);
         Data.createInstance(this);
         ExDownloaderManager.createInstance();

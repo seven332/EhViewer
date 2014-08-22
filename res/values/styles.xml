@@ -106,7 +106,7 @@
         <item name="android:maxHeight">16dip</item>
     </style>
 
-        <style name="ProgressBar.Large">
+    <style name="ProgressBar.Large">
         <item name="android:indeterminateDrawable">@drawable/progress_large</item>
         <item name="android:minWidth">76dip</item>
         <item name="android:maxWidth">76dip</item>
@@ -172,7 +172,7 @@
 
     <style name="TextAppearance.SearchCategory">
         <item name="@android:textColor">@color/primary_text_light</item>
-        <item name="@android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_little_large</item>
         <item name="@android:singleLine">true</item>
     </style>
 
@@ -188,6 +188,18 @@
         <item name="@android:textSize">@dimen/text_little_large</item>
         <item name="@android:textStyle">normal</item>
         <item name="@android:fontFamily">sans-serif-condensed</item>
+    </style>
+
+    <style name="TextAppearance.EmbedButton">
+        <item name="@android:textSize">@dimen/text_large</item>
+        <item name="@android:textStyle">bold</item>
+        <item name="@android:singleLine">true</item>
+    </style>
+
+    <style name="EmbedButton">
+        <item name="@android:textAppearance">@style/TextAppearance.EmbedButton</item>
+        <item name="@android:minHeight">48dp</item>
+        <item name="@android:minWidth">32dp</item>
     </style>
 
 </resources>

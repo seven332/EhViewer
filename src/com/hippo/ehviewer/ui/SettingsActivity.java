@@ -67,7 +67,7 @@ import com.hippo.ehviewer.widget.FileExplorerView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 
-public class SettingsActivity extends AbstractPreferenceActivity {
+public class SettingsActivity extends AbsPreferenceActivity {
     @SuppressWarnings("unused")
     private static String TAG = SettingsActivity.class.getSimpleName();
 

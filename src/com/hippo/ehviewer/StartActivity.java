@@ -39,6 +39,7 @@ import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 
 public class StartActivity extends Activity {
+    private static final String TAG = StartActivity.class.getSimpleName();
 
     private static final int CHECK_WARING = 0;
     private static final int CHECK_ANALYTICS = 1;
@@ -183,7 +184,6 @@ public class StartActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         View wellcome = new View(this);
         wellcome.setBackgroundDrawable(getResources().getDrawable(R.drawable.welcome));
         setContentView(wellcome);

@@ -121,7 +121,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
  *
  * @author Hippo
  */
-public class GalleryListActivity extends AbstractGalleryActivity
+public class GalleryListActivity extends AbsGalleryActivity
         implements View.OnClickListener {
 
     @SuppressWarnings("unused")
@@ -543,8 +543,7 @@ public class GalleryListActivity extends AbstractGalleryActivity
                             gi = getGalleryInfo(longClickItemIndex);
                             Intent it = new Intent(GalleryListActivity.this, DownloadService.class);
                             startService(it);
-                            mServiceConn.getService().add(String.valueOf(gi.gid), gi.thumb,
-                                    mClient.getDetailUrl(gi.gid, gi.token), gi.title);
+                            mServiceConn.getService().add(gi);
                             MaterialToast.showToast(R.string.toast_add_download);
                             break;
                         default:
@@ -1060,9 +1059,8 @@ public class GalleryListActivity extends AbstractGalleryActivity
                     break;
 
                 case 5: // Download
-                    // TODO Download Activity
                     intent = new Intent(GalleryListActivity.this,
-                            GalleryActivity.class);
+                            DownloadActivity.class);
                     startActivity(intent);
                     break;
 
@@ -1143,7 +1141,6 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 Intent intent = new Intent(GalleryListActivity.this,
                         GalleryDetailActivity.class);
                 GalleryInfo gi = getGalleryInfo(position);
-                intent.putExtra("url", mClient.getDetailUrl(gi.gid, gi.token));
                 intent.putExtra(GalleryDetailActivity.KEY_G_INFO, gi);
                 startActivity(intent);
             }
@@ -1412,7 +1409,6 @@ public class GalleryListActivity extends AbstractGalleryActivity
                 e.printStackTrace();
             }
         }*/
-        mData.deleteAllReads();
         mWindowsAnimate.free();
     }
 

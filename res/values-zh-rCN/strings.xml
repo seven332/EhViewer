@@ -362,6 +362,9 @@
     <string name="rating0">…</string>
 
     <!-- Util -->
+    <string name="attention">注意</string>
+    <string name="start">开始</string>
+    <string name="stop">停止</string>
     <string name="invalid_input">无效的输入</string>
     <string name="never_show">不再显示</string>
     <string name="retry">重试</string>
@@ -393,6 +396,7 @@
     <string name="some_page">第 %d 页</string>
     <string name="_default">默认</string>
     <string name="delete">删除</string>
+    <string name="delete2">删除（包括图片）</string>
     <string name="move">移动</string>
     <string name="list">列表</string>
     <string name="homepage">首页</string>

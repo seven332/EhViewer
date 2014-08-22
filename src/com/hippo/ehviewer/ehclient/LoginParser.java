@@ -27,6 +27,9 @@ public class LoginParser {
         Pattern p;
         Matcher m;
 
+        if (body == null)
+            return false;
+
         p = Pattern.compile("<p>You are now logged in as: (.+?)<br />");
         m = p.matcher(body);
         if (m.find()) {

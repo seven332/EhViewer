@@ -25,8 +25,7 @@
         android:layout_height="fill_parent"
         android:clipToPadding="false"
         android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
-        android:fitsSystemWindows="true" >
+        android:dividerHeight="0dp" >
     </ListView>
 
 </LinearLayout>

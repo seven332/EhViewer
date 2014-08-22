@@ -38,11 +38,11 @@ import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RefreshTextView;
 
-public abstract class AbstractGalleryActivity extends AbstractSlidingActivity
+public abstract class AbsGalleryActivity extends AbsSlidingActivity
         implements PullViewGroup.OnFooterRefreshListener,
         PullViewGroup.OnRefreshListener {
     @SuppressWarnings("unused")
-    private static final String TAG = AbstractGalleryActivity.class.getSimpleName();
+    private static final String TAG = AbsGalleryActivity.class.getSimpleName();
 
     private static final int MODE_REFRESH = 0x0;
     private static final int MODE_NEXT_PAGE = 0x1;

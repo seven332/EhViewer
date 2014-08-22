@@ -42,7 +42,7 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 
-public class GalleryActivity extends AbstractActivity
+public class GalleryActivity extends AbsActivity
         implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener {
     @SuppressWarnings("unused")
     private final static String TAG = GalleryActivity.class.getSimpleName();
@@ -232,7 +232,7 @@ public class GalleryActivity extends AbstractActivity
             if (Config.getGalleryFirst()) {
                 Config.setGalleryFirst(false);
                 new DialogBuilder(this).setTitle("提示")
-                        .setMessage("长按屏幕，可使下载从当前页面开始") // TODO
+                        .setMessage("长按屏幕，可使下载从当前页面开始。若该项正在下载，则仅优先加载当前页面。") // TODO
                         .setSimpleNegativeButton().create().show();
             }
         }
