@@ -20,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -131,7 +132,7 @@ public class ExDownloader implements Runnable {
         // Create mark file
         File makeFile = new File(mDir, EhUtils.EH_DOWNLOAD_FILENAME);
         try {
-            makeFile.createNewFile();
+            new FileOutputStream(makeFile).close();
         } catch (IOException e) {}
     }
 

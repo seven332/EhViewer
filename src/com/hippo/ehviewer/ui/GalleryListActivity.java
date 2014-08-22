@@ -1213,14 +1213,15 @@ public class GalleryListActivity extends AbsGalleryActivity
                 }
             });
             AppHandler.getInstance().sendMessageDelayed(m, 500L);
+        }
 
-            // Show translate warning
-            String country = Locale.getDefault().getCountry();
-            if (country.equals("HK") || country.equals("TW")) {
-                new DialogBuilder(this).setTitle("注意")
-                .setMessage("正體中文的翻譯由 OpenCC 自動完成，若有任何錯誤或不妥之處歡迎指出。")
-                .setSimpleNegativeButton().create().show();
-            }
+        String country = Locale.getDefault().getCountry();
+        if (Config.getTraditionalChineseWarning() &&
+                (country.equals("HK") || country.equals("TW"))) {
+            Config.setTraditionalChineseWarning(false);
+            new DialogBuilder(this).setTitle("注意")
+                    .setMessage("正體中文的翻譯由 OpenCC 自動完成，若有任何錯誤或不妥之處歡迎指出。")
+                    .setSimpleNegativeButton().create().show();
         }
     }
 

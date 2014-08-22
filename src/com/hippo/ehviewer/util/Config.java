@@ -305,7 +305,18 @@ public class Config {
         return mConfigPre.getBoolean(KEY_SHOW_POPULAR_UPDATE_TIME, DEFAULT_SHOW_POPULAR_UPDATE_TIME);
     }
 
+    /****** Translate ******/
+    private static final String KEY_TRADITIONAL_CHINESE_WARNING = "traditional_chinese_warning";
+    private static final boolean DEFAULT_TRADITIONAL_CHINESE_WARNING = true;
 
+    public static boolean getTraditionalChineseWarning() {
+        return mConfigPre.getBoolean(
+                KEY_TRADITIONAL_CHINESE_WARNING, DEFAULT_TRADITIONAL_CHINESE_WARNING);
+    }
+
+    public static void setTraditionalChineseWarning(boolean traditional_chinese_warning) {
+        mConfigPre.edit().putBoolean(KEY_TRADITIONAL_CHINESE_WARNING, traditional_chinese_warning).apply();
+    }
 
     /****** Display ******/
 

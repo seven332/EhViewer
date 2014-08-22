@@ -17,6 +17,7 @@
 package com.hippo.ehviewer;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.text.DateFormat;
@@ -78,7 +79,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
             nomedia.delete();
         } else {
             try {
-                nomedia.createNewFile();
+                new FileOutputStream(nomedia).close();
             } catch (IOException e) {}
         }
     }
