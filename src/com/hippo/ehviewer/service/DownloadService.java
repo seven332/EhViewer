@@ -50,6 +50,8 @@ public class DownloadService extends Service
     private volatile ExDownloader mCurExDownloader = null;
     private ServiceBinder mBinder = null;
     private NotificationManager mNotifyManager;
+    private Notification.Builder mBuilder;
+    private String mSpeedStr = null;
 
     @Override
     public void onCreate() {
@@ -62,15 +64,6 @@ public class DownloadService extends Service
         mBinder = new ServiceBinder();
         mNotifyManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);
-    }
-
-    private void setNotification(Notification.Builder builder) {
-
-        builder.setSmallIcon(R.drawable.ic_launcher);
-
-        Intent intent = new Intent(DownloadService.this,DownloadActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendingIntent);
     }
 
     @Override
@@ -178,7 +171,17 @@ public class DownloadService extends Service
         }
     }
 
-    private String mSpeedStr = null;
+    private void ensureNotification() {
+        if (mBuilder != null)
+            return;
+
+        mBuilder = new Notification.Builder(mContext);
+        mBuilder.setSmallIcon(R.drawable.ic_launcher);
+        Intent intent = new Intent(DownloadService.this,DownloadActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(pendingIntent);
+        mBuilder.setOngoing(true).setAutoCancel(false);
+    }
 
     @Override
     @SuppressWarnings("deprecation")
@@ -189,61 +192,68 @@ public class DownloadService extends Service
         mCurDownloadInfo.download = -1;
         mCurDownloadInfo.total = -1;
 
-        Notification.Builder builder = new Notification.Builder(mContext);
-        setNotification(builder);
-        builder.setContentTitle(getString(R.string.start_download)  + " " + gid)
+        ensureNotification();
+
+        mBuilder.setContentTitle(getString(R.string.start_download)  + " " + gid)
                 .setContentText(null)
-                .setProgress(0, 0, true).setOngoing(true).setAutoCancel(false);
-        mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, builder.getNotification());
+                .setProgress(0, 0, true);
+        mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.getNotification());
         mNotifyManager.cancel(gid);
 
         notifyUpdate();
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onDownload(int gid, int downloadSize, int totalSize) {
         if (mCurDownloadInfo == null)
             return;
 
         mCurDownloadInfo.download = downloadSize;
         mCurDownloadInfo.total = totalSize;
-        Notification.Builder builder = new Notification.Builder(mContext);
-        setNotification(builder);
-        builder.setContentTitle(getString(R.string.downloading)  + " " + gid)
+
+        ensureNotification();
+
+        mBuilder.setContentTitle(getString(R.string.downloading)  + " " + gid)
                 .setContentText(mSpeedStr)
-                .setProgress(totalSize, downloadSize, false).setOngoing(true).setAutoCancel(false);
-        mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, builder.getNotification());
+                .setProgress(totalSize, downloadSize, false);
+        mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.getNotification());
 
         notifyUpdate();
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onUpdateSpeed(int gid, int speed) {
         if (mCurDownloadInfo == null)
             return;
 
         mCurDownloadInfo.speed = speed;
         mSpeedStr = Utils.sizeToString(speed) + "/S";
-        Notification.Builder builder = new Notification.Builder(mContext);
-        setNotification(builder);
-        builder.setContentTitle(getString(R.string.downloading)  + " " + gid)
+
+        ensureNotification();
+
+        mBuilder.setContentTitle(getString(R.string.downloading)  + " " + gid)
                 .setContentText(mSpeedStr)
                 .setProgress(mCurDownloadInfo.total, mCurDownloadInfo.download,
-                        mCurDownloadInfo.total == -1 ? true :false)
-                .setOngoing(true).setAutoCancel(false);
-        mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, builder.getNotification());
+                        mCurDownloadInfo.total == -1 ? true :false);
+        mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.getNotification());
 
         notifyUpdate();
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onDownloadOver(int gid, int legacy) {
         if (mCurDownloadInfo == null)
             return;
 
         mCurDownloadInfo.legacy = legacy;
         Notification.Builder builder = new Notification.Builder(mContext);
-        setNotification(builder);
+        builder.setSmallIcon(R.drawable.ic_launcher);
+        Intent intent = new Intent(DownloadService.this,DownloadActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pendingIntent);
         builder.setContentTitle(getString(R.string.download_over)  + " " + gid)
                 .setContentText(legacy == 0 ? getString(R.string.done) :
                     String.format(getString(R.string.legacy_pages), legacy))
