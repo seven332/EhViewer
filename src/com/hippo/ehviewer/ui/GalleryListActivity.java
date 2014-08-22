@@ -233,11 +233,11 @@ public class GalleryListActivity extends AbsGalleryActivity
                                             setUserPanel();
                                             break;
                                         case EhClient.NO_AVATAR:
-                                            MaterialToast.showToast("无头像"); // TODO
+                                            MaterialToast.showToast(R.string.no_avatar);
                                             break;
                                         case EhClient.GET_AVATAR_ERROR:
                                         default:
-                                            MaterialToast.showToast("获取头像失败"); // TODO
+                                            MaterialToast.showToast(R.string.get_avatar_error);
                                             break;
                                         }
                                     }
@@ -383,7 +383,7 @@ public class GalleryListActivity extends AbsGalleryActivity
                         String search = lus.getSearch();
                         switch(lus.getMode()) {
                         case ListUrls.MODE_IMAGE_SEARCH:
-                            mTitle = "图片搜索"; // TODO
+                            mTitle = getString(R.string.image_search);
                             break;
                         case ListUrls.MODE_UPLOADER:
                             mTitle = search;
@@ -565,7 +565,7 @@ public class GalleryListActivity extends AbsGalleryActivity
         TextView tv = (TextView)view.findViewById(R.id.list_jump_sum);
         // For lofi, can not get page num, so use Integer.MAX_VALUE
         tv.setText(String.format(getString(R.string.jump_summary), getCurPage() + 1,
-                getPageNum() == Integer.MAX_VALUE ? "未知" : String.valueOf(getPageNum()))); // TODO
+                getPageNum() == Integer.MAX_VALUE ? getString(R.string._unknown) : String.valueOf(getPageNum())));
         tv = (TextView)view.findViewById(R.id.list_jump_to);
         tv.setText(R.string.jump_to);
         final EditText et = (EditText)view.findViewById(R.id.list_jump_edit);
@@ -859,8 +859,8 @@ public class GalleryListActivity extends AbsGalleryActivity
                 lus = new ListUrls();
                 lus.setSearchImage(intent.getStringExtra(KEY_IMAGE_KEY),
                         intent.getStringExtra(KEY_IMAGE_URL),
-                        EhClient.IMAGE_SEARCH_USE_SIMILARITY_SCAN | EhClient.IMAGE_SEARCH_SHOW_EXPUNGED); // TODO
-                mTitle = "类似内容"; // TODO
+                        EhClient.IMAGE_SEARCH_USE_SIMILARITY_SCAN);
+                mTitle = getString(R.string.similar_content); // TODO
                 setTitle(mTitle);
                 refresh();
                 break;

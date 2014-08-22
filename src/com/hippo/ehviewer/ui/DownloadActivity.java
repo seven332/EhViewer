@@ -149,7 +149,6 @@ public class DownloadActivity extends AbsActivity implements AbsListView.OnItemC
             return position;
         }
 
-        // TODO chinese string
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final DownloadInfo di = mDownloads.get(position);
@@ -225,7 +224,7 @@ public class DownloadActivity extends AbsActivity implements AbsListView.OnItemC
             switch (di.state) {
             case DownloadInfo.STATE_NONE:
                 pb.setVisibility(View.INVISIBLE);
-                leftText.setText("未启动");
+                leftText.setText(R.string.not_started);
                 rightText.setVisibility(View.GONE);
 
                 action.setText(getString(R.string.start));
@@ -234,7 +233,7 @@ public class DownloadActivity extends AbsActivity implements AbsListView.OnItemC
 
             case DownloadInfo.STATE_WAIT:
                 pb.setVisibility(View.INVISIBLE);
-                leftText.setText("等待中");
+                leftText.setText(R.string.waiting);
                 rightText.setVisibility(View.GONE);
 
                 action.setText(getString(R.string.stop));
@@ -263,9 +262,9 @@ public class DownloadActivity extends AbsActivity implements AbsListView.OnItemC
             case DownloadInfo.STATE_FINISH:
                 pb.setVisibility(View.INVISIBLE);
                 if (di.legacy == 0)
-                    leftText.setText("已完成");
+                    leftText.setText(R.string.done);
                 else
-                    leftText.setText(di.legacy + " 页未下载");
+                    leftText.setText(String.format(getApplication().getString(R.string.legacy_pages), di.legacy));
                 rightText.setVisibility(View.GONE);
 
                 action.setText(getString(R.string.start));

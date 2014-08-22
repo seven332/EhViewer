@@ -28,6 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Process;
@@ -76,24 +77,24 @@ public class EhClient {
     public static final int GET_AVATAR_ERROR = 0x1;
     public static final int NO_AVATAR = 0x2;
 
-    private final AppContext mAppContext;
+    private final Context mContext;
     private final Handler mHandler;
     private final EhInfo mInfo;
 
     private static EhClient sInstance;
 
-    public static void createInstance(AppContext appContext) {
-        sInstance = new EhClient(appContext);
+    public static void createInstance(Context context) {
+        sInstance = new EhClient(context);
     }
 
     public static EhClient getInstance() {
         return sInstance;
     }
 
-    private EhClient(AppContext appContext) {
-        mAppContext = appContext;
+    private EhClient(Context context) {
+        mContext = context;
         mHandler = AppHandler.getInstance();
-        mInfo = EhInfo.getInstance(appContext);
+        mInfo = EhInfo.getInstance(context);
     }
 
     public static String getUrlHeader() {
@@ -305,7 +306,7 @@ public class EhClient {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                final HttpHelper hh = new HttpHelper(mAppContext);
+                final HttpHelper hh = new HttpHelper(mContext);
                 String body = hh.postForm(LOGIN_URL, new String[][] {
                         new String[] { "UserName", username },
                         new String[] { "PassWord", password },
@@ -342,7 +343,7 @@ public class EhClient {
                 Pattern p;
                 Matcher m;
                 // Get user profile url
-                HttpHelper hp = new HttpHelper(mAppContext);
+                HttpHelper hp = new HttpHelper(mContext);
                 body = hp.get(FORUMS_URL);
                 if (body == null) {
                     listener.onGetAvatar(GET_AVATAR_ERROR);
@@ -436,7 +437,7 @@ public class EhClient {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpHelper hp = new HttpHelper(mAppContext);
+                HttpHelper hp = new HttpHelper(mContext);
                 String body = hp.get(url);
                 GetGListResponder responder;
                 if (body == null) {
@@ -456,11 +457,12 @@ public class EhClient {
                         break;
                     case ListParser.INDEX_ERROR:
                         responder = new GetGListResponder(listener, checkFlag,
-                                "index error"); // TODO
+                                mContext.getString(R.string.em_index_error));
                         break;
                     case ListParser.PARSER_ERROR:
                     default:
-                        responder = new GetGListResponder(listener, checkFlag, "parser error"); // TODO
+                        responder = new GetGListResponder(listener, checkFlag,
+                                mContext.getString(R.string.em_parser_error));
                         break;
                     }
                 }
@@ -550,12 +552,12 @@ public class EhClient {
             final int searchMode, final int apiMode, final Object checkFlag,
             final OnGetGListFromImageSearchListener listener) {
         if (file == null && bitmap == null)
-            listener.onFailure(checkFlag, "All null"); // TODO
+            listener.onFailure(checkFlag, mContext.getString(R.string.invalid_input));
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpHelper hh = new HttpHelper(mAppContext);
+                HttpHelper hh = new HttpHelper(mContext);
 
                 List<HttpHelper.FormData> dataList = new LinkedList<HttpHelper.FormData>();
                 HttpHelper.FormData data;
@@ -615,11 +617,12 @@ public class EhClient {
                             break;
                         case ListParser.INDEX_ERROR:
                             responder = new GetGListFromImageSearchResponder(listener, checkFlag,
-                                    "index error"); // TODO
+                                    mContext.getString(R.string.em_index_error));
                             break;
                         case ListParser.PARSER_ERROR:
                         default:
-                            responder = new GetGListFromImageSearchResponder(listener, checkFlag, "parser error"); // TODO
+                            responder = new GetGListFromImageSearchResponder(listener, checkFlag,
+                                    mContext.getString(R.string.em_parser_error));
                             break;
                         }
                     }
@@ -671,7 +674,7 @@ public class EhClient {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpHelper hh = new HttpHelper(mAppContext);
+                HttpHelper hh = new HttpHelper(mContext);
                 String body = hh.get(url);
                 GetGDetaiResponder responder;
                 if (body == null) {
@@ -718,7 +721,7 @@ public class EhClient {
                         responder = new GetGDetaiResponder(listener, parser.eMesg);
                     } else {
                         responder = new GetGDetaiResponder(listener,
-                                mAppContext.getString(R.string.em_parser_error));
+                                mContext.getString(R.string.em_parser_error));
                     }
                 }
                 mHandler.post(responder);
@@ -771,7 +774,7 @@ public class EhClient {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpHelper hh = new HttpHelper(mAppContext);
+                HttpHelper hh = new HttpHelper(mContext);
                 String body = hh.get(url);
                 GetLGDetaiResponder responder;
                 if (body == null) {
@@ -786,7 +789,7 @@ public class EhClient {
                         responder = new GetLGDetaiResponder(listener, lgd, parser.isLastPage);
                     } else {
                         responder = new GetLGDetaiResponder(listener,
-                                mAppContext.getString(R.string.em_parser_error));
+                                mContext.getString(R.string.em_parser_error));
                     }
                 }
                 mHandler.post(responder);
@@ -845,7 +848,7 @@ public class EhClient {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpHelper hh = new HttpHelper(mAppContext);
+                HttpHelper hh = new HttpHelper(mContext);
                 String body = hh.get(url);
                 GetPreviewListResponder responder;
                 if (body != null) {
@@ -884,7 +887,7 @@ public class EhClient {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpHelper hp = new HttpHelper(mAppContext);
+                HttpHelper hp = new HttpHelper(mContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
                     public void onSuccess(Object obj) {
@@ -894,13 +897,13 @@ public class EhClient {
                                 DetailParser.COMMENT) {
                             listener.onSuccess(parser.comments);
                         } else {
-                            listener.onFailure("parser error");   // TODO
+                            listener.onFailure( mContext.getString(R.string.em_parser_error));
                         }
                     }
 
                     @Override
                     public void onFailure(String eMsg) {
-                        listener.onFailure(eMsg);   // TODO
+                        listener.onFailure(eMsg);
                     }
                 });
                 hp.postForm(detailUrl, new String[][]{
@@ -909,8 +912,6 @@ public class EhClient {
             }
         }).start();
     }
-
-    // TODO
 
     /********** Use E-hentai API ************/
 
@@ -938,7 +939,7 @@ public class EhClient {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpHelper hp = new HttpHelper(mAppContext);
+                HttpHelper hp = new HttpHelper(mContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
                     public void onSuccess(Object obj) {
@@ -947,7 +948,7 @@ public class EhClient {
                         if (parser.parser(body)) {
                             listener.onSuccess(parser.mRatingAvg, parser.mRatingCnt);
                         } else {
-                            listener.onFailure("parser error");   // TODO
+                            listener.onFailure(mContext.getString(R.string.em_parser_error));
                         }
                     }
                     @Override
@@ -989,7 +990,7 @@ public class EhClient {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpHelper hp = new HttpHelper(mAppContext);
+                HttpHelper hp = new HttpHelper(mContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
                     public void onSuccess(Object obj) {
@@ -998,7 +999,7 @@ public class EhClient {
                         if (parser.parser(body)) {
                             listener.onSuccess(parser.mTagPane);
                         } else {
-                            listener.onFailure("parser error");   // TODO
+                            listener.onFailure( mContext.getString(R.string.em_parser_error));
                         }
                     }
                     @Override
@@ -1051,7 +1052,7 @@ public class EhClient {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpHelper hp = new HttpHelper(mAppContext);
+                HttpHelper hp = new HttpHelper(mContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
                     public void onSuccess(Object obj) {
@@ -1060,9 +1061,9 @@ public class EhClient {
                         if (parser.parser(body)) {
                             listener.onSuccess();
                             // Analytics
-                            Analytics.addToFavoriteGallery(mAppContext, gid, token);
+                            Analytics.addToFavoriteGallery(mContext, gid, token);
                         } else {
-                            listener.onFailure("parser error");   // TODO
+                            listener.onFailure( mContext.getString(R.string.em_parser_error));
                         }
                     }
                     @Override
@@ -1176,7 +1177,7 @@ public class EhClient {
             public void run() {
                 int i;
 
-                HttpHelper hp = new HttpHelper(mAppContext);
+                HttpHelper hp = new HttpHelper(mContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
                     public void onSuccess(Object obj) {
@@ -1188,7 +1189,7 @@ public class EhClient {
                         } else if (re == ListParser.NOT_FOUND) {
                             listener.onSuccess(parser.giList, parser.pageNum);
                         } else if (re == ListParser.PARSER_ERROR) {
-                            listener.onFailure("parser error"); // TODO
+                            listener.onFailure( mContext.getString(R.string.em_parser_error));
                         }
                     }
                     @Override
@@ -1232,7 +1233,7 @@ public class EhClient {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpHelper hp = new HttpHelper(mAppContext);
+                HttpHelper hp = new HttpHelper(mContext);
                 hp.setOnRespondListener(new HttpHelper.OnRespondListener() {
                     @Override
                     public void onSuccess(Object obj) {

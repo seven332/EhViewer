@@ -231,8 +231,8 @@ public class GalleryActivity extends AbsActivity
             // Show first tip
             if (Config.getGalleryFirst()) {
                 Config.setGalleryFirst(false);
-                new DialogBuilder(this).setTitle("提示")
-                        .setMessage("长按屏幕，可使下载从当前页面开始。若该项正在下载，则仅优先加载当前页面。") // TODO
+                new DialogBuilder(this).setTitle(R.string.tip)
+                        .setMessage(R.string.gallery_tip)
                         .setSimpleNegativeButton().create().show();
             }
         }

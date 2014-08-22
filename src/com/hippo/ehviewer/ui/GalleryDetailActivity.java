@@ -517,8 +517,8 @@ public class GalleryDetailActivity extends AbsActivity
     }
 
     private String getAllRatingText(float rating, int people) {
-        StringBuilder sb = new StringBuilder().append("大家觉得").append(" ") // TODO
-                .append(getRatingText(rating))
+        StringBuilder sb = new StringBuilder()
+                .append(String.format(getString(R.string.we_feel), getRatingText(rating)))
                 .append(" (").append(rating);
         if (people != -1)
             sb.append(", ").append(people).append(")").toString();
@@ -627,10 +627,13 @@ public class GalleryDetailActivity extends AbsActivity
         mDetailMore.setVisibility(View.VISIBLE);
         if (mGalleryInfo instanceof GalleryDetail) {
             GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
-            ((TextView)mDetailMore.findViewById(R.id.language)).setText("语言: " + galleryDetail.language); // TODO
+            ((TextView)mDetailMore.findViewById(R.id.language)).setText(
+                    getString(R.string.language) + ": " + galleryDetail.language);
             ((TextView)mDetailMore.findViewById(R.id.posted)).setText(galleryDetail.posted);
-            ((TextView)mDetailMore.findViewById(R.id.pages)).setText("页面: " + String.valueOf(galleryDetail.pages));
-            ((TextView)mDetailMore.findViewById(R.id.size)).setText("大小: " + galleryDetail.size);
+            ((TextView)mDetailMore.findViewById(R.id.pages)).setText(
+                    getString(R.string.pages) + ": " + String.valueOf(galleryDetail.pages));
+            ((TextView)mDetailMore.findViewById(R.id.size)).setText(
+                    getString(R.string.size) + ": " + galleryDetail.size);
             StringBuilder sb = new StringBuilder();
             sb.append("gid: ").append(galleryDetail.gid).append("\n\n")
                     .append("token: ").append(galleryDetail.token).append("\n\n")
@@ -704,11 +707,11 @@ public class GalleryDetailActivity extends AbsActivity
 
             int commentNum = galleryDetail.comments.size();
             if (commentNum == 0)
-                mCommentMoreText.setText("暂无评论，就等你了");
+                mCommentMoreText.setText(R.string.no_comment);
             else if (commentNum <= 2)
-                mCommentMoreText.setText("没有更多评论");
+                mCommentMoreText.setText(R.string.no_more_comment);
             else
-                mCommentMoreText.setText("点击查看更多");
+                mCommentMoreText.setText(R.string.click_more);
             int maxShown = Math.min(2, commentNum);
             for (int i = 0; i < maxShown; i++) {
                 mDetailComment.addView(getCommentView(null, galleryDetail.comments.get(i), true),
@@ -866,14 +869,14 @@ public class GalleryDetailActivity extends AbsActivity
                     }
                     @Override
                     public void onFailure(String eMsg) {
-                        mRatingText.setText("评分失败"); // TODO
+                        mRatingText.setText(getString(R.string.rate_failed));
                         MaterialToast.showToast(eMsg);
                     }
                 });
-                mRatingText.setText("感谢评分"); // TODO
+                mRatingText.setText(getString(R.string.rate_succeeded));
                 mRating.setEnableRate(false);
             } else {
-                mRatingText.setText("请理智评分"); // TODO
+                mRatingText.setText(getString(R.string.rate_sensibly));
                 mRating.setEnableRate(true);
             }
 

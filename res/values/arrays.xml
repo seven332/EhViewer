@@ -41,7 +41,7 @@
 
     <string-array name="comment_long_click">
         <item>@android:string/copy</item>
-        <item>@string/uploader_others</item>
+        <item>@string/gallery_of_he</item>
     </string-array>
 
     <string-array name="page_scaling_entries">

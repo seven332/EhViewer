@@ -30,7 +30,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 import com.hippo.ehviewer.util.Constants;
-import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.ViewUtils;
 
 public final class WindowsAnimate
@@ -77,9 +76,6 @@ public final class WindowsAnimate
     @Override
     @SuppressLint("ClickableViewAccessibility")
     public boolean onTouch(View v, MotionEvent event) {
-
-        Log.d(TAG, "onTouch");
-
         Object obj = v.getTag();
         if (obj == null) {
             PointF p = new PointF();

@@ -16,9 +16,6 @@
 -->
 <resources>
 
-    <string name="drawer_open">打开侧边栏</string>
-    <string name="drawer_close">关闭侧边栏</string>
-
     <!-- Warning -->
     <string name="dailog_waring_title">警告</string>
     <string name="dailog_waring_plain">该应用内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。该应用作者不会对由该应用造成的后果负责。您是否愿意继续使用该应用？</string>
@@ -30,22 +27,11 @@
     <string name="dailog_analyics_plain">您是否愿意将使用情况发送给开发者？这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/cn.html\nGoogle隐私权和条款：http://www.google.com/intl/zh-CN/policies\n\n您以后可以在设置中修改选择</string>
 
     <!-- Network -->
-    <string name="dailog_check_network">检查网络</string>
     <string name="dailog_network_error_yes">我不在意</string>
     <string name="dailog_network_error_no">成</string>
 
     <!-- Exit -->
     <string name="exit_tip">再按一次退出</string>
-
-    <!-- Login -->
-    <string name="check_login">检查登陆状态</string>
-    <string name="toast_login_succeeded">登陆成功</string>
-    <string name="toast_login_failed">登陆失败</string>
-    <string name="dialog_title_login_or_not">是否登陆</string>
-    <string name="dialog_messgae_login_or_not">登陆以后好处都有啥？</string>
-    <string name="not_login">不登陆</string>
-    <string name="toast_logout_succeeded">退出成功</string>
-    <string name="toast_logout_failed">退出失败</string>
 
     <!-- Mode -->
     <string name="content">内容</string>
@@ -63,8 +49,6 @@
     <string name="checkbox_sdt2">搜索差评标签</string>
     <string name="checkbox_sh">搜索被删除的本子</string>
     <string name="checkbox_sr">最低评分：</string>
-    <string name="toast_normal_mode">切换至普通搜索模式</string>
-    <string name="toast_tag_mode">切换至标签搜索模式</string>
 
     <!-- Jump -->
     <string name="jump_summary" formatted="false">第 %d 页，共 %s 页</string>
@@ -85,12 +69,13 @@
     <!-- GalleryListActivity -->
     <string name="no_found">未找到</string>
     <string name="none">无</string>
-    <string name="list_title" formatted="false">%s 第 %d 页</string>
     <string name="quick_search_tip">您可以再左侧栏搜索项中添加快速搜索</string>
+    <string name="no_avatar">无头像</string>
+    <string name="get_avatar_error">获取头像失败</string>
+    <string name="image_search">图像搜索</string>
 
     <!-- Update -->
     <string name="update_message" formatted="false">发现新版本：%s\n大小：%s\n%s\n\n是否更新？</string>
-    <string name="tap_update">点击检查更新</string>
     <string name="checking_update">正在检查更新</string>
     <string name="up_to_date">已是最新版</string>
     <string name="found_update">发现新版本</string>
@@ -99,29 +84,19 @@
     <string name="update_failed">下载更新失败</string>
 
     <!-- GalleryDetialActivity -->
-    <string name="detail_pages_size" formatted="false">页数 : %s (%s)</string>
-    <string name="detail_language">语言 : %s</string>
-    <string name="detail_average">平均得分：%s</string>
-    <string name="detail_people">投票人数：%s</string>
-    <string name="detail_offensive_title">内容警告</string>
-    <string name="detail_offensive">这个本子被所有人标记为瞎眼。所以任何人都不应该看。\n\n（如果你忽略了这个警告，你就失去了抱怨的权利。）</string>
-    <string name="detail_button_cancel">算了，不看了</string>
-    <string name="detail_button_once">就看这一次</string>
-    <string name="detail_button_every">别再烦我了</string>
-    <string name="detail_pining">This gallery is pining for the fjords.</string>
-    <string name="detail_button_known">我知道了</string>
-    <string name="detail_preview_error">获取预览失败</string>
-    <string name="detail_not_rated">暂无人投票</string>
-    <string name="vote_up">顶</string>
-    <string name="vote_down">踩</string>
-    <string name="show_tagged">相同标签</string>
+    <string name="we_feel">大家觉得 %s</string>
+    <string name="more_of_uploader">上传者更多内容</string>
+    <string name="no_more_comment">没有更多评论</string>
+    <string name="no_comment">暂无评论，就等你了</string>
 
-    <!-- GalleryActivity -->
-    <string name="load_pre">载入上一页</string>
-    <string name="first_page">已是第一页</string>
-    <string name="start_reloading">开始继续载入</string>
-    <string name="retry_max_pre">已达重试上限，滑至最左侧继续加载</string>
-    <string name="retry_max_next">已达重试上限，滑至最右侧继续加载</string>
+    <!-- AbsGalleryActivity -->
+    <string name="click_retry">点击重试</string>
+    <string name="click_first_page">点击回第一页</string>
+
+    <!-- Download -->
+    <string name="legacy_pages">%d 页未下载</string>
+    <string name="download_over">下载结束</string>
+    <string name="start_download">开始下载</string>
 
     <!-- ErrorMessage -->
     <string name="em_network_error">网络错误</string>
@@ -151,6 +126,15 @@
     <string name="em_get_body_error">获取正文失败</string>
     <string name="em_invalid_request">无效的请求</string>
     <string name="em_no_sdcard">未挂载 SD卡</string>
+    <string name="em_index_error">索引错误</string>
+    <string name="em_requst_null">请求内容为空</string>
+
+    <!-- Gallery -->
+    <string name="gallery_tip">长按屏幕，可使下载从当前页面开始。若该项正在下载，则仅优先加载当前页面。</string>
+    <string name="read_image_error">读取图片错误</string>
+    <string name="not_loaded">尚未加载</string>
+    <string name="loading_percent">正在加载 %d%%</string>
+    <string name="wait_for_more">等待获取页面信息</string>
 
     <!-- Action -->
     <string name="action_refresh">刷新</string>
@@ -169,9 +153,9 @@
     <string name="delete_successfully">删除成功</string>
     <string name="failed_to_delete">删除失败</string>
     <string name="set_default_favorite">设为默认收藏夹</string>
+    <string name="favorite_warning">未检测到登陆状态，账号收藏可被他人修改。而且由于开发者水平问题，本地收藏不可靠。</string>
 
     <!-- Popular -->
-    <string name="popular_warning_message">该页面中的内容基于数据统计，您尚未开启数据统计。若开启数据统计，您的行为将对该页面产生影响。是否现在开启数据统计？</string>
     <string name="popular_update_time">更新时间 %s</string>
 
     <!-- Settings -->
@@ -207,13 +191,7 @@
     <string name="preview_mode_title">预览图模式</string>
     <string name="preview_mode_normal">正常预览图</string>
     <string name="preview_mode_large">大预览图</string>
-    <string name="preview_per_row_title">每行预览图数量</string>
     <string name="data_settings_title">数据</string>
-    <string name="cache_data_settings_title">缓存</string>
-    <string name="cache_size_title">缓存大小</string>
-    <string name="clear_cache_title">清除缓存</string>
-    <string name="clear_cache_summary_on" formatted="false">大小 : %.2f / %d MB</string>
-    <string name="clear_cache_summary_off">无缓存</string>
     <string name="download_data_settings_title">下载</string>
     <string name="download_path_title">下载路径</string>
     <string name="media_scan_title">允许媒体扫描</string>
@@ -240,25 +218,9 @@
     <string name="allow_analyics_summary_off">感谢您使用本应用</string>
     <string name="about_analyics_title">关于数据统计</string>
     <string name="about_analyics_comment">若您启用了数据统计，本应用会将您的使用情况发送给开发者。这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/cn.html\nGoogle隐私权和条款：http://www.google.com/intl/zh-CN/policies</string>
-    <string name="preference_category_display">显示</string>
-    <string name="preference_screen_ori">屏幕方向</string>
     <string name="portrait">竖屏</string>
     <string name="landscape">横屏</string>
-    <string name="preference_page_scaling">页面缩放</string>
-    <string name="preference_start_position">开页位置</string>
     <string name="preference_settings_title">设置</string>
-    <string name="preference_category_cache">缓存</string>
-    <string name="preference_cache_summary" formatted="false">大小 : %.2f / %d MB</string>
-    <string name="preference_cache_summary_no">无缓存</string>
-    <string name="preference_auto_page_cache">自动清理页面缓存</string>
-    <string name="preference_auto_page_cache_summary_on">当应用关闭时清除页面缓存</string>
-    <string name="preference_auto_page_cache_summary_off">啥都不做</string>
-    <string name="preference_update_server">更新服务器</string>
-    <string name="preference_category_about">关于</string>
-    <string name="preference_author">作者</string>
-    <string name="cache_large">缓存太大了！</string>
-    <string name="input_error">输入错误</string>
-    <string name="create_cache_error">创建缓存错误</string>
     <string name="list_mode_detail">详情</string>
     <string name="list_mode_thumb">缩略图</string>
     <string name="new_folder">新建文件夹</string>
@@ -288,45 +250,18 @@
     <!-- server -->
     <string name="update_server_google">Google</string>
     <string name="update_server_qiniu">七牛</string>
-    <string name="update_server_gokuai">够快</string>
 
     <!-- Tag -->
     <string name="add_tag">添加标签</string>
     <string name="tag_name">标签名称：</string>
     <string name="tag_name_empty">标签名称不能为空</string>
-    <string name="tag_name_exist">标签名称已存在</string>
     <string name="tag_change_name">修改名称</string>
     <string name="new_tag_name">新名称：%s</string>
 
     <!-- Pull -->
-    <string name="pull_refresh_pull">下拉刷新…</string>
-    <string name="pull_refresh_release">释放刷新…</string>
-    <string name="pull_refresh_doing">正在刷新…</string>
-    <string name="pull_refresh_done">完成刷新</string>
-    <string name="pull_refresh_cancel">取消刷新</string>
-    <string name="pull_pre_pull">下拉读取上一页…</string>
-    <string name="pull_pre_release">释放读取上一页…</string>
-    <string name="pull_pre_doing">正在读取上一页…</string>
-    <string name="pull_pre_done">完成读取上一页</string>
-    <string name="pull_pre_cancel">取消读取上一页</string>
-    <string name="pull_load_pull">下拉加载…</string>
-    <string name="pull_load_release">释放加载…</string>
-    <string name="pull_load_doing">正在加载…</string>
-    <string name="pull_load_done">完成加载</string>
-    <string name="pull_load_cancel">取消加载</string>
     <string name="footer_loading">正在加载更多…</string>
     <string name="footer_loaded">已全部加载</string>
     <string name="footer_fail">加载失败，点击继续加载</string>
-
-    <!-- Download -->
-    <string name="start_download_task">开始下载任务</string>
-    <string name="download_task_finished">完成下载任务</string>
-    <string name="downloading">正在下载</string>
-    <string name="download_successfully">下载成功</string>
-    <string name="download_unsuccessfully">下载失败</string>
-    <string name="not_started">未启动</string>
-    <string name="waiting">等待中</string>
-    <string name="wait_for_last">等待上个操作结束</string>
 
     <!-- GalleryView -->
     <string name="pre_page">上一页</string>
@@ -335,18 +270,12 @@
     <string name="zoom_out">缩小</string>
     <string name="menu">菜单</string>
 
-    <!-- Mode Dialog -->
-    <string name="select_mode_warning">请登录以避免 Sad Panda</string>
-
-    <!-- Vote -->
-    <string name="vote_succeeded">投票成功</string>
-    <string name="vote_failed">投票失败</string>
-
     <!-- Rate -->
     <string name="invalid_rating">非法评分</string>
-    <string name="rate_succeeded">评价成功</string>
-    <string name="rate_failed">评价失败</string>
-    <string name="uploader_others">该用户上传的其他内容</string>
+    <string name="rate_succeeded">评分成功</string>
+    <string name="rate_sensibly">理智评分</string>
+    <string name="rate_failed">评分失败</string>
+    <string name="gallery_of_he">该用户上传的内容</string>
 
     <!-- rating -->
     <string name="rating10">根本把持不住</string>
@@ -361,7 +290,20 @@
     <string name="rating1">快要窒息了</string>
     <string name="rating0">…</string>
 
-    <!-- Util -->
+    <!-- Utils -->
+    <string name="click_more">点击查看更多</string>
+    <string name="similar_content">相似内容</string>
+    <string name="_unknown">未知</string>
+    <string name="language">语言</string>
+    <string name="pages">页面</string>
+    <string name="size">大小</string>
+    <string name="tip">提示</string>
+    <string name="not_started">未启动</string>
+    <string name="waiting">等待中</string>
+    <string name="done">已完成</string>
+    <string name="first_page">第一页</string>
+    <string name="the_last_page">最后一页</string>
+    <string name="downloading">正在下载</string>
     <string name="attention">注意</string>
     <string name="start">开始</string>
     <string name="stop">停止</string>

@@ -134,7 +134,7 @@
                     android:drawablePadding="4dp"
                     android:gravity="center"
                     android:maxWidth="52dp"
-                    android:text="上传者更多内容"
+                    android:text="@string/more_of_uploader"
                     android:textSize="@dimen/text_little_small" />
 
                 <TextView
@@ -145,7 +145,7 @@
                     android:drawablePadding="4dp"
                     android:gravity="center"
                     android:maxWidth="52dp"
-                    android:text="相似内容"
+                    android:text="@string/similar_content"
                     android:textSize="@dimen/text_little_small" />
             </LinearLayout>
 
@@ -202,7 +202,7 @@
                     android:layout_below="@id/size"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"
-                    android:text="点击查看更多" />
+                    android:text="@string/click_more" />
             </RelativeLayout>
 
             <View

@@ -191,7 +191,7 @@ public class DownloadService extends Service
 
         Notification.Builder builder = new Notification.Builder(mContext);
         setNotification(builder);
-        builder.setContentTitle("开始下载 " + gid)
+        builder.setContentTitle(getString(R.string.start_download)  + " " + gid)
                 .setContentText(null)
                 .setProgress(0, 0, true).setOngoing(true).setAutoCancel(false);
         mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, builder.getNotification());
@@ -209,7 +209,7 @@ public class DownloadService extends Service
         mCurDownloadInfo.total = totalSize;
         Notification.Builder builder = new Notification.Builder(mContext);
         setNotification(builder);
-        builder.setContentTitle("正在下载 " + gid)
+        builder.setContentTitle(getString(R.string.downloading)  + " " + gid)
                 .setContentText(mSpeedStr)
                 .setProgress(totalSize, downloadSize, false).setOngoing(true).setAutoCancel(false);
         mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, builder.getNotification());
@@ -226,7 +226,7 @@ public class DownloadService extends Service
         mSpeedStr = Utils.sizeToString(speed) + "/S";
         Notification.Builder builder = new Notification.Builder(mContext);
         setNotification(builder);
-        builder.setContentTitle("正在下载 " + gid)
+        builder.setContentTitle(getString(R.string.downloading)  + " " + gid)
                 .setContentText(mSpeedStr)
                 .setProgress(mCurDownloadInfo.total, mCurDownloadInfo.download,
                         mCurDownloadInfo.total == -1 ? true :false)
@@ -244,8 +244,9 @@ public class DownloadService extends Service
         mCurDownloadInfo.legacy = legacy;
         Notification.Builder builder = new Notification.Builder(mContext);
         setNotification(builder);
-        builder.setContentTitle("完成下载 " + gid)
-                .setContentText(legacy == 0 ? "已完成" : legacy + " 页未下载")
+        builder.setContentTitle(getString(R.string.download_over)  + " " + gid)
+                .setContentText(legacy == 0 ? getString(R.string.done) :
+                    String.format(getString(R.string.legacy_pages), legacy))
                 .setOngoing(false).setAutoCancel(true);
         mNotifyManager.notify(gid, builder.getNotification());
         mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);

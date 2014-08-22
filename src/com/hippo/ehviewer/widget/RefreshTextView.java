@@ -62,6 +62,10 @@ public class RefreshTextView extends TextView
         setOnClickListener(this);
     }
 
+    public void setDefaultRefresh(int tiprResId, OnRefreshListener listener) {
+        setDefaultRefresh(getContext().getString(tiprResId), listener);
+    }
+
     public void setDefaultRefresh(String tip, OnRefreshListener listener) {
         mDefaultTip = tip;
         mDefaultListener = listener;

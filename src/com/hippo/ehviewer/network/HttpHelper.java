@@ -173,7 +173,7 @@ public class HttpHelper {
             return SAD_PANDA_ERROR;
 
         else if (e instanceof GetBodyException)
-            return "Null"; // TODO
+            return c.getString(R.string.em_requst_null);
 
         else
             return e.getClass().getSimpleName() + ": " +e.getMessage();

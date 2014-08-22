@@ -17,8 +17,6 @@
 <resources>
 
     <string name="app_name" translatable="false">EhViewer</string>
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
 
     <!-- Warning -->
     <string name="dailog_waring_title">Waring</string>
@@ -31,23 +29,11 @@
     <string name="dailog_analyics_plain">您是否愿意将使用情况发送给开发者？这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/us.html\nGoogle隐私权和条款：http://www.google.com/intl/us/policies\n\n您以后可以在设置中修改选择</string>
 
     <!-- Network -->
-    <string name="dailog_check_network">Checking network</string>
     <string name="dailog_network_error_yes">I don\'t care</string>
     <string name="dailog_network_error_no">Fine</string>
-    <string name="dialog_wait_send_crash_msg">Please close the dialog after sending logcat</string>
 
     <!-- Exit -->
     <string name="exit_tip">Click again to exit</string>
-
-    <!-- Login -->
-    <string name="check_login">Checking login status</string>
-    <string name="toast_login_succeeded">Login succeedfully</string>
-    <string name="toast_login_failed">Failed to login</string>
-    <string name="dialog_title_login_or_not">Login or not</string>
-    <string name="dialog_messgae_login_or_not">What are the benefits of login ?</string>
-    <string name="not_login">Do not login</string>
-    <string name="toast_logout_succeeded">Logout succeedfully</string>
-    <string name="toast_logout_failed">Failed to logout</string>
 
     <!-- Mode -->
     <string name="content">Content</string>
@@ -66,8 +52,6 @@
     <string name="checkbox_sdt2">Search Downvoted Tags</string>
     <string name="checkbox_sh">Show Expunged Galleries</string>
     <string name="checkbox_sr">Minimum Rating:</string>
-    <string name="toast_normal_mode">Switch To Normal Search Mode</string>
-    <string name="toast_tag_mode">Switch To Tag Search Mode</string>
 
     <!-- Jump -->
     <string name="jump_summary" formatted="false">Page %d, %s pages in total</string>
@@ -79,6 +63,7 @@
     <string name="dialog_send_crash_plain">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ?</string>
     <string name="dialog_send_crash_yes">Never mind</string>
     <string name="dialog_send_crash_no">Yes, I would</string>
+    <string name="dialog_wait_send_crash_msg">Please close the dialog after sending logcat</string>
 
     <!-- List item long click -->
     <string name="toast_add_favourite">Add to favourite</string>
@@ -87,12 +72,13 @@
     <!-- GalleryListActivity -->
     <string name="no_found">No hits found</string>
     <string name="none">None</string>
-    <string name="list_title" formatted="false">%s Page %d</string>
     <string name="quick_search_tip">Quick search can be added via search in left drawer</string>
+    <string name="no_avatar">No avatar</string>
+    <string name="get_avatar_error">Get avatar error</string>
+    <string name="image_search">Image search</string>
 
     <!-- Update -->
     <string name="update_message" formatted="false">Found new version : %s\nSize : %s\n%s\n\nUpdate ?</string>
-    <string name="tap_update">Tap to check update</string>
     <string name="checking_update">checking updating</string>
     <string name="up_to_date">Up to date</string>
     <string name="found_update">Found update</string>
@@ -101,27 +87,19 @@
     <string name="update_failed">Download the update Failed</string>
 
     <!-- GalleryDetialActivity -->
-    <string name="detail_pages_size" formatted="false">Pages : %s (%s)</string>
-    <string name="detail_language">Language : %s</string>
-    <string name="detail_offensive_title">Content Warning</string>
-    <string name="detail_offensive">This gallery has been flagged as Offensive For Everyone. Due to its content, it should not be viewed by anyone.\n\n(And if you choose to ignore this warning, you lose all rights to complain about it in the future.)</string>
-    <string name="detail_button_cancel">I would not read it</string>
-    <string name="detail_button_once">Just this time</string>
-    <string name="detail_button_every">Do not trouble me</string>
-    <string name="detail_pining">This gallery is pining for the fjords.</string>
-    <string name="detail_button_known">Yes, I know</string>
-    <string name="detail_preview_error">Get preview error !</string>
-    <string name="detail_not_rated">Not yet rated</string>
-    <string name="vote_up">Vote up</string>
-    <string name="vote_down">Vote down</string>
-    <string name="show_tagged">Show tagged</string>
+    <string name="we_feel">We fell %s</string>
+    <string name="more_of_uploader">More of uploader</string>
+    <string name="no_more_comment">No more comments</string>
+    <string name="no_comment">No comment</string>
 
-    <!-- GalleryActivity -->
-    <string name="load_pre">Load previous page</string>
-    <string name="first_page">First page !</string>
-    <string name="start_reloading">Start reloading</string>
-    <string name="retry_max_pre">Reached retry limit, scroll to leftmost side to reload</string>
-    <string name="retry_max_next">Reached retry limit, scroll to rightmost side to reload</string>
+    <!-- AbsGalleryActivity -->
+    <string name="click_retry">Click to retry</string>
+    <string name="click_first_page">Click to go to first page</string>
+
+    <!-- Download -->
+    <string name="legacy_pages">%d pages leaved</string>
+    <string name="download_over">Download over</string>
+    <string name="start_download">Start downloading</string>
 
     <!-- ErrorMessage -->
     <string name="em_network_error">Network Error</string>
@@ -151,6 +129,15 @@
     <string name="em_get_body_error">Get body error</string>
     <string name="em_invalid_request">Invalid request</string>
     <string name="em_no_sdcard">SD card is Unmounted</string>
+    <string name="em_index_error">Index error</string>
+    <string name="em_requst_null">Requst content is null</string>
+
+    <!-- Gallery -->
+    <string name="gallery_tip">Long press the screen to download from the current page. If the item is being downloaded, just load current page first.</string>
+    <string name="read_image_error">Read image error</string>
+    <string name="not_loaded">Not loader</string>
+    <string name="loading_percent">Loading %d%%</string>
+    <string name="wait_for_more">Waiting to get page information</string>
 
     <!-- Action -->
     <string name="action_refresh">Refresh</string>
@@ -169,9 +156,9 @@
     <string name="delete_successfully">Delete successfully</string>
     <string name="failed_to_delete">Failed to delete</string>
     <string name="set_default_favorite">Set it as default favorite</string>
+    <string name="favorite_warning">Not logged in, account favorite can be modified by someone else. And due to the developer, local favorite is unreliable.</string>
 
     <!-- Popular -->
-    <string name="popular_warning_message">该页面中的内容基于数据统计，您尚未开启数据统计。若开启了数据统计，您的行为将对该页面产生影响。是否现在开启数据统计？</string>
     <string name="popular_update_time">Update at %s</string>
 
     <!-- Settings -->
@@ -207,13 +194,7 @@
     <string name="preview_mode_title">Preview mode</string>
     <string name="preview_mode_normal">Normal</string>
     <string name="preview_mode_large">Large</string>
-    <string name="preview_per_row_title">Preview number per row</string>
     <string name="data_settings_title">Data</string>
-    <string name="cache_data_settings_title">Cache</string>
-    <string name="cache_size_title">Cache size</string>
-    <string name="clear_cache_title">Clear cache</string>
-    <string name="clear_cache_summary_on" formatted="false">Size : %.2f / %d MB</string>
-    <string name="clear_cache_summary_off">No cache</string>
     <string name="download_data_settings_title">Download</string>
     <string name="download_path_title">Download path</string>
     <string name="media_scan_title">Allow media scan</string>
@@ -246,12 +227,6 @@
     <string name="portrait">Portrait</string>
     <string name="landscape">Landscape</string>
     <string name="preference_settings_title">Settings</string>
-    <string name="preference_auto_page_cache">Auto clear page cache</string>
-    <string name="preference_auto_page_cache_summary_on">Clean page cache when the application close</string>
-    <string name="preference_auto_page_cache_summary_off">Leave page cache alone</string>
-    <string name="cache_large">Cache size is too larger !</string>
-    <string name="input_error">Input error</string>
-    <string name="create_cache_error">Create cache error</string>
     <string name="list_mode_detail">Detail</string>
     <string name="list_mode_thumb">Thumb</string>
     <string name="new_folder">New folder</string>
@@ -282,45 +257,20 @@
     <!-- server -->
     <string name="update_server_google">Google</string>
     <string name="update_server_qiniu">Qiniu</string>
-    <string name="update_server_gokuai">Gokuai</string>
 
     <!-- Tag -->
     <string name="add_tag">Add tag</string>
     <string name="tag_name">Tag name : </string>
     <string name="tag_name_empty">Tag name can\'t be empty</string>
-    <string name="tag_name_exist">Tag name already existed</string>
     <string name="tag_change_name">Change name</string>
     <string name="new_tag_name">New name : %s</string>
 
     <!-- Pull -->
-    <string name="pull_refresh_pull">Pull to refresh…</string>
-    <string name="pull_refresh_release">Release to refresh…</string>
-    <string name="pull_refresh_doing">Refreshing…</string>
-    <string name="pull_refresh_done">Refreshed</string>
-    <string name="pull_refresh_cancel">Cancel refresh</string>
-    <string name="pull_pre_pull">Pull to load previous page…</string>
-    <string name="pull_pre_release">Release to load previous page…</string>
-    <string name="pull_pre_doing">Loading previous page…</string>
-    <string name="pull_pre_done">Loaded previous page…</string>
-    <string name="pull_pre_cancel">Cancel previous page…</string>
-    <string name="pull_load_pull">Pull to load…</string>
-    <string name="pull_load_release">Release to load…</string>
-    <string name="pull_load_doing">Loading…</string>
-    <string name="pull_load_done">Loaded</string>
-    <string name="pull_load_cancel">Cancel load</string>
     <string name="footer_loading">Loading more…</string>
     <string name="footer_loaded">All loaded</string>
     <string name="footer_fail">Load fail，click to reload</string>
 
     <!-- Download -->
-    <string name="start_download_task">Start download task</string>
-    <string name="download_task_finished">Download task finished</string>
-    <string name="downloading">Downloading</string>
-    <string name="download_successfully">Download successfully</string>
-    <string name="download_unsuccessfully">Failed to download</string>
-    <string name="not_started">Not started</string>
-    <string name="waiting">Waiting</string>
-    <string name="wait_for_last">Please wait for the last operation</string>
 
     <!-- GalleryView -->
     <string name="pre_page">Previous page</string>
@@ -329,18 +279,12 @@
     <string name="zoom_out">Zoom out</string>
     <string name="menu">Menu</string>
 
-    <!-- Mode Dialog -->
-    <string name="select_mode_warning">Please login to avoid Sad Panda.</string>
-
-    <!-- Vote -->
-    <string name="vote_succeeded">Vote successfully</string>
-    <string name="vote_failed">Failed to vote</string>
-
     <!-- Rate -->
     <string name="invalid_rating">Invalid rating</string>
     <string name="rate_succeeded">Rate successfully</string>
+    <string name="rate_sensibly">Rate sensibly</string>
     <string name="rate_failed">Failed to rate</string>
-    <string name="uploader_others">该用户上传的其他内容</string>
+    <string name="gallery_of_he">Galleries of this guy</string>
 
     <!-- Category -->
     <string name="doujinshi" translatable="false">DOUJINSHI</string>
@@ -369,6 +313,22 @@
     <string name="rating0">DISASTER</string>
 
     <!-- Util -->
+    <string name="click_more">Click for more</string>
+    <string name="similar_content">Similar content</string>
+    <string name="_unknown">Unknown</string>
+    <string name="language">Language</string>
+    <string name="pages">Pages</string>
+    <string name="size">Size</string>
+    <string name="tip">Tip</string>
+    <string name="not_started">Not started</string>
+    <string name="waiting">Waiting</string>
+    <string name="done">Done</string>
+    <string name="first_page">First page</string>
+    <string name="the_last_page">The last page</string>
+    <string name="downloading">Downloading</string>
+    <string name="attention">Attention</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
     <string name="invalid_input">Invalid Input</string>
     <string name="never_show">Never show me this dialog</string>
     <string name="retry">Retry</string>
@@ -377,6 +337,7 @@
     <string name="copyed">Copyed</string>
     <string name="send">Send</string>
     <string name="detail">Detail</string>
+    <string name="delete2">Detail (images included)</string>
     <string name="comment">Comment</string>
     <string name="info">Info</string>
     <string name="reply">Reply</string>

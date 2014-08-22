@@ -19,6 +19,7 @@ package com.hippo.ehviewer.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -28,7 +29,6 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.GalleryInfo;
@@ -49,7 +49,7 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
     private static final int MODE_PRE_PAGE = 0x2;
     private static final int MODE_SOMEWHERE = 0x3;
 
-    protected AppContext mAppContext;
+    protected Context mContext;
     protected EhClient mClient;
 
     private List<GalleryInfo> mGiList;
@@ -249,7 +249,7 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
         super.onCreate(savedInstanceState);
         setContentView(getLayoutRes());
 
-        mAppContext = (AppContext)getApplication();
+        mContext = getApplication();
         mClient = EhClient.getInstance();
 
         mGiList = new ArrayList<GalleryInfo>();
@@ -274,7 +274,8 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
         mContentView.setSelector(new ColorDrawable(Color.TRANSPARENT));
         mContentView.setClipToPadding(false);
 
-        mRefreshTextView.setDefaultRefresh("点击重试", new RefreshTextView.OnRefreshListener() { // TODO
+        mRefreshTextView.setDefaultRefresh(R.string.click_retry,
+                new RefreshTextView.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 retry();
@@ -350,10 +351,10 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
         public void onScrollStateChanged(AbsListView view, int scrollState) {
             switch (scrollState) {
             case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                ImageCache.getInstance(mAppContext).setPauseDiskCache(true);
+                ImageCache.getInstance(mContext).setPauseDiskCache(true);
                 break;
             case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                ImageCache.getInstance(mAppContext).setPauseDiskCache(false);
+                ImageCache.getInstance(mContext).setPauseDiskCache(false);
                 break;
             }
         }
@@ -470,8 +471,8 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
             case MODE_SOMEWHERE:
                 mPullViewGroup.setVisibility(View.GONE);
                 mRefreshTextView.setVisibility(View.VISIBLE);
-                if (eMsg.equals("index error")) {
-                    mRefreshTextView.setEmesg(eMsg, "点击回第一页", // TODO
+                if (eMsg.equals(mContext.getString(R.string.em_index_error))) {
+                    mRefreshTextView.setEmesg(eMsg, mContext.getString(R.string.click_first_page),
                             new RefreshTextView.OnRefreshListener() {
                         @Override
                         public void onRefresh() {

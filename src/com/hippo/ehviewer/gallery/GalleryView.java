@@ -292,7 +292,8 @@ public class GalleryView extends GLView
                 showItems[targetIndex].recycle();
 
             if (res == null) {
-                showItems[targetIndex] = new Text("读取图片错误"); // TODO
+                showItems[targetIndex] = new Text(
+                        mContext.getString(R.string.read_image_error));
             } else {
                 if (res instanceof Bitmap) {
                     BitmapImage bi = new BitmapImage();
@@ -641,13 +642,16 @@ public class GalleryView extends GLView
             if (state == ImageSet.RESULT_DECODE) {
                 showItems[targetIndex] = null;
             } else if (state == ImageSet.RESULT_DOWNLOADING) {
-                showItems[targetIndex] = new Text("正在下载"); // TODO
+                showItems[targetIndex] = new Text(
+                        mContext.getString(R.string.downloading));
             } else if (state == ImageSet.RESULT_NONE) {
-                showItems[targetIndex] = new Text("尚未加载"); // TODO
+                showItems[targetIndex] = new Text(
+                        mContext.getString(R.string.not_loaded));
             }
         } else if (obj instanceof Float) {
             showItems[targetIndex] = new Text(
-                    String.format("正在加载 %d%%", Math.round((Float)obj * 100)));
+                    String.format(mContext.getString(R.string.loading_percent),
+                            Math.round((Float)obj * 100)));
         }
 
         resetSizePosition(targetIndex);
@@ -1029,7 +1033,7 @@ public class GalleryView extends GLView
                 resetSizePosition(PRE_TARGET_INDEX);
                 if (!goToPrePage()) {
                     // Get to first page
-                    MaterialToast.showToast("第一页"); // TODO
+                    MaterialToast.showToast(mContext.getString(R.string.first_page));
                 }
             } else if (Utils.isInArea(topArea, (int)x, (int)y)) {
                 zoom(true);
@@ -1038,7 +1042,8 @@ public class GalleryView extends GLView
                 resetSizePosition(NEXT_TARGET_INDEX);
                 if (!goToNextPage()) {
                     // Get to last page
-                    MaterialToast.showToast(isEnsureSize ? "最后一页" : "等待获取后续页面"); // TODO
+                    MaterialToast.showToast(
+                            mContext.getString(isEnsureSize ? R.string.the_last_page : R.string.wait_for_more));
                 }
             } else if (Utils.isInArea(bottomArea, (int)x, (int)y)) {
                 zoom(false);
@@ -1220,9 +1225,10 @@ public class GalleryView extends GLView
                 ShowItem showItem = showItems[CUR_TARGET_INDEX];
                 if (showItem != null) {
                     if (isFirstPage() && showItem.mRect.left >= 0)
-                        MaterialToast.showToast("第一页");
+                        MaterialToast.showToast(mContext.getString(R.string.first_page));
                     else if (isLastPage() && showItem.mRect.right <= mScreenWidth)
-                        MaterialToast.showToast(isEnsureSize ? "最后一页" : "等待获取后续页面"); // TODO
+                        MaterialToast.showToast(
+                                mContext.getString(isEnsureSize ? R.string.the_last_page : R.string.wait_for_more));
                 }
             }
             return true;

@@ -184,9 +184,6 @@ public class Data {
             reference++;
         }
         else {
-
-            Log.e(TAG, "isInsert");
-
             isInsert = true;
             reference = 1;
         }
@@ -204,7 +201,6 @@ public class Data {
 
         if (isInsert) { // Set
             long id = mDatabase.insert(TABLE_GALLERY, null, values);
-            Log.e(TAG, "id = " + id);
         } else { // Update
             mDatabase.update(TABLE_GALLERY, values, COLUMN_GID + "=?", new String[]{String.valueOf(gid)});
         }

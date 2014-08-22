@@ -50,7 +50,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.cardview.CardViewSalon;
@@ -146,7 +145,7 @@ public class FavouriteActivity extends AbsGalleryActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mAppContext = (AppContext)getApplication();
+        mContext = getApplication();
         mData = Data.getInstance();
         mResources =getResources();
         mClient = EhClient.getInstance();
@@ -276,7 +275,7 @@ public class FavouriteActivity extends AbsGalleryActivity
 
         // Check login
         if (!mClient.isLogin()) {
-            MaterialToast.showToast("未检测到登陆状态，仅可使用本地收藏。由于开发者的问题，本地收藏不可靠，请尽快登陆，将本地收藏转移至账户中的收藏。");// TODO
+            MaterialToast.showToast(R.string.favorite_warning);
         }
 
         // TODO Should show default favourite
