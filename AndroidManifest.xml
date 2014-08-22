@@ -52,7 +52,7 @@
             android:name=".ui.GalleryListActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:screenOrientation="behind"
             android:theme="@style/AppTheme.Main.ListActivity" >
             <intent-filter>

@@ -273,7 +273,8 @@ public class GalleryView extends GLView
                 showItems[targetIndex].recycle();
 
             showItems[targetIndex] = new Text(
-                    String.format("正在加载 %d%%", Math.round(percent * 100)));
+                    String.format(mContext.getString(R.string.loading_percent),
+                            Math.round(percent * 100)));
             resetSizePosition(targetIndex);
         }
     }

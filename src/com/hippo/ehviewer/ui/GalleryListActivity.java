@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -36,6 +37,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -172,6 +174,7 @@ public class GalleryListActivity extends AbsGalleryActivity
     private Data mData;
 
     private int longClickItemIndex;
+    private boolean mShowDrawer;
 
     private AlertDialog loginDialog;
     private AlertDialog mSearchDialog;
@@ -820,8 +823,11 @@ public class GalleryListActivity extends AbsGalleryActivity
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mSlidingMenu.setBehindWidth(
-                mResources.getDimensionPixelOffset(R.dimen.menu_width));
+        if (mShowDrawer)
+            mSlidingMenu.setBehindWidth(
+                    mResources.getDimensionPixelOffset(R.dimen.menu_width));
+        else
+            mSlidingMenu.setBehindWidth(0);
     }
 
     /**
@@ -843,7 +849,6 @@ public class GalleryListActivity extends AbsGalleryActivity
                 lus.setTag(tag);
                 mTitle = tag;
                 setTitle(mTitle);
-                refresh();
                 break;
 
             case ListUrls.MODE_UPLOADER:
@@ -852,7 +857,6 @@ public class GalleryListActivity extends AbsGalleryActivity
                 lus.setMode(ListUrls.MODE_UPLOADER);
                 mTitle = uploader;
                 setTitle(mTitle);
-                refresh();
                 break;
 
             case ListUrls.MODE_IMAGE_SEARCH:
@@ -862,7 +866,6 @@ public class GalleryListActivity extends AbsGalleryActivity
                         EhClient.IMAGE_SEARCH_USE_SIMILARITY_SCAN);
                 mTitle = getString(R.string.similar_content); // TODO
                 setTitle(mTitle);
-                refresh();
                 break;
 
             case ListUrls.MODE_NORMAL:
@@ -871,7 +874,6 @@ public class GalleryListActivity extends AbsGalleryActivity
                 lus = new ListUrls(category);
                 mTitle = Ui.getCategoryText(category);
                 setTitle(mTitle);
-                refresh();
                 break;
 
             default:
@@ -889,6 +891,7 @@ public class GalleryListActivity extends AbsGalleryActivity
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
         handleIntent(intent);
+        refresh();
     }
 
     @Override
@@ -909,6 +912,7 @@ public class GalleryListActivity extends AbsGalleryActivity
     }
 
     @Override
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -919,6 +923,11 @@ public class GalleryListActivity extends AbsGalleryActivity
         mWindowsAnimate.init(this);
 
         handleIntent(getIntent());
+        // Check show drawer or not
+        if (ACTION_GALLERY_LIST.equals(getIntent().getAction()))
+            mShowDrawer = false;
+        else
+            mShowDrawer = true;
 
         setBehindContentView(R.layout.list_menu_left);
         setSlidingActionBarEnabled(false);
@@ -926,25 +935,32 @@ public class GalleryListActivity extends AbsGalleryActivity
         mSlidingMenu.setSecondaryMenu(R.layout.list_menu_right);
         mSlidingMenu.setMode(SlidingMenu.LEFT_RIGHT);
         mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-        mSlidingMenu.setBehindWidth(
-                mResources.getDimensionPixelOffset(R.dimen.menu_width));
-        mSlidingMenu.setShadowDrawable(R.drawable.shadow);
         mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
+        mSlidingMenu.setShadowDrawable(R.drawable.shadow);
         mSlidingMenu.setSecondaryShadowDrawable(R.drawable.shadow_right);
         mSlidingMenu.setOnOpenedListener(new SlidingMenu.OnOpenedListener() {
             @Override
             public void onOpened() {
-                setTitle(R.string.app_name);
-                invalidateOptionsMenu();
+                if (mShowDrawer) {
+                    setTitle(R.string.app_name);
+                    invalidateOptionsMenu();
+                }
             }
         });
         mSlidingMenu.setOnClosedListener(new SlidingMenu.OnClosedListener() {
             @Override
             public void onClosed() {
-                setTitle(mTitle);
-                invalidateOptionsMenu();
+                if (mShowDrawer) {
+                    setTitle(mTitle);
+                    invalidateOptionsMenu();
+                }
             }
         });
+        if (mShowDrawer)
+            mSlidingMenu.setBehindWidth(
+                    mResources.getDimensionPixelOffset(R.dimen.menu_width));
+        else
+            mSlidingMenu.setBehindWidth(0);
 
         // Download service
         Intent it = new Intent(GalleryListActivity.this, DownloadService.class);
@@ -975,8 +991,10 @@ public class GalleryListActivity extends AbsGalleryActivity
         setNoneText(mResources.getString(R.string.no_found));
 
         // Drawer
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (mShowDrawer && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+            actionBar.setHomeAsUpIndicator(mResources.getDrawable(R.drawable.ic_navigation_drawer));
 
         // leftDrawer
         final int[] data = {R.drawable.ic_action_home, R.string.homepage,
@@ -1159,15 +1177,11 @@ public class GalleryListActivity extends AbsGalleryActivity
         int color = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
         color = color & 0x00ffffff | 0xdd000000;
         Drawable drawable = new ColorDrawable(color);
-        final ActionBar actionBar = getActionBar();
+        actionBar = getActionBar();
         actionBar.setBackgroundDrawable(drawable);
         Ui.translucent(this, color);
         mMenuLeft.setBackgroundColor(color);
         tagListMenu.setBackgroundColor(color);
-
-        // Check update
-        if (Config.isAutoCheckForUpdate())
-            checkUpdate();
 
         // Update user panel
         setUserPanel();
@@ -1178,6 +1192,15 @@ public class GalleryListActivity extends AbsGalleryActivity
 
         // get MangeList
         firstTimeRefresh();
+
+        // If not show drawer, just return
+        if (!mShowDrawer) {
+            return;
+        }
+
+        // Check update
+        if (Config.isAutoCheckForUpdate())
+            checkUpdate();
 
         if (Config.isFirstTime()) {
             Config.firstTime();
@@ -1343,11 +1366,15 @@ public class GalleryListActivity extends AbsGalleryActivity
     // Double click back exit
     @Override
     public void onBackPressed() {
-        if (System.currentTimeMillis() - curBackTime > BACK_PRESSED_INTERVAL) {
-            curBackTime = System.currentTimeMillis();
-            MaterialToast.showToast(R.string.exit_tip);
-        } else
+        if (!mShowDrawer) {
             finish();
+        } else {
+            if (System.currentTimeMillis() - curBackTime > BACK_PRESSED_INTERVAL) {
+                curBackTime = System.currentTimeMillis();
+                MaterialToast.showToast(R.string.exit_tip);
+            } else
+                finish();
+        }
     }
 
     private void jump() {
@@ -1359,10 +1386,14 @@ public class GalleryListActivity extends AbsGalleryActivity
         // Handle item selection
         switch (item.getItemId()) {
         case android.R.id.home:
-            if (mSlidingMenu.isMenuShowing())
-                showContent();
-            else
-                showMenu();
+            if (mShowDrawer) {
+                if (mSlidingMenu.isMenuShowing())
+                    showContent();
+                else
+                    showMenu();
+            } else {
+                finish();
+            }
             return true;
         case R.id.action_refresh:
             refresh();

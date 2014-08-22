@@ -36,7 +36,7 @@
     </style>
 
     <style name="AppTheme.Main">
-        <item name="@android:homeAsUpIndicator">@drawable/ic_navigation_drawer</item>
+        <!-- nop -->
     </style>
 
     <style name="AppTheme.Main.ListActivity">

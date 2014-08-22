@@ -18,6 +18,7 @@ package com.hippo.ehviewer.ui;
 
 import java.util.List;
 
+import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -98,6 +100,9 @@ public class DownloadActivity extends AbsActivity implements AbsListView.OnItemC
         filter.addAction(DownloadService.ACTION_UPDATE);
         registerReceiver(mReceiver, filter);
 
+        ActionBar actionBar = getActionBar();
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         mDownloads = Data.getInstance().getAllDownloads();
         for (DownloadInfo di : mDownloads)
             di.selected = false;
@@ -113,7 +118,7 @@ public class DownloadActivity extends AbsActivity implements AbsListView.OnItemC
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
         int actionBarColor = mThemeColor & 0x00ffffff | 0xdd000000;
         Drawable drawable = new ColorDrawable(actionBarColor);
-        getActionBar().setBackgroundDrawable(drawable);
+        actionBar.setBackgroundDrawable(drawable);
         Ui.translucent(this, actionBarColor);
     }
 
@@ -123,6 +128,18 @@ public class DownloadActivity extends AbsActivity implements AbsListView.OnItemC
         unregisterReceiver(mReceiver);
         unbindService(mServiceConn);
         mWindowsAnimate.free();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            finish();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

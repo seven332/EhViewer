@@ -135,7 +135,7 @@
     <!-- Gallery -->
     <string name="gallery_tip">Long press the screen to download from the current page. If the item is being downloaded, just load current page first.</string>
     <string name="read_image_error">Read image error</string>
-    <string name="not_loaded">Not loader</string>
+    <string name="not_loaded">Not loaded</string>
     <string name="loading_percent">Loading %d%%</string>
     <string name="wait_for_more">Waiting to get page information</string>
 

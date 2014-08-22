@@ -555,13 +555,13 @@ public class GalleryDetailActivity extends AbsActivity
                 tagView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        finish();
                         Intent intent = new Intent(GalleryDetailActivity.this,
                                 GalleryListActivity.class);
                         intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
                         intent.putExtra(GalleryListActivity.KEY_MODE,
                                 ListUrls.MODE_TAG);
                         intent.putExtra(GalleryListActivity.KEY_TAG, groupName + ":" + tag);
+                        intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
                         startActivity(intent);
                     }
                 });
@@ -830,21 +830,18 @@ public class GalleryDetailActivity extends AbsActivity
             intent.putExtra(GalleryActivity.KEY_START_INDEX, 0);
             startActivity(intent);
         } else if (v == mCategory) {
-            finish();
             Intent intent = new Intent(this, GalleryListActivity.class);
             intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
             intent.putExtra(GalleryListActivity.KEY_MODE, ListUrls.MODE_NORMAL);
             intent.putExtra(GalleryListActivity.KEY_CATEGORY, mGalleryInfo.category);
             startActivity(intent);
         } else if (v == mMoreOfUploader) {
-            finish();
             Intent intent = new Intent(this, GalleryListActivity.class);
             intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
             intent.putExtra(GalleryListActivity.KEY_MODE, ListUrls.MODE_UPLOADER);
             intent.putExtra(GalleryListActivity.KEY_UPLOADER, mGalleryInfo.uploader);
             startActivity(intent);
         } else if (v == mSimilar) {
-            finish();
             Intent intent = new Intent(this, GalleryListActivity.class);
             intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
             intent.putExtra(GalleryListActivity.KEY_MODE, ListUrls.MODE_IMAGE_SEARCH);
@@ -1081,7 +1078,6 @@ public class GalleryDetailActivity extends AbsActivity
                             break;
 
                         case 1:
-                            finish();
                             Intent intent = new Intent(GalleryDetailActivity.this, GalleryListActivity.class);
                             intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
                             intent.putExtra(GalleryListActivity.KEY_MODE, ListUrls.MODE_UPLOADER);
