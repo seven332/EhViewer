@@ -16,9 +16,9 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
-import com.hippo.ehviewer.util.Log;
-
 import javax.microedition.khronos.opengles.GL11;
+
+import android.util.Log;
 
 public class RawTexture extends BasicTexture {
     private static final String TAG = "RawTexture";

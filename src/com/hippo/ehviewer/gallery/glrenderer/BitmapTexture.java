@@ -16,9 +16,8 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
-import android.graphics.Bitmap;
-
 import junit.framework.Assert;
+import android.graphics.Bitmap;
 
 // BitmapTexture is a texture whose content is specified by a fixed Bitmap.
 //

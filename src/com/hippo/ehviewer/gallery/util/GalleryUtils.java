@@ -42,10 +42,6 @@ public class GalleryUtils {
         sCurrentThread = Thread.currentThread();
     }
 
-    public static boolean isRenderThread() {
-        return sCurrentThread == Thread.currentThread();
-    }
-
     public static void assertNotInRenderThread() {
         if (!sWarned) {
             if (Thread.currentThread() == sCurrentThread) {

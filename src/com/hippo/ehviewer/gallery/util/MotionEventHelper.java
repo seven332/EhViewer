@@ -15,13 +15,11 @@
  */
 package com.hippo.ehviewer.gallery.util;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.Matrix;
-import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.MotionEvent.PointerCoords;
-
-import com.hippo.ehviewer.gallery.common.ApiHelper;
 
 public final class MotionEventHelper {
     private MotionEventHelper() {}
@@ -36,6 +34,7 @@ public final class MotionEventHelper {
         }
     }
 
+    @SuppressLint("Recycle")
     @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
     private static MotionEvent transformEventNew(MotionEvent e, Matrix m) {
         MotionEvent newEvent = MotionEvent.obtain(e);
@@ -44,6 +43,7 @@ public final class MotionEventHelper {
     }
 
     // This is copied from Input.cpp in the android framework.
+    @SuppressLint("Recycle")
     private static MotionEvent transformEventOld(MotionEvent e, Matrix m) {
         long downTime = e.getDownTime();
         long eventTime = e.getEventTime();
@@ -73,6 +73,7 @@ public final class MotionEventHelper {
                 m, pointerCoords[i].orientation);
         }
 
+        @SuppressWarnings("deprecation")
         MotionEvent n = MotionEvent.obtain(downTime, eventTime, action,
                 pointerCount, pointerIds, pointerCoords, metaState, xPrecision,
                 yPrecision, deviceId, edgeFlags, source, flags);
@@ -104,8 +105,8 @@ public final class MotionEventHelper {
         // angle from vertical.  Coordinate system: down is increasing Y, right is
         // increasing X.
         float[] v = new float[2];
-        v[0] = FloatMath.sin(angleRadians);
-        v[1] = -FloatMath.cos(angleRadians);
+        v[0] = (float)Math.sin(angleRadians);
+        v[1] = -(float)Math.cos(angleRadians);
         m.mapVectors(v);
 
         // Derive the transformed vector's clockwise angle from vertical.

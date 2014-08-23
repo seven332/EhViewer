@@ -16,10 +16,10 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
+import java.util.ArrayDeque;
+
 import com.hippo.ehviewer.gallery.ui.GLRoot;
 import com.hippo.ehviewer.gallery.ui.GLRoot.OnGLIdleListener;
-
-import java.util.ArrayDeque;
 
 public class TextureUploader implements OnGLIdleListener {
     private static final int INIT_CAPACITY = 64;

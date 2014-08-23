@@ -16,11 +16,10 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
+import junit.framework.Assert;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
-import junit.framework.Assert;
 
 // ResourceTexture is a texture whose Bitmap is decoded from a resource.
 // By default ResourceTexture is not opaque.

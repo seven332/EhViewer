@@ -19,8 +19,8 @@ package com.hippo.ehviewer.gallery.glrenderer;
 import java.util.WeakHashMap;
 
 import android.graphics.RectF;
+import android.util.Log;
 
-import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.MathUtils;
 
 // BasicTexture is a Texture corresponds to a real GL texture.
@@ -28,7 +28,6 @@ import com.hippo.ehviewer.util.MathUtils;
 // If a BasicTexture is loaded into GL memory, it has a GL texture id.
 public abstract class BasicTexture implements Texture {
 
-    @SuppressWarnings("unused")
     private static final String TAG = "BasicTexture";
     protected static final int UNSPECIFIED = -1;
 
@@ -53,6 +52,7 @@ public abstract class BasicTexture implements Texture {
     protected GLCanvas mCanvasRef = null;
     private static WeakHashMap<BasicTexture, Object> sAllTextures
             = new WeakHashMap<BasicTexture, Object>();
+    @SuppressWarnings("rawtypes")
     private static ThreadLocal sInFinalizer = new ThreadLocal();
 
     protected BasicTexture(GLCanvas canvas, int id, int state) {
@@ -185,6 +185,7 @@ public abstract class BasicTexture implements Texture {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void finalize() {
         sInFinalizer.set(BasicTexture.class);
         recycle();

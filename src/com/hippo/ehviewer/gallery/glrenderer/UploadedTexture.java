@@ -143,9 +143,8 @@ public abstract class UploadedTexture extends BasicTexture {
     }
 
     private void freeBitmap() {
-        //Assert.assertTrue(mBitmap != null);
-        if (mBitmap != null)
-            onFreeBitmap(mBitmap);
+        Assert.assertTrue(mBitmap != null);
+        onFreeBitmap(mBitmap);
         mBitmap = null;
     }
 
@@ -210,10 +209,12 @@ public abstract class UploadedTexture extends BasicTexture {
     private void uploadToCanvas(GLCanvas canvas) {
 
         Bitmap bitmap = getBitmap();
-        if (bitmap != null && !bitmap.isRecycled()) {
+        if (bitmap != null) {
             try {
                 int bWidth = bitmap.getWidth();
                 int bHeight = bitmap.getHeight();
+                int width = bWidth + mBorder * 2;
+                int height = bHeight + mBorder * 2;
                 int texWidth = getTextureWidth();
                 int texHeight = getTextureHeight();
 

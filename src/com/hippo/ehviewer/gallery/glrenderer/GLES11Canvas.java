@@ -28,19 +28,19 @@ import javax.microedition.khronos.opengles.GL11Ext;
 import javax.microedition.khronos.opengles.GL11ExtensionPack;
 
 import junit.framework.Assert;
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
+import android.util.Log;
 
 import com.hippo.ehviewer.util.IntArray;
-import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Utils;
 
 public class GLES11Canvas implements GLCanvas {
-    @SuppressWarnings("unused")
     private static final String TAG = "GLCanvasImp";
 
     private static final float OPAQUE_ALPHA = 0.95f;
@@ -557,7 +557,6 @@ public class GLES11Canvas implements GLCanvas {
         mGLState.setBlendEnabled(mBlendEnabled && (!from.isOpaque()
                 || !Utils.isOpaque(toColor) || alpha < OPAQUE_ALPHA));
 
-        final GL11 gl = mGL;
         if (!bindTexture(from)) return;
 
         // Interpolate the RGB and alpha values between both textures.
@@ -591,7 +590,6 @@ public class GLES11Canvas implements GLCanvas {
         private int mTextureTarget = GL11.GL_TEXTURE_2D;
         private boolean mBlendEnabled = true;
         private float mLineWidth = 1.0f;
-        private final boolean mLineSmooth = false;
 
         public GLState(GL11 gl) {
             mGL = gl;
@@ -817,6 +815,7 @@ public class GLES11Canvas implements GLCanvas {
     }
 
     @Override
+    @SuppressLint("DefaultLocale")
     public void dumpStatisticsAndClear() {
         String line = String.format(
                 "MESH:%d, TEX_OES:%d, TEX_RECT:%d, FILL_RECT:%d, LINE:%d",
@@ -957,13 +956,6 @@ public class GLES11Canvas implements GLCanvas {
         int target = texture.getTarget();
         mGL.glBindTexture(target, texture.getId());
         GLUtils.texSubImage2D(target, 0, xOffset, yOffset, bitmap, format, type);
-    }
-
-    @Override
-    public void texSubImage2D(BasicTexture texture, int xOffset, int yOffset, Bitmap bitmap) {
-        int target = texture.getTarget();
-        mGL.glBindTexture(target, texture.getId());
-        GLUtils.texSubImage2D(target, 0, xOffset, yOffset, bitmap);
     }
 
     @Override

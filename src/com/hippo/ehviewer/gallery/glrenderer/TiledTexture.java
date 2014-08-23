@@ -16,6 +16,9 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -28,9 +31,6 @@ import android.os.SystemClock;
 
 import com.hippo.ehviewer.gallery.ui.GLRoot;
 import com.hippo.ehviewer.gallery.ui.GLRoot.OnGLIdleListener;
-
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 
 // This class is similar to BitmapTexture, except the bitmap is
 // split into tiles. By doing so, we may increase the time required to
@@ -129,18 +129,25 @@ public class TiledTexture implements Texture {
 
         @Override
         protected Bitmap onGetBitmap() {
-            int x = BORDER_SIZE - offsetX;
-            int y = BORDER_SIZE - offsetY;
-            int r = bitmap.getWidth() + x;
-            int b = bitmap.getHeight() + y;
-            sCanvas.drawBitmap(bitmap, x, y, sBitmapPaint);
+            // make a local copy of the reference to the bitmap,
+            // since it might be null'd in a different thread. b/8694871
+            Bitmap localBitmapRef = bitmap;
             bitmap = null;
 
-            // draw borders if need
-            if (x > 0) sCanvas.drawLine(x - 1, 0, x - 1, TILE_SIZE, sPaint);
-            if (y > 0) sCanvas.drawLine(0, y - 1, TILE_SIZE, y - 1, sPaint);
-            if (r < CONTENT_SIZE) sCanvas.drawLine(r, 0, r, TILE_SIZE, sPaint);
-            if (b < CONTENT_SIZE) sCanvas.drawLine(0, b, TILE_SIZE, b, sPaint);
+            if (localBitmapRef != null) {
+                int x = BORDER_SIZE - offsetX;
+                int y = BORDER_SIZE - offsetY;
+                int r = localBitmapRef.getWidth() + x;
+                int b = localBitmapRef.getHeight() + y;
+                sCanvas.drawBitmap(localBitmapRef, x, y, sBitmapPaint);
+                localBitmapRef = null;
+
+                // draw borders if need
+                if (x > 0) sCanvas.drawLine(x - 1, 0, x - 1, TILE_SIZE, sPaint);
+                if (y > 0) sCanvas.drawLine(0, y - 1, TILE_SIZE, y - 1, sPaint);
+                if (r < CONTENT_SIZE) sCanvas.drawLine(r, 0, r, TILE_SIZE, sPaint);
+                if (b < CONTENT_SIZE) sCanvas.drawLine(0, b, TILE_SIZE, b, sPaint);
+            }
 
             return sUploadBitmap;
         }

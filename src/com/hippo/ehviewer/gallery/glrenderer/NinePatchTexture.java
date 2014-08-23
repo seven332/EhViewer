@@ -81,6 +81,7 @@ public class NinePatchTexture extends ResourceTexture {
         private static final int CACHE_SIZE = 16;
         private static final int CACHE_SIZE_START_MOVE = CACHE_SIZE / 2;
         private final int[] mKey = new int[CACHE_SIZE];
+        @SuppressWarnings("unchecked")
         private final V[] mValue = (V[]) new Object[CACHE_SIZE];
         private int mCount;  // number of items in this cache
 

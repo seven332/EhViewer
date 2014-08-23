@@ -34,8 +34,8 @@ abstract class CanvasTexture extends UploadedTexture {
         setOpaque(false);
     }
 
-    @SuppressLint("WrongCall")
     @Override
+    @SuppressLint("WrongCall")
     protected Bitmap onGetBitmap() {
         Bitmap bitmap = Bitmap.createBitmap(mWidth, mHeight, mConfig);
         mCanvas = new Canvas(bitmap);

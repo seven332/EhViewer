@@ -1,9 +1,9 @@
 package com.hippo.ehviewer.gallery.glrenderer;
 
-import android.opengl.GLES20;
-
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11ExtensionPack;
+
+import android.opengl.GLES20;
 
 public class GLES20IdImpl implements GLId {
     private final int[] mTempIntArray = new int[1];

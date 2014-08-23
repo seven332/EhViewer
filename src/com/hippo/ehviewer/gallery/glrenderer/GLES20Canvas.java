@@ -22,15 +22,16 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
+import android.util.Log;
 
 import com.hippo.ehviewer.util.IntArray;
-import com.hippo.ehviewer.util.Log;
 
 public class GLES20Canvas implements GLCanvas {
     // ************** Constants **********************
@@ -818,6 +819,7 @@ public class GLES20Canvas implements GLCanvas {
     }
 
     @Override
+    @SuppressLint("DefaultLocale")
     public void dumpStatisticsAndClear() {
         String line = String.format("MESH:%d, TEX_RECT:%d, FILL_RECT:%d, LINE:%d", mCountDrawMesh,
                 mCountTextureRect, mCountFillRect, mCountDrawLine);
@@ -936,14 +938,6 @@ public class GLES20Canvas implements GLCanvas {
         GLES20.glBindTexture(target, texture.getId());
         checkError();
         GLUtils.texSubImage2D(target, 0, xOffset, yOffset, bitmap, format, type);
-    }
-
-    @Override
-    public void texSubImage2D(BasicTexture texture, int xOffset, int yOffset, Bitmap bitmap) {
-        int target = texture.getTarget();
-        GLES20.glBindTexture(target, texture.getId());
-        checkError();
-        GLUtils.texSubImage2D(target, 0, xOffset, yOffset, bitmap);
     }
 
     @Override

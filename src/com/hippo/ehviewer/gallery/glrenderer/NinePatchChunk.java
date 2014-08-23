@@ -16,10 +16,10 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
-import android.graphics.Rect;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
+import android.graphics.Rect;
 
 // See "frameworks/base/include/utils/ResourceTypes.h" for the format of
 // NinePatch chunk.

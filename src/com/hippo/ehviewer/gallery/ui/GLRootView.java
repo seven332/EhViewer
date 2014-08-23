@@ -25,7 +25,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Matrix;
@@ -39,12 +38,12 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
 import com.hippo.ehviewer.gallery.anim.CanvasAnimation;
-import com.hippo.ehviewer.gallery.common.ApiHelper;
 import com.hippo.ehviewer.gallery.glrenderer.BasicTexture;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLES11Canvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLES20Canvas;
 import com.hippo.ehviewer.gallery.glrenderer.UploadedTexture;
+import com.hippo.ehviewer.gallery.util.ApiHelper;
 import com.hippo.ehviewer.gallery.util.GalleryUtils;
 import com.hippo.ehviewer.gallery.util.MotionEventHelper;
 import com.hippo.ehviewer.util.Log;
@@ -70,9 +69,6 @@ public class GLRootView extends GLSurfaceView
     private int mInvalidateColor = 0;
 
     private static final boolean DEBUG_DRAWING_STAT = false;
-
-    private static final boolean DEBUG_PROFILE = false;
-    private static final boolean DEBUG_PROFILE_SLOW_ONLY = false;
 
     private static final int FLAG_INITIALIZED = 1;
     private static final int FLAG_NEED_LAYOUT = 2;
@@ -106,14 +102,13 @@ public class GLRootView extends GLSurfaceView
             mRenderLock.newCondition();
     private boolean mFreeze;
 
-    private long mLastDrawFinishTime;
     private boolean mInDownState = false;
-    //private boolean mFirstDraw = true;
 
     public GLRootView(Context context) {
         this(context, null);
     }
 
+    @SuppressWarnings("deprecation")
     public GLRootView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mFlags |= FLAG_INITIALIZED;
@@ -179,8 +174,8 @@ public class GLRootView extends GLSurfaceView
         superRequestRender();
     }
 
-    @SuppressLint("NewApi")
     @Override
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void requestRender() {
         if (DEBUG_INVALIDATE) {
             StackTraceElement e = Thread.currentThread().getStackTrace()[4];
@@ -296,7 +291,7 @@ public class GLRootView extends GLSurfaceView
             mRenderLock.unlock();
         }
 
-        if (DEBUG_FPS || DEBUG_PROFILE) {
+        if (DEBUG_FPS) {
             setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         } else {
             setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -314,6 +309,7 @@ public class GLRootView extends GLSurfaceView
                 + ", gl10: " + gl1.toString());
         Process.setThreadPriority(Process.THREAD_PRIORITY_DISPLAY);
         GalleryUtils.setRenderThread();
+
         GL11 gl = (GL11) gl1;
         Utils.assertTrue(mGL == gl);
 
@@ -347,21 +343,6 @@ public class GLRootView extends GLSurfaceView
         } finally {
             mRenderLock.unlock();
         }
-/*
-        // We put a black cover View in front of the SurfaceView and hide it
-        // after the first draw. This prevents the SurfaceView being transparent
-        // before the first draw.
-        if (mFirstDraw) {
-            mFirstDraw = false;
-            post(new Runnable() {
-                    @Override
-                    public void run() {
-                        View root = getRootView();
-                        View cover = root.findViewById(R.id.gl_root_cover);
-                        cover.setVisibility(GONE);
-                    }
-                });
-        }*/
     }
 
     private void onDrawFrameLocked(GL10 gl) {
@@ -385,6 +366,9 @@ public class GLRootView extends GLSurfaceView
         rotateCanvas(-mCompensation);
         if (mContentView != null) {
            mContentView.render(mCanvas);
+        } else {
+            // Make sure we always draw something to prevent displaying garbage
+            mCanvas.clearBuffer();
         }
         mCanvas.restore();
 
@@ -544,6 +528,7 @@ public class GLRootView extends GLSurfaceView
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void setLightsOutMode(boolean enabled) {
         if (!ApiHelper.HAS_SET_SYSTEM_UI_VISIBILITY) return;
