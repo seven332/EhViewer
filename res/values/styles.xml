@@ -199,7 +199,6 @@
     <style name="EmbedButton">
         <item name="@android:textAppearance">@style/TextAppearance.EmbedButton</item>
         <item name="@android:minHeight">48dp</item>
-        <item name="@android:minWidth">32dp</item>
     </style>
 
 </resources>

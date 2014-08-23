@@ -640,7 +640,7 @@ public class FavouriteActivity extends AbsGalleryActivity
                                 new int[]{}},
                                 new int[]{0xff84cae4, 0xff33b5e5, 0xFFFAFAFA}, null, false);
             }
-            final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.cover);
+            final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.thumb);
             if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
                 // Set margin top 8dp if position is 0, otherwise 4dp
                 LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)
@@ -657,7 +657,7 @@ public class FavouriteActivity extends AbsGalleryActivity
                         new LoadImageView.SimpleImageGetListener(thumb).setFixScaleType(true));
             }
             // Set manga name
-            TextView name = (TextView) convertView.findViewById(R.id.name);
+            TextView name = (TextView) convertView.findViewById(R.id.title);
             name.setText(gi.title);
             // Set uploder
             TextView uploader = (TextView) convertView.findViewById(R.id.uploader);
@@ -674,9 +674,16 @@ public class FavouriteActivity extends AbsGalleryActivity
                     .findViewById(R.id.rate);
             rate.setRating(gi.rating);
             // set posted
-            TextView posted = (TextView) convertView.findViewById(R.id.posted);
+            TextView posted = (TextView)convertView.findViewById(R.id.posted);
             posted.setText(gi.posted);
-
+            // Set simple language
+            TextView simpleLanguage = (TextView)convertView.findViewById(R.id.simple_language);
+            if (gi.simpleLanguage == null) {
+                simpleLanguage.setVisibility(View.GONE);
+            } else {
+                simpleLanguage.setVisibility(View.VISIBLE);
+                simpleLanguage.setText(gi.simpleLanguage);
+            }
             return convertView;
         }
     }

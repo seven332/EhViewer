@@ -55,44 +55,36 @@
 
     <!-- RelativeLayout layout_marginBottom layout_below -->
 
-    <FrameLayout
-        android:id="@+id/box"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/category"
+        style="@style/CardMessage"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/title"
-        android:layout_alignParentBottom="true" >
+        android:layout_alignBottom="@id/thumb"
+        android:layout_marginBottom="8dp"
+        android:paddingBottom="2dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="2dp"
+        android:textColor="@android:color/white" />
 
-        <TextView
-            android:id="@+id/category"
-            style="@style/CardMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:paddingBottom="2dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="2dp"
-            android:textColor="@android:color/white" />
+    <TextView
+        android:id="@+id/posted"
+        style="@style/CardMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/thumb"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="4dp" />
 
-        <TextView
-            android:id="@+id/posted"
-            style="@style/CardMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|bottom"
-            android:layout_marginRight="4dp" />
-
-        <TextView
-            android:id="@+id/simple_language"
-            style="@style/CardMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|top"
-            android:layout_marginRight="4dp"
-            android:visibility="gone" />
-
-    </FrameLayout>
+    <TextView
+        android:id="@+id/simple_language"
+        style="@style/CardMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/posted"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="4dp" />
 
 </RelativeLayout>
