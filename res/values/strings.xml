@@ -337,7 +337,7 @@
     <string name="copyed">Copyed</string>
     <string name="send">Send</string>
     <string name="detail">Detail</string>
-    <string name="delete2">Detail (images included)</string>
+    <string name="delete2">Delete (images included)</string>
     <string name="comment">Comment</string>
     <string name="info">Info</string>
     <string name="reply">Reply</string>

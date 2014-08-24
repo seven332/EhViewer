@@ -700,8 +700,10 @@ public class GalleryDetailActivity extends AbsActivity
         }
 
         // Comment
-        if (mGalleryInfo instanceof GalleryDetail) {
-            GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
+        GalleryDetail galleryDetail;
+        if (mGalleryInfo instanceof GalleryDetail &&
+                (galleryDetail = (GalleryDetail)mGalleryInfo) != null &&
+                galleryDetail.comments != null) {
             mDividerTC.setVisibility(View.VISIBLE);
             mDetailComment.setVisibility(View.VISIBLE);
 
