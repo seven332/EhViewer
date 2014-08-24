@@ -363,6 +363,18 @@ public class Config {
                 KEY_PREVIEW_COLUMNS_LANDSCAPE, DEFAULT_PREVIEW_COLUMNS_LANDSCAPE);
     }
 
+    private static final String KEY_VERSION_CODE = "version_code";
+    private static final int DEFAULT_VERSION_CODE = 0;
+
+    public static int getVersionCode() {
+        return mConfigPre.getInt(KEY_VERSION_CODE,
+                DEFAULT_VERSION_CODE);
+    }
+
+    public static void setVersionCode(int versionCode) {
+        mConfigPre.edit().putInt(KEY_VERSION_CODE, versionCode).apply();
+    }
+
     /****** GalleryActivity ******/
 
     private static final String KEY_GALLERY_FIRST = "gallery_first";

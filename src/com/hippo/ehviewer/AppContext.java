@@ -25,10 +25,13 @@ import java.text.SimpleDateFormat;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 
 import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.ehclient.EhClient;
+import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.ehclient.ExDownloaderManager;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
@@ -82,6 +85,18 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
                 new FileOutputStream(nomedia).close();
             } catch (IOException e) {}
         }
+
+        // Fix <=22 error
+        if (Config.getVersionCode() <= 22) {
+            EhInfo.getInstance(this).logout();
+        }
+
+
+        // Update version code
+        try {
+            PackageInfo pi= getPackageManager().getPackageInfo(getPackageName(), 0);
+            Config.setVersionCode(pi.versionCode);
+        } catch (NameNotFoundException e) {}
     }
 
     /**
