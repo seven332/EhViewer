@@ -396,7 +396,8 @@ public class Data {
             while (!cursor.isAfterLast()) {
                 int gid = cursor.getInt(0);
                 GalleryInfo galleryInfo = getGallery(gid);
-                mLocalFavourites.add(galleryInfo);
+                if (galleryInfo != null)
+                    mLocalFavourites.add(galleryInfo);
                 cursor.moveToNext();
             }
         }

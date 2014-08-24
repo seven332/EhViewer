@@ -22,14 +22,16 @@ import java.io.FileNotFoundException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import javax.microedition.khronos.opengles.GL11;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Movie;
 import android.util.SparseArray;
 
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.ehclient.ExDownloader;
 import com.hippo.ehviewer.ehclient.ExDownloaderManager;
+import com.hippo.ehviewer.gallery.image.Image;
 import com.hippo.ehviewer.util.AutoExpandArray;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
@@ -207,7 +209,8 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
                 try {
                     fis = new FileInputStream(new File(mDir, filename));
                     if (isGif) {
-                        res = Movie.decodeStream(fis);
+                        //res = Movie.decodeStream(fis);
+                        res = Image.decodeStream(fis, GL11.GL_RGB);
                     } else {
                         BitmapFactory.Options opt = new BitmapFactory.Options();
                         // TODO why only ARGB_8888 always work well, other may slit image

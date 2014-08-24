@@ -28,12 +28,14 @@ import android.view.animation.OvershootInterpolator;
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.data.ImageSet;
+import com.hippo.ehviewer.gallery.glrenderer.BasicTexture;
 import com.hippo.ehviewer.gallery.glrenderer.BitmapTexture;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLPaint;
+import com.hippo.ehviewer.gallery.glrenderer.ImageTexture;
 import com.hippo.ehviewer.gallery.glrenderer.MovieTexture;
 import com.hippo.ehviewer.gallery.glrenderer.StringTexture;
-import com.hippo.ehviewer.gallery.glrenderer.UploadedTexture;
+import com.hippo.ehviewer.gallery.image.Image;
 import com.hippo.ehviewer.gallery.ui.GLView;
 import com.hippo.ehviewer.gallery.ui.GestureRecognizer;
 import com.hippo.ehviewer.gallery.util.GalleryUtils;
@@ -297,11 +299,15 @@ public class GalleryView extends GLView
                         mContext.getString(R.string.read_image_error));
             } else {
                 if (res instanceof Bitmap) {
-                    BitmapImage bi = new BitmapImage();
+                    BitmapItem bi = new BitmapItem();
                     bi.load((Bitmap)res);
                     showItems[targetIndex] = bi;
-                } else {
-                    MovieImage mi = new MovieImage();
+                } else if(res instanceof Image) {
+                    ImageItem ii = new ImageItem();
+                    ii.load((Image)res);
+                    showItems[targetIndex] = ii;
+                }  else {
+                    MovieItem mi = new MovieItem();
                     mi.load((Movie)res);
                     showItems[targetIndex] = mi;
                 }
@@ -348,6 +354,9 @@ public class GalleryView extends GLView
         canvas.drawLine(right, top, right, bottom, paint);
     }
 
+    private ImageTexture nt;
+
+
     @Override
     protected synchronized void render(GLCanvas canvas) {
         // If it is not render thread, do not render
@@ -360,7 +369,7 @@ public class GalleryView extends GLView
             item = showItems[CUR_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas);
-            if (item instanceof MovieImage)
+            if (item instanceof MovieItem)
                 hasMovie |= true;
             break;
 
@@ -369,13 +378,13 @@ public class GalleryView extends GLView
             item = showItems[PRE_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas, scrollXOffset, scrollYOffset);
-            if (item instanceof MovieImage)
+            if (item instanceof MovieItem)
                 hasMovie |= true;
 
             item = showItems[CUR_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas, scrollXOffset, scrollYOffset);
-            if (item instanceof MovieImage)
+            if (item instanceof MovieItem)
                 hasMovie |= true;
             break;
 
@@ -384,13 +393,13 @@ public class GalleryView extends GLView
             item = showItems[CUR_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas, scrollXOffset, scrollYOffset);
-            if (item instanceof MovieImage)
+            if (item instanceof MovieItem)
                 hasMovie |= true;
 
             item = showItems[NEXT_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas, scrollXOffset, scrollYOffset);
-            if (item instanceof MovieImage)
+            if (item instanceof MovieItem)
                 hasMovie |= true;
             break;
         }
@@ -401,6 +410,14 @@ public class GalleryView extends GLView
 
         // TODO Mask to reduce brightness
         //canvas.fillRect(0, 0, mScreenWidth, mScreenHeight, MASK_COLOR);
+
+
+        //if (nt == null)
+            //nt = new ImageTexture();
+
+       // nt.draw(canvas, 0, 0);
+       // Log.d(TAG, "nt.draw");
+
 
         if (hasMovie)
             invalidate();
@@ -442,8 +459,8 @@ public class GalleryView extends GLView
             rect.top = yOffset;
             rect.right = rect.left + text.width;
             rect.bottom = rect.top + text.height;
-        } else if (showItem instanceof Image) {
-            Image image = (Image)showItem;
+        } else if (showItem instanceof BasicItem) {
+            BasicItem image = (BasicItem)showItem;
 
             // Set scale
             int showWidth = 0;
@@ -684,9 +701,9 @@ public class GalleryView extends GLView
         ShowItem curShowItem;
         curShowItem = showItems[CUR_TARGET_INDEX];
 
-        if (curShowItem == null || !(curShowItem instanceof Image))
+        if (curShowItem == null || !(curShowItem instanceof BasicItem))
             return false;
-        Image image = (Image)curShowItem;
+        BasicItem image = (BasicItem)curShowItem;
         float newScale;
         if (mode) {
             newScale = image.imageScale * 1.1f;
@@ -905,7 +922,7 @@ public class GalleryView extends GLView
 
         private final TimeRunner mDoubleTapRunner = new TimeRunner() {
 
-            private Image image;
+            private BasicItem image;
             private float startScale;
             private float endScale;
             private final Point startPosition = new Point();
@@ -929,11 +946,11 @@ public class GalleryView extends GLView
             @Override
             protected void onStart() {
                 ShowItem showItem = showItems[CUR_TARGET_INDEX];
-                if (showItem == null || !(showItem instanceof Image)) {
+                if (showItem == null || !(showItem instanceof BasicItem)) {
                     mDoubleTapRunner.cancel();
                     return;
                 }
-                image = (Image)showItem;
+                image = (BasicItem)showItem;
                 int width = image.width;
                 int height = image.height;
                 if (width == -1 || height == -1) {
@@ -1073,7 +1090,7 @@ public class GalleryView extends GLView
                 return true;
 
             ShowItem curShowItem = showItems[CUR_TARGET_INDEX];
-            if (curShowItem == null || !(curShowItem instanceof Image))
+            if (curShowItem == null || !(curShowItem instanceof BasicItem))
                 return true;
 
             mDoubleTapAnimating = true;
@@ -1121,7 +1138,7 @@ public class GalleryView extends GLView
                 Rect rect = curShowItem.mRect;
 
                 // Check change page or not
-                if (curShowItem == null || !(curShowItem instanceof Image))
+                if (curShowItem == null || !(curShowItem instanceof BasicItem))
                     changePage = true;
                 else{
                     if ( Math.abs(totalX/totalY) > 1 && ((totalX > CHANGE_PAGE_OFFSET && dx < 0 && rect.left >= 0)
@@ -1265,10 +1282,10 @@ public class GalleryView extends GLView
             }
 
             ShowItem curShowItem = showItems[CUR_TARGET_INDEX];
-            if (curShowItem == null || !(curShowItem instanceof Image))
+            if (curShowItem == null || !(curShowItem instanceof BasicItem))
                 return true;
 
-            Image image = (Image)curShowItem;
+            BasicItem image = (BasicItem)curShowItem;
 
             float newScale = image.imageScale * scale;
             if (newScale > SCALE_MAX || newScale < SCALE_MIN)
@@ -1392,15 +1409,17 @@ public class GalleryView extends GLView
         public abstract void recycle();
     }
 
-    private abstract class Image extends ShowItem{
-        private UploadedTexture mTexture;
+    private abstract class BasicItem extends ShowItem{
+        private BasicTexture mTexture;
         public float imageScale = 1;
+        private final RectF source = new RectF();
+        private final RectF target = new RectF();
 
         /**
          * You must call init before draw
          * @param texture
          */
-        public void init(UploadedTexture texture) {
+        public void init(BasicTexture texture) {
             mTexture = texture;
             imageScale = 1;
         }
@@ -1441,8 +1460,6 @@ public class GalleryView extends GLView
                 // Only show what in the own box
                 // TODO only what can be seen
                 if (left < leftBound || top < topBound || right > rightBound || bottom > bottomBound) {
-                    RectF source = new RectF();
-                    RectF target = new RectF();
 
                     if (left < leftBound) {
                         target.left = leftBound;
@@ -1486,7 +1503,7 @@ public class GalleryView extends GLView
         }
     }
 
-    private class BitmapImage extends Image{
+    private class BitmapItem extends BasicItem{
         private BitmapTexture mTexture;
         private Bitmap mContextBmp;
 
@@ -1514,7 +1531,30 @@ public class GalleryView extends GLView
         }
     }
 
-    private class MovieImage extends Image{
+    private class ImageItem extends BasicItem {
+        private ImageTexture mTexture;
+
+        public void load(Image image) {
+            mTexture = new ImageTexture(image);
+            width = mTexture.getWidth();
+            height = mTexture.getHeight();
+
+            super.init(mTexture);
+        }
+
+        @Override
+        public void draw(GLCanvas canvas, int xOffset, int yOffset) {
+            super.draw(canvas, xOffset, yOffset);
+        }
+
+
+        @Override
+        public void recycle() {
+            mTexture.recycle();
+        }
+    }
+
+    private class MovieItem extends BasicItem {
         private MovieTexture mTexture;
         private Movie mContextMovie;
 
