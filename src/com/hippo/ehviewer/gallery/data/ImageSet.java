@@ -210,7 +210,7 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
                     fis = new FileInputStream(new File(mDir, filename));
                     if (isGif) {
                         //res = Movie.decodeStream(fis);
-                        res = Image.decodeStream(fis, GL11.GL_RGB);
+                        res = Image.decodeStream(fis, GL11.GL_RGBA);
                     } else {
                         BitmapFactory.Options opt = new BitmapFactory.Options();
                         // TODO why only ARGB_8888 always work well, other may slit image

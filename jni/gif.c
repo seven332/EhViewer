@@ -121,12 +121,34 @@ static inline bool getColorFromTableRGB(const ColorMapObject* cmap, int index,
     return true;
 }
 
+static inline bool getColorFromTableRGBA(const ColorMapObject* cmap, int index,
+        rgba* color) {
+    if (cmap == NULL || index < 0 || index >= cmap->ColorCount)
+        return false;
+    GifColorType gct = cmap->Colors[index];
+    color->red = gct.Red;
+    color->green = gct.Green;
+    color->blue = gct.Blue;
+    color->alpha = 0xff;
+    return true;
+}
+
 static inline bool getColorFromTableLUM(const ColorMapObject* cmap, int index,
         lum* color) {
     if (cmap == NULL || index < 0 || index >= cmap->ColorCount)
         return false;
     GifColorType gct = cmap->Colors[index];
     color->l = getVFrowRGB(gct.Red, gct.Green, gct.Blue);
+    return true;
+}
+
+static inline bool getColorFromTableLUMA(const ColorMapObject* cmap, int index,
+        luma* color) {
+    if (cmap == NULL || index < 0 || index >= cmap->ColorCount)
+        return false;
+    GifColorType gct = cmap->Colors[index];
+    color->l = getVFrowRGB(gct.Red, gct.Green, gct.Blue);
+    color->a = 0xff;
     return true;
 }
 
@@ -141,6 +163,21 @@ static void setBgRGB(GIF* gif, rgb* pixels) {
         memset(pixels, BG_LUM, size);
 }
 
+static void setBgRGBA(GIF* gif, rgba* pixels) {
+    GifFileType* gifFile = gif->gifFile;
+    int num = gifFile->SWidth * gifFile->SHeight;
+    int size = num * sizeof(rgba);
+    rgba color;
+    if (getColorFromTableRGBA(gifFile->SColorMap, gifFile->SBackGroundColor, &color)) {
+        eraseRGBA(pixels, num, color);
+        color.red = BG_LUM;
+        color.green = BG_LUM;
+        color.blue = BG_LUM;
+        color.red = 0xff;
+    }
+    eraseRGBA(pixels, num, color);
+}
+
 static void setBgLUM(GIF* gif, lum* pixels) {
     GifFileType* gifFile = gif->gifFile;
     int num = gifFile->SWidth * gifFile->SHeight;
@@ -152,15 +189,31 @@ static void setBgLUM(GIF* gif, lum* pixels) {
         memset(pixels, BG_LUM, size);
 }
 
+static void setBgLUMA(GIF* gif, luma* pixels) {
+    GifFileType* gifFile = gif->gifFile;
+    int num = gifFile->SWidth * gifFile->SHeight;
+    int size = num * sizeof(lum);
+    luma color;
+    if (!getColorFromTableLUMA(gifFile->SColorMap, gifFile->SBackGroundColor, &color)) {
+        color.l = BG_LUM;
+        color.a = 0xff;
+    }
+    eraseLUMA(pixels, num, color);
+}
+
 static void setBg(GIF* gif, void* pixels) {
     switch (gif->format) {
     case GL_RGB:
-    case GL_RGBA:
         setBgRGB(gif, pixels);
         break;
+    case GL_RGBA:
+        setBgRGBA(gif, pixels);
+        break;
     case GL_LUMINANCE:
-    case GL_LUMINANCE_ALPHA:
         setBgLUM(gif, pixels);
+        break;
+    case GL_LUMINANCE_ALPHA:
+        setBgLUMA(gif, pixels);
         break;
     }
 }
@@ -174,12 +227,30 @@ static inline void copyLineRGB(GifByteType* src, rgb* dst,
     }
 }
 
+static inline void copyLineRGBA(GifByteType* src, rgba* dst,
+        const ColorMapObject* cmap, int tran, int width) {
+    for (; width > 0; width--, src++, dst++) {
+        int index = *src;
+        if (tran == -1 || *src != tran)
+            getColorFromTableRGBA(cmap, *src, dst);
+    }
+}
+
 static inline void copyLineLUM(GifByteType* src, lum* dst,
         const ColorMapObject* cmap, int tran, int width) {
     for (; width > 0; width--, src++, dst++) {
         int index = *src;
         if (tran == -1 || *src != tran)
             getColorFromTableLUM(cmap, *src, dst);
+    }
+}
+
+static inline void copyLineLUMA(GifByteType* src, luma* dst,
+        const ColorMapObject* cmap, int tran, int width) {
+    for (; width > 0; width--, src++, dst++) {
+        int index = *src;
+        if (tran == -1 || *src != tran)
+            getColorFromTableLUMA(cmap, *src, dst);
     }
 }
 
@@ -193,7 +264,9 @@ static void drawFrame(GIF* gif, void* pixels, int index) {
     int tran = gif->trans[index];
     GifByteType* src;
     rgb* dst1;
-    lum* dst2;
+    rgba* dst2;
+    lum* dst3;
+    luma* dst4;
 
     if (cmap == NULL)
         cmap = gifFile->SColorMap;
@@ -209,16 +282,24 @@ static void drawFrame(GIF* gif, void* pixels, int index) {
         if (copyWidth > 0 && copyHeight > 0) {
             switch (gif->format) {
             case GL_RGB:
-            case GL_RGBA:
                 dst1 = (rgb*)pixels + gid.Top * ScreenWidth + gid.Left;
                 for (; copyHeight > 0; copyHeight--, src += gid.Width, dst1 += ScreenWidth)
                     copyLineRGB(src, dst1, cmap, tran, copyWidth);
                 break;
-            case GL_LUMINANCE:
-            case GL_LUMINANCE_ALPHA:
-                dst2 = (lum*)pixels + gid.Top * ScreenWidth + gid.Left;
+            case GL_RGBA:
+                dst2 = (rgba*)pixels + gid.Top * ScreenWidth + gid.Left;
                 for (; copyHeight > 0; copyHeight--, src += gid.Width, dst2 += ScreenWidth)
-                    copyLineLUM(src, dst2, cmap, tran, copyWidth);
+                    copyLineRGBA(src, dst2, cmap, tran, copyWidth);
+                break;
+            case GL_LUMINANCE:
+                dst3 = (lum*)pixels + gid.Top * ScreenWidth + gid.Left;
+                for (; copyHeight > 0; copyHeight--, src += gid.Width, dst3 += ScreenWidth)
+                    copyLineLUM(src, dst3, cmap, tran, copyWidth);
+                break;
+            case GL_LUMINANCE_ALPHA:
+                dst4 = (luma*)pixels + gid.Top * ScreenWidth + gid.Left;
+                for (; copyHeight > 0; copyHeight--, src += gid.Width, dst4 += ScreenWidth)
+                    copyLineLUMA(src, dst4, cmap, tran, copyWidth);
                 break;
             }
         }
@@ -277,12 +358,16 @@ static void render(GIF* gif, int index) {
         int size;
         switch (gif->format) {
         case GL_RGB:
-        case GL_RGBA:
             size = width * height * sizeof(rgb);
             break;
+        case GL_RGBA:
+            size = width * height * sizeof(rgba);
+            break;
         case GL_LUMINANCE:
-        case GL_LUMINANCE_ALPHA:
             size = width * height * sizeof(lum);
+            break;
+        case GL_LUMINANCE_ALPHA:
+            size = width * height * sizeof(luma);
             break;
         }
         if (gif->bak == NULL)
@@ -309,12 +394,16 @@ static GIF* analysisGifFileType(GifFileType* gifFile, int format, int* delays) {
     gif->format = format;
     switch (format) {
     case GL_RGB:
-    case GL_RGBA:
         gif->pixels = malloc(gifFile->SWidth * gifFile->SHeight * sizeof(rgb));
         break;
+    case GL_RGBA:
+        gif->pixels = malloc(gifFile->SWidth * gifFile->SHeight * sizeof(rgba));
+        break;
     case GL_LUMINANCE:
-    case GL_LUMINANCE_ALPHA:
         gif->pixels = malloc(gifFile->SWidth * gifFile->SHeight * sizeof(lum));
+        break;
+    case GL_LUMINANCE_ALPHA:
+        gif->pixels = malloc(gifFile->SWidth * gifFile->SHeight * sizeof(luma));
         break;
     }
     gif->pxlIndex = -1;
@@ -349,11 +438,6 @@ jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format) {
     int* delays;
 
     // GIF not
-    if (format == GL_RGBA)
-        format = GL_RGB;
-    else if (format == GL_LUMINANCE_ALPHA)
-        format = GL_LUMINANCE;
-
     sc = getStreamContainer(env, is);
     if (sc == NULL)
         return NULL;

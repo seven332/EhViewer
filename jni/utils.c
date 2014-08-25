@@ -12,7 +12,19 @@ void eraseRGB(rgb* pixels, int num, rgb color) {
         *(pixels + i) = color;
 }
 
+void eraseRGBA(rgba* pixels, int num, rgba color) {
+    int i;
+    for (i = 0; i < num; i++)
+        *(pixels + i) = color;
+}
+
 void eraseLUM(lum* pixels, int num, lum color) {
+    int i;
+    for (i = 0; i < num; i++)
+        *(pixels + i) = color;
+}
+
+void eraseLUMA(luma* pixels, int num, luma color) {
     int i;
     for (i = 0; i < num; i++)
         *(pixels + i) = color;

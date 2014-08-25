@@ -12,7 +12,9 @@ typedef struct {
 } StreamContainer;
 
 void eraseRGB(rgb* pixels, int num, rgb color);
+void eraseRGBA(rgba* pixels, int num, rgba color);
 void eraseLUM(lum* pixels, int num, lum color);
+void eraseLUMA(luma* pixels, int num, luma color);
 
 byte getVFrowRGB(byte r, byte g, byte b);
 
