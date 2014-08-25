@@ -84,7 +84,7 @@ public class GalleryDetail extends GalleryInfo
 
     @Override
     public PreviewList getPreview(int page) {
-        if (page >= 0 && page < previewLists.length)
+        if (page >= 0 && previewLists != null && page < previewLists.length)
             return previewLists[page];
         else
             return null;
@@ -92,7 +92,10 @@ public class GalleryDetail extends GalleryInfo
 
     @Override
     public void setPreview(int page, PreviewList previewList) {
-        if (page >= 0 && page < previewLists.length)
+        if (previewLists == null && previewSum > 0)
+            previewLists = new PreviewList[previewSum];
+
+        if (page >= 0 && previewLists != null && page < previewLists.length)
             previewLists[page] = previewList;
     }
 }

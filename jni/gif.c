@@ -75,8 +75,7 @@ static void getDrawStack(GIF* gif, int targetIndex, int* which, int* stack,
     int pxlIndex = gif->pxlIndex;
     int bakIndex = gif->bakIndex;
 
-    *which = SET_BG
-    ;
+    *which = SET_BG;
     *stackSize = 0;
 
     for (i = targetIndex; i >= 0;) {
@@ -125,10 +124,10 @@ static inline bool getColorFromTableRGB(const ColorMapObject* cmap, int index,
 static inline bool getColorFromTableLUM(const ColorMapObject* cmap, int index,
         lum* color) {
     if (cmap == NULL || index < 0 || index >= cmap->ColorCount)
-            return false;
-        GifColorType gct = cmap->Colors[index];
-        color->l = getVFrowRGB(gct.Red, gct.Green, gct.Blue);
-        return true;
+        return false;
+    GifColorType gct = cmap->Colors[index];
+    color->l = getVFrowRGB(gct.Red, gct.Green, gct.Blue);
+    return true;
 }
 
 static void setBgRGB(GIF* gif, rgb* pixels) {
@@ -166,7 +165,7 @@ static void setBg(GIF* gif, void* pixels) {
     }
 }
 
-static void copyLineRGB(GifByteType* src, rgb* dst,
+static inline void copyLineRGB(GifByteType* src, rgb* dst,
         const ColorMapObject* cmap, int tran, int width) {
     for (; width > 0; width--, src++, dst++) {
         int index = *src;
@@ -175,7 +174,7 @@ static void copyLineRGB(GifByteType* src, rgb* dst,
     }
 }
 
-static void copyLineLUM(GifByteType* src, lum* dst,
+static inline void copyLineLUM(GifByteType* src, lum* dst,
         const ColorMapObject* cmap, int tran, int width) {
     for (; width > 0; width--, src++, dst++) {
         int index = *src;
@@ -192,12 +191,14 @@ static void drawFrame(GIF* gif, void* pixels, int index) {
     GifImageDesc gid = cur.ImageDesc;
     ColorMapObject *cmap = gid.ColorMap;
     int tran = gif->trans[index];
+    GifByteType* src;
     rgb* dst1;
     lum* dst2;
 
     if (cmap == NULL)
         cmap = gifFile->SColorMap;
     if (cmap != NULL) {
+        src = cur.RasterBits;
         int copyWidth = gid.Width;
         int copyHeight = gid.Height;
         if (copyWidth + gid.Left > ScreenWidth)
@@ -206,7 +207,6 @@ static void drawFrame(GIF* gif, void* pixels, int index) {
             copyHeight = ScreenHeight - gid.Top;
 
         if (copyWidth > 0 && copyHeight > 0) {
-            GifByteType* src = cur.RasterBits;
             switch (gif->format) {
             case GL_RGB:
             case GL_RGBA:

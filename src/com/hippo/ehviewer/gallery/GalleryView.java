@@ -96,8 +96,8 @@ public class GalleryView extends GLView
     private static final float CHANGE_PAGE_OFFSET = Ui.dp2pix(12);
 
     // TODO 根据界面的大小调整缩放界限
-    private static final float SCALE_MIN = 1/4.0f;
-    private static final float SCALE_MAX = 4;
+    private static final float SCALE_MIN = 1/10.0f;
+    private static final float SCALE_MAX = 10.0f;
 
     private static final float LINE_WIDTH = Ui.dp2pix(3);
     private static final int LINE_COLOR = -1; // White
