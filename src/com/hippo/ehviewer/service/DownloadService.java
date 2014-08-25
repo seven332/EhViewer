@@ -180,7 +180,7 @@ public class DownloadService extends Service
         Intent intent = new Intent(DownloadService.this,DownloadActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(pendingIntent);
-        mBuilder.setOngoing(true).setAutoCancel(false);
+        mBuilder.setOngoing(false).setAutoCancel(false);
     }
 
     @Override
