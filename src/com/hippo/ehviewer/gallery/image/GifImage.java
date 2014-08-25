@@ -24,16 +24,16 @@ public class GifImage extends Image {
 
     private final int mImageCount;
     private final int[] mDelayArray;
-    private final int[] mTranArray;
     private long mDelaySum;
     private final long mStartTime;
 
+    private int mLastIndex = -1;
+
     protected GifImage(int nativeImage, int fileFormat, int width, int height,
-            int format, int type, int[] delayArray, int[] tranArray) {
+            int format, int type, int[] delayArray) {
         super(nativeImage, fileFormat, width, height, format, type);
         mImageCount = delayArray.length;
         mDelayArray = delayArray;
-        mTranArray = tranArray;
 
         mDelaySum = 0;
         for (int delay : delayArray)
@@ -50,7 +50,8 @@ public class GifImage extends Image {
         return index;
     }
 
-    public boolean isAnimate() {
+    @Override
+    public boolean isAnimated() {
         return mImageCount > 1;
     }
 
@@ -58,7 +59,10 @@ public class GifImage extends Image {
     public void render() {
         if (mNativeImage != 0) {
             int index = getCurIndex();
-            nativeRender(GL11.GL_TEXTURE_2D, 0, 0, 0, mFormat, mType, mNativeImage, index, mTranArray[index]);
+            if (mLastIndex != index) {
+                nativeRender(GL11.GL_TEXTURE_2D, 0, 0, 0, mFormat, mType, mNativeImage, FORMAT_GIF, index);
+                mLastIndex = index;
+            }
         }
     }
 
@@ -67,5 +71,5 @@ public class GifImage extends Image {
     }
 
     private static native void nativeRender(int target, int level, int xoffset,
-            int yoffset, int format, int type, int nativeImage, int index, int tran);
+            int yoffset, int format, int type, int nativeImage, int fileFormat, int index);
 }

@@ -1,14 +1,19 @@
-/*
- * image.h
- *
- *  Created on: 2014年8月24日
- *      Author: Hippo
- */
-
 #include <jni.h>
+#include <stdlib.h>
+#include <memory.h>
+#include <GLES2/gl2.h>
+#include <android/log.h>
 
 #ifndef IMAGE_H_
 #define IMAGE_H_
+
+#define TAG "libimage"
+#define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG ,__VA_ARGS__)
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG ,__VA_ARGS__)
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, TAG ,__VA_ARGS__)
+#define LOGW(...) __android_log_print(ANDROID_LOG_WARN, TAG ,__VA_ARGS__)
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, TAG ,__VA_ARGS__)
+#define LOGF(...) __android_log_print(ANDROID_LOG_FATAL, TAG ,__VA_ARGS__)
 
 typedef unsigned char byte;
 
@@ -34,18 +39,17 @@ typedef struct {
     byte alpha;
 } rgba;
 
+#define DEFAULT_TARGET GL_TEXTURE_2D
+#define DEFAULT_TYPE GL_UNSIGNED_BYTE
+
+#define FORMAT_UNKNOWN -1
 #define FORMAT_JPEG 0x0
 #define FORMAT_PNG 0x1
 #define FORMAT_BMP 0x2
 #define FORMAT_GIF 0x3
 
-typedef struct {
-    JavaVM* jvm;
-    jobject stream;
-    jmethodID readMID;
-    jmethodID closeMID;
-    jbyteArray buffer;
-} StreamContainer;
+#define BG_LUM 0x21
 
+JavaVM *g_jvm;
 
 #endif /* IMAGE_H_ */

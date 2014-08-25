@@ -5,6 +5,8 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := image
 LOCAL_SRC_FILES := \
 image.c \
+gif.c \
+utils.c \
 giflib/dgif_lib.c \
 giflib/gif_hash.c \
 giflib/gifalloc.c

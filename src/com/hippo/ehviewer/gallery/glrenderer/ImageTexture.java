@@ -18,6 +18,9 @@ package com.hippo.ehviewer.gallery.glrenderer;
 
 import javax.microedition.khronos.opengles.GL11;
 
+import android.opengl.GLES20;
+import android.util.Log;
+
 import com.hippo.ehviewer.gallery.image.Image;
 
 public class ImageTexture extends BasicTexture {
@@ -31,6 +34,13 @@ public class ImageTexture extends BasicTexture {
     public ImageTexture(Image image) {
         mImage = image;
         setSize(image.getWidth(), image.getHeight());
+    }
+
+    public boolean isAnimated() {
+        if (mImage == null || mImage.isRecycled())
+            return false;
+        else
+            return mImage.isAnimated();
     }
 
     @Override
@@ -62,6 +72,14 @@ public class ImageTexture extends BasicTexture {
         return mImage.getType();
     }
 
+    public static void checkError() {
+        int error = GLES20.glGetError();
+        if (error != 0) {
+            Throwable t = new Throwable();
+            Log.e(TAG, "GL error: " + error, t);
+        }
+    }
+
     private void uploadToCanvas(GLCanvas canvas) {
         mId = canvas.getGLId().generateTexture();
         int format = getFormat();
@@ -70,6 +88,8 @@ public class ImageTexture extends BasicTexture {
         canvas.setTextureParameters(this);
         canvas.initializeTextureSize(this, format, type);
 
+        GLES20.glBindTexture(getTarget(), mId);
+        checkError();
         mImage.render();
 
         setAssociatedCanvas(canvas);
@@ -80,23 +100,30 @@ public class ImageTexture extends BasicTexture {
     private void updateContent(GLCanvas canvas) {
         if (!isLoaded()) {
             uploadToCanvas(canvas);
-        } else if (!mContentValid) {
+        } else if (isAnimated()) {
+            GLES20.glBindTexture(getTarget(), mId);
+            checkError();
             mImage.render();
+
             mContentValid = true;
         }
     }
 
     @Override
     protected boolean onBind(GLCanvas canvas) {
-        updateContent(canvas);
-        return isContentValid();
+        if (mImage == null || mImage.isRecycled()) {
+            return false;
+        } else {
+            updateContent(canvas);
+            return isContentValid();
+        }
     }
 
     @Override
     public void recycle() {
         super.recycle();
         if (mImage != null) {
-            mImage.free();
+            mImage.recycle();
             mImage = null;
         }
     }

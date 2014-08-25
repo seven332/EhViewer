@@ -68,6 +68,10 @@ public class Image {
         return mType;
     }
 
+    public boolean isAnimated() {
+        return false;
+    }
+
     public void render() {
         if (mNativeImage != 0) {
             nativeRender(GL11.GL_TEXTURE_2D, 0, 0, 0,
@@ -75,11 +79,15 @@ public class Image {
         }
     }
 
-    public void free() {
+    public void recycle() {
         if (mNativeImage != 0) {
             nativeFree(mNativeImage, mFileFormat);
             mNativeImage = 0;
         }
+    }
+
+    public boolean isRecycled() {
+        return mNativeImage == 0;
     }
 
     /**

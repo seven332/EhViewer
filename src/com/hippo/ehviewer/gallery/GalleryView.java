@@ -354,23 +354,22 @@ public class GalleryView extends GLView
         canvas.drawLine(right, top, right, bottom, paint);
     }
 
-    private ImageTexture nt;
-
-
     @Override
     protected synchronized void render(GLCanvas canvas) {
         // If it is not render thread, do not render
         super.render(canvas);
 
-        boolean hasMovie = false;
+        boolean needRefresh = false;
         ShowItem item;
         switch (mScrollState) {
         case SCROLL_NONE:
             item = showItems[CUR_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas);
+            if (item instanceof ImageItem && ((ImageItem)item).isAnimated())
+                needRefresh |= true;
             if (item instanceof MovieItem)
-                hasMovie |= true;
+                needRefresh |= true;
             break;
 
         case SCROLL_LEFT:
@@ -378,14 +377,18 @@ public class GalleryView extends GLView
             item = showItems[PRE_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas, scrollXOffset, scrollYOffset);
+            if (item instanceof ImageItem && ((ImageItem)item).isAnimated())
+                needRefresh |= true;
             if (item instanceof MovieItem)
-                hasMovie |= true;
+                needRefresh |= true;
 
             item = showItems[CUR_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas, scrollXOffset, scrollYOffset);
+            if (item instanceof ImageItem && ((ImageItem)item).isAnimated())
+                needRefresh |= true;
             if (item instanceof MovieItem)
-                hasMovie |= true;
+                needRefresh |= true;
             break;
 
         case SCROLL_RIGHT:
@@ -393,14 +396,18 @@ public class GalleryView extends GLView
             item = showItems[CUR_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas, scrollXOffset, scrollYOffset);
+            if (item instanceof ImageItem && ((ImageItem)item).isAnimated())
+                needRefresh |= true;
             if (item instanceof MovieItem)
-                hasMovie |= true;
+                needRefresh |= true;
 
             item = showItems[NEXT_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas, scrollXOffset, scrollYOffset);
+            if (item instanceof ImageItem && ((ImageItem)item).isAnimated())
+                needRefresh |= true;
             if (item instanceof MovieItem)
-                hasMovie |= true;
+                needRefresh |= true;
             break;
         }
 
@@ -409,17 +416,8 @@ public class GalleryView extends GLView
             drawTapArea(canvas);
 
         // TODO Mask to reduce brightness
-        //canvas.fillRect(0, 0, mScreenWidth, mScreenHeight, MASK_COLOR);
 
-
-        //if (nt == null)
-            //nt = new ImageTexture();
-
-       // nt.draw(canvas, 0, 0);
-       // Log.d(TAG, "nt.draw");
-
-
-        if (hasMovie)
+        if (needRefresh)
             invalidate();
     }
 
@@ -1547,10 +1545,13 @@ public class GalleryView extends GLView
             super.draw(canvas, xOffset, yOffset);
         }
 
-
         @Override
         public void recycle() {
             mTexture.recycle();
+        }
+
+        public boolean isAnimated() {
+            return mTexture.isAnimated();
         }
     }
 

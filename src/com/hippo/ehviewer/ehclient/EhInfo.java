@@ -59,9 +59,9 @@ public class EhInfo {
     private static final String KEY_DISPLAYNAME = "displayname";
     private static final String DEFAULT_NAME = "Hippo";
     private static final String KEY_MEMBER_ID = "ipb_member_id";
-    private static final String DEFAULT_MEMBER_ID = "1936857";
+    private static final String DEFAULT_MEMBER_ID = null;
     private static final String KEY_PASS_HASH = "ipb_pass_hash";
-    private static final String DEFAULT_PASS_HASH = "725e2726990bc34ae3852bb4f7c7879a";
+    private static final String DEFAULT_PASS_HASH = null;
 
     private final Context mContext;
     private final SharedPreferences mInfoPref;
@@ -171,11 +171,16 @@ public class EhInfo {
     }
 
     public void setCookie(HttpURLConnection conn, String previewMode) {
-        String cookie = "ipb_member_id=" + mInfoPref.getString(KEY_MEMBER_ID, DEFAULT_MEMBER_ID) +
-                "; ipb_pass_hash=" + mInfoPref.getString(KEY_PASS_HASH, DEFAULT_PASS_HASH) +
-                "; uconfig=" + (previewMode == null ? mUconfig : getUconfigString(previewMode)) +
-                "; xres=" + Config.getLofiResolution();
-        conn.setRequestProperty("Cookie", cookie);
+        StringBuilder sb = new StringBuilder();
+        String id = mInfoPref.getString(KEY_MEMBER_ID, DEFAULT_MEMBER_ID);
+        String hash = mInfoPref.getString(KEY_PASS_HASH, DEFAULT_PASS_HASH);
+        sb.append("uconfig=").append(previewMode == null ? mUconfig : getUconfigString(previewMode))
+                .append("; xres=").append(Config.getLofiResolution());
+        if (id != null)
+            sb.append("; ipb_member_id=").append(id);
+        if (hash != null)
+            sb.append("; ipb_pass_hash=").append(hash);
+        conn.setRequestProperty("Cookie", sb.toString());
     }
 
     public boolean isLogin() {
