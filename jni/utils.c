@@ -1,6 +1,10 @@
 #include "image.h"
 #include "utils.h"
 
+int nextMulOf4(int x) {
+    return (x + 3) / 4 * 4;
+}
+
 byte getVFrowRGB(byte r, byte g, byte b) {
     byte t =  g > b ? g : b;
     return r > t ? r : t;

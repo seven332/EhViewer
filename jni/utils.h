@@ -11,6 +11,8 @@ typedef struct {
     jbyteArray buffer;
 } StreamContainer;
 
+int nextMulOf4(int x);
+
 void eraseRGB(rgb* pixels, int num, rgb color);
 void eraseRGBA(rgba* pixels, int num, rgba color);
 void eraseLUM(lum* pixels, int num, lum color);

@@ -436,6 +436,7 @@ jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format) {
     GIF* gif;
     int slurp, imageCount;
     int* delays;
+    int realWidth;
 
     // GIF not
     sc = getStreamContainer(env, is);
@@ -448,6 +449,11 @@ jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format) {
         freeStreamContainer(env, sc);
         return NULL;
     }
+
+    // Fix width, for not RGBA, but I will tell others the real width
+    realWidth = gifFile->SWidth;
+    if (format != GL_RGBA)
+        gifFile->SWidth = nextMulOf4(realWidth);
 
     // Slurp
     slurp = DGifSlurp(gifFile);
@@ -489,7 +495,7 @@ jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format) {
         return NULL;
     else
         return (*env)->NewObject(env, gifClazz, constructor, (jint) gif,
-                FORMAT_GIF, gifFile->SWidth, gifFile->SHeight, format,
+                FORMAT_GIF, realWidth, gifFile->SHeight, format,
                 DEFAULT_TYPE, delayArray);
 }
 
