@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.gallery.image;
 
-import javax.microedition.khronos.opengles.GL11;
 
 public class GifImage extends Image {
 
@@ -25,7 +24,7 @@ public class GifImage extends Image {
     private final int mImageCount;
     private final int[] mDelayArray;
     private long mDelaySum;
-    private final long mStartTime;
+    private long mStartTime;
 
     private int mLastIndex = -1;
 
@@ -38,15 +37,19 @@ public class GifImage extends Image {
         mDelaySum = 0;
         for (int delay : delayArray)
             mDelaySum += delay;
-        mStartTime = System.currentTimeMillis();
     }
 
     private int getCurIndex() {
-        long curTime = System.currentTimeMillis();
-        long time = (curTime - mStartTime) % mDelaySum;
-        int end = mImageCount - 1;
         int index = 0;
-        for (; index < end && (time -= mDelayArray[index]) > 0; index++);
+        if (mLastIndex == -1) {
+            index = 0;
+            mStartTime = System.currentTimeMillis();
+        } else {
+            long curTime = System.currentTimeMillis();
+            long time = (curTime - mStartTime) % mDelaySum;
+            int end = mImageCount - 1;
+            for (; index < end && (time -= mDelayArray[index]) > 0; index++);
+        }
         return index;
     }
 
@@ -60,7 +63,7 @@ public class GifImage extends Image {
         if (mNativeImage != 0) {
             int index = getCurIndex();
             if (mLastIndex != index) {
-                nativeRender(GL11.GL_TEXTURE_2D, 0, 0, 0, mFormat, mType, mNativeImage, FORMAT_GIF, index);
+                nativeRender(mFormat, mType, mNativeImage, FORMAT_GIF, index);
                 mLastIndex = index;
             }
         }
@@ -70,6 +73,5 @@ public class GifImage extends Image {
         System.loadLibrary("image");
     }
 
-    private static native void nativeRender(int target, int level, int xoffset,
-            int yoffset, int format, int type, int nativeImage, int fileFormat, int index);
+    private static native void nativeRender(int format, int type, int nativeImage, int fileFormat, int index);
 }

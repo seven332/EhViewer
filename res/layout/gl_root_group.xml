@@ -34,6 +34,17 @@
         android:layout_marginRight="12dp"
         android:textColor="@color/secondary_text_light" />
 
+    <com.hippo.ehviewer.widget.BatteryView
+        xmlns:auto="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/battery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="12dp"
+        android:textColor="@color/secondary_text_light"
+        auto:bvColor="@color/secondary_text_light" />
+
     <LinearLayout
         android:id="@+id/action_bar"
         android:layout_width="match_parent"

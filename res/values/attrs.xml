@@ -89,5 +89,9 @@
         <attr name="mpThickness" format="dimension" />
         <attr name="mpInnerRadius" format="dimension" />
     </declare-styleable>
-    
+
+    <declare-styleable name="BatteryView">
+        <attr name="bvColor" format="color" />
+    </declare-styleable>
+
 </resources>

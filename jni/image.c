@@ -52,15 +52,13 @@ Java_com_hippo_ehviewer_gallery_image_Image_nativeFree(JNIEnv* env,
 
 JNIEXPORT void JNICALL
 Java_com_hippo_ehviewer_gallery_image_Image_nativeRender(JNIEnv* env,
-        jclass clazz, jint target, jint level, jint xoffset, jint yoffset,
-        jint format, jint type, jint nativeImage, jint fileFormat) {
+        jclass clazz, jint format, jint type, jint nativeImage, jint fileFormat) {
     // TODO
 }
 
 JNIEXPORT void JNICALL
 Java_com_hippo_ehviewer_gallery_image_GifImage_nativeRender(JNIEnv* env,
-        jclass clazz, jint target, jint level, jint xoffset, jint yoffset,
-        jint format, jint type, jint nativeImage, jint fileFormat, jint index) {
+        jclass clazz, jint format, jint type, jint nativeImage, jint fileFormat, jint index) {
 
     if (type != DEFAULT_TYPE || fileFormat != FORMAT_GIF)
         return;

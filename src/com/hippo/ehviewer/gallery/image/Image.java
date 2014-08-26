@@ -18,8 +18,6 @@ package com.hippo.ehviewer.gallery.image;
 
 import java.io.InputStream;
 
-import javax.microedition.khronos.opengles.GL11;
-
 
 public class Image {
 
@@ -74,8 +72,7 @@ public class Image {
 
     public void render() {
         if (mNativeImage != 0) {
-            nativeRender(GL11.GL_TEXTURE_2D, 0, 0, 0,
-                    mFormat, mType, mNativeImage, mFileFormat);
+            nativeRender(mFormat, mType, mNativeImage, mFileFormat);
         }
     }
 
@@ -108,5 +105,5 @@ public class Image {
 
     private static native Image nativeDecodeStream(InputStream is, int format);
     private static native void nativeFree(int mNativeImage, int format);
-    private static native void nativeRender(int target, int level, int xoffset, int yoffset, int format, int type, int nativeImage, int fileFormat);
+    private static native void nativeRender(int format, int type, int nativeImage, int fileFormat);
 }

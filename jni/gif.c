@@ -10,6 +10,12 @@
 
 static int errorCode;
 
+// TODO is GIF87a work fine ?
+
+static inline freeSafely(void* p) {
+    if (p != NULL) free(p);
+}
+
 /*
  * Return NULL if error
  */
@@ -66,7 +72,7 @@ static int streamReadFun(GifFileType* gif, GifByteType* bytes, int size) {
 /*
  * stack store the index to draw
  * stack capacity should be imageCount * sizeof(int).
- * When read it, use for(; size > 0; size--).
+ * When read it, use from tail to head
  */
 static void getDrawStack(GIF* gif, int targetIndex, int* which, int* stack,
         int* stackSize) {
@@ -313,7 +319,7 @@ static void render(GIF* gif, int index) {
     int height = gif->gifFile->SHeight;
     int imageCount = gif->gifFile->ImageCount;
     int which, stackSize;
-    int* stack = (int*) malloc(imageCount * sizeof(int));
+    int stack[imageCount];
     void* tempPoint;
     int tempInt;
 
@@ -346,9 +352,6 @@ static void render(GIF* gif, int index) {
     glTexSubImage2D(DEFAULT_TARGET, 0, 0, 0, width,
             height, gif->format, DEFAULT_TYPE, gif->pixels);
 
-    // release
-    free(stack);
-
     // update pxlIndex
     gif->pxlIndex = index;
 
@@ -372,8 +375,10 @@ static void render(GIF* gif, int index) {
         }
         if (gif->bak == NULL)
             gif->bak = malloc(size);
-        memcpy(gif->bak, gif->pixels, size);
-        gif->bakIndex = index;
+        if (gif->bak != NULL) {
+            memcpy(gif->bak, gif->pixels, size);
+            gif->bakIndex = index;
+        }
     }
 }
 
@@ -388,6 +393,9 @@ static GIF* analysisGifFileType(GifFileType* gifFile, int format, int* delays) {
     int imageCount = gifFile->ImageCount;
 
     gif = (GIF*) malloc(sizeof(GIF));
+    if (gif == NULL)
+        return NULL;
+
     gif->gifFile = gifFile;
     gif->trans = (int*) malloc(imageCount * sizeof(int));
     gif->disposals = (int*) malloc(imageCount * sizeof(int));
@@ -409,6 +417,14 @@ static GIF* analysisGifFileType(GifFileType* gifFile, int format, int* delays) {
     gif->pxlIndex = -1;
     gif->bak = NULL;
     gif->bakIndex = -1;
+
+    if (gif->trans == NULL || gif->disposals == NULL || gif->pixels == NULL) {
+        freeSafely(gif->pixels);
+        freeSafely(gif->disposals);
+        freeSafely(gif->trans);
+        free(gif);
+        return NULL;
+    }
 
     trans = gif->trans;
     disposals = gif->disposals;
@@ -471,15 +487,19 @@ jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format) {
     // Check image count
     imageCount = gifFile->ImageCount;
     if (imageCount < 1) {
-        DGifCloseFile(gif->gifFile, &errorCode);
+        DGifCloseFile(gifFile, &errorCode);
         return NULL;
     }
 
     // Get GIF
     delays = (int*) malloc(imageCount * sizeof(int));
+    if (delays == NULL) {
+        DGifCloseFile(gifFile, &errorCode);
+        return NULL;
+    }
     gif = analysisGifFileType(gifFile, format, delays);
     if (gif == NULL) {
-        DGifCloseFile(gif->gifFile, &errorCode);
+        DGifCloseFile(gifFile, &errorCode);
         return NULL;
     }
 
@@ -512,10 +532,10 @@ void GIF_Free(JNIEnv* env, int nativeImage) {
 
     GIF* gif = (GIF*) nativeImage;
     DGifCloseFile(gif->gifFile, &errorCode);
-    if (gif->trans != NULL) free(gif->trans);
-    if (gif->disposals != NULL) free(gif->disposals);
-    if (gif->pixels != NULL) free(gif->pixels);
-    if (gif->bak != NULL) free(gif->bak);
+    freeSafely(gif->trans);
+    freeSafely(gif->disposals);
+    freeSafely(gif->pixels);
+    freeSafely(gif->bak);
     free(gif);
 }
 
