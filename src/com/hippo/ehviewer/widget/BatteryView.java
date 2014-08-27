@@ -71,11 +71,11 @@ public class BatteryView extends TextView {
 
         @Override
         public void run() {
-            level += 5;
+            level += 2;
             if (level > mLevel)
                 level = 0;
             mDrawable.setElect(level, mLevel <= BatteryDrawable.WARN_LIMIT);
-            getHandler().postDelayed(mCharger, 500);
+            getHandler().postDelayed(mCharger, 200);
         }
     };
 

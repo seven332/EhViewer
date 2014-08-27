@@ -26,6 +26,7 @@ import android.graphics.drawable.Drawable;
 
 public class BatteryDrawable extends Drawable {
 
+    @SuppressWarnings("unused")
     private static final String TAG = BatteryDrawable.class.getSimpleName();
 
     public static final int WARN_LIMIT = 15;
@@ -59,14 +60,12 @@ public class BatteryDrawable extends Drawable {
                 halfStrokeWidth, 0 + strokeWidth, halfStrokeWidth, height - strokeWidth,
                 0, halfStrokeWidth, turn1 - halfStrokeWidth, halfStrokeWidth,
                 0, height - halfStrokeWidth, turn1 - halfStrokeWidth, height - halfStrokeWidth,
-                turn1, 0, turn1, turn2 - halfStrokeWidth,
-                turn1, height, turn1, height - turn2 + halfStrokeWidth,
-                turn1 - halfStrokeWidth, turn2, width, turn2,
-                turn1 - halfStrokeWidth, height - turn2, width, height - turn2,
-                width - halfStrokeWidth, turn2 + halfStrokeWidth, width - halfStrokeWidth, height - turn2 - halfStrokeWidth};
+                turn1, 0, turn1, turn2,
+                turn1, height, turn1, height - turn2};
 
         mPaint.setStrokeWidth(strokeWidth);
         canvas.drawLines(drawPoints, mPaint);
+        canvas.drawRect(turn1 - halfStrokeWidth, turn2, width, height - turn2, mPaint);
         canvas.drawRect(start, 0 + strokeWidth, levelEnd, height - strokeWidth, mPaint);
     }
 

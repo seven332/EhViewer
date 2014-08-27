@@ -19,6 +19,7 @@ typedef struct {
 } GIF;
 
 jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format);
+jobject GIF_DecodeFile(JNIEnv* env, const char * namePath, jint format);
 void GIF_Render(JNIEnv* env, int nativeImage, int format, int index);
 void GIF_Free(JNIEnv* env, int nativeImage);
 

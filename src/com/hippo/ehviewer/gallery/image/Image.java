@@ -94,9 +94,12 @@ public class Image {
      * @param format
      * @return
      */
-
     public static final Image decodeStream(InputStream is, int format) {
         return nativeDecodeStream(is, format);
+    }
+
+    public static final Image decodeFile(String pathName, int format) {
+        return nativeDecodeFile(pathName, format);
     }
 
     static {
@@ -104,6 +107,7 @@ public class Image {
     }
 
     private static native Image nativeDecodeStream(InputStream is, int format);
+    private static native Image nativeDecodeFile(String pathName, int format);
     private static native void nativeFree(int mNativeImage, int format);
     private static native void nativeRender(int format, int type, int nativeImage, int fileFormat);
 }

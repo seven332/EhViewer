@@ -445,26 +445,14 @@ static GIF* analysisGifFileType(GifFileType* gifFile, int format, int* delays) {
     return gif;
 }
 
-jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format) {
+jobject getObjFromGifFileType(JNIEnv* env, GifFileType* gifFile, int format) {
 
-    StreamContainer* sc;
-    GifFileType* gifFile;
-    GIF* gif;
-    int slurp, imageCount;
+    int realWidth, slurp, imageCount;
     int* delays;
-    int realWidth;
-
-    // GIF not
-    sc = getStreamContainer(env, is);
-    if (sc == NULL)
-        return NULL;
-
-    // Open file
-    gifFile = DGifOpen(sc, &streamReadFun, &errorCode);
-    if (gifFile == NULL) {
-        freeStreamContainer(env, sc);
-        return NULL;
-    }
+    GIF* gif;
+    jintArray delayArray;
+    jclass gifClazz;
+    jmethodID constructor;
 
     // Fix width, for not RGBA, but I will tell others the real width
     realWidth = gifFile->SWidth;
@@ -473,43 +461,36 @@ jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format) {
 
     // Slurp
     slurp = DGifSlurp(gifFile);
-    // Free container
-    closeStreamContainer(env, sc);
-    clearException(env);
-    freeStreamContainer(env, sc);
-#if defined(STRICT_FORMAT_89A)
-    if (slurp != GIF_OK) {
-        DGifCloseFile(GifFile);
+#ifdef STRICT_FORMAT_89A
+    if (slurp != GIF_OK)
         return NULL;
-    }
 #endif
 
     // Check image count
     imageCount = gifFile->ImageCount;
-    if (imageCount < 1) {
-        DGifCloseFile(gifFile, &errorCode);
+    if (imageCount < 1)
         return NULL;
-    }
 
-    // Get GIF
+    // delays malloc
     delays = (int*) malloc(imageCount * sizeof(int));
-    if (delays == NULL) {
-        DGifCloseFile(gifFile, &errorCode);
+    if (delays == NULL)
         return NULL;
-    }
+
+    // analysis GifFileType
     gif = analysisGifFileType(gifFile, format, delays);
     if (gif == NULL) {
-        DGifCloseFile(gifFile, &errorCode);
+        free(delays);
         return NULL;
     }
 
     // Copy value
-    jintArray delayArray = (*env)->NewIntArray(env, imageCount);
+    delayArray = (*env)->NewIntArray(env, imageCount);
     (*env)->SetIntArrayRegion(env, delayArray, 0, imageCount, delays);
+    free(delays);
 
-    jclass gifClazz = (*env)->FindClass(env,
+    gifClazz = (*env)->FindClass(env,
             "com/hippo/ehviewer/gallery/image/GifImage");
-    jmethodID constructor = (*env)->GetMethodID(env, gifClazz, "<init>",
+    constructor = (*env)->GetMethodID(env, gifClazz, "<init>",
             "(IIIIII[I)V");
     if (constructor == 0)
         return NULL;
@@ -517,6 +498,51 @@ jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format) {
         return (*env)->NewObject(env, gifClazz, constructor, (jint) gif,
                 FORMAT_GIF, realWidth, gifFile->SHeight, format,
                 DEFAULT_TYPE, delayArray);
+}
+
+jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format) {
+
+    StreamContainer* sc;
+    GifFileType* gifFile;
+    jobject gifImage;
+
+    sc = getStreamContainer(env, is);
+    if (sc == NULL)
+        return NULL;
+
+    // Open gif file
+    gifFile = DGifOpen(sc, &streamReadFun, &errorCode);
+    if (gifFile == NULL) {
+        closeStreamContainer(env, sc);
+        clearException(env);
+        freeStreamContainer(env, sc);
+        return NULL;
+    }
+
+    gifImage = getObjFromGifFileType(env, gifFile, format);
+    if (gifImage == NULL)
+        DGifCloseFile(gifFile, &errorCode);
+
+    closeStreamContainer(env, sc);
+    clearException(env);
+    freeStreamContainer(env, sc);
+
+    return gifImage;
+}
+
+jobject GIF_DecodeFile(JNIEnv* env, const char * namePath, jint format) {
+    GifFileType* gifFile;
+    jobject gifImage;
+
+    gifFile = DGifOpenFileName(namePath, &errorCode);
+    if (gifFile == NULL)
+        return NULL;
+
+    gifImage = getObjFromGifFileType(env, gifFile, format);
+    if (gifImage == NULL)
+        DGifCloseFile(gifFile, &errorCode);
+
+    return gifImage;
 }
 
 void GIF_Render(JNIEnv* env, int nativeImage, int format, int index) {

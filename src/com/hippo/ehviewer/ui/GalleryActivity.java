@@ -247,12 +247,11 @@ public class GalleryActivity extends AbsActivity
     }
 
     private void startHideTask() {
-        mHideTaskTimeStamp = System.currentTimeMillis();
-        AppHandler.getInstance().postDelayed(new HideTask(mHideTaskTimeStamp), 2000);
+        AppHandler.getInstance().postDelayed(mHideTask, 2000);
     }
 
     private void cancelHideTask() {
-        mHideTaskTimeStamp = 0;
+        AppHandler.getInstance().removeCallbacks(mHideTask);
     }
 
     @Override
@@ -276,21 +275,14 @@ public class GalleryActivity extends AbsActivity
         }
     }
 
-    // The task to hide actionbar
-    private class HideTask implements Runnable {
-        private final long mTimeStamp;
-
-        public HideTask(long timeStamp) {
-            mTimeStamp = timeStamp;
-        }
-
+    private final Runnable mHideTask = new Runnable() {
         @Override
         public void run() {
-            if (mTimeStamp == mHideTaskTimeStamp &&!mShowAnimator.isRunning() &&
-                    !mHideAnimator.isRunning() && mActionBar.getVisibility() == View.VISIBLE)
+            if (!mShowAnimator.isRunning() && !mHideAnimator.isRunning()
+                    && mActionBar.getVisibility() == View.VISIBLE)
                 mHideAnimator.start();
         }
-    }
+    };
 
     @Override
     public void onPageChanged(int index) {

@@ -18,7 +18,6 @@ package com.hippo.ehviewer.gallery.data;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -204,20 +203,25 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
                 final int index = decodeInfo.index;
                 String filename = decodeInfo.filename;
                 boolean isGif = Utils.getExtension(filename, "jpg").equals("gif");
-                FileInputStream fis;
+                FileInputStream fis = null;
                 Object res = null;
                 try {
-                    fis = new FileInputStream(new File(mDir, filename));
+                    File file = new File(mDir, filename);
+                    fis = new FileInputStream(file);
                     if (isGif) {
                         //res = Movie.decodeStream(fis);
-                        res = Image.decodeStream(fis, GL11.GL_RGBA);
+                        //res = Image.decodeStream(fis, GL11.GL_RGB);
+                        res = Image.decodeFile(file.getPath(), GL11.GL_RGB);
                     } else {
                         BitmapFactory.Options opt = new BitmapFactory.Options();
                         // TODO why only ARGB_8888 always work well, other may slit image
                         opt.inPreferredConfig = Bitmap.Config.ARGB_8888;
                         res = BitmapFactory.decodeStream(fis, null, opt);
                     }
-                } catch (FileNotFoundException e) {}
+                } catch (Exception e) {
+                } finally {
+                    Utils.closeQuietly(fis);
+                }
 
                 final Object _res = res;
                 // Post to UI thread
