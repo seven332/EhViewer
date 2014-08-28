@@ -23,8 +23,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.microedition.khronos.opengles.GL11;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.SparseArray;
 
 import com.hippo.ehviewer.AppHandler;
@@ -205,6 +203,10 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
                 boolean isGif = Utils.getExtension(filename, "jpg").equals("gif");
                 FileInputStream fis = null;
                 Object res = null;
+
+                res = Image.decodeFile(new File(mDir, filename).getPath(), GL11.GL_RGB);
+
+                /*
                 try {
                     File file = new File(mDir, filename);
                     fis = new FileInputStream(file);
@@ -222,6 +224,7 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
                 } finally {
                     Utils.closeQuietly(fis);
                 }
+                */
 
                 final Object _res = res;
                 // Post to UI thread

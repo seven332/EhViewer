@@ -1,13 +1,12 @@
 #include <jni.h>
 #include <stdlib.h>
-#include <memory.h>
+#include <stdio.h>
 #include <GLES2/gl2.h>
-//#include <android/log.h>
+#include <android/log.h>
 
 #ifndef IMAGE_H_
 #define IMAGE_H_
 
-/*
 #define TAG "libimage"
 #define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG ,__VA_ARGS__)
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG ,__VA_ARGS__)
@@ -15,7 +14,6 @@
 #define LOGW(...) __android_log_print(ANDROID_LOG_WARN, TAG ,__VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, TAG ,__VA_ARGS__)
 #define LOGF(...) __android_log_print(ANDROID_LOG_FATAL, TAG ,__VA_ARGS__)
-*/
 
 typedef unsigned char byte;
 
@@ -51,6 +49,7 @@ typedef struct {
 #define FORMAT_GIF 0x3
 
 #define BG_LUM 0x21
+static rgb defaultBgColorRGB ={0x21, 0x21, 0x21};
 
 JavaVM *g_jvm;
 

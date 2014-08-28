@@ -1,6 +1,5 @@
 #include "gif.h"
 #include "utils.h"
-#include "image.h"
 
 //#define STRICT_FORMAT_89A
 
@@ -67,6 +66,11 @@ static int streamReadFun(GifFileType* gif, GifByteType* bytes, int size) {
     (*env)->MonitorExit(env, sc->stream);
 
     return len >= 0 ? len : 0;
+}
+
+static int fileReadFun(GifFileType* gif, GifByteType* bytes, int size) {
+    FILE* fp = (FILE*) gif->UserData;
+    return fread(bytes, 1, size, fp);
 }
 
 /*
@@ -492,12 +496,14 @@ jobject getObjFromGifFileType(JNIEnv* env, GifFileType* gifFile, int format) {
             "com/hippo/ehviewer/gallery/image/GifImage");
     constructor = (*env)->GetMethodID(env, gifClazz, "<init>",
             "(IIIIII[I)V");
-    if (constructor == 0)
+    if (constructor == 0) {
+        GIF_Free((JNIEnv*)NULL, (int)gif);
         return NULL;
-    else
+    } else {
         return (*env)->NewObject(env, gifClazz, constructor, (jint) gif,
                 FORMAT_GIF, realWidth, gifFile->SHeight, format,
                 DEFAULT_TYPE, delayArray);
+    }
 }
 
 jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format) {
@@ -506,7 +512,7 @@ jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format) {
     GifFileType* gifFile;
     jobject gifImage;
 
-    sc = getStreamContainer(env, is);
+    sc = (StreamContainer*)getStreamContainer(env, is);
     if (sc == NULL)
         return NULL;
 
@@ -530,11 +536,12 @@ jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format) {
     return gifImage;
 }
 
-jobject GIF_DecodeFile(JNIEnv* env, const char * namePath, jint format) {
+jobject GIF_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
+
     GifFileType* gifFile;
     jobject gifImage;
 
-    gifFile = DGifOpenFileName(namePath, &errorCode);
+    gifFile = DGifOpen(fp, &fileReadFun, &errorCode);
     if (gifFile == NULL)
         return NULL;
 
