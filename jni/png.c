@@ -11,12 +11,12 @@ jobject PNG_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
     png_image image;
     png_bytep buffer;
     PNG* png;
-    jclass gifClazz;
+    jclass imageClazz;
     jmethodID constructor;
     int fakeWidth;
     int fakeStride;
 
-    png = (PNG*)malloc(sizeof(PNG));
+    png = (PNG*) malloc(sizeof(PNG));
     if (png == NULL)
         return NULL;
 
@@ -33,6 +33,7 @@ jobject PNG_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
         break;
     case GL_LUMINANCE_ALPHA:
     default:
+        format = GL_LUMINANCE_ALPHA;
         pngFormat = PNG_FORMAT_GA;
         break;
     }
@@ -44,7 +45,7 @@ jobject PNG_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
         return NULL;
 
     image.format = pngFormat;
-    fakeWidth = nextMulOf4(image.width);
+    fakeWidth = format != GL_RGBA ? nextMulOf4(image.width) : image.width;
     fakeStride = PNG_IMAGE_PIXEL_CHANNELS(image.format) * fakeWidth;
     buffer = malloc(image.height * fakeStride);
     if (buffer == NULL)
@@ -63,16 +64,16 @@ jobject PNG_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
     png->height = image.height; // Tell other the image file width
     png->format = format;
 
-    gifClazz = (*env)->FindClass(env,
+    imageClazz = (*env)->FindClass(env,
             "com/hippo/ehviewer/gallery/image/Image");
-    constructor = (*env)->GetMethodID(env, gifClazz, "<init>",
+    constructor = (*env)->GetMethodID(env, imageClazz, "<init>",
             "(IIIIII)V");
 
     if (constructor == 0) {
         PNG_Free((JNIEnv*)NULL, (int)png);
         return NULL;
     } else {
-        return (*env)->NewObject(env, gifClazz, constructor, (jint) png,
+        return (*env)->NewObject(env, imageClazz, constructor, (jint) png,
                 FORMAT_PNG, png->width, png->height, format,
                 DEFAULT_TYPE);
     }

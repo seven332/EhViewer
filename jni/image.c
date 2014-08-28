@@ -21,9 +21,10 @@ static int detectFileFormat() {
  */
 static FILE* detectFileFormatPathName(const char* namePath, int* format) {
 
-    char pngSig[3] = {137, 80, 78};
-    char gifSig[3] = {71, 73, 70};
-    char buf[3];
+    char jpegSig[2] = {0xFF, 0xD8};
+    char pngSig[2] = {137, 80};
+    char gifSig[2] = {71, 73};
+    char buf[2];
 
     FILE* fp = fopen(namePath, "r");
     if (fp == NULL) {
@@ -31,16 +32,18 @@ static FILE* detectFileFormatPathName(const char* namePath, int* format) {
         return NULL;
     }
 
-    if (fread(buf, 1, 3, fp) != 3) {
+    if (fread(buf, 1, 2, fp) != 2) {
         fclose(fp);
         *format = FORMAT_UNKNOWN;
         return NULL;
     }
     rewind(fp);
 
-    if (!memcmp(buf, pngSig, 3))
+    if (!memcmp(buf, jpegSig, 2))
+        *format = FORMAT_JPEG;
+    else if (!memcmp(buf, pngSig, 2))
         *format = FORMAT_PNG;
-    else if (!memcmp(buf, gifSig, 3))
+    else if (!memcmp(buf, gifSig, 2))
         *format = FORMAT_GIF;
     else
         *format = FORMAT_UNKNOWN;
@@ -56,11 +59,10 @@ Java_com_hippo_ehviewer_gallery_image_Image_nativeDecodeStream(JNIEnv* env,
 
     switch (detectFileFormat()) {
     case FORMAT_JPEG:
-        return NULL;
+        return JPEG_DecodeStream(env, is, format);
 
     case FORMAT_PNG:
         return PNG_DecodeStream(env, is, format);
-        return NULL;
 
     case FORMAT_BMP:
         return NULL;
@@ -93,7 +95,7 @@ Java_com_hippo_ehviewer_gallery_image_Image_nativeDecodeFile(JNIEnv* env,
 
     switch (fileFormat) {
     case FORMAT_JPEG:
-        image = NULL;
+        image = JPEG_DecodeFileHandler(env, fp, format);
         break;
     case FORMAT_PNG:
         image = PNG_DecodeFileHandler(env, fp, format);
@@ -121,6 +123,7 @@ Java_com_hippo_ehviewer_gallery_image_Image_nativeFree(JNIEnv* env,
 
     switch (fileFormat) {
     case FORMAT_JPEG:
+        JPEG_Free(env, nativeImage);
         break;
     case FORMAT_PNG:
         PNG_Free(env, nativeImage);
@@ -139,6 +142,7 @@ Java_com_hippo_ehviewer_gallery_image_Image_nativeRender(JNIEnv* env,
 
     switch (fileFormat) {
     case FORMAT_JPEG:
+        JPEG_Render(env, nativeImage, format);
         break;
     case FORMAT_PNG:
         PNG_Render(env, nativeImage, format);

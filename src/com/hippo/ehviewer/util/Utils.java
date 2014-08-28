@@ -623,4 +623,12 @@ public final class Utils {
         Vibrator v = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(milliseconds);
     }
+
+    public static String getPathName(String parent, String name) {
+        StringBuilder sb = new StringBuilder(parent);
+        if (parent.charAt(parent.length() - 1) != File.separatorChar)
+            sb.append(File.separatorChar);
+        sb.append(name);
+        return sb.toString();
+    }
 }

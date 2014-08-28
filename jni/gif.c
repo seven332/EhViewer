@@ -11,10 +11,6 @@ static int errorCode;
 
 // TODO is GIF87a work fine ?
 
-static inline freeSafely(void* p) {
-    if (p != NULL) free(p);
-}
-
 /*
  * Return NULL if error
  */
@@ -423,9 +419,9 @@ static GIF* analysisGifFileType(GifFileType* gifFile, int format, int* delays) {
     gif->bakIndex = -1;
 
     if (gif->trans == NULL || gif->disposals == NULL || gif->pixels == NULL) {
-        freeSafely(gif->pixels);
-        freeSafely(gif->disposals);
-        freeSafely(gif->trans);
+        free(gif->pixels);
+        free(gif->disposals);
+        free(gif->trans);
         free(gif);
         return NULL;
     }
@@ -565,10 +561,10 @@ void GIF_Free(JNIEnv* env, int nativeImage) {
 
     GIF* gif = (GIF*) nativeImage;
     DGifCloseFile(gif->gifFile, &errorCode);
-    freeSafely(gif->trans);
-    freeSafely(gif->disposals);
-    freeSafely(gif->pixels);
-    freeSafely(gif->bak);
+    free(gif->trans);
+    free(gif->disposals);
+    free(gif->pixels);
+    free(gif->bak);
     free(gif);
 }
 
