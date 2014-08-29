@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.hippo.ehviewer.util.Log;
+
 public class EdDetailParser {
 
     int previewPageNum;
@@ -73,32 +75,55 @@ public class EdDetailParser {
                 m = p.matcher(body);
                 if (m.find())
                     previewPageNum = Integer.valueOf(m.group(1).replace(",", ""));
-                else
+                else {
+                    Log.e("TAG", "get needPreviewInfo failed");
                     return false;
+                }
 
                 p = Pattern.compile("<td class=\"gdt1\">Images:</td><td class=\"gdt2\">([\\d,]+) ");
                 m = p.matcher(body);
                 if (m.find())
                     imageNum = Integer.valueOf(m.group(1).replace(",", ""));
-                else
+                else {
+                    Log.e("TAG", "get needPreviewInfo failed");
                     return false;
+                }
             }
 
             // Parser preview
-            p = Pattern.compile("<div class=\"gdtm\"[^>]*><div[^>]*><a href=\"http://exhentai.org/s/(\\w+)/\\d+-(\\d+)\">");
-            m = p.matcher(body);
+
             boolean first = true;
-            while(m.find()) {
-                if (first) {
-                    pageTokenArray = new LinkedList<String>();
-                    previewStartIndex = Integer.parseInt(m.group(2)) - 1;
-                    first = false;
+            if (body.contains("<div class=\"gdtl\"")) {
+                p = Pattern.compile("<div class=\"gdtl\"[^>]*><a href=\"http://[^/]+/s/(\\w+)/\\d+-(\\d+)\">");
+                m = p.matcher(body);
+                while(m.find()) {
+                    if (first) {
+                        pageTokenArray = new LinkedList<String>();
+                        previewStartIndex = Integer.parseInt(m.group(2)) - 1;
+                        first = false;
+                    }
+                    pageTokenArray.add(m.group(1));
                 }
-                pageTokenArray.add(m.group(1));
+
+            } else {
+                p = Pattern.compile("<div class=\"gdtm\"[^>]*><div[^>]*><a href=\"http://[^/]+/s/(\\w+)/\\d+-(\\d+)\">");
+                m = p.matcher(body);
+                while(m.find()) {
+                    if (first) {
+                        pageTokenArray = new LinkedList<String>();
+                        previewStartIndex = Integer.parseInt(m.group(2)) - 1;
+                        first = false;
+                    }
+                    pageTokenArray.add(m.group(1));
+                }
             }
-            if (first)
+
+
+
+            if (first) {
+                Log.e("TAG", "get gdtm");
                 return false;
-            else
+            } else
                 return true;
         }
     }
