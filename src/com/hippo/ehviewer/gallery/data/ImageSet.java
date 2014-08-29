@@ -22,6 +22,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.microedition.khronos.opengles.GL11;
 
+import android.graphics.BitmapFactory;
+import android.graphics.Movie;
 import android.util.SparseArray;
 
 import com.hippo.ehviewer.AppHandler;
@@ -201,14 +203,14 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
                 String pathName = Utils.getPathName(mDir.getPath(), decodeInfo.filename);
                 Object res = null;
 
-                res = Image.decodeFile(pathName, GL11.GL_RGB);
-
-                /*
-                if (Utils.getExtension(pathName, "jpg").equals("gif"))
-                    res = Movie.decodeFile(pathName);
-                else
-                    res = BitmapFactory.decodeFile(pathName);
-                */
+                if (Utils.SUPPORT_IMAGE) {
+                    res = Image.decodeFile(pathName, GL11.GL_RGB);
+                } else {
+                    if (Utils.getExtension(pathName, "jpg").equals("gif"))
+                        res = Movie.decodeFile(pathName);
+                    else
+                        res = BitmapFactory.decodeFile(pathName);
+                }
 
                 final Object _res = res;
                 // Post to UI thread

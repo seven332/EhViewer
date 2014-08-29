@@ -94,6 +94,12 @@ ifeq ($(TARGET_ARCH),x86)
     libjpeg-turbo/simd/jsimdcpu.asm
 endif
 
+ifeq ($(TARGET_ARCH),mips)
+    LOCAL_SRC_FILES += \
+    libjpeg-turbo/simd/jsimd_mips.c \
+    libjpeg-turbo/simd/jsimd_mips_dspr2.S
+endif
+
 include $(BUILD_STATIC_LIBRARY)
 
 

@@ -67,9 +67,6 @@ public class DetailParser {
     public int previewSum;
     public LinkedHashMap<String, LinkedList<String>> tags;
     public PreviewList previewList;
-    /**
-     * If no comment, just an empty list
-     **/
     public LinkedList<Comment> comments;
 
     public void reset() {
@@ -203,23 +200,19 @@ public class DetailParser {
                 isLargePreview = true;
 
             if (isLargePreview) {
+                previewList = new LargePreviewList();
                 p = Pattern.compile("<div class=\"gdtl\".+?<a href=\"(.+?)\"><img.+?src=\"(.+?)\"");
                 m = p.matcher(body);
                 while (m.find()) {
-                    if (previewList == null) {
-                        re |= PREVIEW;
-                        previewList = new LargePreviewList();
-                    }
+                    re |= PREVIEW;
                     ((LargePreviewList)previewList).addItem(m.group(2), m.group(1));
                 }
             } else {
+                previewList = new NormalPreviewList();
                 p = Pattern.compile("<div[^<>]*class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*>");
                 m = p.matcher(body);
                 while (m.find()) {
-                    if (previewList == null) {
-                        re |= PREVIEW;
-                        previewList = new NormalPreviewList();
-                    }
+                    re |= PREVIEW;
                     ((NormalPreviewList)previewList).addItem(m.group(3), m.group(4), "0", m.group(1),
                             m.group(2), m.group(5));
                 }

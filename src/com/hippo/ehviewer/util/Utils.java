@@ -41,6 +41,13 @@ public final class Utils {
     @SuppressWarnings("unused")
     private static String TAG = "Util";
 
+    public static final boolean SUPPORT_IMAGE;
+
+    static {
+        String cpu = Build.CPU_ABI;
+        SUPPORT_IMAGE = cpu.startsWith("armeabi") || cpu.equals("mips");
+    }
+
     /**
      * Put InputStream to File, default bufferSize is 512 * 1024
      *

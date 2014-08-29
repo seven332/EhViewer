@@ -693,7 +693,9 @@ public class EhClient {
                         md.firstPage = "pining";
                         responder = new GetGDetaiResponder(listener, md);
                     } else if ((result & (DetailParser.DETAIL | DetailParser.PREVIEW_INFO |
-                            DetailParser.PREVIEW)) != 0) {
+                            DetailParser.PREVIEW)) == (DetailParser.DETAIL | DetailParser.PREVIEW_INFO |
+                            DetailParser.PREVIEW)) {
+                        // At least get detail and preview
                         md.thumb = parser.thumb;
                         md.title = parser.title;
                         md.title_jpn = parser.title_jpn;
