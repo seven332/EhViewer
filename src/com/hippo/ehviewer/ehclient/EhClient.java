@@ -34,7 +34,6 @@ import android.os.Handler;
 import android.os.Process;
 
 import com.hippo.ehviewer.Analytics;
-import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Comment;
@@ -1261,7 +1260,7 @@ public class EhClient {
                                 gi.gid = j.getInt("gid");
                                 gi.token = j.getString("token");
                                 gi.title = Utils.unescapeXml(j.getString("title"));
-                                gi.posted = AppContext.sFormatter.format(Long.parseLong(j.getString("posted")) * 1000);
+                                gi.posted = Utils.sDate.format(Long.parseLong(j.getString("posted")) * 1000);
                                 gi.thumb = j.getString("thumb");
                                 gi.category = getType(j.getString("category"));
                                 gi.uploader = j.getString("uploader");

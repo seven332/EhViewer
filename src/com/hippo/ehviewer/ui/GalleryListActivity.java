@@ -1599,7 +1599,7 @@ public class GalleryListActivity extends AbsGalleryActivity
                     // Show update time
                     if (timeStamp != -1 && Config.getShowPopularUpdateTime())
                         MaterialToast.showToast(String.format(getString(R.string.popular_update_time),
-                                AppContext.sFormatter.format(timeStamp)));
+                                Utils.sDate.format(timeStamp)));
                 }
                 @Override
                 public void onFailure(String eMsg) {

@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.util;
 
+import java.io.File;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -28,6 +30,9 @@ import com.hippo.ehviewer.ehclient.EhClient;
 public class Config {
     @SuppressWarnings("unused")
     private static final String TAG = Config.class.getSimpleName();
+
+    public static final String EXTERANL_DIR_NAME = "EhViewer";
+    public static File sExternalDir;
 
     private static final String KEY_UPDATE_DATE = "update_date";
 
@@ -85,6 +90,13 @@ public class Config {
 
         mContext = context;
         mConfigPre = PreferenceManager.getDefaultSharedPreferences(mContext);
+
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            sExternalDir = new File(Environment.getExternalStorageDirectory(), EXTERANL_DIR_NAME);
+            Utils.ensureDir(sExternalDir, true);
+        } else {
+            sExternalDir = null;
+        }
     }
 
     /**

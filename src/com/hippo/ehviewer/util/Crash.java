@@ -23,7 +23,6 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Date;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -32,8 +31,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Environment;
-
-import com.hippo.ehviewer.AppContext;
 
 public class Crash {
     private static final String TAG = "Crash";
@@ -70,6 +67,19 @@ public class Crash {
         return mInit;
     }
 
+    public static final String getThrowableInfo(Throwable t) {
+        Writer writer = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(writer);
+        t.printStackTrace(printWriter);
+        Throwable cause = t.getCause();
+        while (cause != null) {
+            cause.printStackTrace(printWriter);
+            cause = cause.getCause();
+        }
+        printWriter.close();
+        return writer.toString();
+    }
+
     /**
      * Save throwable infomation to file
      *
@@ -79,22 +89,13 @@ public class Crash {
         StringBuffer sb = new StringBuffer();
         collectDeviceInfo(sb);
 
-        Writer writer = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(writer);
-        ex.printStackTrace(printWriter);
-        Throwable cause = ex.getCause();
-        while (cause != null) {
-            cause.printStackTrace(printWriter);
-            cause = cause.getCause();
-        }
-        printWriter.close();
-        String result = writer.toString();
+        String result = getThrowableInfo(ex);
         Log.e(TAG, result);
         sb.append("======== CrashInfo ========\n");
         sb.append(result);
         try {
             long timestamp = System.currentTimeMillis();
-            String time = AppContext.sFormatter.format(new Date());
+            String time = Utils.sDate.format(System.currentTimeMillis());
             String fileName = "crash-" + time + "-" + timestamp + ".log";
             String path = null;
             boolean position = false;

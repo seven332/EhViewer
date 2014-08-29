@@ -16,57 +16,119 @@
 
 package com.hippo.ehviewer.util;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import android.content.Context;
+
 public class Log {
     private static final String NULL = "null";
-    
+    private static final String LOG_FILENAME = "log.log";
+
+    private static final Object sLock = new Object();
+
+    private static File sLogFile;
+
+    public static void init(Context context) {
+        if (Config.sExternalDir != null)
+            sLogFile = new File(Config.sExternalDir, LOG_FILENAME);
+        else
+            sLogFile = new File(context.getFilesDir(), LOG_FILENAME);
+    }
+
+    public static void f(final String msg) {
+        new BgThread() {
+            @Override
+            public void run() {
+                synchronized(sLock) {
+                    try {
+                        FileWriter fw = new FileWriter(sLogFile, true);
+                        fw.append(Utils.sDate.format(System.currentTimeMillis()))
+                                .append(": ").append(msg).append("\n");
+                        fw.flush();
+                        fw.close();
+                    } catch (IOException e) {}
+                }
+            }
+        }.start();
+    }
+
+    public static void f(final Throwable tr) {
+        new BgThread() {
+            @Override
+            public void run() {
+                synchronized(sLock) {
+                    try {
+                        FileWriter fw = new FileWriter(sLogFile, true);
+                        fw.append(Utils.sDate.format(System.currentTimeMillis()))
+                                .append(": ").append(Crash.getThrowableInfo(tr)).append("\n");
+                        fw.flush();
+                        fw.close();
+                    } catch (IOException e) {}
+                }
+            }
+        }.start();
+    }
+
     public static int v(String tag, String msg) {
         if (msg == null)
             msg = NULL;
         return android.util.Log.v(tag, msg);
     }
+
     public static int v(String tag, String msg, Throwable tr) {
         if (msg == null)
             msg = NULL;
         return android.util.Log.v(tag, msg, tr);
     }
+
     public static int d(String tag, String msg) {
         if (msg == null)
             msg = NULL;
         return android.util.Log.d(tag, msg);
     }
+
     public static int d(String tag, String msg, Throwable tr) {
         if (msg == null)
             msg = NULL;
         return android.util.Log.d(tag, msg, tr);
     }
+
     public static int i(String tag, String msg) {
         if (msg == null)
             msg = NULL;
         return android.util.Log.i(tag, msg);
     }
+
     public static int i(String tag, String msg, Throwable tr) {
         if (msg == null)
             msg = NULL;
         return android.util.Log.i(tag, msg, tr);
     }
+
     public static int w(String tag, String msg) {
         if (msg == null)
             msg = NULL;
         return android.util.Log.w(tag, msg);
     }
+
     public static int w(String tag, String msg, Throwable tr) {
         if (msg == null)
             msg = NULL;
         return android.util.Log.w(tag, msg, tr);
     }
+
     public static int w(String tag, Throwable tr) {
         return android.util.Log.w(tag, tr);
     }
+
     public static int e(String tag, String msg) {
         if (msg == null)
             msg = NULL;
         return android.util.Log.e(tag, msg);
     }
+
     public static int e(String tag, String msg, Throwable tr) {
         if (msg == null)
             msg = NULL;

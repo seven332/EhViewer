@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +43,11 @@ public final class Utils {
     private static String TAG = "Util";
 
     public static final boolean SUPPORT_IMAGE;
+    @SuppressLint("SimpleDateFormat")
+    public static final DateFormat sDate = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    @SuppressLint("SimpleDateFormat")
+    public static final DateFormat sDate2 = new SimpleDateFormat("yyyyMMdd");
+
 
     static {
         String cpu = Build.CPU_ABI;
@@ -181,12 +187,14 @@ public final class Utils {
         }.start();
     }
 
-    // TODO
-    @SuppressLint("SimpleDateFormat")
+    static {
+
+    }
+
     public static int getDate() {
         int time = 0;
         try {
-            time = Integer.parseInt(new SimpleDateFormat("yyyyMMdd").format(new Date()));
+            time = Integer.parseInt(sDate2.format(new Date()));
         } catch (NumberFormatException e) {}
         return time;
     }

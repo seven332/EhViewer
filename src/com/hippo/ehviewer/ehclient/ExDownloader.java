@@ -398,9 +398,7 @@ public class ExDownloader implements Runnable {
             }
             writer.flush();
             writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) {}
     }
 
     private void getDetailInfo(int pageIndex, File ediFile, boolean needPreviewInfo) throws Exception {
@@ -410,11 +408,12 @@ public class ExDownloader implements Runnable {
         hh.setPreviewMode("m");
         String body = hh.get(url);
         if (body == null)
-            throw new Exception(hh.getEMsg() != null ? hh.getEMsg() : "Http error");
+            throw new Exception(hh.getEMsg() != null ? hh.getEMsg() : "Http error, body == null");
         if (!edp.parser(body, mMode, needPreviewInfo))
-            throw new Exception(edp.emsg != null ? edp.emsg : "Parser error");
+            throw new Exception(edp.emsg != null ? edp.emsg : "Parser error, body is \n" + body);
         if (edp.previewStartIndex != pageIndex * mPreviewPerPage)
-            throw new Exception("预测与实际不匹配");
+            throw new Exception("预测与实际不匹配, 预测: " + edp.previewStartIndex +
+                    ", 实际: " + pageIndex * mPreviewPerPage + ", body is \n" + body);
 
         List<String> pageTokenArray = edp.pageTokenArray;
         if (needPreviewInfo)
@@ -522,7 +521,7 @@ public class ExDownloader implements Runnable {
             }
         } catch (Exception e) {
 
-            // TODO get error
+            Log.f(e);
 
             synchronized (mDownloadLock) {
                 if (mDownloadMode && mLfd != null && mDownloadIndexSet != null) {

@@ -20,10 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -36,6 +33,7 @@ import com.hippo.ehviewer.ehclient.ExDownloaderManager;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.Favorite;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.MaterialToast;
 
@@ -43,8 +41,6 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
 
     @SuppressWarnings("unused")
     private static final String TAG = "AppContext";
-    @SuppressLint("SimpleDateFormat")
-    public static final DateFormat sFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private Thread.UncaughtExceptionHandler mDefaultHandler;
 
@@ -64,6 +60,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
 
         // Init everything
         Config.init(this);
+        Log.init(this);
         Ui.init(this);
         Crash.init(this);
         EhClient.createInstance(this);
