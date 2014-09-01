@@ -46,27 +46,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/read_display_settings_title">
-
-        <com.hippo.ehviewer.preference.AutoListPreference
-            android:key="page_scaling"
-            android:title="@string/page_scaling_title"
-            android:entries="@array/page_scaling_entries"
-            android:entryValues="@array/page_scaling_entry_values"
-            android:defaultValue="3"
-            android:summary="%s" />
-
-        <com.hippo.ehviewer.preference.AutoListPreference
-            android:key="start_position"
-            android:title="@string/start_position_title"
-            android:entries="@array/start_position_entries"
-            android:entryValues="@array/start_position_values"
-            android:defaultValue="1"
-            android:summary="%s" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
         android:title="@string/list_display_settings_title">
 
         <com.hippo.ehviewer.preference.AutoListPreference

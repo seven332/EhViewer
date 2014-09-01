@@ -38,10 +38,6 @@ public class Config {
 
     private static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
     private static final String DEFAULT_SCREEN_ORIENTATION = "0";
-    private static final String KEY_PAGE_SCALING = "page_scaling";
-    private static final String DEFAULT_PAGE_SCALING = "3";
-    private static final String KEY_START_POSITION = "start_position";
-    private static final String DEFAULT_START_POSITION = "1";
 
     private static final String KEY_CACHE_SIZE = "cache_size";
     private static final String DEFAULT_CACHE_SIZE = "25";
@@ -172,30 +168,6 @@ public class Config {
             mConfigPre.edit().putString(KEY_CACHE_SIZE, DEFAULT_CACHE_SIZE).apply();
             return 25;
         }
-    }
-
-    public static int getPageScalingMode() {
-        int pageScalingMode = 3;
-        try {
-            pageScalingMode = Integer.parseInt(mConfigPre.getString(
-                    KEY_PAGE_SCALING, DEFAULT_PAGE_SCALING));
-        } catch (Exception e) {
-            mConfigPre.edit().putString(KEY_PAGE_SCALING, DEFAULT_PAGE_SCALING)
-                    .apply();
-        }
-        return pageScalingMode;
-    }
-
-    public static int getStartPosition() {
-        int startPosition = 1;
-        try {
-            startPosition = Integer.parseInt(mConfigPre.getString(
-                    KEY_START_POSITION, DEFAULT_START_POSITION));
-        } catch (Exception e) {
-            mConfigPre.edit().putString(KEY_START_POSITION, DEFAULT_START_POSITION)
-                    .apply();
-        }
-        return startPosition;
     }
 
     public static int getScreenOriMode() {
@@ -400,8 +372,6 @@ public class Config {
         mConfigPre.edit().putBoolean(KEY_GALLERY_FIRST, galleryFirst).apply();
     }
 
-
-
     /****** Mode an API Mode ******/
 
     private static final String KEY_MODE = "mode";
@@ -516,5 +486,48 @@ public class Config {
 
     public static int getPreviewPerRow() {
         return Integer.parseInt(mConfigPre.getString(KEY_PREVIEW_PER_ROW, DEFAULT_PREVIEW_PER_ROW));
+    }
+
+    /****** Read ******/
+
+    private static final String KEY_PAGE_SCALING = "page_scaling";
+    private static final String DEFAULT_PAGE_SCALING = "3";
+    private static final String KEY_START_POSITION = "start_position";
+    private static final String DEFAULT_START_POSITION = "1";
+    private static final String KEY_GALLERY_SHOW_TIME = "gallery_show_clock";
+    private static final boolean DEFAULT_GALLERY_SHOW_TIME = true;
+    private static final String KEY_GALLERY_SHOW_BATTERY = "gallery_show_battery";
+    private static final boolean DEFAULT_GALLERY_SHOW_BATTERY = true;
+
+    public static int getPageScalingMode() {
+        int pageScalingMode = 3;
+        try {
+            pageScalingMode = Integer.parseInt(mConfigPre.getString(
+                    KEY_PAGE_SCALING, DEFAULT_PAGE_SCALING));
+        } catch (Exception e) {
+            mConfigPre.edit().putString(KEY_PAGE_SCALING, DEFAULT_PAGE_SCALING)
+                    .apply();
+        }
+        return pageScalingMode;
+    }
+
+    public static int getStartPosition() {
+        int startPosition = 1;
+        try {
+            startPosition = Integer.parseInt(mConfigPre.getString(
+                    KEY_START_POSITION, DEFAULT_START_POSITION));
+        } catch (Exception e) {
+            mConfigPre.edit().putString(KEY_START_POSITION, DEFAULT_START_POSITION)
+                    .apply();
+        }
+        return startPosition;
+    }
+
+    public static boolean getGShowTime() {
+        return mConfigPre.getBoolean(KEY_GALLERY_SHOW_TIME, DEFAULT_GALLERY_SHOW_TIME);
+    }
+
+    public static boolean getGShowBattery() {
+        return mConfigPre.getBoolean(KEY_GALLERY_SHOW_BATTERY, DEFAULT_GALLERY_SHOW_BATTERY);
     }
 }

@@ -136,6 +136,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         DisplayFragment.class.getName(),
         EhFragment.class.getName(),
         DataFragment.class.getName(),
+        ReadFragment.class.getName(),
         AboutFragment.class.getName()
     };
 
@@ -143,7 +144,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
         R.drawable.ic_setting_display,
         R.drawable.ic_action_panda,
         R.drawable.ic_setting_data,
-        R.drawable.ic_action_info
+        R.drawable.ic_setting_read,
+        R.drawable.ic_setting_about
     };
 
     @Override
@@ -581,6 +583,29 @@ public class SettingsActivity extends AbsPreferenceActivity {
             }
 
             return true;
+        }
+    }
+
+    public static class ReadFragment extends TranslucentPreferenceFragment
+            implements Preference.OnPreferenceChangeListener,
+            Preference.OnPreferenceClickListener {
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.read_settings);
+        }
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            // TODO Auto-generated method stub
+            return false;
         }
     }
 

@@ -172,11 +172,11 @@
     <string name="start_position_title">开页位置</string>
     <string name="list_display_settings_title">列表</string>
     <string name="list_mode_title">列表模式</string>
-    
+
     <string name="list_thumb_columns">列表缩略图列数</string>
     <string name="preview_display_settings_title">预览</string>
     <string name="preview_columns">预览图列数</string>
-    
+
     <string name="popular_display_settings_title">热门</string>
     <string name="show_popular_update_time_title">显示热门更新时间</string>
     <string name="eh_settings_title">EH</string>
@@ -191,6 +191,7 @@
     <string name="preview_mode_title">预览图模式</string>
     <string name="preview_mode_normal">正常预览图</string>
     <string name="preview_mode_large">大预览图</string>
+
     <string name="data_settings_title">数据</string>
     <string name="download_data_settings_title">下载</string>
     <string name="download_path_title">下载路径</string>
@@ -199,6 +200,11 @@
     <string name="media_scan_summary_off">大多数图库应用将不会显示下载目录中的图片</string>
     <string name="favorite_data_settings_title">收藏</string>
     <string name="default_favorite">默认收藏夹</string>
+
+    <string name="read_settings_title">阅读</string>
+    <string name="gallery_show_clock_title">显示时间</string>
+    <string name="gallery_show_battery_title">显示电量</string>
+
     <string name="about_settings_title">关于</string>
     <string name="author_title">作者</string>
     <string name="changelog_title">日志</string>

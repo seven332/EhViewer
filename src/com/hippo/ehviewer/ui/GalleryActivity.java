@@ -220,6 +220,12 @@ public class GalleryActivity extends AbsActivity
 
             initAnimator();
 
+            // Hide or show
+            if (!Config.getGShowTime())
+                findViewById(R.id.clock).setVisibility(View.GONE);
+            if (!Config.getGShowBattery())
+                findViewById(R.id.battery).setVisibility(View.GONE);
+
             // Set listener
             mGalleryView.setGalleryViewListener(this);
             mPageSeeker.setOnSeekBarChangeListener(this);
@@ -305,6 +311,10 @@ public class GalleryActivity extends AbsActivity
     }
 
     public void updateSeekBubble(int progress, int max, int thumbOffset) {
+        if (max == 0)
+            // Avoid divide by zero
+            return;
+
         thumbOffset = thumbOffset + Ui.dp2pix(12);
         int x = (mainView.getWidth() - 2 * thumbOffset) * progress / max + thumbOffset;
         mSeekerBubble.setX(x);

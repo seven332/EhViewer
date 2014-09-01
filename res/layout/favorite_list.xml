@@ -22,7 +22,8 @@
     <com.hippo.ehviewer.widget.PullListView
         android:id="@+id/gallery_list"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent"
+        android:saveEnabled="false" />
 
     <com.hippo.ehviewer.widget.RefreshTextView
         android:id="@+id/refresh_text"
