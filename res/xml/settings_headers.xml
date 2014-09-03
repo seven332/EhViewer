@@ -41,6 +41,12 @@
         android:icon="@drawable/ic_setting_read_dark" />
 
     <header
+        android:id="@+id/advanced_settings"
+        android:fragment="com.hippo.ehviewer.ui.SettingsActivity$AdvancedFragment"
+        android:title="@string/advanced_settings_title"
+        android:icon="@drawable/ic_setting_advanced_dark" />
+
+    <header
         android:id="@+id/about_settings"
         android:fragment="com.hippo.ehviewer.ui.SettingsActivity$AboutFragment"
         android:title="@string/about_settings_title"

@@ -137,6 +137,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         EhFragment.class.getName(),
         DataFragment.class.getName(),
         ReadFragment.class.getName(),
+        AdvancedFragment.class.getName(),
         AboutFragment.class.getName()
     };
 
@@ -145,6 +146,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         R.drawable.ic_action_panda,
         R.drawable.ic_setting_data,
         R.drawable.ic_setting_read,
+        R.drawable.ic_setting_advanced,
         R.drawable.ic_setting_about
     };
 
@@ -606,6 +608,14 @@ public class SettingsActivity extends AbsPreferenceActivity {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             // TODO Auto-generated method stub
             return false;
+        }
+    }
+
+    public static class AdvancedFragment extends TranslucentPreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.advanced_settings);
         }
     }
 

@@ -67,7 +67,7 @@ import com.hippo.ehviewer.util.Utils;
 public class HttpHelper {
     private static final String TAG = HttpHelper.class.getSimpleName();
 
-    private static final int HTTP_RETRY_TIMES = 5;
+    private static final int HTTP_RETRY_TIMES = 3;
 
     public static final String SAD_PANDA_ERROR = "Sad Panda";
     public static final String HAPPY_PANDA_BODY = "Happy Panda";
@@ -197,12 +197,12 @@ public class HttpHelper {
     }
 
     private Object requst(RequestHelper rh) {
-        mException = null;
-        int redirectionCount = 0;
         URL url = null;
         HttpURLConnection conn = null;
 
         for (int times = 0; times < HTTP_RETRY_TIMES; times++) {
+            mException = null;
+            int redirectionCount = 0;
             boolean firstTime = true;
             try {
                 url = rh.getUrl();

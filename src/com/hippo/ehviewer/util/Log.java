@@ -22,7 +22,9 @@ import java.io.IOException;
 
 import android.content.Context;
 
-public class Log {
+import com.hippo.ehviewer.AppContext;
+
+public final class Log {
     private static final String NULL = "null";
     private static final String LOG_FILENAME = "log.log";
 
@@ -72,51 +74,59 @@ public class Log {
     }
 
     public static int v(String tag, String msg) {
-        if (msg == null)
-            msg = NULL;
-        return android.util.Log.v(tag, msg);
+        if (AppContext.DEBUG)
+            return android.util.Log.v(tag, msg == null ? NULL : msg);
+        else
+            return 0;
     }
 
     public static int v(String tag, String msg, Throwable tr) {
-        if (msg == null)
-            msg = NULL;
-        return android.util.Log.v(tag, msg, tr);
+        if (AppContext.DEBUG)
+            return android.util.Log.v(tag, msg == null ? NULL : msg, tr);
+        else
+            return 0;
     }
 
     public static int d(String tag, String msg) {
-        if (msg == null)
-            msg = NULL;
-        return android.util.Log.d(tag, msg);
+        if (AppContext.DEBUG)
+            return android.util.Log.d(tag, msg == null ? NULL : msg);
+        else
+            return 0;
     }
 
     public static int d(String tag, String msg, Throwable tr) {
-        if (msg == null)
-            msg = NULL;
-        return android.util.Log.d(tag, msg, tr);
+        if (AppContext.DEBUG)
+            return android.util.Log.d(tag, msg == null ? NULL : msg, tr);
+        else
+            return 0;
     }
 
     public static int i(String tag, String msg) {
-        if (msg == null)
-            msg = NULL;
-        return android.util.Log.i(tag, msg);
+        if (AppContext.DEBUG)
+            return android.util.Log.i(tag, msg == null ? NULL : msg);
+        else
+            return 0;
     }
 
     public static int i(String tag, String msg, Throwable tr) {
-        if (msg == null)
-            msg = NULL;
-        return android.util.Log.i(tag, msg, tr);
+        if (AppContext.DEBUG)
+            return android.util.Log.i(tag, msg == null ? NULL : msg, tr);
+        else
+            return 0;
     }
 
     public static int w(String tag, String msg) {
-        if (msg == null)
-            msg = NULL;
-        return android.util.Log.w(tag, msg);
+        if (AppContext.DEBUG)
+            return android.util.Log.w(tag, msg == null ? NULL : msg);
+        else
+            return 0;
     }
 
     public static int w(String tag, String msg, Throwable tr) {
-        if (msg == null)
-            msg = NULL;
-        return android.util.Log.w(tag, msg, tr);
+        if (AppContext.DEBUG)
+            return android.util.Log.w(tag, msg == null ? NULL : msg, tr);
+        else
+            return 0;
     }
 
     public static int w(String tag, Throwable tr) {
@@ -124,14 +134,16 @@ public class Log {
     }
 
     public static int e(String tag, String msg) {
-        if (msg == null)
-            msg = NULL;
-        return android.util.Log.e(tag, msg);
+        if (AppContext.DEBUG)
+            return android.util.Log.e(tag, msg == null ? NULL : msg);
+        else
+            return 0;
     }
 
     public static int e(String tag, String msg, Throwable tr) {
-        if (msg == null)
-            msg = NULL;
-        return android.util.Log.e(tag, msg, tr);
+        if (AppContext.DEBUG)
+            return android.util.Log.e(tag, msg == null ? NULL : msg, tr);
+        else
+            return 0;
     }
 }

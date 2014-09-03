@@ -205,6 +205,9 @@
     <string name="gallery_show_clock_title">显示时间</string>
     <string name="gallery_show_battery_title">显示电量</string>
 
+    <string name="advanced_settings_title">高级</string>
+    <string name="http_advanced_settings_title">HTTP</string>
+
     <string name="about_settings_title">关于</string>
     <string name="author_title">作者</string>
     <string name="changelog_title">日志</string>

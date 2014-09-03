@@ -42,6 +42,8 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
     @SuppressWarnings("unused")
     private static final String TAG = "AppContext";
 
+    public static final boolean DEBUG = true;
+
     private Thread.UncaughtExceptionHandler mDefaultHandler;
 
     private static AppContext sInstance;

@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import com.hippo.ehviewer.ehclient.EhClient;
+import com.hippo.ehviewer.network.UrlBuilder;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Utils;
 
@@ -214,98 +215,104 @@ public class ListUrls {
     }
 
     public String getUrl(int mode) {
-        StringBuilder url = new StringBuilder(EhClient.getUrlHeader(mode));
 
         switch (mMode) {
         case MODE_POPULAR:
             return null;
 
         case MODE_IMAGE_SEARCH:
-            if (mResultUrl == null) {
+            if (mResultUrl == null)
                 return null;
-            } else {
+            else
                 return mResultUrl + "&page=" + page;
-            }
 
         case MODE_TAG:
             // Add tag
-            url.append("tag/");
+            StringBuilder sb = new StringBuilder(EhClient.getUrlHeader(mode));
+            sb.append("tag/");
             if (mTag != null) {
                 String[] tag = mTag.split("\\s+");
                 try {
                     for (int i = 0; i < tag.length; i++)
                         tag[i] = URLEncoder.encode(tag[i], "UTF-8");
                 } catch (UnsupportedEncodingException e) {}
-                url.append(Utils.join(tag, '+'));
+                sb.append(Utils.join(tag, '+'));
 
                 // Add page
-                url.append("/").append(page);
+                sb.append("/").append(page);
             } else {
-                url.append(page);
+                sb.append(page);
             }
-            break;
+            return sb.toString();
 
         case MODE_NORMAL:
         case MODE_UPLOADER:
         default:
+            String header = EhClient.getUrlHeader(mode);
             boolean isNeedFooter = false;
+            UrlBuilder ub;
             // Add category
             if (category != NONE) {
                 isNeedFooter = true;
                 if (NUM_CATEGORY) {
-                    url.append(category).append('?');
+                    ub = new UrlBuilder(header + category);
                 } else {
-                    url.append("?");
-                    if ((category & DOUJINSHI) == 0) url.append("f_doujinshi=0&"); else url.append("f_doujinshi=1&");
-                    if ((category & MANGA) == 0) url.append("f_manga=0&"); else url.append("f_manga=1&");
-                    if ((category & ARTIST_CG) == 0) url.append("f_artistcg=0&"); else url.append("f_artistcg=1&");
-                    if ((category & GAME_CG) == 0) url.append("f_gamecg=0&"); else url.append("f_gamecg=1&");
-                    if ((category & WESTERN) == 0) url.append("f_western=0&"); else url.append("f_western=1&");
-                    if ((category & NON_H) == 0) url.append("f_non-h=0&"); else url.append("f_non-h=1&");
-                    if ((category & IMAGE_SET) == 0) url.append("f_imageset=0&"); else url.append("f_imageset=1&");
-                    if ((category & COSPLAY) == 0) url.append("f_cosplay=0&"); else url.append("f_cosplay=1&");
-                    if ((category & ASIAN_PORN) == 0) url.append("f_asianporn=0&"); else url.append("f_asianporn=1&");
-                    if ((category & MISC) == 0) url.append("f_misc=0&"); else url.append("f_misc=1&");
+                    ub = new UrlBuilder(header);
+                    ub.addQuery("f_doujinshi", ((category & DOUJINSHI) == 0) ? "0" : "1");
+                    ub.addQuery("f_manga", ((category & MANGA) == 0) ? "0" : "1");
+                    ub.addQuery("f_artistcg", ((category & ARTIST_CG) == 0) ? "0" : "1");
+                    ub.addQuery("f_gamecg", ((category & GAME_CG) == 0) ? "0" : "1");
+                    ub.addQuery("f_western", ((category & WESTERN) == 0) ? "0" : "1");
+                    ub.addQuery("f_non-h", ((category & NON_H) == 0) ? "0" : "1");
+                    ub.addQuery("f_imageset", ((category & IMAGE_SET) == 0) ? "0" : "1");
+                    ub.addQuery("f_cosplay", ((category & COSPLAY) == 0) ? "0" : "1");
+                    ub.addQuery("f_asianporn", ((category & ASIAN_PORN) == 0) ? "0" : "1");
+                    ub.addQuery("f_misc", ((category & MISC) == 0) ? "0" : "1");
                 }
             } else {
-                url.append('?');
+                ub = new UrlBuilder(header);
             }
 
             // Add search item
             if (search != null) {
                 isNeedFooter = true;
-                url.append("f_search=");
+
                 String[] tag = search.split("\\s+");
                 try {
                     for (int i = 0; i < tag.length; i++)
                         tag[i] = URLEncoder.encode(tag[i], "UTF-8");
                 } catch (UnsupportedEncodingException e) {}
-                url.append(Utils.join(tag, '+')).append("&");
+
+                ub.addQuery("f_search", Utils.join(tag, '+'));
             }
 
             // Add page
-            url.append("page=").append(page).append("&");
+            if (page != 0) {
+                ub.addQuery("page", page);
+            }
 
             // Add foot
-            if (isNeedFooter) url.append("f_apply=Apply+Filter");
+            if (isNeedFooter) ub.addQuery("f_apply", "Apply+Filter");
 
             // Add advance search
             if (isAdvance()) {
-                url.append("&advsearch=1");
-                if((advsearchType & SNAME) != 0) url.append("&f_sname=on");
-                if((advsearchType & STAGS) != 0) url.append("&f_stags=on");
-                if((advsearchType & SDESC) != 0) url.append("&f_sdesc=on");
-                if((advsearchType & STORR) != 0) url.append("&f_storr=on");
-                if((advsearchType & STO) != 0) url.append("&f_sto=on");
-                if((advsearchType & STD1) != 0) url.append("&f_sdt1=on");
-                if((advsearchType & STD2) != 0) url.append("&f_sdt2=on");
-                if((advsearchType & SH) != 0) url.append("&f_sh=on");
+                ub.addQuery("advsearch", "1");
+                if((advsearchType & SNAME) != 0) ub.addQuery("f_sname", "on");
+                if((advsearchType & STAGS) != 0) ub.addQuery("f_stags", "on");
+                if((advsearchType & SDESC) != 0) ub.addQuery("f_sdesc", "on");
+                if((advsearchType & STORR) != 0) ub.addQuery("f_storr", "on");
+                if((advsearchType & STO) != 0) ub.addQuery("f_sto", "on");
+                if((advsearchType & STD1) != 0) ub.addQuery("f_sdt1", "on");
+                if((advsearchType & STD2) != 0) ub.addQuery("f_sdt2", "on");
+                if((advsearchType & SH) != 0) ub.addQuery("f_sh", "on");
 
                 // Set min star
-                if (isMinRating()) url.append("&f_sr=on&f_srdd=").append(minRating);
+                if (isMinRating()) {
+                    ub.addQuery("f_sr", "on");
+                    ub.addQuery("f_srdd", minRating);
+                }
             }
+            return ub.build();
         }
-
-        return url.toString();
     }
 }
