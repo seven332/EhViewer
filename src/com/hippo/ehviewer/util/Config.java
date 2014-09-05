@@ -560,6 +560,9 @@ public class Config {
     private static final String KEY_HTTP_READ_TIMEOUT = "http_read_timeout";
     private static final String DEFAULT_HTTP_READ_TIMEOUT = "5000";
 
+    private static final String KEY_EH_MIN_INTERVAL = "eh_min_interval";
+    private static final String DEFAULT_EH_MIN_INTERVAL = "0";
+
     public static int getHttpRetry() {
         try {
             return Integer.parseInt(mConfigPre.getString(KEY_HTTP_RETRY, DEFAULT_HTTP_RETRY));
@@ -581,6 +584,14 @@ public class Config {
             return Integer.parseInt(mConfigPre.getString(KEY_HTTP_READ_TIMEOUT, DEFAULT_HTTP_READ_TIMEOUT));
         } catch(Throwable e){
             return 5000;
+        }
+    }
+
+    public static int getEhMinInterval() {
+        try {
+            return Integer.parseInt(mConfigPre.getString(KEY_EH_MIN_INTERVAL, DEFAULT_EH_MIN_INTERVAL));
+        } catch(Throwable e){
+            return 0;
         }
     }
 }

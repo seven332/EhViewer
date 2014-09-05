@@ -632,10 +632,12 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_HTTP_RETRY = "http_retry";
         private static final String KEY_HTTP_CONNECT_TIMEOUT = "http_connect_timeout";
         private static final String KEY_HTTP_READ_TIMEOUT = "http_read_timeout";
+        private static final String KEY_EH_MIN_INTERVAL = "eh_min_interval";
 
         private Preference mHttpRetry;
         private Preference mHttpConnectTimeout;
         private Preference mHttpReadTimeout;
+        private Preference mEhMinInterval;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -648,6 +650,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mHttpConnectTimeout.setOnPreferenceChangeListener(this);
             mHttpReadTimeout = findPreference(KEY_HTTP_READ_TIMEOUT);
             mHttpReadTimeout.setOnPreferenceChangeListener(this);
+            mEhMinInterval = findPreference(KEY_EH_MIN_INTERVAL);
+            mEhMinInterval.setOnPreferenceChangeListener(this);
         }
 
         @Override
@@ -678,6 +682,16 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 try {
                     int num = Integer.parseInt(value);
                     if (num < 1)
+                        throw new Throwable();
+                } catch(Throwable e){
+                    MaterialToast.showToast(R.string.invalid_input);
+                    return false;
+                }
+            }  else if (KEY_EH_MIN_INTERVAL.equals(key)) {
+                String value = (String)newValue;
+                try {
+                    int num = Integer.parseInt(value);
+                    if (num < 0)
                         throw new Throwable();
                 } catch(Throwable e){
                     MaterialToast.showToast(R.string.invalid_input);

@@ -47,4 +47,16 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/eh_advanced_settings_title">
+
+        <com.hippo.ehviewer.preference.EditTextPreference
+            android:key="eh_min_interval"
+            android:title="@string/eh_min_interval_title"
+            android:inputType="number"
+            android:numeric="integer"
+            android:defaultValue="0" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

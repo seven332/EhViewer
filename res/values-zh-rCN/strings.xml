@@ -212,6 +212,8 @@
     <string name="http_retry_title">连接重试次数</string>
     <string name="http_connect_timeout_title">连接超时 (ms)</string>
     <string name="http_read_timeout_title">读取超时 (ms)</string>
+    <string name="eh_advanced_settings_title">EH</string>
+    <string name="eh_min_interval_title">EH 站点最小连接间隔 (ms)</string>
 
     <string name="about_settings_title">关于</string>
     <string name="author_title">作者</string>

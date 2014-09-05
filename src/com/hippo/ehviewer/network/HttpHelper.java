@@ -68,8 +68,6 @@ import com.hippo.ehviewer.util.Utils;
 public class HttpHelper {
     private static final String TAG = HttpHelper.class.getSimpleName();
 
-    private static final int HTTP_RETRY_TIMES = 3;
-
     public static final String SAD_PANDA_ERROR = "Sad Panda";
     public static final String HAPPY_PANDA_BODY = "Happy Panda";
 
@@ -91,7 +89,7 @@ public class HttpHelper {
         "http://proxyy0005.appsp0t.com/proxy",
         "http://proxyy0006.appsp0t.com/proxy"
     };
-    private static int sProxyIndex = MathUtils.random(0, PROXY_URLS.length);
+    private static volatile int sProxyIndex = MathUtils.random(0, PROXY_URLS.length);
     private static Object sProxyIndexLock = new Object();
 
     public class Package {
@@ -108,6 +106,9 @@ public class HttpHelper {
     private String mLastUrl;
     private OnRespondListener mListener;
     private String mPreviewMode;
+
+    private volatile long mLastEhConnectTime = 0;
+    private static final Object ehLock = new Object();
 
     public interface OnRespondListener {
         void onSuccess(Object body);
@@ -200,6 +201,7 @@ public class HttpHelper {
     private Object requst(RequestHelper rh) {
         URL url = null;
         HttpURLConnection conn = null;
+        boolean isCookiable = false;
 
         for (int times = 0; times < Config.getHttpRetry(); times++) {
             mException = null;
@@ -207,8 +209,24 @@ public class HttpHelper {
             boolean firstTime = true;
             try {
                 url = rh.getUrl();
+
+                isCookiable = isUrlCookiable(url);
+
+                while (isCookiable) {
+                    synchronized(ehLock) {
+                        long cur = System.currentTimeMillis();
+                        long left = mLastEhConnectTime + Config.getEhMinInterval() - cur;
+                        if (left <= 0) {
+                            mLastEhConnectTime = cur;
+                            break;
+                        } else {
+                            Thread.sleep(left);
+                        }
+                    }
+                }
+
+
                 Log.d(TAG, "Requst " + url.toString());
-                boolean isCookiable = isUrlCookiable(url);
                 while (redirectionCount++ < Constants.MAX_REDIRECTS) {
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setInstanceFollowRedirects(false);
@@ -245,6 +263,7 @@ public class HttpHelper {
                             AppHandler.getInstance().sendMessage(
                                     Message.obtain(null, AppHandler.HTTP_HELPER_TAG,
                                             Constants.TRUE, 0, new Package(obj, mListener)));
+
                         return obj;
                     // redirect
                     case HttpURLConnection.HTTP_MOVED_PERM:
@@ -290,6 +309,7 @@ public class HttpHelper {
         // Send exception to helper
         if (mException != null)
             rh.onGetException(mException);
+
         return null;
     }
 
