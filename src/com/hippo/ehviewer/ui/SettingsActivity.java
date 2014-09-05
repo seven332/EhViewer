@@ -57,7 +57,6 @@ import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.preference.AutoListPreference;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Favorite;
-import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
@@ -627,11 +626,66 @@ public class SettingsActivity extends AbsPreferenceActivity {
         }
     }
 
-    public static class AdvancedFragment extends TranslucentPreferenceFragment {
+    public static class AdvancedFragment extends TranslucentPreferenceFragment
+            implements Preference.OnPreferenceChangeListener {
+
+        private static final String KEY_HTTP_RETRY = "http_retry";
+        private static final String KEY_HTTP_CONNECT_TIMEOUT = "http_connect_timeout";
+        private static final String KEY_HTTP_READ_TIMEOUT = "http_read_timeout";
+
+        private Preference mHttpRetry;
+        private Preference mHttpConnectTimeout;
+        private Preference mHttpReadTimeout;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.advanced_settings);
+
+            mHttpRetry = findPreference(KEY_HTTP_RETRY);
+            mHttpRetry.setOnPreferenceChangeListener(this);
+            mHttpConnectTimeout = findPreference(KEY_HTTP_CONNECT_TIMEOUT);
+            mHttpConnectTimeout.setOnPreferenceChangeListener(this);
+            mHttpReadTimeout = findPreference(KEY_HTTP_READ_TIMEOUT);
+            mHttpReadTimeout.setOnPreferenceChangeListener(this);
+        }
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final String key = preference.getKey();
+            if (KEY_HTTP_RETRY.equals(key)) {
+                String value = (String)newValue;
+                try {
+                    int num = Integer.parseInt(value);
+                    if (num < 1 || num > 10)
+                        throw new Throwable();
+                } catch(Throwable e){
+                    MaterialToast.showToast(R.string.invalid_input);
+                    return false;
+                }
+            } else if (KEY_HTTP_CONNECT_TIMEOUT.equals(key)) {
+                String value = (String)newValue;
+                try {
+                    int num = Integer.parseInt(value);
+                    if (num < 1)
+                        throw new Throwable();
+                } catch(Throwable e){
+                    MaterialToast.showToast(R.string.invalid_input);
+                    return false;
+                }
+            }  else if (KEY_HTTP_READ_TIMEOUT.equals(key)) {
+                String value = (String)newValue;
+                try {
+                    int num = Integer.parseInt(value);
+                    if (num < 1)
+                        throw new Throwable();
+                } catch(Throwable e){
+                    MaterialToast.showToast(R.string.invalid_input);
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 

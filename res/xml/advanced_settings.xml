@@ -24,17 +24,26 @@
             android:key="http_warning"
             android:title="@string/http_warning_title" />
 
-        <Preference
+        <com.hippo.ehviewer.preference.EditTextPreference
             android:key="http_retry"
-            android:title="@string/http_retry_title" />
+            android:title="@string/http_retry_title"
+            android:inputType="number"
+            android:numeric="integer"
+            android:defaultValue="3" />
 
-        <Preference
+        <com.hippo.ehviewer.preference.EditTextPreference
             android:key="http_connect_timeout"
-            android:title="@string/http_connect_timeout_title" />
+            android:title="@string/http_connect_timeout_title"
+            android:inputType="number"
+            android:numeric="integer"
+            android:defaultValue="5000" />
 
-        <Preference
+        <com.hippo.ehviewer.preference.EditTextPreference
             android:key="http_read_timeout"
-            android:title="@string/http_read_timeout_title" />
+            android:title="@string/http_read_timeout_title"
+            android:inputType="number"
+            android:numeric="integer"
+            android:defaultValue="5000" />
 
     </PreferenceCategory>
 

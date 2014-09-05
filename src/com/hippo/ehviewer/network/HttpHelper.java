@@ -51,6 +51,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.exception.StopRequestException;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.FastByteArrayOutputStream;
 import com.hippo.ehviewer.util.Log;
@@ -200,7 +201,7 @@ public class HttpHelper {
         URL url = null;
         HttpURLConnection conn = null;
 
-        for (int times = 0; times < HTTP_RETRY_TIMES; times++) {
+        for (int times = 0; times < Config.getHttpRetry(); times++) {
             mException = null;
             int redirectionCount = 0;
             boolean firstTime = true;
@@ -212,8 +213,8 @@ public class HttpHelper {
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setInstanceFollowRedirects(false);
                     conn.setRequestProperty("User-Agent", Constants.userAgent);
-                    conn.setConnectTimeout(Constants.DEFAULT_TIMEOUT);
-                    conn.setReadTimeout(Constants.DEFAULT_TIMEOUT);
+                    conn.setConnectTimeout(Config.getHttpConnectTimeout());
+                    conn.setReadTimeout(Config.getHttpReadTimeout());
                     // Set cookie if necessary
                     if (isCookiable)
                         EhInfo.getInstance(mContext).setCookie(conn, mPreviewMode);

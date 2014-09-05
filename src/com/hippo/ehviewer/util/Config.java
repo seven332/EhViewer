@@ -547,4 +547,40 @@ public class Config {
             return 3;
         }
     }
+
+
+    /****** Advanced ******/
+
+    private static final String KEY_HTTP_RETRY = "http_retry";
+    private static final String DEFAULT_HTTP_RETRY = "3";
+
+    private static final String KEY_HTTP_CONNECT_TIMEOUT = "http_connect_timeout";
+    private static final String DEFAULT_HTTP_CONNECT_TIMEOUT = "5000";
+
+    private static final String KEY_HTTP_READ_TIMEOUT = "http_read_timeout";
+    private static final String DEFAULT_HTTP_READ_TIMEOUT = "5000";
+
+    public static int getHttpRetry() {
+        try {
+            return Integer.parseInt(mConfigPre.getString(KEY_HTTP_RETRY, DEFAULT_HTTP_RETRY));
+        } catch(Throwable e){
+            return 3;
+        }
+    }
+
+    public static int getHttpConnectTimeout() {
+        try {
+            return Integer.parseInt(mConfigPre.getString(KEY_HTTP_CONNECT_TIMEOUT, DEFAULT_HTTP_CONNECT_TIMEOUT));
+        } catch(Throwable e){
+            return 5000;
+        }
+    }
+
+    public static int getHttpReadTimeout() {
+        try {
+            return Integer.parseInt(mConfigPre.getString(KEY_HTTP_READ_TIMEOUT, DEFAULT_HTTP_READ_TIMEOUT));
+        } catch(Throwable e){
+            return 5000;
+        }
+    }
 }

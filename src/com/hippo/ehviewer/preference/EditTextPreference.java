@@ -17,8 +17,8 @@
 package com.hippo.ehviewer.preference;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.preference.Preference;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
@@ -57,9 +57,15 @@ public class EditTextPreference extends Preference implements
     }
 
     @Override
-    protected void onAttachedToHierarchy(PreferenceManager preferenceManager) {
-        super.onAttachedToHierarchy(preferenceManager);
-        setSummary(getPersistedString(null));
+    protected Object onGetDefaultValue(TypedArray a, int index) {
+        return a.getString(index);
+    }
+
+    @Override
+    protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
+        setSummary(restorePersistedValue ? getPersistedString((String) defaultValue) : (String) defaultValue);
+        if (!restorePersistedValue)
+            persistString((String) defaultValue);
     }
 
     @Override

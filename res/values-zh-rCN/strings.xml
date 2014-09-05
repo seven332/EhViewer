@@ -210,8 +210,8 @@
     <string name="http_advanced_settings_title">HTTP</string>
     <string name="http_warning_title">以下选项会影响所有 HTTP 连接</string>
     <string name="http_retry_title">连接重试次数</string>
-    <string name="http_connect_timeout_title">连接超时</string>
-    <string name="http_read_timeout_title">读取超时</string>
+    <string name="http_connect_timeout_title">连接超时 (ms)</string>
+    <string name="http_read_timeout_title">读取超时 (ms)</string>
 
     <string name="about_settings_title">关于</string>
     <string name="author_title">作者</string>
