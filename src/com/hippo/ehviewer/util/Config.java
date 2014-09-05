@@ -41,10 +41,7 @@ public class Config {
 
     private static final String KEY_CACHE_SIZE = "cache_size";
     private static final String DEFAULT_CACHE_SIZE = "25";
-    private static final String KEY_DOWNLOAD_PATH = "download_path";
-    private static final String DEFAULT_DOWNLOAD_PATH = Environment.getExternalStorageDirectory() + "/EhViewer/download/";
-    private static final String KEY_MEDIA_SCAN = "media_scan";
-    private static final boolean DEFAULT_MEDIA_SCAN = false;
+
 
     private static final String KEY_AUTO_CHECK_FOR_UPDATE = "auto_check_for_update";
     private static final boolean DEFAULT_AUTO_CHECK_FOR_UPDATE = true;
@@ -148,14 +145,6 @@ public class Config {
         mConfigPre.edit().putBoolean(KEY_FIRST, false).apply();
     }
 
-    public static String getDownloadPath() {
-        return mConfigPre.getString(KEY_DOWNLOAD_PATH, DEFAULT_DOWNLOAD_PATH);
-    }
-
-    public static void setDownloadPath(String path) {
-        mConfigPre.edit().putString(KEY_DOWNLOAD_PATH, path).apply();
-    }
-
     /**
      * Get cover cache size in MB
      *
@@ -233,10 +222,6 @@ public class Config {
         default:
             return "google";
         }
-    }
-
-    public static boolean getMediaScan() {
-        return mConfigPre.getBoolean(KEY_MEDIA_SCAN, DEFAULT_MEDIA_SCAN);
     }
 
     public static boolean getRandomThemeColor() {
@@ -529,5 +514,37 @@ public class Config {
 
     public static boolean getGShowBattery() {
         return mConfigPre.getBoolean(KEY_GALLERY_SHOW_BATTERY, DEFAULT_GALLERY_SHOW_BATTERY);
+    }
+
+
+    /****** Download ******/
+
+    private static final String KEY_DOWNLOAD_PATH = "download_path";
+    private static final String DEFAULT_DOWNLOAD_PATH = Environment.getExternalStorageDirectory() + "/EhViewer/download/";
+
+    private static final String KEY_MEDIA_SCAN = "media_scan";
+    private static final boolean DEFAULT_MEDIA_SCAN = false;
+
+    private static final String KEY_DOWNLOAD_THREAD = "download_thread";
+    private static final String DEFAULT_DOWNLOAD_THREAD = "3";
+
+    public static boolean getMediaScan() {
+        return mConfigPre.getBoolean(KEY_MEDIA_SCAN, DEFAULT_MEDIA_SCAN);
+    }
+
+    public static String getDownloadPath() {
+        return mConfigPre.getString(KEY_DOWNLOAD_PATH, DEFAULT_DOWNLOAD_PATH);
+    }
+
+    public static void setDownloadPath(String path) {
+        mConfigPre.edit().putString(KEY_DOWNLOAD_PATH, path).apply();
+    }
+
+    public static int getDownloadThread() {
+        try {
+            return Integer.parseInt(mConfigPre.getString(KEY_DOWNLOAD_THREAD, DEFAULT_DOWNLOAD_THREAD));
+        } catch(Throwable e){
+            return 3;
+        }
     }
 }

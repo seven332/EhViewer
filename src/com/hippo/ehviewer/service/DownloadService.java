@@ -92,8 +92,10 @@ public class DownloadService extends Service
             return;
 
         mCurDownloadInfo = mData.getFirstWaitDownloadInfo();
-        if (mCurDownloadInfo == null)
+        if (mCurDownloadInfo == null) {
+            stopSelf();
             return;
+        }
 
         mCurDownloadInfo.state = DownloadInfo.STATE_DOWNLOAD;
         mCurDownloadInfo.download = -1;

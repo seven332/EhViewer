@@ -36,6 +36,7 @@ import android.os.Process;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.AutoExpandArray;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Utils;
@@ -45,7 +46,6 @@ public class ExDownloader implements Runnable {
     private static final String TAG = ExDownloader.class.getSimpleName();
 
     private static final int IO_BUFFER_SIZE = 8 * 1024;
-    private static final int WORKER_NUM = 3;
 
     private final Context mContext;
     private final ExDownloaderManager mManager;
@@ -75,8 +75,9 @@ public class ExDownloader implements Runnable {
 
     private volatile int mCurRequestPageIndex = -1;
 
-    private final Worker[] mWorkerArray = new Worker[WORKER_NUM];
-    private final HttpHelper.DownloadControlor[] mControlorArray = new HttpHelper.DownloadControlor[WORKER_NUM];
+    private final int mWorkerNum;
+    private final Worker[] mWorkerArray;
+    private final HttpHelper.DownloadControlor[] mControlorArray;
 
     private final Object mPageTokenLock = new Object();
     private final Object mWorkerLock = new Object();
@@ -125,6 +126,10 @@ public class ExDownloader implements Runnable {
         mToken = token;
         mTitle = title;
         mMode = mode;
+
+        mWorkerNum = Config.getDownloadThread();
+        mWorkerArray = new Worker[mWorkerNum];
+        mControlorArray = new HttpHelper.DownloadControlor[mWorkerNum];
 
         // Make sure dir
         mDir = EhUtils.getGalleryDir(mGid, mTitle);

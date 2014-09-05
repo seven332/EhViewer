@@ -179,6 +179,7 @@
 
     <string name="popular_display_settings_title">热门</string>
     <string name="show_popular_update_time_title">显示热门更新时间</string>
+
     <string name="eh_settings_title">EH</string>
     <string name="list_eh_settings_title">列表</string>
     <string name="list_default_category_title">列表默认分类</string>
@@ -191,22 +192,26 @@
     <string name="preview_mode_title">预览图模式</string>
     <string name="preview_mode_normal">正常预览图</string>
     <string name="preview_mode_large">大预览图</string>
-
-    <string name="data_settings_title">数据</string>
-    <string name="download_data_settings_title">下载</string>
-    <string name="download_path_title">下载路径</string>
-    <string name="media_scan_title">允许媒体扫描</string>
-    <string name="media_scan_summary_on">请避免他人翻看你的图库应用</string>
-    <string name="media_scan_summary_off">大多数图库应用将不会显示下载目录中的图片</string>
-    <string name="favorite_data_settings_title">收藏</string>
+    <string name="favorite_eh_settings_title">收藏</string>
     <string name="default_favorite">默认收藏夹</string>
 
     <string name="read_settings_title">阅读</string>
     <string name="gallery_show_clock_title">显示时间</string>
     <string name="gallery_show_battery_title">显示电量</string>
 
+    <string name="download_settings_title">下载</string>
+    <string name="download_path_title">下载路径</string>
+    <string name="media_scan_title">允许媒体扫描</string>
+    <string name="media_scan_summary_on">请避免他人翻看你的图库应用</string>
+    <string name="media_scan_summary_off">大多数图库应用将不会显示下载目录中的图片</string>
+    <string name="download_thread_title">下载线程数</string>
+
     <string name="advanced_settings_title">高级</string>
     <string name="http_advanced_settings_title">HTTP</string>
+    <string name="http_warning_title">以下选项会影响所有 HTTP 连接</string>
+    <string name="http_retry_title">连接重试次数</string>
+    <string name="http_connect_timeout_title">连接超时</string>
+    <string name="http_read_timeout_title">读取超时</string>
 
     <string name="about_settings_title">关于</string>
     <string name="author_title">作者</string>

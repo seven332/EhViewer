@@ -57,6 +57,7 @@ import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.preference.AutoListPreference;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Favorite;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
@@ -135,8 +136,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
     private static final String[] ENTRY_FRAGMENTS = {
         DisplayFragment.class.getName(),
         EhFragment.class.getName(),
-        DataFragment.class.getName(),
         ReadFragment.class.getName(),
+        DownloadFragment.class.getName(),
         AdvancedFragment.class.getName(),
         AboutFragment.class.getName()
     };
@@ -144,8 +145,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
     private static final int[] FRAGMENT_ICONS = {
         R.drawable.ic_setting_display,
         R.drawable.ic_action_panda,
-        R.drawable.ic_setting_data,
         R.drawable.ic_setting_read,
+        R.drawable.ic_setting_download,
         R.drawable.ic_setting_advanced,
         R.drawable.ic_setting_about
     };
@@ -296,11 +297,13 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_EXCULDE_TAG_GROUP = "exculde_tag_group";
         private static final String KEY_EXCULDE_LANGUAGE = "exculde_language";
         private static final String KEY_PREVIEW_MODE = "preview_mode";
+        private static final String KEY_DEFAULT_FAVORITE = "default_favorite";
 
         private Preference mListDefaultCategory;
         private Preference mExculdeTagGroup;
         private Preference mExculdeLanguage;
         private AutoListPreference mPreviewMode;
+        private ListPreference mDefaultFavorite;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -315,6 +318,14 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mExculdeLanguage.setOnPreferenceClickListener(this);
             mPreviewMode = (AutoListPreference)findPreference(KEY_PREVIEW_MODE);
             mPreviewMode.setOnPreferenceChangeListener(this);
+            mDefaultFavorite = (ListPreference)findPreference(KEY_DEFAULT_FAVORITE);
+
+            int i = 0;
+            String[] entrise = new String[Favorite.FAVORITE_TITLES.length + 1];
+            entrise[i++] = getString(R.string.none);
+            for (String str : Favorite.FAVORITE_TITLES)
+                entrise[i++] = str;
+            mDefaultFavorite.setEntries(entrise);
         }
 
         @Override
@@ -433,48 +444,66 @@ public class SettingsActivity extends AbsPreferenceActivity {
         }
     }
 
-    public static class DataFragment extends TranslucentPreferenceFragment
+    public static class ReadFragment extends TranslucentPreferenceFragment
             implements Preference.OnPreferenceChangeListener,
             Preference.OnPreferenceClickListener {
 
-        private static final String KEY_CACHE_SIZE = "cache_size";
-        private static final String KEY_CLEAR_CACHE = "clear_cache";
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.read_settings);
+        }
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            // TODO Auto-generated method stub
+            return false;
+        }
+    }
+
+    public static class DownloadFragment extends TranslucentPreferenceFragment
+            implements Preference.OnPreferenceChangeListener,
+            Preference.OnPreferenceClickListener{
+
         private static final String KEY_DOWNLOAD_PATH = "download_path";
         private static final String KEY_MEDIA_SCAN = "media_scan";
-        private static final String KEY_DEFAULT_FAVORITE = "default_favorite";
+        private static final String KEY_DOWNLOAD_THREAD = "download_thread";
+
+        private static final int MIN_THREAD_NUM = 1;
+        private static final int MAX_THREAD_NUM = 10;
 
         private AlertDialog mDirSelectDialog;
 
         private Preference mDownloadPath;
         private CheckBoxPreference mMediaScan;
-        private ListPreference mDefaultFavorite;
+        private Preference mDownloadThread;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.data_settings);
+            addPreferencesFromResource(R.xml.download_settings);
 
             mDownloadPath = findPreference(KEY_DOWNLOAD_PATH);
             mDownloadPath.setOnPreferenceClickListener(this);
             mMediaScan = (CheckBoxPreference)findPreference(KEY_MEDIA_SCAN);
             mMediaScan.setOnPreferenceChangeListener(this);
-            mDefaultFavorite = (ListPreference)findPreference(KEY_DEFAULT_FAVORITE);
+            mDownloadThread = findPreference(KEY_DOWNLOAD_THREAD);
+            mDownloadThread.setOnPreferenceChangeListener(this);
 
             mDownloadPath.setSummary(Config.getDownloadPath());
-
-            int i = 0;
-            String[] entrise = new String[Favorite.FAVORITE_TITLES.length + 1];
-            entrise[i++] = getString(R.string.none);
-            for (String str : Favorite.FAVORITE_TITLES)
-                entrise[i++] = str;
-            mDefaultFavorite.setEntries(entrise);
         }
 
         @Override
-        public boolean onPreferenceChange(Preference preference, Object objValue) {
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
             final String key = preference.getKey();
             if (KEY_MEDIA_SCAN.equals(key)) {
-                boolean value = (Boolean)objValue;
+                boolean value = (Boolean)newValue;
                 File nomedia = new File(Config.getDownloadPath(), ".nomedia");
                 if (value) {
                     nomedia.delete();
@@ -483,13 +512,23 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         nomedia.createNewFile();
                     } catch (IOException e) {}
                 }
+            } else if (KEY_DOWNLOAD_THREAD.equals(key)) {
+                String value = (String)newValue;
+                try {
+                    int num = Integer.parseInt(value);
+                    if (num < MIN_THREAD_NUM || num > MAX_THREAD_NUM)
+                        throw new Throwable();
+                } catch(Throwable e){
+                    MaterialToast.showToast(R.string.invalid_input);
+                    return false;
+                }
             }
 
             return true;
         }
 
-        @SuppressLint("InflateParams")
         @Override
+        @SuppressLint("InflateParams")
         public boolean onPreferenceClick(Preference preference) {
             final String key = preference.getKey();
             if (KEY_DOWNLOAD_PATH.equals(key)) {
@@ -585,29 +624,6 @@ public class SettingsActivity extends AbsPreferenceActivity {
             }
 
             return true;
-        }
-    }
-
-    public static class ReadFragment extends TranslucentPreferenceFragment
-            implements Preference.OnPreferenceChangeListener,
-            Preference.OnPreferenceClickListener {
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.read_settings);
-        }
-
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            // TODO Auto-generated method stub
-            return false;
         }
     }
 

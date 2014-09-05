@@ -17,25 +17,22 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory
-        android:title="@string/http_advanced_settings_title">
+    <Preference
+        android:key="download_path"
+        android:title="@string/download_path_title" />
 
-        <Preference
-            android:key="http_warning"
-            android:title="@string/http_warning_title" />
+    <CheckBoxPreference
+        android:key="media_scan"
+        android:title="@string/media_scan_title"
+        android:summaryOn="@string/media_scan_summary_on"
+        android:summaryOff="@string/media_scan_summary_off"
+        android:defaultValue="false" />
 
-        <Preference
-            android:key="http_retry"
-            android:title="@string/http_retry_title" />
-
-        <Preference
-            android:key="http_connect_timeout"
-            android:title="@string/http_connect_timeout_title" />
-
-        <Preference
-            android:key="http_read_timeout"
-            android:title="@string/http_read_timeout_title" />
-
-    </PreferenceCategory>
+    <com.hippo.ehviewer.preference.EditTextPreference
+        android:key="download_thread"
+        android:title="@string/download_thread_title"
+        android:inputType="number"
+        android:numeric="integer"
+        android:defaultValue="3" />
 
 </PreferenceScreen>

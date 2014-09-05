@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
 
 public final class ViewUtils {
@@ -90,5 +91,11 @@ public final class ViewUtils {
         // TODO bad idea to check click
         return event.getAction() == MotionEvent.ACTION_UP &&
                 System.nanoTime() / 1000000 - event.getDownTime() < 200;
+    }
+
+    public static void removeFromParent(View view) {
+        ViewParent vp = view.getParent();
+        if (vp instanceof ViewGroup)
+            ((ViewGroup)vp).removeView(view);
     }
 }
