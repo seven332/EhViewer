@@ -156,6 +156,43 @@ public class DownloadService extends Service
         }
     }
 
+    public void startAll() {
+        for (DownloadInfo di : mData.getAllDownloads()) {
+            if (di.state == DownloadInfo.STATE_NONE ||
+                    (di.state == DownloadInfo.STATE_FINISH && di.legacy != 0))
+                di.state = DownloadInfo.STATE_WAIT;
+        }
+        notifyDownloadInfoChanged();
+        notifyUpdate();
+    }
+
+    public void stopAll() {
+        for (DownloadInfo di : mData.getAllDownloads()) {
+            if (di.state == DownloadInfo.STATE_WAIT ||
+                    di.state == DownloadInfo.STATE_DOWNLOAD) {
+                if (mCurDownloadInfo == di) {
+                    // Cancel download notification
+                    mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
+
+                    // Target downloadinfo is downloading
+                    mCurDownloadInfo.state = DownloadInfo.STATE_NONE;
+                    mData.addDownload(mCurDownloadInfo);
+                    mCurDownloadInfo = null;
+
+                    mCurExDownloader.setListenerDownload(null);
+                    mCurExDownloader.setDownloadMode(false);
+                    mEdManager.freeExDownloader(mCurExDownloader);
+                    mCurExDownloader = null;
+                } else {
+                    di.state = DownloadInfo.STATE_NONE;
+                }
+            }
+        }
+
+        notifyDownloadInfoChanged();
+        notifyUpdate();
+    }
+
     public void delete(DownloadInfo di) {
         stop(di);
         mData.deleteDownload(di.galleryInfo.gid);

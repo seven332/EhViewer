@@ -28,6 +28,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,12 +132,32 @@ public class DownloadActivity extends AbsActivity implements AbsListView.OnItemC
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.download, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
+        Intent it;
         switch (item.getItemId()) {
         case android.R.id.home:
             finish();
             return true;
+
+        case R.id.action_start:
+            it = new Intent(DownloadActivity.this, DownloadService.class);
+            startService(it);
+            mServiceConn.getService().startAll();
+            return true;
+
+        case R.id.action_stop:
+            it = new Intent(DownloadActivity.this, DownloadService.class);
+            startService(it);
+            mServiceConn.getService().stopAll();
+            return true;
+
         default:
             return super.onOptionsItemSelected(item);
         }
