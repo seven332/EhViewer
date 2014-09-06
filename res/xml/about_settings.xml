@@ -15,45 +15,45 @@
  -->
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android" >
-    
+
     <Preference
         android:key="author"
         android:title="@string/author_title"
         android:summary="@string/author_summary" />
-    
+
     <Preference
         android:key="changelog"
         android:title="@string/changelog_title" />
-    
+
     <Preference
         android:key="thanks"
         android:title="@string/thanks_title" />
-    
+
     <Preference
         android:key="website"
         android:title="@string/website_title"
         android:summary="@string/website_summary" />
-    
+
     <Preference
         android:key="source"
         android:title="@string/source_title"
         android:summary="@string/source_summary" />
-    
+
     <PreferenceCategory
         android:title="@string/update_about_settings_title">
-        
+
         <CheckBoxPreference
             android:key="auto_check_for_update"
             android:title="@string/auto_check_for_update_title"
             android:summaryOn="@string/auto_check_for_update_summary_on"
             android:summaryOff="@string/auto_check_for_update_summary_off"
             android:defaultValue="true" />
-        
+
         <Preference
             android:key="check_for_update"
             android:title="@string/check_for_update_title"
             android:summary="@string/check_for_update_summary" />
-        
+
         <com.hippo.ehviewer.preference.AutoListPreference
             android:entries="@array/update_server_entries"
             android:entryValues="@array/update_server_entry_values"
@@ -61,23 +61,27 @@
             android:title="@string/update_server_title"
             android:summary="%s"
             android:defaultValue="1" />
-        
+
+        <Preference
+            android:key="cloud_drive"
+            android:title="@string/cloud_drive_title" />
+
     </PreferenceCategory>
-    
+
     <PreferenceCategory
         android:title="@string/analytics_about_settings_title" >
-        
+
         <CheckBoxPreference
             android:key="allow_analyics"
             android:title="@string/allow_analyics_title"
             android:summaryOn="@string/allow_analyics_summary_on"
             android:summaryOff="@string/allow_analyics_summary_off"
             android:defaultValue="false" />
-        
+
         <Preference
             android:key="about_analyics"
             android:title="@string/about_analyics_title" />
-        
+
     </PreferenceCategory>
-    
+
 </PreferenceScreen>

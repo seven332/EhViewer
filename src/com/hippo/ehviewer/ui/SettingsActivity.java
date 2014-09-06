@@ -726,6 +726,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_WEBSITE = "website";
         private static final String KEY_SOURCE = "source";
         private static final String KEY_CHECK_UPDATE = "check_for_update";
+        private static final String KEY_CLOUD_DRIVE = "cloud_drive";
         private static final String KEY_ALLOW_ANALYICS = "allow_analyics";
         private static final String KEY_ABOUT_ANALYICS = "about_analyics";
 
@@ -735,6 +736,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private Preference mWebsite;
         private Preference mSource;
         private Preference mCheckUpdate;
+        private Preference mCloudDrive;
         private CheckBoxPreference mAllowAnalyics;
         private Preference mAboutAnalyics;
 
@@ -755,6 +757,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mSource.setOnPreferenceClickListener(this);
             mCheckUpdate = findPreference(KEY_CHECK_UPDATE);
             mCheckUpdate.setOnPreferenceClickListener(this);
+            mCloudDrive = findPreference(KEY_CLOUD_DRIVE);
+            mCloudDrive.setOnPreferenceClickListener(this);
             mAllowAnalyics = (CheckBoxPreference)findPreference(KEY_ALLOW_ANALYICS);
             mAllowAnalyics.setOnPreferenceChangeListener(this);
             mAboutAnalyics = findPreference(KEY_ABOUT_ANALYICS);
@@ -837,6 +841,11 @@ public class SettingsActivity extends AbsPreferenceActivity {
                                 UpdateHelper.setEnabled(true);
                             }
                         }).checkUpdate();
+
+            } else if (KEY_CLOUD_DRIVE.equals(key)) {
+                Uri uri = Uri.parse("https://mega.co.nz/#F!xkMChYrI!Q85i3d7kNkhVkwvDePbahw");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
 
             } else if (KEY_ABOUT_ANALYICS.equals(key)) {
                 new DialogBuilder(mActivity).setTitle(R.string.about_analyics_title)

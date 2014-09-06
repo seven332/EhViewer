@@ -239,6 +239,7 @@
     <string name="check_for_update_title">Check for update</string>
     <string name="check_for_update_summary">Tap to check for update</string>
     <string name="update_server_title">Update server</string>
+    <string name="cloud_drive_title">Click here if update failed</string>
     <string name="analytics_about_settings_title">Statistics</string>
     <string name="allow_analyics_title">Enable statistics</string>
     <string name="allow_analyics_summary_on">Thanks for you help</string>

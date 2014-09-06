@@ -233,6 +233,7 @@
     <string name="check_for_update_title">检查更新</string>
     <string name="check_for_update_summary">点击检查更新</string>
     <string name="update_server_title">更新服务器</string>
+    <string name="cloud_drive_title">如果更新失败点击此处</string>
     <string name="analytics_about_settings_title">数据统计</string>
     <string name="allow_analyics_title">启用数据统计</string>
     <string name="allow_analyics_summary_on">感谢您对本应用的支持</string>

@@ -221,6 +221,7 @@
     <string name="check_for_update_title">檢查更新</string>
     <string name="check_for_update_summary">點擊檢查更新</string>
     <string name="update_server_title">更新服務器</string>
+    <string name="cloud_drive_title">如果更新失敗點擊此處</string>
     <string name="analytics_about_settings_title">數據統計</string>
     <string name="allow_analyics_title">啓用數據統計</string>
     <string name="allow_analyics_summary_on">感謝您對本應用的支持</string>
