@@ -23,6 +23,7 @@
 
     <!-- Mode -->
     <string name="content">內容</string>
+    <string name="lofi_resolution">Lofi 分辨率</string>
 
     <!-- Search -->
     <string name="hint_no_keyword">沒關鍵字也行</string>
@@ -35,8 +36,11 @@
     <string name="checkbox_sto">僅搜索有種子的本子</string>
     <string name="checkbox_sdt1">搜索 Low-Power 標籤</string>
     <string name="checkbox_sdt2">搜索差評標籤</string>
-    <string name="checkbox_sh">搜索被刪除的本子</string>
+    <string name="checkbox_sh">搜索被遺棄的資源</string>
     <string name="checkbox_sr">最低評分：</string>
+    <string name="use_similarity_scan">使用相似搜索</string>
+    <string name="only_search_covers">只搜索封面</string>
+    <string name="show_expunged">顯示被遺棄的資源</string>
 
     <!-- Jump -->
     <string name="jump_summary" formatted="false">第 %d 頁，共 %s 頁</string>
@@ -160,13 +164,12 @@
     <string name="start_position_title">開頁位置</string>
     <string name="list_display_settings_title">列表</string>
     <string name="list_mode_title">列表模式</string>
-    
     <string name="list_thumb_columns">列表縮略圖列數</string>
     <string name="preview_display_settings_title">預覽</string>
     <string name="preview_columns">預覽圖列數</string>
-    
     <string name="popular_display_settings_title">熱門</string>
     <string name="show_popular_update_time_title">顯示熱門更新時間</string>
+
     <string name="eh_settings_title">EH</string>
     <string name="list_eh_settings_title">列表</string>
     <string name="list_default_category_title">列表默認分類</string>
@@ -179,14 +182,32 @@
     <string name="preview_mode_title">預覽圖模式</string>
     <string name="preview_mode_normal">正常預覽圖</string>
     <string name="preview_mode_large">大預覽圖</string>
-    <string name="data_settings_title">數據</string>
-    <string name="download_data_settings_title">下載</string>
+    <string name="favorite_eh_settings_title">收藏</string>
+    <string name="default_favorite">默認收藏夾</string>
+
+    <string name="read_settings_title">閱讀</string>
+    <string name="gallery_show_clock_title">顯示時間</string>
+    <string name="gallery_show_battery_title">顯示電量</string>
+    <string name="custom_codec_title">自定義解碼</string>
+    <string name="custom_codec_summary">自定義解碼可能會更使用更少內存，解碼更快</string>
+    <string name="custom_codec_summary_not">自定義解碼暫不支持 x86, mips</string>
+
+    <string name="download_settings_title">下載</string>
     <string name="download_path_title">下載路徑</string>
     <string name="media_scan_title">允許媒體掃描</string>
     <string name="media_scan_summary_on">請避免他人翻看你的圖庫應用</string>
     <string name="media_scan_summary_off">大多數圖庫應用將不會顯示下載目錄中的圖片</string>
-    <string name="favorite_data_settings_title">收藏</string>
-    <string name="default_favorite">默認收藏夾</string>
+    <string name="download_thread_title">下載線程數</string>
+
+    <string name="advanced_settings_title">高級</string>
+    <string name="http_advanced_settings_title">HTTP</string>
+    <string name="http_warning_title">以下選項會影響所有 HTTP 連接</string>
+    <string name="http_retry_title">連接重試次數</string>
+    <string name="http_connect_timeout_title">連接超時 (ms)</string>
+    <string name="http_read_timeout_title">讀取超時 (ms)</string>
+    <string name="eh_advanced_settings_title">EH</string>
+    <string name="eh_min_interval_title">EH 站點最小連接間隔 (ms)</string>
+
     <string name="about_settings_title">關於</string>
     <string name="author_title">作者</string>
     <string name="changelog_title">日誌</string>
@@ -279,6 +300,7 @@
     <string name="rating0">…</string>
 
     <!-- Utils -->
+    <string name="select">選擇</string>
     <string name="click_more">點擊查看更多</string>
     <string name="similar_content">相似內容</string>
     <string name="_unknown">未知</string>

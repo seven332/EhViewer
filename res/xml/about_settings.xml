@@ -55,12 +55,12 @@
             android:summary="@string/check_for_update_summary" />
         
         <com.hippo.ehviewer.preference.AutoListPreference
-            android:defaultValue="1"
             android:entries="@array/update_server_entries"
             android:entryValues="@array/update_server_entry_values"
             android:key="update_server"
             android:title="@string/update_server_title"
-            android:summary="%s" />
+            android:summary="%s"
+            android:defaultValue="1" />
         
     </PreferenceCategory>
     

@@ -176,11 +176,9 @@
     <string name="start_position_title">开页位置</string>
     <string name="list_display_settings_title">列表</string>
     <string name="list_mode_title">列表模式</string>
-
     <string name="list_thumb_columns">列表缩略图列数</string>
     <string name="preview_display_settings_title">预览</string>
     <string name="preview_columns">预览图列数</string>
-
     <string name="popular_display_settings_title">热门</string>
     <string name="show_popular_update_time_title">显示热门更新时间</string>
 

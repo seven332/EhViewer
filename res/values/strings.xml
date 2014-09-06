@@ -53,6 +53,9 @@
     <string name="checkbox_sdt2">Search Downvoted Tags</string>
     <string name="checkbox_sh">Show Expunged Galleries</string>
     <string name="checkbox_sr">Minimum Rating:</string>
+    <string name="use_similarity_scan">Use similarity scan</string>
+    <string name="only_search_covers">Only search covers</string>
+    <string name="show_expunged">Show expunged</string>
 
     <!-- Jump -->
     <string name="jump_summary" formatted="false">Page %d, %s pages in total</string>
@@ -176,13 +179,12 @@
     <string name="start_position_title">Start position</string>
     <string name="list_display_settings_title">List</string>
     <string name="list_mode_title">List mode</string>
-    
     <string name="list_thumb_columns">Number of List thumb columns</string>
     <string name="preview_display_settings_title">Preview</string>
     <string name="preview_columns">Number of preview columns</string>
-    
     <string name="popular_display_settings_title">Popular</string>
     <string name="show_popular_update_time_title">Show popular update time</string>
+
     <string name="eh_settings_title">EH</string>
     <string name="list_eh_settings_title">List</string>
     <string name="list_default_category_title">List default categories</string>
@@ -195,14 +197,32 @@
     <string name="preview_mode_title">Preview mode</string>
     <string name="preview_mode_normal">Normal</string>
     <string name="preview_mode_large">Large</string>
-    <string name="data_settings_title">Data</string>
-    <string name="download_data_settings_title">Download</string>
+    <string name="favorite_eh_settings_title">Favorite</string>
+    <string name="default_favorite">Default Favorite</string>
+
+    <string name="read_settings_title">Read</string>
+    <string name="gallery_show_clock_title">Show clock</string>
+    <string name="gallery_show_battery_title">Show battery</string>
+    <string name="custom_codec_title">Custom codec</string>
+    <string name="custom_codec_summary">Custom codec may cost less memory, decode faster</string>
+    <string name="custom_codec_summary_not">Custom codec do not support x86, mips</string>
+
+    <string name="download_settings_title">Download</string>
     <string name="download_path_title">Download path</string>
     <string name="media_scan_title">Allow media scan</string>
     <string name="media_scan_summary_on">Please keep your gallery apps away from other people</string>
     <string name="media_scan_summary_off">Most gallery apps will ignore pictures in download path</string>
-    <string name="favorite_data_settings_title">Favorite</string>
-    <string name="default_favorite">Default Favorite</string>
+    <string name="download_thread_title">Download threads</string>
+
+    <string name="advanced_settings_title">Advanced</string>
+    <string name="http_advanced_settings_title">HTTP</string>
+    <string name="http_warning_title">Options below will affect all HTTP connections</string>
+    <string name="http_retry_title">Retry times</string>
+    <string name="http_connect_timeout_title">Connect timeout (ms)</string>
+    <string name="http_read_timeout_title">Read timeout (ms)</string>
+    <string name="eh_advanced_settings_title">EH</string>
+    <string name="eh_min_interval_title">The minimum connection interval of EH site (ms)</string>
+
     <string name="about_settings_title">About</string>
     <string name="author_title">Author</string>
     <string name="author_summary" translatable="false">Hippo &lt;ehviewersu@gmail.com&gt;</string>
@@ -314,6 +334,7 @@
     <string name="rating0">DISASTER</string>
 
     <!-- Util -->
+    <string name="select">Select</string>
     <string name="click_more">Click for more</string>
     <string name="similar_content">Similar content</string>
     <string name="_unknown">Unknown</string>
