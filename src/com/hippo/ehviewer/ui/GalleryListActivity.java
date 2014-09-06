@@ -333,7 +333,7 @@ public class GalleryListActivity extends AbsGalleryActivity
             }
         });
 
-        final Button selectImage = (Button)view.findViewById(R.id.select_image);
+        final View selectImage = view.findViewById(R.id.select_image);
         selectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

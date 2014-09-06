@@ -38,7 +38,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:checked="true"
-                android:text="Use Similarity Scan" />
+                android:text="@string/use_similarity_scan" />
 
             <CheckBox
                 android:id="@+id/checkboxCovers"
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:text="Only Search Covers" />
+                android:text="@string/only_search_covers" />
         </TableRow>
 
         <TableRow
@@ -59,17 +59,18 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:text="Show Expunged" />
+                android:text="@string/show_expunged" />
         </TableRow>
     </TableLayout>
 
-    <Button
+    <TextView
+        style="@style/EmbedButton"
         android:id="@+id/select_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Select" />
-    
+        android:text="@string/select" />
+
     <TextView
         android:id="@+id/target_image"
         android:layout_width="wrap_content"

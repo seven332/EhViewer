@@ -22,7 +22,8 @@
 
         <Preference
             android:key="http_warning"
-            android:title="@string/http_warning_title" />
+            android:title="@string/http_warning_title"
+            android:selectable="false" />
 
         <com.hippo.ehviewer.preference.EditTextPreference
             android:key="http_retry"

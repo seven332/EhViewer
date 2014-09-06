@@ -16,13 +16,16 @@
 
 package com.hippo.ehviewer.preference;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
 
+import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
@@ -74,13 +77,11 @@ public class EditTextPreference extends Preference implements
         if (!isShown) {
             mEditText.setText(this.getPersistedString(null));
 
-            new DialogBuilder(getContext()).setTitle(getTitle()).setView(mEditText, 12, false)
+            AlertDialog d = new DialogBuilder(getContext()).setTitle(getTitle()).setView(mEditText, Ui.dp2pix(4), false)
                     .setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             ((AlertButton)v).dialog.dismiss();
-                            ViewUtils.removeFromParent(mEditText);
-                            isShown = false;
                         }
                     }).setPositiveButton(android.R.string.ok, new View.OnClickListener() {
                         @Override
@@ -90,11 +91,17 @@ public class EditTextPreference extends Preference implements
                                 EditTextPreference.this.persistString(value);
                                 setSummary(value);
                                 ((AlertButton)v).dialog.dismiss();
-                                ViewUtils.removeFromParent(mEditText);
-                                isShown = false;
                             }
                         }
-                    }).create().show();
+                    }).create();
+            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    isShown = false;
+                    ViewUtils.removeFromParent(mEditText);
+                }
+            });
+            d.show();
 
             isShown = true;
         }

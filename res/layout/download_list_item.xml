@@ -92,7 +92,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:gravity="center"
                     android:text="@string/read" />
 
                 <TextView
@@ -101,8 +100,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center" />
+                    android:layout_weight="1" />
 
             </TableRow>
 
@@ -117,7 +115,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:gravity="center"
                     android:textColor="@color/warning_red"
                     android:text="@string/delete" />
 
@@ -128,7 +125,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:gravity="center"
                     android:textColor="@color/warning_red"
                     android:text="@string/delete2" />
 
@@ -145,7 +141,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:gravity="center"
                     android:text="@string/detail" />
 
             </TableRow>

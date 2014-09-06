@@ -35,6 +35,7 @@
 
     <!-- Mode -->
     <string name="content">内容</string>
+    <string name="lofi_resolution">Lofi 分辨率</string>
 
     <!-- Search -->
     <string name="hint_no_keyword">没关键字也行</string>
@@ -47,8 +48,11 @@
     <string name="checkbox_sto">仅搜索有种子的本子</string>
     <string name="checkbox_sdt1">搜索 Low-Power 标签</string>
     <string name="checkbox_sdt2">搜索差评标签</string>
-    <string name="checkbox_sh">搜索被删除的本子</string>
+    <string name="checkbox_sh">搜索被遗弃的资源</string>
     <string name="checkbox_sr">最低评分：</string>
+    <string name="use_similarity_scan">使用相似搜索</string>
+    <string name="only_search_covers">只搜索封面</string>
+    <string name="show_expunged">显示被遗弃的资源</string>
 
     <!-- Jump -->
     <string name="jump_summary" formatted="false">第 %d 页，共 %s 页</string>
@@ -307,6 +311,7 @@
     <string name="rating0">…</string>
 
     <!-- Utils -->
+    <string name="select">选择</string>
     <string name="click_more">点击查看更多</string>
     <string name="similar_content">相似内容</string>
     <string name="_unknown">未知</string>

@@ -199,6 +199,7 @@
     <style name="EmbedButton">
         <item name="@android:textAppearance">@style/TextAppearance.EmbedButton</item>
         <item name="@android:minHeight">48dp</item>
+        <item name="@android:gravity">center</item>
     </style>
 
 </resources>

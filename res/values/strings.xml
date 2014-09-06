@@ -38,6 +38,7 @@
     <!-- Mode -->
     <string name="content">Content</string>
     <string name="api" translatable="false">API</string>
+    <string name="lofi_resolution">Lofi resolution</string>
 
     <!-- Search -->
     <string name="hint_no_keyword">No keyword is OK</string>
