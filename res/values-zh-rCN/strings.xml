@@ -202,6 +202,9 @@
     <string name="read_settings_title">阅读</string>
     <string name="gallery_show_clock_title">显示时间</string>
     <string name="gallery_show_battery_title">显示电量</string>
+    <string name="custom_codec_title">自定义解码</string>
+    <string name="custom_codec_summary">自定义解码可能会更使用更少内存，解码更快</string>
+    <string name="custom_codec_summary_not">自定义解码暂不支持 x86, mips</string>
 
     <string name="download_settings_title">下载</string>
     <string name="download_path_title">下载路径</string>

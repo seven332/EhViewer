@@ -203,7 +203,7 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
                 String pathName = Utils.getPathName(mDir.getPath(), decodeInfo.filename);
                 Object res = null;
 
-                if (Utils.SUPPORT_IMAGE) {
+                if (Utils.SUPPORT_IMAGE && Config.getCustomCodec()) {
                     res = Image.decodeFile(pathName, GL11.GL_RGB);
                 } else {
                     if (Utils.getExtension(pathName, "jpg").equals("gif"))

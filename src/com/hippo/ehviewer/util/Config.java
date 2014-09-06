@@ -477,12 +477,17 @@ public class Config {
 
     private static final String KEY_PAGE_SCALING = "page_scaling";
     private static final String DEFAULT_PAGE_SCALING = "3";
+
     private static final String KEY_START_POSITION = "start_position";
     private static final String DEFAULT_START_POSITION = "1";
+
     private static final String KEY_GALLERY_SHOW_TIME = "gallery_show_clock";
     private static final boolean DEFAULT_GALLERY_SHOW_TIME = true;
+
     private static final String KEY_GALLERY_SHOW_BATTERY = "gallery_show_battery";
     private static final boolean DEFAULT_GALLERY_SHOW_BATTERY = true;
+
+    private static final String KEY_CUSTOM_CODEC = "custom_codec";
 
     public static int getPageScalingMode() {
         int pageScalingMode = 3;
@@ -514,6 +519,10 @@ public class Config {
 
     public static boolean getGShowBattery() {
         return mConfigPre.getBoolean(KEY_GALLERY_SHOW_BATTERY, DEFAULT_GALLERY_SHOW_BATTERY);
+    }
+
+    public static boolean getCustomCodec() {
+        return mConfigPre.getBoolean(KEY_CUSTOM_CODEC, Utils.SUPPORT_IMAGE);
     }
 
 

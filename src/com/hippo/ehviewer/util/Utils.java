@@ -51,7 +51,7 @@ public final class Utils {
 
     static {
         String cpu = Build.CPU_ABI;
-        SUPPORT_IMAGE = cpu.startsWith("armeabi") || cpu.equals("mips");
+        SUPPORT_IMAGE = cpu.equals("armeabi") || cpu.equals("armeabi-v7a");
     }
 
     /**

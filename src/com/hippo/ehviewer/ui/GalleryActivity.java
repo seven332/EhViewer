@@ -73,7 +73,6 @@ public class GalleryActivity extends AbsActivity
 
     private ValueAnimator mShowAnimator;
     private ValueAnimator mHideAnimator;
-    private long mHideTaskTimeStamp;
 
     @Override
     public void onOrientationChanged(int paddingTop, int paddingBottom) {
@@ -266,6 +265,8 @@ public class GalleryActivity extends AbsActivity
 
         if (mImageSet != null)
             mImageSet.free();
+        if (mGalleryView != null)
+            mGalleryView.free();
     }
 
     @Override

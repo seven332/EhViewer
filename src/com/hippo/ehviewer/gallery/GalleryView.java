@@ -743,8 +743,10 @@ public class GalleryView extends GLView
             return false;
 
         ShowItem showItem;
-        if (showItems[NEXT_TARGET_INDEX] != null)
+        if (showItems[NEXT_TARGET_INDEX] != null) {
             showItems[NEXT_TARGET_INDEX].recycle();
+            showItems[NEXT_TARGET_INDEX] = null;
+        }
         showItems[NEXT_TARGET_INDEX] = showItems[CUR_TARGET_INDEX];
         showItems[CUR_TARGET_INDEX] = showItems[PRE_TARGET_INDEX];
         showItems[PRE_TARGET_INDEX] = null;
@@ -780,8 +782,10 @@ public class GalleryView extends GLView
             return false;
 
         ShowItem showItem;
-        if (showItems[PRE_TARGET_INDEX] != null)
+        if (showItems[PRE_TARGET_INDEX] != null) {
             showItems[PRE_TARGET_INDEX].recycle();
+            showItems[PRE_TARGET_INDEX] = null;
+        }
         showItems[PRE_TARGET_INDEX] = showItems[CUR_TARGET_INDEX];
         showItems[CUR_TARGET_INDEX] = showItems[NEXT_TARGET_INDEX];
         showItems[NEXT_TARGET_INDEX] = null;
@@ -819,12 +823,18 @@ public class GalleryView extends GLView
             return goToNextPage();
         } else {
             // Free
-            if (showItems[PRE_TARGET_INDEX] != null)
+            if (showItems[PRE_TARGET_INDEX] != null) {
                 showItems[PRE_TARGET_INDEX].recycle();
-            if (showItems[CUR_TARGET_INDEX] != null)
+                showItems[PRE_TARGET_INDEX] = null;
+            }
+            if (showItems[CUR_TARGET_INDEX] != null) {
                 showItems[CUR_TARGET_INDEX].recycle();
-            if (showItems[NEXT_TARGET_INDEX] != null)
+                showItems[CUR_TARGET_INDEX] = null;
+            }
+            if (showItems[NEXT_TARGET_INDEX] != null) {
                 showItems[NEXT_TARGET_INDEX].recycle();
+                showItems[NEXT_TARGET_INDEX] = null;
+            }
 
             mCurIndex = index;
             setState();
@@ -841,14 +851,19 @@ public class GalleryView extends GLView
         }
     }
 
+    public synchronized void free() {
+        for (int i = 0; i < TARGET_INDEX_SIZE; i++) {
+            if (showItems[i] != null) {
+                showItems[i].recycle();
+                showItems[i] = null;
+            }
+        }
+    }
+
     @Override
     protected boolean onTouch(MotionEvent event) {
         mGestureRecognizer.onTouchEvent(event);
         return true;
-    }
-
-    private void setTouchLocked(boolean locked) {
-
     }
 
     private class MyGestureListener implements GestureRecognizer.Listener {
