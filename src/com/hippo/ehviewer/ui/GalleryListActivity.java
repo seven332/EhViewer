@@ -1002,7 +1002,7 @@ public class GalleryListActivity extends AbsGalleryActivity
                 R.drawable.ic_action_search, android.R.string.search_go,
                 R.drawable.ic_action_favorite, R.string.favourite,
                 R.drawable.ic_action_popular, R.string.popular,
-                R.drawable.ic_action_download, R.string.download,
+                R.drawable.ic_setting_download, R.string.download,
                 R.drawable.ic_action_settings, R.string.action_settings};
 
         itemListMenu.setSelector(new ColorDrawable(Color.TRANSPARENT));
@@ -1306,10 +1306,8 @@ public class GalleryListActivity extends AbsGalleryActivity
             searchText.setTextColor(Color.WHITE);
             searchText.setHintTextColor(Color.WHITE);
 
-            int searchImageID = mResources.getIdentifier("android:drawable/ic_search", null, null);
-            Drawable searchImage = null;
-            if (searchImageID > 0
-                    && (searchImage = mResources.getDrawable(searchImageID)) != null) {
+            Drawable searchImage = mResources.getDrawable(R.drawable.ic_action_search);
+            if (searchImage != null) {
                 SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
                 ssb.append(getString(R.string.advance_search_left));
                 int textSize = (int) (searchText.getTextSize() * 1.25);
@@ -1335,23 +1333,19 @@ public class GalleryListActivity extends AbsGalleryActivity
 
         int closeViewID = mResources.getIdentifier("android:id/search_close_btn", null, null);
         ImageView closeView = null;
-        int closeImageID = mResources.getIdentifier("android:drawable/ic_clear", null, null);
-        Drawable closeImage = null;
+        Drawable closeImage = mResources.getDrawable(R.drawable.ic_clear);
         if (closeViewID > 0
                 && (closeView = (ImageView)mSearchView.findViewById(closeViewID)) != null
-                && closeImageID > 0
-                && (closeImage = mResources.getDrawable(closeImageID)) != null) {
+                && closeImage != null) {
             closeView.setImageDrawable(closeImage);
         }
 
         int voiceViewID = mResources.getIdentifier("android:id/search_voice_btn", null, null);
         ImageView voiceView = null;
-        int voiceImageID = mResources.getIdentifier("android:drawable/ic_voice_search", null, null);
-        Drawable voiceImage = null;
+        Drawable voiceImage = mResources.getDrawable(R.drawable.ic_voice_search);
         if (voiceViewID > 0
                 && (voiceView = (ImageView)mSearchView.findViewById(voiceViewID)) != null
-                && voiceImageID > 0
-                && (voiceImage = mResources.getDrawable(voiceImageID)) != null) {
+                && voiceImage != null) {
             voiceView.setImageDrawable(voiceImage);
         }
 

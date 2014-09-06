@@ -36,7 +36,6 @@
         android:choiceMode="singleChoice"
         android:clickable="true"
         android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
-        android:scrollbarThumbVertical="@drawable/scrollbar_blue" >
+        android:dividerHeight="0dp" >
     </ListView>
 </LinearLayout>

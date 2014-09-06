@@ -22,7 +22,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
@@ -39,7 +38,7 @@ public abstract class PullViewGroup extends SuperSwipeRefreshLayout
 
     private View mFooter;
     private TextView mFooterTipTextView;
-    private ProgressBar mFooterProgressBar;
+    private View mFooterProgressBar;
     private int footerState = FOOTER_SUCCESS;
     private OnFooterRefreshListener mFooterRefreshListener;
 
@@ -93,7 +92,7 @@ public abstract class PullViewGroup extends SuperSwipeRefreshLayout
         mFooter = LayoutInflater.from(mContext)
                 .inflate(R.layout.pull_list_view_footer, null);
         mFooterTipTextView = (TextView)mFooter.findViewById(R.id.footer_tip_text);
-        mFooterProgressBar = (ProgressBar)mFooter.findViewById(R.id.footer_progressBar);
+        mFooterProgressBar = mFooter.findViewById(R.id.footer_progressBar);
         mFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

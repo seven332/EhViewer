@@ -28,10 +28,6 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="ActionBarTabStyle" parent="@android:style/Widget.Holo.Light.ActionBar.TabView">
-        <item name="android:background">@drawable/ab_tab_indicator</item>
-    </style>
-
     <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_action_core_overflow</item>
     </style>
@@ -86,32 +82,23 @@
     </style>
 
     <style name="MaterialProgress">
-        <item name="@android:layout_width">48dip</item>
-        <item name="@android:layout_height">48dip</item>
-        <item name="mpWidth">48dip</item>
-        <item name="mpHeight">48dip</item>
+        <item name="@android:layout_width">48dp</item>
+        <item name="@android:layout_height">48dp</item>
+        <item name="mpWidth">48dp</item>
+        <item name="mpHeight">48dp</item>
         <item name="mpColor">@color/material_progress_blue</item>
         <item name="mpThickness">4dp</item>
         <item name="mpInnerRadius">19dp</item>
     </style>
 
-    <style name="ProgressBar" parent="@android:Widget.Holo.ProgressBar">
-    </style>
-
-    <style name="ProgressBar.Small">
-        <item name="android:indeterminateDrawable">@drawable/progress_small</item>
-        <item name="android:minWidth">16dip</item>
-        <item name="android:maxWidth">16dip</item>
-        <item name="android:minHeight">16dip</item>
-        <item name="android:maxHeight">16dip</item>
-    </style>
-
-    <style name="ProgressBar.Large">
-        <item name="android:indeterminateDrawable">@drawable/progress_large</item>
-        <item name="android:minWidth">76dip</item>
-        <item name="android:maxWidth">76dip</item>
-        <item name="android:minHeight">76dip</item>
-        <item name="android:maxHeight">76dip</item>
+    <style name="MaterialProgress.small">
+        <item name="@android:layout_width">16dp</item>
+        <item name="@android:layout_height">16dp</item>
+        <item name="mpWidth">16dp</item>
+        <item name="mpHeight">16dp</item>
+        <item name="mpColor">@color/material_progress_blue</item>
+        <item name="mpThickness">2dp</item>
+        <item name="mpInnerRadius">6dp</item>
     </style>
 
     <!-- Text -->

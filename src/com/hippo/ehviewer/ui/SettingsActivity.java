@@ -543,7 +543,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 .setView(view, new LinearLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT, Ui.dp2pix(360)), false)
                 .setTitle(downloadPath)
-                .setAction(R.drawable.ic_action_new_folder,
+                .setAction(R.drawable.ic_plus,
                         new View.OnClickListener(){
                     @Override
                     public void onClick(View v) {

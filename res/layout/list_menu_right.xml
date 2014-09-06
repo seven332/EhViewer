@@ -25,8 +25,7 @@
         android:choiceMode="singleChoice"
         android:clickable="true"
         android:divider="@color/divider"
-        android:dividerHeight="1.0dp"
-        android:scrollbarThumbVertical="@drawable/scrollbar_white" />
+        android:dividerHeight="1.0dp" />
 
     <TextView
         android:id="@+id/tip_text"

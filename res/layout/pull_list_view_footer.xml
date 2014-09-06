@@ -30,11 +30,9 @@
             android:layout_centerInParent="true"
             android:orientation="horizontal" >
 
-            <ProgressBar
+            <com.hippo.ehviewer.widget.MaterialProgress
                 android:id="@+id/footer_progressBar"
-                style="@style/ProgressBar.Small"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/MaterialProgress.small"
                 android:layout_gravity="center"
                 android:layout_marginRight="20dp"
                 android:visibility="gone" />

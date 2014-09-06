@@ -107,7 +107,7 @@
         <activity
             android:name=".ui.DownloadActivity"
             android:configChanges="orientation|screenSize"
-            android:icon="@drawable/ic_action_download"
+            android:icon="@drawable/ic_setting_download"
             android:label="@string/download"
             android:launchMode="singleTask"
             android:screenOrientation="behind"

@@ -21,5 +21,4 @@
     android:background="@android:color/holo_blue_dark"
     android:clickable="true"
     android:divider="@color/divider"
-    android:dividerHeight="1.0dp"
-    android:scrollbarThumbVertical="@drawable/scrollbar_white" />
+    android:dividerHeight="1.0dp" />
