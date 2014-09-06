@@ -175,6 +175,8 @@ include $(BUILD_STATIC_LIBRARY)
 ##################################################
 include $(CLEAR_VARS)
 
+#RELEASE_FLAG := true
+
 LOCAL_MODULE    := libimage
 LOCAL_SRC_FILES := \
 image.c \
@@ -184,6 +186,12 @@ gif.c \
 utils.c
 LOCAL_CFLAGS := -O3
 LOCAL_STATIC_LIBRARIES := libjpeg-turbo libpng libgif
-LOCAL_LDLIBS := -lGLESv2 -llog
+LOCAL_LDLIBS := -lGLESv2
+
+ifdef RELEASE_FLAG
+    LOCAL_CFLAGS += -DRELEASE
+else
+    LOCAL_LDLIBS += -llog
+endif
 
 include $(BUILD_SHARED_LIBRARY)
