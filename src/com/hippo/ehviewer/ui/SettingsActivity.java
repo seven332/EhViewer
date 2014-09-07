@@ -449,20 +449,20 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
         private static final String KEY_CUSTOM_CODEC = "custom_codec";
 
-        private Preference mCustomCodec;
+        private CheckBoxPreference mCustomCodec;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.read_settings);
 
-            mCustomCodec = findPreference(KEY_CUSTOM_CODEC);
+            mCustomCodec = (CheckBoxPreference) findPreference(KEY_CUSTOM_CODEC);
             if (!Utils.SUPPORT_IMAGE) {
                 mCustomCodec.setEnabled(false);
-                mCustomCodec.setDefaultValue(false);
+                mCustomCodec.setChecked(Config.getCustomCodec());
                 mCustomCodec.setSummary(R.string.custom_codec_summary_not);
             } else {
-                mCustomCodec.setDefaultValue(true);
+                mCustomCodec.setChecked(Config.getCustomCodec());
             }
         }
 
