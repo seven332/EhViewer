@@ -112,8 +112,10 @@ public class RippleSprite extends Sprite {
         mOuterRadius = ((float) Math.sqrt(halfWidth * halfWidth
                 + halfHeight * halfHeight));
 
-        //mStartingX = mBounds.exactCenterX();
-        //mStartingY = mBounds.exactCenterY();
+        if (!mKeepBound) {
+            mStartingX = mBounds.exactCenterX();
+            mStartingY = mBounds.exactCenterY();
+        }
         clampStartingPosition();
     }
 
