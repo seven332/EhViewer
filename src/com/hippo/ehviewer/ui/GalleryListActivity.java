@@ -41,6 +41,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.provider.SearchRecentSuggestions;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -70,6 +71,7 @@ import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.SimpleSuggestionProvider;
 import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.Data;
@@ -837,8 +839,7 @@ public class GalleryListActivity extends AbsGalleryActivity
     private void handleIntent(Intent intent) {
         String action = intent.getAction();
         if (Intent.ACTION_SEARCH.equals(action)) {
-           String query =
-                 intent.getStringExtra(SearchManager.QUERY);
+           String query = intent.getStringExtra(SearchManager.QUERY);
            mSearchView.setQuery(query, true);
         } else if (ACTION_GALLERY_LIST.equals(action)) {
             int mode = intent.getIntExtra(GalleryListActivity.KEY_MODE, -1);
@@ -1272,6 +1273,12 @@ public class GalleryListActivity extends AbsGalleryActivity
             }
             @Override
             public boolean onQueryTextSubmit(String query) {
+                // Store suggestion
+                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
+                        GalleryListActivity.this, SimpleSuggestionProvider.AUTHORITY,
+                        SimpleSuggestionProvider.MODE);
+                suggestions.saveRecentQuery(query, null);
+
                 mSearchView.clearFocus();
                 String t = null;
                 if (query == null || query.isEmpty())

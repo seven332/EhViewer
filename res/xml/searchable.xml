@@ -16,4 +16,6 @@
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
         android:label="@string/app_name"
         android:hint="@string/advance_search_left"
-        android:voiceSearchMode="showVoiceSearchButton|launchRecognizer" />
+        android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
+        android:searchSuggestAuthority="com.hippo.ehviewer.SimpleSuggestionProvider"
+        android:searchSuggestSelection=" ?" />

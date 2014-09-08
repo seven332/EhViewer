@@ -120,6 +120,12 @@
         <service
             android:name=".service.DownloadService"
             android:label="DownloadService" />
+
+        <provider
+            android:name=".SimpleSuggestionProvider"
+            android:authorities="com.hippo.ehviewer.SimpleSuggestionProvider"
+            android:exported="false" />
+
     </application>
 
 </manifest>
