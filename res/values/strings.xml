@@ -193,6 +193,9 @@
     <string name="exculde_tag_group_summary">Exclude certain tag groups from a default tag search</string>
     <string name="exculde_language_title">Exculde language</string>
     <string name="exculde_language_summary">To hide galleries in certain languages from the gallery list and searches</string>
+    <string name="search_eh_settings_title">Search</string>
+    <string name="clear_suggestions_title">Clear search history</string>
+    <string name="clear_suggestions_summary">Remove all the searches you have performed</string>
     <string name="detail_eh_settings_title">Detail</string>
     <string name="preview_mode_title">Preview mode</string>
     <string name="preview_mode_normal">Normal</string>

@@ -34,6 +34,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.provider.SearchRecentSuggestions;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -51,6 +52,7 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.SimpleSuggestionProvider;
 import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.network.HttpHelper;
@@ -295,12 +297,14 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_LIST_DEFAULT_CATEGORY = "list_default_category";
         private static final String KEY_EXCULDE_TAG_GROUP = "exculde_tag_group";
         private static final String KEY_EXCULDE_LANGUAGE = "exculde_language";
+        private static final String KEY_CLEAR_SUGGESTIONS = "clear_suggestions";
         private static final String KEY_PREVIEW_MODE = "preview_mode";
         private static final String KEY_DEFAULT_FAVORITE = "default_favorite";
 
         private Preference mListDefaultCategory;
         private Preference mExculdeTagGroup;
         private Preference mExculdeLanguage;
+        private Preference mClearSuggestions;
         private AutoListPreference mPreviewMode;
         private ListPreference mDefaultFavorite;
 
@@ -315,6 +319,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mExculdeTagGroup.setOnPreferenceClickListener(this);
             mExculdeLanguage = findPreference(KEY_EXCULDE_LANGUAGE);
             mExculdeLanguage.setOnPreferenceClickListener(this);
+            mClearSuggestions = findPreference(KEY_CLEAR_SUGGESTIONS);
+            mClearSuggestions.setOnPreferenceClickListener(this);
             mPreviewMode = (AutoListPreference)findPreference(KEY_PREVIEW_MODE);
             mPreviewMode.setOnPreferenceChangeListener(this);
             mDefaultFavorite = (ListPreference)findPreference(KEY_DEFAULT_FAVORITE);
@@ -394,6 +400,11 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         EhInfo.getInstance(mActivity).setExculdeLanguage(newValue);
                     }
                 }).create().show();
+
+            } else if (KEY_CLEAR_SUGGESTIONS.equals(key)) {
+                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(mActivity,
+                        SimpleSuggestionProvider.AUTHORITY, SimpleSuggestionProvider.MODE);
+                suggestions.clearHistory();
             }
             return true;
         }

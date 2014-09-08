@@ -34,6 +34,15 @@
             android:title="@string/exculde_language_title" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/search_eh_settings_title" >
+
+        <Preference
+            android:key="clear_suggestions"
+            android:title="@string/clear_suggestions_title"
+            android:summary="@string/clear_suggestions_summary" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/detail_eh_settings_title" >
 
         <com.hippo.ehviewer.preference.AutoListPreference

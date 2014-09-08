@@ -190,6 +190,9 @@
     <string name="exculde_tag_group_summary">在标签搜索中排除特定标签类别</string>
     <string name="exculde_language_title">排除语言</string>
     <string name="exculde_language_summary">在列表与搜索中排除特定语言</string>
+    <string name="search_eh_settings_title">搜索</string>
+    <string name="clear_suggestions_title">清除搜索记录</string>
+    <string name="clear_suggestions_summary">删除您已执行的所有搜索</string>
     <string name="detail_eh_settings_title">详情</string>
     <string name="preview_mode_title">预览图模式</string>
     <string name="preview_mode_normal">正常预览图</string>
