@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.Data;
@@ -41,7 +42,8 @@ public class DownloadService extends Service
     private static final String TAG = DownloadService.class.getSimpleName();
     private static final int DOWNLOAD_NOTIFY_ID = -1;
 
-    public static final String ACTION_UPDATE = "com.hippo.ehviewer.service.DownloadService";
+    public static final String ACTION_UPDATE = "com.hippo.ehviewer.service.DownloadService.UPDATE";
+    public static final String ACTION_STOP = "com.hippo.ehviewer.service.DownloadService.STOP";
 
     private Context mContext;
     private Data mData;
@@ -50,7 +52,7 @@ public class DownloadService extends Service
     private volatile ExDownloader mCurExDownloader = null;
     private ServiceBinder mBinder = null;
     private NotificationManager mNotifyManager;
-    private Notification.Builder mBuilder;
+    private NotificationCompat.Builder mBuilder;
     private String mSpeedStr = null;
 
     @Override
@@ -68,6 +70,10 @@ public class DownloadService extends Service
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        if (ACTION_STOP.equals(intent.getAction()))
+            stopCurrentTask();
+
         return START_NOT_STICKY;
     }
 
@@ -156,6 +162,11 @@ public class DownloadService extends Service
         }
     }
 
+    public void stopCurrentTask() {
+        if (mCurDownloadInfo != null)
+            stop(mCurDownloadInfo);
+    }
+
     public void startAll() {
         for (DownloadInfo di : mData.getAllDownloads()) {
             if (di.state == DownloadInfo.STATE_NONE ||
@@ -214,12 +225,18 @@ public class DownloadService extends Service
         if (mBuilder != null)
             return;
 
-        mBuilder = new Notification.Builder(mContext);
+        mBuilder = new NotificationCompat.Builder(mContext);
         mBuilder.setSmallIcon(R.drawable.ic_launcher);
         Intent intent = new Intent(DownloadService.this,DownloadActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(pendingIntent);
-        mBuilder.setOngoing(false).setAutoCancel(false);
+        mBuilder.setOngoing(true).setAutoCancel(false);
+
+        // Add action
+        Intent stopIntent = new Intent(this, DownloadService.class);
+        stopIntent.setAction(ACTION_STOP);
+        PendingIntent piStop = PendingIntent.getService(this, 0, stopIntent, 0);
+        mBuilder.addAction(R.drawable.ic_clear, getString(R.string.stop), piStop);
     }
 
     @Override

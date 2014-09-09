@@ -1262,8 +1262,8 @@ public class GalleryListActivity extends AbsGalleryActivity
 
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        mSearchView =
-                (SearchView) menu.findItem(R.id.action_search).getActionView();
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView) searchItem.getActionView();
         mSearchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -1279,7 +1279,8 @@ public class GalleryListActivity extends AbsGalleryActivity
                         SimpleSuggestionProvider.MODE);
                 suggestions.saveRecentQuery(query, null);
 
-                mSearchView.clearFocus();
+                searchItem.collapseActionView();
+
                 String t = null;
                 if (query == null || query.isEmpty())
                     t = getString(android.R.string.search_go);
