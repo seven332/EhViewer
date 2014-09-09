@@ -126,7 +126,9 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
  * @author Hippo
  */
 public class GalleryListActivity extends AbsGalleryActivity
-        implements View.OnClickListener {
+        implements View.OnClickListener, SearchView.OnQueryTextListener,
+        SearchView.OnFocusChangeListener, SlidingMenu.OnOpenedListener,
+        SlidingMenu.OnClosedListener {
 
     @SuppressWarnings("unused")
     private static final String TAG = GalleryListActivity.class.getSimpleName();
@@ -152,9 +154,11 @@ public class GalleryListActivity extends AbsGalleryActivity
     private SlidingMenu mSlidingMenu;
     private View mMenuLeft;
     private LinearLayout mUserPanel;
-    private SearchView mSearchView;
     private ListView itemListMenu;
     private TagListView tagListMenu;
+
+    private SearchView mSearchView;
+    private MenuItem mSearchItem;
 
     private ImageView avatar;
     private TextView userView;
@@ -913,6 +917,22 @@ public class GalleryListActivity extends AbsGalleryActivity
     }
 
     @Override
+    public void onOpened() {
+        if (mShowDrawer) {
+            setTitle(R.string.app_name);
+            invalidateOptionsMenu();
+        }
+    }
+
+    @Override
+    public void onClosed() {
+        if (mShowDrawer) {
+            setTitle(mTitle);
+            invalidateOptionsMenu();
+        }
+    }
+
+    @Override
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -939,24 +959,8 @@ public class GalleryListActivity extends AbsGalleryActivity
         mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
         mSlidingMenu.setShadowDrawable(R.drawable.shadow);
         mSlidingMenu.setSecondaryShadowDrawable(R.drawable.shadow_right);
-        mSlidingMenu.setOnOpenedListener(new SlidingMenu.OnOpenedListener() {
-            @Override
-            public void onOpened() {
-                if (mShowDrawer) {
-                    setTitle(R.string.app_name);
-                    invalidateOptionsMenu();
-                }
-            }
-        });
-        mSlidingMenu.setOnClosedListener(new SlidingMenu.OnClosedListener() {
-            @Override
-            public void onClosed() {
-                if (mShowDrawer) {
-                    setTitle(mTitle);
-                    invalidateOptionsMenu();
-                }
-            }
-        });
+        mSlidingMenu.setOnOpenedListener(this);
+        mSlidingMenu.setOnClosedListener(this);
         if (mShowDrawer)
             mSlidingMenu.setBehindWidth(
                     mResources.getDimensionPixelOffset(R.dimen.menu_width));
@@ -1253,6 +1257,41 @@ public class GalleryListActivity extends AbsGalleryActivity
     }
 
     @Override
+    public boolean onQueryTextSubmit(String query) {
+        // Store suggestion
+        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
+                GalleryListActivity.this, SimpleSuggestionProvider.AUTHORITY,
+                SimpleSuggestionProvider.MODE);
+        suggestions.saveRecentQuery(query, null);
+        // collapse search view
+        if (mSearchItem != null)
+            mSearchItem.collapseActionView();
+
+        String t = null;
+        if (query == null || query.isEmpty())
+            t = getString(android.R.string.search_go);
+        else
+            t = query;
+
+        lus = new ListUrls(ListUrls.NONE, query);
+        refresh();
+        mTitle = t;
+        setTitle(mTitle);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (!hasFocus && mSearchItem != null)
+            mSearchItem.collapseActionView();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Do not show menu when mSlidingMenu is shown
         if (mSlidingMenu!= null && mSlidingMenu.isMenuShowing())
@@ -1262,38 +1301,12 @@ public class GalleryListActivity extends AbsGalleryActivity
 
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        final MenuItem searchItem = menu.findItem(R.id.action_search);
-        mSearchView = (SearchView) searchItem.getActionView();
+        mSearchItem = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView) mSearchItem.getActionView();
         mSearchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                // Store suggestion
-                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
-                        GalleryListActivity.this, SimpleSuggestionProvider.AUTHORITY,
-                        SimpleSuggestionProvider.MODE);
-                suggestions.saveRecentQuery(query, null);
-
-                searchItem.collapseActionView();
-
-                String t = null;
-                if (query == null || query.isEmpty())
-                    t = getString(android.R.string.search_go);
-                else
-                    t = query;
-
-                lus = new ListUrls(ListUrls.NONE, query);
-                refresh();
-                mTitle = t;
-                setTitle(mTitle);
-                return true;
-            }
-        });
+        mSearchView.setOnQueryTextListener(this);
+        mSearchView.setOnQueryTextFocusChangeListener(this);
 
         // Make search view custom look
         int searchTextID = mResources.getIdentifier("android:id/search_src_text", null, null);
