@@ -43,6 +43,7 @@ public class DownloadService extends Service
 
     public static final String ACTION_UPDATE = "com.hippo.ehviewer.service.DownloadService.UPDATE";
     public static final String ACTION_STOP = "com.hippo.ehviewer.service.DownloadService.STOP";
+    public static final String ACTION_STOP_ALL = "com.hippo.ehviewer.service.DownloadService.STOP_ALL";
 
     private Context mContext;
     private Data mData;
@@ -70,8 +71,13 @@ public class DownloadService extends Service
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if (ACTION_STOP.equals(intent.getAction()))
+        if (ACTION_STOP.equals(intent.getAction())) {
             stopCurrentTask();
+            mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
+        } else if (ACTION_STOP_ALL.equals(intent.getAction())) {
+            stopAll();
+            mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
+        }
 
         return START_NOT_STICKY;
     }
@@ -235,7 +241,12 @@ public class DownloadService extends Service
         Intent stopIntent = new Intent(this, DownloadService.class);
         stopIntent.setAction(ACTION_STOP);
         PendingIntent piStop = PendingIntent.getService(this, 0, stopIntent, 0);
-        mBuilder.addAction(R.drawable.ic_clear, getString(R.string.stop), piStop);
+        mBuilder.addAction(R.drawable.ic_clear2, getString(R.string.stop), piStop);
+
+        Intent stopAllIntent = new Intent(this, DownloadService.class);
+        stopAllIntent.setAction(ACTION_STOP_ALL);
+        PendingIntent piStopAll = PendingIntent.getService(this, 0, stopAllIntent, 0);
+        mBuilder.addAction(R.drawable.ic_clear, getString(R.string.stop_all), piStopAll);
     }
 
     @Override

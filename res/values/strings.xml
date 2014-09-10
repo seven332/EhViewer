@@ -355,6 +355,7 @@
     <string name="attention">Attention</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
+    <string name="stop_all">Stop all</string>
     <string name="invalid_input">Invalid Input</string>
     <string name="never_show">Never show me this dialog</string>
     <string name="retry">Retry</string>

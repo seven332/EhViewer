@@ -333,6 +333,7 @@
     <string name="attention">注意</string>
     <string name="start">开始</string>
     <string name="stop">停止</string>
+    <string name="stop_all">全部停止</string>
     <string name="invalid_input">无效的输入</string>
     <string name="never_show">不再显示</string>
     <string name="retry">重试</string>
