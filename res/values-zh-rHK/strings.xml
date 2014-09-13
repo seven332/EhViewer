@@ -321,6 +321,7 @@
     <string name="attention">注意</string>
     <string name="start">開始</string>
     <string name="stop">停止</string>
+    <string name="stop_all">全部停止</string>
     <string name="invalid_input">無效的輸入</string>
     <string name="never_show">不再顯示</string>
     <string name="retry">重試</string>
