@@ -113,7 +113,7 @@ public class NormalPreviewList extends PreviewList{
         int index = mTargetPage * mPi.getPreviewPerPage(); // it is display index
         int rowIndex = 0;
         for (NormalPreviewList.Row row : rowArray) {
-            for (NormalPreviewList.Item item : row.itemArray) {
+            for (int i = 0; i < row.itemArray.size(); i++) {
                 View view = inflater.inflate(R.layout.preview_item, null);
 
                 ((TextView)view.findViewById(R.id.text)).setText(String.valueOf(index + 1));

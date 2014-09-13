@@ -38,7 +38,6 @@ import com.hippo.ehviewer.util.Utils;
 
 public class ImageSet implements ExDownloader.ListenerForImageSet {
 
-    @SuppressWarnings("unused")
     private static final String TAG = ImageSet.class.getSimpleName();
 
     /**

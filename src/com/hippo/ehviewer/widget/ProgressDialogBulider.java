@@ -17,9 +17,8 @@
 package com.hippo.ehviewer.widget;
 
 import java.text.NumberFormat;
-import com.hippo.ehviewer.R;
+
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -32,26 +31,28 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class ProgressDialogBulider extends DialogBuilder{
-    
+import com.hippo.ehviewer.R;
+
+public class ProgressDialogBulider extends DialogBuilder {
+
     /** Creates a ProgressDialog with a circular, spinning progress
      * bar. This is not the default.
      */
     public static final int STYLE_SPINNER = 0;
-    
+
     /** Creates a ProgressDialog with a horizontal progress bar.
      */
     public static final int STYLE_HORIZONTAL = 1;
-    
+
     private ProgressBar mProgress;
     private TextView mMessageView;
-    
+
     private int mProgressStyle = STYLE_HORIZONTAL;
     private TextView mProgressNumber;
     private String mProgressNumberFormat;
     private TextView mProgressPercent;
     private NumberFormat mProgressPercentFormat;
-    
+
     private int mMax;
     private int mProgressVal;
     private int mSecondaryProgressVal;
@@ -61,24 +62,24 @@ public class ProgressDialogBulider extends DialogBuilder{
     private Drawable mIndeterminateDrawable;
     private CharSequence mMessage;
     private boolean mIndeterminate;
-    
-    private boolean mHasStarted = true;
+
+    private final boolean mHasStarted = true;
     private Handler mViewUpdateHandler;
-    
+
     private void initFormats() {
         mProgressNumberFormat = "%1d/%2d";
         mProgressPercentFormat = NumberFormat.getPercentInstance();
         mProgressPercentFormat.setMaximumFractionDigits(0);
     }
-    
+
     @SuppressLint("HandlerLeak")
     public ProgressDialogBulider(Context context) {
         super(context);
-        
+
         initFormats();
         LayoutInflater inflater = LayoutInflater.from(context);
         if (mProgressStyle == STYLE_HORIZONTAL) {
-            
+
             /* Use a separate handler to update the text views as they
              * must be updated on the same thread that created them.
              */
@@ -86,7 +87,7 @@ public class ProgressDialogBulider extends DialogBuilder{
                 @Override
                 public void handleMessage(Message msg) {
                     super.handleMessage(msg);
-                    
+
                     /* Update the number and percent */
                     int progress = mProgress.getProgress();
                     int max = mProgress.getMax();
@@ -145,14 +146,14 @@ public class ProgressDialogBulider extends DialogBuilder{
         setIndeterminate(mIndeterminate);
         onProgressChanged();
     }
-    
+
     /*
     @Override
     public AlertDialog create() {
         mHasStarted = true;
         return super.create();
     }*/
-    
+
     public ProgressDialogBulider setProgress(int value) {
         if (mHasStarted) {
             mProgress.setProgress(value);
@@ -255,7 +256,7 @@ public class ProgressDialogBulider extends DialogBuilder{
         }
         return mIndeterminate;
     }
-    
+
     @Override
     public ProgressDialogBulider setMessage(CharSequence message) {
         if (mProgress != null) {
@@ -269,7 +270,7 @@ public class ProgressDialogBulider extends DialogBuilder{
         }
         return this;
     }
-    
+
     public void setProgressStyle(int style) {
         mProgressStyle = style;
     }
@@ -299,7 +300,7 @@ public class ProgressDialogBulider extends DialogBuilder{
         mProgressPercentFormat = format;
         onProgressChanged();
     }
-    
+
     private void onProgressChanged() {
         if (mProgressStyle == STYLE_HORIZONTAL) {
             if (mViewUpdateHandler != null && !mViewUpdateHandler.hasMessages(0)) {

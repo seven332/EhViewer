@@ -18,6 +18,7 @@ package com.hippo.ehviewer.util;
 
 public class AutoExpandArray<E> {
 
+    @SuppressWarnings("unused")
     private static final String TAG = AutoExpandArray.class.getSimpleName();
 
     private static final int MIN_CAPACITY_INCREMENT = 12;

@@ -39,6 +39,8 @@ import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
 
 public class StartActivity extends Activity {
+
+    @SuppressWarnings("unused")
     private static final String TAG = StartActivity.class.getSimpleName();
 
     private static final int CHECK_WARING = 0;

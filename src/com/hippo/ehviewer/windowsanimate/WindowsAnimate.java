@@ -34,6 +34,8 @@ import com.hippo.ehviewer.util.ViewUtils;
 
 public final class WindowsAnimate
         implements View.OnTouchListener {
+
+    @SuppressWarnings("unused")
     private static final String TAG = WindowsAnimate.class.getSimpleName();
 
     private static final TimeInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();

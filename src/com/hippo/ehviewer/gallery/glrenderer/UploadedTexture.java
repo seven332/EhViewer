@@ -213,8 +213,6 @@ public abstract class UploadedTexture extends BasicTexture {
             try {
                 int bWidth = bitmap.getWidth();
                 int bHeight = bitmap.getHeight();
-                int width = bWidth + mBorder * 2;
-                int height = bHeight + mBorder * 2;
                 int texWidth = getTextureWidth();
                 int texHeight = getTextureHeight();
 

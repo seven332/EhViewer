@@ -11,34 +11,30 @@
 
 package com.hippo.ehviewer.cache;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ComponentCallbacks2;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
-import android.os.ParcelFileDescriptor;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import com.hippo.ehviewer.util.Utils;
 
@@ -48,7 +44,7 @@ import com.hippo.ehviewer.util.Utils;
 public final class ImageCache {
 
     private static final String TAG = ImageCache.class.getSimpleName();
-    
+
     /**
      * Default memory cache size as a percent of device memory class
      */
@@ -90,8 +86,8 @@ public final class ImageCache {
      * Used to temporarily pause the disk cache while scrolling
      */
     public boolean mPauseDiskAccess = false;
-    private Object mPauseLock = new Object();
-    
+    private final Object mPauseLock = new Object();
+
     /**
      * Constructor of <code>ImageCache</code>
      *
@@ -404,7 +400,7 @@ public final class ImageCache {
         }
         return null;
     }
-    
+
     /**
      * flush() is called to synchronize up other methods that are accessing the
      * cache first

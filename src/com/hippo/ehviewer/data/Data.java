@@ -200,7 +200,7 @@ public class Data {
         values.put(COLUMN_REFERENCE, reference);
 
         if (isInsert) { // Set
-            long id = mDatabase.insert(TABLE_GALLERY, null, values);
+            mDatabase.insert(TABLE_GALLERY, null, values);
         } else { // Update
             mDatabase.update(TABLE_GALLERY, values, COLUMN_GID + "=?", new String[]{String.valueOf(gid)});
         }
