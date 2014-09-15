@@ -96,72 +96,63 @@ public class ExpandingListView extends ListView {
         }
     };
 
-
-
-    /**
-     * Calculates the top and bottom bound changes of the selected item. These values are
-     * also used to move the bounds of the items around the one that is actually being
-     * expanded or collapsed.
-     *
-     * This method can be modified to achieve different user experiences depending
-     * on how you want the cells to expand or collapse. In this specific demo, the cells
-     * always try to expand downwards (leaving top bound untouched), and similarly,
-     * collapse upwards (leaving top bound untouched). If the change in bounds
-     * results in the complete disappearance of a cell, its lower bound is moved is
-     * moved to the top of the screen so as not to hide any additional content that
-     * the user has not interacted with yet. Furthermore, if the collapsed cell is
-     * partially off screen when it is first clicked, it is translated such that its
-     * full contents are visible. Lastly, this behaviour varies slightly near the bottom
-     * of the listview in order to account for the fact that the bottom bounds of the actual
-     * listview cannot be modified.
-     */
-    private int[] getTopAndBottomTranslations(int top, int bottom, int yDelta, View view,
-                                              boolean isExpanding) {
+    private int[] getTopAndBottomTranslationsE(int top, int bottom, int yDelta) {
         int yTranslateTop = 0;
         int yTranslateBottom = yDelta;
 
         int height = bottom - top;
         int bottomLine = getHeight() - getPaddingBottom();
 
-        if (isExpanding) {
-            boolean isOverTop = top < getPaddingTop();
-            boolean isBelowBottom = (top + height + yDelta) > bottomLine;
-            if (isOverTop) {
-                yTranslateTop = top - getPaddingTop();
-                yTranslateBottom = yDelta - yTranslateTop;
-            } else if (isBelowBottom){
-                int deltaBelow = top + height + yDelta - bottomLine;
-                yTranslateTop = top - deltaBelow < getPaddingTop() ? (top - getPaddingTop()) : deltaBelow;
-                yTranslateBottom = yDelta - yTranslateTop;
-            }
-        } else if (view.getParent() != null) {
-            int index = 0;
-            final int childCount = getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                if (getChildAt(i).equals(view)) {
-                    index = i;
-                    break;
-                }
-            }
-
-            int maxBottom = bottom;
-            for (int i = index + 1; i < getChildCount(); i++) {
-                View v = getChildAt(i);
-                maxBottom += v.getVisibility() != View.GONE ? v.getHeight() + getDividerHeight() : 0;
-            }
-
-            int newMaxBottom = maxBottom - yDelta;
-
-            boolean isCollapsingAboveBottom = maxBottom >= bottomLine && newMaxBottom < bottomLine;
-
-            if (isCollapsingAboveBottom) {
-                yTranslateTop = bottomLine - newMaxBottom;
-                yTranslateBottom = yDelta - yTranslateTop;
-            }
+        boolean isOverTop = top < getPaddingTop();
+        boolean isBelowBottom = (top + height + yDelta) > bottomLine;
+        if (isOverTop) {
+            yTranslateTop = top - getPaddingTop();
+            yTranslateBottom = yDelta - yTranslateTop;
+        } else if (isBelowBottom){
+            int deltaBelow = top + height + yDelta - bottomLine;
+            yTranslateTop = top - deltaBelow < getPaddingTop() ? (top - getPaddingTop()) : deltaBelow;
+            yTranslateBottom = yDelta - yTranslateTop;
         }
 
         return new int[] {yTranslateTop, yTranslateBottom};
     }
+
+    private int[] getTopAndBottomTranslationsC(int top, int bottom, int yDelta, int firstTop, View view) {
+        int yTranslateTop = 0;
+        int yTranslateBottom = yDelta;
+
+        int bottomLine = getHeight() - getPaddingBottom();
+
+        int index = 0;
+        final int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            if (getChildAt(i).equals(view)) {
+                index = i;
+                break;
+            }
+        }
+
+        int maxBottom = bottom;
+        for (int i = index + 1; i < getChildCount(); i++) {
+            View v = getChildAt(i);
+            maxBottom += v.getVisibility() != View.GONE ? v.getHeight() + getDividerHeight() : 0;
+        }
+
+        int newMaxBottom = maxBottom - yDelta;
+        int maxYTranslateTop = getPaddingTop() - firstTop;
+
+        boolean isCollapsingAboveBottom = maxBottom >= bottomLine && newMaxBottom < bottomLine;
+
+        if (isCollapsingAboveBottom) {
+            yTranslateTop = bottomLine - newMaxBottom;
+            if (yTranslateTop > maxYTranslateTop)
+                yTranslateTop = maxYTranslateTop;
+            yTranslateBottom = yDelta - yTranslateTop;
+        }
+
+        return new int[] {yTranslateTop, yTranslateBottom};
+    }
+
 
     /**
      * This method expands the view that was clicked and animates all the views
@@ -244,7 +235,7 @@ public class ExpandingListView extends ListView {
                     int oldHeight = oldBottom - oldTop;
                     int delta = newHeight - oldHeight;
 
-                    mTranslate = getTopAndBottomTranslations(oldTop, oldBottom, delta, view, true);
+                    mTranslate = getTopAndBottomTranslationsE(oldTop, oldBottom, delta);
 
                     int currentTop = view.getTop();
                     int futureTop = oldTop - mTranslate[0];
@@ -402,6 +393,7 @@ public class ExpandingListView extends ListView {
          /* Store the original top and bottom bounds of all the cells.*/
          final int oldTop = view.getTop();
          final int oldBottom = view.getBottom();
+         final int firstTop = getChildAt(0).getTop();
 
          final HashMap<View, int[]> oldCoordinates = new HashMap<View, int[]>();
 
@@ -438,7 +430,7 @@ public class ExpandingListView extends ListView {
                      int oldHeight = oldBottom - oldTop;
                      int deltaHeight = oldHeight - newHeight;
 
-                     mTranslate = getTopAndBottomTranslations(oldTop, oldBottom, deltaHeight, view, false);
+                     mTranslate = getTopAndBottomTranslationsC(oldTop, oldBottom, deltaHeight, firstTop, view);
 
                      int currentTop = view.getTop();
                      int futureTop = oldTop + mTranslate[0];
