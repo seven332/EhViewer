@@ -68,8 +68,9 @@ public class DownloadService extends Service
                 getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    private void handleIntent(Intent intent) {
+        if (intent == null)
+            return;
 
         if (ACTION_STOP.equals(intent.getAction())) {
             stopCurrentTask();
@@ -78,6 +79,12 @@ public class DownloadService extends Service
             stopAll();
             mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
         }
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        handleIntent(intent);
 
         return START_NOT_STICKY;
     }
