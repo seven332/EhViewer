@@ -32,11 +32,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -55,16 +52,17 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.DialogBuilder;
+import com.hippo.ehviewer.widget.ExpandingListView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 
-public class DownloadActivity extends AbsActivity implements AbsListView.OnItemClickListener {
+public class DownloadActivity extends AbsActivity {
 
     private WindowsAnimate mWindowsAnimate;
     private int mThemeColor;
     private List<DownloadInfo> mDownloads;
 
-    private ListView mList;
+    private ExpandingListView mList;
     private ListAdapter mAdapter;
 
     private final DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
@@ -106,15 +104,13 @@ public class DownloadActivity extends AbsActivity implements AbsListView.OnItemC
 
         mDownloads = Data.getInstance().getAllDownloads();
         for (DownloadInfo di : mDownloads)
-            di.selected = false;
+            di.setExpanded(false);
 
-        mList = (ListView)findViewById(R.id.download);
-
+        mList = (ExpandingListView)findViewById(R.id.download);
         mAdapter = new ListAdapter();
-
         mList.setAdapter(mAdapter);
-        mList.setOnItemClickListener(this);
         mList.setSelector(new ColorDrawable(Color.TRANSPARENT));
+        mList.setExpandingId(R.id.buttons);
 
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
         int actionBarColor = mThemeColor & 0x00ffffff | 0xdd000000;
@@ -161,14 +157,6 @@ public class DownloadActivity extends AbsActivity implements AbsListView.OnItemC
         default:
             return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,
-            long id) {
-        DownloadInfo di = mDownloads.get(position);
-        di.selected = !di.selected;
-        mAdapter.notifyDataSetChanged();
     }
 
     public class ListAdapter extends BaseAdapter {
@@ -219,7 +207,7 @@ public class DownloadActivity extends AbsActivity implements AbsListView.OnItemC
             TextView title = (TextView)convertView.findViewById(R.id.title);
             title.setText(gi.title);
             View Buttons = convertView.findViewById(R.id.buttons);
-            if (di.selected)
+            if (di.getExpanded())
                 Buttons.setVisibility(View.VISIBLE);
             else
                 Buttons.setVisibility(View.GONE);
@@ -310,6 +298,18 @@ public class DownloadActivity extends AbsActivity implements AbsListView.OnItemC
                 break;
             }
             return convertView;
+        }
+
+        @Override
+        public void notifyDataSetChanged() {
+            if (!mList.isAnimating())
+                super.notifyDataSetChanged();
+        }
+
+        @Override
+        public void notifyDataSetInvalidated() {
+            if (!mList.isAnimating())
+                super.notifyDataSetInvalidated();
         }
     }
 

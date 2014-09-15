@@ -78,7 +78,7 @@
             android:id="@+id/buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:paddingTop="8dp"
             android:layout_below="@id/thumb" >
 
             <TableRow

@@ -291,7 +291,7 @@ public class HttpHelper {
                 throw new RedirectionException();
             } catch (Exception e) {
                 mException = e;
-                //e.printStackTrace();
+                e.printStackTrace();
                 // For download, if need stop, just stop
                 if (mException instanceof StopRequestException)
                     break;

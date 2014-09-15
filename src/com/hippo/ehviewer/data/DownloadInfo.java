@@ -16,8 +16,10 @@
 
 package com.hippo.ehviewer.data;
 
+import com.hippo.ehviewer.widget.ExpandableListItem;
 
-public class DownloadInfo {
+
+public class DownloadInfo implements ExpandableListItem {
     @SuppressWarnings("unused")
     private static final String TAG = DownloadInfo.class.getSimpleName();
 
@@ -35,7 +37,7 @@ public class DownloadInfo {
     public volatile int total = -1;
     public volatile int legacy;
 
-    public boolean selected = false;
+    private boolean mExpanded = false;
 
     public DownloadInfo(GalleryInfo gi, int mode) {
         this.galleryInfo = gi;
@@ -47,5 +49,15 @@ public class DownloadInfo {
         this.mode = mode;
         this.state = state;
         this.legacy = legacy;
+    }
+
+    @Override
+    public void setExpanded(boolean expanded) {
+        mExpanded = expanded;
+    }
+
+    @Override
+    public boolean getExpanded() {
+        return mExpanded;
     }
 }

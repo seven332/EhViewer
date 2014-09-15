@@ -19,13 +19,13 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <ListView
+    <com.hippo.ehviewer.widget.ExpandingListView
         android:id="@+id/download"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:clipToPadding="false"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp" >
-    </ListView>
+    </com.hippo.ehviewer.widget.ExpandingListView>
 
 </LinearLayout>
