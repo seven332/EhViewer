@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 The Android Open Source Project
+ * Copyright (C) 2014 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -411,6 +412,10 @@ public class ExpandingListView extends ListView {
              oldCoordinates.put(v, new int [] {v.getTop(), v.getBottom()});
          }
 
+         /* Update the layout so the extra content becomes gone.*/
+         final View expandingLayout = view.findViewById(mExpandingId);
+         expandingLayout.setVisibility(View.GONE);
+
          /* Add an onPreDraw listener. */
          final ViewTreeObserver observer = getViewTreeObserver();
          observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -424,8 +429,10 @@ public class ExpandingListView extends ListView {
                      * and added to it.*/
                      mShouldRemoveObserver = true;
 
+                     expandingLayout.setVisibility(View.VISIBLE);
+
                      int newTop = view.getTop();
-                     int newBottom = view.getBottom() - view.findViewById(mExpandingId).getHeight();
+                     int newBottom = view.getBottom();
 
                      int newHeight = newBottom - newTop;
                      int oldHeight = oldBottom - oldTop;
