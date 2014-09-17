@@ -392,9 +392,9 @@ cmyk_gray_convert (j_decompress_ptr cinfo,
 
         for (col = 0; col < num_cols; col++) {
             lum = (inptr3[col]) / 255.0f;
-            r = inptr0[col];
-            g = inptr1[col];
-            b = inptr2[col];
+            r = inptr0[col] * lum;
+            g = inptr1[col] * lum;
+            b = inptr2[col] * lum;
             /* Y */
             outptr[col] = (JSAMPLE)
                     ((ctab[r+R_Y_OFF] + ctab[g+G_Y_OFF] + ctab[b+B_Y_OFF])
