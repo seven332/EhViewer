@@ -33,7 +33,7 @@
  */
 #ifndef PNG_ARM_NEON_FILE
 #  ifdef __linux__
-#     define PNG_ARM_NEON_FILE "contrib/arm-neon/linux.c"
+#     define PNG_ARM_NEON_FILE "../contrib/arm-neon/linux.c"
 #  endif
 #endif
 

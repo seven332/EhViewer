@@ -11,9 +11,11 @@ struct my_error_mgr {
 
 typedef struct my_error_mgr * my_error_ptr;
 
+char emsg[JMSG_LENGTH_MAX];
+
 static void my_error_exit(j_common_ptr cinfo) {
     my_error_ptr myerr = (my_error_ptr) cinfo->err;
-    (*cinfo->err->output_message)(cinfo);
+    (*cinfo->err->format_message)(cinfo, emsg);
     longjmp(myerr->setjmp_buffer, 1);
 }
 
@@ -43,6 +45,7 @@ jobject JPEG_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
     cinfo.err = jpeg_std_error(&jerr.pub);
     jerr.pub.error_exit = my_error_exit;
     if (setjmp(jerr.setjmp_buffer)) {
+        LOGE("%s", emsg);
         free(jpeg);
         jpeg_destroy_decompress(&cinfo);
         return NULL;

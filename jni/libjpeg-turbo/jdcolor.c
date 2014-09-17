@@ -633,9 +633,9 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
   case JCS_EXT_ARGB:
     cinfo->out_color_components = rgb_pixelsize[cinfo->out_color_space];
     if (cinfo->jpeg_color_space == JCS_YCbCr) {
-      if (jsimd_can_ycc_rgb())
+      if (jsimd_can_ycc_rgb()) {
         cconvert->pub.color_convert = jsimd_ycc_rgb_convert;
-      else {
+      } else {
         cconvert->pub.color_convert = ycc_rgb_convert;
         build_ycc_rgb_table(cinfo);
       }
@@ -649,8 +649,12 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
         cconvert->pub.color_convert = null_convert;
       else
         cconvert->pub.color_convert = rgb_rgb_convert;
-    } else
+    } else if (cinfo->jpeg_color_space == JCS_CMYK) {
+      // TODO
       ERREXIT(cinfo, JERR_CONVERSION_NOTIMPL);
+    } else {
+      ERREXIT(cinfo, JERR_CONVERSION_NOTIMPL);
+    }
     break;
 
   case JCS_RGB565:

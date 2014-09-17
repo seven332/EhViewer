@@ -47,7 +47,11 @@ libjpeg-turbo/turbojpeg.c
 LOCAL_CFLAGS := -O3
 
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
-    LOCAL_CFLAGS += -mfpu=neon
+    # Don't add -mfpu=neon
+    # Some arm v7 cpu do not support neon,
+    # libjpeg-turbo can check neon in init_simd()
+    # through parse_proc_cpuinfo()
+    #LOCAL_CFLAGS += -mfpu=neon
 endif
 
 ifeq ($(TARGET_ARCH),arm)
@@ -143,6 +147,8 @@ libpng/pngtrans.c
 LOCAL_CFLAGS := -O3
 
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
+    # Add -mfpu=neon
+    # libpng only check neon when add -mfpu=neon
     LOCAL_CFLAGS += -mfpu=neon
     LOCAL_SRC_FILES += \
     libpng/arm/arm_init.c \
