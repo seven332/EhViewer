@@ -64,7 +64,7 @@
 
     <!-- Send Crash -->
     <string name="dialog_send_crash_title">It is important</string>
-    <string name="dialog_send_crash_plain">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ?</string>
+    <string name="dialog_send_crash_plain">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ? (via e-mail)</string>
     <string name="dialog_send_crash_yes">Never mind</string>
     <string name="dialog_send_crash_no">Yes, I would</string>
     <string name="dialog_wait_send_crash_msg">Please close the dialog after sending logcat</string>

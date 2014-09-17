@@ -92,8 +92,8 @@ public class GalleryView extends GLView
     private static final float[] CENTER_AREA_SCALE = {2/7.0f, 3/8.0f, 5/7.0f, 5/8.0f};
 
     private static final float MILLSEC_PER_DIX = 0.2f;
-    private static final float CHANGE_PAGE_PROPORTION = 0.05f;
-    private static final float CHANGE_PAGE_OFFSET = Ui.dp2pix(12);
+    private static final float CHANGE_PAGE_PROPORTION = 0.1f;
+    private static final float CHANGE_PAGE_OFFSET = Ui.dp2pix(24);
 
     // TODO 根据界面的大小调整缩放界限
     private static final float SCALE_MIN = 1/10.0f;

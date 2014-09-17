@@ -150,6 +150,7 @@ public class GalleryListActivity extends AbsGalleryActivity
     private EhClient mClient;
     private Resources mResources;
     private WindowsAnimate mWindowsAnimate;
+    private SearchRecentSuggestions mSuggestions;
 
     private SlidingMenu mSlidingMenu;
     private View mMenuLeft;
@@ -514,7 +515,7 @@ public class GalleryListActivity extends AbsGalleryActivity
             String filePath = (String)mSearchImageText.getText();
             File file = new File(filePath);
             if (!file.exists()) {
-                MaterialToast.showToast("图片不存在");
+                MaterialToast.showToast("图片不存在"); // TODO
             } else {
                 if (!file.canRead()) {
                     MaterialToast.showToast("图片不可读");
@@ -942,6 +943,9 @@ public class GalleryListActivity extends AbsGalleryActivity
         mResources = getResources();
         mWindowsAnimate = new WindowsAnimate();
         mWindowsAnimate.init(this);
+        mSuggestions = new SearchRecentSuggestions(
+                GalleryListActivity.this, SimpleSuggestionProvider.AUTHORITY,
+                SimpleSuggestionProvider.MODE);
 
         handleIntent(getIntent());
         // Check show drawer or not
@@ -1259,10 +1263,7 @@ public class GalleryListActivity extends AbsGalleryActivity
     @Override
     public boolean onQueryTextSubmit(String query) {
         // Store suggestion
-        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
-                GalleryListActivity.this, SimpleSuggestionProvider.AUTHORITY,
-                SimpleSuggestionProvider.MODE);
-        suggestions.saveRecentQuery(query, null);
+        mSuggestions.saveRecentQuery(query, null);
         // collapse search view
         if (mSearchItem != null)
             mSearchItem.collapseActionView();

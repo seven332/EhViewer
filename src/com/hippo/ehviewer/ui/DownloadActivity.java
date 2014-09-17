@@ -185,7 +185,6 @@ public class DownloadActivity extends AbsActivity {
                         .inflate(R.layout.download_list_item, parent, false);
                 CardViewSalon.reformWithShadow(((ViewGroup)convertView).getChildAt(0),
                         0xFFFAFAFA, 0, false); // TODO
-                mWindowsAnimate.addRippleEffect(((ViewGroup)convertView).getChildAt(0), true);
                 ((TextView)convertView.findViewById(R.id.action)).setTextColor(mThemeColor);
             }
             LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.thumb);

@@ -263,6 +263,9 @@ public class ExpandingListView extends ListView {
 
                     setSelectionFromTop(firstVisiblePosition, firstChildStartTop - deltaTop - getPaddingTop());
 
+                    /* Request another layout to update the layout parameters of the cells.*/
+                    requestLayout();
+
                     /* Return false such that the ListView does not redraw its contents on
                      * this layout but only updates all the parameters associated with its
                      * children.*/
@@ -457,6 +460,8 @@ public class ExpandingListView extends ListView {
                      }
 
                      setSelectionFromTop(firstVisiblePosition, firstChildStartTop - deltaTop - getPaddingTop());
+
+                     requestLayout();
 
                      return false;
                  }

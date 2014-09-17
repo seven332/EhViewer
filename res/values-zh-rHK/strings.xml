@@ -49,7 +49,7 @@
 
     <!-- Send Crash -->
     <string name="dialog_send_crash_title">這很重要</string>
-    <string name="dialog_send_crash_plain">上次該應用崩潰了。你願意把日誌發送給開發者以便以後得到更好的用戶體驗麼？</string>
+    <string name="dialog_send_crash_plain">上次該應用崩潰了。你願意把錯誤日誌發送給開發者以便以後得到更好的用戶體驗麼？（以電子郵件的形式發送）</string>
     <string name="dialog_send_crash_yes">我願意</string>
     <string name="dialog_send_crash_no">門兒都沒有</string>
     <string name="dialog_wait_send_crash_msg">請在發送完日誌後關閉該窗口</string>
