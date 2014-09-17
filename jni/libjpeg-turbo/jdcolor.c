@@ -373,7 +373,10 @@ cmyk_gray_convert (j_decompress_ptr cinfo,
         JSAMPIMAGE input_buf, JDIMENSION input_row,
         JSAMPARRAY output_buf, int num_rows) {
 
+    my_cconvert_ptr cconvert = (my_cconvert_ptr) cinfo->cconvert;
     register float lum;
+    register int r, g, b;
+    register INT32 * ctab = cconvert->rgb_y_tab;
     register JSAMPROW outptr;
     register JSAMPROW inptr0, inptr1, inptr2, inptr3;
     register JDIMENSION col;
@@ -389,7 +392,13 @@ cmyk_gray_convert (j_decompress_ptr cinfo,
 
         for (col = 0; col < num_cols; col++) {
             lum = (inptr3[col]) / 255.0f;
-            outptr[col] = MAX(MAX(inptr0[col], inptr1[col]), inptr2[col]) * lum;
+            r = inptr0[col];
+            g = inptr1[col];
+            b = inptr2[col];
+            /* Y */
+            outptr[col] = (JSAMPLE)
+                    ((ctab[r+R_Y_OFF] + ctab[g+G_Y_OFF] + ctab[b+B_Y_OFF])
+                    >> SCALEBITS);
         }
     }
 }
@@ -703,6 +712,7 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
       build_rgb_y_table(cinfo);
     } else if (cinfo->jpeg_color_space == JCS_CMYK) {
       cconvert->pub.color_convert = cmyk_gray_convert;
+      build_rgb_y_table(cinfo);
     } else {
       ERREXIT(cinfo, JERR_CONVERSION_NOTIMPL);
     }
