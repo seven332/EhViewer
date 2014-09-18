@@ -19,6 +19,7 @@ package com.hippo.ehviewer.ui;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -51,13 +53,18 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.AppContext;
+import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.SimpleSuggestionProvider;
 import com.hippo.ehviewer.UpdateHelper;
+import com.hippo.ehviewer.data.Data;
+import com.hippo.ehviewer.data.DownloadInfo;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.preference.AutoListPreference;
+import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
@@ -67,6 +74,7 @@ import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FileExplorerView;
 import com.hippo.ehviewer.widget.MaterialToast;
+import com.hippo.ehviewer.widget.ProgressDialogBulider;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 
 public class SettingsActivity extends AbsPreferenceActivity {
@@ -455,12 +463,16 @@ public class SettingsActivity extends AbsPreferenceActivity {
     }
 
     public static class ReadFragment extends TranslucentPreferenceFragment
-            implements Preference.OnPreferenceChangeListener,
-            Preference.OnPreferenceClickListener {
+            implements Preference.OnPreferenceClickListener {
 
         private static final String KEY_CUSTOM_CODEC = "custom_codec";
+        private static final String KEY_CLEAN_REDUNDANCY = "clean_redundancy";
 
         private CheckBoxPreference mCustomCodec;
+        private Preference mCleanRedundancy;
+
+        private ProgressDialogBulider mBuilder;
+        private AlertDialog mDialog;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -468,6 +480,9 @@ public class SettingsActivity extends AbsPreferenceActivity {
             addPreferencesFromResource(R.xml.read_settings);
 
             mCustomCodec = (CheckBoxPreference) findPreference(KEY_CUSTOM_CODEC);
+            mCleanRedundancy = findPreference(KEY_CLEAN_REDUNDANCY);
+            mCleanRedundancy.setOnPreferenceClickListener(this);
+
             if (!Utils.SUPPORT_IMAGE) {
                 mCustomCodec.setEnabled(false);
                 mCustomCodec.setChecked(Config.getCustomCodec());
@@ -477,22 +492,121 @@ public class SettingsActivity extends AbsPreferenceActivity {
             }
         }
 
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-            // TODO Auto-generated method stub
+        private boolean isInDownloadList(List<DownloadInfo> diList, String filename) {
+            for (DownloadInfo di : diList)
+                if (filename.startsWith(String.valueOf(di.galleryInfo.gid)))
+                    return true;
             return false;
         }
 
+        private class CleanResponder implements Runnable {
+
+            public static final int STATE_NONE = 0x0;
+            public static final int STATE_START = 0x1;
+            public static final int STATE_DOING = 0x2;
+            public static final int STATE_DONE = 0x3;
+
+            private final int mState;
+            private final int mMax;
+            private final int mProgress;
+
+            public CleanResponder(int state, int max, int progress) {
+                mState = state;
+                mMax = max;
+                mProgress = progress;
+            }
+
+            @Override
+            public void run() {
+
+                switch (mState) {
+                case STATE_NONE:
+                    MaterialToast.showToast(R.string.no_redundancy);
+                    break;
+                case STATE_START:
+                    if (!mActivity.isFinishing()) {
+                        mBuilder = new ProgressDialogBulider(mActivity);
+                        mBuilder.setCancelable(false).setTitle(R.string.clean_redundancy_title);
+                        mDialog = mBuilder.create();
+                        mDialog.show();
+                    }
+                    break;
+                case STATE_DOING:
+                    if (mBuilder != null) {
+                        mBuilder.setMax(mMax);
+                        mBuilder.setProgress(mProgress);
+                    }
+                    break;
+                case STATE_DONE:
+                    if (mDialog != null) {
+                        mDialog.dismiss();
+                        MaterialToast.showToast(String.format(getString(R.string.clean_redundancy), mMax));
+                    }
+                    mBuilder = null;
+                    mDialog = null;
+                    break;
+                }
+            }
+        }
+
         @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            // TODO Auto-generated method stub
-            return false;
+        public boolean onPreferenceClick(Preference preference) {
+            final String key = preference.getKey();
+            if (KEY_CLEAN_REDUNDANCY.equals(key)) {
+
+                // Create a thread to do clean task
+                new BgThread() {
+                    @Override
+                    public void run() {
+                        Data data = Data.getInstance();
+                        List<DownloadInfo> diList = data.getAllDownloads();
+                        File downloadDir = new File(Config.getDownloadPath());
+                        String[] files = downloadDir.list();
+                        Handler handler = AppHandler.getInstance();
+                        List<File> targetDirList = new ArrayList<File>();
+
+                        if (files == null) {
+                            // Check files null
+                            handler.post(new CleanResponder(CleanResponder.STATE_NONE, 0, 0));
+                            return;
+                        }
+
+                        for (String filename : files) {
+                            // If in download list, just continue
+                            if (isInDownloadList(diList, filename))
+                                continue;
+                            File dir = new File(downloadDir, filename);
+                            // If there is no tag file, just continue
+                            if (!new File(dir, EhUtils.EH_DOWNLOAD_FILENAME).exists())
+                                continue;
+                            // Add to list
+                            targetDirList.add(dir);
+                        }
+
+                        if (targetDirList.isEmpty()) {
+                            handler.post(new CleanResponder(CleanResponder.STATE_NONE, 0, 0));
+                            return;
+                        } else {
+                            handler.post(new CleanResponder(CleanResponder.STATE_START, 0, 0));
+                        }
+                        // Do delete
+                        for (int i = 0; i < targetDirList.size(); i++) {
+                            File dir = targetDirList.get(i);
+                            Utils.deleteFile(dir);
+                            handler.post(new CleanResponder(CleanResponder.STATE_DOING, targetDirList.size(), i + 1));
+                        }
+                        // Close windows
+                        handler.post(new CleanResponder(CleanResponder.STATE_DONE, targetDirList.size(), targetDirList.size()));
+                    }
+                }.start();
+            }
+            return true;
         }
     }
 
     public static class DownloadFragment extends TranslucentPreferenceFragment
             implements Preference.OnPreferenceChangeListener,
-            Preference.OnPreferenceClickListener{
+            Preference.OnPreferenceClickListener {
 
         private static final String KEY_DOWNLOAD_PATH = "download_path";
         private static final String KEY_MEDIA_SCAN = "media_scan";

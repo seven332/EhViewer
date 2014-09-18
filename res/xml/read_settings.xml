@@ -48,4 +48,8 @@
         android:title="@string/custom_codec_title"
         android:summary="@string/custom_codec_summary" />
 
+    <Preference
+        android:key="clean_redundancy"
+        android:title="@string/clean_redundancy_title" />
+
 </PreferenceScreen>
