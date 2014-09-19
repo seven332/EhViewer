@@ -209,6 +209,12 @@
     <string name="clean_redundancy_title">清理阅读冗余</string>
     <string name="no_redundancy">未发现冗余</string>
     <string name="clean_redundancy">完成冗余清理，共清理 %d 项</string>
+    <string name="decode_format_title">解码格式</string>
+    <string name="decode_format_auto">自动</string>
+    <string name="decode_format_gray">黑白</string>
+    <string name="decode_format_gray_alpha">黑白（透明）</string>
+    <string name="decode_format_rgb">彩色</string>
+    <string name="decode_format_rgba">彩色（透明）</string>
 
     <string name="download_settings_title">下载</string>
     <string name="download_path_title">下载路径</string>

@@ -646,4 +646,12 @@ public final class Utils {
         sb.append(name);
         return sb.toString();
     }
+
+    public static int parseIntSafely(String str, int defaultValue) {
+        try {
+            return Integer.parseInt(str);
+        } catch (Throwable e) {
+            return defaultValue;
+        }
+    }
 }

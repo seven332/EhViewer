@@ -18,15 +18,23 @@ package com.hippo.ehviewer.gallery.image;
 
 import java.io.InputStream;
 
+import javax.microedition.khronos.opengles.GL11;
+
 
 public class Image {
 
     private static final String TAG = Image.class.getSimpleName();
 
-    public static final int FORMAT_JPEG = 0x0;
-    public static final int FORMAT_PNG = 0x1;
-    public static final int FORMAT_BMP = 0x2;
-    public static final int FORMAT_GIF = 0x3;
+    public static final int FILE_FORMAT_JPEG = 0x0;
+    public static final int FILE_FORMAT_PNG = 0x1;
+    public static final int FILE_FORMAT_BMP = 0x2;
+    public static final int FILE_FORMAT_GIF = 0x3;
+
+    public static final int FORMAT_AUTO = 0x0;
+    public static final int FORMAT_GRAY = GL11.GL_LUMINANCE;
+    public static final int FORMAT_GRAY_ALPHA = GL11.GL_LUMINANCE_ALPHA;
+    public static final int FORMAT_RGB = GL11.GL_RGB;
+    public static final int FORMAT_RGBA = GL11.GL_RGBA;
 
     protected int mNativeImage;
     protected final int mFileFormat;

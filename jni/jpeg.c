@@ -56,16 +56,27 @@ jobject JPEG_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
 
     // Set png format
     switch (format) {
-    case GL_RGB:
+    case FORMAT_AUTO:
+        if (cinfo.jpeg_color_space == JCS_GRAYSCALE) {
+            format = FORMAT_GRAY;
+            cinfo.out_color_space == JCS_GRAYSCALE;
+        } else {
+            format = FORMAT_RGB;
+            cinfo.out_color_space = JCS_RGB;
+        }
+        break;
+    case FORMAT_RGB:
         cinfo.out_color_space = JCS_RGB;
         break;
-    case GL_RGBA:
+    case FORMAT_RGBA:
         cinfo.out_color_space = JCS_EXT_RGBA;
         break;
-    case GL_LUMINANCE:
-    default:
-        format = GL_LUMINANCE;
+    case FORMAT_GRAY:
         cinfo.out_color_space = JCS_GRAYSCALE;
+        break;
+    default:
+        format = FORMAT_RGB;
+        cinfo.out_color_space = JCS_RGB;
         break;
     }
 
@@ -73,7 +84,7 @@ jobject JPEG_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
 
     // Set
     realStride = cinfo.output_width * cinfo.output_components;
-    fakeWidth = format != GL_RGBA ? nextMulOf4(cinfo.output_width) : cinfo.output_width;
+    fakeWidth = format != FORMAT_RGBA ? nextMulOf4(cinfo.output_width) : cinfo.output_width;
     fakeStride = fakeWidth * cinfo.output_components;
     data = malloc(fakeStride * cinfo.output_height);
     if (data == NULL) {
@@ -116,7 +127,7 @@ jobject JPEG_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
         return NULL;
     } else {
         return (*env)->NewObject(env, imageClazz, constructor, (jint) jpeg,
-                FORMAT_JPEG, cinfo.output_width, cinfo.output_height, format,
+                FILE_FORMAT_JPEG, cinfo.output_width, cinfo.output_height, format,
                 DEFAULT_TYPE);
     }
 }

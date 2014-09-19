@@ -476,10 +476,12 @@ public class Config {
     /****** Read ******/
 
     private static final String KEY_PAGE_SCALING = "page_scaling";
-    private static final String DEFAULT_PAGE_SCALING = "3";
+    private static final String DEFAULT_PAGE_SCALING_STR = "3";
+    private static final int DEFAULT_PAGE_SCALING = 3;
 
     private static final String KEY_START_POSITION = "start_position";
-    private static final String DEFAULT_START_POSITION = "1";
+    private static final String DEFAULT_START_POSITION_STR = "1";
+    private static final int DEFAULT_START_POSITION = 1;
 
     private static final String KEY_GALLERY_SHOW_TIME = "gallery_show_clock";
     private static final boolean DEFAULT_GALLERY_SHOW_TIME = true;
@@ -489,28 +491,18 @@ public class Config {
 
     private static final String KEY_CUSTOM_CODEC = "custom_codec";
 
+    private static final String KEY_DECODE_FORMAT = "decode_format";
+    private static final String DEFAULT_DECODE_FORMAT_STR = "0";
+    private static final int DEFAULT_DECODE_FORMAT = 0;
+
     public static int getPageScalingMode() {
-        int pageScalingMode = 3;
-        try {
-            pageScalingMode = Integer.parseInt(mConfigPre.getString(
-                    KEY_PAGE_SCALING, DEFAULT_PAGE_SCALING));
-        } catch (Exception e) {
-            mConfigPre.edit().putString(KEY_PAGE_SCALING, DEFAULT_PAGE_SCALING)
-                    .apply();
-        }
-        return pageScalingMode;
+        return Utils.parseIntSafely(mConfigPre.getString(KEY_PAGE_SCALING,
+                DEFAULT_PAGE_SCALING_STR), DEFAULT_PAGE_SCALING);
     }
 
     public static int getStartPosition() {
-        int startPosition = 1;
-        try {
-            startPosition = Integer.parseInt(mConfigPre.getString(
-                    KEY_START_POSITION, DEFAULT_START_POSITION));
-        } catch (Exception e) {
-            mConfigPre.edit().putString(KEY_START_POSITION, DEFAULT_START_POSITION)
-                    .apply();
-        }
-        return startPosition;
+        return Utils.parseIntSafely(mConfigPre.getString(KEY_START_POSITION,
+                DEFAULT_START_POSITION_STR), DEFAULT_START_POSITION);
     }
 
     public static boolean getGShowTime() {
@@ -525,6 +517,10 @@ public class Config {
         return mConfigPre.getBoolean(KEY_CUSTOM_CODEC, Utils.SUPPORT_IMAGE);
     }
 
+    public static int getDecodeFormat() {
+        return Utils.parseIntSafely(mConfigPre.getString(KEY_DECODE_FORMAT,
+                DEFAULT_DECODE_FORMAT_STR), DEFAULT_DECODE_FORMAT);
+    }
 
     /****** Download ******/
 
@@ -535,7 +531,8 @@ public class Config {
     private static final boolean DEFAULT_MEDIA_SCAN = false;
 
     private static final String KEY_DOWNLOAD_THREAD = "download_thread";
-    private static final String DEFAULT_DOWNLOAD_THREAD = "3";
+    private static final String DEFAULT_DOWNLOAD_THREAD_STR = "3";
+    private static final int DEFAULT_DOWNLOAD_THREAD = 3;
 
     public static boolean getMediaScan() {
         return mConfigPre.getBoolean(KEY_MEDIA_SCAN, DEFAULT_MEDIA_SCAN);
@@ -550,11 +547,8 @@ public class Config {
     }
 
     public static int getDownloadThread() {
-        try {
-            return Integer.parseInt(mConfigPre.getString(KEY_DOWNLOAD_THREAD, DEFAULT_DOWNLOAD_THREAD));
-        } catch(Throwable e){
-            return 3;
-        }
+        return Utils.parseIntSafely(mConfigPre.getString(KEY_DOWNLOAD_THREAD,
+                DEFAULT_DOWNLOAD_THREAD_STR), DEFAULT_DOWNLOAD_THREAD);
     }
 
 

@@ -148,4 +148,21 @@
         <item>m</item>
         <item>l</item>
     </string-array>
+
+    <string-array name="decode_format_entries">
+        <item>@string/decode_format_auto</item>
+        <item>@string/decode_format_gray</item>
+        <item>@string/decode_format_gray_alpha</item>
+        <item>@string/decode_format_rgb</item>
+        <item>@string/decode_format_rgba</item>
+    </string-array>
+
+    <string-array name="decode_format_values" translatable="false">
+        <item>0</item>
+        <item>6409</item>
+        <item>6410</item>
+        <item>6407</item>
+        <item>6408</item>
+    </string-array>
+
 </resources>

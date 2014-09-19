@@ -7,7 +7,7 @@ jobject PNG_DecodeStream(JNIEnv* env, jobject is, jint format) {
 }
 
 jobject PNG_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
-    int pngFormat, width, height;
+    int width, height;
     png_image image;
     png_bytep buffer;
     PNG* png;
@@ -20,32 +20,47 @@ jobject PNG_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
     if (png == NULL)
         return NULL;
 
-    // Get png format
-    switch (format) {
-    case GL_RGB:
-        pngFormat = PNG_FORMAT_RGB;
-        break;
-    case GL_RGBA:
-        pngFormat = PNG_FORMAT_RGBA;
-        break;
-    case GL_LUMINANCE:
-        pngFormat = PNG_FORMAT_GRAY;
-        break;
-    case GL_LUMINANCE_ALPHA:
-    default:
-        format = GL_LUMINANCE_ALPHA;
-        pngFormat = PNG_FORMAT_GA;
-        break;
-    }
-
     memset(&image, 0, sizeof image);
     image.version = PNG_IMAGE_VERSION;
 
     if (!png_image_begin_read_from_stdio(&image, fp))
         return NULL;
 
-    image.format = pngFormat;
-    fakeWidth = format != GL_RGBA ? nextMulOf4(image.width) : image.width;
+    // Get png format
+    switch (format) {
+    case FORMAT_AUTO:
+        if (image.format == PNG_FORMAT_GRAY) {
+            format = FORMAT_GRAY;
+        }  else if (image.format == PNG_FORMAT_GA) {
+            format = FORMAT_GRAY_ALPHA;
+        } else if (image.format == PNG_FORMAT_RGB) {
+            format = FORMAT_RGB;
+        } else if (image.format == PNG_FORMAT_RGBA) {
+            format = FORMAT_RGBA;
+        } else {
+            format = FORMAT_RGB;
+            image.format = PNG_FORMAT_RGB;
+        }
+        break;
+    case FORMAT_RGB:
+        image.format = PNG_FORMAT_RGB;
+        break;
+    case FORMAT_RGBA:
+        image.format = PNG_FORMAT_RGBA;
+        break;
+    case FORMAT_GRAY:
+        image.format = PNG_FORMAT_GRAY;
+        break;
+    case FORMAT_GRAY_ALPHA:
+        image.format = PNG_FORMAT_GA;
+        break;
+    default:
+        format = FORMAT_RGB;
+        image.format = PNG_FORMAT_RGB;
+        break;
+    }
+
+    fakeWidth = format != FORMAT_RGBA ? nextMulOf4(image.width) : image.width;
     fakeStride = PNG_IMAGE_PIXEL_CHANNELS(image.format) * fakeWidth;
     buffer = malloc(image.height * fakeStride);
     if (buffer == NULL)
@@ -74,7 +89,7 @@ jobject PNG_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
         return NULL;
     } else {
         return (*env)->NewObject(env, imageClazz, constructor, (jint) png,
-                FORMAT_PNG, png->width, png->height, format,
+                FILE_FORMAT_PNG, png->width, png->height, format,
                 DEFAULT_TYPE);
     }
 }

@@ -48,6 +48,15 @@
         android:title="@string/custom_codec_title"
         android:summary="@string/custom_codec_summary" />
 
+    <com.hippo.ehviewer.preference.AutoListPreference
+        android:key="decode_format"
+        android:title="@string/decode_format_title"
+        android:entries="@array/decode_format_entries"
+        android:entryValues="@array/decode_format_values"
+        android:defaultValue="0"
+        android:summary="%s"
+        android:dependency="custom_codec" />
+
     <Preference
         android:key="clean_redundancy"
         android:title="@string/clean_redundancy_title" />

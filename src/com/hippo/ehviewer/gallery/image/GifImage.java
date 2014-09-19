@@ -63,7 +63,7 @@ public class GifImage extends Image {
         if (mNativeImage != 0) {
             int index = getCurIndex();
             if (mLastIndex != index) {
-                nativeRender(mFormat, mType, mNativeImage, FORMAT_GIF, index);
+                nativeRender(mFormat, mType, mNativeImage, FILE_FORMAT_GIF, index);
                 mLastIndex = index;
             }
         }

@@ -55,11 +55,17 @@ typedef struct {
 #define DEFAULT_TARGET GL_TEXTURE_2D
 #define DEFAULT_TYPE GL_UNSIGNED_BYTE
 
-#define FORMAT_UNKNOWN -1
-#define FORMAT_JPEG 0x0
-#define FORMAT_PNG 0x1
-#define FORMAT_BMP 0x2
-#define FORMAT_GIF 0x3
+#define FILE_FORMAT_UNKNOWN   -1
+#define FILE_FORMAT_JPEG     0x0
+#define FILE_FORMAT_PNG      0x1
+#define FILE_FORMAT_BMP      0x2
+#define FILE_FORMAT_GIF      0x3
+
+#define FORMAT_AUTO          0x0
+#define FORMAT_GRAY          GL_LUMINANCE
+#define FORMAT_GRAY_ALPHA    GL_LUMINANCE_ALPHA
+#define FORMAT_RGB           GL_RGB
+#define FORMAT_RGBA          GL_RGBA
 
 #define BG_LUM 0x21
 static rgb defaultBgColorRGB ={0x21, 0x21, 0x21};

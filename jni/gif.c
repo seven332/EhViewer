@@ -497,7 +497,7 @@ jobject getObjFromGifFileType(JNIEnv* env, GifFileType* gifFile, int format) {
         return NULL;
     } else {
         return (*env)->NewObject(env, gifClazz, constructor, (jint) gif,
-                FORMAT_GIF, realWidth, gifFile->SHeight, format,
+                FILE_FORMAT_GIF, realWidth, gifFile->SHeight, format,
                 DEFAULT_TYPE, delayArray);
     }
 }
@@ -507,6 +507,9 @@ jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format) {
     StreamContainer* sc;
     GifFileType* gifFile;
     jobject gifImage;
+
+    if (format == FORMAT_AUTO)
+        format = FORMAT_RGB;
 
     sc = (StreamContainer*)getStreamContainer(env, is);
     if (sc == NULL)
@@ -536,6 +539,9 @@ jobject GIF_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
 
     GifFileType* gifFile;
     jobject gifImage;
+
+    if (format == FORMAT_AUTO)
+        format = FORMAT_RGB;
 
     gifFile = DGifOpen(fp, &fileReadFun, &errorCode);
     if (gifFile == NULL)

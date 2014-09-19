@@ -20,8 +20,6 @@ import java.io.File;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import javax.microedition.khronos.opengles.GL11;
-
 import android.graphics.BitmapFactory;
 import android.graphics.Movie;
 import android.util.SparseArray;
@@ -203,7 +201,7 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
                 Object res = null;
 
                 if (Utils.SUPPORT_IMAGE && Config.getCustomCodec()) {
-                    res = Image.decodeFile(pathName, GL11.GL_RGB);
+                    res = Image.decodeFile(pathName, Config.getDecodeFormat());
                 } else {
                     if (Utils.getExtension(pathName, "jpg").equals("gif"))
                         res = Movie.decodeFile(pathName);
