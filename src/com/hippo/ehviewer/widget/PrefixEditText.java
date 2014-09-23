@@ -21,14 +21,14 @@ import android.text.Editable;
 import android.text.Selection;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 
-public class PrefixEditText extends EditText
+public class PrefixEditText extends AutoCompleteTextView
         implements TextWatcher {
-    
+
     private Context mContext;
     private String mPrefix;
-    
+
     public PrefixEditText(Context context) {
         super(context);
         init(context);
@@ -41,24 +41,24 @@ public class PrefixEditText extends EditText
         super(context, attrs, defStyle);
         init(context);
     }
-    
+
     private void init(Context context) {
         mContext = context;
         addTextChangedListener(this);
     }
-    
+
     public void setPrefix(int resId) {
         setPrefix(mContext.getString(resId));
     }
-    
+
     public void setPrefix(String prefix) {
         mPrefix = prefix;
         setText(mPrefix);
         if (mPrefix != null)
             Selection.setSelection(getText(), mPrefix.length());
     }
-    
-    @Override 
+
+    @Override
     protected void onSelectionChanged(int selStart, int selEnd) {
         super.onSelectionChanged(selStart, selEnd);
         if(mPrefix != null) {
@@ -72,15 +72,15 @@ public class PrefixEditText extends EditText
             setSelection(newSelStart, newSelEnd);
         }
     }
-    
+
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count,
             int after) {}
-    
+
     @Override
     public void onTextChanged(CharSequence s, int start,
             int before, int count) {}
-    
+
     @Override
     public void afterTextChanged(Editable s) {
         if(mPrefix != null &&
@@ -89,5 +89,5 @@ public class PrefixEditText extends EditText
             setSelection(mPrefix.length());
         }
     }
-    
+
 }

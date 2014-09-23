@@ -75,6 +75,7 @@ import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FileExplorerView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.ProgressDialogBulider;
+import com.hippo.ehviewer.widget.SuggestionHelper;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 
 public class SettingsActivity extends AbsPreferenceActivity {
@@ -410,8 +411,9 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 }).create().show();
 
             } else if (KEY_CLEAR_SUGGESTIONS.equals(key)) {
-                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(mActivity,
-                        SimpleSuggestionProvider.AUTHORITY, SimpleSuggestionProvider.MODE);
+                SearchRecentSuggestions suggestions = SuggestionHelper.getInstance (
+                        mActivity, SimpleSuggestionProvider.AUTHORITY,
+                        SimpleSuggestionProvider.MODE);
                 suggestions.clearHistory();
             }
             return true;

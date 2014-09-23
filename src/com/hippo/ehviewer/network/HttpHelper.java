@@ -80,6 +80,7 @@ public class HttpHelper {
     private static final String DEFAULT_CHARSET = "utf-8";
     private static final String CHARSET_KEY = "charset=";
 
+    // TODO Get proxy list from server
     private static final String[] PROXY_URLS = {
         "http://proxyy0000.appsp0t.com/proxy",
         "http://proxyy0001.appsp0t.com/proxy",
@@ -87,7 +88,16 @@ public class HttpHelper {
         "http://proxyy0003.appsp0t.com/proxy",
         "http://proxyy0004.appsp0t.com/proxy",
         "http://proxyy0005.appsp0t.com/proxy",
-        "http://proxyy0006.appsp0t.com/proxy"
+        "http://proxyy0006.appsp0t.com/proxy",
+        "http://proxyy0007.appsp0t.com/proxy",
+        "http://proxyy0008.appsp0t.com/proxy",
+        "http://proxyy0009.appsp0t.com/proxy",
+        "http://proxyy000a.appsp0t.com/proxy",
+        "http://proxyy000b.appsp0t.com/proxy",
+        "http://proxyy000c.appsp0t.com/proxy",
+        "http://proxyy000d.appsp0t.com/proxy",
+        "http://proxyy000e.appsp0t.com/proxy",
+        "http://proxyy000f.appsp0t.com/proxy"
     };
     private static volatile int sProxyIndex = MathUtils.random(0, PROXY_URLS.length);
     private static Object sProxyIndexLock = new Object();

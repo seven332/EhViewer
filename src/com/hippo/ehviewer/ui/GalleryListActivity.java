@@ -41,7 +41,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.provider.SearchRecentSuggestions;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -93,8 +92,9 @@ import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialToast;
-import com.hippo.ehviewer.widget.PrefixEditText;
 import com.hippo.ehviewer.widget.RatingView;
+import com.hippo.ehviewer.widget.SuggestionHelper;
+import com.hippo.ehviewer.widget.SuggestionTextView;
 import com.hippo.ehviewer.widget.SuperDialogUtil;
 import com.hippo.ehviewer.widget.TagListView;
 import com.hippo.ehviewer.widget.TagsAdapter;
@@ -150,7 +150,7 @@ public class GalleryListActivity extends AbsGalleryActivity
     private EhClient mClient;
     private Resources mResources;
     private WindowsAnimate mWindowsAnimate;
-    private SearchRecentSuggestions mSuggestions;
+    private SuggestionHelper mSuggestions;
 
     private SlidingMenu mSlidingMenu;
     private View mMenuLeft;
@@ -314,16 +314,20 @@ public class GalleryListActivity extends AbsGalleryActivity
     }
 
     private void handleSearchView(View view) {
-        final PrefixEditText pet = (PrefixEditText)view.findViewById(R.id.search_text);
+        final SuggestionTextView pet = (SuggestionTextView)view.findViewById(R.id.search_text);
+        pet.setSuggestionHelper(mSuggestions);
         CheckBox uploaderCb = (CheckBox)view.findViewById(R.id.checkbox_uploader);
         uploaderCb.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                     boolean isChecked) {
-                if (isChecked)
+                if (isChecked) {
                     pet.setPrefix("uploader:");
-                else
+                    pet.setSuggestionHelper(null);
+                } else {
                     pet.setPrefix(null);
+                    pet.setSuggestionHelper(mSuggestions);
+                }
             }
         });
 
@@ -943,7 +947,7 @@ public class GalleryListActivity extends AbsGalleryActivity
         mResources = getResources();
         mWindowsAnimate = new WindowsAnimate();
         mWindowsAnimate.init(this);
-        mSuggestions = new SearchRecentSuggestions(
+        mSuggestions = SuggestionHelper.getInstance (
                 GalleryListActivity.this, SimpleSuggestionProvider.AUTHORITY,
                 SimpleSuggestionProvider.MODE);
 
@@ -1445,18 +1449,6 @@ public class GalleryListActivity extends AbsGalleryActivity
         super.onDestroy();
         unbindService(mServiceConn);
 
-        /*
-        List<GalleryInfo> reads = mData.getAllReads();
-        for (GalleryInfo item : reads) {
-            File folder = new File(Config.getDownloadPath(),
-                    StringEscapeUtils.escapeHtml4(item.title));
-            try {
-                Util.deleteContents(folder);
-                folder.delete();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }*/
         mWindowsAnimate.free();
     }
 

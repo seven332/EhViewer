@@ -38,7 +38,7 @@
         android:layout_marginLeft="16dp"
         android:text="@string/checkbox_uploader" />
 
-    <com.hippo.ehviewer.widget.PrefixEditText
+    <com.hippo.ehviewer.widget.SuggestionTextView
         android:id="@+id/search_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,8 +47,8 @@
         android:layout_marginRight="16dp"
         android:ems="10"
         android:hint="@string/hint_no_keyword"
-        android:singleLine="true" >
-    </com.hippo.ehviewer.widget.PrefixEditText>
+        android:singleLine="true"
+        android:dropDownVerticalOffset="38dp" />
 
     <CheckBox
         android:id="@+id/checkbox_advance"
