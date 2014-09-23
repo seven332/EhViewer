@@ -54,7 +54,7 @@ public class ExDownloaderManager {
         }
     }
 
-    File getExDownloadInfoDir() {
+    public File getExDownloadInfoDir() {
         return mExDownloadInfoDir;
     }
 

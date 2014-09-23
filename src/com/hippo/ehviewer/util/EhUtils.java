@@ -33,6 +33,14 @@ public final class EhUtils {
                 Utils.standardizeFilename(gid + "-" + title));
     }
 
+    public static int getGidFromDirname(String dirname) {
+        int index = dirname.indexOf('-');
+        if (index == -1)
+            return 0;
+        else
+            return Utils.parseIntSafely(dirname.substring(0, index), 0);
+    }
+
     /**
      * Index start from 0
      *
