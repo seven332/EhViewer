@@ -846,7 +846,7 @@ public class GalleryListActivity extends AbsGalleryActivity
      * @param intent
      */
     private void handleIntent(Intent intent) {
-        String action = intent.getAction();
+        String action = intent != null ? intent.getAction() : null;
         if (Intent.ACTION_SEARCH.equals(action)) {
            String query = intent.getStringExtra(SearchManager.QUERY);
            mSearchView.setQuery(query, true);

@@ -114,6 +114,13 @@ public class DetailParser {
             return PINING;
         }
 
+        p = Pattern.compile("<div class=\"d\">\n<p>([^<]+)</p>");
+        m = p.matcher(body);
+        if (m.find()) {
+            eMesg = m.group(1);
+            return ERROR;
+        }
+
         // Get detail
         if ((mode & DETAIL) != 0) {
             p = Pattern
