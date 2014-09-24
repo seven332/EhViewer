@@ -726,6 +726,9 @@ public class HttpHelper {
     }
 
     private class DownloadHelper implements RequestHelper {
+
+        private static final String DOWNLOAD_EXTENSION = ".download";
+
         private final String mUrl;
         private final File mDir;
         private final String mFileName;
@@ -813,12 +816,14 @@ public class HttpHelper {
 
             // Make sure parent exist
             mDir.mkdirs();
-            mFile = new File(mDir, mFileName);
+            mFile = new File(mDir, mFileName + DOWNLOAD_EXTENSION);
             // Transfer
             transferData(conn.getInputStream(), new FileOutputStream(mFile));
             // Callback
             if (mListener != null)
                 mListener.onDownloadOver(DOWNLOAD_OK_CODE, null);
+            // Get ok rename
+            mFile.renameTo(new File(mDir, mFileName));
             return DOWNLOAD_OK_STR;
         }
 
