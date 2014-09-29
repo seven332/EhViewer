@@ -238,7 +238,7 @@ public class DownloadService extends Service
             return;
 
         mBuilder = new NotificationCompat.Builder(mContext);
-        mBuilder.setSmallIcon(R.drawable.ic_launcher);
+        mBuilder.setSmallIcon(R.drawable.ic_stat_eh);
         Intent intent = new Intent(DownloadService.this,DownloadActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(pendingIntent);
