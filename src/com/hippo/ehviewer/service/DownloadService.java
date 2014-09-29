@@ -238,7 +238,7 @@ public class DownloadService extends Service
             return;
 
         mBuilder = new NotificationCompat.Builder(mContext);
-        mBuilder.setSmallIcon(R.drawable.ic_stat_eh);
+        mBuilder.setSmallIcon(android.R.drawable.stat_sys_download);
         Intent intent = new Intent(DownloadService.this,DownloadActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(pendingIntent);
@@ -319,7 +319,7 @@ public class DownloadService extends Service
 
         mCurDownloadInfo.legacy = legacy;
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
-        builder.setSmallIcon(R.drawable.ic_launcher);
+        builder.setSmallIcon(android.R.drawable.stat_sys_download_done);
         Intent intent = new Intent(DownloadService.this,DownloadActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
