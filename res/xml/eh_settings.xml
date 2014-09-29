@@ -45,7 +45,7 @@
 
     <PreferenceCategory android:title="@string/detail_eh_settings_title" >
 
-        <com.hippo.ehviewer.preference.AutoListPreference
+        <com.hippo.ehviewer.preference.ListPreference
             android:defaultValue="l"
             android:entries="@array/preview_mode_entries"
             android:entryValues="@array/preview_mode_entry_values"
@@ -57,7 +57,7 @@
 
     <PreferenceCategory android:title="@string/favorite_eh_settings_title" >
 
-        <com.hippo.ehviewer.preference.AutoListPreference
+        <com.hippo.ehviewer.preference.ListPreference
             android:key="default_favorite"
             android:title="@string/default_favorite"
             android:entryValues="@array/default_favorite_entry_values"

@@ -32,11 +32,10 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 
+import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.ui.GalleryListActivity;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
-import com.hippo.ehviewer.widget.AlertButton;
-import com.hippo.ehviewer.widget.DialogBuilder;
 
 public class StartActivity extends Activity {
 
@@ -47,136 +46,116 @@ public class StartActivity extends Activity {
     private static final int CHECK_ANALYTICS = 1;
     private static final int CHECK_NETWORK = 2;
     private static final int CHECK_CRASH = 3;
-    private static final int CHECK_EXTERNAL_STORAGE = 4;
 
     private String lastCrash;
     private boolean isAnimationOver = false;
     private boolean isCheckOver = false;
 
-    private AlertDialog createWarningDialog() {
-        return new DialogBuilder(this).setCancelable(false)
+    private MaterialAlertDialog createWarningDialog() {
+        return new MaterialAlertDialog.Builder(this).setCancelable(false)
                 .setTitle(R.string.dailog_waring_title)
                 .setMessage(R.string.dailog_waring_plain)
-                .setPositiveButton(R.string.dailog_waring_yes,
-                new View.OnClickListener() {
+                .setPositiveButton(R.string.dailog_waring_yes)
+                .setNegativeButton(R.string.dailog_waring_no)
+                .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        Config.allowed();
-
-                        check(CHECK_ANALYTICS);
-                    }
-                }).setNegativeButton(R.string.dailog_waring_no,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        finish();
+                    public boolean onClick(MaterialAlertDialog dialog, int which) {
+                        switch (which) {
+                        case MaterialAlertDialog.POSITIVE:
+                            Config.allowed();
+                            check(CHECK_ANALYTICS);
+                            break;
+                        case MaterialAlertDialog.NEGATIVE:
+                            finish();
+                            break;
+                        }
+                        return true;
                     }
                 }).create();
     }
 
     private AlertDialog createAllowAnalyicsDialog() {
-        return new DialogBuilder(this).setCancelable(false)
+        return new MaterialAlertDialog.Builder(this).setCancelable(false)
                 .setTitle(R.string.dailog_analyics_title)
                 .setMessageAutoLink(Linkify.WEB_URLS)
-                .setLongMessage(R.string.dailog_analyics_plain)
-                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                .setMessage(R.string.dailog_analyics_plain)
+                .setPositiveButton(android.R.string.ok)
+                .setNegativeButton(android.R.string.cancel)
+                .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        Config.setAllowAnalyics(true);
-                        check(CHECK_NETWORK);
-                    }
-                }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        Config.setAllowAnalyics(false);
-                        check(CHECK_NETWORK);
+                    public boolean onClick(MaterialAlertDialog dialog, int which) {
+                        switch (which) {
+                        case MaterialAlertDialog.POSITIVE:
+                            Config.setAllowAnalyics(true);
+                            check(CHECK_NETWORK);
+                            break;
+                        case MaterialAlertDialog.NEGATIVE:
+                            Config.setAllowAnalyics(false);
+                            check(CHECK_NETWORK);
+                            break;
+                        }
+                        return true;
                     }
                 }).create();
     }
 
     private AlertDialog createNetworkErrorDialog() {
-        return new DialogBuilder(this).setCancelable(false)
+        return new MaterialAlertDialog.Builder(this).setCancelable(false)
                 .setTitle(R.string.error).setMessage(R.string.em_no_network)
-                .setPositiveButton(R.string.dailog_network_error_yes,
-                new View.OnClickListener() {
+                .setPositiveButton(R.string.dailog_network_error_yes)
+                .setNegativeButton(R.string.dailog_network_error_no)
+                .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-
-                        check(CHECK_CRASH);
-                    }
-                })
-                .setNegativeButton(R.string.dailog_network_error_no,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        finish();
+                    public boolean onClick(MaterialAlertDialog dialog, int which) {
+                        switch (which) {
+                        case MaterialAlertDialog.POSITIVE:
+                            check(CHECK_CRASH);
+                            break;
+                        case MaterialAlertDialog.NEGATIVE:
+                            finish();
+                            break;
+                        }
+                        return true;
                     }
                 }).create();
     }
 
     private AlertDialog createSendCrashDialog() {
-        return new DialogBuilder(this).setCancelable(false)
+        return new MaterialAlertDialog.Builder(this).setCancelable(false)
                 .setTitle(R.string.dialog_send_crash_title)
                 .setMessage(R.string.dialog_send_crash_plain)
-                .setPositiveButton(R.string.dialog_send_crash_yes, new View.OnClickListener() {
+                .setPositiveButton(R.string.dialog_send_crash_yes)
+                .setNegativeButton(R.string.dialog_send_crash_no)
+                .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-
-                        new DialogBuilder(StartActivity.this).setCancelable(false)
-                                .setTitle(R.string.wait)
-                                .setMessage(R.string.dialog_wait_send_crash_msg)
-                                .setPositiveButton(android.R.string.ok,
-                                        new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                ((AlertButton)v).dialog.dismiss();
-
-                                                check(CHECK_EXTERNAL_STORAGE);
-                                            }
-                                        }).show();
-
-                        Intent i = new Intent(Intent.ACTION_SENDTO);
-                        i.setData(Uri.parse("mailto:ehviewersu@gmail.com"));
-                        i.putExtra(Intent.EXTRA_SUBJECT, "I found a bug in EhViewer !");
-                        i.putExtra(Intent.EXTRA_TEXT, lastCrash);
-                        startActivity(i);
-                        lastCrash = null;
-                    }
-                }).setNegativeButton(R.string.dialog_send_crash_no, new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        lastCrash = null;
-
-                        check(CHECK_EXTERNAL_STORAGE);
-                    }
-                }).create();
-    }
-
-    private AlertDialog createNoSdCardDialog() {
-        return new DialogBuilder(this).setCancelable(false)
-                .setTitle("未检测到内置存储空间或 Sd Card")
-                .setMessage("未检测到内置存储空间或 Sd Card，您无法使用磁盘缓存与下载功能，用户体验会很糟，是否继续？")
-                .setPositiveButton("我不介意", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-
-                        checkOver();
-                    }
-                }).setNegativeButton("算了", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        finish();
+                    public boolean onClick(MaterialAlertDialog dialog, int which) {
+                        switch (which) {
+                        case MaterialAlertDialog.POSITIVE:
+                            // A wait dialog
+                            new MaterialAlertDialog.Builder(StartActivity.this).setCancelable(false)
+                                    .setTitle(R.string.wait)
+                                    .setMessage(R.string.dialog_wait_send_crash_msg)
+                                    .setPositiveButton(android.R.string.ok)
+                                    .setButtonListener(new MaterialAlertDialog.OnClickListener() {
+                                        @Override
+                                        public boolean onClick(MaterialAlertDialog dialog, int which) {
+                                            checkOver();
+                                            return true;
+                                        }
+                                    }).show();
+                            Intent i = new Intent(Intent.ACTION_SENDTO);
+                            i.setData(Uri.parse("mailto:ehviewersu@gmail.com"));
+                            i.putExtra(Intent.EXTRA_SUBJECT, "I found a bug in EhViewer !");
+                            i.putExtra(Intent.EXTRA_TEXT, lastCrash);
+                            startActivity(i);
+                            lastCrash = null;
+                            break;
+                        case MaterialAlertDialog.NEGATIVE:
+                            lastCrash = null;
+                            checkOver();
+                            break;
+                        }
+                        return true;
                     }
                 }).create();
     }
@@ -251,11 +230,6 @@ public class StartActivity extends Activity {
         case CHECK_CRASH:
             if ((lastCrash = Crash.getLastCrash()) != null) {
                 createSendCrashDialog().show();
-                return;
-            }
-        case CHECK_EXTERNAL_STORAGE:
-            if (false) {
-                createNoSdCardDialog().show();
                 return;
             }
         }

@@ -39,6 +39,7 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.DownloadInfo;
@@ -50,8 +51,6 @@ import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
-import com.hippo.ehviewer.widget.AlertButton;
-import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.ExpandingListView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
@@ -321,17 +320,21 @@ public class DownloadActivity extends AbsActivity {
 
         @Override
         public void onClick(View v) {
-            new DialogBuilder(DownloadActivity.this).setTitle(R.string.attention)
-                    .setMessage(R.string.delete).setSimpleNegativeButton()
-                    .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+            new MaterialAlertDialog.Builder(DownloadActivity.this).setTitle(R.string.attention)
+                    .setMessage(R.string.delete)
+                    .setPositiveButton(android.R.string.ok)
+                    .setNegativeButton(android.R.string.cancel)
+                    .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
-                            ((AlertButton)v).dialog.dismiss();
-                            Intent it = new Intent(DownloadActivity.this, DownloadService.class);
-                            startService(it);
-                            mServiceConn.getService().delete(mDownloadInfo);
+                        public boolean onClick(MaterialAlertDialog dialog, int which) {
+                            if (which == MaterialAlertDialog.POSITIVE) {
+                                Intent it = new Intent(DownloadActivity.this, DownloadService.class);
+                                startService(it);
+                                mServiceConn.getService().delete(mDownloadInfo);
+                            }
+                            return true;
                         }
-                    }).create().show();
+                    }).show();
         }
     }
 
@@ -344,20 +347,24 @@ public class DownloadActivity extends AbsActivity {
 
         @Override
         public void onClick(View v) {
-            new DialogBuilder(DownloadActivity.this).setTitle(R.string.attention)
-                    .setMessage(R.string.delete2).setSimpleNegativeButton()
-                    .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+            new MaterialAlertDialog.Builder(DownloadActivity.this).setTitle(R.string.attention)
+                    .setMessage(R.string.delete2)
+                    .setPositiveButton(android.R.string.ok)
+                    .setNegativeButton(android.R.string.cancel)
+                    .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
-                            ((AlertButton)v).dialog.dismiss();
-                            Intent it = new Intent(DownloadActivity.this, DownloadService.class);
-                            startService(it);
-                            mServiceConn.getService().delete(mDownloadInfo);
-                            // Delete dir
-                            GalleryInfo gi = mDownloadInfo.galleryInfo;
-                            Utils.deleteDirInThread(EhUtils.getGalleryDir(gi.gid, gi.title));
+                        public boolean onClick(MaterialAlertDialog dialog, int which) {
+                            if (which == MaterialAlertDialog.POSITIVE) {
+                                Intent it = new Intent(DownloadActivity.this, DownloadService.class);
+                                startService(it);
+                                mServiceConn.getService().delete(mDownloadInfo);
+                                // Delete dir
+                                GalleryInfo gi = mDownloadInfo.galleryInfo;
+                                Utils.deleteDirInThread(EhUtils.getGalleryDir(gi.gid, gi.title));
+                            }
+                            return true;
                         }
-                    }).create().show();
+                    }).show();
         }
     }
 

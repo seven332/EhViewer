@@ -72,6 +72,7 @@ import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.SimpleSuggestionProvider;
 import com.hippo.ehviewer.UpdateHelper;
+import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
@@ -128,7 +129,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 public class GalleryListActivity extends AbsGalleryActivity
         implements View.OnClickListener, SearchView.OnQueryTextListener,
         SearchView.OnFocusChangeListener, SlidingMenu.OnOpenedListener,
-        SlidingMenu.OnClosedListener {
+        SlidingMenu.OnClosedListener, EhClient.OnLoginListener {
 
     @SuppressWarnings("unused")
     private static final String TAG = GalleryListActivity.class.getSimpleName();
@@ -207,64 +208,70 @@ public class GalleryListActivity extends AbsGalleryActivity
         startActivity(intent);
     }
 
+    @Override
+    public void onSuccess() {
+        setUserPanel();
+    }
+
+    @Override
+    public void onGetAvatar(final int code) {
+        GalleryListActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (code) {
+                case EhClient.GET_AVATAR_OK:
+                    setUserPanel();
+                    break;
+                case EhClient.NO_AVATAR:
+                    MaterialToast.showToast(R.string.no_avatar);
+                    break;
+                case EhClient.GET_AVATAR_ERROR:
+                default:
+                    MaterialToast.showToast(R.string.get_avatar_error);
+                    break;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onFailure(String eMesg) {
+        setUserPanel();
+        MaterialToast.showToast(eMesg);
+        if (!GalleryListActivity.this.isFinishing())
+            loginDialog.show();
+    }
+
+    @SuppressLint("InflateParams")
     private AlertDialog createLoginDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.login, null);
 
-        return new DialogBuilder(this).setCancelable(false)
+        return new MaterialAlertDialog.Builder(this).setCancelable(false)
                 .setTitle(R.string.login)
-                .setView(view, false)
-                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                .setView(view)
+                .setPositiveButton(android.R.string.ok)
+                .setNegativeButton(android.R.string.cancel)
+                .setNeutralButton(R.string.register)
+                .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        setUserPanel(WAIT);
-                        String username = ((EditText) loginDialog.findViewById(R.id.username)).getText().toString();
-                        String password = ((EditText) loginDialog.findViewById(R.id.password)).getText().toString();
-                        mClient.login(username, password, new EhClient.OnLoginListener() {
-                            @Override
-                            public void onSuccess() {
-                                setUserPanel();
-                            }
-                            @Override
-                            public void onFailure(String eMsg) {
-                                setUserPanel();
-                                MaterialToast.showToast(eMsg);
-                                if (!GalleryListActivity.this.isFinishing())
-                                    loginDialog.show();
-                            }
-                            @Override
-                            public void onGetAvatar(final int code) {
-                                GalleryListActivity.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        switch (code) {
-                                        case EhClient.GET_AVATAR_OK:
-                                            setUserPanel();
-                                            break;
-                                        case EhClient.NO_AVATAR:
-                                            MaterialToast.showToast(R.string.no_avatar);
-                                            break;
-                                        case EhClient.GET_AVATAR_ERROR:
-                                        default:
-                                            MaterialToast.showToast(R.string.get_avatar_error);
-                                            break;
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                    }
-                }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        setUserPanel();
-                    }
-                }).setNeutralButton(R.string.register, new View.OnClickListener(){
-                    @Override
-                    public void onClick(View v) {
-                        toRegister();
+                    public boolean onClick(MaterialAlertDialog dialog, int which) {
+                        switch (which) {
+                        case MaterialAlertDialog.POSITIVE:
+                            setUserPanel(WAIT);
+                            String username = ((EditText) loginDialog.findViewById(R.id.username)).getText().toString();
+                            String password = ((EditText) loginDialog.findViewById(R.id.password)).getText().toString();
+                            mClient.login(username, password, GalleryListActivity.this);
+                            return true;
+                        case MaterialAlertDialog.NEGATIVE:
+                            setUserPanel();
+                            return true;
+                        case MaterialAlertDialog.NEUTRAL:
+                            toRegister();
+                            return false;
+                        default:
+                            return false;
+                        }
                     }
                 }).create();
     }
@@ -1232,9 +1239,9 @@ public class GalleryListActivity extends AbsGalleryActivity
         if (Config.getTraditionalChineseWarning() &&
                 (country.equals("HK") || country.equals("TW"))) {
             Config.setTraditionalChineseWarning(false);
-            new DialogBuilder(this).setTitle("注意")
+            new MaterialAlertDialog.Builder(this).setTitle("注意")
                     .setMessage("正體中文的翻譯由 OpenCC 自動完成，若有任何錯誤或不妥之處歡迎指出。")
-                    .setSimpleNegativeButton().create().show();
+                    .show();
         }
     }
 

@@ -52,6 +52,7 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
@@ -64,7 +65,6 @@ import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.ActionableToastBar;
 import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
-import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.ProgressDialogBulider;
@@ -430,14 +430,13 @@ public class FavouriteActivity extends AbsGalleryActivity
     }
 
     private AlertDialog createMoveDialog(final ActionMode mode) {
-        return new DialogBuilder(this).setTitle(R.string.where_to_move)
-                .setItems(Favorite.FAVORITE_TITLES, new AdapterView.OnItemClickListener() {
+        return new MaterialAlertDialog.Builder(this).setTitle(R.string.where_to_move)
+                .setItems(Favorite.FAVORITE_TITLES, new MaterialAlertDialog.OnClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                            int position, long id) {
+                    public boolean onClick(MaterialAlertDialog dialog, int position) {
                         if (mMenuIndex == position) {
                             MaterialToast.showToast(R.string.dst_src_same);
-                            return;
+                            return true;
                         }
 
                         mTargetCat = position - 1;
@@ -465,8 +464,9 @@ public class FavouriteActivity extends AbsGalleryActivity
                                 mPullViewGroup.setRefreshing(true);
                             }
                         }
+                        return true;
                     }
-                }).setSimpleNegativeButton().create();
+                }).setNegativeButton(android.R.string.cancel).create();
     }
 
     @Override

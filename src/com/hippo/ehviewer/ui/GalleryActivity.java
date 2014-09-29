@@ -33,14 +33,13 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Ui;
-import com.hippo.ehviewer.widget.AlertButton;
-import com.hippo.ehviewer.widget.DialogBuilder;
 
 public class GalleryActivity extends AbsActivity
         implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener {
@@ -202,15 +201,16 @@ public class GalleryActivity extends AbsActivity
         int startIndex = intent.getIntExtra(KEY_START_INDEX, 0);
 
         if (mGid == -1 || token == null || mTitle == null) {
-            new DialogBuilder(this).setTitle(R.string.error)
-                    .setMessage("数据错误！").setPositiveButton("关闭",
-                    new View.OnClickListener() {
+            new MaterialAlertDialog.Builder(this).setTitle(R.string.error)
+                    .setMessage("数据错误！") // TODO
+                    .setPositiveButton("关闭")
+                    .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
-                            ((AlertButton)v).dialog.dismiss();
+                        public boolean onClick(MaterialAlertDialog dialog, int which) {
                             finish();
+                            return true;
                         }
-                    }).create().show();
+                    }).show();
         } else {
             mImageSet = new ImageSet(mGid, token, mTitle, startIndex);
             mGalleryView = new GalleryView(getApplicationContext(), mImageSet, startIndex);
@@ -236,9 +236,10 @@ public class GalleryActivity extends AbsActivity
             // Show first tip
             if (Config.getGalleryFirst()) {
                 Config.setGalleryFirst(false);
-                new DialogBuilder(this).setTitle(R.string.tip)
+                new MaterialAlertDialog.Builder(this).setTitle(R.string.tip)
                         .setMessage(R.string.gallery_tip)
-                        .setSimpleNegativeButton().create().show();
+                        .setNegativeButton(android.R.string.cancel)
+                        .show();
             }
         }
     }

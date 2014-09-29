@@ -18,5 +18,6 @@
 
     <item type="id" name="position_x"></item>
     <item type="id" name="position_y"></item>
+    <item type="id" name="edittextpreference_edittext"></item>
 
 </resources>

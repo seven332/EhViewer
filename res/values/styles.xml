@@ -46,6 +46,15 @@
         <item name="@android:textStyle">normal</item>
     </style>
 
+    <style name="TextAppearance.DialogTitle">
+        <item name="@android:textSize">@dimen/text_super_large</item>
+    </style>
+
+    <style name="TextAppearance.DialogMessage">
+        <item name="@android:textColor">@color/secondary_text_dark</item>
+        <item name="@android:textSize">@dimen/text_little_large</item>
+    </style>
+
     <style name="TextAppearance.SuperButton">
         <item name="@android:fontFamily">sans-serif-medium</item>
         <item name="@android:textAllCaps">true</item>
@@ -54,6 +63,20 @@
 
     <style name="TextAppearance.SuperButton.Small">
         <item name="@android:textSize">13sp</item>
+    </style>
+
+    <style name="TextAppearance.DialogButton">
+        <item name="@android:textAllCaps">true</item>
+        <item name="@android:textSize">@dimen/text_little_large</item>
+    </style>
+
+    <style name="DialogButton" parent="@android:Widget.Button">
+        <item name="@android:background">@null</item>
+        <item name="@android:textAppearance">@style/TextAppearance.DialogButton</item>
+        <item name="@android:minHeight">36dp</item>
+        <item name="@android:maxLines">2</item>
+        <item name="@android:paddingLeft">16dp</item>
+        <item name="@android:paddingRight">16dp</item>
     </style>
 
     <style name="SuperButton" parent="@android:Widget.Button">

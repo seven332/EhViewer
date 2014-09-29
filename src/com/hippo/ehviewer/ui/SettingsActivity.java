@@ -33,7 +33,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.provider.SearchRecentSuggestions;
@@ -57,12 +56,13 @@ import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.SimpleSuggestionProvider;
 import com.hippo.ehviewer.UpdateHelper;
+import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.DownloadInfo;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.ehclient.ExDownloaderManager;
 import com.hippo.ehviewer.network.HttpHelper;
-import com.hippo.ehviewer.preference.AutoListPreference;
+import com.hippo.ehviewer.preference.ListPreference;
 import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
@@ -224,7 +224,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_RANDOM_THEME_COLOR = "random_theme_color";
         private static final String KEY_THEME_COLOR = "theme_color";
 
-        private AutoListPreference mScreenOrientation;
+        private ListPreference mScreenOrientation;
         private CheckBoxPreference mRandomThemeColor;
         private Preference mThemeColor;
 
@@ -233,7 +233,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.display_settings);
 
-            mScreenOrientation = (AutoListPreference)findPreference(KEY_SCREEN_ORIENTATION);
+            mScreenOrientation = (ListPreference)findPreference(KEY_SCREEN_ORIENTATION);
             mScreenOrientation.setOnPreferenceChangeListener(this);
             mRandomThemeColor = (CheckBoxPreference)findPreference(KEY_RANDOM_THEME_COLOR);
             mRandomThemeColor.setOnPreferenceChangeListener(this);
@@ -315,7 +315,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private Preference mExculdeTagGroup;
         private Preference mExculdeLanguage;
         private Preference mClearSuggestions;
-        private AutoListPreference mPreviewMode;
+        private ListPreference mPreviewMode;
         private ListPreference mDefaultFavorite;
 
         @Override
@@ -331,7 +331,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mExculdeLanguage.setOnPreferenceClickListener(this);
             mClearSuggestions = findPreference(KEY_CLEAR_SUGGESTIONS);
             mClearSuggestions.setOnPreferenceClickListener(this);
-            mPreviewMode = (AutoListPreference)findPreference(KEY_PREVIEW_MODE);
+            mPreviewMode = (ListPreference)findPreference(KEY_PREVIEW_MODE);
             mPreviewMode.setOnPreferenceChangeListener(this);
             mDefaultFavorite = (ListPreference)findPreference(KEY_DEFAULT_FAVORITE);
 
@@ -908,18 +908,18 @@ public class SettingsActivity extends AbsPreferenceActivity {
             } else if (KEY_CHANGELOG.equals(key)) {
                 InputStream is = mActivity.getResources()
                         .openRawResource(R.raw.change_log);
-                new DialogBuilder(mActivity).setTitle(R.string.changelog)
-                        .setLongMessage(Utils.InputStream2String(is, "utf-8"))
-                        .setSimpleNegativeButton().create().show();
+                new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.changelog)
+                        .setMessage(Utils.InputStream2String(is, "utf-8"))
+                        .setNegativeButton(android.R.string.cancel).show();
 
             } else if (KEY_THANKS.equals(key)) {
                 InputStream is = mActivity.getResources()
                         .openRawResource(R.raw.thanks);
                 final WebView webView = new WebView(mActivity);
                 webView.loadData(Utils.InputStream2String(is, "utf-8"), "text/html; charset=UTF-8", null);
-                new DialogBuilder(mActivity).setTitle(R.string.thanks)
-                        .setView(webView, false).setSimpleNegativeButton()
-                        .create().show();
+                new MaterialAlertDialog.Builder(mActivity)//.setTitle(R.string.thanks)
+                        .setView(webView).setNegativeButton(android.R.string.cancel)
+                        .show();
 
             } else if (KEY_WEBSITE.equals(key)) {
                 Uri uri = Uri.parse("http://www.ehviewer.com");
@@ -979,11 +979,12 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 startActivity(intent);
 
             } else if (KEY_ABOUT_ANALYICS.equals(key)) {
-                new DialogBuilder(mActivity).setTitle(R.string.about_analyics_title)
-                .setMessageAutoLink(Linkify.WEB_URLS)
-                .setLongMessage(R.string.about_analyics_comment)
-                .setSimpleNegativeButton()
-                .create().show();
+                new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.about_analyics_title)
+                        .setMessageAutoLink(Linkify.WEB_URLS)
+                        .setMessage(R.string.about_analyics_comment)
+                        .setNegativeButton(android.R.string.cancel)
+                        .show();
+
             }
             return true;
         }

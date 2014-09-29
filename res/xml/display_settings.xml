@@ -35,7 +35,7 @@
     <PreferenceCategory
         android:title="@string/screen_display_settings_title">
 
-        <com.hippo.ehviewer.preference.AutoListPreference
+        <com.hippo.ehviewer.preference.ListPreference
             android:key="screen_orientation"
             android:title="@string/screen_orientation_title"
             android:entries="@array/screen_orientation_entries"
@@ -48,7 +48,7 @@
     <PreferenceCategory
         android:title="@string/list_display_settings_title">
 
-        <com.hippo.ehviewer.preference.AutoListPreference
+        <com.hippo.ehviewer.preference.ListPreference
             android:key="list_mode"
             android:title="@string/list_mode_title"
             android:entries="@array/list_mode_entries"

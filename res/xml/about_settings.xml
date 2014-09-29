@@ -54,7 +54,7 @@
             android:title="@string/check_for_update_title"
             android:summary="@string/check_for_update_summary" />
 
-        <com.hippo.ehviewer.preference.AutoListPreference
+        <com.hippo.ehviewer.preference.ListPreference
             android:entries="@array/update_server_entries"
             android:entryValues="@array/update_server_entry_values"
             android:key="update_server"

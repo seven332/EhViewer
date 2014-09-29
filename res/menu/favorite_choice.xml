@@ -17,11 +17,11 @@
     <item
         android:id="@+id/action_delete"
         android:title="@string/delete"
-        android:icon="@drawable/ic_action_delete_dark"
+        android:icon="@drawable/ic_action_delete"
         android:showAsAction="always" />
     <item
         android:id="@+id/action_move"
         android:title="@string/move"
-        android:icon="@drawable/ic_action_move_dark"
+        android:icon="@drawable/ic_action_move"
         android:showAsAction="always" />
 </menu>

@@ -38,6 +38,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -61,6 +62,7 @@ import android.widget.ViewSwitcher;
 import com.faizmalkani.floatingactionbutton.FloatingActionButton;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.ApiGalleryDetail;
 import com.hippo.ehviewer.data.Comment;
@@ -169,7 +171,6 @@ public class GalleryDetailActivity extends AbsActivity
     private Drawable mCheckmarkDrawable;
 
     private Dialog mCommentLongClickDialog;
-    private Dialog mGoToDialog;
 
     private CommentAdapter mCommentAdapter;
 
@@ -179,44 +180,22 @@ public class GalleryDetailActivity extends AbsActivity
     private boolean mGetPreview = false;
 
     private AlertDialog createGoToDialog() {
-        return new DialogBuilder(this, mThemeColor).setTitle(R.string.jump)
-                .setAdapter(new BaseAdapter() {
+        CharSequence[] items = new CharSequence[((PreviewImpl)mGalleryInfo).getPreviewPageNum()];
+        for (int i = 0; i < items.length; i++)
+            items[i] = Integer.toString(i + 1);
+
+        Log.d(TAG, "items = " + items.length);
+
+        return new MaterialAlertDialog.Builder(this).setTitle(R.string.jump)
+                .setNegativeButton(android.R.string.cancel)
+                .setItems(items, new MaterialAlertDialog.OnClickListener() {
                     @Override
-                    public int getCount() {
-                        return ((PreviewImpl)mGalleryInfo).getPreviewPageNum();
-                    }
-                    @Override
-                    public Object getItem(int position) {
-                        return position;
-                    }
-                    @Override
-                    public long getItemId(int position) {
-                        return position;
-                    }
-                    @SuppressLint({ "ViewHolder", "InflateParams" })
-                    @Override
-                    public View getView(int position, View convertView,
-                            ViewGroup parent) {
-                        View view = LayoutInflater.from(GalleryDetailActivity.this)
-                                .inflate(R.layout.list_item_text, null);
-                        TextView tv = (TextView)view.findViewById(android.R.id.text1);
-                        tv.setText(String.format(getString(R.string.some_page), position + 1));
-                        return tv;
-                    }
-                }, new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> arg0, View arg1,
-                            int position, long arg3) {
-                        mGoToDialog.dismiss();
+                    public boolean onClick(MaterialAlertDialog dialog, int position) {
                         if (position != mCurPreviewPage) {
                             mCurPreviewPage = position;
                             refreshPreview();
                         }
-                    }
-                }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View paramView) {
-                        mGoToDialog.dismiss();
+                        return true;
                     }
                 }).create();
     }
@@ -399,9 +378,6 @@ public class GalleryDetailActivity extends AbsActivity
         mPreviewWait.setColor(mThemeColor);
         mPreviewRefresh.setRoundBackground(true, mThemeColor, 0);
         mReply.setColor(mThemeColor);
-
-        // Create dialog
-        mGoToDialog = createGoToDialog();
 
         // Set ripple
         mWindowsAnimate.addRippleEffect(mDownloadButton, true);
@@ -942,7 +918,7 @@ public class GalleryDetailActivity extends AbsActivity
             if (mGalleryInfo instanceof PreviewImpl &&
                     ((PreviewImpl)mGalleryInfo).getPreviewPageNum() != Integer.MAX_VALUE &&
                     ((PreviewImpl)mGalleryInfo).getPreviewPageNum() > 1)
-                mGoToDialog.show();
+                createGoToDialog().show();
         } else if (v == mPreviewBack) {
             if (!(mGalleryInfo instanceof PreviewImpl) ||
                     (mGalleryInfo instanceof LofiGalleryDetail && mGetPreview))

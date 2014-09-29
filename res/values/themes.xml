@@ -28,6 +28,8 @@
         <item name="@android:homeAsUpIndicator">@drawable/ic_ab_back</item>
         <item name="@android:windowActionBarOverlay">true</item>
 
+        <item name="@android:listChoiceIndicatorSingle">@drawable/btn_radio_material_anim</item>
+        <item name="@android:listChoiceIndicatorMultiple">@drawable/btn_check_material_anim</item>
     </style>
 
     <style name="AppTheme.Normal">

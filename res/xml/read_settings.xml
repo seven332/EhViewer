@@ -17,7 +17,7 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <com.hippo.ehviewer.preference.AutoListPreference
+    <com.hippo.ehviewer.preference.ListPreference
         android:key="page_scaling"
         android:title="@string/page_scaling_title"
         android:entries="@array/page_scaling_entries"
@@ -25,7 +25,7 @@
         android:defaultValue="3"
         android:summary="%s" />
 
-    <com.hippo.ehviewer.preference.AutoListPreference
+    <com.hippo.ehviewer.preference.ListPreference
         android:key="start_position"
         android:title="@string/start_position_title"
         android:entries="@array/start_position_entries"
@@ -36,7 +36,8 @@
     <CheckBoxPreference
         android:key="gallery_show_clock"
         android:title="@string/gallery_show_clock_title"
-        android:defaultValue="true" />
+        android:defaultValue="true"
+        android:enabled="false" />
 
     <CheckBoxPreference
         android:key="gallery_show_battery"
@@ -48,7 +49,7 @@
         android:title="@string/custom_codec_title"
         android:summary="@string/custom_codec_summary" />
 
-    <com.hippo.ehviewer.preference.AutoListPreference
+    <com.hippo.ehviewer.preference.ListPreference
         android:key="decode_format"
         android:title="@string/decode_format_title"
         android:entries="@array/decode_format_entries"

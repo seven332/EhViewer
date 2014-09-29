@@ -18,48 +18,45 @@ package com.hippo.ehviewer.preference;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.preference.Preference;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.app.MaterialAlertDialog;
+import com.hippo.ehviewer.app.MaterialAlertDialog.Builder;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.widget.AlertButton;
-import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.MaterialToast;
 
-public class NumberOfColumnsPreference extends Preference
-        implements Preference.OnPreferenceClickListener {
+public class NumberOfColumnsPreference extends DialogPreference {
 
-    private final Context mContext;
+    private Context mContext;
     private String keyPortrait;
     private String keyLandscape;
     private int defValuePortrait;
     private int defValueLandscape;
 
-    public NumberOfColumnsPreference(Context context) {
-        super(context);
-        mContext = context;
-    }
-
     public NumberOfColumnsPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
         init(context, attrs, 0);
     }
 
     public NumberOfColumnsPreference(Context context, AttributeSet attrs,
             int defStyle) {
         super(context, attrs, defStyle);
-        mContext = context;
         init(context, attrs, defStyle);
     }
 
-    public void init(Context context, AttributeSet attrs,
+    private void updateSummary(int portrait, int landscape) {
+        setSummary(String.format("%s: %d, %s: %d", mContext.getString(R.string.portrait),
+                portrait, mContext.getString(R.string.landscape), landscape));
+    }
+
+    private void init(Context context, AttributeSet attrs,
             int defStyle) {
-        TypedArray a = context.obtainStyledAttributes(attrs,
+        mContext = context;
+        TypedArray a = mContext.obtainStyledAttributes(attrs,
                 R.styleable.NumberOfColumnsPreference, defStyle, 0);
 
         keyPortrait = a.getString(R.styleable.NumberOfColumnsPreference_keyPortrait);
@@ -74,50 +71,53 @@ public class NumberOfColumnsPreference extends Preference
 
         a.recycle();
 
-        setOnPreferenceClickListener(this);
         updateSummary(Config.getInt(keyPortrait, defValuePortrait),
                 Config.getInt(keyLandscape, defValueLandscape));
     }
 
-    private void updateSummary(int portrait, int landscape) {
-        setSummary(String.format("%s: %d, %s: %d", mContext.getString(R.string.portrait),
-                portrait, mContext.getString(R.string.landscape), landscape));
+    @Override
+    protected View onCreateDialogView() {
+        LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        return inflater.inflate(R.layout.set_column_number, null);
     }
 
     @Override
-    public boolean onPreferenceClick(Preference preference) {
-        if (keyPortrait == null || keyLandscape == null)
-            return true;
-
-        DialogBuilder db = new DialogBuilder(mContext);
-        db.setTitle(getTitle()).setView(R.layout.set_column_number, true);
-        LinearLayout customLayout = db.getCustomLayout();
-
-        final EditText editTextPortrait = (EditText)customLayout.findViewById(R.id.portrait);
+    protected void onBindDialogView(View view) {
+        final EditText editTextPortrait = (EditText) view.findViewById(R.id.portrait);
         editTextPortrait.setText(String.valueOf(Config.getInt(keyPortrait, defValuePortrait)));
-        final EditText editTextLandscape = (EditText)customLayout.findViewById(R.id.landscape);
+        final EditText editTextLandscape = (EditText) view.findViewById(R.id.landscape);
         editTextLandscape.setText(String.valueOf(Config.getInt(keyLandscape, defValueLandscape)));
+    }
 
-        db.setSimpleNegativeButton().setPositiveButton(android.R.string.ok, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    int newPortrait = Integer.valueOf(editTextPortrait.getText().toString());
-                    int newLandscape = Integer.valueOf(editTextLandscape.getText().toString());
-                    if (newPortrait > 0 && newPortrait < 100 &&
-                            newLandscape > 0 && newLandscape < 100) { // TODO Need a better range
-                        Config.setInt(keyPortrait, newPortrait);
-                        Config.setInt(keyLandscape, newLandscape);
-                        updateSummary(newPortrait, newLandscape);
-                        ((AlertButton)v).dialog.dismiss();
-                    } else {
-                        throw new Exception();
-                    }
-                } catch (Exception e) {
-                    MaterialToast.showToast(R.string.invalid_input);
+    @Override
+    protected void onPrepareDialogBuilder(Builder builder) {
+        // Empty
+    }
+
+    @Override
+    public boolean onClick(MaterialAlertDialog dialog, int which) {
+        super.onClick(dialog, which);
+        if (which == MaterialAlertDialog.POSITIVE) {
+            try {
+                EditText editTextPortrait = (EditText) dialog.findViewById(R.id.portrait);
+                EditText editTextLandscape = (EditText) dialog.findViewById(R.id.landscape);
+                int newPortrait = Integer.valueOf(editTextPortrait.getText().toString());
+                int newLandscape = Integer.valueOf(editTextLandscape.getText().toString());
+                if (newPortrait > 0 && newPortrait < 100 &&
+                        newLandscape > 0 && newLandscape < 100) { // TODO Need a better range
+                    Config.setInt(keyPortrait, newPortrait);
+                    Config.setInt(keyLandscape, newLandscape);
+                    updateSummary(newPortrait, newLandscape);
+                    return true;
+                } else {
+                    throw new Exception();
                 }
+            } catch (Exception e) {
+                MaterialToast.showToast(R.string.invalid_input);
+                return false;
             }
-        }).create().show();
-        return true;
+        } else {
+            return true;
+        }
     }
 }
