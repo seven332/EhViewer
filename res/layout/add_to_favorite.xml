@@ -14,7 +14,10 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
 
     <ListView
         android:id="@+id/list"
@@ -33,4 +36,4 @@
         android:checked="false"
         android:text="@string/set_default_favorite" />
 
-</merge>
+</LinearLayout>

@@ -16,21 +16,22 @@
 
 package com.hippo.ehviewer.util;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.Resources;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
-import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.MaterialToast;
 
 public class Favorite {
@@ -78,13 +79,15 @@ public class Favorite {
         }
     }
 
+    @SuppressLint("InflateParams")
     public static AlertDialog getAddToFavoriteDialog(final Context context, final GalleryInfo gi) {
-        DialogBuilder db = new DialogBuilder(context).setView(R.layout.add_to_favorite, false);
-        db.setTitle(R.string.where_to_add);
-        db.setSimpleNegativeButton();
-        ViewGroup vg = db.getCustomLayout();
-        final CheckBox cb = (CheckBox)vg.findViewById(R.id.set_default);
-        ListView lv = (ListView)vg.findViewById(R.id.list);
+
+        // TODO List do not work final
+
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.add_to_favorite, null);
+        final CheckBox cb = (CheckBox) view.findViewById(R.id.set_default);
+        ListView lv = (ListView) view.findViewById(R.id.list);
         lv.setAdapter(new ArrayAdapter<String>(mContext,
                 R.layout.list_item_text, FAVORITE_TITLES));
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -117,6 +120,10 @@ public class Favorite {
                 }
             }
         });
-        return lastAddToFavoriteDialog = db.create();
+
+        return lastAddToFavoriteDialog = new MaterialAlertDialog.Builder(context)
+                .setTitle(R.string.where_to_add)
+                .setView(view).setNegativeButton(android.R.string.cancel)
+                .setPositiveButton(android.R.string.ok).create();
     }
 }

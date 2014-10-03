@@ -26,10 +26,10 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
@@ -38,7 +38,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -85,9 +84,7 @@ import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
-import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
-import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.LinkifyTextView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialProgress;
@@ -170,8 +167,6 @@ public class GalleryDetailActivity extends AbsActivity
     private Drawable mRateDrawable;
     private Drawable mCheckmarkDrawable;
 
-    private Dialog mCommentLongClickDialog;
-
     private CommentAdapter mCommentAdapter;
 
     private int mThemeColor;
@@ -179,12 +174,15 @@ public class GalleryDetailActivity extends AbsActivity
     private boolean mShowPreview = false;
     private boolean mGetPreview = false;
 
+    private String mOldReply;
+    private boolean mReplyPositive;
+
     private AlertDialog createGoToDialog() {
         CharSequence[] items = new CharSequence[((PreviewImpl)mGalleryInfo).getPreviewPageNum()];
         for (int i = 0; i < items.length; i++)
             items[i] = Integer.toString(i + 1);
 
-        Log.d(TAG, "items = " + items.length);
+        // TODO too slow
 
         return new MaterialAlertDialog.Builder(this).setTitle(R.string.jump)
                 .setNegativeButton(android.R.string.cancel)
@@ -890,30 +888,54 @@ public class GalleryDetailActivity extends AbsActivity
             animation.start();
             mRunningAnimateNum++;
         } else if (v == mReply) {
+            mReplyPositive = false;
             final EditText et = new EditText(this);
             et.setGravity(Gravity.TOP);
-            et.setBackgroundDrawable(null);
-            new DialogBuilder(this, mThemeColor).setTitle(R.string.reply).setView(et, new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 600), true).setSimpleNegativeButton()
-                    .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+            et.setTextColor(getResources().getColor(R.color.secondary_text_dark));
+            et.setBackgroundDrawable(new ColorDrawable(
+                    getResources().getColor(R.color.edit_text_gb)));
+            et.setText(mOldReply);
+            if (mOldReply != null)
+                et.setSelection(mOldReply.length());
+
+            new MaterialAlertDialog.Builder(this).setTitle(R.string.reply)
+                    .setView(et, new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 600))
+                    .setNegativeButton(android.R.string.cancel)
+                    .setPositiveButton(android.R.string.ok)
+                    .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
-                            ((AlertButton)v).dialog.dismiss();
-                            mClient.comment(EhClient.getDetailUrl(mGalleryInfo.gid,
-                                    mGalleryInfo.token, 0, Config.getApiMode()), et.getText().toString(),
-                                    new EhClient.OnCommentListener() {
-                                        @Override
-                                        public void onSuccess(List<Comment> comments) {
-                                            ((GalleryDetail)mGalleryInfo).comments = comments;
-                                            mCommentAdapter.notifyDataSetChanged();
-                                        }
-                                        @Override
-                                        public void onFailure(String eMsg) {
-                                            MaterialToast.showToast(eMsg);
-                                        }
-                                    });
+                        public boolean onClick(MaterialAlertDialog dialog, int which) {
+                            if (which == MaterialAlertDialog.POSITIVE) {
+                                mReplyPositive = true;
+                                mClient.comment(EhClient.getDetailUrl(mGalleryInfo.gid,
+                                        mGalleryInfo.token, 0, Config.getApiMode()), et.getText().toString(),
+                                        new EhClient.OnCommentListener() {
+                                            @Override
+                                            public void onSuccess(List<Comment> comments) {
+                                                ((GalleryDetail)mGalleryInfo).comments = comments;
+                                                mCommentAdapter.notifyDataSetChanged();
+                                                mOldReply = null;
+                                            }
+                                            @Override
+                                            public void onFailure(String eMsg) {
+                                                MaterialToast.showToast(eMsg);
+                                                mOldReply = et.getText().toString();
+                                            }
+                                        });
+                            }
+                            return true;
                         }
-                    }).create().show();
+                    }).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            if (mReplyPositive)
+                                mOldReply = null;
+                            else
+                                mOldReply = et.getText().toString();
+                        }
+                    }).show();
+
         } else if (v == mPreviewPage) {
             if (mGalleryInfo instanceof PreviewImpl &&
                     ((PreviewImpl)mGalleryInfo).getPreviewPageNum() != Integer.MAX_VALUE &&
@@ -1041,13 +1063,12 @@ public class GalleryDetailActivity extends AbsActivity
     public boolean onItemLongClick(AdapterView<?> parent, View view,
             int position, long id) {
         final Comment c = (Comment)parent.getItemAtPosition(position);
-        mCommentLongClickDialog = new DialogBuilder(this, mThemeColor)
-                .setTitle(R.string.what_to_do).setItems(R.array.comment_long_click,
-                        new AdapterView.OnItemClickListener() {
+
+        new MaterialAlertDialog.Builder(this).setTitle(R.string.what_to_do)
+                .setNegativeButton(android.R.string.cancel)
+                .setItems(R.array.comment_long_click, new MaterialAlertDialog.OnClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                            int position, long id) {
-                        mCommentLongClickDialog.dismiss();
+                    public boolean onClick(MaterialAlertDialog dialog, int position) {
                         switch (position) {
                         case 0:
                             ClipboardManager cm = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
@@ -1063,9 +1084,9 @@ public class GalleryDetailActivity extends AbsActivity
                             startActivity(intent);
                             break;
                         }
+                        return true;
                     }
-                }).setSimpleNegativeButton().create();
-        mCommentLongClickDialog.show();
+                }).show();
         return true;
     }
 

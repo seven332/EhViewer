@@ -41,12 +41,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -72,7 +69,6 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.CategoryTable;
-import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.FileExplorerView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.ProgressDialogBulider;
@@ -362,54 +358,61 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 final CategoryTable ct = new CategoryTable(mActivity);
                 ct.setCategory(defaultCat);
 
-                new DialogBuilder(mActivity)
-                .setTitle(R.string.list_default_category_title)
-                .setView(ct, 12).setSimpleNegativeButton()
-                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        int defaultCat = ct.getCategory();
-                        Config.setDefaultCat(defaultCat);
-                        EhInfo.getInstance(mActivity).setDefaultCat(defaultCat);
-                    }
-                }).create().show();
+                new MaterialAlertDialog.Builder(mActivity)
+                        .setTitle(R.string.list_default_category_title)
+                        .setView(ct).setPositiveButton(android.R.string.ok)
+                        .setNegativeButton(android.R.string.cancel)
+                        .setButtonListener(new MaterialAlertDialog.OnClickListener() {
+                            @Override
+                            public boolean onClick(MaterialAlertDialog dialog, int which) {
+                                if (which == MaterialAlertDialog.POSITIVE) {
+                                    int defaultCat = ct.getCategory();
+                                    Config.setDefaultCat(defaultCat);
+                                    EhInfo.getInstance(mActivity).setDefaultCat(defaultCat);
+                                }
+                                return true;
+                            }
+                        }).show();
 
             } else if (KEY_EXCULDE_TAG_GROUP.equals(key)) {
                 LayoutInflater inflater = LayoutInflater.from(mActivity);
                 final TableLayout tl = (TableLayout)inflater.inflate(R.layout.exculde_tag_group, null);
                 setExculdeTagGroup(tl, Config.getExculdeTagGroup());
 
-                new DialogBuilder(mActivity)
-                .setTitle(R.string.exculde_tag_group_title)
-                .setView(tl, 12).setSimpleNegativeButton()
-                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        int newValue = getExculdeTagGroup(tl);
-                        Config.setExculdeTagGroup(newValue);
-                        EhInfo.getInstance(mActivity).setExculdeTagGroup(newValue);
-                    }
-                }).create().show();
+                new MaterialAlertDialog.Builder(mActivity)
+                        .setTitle(R.string.exculde_tag_group_title)
+                        .setView(tl).setPositiveButton(android.R.string.ok)
+                        .setNegativeButton(android.R.string.cancel)
+                        .setButtonListener(new MaterialAlertDialog.OnClickListener() {
+                            @Override
+                            public boolean onClick(MaterialAlertDialog dialog,
+                                    int which) {
+                                int newValue = getExculdeTagGroup(tl);
+                                Config.setExculdeTagGroup(newValue);
+                                EhInfo.getInstance(mActivity).setExculdeTagGroup(newValue);
+                                return true;
+                            }
+                        }).show();
 
             } else if (KEY_EXCULDE_LANGUAGE.equals(key)) {
                 LayoutInflater inflater = LayoutInflater.from(mActivity);
                 final TableLayout tl = (TableLayout)inflater.inflate(R.layout.exculde_language, null);
                 setExculdeLanguage(tl, Config.getExculdeLanguage());
 
-                new DialogBuilder(mActivity)
-                .setTitle(R.string.exculde_language_title)
-                .setView(tl, 12).setSimpleNegativeButton()
-                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        String newValue = getExculdeLanguage(tl);
-                        Config.setExculdeLanguage(newValue);
-                        EhInfo.getInstance(mActivity).setExculdeLanguage(newValue);
-                    }
-                }).create().show();
+                new MaterialAlertDialog.Builder(mActivity)
+                        .setTitle(R.string.exculde_language_title)
+                        .setView(tl).setPositiveButton(android.R.string.ok)
+                        .setNegativeButton(android.R.string.cancel)
+                        .setButtonListener(new MaterialAlertDialog.OnClickListener() {
+                            @Override
+                            public boolean onClick(MaterialAlertDialog dialog,
+                                    int which) {
+                                String newValue = getExculdeLanguage(tl);
+                                Config.setExculdeLanguage(newValue);
+                                EhInfo.getInstance(mActivity).setExculdeLanguage(newValue);
+                                return true;
+                            }
+                        }).show();
 
             } else if (KEY_CLEAR_SUGGESTIONS.equals(key)) {
                 SearchRecentSuggestions suggestions = SuggestionHelper.getInstance (
@@ -683,6 +686,59 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         (TextView)view.findViewById(R.id.warning);
 
                 String downloadPath = Config.getDownloadPath();
+                fileExplorerView.setPath(downloadPath);
+                fileExplorerView.setOnItemClickListener(
+                        new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+                        fileExplorerView.onItemClick(parent, view, position, id);
+                        mDirSelectDialog.setTitle(fileExplorerView.getCurPath());
+                        if (fileExplorerView.canWrite())
+                            warning.setVisibility(View.GONE);
+                        else
+                            warning.setVisibility(View.VISIBLE);
+                    }
+                });
+                if (fileExplorerView.canWrite())
+                    warning.setVisibility(View.GONE);
+                else
+                    warning.setVisibility(View.VISIBLE);
+
+                mDirSelectDialog = new MaterialAlertDialog.Builder(mActivity).setTitle(downloadPath)
+                        .setView(view).setActionButton("New") // TODO
+                        .setPositiveButton(android.R.string.ok)
+                        .setNegativeButton(android.R.string.cancel)
+                        .setButtonListener(new MaterialAlertDialog.OnClickListener() {
+                            @Override
+                            public boolean onClick(MaterialAlertDialog dialog, int which) {
+                                switch (which) {
+                                case MaterialAlertDialog.ACTION:
+                                    return false;
+                                case MaterialAlertDialog.POSITIVE:
+                                    if (!fileExplorerView.canWrite()) {
+                                        MaterialToast.showToast(R.string.cur_dir_not_writable);
+                                        return false;
+                                    }
+                                    String downloadPath = fileExplorerView.getCurPath();
+                                    // Update .nomedia file
+                                    // TODO Should I delete .nomedia in old download dir ?
+                                    if (!Config.getMediaScan()) {
+                                        try {
+                                            new File(Config.getDownloadPath(), ".nomedia").createNewFile();
+                                        } catch (IOException e) {}
+                                    }
+                                    Config.setDownloadPath(downloadPath);
+                                    mDownloadPath.setSummary(downloadPath);
+                                    return true;
+                                case MaterialAlertDialog.NEGATIVE:
+                                default:
+                                    return true;
+                                }
+                            }
+                        }).create();
+                mDirSelectDialog.show();
+                /*
                 DialogBuilder dialogBuilder = new DialogBuilder(mActivity)
                 .setView(view, new LinearLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT, Ui.dp2pix(360)), false)
@@ -763,7 +819,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 });
 
                 mDirSelectDialog = dialogBuilder.create();
-                mDirSelectDialog.show();
+                mDirSelectDialog.show();*/
             }
 
             return true;

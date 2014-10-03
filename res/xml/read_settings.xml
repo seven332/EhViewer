@@ -36,8 +36,7 @@
     <CheckBoxPreference
         android:key="gallery_show_clock"
         android:title="@string/gallery_show_clock_title"
-        android:defaultValue="true"
-        android:enabled="false" />
+        android:defaultValue="true" />
 
     <CheckBoxPreference
         android:key="gallery_show_battery"

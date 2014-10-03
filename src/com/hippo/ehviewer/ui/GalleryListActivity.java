@@ -90,7 +90,6 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.CategoryTable;
-import com.hippo.ehviewer.widget.DialogBuilder;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.RatingView;
@@ -276,24 +275,32 @@ public class GalleryListActivity extends AbsGalleryActivity
                 }).create();
     }
 
+    @SuppressLint("InflateParams")
     private AlertDialog createModeDialog() {
-        DialogBuilder db = new DialogBuilder(this);
-        db.setTitle(R.string.mode).setView(R.layout.select_mode, true);
-        LinearLayout customLayout = db.getCustomLayout();
-        final Spinner modeSpinner = (Spinner)customLayout.findViewById(R.id.mode_list);
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
+        View cv = inflater.inflate(R.layout.select_mode, null);
+
+        final Spinner modeSpinner = (Spinner) cv.findViewById(R.id.mode_list);
         modeSpinner.setSelection(Config.getMode());
-        final Spinner apiModeSpinner = (Spinner)customLayout.findViewById(R.id.api_mode_list);
+        final Spinner apiModeSpinner = (Spinner) cv.findViewById(R.id.api_mode_list);
         apiModeSpinner.setSelection(Config.getApiMode());
-        final Spinner lofiResolutionSpinner = (Spinner)customLayout.findViewById(R.id.lofi_resolution_list);
+        final Spinner lofiResolutionSpinner = (Spinner) cv.findViewById(R.id.lofi_resolution_list);
         lofiResolutionSpinner.setSelection(Config.getLofiResolution() - 1);
-        return db.setSimpleNegativeButton()
-                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+
+        return new MaterialAlertDialog.Builder(this).setTitle(R.string.mode)
+                .setView(cv).setPositiveButton(android.R.string.ok)
+                .setNegativeButton(android.R.string.cancel)
+                .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        Config.setMode(modeSpinner.getSelectedItemPosition());
-                        Config.setApiMode(apiModeSpinner.getSelectedItemPosition());
-                        Config.setLofiResolution(lofiResolutionSpinner.getSelectedItemPosition() + 1);
+                    public boolean onClick(MaterialAlertDialog dialog, int which) {
+                        if (which == MaterialAlertDialog.POSITIVE) {
+                            Config.setMode(modeSpinner.getSelectedItemPosition());
+                            Config.setApiMode(apiModeSpinner.getSelectedItemPosition());
+                            Config.setLofiResolution(lofiResolutionSpinner.getSelectedItemPosition() + 1);
+                        }
+                        return true;
                     }
                 }).create();
     }
@@ -372,74 +379,78 @@ public class GalleryListActivity extends AbsGalleryActivity
         mSearchImageText = (TextView)view.findViewById(R.id.target_image);
         handleSearchView(view);
 
-        return new DialogBuilder(this).setTitle(android.R.string.search_go)
-                .setView(view, false)
-                .setAction(new View.OnClickListener() {
+        return new MaterialAlertDialog.Builder(this).setTitle(android.R.string.search_go)
+                .setView(view).setActionButton(R.string.mode)
+                .setPositiveButton(android.R.string.ok)
+                .setNegativeButton(android.R.string.cancel)
+                .setNeutralButton(R.string.add)
+                .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        if (searchNormal.getVisibility() == View.VISIBLE) {
-                            searchNormal.setVisibility(View.GONE);
-                            searchTag.setVisibility(View.VISIBLE);
-                        } else if (searchTag.getVisibility() == View.VISIBLE) {
-                            searchTag.setVisibility(View.GONE);
-                            searchImage.setVisibility(View.VISIBLE);
-                        } else if (searchImage.getVisibility() == View.VISIBLE) {
-                            searchImage.setVisibility(View.GONE);
-                            searchNormal.setVisibility(View.VISIBLE);
-                        }
-                    }
-                }).setPositiveButton(android.R.string.ok, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ListUrls listUrls = getLus(mSearchDialog);
-                        if (listUrls == null)
-                            return;
-
-                        ((AlertButton)v).dialog.dismiss();
-                        lus = listUrls;
-                        refresh();
-                        showContent();
-
-                        // Get title
-                        String search = lus.getSearch();
-                        switch(lus.getMode()) {
-                        case ListUrls.MODE_IMAGE_SEARCH:
-                            mTitle = getString(R.string.image_search);
-                            break;
-                        case ListUrls.MODE_UPLOADER:
-                            mTitle = search;
-                            break;
-                        case ListUrls.MODE_TAG:
-                            mTitle = lus.getTag();
-                            break;
-                        case ListUrls.MODE_POPULAR:
-                            mTitle = getString(R.string.popular);
-                        case ListUrls.MODE_NORMAL:
-                        default:
-                            if (search == null || search.isEmpty())
-                                mTitle = getString(android.R.string.search_go);
-                            else
-                                mTitle = search;
-                            break;
-                        }
-                        setTitle(mTitle);
-                    }
-                }).setSimpleNegativeButton()
-                .setNeutralButton(R.string.add, new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        if (searchImage.getVisibility() == View.VISIBLE)
-                            return;
-                        createSetNameDialog(null, null, new OnSetNameListener() {
-                            @Override
-                            public void onSetVaildName(String newName) {
-                                ((AlertButton)v).dialog.dismiss();
-                                mData.addTag(new Tag(newName, getLus(mSearchDialog)));
-                                listMenuTag.add(newName);
-                                tagsAdapter.addId(newName);
-                                tagsAdapter.notifyDataSetChanged();
+                    public boolean onClick(final MaterialAlertDialog dialog, int which) {
+                        switch (which) {
+                        case MaterialAlertDialog.ACTION:
+                            if (searchNormal.getVisibility() == View.VISIBLE) {
+                                searchNormal.setVisibility(View.GONE);
+                                searchTag.setVisibility(View.VISIBLE);
+                            } else if (searchTag.getVisibility() == View.VISIBLE) {
+                                searchTag.setVisibility(View.GONE);
+                                searchImage.setVisibility(View.VISIBLE);
+                            } else if (searchImage.getVisibility() == View.VISIBLE) {
+                                searchImage.setVisibility(View.GONE);
+                                searchNormal.setVisibility(View.VISIBLE);
                             }
-                        }).show();
+                            return false;
+                        case MaterialAlertDialog.POSITIVE:
+                            ListUrls listUrls = getLus(mSearchDialog);
+                            if (listUrls == null)
+                                return true;
+
+                            lus = listUrls;
+                            refresh();
+                            showContent();
+
+                            // Get title
+                            String search = lus.getSearch();
+                            switch(lus.getMode()) {
+                            case ListUrls.MODE_IMAGE_SEARCH:
+                                mTitle = getString(R.string.image_search);
+                                break;
+                            case ListUrls.MODE_UPLOADER:
+                                mTitle = search;
+                                break;
+                            case ListUrls.MODE_TAG:
+                                mTitle = lus.getTag();
+                                break;
+                            case ListUrls.MODE_POPULAR:
+                                mTitle = getString(R.string.popular);
+                            case ListUrls.MODE_NORMAL:
+                            default:
+                                if (search == null || search.isEmpty())
+                                    mTitle = getString(android.R.string.search_go);
+                                else
+                                    mTitle = search;
+                                break;
+                            }
+                            setTitle(mTitle);
+                            return true;
+                        case MaterialAlertDialog.NEUTRAL:
+                            if (searchImage.getVisibility() == View.VISIBLE)
+                                return false;
+                            createSetNameDialog(null, null, new OnSetNameListener() {
+                                @Override
+                                public void onSetVaildName(String newName) {
+                                    mData.addTag(new Tag(newName, getLus(mSearchDialog)));
+                                    listMenuTag.add(newName);
+                                    tagsAdapter.addId(newName);
+                                    tagsAdapter.notifyDataSetChanged();
+
+                                    dialog.dismiss();
+                                }
+                            }).show();
+                            return false;
+                        default:
+                            return true;
+                        }
                     }
                 }).create();
     }
@@ -548,38 +559,28 @@ public class GalleryListActivity extends AbsGalleryActivity
     }
 
     private AlertDialog createLongClickDialog() {
-        return new DialogBuilder(this).setTitle(R.string.what_to_do)
-                .setItems(R.array.list_item_long_click,
-                new AdapterView.OnItemClickListener() {
+        return new MaterialAlertDialog.Builder(this).setTitle(R.string.what_to_do)
+                .setItems(R.array.list_item_long_click, new MaterialAlertDialog.OnClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> arg0, View arg1,
-                            int position, long arg3) {
-                        final GalleryInfo gi;
+                    public boolean onClick(MaterialAlertDialog dialog, int position) {
+                        final GalleryInfo gi = getGalleryInfo(longClickItemIndex);
                         switch (position) {
                         case 0: // Add favourite item
-                            gi = getGalleryInfo(longClickItemIndex);
                             Favorite.addToFavorite(GalleryListActivity.this, gi);
                             break;
                         case 1:
-                            gi = getGalleryInfo(longClickItemIndex);
                             Intent it = new Intent(GalleryListActivity.this, DownloadService.class);
                             startService(it);
                             mServiceConn.getService().add(gi);
                             MaterialToast.showToast(R.string.toast_add_download);
                             break;
-                        default:
-                            break;
                         }
-                        longClickDialog.dismiss();
+                        return true;
                     }
-                }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                    }
-                }).create();
+                }).setNegativeButton(android.R.string.cancel).create();
     }
 
+    @SuppressLint("InflateParams")
     private AlertDialog createJumpDialog() {
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.jump, null);
@@ -591,30 +592,27 @@ public class GalleryListActivity extends AbsGalleryActivity
         tv.setText(R.string.jump_to);
         final EditText et = (EditText)view.findViewById(R.id.list_jump_edit);
 
-        return new DialogBuilder(this).setTitle(R.string.jump)
-                .setView(view, true)
-                .setPositiveButton(android.R.string.ok,
-                new View.OnClickListener() {
+        return new MaterialAlertDialog.Builder(this).setTitle(R.string.jump)
+                .setView(view).setPositiveButton(android.R.string.ok)
+                .setNegativeButton(android.R.string.cancel)
+                .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        int targetPage;
-                        try{
-                            targetPage = Integer.parseInt(et.getText().toString()) - 1;
-                            if (targetPage < 0 || targetPage >= getPageNum())
-                                throw new Exception();
-                        } catch(Exception e) {
-                            MaterialToast.showToast(R.string.toast_invalid_page);
-                            return;
+                    public boolean onClick(MaterialAlertDialog dialog, int which) {
+                        if (which == MaterialAlertDialog.POSITIVE) {
+                            int targetPage;
+                            try{
+                                targetPage = Integer.parseInt(et.getText().toString()) - 1;
+                                if (targetPage < 0 || targetPage >= getPageNum())
+                                    throw new Exception();
+                            } catch(Exception e) {
+                                MaterialToast.showToast(R.string.toast_invalid_page);
+                                return false;
+                            }
+                            jumpTo(targetPage);
+                            return true;
+                        } else {
+                            return true;
                         }
-
-                        ((AlertButton)v).dialog.dismiss();
-                        jumpTo(targetPage);
-                    }
-                }).setNegativeButton(android.R.string.cancel,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
                     }
                 }).create();
     }
@@ -630,6 +628,7 @@ public class GalleryListActivity extends AbsGalleryActivity
      * @param oldStr string can be oldstr, even it is in listMenuTitle
      * @param listener what to do when set right text
      */
+    @SuppressLint("InflateParams")
     private AlertDialog createSetNameDialog(final String hint, final String oldStr, final OnSetNameListener listener) {
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.set_name, null);
@@ -637,28 +636,29 @@ public class GalleryListActivity extends AbsGalleryActivity
         if (hint != null)
             et.setText(hint);
 
-        return new DialogBuilder(this).setTitle(R.string.add_tag)
-                .setView(view, true).setPositiveButton(android.R.string.ok,
-                new View.OnClickListener(){
+        return new MaterialAlertDialog.Builder(this).setTitle(R.string.add_tag)
+                .setView(view).setPositiveButton(android.R.string.ok)
+                .setNegativeButton(android.R.string.cancel)
+                .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        String key = et.getText().toString();
-                        if (key.length() == 0)
-                            MaterialToast.showToast(R.string.tag_name_empty);
-                        else if (listMenuTag.contains(key) && !key.equals(oldStr))
-                            MaterialToast.showToast(R.string.tag_name_empty);
-                        else {
-                            ((AlertButton)v).dialog.dismiss();
-                            if (listener != null) {
-                                listener.onSetVaildName(key);
+                    public boolean onClick(MaterialAlertDialog dialog, int which) {
+                        if (which == MaterialAlertDialog.POSITIVE) {
+                            String key = et.getText().toString();
+                            if (key.length() == 0) {
+                                MaterialToast.showToast(R.string.tag_name_empty);
+                                return false;
+                            } else if (listMenuTag.contains(key) && !key.equals(oldStr)) {
+                                MaterialToast.showToast(R.string.tag_name_empty);
+                                return false;
+                            } else {
+                                if (listener != null) {
+                                    listener.onSetVaildName(key);
+                                }
+                                return true;
                             }
+                        } else {
+                            return true;
                         }
-                    }
-                }).setNegativeButton(android.R.string.cancel,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
                     }
                 }).create();
     }
@@ -668,62 +668,62 @@ public class GalleryListActivity extends AbsGalleryActivity
         final View view = inflater.inflate(R.layout.search, null);
         final View searchNormal = view.findViewById(R.id.search_normal);
         final View searchTag = view.findViewById(R.id.search_tag);
+        final View searchImage = view.findViewById(R.id.search_image);
         handleSearchView(view);
 
         ListUrls listUrls = mData.getTag(position);
         setFilterView(view, listUrls);
 
-        return new DialogBuilder(this).setTitle(listMenuTag.get(position))
-                .setView(view, false)
-                .setAction(new View.OnClickListener() {
+        return new MaterialAlertDialog.Builder(this).setTitle(listMenuTag.get(position))
+                .setView(view).setActionButton(R.string.mode)
+                .setPositiveButton(android.R.string.ok)
+                .setNegativeButton(android.R.string.cancel)
+                .setNeutralButton(R.string.tag_change_name)
+                .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        if (searchNormal.getVisibility() == View.GONE) {
-                            searchNormal.setVisibility(View.VISIBLE);
-                            searchTag.setVisibility(View.GONE);
-                        } else {
-                            searchNormal.setVisibility(View.GONE);
-                            searchTag.setVisibility(View.VISIBLE);
-                        }
-                    }
-                }).setPositiveButton(android.R.string.ok, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        ListUrls listUrls = getLus(view);
-                        if (newTagName != null) {
-                            mData.setTag(position, new Tag(newTagName, listUrls));
-                            tagsAdapter.set(listMenuTag.get(position), newTagName);
-                            listMenuTag.set(position, newTagName);
-                            tagsAdapter.notifyDataSetChanged();
-
-                            newTagName = null;
-                        } else
-                            mData.setTag(position, new Tag(listMenuTag.get(position), listUrls));
-                    }
-                }).setNegativeButton(android.R.string.cancel, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((AlertButton)v).dialog.dismiss();
-                        newTagName = null;
-                    }
-                }).setNeutralButton(R.string.tag_change_name, new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        String hint = newTagName == null ? listMenuTag.get(position) : newTagName;
-                        createSetNameDialog(hint, listMenuTag.get(position), new OnSetNameListener(){
-                            @Override
-                            public void onSetVaildName(String newName) {
-                                if (newName.equals(listMenuTag.get(position))) // If new is old name
-                                    SuperDialogUtil.setTitle(((AlertButton)v).dialog,
-                                            listMenuTag.get(position));
-                                else {
-                                    newTagName = newName;
-                                    SuperDialogUtil.setTitle(((AlertButton)v).dialog,
-                                            String.format(getString(R.string.new_tag_name), newTagName));
-                                }
+                    public boolean onClick(final MaterialAlertDialog dialog, int which) {
+                        switch (which) {
+                        case MaterialAlertDialog.ACTION:
+                            if (searchNormal.getVisibility() == View.GONE) {
+                                searchNormal.setVisibility(View.VISIBLE);
+                                searchTag.setVisibility(View.GONE);
+                                searchImage.setVisibility(View.GONE);
+                            } else {
+                                searchNormal.setVisibility(View.GONE);
+                                searchTag.setVisibility(View.VISIBLE);
+                                searchImage.setVisibility(View.GONE);
                             }
-                        }).show();
+                            return false;
+                        case MaterialAlertDialog.POSITIVE:
+                            ListUrls listUrls = getLus(view);
+                            if (newTagName != null) {
+                                mData.setTag(position, new Tag(newTagName, listUrls));
+                                tagsAdapter.set(listMenuTag.get(position), newTagName);
+                                listMenuTag.set(position, newTagName);
+                                tagsAdapter.notifyDataSetChanged();
+                                newTagName = null;
+                            } else {
+                                mData.setTag(position, new Tag(listMenuTag.get(position), listUrls));
+                            }
+                            return true;
+                        case MaterialAlertDialog.NEUTRAL:
+                            String hint = newTagName == null ? listMenuTag.get(position) : newTagName;
+                            createSetNameDialog(hint, listMenuTag.get(position), new OnSetNameListener(){
+                                @Override
+                                public void onSetVaildName(String newName) {
+                                    if (newName.equals(listMenuTag.get(position))) { // If new is old name
+                                        dialog.setTitle(listMenuTag.get(position));
+                                    } else {
+                                        newTagName = newName;
+                                        dialog.setTitle(String.format(getString(R.string.new_tag_name), newTagName));
+                                    }
+                                }
+                            }).show();
+                            return false;
+                        case MaterialAlertDialog.NEGATIVE:
+                        default:
+                            return true;
+                        }
                     }
                 }).create();
     }

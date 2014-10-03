@@ -30,6 +30,7 @@
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:gravity="center"
+            android:textAppearance="@style/TextAppearance.DialogMessage"
             android:text="@string/portrait" />
 
         <EditText
@@ -38,6 +39,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="1"
+            android:textSize="@dimen/text_little_large"
+            android:textColor="@color/secondary_text_dark"
             android:inputType="number" />
     </LinearLayout>
 
@@ -52,6 +55,7 @@
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:gravity="center"
+            android:textAppearance="@style/TextAppearance.DialogMessage"
             android:text="@string/landscape" />
 
         <EditText
@@ -60,6 +64,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="1"
+            android:textSize="@dimen/text_little_large"
+            android:textColor="@color/secondary_text_dark"
             android:inputType="number" />
     </LinearLayout>
 

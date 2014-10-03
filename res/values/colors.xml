@@ -81,4 +81,6 @@
 
     <color name="material_progress_blue">#ff40c4ff</color>
 
+    <color name="edit_text_gb">#11000000</color>
+
 </resources>

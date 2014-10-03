@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.preference;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -76,8 +77,9 @@ public class NumberOfColumnsPreference extends DialogPreference {
     }
 
     @Override
+    @SuppressLint("InflateParams")
     protected View onCreateDialogView() {
-        LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         return inflater.inflate(R.layout.set_column_number, null);
     }
 

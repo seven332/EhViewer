@@ -19,6 +19,8 @@ package com.hippo.ehviewer.app;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -44,14 +46,15 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
     private final Builder mBuilder;
 
     private View mRootView;
+    private TextView mTitle;
     private Button mActionButton;
     private Button mPositiveButton;
     private Button mNegativeButton;
     private Button mNeutralButton;
 
     private MaterialAlertDialog(Builder builder) {
-        super(builder.mContext);
-
+        //super(builder.mContext);
+        super(new ContextThemeWrapper(builder.mContext, R.style.AppTheme_Main));
         mContext = builder.mContext;
         mBuilder = builder;
 
@@ -64,11 +67,11 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
                 R.layout.alert_dialog_material, null);
 
         // Title
-        TextView title = (TextView) mRootView.findViewById(R.id.title);
+        mTitle = (TextView) mRootView.findViewById(R.id.title);
         if (mBuilder.mTitle == null)
-            title.setVisibility(View.GONE);
+            mTitle.setVisibility(View.GONE);
         else
-            title.setText(mBuilder.mTitle);
+            mTitle.setText(mBuilder.mTitle);
 
         TextView message = (TextView) mRootView.findViewById(R.id.message);
         ListView list = (ListView) mRootView.findViewById(R.id.list);
@@ -82,6 +85,7 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
                 lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT);
+            mBuilder.mCustomView.setId(R.id.custom);
             topPanel.addView(mBuilder.mCustomView, lp);
         } else if (mBuilder.mAdapter != null) {
             // List
@@ -154,6 +158,8 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
         setView(mRootView);
 
         setCancelable(mBuilder.mCancelable);
+        if (mBuilder.mOnDismissListener != null)
+            setOnDismissListener(mBuilder.mOnDismissListener);
 
         // Try to keep title visible
         final ScrollView sv = ((ScrollView) mRootView.findViewById(R.id.scrollView));
@@ -164,6 +170,16 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
                 sv.scrollTo(0, 0);
             }
         });
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle.setText(title);
+    }
+
+    @Override
+    public void setTitle(int resId) {
+        setTitle(getContext().getString(resId));
     }
 
     @Override
@@ -223,6 +239,8 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
         private OnClickListener mOnClickListener;
         private int mCheckedItem;
         private boolean mIsSingleChoice;
+
+        private DialogInterface.OnDismissListener mOnDismissListener;
 
         public Builder(Context context) {
             mContext = context;
@@ -357,6 +375,11 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
             mOnClickListener = listener;
             mCheckedItem = checkedItem;
             mIsSingleChoice = true;
+            return this;
+        }
+
+        public Builder setOnDismissListener(DialogInterface.OnDismissListener l) {
+            mOnDismissListener = l;
             return this;
         }
 

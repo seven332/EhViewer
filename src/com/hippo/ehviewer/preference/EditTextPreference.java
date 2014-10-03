@@ -39,6 +39,7 @@ public class EditTextPreference extends DialogPreference {
     protected View onCreateDialogView() {
         EditText et = new EditText(getContext());
         et.setId(R.id.edittextpreference_edittext);
+        et.setTextColor(getContext().getResources().getColor(R.color.secondary_text_dark));
         return et;
     }
 

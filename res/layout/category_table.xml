@@ -23,7 +23,7 @@
             style="@style/SearchCategory"
             android:layout_width="0.0dp"
             android:layout_marginRight="6.0dp"
-            android:background="@color/doujinshi_bg"
+            android:textColor="@color/doujinshi_bg"
             android:text="@string/doujinshi" />
 
         <com.hippo.ehviewer.widget.CheckTextView
@@ -31,7 +31,7 @@
             style="@style/SearchCategory"
             android:layout_width="0.0dp"
             android:layout_marginLeft="6.0dp"
-            android:background="@color/manga_bg"
+            android:textColor="@color/manga_bg"
             android:text="@string/manga" />
     </TableRow>
 
@@ -42,7 +42,7 @@
             style="@style/SearchCategory"
             android:layout_width="0.0dp"
             android:layout_marginRight="6.0dp"
-            android:background="@color/artist_cg_bg"
+            android:textColor="@color/artist_cg_bg"
             android:text="@string/artist_cg" />
 
         <com.hippo.ehviewer.widget.CheckTextView
@@ -50,7 +50,7 @@
             style="@style/SearchCategory"
             android:layout_width="0.0dp"
             android:layout_marginLeft="6.0dp"
-            android:background="@color/game_cg_bg"
+            android:textColor="@color/game_cg_bg"
             android:text="@string/game_cg" />
     </TableRow>
 
@@ -61,7 +61,7 @@
             style="@style/SearchCategory"
             android:layout_width="0.0dp"
             android:layout_marginRight="6.0dp"
-            android:background="@color/western_bg"
+            android:textColor="@color/western_bg"
             android:text="@string/western" />
 
         <com.hippo.ehviewer.widget.CheckTextView
@@ -69,7 +69,7 @@
             style="@style/SearchCategory"
             android:layout_width="0.0dp"
             android:layout_marginLeft="6.0dp"
-            android:background="@color/non_h_bg"
+            android:textColor="@color/non_h_bg"
             android:text="@string/non_h" />
     </TableRow>
 
@@ -80,7 +80,7 @@
             style="@style/SearchCategory"
             android:layout_width="0.0dp"
             android:layout_marginRight="6.0dp"
-            android:background="@color/image_set_bg"
+            android:textColor="@color/image_set_bg"
             android:text="@string/image_set" />
 
         <com.hippo.ehviewer.widget.CheckTextView
@@ -88,7 +88,7 @@
             style="@style/SearchCategory"
             android:layout_width="0.0dp"
             android:layout_marginLeft="6.0dp"
-            android:background="@color/cosplay_bg"
+            android:textColor="@color/cosplay_bg"
             android:text="@string/cosplay" />
     </TableRow>
 
@@ -99,7 +99,7 @@
             style="@style/SearchCategory"
             android:layout_width="0.0dp"
             android:layout_marginRight="6.0dp"
-            android:background="@color/asian_porn_bg"
+            android:textColor="@color/asian_porn_bg"
             android:text="@string/asian_porn" />
 
         <com.hippo.ehviewer.widget.CheckTextView
@@ -107,7 +107,7 @@
             style="@style/SearchCategory"
             android:layout_width="0.0dp"
             android:layout_marginLeft="6.0dp"
-            android:background="@color/misc_bg"
+            android:textColor="@color/misc_bg"
             android:text="@string/misc" />
     </TableRow>
 

@@ -25,9 +25,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="48dp"
-    android:textColor="@color/primary_text_dark"
-    android:textSize="@dimen/text_little_large"
+    android:textAppearance="@style/TextAppearance.DialogMessage"
     android:gravity="center_vertical"
-    android:paddingStart="16dip"
-    android:paddingEnd="16dip"
+    android:paddingLeft="16dip"
+    android:paddingRight="16dip"
     android:ellipsize="marquee" />
