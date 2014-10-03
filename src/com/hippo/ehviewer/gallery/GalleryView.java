@@ -93,9 +93,11 @@ public class GalleryView extends GLView
 
     private static final float MILLSEC_PER_DIX = 0.2f;
     private static final float CHANGE_PAGE_PROPORTION = 0.1f;
-    private static final float CHANGE_PAGE_OFFSET = Ui.dp2pix(24);
+    private static final float SLIDE_SENSITIVITY = 0;
 
-    // TODO 根据界面的大小调整缩放界限
+    private static final int ANIMATE_MIN = 200;
+
+    // TODO 根据图片的大小调整缩放界限
     private static final float SCALE_MIN = 1/10.0f;
     private static final float SCALE_MAX = 10.0f;
 
@@ -1154,8 +1156,8 @@ public class GalleryView extends GLView
                 if (curShowItem == null || !(curShowItem instanceof BasicItem))
                     changePage = true;
                 else{
-                    if ( Math.abs(totalX/totalY) > 1 && ((totalX > CHANGE_PAGE_OFFSET && dx < 0 && rect.left >= 0)
-                            || (totalX < -CHANGE_PAGE_OFFSET && dx > 0 && rect.right <= mScreenWidth)))
+                    if ( Math.abs(totalX/totalY) > 1 && ((totalX > SLIDE_SENSITIVITY && dx < 0 && rect.left >= 0)
+                            || (totalX < -SLIDE_SENSITIVITY && dx > 0 && rect.right <= mScreenWidth)))
                         changePage = true;
                 }
                 if (changePage) { // If change page
@@ -1232,10 +1234,10 @@ public class GalleryView extends GLView
 
                 mScrollState = SCROLL_ANIME_LEFT;
                 if (stopScrollXOffset > mScreenWidth * CHANGE_PAGE_PROPORTION) { // Go to pre page
-                    mToPreTimeRunner.setDuration((int)(MILLSEC_PER_DIX * (mScreenWidth-stopScrollXOffset)));
+                    mToPreTimeRunner.setDuration(Math.max((int) (MILLSEC_PER_DIX * (mScreenWidth - stopScrollXOffset)), ANIMATE_MIN));
                     mToPreTimeRunner.start();
                 } else {
-                    mReturnTimeRunner.setDuration((int)(MILLSEC_PER_DIX * stopScrollXOffset));
+                    mReturnTimeRunner.setDuration(Math.max((int) (MILLSEC_PER_DIX * stopScrollXOffset), ANIMATE_MIN));
                     mReturnTimeRunner.start();
                 }
                 break;
@@ -1245,10 +1247,10 @@ public class GalleryView extends GLView
 
                 mScrollState = SCROLL_ANIME_RIGHT;
                 if (-stopScrollXOffset > mScreenWidth * CHANGE_PAGE_PROPORTION) { // Go to next page
-                    mToNextTimeRunner.setDuration((int)(MILLSEC_PER_DIX * (mScreenWidth+stopScrollXOffset)));
+                    mToNextTimeRunner.setDuration(Math.max((int) (MILLSEC_PER_DIX * (mScreenWidth + stopScrollXOffset)), ANIMATE_MIN));
                     mToNextTimeRunner.start();
                 } else {
-                    mReturnTimeRunner.setDuration((int)(MILLSEC_PER_DIX * -stopScrollXOffset));
+                    mReturnTimeRunner.setDuration(Math.max((int) (MILLSEC_PER_DIX * (-stopScrollXOffset)), ANIMATE_MIN));
                     mReturnTimeRunner.start();
                 }
                 break;
