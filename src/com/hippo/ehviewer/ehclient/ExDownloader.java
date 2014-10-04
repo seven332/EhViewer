@@ -248,7 +248,7 @@ public class ExDownloader implements Runnable {
         if (mImageNum != -1) {
             return mImageNum - 1;
         } else {
-            return Math.max(Math.max(Math.max(mStartIndex - 1,
+            return Math.max(Math.max(Math.max(mStartIndex,
                     Math.max(mCurMaxPreviewPage, mPreviewPageNum - 1) * mPreviewPerPage),
                     mPageTokeArray.maxValidIndex()), 0);
         }
