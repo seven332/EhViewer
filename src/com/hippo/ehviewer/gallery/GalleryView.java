@@ -767,6 +767,7 @@ public class GalleryView extends GLView
         setState();
         loadImage(mCurIndex-1);
 
+        mImageSet.setCurReadIndex(mCurIndex);
         if (mGalleryViewListener != null) {
             mGalleryViewListener.onPageChanged(mCurIndex);
         }
@@ -805,6 +806,7 @@ public class GalleryView extends GLView
         setState();
         loadImage(mCurIndex+1);
 
+        mImageSet.setCurReadIndex(mCurIndex);
         if (mGalleryViewListener != null) {
             mGalleryViewListener.onPageChanged(mCurIndex);
         }
@@ -844,6 +846,7 @@ public class GalleryView extends GLView
             loadImage(mCurIndex);
             loadImage(mCurIndex+1);
 
+            mImageSet.setCurReadIndex(mCurIndex);
             if (mGalleryViewListener != null) {
                 mGalleryViewListener.onPageChanged(mCurIndex);
             }

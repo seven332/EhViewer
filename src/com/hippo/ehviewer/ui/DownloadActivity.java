@@ -229,7 +229,7 @@ public class DownloadActivity extends AbsActivity {
                     intent.putExtra(GalleryActivity.KEY_GID, gi.gid);
                     intent.putExtra(GalleryActivity.KEY_TOKEN, gi.token);
                     intent.putExtra(GalleryActivity.KEY_TITLE, gi.title);
-                    intent.putExtra(GalleryActivity.KEY_START_INDEX, 0);
+                    intent.putExtra(GalleryActivity.KEY_START_INDEX, -1);
                     startActivity(intent);
                 }
             });
@@ -360,7 +360,7 @@ public class DownloadActivity extends AbsActivity {
                                 mServiceConn.getService().delete(mDownloadInfo);
                                 // Delete dir
                                 GalleryInfo gi = mDownloadInfo.galleryInfo;
-                                Utils.deleteDirInThread(EhUtils.getGalleryDir(gi.gid, gi.title));
+                                Utils.deleteDirInThread(EhUtils.getGalleryDir(gi.gid));
                             }
                             return true;
                         }

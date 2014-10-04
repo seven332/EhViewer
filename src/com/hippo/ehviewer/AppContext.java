@@ -17,6 +17,7 @@
 package com.hippo.ehviewer;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -32,9 +33,11 @@ import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.ehclient.ExDownloaderManager;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
+import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.MaterialToast;
 
 public class AppContext extends Application implements UncaughtExceptionHandler {
@@ -85,9 +88,52 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
             } catch (IOException e) {}
         }
 
-        // Fix <=22 error
+        // Fix <=22 login error
         if (Config.getVersionCode() <= 22)
             EhInfo.getInstance(this).logout();
+
+        // Fix <=25 Update
+        if (Config.getVersionCode() <= 25) {
+            File downloadDir = new File(Config.getDownloadPath());
+            String cachePath = getExternalCacheDir() != null
+                    ? getExternalCacheDir().getPath()
+                    : getCacheDir().getPath();
+            File oldEdInfoDir = new File(cachePath, "ExDownloaderManager");
+            String[] list = downloadDir.list();
+            if (list != null && list.length != 0) {
+                for (String str : list) {
+                    // Change download dir name from gid-title to gid
+                    File oldDir = new File(downloadDir, str);
+                    if (!new File(oldDir, EhUtils.EH_DOWNLOAD_FILENAME).exists())
+                        continue;
+                    int index = str.indexOf('-');
+                    if (index == -1)
+                        continue;
+                    String gid = str.substring(0, index);
+                    File newDir = new File(downloadDir, gid);
+                    if (!oldDir.renameTo(newDir)) {
+                        // if delete error, might same gid and different title
+                        Utils.deleteDirInThread(oldDir);
+                        continue;
+                    }
+                    // Move download info file
+                    File oldInfoFile = new File(oldEdInfoDir, gid);
+                    File newInfoFile = new File(newDir, EhUtils.EH_DOWNLOAD_FILENAME);
+                    try {
+                        FileOutputStream fos = new FileOutputStream(newInfoFile);
+                        // Add last page
+                        byte[] bs = {'0', '0', '0', '0', '0', '0', '0', '0', '\n'};
+                        fos.write(bs);
+                        Utils.copy(new FileInputStream(oldInfoFile), fos);
+                    } catch (Throwable e) {
+                        continue;
+                    }
+                }
+            }
+            // Delete old exdownload info dir
+            Utils.deleteDirInThread(oldEdInfoDir);
+        }
+
 
         // Update version code
         try {

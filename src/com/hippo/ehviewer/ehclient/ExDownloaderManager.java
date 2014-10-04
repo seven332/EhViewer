@@ -16,8 +16,6 @@
 
 package com.hippo.ehviewer.ehclient;
 
-import java.io.File;
-
 import android.content.Context;
 import android.util.SparseArray;
 
@@ -29,7 +27,6 @@ public class ExDownloaderManager {
 
     private final Context mContext;
     private final SparseArray<ExDownloader> mExDownloadList;
-    private final File mExDownloadInfoDir;
 
     private static ExDownloaderManager sInstance;
 
@@ -44,18 +41,6 @@ public class ExDownloaderManager {
     private ExDownloaderManager() {
         mContext = AppContext.getInstance();
         mExDownloadList = new SparseArray<ExDownloader>();
-        // Init download info dir
-        String cachePath = mContext.getExternalCacheDir() != null
-                ? mContext.getExternalCacheDir().getPath()
-                : mContext.getCacheDir().getPath();
-        mExDownloadInfoDir = new File(cachePath, TAG);
-        if (!mExDownloadInfoDir.exists()) {
-            mExDownloadInfoDir.mkdirs();
-        }
-    }
-
-    public File getExDownloadInfoDir() {
-        return mExDownloadInfoDir;
     }
 
     public synchronized ExDownloader getExDownloader(int gid, String token, String title, int mode) {

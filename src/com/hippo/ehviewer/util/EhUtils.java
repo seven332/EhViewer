@@ -18,6 +18,7 @@ package com.hippo.ehviewer.util;
 
 import java.io.File;
 
+
 public final class EhUtils {
 
     public static final String EH_DOWNLOAD_FILENAME = ".ehviewer";
@@ -25,20 +26,11 @@ public final class EhUtils {
     /**
      * Get gallery for read and download
      * @param gid
-     * @param title
      * @return
      */
-    public static File getGalleryDir(int gid, String title) {
+    public static File getGalleryDir(int gid) {
         return new File(Config.getDownloadPath(),
-                Utils.standardizeFilename(gid + "-" + title));
-    }
-
-    public static int getGidFromDirname(String dirname) {
-        int index = dirname.indexOf('-');
-        if (index == -1)
-            return 0;
-        else
-            return Utils.parseIntSafely(dirname.substring(0, index), 0);
+                Utils.standardizeFilename(Integer.toString(gid)));
     }
 
     /**

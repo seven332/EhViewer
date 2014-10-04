@@ -88,7 +88,7 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
 
     public ImageSet(int gid, String token, String title, int startIndex) {
 
-        mDir = EhUtils.getGalleryDir(gid, title);
+        mDir = EhUtils.getGalleryDir(gid);
         Utils.ensureDir(mDir, true);
 
         // Init ExDownloader
@@ -126,6 +126,10 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
 
     public void setStartIndex(int startIndex) {
         mExDownloader.setStartIndex(startIndex);
+    }
+
+    public void setCurReadIndex(int index) {
+        mExDownloader.setCurReadIndex(index);
     }
 
     public Object getImage(int index) {

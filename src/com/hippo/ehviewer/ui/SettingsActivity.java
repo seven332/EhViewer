@@ -57,7 +57,6 @@ import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.DownloadInfo;
 import com.hippo.ehviewer.ehclient.EhInfo;
-import com.hippo.ehviewer.ehclient.ExDownloaderManager;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.preference.ListPreference;
 import com.hippo.ehviewer.util.BgThread;
@@ -599,9 +598,6 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         for (int i = 0; i < targetDirList.size(); i++) {
                             File dir = targetDirList.get(i);
                             Utils.deleteFile(dir);
-                            // Delete gid file
-                            new File(ExDownloaderManager.getInstance().getExDownloadInfoDir(),
-                                    String.valueOf(EhUtils.getGidFromDirname(dir.getName()))).delete();
                             handler.post(new CleanResponder(CleanResponder.STATE_DOING, targetDirList.size(), i + 1));
                         }
                         // Close windows

@@ -20,10 +20,10 @@ import java.io.BufferedInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
@@ -36,6 +36,7 @@ import android.os.Process;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.AutoExpandArray;
+import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Log;
@@ -97,6 +98,8 @@ public class ExDownloader implements Runnable {
     private volatile HashSet<Integer> mDownloadIndexSet;
     private volatile Object mDownloadLock = new Object();
 
+    private int mCurReadIndex = 0;
+
     /**
      * Do no work in UI thread
      * @author Hippo
@@ -132,13 +135,8 @@ public class ExDownloader implements Runnable {
         mControlorArray = new HttpHelper.DownloadControlor[mWorkerNum];
 
         // Make sure dir
-        mDir = EhUtils.getGalleryDir(mGid, mTitle);
+        mDir = EhUtils.getGalleryDir(mGid);
         Utils.ensureDir(mDir, true);
-        // Create mark file
-        File makeFile = new File(mDir, EhUtils.EH_DOWNLOAD_FILENAME);
-        try {
-            new FileOutputStream(makeFile).close();
-        } catch (IOException e) {}
     }
 
     public void setListenerForImageSet(ListenerForImageSet l) {
@@ -244,6 +242,15 @@ public class ExDownloader implements Runnable {
         ensureWorkers();
     }
 
+    public void setCurReadIndex(final int index) {
+        new BgThread() {
+            @Override
+            public void run() {
+                writeCurReadIndex(index);
+            }
+        }.start();
+    }
+
     public int getMaxEnsureIndex() {
         if (mImageNum != -1) {
             return mImageNum - 1;
@@ -288,7 +295,7 @@ public class ExDownloader implements Runnable {
     }
 
     private File getExDownloadInfoFile() {
-        return new File(mManager.getExDownloadInfoDir(), String.valueOf(mGid));
+        return new File(mDir, EhUtils.EH_DOWNLOAD_FILENAME);
     }
 
     private boolean checkMode(int samlpe, int target) {
@@ -300,6 +307,7 @@ public class ExDownloader implements Runnable {
      * This function parser the download info file.<br>
      * The file look like this:<br>
      * <code>
+     * 00000000<br>
      * 728874<br>
      * 306429c222<br>
      * 1<br>
@@ -317,7 +325,7 @@ public class ExDownloader implements Runnable {
      * @param ediFile
      * @return
      */
-    private boolean parserEdiFile(File ediFile) {
+    private synchronized boolean parserEdiFile(File ediFile) {
         if (!ediFile.exists() || !ediFile.isFile() || !ediFile.canRead()
                 || !ediFile.canWrite())
             return false;
@@ -326,6 +334,8 @@ public class ExDownloader implements Runnable {
         try {
             is = new BufferedInputStream(new FileInputStream(ediFile),
                     IO_BUFFER_SIZE);
+            // skip read index
+            Utils.readAsciiLine(is);
             if (mGid != Integer.valueOf(Utils.readAsciiLine(is)) ||
                     !mToken.equals(Utils.readAsciiLine(is)))
                 return false;
@@ -377,9 +387,11 @@ public class ExDownloader implements Runnable {
         }
     }
 
-    private void writeEdiFile(File ediFile) {
+    private synchronized void writeEdiFile(File ediFile) {
         try {
             FileWriter writer = new FileWriter(ediFile);
+            writer.write(String.format("%08x", mCurReadIndex));
+            writer.write("\n");
             writer.write(String.valueOf(mGid));
             writer.write("\n");
             writer.write(mToken);
@@ -404,6 +416,27 @@ public class ExDownloader implements Runnable {
             writer.flush();
             writer.close();
         } catch (IOException e) {}
+    }
+
+    private synchronized void writeCurReadIndex(int index) {
+        mCurReadIndex = index;
+        try {
+            RandomAccessFile raf = new RandomAccessFile(getExDownloadInfoFile(), "rw");
+            raf.write(String.format("%08x", mCurReadIndex).getBytes());
+            raf.close();
+        } catch (Throwable e) {}
+    }
+
+    public static int readCurReadIndex(int gid) {
+        try {
+            RandomAccessFile raf = new RandomAccessFile(new File(EhUtils.getGalleryDir(gid),
+                    EhUtils.EH_DOWNLOAD_FILENAME), "r");
+            int index = Integer.parseInt(raf.readLine(), 16);
+            raf.close();
+            return index;
+        } catch (Throwable e) {
+            return 0;
+        }
     }
 
     private void getDetailInfo(int pageIndex, File ediFile, boolean needPreviewInfo) throws Exception {
@@ -478,7 +511,7 @@ public class ExDownloader implements Runnable {
         try {
             File ediFile = getExDownloadInfoFile();
             if (!parserEdiFile(ediFile) || mPreviewPerPage == -1 ||
-                    (mMode == EhClient.MODE_EX && mImageNum == -1)) {
+                    ((mMode == EhClient.MODE_EX || mMode == EhClient.MODE_G) && mImageNum == -1)) {
                 getDetailInfo(0, ediFile, true);
             }
 

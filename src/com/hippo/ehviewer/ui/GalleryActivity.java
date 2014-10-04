@@ -34,6 +34,7 @@ import android.widget.TextView;
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
+import com.hippo.ehviewer.ehclient.ExDownloader;
 import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
@@ -199,6 +200,8 @@ public class GalleryActivity extends AbsActivity
         String token = intent.getStringExtra(KEY_TOKEN);
         mTitle = intent.getStringExtra(KEY_TITLE);
         int startIndex = intent.getIntExtra(KEY_START_INDEX, 0);
+        if (startIndex == -1)
+            startIndex = ExDownloader.readCurReadIndex(mGid);
 
         if (mGid == -1 || token == null || mTitle == null) {
             new MaterialAlertDialog.Builder(this).setTitle(R.string.error)
@@ -214,6 +217,7 @@ public class GalleryActivity extends AbsActivity
         } else {
             mImageSet = new ImageSet(mGid, token, mTitle, startIndex);
             mGalleryView = new GalleryView(getApplicationContext(), mImageSet, startIndex);
+
             GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);
             glrv.setContentPane(mGalleryView);
 
@@ -302,6 +306,7 @@ public class GalleryActivity extends AbsActivity
     public void onSizeUpdate(int size) {
         updateTitle();
         mPageSeeker.setMax(size - 1);
+        mPageSeeker.setProgress(mGalleryView.getCurIndex() + 1);
     }
 
     private void showSeekBubble() {
