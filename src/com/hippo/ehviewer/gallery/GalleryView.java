@@ -184,6 +184,8 @@ public class GalleryView extends GLView
         mImageSet = imageSet;
         mCurIndex = startIndex;
 
+        showItems = new ShowItem[TARGET_INDEX_SIZE];
+
         checkSize();
 
         // adjust mCurIndex
@@ -193,8 +195,6 @@ public class GalleryView extends GLView
 
         mGestureRecognizer = new GestureRecognizer(mContext, new MyGestureListener());
         setBackgroundColor(GalleryUtils.intColorToFloatARGBArray(BACKGROUND_COLOR));
-
-        showItems = new ShowItem[TARGET_INDEX_SIZE];
 
         // Init config
         scaleMode = Config.getPageScalingMode();
@@ -233,6 +233,11 @@ public class GalleryView extends GLView
         } else {
             isEnsureSize = true;
             mSize = size;
+        }
+
+        if (mSize > oldSize && mCurIndex == oldSize - 1 && showItems[NEXT_TARGET_INDEX] == null) {
+            mState = STATE_NONE;
+            loadImage(mCurIndex + 1);
         }
 
         if (mSize != oldSize && mGalleryViewListener != null)
