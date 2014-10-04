@@ -30,11 +30,13 @@ import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.SqlUtils;
 
-
+// TODO
+// what a mess
+// refactoring
 public class Data {
     private static final String TAG = "Data";
 
-    private static final int VERSION = 2;
+    private static final int VERSION = 3;
     private static final String DB_NAME = "data";
 
     private static final String TABLE_GALLERY = "gallery";
@@ -63,6 +65,8 @@ public class Data {
     private static final String COLUMN_STATE = "state";
     private static final String COLUMN_LEGACY = "legacy";
 
+    private static final String COLUMN_DATE = "date";
+
     private final SparseArray<GalleryInfo> mGallerys;
 
     private long mTagRowNum;
@@ -87,10 +91,10 @@ public class Data {
 
     public Data(Context context) {
         mContext = context;
+        mGallerys = new SparseArray<GalleryInfo>();
+
         mDBHelper = new DBHelper(mContext);
         mDatabase = mDBHelper.getWritableDatabase();
-
-        mGallerys = new SparseArray<GalleryInfo>();
 
         getTags();
         getLocalFavourites();
@@ -110,10 +114,10 @@ public class Data {
      * @param gid
      * @return
      */
-    public GalleryInfo getGallery(int gid) {
+    public GalleryInfo getGallery(SQLiteDatabase db, int gid) {
         GalleryInfo galleryInfo = mGallerys.get(gid);
         if (galleryInfo == null) {
-            Cursor cursor = mDatabase.rawQuery("select * from " + TABLE_GALLERY + " where " + COLUMN_GID + "=?",
+            Cursor cursor = db.rawQuery("select * from " + TABLE_GALLERY + " where " + COLUMN_GID + "=?",
                     new String[]{String.valueOf(gid)});
             if (cursor.moveToFirst()) {
                 galleryInfo = new GalleryInfo();
@@ -255,13 +259,14 @@ public class Data {
     private synchronized void getDownloads() {
         mDownloads = new ArrayList<DownloadInfo>();
 
-        Cursor cursor = mDatabase.rawQuery("select * from "
-                + TABLE_DOWNLOAD, null);
+        Cursor cursor = mDatabase.rawQuery("select * from " + TABLE_DOWNLOAD
+                + " order by " + COLUMN_DATE + " asc", null);
+
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
 
                 int gid = cursor.getInt(0);
-                GalleryInfo galleryInfo = getGallery(gid);
+                GalleryInfo galleryInfo = getGallery(mDatabase, gid);
                 if (galleryInfo == null) {
                     cursor.moveToNext();
                     continue;
@@ -335,6 +340,9 @@ public class Data {
                     COLUMN_GID + "=?", new String[]{String.valueOf(galleryInfo.gid)});
             return false;
         } else {
+            // If not update, set date
+            values.put(COLUMN_DATE, System.currentTimeMillis());
+
             if (mDatabase.insert(TABLE_DOWNLOAD, null,
                     values) != -1) { // If add ok
                 mDownloads.add(downloadInfo);
@@ -395,7 +403,7 @@ public class Data {
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 int gid = cursor.getInt(0);
-                GalleryInfo galleryInfo = getGallery(gid);
+                GalleryInfo galleryInfo = getGallery(mDatabase, gid);
                 if (galleryInfo != null)
                     mLocalFavourites.add(galleryInfo);
                 cursor.moveToNext();
@@ -636,11 +644,11 @@ public class Data {
             db.execSQL(CreateTag);
 
             // download
-            createDownloadTable(db);
+            createDownloadTableVer3(db);
         }
 
-        private void createDownloadTable(SQLiteDatabase db) {
-            String CreateDownload = "create table "
+        private void createDownloadTableVer2(SQLiteDatabase db) {
+            String createDownload = "create table "
                     + TABLE_DOWNLOAD + "("
                     + COLUMN_GID + " integer primary key,"
                     + COLUMN_MODE + " integer,"
@@ -648,7 +656,66 @@ public class Data {
                     + COLUMN_LEGACY + " integer,"
                     + "foreign key(" + COLUMN_GID + ") references " + TABLE_GALLERY + "(" + COLUMN_GID + "));";
 
-            SqlUtils.exeSQLSafely(db, CreateDownload);
+            SqlUtils.exeSQLSafely(db, createDownload);
+        }
+
+        private synchronized List<DownloadInfo> getDownloadsVer2(SQLiteDatabase db) {
+            List<DownloadInfo> list = new ArrayList<DownloadInfo>();
+
+            Cursor cursor = db.rawQuery("select * from " + TABLE_DOWNLOAD,
+                    null);
+
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+
+                    int gid = cursor.getInt(0);
+                    GalleryInfo galleryInfo = getGallery(db, gid);
+                    if (galleryInfo == null) {
+                        cursor.moveToNext();
+                        continue;
+                    }
+                    int mode = cursor.getInt(1);
+                    int state = cursor.getInt(2);
+                    int legacy = cursor.getInt(3);
+                    if (state == DownloadInfo.STATE_WAIT || state == DownloadInfo.STATE_DOWNLOAD)
+                        state = DownloadInfo.STATE_NONE;
+
+                    DownloadInfo downloadInfo = new DownloadInfo(
+                            galleryInfo, mode, state, legacy);
+                    list.add(downloadInfo);
+
+                    cursor.moveToNext();
+                }
+            }
+            cursor.close();
+
+            return list;
+        }
+
+        private void createDownloadTableVer3(SQLiteDatabase db) {
+            String createDownload = "create table "
+                    + TABLE_DOWNLOAD + "("
+                    + COLUMN_GID + " integer primary key,"
+                    + COLUMN_MODE + " integer,"
+                    + COLUMN_STATE + " integer,"
+                    + COLUMN_LEGACY + " integer,"
+                    + COLUMN_DATE + " long,"
+                    + "foreign key(" + COLUMN_GID + ") references " + TABLE_GALLERY + "(" + COLUMN_GID + "));";
+
+            SqlUtils.exeSQLSafely(db, createDownload);
+        }
+
+        public void addDownloadInfoVer3(SQLiteDatabase db, List<DownloadInfo> l) {
+            for (int i = 0; i < l.size(); i++) {
+                DownloadInfo di = l.get(i);
+                ContentValues values = new ContentValues();
+                values.put(COLUMN_GID, di.galleryInfo.gid);
+                values.put(COLUMN_MODE, di.mode);
+                values.put(COLUMN_STATE, di.state);
+                values.put(COLUMN_LEGACY, di.legacy);
+                values.put(COLUMN_DATE, (long) i);
+                db.insert(TABLE_DOWNLOAD, null, values);
+            }
         }
 
         @Override
@@ -657,8 +724,12 @@ public class Data {
             case 1:
                 SqlUtils.dropTable(db, TABLE_DOWNLOAD);
                 SqlUtils.dropTable(db, "read");
-                createDownloadTable(db);
-                break;
+                createDownloadTableVer2(db);
+            case 2:
+                List<DownloadInfo> l = getDownloadsVer2(db);
+                SqlUtils.dropTable(db, TABLE_DOWNLOAD);
+                createDownloadTableVer3(db);
+                addDownloadInfoVer3(db, l);
             case VERSION:
                 break;
             default:
