@@ -105,7 +105,7 @@ public class DownloadService extends Service
     }
 
     // Try to start download
-    public void notifyDownloadInfoChanged() {
+    public synchronized void notifyDownloadInfoChanged() {
         if (mCurDownloadInfo != null || mCurExDownloader != null)
             return;
 
@@ -151,7 +151,7 @@ public class DownloadService extends Service
         }
     }
 
-    public void stop(DownloadInfo di) {
+    public synchronized void stop(DownloadInfo di) {
         if (mCurDownloadInfo == di) {
             // Cancel download notification
             mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
@@ -189,7 +189,7 @@ public class DownloadService extends Service
         notifyUpdate();
     }
 
-    public void stopAll() {
+    public synchronized void stopAll() {
         for (DownloadInfo di : mData.getAllDownloads()) {
             if (di.state == DownloadInfo.STATE_WAIT ||
                     di.state == DownloadInfo.STATE_DOWNLOAD) {
@@ -313,7 +313,7 @@ public class DownloadService extends Service
     }
 
     @Override
-    public void onDownloadOver(int gid, int legacy) {
+    public synchronized void onDownloadOver(int gid, int legacy) {
         if (mCurDownloadInfo == null)
             return;
 
