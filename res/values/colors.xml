@@ -67,7 +67,7 @@
     <color name="secondary_text_dark">#8a000000</color>
     <color name="primary_text_light">#deffffff</color>
     <color name="secondary_text_light">#61ffffff</color>
-    
+
     <color name="disabled_mask">#61000000</color>
 
     <color name="theme_red">#ffc53929</color>

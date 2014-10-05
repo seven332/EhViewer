@@ -26,18 +26,22 @@
 
         <CheckBox
             android:id="@+id/tag_group_reclass"
+            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="reclass"
+            android:button="@drawable/btn_check_dialog_material"
             tools:ignore="HardcodedText" />
 
         <CheckBox
             android:id="@+id/tag_group_language"
+            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="language"
+            android:button="@drawable/btn_check_dialog_material"
             tools:ignore="HardcodedText" />
     </TableRow>
 
@@ -47,18 +51,22 @@
 
         <CheckBox
             android:id="@+id/tag_group_parody"
+            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="parody"
+            android:button="@drawable/btn_check_dialog_material"
             tools:ignore="HardcodedText" />
 
         <CheckBox
             android:id="@+id/tag_group_character"
+            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="character"
+            android:button="@drawable/btn_check_dialog_material"
             tools:ignore="HardcodedText" />
     </TableRow>
 
@@ -68,18 +76,22 @@
 
         <CheckBox
             android:id="@+id/tag_group_group"
+            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="group"
+            android:button="@drawable/btn_check_dialog_material"
             tools:ignore="HardcodedText" />
 
         <CheckBox
             android:id="@+id/tag_group_artist"
+            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="artist"
+            android:button="@drawable/btn_check_dialog_material"
             tools:ignore="HardcodedText" />
     </TableRow>
 
@@ -89,18 +101,22 @@
 
         <CheckBox
             android:id="@+id/tag_group_male"
+            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="male"
+            android:button="@drawable/btn_check_dialog_material"
             tools:ignore="HardcodedText" />
 
         <CheckBox
             android:id="@+id/tag_group_female"
+            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="female"
+            android:button="@drawable/btn_check_dialog_material"
             tools:ignore="HardcodedText" />
     </TableRow>
 

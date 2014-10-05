@@ -22,9 +22,9 @@
         <bitmap android:src="@drawable/btn_radio_off_disabled" />
     </item>
     <item android:state_checked="true">
-        <bitmap android:src="@drawable/btn_radio_to_on_mtrl_015" />
+        <bitmap android:src="@drawable/btn_radio_on_dialog" />
     </item>
     <item>
-        <bitmap android:src="@drawable/btn_radio_to_off_mtrl_015" />
+        <bitmap android:src="@drawable/btn_radio_off_dialog" />
     </item>
 </selector>
