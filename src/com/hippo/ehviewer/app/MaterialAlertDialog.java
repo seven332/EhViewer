@@ -29,7 +29,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
@@ -66,20 +65,39 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
         mRootView = LayoutInflater.from(mContext).inflate(
                 R.layout.alert_dialog_material, null);
 
+        // Check in scroll view or not
+        boolean inScrollView;
+        if (mBuilder.mCustomView != null)
+            inScrollView = mBuilder.mInScrollView;
+        else if (mBuilder.mAdapter != null)
+            inScrollView = false;
+        else
+            inScrollView = true;
+        // Get widget
+        LinearLayout topPanel;
+        TextView message = null;
+        ListView list = null;
+        if (inScrollView) {
+            mRootView.findViewById(R.id.top_panel_noscroll).setVisibility(View.GONE);
+            mTitle = (TextView) mRootView.findViewById(R.id.title);
+            topPanel = (LinearLayout) mRootView.findViewById(R.id.top_panel);
+            message = (TextView) mRootView.findViewById(R.id.message);
+        } else {
+            mRootView.findViewById(R.id.scroll_view).setVisibility(View.GONE);
+            mTitle = (TextView) mRootView.findViewById(R.id.title2);
+            topPanel = (LinearLayout) mRootView.findViewById(R.id.top_panel_noscroll);
+            list = (ListView) mRootView.findViewById(R.id.list);
+        }
         // Title
-        mTitle = (TextView) mRootView.findViewById(R.id.title);
         if (mBuilder.mTitle == null)
             mTitle.setVisibility(View.GONE);
         else
             mTitle.setText(mBuilder.mTitle);
-
-        TextView message = (TextView) mRootView.findViewById(R.id.message);
-        ListView list = (ListView) mRootView.findViewById(R.id.list);
+        // Content
         if (mBuilder.mCustomView != null) {
             // CustomView
-            message.setVisibility(View.GONE);
-            list.setVisibility(View.GONE);
-            LinearLayout topPanel = (LinearLayout) mRootView.findViewById(R.id.top_panel);
+            if (message != null) message.setVisibility(View.GONE);
+            if (list != null) list.setVisibility(View.GONE);
             LinearLayout.LayoutParams lp = mBuilder.mCustomLp;
             if (lp == null)
                 lp = new LinearLayout.LayoutParams(
@@ -89,19 +107,19 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
             topPanel.addView(mBuilder.mCustomView, lp);
         } else if (mBuilder.mAdapter != null) {
             // List
-            message.setVisibility(View.GONE);
+            if (message != null) message.setVisibility(View.GONE);
             list.setAdapter(mBuilder.mAdapter);
             list.setOnItemClickListener(this);
             if (mBuilder.mIsSingleChoice) {
                 list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
                 if (mBuilder.mCheckedItem > -1) {
                     list.setItemChecked(mBuilder.mCheckedItem, true);
-                    //list.setSelection(mBuilder.mCheckedItem);
+                    list.setSelection(mBuilder.mCheckedItem);
                 }
             }
         } else {
             // Message
-            list.setVisibility(View.GONE);
+            if (list != null) list.setVisibility(View.GONE);
             if (mBuilder.mAutoLinkMask != -1)
                 message.setAutoLinkMask(mBuilder.mAutoLinkMask);
             message.setText(mBuilder.mMessage);
@@ -160,16 +178,6 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
         setCancelable(mBuilder.mCancelable);
         if (mBuilder.mOnDismissListener != null)
             setOnDismissListener(mBuilder.mOnDismissListener);
-
-        // Try to keep title visible
-        final ScrollView sv = ((ScrollView) mRootView.findViewById(R.id.scrollView));
-        sv.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right,
-                    int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                sv.scrollTo(0, 0);
-            }
-        });
     }
 
     @Override
@@ -232,6 +240,7 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
         private OnClickListener mButtonListener;
         private View mCustomView;
         private LinearLayout.LayoutParams mCustomLp;
+        private boolean mInScrollView = true;
         private boolean mCancelable = true;
         private int mAutoLinkMask = -1;
 
@@ -305,13 +314,15 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
             return this;
         }
 
-        public Builder setView(View view) {
+        public Builder setView(View view, boolean inScrollView) {
             mCustomView = view;
+            mInScrollView = inScrollView;
             return this;
         }
 
-        public Builder setView(View view, LinearLayout.LayoutParams lp) {
+        public Builder setView(View view, boolean inScrollView, LinearLayout.LayoutParams lp) {
             mCustomView = view;
+            mInScrollView = inScrollView;
             mCustomLp = lp;
             return this;
         }

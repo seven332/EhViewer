@@ -25,13 +25,13 @@
         android:orientation="horizontal" >
 
         <TextView
+            style="@style/DialogMessage"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.DialogMessage"
             android:text="@string/content" />
 
         <Spinner
@@ -50,13 +50,13 @@
         android:orientation="horizontal" >
 
         <TextView
+            style="@style/DialogMessage"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.DialogMessage"
             android:text="@string/api" />
 
         <Spinner
@@ -75,13 +75,13 @@
         android:orientation="horizontal" >
 
         <TextView
+            style="@style/DialogMessage"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.DialogMessage"
             android:text="@string/lofi_resolution" />
 
         <Spinner

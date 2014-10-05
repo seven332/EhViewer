@@ -25,22 +25,21 @@
         android:orientation="horizontal" >
 
         <TextView
+            style="@style/DialogMessage"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.DialogMessage"
             android:text="@string/portrait" />
 
         <EditText
             android:id="@+id/portrait"
+            style="@style/DialogMessage"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="1"
-            android:textSize="@dimen/text_little_large"
-            android:textColor="@color/secondary_text_dark"
             android:inputType="number" />
     </LinearLayout>
 
@@ -50,22 +49,21 @@
         android:orientation="horizontal" >
 
         <TextView
+            style="@style/DialogMessage"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.DialogMessage"
             android:text="@string/landscape" />
 
         <EditText
             android:id="@+id/landscape"
+            style="@style/DialogMessage"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="1"
-            android:textSize="@dimen/text_little_large"
-            android:textColor="@color/secondary_text_dark"
             android:inputType="number" />
     </LinearLayout>
 

@@ -899,7 +899,7 @@ public class GalleryDetailActivity extends AbsActivity
                 et.setSelection(mOldReply.length());
 
             new MaterialAlertDialog.Builder(this).setTitle(R.string.reply)
-                    .setView(et, new LinearLayout.LayoutParams(
+                    .setView(et, true, new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, 600))
                     .setNegativeButton(android.R.string.cancel)
                     .setPositiveButton(android.R.string.ok)

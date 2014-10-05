@@ -36,6 +36,11 @@ public class EditTextPreference extends DialogPreference {
     }
 
     @Override
+    protected boolean inScrollView() {
+        return true;
+    }
+
+    @Override
     protected View onCreateDialogView() {
         EditText et = new EditText(getContext());
         et.setId(R.id.edittextpreference_edittext);

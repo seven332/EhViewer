@@ -149,6 +149,10 @@ public class ListPreference extends DialogPreference {
         return findIndexOfValue(mValue);
     }
 
+    @Override
+    protected boolean inScrollView() {
+        return false;
+    }
 
     @Override
     protected void onBindDialogView(View view) {

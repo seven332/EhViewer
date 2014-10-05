@@ -89,7 +89,7 @@ public class Favorite {
         final CheckBox cb = (CheckBox) view.findViewById(R.id.set_default);
         ListView lv = (ListView) view.findViewById(R.id.list);
         lv.setAdapter(new ArrayAdapter<String>(mContext,
-                R.layout.list_item_text, FAVORITE_TITLES));
+                R.layout.select_dialog_item, FAVORITE_TITLES));
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
@@ -123,7 +123,7 @@ public class Favorite {
 
         return lastAddToFavoriteDialog = new MaterialAlertDialog.Builder(context)
                 .setTitle(R.string.where_to_add)
-                .setView(view).setNegativeButton(android.R.string.cancel)
+                .setView(view, false).setNegativeButton(android.R.string.cancel)
                 .setPositiveButton(android.R.string.ok).create();
     }
 }

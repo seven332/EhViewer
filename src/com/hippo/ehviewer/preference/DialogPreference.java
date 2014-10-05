@@ -57,6 +57,8 @@ public abstract class DialogPreference extends android.preference.DialogPreferen
 
     protected abstract void onPrepareDialogBuilder(MaterialAlertDialog.Builder builder);
 
+    protected abstract boolean inScrollView();
+
     @Override
     protected void showDialog(Bundle state) {
         Context context = getContext();
@@ -74,7 +76,7 @@ public abstract class DialogPreference extends android.preference.DialogPreferen
         View contentView = onCreateDialogView();
         if (contentView != null) {
             onBindDialogView(contentView);
-            mBuilder.setView(contentView);
+            mBuilder.setView(contentView, inScrollView());
         } else {
             mBuilder.setMessage(getDialogMessage());
         }

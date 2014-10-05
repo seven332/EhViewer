@@ -248,7 +248,7 @@ public class GalleryListActivity extends AbsGalleryActivity
 
         return new MaterialAlertDialog.Builder(this).setCancelable(false)
                 .setTitle(R.string.login)
-                .setView(view)
+                .setView(view, true)
                 .setPositiveButton(android.R.string.ok)
                 .setNegativeButton(android.R.string.cancel)
                 .setNeutralButton(R.string.register)
@@ -290,7 +290,7 @@ public class GalleryListActivity extends AbsGalleryActivity
         lofiResolutionSpinner.setSelection(Config.getLofiResolution() - 1);
 
         return new MaterialAlertDialog.Builder(this).setTitle(R.string.mode)
-                .setView(cv).setPositiveButton(android.R.string.ok)
+                .setView(cv, true).setPositiveButton(android.R.string.ok)
                 .setNegativeButton(android.R.string.cancel)
                 .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
@@ -380,7 +380,7 @@ public class GalleryListActivity extends AbsGalleryActivity
         handleSearchView(view);
 
         return new MaterialAlertDialog.Builder(this).setTitle(android.R.string.search_go)
-                .setView(view).setActionButton(R.string.mode)
+                .setView(view, true).setActionButton(R.string.mode)
                 .setPositiveButton(android.R.string.ok)
                 .setNegativeButton(android.R.string.cancel)
                 .setNeutralButton(R.string.add)
@@ -593,7 +593,7 @@ public class GalleryListActivity extends AbsGalleryActivity
         final EditText et = (EditText)view.findViewById(R.id.list_jump_edit);
 
         return new MaterialAlertDialog.Builder(this).setTitle(R.string.jump)
-                .setView(view).setPositiveButton(android.R.string.ok)
+                .setView(view, true).setPositiveButton(android.R.string.ok)
                 .setNegativeButton(android.R.string.cancel)
                 .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
@@ -637,7 +637,7 @@ public class GalleryListActivity extends AbsGalleryActivity
             et.setText(hint);
 
         return new MaterialAlertDialog.Builder(this).setTitle(R.string.add_tag)
-                .setView(view).setPositiveButton(android.R.string.ok)
+                .setView(view, true).setPositiveButton(android.R.string.ok)
                 .setNegativeButton(android.R.string.cancel)
                 .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
@@ -675,7 +675,7 @@ public class GalleryListActivity extends AbsGalleryActivity
         setFilterView(view, listUrls);
 
         return new MaterialAlertDialog.Builder(this).setTitle(listMenuTag.get(position))
-                .setView(view).setActionButton(R.string.mode)
+                .setView(view, true).setActionButton(R.string.mode)
                 .setPositiveButton(android.R.string.ok)
                 .setNegativeButton(android.R.string.cancel)
                 .setNeutralButton(R.string.tag_change_name)

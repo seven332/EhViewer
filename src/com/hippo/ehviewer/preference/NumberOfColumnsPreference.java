@@ -77,6 +77,11 @@ public class NumberOfColumnsPreference extends DialogPreference {
     }
 
     @Override
+    protected boolean inScrollView() {
+        return true;
+    }
+
+    @Override
     @SuppressLint("InflateParams")
     protected View onCreateDialogView() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

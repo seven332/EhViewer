@@ -75,6 +75,11 @@ public class ColorPreference extends DialogPreference implements ColorPickerView
     }
 
     @Override
+    protected boolean inScrollView() {
+        return true;
+    }
+
+    @Override
     @SuppressLint("InflateParams")
     protected View onCreateDialogView() {
         LayoutInflater mInflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

@@ -19,20 +19,18 @@
     android:orientation="vertical" >
 
     <TextView
+        style="@style/DialogMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textAppearance="@style/TextAppearance.DialogMessage"
         android:text="@string/tag_name" />
 
     <EditText
         android:id="@+id/set_name_edit"
+        style="@style/DialogMessage"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="text"
-        android:singleLine="true"
-        android:textSize="@dimen/text_little_large"
-        android:textColor="@color/secondary_text_dark" />
+        android:singleLine="true" />
 
 </LinearLayout>

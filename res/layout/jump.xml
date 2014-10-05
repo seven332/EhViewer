@@ -22,7 +22,7 @@
 
     <TextView
         android:id="@+id/list_jump_sum"
-        android:textAppearance="@style/TextAppearance.DialogMessage"
+        style="@style/DialogMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -36,20 +36,19 @@
 
         <TextView
             android:id="@+id/list_jump_to"
-            android:textAppearance="@style/TextAppearance.DialogMessage"
+            style="@style/DialogMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp" />
 
         <EditText
             android:id="@+id/list_jump_edit"
+            style="@style/DialogMessage"
             android:layout_width="128dp"
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="number"
-            android:singleLine="true"
-            android:textSize="@dimen/text_little_large"
-            android:textColor="@color/secondary_text_dark" />
+            android:singleLine="true" />
 
     </LinearLayout>
 </LinearLayout>

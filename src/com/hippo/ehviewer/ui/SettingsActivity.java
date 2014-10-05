@@ -359,7 +359,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
                 new MaterialAlertDialog.Builder(mActivity)
                         .setTitle(R.string.list_default_category_title)
-                        .setView(ct).setPositiveButton(android.R.string.ok)
+                        .setView(ct, true).setPositiveButton(android.R.string.ok)
                         .setNegativeButton(android.R.string.cancel)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                             @Override
@@ -380,7 +380,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
                 new MaterialAlertDialog.Builder(mActivity)
                         .setTitle(R.string.exculde_tag_group_title)
-                        .setView(tl).setPositiveButton(android.R.string.ok)
+                        .setView(tl, true).setPositiveButton(android.R.string.ok)
                         .setNegativeButton(android.R.string.cancel)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                             @Override
@@ -400,7 +400,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
                 new MaterialAlertDialog.Builder(mActivity)
                         .setTitle(R.string.exculde_language_title)
-                        .setView(tl).setPositiveButton(android.R.string.ok)
+                        .setView(tl, true).setPositiveButton(android.R.string.ok)
                         .setNegativeButton(android.R.string.cancel)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                             @Override
@@ -702,7 +702,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                     warning.setVisibility(View.VISIBLE);
 
                 mDirSelectDialog = new MaterialAlertDialog.Builder(mActivity).setTitle(downloadPath)
-                        .setView(view).setActionButton("New") // TODO
+                        .setView(view, false).setActionButton("New") // TODO
                         .setPositiveButton(android.R.string.ok)
                         .setNegativeButton(android.R.string.cancel)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
@@ -970,7 +970,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 final WebView webView = new WebView(mActivity);
                 webView.loadData(Utils.InputStream2String(is, "utf-8"), "text/html; charset=UTF-8", null);
                 new MaterialAlertDialog.Builder(mActivity)//.setTitle(R.string.thanks)
-                        .setView(webView).setNegativeButton(android.R.string.cancel)
+                        .setView(webView, true).setNegativeButton(android.R.string.cancel)
                         .show();
 
             } else if (KEY_WEBSITE.equals(key)) {
