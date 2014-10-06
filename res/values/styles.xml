@@ -220,6 +220,11 @@
         <item name="@android:minHeight">48dp</item>
         <item name="@android:gravity">center</item>
     </style>
+    
+    
+    <style name="EmbedButton.Dialog">
+        <item name="@android:textColor">@color/secondary_text_dark</item>
+    </style>
 
     <style name="DropDownItem" parent="@android:Widget.DropDownItem">
         <item name="android:textAppearance">@style/TextAppearance.DropDownItem</item>

@@ -17,10 +17,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="24dp"
-    android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp"
-    android:layout_marginTop="24dp"
     android:orientation="vertical" >
 
     <TableLayout
@@ -33,19 +29,23 @@
 
             <CheckBox
                 android:id="@+id/checkboxSimilar"
+                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:checked="true"
+                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/use_similarity_scan" />
 
             <CheckBox
                 android:id="@+id/checkboxCovers"
+                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/only_search_covers" />
         </TableRow>
 
@@ -55,16 +55,18 @@
 
             <CheckBox
                 android:id="@+id/checkboxExp"
+                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/show_expunged" />
         </TableRow>
     </TableLayout>
 
     <TextView
-        style="@style/EmbedButton"
+        style="@style/EmbedButton.Dialog"
         android:id="@+id/select_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -73,6 +75,7 @@
 
     <TextView
         android:id="@+id/target_image"
+        style="@style/DialogMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

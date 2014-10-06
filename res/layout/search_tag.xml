@@ -20,6 +20,7 @@
 
     <EditText
         android:id="@+id/search_tag_text"
+        style="@style/DialogMessage"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
