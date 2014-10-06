@@ -26,15 +26,15 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="8dp"
-        android:src="@drawable/ic_dir_dark" />
+        android:src="@drawable/ic_dir_dark_dialog" />
 
     <TextView
         android:id="@+id/text"
+        style="@style/DialogMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_margin="8.0dp"
-        android:layout_toRightOf="@id/icon"
-        android:textColor="@android:color/black" />
+        android:layout_toRightOf="@id/icon" />
 
 </RelativeLayout>

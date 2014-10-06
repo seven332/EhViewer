@@ -44,6 +44,8 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -702,7 +704,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
                     warning.setVisibility(View.VISIBLE);
 
                 mDirSelectDialog = new MaterialAlertDialog.Builder(mActivity).setTitle(downloadPath)
-                        .setView(view, false).setActionButton("New") // TODO
+                        .setView(view, false, new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT, Ui.dp2pix(360))).setActionButton(R.string._new)
                         .setPositiveButton(android.R.string.ok)
                         .setNegativeButton(android.R.string.cancel)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
@@ -710,6 +713,34 @@ public class SettingsActivity extends AbsPreferenceActivity {
                             public boolean onClick(MaterialAlertDialog dialog, int which) {
                                 switch (which) {
                                 case MaterialAlertDialog.ACTION:
+                                    final EditText et = new EditText(mActivity);
+                                    et.setText("New folder"); // TODO
+                                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                            LinearLayout.LayoutParams.MATCH_PARENT,
+                                            LinearLayout.LayoutParams.WRAP_CONTENT);
+                                    int x = Ui.dp2pix(8);
+                                    lp.leftMargin = x;
+                                    lp.rightMargin = x;
+                                    lp.topMargin = x;
+                                    lp.bottomMargin = x;
+                                    new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.new_folder)
+                                            .setView(et, true, lp)
+                                            .setPositiveButton(R.string._new)
+                                            .setNegativeButton(android.R.string.cancel)
+                                            .setButtonListener(new MaterialAlertDialog.OnClickListener() {
+                                                @Override
+                                                public boolean onClick(
+                                                        MaterialAlertDialog dialog,
+                                                        int which) {
+                                                    if (which == MaterialAlertDialog.POSITIVE) {
+                                                        File dir = new File(fileExplorerView.getCurPath(),
+                                                                et.getText().toString());
+                                                        dir.mkdirs();
+                                                        fileExplorerView.refresh();
+                                                    }
+                                                    return true;
+                                                }
+                                            }).show();
                                     return false;
                                 case MaterialAlertDialog.POSITIVE:
                                     if (!fileExplorerView.canWrite()) {
@@ -734,88 +765,6 @@ public class SettingsActivity extends AbsPreferenceActivity {
                             }
                         }).create();
                 mDirSelectDialog.show();
-                /*
-                DialogBuilder dialogBuilder = new DialogBuilder(mActivity)
-                .setView(view, new LinearLayout.LayoutParams(
-                LayoutParams.MATCH_PARENT, Ui.dp2pix(360)), false)
-                .setTitle(downloadPath)
-                .setAction(R.drawable.ic_plus,
-                        new View.OnClickListener(){
-                    @Override
-                    public void onClick(View v) {
-                        final EditText et = new EditText(mActivity);
-                        et.setText("New folder");
-                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT);
-                        int x = Ui.dp2pix(8);
-                        lp.leftMargin = x;
-                        lp.rightMargin = x;
-                        lp.topMargin = x;
-                        lp.bottomMargin = x;
-                        new DialogBuilder(mActivity).setView(et, lp)
-                        .setTitle(R.string.new_folder)
-                        .setPositiveButton(R.string._new, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                ((AlertButton)v).dialog.dismiss();
-                                File dir = new File(fileExplorerView.getCurPath(),
-                                        et.getText().toString());
-                                dir.mkdirs();
-                                fileExplorerView.refresh();
-                                // TODO check if the directory was created
-                            }
-                        }).setSimpleNegativeButton().create().show();
-                    }
-                }).setPositiveButton(android.R.string.ok,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (!fileExplorerView.canWrite())
-                            MaterialToast.showToast(R.string.cur_dir_not_writable);
-                        else {
-                            String downloadPath = fileExplorerView.getCurPath();
-
-                            // Update .nomedia file
-                            // TODO Should I delete .nomedia in old download dir ?
-                            if (!Config.getMediaScan()) {
-                                try {
-                                    new File(Config.getDownloadPath(), ".nomedia").createNewFile();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            Config.setDownloadPath(downloadPath);
-                            mDownloadPath.setSummary(downloadPath);
-                            ((AlertButton)v).dialog.dismiss();
-                        }
-                    }
-                }).setSimpleNegativeButton();
-                final TextView title = dialogBuilder.getTitleView();
-
-                if (fileExplorerView.canWrite())
-                    warning.setVisibility(View.GONE);
-                else
-                    warning.setVisibility(View.VISIBLE);
-
-                fileExplorerView.setPath(downloadPath);
-                fileExplorerView.setOnItemClickListener(
-                        new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                            int position, long id) {
-                        fileExplorerView.onItemClick(parent, view, position, id);
-                        title.setText(fileExplorerView.getCurPath());
-                        if (fileExplorerView.canWrite())
-                            warning.setVisibility(View.GONE);
-                        else
-                            warning.setVisibility(View.VISIBLE);
-                    }
-                });
-
-                mDirSelectDialog = dialogBuilder.create();
-                mDirSelectDialog.show();*/
             }
 
             return true;

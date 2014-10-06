@@ -881,7 +881,7 @@ public class GalleryListActivity extends AbsGalleryActivity
                 lus.setSearchImage(intent.getStringExtra(KEY_IMAGE_KEY),
                         intent.getStringExtra(KEY_IMAGE_URL),
                         EhClient.IMAGE_SEARCH_USE_SIMILARITY_SCAN);
-                mTitle = getString(R.string.similar_content); // TODO
+                mTitle = getString(R.string.similar_content);
                 setTitle(mTitle);
                 break;
 
