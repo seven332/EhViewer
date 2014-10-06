@@ -92,12 +92,13 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         // Update proxy urls
         HttpHelper.updateProxyUrls(this);
 
+        int oldVersion = Config.getVersionCode();
         // Fix <=22 login error
-        if (Config.getVersionCode() <= 22)
+        if (oldVersion <= 22)
             EhInfo.getInstance(this).logout();
 
         // Fix <=25 Update
-        if (Config.getVersionCode() <= 25) {
+        if (oldVersion <= 25) {
             File downloadDir = new File(Config.getDownloadPath());
             String cachePath = getExternalCacheDir() != null
                     ? getExternalCacheDir().getPath()

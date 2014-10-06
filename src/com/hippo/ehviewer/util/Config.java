@@ -336,7 +336,7 @@ public class Config {
     }
 
     private static final String KEY_VERSION_CODE = "version_code";
-    private static final int DEFAULT_VERSION_CODE = 0;
+    private static final int DEFAULT_VERSION_CODE = Integer.MAX_VALUE;
 
     public static int getVersionCode() {
         return mConfigPre.getInt(KEY_VERSION_CODE,
