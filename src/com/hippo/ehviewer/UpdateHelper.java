@@ -31,6 +31,7 @@ import android.net.Uri;
 import android.os.Process;
 import android.support.v4.app.NotificationCompat;
 
+import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Utils;
@@ -42,7 +43,6 @@ public class UpdateHelper implements Runnable {
     @SuppressWarnings("unused")
     private static final String TAG = "UpdateHelper";
 
-    private static final String UPDATE_API = "http://www.ehviewer.com/API";
     private static final String HEADER = "Ehviewer-";
     private static final String FOOTER = ".apk";
 
@@ -114,7 +114,7 @@ public class UpdateHelper implements Runnable {
 
             jo.put("detail", detailJO);
 
-            _package.body = hp.postJson(UPDATE_API, jo);
+            _package.body = hp.postJson(EhClient.API_EHVIEWER, jo);
             _package.emesg = hp.getEMsg();
             send(_package);
         } catch (NameNotFoundException e) {

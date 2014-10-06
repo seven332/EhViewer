@@ -17,6 +17,9 @@
 package com.hippo.ehviewer.util;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -596,5 +599,39 @@ public class Config {
         } catch(Throwable e){
             return 0;
         }
+    }
+
+
+    // Proxy urls
+    private static final String PROXY_URLS_KEY = "proxy_urls";
+    public static final String[] DEFAULT_PROXY_URLS = {
+        "http://proxyy0000.appsp0t.com/proxy",
+        "http://proxyy0001.appsp0t.com/proxy",
+        "http://proxyy0002.appsp0t.com/proxy",
+        "http://proxyy0003.appsp0t.com/proxy",
+        "http://proxyy0004.appsp0t.com/proxy",
+        "http://proxyy0005.appsp0t.com/proxy",
+        "http://proxyy0006.appsp0t.com/proxy",
+        "http://proxyy0007.appsp0t.com/proxy",
+        "http://proxyy0008.appsp0t.com/proxy",
+        "http://proxyy0009.appsp0t.com/proxy",
+        "http://proxyy000a.appsp0t.com/proxy",
+        "http://proxyy000b.appsp0t.com/proxy",
+        "http://proxyy000c.appsp0t.com/proxy",
+        "http://proxyy000d.appsp0t.com/proxy",
+        "http://proxyy000e.appsp0t.com/proxy",
+        "http://proxyy000f.appsp0t.com/proxy"
+    };
+
+    public static String[] getProxyUrls() {
+        Set<String> re = mConfigPre.getStringSet(PROXY_URLS_KEY, null);
+        if (re != null && re.size() > 0)
+            return re.toArray(new String[re.size()]);
+        else
+            return DEFAULT_PROXY_URLS;
+    }
+
+    public static void setProxyUrls(String[] urls) {
+        mConfigPre.edit().putStringSet(PROXY_URLS_KEY, new HashSet<String>(Arrays.asList(urls))).apply();
     }
 }

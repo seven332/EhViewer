@@ -69,7 +69,7 @@ public class EhClient {
     public static final String HEADER_EX = "http://exhentai.org/";
     public static final String HEADER_LOFI = "http://lofi.e-hentai.org/";
 
-    private static final String API_EHVIEWER = "http://www.ehviewer.com/API";
+    public static final String API_EHVIEWER = "http://www.ehviewer.com/API";
 
     /* Avatar get code */
     public static final int GET_AVATAR_OK = 0x0;

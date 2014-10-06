@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.conn.ConnectTimeoutException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -51,6 +52,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.exception.StopRequestException;
+import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.FastByteArrayOutputStream;
@@ -81,25 +83,8 @@ public class HttpHelper {
     private static final String CHARSET_KEY = "charset=";
 
     // TODO Get proxy list from server
-    private static final String[] PROXY_URLS = {
-        "http://proxyy0000.appsp0t.com/proxy",
-        "http://proxyy0001.appsp0t.com/proxy",
-        "http://proxyy0002.appsp0t.com/proxy",
-        "http://proxyy0003.appsp0t.com/proxy",
-        "http://proxyy0004.appsp0t.com/proxy",
-        "http://proxyy0005.appsp0t.com/proxy",
-        "http://proxyy0006.appsp0t.com/proxy",
-        "http://proxyy0007.appsp0t.com/proxy",
-        "http://proxyy0008.appsp0t.com/proxy",
-        "http://proxyy0009.appsp0t.com/proxy",
-        "http://proxyy000a.appsp0t.com/proxy",
-        "http://proxyy000b.appsp0t.com/proxy",
-        "http://proxyy000c.appsp0t.com/proxy",
-        "http://proxyy000d.appsp0t.com/proxy",
-        "http://proxyy000e.appsp0t.com/proxy",
-        "http://proxyy000f.appsp0t.com/proxy"
-    };
-    private static volatile int sProxyIndex = MathUtils.random(0, PROXY_URLS.length);
+    private static String[] sProxyUrls = Config.DEFAULT_PROXY_URLS;
+    private static volatile int sProxyIndex = MathUtils.random(0, sProxyUrls.length);
     private static Object sProxyIndexLock = new Object();
 
     public class Package {
@@ -125,11 +110,43 @@ public class HttpHelper {
         void onFailure(String eMsg);
     }
 
+    public static void updateProxyUrls(final Context context) {
+        new BgThread() {
+            @Override
+            public void run() {
+                try {
+                    HttpHelper hh = new HttpHelper(context);
+                    JSONObject json = new JSONObject();
+                    json.put("method", "proxy_urls");
+                    String body = hh.postJson(EhClient.API_EHVIEWER, json);
+                    JSONObject jo = new JSONObject(body);
+                    JSONArray ja = jo.getJSONObject("proxy_urls").getJSONArray("urls");
+                    String[] newUrls = new String[ja.length()];
+                    if (newUrls.length < 1)
+                        throw new Throwable();
+                    for (int i = 0; i < ja.length(); i++)
+                        newUrls[i] = ja.getString(i);
+                    synchronized(sProxyIndexLock) {
+                        sProxyUrls = newUrls;
+                        sProxyIndex = MathUtils.random(0, sProxyUrls.length);
+                    }
+                    // Put proxy into config
+                    Config.setProxyUrls(sProxyUrls);
+                } catch (Throwable e) {
+                    synchronized(sProxyIndexLock) {
+                        sProxyUrls = Config.getProxyUrls();
+                        sProxyIndex = MathUtils.random(0, sProxyUrls.length);
+                    }
+                }
+            }
+        }.start();
+    }
+
     public String getProxyUrl() {
         synchronized(sProxyIndexLock) {
-            if (sProxyIndex < 0 || sProxyIndex >= PROXY_URLS.length)
+            if (sProxyIndex < 0 || sProxyIndex >= sProxyUrls.length)
                 sProxyIndex = 0;
-            return PROXY_URLS[sProxyIndex++];
+            return sProxyUrls[sProxyIndex++];
         }
     }
 

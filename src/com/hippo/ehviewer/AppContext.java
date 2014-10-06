@@ -31,6 +31,7 @@ import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.ehclient.ExDownloaderManager;
+import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.EhUtils;
@@ -87,6 +88,9 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
                 new FileOutputStream(nomedia).close();
             } catch (IOException e) {}
         }
+
+        // Update proxy urls
+        HttpHelper.updateProxyUrls(this);
 
         // Fix <=22 login error
         if (Config.getVersionCode() <= 22)
