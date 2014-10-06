@@ -803,7 +803,7 @@ public class GalleryDetailActivity extends AbsActivity
             intent.putExtra(GalleryActivity.KEY_GID, mGalleryInfo.gid);
             intent.putExtra(GalleryActivity.KEY_TOKEN, mGalleryInfo.token);
             intent.putExtra(GalleryActivity.KEY_TITLE, mGalleryInfo.title);
-            intent.putExtra(GalleryActivity.KEY_START_INDEX, 0);
+            intent.putExtra(GalleryActivity.KEY_START_INDEX, -1);
             startActivity(intent);
         } else if (v == mCategory) {
             Intent intent = new Intent(this, GalleryListActivity.class);
