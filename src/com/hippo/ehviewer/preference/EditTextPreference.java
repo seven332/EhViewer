@@ -74,7 +74,10 @@ public class EditTextPreference extends DialogPreference {
     public boolean onClick(MaterialAlertDialog dialog, int which) {
         super.onClick(dialog, which);
         if (which == MaterialAlertDialog.POSITIVE) {
-            String value = ((EditText) dialog.findViewById(R.id.edittextpreference_edittext)).getText().toString();
+            EditText et = (EditText) dialog.findViewById(R.id.edittextpreference_edittext);
+            if (et == null)
+                return true;
+            String value = et.getText().toString();
             if (callChangeListener(value)) {
                 persistString(value);
                 setSummary(value);
