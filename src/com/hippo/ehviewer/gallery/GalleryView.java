@@ -94,6 +94,7 @@ public class GalleryView extends GLView
     private static final float MILLSEC_PER_DIX = 0.2f;
     private static final float CHANGE_PAGE_PROPORTION = 0.1f;
     private static final float SLIDE_SENSITIVITY = 0;
+    private static final float BORDER_TIP_SENSITIVITY = Ui.dp2pix(48);
 
     private static final int ANIMATE_MIN = 200;
 
@@ -1224,7 +1225,7 @@ public class GalleryView extends GLView
         }
 
         @Override
-        public boolean onScrollEnd() {
+        public boolean onScrollEnd(float totalX, float totalY) {
 
             if (isScale)
                 return false;
@@ -1264,7 +1265,7 @@ public class GalleryView extends GLView
                 break;
             case SCROLL_NONE:
                 ShowItem showItem = showItems[CUR_TARGET_INDEX];
-                if (showItem != null) {
+                if (showItem != null && Math.abs(totalX) - BORDER_TIP_SENSITIVITY > 0) {
                     if (isFirstPage() && showItem.mRect.left >= 0)
                         MaterialToast.showToast(mContext.getString(R.string.first_page));
                     else if (isLastPage() && showItem.mRect.right <= mScreenWidth)
