@@ -22,6 +22,11 @@
         android:summary="@string/author_summary" />
 
     <Preference
+        android:key="twitter"
+        android:title="@string/twitter_title"
+        android:summary="@string/twitter_summary" />
+
+    <Preference
         android:key="changelog"
         android:title="@string/changelog_title" />
 

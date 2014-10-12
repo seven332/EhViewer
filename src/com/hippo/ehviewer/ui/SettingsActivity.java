@@ -962,6 +962,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             Preference.OnPreferenceChangeListener {
 
         private static final String KEY_AUTHOR = "author";
+        private static final String KEY_TWITTER = "twitter";
         private static final String KEY_CHANGELOG = "changelog";
         private static final String KEY_THANKS = "thanks";
         private static final String KEY_WEBSITE = "website";
@@ -972,6 +973,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_ABOUT_ANALYICS = "about_analyics";
 
         private Preference mAuthor;
+        private Preference mTwitter;
         private Preference mChangelog;
         private Preference mThanks;
         private Preference mWebsite;
@@ -988,6 +990,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
             mAuthor = findPreference(KEY_AUTHOR);
             mAuthor.setOnPreferenceClickListener(this);
+            mTwitter = findPreference(KEY_TWITTER);
+            mTwitter.setOnPreferenceClickListener(this);
             mChangelog = findPreference(KEY_CHANGELOG);
             mChangelog.setOnPreferenceClickListener(this);
             mThanks = findPreference(KEY_THANKS);
@@ -1014,6 +1018,28 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 i.setData(Uri.parse("mailto:ehviewersu@gmail.com"));
                 i.putExtra(Intent.EXTRA_SUBJECT, "About EhViewer");
                 startActivity(i);
+
+            } else if (KEY_TWITTER.equals(key)) {
+                new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.twitter_title)
+                        .setItems(new CharSequence[]{"@EhViewer", "@jkjvinn"}, new MaterialAlertDialog.OnClickListener() {
+                            @Override
+                            public boolean onClick(MaterialAlertDialog dialog, int which) {
+                                Uri uri = null;
+                                switch (which) {
+                                case 0:
+                                    uri = Uri.parse("https://twitter.com/EhViewer");
+                                    break;
+                                case 1:
+                                    uri = Uri.parse("https://twitter.com/jkjvinn");
+                                    break;
+                                }
+                                if (uri != null) {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                    startActivity(intent);
+                                }
+                                return true;
+                            }
+                        }).setNegativeButton(android.R.string.cancel).show();
 
             } else if (KEY_CHANGELOG.equals(key)) {
                 InputStream is = mActivity.getResources()
