@@ -201,7 +201,7 @@ public class GalleryActivity extends AbsActivity
         mTitle = intent.getStringExtra(KEY_TITLE);
         int startIndex = intent.getIntExtra(KEY_START_INDEX, 0);
         if (startIndex == -1)
-            startIndex = ExDownloader.readCurReadIndex(mGid);
+            startIndex = ExDownloader.readCurReadIndex(mGid, mTitle);
 
         if (mGid == -1 || token == null || mTitle == null) {
             new MaterialAlertDialog.Builder(this).setTitle(R.string.error)

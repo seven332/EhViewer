@@ -360,7 +360,7 @@ public class DownloadActivity extends AbsActivity {
                                 mServiceConn.getService().delete(mDownloadInfo);
                                 // Delete dir
                                 GalleryInfo gi = mDownloadInfo.galleryInfo;
-                                Utils.deleteDirInThread(EhUtils.getGalleryDir(gi.gid));
+                                Utils.deleteDirInThread(EhUtils.getGalleryDir(gi.gid, gi.title));
                             }
                             return true;
                         }

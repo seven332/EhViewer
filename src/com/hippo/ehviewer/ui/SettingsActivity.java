@@ -16,7 +16,9 @@
 
 package com.hippo.ehviewer.ui;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -56,8 +58,10 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.SimpleSuggestionProvider;
 import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
+import com.hippo.ehviewer.data.ApiGalleryInfo;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.DownloadInfo;
+import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.preference.ListPreference;
@@ -65,6 +69,7 @@ import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Favorite;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
@@ -772,17 +777,20 @@ public class SettingsActivity extends AbsPreferenceActivity {
     }
 
     public static class AdvancedFragment extends TranslucentPreferenceFragment
-            implements Preference.OnPreferenceChangeListener {
+            implements Preference.OnPreferenceChangeListener,
+            Preference.OnPreferenceClickListener {
 
         private static final String KEY_HTTP_RETRY = "http_retry";
         private static final String KEY_HTTP_CONNECT_TIMEOUT = "http_connect_timeout";
         private static final String KEY_HTTP_READ_TIMEOUT = "http_read_timeout";
         private static final String KEY_EH_MIN_INTERVAL = "eh_min_interval";
+        private static final String KEY_FIX_DIRNAME = "fix_dirname";
 
         private Preference mHttpRetry;
         private Preference mHttpConnectTimeout;
         private Preference mHttpReadTimeout;
         private Preference mEhMinInterval;
+        private Preference mFixDirname;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -797,6 +805,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mHttpReadTimeout.setOnPreferenceChangeListener(this);
             mEhMinInterval = findPreference(KEY_EH_MIN_INTERVAL);
             mEhMinInterval.setOnPreferenceChangeListener(this);
+            mFixDirname = findPreference(KEY_FIX_DIRNAME);
+            mFixDirname.setOnPreferenceClickListener(this);
         }
 
         @Override
@@ -844,6 +854,110 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 }
             }
 
+            return true;
+        }
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            final String key = preference.getKey();
+            if (KEY_FIX_DIRNAME.equals(key)) {
+                mFixDirname.setEnabled(false);
+                new BgThread() {
+                    @Override
+                    public void run() {
+                        File downloadDir = new File(Config.getDownloadPath());
+                        List<File> targetDirList = new ArrayList<File>();
+
+                        String[] list = downloadDir.list();
+                        if (list != null) {
+                            for (String str: list) {
+                                if (str.contains("-")) continue;
+                                File dir = new File(downloadDir, str);
+                                if (new File(dir, EhUtils.EH_DOWNLOAD_FILENAME).exists())
+                                    targetDirList.add(dir);
+                            }
+                        }
+
+                        if (targetDirList.size() == 0) {
+                            AppHandler.getInstance().post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mFixDirname.setEnabled(true);
+                                    MaterialToast.showToast("未发现可修正项"); // TODO
+                                }
+                            });
+                            return;
+                        } else {
+                            AppHandler.getInstance().post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MaterialToast.showToast("开始修正"); // TODO
+                                }
+                            });
+                        }
+
+                        int handleNum = 0;
+                        List<File> dirs = new ArrayList<File>();
+                        List<Integer> gids = new ArrayList<Integer>();
+                        List<String> tokens = new ArrayList<String>();
+                        // Do get title from api
+                        for (int i = 0; i < targetDirList.size(); i++) {
+                            File dir = targetDirList.get(i);
+                            File info = new File(dir, EhUtils.EH_DOWNLOAD_FILENAME);
+                            InputStream is = null;
+                            int gid;
+                            String token;
+                            try {
+                                is = new BufferedInputStream(new FileInputStream(info),
+                                        128);
+                                // skip read index
+                                Utils.readAsciiLine(is);
+                                gid = Integer.parseInt(Utils.readAsciiLine(is));
+                                token = Utils.readAsciiLine(is);
+                                Utils.closeQuietly(is);
+                                dirs.add(dir);
+                                gids.add(gid);
+                                tokens.add(token);
+                                // Post api when to 25 or the end
+                                if (gids.size() == 25 || i == targetDirList.size() - 1) {
+                                    ApiGalleryInfo[] agiArray = EhClient.getInstance().getApiGalleryInfo(
+                                            Utils.toIntArray(gids), tokens.toArray(new String[tokens.size()]));
+                                    // Change dirname
+                                    if (agiArray != null) {
+                                        for (int j = 0; j < agiArray.length; j++) {
+                                            ApiGalleryInfo agi = agiArray[j];
+                                            if (agi != null) {
+                                                handleNum++;
+
+                                                Log.d(TAG, dirs.get(j).getName());
+                                                Log.d(TAG, EhUtils.generateGalleryDir(agi.gid, agi.title).getName());
+
+                                                dirs.get(j).renameTo(EhUtils.generateGalleryDir(agi.gid, agi.title));
+                                            }
+                                        }
+                                    }
+                                    dirs.clear();
+                                    gids.clear();
+                                    tokens.clear();
+                                    // Wait for CD, if not last
+                                    if (i != targetDirList.size() - 1)
+                                        Thread.sleep(3000);
+                                }
+                            } catch (Throwable e) {
+                                continue;
+                            }
+                        }
+                        final int _handleNum = handleNum;
+                        AppHandler.getInstance().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mFixDirname.setEnabled(true);
+                                MaterialToast.showToast("共修正 " + _handleNum + " 项");
+                            }
+                        });
+                    }
+                }.start();
+            }
             return true;
         }
     }

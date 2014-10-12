@@ -59,5 +59,14 @@
             android:defaultValue="0" />
 
     </PreferenceCategory>
+    
+    <PreferenceCategory
+        android:title="@string/eh_others_settings_title">
 
+        <Preference
+            android:key="fix_dirname"
+            android:title="@string/fix_dirname_title"
+            android:summary="@string/fix_dirname_title_summary" />
+
+    </PreferenceCategory>
 </PreferenceScreen>

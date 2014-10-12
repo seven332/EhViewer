@@ -231,6 +231,9 @@
     <string name="http_read_timeout_title">读取超时 (ms)</string>
     <string name="eh_advanced_settings_title">EH</string>
     <string name="eh_min_interval_title">EH 站点最小连接间隔 (ms)</string>
+    <string name="eh_others_settings_title">其他</string>
+    <string name="fix_dirname_title">修正下载文件夹名</string>
+    <string name="fix_dirname_title_summary">将下载文件夹名由 gid 改为 gid-title，不进行修正不会影响使用</string>
 
     <string name="about_settings_title">关于</string>
     <string name="author_title">作者</string>

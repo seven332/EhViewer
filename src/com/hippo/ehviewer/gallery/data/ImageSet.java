@@ -88,7 +88,7 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
 
     public ImageSet(int gid, String token, String title, int startIndex) {
 
-        mDir = EhUtils.getGalleryDir(gid);
+        mDir = EhUtils.getGalleryDir(gid, title);
         Utils.ensureDir(mDir, true);
 
         // Init ExDownloader

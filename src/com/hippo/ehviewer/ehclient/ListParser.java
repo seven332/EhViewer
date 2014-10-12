@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.LofiGalleryInfo;
+import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Utils;
 
 public class ListParser {
@@ -84,7 +85,7 @@ public class ListParser {
                 } else {
                     continue;
                 }
-                lgi.category = EhClient.getType(m.group(5));
+                lgi.category = EhUtils.getCategory(m.group(5));
                 String tags = m.group(6);
                 if (tags.equals("-"))
                     lgi.lofiTags = null;
@@ -147,7 +148,7 @@ public class ListParser {
             while (m.find()) {
                 GalleryInfo gi = new GalleryInfo();
 
-                gi.category = EhClient.getType(m.group(1));
+                gi.category = EhUtils.getCategory(m.group(1));
                 gi.posted = m.group(2);
                 if (m.group(3) == null) {
                     gi.thumb = Utils.unescapeXml("http://"

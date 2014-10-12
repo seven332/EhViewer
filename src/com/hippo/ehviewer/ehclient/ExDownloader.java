@@ -135,7 +135,7 @@ public class ExDownloader implements Runnable {
         mControlorArray = new HttpHelper.DownloadControlor[mWorkerNum];
 
         // Make sure dir
-        mDir = EhUtils.getGalleryDir(mGid);
+        mDir = EhUtils.getGalleryDir(mGid, mTitle);
         Utils.ensureDir(mDir, true);
     }
 
@@ -427,9 +427,9 @@ public class ExDownloader implements Runnable {
         } catch (Throwable e) {}
     }
 
-    public static int readCurReadIndex(int gid) {
+    public static int readCurReadIndex(int gid, String title) {
         try {
-            RandomAccessFile raf = new RandomAccessFile(new File(EhUtils.getGalleryDir(gid),
+            RandomAccessFile raf = new RandomAccessFile(new File(EhUtils.getGalleryDir(gid, title),
                     EhUtils.EH_DOWNLOAD_FILENAME), "r");
             int index = Integer.parseInt(raf.readLine(), 16);
             raf.close();

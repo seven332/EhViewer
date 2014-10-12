@@ -27,6 +27,7 @@ import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.LargePreviewList;
 import com.hippo.ehviewer.data.NormalPreviewList;
 import com.hippo.ehviewer.data.PreviewList;
+import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Utils;
 
 public class DetailParser {
@@ -153,7 +154,7 @@ public class DetailParser {
                 thumb = Utils.unescapeXml(m.group(1));
                 title = Utils.unescapeXml(m.group(2));
                 title_jpn = Utils.unescapeXml(m.group(3));
-                category = EhClient.getType(m.group(4));
+                category = EhUtils.getCategory(m.group(4));
                 uploader = m.group(5);
                 posted = m.group(6);
                 pages = Integer.parseInt(m.group(7));

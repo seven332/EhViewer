@@ -111,6 +111,14 @@ public class Config {
         mConfigPre.edit().putInt(key, value).apply();
     }
 
+    public static boolean getBoolean(String key, boolean defValue) {
+        return mConfigPre.getBoolean(key, defValue);
+    }
+
+    public static void setBoolean(String key, boolean value) {
+        mConfigPre.edit().putBoolean(key, value).apply();
+    }
+
 
     /****** For Normal Config ******/
     private static final String KEY_ALLOWED = "allowed";

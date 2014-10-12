@@ -107,23 +107,14 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
             String[] list = downloadDir.list();
             if (list != null && list.length != 0) {
                 for (String str : list) {
-                    // Change download dir name from gid-title to gid
-                    File oldDir = new File(downloadDir, str);
-                    if (!new File(oldDir, EhUtils.EH_DOWNLOAD_FILENAME).exists())
-                        continue;
                     int index = str.indexOf('-');
                     if (index == -1)
                         continue;
                     String gid = str.substring(0, index);
-                    File newDir = new File(downloadDir, gid);
-                    if (!oldDir.renameTo(newDir)) {
-                        // if delete error, might same gid and different title
-                        Utils.deleteDirInThread(oldDir);
-                        continue;
-                    }
+                    File gDir = new File(downloadDir, str);
                     // Move download info file
                     File oldInfoFile = new File(oldEdInfoDir, gid);
-                    File newInfoFile = new File(newDir, EhUtils.EH_DOWNLOAD_FILENAME);
+                    File newInfoFile = new File(gDir, EhUtils.EH_DOWNLOAD_FILENAME);
                     try {
                         FileOutputStream fos = new FileOutputStream(newInfoFile);
                         // Add last page
@@ -138,7 +129,6 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
             // Delete old exdownload info dir
             Utils.deleteDirInThread(oldEdInfoDir);
         }
-
 
         // Update version code
         try {

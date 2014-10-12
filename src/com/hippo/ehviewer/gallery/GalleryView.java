@@ -1158,38 +1158,40 @@ public class GalleryView extends GLView
             case SCROLL_ANIME_RIGHT:
                 return false;
             case SCROLL_NONE:
-                boolean changePage = false;
+                // If it is true, page will move
+                boolean movePage = false;
                 Rect rect = curShowItem.mRect;
 
-                // Check change page or not
-                if (curShowItem == null || !(curShowItem instanceof BasicItem))
-                    changePage = true;
-                else{
-                    if ( Math.abs(totalX/totalY) > 1 && ((totalX > SLIDE_SENSITIVITY && dx < 0 && rect.left >= 0)
-                            || (totalX < -SLIDE_SENSITIVITY && dx > 0 && rect.right <= mScreenWidth)))
-                        changePage = true;
+                // If show item is null or TextItem, just move
+                // Check finger move left or right
+                // Check min sensitivity
+                if (curShowItem == null || !(curShowItem instanceof BasicItem) ||
+                        (Math.abs(totalX/totalY) > 1 && ((totalX > SLIDE_SENSITIVITY && dx < 0 && rect.left >= 0)
+                                || (totalX < -SLIDE_SENSITIVITY && dx > 0 && rect.right <= mScreenWidth)))) {
+                    movePage = true;
                 }
-                if (changePage) { // If change page
+                if (movePage) { // If change page
                     if (dx < 0) { // Go to left
                         if (!isFirstPage()) { // Not first page
                             scrollXOffset = 0;
                             mScrollState = SCROLL_LEFT;
+                            // Prepare previous show item
                             resetSizePosition(PRE_TARGET_INDEX);
                         } else {
-                            changePage = false;
+                            movePage = false;
                         }
-                    }
-                    else { // Go to righ
+                    } else { // Go to righ
                         if (!isLastPage()) { // Not last page
                             scrollXOffset = 0;
                             mScrollState = SCROLL_RIGHT;
+                            // Prepare next show item
                             resetSizePosition(NEXT_TARGET_INDEX);
                         } else {
-                            changePage = false;
+                            movePage = false;
                         }
                     }
                 }
-                if (!changePage){ // Move cur image
+                if (!movePage) { // Move cur image
                     int actDx = -(int)dx;
                     int actDy = -(int)dy;
                     if (rect.width() <= mScreenWidth)

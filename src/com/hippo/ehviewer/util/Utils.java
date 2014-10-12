@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -634,4 +635,15 @@ public final class Utils {
             return defaultValue;
         }
     }
+
+    public static int[] toIntArray(Collection<? extends Number> collection) {
+        Object[] boxedArray = collection.toArray();
+        int len = boxedArray.length;
+        int[] array = new int[len];
+        for (int i = 0; i < len; i++) {
+            // checkNotNull for GWT (do not optimize)
+            array[i] = ((Number) (boxedArray[i])).intValue();
+        }
+        return array;
+      }
 }

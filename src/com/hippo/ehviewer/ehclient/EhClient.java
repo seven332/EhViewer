@@ -36,15 +36,17 @@ import android.os.Process;
 import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.data.ApiGalleryInfo;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.GalleryPopular;
-import com.hippo.ehviewer.data.ListUrls;
 import com.hippo.ehviewer.data.LofiGalleryDetail;
 import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.network.HttpHelper;
+import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Utils;
 
 public class EhClient {
@@ -885,7 +887,7 @@ public class EhClient {
 
     public void comment(final String detailUrl, final String comment,
             final OnCommentListener listener) {
-        new Thread(new Runnable() {
+        new BgThread(new Runnable() {
             @Override
             public void run() {
                 HttpHelper hp = new HttpHelper(mContext);
@@ -1090,56 +1092,6 @@ public class EhClient {
         }).start();
     }
 
-    private static final int[] CATEGORY_VALUES = {
-        ListUrls.MISC,
-        ListUrls.DOUJINSHI,
-        ListUrls.MANGA,
-        ListUrls.ARTIST_CG,
-        ListUrls.GAME_CG,
-        ListUrls.IMAGE_SET,
-        ListUrls.COSPLAY,
-        ListUrls.ASIAN_PORN,
-        ListUrls.NON_H,
-        ListUrls.WESTERN,
-        ListUrls.UNKNOWN
-    };
-
-    // TODO How about "Private"
-    private static final String[][] CATEGORY_STRINGS = {
-        new String[]{"misc"},
-        new String[]{"doujinshi"},
-        new String[]{"manga"},
-        new String[]{"artistcg", "Artist CG Sets"},
-        new String[]{"gamecg", "Game CG Sets"},
-        new String[]{"imageset", "Image Sets"},
-        new String[]{"cosplay"},
-        new String[]{"asianporn", "Asian Porn"},
-        new String[]{"non-h"},
-        new String[]{"western"},
-        new String[]{"unknown"}
-    };
-
-    public static int getType(String type) {
-        int i;
-        for (i = 0; i < CATEGORY_STRINGS.length - 1; i++) {
-            for (String str : CATEGORY_STRINGS[i])
-                if (str.equalsIgnoreCase(type))
-                    return CATEGORY_VALUES[i];
-        }
-
-        return CATEGORY_VALUES[i];
-    }
-
-    public static String getType(int type) {
-        int i;
-        for (i = 0; i < CATEGORY_VALUES.length - 1; i++) {
-            if (CATEGORY_VALUES[i] == type)
-                break;
-        }
-        return CATEGORY_STRINGS[i][0];
-    }
-
-
     // modifyFavorite
     public interface OnModifyFavoriteListener {
         void onSuccess(List<GalleryInfo> gis, int pageNum);
@@ -1173,7 +1125,7 @@ public class EhClient {
      */
     public void modifyFavorite(final int[] gids, final int dstCat, final int srcCat,
             final OnModifyFavoriteListener listener) {
-        new Thread(new Runnable() {
+        new BgThread(new Runnable() {
             @Override
             public void run() {
                 int i;
@@ -1231,7 +1183,7 @@ public class EhClient {
             listener.onFailure(e.getMessage());
             return;
         }
-        new Thread(new Runnable() {
+        new BgThread(new Runnable() {
             @Override
             public void run() {
                 HttpHelper hp = new HttpHelper(mContext);
@@ -1262,7 +1214,7 @@ public class EhClient {
                                 gi.title = Utils.unescapeXml(j.getString("title"));
                                 gi.posted = Utils.sDate.format(Long.parseLong(j.getString("posted")) * 1000);
                                 gi.thumb = j.getString("thumb");
-                                gi.category = getType(j.getString("category"));
+                                gi.category = EhUtils.getCategory(j.getString("category"));
                                 gi.uploader = j.getString("uploader");
                                 gi.rating = Float.parseFloat(j.getString("rating"));
                                 gi.generateSLang();
@@ -1290,183 +1242,163 @@ public class EhClient {
         }).start();
     }
 
-
-    /*
-    private static class GetGalleryMetadataPackage {
-        public Map<String, ListMangaDetail> lmds;
-        public OnGetGalleryMetadataListener listener;
-
-        public GetGalleryMetadataPackage(Map<String, ListMangaDetail> lmds,
-                OnGetGalleryMetadataListener listener) {
-            this.lmds = lmds;
-            this.listener = listener;
-        }
+    public interface OnGetApiGalleryInfoListener {
+        public void onSuccess(Object checkFlag, ApiGalleryInfo[] agiArray);
+        public void onFailure(Object checkFlag, String eMsg);
     }
 
-    private static Handler getGalleryMetadataHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            OnGetGalleryMetadataListener listener =
-                    ((GetGalleryMetadataPackage) msg.obj).listener;
-            Map<String, ListMangaDetail> lmds =
-                    ((GetGalleryMetadataPackage) msg.obj).lmds;
-            if (lmds == null || lmds.size() == 0)
-                listener.onFailure(msg.what);
-            else
-                listener.onSuccess(lmds);
-        };
-    };
+    private class GetApiGalleryInfoResponder implements Runnable {
+        private final boolean isOk;
+        private final OnGetApiGalleryInfoListener listener;
+        private final Object checkFlag;
+        private final ApiGalleryInfo[] agiArray;
+        private final String eMesg;
 
-    private static class GetGalleryMetadataRunnable implements Runnable {
-        private String[][] gidTokens;
-        private OnGetGalleryMetadataListener listener;
-
-        public GetGalleryMetadataRunnable(String[][] gidTokens,
-                OnGetGalleryMetadataListener listener) {
-            this.gidTokens = gidTokens;
+        public GetApiGalleryInfoResponder(OnGetApiGalleryInfoListener listener,
+                Object checkFlag, ApiGalleryInfo[] agiArray) {
+            this.isOk = true;
             this.listener = listener;
+            this.checkFlag = checkFlag;
+            this.agiArray = agiArray;
+            this.eMesg = null;
+        }
+
+        public GetApiGalleryInfoResponder(OnGetApiGalleryInfoListener listener,
+                Object checkFlag, String eMsg) {
+            this.isOk = false;
+            this.listener = listener;
+            this.checkFlag = checkFlag;
+            this.agiArray = null;
+            this.eMesg = eMsg;
         }
 
         @Override
         public void run() {
-            int errorMessageId = R.string.em_unknown_error;
-            Map<String, ListMangaDetail> lmds = new HashMap<String, ListMangaDetail>();
+            if (isOk)
+                listener.onSuccess(checkFlag, agiArray);
+            else
+                listener.onFailure(checkFlag, eMesg);
+        }
+    }
 
-            // Create post string
-            StringBuffer strBuf = new StringBuffer();
-            strBuf.append("{\"method\": \"gdata\",\"gidlist\": [");
-            for (String[] item: gidTokens)
-                strBuf.append("[" + item[0] + ",\"" + item[1] + "\"],");
-            strBuf.delete(strBuf.length()-1, strBuf.length());
-            strBuf.append("]}");
-            StringBuffer sb = new StringBuffer();
-            errorMessageId = postJson(API_URL, strBuf.toString(),sb);
-            if (sb.length() != 0) {
-                String pageContent = sb.toString();
+    private ApiGalleryInfo Json2Agi(JSONObject js) throws JSONException {
+        ApiGalleryInfo agi = new ApiGalleryInfo();
+        agi.gid = js.getInt("gid");
+        agi.token = js.getString("token");
+        agi.archiver_key = js.getString("archiver_key");
+        agi.title = js.getString("title");
+        agi.title_jpn = js.getString("title_jpn");
+        agi.category = EhUtils.getCategory(js.getString("category"));
+        agi.thumb = js.getString("thumb");
+        agi.uploader = js.getString("uploader");
+        agi.posted = Utils.sDate.format(Long.parseLong(js.getString("posted")) * 1000);
+        agi.filecount = js.getString("filecount");
+        agi.filesize = js.getLong("filesize");
+        agi.expunged = js.getBoolean("expunged");
+        agi.rating = Float.parseFloat(js.getString("rating"));
+        agi.torrentcount = js.getString("torrentcount");
+        JSONArray tags = js.getJSONArray("tags");
+        agi.apiTags = new String[tags.length()];
+        for (int j = 0; j < tags.length(); j++)
+            agi.apiTags[j] = tags.getString(j);
+        return agi;
+    }
+
+    public void getApiGalleryInfo(final Object checkFlag, final int[] gids, final String[] tokens, final OnGetApiGalleryInfoListener l) {
+        new BgThread() {
+            @Override
+            public void run() {
+                GetApiGalleryInfoResponder responder;
+                ApiGalleryInfo[] agiArray;
+                int requstLen;
+                // Create json
+                JSONObject json = new JSONObject();
                 try {
-                    SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-                    JSONObject jsonObject = new JSONObject(pageContent);
-                    JSONArray jsonArray = jsonObject.getJSONArray("gmetadata");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jo = jsonArray.getJSONObject(i);
-                        if (jo.getString("error") != null)
-                            continue;
-                        ListMangaDetail lmd = new ListMangaDetail();
-                        lmd.gid = Long.toString(jo.getLong("gid"));
-                        lmd.token = jo.getString("token");
-                        lmd.archiver_key = jo.getString("archiver_key");
-                        lmd.title = jo.getString("title");
-                        lmd.title_jpn = jo.getString("title_jpn");
-                        lmd.category = getType(jo.getString("category"));
-                        lmd.thumb = jo.getString("thumb");
-                        lmd.uploader = jo.getString("uploader");
-                        lmd.posted = fm.format(Long.parseLong(jo.getString("posted")) * 1000);
-                        lmd.filecount = jo.getString("filecount");
-                        lmd.filesize = jo.getLong("filesize");
-                        lmd.expunged = jo.getBoolean("expunged");
-                        lmd.rating = jo.getString("rating");
-                        lmd.torrentcount = jo.getString("torrentcount");
-                        JSONArray ja = jo.getJSONArray("tags");
-                        int length = ja.length();
-                        lmd.tags = new String[1][length+1];
-                        lmd.tags[0][0] = "all";
-                        for (int j = 1; j < length+1; j++)
-                            lmd.tags[0][j] = ja.getString(j);
-
-                        lmds.put(lmd.gid, lmd);
+                    json.put("method", "gdata");
+                    JSONArray jsonA = new JSONArray();
+                    requstLen = Math.min(gids.length, tokens.length);
+                    agiArray = new ApiGalleryInfo[requstLen];
+                    for (int i = 0; i < requstLen; i++) {
+                        JSONArray ja = new JSONArray();
+                        ja.put(gids[i]);
+                        ja.put(tokens[i]);
+                        jsonA.put(ja);
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    errorMessageId = R.string.em_parser_error;
+                    json.put("gidlist", jsonA);
+                } catch (Throwable e) {
+                    responder = new GetApiGalleryInfoResponder(l, null, "Create json error");
+                    mHandler.post(responder);
+                    return;
                 }
+                // Post
+                HttpHelper hh = new HttpHelper(mContext);
+                String body = hh.postJson(getApiUrl(), json);
+                if (body != null) {
+                    try {
+                        json = new JSONObject(body);
+                        JSONArray jsonA = (JSONArray) json.get("gmetadata");
+                        for (int i = 0; i < jsonA.length(); i++) {
+                            ApiGalleryInfo agi = Json2Agi(jsonA.getJSONObject(i));
+                            // Add to agiArray
+                            for (int j = 0; j < requstLen; j++) {
+                                if (agi.gid == gids[j])
+                                    agiArray[j] = agi;
+                            }
+                        }
+                        responder = new GetApiGalleryInfoResponder(l, checkFlag, agiArray);
+                    } catch (Throwable e) {
+                        responder = new GetApiGalleryInfoResponder(l, checkFlag, "Json error");
+                    }
+                } else {
+                    responder = new GetApiGalleryInfoResponder(l, checkFlag, hh.getEMsg());
+                }
+                mHandler.post(responder);
             }
-            Message msg = new Message();
-            msg.what = errorMessageId;
-            msg.obj = new GetGalleryMetadataPackage(lmds, listener);
-            getGalleryMetadataHandler.sendMessage(msg);
-        }
+        }.start();
     }
 
-    public static void getGalleryMetadata(String[][] gidTokens,
-            OnGetGalleryMetadataListener listener) {
-        new Thread(new GetGalleryMetadataRunnable(gidTokens,
-                listener)).start();
-    }
-
-
-
-    private static class GetGalleryTokensPackage {
-        public Map<String, String> tokens;
-        public OnGetGalleryTokensListener listener;
-
-        public GetGalleryTokensPackage(Map<String, String> tokens,
-                OnGetGalleryTokensListener listener) {
-            this.tokens = tokens;
-            this.listener = listener;
+    public ApiGalleryInfo[] getApiGalleryInfo(int[] gids, String[] tokens) {
+        ApiGalleryInfo[] agiArray;
+        int requstLen;
+        // Create json
+        JSONObject json = new JSONObject();
+        try {
+            json.put("method", "gdata");
+            JSONArray jsonA = new JSONArray();
+            requstLen = Math.min(gids.length, tokens.length);
+            agiArray = new ApiGalleryInfo[requstLen];
+            for (int i = 0; i < requstLen; i++) {
+                JSONArray ja = new JSONArray();
+                ja.put(gids[i]);
+                ja.put(tokens[i]);
+                jsonA.put(ja);
+            }
+            json.put("gidlist", jsonA);
+        } catch (Throwable e) {
+            return null;
         }
-    }
-
-    private static Handler getGalleryTokensHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            OnGetGalleryTokensListener listener =
-                    ((GetGalleryTokensPackage) msg.obj).listener;
-            Map<String, String> tokens =
-                    ((GetGalleryTokensPackage) msg.obj).tokens;
-            if (tokens == null || tokens.size() == 0)
-                listener.onFailure(msg.what);
-            else
-                listener.onSuccess(tokens);
-        };
-    };
-
-
-    private static class GetGalleryTokensRunnable implements Runnable {
-        private String gid;
-        private String token;
-        private String[] pages;
-        private OnGetGalleryMetadataListener listener;
-
-        public GetGalleryTokensRunnable(String gid, String token, String[] pages,
-                OnGetGalleryMetadataListener listener) {
-            this.gid = gid;
-            this.token = token;
-            this.pages = pages;
-            this.listener = listener;
-        }
-
-        @Override
-        public void run() {
-            int errorMessageId = R.string.em_unknown_error;
-            Map<String, String> tokens = new HashMap<String, String>();
-
-            // Create post string
-            StringBuffer strBuf = new StringBuffer();
-            strBuf.append("{\"method\": \"gtoken\",\"pagelist\": [");
-            for (String item: pages)
-                strBuf.append("[" + gid + ",\"" + token + "\"," + item + "],");
-            strBuf.delete(strBuf.length()-1, strBuf.length());
-            strBuf.append("]}");
-
-            Log.i(TAG, strBuf.toString());
-
-            StringBuffer sb = new StringBuffer();
-            errorMessageId = postJson(API_URL, strBuf.toString(),sb);
-            if (sb.length() != 0) {
-                String pageContent = sb.toString();
-                Log.d(TAG, pageContent);
+        // Post api
+        HttpHelper hh = new HttpHelper(mContext);
+        String body = hh.postJson(getApiUrl(), json);
+        if (body == null) {
+            return null;
+        } else {
+            try {
+                json = new JSONObject(body);
+                JSONArray jsonA = (JSONArray) json.get("gmetadata");
+                for (int i = 0; i < jsonA.length(); i++) {
+                    ApiGalleryInfo agi = Json2Agi(jsonA.getJSONObject(i));
+                    // Add to agiArray
+                    for (int j = 0; j < requstLen; j++) {
+                        if (agi.gid == gids[j])
+                            agiArray[j] = agi;
+                    }
+                }
+                return agiArray;
+            } catch (Throwable e) {
+                return null;
             }
         }
     }
-
-
-    */
-
-    /*
-    private static void getGalleryTokens(String gid, String token, String[] pages,
-            OnGetGalleryMetadataListener listener) {
-        new Thread(new GetGalleryTokensRunnable(gid, token, pages,
-                listener)).start();
-    }*/
 
 }
