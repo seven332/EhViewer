@@ -87,11 +87,16 @@ public final class EhUtils {
         File downloadDir = new File(Config.getDownloadPath());
         File gDir = new File(downloadDir,
                 Utils.standardizeFilename(Integer.toString(gid)));
+        File defaultDir = generateGalleryDir(gid, title);
 
-        if (gDir.exists())
-            return gDir;
-        else
-            return generateGalleryDir(gid, title);
+        if (gDir.exists()) {
+            if (gDir.renameTo(defaultDir))
+                return defaultDir;
+            else
+                return gDir;
+        } else {
+            return defaultDir;
+        }
 
         // TODO check a dir start with the gid, but it may take a long time
         // Create a map to record all ?
