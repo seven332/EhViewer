@@ -16,6 +16,9 @@
 
 package com.hippo.ehviewer.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -39,11 +42,14 @@ public class DownloadService extends Service
         implements ExDownloader.ListenerForDownload {
     @SuppressWarnings("unused")
     private static final String TAG = DownloadService.class.getSimpleName();
-    private static final int DOWNLOAD_NOTIFY_ID = -1;
+    private static final int DOWNLOADING_NOTIFY_ID = -1;
+    private static final int DOWNLOAD_NOTIFY_ID = -2;
+    //private static final int DOWNLOAD_FAILED_NOTIFY_ID = -3;
 
     public static final String ACTION_UPDATE = "com.hippo.ehviewer.service.DownloadService.UPDATE";
     public static final String ACTION_STOP = "com.hippo.ehviewer.service.DownloadService.STOP";
     public static final String ACTION_STOP_ALL = "com.hippo.ehviewer.service.DownloadService.STOP_ALL";
+    public static final String ACTION_CLEAR = "com.hippo.ehviewer.service.DownloadService.ACTION_CLEAR";
 
     private Context mContext;
     private Data mData;
@@ -54,6 +60,9 @@ public class DownloadService extends Service
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
     private String mSpeedStr = null;
+
+    private final List<Integer> mDownloadOk = new ArrayList<Integer>();
+    private final List<Integer> mDownloadFailed = new ArrayList<Integer>();
 
     @Override
     public void onCreate() {
@@ -68,16 +77,20 @@ public class DownloadService extends Service
                 getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    private void handleIntent(Intent intent) {
+    private synchronized void handleIntent(Intent intent) {
         if (intent == null)
             return;
 
-        if (ACTION_STOP.equals(intent.getAction())) {
+        String action = intent.getAction();
+        if (ACTION_STOP.equals(action)) {
             stopCurrentTask();
-            mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
-        } else if (ACTION_STOP_ALL.equals(intent.getAction())) {
+            mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
+        } else if (ACTION_STOP_ALL.equals(action)) {
             stopAll();
-            mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
+            mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
+        } else if (ACTION_CLEAR.equals(action)) {
+            mDownloadOk.clear();
+            mDownloadFailed.clear();
         }
     }
 
@@ -98,7 +111,7 @@ public class DownloadService extends Service
     public void onDestroy() {
         super.onDestroy();
 
-        mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
+        mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
 
         mBinder = null;
         mNotifyManager = null;
@@ -154,7 +167,7 @@ public class DownloadService extends Service
     public synchronized void stop(DownloadInfo di) {
         if (mCurDownloadInfo == di) {
             // Cancel download notification
-            mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
+            mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
 
             // Target downloadinfo is downloading
             mCurDownloadInfo.state = DownloadInfo.STATE_NONE;
@@ -195,7 +208,7 @@ public class DownloadService extends Service
                     di.state == DownloadInfo.STATE_DOWNLOAD) {
                 if (mCurDownloadInfo == di) {
                     // Cancel download notification
-                    mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
+                    mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
 
                     // Target downloadinfo is downloading
                     mCurDownloadInfo.state = DownloadInfo.STATE_NONE;
@@ -269,7 +282,7 @@ public class DownloadService extends Service
         mBuilder.setContentTitle(getString(R.string.start_download)  + " " + gid)
                 .setContentText(null)
                 .setProgress(0, 0, true);
-        mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
+        mNotifyManager.notify(DOWNLOADING_NOTIFY_ID, mBuilder.build());
         mNotifyManager.cancel(gid);
 
         notifyUpdate();
@@ -288,7 +301,7 @@ public class DownloadService extends Service
         mBuilder.setContentTitle(getString(R.string.downloading)  + " " + gid)
                 .setContentText(mSpeedStr)
                 .setProgress(totalSize, downloadSize, false);
-        mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
+        mNotifyManager.notify(DOWNLOADING_NOTIFY_ID, mBuilder.build());
 
         notifyUpdate();
     }
@@ -307,9 +320,32 @@ public class DownloadService extends Service
                 .setContentText(mSpeedStr)
                 .setProgress(mCurDownloadInfo.total, mCurDownloadInfo.download,
                         mCurDownloadInfo.total == -1 ? true :false);
-        mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, mBuilder.build());
+        mNotifyManager.notify(DOWNLOADING_NOTIFY_ID, mBuilder.build());
 
         notifyUpdate();
+    }
+
+    private synchronized String getDownloadNotificationText() {
+
+        int ok = mDownloadOk.size();
+        int failed = mDownloadFailed.size();
+
+        // TODO
+        if (ok == 0 && failed == 0) {
+            return "null";
+        } else if (ok == 1 && failed == 0) {
+            return "下载成功 " + mDownloadOk.get(0);
+        } else if (failed == 0) {
+            return "下载成功 " + mDownloadOk.size() + " 项";
+        } else if (ok == 0 && failed == 1) {
+            return "下载失败 " + mDownloadFailed.get(0);
+        } else if (ok == 0) {
+            return "下载失败 " + mDownloadFailed.size() + " 项";
+        } else if (ok == 1 && failed == 1){
+            return "下载成功 " + mDownloadOk.get(0) + ", 下载失败 " + mDownloadFailed.get(0);
+        } else {
+            return "下载成功 " + mDownloadOk.size() + " 项, 下载失败 " + mDownloadFailed.size() + " 项";
+        }
     }
 
     @Override
@@ -318,17 +354,33 @@ public class DownloadService extends Service
             return;
 
         mCurDownloadInfo.legacy = legacy;
+        if (mCurDownloadInfo.legacy == 0) {
+            // Download ok
+            if (!mDownloadOk.contains(gid))
+                mDownloadOk.add(gid);
+            mDownloadFailed.remove((Integer) gid);
+        } else {
+            // Download failed
+            if (!mDownloadFailed.contains(gid))
+                mDownloadFailed.add(gid);
+            mDownloadOk.remove((Integer) gid);
+        }
+
+        Intent clearIntent = new Intent(this, DownloadService.class);
+        clearIntent.setAction(ACTION_CLEAR);
+        PendingIntent piClear = PendingIntent.getService(this, 0, clearIntent, 0);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
         builder.setSmallIcon(android.R.drawable.stat_sys_download_done);
         Intent intent = new Intent(DownloadService.this,DownloadActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
-        builder.setContentTitle(getString(R.string.download_over)  + " " + gid)
-                .setContentText(legacy == 0 ? getString(R.string.done) :
-                    String.format(getString(R.string.legacy_pages), legacy))
+        builder.setContentTitle(getString(R.string.download_over))
+                .setContentText(getDownloadNotificationText())
+                .setDeleteIntent(piClear)
                 .setOngoing(false).setAutoCancel(true);
-        mNotifyManager.notify(gid, builder.build());
-        mNotifyManager.cancel(DOWNLOAD_NOTIFY_ID);
+        mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, builder.build());
+        mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
 
         mCurDownloadInfo.legacy = legacy;
         mCurDownloadInfo.state = DownloadInfo.STATE_FINISH;
