@@ -69,7 +69,6 @@ import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Favorite;
-import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
@@ -928,10 +927,6 @@ public class SettingsActivity extends AbsPreferenceActivity {
                                             ApiGalleryInfo agi = agiArray[j];
                                             if (agi != null) {
                                                 handleNum++;
-
-                                                Log.d(TAG, dirs.get(j).getName());
-                                                Log.d(TAG, EhUtils.generateGalleryDir(agi.gid, agi.title).getName());
-
                                                 dirs.get(j).renameTo(EhUtils.generateGalleryDir(agi.gid, agi.title));
                                             }
                                         }
