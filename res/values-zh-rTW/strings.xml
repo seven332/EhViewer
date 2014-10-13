@@ -236,6 +236,8 @@
 
     <string name="about_settings_title">關於</string>
     <string name="author_title">作者</string>
+    <string name="twitter_title">Twitter</string>
+    <string name="twitter_summary">目前由 @jkjvinn 管理更新</string>
     <string name="changelog_title">日誌</string>
     <string name="thanks_title">感謝</string>
     <string name="website_title">網站</string>
