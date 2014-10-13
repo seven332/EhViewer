@@ -205,8 +205,8 @@ public class GalleryActivity extends AbsActivity
 
         if (mGid == -1 || token == null || mTitle == null) {
             new MaterialAlertDialog.Builder(this).setTitle(R.string.error)
-                    .setMessage("数据错误！") // TODO
-                    .setPositiveButton("关闭")
+                    .setMessage(R.string.ga_data_error)
+                    .setPositiveButton(R.string.close)
                     .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                         @Override
                         public boolean onClick(MaterialAlertDialog dialog, int which) {

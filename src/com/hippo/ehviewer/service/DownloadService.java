@@ -330,7 +330,6 @@ public class DownloadService extends Service
         int ok = mDownloadOk.size();
         int failed = mDownloadFailed.size();
 
-        // TODO
         if (ok == 0 && failed == 0) {
             return "null";
         } else if (ok == 1 && failed == 0) {

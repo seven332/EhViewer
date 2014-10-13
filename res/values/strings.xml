@@ -80,6 +80,8 @@
     <string name="no_avatar">No avatar</string>
     <string name="get_avatar_error">Get avatar error</string>
     <string name="image_search">Image search</string>
+    <string name="image_not_exist">Image does not exist</string>
+    <string name="image_not_readable">Image is not readable</string>
 
     <!-- Update -->
     <string name="update_message" formatted="false">Found new version : %s\nSize : %s\n%s\n\nUpdate ?</string>
@@ -141,6 +143,9 @@
     <string name="em_no_sdcard">SD card is Unmounted</string>
     <string name="em_index_error">Index error</string>
     <string name="em_requst_null">Requst content is null</string>
+
+    <!-- GalleryActivity -->
+    <string name="ga_data_error">Data Error !</string>
 
     <!-- Gallery -->
     <string name="gallery_tip">Long press the screen to download from the current page. If the item is being downloaded, just load current page first.</string>
@@ -358,6 +363,7 @@
     <string name="rating0">DISASTER</string>
 
     <!-- Util -->
+    <string name="close">Close</string>
     <string name="select">Select</string>
     <string name="click_more">Click for more</string>
     <string name="similar_content">Similar content</string>

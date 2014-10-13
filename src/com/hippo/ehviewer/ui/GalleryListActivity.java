@@ -537,10 +537,10 @@ public class GalleryListActivity extends AbsGalleryActivity
             String filePath = (String)mSearchImageText.getText();
             File file = new File(filePath);
             if (!file.exists()) {
-                MaterialToast.showToast("图片不存在"); // TODO
+                MaterialToast.showToast(R.string.image_not_exist);
             } else {
                 if (!file.canRead()) {
-                    MaterialToast.showToast("图片不可读");
+                    MaterialToast.showToast(R.string.image_not_readable);
                 } else {
 
                     CheckBox similar = (CheckBox)view.findViewById(R.id.checkboxSimilar);

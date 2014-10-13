@@ -947,7 +947,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                             @Override
                             public void run() {
                                 mFixDirname.setEnabled(true);
-                                MaterialToast.showToast("共修正 " + _handleNum + " 项");
+                                MaterialToast.showToast("共修正 " + _handleNum + " 项"); // TODO
                             }
                         });
                     }

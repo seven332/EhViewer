@@ -65,6 +65,8 @@
     <string name="no_avatar">無頭像</string>
     <string name="get_avatar_error">獲取頭像失敗</string>
     <string name="image_search">圖像搜索</string>
+    <string name="image_not_exist">圖像不存在</string>
+    <string name="image_not_readable">圖像不可讀</string>
 
     <!-- Update -->
     <string name="update_message" formatted="false">發現新版本：%s\n大小：%s\n%s\n\n是否更新？</string>
@@ -126,6 +128,9 @@
     <string name="em_no_sdcard">未掛載 SD卡</string>
     <string name="em_index_error">索引錯誤</string>
     <string name="em_requst_null">請求內容爲空</string>
+
+    <!-- GalleryActivity -->
+    <string name="ga_data_error">數據錯誤！</string>
 
     <!-- Gallery -->
     <string name="gallery_tip">長按屏幕，可使下載從當前頁面開始。若該項正在下載，則僅優先加載當前頁面。</string>
@@ -322,6 +327,7 @@
     <string name="rating0">…</string>
 
     <!-- Utils -->
+    <string name="close">關閉</string>
     <string name="select">選擇</string>
     <string name="click_more">點擊查看更多</string>
     <string name="similar_content">相似內容</string>
