@@ -89,6 +89,12 @@
     <string name="legacy_pages">%d 頁未下載</string>
     <string name="download_over">下載結束</string>
     <string name="start_download">開始下載</string>
+    <string name="download_1">下載成功 %d</string>
+    <string name="download_2">下載成功 %d 項</string>
+    <string name="download_3">下載失敗 %d</string>
+    <string name="download_4">下載失敗 %d 項</string>
+    <string name="download_5" formatted="false">下載成功 %d, 下載失敗 %d</string>
+    <string name="download_6" formatted="false">下載成功 %d 項, 下載失敗 %d 項</string>
 
     <!-- ErrorMessage -->
     <string name="em_network_error">網絡錯誤</string>
@@ -194,6 +200,15 @@
     <string name="custom_codec_title">自定義解碼</string>
     <string name="custom_codec_summary">自定義解碼可能會更使用更少內存，解碼更快</string>
     <string name="custom_codec_summary_not">自定義解碼暫不支持 x86, mips</string>
+    <string name="clean_redundancy_title">清理閱讀冗餘</string>
+    <string name="no_redundancy">未發現冗餘</string>
+    <string name="clean_redundancy">完成冗餘清理，共清理 %d 項</string>
+    <string name="decode_format_title">解碼格式</string>
+    <string name="decode_format_auto">自動</string>
+    <string name="decode_format_gray">黑白</string>
+    <string name="decode_format_gray_alpha">黑白（透明）</string>
+    <string name="decode_format_rgb">彩色</string>
+    <string name="decode_format_rgba">彩色（透明）</string>
 
     <string name="download_settings_title">下載</string>
     <string name="download_path_title">下載路徑</string>
@@ -210,6 +225,9 @@
     <string name="http_read_timeout_title">讀取超時 (ms)</string>
     <string name="eh_advanced_settings_title">EH</string>
     <string name="eh_min_interval_title">EH 站點最小連接間隔 (ms)</string>
+    <string name="eh_others_settings_title">其他</string>
+    <string name="fix_dirname_title">修正下載文件夾名</string>
+    <string name="fix_dirname_title_summary">將下載文件夾名由 gid 改爲 gid-title，不進行修正不會影響使用</string>
 
     <string name="about_settings_title">關於</string>
     <string name="author_title">作者</string>

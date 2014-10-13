@@ -334,17 +334,17 @@ public class DownloadService extends Service
         if (ok == 0 && failed == 0) {
             return "null";
         } else if (ok == 1 && failed == 0) {
-            return "下载成功 " + mDownloadOk.get(0);
+            return String.format(getString(R.string.download_1), mDownloadOk.get(0));
         } else if (failed == 0) {
-            return "下载成功 " + mDownloadOk.size() + " 项";
+            return String.format(getString(R.string.download_2), mDownloadOk.size());
         } else if (ok == 0 && failed == 1) {
-            return "下载失败 " + mDownloadFailed.get(0);
+            return String.format(getString(R.string.download_3), mDownloadFailed.get(0));
         } else if (ok == 0) {
-            return "下载失败 " + mDownloadFailed.size() + " 项";
+            return String.format(getString(R.string.download_4), mDownloadFailed.size());
         } else if (ok == 1 && failed == 1){
-            return "下载成功 " + mDownloadOk.get(0) + ", 下载失败 " + mDownloadFailed.get(0);
+            return String.format(getString(R.string.download_5), mDownloadOk.get(0), mDownloadFailed.get(0));
         } else {
-            return "下载成功 " + mDownloadOk.size() + " 项, 下载失败 " + mDownloadFailed.size() + " 项";
+            return String.format(getString(R.string.download_6), mDownloadOk.size(), mDownloadFailed.size());
         }
     }
 

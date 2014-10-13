@@ -104,6 +104,12 @@
     <string name="legacy_pages">%d pages leaved</string>
     <string name="download_over">Download over</string>
     <string name="start_download">Start downloading</string>
+    <string name="download_1">Download OK %d</string>
+    <string name="download_2">Download OK %d items</string>
+    <string name="download_3">Download failed %d</string>
+    <string name="download_4">Download failed %d items</string>
+    <string name="download_5" formatted="false">Download OK %d, Download failed %d</string>
+    <string name="download_6" formatted="false">Download OK %d items, Download failed %d items</string>
 
     <!-- ErrorMessage -->
     <string name="em_network_error">Network Error</string>
@@ -209,6 +215,15 @@
     <string name="custom_codec_title">Custom codec</string>
     <string name="custom_codec_summary">Custom codec may cost less memory, decode faster</string>
     <string name="custom_codec_summary_not">Custom codec do not support x86, mips</string>
+    <string name="clean_redundancy_title">Clean redundancy</string>
+    <string name="no_redundancy">No redundancy</string>
+    <string name="clean_redundancy">Redundancy cleaning completed, clean-up %d items totally</string>
+    <string name="decode_format_title">Decode format</string>
+    <string name="decode_format_auto">Auto</string>
+    <string name="decode_format_gray">Gray</string>
+    <string name="decode_format_gray_alpha">Gray (alpha)</string>
+    <string name="decode_format_rgb">RGB</string>
+    <string name="decode_format_rgba">RGB (alpha)</string>
 
     <string name="download_settings_title">Download</string>
     <string name="download_path_title">Download path</string>
@@ -225,12 +240,15 @@
     <string name="http_read_timeout_title">Read timeout (ms)</string>
     <string name="eh_advanced_settings_title">EH</string>
     <string name="eh_min_interval_title">The minimum connection interval of EH site (ms)</string>
+    <string name="eh_others_settings_title">Others</string>
+    <string name="fix_dirname_title">Fix download folder name</string>
+    <string name="fix_dirname_title_summary">Download folder name will be human readable. It is OK to leave me alone.</string>
 
     <string name="about_settings_title">About</string>
     <string name="author_title">Author</string>
     <string name="author_summary" translatable="false">Hippo &lt;ehviewersu@gmail.com&gt;</string>
     <string name="twitter_title">Twitter</string>
-    <string name="twitter_summary">目前由 @jkjvinn 管理更新</string>
+    <string name="twitter_summary">\@jkjvinn is in charge</string>
     <string name="changelog_title">Changelog</string>
     <string name="thanks_title">Thanks</string>
     <string name="website_title">Website</string>
