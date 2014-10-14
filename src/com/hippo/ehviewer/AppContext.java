@@ -115,6 +115,8 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
                     // Move download info file
                     File oldInfoFile = new File(oldEdInfoDir, gid);
                     File newInfoFile = new File(gDir, EhUtils.EH_DOWNLOAD_FILENAME);
+                    if (!oldInfoFile.exists())
+                        continue;
                     try {
                         FileOutputStream fos = new FileOutputStream(newInfoFile);
                         // Add last page
