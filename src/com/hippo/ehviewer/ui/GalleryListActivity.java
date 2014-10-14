@@ -919,7 +919,7 @@ public class GalleryListActivity extends AbsGalleryActivity implements
 
     /**
      * Get
-     * 
+     *
      * @param intent
      */
     private void handleIntent(Intent intent) {
@@ -1039,7 +1039,8 @@ public class GalleryListActivity extends AbsGalleryActivity implements
         ((RatingView) v.findViewById(R.id.rate)).setRating(2.3f);
         ((TextView) v.findViewById(R.id.category)).setText("haha");
         ViewUtils.measureView(v);
-        v.getMeasuredHeight();
+        mListDetailThumbHeight = Math.max(v.getMeasuredHeight(), Ui.dp2pix(120));
+        mListDetailThumbWidth = mListDetailThumbHeight * 2 / 3;
 
         handleIntent(getIntent());
         // Check show drawer or not
@@ -1838,6 +1839,9 @@ public class GalleryListActivity extends AbsGalleryActivity implements
                             0xFFFAFAFA }, null, false); // TODO
                     viewHolder.thumb = (LoadImageView) convertView
                             .findViewById(R.id.thumb);
+                    ViewGroup.LayoutParams lp = viewHolder.thumb.getLayoutParams();
+                    lp.width = mListDetailThumbWidth;
+                    lp.height = mListDetailThumbHeight;
                     viewHolder.category = (TextView) convertView
                             .findViewById(R.id.category);
                     viewHolder.simpleLanguage = (TextView) convertView
