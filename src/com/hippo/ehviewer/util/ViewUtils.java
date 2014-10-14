@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
@@ -45,7 +46,8 @@ public final class ViewUtils {
      */
     public static void getLocationInWindow(View view, int[] location) {
         if (location == null || location.length < 2) {
-            throw new IllegalArgumentException("location must be an array of two integers");
+            throw new IllegalArgumentException(
+                    "location must be an array of two integers");
         }
 
         float[] position = new float[2];
@@ -55,7 +57,7 @@ public final class ViewUtils {
 
         ViewParent viewParent = view.getParent();
         while (viewParent instanceof View) {
-            view = (View)viewParent;
+            view = (View) viewParent;
             if (view.getId() == android.R.id.content) {
                 break;
             }
@@ -67,7 +69,7 @@ public final class ViewUtils {
             position[1] += view.getTop();
 
             viewParent = view.getParent();
-         }
+        }
 
         location[0] = (int) (position[0] + 0.5f);
         location[1] = (int) (position[1] + 0.5f);
@@ -86,11 +88,13 @@ public final class ViewUtils {
 
     /**
      * Returns a bitmap showing a screenshot of the view passed in.
+     * 
      * @param v
      * @return
      */
     public static Bitmap getBitmapFromView(View v) {
-        Bitmap bitmap = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(v.getWidth(), v.getHeight(),
+                Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         // TODO I need to know why I need it, when ScrollView
         canvas.translate(-v.getScrollX(), -v.getScrollY());
@@ -100,32 +104,49 @@ public final class ViewUtils {
 
     public static boolean isClickAction(MotionEvent event) {
         // TODO bad idea to check click
-        return event.getAction() == MotionEvent.ACTION_UP &&
-                System.nanoTime() / 1000000 - event.getDownTime() < 200;
+        return event.getAction() == MotionEvent.ACTION_UP
+                && System.nanoTime() / 1000000 - event.getDownTime() < 200;
     }
 
     public static void removeFromParent(View view) {
         ViewParent vp = view.getParent();
         if (vp instanceof ViewGroup)
-            ((ViewGroup)vp).removeView(view);
+            ((ViewGroup) vp).removeView(view);
     }
 
     /**
-     * Method that removes the support for HardwareAcceleration from a {@link View}.<br/>
+     * Method that removes the support for HardwareAcceleration from a
+     * {@link View}.<br/>
      * <br/>
      * Check AOSP notice:<br/>
+     * 
      * <pre>
      * 'ComposeShader can only contain shaders of different types (a BitmapShader and a
      * LinearGradient for instance, but not two instances of BitmapShader)'. But, 'If your
      * application is affected by any of these missing features or limitations, you can turn
      * off hardware acceleration for just the affected portion of your application by calling
-     * setLayerType(View.LAYER_TYPE_SOFTWARE, null).'</pre>
+     * setLayerType(View.LAYER_TYPE_SOFTWARE, null).'
+     * </pre>
      *
-     * @param v The view
+     * @param v
+     *            The view
      */
     public static void removeHardwareAccelerationSupport(View v) {
         if (v.getLayerType() != View.LAYER_TYPE_SOFTWARE) {
             v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
+    }
+
+    public static void measureView(View v) {
+        ViewGroup.LayoutParams oldLp = v.getLayoutParams();
+        ViewGroup.LayoutParams newLp = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        v.setLayoutParams(newLp);
+        int measureSpec = MeasureSpec.makeMeasureSpec(0,
+                MeasureSpec.UNSPECIFIED);
+        v.measure(measureSpec, measureSpec);
+        if (oldLp != null)
+            v.setLayoutParams(oldLp);
     }
 }
