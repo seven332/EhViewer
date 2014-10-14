@@ -42,6 +42,10 @@ public class StartActivity extends Activity {
     @SuppressWarnings("unused")
     private static final String TAG = StartActivity.class.getSimpleName();
 
+    private static final int NETWORK_STATE_NONE = 0x0;
+    private static final int NETWORK_STATE_MOBILE = 0x1;
+    private static final int NETWORK_STATE_WIFI = 0x2;
+
     private static final int CHECK_WARING = 0;
     private static final int CHECK_ANALYTICS = 1;
     private static final int CHECK_NETWORK = 2;
@@ -55,8 +59,8 @@ public class StartActivity extends Activity {
         return new MaterialAlertDialog.Builder(this).setCancelable(false)
                 .setTitle(R.string.dailog_waring_title)
                 .setMessage(R.string.dailog_waring_plain)
-                .setPositiveButton(R.string.dailog_waring_yes)
-                .setNegativeButton(R.string.dailog_waring_no)
+                .setPositiveButton(android.R.string.ok)
+                .setNegativeButton(android.R.string.cancel)
                 .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
                     public boolean onClick(MaterialAlertDialog dialog, int which) {
@@ -99,11 +103,22 @@ public class StartActivity extends Activity {
                 }).create();
     }
 
-    private AlertDialog createNetworkErrorDialog() {
+    private AlertDialog createNetworkDialog(int state) {
+        int mesgId;
+        switch (state) {
+        case NETWORK_STATE_MOBILE:
+            mesgId = R.string.dailog_network_mobile_title;
+            break;
+        case NETWORK_STATE_NONE:
+        default:
+            mesgId = R.string.dailog_network_none_title;
+            break;
+        }
+
         return new MaterialAlertDialog.Builder(this).setCancelable(false)
-                .setTitle(R.string.error).setMessage(R.string.em_no_network)
-                .setPositiveButton(R.string.dailog_network_error_yes)
-                .setNegativeButton(R.string.dailog_network_error_no)
+                .setTitle(R.string.warning).setMessage(mesgId)
+                .setPositiveButton(android.R.string.ok)
+                .setNegativeButton(android.R.string.cancel)
                 .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
                     public boolean onClick(MaterialAlertDialog dialog, int which) {
@@ -124,28 +139,34 @@ public class StartActivity extends Activity {
         return new MaterialAlertDialog.Builder(this).setCancelable(false)
                 .setTitle(R.string.dialog_send_crash_title)
                 .setMessage(R.string.dialog_send_crash_plain)
-                .setPositiveButton(R.string.dialog_send_crash_yes)
-                .setNegativeButton(R.string.dialog_send_crash_no)
+                .setPositiveButton(android.R.string.ok)
+                .setNegativeButton(android.R.string.cancel)
                 .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
                     public boolean onClick(MaterialAlertDialog dialog, int which) {
                         switch (which) {
                         case MaterialAlertDialog.POSITIVE:
                             // A wait dialog
-                            new MaterialAlertDialog.Builder(StartActivity.this).setCancelable(false)
+                            new MaterialAlertDialog.Builder(StartActivity.this)
+                                    .setCancelable(false)
                                     .setTitle(R.string.wait)
-                                    .setMessage(R.string.dialog_wait_send_crash_msg)
+                                    .setMessage(
+                                            R.string.dialog_wait_send_crash_msg)
                                     .setPositiveButton(android.R.string.ok)
-                                    .setButtonListener(new MaterialAlertDialog.OnClickListener() {
-                                        @Override
-                                        public boolean onClick(MaterialAlertDialog dialog, int which) {
-                                            checkOver();
-                                            return true;
-                                        }
-                                    }).show();
+                                    .setButtonListener(
+                                            new MaterialAlertDialog.OnClickListener() {
+                                                @Override
+                                                public boolean onClick(
+                                                        MaterialAlertDialog dialog,
+                                                        int which) {
+                                                    checkOver();
+                                                    return true;
+                                                }
+                                            }).show();
                             Intent i = new Intent(Intent.ACTION_SENDTO);
                             i.setData(Uri.parse("mailto:ehviewersu@gmail.com"));
-                            i.putExtra(Intent.EXTRA_SUBJECT, "I found a bug in EhViewer !");
+                            i.putExtra(Intent.EXTRA_SUBJECT,
+                                    "I found a bug in EhViewer !");
                             i.putExtra(Intent.EXTRA_TEXT, lastCrash);
                             startActivity(i);
                             lastCrash = null;
@@ -166,13 +187,13 @@ public class StartActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View wellcome = new View(this);
-        wellcome.setBackgroundDrawable(getResources().getDrawable(R.drawable.welcome));
+        wellcome.setBackgroundDrawable(getResources().getDrawable(
+                R.drawable.welcome));
         setContentView(wellcome);
 
         // For fullscreen
         if (Build.VERSION.SDK_INT >= 19) {
-            wellcome.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            wellcome.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -181,7 +202,7 @@ public class StartActivity extends Activity {
         }
 
         // Show welcome in progress
-        AlphaAnimation aa = new AlphaAnimation(0.3f,1.0f);
+        AlphaAnimation aa = new AlphaAnimation(0.3f, 1.0f);
         aa.setDuration(2000);
         aa.setAnimationListener(new AnimationListener() {
             @Override
@@ -190,22 +211,22 @@ public class StartActivity extends Activity {
                     redirectTo();
                 isAnimationOver = true;
             }
+
             @Override
-            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationRepeat(Animation animation) {
+            }
+
             @Override
-            public void onAnimationStart(Animation animation) {}
+            public void onAnimationStart(Animation animation) {
+            }
         });
         wellcome.startAnimation(aa);
         check(CHECK_WARING);
     }
 
     /**
-     * Order is
-     * 1. check waring
-     * 2. check analyics
-     * 3. check network
-     * 4. check crash
-     * 5. check external storage
+     * Order is 1. check waring 2. check analyics 3. check network 4. check
+     * crash 5. check external storage
      *
      * @param order
      */
@@ -223,8 +244,9 @@ public class StartActivity extends Activity {
                 return;
             }
         case CHECK_NETWORK:
-            if (!isNetworkAvailable()) {
-                createNetworkErrorDialog().show();
+            int state = getNetworkState();
+            if (state != NETWORK_STATE_WIFI) {
+                createNetworkDialog(state).show();
                 return;
             }
         case CHECK_CRASH:
@@ -242,16 +264,21 @@ public class StartActivity extends Activity {
         isCheckOver = true;
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mNetworkInfo = cm.getActiveNetworkInfo();
-        if (mNetworkInfo == null || !mNetworkInfo.isAvailable())
-            return false;
+    private int getNetworkState() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo mMobile = cm
+                .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        if (mWifi != null && mWifi.isConnected())
+            return NETWORK_STATE_WIFI;
+        else if (mMobile != null && mMobile.isConnected())
+            return NETWORK_STATE_MOBILE;
         else
-            return true;
+            return NETWORK_STATE_NONE;
     }
 
-    private void redirectTo(){
+    private void redirectTo() {
         Intent intent = new Intent(this, GalleryListActivity.class);
         startActivity(intent);
         finish();

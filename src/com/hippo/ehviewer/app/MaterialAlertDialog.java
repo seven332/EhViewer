@@ -33,7 +33,8 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
 
-public class MaterialAlertDialog extends AlertDialog implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class MaterialAlertDialog extends AlertDialog implements
+        View.OnClickListener, AdapterView.OnItemClickListener {
 
     public final static int ACTION = 0;
     public final static int POSITIVE = 1;
@@ -52,7 +53,7 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
     private Button mNeutralButton;
 
     private MaterialAlertDialog(Builder builder) {
-        //super(builder.mContext);
+        // super(builder.mContext);
         super(new ContextThemeWrapper(builder.mContext, R.style.AppTheme_Main));
         mContext = builder.mContext;
         mBuilder = builder;
@@ -78,14 +79,16 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
         TextView message = null;
         ListView list = null;
         if (inScrollView) {
-            mRootView.findViewById(R.id.top_panel_noscroll).setVisibility(View.GONE);
+            mRootView.findViewById(R.id.top_panel_noscroll).setVisibility(
+                    View.GONE);
             mTitle = (TextView) mRootView.findViewById(R.id.title);
             topPanel = (LinearLayout) mRootView.findViewById(R.id.top_panel);
             message = (TextView) mRootView.findViewById(R.id.message);
         } else {
             mRootView.findViewById(R.id.scroll_view).setVisibility(View.GONE);
             mTitle = (TextView) mRootView.findViewById(R.id.title2);
-            topPanel = (LinearLayout) mRootView.findViewById(R.id.top_panel_noscroll);
+            topPanel = (LinearLayout) mRootView
+                    .findViewById(R.id.top_panel_noscroll);
             list = (ListView) mRootView.findViewById(R.id.list);
         }
         // Title
@@ -96,8 +99,10 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
         // Content
         if (mBuilder.mCustomView != null) {
             // CustomView
-            if (message != null) message.setVisibility(View.GONE);
-            if (list != null) list.setVisibility(View.GONE);
+            if (message != null)
+                message.setVisibility(View.GONE);
+            if (list != null)
+                list.setVisibility(View.GONE);
             LinearLayout.LayoutParams lp = mBuilder.mCustomLp;
             if (lp == null)
                 lp = new LinearLayout.LayoutParams(
@@ -107,7 +112,8 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
             topPanel.addView(mBuilder.mCustomView, lp);
         } else if (mBuilder.mAdapter != null) {
             // List
-            if (message != null) message.setVisibility(View.GONE);
+            if (message != null)
+                message.setVisibility(View.GONE);
             list.setAdapter(mBuilder.mAdapter);
             list.setOnItemClickListener(this);
             if (mBuilder.mIsSingleChoice) {
@@ -119,7 +125,8 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
             }
         } else {
             // Message
-            if (list != null) list.setVisibility(View.GONE);
+            if (list != null)
+                list.setVisibility(View.GONE);
             if (mBuilder.mAutoLinkMask != -1)
                 message.setAutoLinkMask(mBuilder.mAutoLinkMask);
             message.setText(mBuilder.mMessage);
@@ -222,7 +229,6 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
             dismiss();
     }
 
-
     public static interface OnClickListener {
         public boolean onClick(MaterialAlertDialog dialog, int which);
     }
@@ -314,13 +320,29 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
             return this;
         }
 
+        /**
+         * Custom view id will be R.id.custom
+         * 
+         * @param view
+         * @param inScrollView
+         * @return
+         */
         public Builder setView(View view, boolean inScrollView) {
             mCustomView = view;
             mInScrollView = inScrollView;
             return this;
         }
 
-        public Builder setView(View view, boolean inScrollView, LinearLayout.LayoutParams lp) {
+        /**
+         * Custom view id will be R.id.custom
+         * 
+         * @param view
+         * @param inScrollView
+         * @param lp
+         * @return
+         */
+        public Builder setView(View view, boolean inScrollView,
+                LinearLayout.LayoutParams lp) {
             mCustomView = view;
             mInScrollView = inScrollView;
             mCustomLp = lp;
@@ -339,14 +361,15 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
 
         public Builder setItems(int itemsId, final OnClickListener listener) {
             mAdapter = new ArrayAdapter<CharSequence>(mContext,
-                    R.layout.select_dialog_item, android.R.id.text1,
-                    mContext.getResources().getTextArray(itemsId));
+                    R.layout.select_dialog_item, android.R.id.text1, mContext
+                            .getResources().getTextArray(itemsId));
             mOnClickListener = listener;
             mIsSingleChoice = false;
             return this;
         }
 
-        public Builder setItems(CharSequence[] items, final OnClickListener listener) {
+        public Builder setItems(CharSequence[] items,
+                final OnClickListener listener) {
             mAdapter = new ArrayAdapter<CharSequence>(mContext,
                     R.layout.select_dialog_item, android.R.id.text1, items);
             mOnClickListener = listener;
@@ -354,7 +377,8 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
             return this;
         }
 
-        public Builder setAdapter(final ListAdapter adapter, final OnClickListener listener) {
+        public Builder setAdapter(final ListAdapter adapter,
+                final OnClickListener listener) {
             mAdapter = adapter;
             mOnClickListener = listener;
             mIsSingleChoice = false;
@@ -372,16 +396,19 @@ public class MaterialAlertDialog extends AlertDialog implements View.OnClickList
             return this;
         }
 
-        public Builder setSingleChoiceItems(CharSequence[] items, int checkedItem, final OnClickListener listener) {
+        public Builder setSingleChoiceItems(CharSequence[] items,
+                int checkedItem, final OnClickListener listener) {
             mAdapter = new ArrayAdapter<CharSequence>(mContext,
-                    R.layout.select_dialog_singlechoice, android.R.id.text1, items);
+                    R.layout.select_dialog_singlechoice, android.R.id.text1,
+                    items);
             mOnClickListener = listener;
             mCheckedItem = checkedItem;
             mIsSingleChoice = true;
             return this;
         }
 
-        public Builder setSingleChoiceItems(ListAdapter adapter, int checkedItem, final OnClickListener listener) {
+        public Builder setSingleChoiceItems(ListAdapter adapter,
+                int checkedItem, final OnClickListener listener) {
             mAdapter = adapter;
             mOnClickListener = listener;
             mCheckedItem = checkedItem;

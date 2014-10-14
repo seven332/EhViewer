@@ -43,8 +43,8 @@ public class EditTextPreference extends DialogPreference {
     @Override
     protected View onCreateDialogView() {
         EditText et = new EditText(getContext());
-        et.setId(R.id.edittextpreference_edittext);
-        et.setTextColor(getContext().getResources().getColor(R.color.secondary_text_dark));
+        et.setTextColor(getContext().getResources().getColor(
+                R.color.secondary_text_dark));
         return et;
     }
 
@@ -64,8 +64,10 @@ public class EditTextPreference extends DialogPreference {
     }
 
     @Override
-    protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
-        setSummary(restorePersistedValue ? getPersistedString((String) defaultValue) : (String) defaultValue);
+    protected void onSetInitialValue(boolean restorePersistedValue,
+            Object defaultValue) {
+        setSummary(restorePersistedValue ? getPersistedString((String) defaultValue)
+                : (String) defaultValue);
         if (!restorePersistedValue)
             persistString((String) defaultValue);
     }
@@ -74,10 +76,8 @@ public class EditTextPreference extends DialogPreference {
     public boolean onClick(MaterialAlertDialog dialog, int which) {
         super.onClick(dialog, which);
         if (which == MaterialAlertDialog.POSITIVE) {
-            EditText et = (EditText) dialog.findViewById(R.id.edittextpreference_edittext);
-            if (et == null)
-                return true;
-            String value = et.getText().toString();
+            String value = ((EditText) dialog.findViewById(R.id.custom))
+                    .getText().toString();
             if (callChangeListener(value)) {
                 persistString(value);
                 setSummary(value);

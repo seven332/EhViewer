@@ -19,16 +19,14 @@
     <!-- Warning -->
     <string name="dailog_waring_title">警告</string>
     <string name="dailog_waring_plain">该应用内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。该应用作者不会对由该应用造成的后果负责。您是否愿意继续使用该应用？</string>
-    <string name="dailog_waring_yes">我愿意</string>
-    <string name="dailog_waring_no">不！</string>
 
     <!-- Analyics -->
     <string name="dailog_analyics_title">数据统计</string>
     <string name="dailog_analyics_plain">您是否愿意将使用情况发送给开发者？这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/cn.html\nGoogle隐私权和条款：http://www.google.com/intl/zh-CN/policies\n\n您以后可以在设置中修改选择</string>
 
     <!-- Network -->
-    <string name="dailog_network_error_yes">我不在意</string>
-    <string name="dailog_network_error_no">成</string>
+    <string name="dailog_network_mobile_title">您正在使用移动网络，可能会消耗大量的资费，是否继续使用？</string>
+    <string name="dailog_network_none_title">未检测到网络连接，是否继续使用？</string>
 
     <!-- Exit -->
     <string name="exit_tip">再按一次退出</string>
@@ -62,8 +60,6 @@
     <!-- Send Crash -->
     <string name="dialog_send_crash_title">这很重要</string>
     <string name="dialog_send_crash_plain">上次该应用崩溃了。你愿意把错误日志发送给开发者以便以后得到更好的用户体验么？（以电子邮件的形式发送）</string>
-    <string name="dialog_send_crash_yes">我愿意</string>
-    <string name="dialog_send_crash_no">门儿都没有</string>
     <string name="dialog_wait_send_crash_msg">请在发送完日志后关闭该窗口</string>
 
     <!-- List item long click -->
@@ -341,6 +337,7 @@
     <string name="rating0">…</string>
 
     <!-- Utils -->
+    <string name="warning">警告</string>
     <string name="close">关闭</string>
     <string name="select">选择</string>
     <string name="click_more">点击查看更多</string>

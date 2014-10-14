@@ -20,17 +20,15 @@
 
     <!-- Warning -->
     <string name="dailog_waring_title">Waring</string>
-    <string name="dailog_waring_plain">该应用内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。该应用作者不会对由该应用造成的后果负责。您是否愿意继续使用该应用？</string>
-    <string name="dailog_waring_yes">Yes, I would</string>
-    <string name="dailog_waring_no">NO !</string>
+    <string name="dailog_waring_plain">本应用中内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。该应用作者不会对由本应用造成的后果负责。您是否愿意继续使用该应用？</string>
 
     <!-- Analyics -->
     <string name="dailog_analyics_title">Usage statistics</string>
     <string name="dailog_analyics_plain">您是否愿意将使用情况发送给开发者？这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/us.html\nGoogle隐私权和条款：http://www.google.com/intl/us/policies\n\n您以后可以在设置中修改选择</string>
 
     <!-- Network -->
-    <string name="dailog_network_error_yes">I don\'t care</string>
-    <string name="dailog_network_error_no">Fine</string>
+    <string name="dailog_network_mobile_title">You are using the mobile network, it may consume a large amount of charges, whether to continue to use ?</string>
+    <string name="dailog_network_none_title">Does not detect a network connection, whether to continue to use ?</string>
 
     <!-- Exit -->
     <string name="exit_tip">Click again to exit</string>
@@ -65,8 +63,6 @@
     <!-- Send Crash -->
     <string name="dialog_send_crash_title">It is important</string>
     <string name="dialog_send_crash_plain">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ? (via e-mail)</string>
-    <string name="dialog_send_crash_yes">Never mind</string>
-    <string name="dialog_send_crash_no">Yes, I would</string>
     <string name="dialog_wait_send_crash_msg">Please close the dialog after sending logcat</string>
 
     <!-- List item long click -->
@@ -363,6 +359,7 @@
     <string name="rating0">DISASTER</string>
 
     <!-- Util -->
+    <string name="warning">Warning</string>
     <string name="close">Close</string>
     <string name="select">Select</string>
     <string name="click_more">Click for more</string>
