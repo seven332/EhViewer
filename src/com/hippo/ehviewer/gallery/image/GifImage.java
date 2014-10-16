@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.gallery.image;
 
-
 public class GifImage extends Image {
 
     private static final String TAG = Image.class.getSimpleName();
@@ -24,7 +23,9 @@ public class GifImage extends Image {
     private final int mImageCount;
     private final int[] mDelayArray;
     private long mDelaySum;
-    private long mStartTime;
+    private volatile long mStartTime;
+    private volatile long mStopTime = -1;
+    private volatile boolean mRunning = true;
 
     private int mLastIndex = -1;
 
@@ -41,16 +42,39 @@ public class GifImage extends Image {
 
     private int getCurIndex() {
         int index = 0;
-        if (mLastIndex == -1) {
-            index = 0;
-            mStartTime = System.currentTimeMillis();
+        if (mRunning) {
+            if (mLastIndex == -1) {
+                index = 0;
+                mStartTime = System.currentTimeMillis();
+            } else {
+                long curTime = System.currentTimeMillis();
+                long time = (curTime - mStartTime) % mDelaySum;
+                int end = mImageCount - 1;
+                for (; index < end && (time -= mDelayArray[index]) > 0; index++)
+                    ;
+            }
+            return index;
         } else {
-            long curTime = System.currentTimeMillis();
-            long time = (curTime - mStartTime) % mDelaySum;
-            int end = mImageCount - 1;
-            for (; index < end && (time -= mDelayArray[index]) > 0; index++);
+            return mLastIndex == -1 ? index : mLastIndex;
         }
-        return index;
+    }
+
+    @Override
+    public void start() {
+        if (!mRunning) {
+            mRunning = true;
+            long curTime = System.currentTimeMillis();
+            mStartTime = curTime - (mStopTime == -1 ? curTime : mStopTime)
+                    + mStartTime;
+        }
+    }
+
+    @Override
+    public void stop() {
+        if (mRunning) {
+            mRunning = false;
+            mStopTime = System.currentTimeMillis();
+        }
     }
 
     @Override
@@ -63,7 +87,8 @@ public class GifImage extends Image {
         if (mNativeImage != 0) {
             int index = getCurIndex();
             if (mLastIndex != index) {
-                nativeRender(mFormat, mType, mNativeImage, FILE_FORMAT_GIF, index);
+                nativeRender(mFormat, mType, mNativeImage, FILE_FORMAT_GIF,
+                        index);
                 mLastIndex = index;
             }
         }
@@ -73,5 +98,6 @@ public class GifImage extends Image {
         System.loadLibrary("image");
     }
 
-    private static native void nativeRender(int format, int type, int nativeImage, int fileFormat, int index);
+    private static native void nativeRender(int format, int type,
+            int nativeImage, int fileFormat, int index);
 }

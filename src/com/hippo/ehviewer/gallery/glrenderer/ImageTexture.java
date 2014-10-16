@@ -36,6 +36,16 @@ public class ImageTexture extends BasicTexture {
         setSize(image.getWidth(), image.getHeight());
     }
 
+    public void start() {
+        if (mImage != null)
+            mImage.start();
+    }
+
+    public void stop() {
+        if (mImage != null)
+            mImage.stop();
+    }
+
     public boolean isAnimated() {
         if (mImage == null || mImage.isRecycled())
             return false;

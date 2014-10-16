@@ -20,7 +20,6 @@ import java.io.InputStream;
 
 import javax.microedition.khronos.opengles.GL11;
 
-
 public class Image {
 
     private static final String TAG = Image.class.getSimpleName();
@@ -44,8 +43,8 @@ public class Image {
     protected final int mFormat;
     protected final int mType;
 
-    protected Image(int nativeImage, int fileFormat, int width,
-            int height, int format, int type) {
+    protected Image(int nativeImage, int fileFormat, int width, int height,
+            int format, int type) {
         mNativeImage = nativeImage;
         mFileFormat = fileFormat;
         mWidth = width;
@@ -78,6 +77,14 @@ public class Image {
         return false;
     }
 
+    public void start() {
+        // Empty
+    }
+
+    public void stop() {
+        // Empty
+    }
+
     public void render() {
         if (mNativeImage != 0) {
             nativeRender(mFormat, mType, mNativeImage, mFileFormat);
@@ -96,7 +103,8 @@ public class Image {
     }
 
     /**
-     * format can be GL11.GL_RGB, GL11.GL_RGBA, GL11.GL_LUMINANCE, GL11.GL_LUMINANCE_ALPHA
+     * format can be GL11.GL_RGB, GL11.GL_RGBA, GL11.GL_LUMINANCE,
+     * GL11.GL_LUMINANCE_ALPHA
      *
      * @param is
      * @param format
@@ -115,7 +123,11 @@ public class Image {
     }
 
     private static native Image nativeDecodeStream(InputStream is, int format);
+
     private static native Image nativeDecodeFile(String pathName, int format);
+
     private static native void nativeFree(int mNativeImage, int format);
-    private static native void nativeRender(int format, int type, int nativeImage, int fileFormat);
+
+    private static native void nativeRender(int format, int type,
+            int nativeImage, int fileFormat);
 }
