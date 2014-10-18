@@ -21,7 +21,7 @@ typedef struct {
 
 jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format);
 jobject GIF_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format);
-void GIF_Render(JNIEnv* env, int nativeImage, int format, int index);
-void GIF_Free(JNIEnv* env, int nativeImage);
+void GIF_Render(JNIEnv* env, GIF* gif, int format, int index);
+void GIF_Free(JNIEnv* env, GIF* gif);
 
 #endif /* GIF_H_ */

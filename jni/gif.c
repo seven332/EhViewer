@@ -491,12 +491,12 @@ jobject getObjFromGifFileType(JNIEnv* env, GifFileType* gifFile, int format) {
     gifClazz = (*env)->FindClass(env,
             "com/hippo/ehviewer/gallery/image/GifImage");
     constructor = (*env)->GetMethodID(env, gifClazz, "<init>",
-            "(IIIIII[I)V");
+            "(JIIIII[I)V");
     if (constructor == 0) {
-        GIF_Free((JNIEnv*)NULL, (int)gif);
+        GIF_Free((JNIEnv*)NULL, gif);
         return NULL;
     } else {
-        return (*env)->NewObject(env, gifClazz, constructor, (jint) gif,
+        return (*env)->NewObject(env, gifClazz, constructor, (jlong) (intptr_t) gif,
                 FILE_FORMAT_GIF, realWidth, gifFile->SHeight, format,
                 DEFAULT_TYPE, delayArray);
     }
@@ -511,7 +511,7 @@ jobject GIF_DecodeStream(JNIEnv* env, jobject is, jint format) {
     if (format == FORMAT_AUTO)
         format = FORMAT_RGB;
 
-    sc = (StreamContainer*)getStreamContainer(env, is);
+    sc = getStreamContainer(env, is);
     if (sc == NULL)
         return NULL;
 
@@ -554,18 +554,16 @@ jobject GIF_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
     return gifImage;
 }
 
-void GIF_Render(JNIEnv* env, int nativeImage, int format, int index) {
+void GIF_Render(JNIEnv* env, GIF* gif, int format, int index) {
 
-    GIF* gif = (GIF*) nativeImage;
     if (format != gif->format)
         return;
 
     render(gif, index);
 }
 
-void GIF_Free(JNIEnv* env, int nativeImage) {
+void GIF_Free(JNIEnv* env, GIF* gif) {
 
-    GIF* gif = (GIF*) nativeImage;
     DGifCloseFile(gif->gifFile, &errorCode);
     free(gif->trans);
     free(gif->disposals);

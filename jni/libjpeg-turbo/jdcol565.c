@@ -5,6 +5,7 @@
  * Copyright (C) 1991-1997, Thomas G. Lane.
  * Modifications:
  * Copyright (C) 2013, Linaro Limited.
+ * Copyright (C) 2014, D. R. Commander.
  * For conditions of distribution and use, see the accompanying README file.
  *
  * This file contains output colorspace conversion routines.
@@ -13,42 +14,11 @@
 /* This file is included by jdcolor.c */
 
 
-#define PACK_SHORT_565(r, g, b)   ((((r) << 8) & 0xf800) |  \
-                                   (((g) << 3) & 0x7E0) | ((b) >> 3))
-#define PACK_TWO_PIXELS(l, r)     ((r << 16) | l)
-#define PACK_NEED_ALIGNMENT(ptr)  (((size_t)(ptr)) & 3)
-
-#define WRITE_TWO_PIXELS(addr, pixels) {  \
-  ((INT16*)(addr))[0] = (pixels);  \
-  ((INT16*)(addr))[1] = (pixels) >> 16;  \
-}
-#define WRITE_TWO_ALIGNED_PIXELS(addr, pixels)  ((*(INT32 *)(addr)) = pixels)
-
-#define DITHER_565_R(r, dither)  ((r) + ((dither) & 0xFF))
-#define DITHER_565_G(g, dither)  ((g) + (((dither) & 0xFF) >> 1))
-#define DITHER_565_B(b, dither)  ((b) + ((dither) & 0xFF))
-
-
-/* Declarations for ordered dithering
- *
- * We use a 4x4 ordered dither array packed into 32 bits.  This array is
- * sufficent for dithering RGB888 to RGB565.
- */
-
-#define DITHER_MASK       0x3
-#define DITHER_ROTATE(x)  (((x) << 24) | (((x) >> 8) & 0x00FFFFFF))
-static const INT32 dither_matrix[4] = {
-  0x0008020A,
-  0x0C040E06,
-  0x030B0109,
-  0x0F070D05
-};
-
-
-METHODDEF(void)
-ycc_rgb565_convert (j_decompress_ptr cinfo,
-                    JSAMPIMAGE input_buf, JDIMENSION input_row,
-                    JSAMPARRAY output_buf, int num_rows)
+INLINE
+LOCAL(void)
+ycc_rgb565_convert_internal (j_decompress_ptr cinfo,
+                             JSAMPIMAGE input_buf, JDIMENSION input_row,
+                             JSAMPARRAY output_buf, int num_rows)
 {
   my_cconvert_ptr cconvert = (my_cconvert_ptr) cinfo->cconvert;
   register int y, cb, cr;
@@ -123,10 +93,11 @@ ycc_rgb565_convert (j_decompress_ptr cinfo,
 }
 
 
-METHODDEF(void)
-ycc_rgb565D_convert (j_decompress_ptr cinfo,
-                     JSAMPIMAGE input_buf, JDIMENSION input_row,
-                     JSAMPARRAY output_buf, int num_rows)
+INLINE
+LOCAL(void)
+ycc_rgb565D_convert_internal (j_decompress_ptr cinfo,
+                              JSAMPIMAGE input_buf, JDIMENSION input_row,
+                              JSAMPARRAY output_buf, int num_rows)
 {
   my_cconvert_ptr cconvert = (my_cconvert_ptr) cinfo->cconvert;
   register int y, cb, cr;
@@ -208,10 +179,11 @@ ycc_rgb565D_convert (j_decompress_ptr cinfo,
 }
 
 
-METHODDEF(void)
-rgb_rgb565_convert (j_decompress_ptr cinfo,
-                    JSAMPIMAGE input_buf, JDIMENSION input_row,
-                    JSAMPARRAY output_buf, int num_rows)
+INLINE
+LOCAL(void)
+rgb_rgb565_convert_internal (j_decompress_ptr cinfo,
+                             JSAMPIMAGE input_buf, JDIMENSION input_row,
+                             JSAMPARRAY output_buf, int num_rows)
 {
   register JSAMPROW outptr;
   register JSAMPROW inptr0, inptr1, inptr2;
@@ -262,10 +234,11 @@ rgb_rgb565_convert (j_decompress_ptr cinfo,
 }
 
 
-METHODDEF(void)
-rgb_rgb565D_convert (j_decompress_ptr cinfo,
-                     JSAMPIMAGE input_buf, JDIMENSION input_row,
-                     JSAMPARRAY output_buf, int num_rows)
+INLINE
+LOCAL(void)
+rgb_rgb565D_convert_internal (j_decompress_ptr cinfo,
+                              JSAMPIMAGE input_buf, JDIMENSION input_row,
+                              JSAMPARRAY output_buf, int num_rows)
 {
   register JSAMPROW outptr;
   register JSAMPROW inptr0, inptr1, inptr2;
@@ -320,10 +293,11 @@ rgb_rgb565D_convert (j_decompress_ptr cinfo,
 }
 
 
-METHODDEF(void)
-gray_rgb565_convert (j_decompress_ptr cinfo,
-                     JSAMPIMAGE input_buf, JDIMENSION input_row,
-                     JSAMPARRAY output_buf, int num_rows)
+INLINE
+LOCAL(void)
+gray_rgb565_convert_internal (j_decompress_ptr cinfo,
+                              JSAMPIMAGE input_buf, JDIMENSION input_row,
+                              JSAMPARRAY output_buf, int num_rows)
 {
   register JSAMPROW inptr, outptr;
   register JDIMENSION col;
@@ -359,10 +333,11 @@ gray_rgb565_convert (j_decompress_ptr cinfo,
 }
 
 
-METHODDEF(void)
-gray_rgb565D_convert (j_decompress_ptr cinfo,
-                      JSAMPIMAGE input_buf, JDIMENSION input_row,
-                      JSAMPARRAY output_buf, int num_rows)
+INLINE
+LOCAL(void)
+gray_rgb565D_convert_internal (j_decompress_ptr cinfo,
+                               JSAMPIMAGE input_buf, JDIMENSION input_row,
+                               JSAMPARRAY output_buf, int num_rows)
 {
   register JSAMPROW inptr, outptr;
   register JDIMENSION col;

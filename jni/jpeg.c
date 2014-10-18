@@ -121,19 +121,18 @@ jobject JPEG_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format) {
     imageClazz = (*env)->FindClass(env,
             "com/hippo/ehviewer/gallery/image/Image");
     constructor = (*env)->GetMethodID(env, imageClazz, "<init>",
-            "(IIIIII)V");
+            "(JIIIII)V");
     if (constructor == 0) {
-        JPEG_Free((JNIEnv*)NULL, (int) jpeg);
+        JPEG_Free((JNIEnv*)NULL, jpeg);
         return NULL;
     } else {
-        return (*env)->NewObject(env, imageClazz, constructor, (jint) jpeg,
+        return (*env)->NewObject(env, imageClazz, constructor, (jlong) (intptr_t) jpeg,
                 FILE_FORMAT_JPEG, cinfo.output_width, cinfo.output_height, format,
                 DEFAULT_TYPE);
     }
 }
 
-void JPEG_Render(JNIEnv* env, int nativeImage, int format) {
-    JPEG* jpeg = (JPEG*) nativeImage;
+void JPEG_Render(JNIEnv* env, JPEG* jpeg, int format) {
     if (format != jpeg->format)
         return;
 
@@ -141,9 +140,8 @@ void JPEG_Render(JNIEnv* env, int nativeImage, int format) {
             jpeg->height, format, DEFAULT_TYPE, jpeg->data);
 }
 
-void JPEG_Free(JNIEnv* env, int nativeImage) {
+void JPEG_Free(JNIEnv* env, JPEG* jpeg) {
 
-    JPEG* jpeg = (JPEG*) nativeImage;
     free(jpeg->data);
     free(jpeg);
 }

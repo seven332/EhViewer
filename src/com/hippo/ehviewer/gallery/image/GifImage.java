@@ -29,7 +29,7 @@ public class GifImage extends Image {
 
     private int mLastIndex = -1;
 
-    protected GifImage(int nativeImage, int fileFormat, int width, int height,
+    protected GifImage(long nativeImage, int fileFormat, int width, int height,
             int format, int type, int[] delayArray) {
         super(nativeImage, fileFormat, width, height, format, type);
         mImageCount = delayArray.length;
@@ -99,5 +99,5 @@ public class GifImage extends Image {
     }
 
     private static native void nativeRender(int format, int type,
-            int nativeImage, int fileFormat, int index);
+            long nativeImage, int fileFormat, int index);
 }

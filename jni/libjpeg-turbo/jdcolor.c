@@ -213,6 +213,7 @@ typedef my_color_deconverter * my_cconvert_ptr;
 #undef rgb_rgb_convert_internal
 #undef cmyk_rgb_convert_internal
 
+
 /*
  * Initialize tables for YCC->RGB colorspace conversion.
  */
@@ -638,7 +639,162 @@ ycck_cmyk_convert (j_decompress_ptr cinfo,
 }
 
 
+/*
+ * RGB565 conversion
+ */
+
+#define PACK_SHORT_565_LE(r, g, b)   ((((r) << 8) & 0xF800) |  \
+                                      (((g) << 3) & 0x7E0) | ((b) >> 3))
+#define PACK_SHORT_565_BE(r, g, b)   (((r) & 0xF8) | ((g) >> 5) |  \
+                                      (((g) << 11) & 0xE000) |  \
+                                      (((b) << 5) & 0x1F00))
+
+#define PACK_TWO_PIXELS_LE(l, r)     ((r << 16) | l)
+#define PACK_TWO_PIXELS_BE(l, r)     ((l << 16) | r)
+
+#define PACK_NEED_ALIGNMENT(ptr)     (((size_t)(ptr)) & 3)
+
+#define WRITE_TWO_ALIGNED_PIXELS(addr, pixels)  ((*(int *)(addr)) = pixels)
+
+#define DITHER_565_R(r, dither)  ((r) + ((dither) & 0xFF))
+#define DITHER_565_G(g, dither)  ((g) + (((dither) & 0xFF) >> 1))
+#define DITHER_565_B(b, dither)  ((b) + ((dither) & 0xFF))
+
+
+/* Declarations for ordered dithering
+ *
+ * We use a 4x4 ordered dither array packed into 32 bits.  This array is
+ * sufficent for dithering RGB888 to RGB565.
+ */
+
+#define DITHER_MASK       0x3
+#define DITHER_ROTATE(x)  (((x) << 24) | (((x) >> 8) & 0x00FFFFFF))
+static const INT32 dither_matrix[4] = {
+  0x0008020A,
+  0x0C040E06,
+  0x030B0109,
+  0x0F070D05
+};
+
+
+static INLINE boolean is_big_endian(void)
+{
+  int test_value = 1;
+  if(*(char *)&test_value != 1)
+    return TRUE;
+  return FALSE;
+}
+
+
+/* Include inline routines for RGB565 conversion */
+
+#define PACK_SHORT_565 PACK_SHORT_565_LE
+#define PACK_TWO_PIXELS PACK_TWO_PIXELS_LE
+#define ycc_rgb565_convert_internal ycc_rgb565_convert_le
+#define ycc_rgb565D_convert_internal ycc_rgb565D_convert_le
+#define rgb_rgb565_convert_internal rgb_rgb565_convert_le
+#define rgb_rgb565D_convert_internal rgb_rgb565D_convert_le
+#define gray_rgb565_convert_internal gray_rgb565_convert_le
+#define gray_rgb565D_convert_internal gray_rgb565D_convert_le
 #include "jdcol565.c"
+#undef PACK_SHORT_565
+#undef PACK_TWO_PIXELS
+#undef ycc_rgb565_convert_internal
+#undef ycc_rgb565D_convert_internal
+#undef rgb_rgb565_convert_internal
+#undef rgb_rgb565D_convert_internal
+#undef gray_rgb565_convert_internal
+#undef gray_rgb565D_convert_internal
+
+#define PACK_SHORT_565 PACK_SHORT_565_BE
+#define PACK_TWO_PIXELS PACK_TWO_PIXELS_BE
+#define ycc_rgb565_convert_internal ycc_rgb565_convert_be
+#define ycc_rgb565D_convert_internal ycc_rgb565D_convert_be
+#define rgb_rgb565_convert_internal rgb_rgb565_convert_be
+#define rgb_rgb565D_convert_internal rgb_rgb565D_convert_be
+#define gray_rgb565_convert_internal gray_rgb565_convert_be
+#define gray_rgb565D_convert_internal gray_rgb565D_convert_be
+#include "jdcol565.c"
+#undef PACK_SHORT_565
+#undef PACK_TWO_PIXELS
+#undef ycc_rgb565_convert_internal
+#undef ycc_rgb565D_convert_internal
+#undef rgb_rgb565_convert_internal
+#undef rgb_rgb565D_convert_internal
+#undef gray_rgb565_convert_internal
+#undef gray_rgb565D_convert_internal
+
+
+METHODDEF(void)
+ycc_rgb565_convert (j_decompress_ptr cinfo,
+                    JSAMPIMAGE input_buf, JDIMENSION input_row,
+                    JSAMPARRAY output_buf, int num_rows)
+{
+  if (is_big_endian())
+    ycc_rgb565_convert_be(cinfo, input_buf, input_row, output_buf, num_rows);
+  else
+    ycc_rgb565_convert_le(cinfo, input_buf, input_row, output_buf, num_rows);
+}
+
+
+METHODDEF(void)
+ycc_rgb565D_convert (j_decompress_ptr cinfo,
+                     JSAMPIMAGE input_buf, JDIMENSION input_row,
+                     JSAMPARRAY output_buf, int num_rows)
+{
+  if (is_big_endian())
+    ycc_rgb565D_convert_be(cinfo, input_buf, input_row, output_buf, num_rows);
+  else
+    ycc_rgb565D_convert_le(cinfo, input_buf, input_row, output_buf, num_rows);
+}
+
+
+METHODDEF(void)
+rgb_rgb565_convert (j_decompress_ptr cinfo,
+                    JSAMPIMAGE input_buf, JDIMENSION input_row,
+                    JSAMPARRAY output_buf, int num_rows)
+{
+  if (is_big_endian())
+    rgb_rgb565_convert_be(cinfo, input_buf, input_row, output_buf, num_rows);
+  else
+    rgb_rgb565_convert_le(cinfo, input_buf, input_row, output_buf, num_rows);
+}
+
+
+METHODDEF(void)
+rgb_rgb565D_convert (j_decompress_ptr cinfo,
+                     JSAMPIMAGE input_buf, JDIMENSION input_row,
+                     JSAMPARRAY output_buf, int num_rows)
+{
+  if (is_big_endian())
+    rgb_rgb565D_convert_be(cinfo, input_buf, input_row, output_buf, num_rows);
+  else
+    rgb_rgb565D_convert_le(cinfo, input_buf, input_row, output_buf, num_rows);
+}
+
+
+METHODDEF(void)
+gray_rgb565_convert (j_decompress_ptr cinfo,
+                     JSAMPIMAGE input_buf, JDIMENSION input_row,
+                     JSAMPARRAY output_buf, int num_rows)
+{
+  if (is_big_endian())
+    gray_rgb565_convert_be(cinfo, input_buf, input_row, output_buf, num_rows);
+  else
+    gray_rgb565_convert_le(cinfo, input_buf, input_row, output_buf, num_rows);
+}
+
+
+METHODDEF(void)
+gray_rgb565D_convert (j_decompress_ptr cinfo,
+                      JSAMPIMAGE input_buf, JDIMENSION input_row,
+                      JSAMPARRAY output_buf, int num_rows)
+{
+  if (is_big_endian())
+    gray_rgb565D_convert_be(cinfo, input_buf, input_row, output_buf, num_rows);
+  else
+    gray_rgb565D_convert_le(cinfo, input_buf, input_row, output_buf, num_rows);
+}
 
 
 /*

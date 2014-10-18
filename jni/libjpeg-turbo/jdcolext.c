@@ -141,8 +141,9 @@ rgb_rgb_convert_internal (j_decompress_ptr cinfo,
   }
 }
 
+
 /*
- * Convert RGB to extended RGB: just swap the order of source pixels
+ * Convert cmyk to extended RGB
  */
 
 INLINE

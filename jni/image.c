@@ -1,4 +1,5 @@
 #include "image.h"
+#include "jpeg.h"
 #include "gif.h"
 #include "png.h"
 #include "giflib/gif_lib.h"
@@ -119,33 +120,33 @@ Java_com_hippo_ehviewer_gallery_image_Image_nativeDecodeFile(JNIEnv* env,
 
 JNIEXPORT void JNICALL
 Java_com_hippo_ehviewer_gallery_image_Image_nativeFree(JNIEnv* env,
-        jclass clazz, jint nativeImage, jint fileFormat) {
+        jclass clazz, jlong nativeImage, jint fileFormat) {
 
     switch (fileFormat) {
     case FILE_FORMAT_JPEG:
-        JPEG_Free(env, nativeImage);
+        JPEG_Free(env, (JPEG*) (intptr_t) nativeImage);
         break;
     case FILE_FORMAT_PNG:
-        PNG_Free(env, nativeImage);
+        PNG_Free(env, (PNG*) (intptr_t) nativeImage);
         break;
     case FILE_FORMAT_BMP:
         break;
     case FILE_FORMAT_GIF:
-        GIF_Free(env, nativeImage);
+        GIF_Free(env, (GIF*) (intptr_t) nativeImage);
         break;
     }
 }
 
 JNIEXPORT void JNICALL
 Java_com_hippo_ehviewer_gallery_image_Image_nativeRender(JNIEnv* env,
-        jclass clazz, jint format, jint type, jint nativeImage, jint fileFormat) {
+        jclass clazz, jint format, jint type, jlong nativeImage, jint fileFormat) {
 
     switch (fileFormat) {
     case FILE_FORMAT_JPEG:
-        JPEG_Render(env, nativeImage, format);
+        JPEG_Render(env, (JPEG*) (intptr_t) nativeImage, format);
         break;
     case FILE_FORMAT_PNG:
-        PNG_Render(env, nativeImage, format);
+        PNG_Render(env, (PNG*) (intptr_t) nativeImage, format);
         break;
     case FILE_FORMAT_BMP:
         break;
@@ -154,13 +155,13 @@ Java_com_hippo_ehviewer_gallery_image_Image_nativeRender(JNIEnv* env,
 
 JNIEXPORT void JNICALL
 Java_com_hippo_ehviewer_gallery_image_GifImage_nativeRender(JNIEnv* env,
-        jclass clazz, jint format, jint type, jint nativeImage, jint fileFormat,
+        jclass clazz, jint format, jint type, jlong nativeImage, jint fileFormat,
         jint index) {
 
     if (type != DEFAULT_TYPE || fileFormat != FILE_FORMAT_GIF)
         return;
 
-    GIF_Render(env, nativeImage, format, index);
+    GIF_Render(env, (GIF*) (intptr_t) nativeImage, format, index);
 }
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {

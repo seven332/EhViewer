@@ -14,7 +14,7 @@ typedef struct {
 
 jobject PNG_DecodeStream(JNIEnv* env, jobject is, jint format);
 jobject PNG_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format);
-void PNG_Render(JNIEnv* env, int nativeImage, int format);
-void PNG_Free(JNIEnv* env, int nativeImage);
+void PNG_Render(JNIEnv* env, PNG* png, int format);
+void PNG_Free(JNIEnv* env, PNG* png);
 
 #endif /* PNG_H_ */

@@ -5,7 +5,7 @@
  * Copyright (C) 1994-1996, Thomas G. Lane.
  * Copyright 2009 Pierre Ossman <ossman@cendio.se> for Cendio AB
  * libjpeg-turbo Modifications:
- * Copyright (C) 2009, 2011, D. R. Commander.
+ * Copyright (C) 2009, 2011, 2014 D. R. Commander.
  * Copyright (C) 2013, Linaro Limited.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -43,38 +43,6 @@
 #include "jconfigint.h"
 
 #ifdef UPSAMPLE_MERGING_SUPPORTED
-
-
-#define PACK_SHORT_565(r, g, b)   ((((r) << 8) & 0xf800) |  \
-                                   (((g) << 3) & 0x7E0) | ((b) >> 3))
-#define PACK_TWO_PIXELS(l, r)     ((r << 16) | l)
-#define PACK_NEED_ALIGNMENT(ptr)  (((size_t)(ptr)) & 3)
-
-#define WRITE_TWO_PIXELS(addr, pixels) {  \
-  ((INT16*)(addr))[0] = (pixels);  \
-  ((INT16*)(addr))[1] = (pixels) >> 16;  \
-}
-#define WRITE_TWO_ALIGNED_PIXELS(addr, pixels)  ((*(INT32 *)(addr)) = pixels)
-
-#define DITHER_565_R(r, dither)  ((r) + ((dither) & 0xFF))
-#define DITHER_565_G(g, dither)  ((g) + (((dither) & 0xFF) >> 1))
-#define DITHER_565_B(b, dither)  ((b) + ((dither) & 0xFF))
-
-
-/* Declarations for ordered dithering
- *
- * We use a 4x4 ordered dither array packed into 32 bits.  This array is
- * sufficent for dithering RGB888 to RGB565.
- */
-
-#define DITHER_MASK       0x3
-#define DITHER_ROTATE(x)  (((x) << 24) | (((x) >> 8) & 0x00FFFFFF))
-static const INT32 dither_matrix[4] = {
-  0x0008020A,
-  0x0C040E06,
-  0x030B0109,
-  0x0F070D05
-};
 
 
 /* Private subobject */
@@ -451,72 +419,106 @@ h2v2_merged_upsample (j_decompress_ptr cinfo,
 }
 
 
+/*
+ * RGB565 conversion
+ */
+
+#define PACK_SHORT_565_LE(r, g, b)   ((((r) << 8) & 0xF800) |  \
+                                      (((g) << 3) & 0x7E0) | ((b) >> 3))
+#define PACK_SHORT_565_BE(r, g, b)   (((r) & 0xF8) | ((g) >> 5) |  \
+                                      (((g) << 11) & 0xE000) |  \
+                                      (((b) << 5) & 0x1F00))
+
+#define PACK_TWO_PIXELS_LE(l, r)     ((r << 16) | l)
+#define PACK_TWO_PIXELS_BE(l, r)     ((l << 16) | r)
+
+#define PACK_NEED_ALIGNMENT(ptr)  (((size_t)(ptr)) & 3)
+
+#define WRITE_TWO_PIXELS_LE(addr, pixels) {  \
+  ((INT16*)(addr))[0] = (pixels);  \
+  ((INT16*)(addr))[1] = (pixels) >> 16;  \
+}
+#define WRITE_TWO_PIXELS_BE(addr, pixels) {  \
+  ((INT16*)(addr))[1] = (pixels);  \
+  ((INT16*)(addr))[0] = (pixels) >> 16;  \
+}
+
+#define DITHER_565_R(r, dither)  ((r) + ((dither) & 0xFF))
+#define DITHER_565_G(g, dither)  ((g) + (((dither) & 0xFF) >> 1))
+#define DITHER_565_B(b, dither)  ((b) + ((dither) & 0xFF))
+
+
+/* Declarations for ordered dithering
+ *
+ * We use a 4x4 ordered dither array packed into 32 bits.  This array is
+ * sufficent for dithering RGB888 to RGB565.
+ */
+
+#define DITHER_MASK       0x3
+#define DITHER_ROTATE(x)  (((x) << 24) | (((x) >> 8) & 0x00FFFFFF))
+static const INT32 dither_matrix[4] = {
+  0x0008020A,
+  0x0C040E06,
+  0x030B0109,
+  0x0F070D05
+};
+
+
+/* Include inline routines for RGB565 conversion */
+
+#define PACK_SHORT_565 PACK_SHORT_565_LE
+#define PACK_TWO_PIXELS PACK_TWO_PIXELS_LE
+#define WRITE_TWO_PIXELS WRITE_TWO_PIXELS_LE
+#define h2v1_merged_upsample_565_internal h2v1_merged_upsample_565_le
+#define h2v1_merged_upsample_565D_internal h2v1_merged_upsample_565D_le
+#define h2v2_merged_upsample_565_internal h2v2_merged_upsample_565_le
+#define h2v2_merged_upsample_565D_internal h2v2_merged_upsample_565D_le
+#include "jdmrg565.c"
+#undef PACK_SHORT_565
+#undef PACK_TWO_PIXELS
+#undef WRITE_TWO_PIXELS
+#undef h2v1_merged_upsample_565_internal
+#undef h2v1_merged_upsample_565D_internal
+#undef h2v2_merged_upsample_565_internal
+#undef h2v2_merged_upsample_565D_internal
+
+#define PACK_SHORT_565 PACK_SHORT_565_BE
+#define PACK_TWO_PIXELS PACK_TWO_PIXELS_BE
+#define WRITE_TWO_PIXELS WRITE_TWO_PIXELS_BE
+#define h2v1_merged_upsample_565_internal h2v1_merged_upsample_565_be
+#define h2v1_merged_upsample_565D_internal h2v1_merged_upsample_565D_be
+#define h2v2_merged_upsample_565_internal h2v2_merged_upsample_565_be
+#define h2v2_merged_upsample_565D_internal h2v2_merged_upsample_565D_be
+#include "jdmrg565.c"
+#undef PACK_SHORT_565
+#undef PACK_TWO_PIXELS
+#undef WRITE_TWO_PIXELS
+#undef h2v1_merged_upsample_565_internal
+#undef h2v1_merged_upsample_565D_internal
+#undef h2v2_merged_upsample_565_internal
+#undef h2v2_merged_upsample_565D_internal
+
+
+static INLINE boolean is_big_endian(void)
+{
+  int test_value = 1;
+  if(*(char *)&test_value != 1)
+    return TRUE;
+  return FALSE;
+}
+
+
 METHODDEF(void)
 h2v1_merged_upsample_565 (j_decompress_ptr cinfo,
                           JSAMPIMAGE input_buf, JDIMENSION in_row_group_ctr,
                           JSAMPARRAY output_buf)
 {
-  my_upsample_ptr upsample = (my_upsample_ptr) cinfo->upsample;
-  register int y, cred, cgreen, cblue;
-  int cb, cr;
-  register JSAMPROW outptr;
-  JSAMPROW inptr0, inptr1, inptr2;
-  JDIMENSION col;
-  /* copy these pointers into registers if possible */
-  register JSAMPLE * range_limit = cinfo->sample_range_limit;
-  int * Crrtab = upsample->Cr_r_tab;
-  int * Cbbtab = upsample->Cb_b_tab;
-  INT32 * Crgtab = upsample->Cr_g_tab;
-  INT32 * Cbgtab = upsample->Cb_g_tab;
-  unsigned int r, g, b;
-  INT32 rgb;
-  SHIFT_TEMPS
-
-  inptr0 = input_buf[0][in_row_group_ctr];
-  inptr1 = input_buf[1][in_row_group_ctr];
-  inptr2 = input_buf[2][in_row_group_ctr];
-  outptr = output_buf[0];
-
-  /* Loop for each pair of output pixels */
-  for (col = cinfo->output_width >> 1; col > 0; col--) {
-    /* Do the chroma part of the calculation */
-    cb = GETJSAMPLE(*inptr1++);
-    cr = GETJSAMPLE(*inptr2++);
-    cred = Crrtab[cr];
-    cgreen = (int) RIGHT_SHIFT(Cbgtab[cb] + Crgtab[cr], SCALEBITS);
-    cblue = Cbbtab[cb];
-
-    /* Fetch 2 Y values and emit 2 pixels */
-    y  = GETJSAMPLE(*inptr0++);
-    r = range_limit[y + cred];
-    g = range_limit[y + cgreen];
-    b = range_limit[y + cblue];
-    rgb = PACK_SHORT_565(r, g, b);
-
-    y  = GETJSAMPLE(*inptr0++);
-    r = range_limit[y + cred];
-    g = range_limit[y + cgreen];
-    b = range_limit[y + cblue];
-    rgb = PACK_TWO_PIXELS(rgb, PACK_SHORT_565(r, g, b));
-
-    WRITE_TWO_PIXELS(outptr, rgb);
-    outptr += 4;
-  }
-
-  /* If image width is odd, do the last output column separately */
-  if (cinfo->output_width & 1) {
-    cb = GETJSAMPLE(*inptr1);
-    cr = GETJSAMPLE(*inptr2);
-    cred = Crrtab[cr];
-    cgreen = (int) RIGHT_SHIFT(Cbgtab[cb] + Crgtab[cr], SCALEBITS);
-    cblue = Cbbtab[cb];
-    y  = GETJSAMPLE(*inptr0);
-    r = range_limit[y + cred];
-    g = range_limit[y + cgreen];
-    b = range_limit[y + cblue];
-    rgb = PACK_SHORT_565(r, g, b);
-    *(INT16*)outptr = rgb;
-   }
+  if (is_big_endian())
+    h2v1_merged_upsample_565_be(cinfo, input_buf, in_row_group_ctr,
+                                output_buf);
+  else
+    h2v1_merged_upsample_565_le(cinfo, input_buf, in_row_group_ctr,
+                                output_buf);
  }
 
 
@@ -525,70 +527,12 @@ h2v1_merged_upsample_565D (j_decompress_ptr cinfo,
                            JSAMPIMAGE input_buf, JDIMENSION in_row_group_ctr,
                            JSAMPARRAY output_buf)
 {
-  my_upsample_ptr upsample = (my_upsample_ptr) cinfo->upsample;
-  register int y, cred, cgreen, cblue;
-  int cb, cr;
-  register JSAMPROW outptr;
-  JSAMPROW inptr0, inptr1, inptr2;
-  JDIMENSION col;
-  /* copy these pointers into registers if possible */
-  register JSAMPLE * range_limit = cinfo->sample_range_limit;
-  int * Crrtab = upsample->Cr_r_tab;
-  int * Cbbtab = upsample->Cb_b_tab;
-  INT32 * Crgtab = upsample->Cr_g_tab;
-  INT32 * Cbgtab = upsample->Cb_g_tab;
-  INT32 d0 = dither_matrix[cinfo->output_scanline & DITHER_MASK];
-  unsigned int r, g, b;
-  INT32 rgb;
-  SHIFT_TEMPS
-
-  inptr0 = input_buf[0][in_row_group_ctr];
-  inptr1 = input_buf[1][in_row_group_ctr];
-  inptr2 = input_buf[2][in_row_group_ctr];
-  outptr = output_buf[0];
-
-  /* Loop for each pair of output pixels */
-  for (col = cinfo->output_width >> 1; col > 0; col--) {
-    /* Do the chroma part of the calculation */
-    cb = GETJSAMPLE(*inptr1++);
-    cr = GETJSAMPLE(*inptr2++);
-    cred = Crrtab[cr];
-    cgreen = (int) RIGHT_SHIFT(Cbgtab[cb] + Crgtab[cr], SCALEBITS);
-    cblue = Cbbtab[cb];
-
-    /* Fetch 2 Y values and emit 2 pixels */
-    y  = GETJSAMPLE(*inptr0++);
-    r = range_limit[DITHER_565_R(y + cred, d0)];
-    g = range_limit[DITHER_565_G(y + cgreen, d0)];
-    b = range_limit[DITHER_565_B(y + cblue, d0)];
-    d0 = DITHER_ROTATE(d0);
-    rgb = PACK_SHORT_565(r, g, b);
-
-    y  = GETJSAMPLE(*inptr0++);
-    r = range_limit[DITHER_565_R(y + cred, d0)];
-    g = range_limit[DITHER_565_G(y + cgreen, d0)];
-    b = range_limit[DITHER_565_B(y + cblue, d0)];
-    d0 = DITHER_ROTATE(d0);
-    rgb = PACK_TWO_PIXELS(rgb, PACK_SHORT_565(r, g, b));
-
-    WRITE_TWO_PIXELS(outptr, rgb);
-    outptr += 4;
-  }
-
-  /* If image width is odd, do the last output column separately */
-  if (cinfo->output_width & 1) {
-    cb = GETJSAMPLE(*inptr1);
-    cr = GETJSAMPLE(*inptr2);
-    cred = Crrtab[cr];
-    cgreen = (int) RIGHT_SHIFT(Cbgtab[cb] + Crgtab[cr], SCALEBITS);
-    cblue = Cbbtab[cb];
-    y  = GETJSAMPLE(*inptr0);
-    r = range_limit[DITHER_565_R(y + cred, d0)];
-    g = range_limit[DITHER_565_G(y + cgreen, d0)];
-    b = range_limit[DITHER_565_B(y + cblue, d0)];
-    rgb = PACK_SHORT_565(r, g, b);
-    *(INT16*)outptr = rgb;
-  }
+  if (is_big_endian())
+    h2v1_merged_upsample_565D_be(cinfo, input_buf, in_row_group_ctr,
+                                 output_buf);
+  else
+    h2v1_merged_upsample_565D_le(cinfo, input_buf, in_row_group_ctr,
+                                 output_buf);
 }
 
 
@@ -597,92 +541,12 @@ h2v2_merged_upsample_565 (j_decompress_ptr cinfo,
                           JSAMPIMAGE input_buf, JDIMENSION in_row_group_ctr,
                           JSAMPARRAY output_buf)
 {
-  my_upsample_ptr upsample = (my_upsample_ptr) cinfo->upsample;
-  register int y, cred, cgreen, cblue;
-  int cb, cr;
-  register JSAMPROW outptr0, outptr1;
-  JSAMPROW inptr00, inptr01, inptr1, inptr2;
-  JDIMENSION col;
-  /* copy these pointers into registers if possible */
-  register JSAMPLE * range_limit = cinfo->sample_range_limit;
-  int * Crrtab = upsample->Cr_r_tab;
-  int * Cbbtab = upsample->Cb_b_tab;
-  INT32 * Crgtab = upsample->Cr_g_tab;
-  INT32 * Cbgtab = upsample->Cb_g_tab;
-  unsigned int r, g, b;
-  INT32 rgb;
-  SHIFT_TEMPS
-
-  inptr00 = input_buf[0][in_row_group_ctr * 2];
-  inptr01 = input_buf[0][in_row_group_ctr * 2 + 1];
-  inptr1 = input_buf[1][in_row_group_ctr];
-  inptr2 = input_buf[2][in_row_group_ctr];
-  outptr0 = output_buf[0];
-  outptr1 = output_buf[1];
-
-  /* Loop for each group of output pixels */
-  for (col = cinfo->output_width >> 1; col > 0; col--) {
-    /* Do the chroma part of the calculation */
-    cb = GETJSAMPLE(*inptr1++);
-    cr = GETJSAMPLE(*inptr2++);
-    cred = Crrtab[cr];
-    cgreen = (int) RIGHT_SHIFT(Cbgtab[cb] + Crgtab[cr], SCALEBITS);
-    cblue = Cbbtab[cb];
-
-    /* Fetch 4 Y values and emit 4 pixels */
-    y  = GETJSAMPLE(*inptr00++);
-    r = range_limit[y + cred];
-    g = range_limit[y + cgreen];
-    b = range_limit[y + cblue];
-    rgb = PACK_SHORT_565(r, g, b);
-
-    y  = GETJSAMPLE(*inptr00++);
-    r = range_limit[y + cred];
-    g = range_limit[y + cgreen];
-    b = range_limit[y + cblue];
-    rgb = PACK_TWO_PIXELS(rgb, PACK_SHORT_565(r, g, b));
-
-    WRITE_TWO_PIXELS(outptr0, rgb);
-    outptr0 += 4;
-
-    y  = GETJSAMPLE(*inptr01++);
-    r = range_limit[y + cred];
-    g = range_limit[y + cgreen];
-    b = range_limit[y + cblue];
-    rgb = PACK_SHORT_565(r, g, b);
-
-    y  = GETJSAMPLE(*inptr01++);
-    r = range_limit[y + cred];
-    g = range_limit[y + cgreen];
-    b = range_limit[y + cblue];
-    rgb = PACK_TWO_PIXELS(rgb, PACK_SHORT_565(r, g, b));
-
-    WRITE_TWO_PIXELS(outptr1, rgb);
-    outptr1 += 4;
-  }
-
-  /* If image width is odd, do the last output column separately */
-  if (cinfo->output_width & 1) {
-    cb = GETJSAMPLE(*inptr1);
-    cr = GETJSAMPLE(*inptr2);
-    cred = Crrtab[cr];
-    cgreen = (int) RIGHT_SHIFT(Cbgtab[cb] + Crgtab[cr], SCALEBITS);
-    cblue = Cbbtab[cb];
-
-    y  = GETJSAMPLE(*inptr00);
-    r = range_limit[y + cred];
-    g = range_limit[y + cgreen];
-    b = range_limit[y + cblue];
-    rgb = PACK_SHORT_565(r, g, b);
-    *(INT16*)outptr0 = rgb;
-
-    y  = GETJSAMPLE(*inptr01);
-    r = range_limit[y + cred];
-    g = range_limit[y + cgreen];
-    b = range_limit[y + cblue];
-    rgb = PACK_SHORT_565(r, g, b);
-    *(INT16*)outptr1 = rgb;
-  }
+  if (is_big_endian())
+    h2v2_merged_upsample_565_be(cinfo, input_buf, in_row_group_ctr,
+                                output_buf);
+  else
+    h2v2_merged_upsample_565_le(cinfo, input_buf, in_row_group_ctr,
+                                output_buf);
 }
 
 
@@ -691,98 +555,12 @@ h2v2_merged_upsample_565D (j_decompress_ptr cinfo,
                            JSAMPIMAGE input_buf, JDIMENSION in_row_group_ctr,
                            JSAMPARRAY output_buf)
 {
-  my_upsample_ptr upsample = (my_upsample_ptr) cinfo->upsample;
-  register int y, cred, cgreen, cblue;
-  int cb, cr;
-  register JSAMPROW outptr0, outptr1;
-  JSAMPROW inptr00, inptr01, inptr1, inptr2;
-  JDIMENSION col;
-  /* copy these pointers into registers if possible */
-  register JSAMPLE * range_limit = cinfo->sample_range_limit;
-  int * Crrtab = upsample->Cr_r_tab;
-  int * Cbbtab = upsample->Cb_b_tab;
-  INT32 * Crgtab = upsample->Cr_g_tab;
-  INT32 * Cbgtab = upsample->Cb_g_tab;
-  INT32 d0 = dither_matrix[cinfo->output_scanline & DITHER_MASK];
-  INT32 d1 = dither_matrix[(cinfo->output_scanline+1) & DITHER_MASK];
-  unsigned int r, g, b;
-  INT32 rgb;
-  SHIFT_TEMPS
-
-  inptr00 = input_buf[0][in_row_group_ctr*2];
-  inptr01 = input_buf[0][in_row_group_ctr*2 + 1];
-  inptr1 = input_buf[1][in_row_group_ctr];
-  inptr2 = input_buf[2][in_row_group_ctr];
-  outptr0 = output_buf[0];
-  outptr1 = output_buf[1];
-
-  /* Loop for each group of output pixels */
-  for (col = cinfo->output_width >> 1; col > 0; col--) {
-    /* Do the chroma part of the calculation */
-    cb = GETJSAMPLE(*inptr1++);
-    cr = GETJSAMPLE(*inptr2++);
-    cred = Crrtab[cr];
-    cgreen = (int) RIGHT_SHIFT(Cbgtab[cb] + Crgtab[cr], SCALEBITS);
-    cblue = Cbbtab[cb];
-
-    /* Fetch 4 Y values and emit 4 pixels */
-    y  = GETJSAMPLE(*inptr00++);
-    r = range_limit[DITHER_565_R(y + cred, d0)];
-    g = range_limit[DITHER_565_G(y + cgreen, d0)];
-    b = range_limit[DITHER_565_B(y + cblue, d0)];
-    d0 = DITHER_ROTATE(d0);
-    rgb = PACK_SHORT_565(r, g, b);
-
-    y  = GETJSAMPLE(*inptr00++);
-    r = range_limit[DITHER_565_R(y + cred, d1)];
-    g = range_limit[DITHER_565_G(y + cgreen, d1)];
-    b = range_limit[DITHER_565_B(y + cblue, d1)];
-    d1 = DITHER_ROTATE(d1);
-    rgb = PACK_TWO_PIXELS(rgb, PACK_SHORT_565(r, g, b));
-
-    WRITE_TWO_PIXELS(outptr0, rgb);
-    outptr0 += 4;
-
-    y  = GETJSAMPLE(*inptr01++);
-    r = range_limit[DITHER_565_R(y + cred, d0)];
-    g = range_limit[DITHER_565_G(y + cgreen, d0)];
-    b = range_limit[DITHER_565_B(y + cblue, d0)];
-    d0 = DITHER_ROTATE(d0);
-    rgb = PACK_SHORT_565(r, g, b);
-
-    y  = GETJSAMPLE(*inptr01++);
-    r = range_limit[DITHER_565_R(y + cred, d1)];
-    g = range_limit[DITHER_565_G(y + cgreen, d1)];
-    b = range_limit[DITHER_565_B(y + cblue, d1)];
-    d1 = DITHER_ROTATE(d1);
-    rgb = PACK_TWO_PIXELS(rgb, PACK_SHORT_565(r, g, b));
-
-    WRITE_TWO_PIXELS(outptr1, rgb);
-    outptr1 += 4;
-  }
-
-  /* If image width is odd, do the last output column separately */
-  if (cinfo->output_width & 1) {
-    cb = GETJSAMPLE(*inptr1);
-    cr = GETJSAMPLE(*inptr2);
-    cred = Crrtab[cr];
-    cgreen = (int) RIGHT_SHIFT(Cbgtab[cb] + Crgtab[cr], SCALEBITS);
-    cblue = Cbbtab[cb];
-
-    y  = GETJSAMPLE(*inptr00);
-    r = range_limit[DITHER_565_R(y + cred, d0)];
-    g = range_limit[DITHER_565_G(y + cgreen, d0)];
-    b = range_limit[DITHER_565_B(y + cblue, d0)];
-    rgb = PACK_SHORT_565(r, g, b);
-    *(INT16*)outptr0 = rgb;
-
-    y  = GETJSAMPLE(*inptr01);
-    r = range_limit[DITHER_565_R(y + cred, d1)];
-    g = range_limit[DITHER_565_G(y + cgreen, d1)];
-    b = range_limit[DITHER_565_B(y + cblue, d1)];
-    rgb = PACK_SHORT_565(r, g, b);
-    *(INT16*)outptr1 = rgb;
-  }
+  if (is_big_endian())
+    h2v2_merged_upsample_565D_be(cinfo, input_buf, in_row_group_ctr,
+                                 output_buf);
+  else
+    h2v2_merged_upsample_565D_le(cinfo, input_buf, in_row_group_ctr,
+                                 output_buf);
 }
 
 

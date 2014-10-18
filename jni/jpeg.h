@@ -14,7 +14,7 @@ typedef struct {
 
 jobject JPEG_DecodeStream(JNIEnv* env, jobject is, jint format);
 jobject JPEG_DecodeFileHandler(JNIEnv* env, FILE* fp, jint format);
-void JPEG_Render(JNIEnv* env, int nativeImage, int format);
-void JPEG_Free(JNIEnv* env, int nativeImage);
+void JPEG_Render(JNIEnv* env, JPEG* jpeg, int format);
+void JPEG_Free(JNIEnv* env, JPEG* jpeg);
 
 #endif /* JPEG_H_ */

@@ -44,61 +44,66 @@ libjpeg-turbo/jquant2.c \
 libjpeg-turbo/jutils.c \
 libjpeg-turbo/transupp.c \
 libjpeg-turbo/turbojpeg.c
-LOCAL_CFLAGS := -O3
+LOCAL_CFLAGS := -O3 -DANDROID
 
-ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
+ifeq ($(TARGET_ARCH_ABI),$(filter $(TARGET_ARCH_ABI), armeabi armeabi-v7a))
     # Don't add -mfpu=neon
     # Some arm v7 cpu do not support neon,
     # libjpeg-turbo can check neon in init_simd()
     # through parse_proc_cpuinfo()
     #LOCAL_CFLAGS += -mfpu=neon
-endif
-
-ifeq ($(TARGET_ARCH),arm)
     LOCAL_SRC_FILES += \
     libjpeg-turbo/simd/jsimd_arm.c \
     libjpeg-turbo/simd/jsimd_arm_neon.S
 endif
 
-ifeq ($(TARGET_ARCH),x86)
+ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
     LOCAL_SRC_FILES += \
-    libjpeg-turbo/simd/jsimd_i386.c \
-    libjpeg-turbo/simd/jccolor-mmx.asm \
-    libjpeg-turbo/simd/jccolor-sse2.asm \
-    libjpeg-turbo/simd/jcgray-mmx.asm \
-    libjpeg-turbo/simd/jcgray-sse2.asm \
-    libjpeg-turbo/simd/jcsample-mmx.asm \
-    libjpeg-turbo/simd/jcsample-sse2.asm \
-    libjpeg-turbo/simd/jdcolor-mmx.asm \
-    libjpeg-turbo/simd/jdcolor-sse2.asm \
-    libjpeg-turbo/simd/jdmerge-mmx.asm \
-    libjpeg-turbo/simd/jdmerge-sse2.asm \
-    libjpeg-turbo/simd/jdsample-mmx.asm \
-    libjpeg-turbo/simd/jdsample-sse2.asm \
-    libjpeg-turbo/simd/jfdctflt-3dn.asm \
-    libjpeg-turbo/simd/jfdctflt-sse.asm \
-    libjpeg-turbo/simd/jfdctfst-mmx.asm \
-    libjpeg-turbo/simd/jfdctfst-sse2.asm \
-    libjpeg-turbo/simd/jfdctint-mmx.asm \
-    libjpeg-turbo/simd/jfdctint-sse2.asm \
-    libjpeg-turbo/simd/jidctflt-3dn.asm \
-    libjpeg-turbo/simd/jidctflt-sse.asm \
-    libjpeg-turbo/simd/jidctflt-sse2.asm \
-    libjpeg-turbo/simd/jidctfst-mmx.asm \
-    libjpeg-turbo/simd/jidctfst-sse2.asm \
-    libjpeg-turbo/simd/jidctint-mmx.asm \
-    libjpeg-turbo/simd/jidctint-sse2.asm \
-    libjpeg-turbo/simd/jidctred-mmx.asm \
-    libjpeg-turbo/simd/jidctred-sse2.asm \
-    libjpeg-turbo/simd/jquant-3dn.asm \
-    libjpeg-turbo/simd/jquantf-sse2.asm \
-    libjpeg-turbo/simd/jquanti-sse2.asm \
-    libjpeg-turbo/simd/jquant-mmx.asm \
-    libjpeg-turbo/simd/jquant-sse.asm \
-    libjpeg-turbo/simd/jsimdcpu.asm
+    libjpeg-turbo/simd/jsimd_arm64.c \
+    libjpeg-turbo/simd/jsimd_arm64_neon.S
 endif
 
-ifeq ($(TARGET_ARCH),mips)
+ifeq ($(TARGET_ARCH_ABI),x86)
+    LOCAL_SRC_FILES += \
+    libjpeg-turbo/simd/jsimd_i386.c \
+    libjpeg-turbo/simd/jsimdcpu.asm \
+    libjpeg-turbo/simd/jfdctflt-3dn.asm \
+    libjpeg-turbo/simd/jidctflt-3dn.asm \
+    libjpeg-turbo/simd/jquant-3dn.asm \
+    libjpeg-turbo/simd/jccolor-mmx.asm \
+    libjpeg-turbo/simd/jcgray-mmx.asm \
+    libjpeg-turbo/simd/jcsample-mmx.asm \
+    libjpeg-turbo/simd/jdcolor-mmx.asm \
+    libjpeg-turbo/simd/jdmerge-mmx.asm \
+    libjpeg-turbo/simd/jdsample-mmx.asm \
+    libjpeg-turbo/simd/jfdctfst-mmx.asm \
+    libjpeg-turbo/simd/jfdctint-mmx.asm \
+    libjpeg-turbo/simd/jidctfst-mmx.asm \
+    libjpeg-turbo/simd/jidctint-mmx.asm \
+    libjpeg-turbo/simd/jidctred-mmx.asm \
+    libjpeg-turbo/simd/jquant-mmx.asm \
+    libjpeg-turbo/simd/jfdctflt-sse.asm \
+    libjpeg-turbo/simd/jidctflt-sse.asm \
+    libjpeg-turbo/simd/jquant-sse.asm \
+    libjpeg-turbo/simd/jccolor-sse2.asm \
+    libjpeg-turbo/simd/jcgray-sse2.asm \
+    libjpeg-turbo/simd/jcsample-sse2.asm \
+    libjpeg-turbo/simd/jdcolor-sse2.asm \
+    libjpeg-turbo/simd/jdmerge-sse2.asm \
+    libjpeg-turbo/simd/jdsample-sse2.asm \
+    libjpeg-turbo/simd/jfdctfst-sse2.asm \
+    libjpeg-turbo/simd/jfdctint-sse2.asm \
+    libjpeg-turbo/simd/jidctflt-sse2.asm \
+    libjpeg-turbo/simd/jidctfst-sse2.asm \
+    libjpeg-turbo/simd/jidctint-sse2.asm \
+    libjpeg-turbo/simd/jidctred-sse2.asm \
+    libjpeg-turbo/simd/jquantf-sse2.asm \
+    libjpeg-turbo/simd/jquanti-sse2.asm
+
+    LOCAL_ASMFLAGS:= -Plibjpeg-turbo/simd/jsimdcfg.inc
+endif
+
+ifeq ($(TARGET_ARCH_ABI),mips)
     LOCAL_SRC_FILES += \
     libjpeg-turbo/simd/jsimd_mips.c \
     libjpeg-turbo/simd/jsimd_mips_dspr2.S
@@ -121,7 +126,7 @@ zlib/inflate.c \
 zlib/inftrees.c \
 zlib/trees.c \
 zlib/zutil.c
-LOCAL_CFLAGS := -O3
+LOCAL_CFLAGS := -O3 -DANDROID
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -144,12 +149,15 @@ libpng/pngrtran.c \
 libpng/pngrutil.c \
 libpng/pngset.c \
 libpng/pngtrans.c
-LOCAL_CFLAGS := -O3
+LOCAL_CFLAGS := -O3 -DANDROID
 
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
     # Add -mfpu=neon
     # libpng only check neon when add -mfpu=neon
     LOCAL_CFLAGS += -mfpu=neon
+endif
+
+ifeq ($(TARGET_ARCH_ABI),$(filter $(TARGET_ARCH_ABI), armeabi armeabi-v7a arm64-v8a))
     LOCAL_SRC_FILES += \
     libpng/arm/arm_init.c \
     libpng/arm/filter_neon_intrinsics.c \
@@ -171,7 +179,7 @@ LOCAL_SRC_FILES := \
 giflib/dgif_lib.c \
 giflib/gif_hash.c \
 giflib/gifalloc.c
-LOCAL_CFLAGS := -O3
+LOCAL_CFLAGS := -O3 -DANDROID
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -190,7 +198,7 @@ jpeg.c \
 png.c \
 gif.c \
 utils.c
-LOCAL_CFLAGS := -O3
+LOCAL_CFLAGS := -O3 -DANDROID
 LOCAL_STATIC_LIBRARIES := libjpeg-turbo libpng libgif
 LOCAL_LDLIBS := -lGLESv2
 

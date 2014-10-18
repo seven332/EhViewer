@@ -35,7 +35,7 @@ public class Image {
     public static final int FORMAT_RGB = GL11.GL_RGB;
     public static final int FORMAT_RGBA = GL11.GL_RGBA;
 
-    protected int mNativeImage;
+    protected long mNativeImage;
     protected final int mFileFormat;
     protected final int mWidth;
     protected final int mHeight;
@@ -43,7 +43,7 @@ public class Image {
     protected final int mFormat;
     protected final int mType;
 
-    protected Image(int nativeImage, int fileFormat, int width, int height,
+    protected Image(long nativeImage, int fileFormat, int width, int height,
             int format, int type) {
         mNativeImage = nativeImage;
         mFileFormat = fileFormat;
@@ -126,8 +126,8 @@ public class Image {
 
     private static native Image nativeDecodeFile(String pathName, int format);
 
-    private static native void nativeFree(int mNativeImage, int format);
+    private static native void nativeFree(long nativeImage, int format);
 
     private static native void nativeRender(int format, int type,
-            int nativeImage, int fileFormat);
+            long nativeImage, int fileFormat);
 }

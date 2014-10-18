@@ -28,13 +28,13 @@
 #endif
 #include "jmorecfg.h"           /* seldom changed options */
 
-/*
+
 #ifdef __cplusplus
 #ifndef DONT_USE_EXTERN_C
 extern "C" {
 #endif
 #endif
-*/
+
 
 /* Various constants determining the sizes of things.
  * All of these are specified by the JPEG standard, so don't change them
@@ -1096,12 +1096,10 @@ struct jpeg_color_quantizer { long dummy; };
 #include "jerror.h"             /* fetch error codes too */
 #endif
 
-/*
 #ifdef __cplusplus
 #ifndef DONT_USE_EXTERN_C
 }
 #endif
 #endif
-*/
 
 #endif /* JPEGLIB_H */
