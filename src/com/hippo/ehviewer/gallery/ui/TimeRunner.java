@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.util;
+package com.hippo.ehviewer.gallery.ui;
 
 import android.animation.TimeInterpolator;
-
-import com.hippo.ehviewer.AppHandler;
+import android.os.Handler;
 
 public abstract class TimeRunner {
     private static final int INTERVAL = 5;
@@ -32,6 +31,7 @@ public abstract class TimeRunner {
     private int mDuration = 0;
     private int mDelay = 0;
     private TimeInterpolator mInterpolator;
+    private Handler mHandler;
     private volatile boolean mCancel = false;
 
     private class Respond implements Runnable {
@@ -75,6 +75,11 @@ public abstract class TimeRunner {
         mDoInThread = doInThread;
     }
 
+    public void setHandler(Handler handler) {
+        mHandler = handler;
+        mDoInThread = false;
+    }
+
     public void setInterpolator(TimeInterpolator interpolator) {
         mInterpolator = interpolator;
     }
@@ -99,17 +104,17 @@ public abstract class TimeRunner {
                     e.printStackTrace();
                 }
 
-                if (mDoInThread)
+                if (mDoInThread || mHandler == null)
                     onStart();
                 else
-                    AppHandler.getInstance().post(new Respond(START));
+                    mHandler.post(new Respond(START));
 
                 // Check cancel
                 if (mCancel) {
-                    if (mDoInThread)
+                    if (mDoInThread || mHandler == null)
                         onStart();
                     else
-                        AppHandler.getInstance().post(new Respond(CANCEL));
+                        mHandler.post(new Respond(CANCEL));
                     return;
                 }
 
@@ -117,10 +122,10 @@ public abstract class TimeRunner {
                 for (int runningTime = 0; runningTime < mDuration; runningTime = (int)(System.currentTimeMillis() - startTime)) {
                     // Check cancel
                     if (mCancel) {
-                        if (mDoInThread)
+                        if (mDoInThread || mHandler == null)
                             onStart();
                         else
-                            AppHandler.getInstance().post(new Respond(CANCEL));
+                            mHandler.post(new Respond(CANCEL));
                         return;
                     }
 
@@ -128,11 +133,10 @@ public abstract class TimeRunner {
                     if (mInterpolator != null)
                         percent = mInterpolator.getInterpolation(percent);
 
-                    if (mDoInThread)
+                    if (mDoInThread || mHandler == null)
                         TimeRunner.this.onRun(percent, runningTime);
                     else
-                        AppHandler.getInstance().post(
-                                new Respond(percent, runningTime));
+                        mHandler.post(new Respond(percent, runningTime));
                     try {
                         Thread.sleep(INTERVAL);
                     } catch (InterruptedException e) {
@@ -140,10 +144,10 @@ public abstract class TimeRunner {
                     }
                 }
 
-                if (mDoInThread)
+                if (mDoInThread || mHandler == null)
                     onEnd();
                 else
-                    AppHandler.getInstance().post(new Respond(END));
+                    mHandler.post(new Respond(END));
             }
         }).start();
     }

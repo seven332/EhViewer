@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.gallery;
 
+import android.animation.TimeInterpolator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Movie;
@@ -23,7 +24,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.MotionEvent;
-import android.view.animation.AnticipateInterpolator;
 
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
@@ -36,13 +36,15 @@ import com.hippo.ehviewer.gallery.glrenderer.ImageTexture;
 import com.hippo.ehviewer.gallery.glrenderer.MovieTexture;
 import com.hippo.ehviewer.gallery.glrenderer.StringTexture;
 import com.hippo.ehviewer.gallery.image.Image;
+import com.hippo.ehviewer.gallery.ui.GLRoot;
 import com.hippo.ehviewer.gallery.ui.GLView;
 import com.hippo.ehviewer.gallery.ui.GestureRecognizer;
+import com.hippo.ehviewer.gallery.ui.SynchronizedHandler;
+import com.hippo.ehviewer.gallery.ui.TimeRunner;
 import com.hippo.ehviewer.gallery.util.GalleryUtils;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.MathUtils;
-import com.hippo.ehviewer.util.TimeRunner;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.MaterialToast;
@@ -115,7 +117,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
     @SuppressWarnings("unused")
     private static final int MASK_COLOR = 0x88000000;
 
-    private final GestureRecognizer mGestureRecognizer;
+    private GestureRecognizer mGestureRecognizer;
     private final Context mContext;
 
     private final ImageSet mImageSet;
@@ -200,8 +202,6 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
         setState();
 
-        mGestureRecognizer = new GestureRecognizer(mContext,
-                new MyGestureListener());
         setBackgroundColor(GalleryUtils
                 .intColorToFloatARGBArray(BACKGROUND_COLOR));
 
@@ -687,7 +687,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
     /**
      * If cur page is first page return true
-     * 
+     *
      * @return
      */
     private boolean isFirstPage() {
@@ -696,7 +696,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
     /**
      * If cur page is last page return true
-     * 
+     *
      * @return
      */
     private boolean isLastPage() {
@@ -750,7 +750,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
     /**
      * You'd better resetSizePosition(PRE_TARGET_INDEX) before
-     * 
+     *
      * @return
      */
     private synchronized boolean goToPrePage() {
@@ -791,7 +791,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
     /**
      * You'd better resetSizePosition(NEXT_TARGET_INDEX) before
-     * 
+     *
      * @return
      */
     private synchronized boolean goToNextPage() {
@@ -880,14 +880,23 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
     }
 
     @Override
+    protected void onAttachToRoot(GLRoot root) {
+        super.onAttachToRoot(root);
+        mGestureRecognizer = new GestureRecognizer(mContext,
+                new MyGestureListener());
+    }
+
+    @Override
     protected boolean onTouch(MotionEvent event) {
-        mGestureRecognizer.onTouchEvent(event);
+        if (mGestureRecognizer != null)
+            mGestureRecognizer.onTouchEvent(event);
         return true;
     }
 
     private class MyGestureListener implements GestureRecognizer.Listener {
 
         private boolean isScale = false;
+        private final SynchronizedHandler mSynchronizedHandler;
 
         private final TimeRunner mToPreTimeRunner = new TimeRunner() {
             @Override
@@ -1081,8 +1090,15 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         };
 
         public MyGestureListener() {
+
+            mSynchronizedHandler = new SynchronizedHandler(getGLRoot());
+
+            mToPreTimeRunner.setHandler(mSynchronizedHandler);
+            mToNextTimeRunner.setHandler(mSynchronizedHandler);
+            mReturnTimeRunner.setHandler(mSynchronizedHandler);
+            mDoubleTapRunner.setHandler(mSynchronizedHandler);
             mDoubleTapRunner.setDuration(Constants.ANIMATE_TIME);
-            mDoubleTapRunner.setInterpolator(new AnticipateInterpolator());
+            mDoubleTapRunner.setInterpolator(new ZInterpolator(0.5f));
         }
 
         @Override
@@ -1527,7 +1543,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
         /**
          * You must call init before draw
-         * 
+         *
          * @param texture
          */
         public void init(BasicTexture texture) {
@@ -1743,6 +1759,20 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             if (mTexture == null)
                 return;
             mTexture.recycle();
+        }
+    }
+
+    private static class ZInterpolator implements TimeInterpolator {
+        private final float focalLength;
+
+        public ZInterpolator(float foc) {
+            focalLength = foc;
+        }
+
+        @Override
+        public float getInterpolation(float input) {
+            return (1.0f - focalLength / (focalLength + input)) /
+                (1.0f - focalLength / (focalLength + 1.0f));
         }
     }
 }

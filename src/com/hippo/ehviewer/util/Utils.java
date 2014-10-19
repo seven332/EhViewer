@@ -645,5 +645,11 @@ public final class Utils {
             array[i] = ((Number) (boxedArray[i])).intValue();
         }
         return array;
-      }
+    }
+
+    // Throws NullPointerException if the input is null.
+    public static <T> T checkNotNull(T object) {
+        if (object == null) throw new NullPointerException();
+        return object;
+    }
 }
