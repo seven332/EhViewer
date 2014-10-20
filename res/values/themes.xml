@@ -53,6 +53,11 @@
         <item name="@android:windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.Gallery">
+        <item name="@android:icon">@android:color/transparent</item>
+        <item name="@android:actionBarStyle">@style/ActionBar.Gallery</item>
+    </style>
+
     <!-- For activity whose main view is list, make background darker to match white list -->
     <style name="AppTheme.ListActivity">
         <item name="@android:windowBackground">@color/background_little_light</item>

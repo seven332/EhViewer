@@ -45,30 +45,6 @@
         android:textColor="@color/secondary_text_light"
         auto:bvColor="@color/secondary_text_light" />
 
-    <LinearLayout
-        android:id="@+id/action_bar"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_gravity="top"
-        android:background="@color/background_little_dark"
-        android:orientation="horizontal"
-        android:clickable="true"
-        android:visibility="gone" >
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="24.0dp"
-            android:layout_marginRight="24.0dp"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textColor="@color/secondary_text_light"
-            android:textSize="@dimen/text_large" />
-
-    </LinearLayout>
-
    <LinearLayout
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"

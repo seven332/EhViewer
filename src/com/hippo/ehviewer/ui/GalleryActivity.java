@@ -16,18 +16,13 @@
 
 package com.hippo.ehviewer.ui;
 
-import android.animation.Animator;
-import android.animation.ValueAnimator;
-import android.animation.ValueAnimator.AnimatorUpdateListener;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.Interpolator;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -39,17 +34,12 @@ import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Ui;
 
-public class GalleryActivity extends AbsActivity
-        implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener {
+public class GalleryActivity extends Activity
+        implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener, View.OnSystemUiVisibilityChangeListener {
     @SuppressWarnings("unused")
     private final static String TAG = GalleryActivity.class.getSimpleName();
-
-    private static final Interpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
-    private static final int ACTION_BAR_HEIGHT = 48;
-    private static final int NAV_BAR_HEIGHT = 48;
 
     public final static String KEY_GID = "gid";
     public final static String KEY_TOKEN = "token";
@@ -57,10 +47,10 @@ public class GalleryActivity extends AbsActivity
     public final static String KEY_START_INDEX = "start_index";
 
     private View mainView;
-    private View mActionBar;
     private View mNavBar;
-    private TextView mTitleView;
     private TextView mSeekerBubble;
+
+    private ActionBar mActionBar;
 
     /** It store index, start from 0, so max is samller than size **/
     private SeekBar mPageSeeker;
@@ -71,102 +61,52 @@ public class GalleryActivity extends AbsActivity
     private int mGid;
     private String mTitle;
 
-    private ValueAnimator mShowAnimator;
-    private ValueAnimator mHideAnimator;
+    private final int mBaseSystemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+    private int mLastSystemUiVis;
 
-    @Override
-    public void onOrientationChanged(int paddingTop, int paddingBottom) {
-        // Empty
+    private final Runnable mNavHider = new Runnable() {
+        @Override public void run() {
+            setNavVisibility(false);
+        }
+    };
+
+    private void startHideTask() {
+        AppHandler.getInstance().postDelayed(mNavHider, 2000);
     }
 
-    @SuppressLint("NewApi")
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
-                hasFocus && mainView != null) {
-            mainView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
+    private void cancelHideTask() {
+        AppHandler.getInstance().removeCallbacks(mNavHider);
     }
 
     @Override
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    protected void onResume() {
-        super.onResume();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
-                mainView != null) {
-            mainView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
+    public void onSystemUiVisibilityChange(int visibility) {
+        // Detect when we go out of low-profile mode, to also go out
+        // of full screen.  We only do this when the low profile mode
+        // is changing from its last state, and turning off.
+        int diff = mLastSystemUiVis ^ visibility;
+        mLastSystemUiVis = visibility;
+        if ((diff & View.SYSTEM_UI_FLAG_LOW_PROFILE) != 0
+                && (visibility & View.SYSTEM_UI_FLAG_LOW_PROFILE) == 0) {
+            setNavVisibility(true);
+        }
     }
 
-    private void initAnimator() {
-        mShowAnimator = ValueAnimator.ofFloat(1.0f, 0.0f);
-        mShowAnimator.setDuration(Constants.ANIMATE_TIME);
-        mShowAnimator.setInterpolator(ACCELERATE_INTERPOLATOR);
-        mShowAnimator.addUpdateListener(new AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float value = (Float)animation.getAnimatedValue();
-                mActionBar.setY(- value * Ui.dp2pix(ACTION_BAR_HEIGHT));
-                mNavBar.setY(mainView.getHeight() - (1.0f - value) * Ui.dp2pix(NAV_BAR_HEIGHT));
-                mActionBar.requestLayout();
-                mNavBar.requestLayout();
-            }
-        });
-        mShowAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                mActionBar.setVisibility(View.VISIBLE);
-                mNavBar.setVisibility(View.VISIBLE);
-            }
-            @Override
-            public void onAnimationEnd(Animator animation) {}
-            @Override
-            public void onAnimationCancel(Animator animation) {}
-            @Override
-            public void onAnimationRepeat(Animator animation) {}
-        });
+    void setNavVisibility(boolean visible) {
+        int newVis = mBaseSystemUiVisibility;
+        if (!visible) {
+            newVis |= View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        }
+        final boolean changed = newVis == mainView.getSystemUiVisibility();
 
-        mHideAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
-        mHideAnimator.setDuration(Constants.ANIMATE_TIME);
-        mHideAnimator.setInterpolator(ACCELERATE_INTERPOLATOR);
-        mHideAnimator.addUpdateListener(new AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float value = (Float)animation.getAnimatedValue();
-                mActionBar.setY(- value * Ui.dp2pix(ACTION_BAR_HEIGHT));
-                mNavBar.setY(mainView.getHeight() - (1.0f - value) * Ui.dp2pix(NAV_BAR_HEIGHT));
-                mActionBar.requestLayout();
-                mNavBar.requestLayout();
-            }
-        });
-        mHideAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                mActionBar.setVisibility(View.VISIBLE);
-                mNavBar.setVisibility(View.VISIBLE);
-            }
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mActionBar.setVisibility(View.GONE);
-                mNavBar.setVisibility(View.GONE);
-            }
-            @Override
-            public void onAnimationCancel(Animator animation) {}
-            @Override
-            public void onAnimationRepeat(Animator animation) {}
-        });
+        if (!visible)
+            cancelHideTask();
+
+        // Set the new desired visibility.
+        mainView.setSystemUiVisibility(newVis);
+        mNavBar.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
     }
+
 
     @Override
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -175,25 +115,14 @@ public class GalleryActivity extends AbsActivity
         setContentView(R.layout.gl_root_group);
 
         mainView = findViewById(R.id.main);
-        mActionBar = findViewById(R.id.action_bar);
         mNavBar = findViewById(R.id.nav_bar);
-        mTitleView = (TextView)findViewById(R.id.title);
-        mPageSeeker = (SeekBar)findViewById(R.id.page_seeker);
-        mSeekerBubble = (TextView)findViewById(R.id.seeker_bubble);
+        mPageSeeker = (SeekBar) findViewById(R.id.page_seeker);
+        mSeekerBubble = (TextView) findViewById(R.id.seeker_bubble);
 
-        // FullScreen
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        } else {
-            mainView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        }
+        mainView.setOnSystemUiVisibilityChangeListener(this);
+        setNavVisibility(false);
+
+        mActionBar = getActionBar();
 
         Intent intent = getIntent();
         mGid = intent.getIntExtra(KEY_GID, -1);
@@ -204,6 +133,7 @@ public class GalleryActivity extends AbsActivity
             startIndex = ExDownloader.readCurReadIndex(mGid, mTitle);
 
         if (mGid == -1 || token == null || mTitle == null) {
+            // Get error force finish
             new MaterialAlertDialog.Builder(this).setTitle(R.string.error)
                     .setMessage(R.string.ga_data_error)
                     .setPositiveButton(R.string.close)
@@ -220,8 +150,6 @@ public class GalleryActivity extends AbsActivity
 
             GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);
             glrv.setContentPane(mGalleryView);
-
-            initAnimator();
 
             // Hide or show
             if (!Config.getGShowTime())
@@ -253,15 +181,7 @@ public class GalleryActivity extends AbsActivity
         sb.append(mGalleryView.getCurIndex() + 1).append("/")
                 .append(mGalleryView.getSize())
                 .append(" - ").append(mGid);
-        mTitleView.setText(sb.toString());
-    }
-
-    private void startHideTask() {
-        AppHandler.getInstance().postDelayed(mHideTask, 2000);
-    }
-
-    private void cancelHideTask() {
-        AppHandler.getInstance().removeCallbacks(mHideTask);
+        mActionBar.setTitle(sb.toString());
     }
 
     @Override
@@ -276,25 +196,12 @@ public class GalleryActivity extends AbsActivity
 
     @Override
     public void onTapCenter() {
-        if (mShowAnimator.isRunning() || mHideAnimator.isRunning())
-            return;
-
-        if (mActionBar.getVisibility() == View.GONE) {
-            mShowAnimator.start();
+        int curVis = mainView.getSystemUiVisibility();
+        boolean v = (curVis & View.SYSTEM_UI_FLAG_LOW_PROFILE) != 0;
+        setNavVisibility(v);
+        if (v)
             startHideTask();
-        } else if (mActionBar.getVisibility() == View.VISIBLE) {
-            mHideAnimator.start();
-        }
     }
-
-    private final Runnable mHideTask = new Runnable() {
-        @Override
-        public void run() {
-            if (!mShowAnimator.isRunning() && !mHideAnimator.isRunning()
-                    && mActionBar.getVisibility() == View.VISIBLE)
-                mHideAnimator.start();
-        }
-    };
 
     @Override
     public void onPageChanged(int index) {
