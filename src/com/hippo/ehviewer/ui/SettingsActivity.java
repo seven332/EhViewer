@@ -67,18 +67,17 @@ import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.preference.ListPreference;
 import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.DialogUtils;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
-import com.hippo.ehviewer.widget.AlertButton;
 import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.FileExplorerView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.ProgressDialogBulider;
 import com.hippo.ehviewer.widget.SuggestionHelper;
-import com.hippo.ehviewer.widget.SuperDialogUtil;
 
 public class SettingsActivity extends AbsPreferenceActivity {
     @SuppressWarnings("unused")
@@ -88,8 +87,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
     private ListView mListView;
 
     public void adjustPadding(int paddingTop, int paddingBottom) {
-        mListView.setPadding(mListView.getPaddingLeft(), paddingTop,
-                mListView.getPaddingRight(), paddingBottom);
+        mListView.setPadding(mListView.getPaddingLeft(), paddingTop, mListView.getPaddingRight(), paddingBottom);
     }
 
     @Override
@@ -145,28 +143,19 @@ public class SettingsActivity extends AbsPreferenceActivity {
         loadHeadersFromResource(R.xml.settings_headers, target);
     }
 
-    private static final String[] ENTRY_FRAGMENTS = {
-        DisplayFragment.class.getName(),
-        EhFragment.class.getName(),
-        ReadFragment.class.getName(),
-        DownloadFragment.class.getName(),
-        AdvancedFragment.class.getName(),
-        AboutFragment.class.getName()
-    };
+    private static final String[] ENTRY_FRAGMENTS = { DisplayFragment.class.getName(), EhFragment.class.getName(),
+            ReadFragment.class.getName(), DownloadFragment.class.getName(), AdvancedFragment.class.getName(),
+            AboutFragment.class.getName() };
 
-    private static final int[] FRAGMENT_ICONS = {
-        R.drawable.ic_setting_display,
-        R.drawable.ic_action_panda,
-        R.drawable.ic_setting_read,
-        R.drawable.ic_setting_download,
-        R.drawable.ic_setting_advanced,
-        R.drawable.ic_setting_about
-    };
+    private static final int[] FRAGMENT_ICONS = { R.drawable.ic_setting_display, R.drawable.ic_action_panda,
+            R.drawable.ic_setting_read, R.drawable.ic_setting_download, R.drawable.ic_setting_advanced,
+            R.drawable.ic_setting_about };
 
     @Override
     protected boolean isValidFragment(String fragmentName) {
         for (int i = 0; i < ENTRY_FRAGMENTS.length; i++) {
-            if (ENTRY_FRAGMENTS[i].equals(fragmentName)) return true;
+            if (ENTRY_FRAGMENTS[i].equals(fragmentName))
+                return true;
         }
         return false;
     }
@@ -179,7 +168,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            mActivity = (SettingsActivity)getActivity();
+            mActivity = (SettingsActivity) getActivity();
 
             String fragmentName = getClass().getName();
             int fragmentIndex = -1;
@@ -190,20 +179,18 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 }
             }
             if (fragmentIndex >= 0)
-                mActivity.getActionBar().setIcon(
-                        FRAGMENT_ICONS[fragmentIndex]);
+                mActivity.getActionBar().setIcon(FRAGMENT_ICONS[fragmentIndex]);
         }
 
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
-            SettingsActivity activity = (SettingsActivity)getActivity();
+            SettingsActivity activity = (SettingsActivity) getActivity();
             activity.getFragments().add(this);
 
             View child;
-            if (view instanceof ViewGroup
-                    && (child = ((ViewGroup)view).getChildAt(0)) != null
+            if (view instanceof ViewGroup && (child = ((ViewGroup) view).getChildAt(0)) != null
                     && child instanceof ListView) {
-                mListView = (ListView)child;
+                mListView = (ListView) child;
                 mListView.setClipToPadding(false);
 
                 int[] padding = new int[2];
@@ -213,13 +200,12 @@ public class SettingsActivity extends AbsPreferenceActivity {
         }
 
         public void adjustPadding(int paddingTop, int paddingBottom) {
-            mListView.setPadding(mListView.getPaddingLeft(), paddingTop,
-                    mListView.getPaddingRight(), paddingBottom);
+            mListView.setPadding(mListView.getPaddingLeft(), paddingTop, mListView.getPaddingRight(), paddingBottom);
         }
     }
 
-    public static class DisplayFragment extends TranslucentPreferenceFragment
-            implements Preference.OnPreferenceChangeListener {
+    public static class DisplayFragment extends TranslucentPreferenceFragment implements
+            Preference.OnPreferenceChangeListener {
 
         private static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
         private static final String KEY_RANDOM_THEME_COLOR = "random_theme_color";
@@ -234,9 +220,9 @@ public class SettingsActivity extends AbsPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.display_settings);
 
-            mScreenOrientation = (ListPreference)findPreference(KEY_SCREEN_ORIENTATION);
+            mScreenOrientation = (ListPreference) findPreference(KEY_SCREEN_ORIENTATION);
             mScreenOrientation.setOnPreferenceChangeListener(this);
-            mRandomThemeColor = (CheckBoxPreference)findPreference(KEY_RANDOM_THEME_COLOR);
+            mRandomThemeColor = (CheckBoxPreference) findPreference(KEY_RANDOM_THEME_COLOR);
             mRandomThemeColor.setOnPreferenceChangeListener(this);
             mThemeColor = findPreference(KEY_THEME_COLOR);
 
@@ -247,63 +233,45 @@ public class SettingsActivity extends AbsPreferenceActivity {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final String key = preference.getKey();
             if (KEY_SCREEN_ORIENTATION.equals(key)) {
-                mActivity.setRequestedOrientation(
-                        Config.screenOriPre2Value(Integer.parseInt((String) newValue)));
+                mActivity.setRequestedOrientation(Config.screenOriPre2Value(Integer.parseInt((String) newValue)));
 
             } else if (KEY_RANDOM_THEME_COLOR.equals(key)) {
                 MaterialToast.showToast(R.string.restart_to_take_effect);
-                mThemeColor.setEnabled(!(Boolean)newValue);
+                mThemeColor.setEnabled(!(Boolean) newValue);
             }
 
             return true;
         }
     }
 
-    public static class EhFragment extends TranslucentPreferenceFragment
-            implements Preference.OnPreferenceChangeListener,
-            Preference.OnPreferenceClickListener {
+    public static class EhFragment extends TranslucentPreferenceFragment implements
+            Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
-        private static final int[] EXCULDE_TAG_GROUP_RESID = {
-            R.id.tag_group_reclass,
-            R.id.tag_group_language,
-            R.id.tag_group_parody,
-            R.id.tag_group_character,
-            R.id.tag_group_group,
-            R.id.tag_group_artist,
-            R.id.tag_group_male,
-            R.id.tag_group_female
-        };
+        private static final int[] EXCULDE_TAG_GROUP_RESID = { R.id.tag_group_reclass, R.id.tag_group_language,
+                R.id.tag_group_parody, R.id.tag_group_character, R.id.tag_group_group, R.id.tag_group_artist,
+                R.id.tag_group_male, R.id.tag_group_female };
 
-        private static final int[] EXCULDE_TAG_GROUP_ID = {
-            0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80
-        };
+        private static final int[] EXCULDE_TAG_GROUP_ID = { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80 };
 
-        private static final int[] EXCULDE_LANGUAGE_RESID = {
-            R.id.el_japanese_translated, R.id.el_japanese_rewrite,
-            R.id.el_english_original, R.id.el_english_translated, R.id.el_english_rewrite,
-            R.id.el_chinese_original, R.id.el_chinese_translated, R.id.el_chinese_rewrite,
-            R.id.el_dutch_original, R.id.el_dutch_translated, R.id.el_dutch_rewrite,
-            R.id.el_french_original, R.id.el_french_translated, R.id.el_french_rewrite,
-            R.id.el_german_original, R.id.el_german_translated, R.id.el_german_rewrite,
-            R.id.el_hungarian_original, R.id.el_hungarian_translated, R.id.el_hungarian_rewrite,
-            R.id.el_italian_original, R.id.el_italian_translated, R.id.el_italian_rewrite,
-            R.id.el_korean_original, R.id.el_korean_translated, R.id.el_korean_rewrite,
-            R.id.el_polish_original, R.id.el_polish_translated, R.id.el_polish_rewrite,
-            R.id.el_portuguese_original, R.id.el_portuguese_translated, R.id.el_portuguese_rewrite,
-            R.id.el_russian_original, R.id.el_russian_translated, R.id.el_russian_rewrite,
-            R.id.el_spanish_original, R.id.el_spanish_translated, R.id.el_spanish_rewrite,
-            R.id.el_thai_original, R.id.el_thai_translated, R.id.el_thai_rewrite,
-            R.id.el_vietnamese_original, R.id.el_vietnamese_translated, R.id.el_vietnamese_rewrite,
-            R.id.el_other_original, R.id.el_other_translated, R.id.el_other_rewrite,
-        };
+        private static final int[] EXCULDE_LANGUAGE_RESID = { R.id.el_japanese_translated, R.id.el_japanese_rewrite,
+                R.id.el_english_original, R.id.el_english_translated, R.id.el_english_rewrite,
+                R.id.el_chinese_original, R.id.el_chinese_translated, R.id.el_chinese_rewrite, R.id.el_dutch_original,
+                R.id.el_dutch_translated, R.id.el_dutch_rewrite, R.id.el_french_original, R.id.el_french_translated,
+                R.id.el_french_rewrite, R.id.el_german_original, R.id.el_german_translated, R.id.el_german_rewrite,
+                R.id.el_hungarian_original, R.id.el_hungarian_translated, R.id.el_hungarian_rewrite,
+                R.id.el_italian_original, R.id.el_italian_translated, R.id.el_italian_rewrite, R.id.el_korean_original,
+                R.id.el_korean_translated, R.id.el_korean_rewrite, R.id.el_polish_original, R.id.el_polish_translated,
+                R.id.el_polish_rewrite, R.id.el_portuguese_original, R.id.el_portuguese_translated,
+                R.id.el_portuguese_rewrite, R.id.el_russian_original, R.id.el_russian_translated,
+                R.id.el_russian_rewrite, R.id.el_spanish_original, R.id.el_spanish_translated, R.id.el_spanish_rewrite,
+                R.id.el_thai_original, R.id.el_thai_translated, R.id.el_thai_rewrite, R.id.el_vietnamese_original,
+                R.id.el_vietnamese_translated, R.id.el_vietnamese_rewrite, R.id.el_other_original,
+                R.id.el_other_translated, R.id.el_other_rewrite, };
 
-        private static final String[] EXCULDE_LANGUAGE_ID = {
-            "1024", "2048", "1", "1025", "2049", "10", "1034", "2058", "20", "1044", "2068",
-            "30", "1054", "2078", "40", "1064", "2088", "50", "1074", "2098",
-            "60", "1084", "2108", "70", "1094", "2118", "80", "1104", "2128",
-            "90", "1114", "2138", "100", "1124", "2148", "110", "1134", "2158",
-            "120", "1144", "2168", "130", "1154", "2178", "255", "1279", "2303"
-        };
+        private static final String[] EXCULDE_LANGUAGE_ID = { "1024", "2048", "1", "1025", "2049", "10", "1034",
+                "2058", "20", "1044", "2068", "30", "1054", "2078", "40", "1064", "2088", "50", "1074", "2098", "60",
+                "1084", "2108", "70", "1094", "2118", "80", "1104", "2128", "90", "1114", "2138", "100", "1124",
+                "2148", "110", "1134", "2158", "120", "1144", "2168", "130", "1154", "2178", "255", "1279", "2303" };
 
         private static final String KEY_LIST_DEFAULT_CATEGORY = "list_default_category";
         private static final String KEY_EXCULDE_TAG_GROUP = "exculde_tag_group";
@@ -332,9 +300,9 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mExculdeLanguage.setOnPreferenceClickListener(this);
             mClearSuggestions = findPreference(KEY_CLEAR_SUGGESTIONS);
             mClearSuggestions.setOnPreferenceClickListener(this);
-            mPreviewMode = (ListPreference)findPreference(KEY_PREVIEW_MODE);
+            mPreviewMode = (ListPreference) findPreference(KEY_PREVIEW_MODE);
             mPreviewMode.setOnPreferenceChangeListener(this);
-            mDefaultFavorite = (ListPreference)findPreference(KEY_DEFAULT_FAVORITE);
+            mDefaultFavorite = (ListPreference) findPreference(KEY_DEFAULT_FAVORITE);
 
             int i = 0;
             String[] entrise = new String[Favorite.FAVORITE_TITLES.length + 1];
@@ -348,7 +316,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final String key = preference.getKey();
             if (KEY_PREVIEW_MODE.equals(key)) {
-                String newPreviewMode = (String)newValue;
+                String newPreviewMode = (String) newValue;
                 EhInfo.getInstance(mActivity).setPreviewMode(newPreviewMode);
             }
             return true;
@@ -363,8 +331,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 final CategoryTable ct = new CategoryTable(mActivity);
                 ct.setCategory(defaultCat);
 
-                new MaterialAlertDialog.Builder(mActivity)
-                        .setTitle(R.string.list_default_category_title)
+                new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.list_default_category_title)
                         .setView(ct, true).setPositiveButton(android.R.string.ok)
                         .setNegativeButton(android.R.string.cancel)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
@@ -381,17 +348,14 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
             } else if (KEY_EXCULDE_TAG_GROUP.equals(key)) {
                 LayoutInflater inflater = LayoutInflater.from(mActivity);
-                final TableLayout tl = (TableLayout)inflater.inflate(R.layout.exculde_tag_group, null);
+                final TableLayout tl = (TableLayout) inflater.inflate(R.layout.exculde_tag_group, null);
                 setExculdeTagGroup(tl, Config.getExculdeTagGroup());
 
-                new MaterialAlertDialog.Builder(mActivity)
-                        .setTitle(R.string.exculde_tag_group_title)
-                        .setView(tl, true).setPositiveButton(android.R.string.ok)
-                        .setNegativeButton(android.R.string.cancel)
+                new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.exculde_tag_group_title).setView(tl, true)
+                        .setPositiveButton(android.R.string.ok).setNegativeButton(android.R.string.cancel)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                             @Override
-                            public boolean onClick(MaterialAlertDialog dialog,
-                                    int which) {
+                            public boolean onClick(MaterialAlertDialog dialog, int which) {
                                 int newValue = getExculdeTagGroup(tl);
                                 Config.setExculdeTagGroup(newValue);
                                 EhInfo.getInstance(mActivity).setExculdeTagGroup(newValue);
@@ -401,17 +365,14 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
             } else if (KEY_EXCULDE_LANGUAGE.equals(key)) {
                 LayoutInflater inflater = LayoutInflater.from(mActivity);
-                final TableLayout tl = (TableLayout)inflater.inflate(R.layout.exculde_language, null);
+                final TableLayout tl = (TableLayout) inflater.inflate(R.layout.exculde_language, null);
                 setExculdeLanguage(tl, Config.getExculdeLanguage());
 
-                new MaterialAlertDialog.Builder(mActivity)
-                        .setTitle(R.string.exculde_language_title)
-                        .setView(tl, true).setPositiveButton(android.R.string.ok)
-                        .setNegativeButton(android.R.string.cancel)
+                new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.exculde_language_title).setView(tl, true)
+                        .setPositiveButton(android.R.string.ok).setNegativeButton(android.R.string.cancel)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                             @Override
-                            public boolean onClick(MaterialAlertDialog dialog,
-                                    int which) {
+                            public boolean onClick(MaterialAlertDialog dialog, int which) {
                                 String newValue = getExculdeLanguage(tl);
                                 Config.setExculdeLanguage(newValue);
                                 EhInfo.getInstance(mActivity).setExculdeLanguage(newValue);
@@ -420,9 +381,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         }).show();
 
             } else if (KEY_CLEAR_SUGGESTIONS.equals(key)) {
-                SearchRecentSuggestions suggestions = SuggestionHelper.getInstance (
-                        mActivity, SimpleSuggestionProvider.AUTHORITY,
-                        SimpleSuggestionProvider.MODE);
+                SearchRecentSuggestions suggestions = SuggestionHelper.getInstance(mActivity,
+                        SimpleSuggestionProvider.AUTHORITY, SimpleSuggestionProvider.MODE);
                 suggestions.clearHistory();
             }
             return true;
@@ -430,7 +390,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
         private static void setExculdeTagGroup(TableLayout tl, int value) {
             for (int i = 0; i < EXCULDE_TAG_GROUP_RESID.length; i++) {
-                CheckBox cb = (CheckBox)tl.findViewById(EXCULDE_TAG_GROUP_RESID[i]);
+                CheckBox cb = (CheckBox) tl.findViewById(EXCULDE_TAG_GROUP_RESID[i]);
                 cb.setChecked(Utils.int2boolean(value & EXCULDE_TAG_GROUP_ID[i]));
             }
         }
@@ -438,8 +398,9 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static int getExculdeTagGroup(TableLayout tl) {
             int newValue = 0;
             for (int i = 0; i < EXCULDE_TAG_GROUP_RESID.length; i++) {
-                CheckBox cb = (CheckBox)tl.findViewById(EXCULDE_TAG_GROUP_RESID[i]);
-                if (cb.isChecked()) newValue |= EXCULDE_TAG_GROUP_ID[i];
+                CheckBox cb = (CheckBox) tl.findViewById(EXCULDE_TAG_GROUP_RESID[i]);
+                if (cb.isChecked())
+                    newValue |= EXCULDE_TAG_GROUP_ID[i];
             }
             return newValue;
         }
@@ -456,7 +417,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             String[] items = value.split("x");
             for (String item : items) {
                 int resId = getLanguage(item);
-                if (resId != 0) ((CheckBox)tl.findViewById(resId)).setChecked(true);
+                if (resId != 0)
+                    ((CheckBox) tl.findViewById(resId)).setChecked(true);
             }
         }
 
@@ -464,8 +426,11 @@ public class SettingsActivity extends AbsPreferenceActivity {
             StringBuilder sb = new StringBuilder();
             boolean isFirst = true;
             for (int i = 0; i < EXCULDE_LANGUAGE_RESID.length; i++) {
-                if (((CheckBox)tl.findViewById(EXCULDE_LANGUAGE_RESID[i])).isChecked()) {
-                    if (isFirst) isFirst = false; else sb.append('x');
+                if (((CheckBox) tl.findViewById(EXCULDE_LANGUAGE_RESID[i])).isChecked()) {
+                    if (isFirst)
+                        isFirst = false;
+                    else
+                        sb.append('x');
                     sb.append(EXCULDE_LANGUAGE_ID[i]);
                 }
             }
@@ -473,8 +438,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
         }
     }
 
-    public static class ReadFragment extends TranslucentPreferenceFragment
-            implements Preference.OnPreferenceClickListener {
+    public static class ReadFragment extends TranslucentPreferenceFragment implements
+            Preference.OnPreferenceClickListener {
 
         private static final String KEY_CUSTOM_CODEC = "custom_codec";
         private static final String KEY_CLEAN_REDUNDANCY = "clean_redundancy";
@@ -607,7 +572,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
                             handler.post(new CleanResponder(CleanResponder.STATE_DOING, targetDirList.size(), i + 1));
                         }
                         // Close windows
-                        handler.post(new CleanResponder(CleanResponder.STATE_DONE, targetDirList.size(), targetDirList.size()));
+                        handler.post(new CleanResponder(CleanResponder.STATE_DONE, targetDirList.size(), targetDirList
+                                .size()));
                     }
                 }.start();
             }
@@ -615,9 +581,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
         }
     }
 
-    public static class DownloadFragment extends TranslucentPreferenceFragment
-            implements Preference.OnPreferenceChangeListener,
-            Preference.OnPreferenceClickListener {
+    public static class DownloadFragment extends TranslucentPreferenceFragment implements
+            Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
         private static final String KEY_DOWNLOAD_PATH = "download_path";
         private static final String KEY_MEDIA_SCAN = "media_scan";
@@ -639,7 +604,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
             mDownloadPath = findPreference(KEY_DOWNLOAD_PATH);
             mDownloadPath.setOnPreferenceClickListener(this);
-            mMediaScan = (CheckBoxPreference)findPreference(KEY_MEDIA_SCAN);
+            mMediaScan = (CheckBoxPreference) findPreference(KEY_MEDIA_SCAN);
             mMediaScan.setOnPreferenceChangeListener(this);
             mDownloadThread = findPreference(KEY_DOWNLOAD_THREAD);
             mDownloadThread.setOnPreferenceChangeListener(this);
@@ -651,22 +616,23 @@ public class SettingsActivity extends AbsPreferenceActivity {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final String key = preference.getKey();
             if (KEY_MEDIA_SCAN.equals(key)) {
-                boolean value = (Boolean)newValue;
+                boolean value = (Boolean) newValue;
                 File nomedia = new File(Config.getDownloadPath(), ".nomedia");
                 if (value) {
                     nomedia.delete();
                 } else {
                     try {
                         nomedia.createNewFile();
-                    } catch (IOException e) {}
+                    } catch (IOException e) {
+                    }
                 }
             } else if (KEY_DOWNLOAD_THREAD.equals(key)) {
-                String value = (String)newValue;
+                String value = (String) newValue;
                 try {
                     int num = Integer.parseInt(value);
                     if (num < MIN_THREAD_NUM || num > MAX_THREAD_NUM)
                         throw new Throwable();
-                } catch(Throwable e){
+                } catch (Throwable e) {
                     MaterialToast.showToast(R.string.invalid_input);
                     return false;
                 }
@@ -680,20 +646,15 @@ public class SettingsActivity extends AbsPreferenceActivity {
         public boolean onPreferenceClick(Preference preference) {
             final String key = preference.getKey();
             if (KEY_DOWNLOAD_PATH.equals(key)) {
-                View view = LayoutInflater.from(mActivity)
-                        .inflate(R.layout.dir_selection, null);
-                final FileExplorerView fileExplorerView =
-                        (FileExplorerView)view.findViewById(R.id.file_list);
-                final TextView warning =
-                        (TextView)view.findViewById(R.id.warning);
+                View view = LayoutInflater.from(mActivity).inflate(R.layout.dir_selection, null);
+                final FileExplorerView fileExplorerView = (FileExplorerView) view.findViewById(R.id.file_list);
+                final TextView warning = (TextView) view.findViewById(R.id.warning);
 
                 String downloadPath = Config.getDownloadPath();
                 fileExplorerView.setPath(downloadPath);
-                fileExplorerView.setOnItemClickListener(
-                        new AdapterView.OnItemClickListener() {
+                fileExplorerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                            int position, long id) {
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         fileExplorerView.onItemClick(parent, view, position, id);
                         mDirSelectDialog.setTitle(fileExplorerView.getCurPath());
                         if (fileExplorerView.canWrite())
@@ -707,10 +668,11 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 else
                     warning.setVisibility(View.VISIBLE);
 
-                mDirSelectDialog = new MaterialAlertDialog.Builder(mActivity).setTitle(downloadPath)
-                        .setView(view, false, new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT, Ui.dp2pix(360))).setActionButton(R.string._new)
-                        .setPositiveButton(android.R.string.ok)
+                mDirSelectDialog = new MaterialAlertDialog.Builder(mActivity)
+                        .setTitle(downloadPath)
+                        .setView(view, false,
+                                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Ui.dp2pix(360)))
+                        .setActionButton(R.string._new).setPositiveButton(android.R.string.ok)
                         .setNegativeButton(android.R.string.cancel)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                             @Override
@@ -728,17 +690,14 @@ public class SettingsActivity extends AbsPreferenceActivity {
                                     lp.topMargin = x;
                                     lp.bottomMargin = x;
                                     new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.new_folder)
-                                            .setView(et, true, lp)
-                                            .setPositiveButton(R.string._new)
+                                            .setView(et, true, lp).setPositiveButton(R.string._new)
                                             .setNegativeButton(android.R.string.cancel)
                                             .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                                                 @Override
-                                                public boolean onClick(
-                                                        MaterialAlertDialog dialog,
-                                                        int which) {
+                                                public boolean onClick(MaterialAlertDialog dialog, int which) {
                                                     if (which == MaterialAlertDialog.POSITIVE) {
-                                                        File dir = new File(fileExplorerView.getCurPath(),
-                                                                et.getText().toString());
+                                                        File dir = new File(fileExplorerView.getCurPath(), et.getText()
+                                                                .toString());
                                                         dir.mkdirs();
                                                         fileExplorerView.refresh();
                                                     }
@@ -753,11 +712,13 @@ public class SettingsActivity extends AbsPreferenceActivity {
                                     }
                                     String downloadPath = fileExplorerView.getCurPath();
                                     // Update .nomedia file
-                                    // TODO Should I delete .nomedia in old download dir ?
+                                    // TODO Should I delete .nomedia in old
+                                    // download dir ?
                                     if (!Config.getMediaScan()) {
                                         try {
                                             new File(Config.getDownloadPath(), ".nomedia").createNewFile();
-                                        } catch (IOException e) {}
+                                        } catch (IOException e) {
+                                        }
                                     }
                                     Config.setDownloadPath(downloadPath);
                                     mDownloadPath.setSummary(downloadPath);
@@ -775,9 +736,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
         }
     }
 
-    public static class AdvancedFragment extends TranslucentPreferenceFragment
-            implements Preference.OnPreferenceChangeListener,
-            Preference.OnPreferenceClickListener {
+    public static class AdvancedFragment extends TranslucentPreferenceFragment implements
+            Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
         private static final String KEY_HTTP_RETRY = "http_retry";
         private static final String KEY_HTTP_CONNECT_TIMEOUT = "http_connect_timeout";
@@ -812,42 +772,42 @@ public class SettingsActivity extends AbsPreferenceActivity {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final String key = preference.getKey();
             if (KEY_HTTP_RETRY.equals(key)) {
-                String value = (String)newValue;
+                String value = (String) newValue;
                 try {
                     int num = Integer.parseInt(value);
                     if (num < 1 || num > 10)
                         throw new Throwable();
-                } catch(Throwable e){
+                } catch (Throwable e) {
                     MaterialToast.showToast(R.string.invalid_input);
                     return false;
                 }
             } else if (KEY_HTTP_CONNECT_TIMEOUT.equals(key)) {
-                String value = (String)newValue;
+                String value = (String) newValue;
                 try {
                     int num = Integer.parseInt(value);
                     if (num < 1)
                         throw new Throwable();
-                } catch(Throwable e){
+                } catch (Throwable e) {
                     MaterialToast.showToast(R.string.invalid_input);
                     return false;
                 }
-            }  else if (KEY_HTTP_READ_TIMEOUT.equals(key)) {
-                String value = (String)newValue;
+            } else if (KEY_HTTP_READ_TIMEOUT.equals(key)) {
+                String value = (String) newValue;
                 try {
                     int num = Integer.parseInt(value);
                     if (num < 1)
                         throw new Throwable();
-                } catch(Throwable e){
+                } catch (Throwable e) {
                     MaterialToast.showToast(R.string.invalid_input);
                     return false;
                 }
-            }  else if (KEY_EH_MIN_INTERVAL.equals(key)) {
-                String value = (String)newValue;
+            } else if (KEY_EH_MIN_INTERVAL.equals(key)) {
+                String value = (String) newValue;
                 try {
                     int num = Integer.parseInt(value);
                     if (num < 0)
                         throw new Throwable();
-                } catch(Throwable e){
+                } catch (Throwable e) {
                     MaterialToast.showToast(R.string.invalid_input);
                     return false;
                 }
@@ -869,8 +829,9 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
                         String[] list = downloadDir.list();
                         if (list != null) {
-                            for (String str: list) {
-                                if (str.contains("-")) continue;
+                            for (String str : list) {
+                                if (str.contains("-"))
+                                    continue;
                                 File dir = new File(downloadDir, str);
                                 if (new File(dir, EhUtils.EH_DOWNLOAD_FILENAME).exists())
                                     targetDirList.add(dir);
@@ -907,8 +868,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                             int gid;
                             String token;
                             try {
-                                is = new BufferedInputStream(new FileInputStream(info),
-                                        128);
+                                is = new BufferedInputStream(new FileInputStream(info), 128);
                                 // skip read index
                                 Utils.readAsciiLine(is);
                                 gid = Integer.parseInt(Utils.readAsciiLine(is));
@@ -957,9 +917,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
         }
     }
 
-    public static class AboutFragment extends TranslucentPreferenceFragment
-            implements Preference.OnPreferenceClickListener,
-            Preference.OnPreferenceChangeListener {
+    public static class AboutFragment extends TranslucentPreferenceFragment implements
+            Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
         private static final String KEY_AUTHOR = "author";
         private static final String KEY_TWITTER = "twitter";
@@ -1004,7 +963,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mCheckUpdate.setOnPreferenceClickListener(this);
             mCloudDrive = findPreference(KEY_CLOUD_DRIVE);
             mCloudDrive.setOnPreferenceClickListener(this);
-            mAllowAnalyics = (CheckBoxPreference)findPreference(KEY_ALLOW_ANALYICS);
+            mAllowAnalyics = (CheckBoxPreference) findPreference(KEY_ALLOW_ANALYICS);
             mAllowAnalyics.setOnPreferenceChangeListener(this);
             mAboutAnalyics = findPreference(KEY_ABOUT_ANALYICS);
             mAboutAnalyics.setOnPreferenceClickListener(this);
@@ -1020,42 +979,41 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 startActivity(i);
 
             } else if (KEY_TWITTER.equals(key)) {
-                new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.twitter_title)
-                        .setItems(new CharSequence[]{"@EhViewer", "@jkjvinn"}, new MaterialAlertDialog.OnClickListener() {
-                            @Override
-                            public boolean onClick(MaterialAlertDialog dialog, int which) {
-                                Uri uri = null;
-                                switch (which) {
-                                case 0:
-                                    uri = Uri.parse("https://twitter.com/EhViewer");
-                                    break;
-                                case 1:
-                                    uri = Uri.parse("https://twitter.com/jkjvinn");
-                                    break;
-                                }
-                                if (uri != null) {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                                    startActivity(intent);
-                                }
-                                return true;
-                            }
-                        }).setNegativeButton(android.R.string.cancel).show();
+                new MaterialAlertDialog.Builder(mActivity)
+                        .setTitle(R.string.twitter_title)
+                        .setItems(new CharSequence[] { "@EhViewer", "@jkjvinn" },
+                                new MaterialAlertDialog.OnClickListener() {
+                                    @Override
+                                    public boolean onClick(MaterialAlertDialog dialog, int which) {
+                                        Uri uri = null;
+                                        switch (which) {
+                                        case 0:
+                                            uri = Uri.parse("https://twitter.com/EhViewer");
+                                            break;
+                                        case 1:
+                                            uri = Uri.parse("https://twitter.com/jkjvinn");
+                                            break;
+                                        }
+                                        if (uri != null) {
+                                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                            startActivity(intent);
+                                        }
+                                        return true;
+                                    }
+                                }).setNegativeButton(android.R.string.cancel).show();
 
             } else if (KEY_CHANGELOG.equals(key)) {
-                InputStream is = mActivity.getResources()
-                        .openRawResource(R.raw.change_log);
+                InputStream is = mActivity.getResources().openRawResource(R.raw.change_log);
                 new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.changelog)
-                        .setMessage(Utils.InputStream2String(is, "utf-8"))
-                        .setNegativeButton(android.R.string.cancel).show();
+                        .setMessage(Utils.InputStream2String(is, "utf-8")).setNegativeButton(android.R.string.cancel)
+                        .show();
 
             } else if (KEY_THANKS.equals(key)) {
-                InputStream is = mActivity.getResources()
-                        .openRawResource(R.raw.thanks);
+                InputStream is = mActivity.getResources().openRawResource(R.raw.thanks);
                 final WebView webView = new WebView(mActivity);
                 webView.loadData(Utils.InputStream2String(is, "utf-8"), "text/html; charset=UTF-8", null);
-                new MaterialAlertDialog.Builder(mActivity)//.setTitle(R.string.thanks)
-                        .setView(webView, true).setNegativeButton(android.R.string.cancel)
-                        .show();
+                new MaterialAlertDialog.Builder(mActivity)// .setTitle(R.string.thanks)
+                        .setView(webView, true).setNegativeButton(android.R.string.cancel).show();
 
             } else if (KEY_WEBSITE.equals(key)) {
                 Uri uri = Uri.parse("http://www.ehviewer.com");
@@ -1070,26 +1028,26 @@ public class SettingsActivity extends AbsPreferenceActivity {
             } else if (KEY_CHECK_UPDATE.equals(key)) {
                 mCheckUpdate.setSummary(R.string.checking_update);
                 mCheckUpdate.setEnabled(false);
-                new UpdateHelper((AppContext)mActivity.getApplication())
-                        .SetOnCheckUpdateListener(new UpdateHelper.OnCheckUpdateListener() {
+                new UpdateHelper((AppContext) mActivity.getApplication()).SetOnCheckUpdateListener(
+                        new UpdateHelper.OnCheckUpdateListener() {
                             @Override
-                            public void onSuccess(String version, long size,
-                                    final String url, final String fileName, String info) {
+                            public void onSuccess(String version, long size, final String url, final String fileName,
+                                    String info) {
                                 mCheckUpdate.setSummary(R.string.found_update);
                                 String sizeStr = Utils.sizeToString(size);
-                                AlertDialog dialog = SuperDialogUtil.createUpdateDialog(
-                                        mActivity, version, sizeStr, info,
-                                        new View.OnClickListener() {
+                                AlertDialog dialog = DialogUtils.createUpdateDialog(mActivity, version, sizeStr, info,
+                                        new MaterialAlertDialog.OnClickListener() {
                                             @Override
-                                            public void onClick(View v) {
-                                                ((AlertButton)v).dialog.dismiss();
-                                                // TODO
-                                                HttpHelper hh = new HttpHelper(mActivity);
-                                                hh.downloadInThread(url, new File(Config.getDownloadPath()), fileName, false, null,
-                                                        new UpdateHelper.UpdateListener(mActivity, fileName));
-                                                mCheckUpdate.setEnabled(true);
+                                            public boolean onClick(MaterialAlertDialog dialog, int which) {
+                                                if (which == MaterialAlertDialog.POSITIVE) {
+                                                    HttpHelper hh = new HttpHelper(mActivity);
+                                                    hh.downloadInThread(url, new File(Config.getDownloadPath()),
+                                                            fileName, false, null, new UpdateHelper.UpdateListener(
+                                                                    mActivity, fileName));
+                                                }
+                                                return true;
                                             }
-                                        });
+                                        }).create();
                                 if (!mActivity.isFinishing())
                                     dialog.show();
                             }
@@ -1116,10 +1074,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
             } else if (KEY_ABOUT_ANALYICS.equals(key)) {
                 new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.about_analyics_title)
-                        .setMessageAutoLink(Linkify.WEB_URLS)
-                        .setMessage(R.string.about_analyics_comment)
-                        .setNegativeButton(android.R.string.cancel)
-                        .show();
+                        .setMessageAutoLink(Linkify.WEB_URLS).setMessage(R.string.about_analyics_comment)
+                        .setNegativeButton(android.R.string.cancel).show();
 
             }
             return true;
@@ -1129,7 +1085,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final String key = preference.getKey();
             if (KEY_ALLOW_ANALYICS.equals(key)) {
-                if (!(Boolean)newValue)
+                if (!(Boolean) newValue)
                     Config.setPopularWarning(true);
             }
             return true;

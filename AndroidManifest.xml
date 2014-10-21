@@ -17,7 +17,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hippo.ehviewer"
     android:versionCode="28"
-    android:versionName="0.6.7" >
+    android:versionName="0.6.6" >
 
     <uses-sdk
         android:minSdkVersion="14"
