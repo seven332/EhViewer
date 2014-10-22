@@ -58,6 +58,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.SimpleSuggestionProvider;
 import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
+import com.hippo.ehviewer.app.MaterialProgressDialog;
 import com.hippo.ehviewer.data.ApiGalleryInfo;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.DownloadInfo;
@@ -76,7 +77,6 @@ import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.FileExplorerView;
 import com.hippo.ehviewer.widget.MaterialToast;
-import com.hippo.ehviewer.widget.ProgressDialogBulider;
 import com.hippo.ehviewer.widget.SuggestionHelper;
 
 public class SettingsActivity extends AbsPreferenceActivity {
@@ -447,8 +447,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private CheckBoxPreference mCustomCodec;
         private Preference mCleanRedundancy;
 
-        private ProgressDialogBulider mBuilder;
-        private AlertDialog mDialog;
+        private MaterialProgressDialog mMaterialProgressDialog;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -501,25 +500,22 @@ public class SettingsActivity extends AbsPreferenceActivity {
                     break;
                 case STATE_START:
                     if (!mActivity.isFinishing()) {
-                        mBuilder = new ProgressDialogBulider(mActivity);
-                        mBuilder.setCancelable(false).setTitle(R.string.clean_redundancy_title);
-                        mDialog = mBuilder.create();
-                        mDialog.show();
+                        mMaterialProgressDialog = MaterialProgressDialog.create(mActivity, mActivity.getString(R.string.clean_redundancy_title), false);
+                        mMaterialProgressDialog.show();
                     }
                     break;
                 case STATE_DOING:
-                    if (mBuilder != null) {
-                        mBuilder.setMax(mMax);
-                        mBuilder.setProgress(mProgress);
+                    if (mMaterialProgressDialog != null) {
+                        mMaterialProgressDialog.setMax(mMax);
+                        mMaterialProgressDialog.setProgress(mProgress);
                     }
                     break;
                 case STATE_DONE:
-                    if (mDialog != null) {
-                        mDialog.dismiss();
+                    if (mMaterialProgressDialog != null) {
+                        mMaterialProgressDialog.dismiss();
                         MaterialToast.showToast(String.format(getString(R.string.clean_redundancy), mMax));
                     }
-                    mBuilder = null;
-                    mDialog = null;
+                    mMaterialProgressDialog = null;
                     break;
                 }
             }

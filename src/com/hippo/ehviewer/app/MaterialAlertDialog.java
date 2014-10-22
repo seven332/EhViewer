@@ -52,7 +52,7 @@ public class MaterialAlertDialog extends AlertDialog implements
     private Button mNegativeButton;
     private Button mNeutralButton;
 
-    private MaterialAlertDialog(Builder builder) {
+    protected MaterialAlertDialog(Builder builder) {
         // super(builder.mContext);
         super(new ContextThemeWrapper(builder.mContext, R.style.AppTheme_Main));
         mContext = builder.mContext;
@@ -183,6 +183,8 @@ public class MaterialAlertDialog extends AlertDialog implements
         setView(mRootView);
 
         setCancelable(mBuilder.mCancelable);
+        if (mBuilder.mOnCancelListener != null)
+            setOnCancelListener(mBuilder.mOnCancelListener);
         if (mBuilder.mOnDismissListener != null)
             setOnDismissListener(mBuilder.mOnDismissListener);
     }
@@ -195,6 +197,27 @@ public class MaterialAlertDialog extends AlertDialog implements
     @Override
     public void setTitle(int resId) {
         setTitle(getContext().getString(resId));
+    }
+
+    public void setView(View view, boolean inScrollView) {
+        setView(view, inScrollView, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+    }
+
+    public void setView(View view, boolean inScrollView,
+            LinearLayout.LayoutParams lp) {
+        mRootView.findViewById(inScrollView ? R.id.top_panel_noscroll : R.id.scroll_view).setVisibility(View.GONE);
+        mRootView.findViewById(inScrollView ? R.id.scroll_view : R.id.top_panel_noscroll).setVisibility(View.VISIBLE);
+        mRootView.findViewById(R.id.message).setVisibility(View.GONE);
+        mRootView.findViewById(R.id.list).setVisibility(View.GONE);
+        LinearLayout topPanel = (LinearLayout) mRootView.findViewById(inScrollView ? R.id.top_panel : R.id.top_panel_noscroll);
+        topPanel.addView(view, lp);
+        // Title
+        TextView oldTitle = mTitle;
+        mTitle = (TextView) mRootView.findViewById(inScrollView ? R.id.title : R.id.title2);
+        if (mTitle != oldTitle && oldTitle != null)
+            mTitle.setText(oldTitle.getText());
     }
 
     @Override
@@ -235,27 +258,29 @@ public class MaterialAlertDialog extends AlertDialog implements
 
     public static class Builder {
 
-        private final Context mContext;
+        protected final Context mContext;
 
-        private CharSequence mTitle;
-        private CharSequence mMessage;
-        private CharSequence mActionButtonText;
-        private CharSequence mPositiveButtonText;
-        private CharSequence mNegativeButtonText;
-        private CharSequence mNeutralButtonText;
-        private OnClickListener mButtonListener;
-        private View mCustomView;
-        private LinearLayout.LayoutParams mCustomLp;
-        private boolean mInScrollView = true;
-        private boolean mCancelable = true;
-        private int mAutoLinkMask = -1;
+        protected CharSequence mTitle;
+        protected CharSequence mMessage;
+        protected CharSequence mActionButtonText;
+        protected CharSequence mPositiveButtonText;
+        protected CharSequence mNegativeButtonText;
+        protected CharSequence mNeutralButtonText;
+        protected OnClickListener mButtonListener;
+        protected View mCustomView;
+        protected LinearLayout.LayoutParams mCustomLp;
+        protected boolean mInScrollView = true;
+        protected boolean mCancelable = true;
+        protected int mAutoLinkMask = -1;
 
-        private ListAdapter mAdapter;
-        private OnClickListener mOnClickListener;
-        private int mCheckedItem;
-        private boolean mIsSingleChoice;
+        protected OnCancelListener mOnCancelListener;
 
-        private DialogInterface.OnDismissListener mOnDismissListener;
+        protected ListAdapter mAdapter;
+        protected OnClickListener mOnClickListener;
+        protected int mCheckedItem;
+        protected boolean mIsSingleChoice;
+
+        protected DialogInterface.OnDismissListener mOnDismissListener;
 
         public Builder(Context context) {
             mContext = context;
@@ -322,7 +347,7 @@ public class MaterialAlertDialog extends AlertDialog implements
 
         /**
          * Custom view id will be R.id.custom
-         * 
+         *
          * @param view
          * @param inScrollView
          * @return
@@ -335,7 +360,7 @@ public class MaterialAlertDialog extends AlertDialog implements
 
         /**
          * Custom view id will be R.id.custom
-         * 
+         *
          * @param view
          * @param inScrollView
          * @param lp
@@ -351,6 +376,11 @@ public class MaterialAlertDialog extends AlertDialog implements
 
         public Builder setCancelable(boolean cancelable) {
             mCancelable = cancelable;
+            return this;
+        }
+
+        public Builder setOnCancelListener(OnCancelListener onCancelListener) {
+            mOnCancelListener = onCancelListener;
             return this;
         }
 

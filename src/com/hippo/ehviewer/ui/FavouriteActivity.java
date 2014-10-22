@@ -53,6 +53,7 @@ import android.widget.TextView;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
+import com.hippo.ehviewer.app.MaterialProgressDialog;
 import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
@@ -67,7 +68,6 @@ import com.hippo.ehviewer.widget.ActionableToastBar;
 import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialToast;
-import com.hippo.ehviewer.widget.ProgressDialogBulider;
 import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RatingView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -101,8 +101,7 @@ public class FavouriteActivity extends AbsGalleryActivity
     private int mTargetCat;
 
     private AlertDialog mMoveDialog;
-    private ProgressDialogBulider mPdb;
-    private AlertDialog mProgressDialog;
+    private MaterialProgressDialog mProgressDialog;
 
     private List<GalleryInfo> mLastModifyGiList = null;
     private int mLastModifyPageNum = 0;
@@ -377,10 +376,9 @@ public class FavouriteActivity extends AbsGalleryActivity
     }
 
     private void startMoveFromLocal2Cloud() {
-        mPdb = new ProgressDialogBulider(FavouriteActivity.this);
-        mPdb.setCancelable(false).setTitle(R.string.moving);
-        mPdb.setMax(mChoiceGiSetCopy.size()).setProgress(0);
-        mProgressDialog = mPdb.create();
+        mProgressDialog = MaterialProgressDialog.create(this, getString(R.string.moving), false);
+        mProgressDialog.setMax(mChoiceGiSetCopy.size());
+        mProgressDialog.setProgress(0);
         mProgressDialog.show();
         moveFromLocal2Cloud();
     }
@@ -399,15 +397,16 @@ public class FavouriteActivity extends AbsGalleryActivity
                     // remove from set iterator, favorite data
                     mSetIter.remove();
                     mData.deleteLocalFavourite(mTargetGi.gid);
+                    getGalleryList().remove(mTargetGi);
+                    mAdapter.notifyDataSetChanged();
                     // set mGiLocal2Cloud null for above
                     mTargetGi = null;
-                    mPdb.setProgress(mPdb.getProgress() + 1);
+                    mProgressDialog.setProgress(mProgressDialog.getProgress() + 1);
                     moveFromLocal2Cloud();
                 }
                 @Override
                 public void onFailure(String eMsg) {
                     mAdapter.notifyDataSetChanged();
-                    mPdb = null;
                     mProgressDialog.dismiss();
                     mProgressDialog = null;
                     showToastBar(new ActionClickedListener() {
@@ -420,9 +419,9 @@ public class FavouriteActivity extends AbsGalleryActivity
                 }
             });
         } else {
-            mAdapter.notifyDataSetChanged();
+            if (getGalleryList().size() == 0)
+                onlyShowNone();
             mSetIter = null;
-            mPdb = null;
             mProgressDialog.dismiss();
             mProgressDialog = null;
             MaterialToast.showToast(R.string.move_successfully);

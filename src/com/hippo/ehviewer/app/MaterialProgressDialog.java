@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.widget;
+package com.hippo.ehviewer.app;
 
 import java.text.NumberFormat;
 
@@ -33,10 +33,11 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
 
-public class ProgressDialogBulider extends DialogBuilder {
+public class MaterialProgressDialog extends MaterialAlertDialog {
+
 
     /** Creates a ProgressDialog with a circular, spinning progress
-     * bar. This is not the default.
+     * bar. This is the default.
      */
     public static final int STYLE_SPINNER = 0;
 
@@ -56,28 +57,18 @@ public class ProgressDialogBulider extends DialogBuilder {
     private int mMax;
     private int mProgressVal;
     private int mSecondaryProgressVal;
-    private int mIncrementBy;
-    private int mIncrementSecondaryBy;
-    private Drawable mProgressDrawable;
-    private Drawable mIndeterminateDrawable;
-    private CharSequence mMessage;
     private boolean mIndeterminate;
 
-    private final boolean mHasStarted = true;
+    private boolean mHasStarted;
     private Handler mViewUpdateHandler;
 
-    private void initFormats() {
-        mProgressNumberFormat = "%1d/%2d";
-        mProgressPercentFormat = NumberFormat.getPercentInstance();
-        mProgressPercentFormat.setMaximumFractionDigits(0);
-    }
 
-    @SuppressLint("HandlerLeak")
-    public ProgressDialogBulider(Context context) {
-        super(context);
-
+    @SuppressLint({ "InflateParams", "HandlerLeak" })
+    protected MaterialProgressDialog(Builder builder) {
+        super(builder);
         initFormats();
-        LayoutInflater inflater = LayoutInflater.from(context);
+
+        LayoutInflater inflater = LayoutInflater.from(builder.mContext);
         if (mProgressStyle == STYLE_HORIZONTAL) {
 
             /* Use a separate handler to update the text views as they
@@ -119,59 +110,62 @@ public class ProgressDialogBulider extends DialogBuilder {
             mMessageView = (TextView) view.findViewById(R.id.message);
             setView(view, false);
         }
-        if (mMax > 0) {
-            setMax(mMax);
-        }
-        if (mProgressVal > 0) {
-            setProgress(mProgressVal);
-        }
-        if (mSecondaryProgressVal > 0) {
-            setSecondaryProgress(mSecondaryProgressVal);
-        }
-        if (mIncrementBy > 0) {
-            incrementProgressBy(mIncrementBy);
-        }
-        if (mIncrementSecondaryBy > 0) {
-            incrementSecondaryProgressBy(mIncrementSecondaryBy);
-        }
-        if (mProgressDrawable != null) {
-            setProgressDrawable(mProgressDrawable);
-        }
-        if (mIndeterminateDrawable != null) {
-            setIndeterminateDrawable(mIndeterminateDrawable);
-        }
-        if (mMessage != null) {
-            setMessage(mMessage);
-        }
-        setIndeterminate(mIndeterminate);
-        onProgressChanged();
     }
 
-    /*
-    @Override
-    public AlertDialog create() {
-        mHasStarted = true;
-        return super.create();
-    }*/
+    private void initFormats() {
+        mProgressNumberFormat = "%1d/%2d";
+        mProgressPercentFormat = NumberFormat.getPercentInstance();
+        mProgressPercentFormat.setMaximumFractionDigits(0);
+    }
 
-    public ProgressDialogBulider setProgress(int value) {
+
+    public static MaterialProgressDialog create(Context context, CharSequence title) {
+        return create(context, title, false, null);
+    }
+
+    public static MaterialProgressDialog create(Context context, CharSequence title,
+            boolean cancelable) {
+        return create(context, title, cancelable, null);
+    }
+
+    public static MaterialProgressDialog create(Context context, CharSequence title,
+            boolean cancelable, OnCancelListener cancelListener) {
+
+        MaterialProgressDialog.Builder builder = new MaterialProgressDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setCancelable(cancelable);
+        builder.setOnCancelListener(cancelListener);
+        return new MaterialProgressDialog(builder);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mHasStarted = true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mHasStarted = false;
+    }
+
+    public void setProgress(int value) {
         if (mHasStarted) {
             mProgress.setProgress(value);
             onProgressChanged();
         } else {
             mProgressVal = value;
         }
-        return this;
     }
 
-    public ProgressDialogBulider setSecondaryProgress(int secondaryProgress) {
+    public void setSecondaryProgress(int secondaryProgress) {
         if (mProgress != null) {
             mProgress.setSecondaryProgress(secondaryProgress);
             onProgressChanged();
         } else {
             mSecondaryProgressVal = secondaryProgress;
         }
-        return this;
     }
 
     public int getProgress() {
@@ -195,22 +189,19 @@ public class ProgressDialogBulider extends DialogBuilder {
         return mMax;
     }
 
-    public ProgressDialogBulider setMax(int max) {
+    public void setMax(int max) {
         if (mProgress != null) {
             mProgress.setMax(max);
             onProgressChanged();
         } else {
             mMax = max;
         }
-        return this;
     }
 
     public void incrementProgressBy(int diff) {
         if (mProgress != null) {
             mProgress.incrementProgressBy(diff);
             onProgressChanged();
-        } else {
-            mIncrementBy += diff;
         }
     }
 
@@ -218,36 +209,25 @@ public class ProgressDialogBulider extends DialogBuilder {
         if (mProgress != null) {
             mProgress.incrementSecondaryProgressBy(diff);
             onProgressChanged();
-        } else {
-            mIncrementSecondaryBy += diff;
         }
     }
 
-    public ProgressDialogBulider setProgressDrawable(Drawable d) {
+    public void setProgressDrawable(Drawable d) {
         if (mProgress != null) {
             mProgress.setProgressDrawable(d);
-        } else {
-            mProgressDrawable = d;
         }
-        return this;
     }
 
-    public ProgressDialogBulider setIndeterminateDrawable(Drawable d) {
+    public void setIndeterminateDrawable(Drawable d) {
         if (mProgress != null) {
             mProgress.setIndeterminateDrawable(d);
-        } else {
-            mIndeterminateDrawable = d;
         }
-        return this;
     }
 
-    public ProgressDialogBulider setIndeterminate(boolean indeterminate) {
+    public void setIndeterminate(boolean indeterminate) {
         if (mProgress != null) {
             mProgress.setIndeterminate(indeterminate);
-        } else {
-            mIndeterminate = indeterminate;
         }
-        return this;
     }
 
     public boolean isIndeterminate() {
@@ -258,17 +238,14 @@ public class ProgressDialogBulider extends DialogBuilder {
     }
 
     @Override
-    public ProgressDialogBulider setMessage(CharSequence message) {
+    public void setMessage(CharSequence message) {
         if (mProgress != null) {
             if (mProgressStyle == STYLE_HORIZONTAL) {
                 super.setMessage(message);
             } else {
                 mMessageView.setText(message);
             }
-        } else {
-            mMessage = message;
         }
-        return this;
     }
 
     public void setProgressStyle(int style) {
@@ -308,4 +285,5 @@ public class ProgressDialogBulider extends DialogBuilder {
             }
         }
     }
+
 }
