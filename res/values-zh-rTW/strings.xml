@@ -10,7 +10,7 @@
 
     <!-- Analyics -->
     <string name="dailog_analyics_title">資料統計</string>
-    <string name="dailog_analyics_plain">您是否願意將使用情況發送給開發者？這對開發者維護該應用有很大幫助。在發送使用情況的同時也會發送部分裝置資訊（譬如裝置型號、系統版本）。開發者承諾不收集任何個人身份資訊資料（譬如姓名、電話號碼、電郵地址）。\n\n資料收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies\n\n您以後可以在設定中修改選擇</string>
+    <string name="dailog_analyics_plain">您是否願意將使用情況發送給開發者？這對開發者維護該應用有很大幫助。在發送使用情況的同時也會發送部分裝置資訊（譬如裝置型號、系統版本、當前IP地址）（注意：某些裝置資訊可能可以推測出某些使用者資訊，譬如當前IP地址可能可以大概推測出使用者當前的位置）。開發者承諾不收集任何個人身份資訊資料（譬如姓名、電話號碼、電郵地址）或可永久性標識某臺裝置的資料（譬如IMEI、MAC地址）。\n\n資料收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies\n\n您以後可以在設定中修改選擇</string>
 
     <!-- Network -->
     <string name="dailog_network_mobile_title">您正在使用移動網路，可能會消耗大量的資費，是否繼續使用？</string>
@@ -251,7 +251,7 @@
     <string name="allow_analyics_summary_on">感謝您對本應用的支援</string>
     <string name="allow_analyics_summary_off">感謝您使用本應用</string>
     <string name="about_analyics_title">關於資料統計</string>
-    <string name="about_analyics_comment">若您啟用了資料統計，本應用會將您的使用情況發送給開發者。這對開發者維護該應用有很大幫助。在發送使用情況的同時也會發送部分裝置資訊（譬如裝置型號、系統版本）。開發者承諾不收集任何個人身份資訊資料（譬如姓名、電話號碼、電郵地址）。\n\n資料收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies</string>
+    <string name="about_analyics_comment">若您啟用了資料統計，本應用會將您的使用情況發送給開發者。這對開發者維護該應用有很大幫助。在發送使用情況的同時也會發送部分裝置資訊（譬如裝置型號、系統版本、當前IP地址）（注意：某些裝置資訊可能可以推測出某些使用者資訊，譬如當前IP地址可能可以大概推測出使用者當前的位置）。開發者承諾不收集任何個人身份資訊資料（譬如姓名、電話號碼、電郵地址）或可永久性標識某臺裝置的資料（譬如IMEI、MAC地址）。\n\n資料收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies</string>
     <string name="portrait">豎屏</string>
     <string name="landscape">橫屏</string>
     <string name="preference_settings_title">設定</string>

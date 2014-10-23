@@ -1,0 +1,11 @@
+.settings
+bin
+gen
+obj
+doc
+proguard
+libs/armeabi
+libs/armeabi-v7a
+libs/arm64-v8a
+libs/mips
+libs/x86

@@ -22,7 +22,7 @@
 
     <!-- Analyics -->
     <string name="dailog_analyics_title">数据统计</string>
-    <string name="dailog_analyics_plain">您是否愿意将使用情况发送给开发者？这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/cn.html\nGoogle隐私权和条款：http://www.google.com/intl/zh-CN/policies\n\n您以后可以在设置中修改选择</string>
+    <string name="dailog_analyics_plain">您是否愿意将使用情况发送给开发者？这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本、当前IP地址）（注意：某些设备信息可能可以推测出某些用户信息，譬如当前IP地址可能可以大概推测出用户当前的位置）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）或可永久性标识某台设备的数据（譬如IMEI、MAC地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/cn.html\nGoogle隐私权和条款：http://www.google.com/intl/zh-CN/policies\n\n您以后可以在设置中修改选择</string>
 
     <!-- Network -->
     <string name="dailog_network_mobile_title">您正在使用移动网络，可能会消耗大量的资费，是否继续使用？</string>
@@ -263,7 +263,7 @@
     <string name="allow_analyics_summary_on">感谢您对本应用的支持</string>
     <string name="allow_analyics_summary_off">感谢您使用本应用</string>
     <string name="about_analyics_title">关于数据统计</string>
-    <string name="about_analyics_comment">若您启用了数据统计，本应用会将您的使用情况发送给开发者。这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/cn.html\nGoogle隐私权和条款：http://www.google.com/intl/zh-CN/policies</string>
+    <string name="about_analyics_comment">若您启用了数据统计，本应用会将您的使用情况发送给开发者。这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本、当前IP地址）（注意：某些设备信息可能可以推测出某些用户信息，譬如当前IP地址可能可以大概推测出用户当前的位置）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）或可永久性标识某台设备的数据（譬如IMEI、MAC地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/cn.html\nGoogle隐私权和条款：http://www.google.com/intl/zh-CN/policies</string>
     <string name="portrait">竖屏</string>
     <string name="landscape">横屏</string>
     <string name="preference_settings_title">设置</string>
