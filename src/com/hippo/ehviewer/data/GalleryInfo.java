@@ -61,7 +61,7 @@ public class GalleryInfo implements Parcelable {
 
     public static final String[] S_LANG_PATTERNS = {
         "[(\\[]eng(?:lish)?[)\\]]",
-        "[(（\\[]chinese[)）\\]]|[汉漢]化|中[国國][语語]",
+        "[(（\\[]chinese[)）\\]]|[汉漢]化|中[国國][语語]|[(\\[]CN[)\\]]",
         "[(\\[]spanish[)\\]]|[(\\[]Español[)\\]]",
         "[(\\[]korean[)\\]]",
         "[(\\[]rus(?:sian)?[)\\]]",
