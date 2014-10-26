@@ -210,7 +210,8 @@
     <string name="favorite_eh_settings_title">Favorite</string>
     <string name="default_favorite">Default Favorite</string>
 
-    <string name="read_settings_title">Read</string>
+    <string name="read_settings_title">Reading</string>
+    <string name="keep_screen_on_title">Keep screen when reading</string>
     <string name="gallery_show_clock_title">Show clock</string>
     <string name="gallery_show_battery_title">Show battery</string>
     <string name="custom_codec_title">Custom codec</string>

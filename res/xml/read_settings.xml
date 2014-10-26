@@ -34,6 +34,11 @@
         android:summary="%s" />
 
     <CheckBoxPreference
+        android:key="keep_screen_on"
+        android:title="@string/keep_screen_on_title"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
         android:key="gallery_show_clock"
         android:title="@string/gallery_show_clock_title"
         android:defaultValue="true" />

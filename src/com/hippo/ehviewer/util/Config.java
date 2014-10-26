@@ -497,6 +497,9 @@ public class Config {
     private static final String KEY_GALLERY_SHOW_TIME = "gallery_show_clock";
     private static final boolean DEFAULT_GALLERY_SHOW_TIME = true;
 
+    private static final String KEY_KEEP_SCREEN_ON = "keep_screen_on";
+    private static final boolean DEFAULT_KEEP_SCREEN_ON = false;
+
     private static final String KEY_GALLERY_SHOW_BATTERY = "gallery_show_battery";
     private static final boolean DEFAULT_GALLERY_SHOW_BATTERY = true;
 
@@ -514,6 +517,10 @@ public class Config {
     public static int getStartPosition() {
         return Utils.parseIntSafely(mConfigPre.getString(KEY_START_POSITION,
                 DEFAULT_START_POSITION_STR), DEFAULT_START_POSITION);
+    }
+
+    public static boolean getKeepSreenOn() {
+        return mConfigPre.getBoolean(KEY_KEEP_SCREEN_ON, DEFAULT_KEEP_SCREEN_ON);
     }
 
     public static boolean getGShowTime() {

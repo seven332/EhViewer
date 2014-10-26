@@ -208,6 +208,7 @@
     <string name="default_favorite">默认收藏夹</string>
 
     <string name="read_settings_title">阅读</string>
+    <string name="keep_screen_on_title">阅读时屏幕常亮</string>
     <string name="gallery_show_clock_title">显示时间</string>
     <string name="gallery_show_battery_title">显示电量</string>
     <string name="custom_codec_title">自定义解码</string>
