@@ -826,7 +826,8 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
         String action = intent != null ? intent.getAction() : null;
         if (Intent.ACTION_SEARCH.equals(action)) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            mSearchView.setQuery(query, true);
+            if (mSearchView != null && query != null)
+                mSearchView.setQuery(query, true);
         } else if (ACTION_GALLERY_LIST.equals(action)) {
             int mode = intent.getIntExtra(GalleryListActivity.KEY_MODE, -1);
             switch (mode) {
