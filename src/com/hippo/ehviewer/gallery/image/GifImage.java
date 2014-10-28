@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.gallery.image;
 
+import com.hippo.ehviewer.util.Log;
+
 public class GifImage extends Image {
 
     private static final String TAG = Image.class.getSimpleName();
@@ -84,8 +86,16 @@ public class GifImage extends Image {
 
     @Override
     public void render() {
+        render(getCurIndex());
+    }
+
+    public void render(int index) {
         if (mNativeImage != 0) {
-            int index = getCurIndex();
+            if (index >= mImageCount || index < 0) {
+                Log.d(TAG, "GifImage try render index " + index + ", but image count is " + mImageCount);
+                return;
+            }
+
             if (mLastIndex != index) {
                 nativeRender(mFormat, mType, mNativeImage, FILE_FORMAT_GIF,
                         index);
