@@ -226,9 +226,7 @@ public class DownloadActivity extends AbsActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(DownloadActivity.this,
                             GalleryActivity.class);
-                    intent.putExtra(GalleryActivity.KEY_GID, gi.gid);
-                    intent.putExtra(GalleryActivity.KEY_TOKEN, gi.token);
-                    intent.putExtra(GalleryActivity.KEY_TITLE, gi.title);
+                    intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, gi);
                     intent.putExtra(GalleryActivity.KEY_START_INDEX, -1);
                     startActivity(intent);
                 }

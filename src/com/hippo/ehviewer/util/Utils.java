@@ -521,7 +521,17 @@ public final class Utils {
      * @return
      */
     public static boolean int2boolean(int integer) {
-        return integer == 0 ? false : true;
+        return integer != 0;
+    }
+
+    /**
+     * false for 0, true for 1
+     *
+     * @param bool
+     * @return
+     */
+    public static int boolean2int(boolean bool) {
+        return bool ? 1 : 0;
     }
 
     /**

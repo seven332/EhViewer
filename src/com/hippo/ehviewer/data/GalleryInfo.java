@@ -131,6 +131,30 @@ public class GalleryInfo implements Parcelable {
         dest.writeString(simpleLanguage);
     }
 
+    public GalleryInfo() {
+        // Empty
+    }
+
+    public GalleryInfo(GalleryInfo gi) {
+        gid = gi.gid;
+        token = gi.token;
+        title = gi.title;
+        posted = gi.posted;
+        category = gi.category;
+        thumb = gi.thumb;
+        uploader = gi.uploader;
+        rating = gi.rating;
+        simpleLanguage = gi.simpleLanguage;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof GalleryInfo && ((GalleryInfo) o).gid == gid)
+            return true;
+        else
+            return false;
+    }
+
     public final void generateSLang() {
         for (int i = 0; i < S_LANGS.length; i++) {
             if (Pattern.compile(S_LANG_PATTERNS[i], Pattern.CASE_INSENSITIVE).matcher(title).find()) {

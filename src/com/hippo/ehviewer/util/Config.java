@@ -452,6 +452,10 @@ public class Config {
     private static final String KEY_PREVIEW_PER_ROW = "preview_per_row";
     private static final String DEFAULT_PREVIEW_PER_ROW = "3";
 
+    private static final String KEY_MAX_HISTORY_COUNT = "max_history_count";
+    private static final String DEFAULT_MAX_HISTORY_COUNT_STR = "100";
+    private static final int DEFAULT_MAX_HISTORY_COUNT = 3;
+
     public static int getDefaultCat() {
         return mConfigPre.getInt(KEY_DEFAULT_CAT, DEFAULT_DEFAULT_CAT);
     }
@@ -483,6 +487,12 @@ public class Config {
     public static int getPreviewPerRow() {
         return Integer.parseInt(mConfigPre.getString(KEY_PREVIEW_PER_ROW, DEFAULT_PREVIEW_PER_ROW));
     }
+
+    public static int getMaxHistoryCount() {
+        return Utils.parseIntSafely(mConfigPre.getString(KEY_MAX_HISTORY_COUNT,
+                DEFAULT_MAX_HISTORY_COUNT_STR), DEFAULT_MAX_HISTORY_COUNT);
+    }
+
 
     /****** Read ******/
 

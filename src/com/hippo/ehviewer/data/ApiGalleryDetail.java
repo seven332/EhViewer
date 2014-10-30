@@ -98,4 +98,9 @@ public class ApiGalleryDetail extends ApiGalleryInfo
     public String[] getTags() {
         return apiTags;
     }
+
+    @Override
+    public GalleryInfo toGalleryInfo() {
+        return new GalleryInfo(this);
+    }
 }

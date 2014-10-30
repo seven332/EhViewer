@@ -206,6 +206,8 @@
     <string name="preview_mode_large">大预览图</string>
     <string name="favorite_eh_settings_title">收藏</string>
     <string name="default_favorite">默认收藏夹</string>
+    <string name="history_eh_settings_title">历史</string>
+    <string name="max_history_count_title">最大历史记录条数</string>
 
     <string name="read_settings_title">阅读</string>
     <string name="keep_screen_on_title">阅读时屏幕常亮</string>

@@ -96,4 +96,9 @@ public class LofiGalleryDetail extends LofiGalleryInfo
     public String[] getTags() {
         return lofiTags;
     }
+
+    @Override
+    public GalleryInfo toGalleryInfo() {
+        return new GalleryInfo(this);
+    }
 }

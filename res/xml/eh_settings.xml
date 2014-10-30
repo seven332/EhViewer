@@ -66,4 +66,15 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/history_eh_settings_title" >
+
+        <com.hippo.ehviewer.preference.EditTextPreference
+            android:key="max_history_count"
+            android:title="@string/max_history_count_title"
+            android:inputType="number"
+            android:numeric="integer"
+            android:defaultValue="100" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

@@ -30,6 +30,8 @@ import android.widget.TextView;
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
+import com.hippo.ehviewer.data.Data;
+import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.ExDownloader;
 import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.ImageSet;
@@ -42,9 +44,10 @@ public class GalleryActivity extends Activity
     @SuppressWarnings("unused")
     private final static String TAG = GalleryActivity.class.getSimpleName();
 
-    public final static String KEY_GID = "gid";
-    public final static String KEY_TOKEN = "token";
-    public final static String KEY_TITLE = "title";
+    //public final static String KEY_GID = "gid";
+    //public final static String KEY_TOKEN = "token";
+    //public final static String KEY_TITLE = "title";
+    public final static String KEY_GALLERY_INFO = "gallery_info";
     public final static String KEY_START_INDEX = "start_index";
 
     private View mainView;
@@ -59,8 +62,9 @@ public class GalleryActivity extends Activity
 
     private GalleryView mGalleryView;
 
-    private int mGid;
-    private String mTitle;
+    // private int mGid;
+    // private String mTitle;
+    private GalleryInfo mGi;
 
     private final int mBaseSystemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
@@ -126,14 +130,9 @@ public class GalleryActivity extends Activity
         mActionBar = getActionBar();
 
         Intent intent = getIntent();
-        mGid = intent.getIntExtra(KEY_GID, -1);
-        String token = intent.getStringExtra(KEY_TOKEN);
-        mTitle = intent.getStringExtra(KEY_TITLE);
-        int startIndex = intent.getIntExtra(KEY_START_INDEX, 0);
-        if (startIndex == -1)
-            startIndex = ExDownloader.readCurReadIndex(mGid, mTitle);
+        mGi = (GalleryInfo) intent.getParcelableExtra(KEY_GALLERY_INFO);
 
-        if (mGid == -1 || token == null || mTitle == null) {
+        if (mGi == null) {
             // Get error force finish
             new MaterialAlertDialog.Builder(this).setTitle(R.string.error)
                     .setMessage(R.string.ga_data_error)
@@ -146,11 +145,18 @@ public class GalleryActivity extends Activity
                         }
                     }).show();
         } else {
+
+            Data.getInstance().addHistory(mGi, Data.READ);
+
+            int startIndex = intent.getIntExtra(KEY_START_INDEX, 0);
+            if (startIndex == -1)
+                startIndex = ExDownloader.readCurReadIndex(mGi.gid, mGi.title);
+
             // Keep screen on
             if (Config.getKeepSreenOn())
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-            mImageSet = new ImageSet(mGid, token, mTitle, startIndex);
+            mImageSet = new ImageSet(mGi.gid, mGi.token, mGi.title, startIndex);
             mGalleryView = new GalleryView(getApplicationContext(), mImageSet, startIndex);
 
             GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);
@@ -185,7 +191,7 @@ public class GalleryActivity extends Activity
         StringBuilder sb = new StringBuilder(30);
         sb.append(mGalleryView.getCurIndex() + 1).append("/")
                 .append(mGalleryView.getSize())
-                .append(" - ").append(mGid);
+                .append(" - ").append(mGi.gid);
         mActionBar.setTitle(sb.toString());
     }
 

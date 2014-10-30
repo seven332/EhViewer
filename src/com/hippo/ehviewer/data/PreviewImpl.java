@@ -47,4 +47,6 @@ public interface PreviewImpl {
      */
     public void setPreview(int page, PreviewList previewList);
 
+    public GalleryInfo toGalleryInfo();
+
 }

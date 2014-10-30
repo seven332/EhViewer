@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.data;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -27,22 +28,33 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.SparseArray;
 
 import com.hippo.ehviewer.Analytics;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Log;
+import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.SqlUtils;
 
 // TODO
 // what a mess
 // refactoring
+
+/**
+ * @author Hippo
+ *
+ * Ver 2: 移除 read 表，添加 Download 表
+ * Ver 3: Download 表添加下载时间项
+ * Ver 4: 添历史记录
+ */
 public class Data {
     private static final String TAG = "Data";
 
-    private static final int VERSION = 3;
+    private static final int VERSION = 4;
     private static final String DB_NAME = "data";
 
     private static final String TABLE_GALLERY = "gallery";
     private static final String TABLE_LOCAL_FAVOURITE = "local_favourite";
     private static final String TABLE_TAG = "tag";
     private static final String TABLE_DOWNLOAD = "download";
+    private static final String TABLE_HISTORY = "history";
 
     private static final String COLUMN_GID = "gid";
     private static final String COLUMN_TOKEN = "token";
@@ -73,6 +85,7 @@ public class Data {
     private List<Tag> mTags;
     private List<GalleryInfo> mLocalFavourites;
     private List<DownloadInfo> mDownloads;
+    private List<HistoryItem> mHistory;
 
     private final Context mContext;
 
@@ -99,6 +112,7 @@ public class Data {
         getTags();
         getLocalFavourites();
         getDownloads();
+        getHistory();
     }
 
     @Override
@@ -602,6 +616,99 @@ public class Data {
         return true;
     }
 
+    public static final int NONE = 0x0;
+    public static final int BROWSE = 0x1;
+    public static final int READ = 0x2;
+
+    private synchronized void getHistory() {
+        mHistory = new LinkedList<HistoryItem>();
+        Cursor cursor = mDatabase.rawQuery("select * from " + TABLE_HISTORY
+                + " order by " + COLUMN_DATE + " desc", null);
+
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                int gid = cursor.getInt(0);
+                GalleryInfo gi = getGallery(mDatabase, gid);
+                if (gi != null) {
+                    mHistory.add(new HistoryItem(gi, cursor.getInt(1), cursor.getLong(2)));
+                }
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+    }
+
+    public synchronized int containsHistory(int gid) {
+        int re;
+        Cursor cursor = mDatabase.rawQuery("select * from "
+                + TABLE_HISTORY + " where " + COLUMN_GID + "=?",
+                new String[]{String.valueOf(gid)});
+        if (cursor.moveToFirst())
+            re = cursor.getInt(1);
+        else
+            re = NONE;
+        cursor.close();
+        return re;
+    }
+
+    private int checkMode(int mode) {
+        return MathUtils.clamp(mode, NONE, READ);
+    }
+
+    public synchronized void addHistory(GalleryInfo gi, int mode) {
+        mode = checkMode(mode);
+
+        long curDate = System.currentTimeMillis();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_GID, gi.gid);
+        values.put(COLUMN_DATE, curDate);
+
+        int curMode = checkMode(containsHistory(gi.gid));
+        if (curMode == NONE) {
+            // Add new record
+            values.put(COLUMN_MODE, mode);
+            mDatabase.insert(TABLE_HISTORY, null, values);
+            addGallery(gi);
+
+            mHistory.add(0, new HistoryItem(gi, mode, curDate));
+            truncateHistory(Config.getMaxHistoryCount());
+        } else {
+            // Update record
+            int newMode = Math.max(curMode, mode);
+            values.put(COLUMN_MODE, newMode);
+            mDatabase.update(TABLE_HISTORY, values,
+                    COLUMN_GID + "=?", new String[]{String.valueOf(gi.gid)});
+            updateGallery(gi);
+
+            HistoryItem item = new HistoryItem(gi, mode, curDate);
+            mHistory.remove(item);
+            mHistory.add(0, item);
+        }
+    }
+
+    public void clearHistory() {
+        truncateHistory(0);
+    }
+
+    protected synchronized void truncateHistory(int maxEntries) {
+        if (maxEntries < 0) {
+            return;
+        } else if (maxEntries == 0) {
+            mDatabase.delete(TABLE_HISTORY, null, null);
+        } else {
+            try {
+                mDatabase.execSQL("delete from " + TABLE_HISTORY + " where " + COLUMN_GID
+                        + " in " + "(select " + COLUMN_GID + " from " + TABLE_HISTORY
+                        + " order by " + COLUMN_DATE + " desc limit " + maxEntries
+                        + ", -1);");
+            } catch(Throwable e){}
+        }
+    }
+
+    public synchronized List<HistoryItem> getAllHistory() {
+        return mHistory;
+    }
+
     public class DBHelper extends SQLiteOpenHelper {
 
         public DBHelper(Context context) {
@@ -718,6 +825,17 @@ public class Data {
             }
         }
 
+        private void createHistoryTable(SQLiteDatabase db) {
+            String createDownload = "create table "
+                    + TABLE_HISTORY + "("
+                    + COLUMN_GID + " integer primary key,"
+                    + COLUMN_MODE + " integer,"
+                    + COLUMN_DATE + " long,"
+                    + "foreign key(" + COLUMN_GID + ") references " + TABLE_GALLERY + "(" + COLUMN_GID + "));";
+
+            SqlUtils.exeSQLSafely(db, createDownload);
+        }
+
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             switch (oldVersion) {
@@ -730,6 +848,8 @@ public class Data {
                 SqlUtils.dropTable(db, TABLE_DOWNLOAD);
                 createDownloadTableVer3(db);
                 addDownloadInfoVer3(db, l);
+            case 3:
+                createHistoryTable(db);
             case VERSION:
                 break;
             default:

@@ -19,14 +19,15 @@ package com.hippo.ehviewer.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class GalleryPopular extends GalleryInfo {
-    public long count;
+public class HistoryItem extends GalleryInfo {
+    public int mode;
+    public long date;
 
-    public static final Parcelable.Creator<GalleryPopular> CREATOR =
-            new Parcelable.Creator<GalleryPopular>() {
+    public static final Parcelable.Creator<HistoryItem> CREATOR =
+            new Parcelable.Creator<HistoryItem>() {
                 @Override
-                public GalleryPopular createFromParcel(Parcel source) {
-                    GalleryPopular p = new GalleryPopular();
+                public HistoryItem createFromParcel(Parcel source) {
+                    HistoryItem p = new HistoryItem();
                     p.gid = source.readInt();
                     p.token = source.readString();
                     p.title = source.readString();
@@ -36,19 +37,37 @@ public class GalleryPopular extends GalleryInfo {
                     p.uploader = source.readString();
                     p.rating = source.readFloat();
                     p.simpleLanguage = source.readString();
-                    p.count = source.readLong();
+                    p.mode = source.readInt();
+                    p.date = source.readLong();
                     return p;
                 }
 
                 @Override
-                public GalleryPopular[] newArray(int size) {
-                    return new GalleryPopular[size];
+                public HistoryItem[] newArray(int size) {
+                    return new HistoryItem[size];
                 }
     };
+
+    public HistoryItem() {
+        // Empty
+    }
+
+    public HistoryItem(GalleryInfo gi, int m, long d) {
+        super(gi);
+        mode = m;
+        date = d;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
-        dest.writeLong(count);
+        dest.writeInt(mode);
+        dest.writeLong(date);
     }
+
 }

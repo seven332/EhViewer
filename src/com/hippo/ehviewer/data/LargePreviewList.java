@@ -83,9 +83,7 @@ public class LargePreviewList extends PreviewList {
                     // Add to read in Data
                     Intent intent = new Intent(mActivity,
                             GalleryActivity.class);
-                    intent.putExtra(GalleryActivity.KEY_GID, mPi.getGid());
-                    intent.putExtra(GalleryActivity.KEY_TOKEN, mPi.getToken());
-                    intent.putExtra(GalleryActivity.KEY_TITLE, mPi.getTitle());
+                    intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, mPi.toGalleryInfo());
                     intent.putExtra(GalleryActivity.KEY_START_INDEX, _index);
                     mActivity.startActivity(intent);
                 }

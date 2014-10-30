@@ -98,4 +98,9 @@ public class GalleryDetail extends GalleryInfo
         if (page >= 0 && previewLists != null && page < previewLists.length)
             previewLists[page] = previewList;
     }
+
+    @Override
+    public GalleryInfo toGalleryInfo() {
+        return new GalleryInfo(this);
+    }
 }

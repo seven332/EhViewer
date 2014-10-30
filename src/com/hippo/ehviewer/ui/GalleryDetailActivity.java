@@ -65,6 +65,7 @@ import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.ApiGalleryDetail;
 import com.hippo.ehviewer.data.Comment;
+import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.ListUrls;
@@ -221,6 +222,9 @@ public class GalleryDetailActivity extends AbsActivity
             //
             gi = (GalleryInfo)(intent.getParcelableExtra(KEY_G_INFO));
             if (gi != null) {
+                // Add history
+                Data.getInstance().addHistory(gi, Data.BROWSE);
+
                 if (gi instanceof LofiGalleryInfo) {
                     if (Config.getMode() == EhClient.MODE_LOFI) {
                         gi = new LofiGalleryDetail((LofiGalleryInfo)gi);
@@ -576,6 +580,8 @@ public class GalleryDetailActivity extends AbsActivity
     private void doLayout() {
         if (mDetailScroll.getVisibility() == View.GONE) {
             // If not set header in doPreLayout
+            // Add history first
+            Data.getInstance().addHistory(mGalleryInfo, Data.BROWSE);
             mDetailScroll.setVisibility(View.VISIBLE);
             mDetailHeader.setVisibility(View.VISIBLE);
             mThumb.setLoadInfo(mGalleryInfo.thumb, String.valueOf(mGalleryInfo.gid));
@@ -800,9 +806,7 @@ public class GalleryDetailActivity extends AbsActivity
             //mData.addRead(mGalleryInfo);
             Intent intent = new Intent(this,
                     GalleryActivity.class);
-            intent.putExtra(GalleryActivity.KEY_GID, mGalleryInfo.gid);
-            intent.putExtra(GalleryActivity.KEY_TOKEN, mGalleryInfo.token);
-            intent.putExtra(GalleryActivity.KEY_TITLE, mGalleryInfo.title);
+            intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, mGalleryInfo);
             intent.putExtra(GalleryActivity.KEY_START_INDEX, -1);
             startActivity(intent);
         } else if (v == mCategory) {
