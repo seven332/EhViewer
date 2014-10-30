@@ -15,7 +15,8 @@
      limitations under the License.
  -->
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:auto="http://schemas.android.com/apk/res-auto" >
 
     <PreferenceCategory
         android:title="@string/http_advanced_settings_title">
@@ -30,21 +31,27 @@
             android:title="@string/http_retry_title"
             android:inputType="number"
             android:numeric="integer"
-            android:defaultValue="3" />
+            android:defaultValue="3"
+            auto:etpMin="1"
+            auto:etpMax="5" />
 
         <com.hippo.ehviewer.preference.EditTextPreference
             android:key="http_connect_timeout"
             android:title="@string/http_connect_timeout_title"
             android:inputType="number"
             android:numeric="integer"
-            android:defaultValue="5000" />
+            android:defaultValue="5000"
+            auto:etpMin="100"
+            auto:etpMax="100000" />
 
         <com.hippo.ehviewer.preference.EditTextPreference
             android:key="http_read_timeout"
             android:title="@string/http_read_timeout_title"
             android:inputType="number"
             android:numeric="integer"
-            android:defaultValue="5000" />
+            android:defaultValue="5000"
+            auto:etpMin="100"
+            auto:etpMax="100000" />
 
     </PreferenceCategory>
 
@@ -56,7 +63,9 @@
             android:title="@string/eh_min_interval_title"
             android:inputType="number"
             android:numeric="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            auto:etpMin="0"
+            auto:etpMax="100000" />
 
     </PreferenceCategory>
     

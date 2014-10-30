@@ -582,16 +582,11 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
         private static final String KEY_DOWNLOAD_PATH = "download_path";
         private static final String KEY_MEDIA_SCAN = "media_scan";
-        private static final String KEY_DOWNLOAD_THREAD = "download_thread";
-
-        private static final int MIN_THREAD_NUM = 1;
-        private static final int MAX_THREAD_NUM = 10;
 
         private AlertDialog mDirSelectDialog;
 
         private Preference mDownloadPath;
         private CheckBoxPreference mMediaScan;
-        private Preference mDownloadThread;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -602,8 +597,6 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mDownloadPath.setOnPreferenceClickListener(this);
             mMediaScan = (CheckBoxPreference) findPreference(KEY_MEDIA_SCAN);
             mMediaScan.setOnPreferenceChangeListener(this);
-            mDownloadThread = findPreference(KEY_DOWNLOAD_THREAD);
-            mDownloadThread.setOnPreferenceChangeListener(this);
 
             mDownloadPath.setSummary(Config.getDownloadPath());
         }
@@ -622,18 +615,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                     } catch (IOException e) {
                     }
                 }
-            } else if (KEY_DOWNLOAD_THREAD.equals(key)) {
-                String value = (String) newValue;
-                try {
-                    int num = Integer.parseInt(value);
-                    if (num < MIN_THREAD_NUM || num > MAX_THREAD_NUM)
-                        throw new Throwable();
-                } catch (Throwable e) {
-                    MaterialToast.showToast(R.string.invalid_input);
-                    return false;
-                }
             }
-
             return true;
         }
 
@@ -733,18 +715,10 @@ public class SettingsActivity extends AbsPreferenceActivity {
     }
 
     public static class AdvancedFragment extends TranslucentPreferenceFragment implements
-            Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
+            Preference.OnPreferenceClickListener {
 
-        private static final String KEY_HTTP_RETRY = "http_retry";
-        private static final String KEY_HTTP_CONNECT_TIMEOUT = "http_connect_timeout";
-        private static final String KEY_HTTP_READ_TIMEOUT = "http_read_timeout";
-        private static final String KEY_EH_MIN_INTERVAL = "eh_min_interval";
         private static final String KEY_FIX_DIRNAME = "fix_dirname";
 
-        private Preference mHttpRetry;
-        private Preference mHttpConnectTimeout;
-        private Preference mHttpReadTimeout;
-        private Preference mEhMinInterval;
         private Preference mFixDirname;
 
         @Override
@@ -752,64 +726,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.advanced_settings);
 
-            mHttpRetry = findPreference(KEY_HTTP_RETRY);
-            mHttpRetry.setOnPreferenceChangeListener(this);
-            mHttpConnectTimeout = findPreference(KEY_HTTP_CONNECT_TIMEOUT);
-            mHttpConnectTimeout.setOnPreferenceChangeListener(this);
-            mHttpReadTimeout = findPreference(KEY_HTTP_READ_TIMEOUT);
-            mHttpReadTimeout.setOnPreferenceChangeListener(this);
-            mEhMinInterval = findPreference(KEY_EH_MIN_INTERVAL);
-            mEhMinInterval.setOnPreferenceChangeListener(this);
             mFixDirname = findPreference(KEY_FIX_DIRNAME);
             mFixDirname.setOnPreferenceClickListener(this);
-        }
-
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            final String key = preference.getKey();
-            if (KEY_HTTP_RETRY.equals(key)) {
-                String value = (String) newValue;
-                try {
-                    int num = Integer.parseInt(value);
-                    if (num < 1 || num > 10)
-                        throw new Throwable();
-                } catch (Throwable e) {
-                    MaterialToast.showToast(R.string.invalid_input);
-                    return false;
-                }
-            } else if (KEY_HTTP_CONNECT_TIMEOUT.equals(key)) {
-                String value = (String) newValue;
-                try {
-                    int num = Integer.parseInt(value);
-                    if (num < 1)
-                        throw new Throwable();
-                } catch (Throwable e) {
-                    MaterialToast.showToast(R.string.invalid_input);
-                    return false;
-                }
-            } else if (KEY_HTTP_READ_TIMEOUT.equals(key)) {
-                String value = (String) newValue;
-                try {
-                    int num = Integer.parseInt(value);
-                    if (num < 1)
-                        throw new Throwable();
-                } catch (Throwable e) {
-                    MaterialToast.showToast(R.string.invalid_input);
-                    return false;
-                }
-            } else if (KEY_EH_MIN_INTERVAL.equals(key)) {
-                String value = (String) newValue;
-                try {
-                    int num = Integer.parseInt(value);
-                    if (num < 0)
-                        throw new Throwable();
-                } catch (Throwable e) {
-                    MaterialToast.showToast(R.string.invalid_input);
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         @Override

@@ -29,10 +29,13 @@
         android:defaultValue="false" />
 
     <com.hippo.ehviewer.preference.EditTextPreference
+        xmlns:auto="http://schemas.android.com/apk/res-auto"
         android:key="download_thread"
         android:title="@string/download_thread_title"
         android:inputType="number"
         android:numeric="integer"
-        android:defaultValue="3" />
+        android:defaultValue="3"
+        auto:etpMin="1"
+        auto:etpMax="10" />
 
 </PreferenceScreen>
