@@ -63,7 +63,7 @@ public class GalleryInfo implements Parcelable {
         "[(\\[]eng(?:lish)?[)\\]]",
         "[(（\\[]chinese[)）\\]]|[汉漢]化|中[国國][语語]|[(\\[]CN[)\\]]",
         "[(\\[]spanish[)\\]]|[(\\[]Español[)\\]]",
-        "[(\\[]korean[)\\]]",
+        "[(\\[]korean?[)\\]]",
         "[(\\[]rus(?:sian)?[)\\]]",
         "[(\\[]fr(?:ench)?[)\\]]",
         "[(\\[]portuguese",
