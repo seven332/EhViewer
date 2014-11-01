@@ -813,8 +813,6 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
         super.onConfigurationChanged(newConfig);
         if (mShowDrawer)
             mSlidingMenu.setBehindWidth(mResources.getDimensionPixelOffset(R.dimen.menu_width));
-        else
-            mSlidingMenu.setBehindWidth(0);
     }
 
     /**
@@ -956,10 +954,12 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
         mSlidingMenu.setSecondaryShadowDrawable(R.drawable.shadow_right);
         mSlidingMenu.setOnOpenedListener(this);
         mSlidingMenu.setOnClosedListener(this);
-        if (mShowDrawer)
+        if (mShowDrawer) {
             mSlidingMenu.setBehindWidth(mResources.getDimensionPixelOffset(R.dimen.menu_width));
-        else
-            mSlidingMenu.setBehindWidth(0);
+        } else {
+            getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
+            getSlidingMenu().setEnabled(false);
+        }
 
         // Download service
         Intent it = new Intent(GalleryListActivity.this, DownloadService.class);
