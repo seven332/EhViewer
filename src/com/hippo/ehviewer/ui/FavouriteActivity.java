@@ -78,7 +78,7 @@ public class FavouriteActivity extends AbsGalleryActivity
     @SuppressWarnings("unused")
     private static final String TAG = "FavouriteActivity";
 
-    private static final String LOCAL_FAVORITE_URL = "local_favorite://all";
+    private static final String LOCAL_FAVORITE_URL = "ehviewer://local_favorite";
 
     private Data mData;
     private Resources mResources;
@@ -189,7 +189,6 @@ public class FavouriteActivity extends AbsGalleryActivity
                 Intent intent = new Intent(FavouriteActivity.this,
                         GalleryDetailActivity.class);
                 GalleryInfo gi = getGalleryInfo(position);
-                intent.putExtra("url", mClient.getDetailUrl(gi.gid, gi.token));
                 intent.putExtra(GalleryDetailActivity.KEY_G_INFO, gi);
                 startActivity(intent);
             }

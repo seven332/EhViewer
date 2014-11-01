@@ -169,6 +169,9 @@
     <!-- Popular -->
     <string name="popular_update_time">更新时间 %s</string>
 
+    <!-- History -->
+    <string name="clear_history_message">所有历史记录将被清除</string>
+
     <!-- Settings -->
     <string name="display_settings_title">显示</string>
     <string name="theme_display_settings_title">主题</string>
@@ -340,6 +343,8 @@
     <string name="rating0">…</string>
 
     <!-- Utils -->
+    <string name="clear">清除</string>
+    <string name="history">历史</string>
     <string name="warning">警告</string>
     <string name="close">关闭</string>
     <string name="select">选择</string>

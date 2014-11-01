@@ -105,6 +105,15 @@
         </activity>
 
         <activity
+            android:name=".ui.HistoryActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:icon="@drawable/ic_action_history"
+            android:label="@string/history"
+            android:screenOrientation="behind"
+            android:theme="@style/AppTheme.ListActivity" >
+        </activity>
+
+        <activity
             android:name=".ui.DownloadActivity"
             android:configChanges="orientation|screenSize|uiMode"
             android:icon="@drawable/ic_setting_download"

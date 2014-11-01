@@ -688,6 +688,7 @@ public class Data {
 
     public void clearHistory() {
         truncateHistory(0);
+        mHistory.clear();
     }
 
     protected synchronized void truncateHistory(int maxEntries) {

@@ -996,10 +996,15 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
             actionBar.setHomeAsUpIndicator(mResources.getDrawable(R.drawable.ic_navigation_drawer));
 
         // leftDrawer
-        final int[] data = { R.drawable.ic_action_home, R.string.homepage, R.drawable.ic_action_panda, R.string.mode,
-                R.drawable.ic_action_search, android.R.string.search_go, R.drawable.ic_action_favorite,
-                R.string.favourite, R.drawable.ic_action_popular, R.string.popular, R.drawable.ic_setting_download,
-                R.string.download, R.drawable.ic_action_settings, R.string.action_settings };
+        final int[] data = {
+                R.drawable.ic_action_home, R.string.homepage,
+                R.drawable.ic_action_panda, R.string.mode,
+                R.drawable.ic_action_search, android.R.string.search_go,
+                R.drawable.ic_action_favorite, R.string.favourite,
+                R.drawable.ic_action_popular, R.string.popular,
+                R.drawable.ic_action_history, R.string.history,
+                R.drawable.ic_setting_download, R.string.download,
+                R.drawable.ic_action_settings, R.string.action_settings};
 
         itemListMenu.setSelector(new ColorDrawable(Color.TRANSPARENT));
         itemListMenu.setClipToPadding(false);
@@ -1071,12 +1076,17 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
                     showContent();
                     break;
 
-                case 5: // Download
+                case 5: // HistoryActivity
+                    intent = new Intent(GalleryListActivity.this, HistoryActivity.class);
+                    startActivity(intent);
+                    break;
+
+                case 6: // Download
                     intent = new Intent(GalleryListActivity.this, DownloadActivity.class);
                     startActivity(intent);
                     break;
 
-                case 6: // Settings
+                case 7: // Settings
                     intent = new Intent(GalleryListActivity.this, SettingsActivity.class);
                     startActivity(intent);
                     break;

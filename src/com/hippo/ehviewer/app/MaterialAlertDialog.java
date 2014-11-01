@@ -36,10 +36,10 @@ import com.hippo.ehviewer.R;
 public class MaterialAlertDialog extends AlertDialog implements
         View.OnClickListener, AdapterView.OnItemClickListener {
 
-    public final static int ACTION = 0;
-    public final static int POSITIVE = 1;
-    public final static int NEGATIVE = 2;
-    public final static int NEUTRAL = 3;
+    public final static int ACTION = 0x1;
+    public final static int POSITIVE = 0x2;
+    public final static int NEGATIVE = 0x4;
+    public final static int NEUTRAL = 0x8;
 
     private final Context mContext;
 
@@ -338,6 +338,14 @@ public class MaterialAlertDialog extends AlertDialog implements
 
         public Builder setNeutralButton(int resId) {
             return setNeutralButton(mContext.getString(resId));
+        }
+
+        public Builder setDefaultButton(int b) {
+            if ((b & POSITIVE) == POSITIVE)
+                mPositiveButtonText = mContext.getString(android.R.string.ok);
+            if ((b & NEGATIVE) == NEGATIVE)
+                mNegativeButtonText = mContext.getString(android.R.string.cancel);
+            return this;
         }
 
         public Builder setButtonListener(OnClickListener l) {
