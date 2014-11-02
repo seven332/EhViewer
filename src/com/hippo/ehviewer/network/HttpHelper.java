@@ -45,7 +45,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Message;
-import android.os.Process;
 
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
@@ -839,8 +838,12 @@ public class HttpHelper {
             // Callback
             if (mListener != null)
                 mListener.onDownloadOver(DOWNLOAD_OK_CODE, null);
-            // Get ok rename
+            // Get ok, rename
             mFile.renameTo(new File(mDir, mFileName));
+            // renameTo seem to be not blocked, so wait half a second
+            try {
+                Thread.sleep(500);
+            } catch (Throwable e){}
             return DOWNLOAD_OK_STR;
         }
 
@@ -950,14 +953,12 @@ public class HttpHelper {
     public void downloadInThread(final String url, final File dir,
             final String file, final boolean isProxy,
             final DownloadControlor controlor, final OnDownloadListener listener) {
-        Thread thread = new Thread() {
+        new BgThread() {
             @Override
             public void run() {
                 download(url, dir, file, isProxy, controlor, listener);
             }
-        };
-        thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
-        thread.start();
+        }.start();
     }
 
     /** Exceptions **/
