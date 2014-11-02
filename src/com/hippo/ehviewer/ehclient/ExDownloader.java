@@ -221,7 +221,7 @@ public class ExDownloader implements Runnable {
 
     public void setStartIndex(int startIndex) {
         if (mDownloadMode) {
-            setTargetIndex(startIndex);
+            addTargetIndex(startIndex);
         } else {
             if (mImageNum != -1 && startIndex >= mImageNum)
                 mStartIndex = 0;
@@ -233,7 +233,7 @@ public class ExDownloader implements Runnable {
         }
     }
 
-    public void setTargetIndex(int index) {
+    public void addTargetIndex(int index) {
         if (mImageNum != -1 && index >= mImageNum)
             return;
 

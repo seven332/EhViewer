@@ -216,7 +216,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
         // Try to make current index show image
         if (mCurIndex != startIndex)
-            mImageSet.setTargetIndex(mCurIndex);
+            mImageSet.addTargetIndex(mCurIndex);
 
         // First time to load image in onLayout()
     }

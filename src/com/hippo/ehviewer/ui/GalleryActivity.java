@@ -22,6 +22,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.SeekBar;
@@ -184,6 +186,24 @@ public class GalleryActivity extends Activity
                         .setNegativeButton(android.R.string.cancel)
                         .show();
             }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.gallery, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.action_refresh:
+            mImageSet.redownload(mGalleryView.getCurIndex());
+            return true;
+
+        default:
+            return super.onOptionsItemSelected(item);
         }
     }
 

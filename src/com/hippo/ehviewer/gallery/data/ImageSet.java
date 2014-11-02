@@ -120,8 +120,8 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
         mListener = l;
     }
 
-    public void setTargetIndex(int index) {
-        mExDownloader.setTargetIndex(index);
+    public void addTargetIndex(int index) {
+        mExDownloader.addTargetIndex(index);
     }
 
     public void setStartIndex(int startIndex) {
@@ -132,14 +132,12 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
         mExDownloader.setCurReadIndex(index);
     }
 
-    public Object getImage(int index) {
-        // Try to get file name
+    private String getImageFilename(int index) {
         String filename = mImageFilenameArray.get(index);
         if (filename == null) {
             // Just guess filename
             for (String possibleFilename : EhUtils.getPossibleImageFilenames(index)) {
-                File file = new File(mDir, possibleFilename);
-                if (file.exists()) {
+                if (new File(mDir, possibleFilename).exists()) {
                     // Get filename
                     filename = possibleFilename;
                     mImageFilenameArray.set(index, filename);
@@ -147,8 +145,23 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
                 }
             }
         }
+        return filename;
+    }
 
+    public void redownload(int index) {
+        String filename = getImageFilename(index);
+        if (filename != null) {
+            // Delete file
+            new File(mDir, filename).delete();
+        }
+        mExDownloader.addTargetIndex(index);
+        mListener.onGetImage(index);
+    }
+
+    public Object getImage(int index) {
+        String filename = getImageFilename(index);
         Float percent;
+
         if ((percent = mPercentMap.get(index)) != null) {
             return percent;
         } else if (mExDownloader.isDownloading(index)) {

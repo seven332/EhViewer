@@ -24,13 +24,11 @@
     <item
         android:id="@+id/action_refresh"
         android:showAsAction="never"
-        android:icon="@drawable/ic_action_refresh"
         android:title="@string/action_refresh"/>
 
     <item
         android:id="@+id/action_jump"
         android:showAsAction="never"
-        android:icon="@drawable/ic_action_jump"
         android:title="@string/jump"/>
 
     <item
