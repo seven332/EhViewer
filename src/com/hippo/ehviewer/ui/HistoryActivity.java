@@ -19,10 +19,10 @@ package com.hippo.ehviewer.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
-import android.content.Context;
+import android.app.Dialog;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -43,7 +44,6 @@ import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
-import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
@@ -53,21 +53,89 @@ import com.hippo.ehviewer.widget.RatingView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 public class HistoryActivity extends AbsGalleryActivity
-        implements AdapterView.OnItemClickListener {
+        implements AdapterView.OnItemClickListener, MaterialAlertDialog.OnClickListener {
 
     private static final String TAG = HistoryActivity.class.getSimpleName();
 
-    private Context mContext;
     private Data mData;
-    private Resources mResources;
-    private EhClient mClient;
 
     private PullViewGroup mPullViewGroup;
     private ListView mList;
 
     private BaseAdapter mAdapter;
+    private int mFilterMode;
+
+    private Dialog mFilterDialog;
+    private CheckBox mJustBrowse;
+    private CheckBox mHaveRead;
+
+    private Dialog mClearDialog;
 
     private static final String HISTORY_URL = "ehviewer://history";
+    private static final String KEY_HISTORY_FILTER = "history_filter";
+
+    private void setFilterDialogMode(int filterMode) {
+        if ((filterMode & Data.BROWSE) == 0)
+            mJustBrowse.setChecked(false);
+        else
+            mJustBrowse.setChecked(true);
+        if ((filterMode & Data.READ) == 0)
+            mHaveRead.setChecked(false);
+        else
+            mHaveRead.setChecked(true);
+    }
+
+    private int getFilterDialogMode() {
+        int filterMode = 0;
+        filterMode |= mJustBrowse.isChecked() ? Data.BROWSE : 0;
+        filterMode |= mHaveRead.isChecked() ? Data.READ : 0;
+        return filterMode;
+    }
+
+    @Override
+    public boolean onClick(MaterialAlertDialog dialog, int which) {
+        if (dialog == mFilterDialog) {
+            switch (which) {
+            case MaterialAlertDialog.POSITIVE:
+                int newFilterMode = getFilterDialogMode();
+                if (newFilterMode != mFilterMode) {
+                    mFilterMode = newFilterMode;
+                    Config.setInt(KEY_HISTORY_FILTER, mFilterMode);
+                    refresh();
+                }
+            }
+            return true;
+
+        } else if (dialog == mClearDialog) {
+            switch (which) {
+            case MaterialAlertDialog.POSITIVE:
+                Data.getInstance().clearHistory();
+                refresh();
+            }
+            return true;
+
+        }
+        return true;
+    }
+
+    @SuppressLint("InflateParams")
+    private void createFilterDialog() {
+        View view = LayoutInflater.from(this).inflate(R.layout.history_filter, null);
+        mJustBrowse = (CheckBox) view.findViewById(R.id.just_browse);
+        mHaveRead = (CheckBox) view.findViewById(R.id.have_read);
+
+        mFilterDialog = new MaterialAlertDialog.Builder(this).setTitle(R.string.filter)
+                .setView(view, true)
+                .setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE)
+                .setButtonListener(this).create();
+    }
+
+    private void createClearDialog() {
+        mClearDialog = new MaterialAlertDialog.Builder(this).setTitle(R.string.attention)
+                .setMessage(R.string.clear_history_message)
+                .setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE)
+                .setButtonListener(this).create();
+    }
 
     @Override
     public void onOrientationChanged(int paddingTop, int paddingBottom) {
@@ -91,10 +159,9 @@ public class HistoryActivity extends AbsGalleryActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mContext = getApplication();
         mData = Data.getInstance();
-        mResources =getResources();
-        mClient = EhClient.getInstance();
+
+        mFilterMode = Config.getInt(KEY_HISTORY_FILTER, Data.BROWSE | Data.READ);
 
         // Just avoid error
         setBehindContentView(new View(this));
@@ -122,7 +189,8 @@ public class HistoryActivity extends AbsGalleryActivity
         mList.setDivider(null);
         mList.setOnItemClickListener(this);
 
-        refresh();
+        createFilterDialog();
+        createClearDialog();
     }
 
     @Override
@@ -137,22 +205,19 @@ public class HistoryActivity extends AbsGalleryActivity
         case android.R.id.home:
             finish();
             return true;
-        case R.id.action_clear:
-            new MaterialAlertDialog.Builder(this).setTitle(R.string.attention)
-                    .setMessage(R.string.clear_history_message)
-                    .setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE)
-                    .setButtonListener(new MaterialAlertDialog.OnClickListener() {
-                        @Override
-                        public boolean onClick(MaterialAlertDialog dialog, int which) {
-                            switch (which) {
-                            case MaterialAlertDialog.POSITIVE:
-                                Data.getInstance().clearHistory();
-                                refresh();
-                            }
-                            return true;
-                        }
-                    }).show();
+
+        case R.id.action_filter:
+            if (!mFilterDialog.isShowing()) {
+                setFilterDialogMode(mFilterMode);
+                mFilterDialog.show();
+            }
             return true;
+
+        case R.id.action_clear:
+            if (!mClearDialog.isShowing())
+                mClearDialog.show();
+            return true;
+
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -167,7 +232,7 @@ public class HistoryActivity extends AbsGalleryActivity
     protected void doGetGallerys(String url, long taskStamp,
             OnGetListListener listener) {
         if (url.equals(HISTORY_URL)) {
-            List<GalleryInfo> giList = new ArrayList<GalleryInfo>(mData.getAllHistory());
+            List<GalleryInfo> giList = new ArrayList<GalleryInfo>(mData.getHistory(mFilterMode, true));
             if (giList == null || giList.size() == 0)
                 listener.onSuccess(mAdapter, taskStamp, giList, 0);
             else

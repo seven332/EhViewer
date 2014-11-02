@@ -17,7 +17,6 @@
 package com.hippo.ehviewer.data;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -85,7 +84,6 @@ public class Data {
     private List<Tag> mTags;
     private List<GalleryInfo> mLocalFavourites;
     private List<DownloadInfo> mDownloads;
-    private List<HistoryItem> mHistory;
 
     private final Context mContext;
 
@@ -112,7 +110,6 @@ public class Data {
         getTags();
         getLocalFavourites();
         getDownloads();
-        getHistory();
     }
 
     @Override
@@ -620,22 +617,40 @@ public class Data {
     public static final int BROWSE = 0x1;
     public static final int READ = 0x2;
 
-    private synchronized void getHistory() {
-        mHistory = new LinkedList<HistoryItem>();
-        Cursor cursor = mDatabase.rawQuery("select * from " + TABLE_HISTORY
-                + " order by " + COLUMN_DATE + " desc", null);
+    public synchronized List<HistoryItem> getHistory(int mode, boolean desc) {
+        List<HistoryItem> history = new ArrayList<HistoryItem>();
 
+        StringBuilder sb = new StringBuilder();
+        sb.append("select * from ").append(TABLE_HISTORY);
+        boolean first = true;
+        if (mode != 0) {
+            sb.append(" where " + COLUMN_MODE + " in (");
+            for (int b = 1; b <= READ; b <<= 1) {
+                if ((mode & b) != 0) {
+                    sb.append(first ? "" : ", ").append(b);
+                    first = false;
+                }
+            }
+            sb.append(")");
+        }
+        sb.append(" order by ").append(COLUMN_DATE).append(desc ? " desc" : " asc");
+
+        Log.d(TAG, sb.toString());
+
+        Cursor cursor = mDatabase.rawQuery(sb.toString(), null);
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 int gid = cursor.getInt(0);
                 GalleryInfo gi = getGallery(mDatabase, gid);
                 if (gi != null) {
-                    mHistory.add(new HistoryItem(gi, cursor.getInt(1), cursor.getLong(2)));
+                    history.add(new HistoryItem(gi, cursor.getInt(1), cursor.getLong(2)));
                 }
                 cursor.moveToNext();
             }
         }
         cursor.close();
+
+        return history;
     }
 
     public synchronized int containsHistory(int gid) {
@@ -670,7 +685,6 @@ public class Data {
             mDatabase.insert(TABLE_HISTORY, null, values);
             addGallery(gi);
 
-            mHistory.add(0, new HistoryItem(gi, mode, curDate));
             truncateHistory(Config.getMaxHistoryCount());
         } else {
             // Update record
@@ -679,16 +693,11 @@ public class Data {
             mDatabase.update(TABLE_HISTORY, values,
                     COLUMN_GID + "=?", new String[]{String.valueOf(gi.gid)});
             updateGallery(gi);
-
-            HistoryItem item = new HistoryItem(gi, mode, curDate);
-            mHistory.remove(item);
-            mHistory.add(0, item);
         }
     }
 
     public void clearHistory() {
         truncateHistory(0);
-        mHistory.clear();
     }
 
     protected synchronized void truncateHistory(int maxEntries) {
@@ -704,10 +713,6 @@ public class Data {
                         + ", -1);");
             } catch(Throwable e){}
         }
-    }
-
-    public synchronized List<HistoryItem> getAllHistory() {
-        return mHistory;
     }
 
     public class DBHelper extends SQLiteOpenHelper {

@@ -14,9 +14,17 @@
      limitations under the License.
  -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_filter"
+        android:title="@string/filter"
+        android:icon="@drawable/ic_action_filter"
+        android:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/action_clear"
         android:title="@string/clear"
         android:icon="@drawable/ic_action_clear"
-        android:showAsAction="always" />
+        android:showAsAction="ifRoom" />
+
 </menu>

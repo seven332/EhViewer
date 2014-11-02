@@ -34,6 +34,7 @@
         <!-- spinner -->
         <item name="@android:spinnerDropDownItemStyle">@style/DropDownItem.Spinner</item>
         <item name="@android:spinnerItemStyle">@style/DropDownItem.Spinner</item>
+
     </style>
 
     <style name="AppTheme.Normal">

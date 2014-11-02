@@ -246,4 +246,12 @@
     <style name="DropDownItem.Spinner">
     </style>
 
+    <!-- Dialog -->
+    <style name="Dialog" parent="DialogMessage">
+    </style>
+
+    <style name="Dialog.CheckBox">
+        <item name="android:button">@drawable/btn_check_dialog_material</item>
+    </style>
+
 </resources>

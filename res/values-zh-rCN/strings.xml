@@ -171,6 +171,8 @@
 
     <!-- History -->
     <string name="clear_history_message">所有历史记录将被清除</string>
+    <string name="just_browse">仅浏览过</string>
+    <string name="have_read">已阅读过</string>
 
     <!-- Settings -->
     <string name="display_settings_title">显示</string>
@@ -343,6 +345,7 @@
     <string name="rating0">…</string>
 
     <!-- Utils -->
+    <string name="filter">过滤</string>
     <string name="clear">清除</string>
     <string name="history">历史</string>
     <string name="warning">警告</string>
