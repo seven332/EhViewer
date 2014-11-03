@@ -28,7 +28,7 @@
 
     <CheckBox
         android:id="@+id/set_default"
-        style="@style/DialogMessage"
+        style="@style/Dialog.CheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8.0dp"

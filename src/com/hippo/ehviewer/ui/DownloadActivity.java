@@ -18,6 +18,7 @@ package com.hippo.ehviewer.ui;
 
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -216,10 +218,8 @@ public class DownloadActivity extends AbsActivity {
 
             View read = convertView.findViewById(R.id.read);
             TextView action = (TextView)convertView.findViewById(R.id.action);
-            View delete1 = convertView.findViewById(R.id.delete1);
-            View delete2 = convertView.findViewById(R.id.delete2);
             View detail = convertView.findViewById(R.id.detail);
-
+            View delete = convertView.findViewById(R.id.delete);
 
             read.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -231,8 +231,7 @@ public class DownloadActivity extends AbsActivity {
                     startActivity(intent);
                 }
             });
-            delete1.setOnClickListener(new Delete1Action(di));
-            delete2.setOnClickListener(new Delete2Action(di));
+            delete.setOnClickListener(new DeleteAction(di));
             detail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -309,46 +308,30 @@ public class DownloadActivity extends AbsActivity {
         }
     }
 
-    private class Delete1Action implements View.OnClickListener {
+    private class DeleteAction implements View.OnClickListener {
+
+        private static final String KEY_INCLUDE_PIC = "include_pic";
+
         public DownloadInfo mDownloadInfo;
 
-        public Delete1Action(DownloadInfo di) {
+        public DeleteAction(DownloadInfo di) {
             mDownloadInfo = di;
         }
 
         @Override
+        @SuppressLint("InflateParams")
         public void onClick(View v) {
+            final View view = LayoutInflater.from(DownloadActivity.this).inflate(
+                    R.layout.dialog_message_checkbox, null);
+            final TextView message = (TextView) view.findViewById(R.id.message);
+            final CheckBox cb = (CheckBox) view.findViewById(R.id.checkbox);
+            message.setText(R.string.delete_item);
+            cb.setText("包括图片");
+            cb.setChecked(Config.getBoolean(KEY_INCLUDE_PIC, false));
+
             new MaterialAlertDialog.Builder(DownloadActivity.this).setTitle(R.string.attention)
-                    .setMessage(R.string.delete)
-                    .setPositiveButton(android.R.string.ok)
-                    .setNegativeButton(android.R.string.cancel)
-                    .setButtonListener(new MaterialAlertDialog.OnClickListener() {
-                        @Override
-                        public boolean onClick(MaterialAlertDialog dialog, int which) {
-                            if (which == MaterialAlertDialog.POSITIVE) {
-                                Intent it = new Intent(DownloadActivity.this, DownloadService.class);
-                                startService(it);
-                                mServiceConn.getService().delete(mDownloadInfo);
-                            }
-                            return true;
-                        }
-                    }).show();
-        }
-    }
-
-    private class Delete2Action implements View.OnClickListener {
-        public DownloadInfo mDownloadInfo;
-
-        public Delete2Action(DownloadInfo di) {
-            mDownloadInfo = di;
-        }
-
-        @Override
-        public void onClick(View v) {
-            new MaterialAlertDialog.Builder(DownloadActivity.this).setTitle(R.string.attention)
-                    .setMessage(R.string.delete2)
-                    .setPositiveButton(android.R.string.ok)
-                    .setNegativeButton(android.R.string.cancel)
+                    .setView(view, true)
+                    .setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE)
                     .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                         @Override
                         public boolean onClick(MaterialAlertDialog dialog, int which) {
@@ -357,8 +340,12 @@ public class DownloadActivity extends AbsActivity {
                                 startService(it);
                                 mServiceConn.getService().delete(mDownloadInfo);
                                 // Delete dir
-                                GalleryInfo gi = mDownloadInfo.galleryInfo;
-                                Utils.deleteDirInThread(EhUtils.getGalleryDir(gi.gid, gi.title));
+                                if (cb.isChecked()) {
+                                    GalleryInfo gi = mDownloadInfo.galleryInfo;
+                                    Utils.deleteDirInThread(EhUtils.getGalleryDir(gi.gid, gi.title));
+                                }
+                                // Remember delete choice
+                                Config.setBoolean(KEY_INCLUDE_PIC, cb.isChecked());
                             }
                             return true;
                         }

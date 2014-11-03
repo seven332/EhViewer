@@ -105,6 +105,7 @@
     <string name="download_4">下载失败 %d 项</string>
     <string name="download_5" formatted="false">下载成功 %d, 下载失败 %d</string>
     <string name="download_6" formatted="false">下载成功 %d 项, 下载失败 %d 项</string>
+    <string name="delete_item">该下载项将被删除</string>
 
     <!-- ErrorMessage -->
     <string name="em_network_error">网络错误</string>
