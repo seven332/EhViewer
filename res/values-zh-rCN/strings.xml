@@ -53,7 +53,7 @@
     <string name="show_expunged">显示被遗弃的资源</string>
 
     <!-- Jump -->
-    <string name="jump_summary" formatted="false">第 %d 页，共 %s 页</string>
+    <string name="jump_summary">第 %1$d 页，共 %2$s 页</string>
     <string name="jump_to">跳至：</string>
     <string name="toast_invalid_page">非法页面</string>
 
@@ -77,7 +77,7 @@
     <string name="image_not_readable">图像不可读</string>
 
     <!-- Update -->
-    <string name="update_message" formatted="false">发现新版本：%s\n大小：%s\n%s\n\n是否更新？</string>
+    <string name="update_message">发现新版本：%1$s\n大小：%2$s\n%3$s\n\n是否更新？</string>
     <string name="checking_update">正在检查更新</string>
     <string name="up_to_date">已是最新版</string>
     <string name="found_update">发现新版本</string>
@@ -103,8 +103,8 @@
     <string name="download_2">下载成功 %d 项</string>
     <string name="download_3">下载失败 %d</string>
     <string name="download_4">下载失败 %d 项</string>
-    <string name="download_5" formatted="false">下载成功 %d, 下载失败 %d</string>
-    <string name="download_6" formatted="false">下载成功 %d 项, 下载失败 %d 项</string>
+    <string name="download_5">下载成功 %1$d, 下载失败 %2$d</string>
+    <string name="download_6">下载成功 %1$d 项, 下载失败 %2$d 项</string>
     <string name="delete_item">该下载项将被删除</string>
 
     <!-- ErrorMessage -->

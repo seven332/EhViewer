@@ -41,7 +41,7 @@
     <string name="show_expunged">顯示被遺棄的資源</string>
 
     <!-- Jump -->
-    <string name="jump_summary" formatted="false">第 %d 頁，共 %s 頁</string>
+    <string name="jump_summary">第 %1$d 頁，共 %2$s 頁</string>
     <string name="jump_to">跳至：</string>
     <string name="toast_invalid_page">非法頁面</string>
 
@@ -65,7 +65,7 @@
     <string name="image_not_readable">圖像不可讀</string>
 
     <!-- Update -->
-    <string name="update_message" formatted="false">發現新版本：%s\n大小：%s\n%s\n\n是否更新？</string>
+    <string name="update_message">發現新版本：%1$s\n大小：%2$s\n%3$s\n\n是否更新？</string>
     <string name="checking_update">正在檢查更新</string>
     <string name="up_to_date">已是最新版</string>
     <string name="found_update">發現新版本</string>
@@ -91,8 +91,8 @@
     <string name="download_2">下載成功 %d 項</string>
     <string name="download_3">下載失敗 %d</string>
     <string name="download_4">下載失敗 %d 項</string>
-    <string name="download_5" formatted="false">下載成功 %d, 下載失敗 %d</string>
-    <string name="download_6" formatted="false">下載成功 %d 項, 下載失敗 %d 項</string>
+    <string name="download_5">下載成功 %1$d, 下載失敗 %2$d</string>
+    <string name="download_6">下載成功 %1$d 項, 下載失敗 %2$d 項</string>
 
     <!-- ErrorMessage -->
     <string name="em_network_error">網絡錯誤</string>

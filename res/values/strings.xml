@@ -56,7 +56,7 @@
     <string name="show_expunged">Show expunged</string>
 
     <!-- Jump -->
-    <string name="jump_summary" formatted="false">Page %d, %s pages in total</string>
+    <string name="jump_summary">Page %1$d, %2$s pages in total</string>
     <string name="jump_to">Jump to : </string>
     <string name="toast_invalid_page">Invalid page</string>
 
@@ -80,7 +80,7 @@
     <string name="image_not_readable">Image is not readable</string>
 
     <!-- Update -->
-    <string name="update_message" formatted="false">Found new version : %s\nSize : %s\n%s\n\nUpdate ?</string>
+    <string name="update_message">Found new version : %1$s\nSize : %2$s\n%3$s\n\nUpdate ?</string>
     <string name="checking_update">checking updating</string>
     <string name="up_to_date">Up to date</string>
     <string name="found_update">Found update</string>
@@ -106,8 +106,8 @@
     <string name="download_2">Download OK %d items</string>
     <string name="download_3">Download failed %d</string>
     <string name="download_4">Download failed %d items</string>
-    <string name="download_5" formatted="false">Download OK %d, Download failed %d</string>
-    <string name="download_6" formatted="false">Download OK %d items, Download failed %d items</string>
+    <string name="download_5">Download OK %1$d, Download failed %2$d</string>
+    <string name="download_6">Download OK %1$d items, Download failed %2$d items</string>
 
     <!-- ErrorMessage -->
     <string name="em_network_error">Network Error</string>

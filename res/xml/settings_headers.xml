@@ -17,37 +17,31 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <header
-        android:id="@+id/display_settings"
         android:fragment="com.hippo.ehviewer.ui.SettingsActivity$DisplayFragment"
         android:title="@string/display_settings_title"
         android:icon="@drawable/ic_setting_display_dark" />
 
     <header
-        android:id="@+id/eh_settings"
         android:fragment="com.hippo.ehviewer.ui.SettingsActivity$EhFragment"
         android:title="@string/eh_settings_title"
         android:icon="@drawable/ic_action_panda_dark" />
 
     <header
-        android:id="@+id/read_settings"
         android:fragment="com.hippo.ehviewer.ui.SettingsActivity$ReadFragment"
         android:title="@string/read_settings_title"
         android:icon="@drawable/ic_setting_read_dark" />
 
     <header
-        android:id="@+id/download_settings"
         android:fragment="com.hippo.ehviewer.ui.SettingsActivity$DownloadFragment"
         android:title="@string/download_settings_title"
         android:icon="@drawable/ic_setting_download_dark" />
 
     <header
-        android:id="@+id/advanced_settings"
         android:fragment="com.hippo.ehviewer.ui.SettingsActivity$AdvancedFragment"
         android:title="@string/advanced_settings_title"
         android:icon="@drawable/ic_setting_advanced_dark" />
 
     <header
-        android:id="@+id/about_settings"
         android:fragment="com.hippo.ehviewer.ui.SettingsActivity$AboutFragment"
         android:title="@string/about_settings_title"
         android:icon="@drawable/ic_setting_about_dark" />
