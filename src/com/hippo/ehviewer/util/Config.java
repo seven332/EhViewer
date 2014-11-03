@@ -405,9 +405,6 @@ public final class Config {
     private static final String KEY_UPDATE_SERVER = "update_server";
     private static final String DEFAULT_UPDATE_SERVER = "2";
 
-    private static final String KEY_SET_ANALYTICS = "set_analyics";
-    private static final boolean DEFAULT_SET_ANALYTICS = false;
-
     private static final String KEY_ALLOW_ANALYTICS = "allow_analyics";
     private static final boolean DEFAULT_ALLOW_ANALYTICS = false;
 
@@ -420,7 +417,7 @@ public final class Config {
     }
 
     public static int getUpdateDate() {
-        return mConfigPre.getInt(KEY_UPDATE_DATE, 0);
+        return getInt(KEY_UPDATE_DATE, 0);
     }
 
     public static void setUpdateDate() {
@@ -428,7 +425,7 @@ public final class Config {
     }
 
     public static void setUpdateDate(int date) {
-        mConfigPre.edit().putInt(KEY_UPDATE_DATE, date).apply();
+        setInt(KEY_UPDATE_DATE, date);
     }
 
     public static String getUpdateServer() {
@@ -450,25 +447,13 @@ public final class Config {
     }
 
     public static boolean getAllowAnalyics() {
-        return mConfigPre.getBoolean(KEY_ALLOW_ANALYTICS, DEFAULT_ALLOW_ANALYTICS);
+        return getBoolean(KEY_ALLOW_ANALYTICS, DEFAULT_ALLOW_ANALYTICS);
     }
 
     public static void setAllowAnalyics(boolean setAnalyics) {
-        mConfigPre.edit().putBoolean(KEY_ALLOW_ANALYTICS, setAnalyics).apply();
+        setBoolean(KEY_ALLOW_ANALYTICS, setAnalyics);
     }
 
-    /****** GalleryActivity ******/
-
-    private static final String KEY_GALLERY_FIRST = "gallery_first";
-    private static final boolean DEFAULT_GALLERY_FIRST = true;
-
-    public static boolean getGalleryFirst() {
-        return mConfigPre.getBoolean(KEY_GALLERY_FIRST, DEFAULT_GALLERY_FIRST);
-    }
-
-    public static void setGalleryFirst(boolean galleryFirst) {
-        mConfigPre.edit().putBoolean(KEY_GALLERY_FIRST, galleryFirst).apply();
-    }
 
     /****** Mode an API Mode ******/
 
@@ -482,27 +467,27 @@ public final class Config {
     private static final int DEFAULT_LOFI_RESOLUTION = 1;
 
     public static int getMode() {
-        return mConfigPre.getInt(KEY_MODE, DEFAULT_MODE);
+        return getInt(KEY_MODE, DEFAULT_MODE);
     }
 
     public static void setMode(int mode) {
-        mConfigPre.edit().putInt(KEY_MODE, mode).apply();
+        setInt(KEY_MODE, mode);
     }
 
     public static int getApiMode() {
-        return mConfigPre.getInt(KEY_API_MODE, DEFAULT_API_MODE);
+        return getInt(KEY_API_MODE, DEFAULT_API_MODE);
     }
 
     public static void setApiMode(int apiMode) {
-        mConfigPre.edit().putInt(KEY_API_MODE, apiMode).apply();
+        setInt(KEY_API_MODE, apiMode);
     }
 
     public static int getLofiResolution() {
-        return mConfigPre.getInt(KEY_LOFI_RESOLUTION, DEFAULT_LOFI_RESOLUTION);
+        return getInt(KEY_LOFI_RESOLUTION, DEFAULT_LOFI_RESOLUTION);
     }
 
     public static void setLofiResolution(int lofiResolution) {
-        mConfigPre.edit().putInt(KEY_LOFI_RESOLUTION, lofiResolution).apply();
+        setInt(KEY_LOFI_RESOLUTION, lofiResolution);
     }
 
 

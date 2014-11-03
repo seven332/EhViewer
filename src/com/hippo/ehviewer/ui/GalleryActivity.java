@@ -179,8 +179,9 @@ public class GalleryActivity extends Activity
             mPageSeeker.setProgress(startIndex);
 
             // Show first tip
-            if (Config.getGalleryFirst()) {
-                Config.setGalleryFirst(false);
+            String keyGalleryFirst = "gallery_first";
+            if (Config.getBoolean(keyGalleryFirst, true)) {
+                Config.setBoolean(keyGalleryFirst, false);
                 new MaterialAlertDialog.Builder(this).setTitle(R.string.tip)
                         .setMessage(R.string.gallery_tip)
                         .setNegativeButton(android.R.string.cancel)
