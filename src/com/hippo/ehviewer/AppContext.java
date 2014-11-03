@@ -92,7 +92,8 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         // Update proxy urls
         HttpHelper.updateProxyUrls(this);
 
-        int oldVersion = Config.getVersionCode();
+        String keyVersionCode = "version_code";
+        int oldVersion = Config.getInt(keyVersionCode, Integer.MAX_VALUE);
         // Fix <=22 login error
         if (oldVersion <= 22)
             EhInfo.getInstance(this).logout();
@@ -135,7 +136,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         // Update version code
         try {
             PackageInfo pi= getPackageManager().getPackageInfo(getPackageName(), 0);
-            Config.setVersionCode(pi.versionCode);
+            Config.setInt(keyVersionCode, pi.versionCode);
         } catch (NameNotFoundException e) {}
     }
 

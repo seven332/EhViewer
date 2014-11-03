@@ -45,6 +45,9 @@ public class StartActivity extends Activity {
     private static final int CHECK_NETWORK = 2;
     private static final int CHECK_CRASH = 3;
 
+    private static final String KEY_ALLOWED = "allowed";
+    private static final String KEY_SET_ANALYTICS = "set_analyics";
+
     private String lastCrash;
     private boolean isAnimationOver = false;
     private boolean isCheckOver = false;
@@ -60,7 +63,7 @@ public class StartActivity extends Activity {
                     public boolean onClick(MaterialAlertDialog dialog, int which) {
                         switch (which) {
                         case MaterialAlertDialog.POSITIVE:
-                            Config.allowed();
+                            Config.setBoolean(KEY_ALLOWED, true);
                             check(CHECK_ANALYTICS);
                             break;
                         case MaterialAlertDialog.NEGATIVE:
@@ -227,13 +230,13 @@ public class StartActivity extends Activity {
     private void check(int order) {
         switch (order) {
         case CHECK_WARING:
-            if (!Config.isAllowed()) {
+            if (!Config.getBoolean(KEY_ALLOWED, false)) {
                 createWarningDialog().show();
                 return;
             }
         case CHECK_ANALYTICS:
-            if (!Config.getSetAnalyics()) {
-                Config.setSetAnalyics(true);
+            if (!Config.getBoolean(KEY_SET_ANALYTICS, false)) {
+                Config.setBoolean(KEY_SET_ANALYTICS, true);
                 createAllowAnalyicsDialog().show();
                 return;
             }

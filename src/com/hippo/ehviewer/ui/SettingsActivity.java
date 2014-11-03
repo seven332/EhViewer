@@ -832,7 +832,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
     }
 
     public static class AboutFragment extends TranslucentPreferenceFragment implements
-            Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
+            Preference.OnPreferenceClickListener {
 
         private static final String KEY_AUTHOR = "author";
         private static final String KEY_TWITTER = "twitter";
@@ -842,7 +842,6 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_SOURCE = "source";
         private static final String KEY_CHECK_UPDATE = "check_for_update";
         private static final String KEY_CLOUD_DRIVE = "cloud_drive";
-        private static final String KEY_ALLOW_ANALYICS = "allow_analyics";
         private static final String KEY_ABOUT_ANALYICS = "about_analyics";
 
         private Preference mAuthor;
@@ -853,7 +852,6 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private Preference mSource;
         private Preference mCheckUpdate;
         private Preference mCloudDrive;
-        private CheckBoxPreference mAllowAnalyics;
         private Preference mAboutAnalyics;
 
         @Override
@@ -877,8 +875,6 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mCheckUpdate.setOnPreferenceClickListener(this);
             mCloudDrive = findPreference(KEY_CLOUD_DRIVE);
             mCloudDrive.setOnPreferenceClickListener(this);
-            mAllowAnalyics = (CheckBoxPreference) findPreference(KEY_ALLOW_ANALYICS);
-            mAllowAnalyics.setOnPreferenceChangeListener(this);
             mAboutAnalyics = findPreference(KEY_ABOUT_ANALYICS);
             mAboutAnalyics.setOnPreferenceClickListener(this);
         }
@@ -991,16 +987,6 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         .setMessageAutoLink(Linkify.WEB_URLS).setMessage(R.string.about_analyics_comment)
                         .setNegativeButton(android.R.string.cancel).show();
 
-            }
-            return true;
-        }
-
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            final String key = preference.getKey();
-            if (KEY_ALLOW_ANALYICS.equals(key)) {
-                if (!(Boolean) newValue)
-                    Config.setPopularWarning(true);
             }
             return true;
         }

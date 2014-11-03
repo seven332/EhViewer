@@ -1201,8 +1201,9 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
         if (Config.isAutoCheckForUpdate())
             checkUpdate();
 
-        if (Config.isFirstTime()) {
-            Config.firstTime();
+        String keyFirstTime = "first_time";
+        if (Config.getBoolean(keyFirstTime, false)) {
+            Config.setBoolean(keyFirstTime, true);
 
             // Show left menu, Can't invoke showMenu() immediately
             Message m = Message.obtain(null, new Runnable() {
@@ -1214,10 +1215,12 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
             AppHandler.getInstance().sendMessageDelayed(m, 500L);
         }
 
+        String keyTcWarning = "traditional_chinese_warning";
         String country = Locale.getDefault().getCountry();
-        if (Config.getTraditionalChineseWarning() && (country.equals("HK") || country.equals("TW"))) {
-            Config.setTraditionalChineseWarning(false);
-            new MaterialAlertDialog.Builder(this).setTitle("注意").setMessage("正體中文的翻譯由 OpenCC 自動完成，若有任何錯誤或不妥之處歡迎指出。")
+        if (Config.getBoolean(keyTcWarning, true) && (country.equals("HK") || country.equals("TW"))) {
+            Config.setBoolean(keyTcWarning, false);
+            new MaterialAlertDialog.Builder(this).setTitle("注意")
+                    .setMessage("正體中文的翻譯由 OpenCC 自動完成，若有任何錯誤或不妥之處歡迎指出。")
                     .show();
         }
     }
