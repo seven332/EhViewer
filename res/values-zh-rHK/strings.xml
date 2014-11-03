@@ -377,7 +377,6 @@
     <string name="some_page">第 %d 頁</string>
     <string name="_default">默認</string>
     <string name="delete">刪除</string>
-    <string name="delete2">刪除（包括圖片）</string>
     <string name="move">移動</string>
     <string name="list">列表</string>
     <string name="homepage">首頁</string>

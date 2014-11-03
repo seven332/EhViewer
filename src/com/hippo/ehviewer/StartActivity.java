@@ -19,10 +19,7 @@ package com.hippo.ehviewer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +30,7 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 
 import com.hippo.ehviewer.app.MaterialAlertDialog;
+import com.hippo.ehviewer.network.Network;
 import com.hippo.ehviewer.ui.GalleryListActivity;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
@@ -41,10 +39,6 @@ public class StartActivity extends Activity {
 
     @SuppressWarnings("unused")
     private static final String TAG = StartActivity.class.getSimpleName();
-
-    private static final int NETWORK_STATE_NONE = 0x0;
-    private static final int NETWORK_STATE_MOBILE = 0x1;
-    private static final int NETWORK_STATE_WIFI = 0x2;
 
     private static final int CHECK_WARING = 0;
     private static final int CHECK_ANALYTICS = 1;
@@ -106,10 +100,10 @@ public class StartActivity extends Activity {
     private AlertDialog createNetworkDialog(int state) {
         int mesgId;
         switch (state) {
-        case NETWORK_STATE_MOBILE:
+        case Network.NETWORK_STATE_MOBILE:
             mesgId = R.string.dailog_network_mobile_title;
             break;
-        case NETWORK_STATE_NONE:
+        case Network.NETWORK_STATE_NONE:
         default:
             mesgId = R.string.dailog_network_none_title;
             break;
@@ -244,8 +238,8 @@ public class StartActivity extends Activity {
                 return;
             }
         case CHECK_NETWORK:
-            int state = getNetworkState();
-            if (state != NETWORK_STATE_WIFI) {
+            int state = Network.getNetworkState(this);
+            if (state != Network.NETWORK_STATE_WIFI) {
                 createNetworkDialog(state).show();
                 return;
             }
@@ -262,20 +256,6 @@ public class StartActivity extends Activity {
         if (isAnimationOver)
             redirectTo();
         isCheckOver = true;
-    }
-
-    private int getNetworkState() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mWifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        NetworkInfo mMobile = cm
-                .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-
-        if (mWifi != null && mWifi.isConnected())
-            return NETWORK_STATE_WIFI;
-        else if (mMobile != null && mMobile.isConnected())
-            return NETWORK_STATE_MOBILE;
-        else
-            return NETWORK_STATE_NONE;
     }
 
     private void redirectTo() {

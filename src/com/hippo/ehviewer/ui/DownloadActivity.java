@@ -326,7 +326,7 @@ public class DownloadActivity extends AbsActivity {
             final TextView message = (TextView) view.findViewById(R.id.message);
             final CheckBox cb = (CheckBox) view.findViewById(R.id.checkbox);
             message.setText(R.string.delete_item);
-            cb.setText("包括图片");
+            cb.setText(R.string.pic_included);
             cb.setChecked(Config.getBoolean(KEY_INCLUDE_PIC, false));
 
             new MaterialAlertDialog.Builder(DownloadActivity.this).setTitle(R.string.attention)

@@ -519,7 +519,7 @@ public class FavouriteActivity extends AbsGalleryActivity
         if (mMenuIndex == 0)
             return LOCAL_FAVORITE_URL;
         else
-            return mClient.getFavoriteUrl(mMenuIndex-1, targetPage);
+            return mClient.getFavoriteUrlWithCat(mMenuIndex - 1, targetPage);
     }
 
     @Override

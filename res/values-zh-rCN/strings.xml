@@ -106,6 +106,7 @@
     <string name="download_5">下载成功 %1$d, 下载失败 %2$d</string>
     <string name="download_6">下载成功 %1$d 项, 下载失败 %2$d 项</string>
     <string name="delete_item">该下载项将被删除</string>
+    <string name="pic_included">包括图片</string>
 
     <!-- ErrorMessage -->
     <string name="em_network_error">网络错误</string>
@@ -400,7 +401,6 @@
     <string name="some_page">第 %d 页</string>
     <string name="_default">默认</string>
     <string name="delete">删除</string>
-    <string name="delete2">删除（包括图片）</string>
     <string name="move">移动</string>
     <string name="list">列表</string>
     <string name="homepage">首页</string>
