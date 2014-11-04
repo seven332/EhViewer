@@ -758,6 +758,9 @@ public class Data {
 
             // download
             createDownloadTableVer3(db);
+
+            // History
+            createHistoryTable(db);
         }
 
         private void createDownloadTableVer2(SQLiteDatabase db) {
