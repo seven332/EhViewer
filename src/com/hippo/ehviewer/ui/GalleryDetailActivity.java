@@ -895,16 +895,16 @@ public class GalleryDetailActivity extends AbsActivity
             mReplyPositive = false;
             final EditText et = new EditText(this);
             et.setGravity(Gravity.TOP);
+            et.setHint("评论内容");
             et.setTextColor(getResources().getColor(R.color.secondary_text_dark));
-            et.setBackgroundDrawable(new ColorDrawable(
-                    getResources().getColor(R.color.edit_text_gb)));
+            et.setBackgroundDrawable(null);
             et.setText(mOldReply);
             if (mOldReply != null)
                 et.setSelection(mOldReply.length());
 
             new MaterialAlertDialog.Builder(this).setTitle(R.string.reply)
                     .setView(et, true, new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 600))
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
                     .setNegativeButton(android.R.string.cancel)
                     .setPositiveButton(android.R.string.ok)
                     .setButtonListener(new MaterialAlertDialog.OnClickListener() {
@@ -991,7 +991,7 @@ public class GalleryDetailActivity extends AbsActivity
         mMoreDetailScroll.setPadding(mMoreDetailScroll.getPaddingLeft(), paddingTop,
                 mMoreDetailScroll.getPaddingRight(), paddingBottom);
         mCommentList.setPadding(mCommentList.getPaddingLeft(), paddingTop,
-                mCommentList.getPaddingRight(), paddingBottom);
+                mCommentList.getPaddingRight(), paddingBottom + Ui.dp2pix(16 + 56 + 16));
         ((FrameLayout.LayoutParams)mReply.getLayoutParams()).bottomMargin = Ui.dp2pix(16) + paddingBottom;
     }
 

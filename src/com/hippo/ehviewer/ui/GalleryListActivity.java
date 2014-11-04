@@ -1284,11 +1284,12 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Do not show menu when mSlidingMenu is shown
-        if (mSlidingMenu != null && mSlidingMenu.isMenuShowing())
+        if (mSlidingMenu.isSecondaryMenuShowing())
+            getMenuInflater().inflate(R.menu.quick_search, menu);
+        else if (mSlidingMenu.isMenuShowing())
             return true;
-
-        getMenuInflater().inflate(R.menu.main, menu);
+        else
+            getMenuInflater().inflate(R.menu.gallery_list, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchItem = menu.findItem(R.id.action_search);
@@ -1417,6 +1418,15 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
             if (mStaggeredGridView != null)
                 mStaggeredGridView.invalidateChildren();
             invalidateOptionsMenu();
+            return true;
+        case R.id.action_add:
+            // TODO
+            /*
+            if (lus != null) {
+                new MaterialAlertDialog.Builder(this).setTitle("添加当前状态至快速搜索")
+                        .setMessage("hahah")
+                        .setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE).show();
+            }*/
             return true;
         default:
             return super.onOptionsItemSelected(item);
