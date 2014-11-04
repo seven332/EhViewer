@@ -18,3 +18,21 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-keepattributes SourceFile,LineNumberTable
+
+-keep class com.hippo.**
+
+-keepclassmembers public class * extends android.graphics.drawable.Drawable {
+    void set*(***);
+    *** get*();
+}
+
+-keepclassmembers class com.hippo.ehviewer.drawable.MaterialProgressDrawable$Ring {
+    void set*(***);
+    *** get*();
+}
+
+-keepclassmembers public class * extends com.hippo.ehviewer.windowsanimate.Sprite {
+    void set*(***);
+    *** get*();
+}
