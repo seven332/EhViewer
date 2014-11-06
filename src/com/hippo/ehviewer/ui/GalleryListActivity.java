@@ -624,10 +624,10 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
                         if (which == MaterialAlertDialog.POSITIVE) {
                             String key = et.getText().toString();
                             if (key.length() == 0) {
-                                MaterialToast.showToast(R.string.tag_name_empty);
+                                MaterialToast.showToast(R.string.invalid_input);
                                 return false;
                             } else if (listMenuTag.contains(key) && !key.equals(oldStr)) {
-                                MaterialToast.showToast(R.string.tag_name_empty);
+                                MaterialToast.showToast("该名称已存在"); // TODO
                                 return false;
                             } else {
                                 if (listener != null) {
@@ -899,7 +899,8 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
     @Override
     public void onOpened() {
         if (mShowDrawer) {
-            setTitle(R.string.app_name);
+            if (!mSlidingMenu.isSecondaryMenuShowing())
+                setTitle(R.string.app_name);
             invalidateOptionsMenu();
         }
     }
@@ -957,8 +958,7 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
         if (mShowDrawer) {
             mSlidingMenu.setBehindWidth(mResources.getDimensionPixelOffset(R.dimen.menu_width));
         } else {
-            getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
-            getSlidingMenu().setEnabled(false);
+            mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
         }
 
         // Download service
@@ -1421,12 +1421,34 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
             return true;
         case R.id.action_add:
             // TODO
-            /*
             if (lus != null) {
+                View view = LayoutInflater.from(this).inflate(R.layout.set_name, null);
+                final EditText et = (EditText) view.findViewById(R.id.set_name_edit);
                 new MaterialAlertDialog.Builder(this).setTitle("添加当前状态至快速搜索")
-                        .setMessage("hahah")
-                        .setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE).show();
-            }*/
+                        .setView(view, true)
+                        .setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE)
+                        .setButtonListener(new MaterialAlertDialog.OnClickListener() {
+                            @Override
+                            public boolean onClick(MaterialAlertDialog dialog, int which) {
+                                if (which == MaterialAlertDialog.POSITIVE) {
+                                    String name = et.getText().toString();
+                                    if (name == null || name.isEmpty()) {
+                                        MaterialToast.showToast(R.string.invalid_input);
+                                        return false;
+                                    }
+                                    if (listMenuTag.contains(name)) {
+                                        MaterialToast.showToast("该名称已存在"); // TODO
+                                        return false;
+                                    }
+                                    mData.addTag(new Tag(name, lus));
+                                    listMenuTag.add(name);
+                                    tagsAdapter.addId(name);
+                                    tagsAdapter.notifyDataSetChanged();
+                                }
+                                return true;
+                            }
+                        }).show();
+            }
             return true;
         default:
             return super.onOptionsItemSelected(item);
