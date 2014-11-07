@@ -344,29 +344,31 @@ public class Ui {
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static void translucent(Activity activity, int color, int height) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            boolean needAdd = false;
+            View statusBarBgView;
             FrameLayout.LayoutParams lp;
             ViewGroup decorViewGroup = (ViewGroup) activity.getWindow().getDecorView();
 
-            View statusBarBgView = (View) decorViewGroup.getTag(R.id.translucent_view);
-            if (statusBarBgView == null) {
-                needAdd = true;
-                statusBarBgView = new View(activity);
-            }
-            statusBarBgView.setBackgroundColor(color);
-
-            lp = (FrameLayout.LayoutParams) statusBarBgView.getLayoutParams();
-            if (lp == null)
-                lp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, height);
-            else
+            // Try to find old translucent view
+            if (decorViewGroup.getChildCount() > 1 &&
+                    (statusBarBgView = decorViewGroup.getChildAt(1)) != null &&
+                    statusBarBgView.getId() == R.id.translucent_view) {
+                lp = (LayoutParams) statusBarBgView.getLayoutParams();
                 lp.height = height;
-            lp.gravity = Gravity.TOP;
-
-            if (needAdd) {
-                decorViewGroup.addView(statusBarBgView, lp);
-                decorViewGroup.setTag(R.id.translucent_view, statusBarBgView);
-            } else {
+                lp.gravity = Gravity.TOP;
+                statusBarBgView.setBackgroundColor(color);
                 statusBarBgView.setLayoutParams(lp);
+
+                Log.d(TAG, "translucent new");
+            } else {
+                statusBarBgView = new View(activity);
+                statusBarBgView.setId(R.id.translucent_view);
+                statusBarBgView.setBackgroundColor(color);
+                lp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, height);
+                lp.gravity = Gravity.TOP;
+                decorViewGroup.addView(statusBarBgView, lp);
+
+
+                Log.d(TAG, "translucent update");
             }
         }
     }

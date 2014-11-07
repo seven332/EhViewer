@@ -30,7 +30,6 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,6 +46,7 @@ import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TableLayout;
@@ -87,26 +87,16 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
     private FitWindowView mStandard;
     private List<TranslucentPreferenceFragment> mFragments;
     private ListView mListView;
+    private int mThemeColor;
 
-    public void adjustPadding(int paddingTop, int paddingBottom) {
-        mListView.setPadding(mListView.getPaddingLeft(), paddingTop, mListView.getPaddingRight(), paddingBottom);
+    public void adjustPadding(int t, int b) {
+        mListView.setPadding(mListView.getPaddingLeft(), t, mListView.getPaddingRight(), b);
     }
-
-    // @Override
-    // public void onOrientationChanged(int paddingTop, int paddingBottom) {
-    // for (TranslucentPreferenceFragment f : mFragments) {
-    // if (f.isVisible()) {
-    // f.adjustPadding(paddingTop, paddingBottom);
-    // return;
-    // }
-    // }
-
-        // If no fragment is visible, just headers is shown
-    // adjustPadding(paddingTop, paddingBottom);
-    // }
 
     @Override
     public void onFitSystemWindows(int l, int t, int r, int b) {
+        Ui.translucent(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
+
         for (TranslucentPreferenceFragment f : mFragments) {
             if (f.isVisible()) {
                 f.adjustPadding(t, b);
@@ -121,12 +111,9 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
         super.onCreate(savedInstanceState);
 
         // Set random color
-        int color = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
-        color = color & 0x00ffffff | 0xdd000000;
-        Drawable drawable = new ColorDrawable(color);
-        final ActionBar actionBar = getActionBar();
-        actionBar.setBackgroundDrawable(drawable);
-        Ui.translucent(this, color, 0);
+        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
+        ActionBar actionBar = getActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
 
         actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -134,23 +121,13 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
 
         mListView = getListView();
         mListView.setClipToPadding(false);
-        
-        int listIndex = -1;
-        ViewGroup p = (ViewGroup) mListView.getParent();
-        int size = p.getChildCount();
-        for (int i = 0; i < size; i++) {
-            if (mListView == p.getChildAt(i)) {
-                listIndex = i;
-                break;
-            }
-        }
 
-        if (listIndex != -1) {
-            mStandard = new FitWindowView(this);
-            mStandard.addOnFitSystemWindowsListener(this);
-            p.addView(mStandard, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT));
-        }
+
+        FrameLayout fl = (FrameLayout) getWindow().getDecorView().findViewById(android.R.id.content);
+        mStandard = new FitWindowView(this);
+        mStandard.addOnFitSystemWindowsListener(this);
+        fl.addView(mStandard, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
     @Override
@@ -222,15 +199,11 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
                     && child instanceof ListView) {
                 mListView = (ListView) child;
                 mListView.setClipToPadding(false);
-
-                int[] padding = new int[2];
-                Ui.getWindowPadding(mActivity.getResources(), padding);
-                adjustPadding(padding[0], padding[1]);
             }
         }
 
-        public void adjustPadding(int paddingTop, int paddingBottom) {
-            mListView.setPadding(mListView.getPaddingLeft(), paddingTop, mListView.getPaddingRight(), paddingBottom);
+        public void adjustPadding(int t, int b) {
+            mListView.setPadding(mListView.getPaddingLeft(), t, mListView.getPaddingRight(), b);
         }
     }
 
