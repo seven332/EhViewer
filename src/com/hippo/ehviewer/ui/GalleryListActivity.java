@@ -66,6 +66,9 @@ import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.balysv.materialmenu.MaterialMenuDrawable;
+import com.balysv.materialmenu.MaterialMenuDrawable.Stroke;
+import com.balysv.materialmenu.MaterialMenuIcon;
 import com.etsy.android.grid.StaggeredGridView;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.AppHandler;
@@ -155,6 +158,9 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
     private SuggestionHelper mSuggestions;
     private ActionBar mActionBar;
     private int mThemeColor;
+
+    private MaterialMenuIcon mMaterialMenu;
+    private boolean mDirection;
 
     private DrawerLayout mDrawerLayout;
     private View mLeftMenu;
@@ -907,6 +913,9 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
     public void onDrawerClosed(View view) {
         setTitle(mTitle);
         invalidateOptionsMenu();
+
+        if (view == mLeftMenu)
+            mDirection = false;
     }
 
     @Override
@@ -914,11 +923,18 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
         if (view == mLeftMenu)
             setTitle(R.string.app_name);
         invalidateOptionsMenu();
+
+        if (view == mLeftMenu)
+            mDirection = true;
     }
 
     @Override
     public void onDrawerSlide(View view, float f) {
-        // Empty
+        if (view == mLeftMenu) {
+            mMaterialMenu.setTransformationOffset(
+                    MaterialMenuDrawable.AnimationState.BURGER_ARROW,
+                    mDirection ? 2 - f : f);
+        }
     }
 
     @Override
@@ -938,6 +954,17 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
                 mQuickSearchList.getPaddingRight(), b);
 
         Ui.translucent(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mMaterialMenu.syncState(savedInstanceState);
+    }
+
+    @Override protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mMaterialMenu.onSaveInstanceState(outState);
     }
 
     @Override
@@ -982,6 +1009,9 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
         mSearchDialog = createSearchDialog();
         longClickDialog = createLongClickDialog();
 
+        // Menu
+        mMaterialMenu = new MaterialMenuIcon(this, Color.WHITE, Stroke.THIN);
+
         // Get View
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
 
@@ -1011,7 +1041,7 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
 
         // Drawer
         mActionBar = getActionBar();
-        mActionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar.setDisplayHomeAsUpEnabled(false);
         if (mShowDrawer && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
             mActionBar.setHomeAsUpIndicator(mResources.getDrawable(R.drawable.ic_navigation_drawer));
         mDrawerLayout.setDrawerListener(this);
