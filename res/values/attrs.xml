@@ -77,4 +77,11 @@
         <attr name="etpMin" format="integer" />
     </declare-styleable>
 
+    <declare-styleable name="GalleryListView">
+        <attr name="glvContent">
+            <enum name="listview" value="0" />
+            <enum name="staggeredgridview" value="1" />
+        </attr>
+    </declare-styleable>
+
 </resources>

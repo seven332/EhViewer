@@ -76,13 +76,15 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.FileExplorerView;
+import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.SuggestionHelper;
 
-public class SettingsActivity extends AbsPreferenceActivity {
+public class SettingsActivity extends AbsPreferenceActivity implements FitWindowView.OnFitSystemWindowsListener {
     @SuppressWarnings("unused")
     private static String TAG = SettingsActivity.class.getSimpleName();
 
+    private FitWindowView mStandard;
     private List<TranslucentPreferenceFragment> mFragments;
     private ListView mListView;
 
@@ -90,17 +92,28 @@ public class SettingsActivity extends AbsPreferenceActivity {
         mListView.setPadding(mListView.getPaddingLeft(), paddingTop, mListView.getPaddingRight(), paddingBottom);
     }
 
+    // @Override
+    // public void onOrientationChanged(int paddingTop, int paddingBottom) {
+    // for (TranslucentPreferenceFragment f : mFragments) {
+    // if (f.isVisible()) {
+    // f.adjustPadding(paddingTop, paddingBottom);
+    // return;
+    // }
+    // }
+
+        // If no fragment is visible, just headers is shown
+    // adjustPadding(paddingTop, paddingBottom);
+    // }
+
     @Override
-    public void onOrientationChanged(int paddingTop, int paddingBottom) {
+    public void onFitSystemWindows(int l, int t, int r, int b) {
         for (TranslucentPreferenceFragment f : mFragments) {
             if (f.isVisible()) {
-                f.adjustPadding(paddingTop, paddingBottom);
+                f.adjustPadding(t, b);
                 return;
             }
         }
-
-        // If no fragment is visible, just headers is shown
-        adjustPadding(paddingTop, paddingBottom);
+        adjustPadding(t, b);
     }
 
     @Override
@@ -113,7 +126,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         Drawable drawable = new ColorDrawable(color);
         final ActionBar actionBar = getActionBar();
         actionBar.setBackgroundDrawable(drawable);
-        Ui.translucent(this, color);
+        Ui.translucent(this, color, 0);
 
         actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -121,6 +134,23 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
         mListView = getListView();
         mListView.setClipToPadding(false);
+        
+        int listIndex = -1;
+        ViewGroup p = (ViewGroup) mListView.getParent();
+        int size = p.getChildCount();
+        for (int i = 0; i < size; i++) {
+            if (mListView == p.getChildAt(i)) {
+                listIndex = i;
+                break;
+            }
+        }
+
+        if (listIndex != -1) {
+            mStandard = new FitWindowView(this);
+            mStandard.addOnFitSystemWindowsListener(this);
+            p.addView(mStandard, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+        }
     }
 
     @Override

@@ -16,8 +16,9 @@
 -->
 <ListView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/favorite_menu_list"
-    android:layout_width="match_parent"
+    android:layout_width="@dimen/menu_width"
     android:layout_height="match_parent"
+    android:layout_gravity="right|end"
     android:background="@android:color/holo_blue_dark"
     android:clickable="true"
     android:divider="@color/divider"

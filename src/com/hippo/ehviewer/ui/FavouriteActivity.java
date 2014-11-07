@@ -34,7 +34,9 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.PathShape;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.ActionMode;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,6 +47,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -66,15 +69,18 @@ import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.ActionableToastBar;
 import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
+import com.hippo.ehviewer.widget.FitWindowView;
+import com.hippo.ehviewer.widget.GalleryListView;
+import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RatingView;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
-public class FavouriteActivity extends AbsGalleryActivity
+public class FavouriteActivity extends AbsActivity
         implements ListView.MultiChoiceModeListener,
-        View.OnTouchListener {
+        View.OnTouchListener, GalleryListView.GalleryListViewHelper,
+        FitWindowView.OnFitSystemWindowsListener {
     @SuppressWarnings("unused")
     private static final String TAG = "FavouriteActivity";
 
@@ -83,14 +89,19 @@ public class FavouriteActivity extends AbsGalleryActivity
     private Data mData;
     private Resources mResources;
     private EhClient mClient;
+    private ActionBar mActionBar;
+    private int mThemeColor;
 
-    private RelativeLayout mMainView;
+    private DrawerLayout mDrawerLayout;
+    private ListView mMenu;
+    private FrameLayout mContentView;
+    private FitWindowView mStandard;
+    private GalleryListView mGalleryListView;
     private PullViewGroup mPullViewGroup;
     private ListView mList;
+
     private BaseAdapter mAdapter;
 
-    private SlidingMenu mSlidingMenu;
-    private ListView mMenuList;
     private ActionableToastBar mActionableToastBar;
 
     private Set<GalleryInfo> mChoiceGiSet;
@@ -117,6 +128,8 @@ public class FavouriteActivity extends AbsGalleryActivity
     public void onBackPressed() {
         if (mActionableToastBar.isShown())
             mActionableToastBar.hide(true);
+        else if (mDrawerLayout.isDrawerOpen(mMenu))
+            mDrawerLayout.closeDrawer(mMenu);
         else
             super.onBackPressed();
     }
@@ -125,57 +138,50 @@ public class FavouriteActivity extends AbsGalleryActivity
         mPullViewGroup.setEnabledHeader(false);
         mPullViewGroup.setEnabledFooter(false);
         setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
-        refresh();
+        mGalleryListView.refresh();
     }
 
     private void initFavorite() {
         mPullViewGroup.setEnabledHeader(true);
         mPullViewGroup.setEnabledFooter(true);
         setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
-        refresh();
-    }
-
-    @Override
-    protected int getLayoutRes() {
-        return R.layout.favorite_list;
+        mGalleryListView.refresh();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.favorite);
 
-        mContext = getApplication();
         mData = Data.getInstance();
         mResources =getResources();
         mClient = EhClient.getInstance();
 
-        final ActionBar actionBar = getActionBar();
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        mActionBar = getActionBar();
+        mActionBar.setDisplayHomeAsUpEnabled(true);
 
         // Download service
         Intent it = new Intent(FavouriteActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
 
-        setBehindContentView(R.layout.favorite_menu);
-        setSlidingActionBarEnabled(false);
-        mSlidingMenu = getSlidingMenu();
-        mSlidingMenu.setMode(SlidingMenu.RIGHT);
-        mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-        mSlidingMenu.setBehindWidth(
-                mResources.getDimensionPixelOffset(R.dimen.menu_width));
-        mSlidingMenu.setShadowDrawable(R.drawable.shadow_right);
-        mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
-
         // Get View
-        mMainView = getMainView();
-        mPullViewGroup = getPullViewGroup();
-        mList = (ListView)getContentView();
-        mMenuList = (ListView)findViewById(R.id.favorite_menu_list);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
+        mMenu = (ListView) mDrawerLayout.findViewById(R.id.favorite_menu_list);
+        mContentView = (FrameLayout) mDrawerLayout.findViewById(R.id.content);
+        mStandard = (FitWindowView) mDrawerLayout.findViewById(R.id.standard);
+        mGalleryListView = (GalleryListView) mDrawerLayout.findViewById(R.id.gallery_list);
+        mPullViewGroup = mGalleryListView.getPullViewGroup();
+        mList = (ListView) mGalleryListView.getContentView();
 
         mActionableToastBar = new ActionableToastBar(this);
         mActionableToastBar.setBackgroundColor(mResources.getColor(android.R.color.holo_purple));
-        mMainView.addView(mActionableToastBar);
-        mMainView.setOnTouchListener(this);
+        mContentView.addView(mActionableToastBar);
+        mContentView.setOnTouchListener(this);
+
+        mGalleryListView.setGalleryListViewHelper(this);
+        mStandard.addOnFitSystemWindowsListener(this);
+        mPullViewGroup.setAgainstToChildPadding(true);
 
         mChoiceGiSet = new LinkedHashSet<GalleryInfo>();
         mChoiceGiSetCopy = new LinkedHashSet<GalleryInfo>();
@@ -188,18 +194,18 @@ public class FavouriteActivity extends AbsGalleryActivity
                     int position, long arg3) {
                 Intent intent = new Intent(FavouriteActivity.this,
                         GalleryDetailActivity.class);
-                GalleryInfo gi = getGalleryInfo(position);
+                GalleryInfo gi = mGalleryListView.getGalleryInfo(position);
                 intent.putExtra(GalleryDetailActivity.KEY_G_INFO, gi);
                 startActivity(intent);
             }
         });
         mList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         mList.setMultiChoiceModeListener(this);
-        mAdapter = new ListAdapter(this, getGalleryList());
+        mAdapter = new ListAdapter(this, mGalleryListView.getGalleryList());
         mList.setAdapter(mAdapter);
 
-        mMenuList.setClipToPadding(false);
-        mMenuList.setAdapter(new BaseAdapter() {
+        mMenu.setClipToPadding(false);
+        mMenu.setAdapter(new BaseAdapter() {
             private ShapeDrawable d;
             private ShapeDrawable createDrawable() {
                 Path path = new Path();
@@ -245,11 +251,11 @@ public class FavouriteActivity extends AbsGalleryActivity
                 return convertView;
             }
         });
-        mMenuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
-                showContent();
+                mDrawerLayout.closeDrawers();
                 // If same index, do nothing
                 if (mMenuIndex == position)
                     return;
@@ -264,12 +270,9 @@ public class FavouriteActivity extends AbsGalleryActivity
         });
 
         // Set random color
-        int color = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
-        color = color & 0x00ffffff | 0xdd000000;
-        Drawable drawable = new ColorDrawable(color);
-        actionBar.setBackgroundDrawable(drawable);
-        Ui.translucent(this, color);
-        mMenuList.setBackgroundColor(color);
+        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
+        mActionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
+        mMenu.setBackgroundColor(mThemeColor);
 
         // Check login
         if (!mClient.isLogin()) {
@@ -282,22 +285,21 @@ public class FavouriteActivity extends AbsGalleryActivity
     }
 
     @Override
-    public void onOrientationChanged(int paddingTop, int paddingBottom) {
+    public void onFitSystemWindows(int l, int t, int r, int b) {
         int magicSpacing = Ui.dp2pix(20);
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT, Ui.dp2pix(60));
-        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp.gravity = Gravity.BOTTOM;
         // Make sure actionable is above navigation bar
-        lp.bottomMargin = paddingBottom + magicSpacing;
+        lp.bottomMargin = b + magicSpacing;
         lp.leftMargin = magicSpacing;
         lp.rightMargin = magicSpacing;
         mActionableToastBar.setLayoutParams(lp);
+        mList.setPadding(mList.getPaddingLeft(), t, mList.getPaddingRight(), b);
+        ((DrawerLayout.LayoutParams) mMenu.getLayoutParams()).topMargin = t;
+        mMenu.setPadding(mMenu.getPaddingLeft(), mMenu.getPaddingTop(), mMenu.getPaddingRight(), b);
 
-        mMenuList.setPadding(mMenuList.getPaddingLeft(), paddingTop,
-                mMenuList.getPaddingRight(), paddingBottom);
-
-        mList.setPadding(mList.getPaddingLeft(), paddingTop,
-                mList.getPaddingRight(), paddingBottom);
+        Ui.translucent(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
     }
 
     @Override
@@ -314,7 +316,10 @@ public class FavouriteActivity extends AbsGalleryActivity
             finish();
             return true;
         case R.id.action_list:
-            toggle();
+            if (mDrawerLayout.isDrawerOpen(mMenu))
+                mDrawerLayout.closeDrawer(mMenu);
+            else
+                mDrawerLayout.openDrawer(mMenu);
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -396,7 +401,7 @@ public class FavouriteActivity extends AbsGalleryActivity
                     // remove from set iterator, favorite data
                     mSetIter.remove();
                     mData.deleteLocalFavourite(mTargetGi.gid);
-                    getGalleryList().remove(mTargetGi);
+                    mGalleryListView.getGalleryList().remove(mTargetGi);
                     mAdapter.notifyDataSetChanged();
                     // set mGiLocal2Cloud null for above
                     mTargetGi = null;
@@ -418,8 +423,8 @@ public class FavouriteActivity extends AbsGalleryActivity
                 }
             });
         } else {
-            if (getGalleryList().size() == 0)
-                onlyShowNone();
+            if (mGalleryListView.getGalleryList().size() == 0)
+                mGalleryListView.onlyShowNone();
             mSetIter = null;
             mProgressDialog.dismiss();
             mProgressDialog = null;
@@ -480,7 +485,7 @@ public class FavouriteActivity extends AbsGalleryActivity
             if (mMenuIndex == 0) {
                 for (GalleryInfo gi : mChoiceGiSet)
                     mData.deleteLocalFavourite(gi.gid);
-                refresh();
+                mGalleryListView.refresh();
             } else {
                 mTargetCat = -1;
                 mClient.modifyFavorite(getGids(mChoiceGiSet), mTargetCat,
@@ -509,13 +514,13 @@ public class FavouriteActivity extends AbsGalleryActivity
     public void onItemCheckedStateChanged(ActionMode mode, int position,
             long id, boolean checked) {
         if (checked)
-            mChoiceGiSet.add(getGalleryInfo(position));
+            mChoiceGiSet.add(mGalleryListView.getGalleryInfo(position));
         else
-            mChoiceGiSet.remove(getGalleryInfo(position));
+            mChoiceGiSet.remove(mGalleryListView.getGalleryInfo(position));
     }
 
     @Override
-    protected String getTargetUrl(int targetPage) {
+    public String getTargetUrl(int targetPage) {
         if (mMenuIndex == 0)
             return LOCAL_FAVORITE_URL;
         else
@@ -523,7 +528,7 @@ public class FavouriteActivity extends AbsGalleryActivity
     }
 
     @Override
-    protected void doGetGallerys(String url, final long taskStamp,
+    public void doGetGallerys(String url, final long taskStamp,
             final OnGetListListener listener) {
         // If get local favorite
         if (mLastModifyGiList != null) {
@@ -566,7 +571,7 @@ public class FavouriteActivity extends AbsGalleryActivity
         public void onSuccess(List<GalleryInfo> gis, int pageNum) {
             mLastModifyGiList = gis;
             mLastModifyPageNum = pageNum;
-            refresh();
+            mGalleryListView.refresh();
             MaterialToast.showToast(mSuccStr);
 
             // add to local

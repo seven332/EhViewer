@@ -24,7 +24,6 @@ import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,18 +46,25 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.widget.FitWindowView;
+import com.hippo.ehviewer.widget.GalleryListView;
+import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RatingView;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
-public class HistoryActivity extends AbsGalleryActivity
-        implements AdapterView.OnItemClickListener, MaterialAlertDialog.OnClickListener {
+public class HistoryActivity extends AbsActivity
+        implements AdapterView.OnItemClickListener, MaterialAlertDialog.OnClickListener,
+        GalleryListView.GalleryListViewHelper, FitWindowView.OnFitSystemWindowsListener {
 
     private static final String TAG = HistoryActivity.class.getSimpleName();
 
     private Data mData;
+    private ActionBar mActionBar;
+    private int mThemeColor;
 
+    private FitWindowView mStandard;
+    private GalleryListView mGalleryListView;
     private PullViewGroup mPullViewGroup;
     private ListView mList;
 
@@ -101,7 +107,7 @@ public class HistoryActivity extends AbsGalleryActivity
                 if (newFilterMode != mFilterMode) {
                     mFilterMode = newFilterMode;
                     Config.setInt(KEY_HISTORY_FILTER, mFilterMode);
-                    refresh();
+                    mGalleryListView.refresh();
                 }
             }
             return true;
@@ -110,7 +116,7 @@ public class HistoryActivity extends AbsGalleryActivity
             switch (which) {
             case MaterialAlertDialog.POSITIVE:
                 Data.getInstance().clearHistory();
-                refresh();
+                mGalleryListView.refresh();
             }
             return true;
 
@@ -138,52 +144,43 @@ public class HistoryActivity extends AbsGalleryActivity
     }
 
     @Override
-    public void onOrientationChanged(int paddingTop, int paddingBottom) {
-        mList.setPadding(mList.getPaddingLeft(), paddingTop,
-                mList.getPaddingRight(), paddingBottom);
-    }
-
-    @Override
-    protected int getLayoutRes() {
-        return R.layout.favorite_list;
+    public void onFitSystemWindows(int l, int t, int r, int b) {
+        mList.setPadding(mList.getPaddingLeft(), t, mList.getPaddingRight(), b);
+        Ui.translucent(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        refresh();
+        mGalleryListView.refresh();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.history);
 
         mData = Data.getInstance();
-
         mFilterMode = Config.getInt(KEY_HISTORY_FILTER, Data.BROWSE | Data.READ);
 
-        // Just avoid error
-        setBehindContentView(new View(this));
-        setSlidingActionBarEnabled(false);
-        getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
-        getSlidingMenu().setEnabled(false);
+        mActionBar = getActionBar();
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
+        mActionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
 
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        int color = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
-        color = color & 0x00ffffff | 0xdd000000;
-        Drawable drawable = new ColorDrawable(color);
-        actionBar.setBackgroundDrawable(drawable);
-        Ui.translucent(this, color);
+        mStandard = (FitWindowView) findViewById(R.id.standard);
+        mGalleryListView = (GalleryListView) findViewById(R.id.gallery_list);
+        mPullViewGroup = mGalleryListView.getPullViewGroup();
+        mList = (ListView) mGalleryListView.getContentView();
 
-        mPullViewGroup = getPullViewGroup();
-        mList = (ListView) getContentView();
-
+        mGalleryListView.setGalleryListViewHelper(this);
+        mStandard.addOnFitSystemWindowsListener(this);
+        mPullViewGroup.setAgainstToChildPadding(true);
         mPullViewGroup.setEnabledHeader(false);
         mPullViewGroup.setEnabledFooter(false);
 
-        mAdapter = new ListAdapter(getGalleryList());
+        mAdapter = new ListAdapter(mGalleryListView.getGalleryList());
         mList.setAdapter(mAdapter);
         mList.setClipToPadding(false);
         mList.setDivider(null);
@@ -224,12 +221,12 @@ public class HistoryActivity extends AbsGalleryActivity
     }
 
     @Override
-    protected String getTargetUrl(int targetPage) {
+    public String getTargetUrl(int targetPage) {
         return HISTORY_URL;
     }
 
     @Override
-    protected void doGetGallerys(String url, long taskStamp,
+    public void doGetGallerys(String url, long taskStamp,
             OnGetListListener listener) {
         if (url.equals(HISTORY_URL)) {
             List<GalleryInfo> giList = new ArrayList<GalleryInfo>(mData.getHistory(mFilterMode, true));
@@ -244,7 +241,7 @@ public class HistoryActivity extends AbsGalleryActivity
     public void onItemClick(AdapterView<?> parent, View view, int position,
             long id) {
         Intent intent = new Intent(this, GalleryDetailActivity.class);
-        GalleryInfo gi = getGalleryInfo(position);
+        GalleryInfo gi = mGalleryListView.getGalleryInfo(position);
         intent.putExtra(GalleryDetailActivity.KEY_G_INFO, gi);
         startActivity(intent);
     }

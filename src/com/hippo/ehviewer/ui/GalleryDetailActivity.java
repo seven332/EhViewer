@@ -86,6 +86,7 @@ import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
+import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.LinkifyTextView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialProgress;
@@ -103,7 +104,8 @@ public class GalleryDetailActivity extends AbsActivity
         View.OnTouchListener , ViewSwitcher.ViewFactory,
         ProgressiveRatingBar.OnUserRateListener, PreviewList.PreviewHolder,
         View.OnLayoutChangeListener, AdapterView.OnItemClickListener,
-        AdapterView.OnItemLongClickListener, RefreshTextView.OnRefreshListener {
+        AdapterView.OnItemLongClickListener, RefreshTextView.OnRefreshListener,
+        FitWindowView.OnFitSystemWindowsListener {
 
     @SuppressWarnings("unused")
     private static final String TAG = GalleryDetailActivity.class.getSimpleName();
@@ -121,6 +123,7 @@ public class GalleryDetailActivity extends AbsActivity
     private boolean isCheckmark = false;
     private boolean isSetDrawable = false;
 
+    private FitWindowView mStandard;
     private RefreshTextView mRefreshText;
     private LoadImageView mThumb;
     private TextView mTitle;
@@ -290,6 +293,8 @@ public class GalleryDetailActivity extends AbsActivity
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Get view
+        mStandard = (FitWindowView) findViewById(R.id.standard);
+
         mDetailScroll = (ResponedScrollView)findViewById(R.id.detail_scroll);
         mMoreDetailScroll = (ScrollView)findViewById(R.id.more_detail_scroll);
         mMoreComment = findViewById(R.id.more_comment);
@@ -362,10 +367,7 @@ public class GalleryDetailActivity extends AbsActivity
 
         // Set random color
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
-        int actionBarColor = mThemeColor & 0x00ffffff | 0xdd000000;
-        Drawable drawable = new ColorDrawable(actionBarColor);
-        actionBar.setBackgroundDrawable(drawable);
-        Ui.translucent(this, actionBarColor);
+        actionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
         mDownloadButton.setRoundBackground(true, false, mResources.getColor(R.color.background_light), mThemeColor);
         mDownloadButton.setTextColor(mThemeColor);
         mReadButton.setRoundBackground(true, mThemeColor, 0);
@@ -390,6 +392,7 @@ public class GalleryDetailActivity extends AbsActivity
         mWindowsAnimate.addRippleEffect(mPreviewFront, true);
 
         // Set listener
+        mStandard.addOnFitSystemWindowsListener(this);
         mDownloadButton.setOnClickListener(this);
         mReadButton.setOnClickListener(this);
         mCategory.setOnClickListener(this);
@@ -985,14 +988,16 @@ public class GalleryDetailActivity extends AbsActivity
     }
 
     @Override
-    public void onOrientationChanged(int paddingTop, int paddingBottom) {
-        mDetailScroll.setPadding(mDetailScroll.getPaddingLeft(), paddingTop,
-                mDetailScroll.getPaddingRight(), paddingBottom);
-        mMoreDetailScroll.setPadding(mMoreDetailScroll.getPaddingLeft(), paddingTop,
-                mMoreDetailScroll.getPaddingRight(), paddingBottom);
-        mCommentList.setPadding(mCommentList.getPaddingLeft(), paddingTop,
-                mCommentList.getPaddingRight(), paddingBottom + Ui.dp2pix(16 + 56 + 16));
-        ((FrameLayout.LayoutParams)mReply.getLayoutParams()).bottomMargin = Ui.dp2pix(16) + paddingBottom;
+    public void onFitSystemWindows(int l, int t, int r, int b) {
+        mDetailScroll.setPadding(mDetailScroll.getPaddingLeft(), t,
+                mDetailScroll.getPaddingRight(), b);
+        mMoreDetailScroll.setPadding(mMoreDetailScroll.getPaddingLeft(), t,
+                mMoreDetailScroll.getPaddingRight(), b);
+        mCommentList.setPadding(mCommentList.getPaddingLeft(), t,
+                mCommentList.getPaddingRight(), b + Ui.dp2pix(16 + 56 + 16));
+        ((FrameLayout.LayoutParams)mReply.getLayoutParams()).bottomMargin = Ui.dp2pix(16) + b;
+
+        Ui.translucent(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
     }
 
     @Override

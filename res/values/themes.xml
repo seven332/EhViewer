@@ -18,22 +18,23 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="@android:Theme.Holo.Light.DarkActionBar">
 
-        <item name="@android:textAppearance">@style/TextAppearance</item>
-        <item name="@android:windowBackground">@color/background_light</item>
+        <item name="android:textAppearance">@style/TextAppearance</item>
+        <item name="android:windowBackground">@color/background_light</item>
 
         <!-- ActionBar -->
-        <item name="@android:actionBarSize">@dimen/action_bar_height</item>
-        <item name="@android:actionBarStyle">@style/ActionBar</item>
-        <item name="@android:actionOverflowButtonStyle">@style/OverFlow</item>
-        <item name="@android:homeAsUpIndicator">@drawable/ic_ab_back</item>
-        <item name="@android:windowActionBarOverlay">true</item>
+        <item name="android:windowTitleSize">@dimen/action_bar_height</item>
+        <item name="android:actionBarSize">@dimen/action_bar_height</item>
+        <item name="android:actionBarStyle">@style/ActionBar</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_ab_back</item>
+        <item name="android:windowActionBarOverlay">true</item>
 
         <!-- <item name="@android:listChoiceIndicatorSingle">@drawable/btn_radio_material_anim</item> -->
-        <item name="@android:listChoiceIndicatorMultiple">@drawable/btn_check_material</item>
+        <item name="android:listChoiceIndicatorMultiple">@drawable/btn_check_material</item>
 
         <!-- spinner -->
-        <item name="@android:spinnerDropDownItemStyle">@style/DropDownItem.Spinner</item>
-        <item name="@android:spinnerItemStyle">@style/DropDownItem.Spinner</item>
+        <item name="android:spinnerDropDownItemStyle">@style/DropDownItem.Spinner</item>
+        <item name="android:spinnerItemStyle">@style/DropDownItem.Spinner</item>
 
     </style>
 
@@ -46,30 +47,30 @@
     </style>
 
     <style name="AppTheme.Main.ListActivity">
-        <item name="@android:windowBackground">@color/background_little_light</item>
+        <item name="android:windowBackground">@color/background_little_light</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
-        <item name="@android:windowActionBar">false</item>
-        <item name="@android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="AppTheme.Gallery">
-        <item name="@android:icon">@android:color/transparent</item>
-        <item name="@android:actionBarStyle">@style/ActionBar.Gallery</item>
+        <item name="android:icon">@android:color/transparent</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Gallery</item>
     </style>
 
     <!-- For activity whose main view is list, make background darker to match white list -->
     <style name="AppTheme.ListActivity">
-        <item name="@android:windowBackground">@color/background_little_light</item>
+        <item name="android:windowBackground">@color/background_little_light</item>
     </style>
 
     <!-- Theme for start activity -->
     <style name="AppTheme.NoActionBar.Transparent">
-        <item name="@android:windowBackground">@android:color/transparent</item>
-        <item name="@android:colorBackgroundCacheHint">@null</item>
-        <item name="@android:windowIsTranslucent">true</item>
-        <item name="@android:windowAnimationStyle">@android:style/Animation</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
     </style>
 
 </resources>

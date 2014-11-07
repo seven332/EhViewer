@@ -14,12 +14,21 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <item type="id" name="position_x"></item>
-    <item type="id" name="position_y"></item>
-    <item type="id" name="edittextpreference_edittext"></item>
-    <item type="id" name="custom"></item>
-    <item type="id" name="translucent_view"></item>
+    <com.hippo.ehviewer.widget.PullListView
+        android:id="@+id/pull_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:saveEnabled="false" />
 
-</resources>
+    <com.hippo.ehviewer.widget.RefreshTextView
+        android:id="@+id/refresh_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="24sp" />
+
+</merge>

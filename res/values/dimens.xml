@@ -15,9 +15,9 @@
  -->
 <resources>
 
-    <dimen name="action_bar_height">48dip</dimen>
+    <dimen name="action_bar_height">56dp</dimen>
 
-    <dimen name="dialog_title_height">64dip</dimen>
+    <dimen name="dialog_title_height">64dp</dimen>
 
     <dimen name="shadow_width">12dp</dimen>
     <dimen name="menu_width">200dp</dimen>

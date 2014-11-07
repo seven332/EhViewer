@@ -41,6 +41,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v4.widget.DrawerLayout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -91,6 +92,9 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.CategoryTable;
+import com.hippo.ehviewer.widget.FitWindowView;
+import com.hippo.ehviewer.widget.GalleryListView;
+import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.RatingView;
@@ -99,7 +103,6 @@ import com.hippo.ehviewer.widget.SuggestionTextView;
 import com.hippo.ehviewer.widget.TagListView;
 import com.hippo.ehviewer.widget.TagsAdapter;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 /*
  *
@@ -124,9 +127,10 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
  *
  * @author Hippo
  */
-public class GalleryListActivity extends AbsGalleryActivity implements View.OnClickListener,
-        SearchView.OnQueryTextListener, SearchView.OnFocusChangeListener, SlidingMenu.OnOpenedListener,
-        SlidingMenu.OnClosedListener, EhClient.OnLoginListener {
+public class GalleryListActivity extends AbsActivity implements View.OnClickListener,
+        SearchView.OnQueryTextListener, SearchView.OnFocusChangeListener,
+        DrawerLayout.DrawerListener, EhClient.OnLoginListener,
+        GalleryListView.GalleryListViewHelper, FitWindowView.OnFitSystemWindowsListener {
 
     @SuppressWarnings("unused")
     private static final String TAG = GalleryListActivity.class.getSimpleName();
@@ -149,26 +153,34 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
     private Resources mResources;
     private WindowsAnimate mWindowsAnimate;
     private SuggestionHelper mSuggestions;
+    private ActionBar mActionBar;
+    private int mThemeColor;
 
-    private SlidingMenu mSlidingMenu;
-    private View mMenuLeft;
+    private DrawerLayout mDrawerLayout;
+    private View mLeftMenu;
+    private View mRightMenu;
+    private FitWindowView mStandard;
+    private GalleryListView mGalleryListView;
+
+    private StaggeredGridView mStaggeredGridView;
+
     private LinearLayout mUserPanel;
-    private ListView itemListMenu;
-    private TagListView tagListMenu;
+    private ListView mMenuList;
+    private ImageView mAvatar;
+    private TextView mUsernameView;
+    private Button mLoginButton;
+    private Button mRegisterButton;
+    private Button mLogoutButton;
+    private View mWaitLogView;
+
+    private TagListView mQuickSearchList;
+    private View mQuickSearchTip;
+
+    private TextView mSearchImageText;
 
     private SearchView mSearchView;
     private MenuItem mSearchItem;
 
-    private ImageView avatar;
-    private TextView userView;
-    private Button loginButton;
-    private Button registerButton;
-    private Button logoutButton;
-    private View waitloginoutView;
-    private View mQuickSearchTip;
-    private TextView mSearchImageText;
-
-    private StaggeredGridView mStaggeredGridView;
     private BaseAdapter mAdapter;
 
     private TagsAdapter tagsAdapter;
@@ -396,8 +408,8 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
                                 return true;
 
                             lus = listUrls;
-                            refresh();
-                            showContent();
+                            mGalleryListView.refresh();
+                            mDrawerLayout.closeDrawers();
 
                             // Get title
                             String search = lus.getSearch();
@@ -541,7 +553,7 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
                 .setItems(R.array.list_item_long_click, new MaterialAlertDialog.OnClickListener() {
                     @Override
                     public boolean onClick(MaterialAlertDialog dialog, int position) {
-                        final GalleryInfo gi = getGalleryInfo(longClickItemIndex);
+                        final GalleryInfo gi = mGalleryListView.getGalleryInfo(longClickItemIndex);
                         switch (position) {
                         case 0: // Add favourite item
                             Favorite.addToFavorite(GalleryListActivity.this, gi);
@@ -564,8 +576,9 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
         View view = inflater.inflate(R.layout.jump, null);
         TextView tv = (TextView) view.findViewById(R.id.list_jump_sum);
         // For lofi, can not get page num, so use Integer.MAX_VALUE
-        tv.setText(String.format(getString(R.string.jump_summary), getCurPage() + 1,
-                getPageNum() == Integer.MAX_VALUE ? getString(R.string._unknown) : String.valueOf(getPageNum())));
+        tv.setText(String.format(getString(R.string.jump_summary), mGalleryListView.getCurPage() + 1,
+                mGalleryListView.getPageNum() == Integer.MAX_VALUE ? getString(R.string._unknown) :
+                        String.valueOf(mGalleryListView.getPageNum())));
         tv = (TextView) view.findViewById(R.id.list_jump_to);
         tv.setText(R.string.jump_to);
         final EditText et = (EditText) view.findViewById(R.id.list_jump_edit);
@@ -579,13 +592,13 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
                             int targetPage;
                             try {
                                 targetPage = Integer.parseInt(et.getText().toString()) - 1;
-                                if (targetPage < 0 || targetPage >= getPageNum())
+                                if (targetPage < 0 || targetPage >= mGalleryListView.getPageNum())
                                     throw new Exception();
                             } catch (Exception e) {
                                 MaterialToast.showToast(R.string.toast_invalid_page);
                                 return false;
                             }
-                            jumpTo(targetPage);
+                            mGalleryListView.jumpTo(targetPage);
                             return true;
                         } else {
                             return true;
@@ -642,6 +655,7 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
                 }).create();
     }
 
+    @SuppressLint("InflateParams")
     private AlertDialog createModifyTagDialog(final int position) {
         LayoutInflater inflater = this.getLayoutInflater();
         final View view = inflater.inflate(R.layout.search, null);
@@ -811,8 +825,6 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (mShowDrawer)
-            mSlidingMenu.setBehindWidth(mResources.getDimensionPixelOffset(R.dimen.menu_width));
     }
 
     /**
@@ -876,47 +888,64 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
         handleIntent(intent);
-        refresh();
+        mGalleryListView.refresh();
     }
 
     @Override
     public void onClick(View v) {
-        if (v == loginButton) {
+        if (v == mLoginButton) {
             loginDialog.show();
-        } else if (v == registerButton) {
+        } else if (v == mRegisterButton) {
             toRegister();
-        } else if (v == logoutButton) {
+        } else if (v == mLogoutButton) {
             mClient.logout();
             setUserPanel();
         }
     }
 
     @Override
-    protected int getLayoutRes() {
-        return R.layout.gallery_list;
+    public void onDrawerClosed(View view) {
+        setTitle(mTitle);
+        invalidateOptionsMenu();
     }
 
     @Override
-    public void onOpened() {
-        if (mShowDrawer) {
-            if (!mSlidingMenu.isSecondaryMenuShowing())
-                setTitle(R.string.app_name);
-            invalidateOptionsMenu();
-        }
+    public void onDrawerOpened(View view) {
+        if (view == mLeftMenu)
+            setTitle(R.string.app_name);
+        invalidateOptionsMenu();
     }
 
     @Override
-    public void onClosed() {
-        if (mShowDrawer) {
-            setTitle(mTitle);
-            invalidateOptionsMenu();
-        }
+    public void onDrawerSlide(View view, float f) {
+        // Empty
     }
 
     @Override
+    public void onDrawerStateChanged(int i) {
+        // Empty
+    }
+
+    @Override
+    public void onFitSystemWindows(int l, int t, int r, int b) {
+        mStaggeredGridView.setPadding(mStaggeredGridView.getPaddingLeft(), t,
+                mStaggeredGridView.getPaddingRight(), b);
+        ((DrawerLayout.LayoutParams) mLeftMenu.getLayoutParams()).topMargin = t;
+        ((DrawerLayout.LayoutParams) mRightMenu.getLayoutParams()).topMargin = t;
+        mMenuList.setPadding(mMenuList.getPaddingLeft(), mMenuList.getPaddingTop(),
+                mMenuList.getPaddingRight(), b);
+        mQuickSearchList.setPadding(mQuickSearchList.getPaddingLeft(), mQuickSearchList.getPaddingTop(),
+                mQuickSearchList.getPaddingRight(), b);
+
+        Ui.translucent(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
+    }
+
+    @Override
+    @SuppressLint("InflateParams")
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.gallery_list);
 
         mData = Data.getInstance();
         mClient = EhClient.getInstance();
@@ -944,23 +973,6 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
         else
             mShowDrawer = true;
 
-        setBehindContentView(R.layout.list_menu_left);
-        setSlidingActionBarEnabled(false);
-        mSlidingMenu = getSlidingMenu();
-        mSlidingMenu.setSecondaryMenu(R.layout.list_menu_right);
-        mSlidingMenu.setMode(SlidingMenu.LEFT_RIGHT);
-        mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-        mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
-        mSlidingMenu.setShadowDrawable(R.drawable.shadow);
-        mSlidingMenu.setSecondaryShadowDrawable(R.drawable.shadow_right);
-        mSlidingMenu.setOnOpenedListener(this);
-        mSlidingMenu.setOnClosedListener(this);
-        if (mShowDrawer) {
-            mSlidingMenu.setBehindWidth(mResources.getDimensionPixelOffset(R.dimen.menu_width));
-        } else {
-            mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
-        }
-
         // Download service
         Intent it = new Intent(GalleryListActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
@@ -971,32 +983,48 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
         longClickDialog = createLongClickDialog();
 
         // Get View
-        mMenuLeft = findViewById(R.id.list_menu_left);
-        mUserPanel = (LinearLayout) findViewById(R.id.user_panel);
-        itemListMenu = (ListView) findViewById(R.id.list_menu_item_list);
-        tagListMenu = (TagListView) findViewById(R.id.list_menu_tag_list);
-        avatar = (ImageView) mUserPanel.findViewById(R.id.avatar);
-        userView = (TextView) mUserPanel.findViewById(R.id.user);
-        loginButton = (Button) mUserPanel.findViewById(R.id.login);
-        registerButton = (Button) mUserPanel.findViewById(R.id.register);
-        logoutButton = (Button) mUserPanel.findViewById(R.id.logout);
-        waitloginoutView = mUserPanel.findViewById(R.id.wait);
-        mQuickSearchTip = findViewById(R.id.tip_text);
-        mStaggeredGridView = (StaggeredGridView) getContentView();
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
 
-        loginButton.setOnClickListener(this);
-        registerButton.setOnClickListener(this);
-        logoutButton.setOnClickListener(this);
-        setNoneText(mResources.getString(R.string.no_found));
+        mLeftMenu = mDrawerLayout.findViewById(R.id.list_menu_left);
+        mRightMenu = mDrawerLayout.findViewById(R.id.list_menu_right);
+        mStandard = (FitWindowView) mDrawerLayout.findViewById(R.id.standard);
+        mGalleryListView = (GalleryListView) mDrawerLayout.findViewById(R.id.gallery_list);
+
+        mStaggeredGridView = (StaggeredGridView) mGalleryListView.getContentView();
+
+        mUserPanel = (LinearLayout) mLeftMenu.findViewById(R.id.user_panel);
+        mMenuList = (ListView) mLeftMenu.findViewById(R.id.list_menu_item_list);
+        mAvatar = (ImageView) mUserPanel.findViewById(R.id.avatar);
+        mUsernameView = (TextView) mUserPanel.findViewById(R.id.user);
+        mLoginButton = (Button) mUserPanel.findViewById(R.id.login);
+        mRegisterButton = (Button) mUserPanel.findViewById(R.id.register);
+        mLogoutButton = (Button) mUserPanel.findViewById(R.id.logout);
+        mWaitLogView = mUserPanel.findViewById(R.id.wait);
+
+        mQuickSearchList = (TagListView) mRightMenu.findViewById(R.id.list_menu_tag_list);
+        mQuickSearchTip = mRightMenu.findViewById(R.id.tip_text);
+
+
+        mLoginButton.setOnClickListener(this);
+        mRegisterButton.setOnClickListener(this);
+        mLogoutButton.setOnClickListener(this);
 
         // Drawer
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar = getActionBar();
+        mActionBar.setDisplayHomeAsUpEnabled(true);
         if (mShowDrawer && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
-            actionBar.setHomeAsUpIndicator(mResources.getDrawable(R.drawable.ic_navigation_drawer));
+            mActionBar.setHomeAsUpIndicator(mResources.getDrawable(R.drawable.ic_navigation_drawer));
+        mDrawerLayout.setDrawerListener(this);
+        if (!mShowDrawer)
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mLeftMenu);
+
+        // Content
+        mGalleryListView.setGalleryListViewHelper(this);
+        mStandard.addOnFitSystemWindowsListener(this);
+        mGalleryListView.getPullViewGroup().setAgainstToChildPadding(true);
 
         // leftDrawer
-        final int[] data = {
+        final int[] menuListData = {
                 R.drawable.ic_action_home, R.string.homepage,
                 R.drawable.ic_action_panda, R.string.mode,
                 R.drawable.ic_action_search, android.R.string.search_go,
@@ -1006,17 +1034,17 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
                 R.drawable.ic_setting_download, R.string.download,
                 R.drawable.ic_action_settings, R.string.action_settings};
 
-        itemListMenu.setSelector(new ColorDrawable(Color.TRANSPARENT));
-        itemListMenu.setClipToPadding(false);
-        itemListMenu.setAdapter(new BaseAdapter() {
+        mMenuList.setSelector(new ColorDrawable(Color.TRANSPARENT));
+        mMenuList.setClipToPadding(false);
+        mMenuList.setAdapter(new BaseAdapter() {
             @Override
             public int getCount() {
-                return data.length / 2;
+                return menuListData.length / 2;
             }
 
             @Override
             public Object getItem(int position) {
-                return new int[] { data[position * 2], data[position * 2 + 1] };
+                return new int[] { menuListData[position * 2], menuListData[position * 2 + 1] };
             }
 
             @Override
@@ -1033,23 +1061,23 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
                 } else {
                     tv = (TextView) convertView;
                 }
-                Drawable d = mResources.getDrawable(data[position * 2]);
+                Drawable d = mResources.getDrawable(menuListData[position * 2]);
                 d.setBounds(0, 0, Ui.dp2pix(36), Ui.dp2pix(36));
                 tv.setCompoundDrawables(d, null, null, null);
                 tv.setCompoundDrawablePadding(Ui.dp2pix(8));
-                tv.setText(data[position * 2 + 1]);
+                tv.setText(menuListData[position * 2 + 1]);
                 return tv;
             }
         });
-        itemListMenu.setOnItemClickListener(new OnItemClickListener() {
+        mMenuList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent;
                 switch (position) {
                 case 0: // Home page
                     lus = new ListUrls(ListUrls.NONE, null, 0);
-                    refresh();
-                    showContent();
+                    mGalleryListView.refresh();
+                    mDrawerLayout.closeDrawers();
                     mTitle = mResources.getString(R.string.homepage);
                     setTitle(mTitle);
                     break;
@@ -1072,8 +1100,8 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
                     lus.setMode(ListUrls.MODE_POPULAR);
                     mTitle = mResources.getString(R.string.popular);
                     setTitle(mTitle);
-                    refresh();
-                    showContent();
+                    mGalleryListView.refresh();
+                    mDrawerLayout.closeDrawers();
                     break;
 
                 case 5: // HistoryActivity
@@ -1112,26 +1140,26 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
             mQuickSearchTip.setVisibility(View.VISIBLE);
         else
             mQuickSearchTip.setVisibility(View.GONE);
-        tagListMenu.setClipToPadding(false);
-        tagListMenu.setAdapter(tagsAdapter);
-        tagListMenu.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        tagListMenu.setOnItemClickListener(new OnItemClickListener() {
+        mQuickSearchList.setClipToPadding(false);
+        mQuickSearchList.setAdapter(tagsAdapter);
+        mQuickSearchList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        mQuickSearchList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 lus = mData.getTag(position);
-                refresh();
-                showContent();
+                mGalleryListView.refresh();
+                mDrawerLayout.closeDrawers();
                 mTitle = listMenuTag.get(position);
                 setTitle(mTitle);
             }
         });
-        tagListMenu.setOnModifyListener(new TagListView.OnModifyListener() {
+        mQuickSearchList.setOnModifyListener(new TagListView.OnModifyListener() {
             @Override
             public void onModify(int position) {
                 createModifyTagDialog(position).show();
             }
         });
-        tagListMenu.setOnSwapListener(new TagListView.OnSwapListener() {
+        mQuickSearchList.setOnSwapListener(new TagListView.OnSwapListener() {
             @Override
             public void onSwap(int positionOne, int positionTwo) {
                 String temp = listMenuTag.get(positionOne);
@@ -1141,7 +1169,7 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
                 tagsAdapter.notifyDataSetChanged();
             }
         });
-        tagListMenu.setOnDeleteListener(new TagListView.OnDeleteListener() {
+        mQuickSearchList.setOnDeleteListener(new TagListView.OnDeleteListener() {
             @Override
             public void onDelete(int position) {
                 String removeItem = listMenuTag.remove(position);
@@ -1152,13 +1180,13 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
         });
 
         // Listview
-        mAdapter = new ListAdapter(this, getGalleryList());
+        mAdapter = new ListAdapter(this, mGalleryListView.getGalleryList());
         mStaggeredGridView.setAdapter(mAdapter);
         mStaggeredGridView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 Intent intent = new Intent(GalleryListActivity.this, GalleryDetailActivity.class);
-                GalleryInfo gi = getGalleryInfo(position);
+                GalleryInfo gi = mGalleryListView.getGalleryInfo(position);
                 intent.putExtra(GalleryDetailActivity.KEY_G_INFO, gi);
                 startActivity(intent);
             }
@@ -1173,14 +1201,11 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
         });
 
         // Set random color
-        int color = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
-        color = color & 0x00ffffff | 0xdd000000;
-        Drawable drawable = new ColorDrawable(color);
-        actionBar = getActionBar();
-        actionBar.setBackgroundDrawable(drawable);
-        Ui.translucent(this, color);
-        mMenuLeft.setBackgroundColor(color);
-        tagListMenu.setBackgroundColor(color);
+        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
+        mActionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
+
+        mLeftMenu.setBackgroundColor(mThemeColor);
+        mRightMenu.setBackgroundColor(mThemeColor);
 
         // Update user panel
         setUserPanel();
@@ -1190,7 +1215,7 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
         updateGridView();
 
         // get MangeList
-        firstTimeRefresh();
+        mGalleryListView.firstTimeRefresh();
 
         // If not show drawer, just return
         if (!mShowDrawer) {
@@ -1209,7 +1234,7 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
             Message m = Message.obtain(null, new Runnable() {
                 @Override
                 public void run() {
-                    showMenu();
+                    mDrawerLayout.openDrawer(mLeftMenu);
                 }
             });
             AppHandler.getInstance().sendMessageDelayed(m, 500L);
@@ -1240,17 +1265,6 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
     }
 
     @Override
-    public void onOrientationChanged(int paddingTop, int paddingBottom) {
-        mUserPanel.setPadding(mUserPanel.getPaddingLeft(), paddingTop, mUserPanel.getPaddingRight(),
-                mUserPanel.getPaddingBottom());
-        itemListMenu.setPadding(itemListMenu.getPaddingLeft(), itemListMenu.getPaddingTop(),
-                itemListMenu.getPaddingRight(), paddingBottom);
-        tagListMenu.setPadding(tagListMenu.getPaddingLeft(), paddingTop, tagListMenu.getPaddingRight(), paddingBottom);
-        mStaggeredGridView.setPadding(mStaggeredGridView.getPaddingLeft(), paddingTop,
-                mStaggeredGridView.getPaddingRight(), paddingBottom);
-    }
-
-    @Override
     public boolean onQueryTextSubmit(String query) {
         // Store suggestion
         mSuggestions.saveRecentQuery(query, null);
@@ -1265,7 +1279,7 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
             t = query;
 
         lus = new ListUrls(ListUrls.NONE, query);
-        refresh();
+        mGalleryListView.refresh();
         mTitle = t;
         setTitle(mTitle);
         return true;
@@ -1284,9 +1298,9 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (mSlidingMenu.isSecondaryMenuShowing())
+        if (mDrawerLayout.isDrawerOpen(mRightMenu))
             getMenuInflater().inflate(R.menu.quick_search, menu);
-        else if (mSlidingMenu.isMenuShowing())
+        else if (mDrawerLayout.isDrawerOpen(mLeftMenu))
             return true;
         else
             getMenuInflater().inflate(R.menu.gallery_list, menu);
@@ -1367,14 +1381,18 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
     // Double click back exit
     @Override
     public void onBackPressed() {
-        if (!mShowDrawer) {
-            finish();
+        if (mDrawerLayout.isDrawerOpen(mLeftMenu) || mDrawerLayout.isDrawerOpen(mRightMenu)) {
+            mDrawerLayout.closeDrawers();
         } else {
-            if (System.currentTimeMillis() - curBackTime > BACK_PRESSED_INTERVAL) {
-                curBackTime = System.currentTimeMillis();
-                MaterialToast.showToast(R.string.exit_tip);
-            } else
+            if (!mShowDrawer) {
                 finish();
+            } else {
+                if (System.currentTimeMillis() - curBackTime > BACK_PRESSED_INTERVAL) {
+                    curBackTime = System.currentTimeMillis();
+                    MaterialToast.showToast(R.string.exit_tip);
+                } else
+                    finish();
+            }
         }
     }
 
@@ -1388,19 +1406,19 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
         switch (item.getItemId()) {
         case android.R.id.home:
             if (mShowDrawer) {
-                if (mSlidingMenu.isMenuShowing())
-                    showContent();
+                if (mDrawerLayout.isDrawerOpen(mLeftMenu))
+                    mDrawerLayout.closeDrawers();
                 else
-                    showMenu();
+                    mDrawerLayout.openDrawer(mLeftMenu);
             } else {
                 finish();
             }
             return true;
         case R.id.action_refresh:
-            refresh();
+            mGalleryListView.refresh();
             return true;
         case R.id.action_jump:
-            if (!isRefreshing() && isGetGalleryOk())
+            if (!mGalleryListView.isRefreshing() && mGalleryListView.isGetGalleryOk())
                 jump();
             return true;
         case R.id.action_detail:
@@ -1514,41 +1532,41 @@ public class GalleryListActivity extends AbsGalleryActivity implements View.OnCl
 
         switch (state) {
         case LOGIN:
-            avatar.setImageBitmap(mClient.getAvatar());
-            userView.setVisibility(View.GONE);
-            loginButton.setVisibility(View.VISIBLE);
-            registerButton.setVisibility(View.VISIBLE);
-            logoutButton.setVisibility(View.GONE);
-            waitloginoutView.setVisibility(View.GONE);
+            mAvatar.setImageBitmap(mClient.getAvatar());
+            mUsernameView.setVisibility(View.GONE);
+            mLoginButton.setVisibility(View.VISIBLE);
+            mRegisterButton.setVisibility(View.VISIBLE);
+            mLogoutButton.setVisibility(View.GONE);
+            mWaitLogView.setVisibility(View.GONE);
             break;
         case LOGOUT:
-            avatar.setImageBitmap(mClient.getAvatar());
-            userView.setText(mClient.getDisplayname());
-            userView.setVisibility(View.VISIBLE);
-            loginButton.setVisibility(View.GONE);
-            registerButton.setVisibility(View.GONE);
-            logoutButton.setVisibility(View.VISIBLE);
-            waitloginoutView.setVisibility(View.GONE);
+            mAvatar.setImageBitmap(mClient.getAvatar());
+            mUsernameView.setText(mClient.getDisplayname());
+            mUsernameView.setVisibility(View.VISIBLE);
+            mLoginButton.setVisibility(View.GONE);
+            mRegisterButton.setVisibility(View.GONE);
+            mLogoutButton.setVisibility(View.VISIBLE);
+            mWaitLogView.setVisibility(View.GONE);
             break;
         case WAIT:
-            avatar.setImageBitmap(mClient.getAvatar());
-            userView.setVisibility(View.GONE);
-            loginButton.setVisibility(View.GONE);
-            registerButton.setVisibility(View.GONE);
-            logoutButton.setVisibility(View.GONE);
-            waitloginoutView.setVisibility(View.VISIBLE);
+            mAvatar.setImageBitmap(mClient.getAvatar());
+            mUsernameView.setVisibility(View.GONE);
+            mLoginButton.setVisibility(View.GONE);
+            mRegisterButton.setVisibility(View.GONE);
+            mLogoutButton.setVisibility(View.GONE);
+            mWaitLogView.setVisibility(View.VISIBLE);
             break;
         }
     }
 
     @Override
-    protected String getTargetUrl(int targetPage) {
+    public String getTargetUrl(int targetPage) {
         lus.setPage(targetPage);
         return lus.getUrl();
     }
 
     @Override
-    protected void doGetGallerys(String url, final long taskStamp, final OnGetListListener listener) {
+    public void doGetGallerys(String url, final long taskStamp, final OnGetListListener listener) {
         if (lus.getMode() == ListUrls.MODE_IMAGE_SEARCH) {
             if (url == null) {
                 // No result url

@@ -35,12 +35,10 @@
             android:id="@+id/gallery_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:glvContent="staggeredgridview" />
+            app:glvContent="listview" />
 
     </FrameLayout>
 
-    <include layout="@layout/list_menu_left"/>
-
-    <include layout="@layout/list_menu_right"/>
+    <include layout="@layout/favorite_menu"/>
 
 </android.support.v4.widget.DrawerLayout>

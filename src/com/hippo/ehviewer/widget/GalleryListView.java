@@ -14,47 +14,47 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.ui;
+package com.hippo.ehviewer.widget;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
+import android.os.Build;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.ListParser;
-import com.hippo.ehviewer.widget.MaterialToast;
-import com.hippo.ehviewer.widget.PullViewGroup;
-import com.hippo.ehviewer.widget.RefreshTextView;
 
-public abstract class AbsGalleryActivity extends AbsSlidingActivity
-        implements PullViewGroup.OnFooterRefreshListener,
-        PullViewGroup.OnRefreshListener {
-    @SuppressWarnings("unused")
-    private static final String TAG = AbsGalleryActivity.class.getSimpleName();
+public class GalleryListView extends FrameLayout implements PullViewGroup.OnFooterRefreshListener,
+        PullViewGroup.OnRefreshListener, ListView.OnScrollListener {
+
+    private static final String TAG = GalleryListView.class.getSimpleName();
 
     private static final int MODE_REFRESH = 0x0;
     private static final int MODE_NEXT_PAGE = 0x1;
     private static final int MODE_PRE_PAGE = 0x2;
     private static final int MODE_SOMEWHERE = 0x3;
 
-    protected Context mContext;
-    protected EhClient mClient;
+    private Context mContext;
+    private EhClient mClient;
+    private GalleryListViewHelper mHelper;
 
     private List<GalleryInfo> mGiList;
 
-    private RelativeLayout mMainView;
     private PullViewGroup mPullViewGroup;
     private AbsListView mContentView;
     private RefreshTextView mRefreshTextView;
@@ -79,40 +79,110 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
     private String mTargetUrl;
     private boolean isFootRefresh = false;
 
+    public GalleryListView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context, attrs, 0, 0);
+    }
+
+    public GalleryListView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context, attrs, defStyleAttr, 0);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public GalleryListView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        mContext = context;
+        mGiList = new ArrayList<GalleryInfo>();
+
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.GalleryListView, defStyleAttr, defStyleRes);
+        int index = a.getInt(R.styleable.GalleryListView_glvContent, -1);
+        a.recycle();
+
+        int resId;
+        switch(index) {
+        case 0:
+            resId = R.layout.gallery_list_listview;
+            break;
+        case 1:
+        default:
+            resId = R.layout.gallery_list_staggeredgridview;
+            break;
+        }
+
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        inflater.inflate(resId, this);
+
+        mPullViewGroup = (PullViewGroup) findViewById(R.id.pull_list);
+        mContentView = mPullViewGroup.getContentView();
+        mRefreshTextView = (RefreshTextView) findViewById(R.id.refresh_text);
+
+        mPullViewGroup.setColorScheme(
+                R.color.refresh_color_1,
+                R.color.refresh_color_2,
+                R.color.refresh_color_3,
+                R.color.refresh_color_4);
+        mPullViewGroup.setOnHeaderRefreshListener(this);
+        mPullViewGroup.setOnFooterRefreshListener(this);
+        mPullViewGroup.setFooterString(
+                mContext.getString(R.string.footer_loading),
+                mContext.getString(R.string.footer_loaded),
+                mContext.getString(R.string.footer_fail));
+
+        mContentView.setOnScrollListener(this);
+        mContentView.setSelector(new ColorDrawable(Color.TRANSPARENT));
+        mContentView.setClipToPadding(false);
+
+        mRefreshTextView.setDefaultRefresh(R.string.click_retry, new RefreshTextView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                retry();
+            }
+        });
+    }
+
+    public void setGalleryListViewHelper(GalleryListViewHelper h) {
+        mHelper = h;
+    }
+
+    public PullViewGroup getPullViewGroup() {
+        return mPullViewGroup;
+    }
+
+    public AbsListView getContentView() {
+        return mContentView;
+    }
+
+    public RefreshTextView getRefreshTextView() {
+        return mRefreshTextView;
+    }
+
     public void setNoneText(CharSequence text) {
         mRefreshTextView.setVisibility(View.VISIBLE);
         mRefreshTextView.setEmesg(text, false);
     }
 
-    /**
-     * Get url string for very page
-     *
-     * @param targetPage
-     * @return
-     */
-    protected abstract String getTargetUrl(int targetPage);
+    public void onlyShowList() {
+        mPullViewGroup.setVisibility(View.VISIBLE);
+        mRefreshTextView.setRefreshing(false);
+        mRefreshTextView.setVisibility(View.GONE);
+    }
 
-    /**
-     * Do get gallarys here, you shuold invoke the onSuccess or
-     * onFailure of listener when over
-     *
-     * @param url
-     * @param taskStamp
-     * @param listener
-     */
-    protected abstract void doGetGallerys(String url, long taskStamp, OnGetListListener listener);
-
-    /**
-     * Get the layout resources
-     * @return
-     */
-    protected abstract int getLayoutRes();
+    public void onlyShowNone() {
+        mPullViewGroup.setVisibility(View.GONE);
+        mRefreshTextView.setVisibility(View.VISIBLE);
+        mRefreshTextView.setEmesg(R.string.none, false);
+    }
 
     private void getGallerys() {
         setGallerysLayout();
 
         mTaskStamp = System.currentTimeMillis();
-        doGetGallerys(mTargetUrl, mTaskStamp, mListener);
+        mHelper.doGetGallerys(mTargetUrl, mTaskStamp, mListener);
     }
 
     @Override
@@ -137,19 +207,7 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
         }
     }
 
-    public void onlyShowList() {
-        mPullViewGroup.setVisibility(View.VISIBLE);
-        mRefreshTextView.setRefreshing(false);
-        mRefreshTextView.setVisibility(View.GONE);
-    }
-
-    public void onlyShowNone() {
-        mPullViewGroup.setVisibility(View.GONE);
-        mRefreshTextView.setVisibility(View.VISIBLE);
-        mRefreshTextView.setEmesg(R.string.none, false);
-    }
-
-    protected void firstTimeRefresh() {
+    public void firstTimeRefresh() {
         // set mPullViewGroup gone, make wait view show
         mPullViewGroup.setVisibility(View.GONE);
         mRefreshTextView.setVisibility(View.VISIBLE);
@@ -172,19 +230,26 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
 
     protected boolean retry() {
         // Need to update url, because mode may be changed
-        mTargetUrl = getTargetUrl(mTargetPage);
+        mTargetUrl = mHelper.getTargetUrl(mTargetPage);
         getGallerys();
         return true;
+    }
+
+    private void setListPosition(int position) {
+        if (position == 0)
+            mPullViewGroup.setSelectionFromTop(position, Integer.MAX_VALUE);
+        else
+            mPullViewGroup.setSelectionFromTop(position, 0);
     }
 
     /**
      * Go to page 0.<br>
      * You should know you can refresh or not.
      */
-    protected void refresh() {
+    public void refresh() {
         mGetMode = MODE_REFRESH;
         mTargetPage = 0;
-        mTargetUrl = getTargetUrl(mTargetPage);
+        mTargetUrl = mHelper.getTargetUrl(mTargetPage);
         mIsKeepPosition = false;
         getGallerys();
     }
@@ -198,7 +263,7 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
     protected void getPrePage(boolean isKeepPosition) {
         mGetMode = MODE_PRE_PAGE;
         mTargetPage = mFirstPage - 1;
-        mTargetUrl = getTargetUrl(mTargetPage);
+        mTargetUrl = mHelper.getTargetUrl(mTargetPage);
         mIsKeepPosition = isKeepPosition;
         getGallerys();
     }
@@ -212,7 +277,7 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
     protected void getNextPage(boolean isKeepPosition) {
         mGetMode = MODE_NEXT_PAGE;
         mTargetPage = mLastPage + 1;
-        mTargetUrl = getTargetUrl(mTargetPage);
+        mTargetUrl = mHelper.getTargetUrl(mTargetPage);
         mIsKeepPosition = isKeepPosition;
         getGallerys();
     }
@@ -226,7 +291,7 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
     protected void getSomewhere(int page) {
         mGetMode = MODE_SOMEWHERE;
         mTargetPage = page;
-        mTargetUrl = getTargetUrl(mTargetPage);
+        mTargetUrl = mHelper.getTargetUrl(mTargetPage);
         mIsKeepPosition = false;
         getGallerys();
     }
@@ -242,60 +307,6 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
         } else {
             getSomewhere(page);
         }
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(getLayoutRes());
-
-        mContext = getApplication();
-        mClient = EhClient.getInstance();
-
-        mGiList = new ArrayList<GalleryInfo>();
-
-        mMainView = (RelativeLayout)findViewById(R.id.main);
-        mPullViewGroup = (PullViewGroup)findViewById(R.id.gallery_list);
-        mPullViewGroup.setAgainstToChildPadding(true);
-        mContentView = mPullViewGroup.getContentView();
-        mRefreshTextView = (RefreshTextView)findViewById(R.id.refresh_text);
-
-        mPullViewGroup.setColorScheme(R.color.refresh_color_1,
-                R.color.refresh_color_2,
-                R.color.refresh_color_3,
-                R.color.refresh_color_4);
-        mPullViewGroup.setOnHeaderRefreshListener(this);
-        mPullViewGroup.setOnFooterRefreshListener(this);
-        mPullViewGroup.setFooterString(getString(R.string.footer_loading),
-                getString(R.string.footer_loaded),
-                getString(R.string.footer_fail));
-
-        mContentView.setOnScrollListener(new ScrollListener());
-        mContentView.setSelector(new ColorDrawable(Color.TRANSPARENT));
-        mContentView.setClipToPadding(false);
-
-        mRefreshTextView.setDefaultRefresh(R.string.click_retry,
-                new RefreshTextView.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                retry();
-            }
-        });
-    }
-
-    /**
-     * @return list view
-     */
-    public AbsListView getContentView() {
-        return mContentView;
-    }
-
-    public RelativeLayout getMainView() {
-        return mMainView;
-    }
-
-    public PullViewGroup getPullViewGroup() {
-        return mPullViewGroup;
     }
 
     /**
@@ -325,46 +336,35 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
         return mGiList.get(position);
     }
 
-    private class ScrollListener implements ListView.OnScrollListener {
-        @Override
-        public void onScroll(AbsListView view, int firstVisibleItem,
-                int visibleItemCount, int totalItemCount) {
-            mPullViewGroup.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        mPullViewGroup.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
 
-            if (visibleItemCount < 2 || mItemPerPage == 0)
-                return;
-            if (mLastIndex == 0)
-                mLastIndex = mItemPerPage - 1;
-            int pageChanged = (firstVisibleItem - mFirstIndex)
-                    / mItemPerPage;
-            if (pageChanged == 0)
-                pageChanged = (firstVisibleItem + visibleItemCount - mLastIndex - 1)
-                        / mItemPerPage;
+        if (visibleItemCount < 2 || mItemPerPage == 0)
+            return;
+        if (mLastIndex == 0)
+            mLastIndex = mItemPerPage - 1;
+        int pageChanged = (firstVisibleItem - mFirstIndex) / mItemPerPage;
+        if (pageChanged == 0)
+            pageChanged = (firstVisibleItem + visibleItemCount - mLastIndex - 1) / mItemPerPage;
 
-            if (pageChanged != 0) {
-                mCurPage = mCurPage + pageChanged;
-                mFirstIndex += pageChanged * mItemPerPage;
-                mLastIndex += pageChanged * mItemPerPage;
-            }
-        }
-        @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
-            switch (scrollState) {
-            case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                ImageCache.getInstance(mContext).setPauseDiskCache(true);
-                break;
-            case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                ImageCache.getInstance(mContext).setPauseDiskCache(false);
-                break;
-            }
+        if (pageChanged != 0) {
+            mCurPage = mCurPage + pageChanged;
+            mFirstIndex += pageChanged * mItemPerPage;
+            mLastIndex += pageChanged * mItemPerPage;
         }
     }
 
-    private void setListPosition(int position) {
-        if (position == 0)
-            mPullViewGroup.setSelectionFromTop(position, Integer.MAX_VALUE);
-        else
-            mPullViewGroup.setSelectionFromTop(position, 0);
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        switch (scrollState) {
+        case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+            ImageCache.getInstance(mContext).setPauseDiskCache(true);
+            break;
+        case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+            ImageCache.getInstance(mContext).setPauseDiskCache(false);
+            break;
+        }
     }
 
     public interface OnGetListListener {
@@ -461,6 +461,7 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
 
             mPullViewGroup.setAnyRefreshComplete(true);
         }
+
         @Override
         public void onFailure(BaseAdapter adapter, long taskStamp, String eMsg) {
             if (mTaskStamp != taskStamp)
@@ -492,4 +493,25 @@ public abstract class AbsGalleryActivity extends AbsSlidingActivity
             mPullViewGroup.setAnyRefreshComplete(false);
         }
     };
+
+    public static interface GalleryListViewHelper {
+        /**
+         * Get url string for very page
+         *
+         * @param targetPage
+         * @return
+         */
+        public String getTargetUrl(int targetPage);
+
+        /**
+         * Do get gallarys here, you shuold invoke the onSuccess or onFailure of
+         * listener when over
+         *
+         * @param url
+         * @param taskStamp
+         * @param listener
+         */
+        public void doGetGallerys(String url, long taskStamp, OnGetListListener listener);
+    }
+
 }

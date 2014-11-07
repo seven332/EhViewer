@@ -26,7 +26,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -54,15 +53,17 @@ import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.ExpandingListView;
+import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 
-public class DownloadActivity extends AbsActivity {
+public class DownloadActivity extends AbsActivity implements FitWindowView.OnFitSystemWindowsListener {
 
     private WindowsAnimate mWindowsAnimate;
     private int mThemeColor;
     private List<DownloadInfo> mDownloads;
 
+    private FitWindowView mStandard;
     private ExpandingListView mList;
     private ListAdapter mAdapter;
 
@@ -76,11 +77,10 @@ public class DownloadActivity extends AbsActivity {
     };
 
     @Override
-    public void onOrientationChanged(int paddingTop, int paddingBottom) {
-        if (mList != null) {
-            mList.setPadding(mList.getPaddingLeft(), paddingTop,
-                    mList.getPaddingRight(), paddingBottom);
-        }
+    public void onFitSystemWindows(int l, int t, int r, int b) {
+        mList.setPadding(mList.getPaddingLeft(), t, mList.getPaddingRight(), b);
+
+        Ui.translucent(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
     }
 
     @Override
@@ -107,17 +107,17 @@ public class DownloadActivity extends AbsActivity {
         for (DownloadInfo di : mDownloads)
             di.setExpanded(false);
 
+        mStandard = (FitWindowView) findViewById(R.id.standard);
         mList = (ExpandingListView)findViewById(R.id.download);
+
+        mStandard.addOnFitSystemWindowsListener(this);
         mAdapter = new ListAdapter();
         mList.setAdapter(mAdapter);
         mList.setSelector(new ColorDrawable(Color.TRANSPARENT));
         mList.setExpandingId(R.id.buttons);
 
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
-        int actionBarColor = mThemeColor & 0x00ffffff | 0xdd000000;
-        Drawable drawable = new ColorDrawable(actionBarColor);
-        actionBar.setBackgroundDrawable(drawable);
-        Ui.translucent(this, actionBarColor);
+        actionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
     }
 
     @Override

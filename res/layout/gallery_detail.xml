@@ -16,18 +16,23 @@
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:auto="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.hippo.ehviewer.widget.FitWindowView
+        android:id="@+id/standard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <com.hippo.ehviewer.widget.ResponedScrollView
         android:id="@+id/detail_scroll"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:clipToPadding="false"
         android:visibility="gone" >
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp" >
@@ -36,7 +41,7 @@
 
             <RelativeLayout
                 android:id="@+id/detail_header"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone" >
 
@@ -67,7 +72,7 @@
 
             <LinearLayout
                 android:id="@+id/detail_buttons"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingBottom="16dp"
@@ -98,7 +103,7 @@
 
             <TextView
                 android:id="@+id/warning"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/divider"
                 android:visibility="gone" />
@@ -151,7 +156,7 @@
 
             <View
                 android:id="@+id/detail_divider_a_m"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/divider"
                 android:visibility="gone" />
@@ -160,7 +165,7 @@
 
             <RelativeLayout
                 android:id="@+id/detail_more"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:visibility="gone" >
@@ -207,7 +212,7 @@
 
             <View
                 android:id="@+id/detail_divider_m_r"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/divider"
                 android:visibility="gone" />
@@ -215,7 +220,7 @@
             <!-- Rate -->
             <RelativeLayout
                 android:id="@+id/detail_rate"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:paddingTop="16dp"
@@ -273,7 +278,7 @@
 
             <View
                 android:id="@+id/detail_divider_r_t"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/divider"
                 android:visibility="gone" />
@@ -281,7 +286,7 @@
             <!-- Tags -->
             <LinearLayout
                 android:id="@+id/detail_tag"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:paddingTop="16dp"
@@ -291,7 +296,7 @@
 
             <View
                 android:id="@+id/detail_divider_t_c"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/divider"
                 android:visibility="gone" />
@@ -299,7 +304,7 @@
             <!-- Comments -->
             <LinearLayout
                 android:id="@+id/detail_comment"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingBottom="16dp"
@@ -315,7 +320,7 @@
 
             <View
                 android:id="@+id/detail_divider_c_p"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/divider"
                 android:visibility="gone" />
@@ -329,8 +334,8 @@
 
     <ScrollView
         android:id="@+id/more_detail_scroll"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@color/background_light"
         android:clipToPadding="false"
         android:visibility="gone" >

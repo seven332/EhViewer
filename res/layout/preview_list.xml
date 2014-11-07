@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="16dp"
     android:paddingTop="16dp"
@@ -25,7 +25,7 @@
     <com.hippo.ehviewer.widget.SimpleGridLayout
         xmlns:auto="http://schemas.android.com/apk/res-auto"
         android:id="@+id/preview"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         auto:sgl_item_margin="16dp" >
     </com.hippo.ehviewer.widget.SimpleGridLayout>

@@ -27,7 +27,7 @@
     <EditText
         android:id="@+id/set_name_edit"
         style="@style/DialogMessage"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="text"

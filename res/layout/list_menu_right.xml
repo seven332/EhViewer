@@ -15,8 +15,10 @@
      limitations under the License.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:id="@+id/list_menu_right"
+    android:layout_width="@dimen/menu_width"
+    android:layout_height="match_parent"
+    android:layout_gravity="right|end" >
 
     <com.hippo.ehviewer.widget.TagListView
         android:id="@+id/list_menu_tag_list"

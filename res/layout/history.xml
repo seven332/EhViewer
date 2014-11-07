@@ -13,8 +13,20 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<resources>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-    <dimen name="action_bar_height">40dip</dimen>
+    <com.hippo.ehviewer.widget.FitWindowView
+        android:id="@+id/standard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-</resources>
+    <com.hippo.ehviewer.widget.GalleryListView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/gallery_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:glvContent="listview" />
+
+</FrameLayout>

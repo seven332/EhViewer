@@ -29,7 +29,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyCharacterMap;
@@ -40,6 +39,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 
 import com.hippo.ehviewer.R;
@@ -75,6 +75,8 @@ public class Ui {
     public static int ACTION_BAR_HEIGHT_P;
     public static int ACTION_BAR_HEIGHT_L;
     public static int NAV_BAR_HEIGHT;
+
+    public static int ACTION_BAR_HEIGHT;
 
     static {
         // Android allows a system property to override the presence of the navigation bar.
@@ -128,17 +130,14 @@ public class Ui {
 
         // Get height info
         STATUS_BAR_HEIGHT = getInternalDimensionSize(mResources, "status_bar_height");
-        if ("L".equals(Build.VERSION.CODENAME) || Build.VERSION.SDK_INT >= 21) {
-            ACTION_BAR_HEIGHT_P = Ui.dp2pix(56);
-            ACTION_BAR_HEIGHT_L = Ui.dp2pix(48);
-        } else {
-            ACTION_BAR_HEIGHT_P = Ui.dp2pix(48);
-            ACTION_BAR_HEIGHT_L = Ui.dp2pix(40);
-        }
+        ACTION_BAR_HEIGHT_P = Ui.dp2pix(56);
+        ACTION_BAR_HEIGHT_L = Ui.dp2pix(56);
         if (hasNavBar(mContext))
             NAV_BAR_HEIGHT = getInternalDimensionSize(mResources, "navigation_bar_height");
         else
             NAV_BAR_HEIGHT = 0;
+
+        ACTION_BAR_HEIGHT = mResources.getDimensionPixelSize(R.dimen.action_bar_height);
     }
 
     public static int getInternalDimensionSize(Resources res, String key) {
@@ -312,19 +311,6 @@ public class Ui {
         child.measure(childWidthSpec, childHeightSpec);
     }
 
-    public static final int ORIENTATION_PORTRAIT = 0x0;
-    public static final int ORIENTATION_LANDSCAPE = 0x1;
-
-    public static int getOrientation(Activity activity) {
-        DisplayMetrics dm = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        if (dm.heightPixels > dm.widthPixels){
-            return ORIENTATION_PORTRAIT;
-        }else{
-            return ORIENTATION_LANDSCAPE;
-        }
-    }
-
     /**
      * Update translucent state for API >= 19, KK or more powerful
      *
@@ -333,13 +319,13 @@ public class Ui {
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static void updateTranslucent(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            int screenOri = getOrientation(activity);
+            Configuration c = activity.getResources().getConfiguration();
             Window w = activity.getWindow();
 
             w.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            if (screenOri == ORIENTATION_PORTRAIT)
+            if (c.orientation == Configuration.ORIENTATION_PORTRAIT)
                 w.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            else if (screenOri == ORIENTATION_LANDSCAPE)
+            else if (c.orientation == Configuration.ORIENTATION_LANDSCAPE)
                 w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
     }
@@ -356,15 +342,32 @@ public class Ui {
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    public static void translucent(
-            Activity activity, int color) {
+    public static void translucent(Activity activity, int color, int height) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            ViewGroup decorViewGroup = (ViewGroup)activity.getWindow().getDecorView();
-            View statusBarBgView = new View(activity);
+            boolean needAdd = false;
+            FrameLayout.LayoutParams lp;
+            ViewGroup decorViewGroup = (ViewGroup) activity.getWindow().getDecorView();
+
+            View statusBarBgView = (View) decorViewGroup.getTag(R.id.translucent_view);
+            if (statusBarBgView == null) {
+                needAdd = true;
+                statusBarBgView = new View(activity);
+            }
             statusBarBgView.setBackgroundColor(color);
-            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, STATUS_BAR_HEIGHT);
+
+            lp = (FrameLayout.LayoutParams) statusBarBgView.getLayoutParams();
+            if (lp == null)
+                lp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, height);
+            else
+                lp.height = height;
             lp.gravity = Gravity.TOP;
-            decorViewGroup.addView(statusBarBgView, lp);
+
+            if (needAdd) {
+                decorViewGroup.addView(statusBarBgView, lp);
+                decorViewGroup.setTag(R.id.translucent_view, statusBarBgView);
+            } else {
+                statusBarBgView.setLayoutParams(lp);
+            }
         }
     }
 

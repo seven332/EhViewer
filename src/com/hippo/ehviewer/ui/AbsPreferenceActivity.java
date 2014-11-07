@@ -24,8 +24,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 
-public abstract class AbsPreferenceActivity extends PreferenceActivity
-        implements OnOrientationChangedListener {
+public abstract class AbsPreferenceActivity extends PreferenceActivity {
 
     private static final int[] padding = new int[2];
 
@@ -42,10 +41,6 @@ public abstract class AbsPreferenceActivity extends PreferenceActivity
         super.onConfigurationChanged(newConfig);
 
         Ui.updateTranslucent(this);
-
-        // Set window padding
-        Ui.getWindowPadding(getResources(), padding);
-        onOrientationChanged(padding[0], padding[1]);
     }
 
     @Override
@@ -62,10 +57,6 @@ public abstract class AbsPreferenceActivity extends PreferenceActivity
 
       if (Config.getAllowAnalyics())
           EasyTracker.getInstance(this).activityStart(this);
-
-      // Set window padding
-      Ui.getWindowPadding(getResources(), padding);
-      onOrientationChanged(padding[0], padding[1]);
     }
 
     @Override

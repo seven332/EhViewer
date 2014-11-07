@@ -15,9 +15,9 @@
  -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/list_menu_left"
-    android:layout_width="match_parent"
+    android:layout_width="@dimen/menu_width"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_blue_dark"
+    android:layout_gravity="left|start"
     android:orientation="vertical" >
 
     <include
@@ -25,7 +25,7 @@
         android:id="@+id/user_panel" />
 
     <View
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="1.0dp"
         android:background="@color/divider" />
 
