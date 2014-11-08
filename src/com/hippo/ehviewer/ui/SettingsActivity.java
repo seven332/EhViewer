@@ -26,9 +26,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,6 +52,9 @@ import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import com.balysv.materialmenu.MaterialMenuDrawable;
+import com.balysv.materialmenu.MaterialMenuDrawable.Stroke;
+import com.balysv.materialmenu.MaterialMenuIcon;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
@@ -112,10 +115,11 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
 
         // Set random color
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
-        ActionBar actionBar = getActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
+        getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));
 
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        // Menu
+        MaterialMenuIcon materialMenu = new MaterialMenuIcon(this, Color.WHITE, Stroke.THIN);
+        materialMenu.setState(MaterialMenuDrawable.IconState.ARROW);
 
         mFragments = new LinkedList<TranslucentPreferenceFragment>();
 

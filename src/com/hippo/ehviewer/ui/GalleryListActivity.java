@@ -1011,6 +1011,10 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
 
         // Menu
         mMaterialMenu = new MaterialMenuIcon(this, Color.WHITE, Stroke.THIN);
+        if (mShowDrawer)
+            mMaterialMenu.setState(MaterialMenuDrawable.IconState.BURGER);
+        else
+            mMaterialMenu.setState(MaterialMenuDrawable.IconState.ARROW);
 
         // Get View
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);

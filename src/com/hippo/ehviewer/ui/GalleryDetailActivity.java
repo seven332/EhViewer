@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -32,6 +31,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -58,6 +58,9 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.balysv.materialmenu.MaterialMenuDrawable;
+import com.balysv.materialmenu.MaterialMenuDrawable.Stroke;
+import com.balysv.materialmenu.MaterialMenuIcon;
 import com.faizmalkani.floatingactionbutton.FloatingActionButton;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
@@ -289,8 +292,10 @@ public class GalleryDetailActivity extends AbsActivity
         mWindowsAnimate.init(this);
 
         mResources = getResources();
-        final ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        // Menu
+        MaterialMenuIcon materialMenu = new MaterialMenuIcon(this, Color.WHITE, Stroke.THIN);
+        materialMenu.setState(MaterialMenuDrawable.IconState.ARROW);
 
         // Get view
         mStandard = (FitWindowView) findViewById(R.id.standard);
@@ -367,7 +372,7 @@ public class GalleryDetailActivity extends AbsActivity
 
         // Set random color
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
-        actionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
+        getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));
         mDownloadButton.setRoundBackground(true, false, mResources.getColor(R.color.background_light), mThemeColor);
         mDownloadButton.setTextColor(mThemeColor);
         mReadButton.setRoundBackground(true, mThemeColor, 0);

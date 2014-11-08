@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -37,6 +37,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.balysv.materialmenu.MaterialMenuDrawable;
+import com.balysv.materialmenu.MaterialMenuDrawable.Stroke;
+import com.balysv.materialmenu.MaterialMenuIcon;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
@@ -60,7 +63,6 @@ public class HistoryActivity extends AbsActivity
     private static final String TAG = HistoryActivity.class.getSimpleName();
 
     private Data mData;
-    private ActionBar mActionBar;
     private int mThemeColor;
 
     private FitWindowView mStandard;
@@ -164,10 +166,12 @@ public class HistoryActivity extends AbsActivity
         mData = Data.getInstance();
         mFilterMode = Config.getInt(KEY_HISTORY_FILTER, Data.BROWSE | Data.READ);
 
-        mActionBar = getActionBar();
-        mActionBar.setDisplayHomeAsUpEnabled(true);
+        // Menu
+        MaterialMenuIcon materialMenu = new MaterialMenuIcon(this, Color.WHITE, Stroke.THIN);
+        materialMenu.setState(MaterialMenuDrawable.IconState.ARROW);
+
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
-        mActionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
+        getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));
 
         mStandard = (FitWindowView) findViewById(R.id.standard);
         mGalleryListView = (GalleryListView) findViewById(R.id.gallery_list);

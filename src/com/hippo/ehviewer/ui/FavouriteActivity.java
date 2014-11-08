@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -53,6 +54,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.balysv.materialmenu.MaterialMenuDrawable;
+import com.balysv.materialmenu.MaterialMenuDrawable.Stroke;
+import com.balysv.materialmenu.MaterialMenuIcon;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
@@ -164,8 +168,11 @@ public class FavouriteActivity extends AbsActivity
         Intent it = new Intent(FavouriteActivity.this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
 
-        // Get View
+        // Menu
+        MaterialMenuIcon materialMenu = new MaterialMenuIcon(this, Color.WHITE, Stroke.THIN);
+        materialMenu.setState(MaterialMenuDrawable.IconState.ARROW);
 
+        // Get View
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
         mMenu = (ListView) mDrawerLayout.findViewById(R.id.favorite_menu_list);
         mContentView = (FrameLayout) mDrawerLayout.findViewById(R.id.content);

@@ -19,7 +19,6 @@ package com.hippo.ehviewer.ui;
 import java.util.List;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +37,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.balysv.materialmenu.MaterialMenuDrawable;
+import com.balysv.materialmenu.MaterialMenuDrawable.Stroke;
+import com.balysv.materialmenu.MaterialMenuIcon;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
@@ -100,8 +102,9 @@ public class DownloadActivity extends AbsActivity implements FitWindowView.OnFit
         filter.addAction(DownloadService.ACTION_UPDATE);
         registerReceiver(mReceiver, filter);
 
-        ActionBar actionBar = getActionBar();
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        // Menu
+        MaterialMenuIcon materialMenu = new MaterialMenuIcon(this, Color.WHITE, Stroke.THIN);
+        materialMenu.setState(MaterialMenuDrawable.IconState.ARROW);
 
         mDownloads = Data.getInstance().getAllDownloads();
         for (DownloadInfo di : mDownloads)
@@ -117,7 +120,7 @@ public class DownloadActivity extends AbsActivity implements FitWindowView.OnFit
         mList.setExpandingId(R.id.buttons);
 
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
-        actionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
+        getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));
     }
 
     @Override
