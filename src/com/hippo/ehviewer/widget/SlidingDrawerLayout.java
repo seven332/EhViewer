@@ -762,6 +762,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         if (!mIntercepted)
             return false;
 
+        mDragHelper.processTouchEvent(ev);
+
         // Cancel animate
         cancelAnimation();
 
@@ -797,8 +799,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             }
             break;
         }
-
-        mDragHelper.processTouchEvent(ev);
 
         return true;
     }
