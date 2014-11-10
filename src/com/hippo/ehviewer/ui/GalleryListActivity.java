@@ -41,7 +41,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.support.v4.widget.DrawerLayout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -101,6 +100,7 @@ import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.RatingView;
+import com.hippo.ehviewer.widget.SlidingDrawerLayout;
 import com.hippo.ehviewer.widget.SuggestionHelper;
 import com.hippo.ehviewer.widget.SuggestionTextView;
 import com.hippo.ehviewer.widget.TagListView;
@@ -132,7 +132,7 @@ import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
  */
 public class GalleryListActivity extends AbsActivity implements View.OnClickListener,
         SearchView.OnQueryTextListener, SearchView.OnFocusChangeListener,
-        DrawerLayout.DrawerListener, EhClient.OnLoginListener,
+        SlidingDrawerLayout.DrawerListener, EhClient.OnLoginListener,
         GalleryListView.GalleryListViewHelper, FitWindowView.OnFitSystemWindowsListener {
 
     @SuppressWarnings("unused")
@@ -162,7 +162,7 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
     private MaterialMenuIcon mMaterialMenu;
     private boolean mDirection;
 
-    private DrawerLayout mDrawerLayout;
+    private SlidingDrawerLayout mDrawerLayout;
     private View mLeftMenu;
     private View mRightMenu;
     private FitWindowView mStandard;
@@ -938,7 +938,7 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
     }
 
     @Override
-    public void onDrawerStateChanged(int i) {
+    public void onDrawerStateChanged(View drawerView, int newState) {
         // Empty
     }
 
@@ -946,8 +946,8 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
     public void onFitSystemWindows(int l, int t, int r, int b) {
         mStaggeredGridView.setPadding(mStaggeredGridView.getPaddingLeft(), t,
                 mStaggeredGridView.getPaddingRight(), b);
-        ((DrawerLayout.LayoutParams) mLeftMenu.getLayoutParams()).topMargin = t;
-        ((DrawerLayout.LayoutParams) mRightMenu.getLayoutParams()).topMargin = t;
+        ((SlidingDrawerLayout.LayoutParams) mLeftMenu.getLayoutParams()).topMargin = t;
+        ((SlidingDrawerLayout.LayoutParams) mRightMenu.getLayoutParams()).topMargin = t;
         mMenuList.setPadding(mMenuList.getPaddingLeft(), mMenuList.getPaddingTop(),
                 mMenuList.getPaddingRight(), b);
         mQuickSearchList.setPadding(mQuickSearchList.getPaddingLeft(), mQuickSearchList.getPaddingTop(),
@@ -1017,7 +1017,7 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
             mMaterialMenu.setState(MaterialMenuDrawable.IconState.ARROW);
 
         // Get View
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
+        mDrawerLayout = (SlidingDrawerLayout) findViewById(R.id.drawerlayout);
 
         mLeftMenu = mDrawerLayout.findViewById(R.id.list_menu_left);
         mRightMenu = mDrawerLayout.findViewById(R.id.list_menu_right);
@@ -1050,7 +1050,7 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
             mActionBar.setHomeAsUpIndicator(mResources.getDrawable(R.drawable.ic_navigation_drawer));
         mDrawerLayout.setDrawerListener(this);
         if (!mShowDrawer)
-            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mLeftMenu);
+            ; //mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mLeftMenu);
 
         // Content
         mGalleryListView.setGalleryListViewHelper(this);

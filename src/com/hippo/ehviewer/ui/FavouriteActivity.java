@@ -35,7 +35,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.PathShape;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -80,6 +79,7 @@ import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RatingView;
+import com.hippo.ehviewer.widget.SlidingDrawerLayout;
 
 public class FavouriteActivity extends AbsActivity
         implements ListView.MultiChoiceModeListener,
@@ -96,7 +96,7 @@ public class FavouriteActivity extends AbsActivity
     private ActionBar mActionBar;
     private int mThemeColor;
 
-    private DrawerLayout mDrawerLayout;
+    private SlidingDrawerLayout mDrawerLayout;
     private ListView mMenu;
     private FrameLayout mContentView;
     private FitWindowView mStandard;
@@ -173,7 +173,7 @@ public class FavouriteActivity extends AbsActivity
         materialMenu.setState(MaterialMenuDrawable.IconState.ARROW);
 
         // Get View
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
+        mDrawerLayout = (SlidingDrawerLayout) findViewById(R.id.drawerlayout);
         mMenu = (ListView) mDrawerLayout.findViewById(R.id.favorite_menu_list);
         mContentView = (FrameLayout) mDrawerLayout.findViewById(R.id.content);
         mStandard = (FitWindowView) mDrawerLayout.findViewById(R.id.standard);
@@ -303,7 +303,7 @@ public class FavouriteActivity extends AbsActivity
         lp.rightMargin = magicSpacing;
         mActionableToastBar.setLayoutParams(lp);
         mList.setPadding(mList.getPaddingLeft(), t, mList.getPaddingRight(), b);
-        ((DrawerLayout.LayoutParams) mMenu.getLayoutParams()).topMargin = t;
+        ((SlidingDrawerLayout.LayoutParams) mMenu.getLayoutParams()).topMargin = t;
         mMenu.setPadding(mMenu.getPaddingLeft(), mMenu.getPaddingTop(), mMenu.getPaddingRight(), b);
 
         Ui.translucent(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
