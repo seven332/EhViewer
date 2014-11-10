@@ -29,18 +29,6 @@ public final class MathUtils {
         return v > 0.0F ? v : -v;
     }
 
-    public static int constrain(int amount, int low, int high) {
-        return amount > high ? high : amount < low ? low : amount;
-    }
-
-    public static long constrain(long amount, long low, long high) {
-        return amount > high ? high : amount < low ? low : amount;
-    }
-
-    public static float constrain(float amount, float low, float high) {
-        return amount > high ? high : amount < low ? low : amount;
-    }
-
     public static float log(float a) {
         return (float) Math.log(a);
     }

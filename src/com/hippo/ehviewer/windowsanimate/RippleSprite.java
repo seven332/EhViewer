@@ -322,7 +322,7 @@ public class RippleSprite extends Sprite {
 
         int opacityDuration = (int) (1000.0F * mOpacity / 3.0F + 0.5F);
 
-        float outerSizeInfluence = MathUtils.constrain(
+        float outerSizeInfluence = MathUtils.clamp(
                 (mOuterRadius - WAVE_OUTER_SIZE_INFLUENCE_MIN * Ui.mDensity)
                         / (WAVE_OUTER_SIZE_INFLUENCE_MAX * Ui.mDensity), 0.0F, 1.0F);
 
