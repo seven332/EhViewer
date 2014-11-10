@@ -16,8 +16,6 @@
 
 package com.hippo.ehviewer.util;
 
-import java.lang.reflect.Method;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -70,29 +68,7 @@ public class Ui {
 
     public static Drawable transparentDrawable;
 
-    private static String sNavBarOverride;
-    public static int STATUS_BAR_HEIGHT;
-    public static int ACTION_BAR_HEIGHT_P;
-    public static int ACTION_BAR_HEIGHT_L;
-    public static int NAV_BAR_HEIGHT;
-
     public static int ACTION_BAR_HEIGHT;
-
-    static {
-        // Android allows a system property to override the presence of the navigation bar.
-        // Used by the emulator.
-        // See https://github.com/android/platform_frameworks_base/blob/master/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java#L1076
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            try {
-                Class<?> c = Class.forName("android.os.SystemProperties");
-                Method m = c.getDeclaredMethod("get", String.class);
-                m.setAccessible(true);
-                sNavBarOverride = (String)m.invoke(null, "qemu.hw.mainkeys");
-            } catch (Throwable e) {
-                sNavBarOverride = null;
-            }
-        }
-    }
 
     /**
      * Init Crash
@@ -128,15 +104,6 @@ public class Ui {
         // init drawable
         transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
 
-        // Get height info
-        STATUS_BAR_HEIGHT = getInternalDimensionSize(mResources, "status_bar_height");
-        ACTION_BAR_HEIGHT_P = Ui.dp2pix(56);
-        ACTION_BAR_HEIGHT_L = Ui.dp2pix(56);
-        if (hasNavBar(mContext))
-            NAV_BAR_HEIGHT = getInternalDimensionSize(mResources, "navigation_bar_height");
-        else
-            NAV_BAR_HEIGHT = 0;
-
         ACTION_BAR_HEIGHT = mResources.getDimensionPixelSize(R.dimen.action_bar_height);
     }
 
@@ -153,23 +120,6 @@ public class Ui {
         TypedValue tv = new TypedValue();
         theme.resolveAttribute(attrId, tv, true);
         return TypedValue.complexToDimensionPixelSize(tv.data, mContext.getResources().getDisplayMetrics());
-    }
-
-    private static boolean hasNavBar(Context context) {
-        Resources res = context.getResources();
-        int resourceId = res.getIdentifier("config_showNavigationBar", "bool", "android");
-        if (resourceId != 0) {
-            boolean hasNav = res.getBoolean(resourceId);
-            // check override flag (see static block)
-            if ("1".equals(sNavBarOverride)) {
-                hasNav = false;
-            } else if ("0".equals(sNavBarOverride)) {
-                hasNav = true;
-            }
-            return hasNav;
-        } else { // fallback
-            return !ViewConfiguration.get(context).hasPermanentMenuKey();
-        }
     }
 
     public static String getCategoryText(int category) {
@@ -357,8 +307,6 @@ public class Ui {
                 lp.gravity = Gravity.TOP;
                 statusBarBgView.setBackgroundColor(color);
                 statusBarBgView.setLayoutParams(lp);
-
-                Log.d(TAG, "translucent new");
             } else {
                 statusBarBgView = new View(activity);
                 statusBarBgView.setId(R.id.translucent_view);
@@ -366,28 +314,7 @@ public class Ui {
                 lp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, height);
                 lp.gravity = Gravity.TOP;
                 decorViewGroup.addView(statusBarBgView, lp);
-
-
-                Log.d(TAG, "translucent update");
             }
         }
-    }
-
-    /**
-     * Get paddingTop and paddingBottom
-     *
-     * @param resources
-     * @param padding
-     */
-    public static void getWindowPadding(Resources resources, int[] padding) {
-        if (resources.getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
-            padding[0] = ACTION_BAR_HEIGHT_P;
-            padding[1] = NAV_BAR_HEIGHT;
-        } else {
-            padding[0] = ACTION_BAR_HEIGHT_L;
-            padding[1] = 0;
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-            padding[0] += STATUS_BAR_HEIGHT;
     }
 }
