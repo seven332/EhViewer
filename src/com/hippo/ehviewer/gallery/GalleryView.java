@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.gallery;
 
-import android.animation.TimeInterpolator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Movie;
@@ -47,6 +46,7 @@ import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
+import com.hippo.ehviewer.util.ZInterpolator;
 import com.hippo.ehviewer.widget.MaterialToast;
 
 public class GalleryView extends GLView implements ImageSet.ImageListener,
@@ -1759,20 +1759,6 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             if (mTexture == null)
                 return;
             mTexture.recycle();
-        }
-    }
-
-    private static class ZInterpolator implements TimeInterpolator {
-        private final float focalLength;
-
-        public ZInterpolator(float foc) {
-            focalLength = foc;
-        }
-
-        @Override
-        public float getInterpolation(float input) {
-            return (1.0f - focalLength / (focalLength + input)) /
-                (1.0f - focalLength / (focalLength + 1.0f));
         }
     }
 }

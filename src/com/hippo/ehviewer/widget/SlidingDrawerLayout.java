@@ -41,6 +41,7 @@ import android.view.WindowInsets;
 import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
+import com.hippo.ehviewer.util.ZInterpolator;
 
 @SuppressLint("RtlHardcoded")
 public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.AnimatorUpdateListener,
@@ -265,6 +266,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         mAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
         mAnimator.addUpdateListener(this);
         mAnimator.addListener(this);
+        mAnimator.setInterpolator(new ZInterpolator(0.5f));
         mCancelAnimation = false;
 
         setWillNotDraw(false);
