@@ -53,9 +53,26 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         android.R.attr.layout_gravity
     };
 
-    private static final int STATE_CLOSED = 0x0;
-    private static final int STATE_SLIDING = 0x1;
-    private static final int STATE_OPENED = 0x2;
+    private static final int STATE_CLOSED = 0;
+    private static final int STATE_SLIDING = 1;
+    private static final int STATE_OPEN = 2;
+
+    /**
+     * The drawer is unlocked.
+     */
+    public static final int LOCK_MODE_UNLOCKED = 0;
+
+    /**
+     * The drawer is locked closed. The user may not open it, though the app may
+     * open it programmatically.
+     */
+    public static final int LOCK_MODE_LOCKED_CLOSED = 1;
+
+    /**
+     * The drawer is locked open. The user may not close it, though the app may
+     * close it programmatically.
+     */
+    public static final int LOCK_MODE_LOCKED_OPEN = 2;
 
     private static final float OPEN_SENSITIVITY = 0.1f;
     private static final float CLOSE_SENSITIVITY = 0.9f;
@@ -77,6 +94,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     private int mRightState;
     private float mLeftPercent;
     private float mRightPercent;
+    private int mLeftLockMode;
+    private int mRightLockMode;
 
     private ValueAnimator mAnimator;
     private View mTargetView;
@@ -315,7 +334,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                     // You finger is on Screen!
                 }
                 break;
-            case STATE_OPENED:
+            case STATE_OPEN:
                 // Close other side first
                 mOpenTask = isLeft ? mLeftDrawer : mRightDrawer;
                 startAnimation(!isLeft, false);
@@ -336,7 +355,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             }
             break;
 
-        case STATE_OPENED:
+        case STATE_OPEN:
             // Ok it is opened
             break;
         }
@@ -376,7 +395,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                 // You finger is on Screen!
             }
             break;
-        case STATE_OPENED:
+        case STATE_OPEN:
             startAnimation(isLeft, false);
             break;
         }
@@ -395,7 +414,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         else if (drawer == mRightDrawer)
             return mRightOpened;
         else
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("The view is not drawer");
     }
 
     public boolean isDrawerOpen(int gravity) {
@@ -404,7 +423,66 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         else if (gravity == Gravity.RIGHT)
             return isDrawerOpen(mRightDrawer);
         else
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("gravity must be Gravity.LEFT or Gravity.RIGHT");
+    }
+
+    public void setDrawerLockMode(int lockMode, int gravity) {
+        if (gravity == Gravity.LEFT)
+            setDrawerLockMode(gravity, mLeftDrawer);
+        else if (gravity == Gravity.RIGHT)
+            setDrawerLockMode(gravity, mRightDrawer);
+        else
+            throw new IllegalArgumentException("gravity must be Gravity.LEFT or Gravity.RIGHT");
+    }
+
+    public void setDrawerLockMode(int lockMode, View drawer) {
+        if (drawer != mLeftDrawer && drawer != mRightDrawer)
+            throw new IllegalArgumentException("The view is not drawer");
+
+        int oldLockMode;
+        int otherSideLockMode;
+        if (drawer == mLeftDrawer) {
+            oldLockMode = mLeftLockMode;
+            otherSideLockMode = mRightLockMode;
+            mLeftLockMode = lockMode;
+        } else {
+            oldLockMode = mRightLockMode;
+            otherSideLockMode = mLeftLockMode;
+            mRightLockMode = lockMode;
+        }
+        if (oldLockMode == lockMode)
+            return;
+
+        if (otherSideLockMode == LOCK_MODE_LOCKED_OPEN && lockMode == LOCK_MODE_LOCKED_OPEN)
+            throw new IllegalArgumentException("Only on side could be LOCK_MODE_LOCKED_OPEN");
+
+        switch (lockMode) {
+        // TODO What if open or close fail ?
+        case LOCK_MODE_LOCKED_OPEN:
+            openDrawer(drawer);
+            break;
+        case LOCK_MODE_LOCKED_CLOSED:
+            closeDrawer(drawer);
+            break;
+        }
+    }
+
+    public int getDrawerLockMode(int gravity) {
+        if (gravity == Gravity.LEFT)
+            return getDrawerLockMode(mLeftDrawer);
+        else if (gravity == Gravity.RIGHT)
+            return getDrawerLockMode(mRightDrawer);
+        else
+            throw new IllegalArgumentException("gravity must be Gravity.LEFT or Gravity.RIGHT");
+    }
+
+    public int getDrawerLockMode(View drawer) {
+        if (drawer == mLeftDrawer)
+            return mLeftLockMode;
+        else if (drawer == mRightDrawer)
+            return mRightLockMode;
+        else
+            throw new IllegalArgumentException("The view is not drawer");
     }
 
     @Override
@@ -601,8 +679,12 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         return ViewUtils.isViewUnder(mLeftDrawer, x, y) || ViewUtils.isViewUnder(mRightDrawer, x, y);
     }
 
-    private boolean hasDrawer() {
-        return mLeftDrawer != null || mRightDrawer != null;
+    private boolean isDrawersTouchable() {
+        if ((mLeftDrawer != null && mLeftLockMode == LOCK_MODE_UNLOCKED)
+                || (mRightDrawer != null && mRightLockMode == LOCK_MODE_UNLOCKED))
+            return true;
+        else
+            return false;
     }
 
     private void slideLeftDrawer(int dx) {
@@ -650,7 +732,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     public void onAnimationEnd(Animator animation) {
         if (!mCancelAnimation) {
             updateDrawerSlide(mTargetView, mToOpen ? 1.0f : 0.0f);
-            updateDrawerState(mTargetView, mToOpen ? STATE_OPENED : STATE_CLOSED);
+            updateDrawerState(mTargetView, mToOpen ? STATE_OPEN : STATE_CLOSED);
             if (mToOpen)
                 dispatchOnDrawerOpened(mTargetView);
             else
@@ -699,7 +781,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         if (mStartLeft == mEndLeft) {
             // No need to animate
             updateDrawerSlide(mTargetView, mToOpen ? 1.0f : 0.0f);
-            updateDrawerState(mTargetView, mToOpen ? STATE_OPENED : STATE_CLOSED);
+            updateDrawerState(mTargetView, mToOpen ? STATE_OPEN : STATE_CLOSED);
             if (mToOpen)
                 dispatchOnDrawerOpened(mTargetView);
             else
@@ -719,7 +801,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         final float y = ev.getY();
         boolean interceptSlide = false;
 
-        if (!hasDrawer() || isDrawerUnder((int) x, (int) y)) {
+        if (!isDrawersTouchable() || isDrawerUnder((int) x, (int) y)) {
             return false;
         }
 
@@ -765,6 +847,11 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     @SuppressLint("ClickableViewAccessibility")
     public boolean onTouchEvent(MotionEvent ev) {
 
+        // Cancel animate
+        cancelAnimation();
+
+        mDragHelper.processTouchEvent(ev);
+
         final int action = MotionEventCompat.getActionMasked(ev);
         final float x = ev.getX();
         final float y = ev.getY();
@@ -777,14 +864,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         if (!mIntercepted)
             return false;
 
-        // Cancel animate
-        cancelAnimation();
-
-        mDragHelper.processTouchEvent(ev);
-
-
-
-        if (!hasDrawer() || isDrawerUnder((int) x, (int) y))
+        if (!isDrawersTouchable() || isDrawerUnder((int) x, (int) y))
             return false;
 
         switch (action) {
@@ -1011,10 +1091,10 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                 return child.getLeft();
 
             if (mLeftState == STATE_CLOSED && mRightState == STATE_CLOSED) {
-                if (dx > 0 && mLeftDrawer != null) {
+                if (dx > 0 && mLeftDrawer != null && mLeftLockMode == LOCK_MODE_UNLOCKED) {
                     slideLeftDrawer(dx);
                     updateDrawerState(mLeftDrawer, STATE_SLIDING);
-                } else if (dx < 0 && mRightDrawer != null) {
+                } else if (dx < 0 && mRightDrawer != null && mRightLockMode == LOCK_MODE_UNLOCKED) {
                     slideRightDrawer(dx);
                     updateDrawerState(mRightDrawer, STATE_SLIDING);
                 }

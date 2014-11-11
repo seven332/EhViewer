@@ -1050,7 +1050,7 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
             mActionBar.setHomeAsUpIndicator(mResources.getDrawable(R.drawable.ic_navigation_drawer));
         mDrawerLayout.setDrawerListener(this);
         if (!mShowDrawer)
-            ; //mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mLeftMenu);
+            mDrawerLayout.setDrawerLockMode(SlidingDrawerLayout.LOCK_MODE_LOCKED_CLOSED, mLeftMenu);
 
         // Content
         mGalleryListView.setGalleryListViewHelper(this);
