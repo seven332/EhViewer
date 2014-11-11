@@ -16,16 +16,17 @@
 
 package com.hippo.ehviewer.ui;
 
-import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -39,21 +40,19 @@ import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Constants;
+import com.hippo.ehviewer.util.FullScreenHelper;
 import com.hippo.ehviewer.util.Ui;
 
 public class GalleryActivity extends Activity
-        implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener, View.OnSystemUiVisibilityChangeListener {
+        implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener {
     @SuppressWarnings("unused")
     private final static String TAG = GalleryActivity.class.getSimpleName();
 
-    //public final static String KEY_GID = "gid";
-    //public final static String KEY_TOKEN = "token";
-    //public final static String KEY_TITLE = "title";
     public final static String KEY_GALLERY_INFO = "gallery_info";
     public final static String KEY_START_INDEX = "start_index";
 
-    private View mainView;
-    private View mNavBar;
+    private View mFooter;
     private TextView mSeekerBubble;
 
     private ActionBar mActionBar;
@@ -64,71 +63,72 @@ public class GalleryActivity extends Activity
 
     private GalleryView mGalleryView;
 
-    // private int mGid;
-    // private String mTitle;
     private GalleryInfo mGi;
 
-    private final int mBaseSystemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-    private int mLastSystemUiVis;
+    private FullScreenHelper mFullScreenHelper;
 
-    private final Runnable mNavHider = new Runnable() {
+    private final Runnable mFullScreenTask = new Runnable() {
         @Override public void run() {
-            setNavVisibility(false);
+            setFullScreen(true);
         }
     };
 
-    private void startHideTask() {
-        AppHandler.getInstance().postDelayed(mNavHider, 2000);
+    private void startFullScreenTask() {
+        AppHandler.getInstance().postDelayed(mFullScreenTask, 2000);
     }
 
-    private void cancelHideTask() {
-        AppHandler.getInstance().removeCallbacks(mNavHider);
+    private void cancelFullScreenTask() {
+        AppHandler.getInstance().removeCallbacks(mFullScreenTask);
+    }
+
+    void setFullScreen(final boolean fullScreen) {
+        mFullScreenHelper.setFullScreen(fullScreen);
+
+        AlphaAnimation aa = fullScreen ? new AlphaAnimation(1.0f, 0.0f) : new AlphaAnimation(0.0f, 1.0f);
+        aa.setDuration(Constants.ANIMATE_TIME);
+        aa.setAnimationListener(new AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                if (!fullScreen)
+                    mFooter.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (fullScreen)
+                    mFooter.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                // Empty
+            }
+        });
+        mFooter.startAnimation(aa);
+
+        if (!fullScreen)
+            startFullScreenTask();
+        else
+            cancelFullScreenTask();
     }
 
     @Override
-    public void onSystemUiVisibilityChange(int visibility) {
-        // Detect when we go out of low-profile mode, to also go out
-        // of full screen.  We only do this when the low profile mode
-        // is changing from its last state, and turning off.
-        int diff = mLastSystemUiVis ^ visibility;
-        mLastSystemUiVis = visibility;
-        if ((diff & View.SYSTEM_UI_FLAG_LOW_PROFILE) != 0
-                && (visibility & View.SYSTEM_UI_FLAG_LOW_PROFILE) == 0) {
-            setNavVisibility(true);
-        }
+    protected void onResume() {
+        super.onResume();
+        setFullScreen(true);
     }
-
-    void setNavVisibility(boolean visible) {
-        int newVis = mBaseSystemUiVisibility;
-        if (!visible) {
-            newVis |= View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN;
-        }
-        final boolean changed = newVis == mainView.getSystemUiVisibility();
-
-        if (!visible)
-            cancelHideTask();
-
-        // Set the new desired visibility.
-        mainView.setSystemUiVisibility(newVis);
-        mNavBar.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
-    }
-
 
     @Override
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gl_root_group);
 
-        mainView = findViewById(R.id.main);
-        mNavBar = findViewById(R.id.nav_bar);
+        mFullScreenHelper = new FullScreenHelper(this);
+        mFullScreenHelper.setFullScreen(true);
+
+        mFooter = findViewById(R.id.footer);
         mPageSeeker = (SeekBar) findViewById(R.id.page_seeker);
         mSeekerBubble = (TextView) findViewById(R.id.seeker_bubble);
-
-        mainView.setOnSystemUiVisibilityChangeListener(this);
-        setNavVisibility(false);
-
         mActionBar = getActionBar();
 
         Intent intent = getIntent();
@@ -201,6 +201,8 @@ public class GalleryActivity extends Activity
         switch (item.getItemId()) {
         case R.id.action_refresh:
             mImageSet.redownload(mGalleryView.getCurIndex());
+            cancelFullScreenTask();
+            startFullScreenTask();
             return true;
 
         default:
@@ -228,11 +230,7 @@ public class GalleryActivity extends Activity
 
     @Override
     public void onTapCenter() {
-        int curVis = mainView.getSystemUiVisibility();
-        boolean v = (curVis & View.SYSTEM_UI_FLAG_LOW_PROFILE) != 0;
-        setNavVisibility(v);
-        if (v)
-            startHideTask();
+        setFullScreen(!mFullScreenHelper.getFullScreen());
     }
 
     @Override
@@ -262,7 +260,7 @@ public class GalleryActivity extends Activity
             return;
 
         thumbOffset = thumbOffset + Ui.dp2pix(12);
-        int x = (mainView.getWidth() - 2 * thumbOffset) * progress / max + thumbOffset;
+        int x = (getWindow().getDecorView().getWidth() - 2 * thumbOffset) * progress / max + thumbOffset;
         mSeekerBubble.setX(x);
         mSeekerBubble.setText(String.valueOf(progress + 1));
     }
@@ -275,13 +273,13 @@ public class GalleryActivity extends Activity
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        cancelHideTask();
+        cancelFullScreenTask();
         showSeekBubble();
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        startHideTask();
+        startFullScreenTask();
         hideSeekBubble();
         mGalleryView.goToPage(seekBar.getProgress());
     }

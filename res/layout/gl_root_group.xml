@@ -17,8 +17,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
     <com.hippo.ehviewer.gallery.ui.GLRootView
         android:id="@+id/gl_root_view"
@@ -45,37 +44,45 @@
         android:textColor="@color/secondary_text_light"
         auto:bvColor="@color/secondary_text_light" />
 
-   <LinearLayout
-        android:id="@+id/nav_bar"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_gravity="bottom"
-        android:background="@color/background_little_dark"
-        android:orientation="horizontal"
-        android:clickable="true"
-        android:visibility="gone" >
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:fitsSystemWindows="true" >
 
-        <SeekBar
-            android:id="@+id/page_seeker"
+        <FrameLayout
+            android:id="@+id/footer"
             android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="bottom"
+            android:background="@color/background_little_dark"
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:visibility="gone" >
+
+            <SeekBar
+                android:id="@+id/page_seeker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_gravity="center" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/seeker_bubble"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
-            android:layout_gravity="center" />
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="52dp"
+            android:ellipsize="start"
+            android:singleLine="true"
+            android:textColor="@color/secondary_text_light"
+            android:textSize="@dimen/text_large"
+            android:visibility="gone"
+            android:background="@drawable/seeker_bubble" />
 
-   </LinearLayout>
-
-   <TextView
-        android:id="@+id/seeker_bubble"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="52dp"
-        android:ellipsize="start"
-        android:singleLine="true"
-        android:textColor="@color/secondary_text_light"
-        android:textSize="@dimen/text_large"
-        android:visibility="gone"
-        android:background="@drawable/seeker_bubble" />
+    </FrameLayout>
 
 </FrameLayout>
