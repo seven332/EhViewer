@@ -750,6 +750,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
     private void cancelAnimation() {
         if (mAnimator.isRunning()) {
+            mOpenTask = null;
             mCancelAnimation = true;
             mAnimator.cancel();
         }
