@@ -22,6 +22,10 @@
 
 -keep class com.hippo.**
 
+-keep class com.hippo.ehviewer.gallery.image.Image {*;}
+
+-keep class com.hippo.ehviewer.gallery.image.GifImage {*;}
+
 -keepclassmembers public class * extends android.graphics.drawable.Drawable {
     void set*(***);
     *** get*();
