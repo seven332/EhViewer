@@ -1261,8 +1261,8 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
             checkUpdate();
 
         String keyFirstTime = "first_time";
-        if (Config.getBoolean(keyFirstTime, false)) {
-            Config.setBoolean(keyFirstTime, true);
+        if (Config.getBoolean(keyFirstTime, true)) {
+            Config.setBoolean(keyFirstTime, false);
 
             // Show left menu, Can't invoke showMenu() immediately
             Message m = Message.obtain(null, new Runnable() {
