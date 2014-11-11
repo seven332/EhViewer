@@ -108,6 +108,8 @@
     <string name="download_4">Download failed %d items</string>
     <string name="download_5">Download OK %1$d, Download failed %2$d</string>
     <string name="download_6">Download OK %1$d items, Download failed %2$d items</string>
+    <string name="delete_item">The item will be deleted</string>
+    <string name="pic_included">pictures included</string>
 
     <!-- ErrorMessage -->
     <string name="em_network_error">Network Error</string>
@@ -172,6 +174,11 @@
     <!-- Popular -->
     <string name="popular_update_time">Update at %s</string>
 
+    <!-- History -->
+    <string name="clear_history_message">Clear history records</string>
+    <string name="just_browse">just browse</string>
+    <string name="have_read">have read</string>
+
     <!-- Settings -->
     <string name="display_settings_title">Display</string>
     <string name="theme_display_settings_title">Theme</string>
@@ -209,6 +216,8 @@
     <string name="preview_mode_large">Large</string>
     <string name="favorite_eh_settings_title">Favorite</string>
     <string name="default_favorite">Default Favorite</string>
+    <string name="history_eh_settings_title">History</string>
+    <string name="max_history_count_title">The maximum number of history records</string>
 
     <string name="read_settings_title">Reading</string>
     <string name="keep_screen_on_title">Keep screen when reading</string>
@@ -360,6 +369,9 @@
     <string name="rating0">DISASTER</string>
 
     <!-- Util -->
+    <string name="filter">filter</string>
+    <string name="clear">clear</string>
+    <string name="history">history</string>
     <string name="warning">Warning</string>
     <string name="close">Close</string>
     <string name="select">Select</string>

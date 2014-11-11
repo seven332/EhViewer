@@ -93,6 +93,8 @@
     <string name="download_4">下載失敗 %d 項</string>
     <string name="download_5">下載成功 %1$d, 下載失敗 %2$d</string>
     <string name="download_6">下載成功 %1$d 項, 下載失敗 %2$d 項</string>
+    <string name="delete_item">該下載項將被刪除</string>
+    <string name="pic_included">包括圖片</string>
 
     <!-- ErrorMessage -->
     <string name="em_network_error">網路錯誤</string>
@@ -157,6 +159,11 @@
     <!-- Popular -->
     <string name="popular_update_time">更新時間 %s</string>
 
+    <!-- History -->
+    <string name="clear_history_message">所有歷史記錄將被清除</string>
+    <string name="just_browse">僅瀏覽過</string>
+    <string name="have_read">已閱讀過</string>
+
     <!-- Settings -->
     <string name="display_settings_title">顯示</string>
     <string name="theme_display_settings_title">主題</string>
@@ -194,6 +201,8 @@
     <string name="preview_mode_large">大預覽圖</string>
     <string name="favorite_eh_settings_title">收藏</string>
     <string name="default_favorite">默認收藏夾</string>
+    <string name="history_eh_settings_title">歷史</string>
+    <string name="max_history_count_title">最大歷史記錄條數</string>
 
     <string name="read_settings_title">閱讀</string>
     <string name="keep_screen_on_title">閱讀時螢幕常亮</string>
@@ -326,6 +335,9 @@
     <string name="rating0">…</string>
 
     <!-- Utils -->
+    <string name="filter">過濾</string>
+    <string name="clear">清除</string>
+    <string name="history">歷史</string>
     <string name="warning">警告</string>
     <string name="close">關閉</string>
     <string name="select">選擇</string>
