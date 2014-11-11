@@ -656,16 +656,21 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             else
                 dispatchOnDrawerClosed(mTargetView);
 
-            if (mOpenTask == null || mToOpen)
-                ;
-            else if (mOpenTask == mLeftDrawer)
-                startAnimation(true, true);
-            else if (mOpenTask == mRightDrawer)
-                startAnimation(true, false);
-
-        } else {
-            mCancelAnimation = false;
+            if (mOpenTask != null && !mToOpen &&
+                    (mOpenTask == mLeftDrawer || mOpenTask == mRightDrawer)) {
+                // If call startAnimation directly,
+                // onAnimationStart and onAnimationEnd will not be called
+                final boolean isLeft = mOpenTask == mLeftDrawer;
+                getHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        startAnimation(isLeft, true);
+                    }
+                });
+            }
         }
+
+        mCancelAnimation = false;
         mOpenTask = null;
     }
 
@@ -907,7 +912,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
         // Callback
         if (update && mListener != null) {
-            mListener.onDrawerOpened(drawerView);
+            mListener.onDrawerClosed(drawerView);
         }
     }
 
