@@ -46,7 +46,7 @@ import com.hippo.ehviewer.util.Ui;
 
 public class GalleryActivity extends Activity
         implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener,
-        FullScreenHelper.OnFullScreenBrokenListener {
+        FullScreenHelper.OnFullScreenBrokenListener, MaterialAlertDialog.OnClickListener {
 
     @SuppressWarnings("unused")
     private final static String TAG = GalleryActivity.class.getSimpleName();
@@ -111,6 +111,13 @@ public class GalleryActivity extends Activity
             startFullScreenTask();
         else
             cancelFullScreenTask();
+    }
+
+    @Override
+    public boolean onClick(MaterialAlertDialog dialog, int which) {
+        // When dialog show, full screen may be broken
+        setFullScreen(true);
+        return true;
     }
 
     @Override
@@ -192,6 +199,7 @@ public class GalleryActivity extends Activity
                 new MaterialAlertDialog.Builder(this).setTitle(R.string.tip)
                         .setMessage(R.string.gallery_tip)
                         .setNegativeButton(android.R.string.cancel)
+                        .setButtonListener(this)
                         .show();
             }
         }
