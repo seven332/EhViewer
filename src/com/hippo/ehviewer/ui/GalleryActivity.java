@@ -45,7 +45,9 @@ import com.hippo.ehviewer.util.FullScreenHelper;
 import com.hippo.ehviewer.util.Ui;
 
 public class GalleryActivity extends Activity
-        implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener {
+        implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener,
+        FullScreenHelper.OnFullScreenBrokenListener {
+
     @SuppressWarnings("unused")
     private final static String TAG = GalleryActivity.class.getSimpleName();
 
@@ -89,8 +91,7 @@ public class GalleryActivity extends Activity
         aa.setAnimationListener(new AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                if (!fullScreen)
-                    mFooter.setVisibility(View.VISIBLE);
+                mFooter.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -113,6 +114,11 @@ public class GalleryActivity extends Activity
     }
 
     @Override
+    public void onFullScreenBroken(boolean fullScreen) {
+        setFullScreen(!fullScreen);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         setFullScreen(true);
@@ -124,6 +130,7 @@ public class GalleryActivity extends Activity
         setContentView(R.layout.gl_root_group);
 
         mFullScreenHelper = new FullScreenHelper(this);
+        mFullScreenHelper.setOnFullScreenBrokenListener(this);
         mFullScreenHelper.setFullScreen(true);
 
         mFooter = findViewById(R.id.footer);
