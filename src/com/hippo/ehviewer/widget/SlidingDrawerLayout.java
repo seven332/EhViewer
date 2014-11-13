@@ -850,7 +850,11 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         // Cancel animate
         cancelAnimation();
 
-        mDragHelper.processTouchEvent(ev);
+        try {
+            mDragHelper.processTouchEvent(ev);
+        } catch (Throwable e) {
+            // TODO Another finger touch screen may make trouble
+        }
 
         final int action = MotionEventCompat.getActionMasked(ev);
         final float x = ev.getX();
