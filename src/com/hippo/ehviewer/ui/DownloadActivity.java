@@ -37,9 +37,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.balysv.materialmenu.MaterialMenuDrawable;
-import com.balysv.materialmenu.MaterialMenuDrawable.Stroke;
-import com.balysv.materialmenu.MaterialMenuIcon;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
@@ -47,6 +44,8 @@ import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.DownloadInfo;
 import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
+import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
@@ -103,8 +102,9 @@ public class DownloadActivity extends AbsActivity implements FitWindowView.OnFit
         registerReceiver(mReceiver, filter);
 
         // Menu
-        MaterialMenuIcon materialMenu = new MaterialMenuIcon(this, Color.WHITE, Stroke.THIN);
-        materialMenu.setState(MaterialMenuDrawable.IconState.ARROW);
+        MaterialIndicatorDrawable materialIndicator = new MaterialIndicatorDrawable(this, Color.WHITE, Stroke.THIN);
+        materialIndicator.setIconState(MaterialIndicatorDrawable.IconState.ARROW);
+        Ui.setMaterialIndicator(getActionBar(), materialIndicator);
 
         mDownloads = Data.getInstance().getAllDownloads();
         for (DownloadInfo di : mDownloads)

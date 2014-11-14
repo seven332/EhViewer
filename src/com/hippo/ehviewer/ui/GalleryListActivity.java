@@ -65,9 +65,6 @@ import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.balysv.materialmenu.MaterialMenuDrawable;
-import com.balysv.materialmenu.MaterialMenuDrawable.Stroke;
-import com.balysv.materialmenu.MaterialMenuIcon;
 import com.etsy.android.grid.StaggeredGridView;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.AppHandler;
@@ -81,6 +78,8 @@ import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.ListUrls;
 import com.hippo.ehviewer.data.Tag;
+import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
+import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.service.DownloadService;
@@ -159,7 +158,7 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
     private ActionBar mActionBar;
     private int mThemeColor;
 
-    private MaterialMenuIcon mMaterialMenu;
+    private MaterialIndicatorDrawable mMaterialIndicator;
     private boolean mDirection;
 
     private SlidingDrawerLayout mDrawerLayout;
@@ -931,8 +930,8 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
     @Override
     public void onDrawerSlide(View view, float f) {
         if (view == mLeftMenu) {
-            mMaterialMenu.setTransformationOffset(
-                    MaterialMenuDrawable.AnimationState.BURGER_ARROW,
+            mMaterialIndicator.setTransformationOffset(
+                    MaterialIndicatorDrawable.AnimationState.BURGER_ARROW,
                     mDirection ? 2 - f : f);
         }
     }
@@ -959,12 +958,12 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mMaterialMenu.syncState(savedInstanceState);
+        mMaterialIndicator.syncState(savedInstanceState);
     }
 
     @Override protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mMaterialMenu.onSaveInstanceState(outState);
+        mMaterialIndicator.onSaveInstanceState(outState);
     }
 
     @Override
@@ -1009,12 +1008,18 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
         mSearchDialog = createSearchDialog();
         longClickDialog = createLongClickDialog();
 
+        ColorDrawable cd = new ColorDrawable(Color.WHITE);
+        cd.setBounds(0, 0, Ui.dp2pix(32), Ui.dp2pix(32));
+        this.
+
         // Menu
-        mMaterialMenu = new MaterialMenuIcon(this, Color.WHITE, Stroke.THIN);
+        mMaterialIndicator = new MaterialIndicatorDrawable(this, Color.WHITE, Stroke.THIN);
         if (mShowDrawer)
-            mMaterialMenu.setState(MaterialMenuDrawable.IconState.BURGER);
+            mMaterialIndicator.setIconState(MaterialIndicatorDrawable.IconState.BURGER);
         else
-            mMaterialMenu.setState(MaterialMenuDrawable.IconState.ARROW);
+            mMaterialIndicator.setIconState(MaterialIndicatorDrawable.IconState.ARROW);
+        mActionBar = getActionBar();
+        Ui.setMaterialIndicator(mActionBar, mMaterialIndicator);
 
         // Get View
         mDrawerLayout = (SlidingDrawerLayout) findViewById(R.id.drawerlayout);
@@ -1044,10 +1049,6 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
         mLogoutButton.setOnClickListener(this);
 
         // Drawer
-        mActionBar = getActionBar();
-        mActionBar.setDisplayHomeAsUpEnabled(false);
-        if (mShowDrawer && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
-            mActionBar.setHomeAsUpIndicator(mResources.getDrawable(R.drawable.ic_navigation_drawer));
         mDrawerLayout.setDrawerListener(this);
         if (!mShowDrawer)
             mDrawerLayout.setDrawerLockMode(SlidingDrawerLayout.LOCK_MODE_LOCKED_CLOSED, mLeftMenu);

@@ -37,15 +37,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.balysv.materialmenu.MaterialMenuDrawable;
-import com.balysv.materialmenu.MaterialMenuDrawable.Stroke;
-import com.balysv.materialmenu.MaterialMenuIcon;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
+import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
@@ -159,7 +158,7 @@ public class HistoryActivity extends AbsActivity
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.history);
 
@@ -167,8 +166,9 @@ public class HistoryActivity extends AbsActivity
         mFilterMode = Config.getInt(KEY_HISTORY_FILTER, Data.BROWSE | Data.READ);
 
         // Menu
-        MaterialMenuIcon materialMenu = new MaterialMenuIcon(this, Color.WHITE, Stroke.THIN);
-        materialMenu.setState(MaterialMenuDrawable.IconState.ARROW);
+        MaterialIndicatorDrawable materialIndicator = new MaterialIndicatorDrawable(this, Color.WHITE, Stroke.THIN);
+        materialIndicator.setIconState(MaterialIndicatorDrawable.IconState.ARROW);
+        Ui.setMaterialIndicator(getActionBar(), materialIndicator);
 
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
         getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));

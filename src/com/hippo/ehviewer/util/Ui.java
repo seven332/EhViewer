@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.util;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -42,6 +43,7 @@ import android.widget.FrameLayout.LayoutParams;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.ListUrls;
+import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
 
 public class Ui {
     @SuppressWarnings("unused")
@@ -272,11 +274,14 @@ public class Ui {
             Configuration c = activity.getResources().getConfiguration();
             Window w = activity.getWindow();
 
-            w.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             if (c.orientation == Configuration.ORIENTATION_PORTRAIT)
                 w.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             else if (c.orientation == Configuration.ORIENTATION_LANDSCAPE)
                 w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+
+            // For KK set a color view at top to make color status bar
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
+                w.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
     }
 
@@ -291,9 +296,10 @@ public class Ui {
             activity.setRequestedOrientation(screenOri);
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void translucent(Activity activity, int color, int height) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        int darkColor = Theme.getDarkerColor(color);
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             View statusBarBgView;
             FrameLayout.LayoutParams lp;
             ViewGroup decorViewGroup = (ViewGroup) activity.getWindow().getDecorView();
@@ -305,16 +311,33 @@ public class Ui {
                 lp = (LayoutParams) statusBarBgView.getLayoutParams();
                 lp.height = height;
                 lp.gravity = Gravity.TOP;
-                statusBarBgView.setBackgroundColor(color);
+                statusBarBgView.setBackgroundColor(darkColor);
                 statusBarBgView.setLayoutParams(lp);
             } else {
                 statusBarBgView = new View(activity);
                 statusBarBgView.setId(R.id.translucent_view);
-                statusBarBgView.setBackgroundColor(color);
+                statusBarBgView.setBackgroundColor(darkColor);
                 lp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, height);
                 lp.gravity = Gravity.TOP;
                 decorViewGroup.addView(statusBarBgView, lp);
             }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            activity.getWindow().setStatusBarColor(Theme.getDarkerColor(darkColor));
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public static void setMaterialIndicator(ActionBar actionBar, MaterialIndicatorDrawable d) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setIcon(d);
+        } else {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(d);
+            actionBar.setIcon(null);
         }
     }
 }

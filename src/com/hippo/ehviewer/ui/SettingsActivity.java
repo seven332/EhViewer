@@ -52,9 +52,6 @@ import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-import com.balysv.materialmenu.MaterialMenuDrawable;
-import com.balysv.materialmenu.MaterialMenuDrawable.Stroke;
-import com.balysv.materialmenu.MaterialMenuIcon;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
@@ -65,6 +62,8 @@ import com.hippo.ehviewer.app.MaterialProgressDialog;
 import com.hippo.ehviewer.data.ApiGalleryInfo;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.DownloadInfo;
+import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
+import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.network.HttpHelper;
@@ -118,8 +117,9 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
         getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));
 
         // Menu
-        MaterialMenuIcon materialMenu = new MaterialMenuIcon(this, Color.WHITE, Stroke.THIN);
-        materialMenu.setState(MaterialMenuDrawable.IconState.ARROW);
+        MaterialIndicatorDrawable materialIndicator = new MaterialIndicatorDrawable(this, Color.WHITE, Stroke.THIN);
+        materialIndicator.setIconState(MaterialIndicatorDrawable.IconState.ARROW);
+        Ui.setMaterialIndicator(getActionBar(), materialIndicator);
 
         mFragments = new LinkedList<TranslucentPreferenceFragment>();
 

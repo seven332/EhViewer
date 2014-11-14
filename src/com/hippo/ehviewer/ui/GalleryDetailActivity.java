@@ -58,9 +58,6 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import com.balysv.materialmenu.MaterialMenuDrawable;
-import com.balysv.materialmenu.MaterialMenuDrawable.Stroke;
-import com.balysv.materialmenu.MaterialMenuIcon;
 import com.faizmalkani.floatingactionbutton.FloatingActionButton;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
@@ -77,6 +74,8 @@ import com.hippo.ehviewer.data.LofiGalleryDetail;
 import com.hippo.ehviewer.data.LofiGalleryInfo;
 import com.hippo.ehviewer.data.PreviewImpl;
 import com.hippo.ehviewer.data.PreviewList;
+import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
+import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.drawable.OvalDrawable;
 import com.hippo.ehviewer.ehclient.DetailUrlParser;
 import com.hippo.ehviewer.ehclient.EhClient;
@@ -294,8 +293,9 @@ public class GalleryDetailActivity extends AbsActivity
         mResources = getResources();
 
         // Menu
-        MaterialMenuIcon materialMenu = new MaterialMenuIcon(this, Color.WHITE, Stroke.THIN);
-        materialMenu.setState(MaterialMenuDrawable.IconState.ARROW);
+        MaterialIndicatorDrawable materialIndicator = new MaterialIndicatorDrawable(this, Color.WHITE, Stroke.THIN);
+        materialIndicator.setIconState(MaterialIndicatorDrawable.IconState.ARROW);
+        Ui.setMaterialIndicator(getActionBar(), materialIndicator);
 
         // Get view
         mStandard = (FitWindowView) findViewById(R.id.standard);
