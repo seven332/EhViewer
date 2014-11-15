@@ -58,7 +58,6 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import com.faizmalkani.floatingactionbutton.FloatingActionButton;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
@@ -89,6 +88,7 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
 import com.hippo.ehviewer.widget.FitWindowView;
+import com.hippo.ehviewer.widget.FloatingActionButton;
 import com.hippo.ehviewer.widget.LinkifyTextView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialProgress;

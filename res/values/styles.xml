@@ -17,30 +17,30 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="ActionBar" parent="@android:style/Widget.Holo.ActionBar">
-        <item name="android:background">@android:color/holo_blue_dark</item>
-        <item name="android:backgroundStacked">@color/tag_bg</item>
-        <item name="android:backgroundSplit">@android:color/holo_blue_dark</item>
-        <item name="android:titleTextStyle">@style/ActionBarTitleFont</item>
+        <item name="@android:background">@android:color/holo_blue_dark</item>
+        <item name="@android:backgroundStacked">@color/tag_bg</item>
+        <item name="@android:backgroundSplit">@android:color/holo_blue_dark</item>
+        <item name="@android:titleTextStyle">@style/ActionBarTitleFont</item>
     </style>
 
     <style name="ActionBar.Gallery" parent="@android:style/Widget.Holo.ActionBar">
-        <item name="android:background">@color/background_little_dark</item>
-        <item name="android:backgroundStacked">@color/tag_bg</item>
-        <item name="android:backgroundSplit">@color/background_little_dark</item>
-        <item name="android:titleTextStyle">@style/ActionBarTitleFont.Gallery</item>
+        <item name="@android:background">@color/background_little_dark</item>
+        <item name="@android:backgroundStacked">@color/tag_bg</item>
+        <item name="@android:backgroundSplit">@color/background_little_dark</item>
+        <item name="@android:titleTextStyle">@style/ActionBarTitleFont.Gallery</item>
     </style>
 
     <style name="ActionBarTitleFont" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@android:color/white</item>
+        <item name="@android:textStyle">bold</item>
+        <item name="@android:textColor">@android:color/white</item>
     </style>
 
     <style name="ActionBarTitleFont.Gallery" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
-        <item name="android:textColor">@color/secondary_text_light</item>
+        <item name="@android:textColor">@color/secondary_text_light</item>
     </style>
 
     <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
-        <item name="android:src">@drawable/ic_action_core_overflow</item>
+        <item name="@android:src">@drawable/ic_action_core_overflow</item>
     </style>
 
     <style name="PopupMenu" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
@@ -146,29 +146,29 @@
 
     <!-- Text -->
     <style name="TextAppearance.CardTitle">
-        <item name="android:textSize">@dimen/text_little_large</item>
+        <item name="@android:textSize">@dimen/text_little_large</item>
     </style>
 
     <style name="CardTitle">
         <item name="@android:textAppearance">@style/TextAppearance.CardTitle</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:maxLines">2</item>
-        <item name="android:lineSpacingExtra">0sp</item>
+        <item name="@android:ellipsize">end</item>
+        <item name="@android:maxLines">2</item>
+        <item name="@android:lineSpacingExtra">0sp</item>
     </style>
 
     <style name="TextAppearance.CardMessage">
-        <item name="android:textColor">@color/secondary_text_dark</item>
+        <item name="@android:textColor">@color/secondary_text_dark</item>
     </style>
 
     <style name="CardMessage">
         <item name="@android:textAppearance">@style/TextAppearance.CardMessage</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:singleLine">true</item>
+        <item name="@android:ellipsize">end</item>
+        <item name="@android:singleLine">true</item>
     </style>
 
     <style name="TextAppearance.DetailTitle">
-        <item name="android:textSize">@dimen/text_large</item>
-        <item name="android:textColor">@color/primary_text_dark</item>
+        <item name="@android:textSize">@dimen/text_large</item>
+        <item name="@android:textColor">@color/primary_text_dark</item>
     </style>
 
     <style name="DetailTitle">
@@ -178,8 +178,8 @@
     </style>
 
     <style name="TextAppearance.DetailSubtitle">
-        <item name="android:textSize">@dimen/text_little_large</item>
-        <item name="android:textColor">@color/secondary_text_dark</item>
+        <item name="@android:textSize">@dimen/text_little_large</item>
+        <item name="@android:textColor">@color/secondary_text_dark</item>
     </style>
 
     <style name="DetailSubtitle">
@@ -189,15 +189,15 @@
     </style>
 
     <style name="TextTag">
-        <item name="android:textSize">@dimen/text_medium</item>
-        <item name="android:textColor">@color/primary_text_light</item>
-        <item name="android:background">@color/background_dark</item>
-        <item name="android:ellipsize">marquee</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:paddingTop">4dp</item>
-        <item name="android:paddingBottom">4dp</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
+        <item name="@android:textSize">@dimen/text_medium</item>
+        <item name="@android:textColor">@color/primary_text_light</item>
+        <item name="@android:background">@color/background_dark</item>
+        <item name="@android:ellipsize">marquee</item>
+        <item name="@android:singleLine">true</item>
+        <item name="@android:paddingTop">4dp</item>
+        <item name="@android:paddingBottom">4dp</item>
+        <item name="@android:paddingLeft">8dp</item>
+        <item name="@android:paddingRight">8dp</item>
     </style>
 
     <style name="TextAppearance.SearchCategory">
@@ -238,12 +238,28 @@
     </style>
 
     <style name="DropDownItem" parent="@android:Widget.DropDownItem">
-        <item name="android:textAppearance">@style/TextAppearance.DropDownItem</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
+        <item name="@android:textAppearance">@style/TextAppearance.DropDownItem</item>
+        <item name="@android:paddingLeft">8dp</item>
+        <item name="@android:paddingRight">8dp</item>
     </style>
 
     <style name="DropDownItem.Spinner">
+    </style>
+
+    <!-- Dialog -->
+    <style name="FloatingActionButton">
+        <item name="@android:minWidth">60dp</item>
+        <item name="@android:minHeight">60dp</item>
+        <item name="fabShadowRadius">2dp</item>
+        <item name="fabShadowDx">0dp</item>
+        <item name="fabShadowDy">1dp</item>
+        <item name="fabShadowColor">@color/secondary_text_dark</item>
+        <item name="fabDrawableSide">24dp</item>
+    </style>
+
+    <style name="FloatingActionButton.Small">
+        <item name="@android:minWidth">44dp</item>
+        <item name="@android:minHeight">44dp</item>
     </style>
 
     <!-- Dialog -->
@@ -251,7 +267,7 @@
     </style>
 
     <style name="Dialog.CheckBox">
-        <item name="android:button">@drawable/btn_check_dialog_material</item>
+        <item name="@android:button">@drawable/btn_check_dialog_material</item>
     </style>
 
 </resources>

@@ -84,4 +84,14 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="FloatingActionButton">
+        <attr name="fabDrawable" format="integer"/>
+        <attr name="fabColor" format="color"/>
+        <attr name="fabShadowRadius" format="dimension"/>
+        <attr name="fabShadowDx" format="dimension"/>
+        <attr name="fabShadowDy" format="dimension"/>
+        <attr name="fabShadowColor" format="color"/>
+        <attr name="fabDrawableSide" format="dimension"/>
+    </declare-styleable>
+
 </resources>
