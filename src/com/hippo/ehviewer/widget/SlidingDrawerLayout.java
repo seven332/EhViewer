@@ -687,19 +687,20 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             return false;
     }
 
-    private void slideLeftDrawer(int dx) {
+    private int getActualDxLeft(int dx) {
         int leftWidth = mLeftDrawer.getWidth();
         int oldLeft = mLeftDrawer.getLeft();
         int newLeft = MathUtils.clamp(oldLeft + dx, -leftWidth, 0);
         int newVisible = newLeft == -leftWidth ? View.INVISIBLE : View.VISIBLE;
         if (mLeftDrawer.getVisibility() != newVisible)
             mLeftDrawer.setVisibility(newVisible);
-        mLeftDrawer.offsetLeftAndRight(newLeft - oldLeft);
 
         updateDrawerSlide(mLeftDrawer, (newLeft + leftWidth) / (float) leftWidth);
+
+        return newLeft - oldLeft;
     }
 
-    private void slideRightDrawer(int dx) {
+    private int getActualDxRight(int dx) {
         int width = getWidth();
         int rightWidth = mRightDrawer.getWidth();
         int oldLeft = mRightDrawer.getLeft();
@@ -707,9 +708,18 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         int newVisible = newLeft == width ? View.INVISIBLE : View.VISIBLE;
         if (mRightDrawer.getVisibility() != newVisible)
             mRightDrawer.setVisibility(newVisible);
-        mRightDrawer.offsetLeftAndRight(newLeft - oldLeft);
 
         updateDrawerSlide(mRightDrawer, (width - newLeft) / (float) rightWidth);
+
+        return newLeft - oldLeft;
+    }
+
+    private void slideLeftDrawer(int dx) {
+        mLeftDrawer.offsetLeftAndRight(getActualDxLeft(dx));
+    }
+
+    private void slideRightDrawer(int dx) {
+        mRightDrawer.offsetLeftAndRight(getActualDxRight(dx));
     }
 
     @Override
@@ -801,11 +811,12 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         final float y = ev.getY();
         boolean interceptSlide = false;
 
-        if (!isDrawersTouchable() || isDrawerUnder((int) x, (int) y)) {
+        if (!isDrawersTouchable()) {
             return false;
         }
 
-        if ((mLeftState != STATE_CLOSED || mRightState != STATE_CLOSED))
+        if ((mLeftState == STATE_OPEN || mRightState == STATE_OPEN) &&
+                !isDrawerUnder((int) x, (int) y))
             return true;
 
         switch (action) {
@@ -868,7 +879,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         if (!mIntercepted)
             return false;
 
-        if (!isDrawersTouchable() || isDrawerUnder((int) x, (int) y))
+        if (!isDrawersTouchable())
             return false;
 
         switch (action) {
@@ -1080,7 +1091,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
-            return child == mContentView;
+            return true;
         }
 
         @Override
@@ -1094,23 +1105,35 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             if (!mIntercepted)
                 return child.getLeft();
 
-            if (mLeftState == STATE_CLOSED && mRightState == STATE_CLOSED) {
-                if (dx > 0 && mLeftDrawer != null && mLeftLockMode == LOCK_MODE_UNLOCKED) {
+            if (child == mContentView) {
+                if (mLeftState == STATE_CLOSED && mRightState == STATE_CLOSED) {
+                    if (dx > 0 && mLeftDrawer != null && mLeftLockMode == LOCK_MODE_UNLOCKED) {
+                        slideLeftDrawer(dx);
+                        updateDrawerState(mLeftDrawer, STATE_SLIDING);
+                    } else if (dx < 0 && mRightDrawer != null && mRightLockMode == LOCK_MODE_UNLOCKED) {
+                        slideRightDrawer(dx);
+                        updateDrawerState(mRightDrawer, STATE_SLIDING);
+                    }
+                } else if (mLeftState != STATE_CLOSED) {
                     slideLeftDrawer(dx);
                     updateDrawerState(mLeftDrawer, STATE_SLIDING);
-                } else if (dx < 0 && mRightDrawer != null && mRightLockMode == LOCK_MODE_UNLOCKED) {
+                } else if (mRightState != STATE_CLOSED) {
                     slideRightDrawer(dx);
                     updateDrawerState(mRightDrawer, STATE_SLIDING);
                 }
-            } else if (mLeftState != STATE_CLOSED) {
-                slideLeftDrawer(dx);
-                updateDrawerState(mLeftDrawer, STATE_SLIDING);
-            } else if (mRightState != STATE_CLOSED) {
-                slideRightDrawer(dx);
-                updateDrawerState(mRightDrawer, STATE_SLIDING);
-            }
+                return child.getLeft();
 
-            return child.getLeft();
+            } else if (child == mLeftDrawer) {
+                updateDrawerState(mLeftDrawer, STATE_SLIDING);
+                return child.getLeft() + getActualDxLeft(dx);
+
+            } else if (child == mRightDrawer) {
+                updateDrawerState(mRightDrawer, STATE_SLIDING);
+                return child.getLeft() + getActualDxRight(dx);
+
+            } else {
+                return child.getLeft();
+            }
         }
 
         @Override

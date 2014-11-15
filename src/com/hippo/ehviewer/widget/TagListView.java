@@ -31,6 +31,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.support.v4.util.LongSparseArray;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -415,7 +416,7 @@ public class TagListView extends ListView {
                 break;
         }
 
-        return super.onTouchEvent(event);
+        return super.onTouchEvent(event) | mCellIsMobile;
     }
 
     /**
@@ -457,8 +458,14 @@ public class TagListView extends ListView {
 
             final int switchViewStartTop = switchView.getTop();
 
-            mobileView.setVisibility(View.VISIBLE);
-            switchView.setVisibility(View.INVISIBLE);
+            // TODO where does the different come from
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                mobileView.setVisibility(View.VISIBLE);
+                switchView.setVisibility(View.INVISIBLE);
+            } else {
+                mobileView.setVisibility(View.INVISIBLE);
+                switchView.setVisibility(View.VISIBLE);
+            }
 
             updateNeighborViewsForID(mMobileItemId);
 
