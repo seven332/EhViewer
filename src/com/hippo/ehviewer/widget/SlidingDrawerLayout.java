@@ -38,6 +38,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
 
+import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
@@ -319,14 +320,14 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             // Check other side first
             switch (isLeft ? mRightState : mLeftState) {
             case STATE_CLOSED:
-                startAnimation(isLeft, true);
+                startAnimation(isLeft, true, false);
                 break;
             case STATE_SLIDING:
                 if (mAnimator.isRunning()) {
                     if (mToOpen) {
                         cancelAnimation();
                         mOpenTask = isLeft ? mLeftDrawer : mRightDrawer;
-                        startAnimation(!isLeft, false);
+                        startAnimation(!isLeft, false, false);
                     } else {
                         mOpenTask = isLeft ? mLeftDrawer : mRightDrawer;
                     }
@@ -337,7 +338,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             case STATE_OPEN:
                 // Close other side first
                 mOpenTask = isLeft ? mLeftDrawer : mRightDrawer;
-                startAnimation(!isLeft, false);
+                startAnimation(!isLeft, false, false);
                 break;
             }
             break;
@@ -348,7 +349,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                     // Same purpose
                 } else {
                     cancelAnimation();
-                    startAnimation(isLeft, true);
+                    startAnimation(isLeft, true, false);
                 }
             } else {
                 // You finger is on Screen!
@@ -387,7 +388,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             if (mAnimator.isRunning()) {
                 if (mToOpen) {
                     cancelAnimation();
-                    startAnimation(isLeft, false);
+                    startAnimation(isLeft, false, false);
                 } else {
                     // Same purpose
                 }
@@ -396,7 +397,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             }
             break;
         case STATE_OPEN:
-            startAnimation(isLeft, false);
+            startAnimation(isLeft, false, false);
             break;
         }
     }
@@ -756,7 +757,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                 getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        startAnimation(isLeft, true);
+                        startAnimation(isLeft, true, false);
                     }
                 });
             }
@@ -776,7 +777,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         // Empty
     }
 
-    private void startAnimation(final boolean isLeft, final boolean isOpen) {
+    private void startAnimation(final boolean isLeft, final boolean isOpen,
+            boolean staticDuration) {
         mToOpen = isOpen;
         if (isLeft) {
             mTargetView = mLeftDrawer;
@@ -799,7 +801,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             return;
         }
 
-        mAnimator.setDuration((long) (Ui.pix2dp(Math.abs(mEndLeft - mStartLeft)) * 1.5));
+        mAnimator.setDuration(staticDuration ? Constants.ANIMATE_TIME :
+            (long) (Ui.pix2dp(Math.abs(mEndLeft - mStartLeft)) * 1.5));
         mAnimator.start();
     }
 
@@ -830,7 +833,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             final float adx = Math.abs(x - mInitialMotionX);
             final float ady = Math.abs(y - mInitialMotionY);
             final int slop = mDragHelper.getTouchSlop();
-            if (adx > slop && adx > (2 * ady))
+            if (adx > slop && adx > ady)
                 interceptSlide = true;
             break;
         case MotionEvent.ACTION_UP:
@@ -892,19 +895,23 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             mInterceptPointNum = 0;
 
             if (mLeftState == STATE_SLIDING) {
-                if ((mLeftOpened && mLeftPercent < CLOSE_SENSITIVITY) ||
-                        (!mLeftOpened && mLeftPercent < OPEN_SENSITIVITY))
-                    startAnimation(true, false);
-                else if ((mLeftOpened && mLeftPercent >= CLOSE_SENSITIVITY) ||
-                        (!mLeftOpened && mLeftPercent >= OPEN_SENSITIVITY))
-                    startAnimation(true, true);
+                if (mLeftOpened && mLeftPercent < CLOSE_SENSITIVITY)
+                    startAnimation(true, false, false);
+                else if (!mLeftOpened && mLeftPercent < OPEN_SENSITIVITY)
+                    startAnimation(true, false, true);
+                else if (mLeftOpened && mLeftPercent >= CLOSE_SENSITIVITY)
+                    startAnimation(true, true, true);
+                else if (!mLeftOpened && mLeftPercent >= OPEN_SENSITIVITY)
+                    startAnimation(true, true, false);
             } else if (mRightState == STATE_SLIDING) {
-                if ((mRightOpened && mRightPercent < CLOSE_SENSITIVITY) ||
-                        (!mRightOpened && mRightPercent < OPEN_SENSITIVITY))
-                    startAnimation(false, false);
-                else if ((mRightOpened && mRightPercent >= CLOSE_SENSITIVITY) ||
-                        (!mRightOpened && mRightPercent >= OPEN_SENSITIVITY))
-                    startAnimation(false, true);
+                if (mRightOpened && mRightPercent < CLOSE_SENSITIVITY)
+                    startAnimation(false, false, false);
+                else if (!mRightOpened && mRightPercent < OPEN_SENSITIVITY)
+                    startAnimation(false, false, true);
+                else if (mRightOpened && mRightPercent >= CLOSE_SENSITIVITY)
+                    startAnimation(false, true, true);
+                else if (!mRightOpened && mRightPercent >= OPEN_SENSITIVITY)
+                    startAnimation(false, true, false);
             }
             break;
         }
