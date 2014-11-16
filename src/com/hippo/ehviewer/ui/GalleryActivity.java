@@ -86,15 +86,16 @@ public class GalleryActivity extends Activity
     void setFullScreen(final boolean fullScreen) {
         mFullScreenHelper.setFullScreen(fullScreen);
 
-        if (!(fullScreen && mFooter.getVisibility() == View.GONE) &&
-                !(!fullScreen && mFooter.getVisibility() == View.VISIBLE)) {
+        if ((fullScreen && mFooter.getVisibility() == View.VISIBLE) ||
+                (!fullScreen && mFooter.getVisibility() == View.GONE)) {
             AlphaAnimation aa = fullScreen ? new AlphaAnimation(1.0f, 0.0f) :
                     new AlphaAnimation(0.0f, 1.0f);
             aa.setDuration(Constants.ANIMATE_TIME);
             aa.setAnimationListener(new AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
-                    mFooter.setVisibility(View.VISIBLE);
+                    if (!fullScreen)
+                        mFooter.setVisibility(View.VISIBLE);
                 }
 
                 @Override
