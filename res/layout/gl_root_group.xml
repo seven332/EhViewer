@@ -79,7 +79,7 @@
             android:ellipsize="start"
             android:singleLine="true"
             android:textColor="@color/secondary_text_light"
-            android:textSize="@dimen/text_large"
+            android:textSize="@dimen/text_medium"
             android:visibility="gone"
             android:background="@drawable/seeker_bubble" />
 

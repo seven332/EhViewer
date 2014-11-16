@@ -26,7 +26,6 @@
         android:id="@+id/user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/text_medium"
         android:textColor="@color/secondary_text_dark" />
 
     <TextView
@@ -34,7 +33,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:textSize="@dimen/text_medium"
         android:textColor="@color/secondary_text_dark" />
 
     <com.hippo.ehviewer.widget.LinkifyTextView

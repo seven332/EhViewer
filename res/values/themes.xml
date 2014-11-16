@@ -19,6 +19,8 @@
     <style name="AppTheme" parent="@android:Theme.Holo.Light.DarkActionBar">
 
         <item name="android:textAppearance">@style/TextAppearance</item>
+        <item name="android:textAppearanceSmall">@style/TextAppearance.Small</item>
+        <item name="android:textAppearanceMedium">@style/TextAppearance.Medium</item>
         <item name="android:windowBackground">@color/background_light</item>
 
         <!-- ActionBar -->

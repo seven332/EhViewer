@@ -128,7 +128,7 @@
                     android:drawablePadding="4dp"
                     android:gravity="center"
                     android:maxWidth="52dp"
-                    android:textSize="@dimen/text_little_small" />
+                    android:textSize="@dimen/text_super_small" />
 
                 <TextView
                     android:id="@+id/more_of_uploader"
@@ -140,7 +140,7 @@
                     android:gravity="center"
                     android:maxWidth="52dp"
                     android:text="@string/more_of_uploader"
-                    android:textSize="@dimen/text_little_small" />
+                    android:textSize="@dimen/text_super_small" />
 
                 <TextView
                     android:id="@+id/similar"
@@ -151,7 +151,7 @@
                     android:gravity="center"
                     android:maxWidth="52dp"
                     android:text="@string/similar_content"
-                    android:textSize="@dimen/text_little_small" />
+                    android:textSize="@dimen/text_super_small" />
             </LinearLayout>
 
             <View
@@ -262,7 +262,7 @@
                         android:gravity="center"
                         android:maxWidth="52dp"
                         android:text="@string/favourite"
-                        android:textSize="@dimen/text_little_small" />
+                        android:textSize="@dimen/text_super_small" />
 
                     <TextView
                         android:id="@+id/rate"
@@ -272,7 +272,7 @@
                         android:gravity="center"
                         android:maxWidth="52dp"
                         android:text="@string/rate"
-                        android:textSize="@dimen/text_little_small" />
+                        android:textSize="@dimen/text_super_small" />
                 </LinearLayout>
             </RelativeLayout>
 
@@ -346,7 +346,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:textIsSelectable="true"
-            android:textSize="@dimen/text_little_large" />
+            android:textSize="@dimen/text_little_small" />
     </ScrollView>
 
     <FrameLayout

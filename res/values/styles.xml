@@ -52,18 +52,25 @@
         <item name="@android:textColorHint">@color/secondary_text_dark</item>
         <item name="@android:textColorHighlight">#6640c4ff</item>
         <item name="@android:textColorLink">#ff00bcd4</item>
-        <item name="@android:textSize">@dimen/text_medium</item>
+        <item name="@android:textSize">@dimen/text_small</item>
         <item name="@android:fontFamily">sans-serif</item>
         <item name="@android:textStyle">normal</item>
     </style>
 
+    <style name="TextAppearance.Small">
+    </style>
+
+    <style name="TextAppearance.Medium">
+        <item name="@android:textSize">@dimen/text_medium</item>
+    </style>
+
     <style name="TextAppearance.DialogTitle">
-        <item name="@android:textSize">@dimen/text_super_large</item>
+        <item name="@android:textSize">@dimen/text_little_large</item>
     </style>
 
     <style name="TextAppearance.DialogMessage">
         <item name="@android:textColor">@color/secondary_text_dark</item>
-        <item name="@android:textSize">@dimen/text_little_large</item>
+        <item name="@android:textSize">@dimen/text_little_small</item>
     </style>
 
     <style name="TextAppearance.DropDownItem" parent="TextAppearance.DialogMessage">
@@ -81,13 +88,13 @@
 
     <style name="TextAppearance.DialogButton">
         <item name="@android:textAllCaps">true</item>
-        <item name="@android:textSize">@dimen/text_little_large</item>
+        <item name="@android:textSize">@dimen/text_little_small</item>
     </style>
 
     <style name="DialogMessage">
         <item name="@android:textAppearance">@style/TextAppearance.DialogMessage</item>
         <item name="@android:textColor">@color/secondary_text_dark</item>
-        <item name="@android:textSize">@dimen/text_little_large</item>
+        <item name="@android:textSize">@dimen/text_little_small</item>
     </style>
 
     <style name="DialogButton" parent="@android:Widget.Button">
@@ -146,7 +153,7 @@
 
     <!-- Text -->
     <style name="TextAppearance.CardTitle">
-        <item name="@android:textSize">@dimen/text_little_large</item>
+        <item name="@android:textSize">@dimen/text_little_small</item>
     </style>
 
     <style name="CardTitle">
@@ -167,7 +174,7 @@
     </style>
 
     <style name="TextAppearance.DetailTitle">
-        <item name="@android:textSize">@dimen/text_large</item>
+        <item name="@android:textSize">@dimen/text_medium</item>
         <item name="@android:textColor">@color/primary_text_dark</item>
     </style>
 
@@ -178,7 +185,7 @@
     </style>
 
     <style name="TextAppearance.DetailSubtitle">
-        <item name="@android:textSize">@dimen/text_little_large</item>
+        <item name="@android:textSize">@dimen/text_little_small</item>
         <item name="@android:textColor">@color/secondary_text_dark</item>
     </style>
 
@@ -189,7 +196,7 @@
     </style>
 
     <style name="TextTag">
-        <item name="@android:textSize">@dimen/text_medium</item>
+        <item name="@android:textSize">@dimen/text_small</item>
         <item name="@android:textColor">@color/primary_text_light</item>
         <item name="@android:background">@color/background_dark</item>
         <item name="@android:ellipsize">marquee</item>
@@ -202,7 +209,7 @@
 
     <style name="TextAppearance.SearchCategory">
         <item name="@android:textStyle">bold</item>
-        <item name="@android:textSize">@dimen/text_little_large</item>
+        <item name="@android:textSize">@dimen/text_little_small</item>
         <item name="@android:singleLine">true</item>
     </style>
 
@@ -215,13 +222,13 @@
     </style>
 
     <style name="TextAppearance.Toast">
-        <item name="@android:textSize">@dimen/text_little_large</item>
+        <item name="@android:textSize">@dimen/text_little_small</item>
         <item name="@android:textStyle">normal</item>
         <item name="@android:fontFamily">sans-serif-condensed</item>
     </style>
 
     <style name="TextAppearance.EmbedButton">
-        <item name="@android:textSize">@dimen/text_large</item>
+        <item name="@android:textSize">@dimen/text_medium</item>
         <item name="@android:textStyle">bold</item>
         <item name="@android:singleLine">true</item>
     </style>
