@@ -749,6 +749,7 @@ public class HttpHelper {
         private final File mDir;
         private final String mFileName;
         private File mFile;
+        private File mTempFile;
         private final boolean mIsProxy;
         private final DownloadControlor mControlor;
         private final OnDownloadListener mListener;
@@ -832,24 +833,24 @@ public class HttpHelper {
 
             // Make sure parent exist
             mDir.mkdirs();
-            mFile = new File(mDir, mFileName + DOWNLOAD_EXTENSION);
+            mFile = new File(mDir, mFileName);
+            mTempFile = new File(mDir, mFileName + DOWNLOAD_EXTENSION);
             // Transfer
-            transferData(conn.getInputStream(), new FileOutputStream(mFile));
+            transferData(conn.getInputStream(), new FileOutputStream(mTempFile));
+            // Get ok, rename
+            // TODO what if rename fail
+            mTempFile.renameTo(mFile);
             // Callback
             if (mListener != null)
                 mListener.onDownloadOver(DOWNLOAD_OK_CODE, null);
-            // Get ok, rename
-            mFile.renameTo(new File(mDir, mFileName));
-            // renameTo seem to be not blocked, so wait half a second
-            try {
-                Thread.sleep(500);
-            } catch (Throwable e){}
             return DOWNLOAD_OK_STR;
         }
 
         @Override
         public void onGetException(Exception e) {
             // Delete unfinished file
+            if (mTempFile != null)
+                mTempFile.delete();
             if (mFile != null)
                 mFile.delete();
             // Callback
