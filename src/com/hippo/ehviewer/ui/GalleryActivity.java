@@ -69,6 +69,8 @@ public class GalleryActivity extends Activity
 
     private FullScreenHelper mFullScreenHelper;
 
+    private boolean mFirstTime = true;
+
     private final Runnable mFullScreenTask = new Runnable() {
         @Override public void run() {
             setFullScreen(true);
@@ -84,10 +86,10 @@ public class GalleryActivity extends Activity
     }
 
     void setFullScreen(final boolean fullScreen) {
+
         mFullScreenHelper.setFullScreen(fullScreen);
 
-        if ((fullScreen && mFooter.getVisibility() == View.VISIBLE) ||
-                (!fullScreen && mFooter.getVisibility() == View.GONE)) {
+        if (!mFirstTime) {
             AlphaAnimation aa = fullScreen ? new AlphaAnimation(1.0f, 0.0f) :
                     new AlphaAnimation(0.0f, 1.0f);
             aa.setDuration(Constants.ANIMATE_TIME);
@@ -110,6 +112,8 @@ public class GalleryActivity extends Activity
                 }
             });
             mFooter.startAnimation(aa);
+        } else {
+            mFirstTime = false;
         }
 
         if (!fullScreen)
