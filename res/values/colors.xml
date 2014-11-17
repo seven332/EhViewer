@@ -83,4 +83,7 @@
 
     <color name="edit_text_gb">#11000000</color>
 
+    <color name="control_normal">#ff80cbc4</color>
+    <color name="control_activated">#ff009688</color>
+
 </resources>

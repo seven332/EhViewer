@@ -37,6 +37,10 @@
         <item name="android:spinnerDropDownItemStyle">@style/DropDownItem.Spinner</item>
         <item name="android:spinnerItemStyle">@style/DropDownItem.Spinner</item>
 
+        <!-- color -->
+        <item name="android:colorControlNormal">@color/control_normal</item>
+        <item name="android:colorControlActivated">@color/control_activated</item>
+
     </style>
 
 </resources>
