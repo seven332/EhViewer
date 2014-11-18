@@ -36,6 +36,8 @@ Just import into Eclipse and build. Do it youself if you prefer Android Studio.
     - 抽屉指示器
 - [OpenCC](https://github.com/BYVoid/OpenCC)
     - 繁化工作
+- [Slabo](https://github.com/TiroTypeworks/Slabo)
+    - 字体
 - [SlidingMenu](https://github.com/jfeinstein10/SlidingMenu)
     - 曾作为抽屉控件
 - [source-code-pro](https://github.com/adobe/source-code-pro)
