@@ -580,8 +580,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                 child.measure(contentWidthSpec, contentHeightSpec);
             } else if (child == mLeftDrawer || child == mRightDrawer) {
                 final int drawerWidthSpec = getChildMeasureSpec(widthMeasureSpec,
-                        mMinDrawerMargin + lp.leftMargin + lp.rightMargin,
-                        lp.width);
+                        lp.leftMargin + lp.rightMargin,
+                        Math.min(widthSize - mMinDrawerMargin, lp.width));
                 final int drawerHeightSpec = getChildMeasureSpec(heightMeasureSpec,
                         lp.topMargin + lp.bottomMargin,
                         lp.height);
@@ -802,7 +802,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         }
 
         mAnimator.setDuration(staticDuration ? Constants.ANIMATE_TIME :
-            (long) (Ui.pix2dp(Math.abs(mEndLeft - mStartLeft)) * 1.5));
+            (long) (Ui.pix2dp(Math.abs(mEndLeft - mStartLeft)) * 1.25));
         mAnimator.start();
     }
 

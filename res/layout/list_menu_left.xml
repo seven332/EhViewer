@@ -15,8 +15,7 @@
  -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/list_menu_left"
-    android:layout_width="@dimen/menu_width"
-    android:layout_height="match_parent"
+    style="@style/Drawer"
     android:layout_gravity="left|start"
     android:orientation="vertical" >
 

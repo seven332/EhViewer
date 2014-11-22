@@ -40,6 +40,7 @@ import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.MaterialToast;
+import com.hippo.ehviewer.widget.SlidingDrawerLayout;
 
 public class AppContext extends Application implements UncaughtExceptionHandler {
 
@@ -74,6 +75,8 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         Data.createInstance(this);
         ExDownloaderManager.createInstance();
         MaterialToast.setContext(this);
+
+        SlidingDrawerLayout.setDefaultMinDrawerMargin(Ui.ACTION_BAR_HEIGHT);
 
         // Do catch error prepare
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();

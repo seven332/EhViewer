@@ -15,5 +15,5 @@
  -->
 
 <resources>
-    <bool name="navigation_bar_can_move">false</bool>
+    <bool name="is_table">false</bool>
 </resources>

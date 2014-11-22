@@ -46,6 +46,12 @@
     <style name="PopupMenu" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
     </style>
 
+    <!-- Drawer -->
+    <style name="Drawer">
+        <item name="android:layout_width">@dimen/drawer_max_width</item>
+        <item name="android:layout_height">fill_parent</item>
+    </style>
+
     <!-- SuperButton -->
     <style name="TextAppearance">
         <item name="@android:textColor">@color/primary_text_dark</item>

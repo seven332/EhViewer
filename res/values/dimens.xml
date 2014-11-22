@@ -17,10 +17,11 @@
 
     <dimen name="action_bar_height">56dp</dimen>
 
+    <dimen name="drawer_max_width">320dip</dimen>
+
     <dimen name="dialog_title_height">64dp</dimen>
 
     <dimen name="shadow_width">12dp</dimen>
-    <dimen name="menu_width">200dp</dimen>
 
     <dimen name="title_large">20.0sp</dimen>
     <dimen name="title_medium">18.0sp</dimen>
@@ -50,7 +51,6 @@
     <dimen name="color_scheme_dialog_row_padding">8.0dip</dimen>
 
     <!-- Text size -->
-    
     <dimen name="text_large">22sp</dimen>
     <dimen name="text_little_large">20sp</dimen>
     <dimen name="text_medium">18sp</dimen>

@@ -275,7 +275,7 @@ public class Ui {
             Window w = activity.getWindow();
 
             if (c.orientation == Configuration.ORIENTATION_PORTRAIT ||
-                    !activity.getResources().getBoolean(R.bool.navigation_bar_can_move))
+                    !activity.getResources().getBoolean(R.bool.is_table))
                 w.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             else
                 w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
