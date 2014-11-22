@@ -147,7 +147,7 @@ public class HistoryActivity extends AbsActivity
     @Override
     public void onFitSystemWindows(int l, int t, int r, int b) {
         mList.setPadding(mList.getPaddingLeft(), t, mList.getPaddingRight(), b);
-        Ui.translucent(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
+        Ui.colorStatusBarKK(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
     }
 
     @Override
@@ -170,8 +170,10 @@ public class HistoryActivity extends AbsActivity
         materialIndicator.setIconState(MaterialIndicatorDrawable.IconState.ARROW);
         Ui.setMaterialIndicator(getActionBar(), materialIndicator);
 
+        // Theme
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
         getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));
+        Ui.colorStatusBarL(this, mThemeColor);
 
         mStandard = (FitWindowView) findViewById(R.id.standard);
         mGalleryListView = (GalleryListView) findViewById(R.id.gallery_list);

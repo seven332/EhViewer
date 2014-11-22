@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -41,14 +40,11 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -78,35 +74,14 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.FileExplorerView;
-import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.SuggestionHelper;
 
-public class SettingsActivity extends AbsPreferenceActivity implements FitWindowView.OnFitSystemWindowsListener {
+public class SettingsActivity extends AbsPreferenceActivity {
     @SuppressWarnings("unused")
     private static String TAG = SettingsActivity.class.getSimpleName();
 
-    private FitWindowView mStandard;
-    private List<TranslucentPreferenceFragment> mFragments;
-    private ListView mListView;
     private int mThemeColor;
-
-    public void adjustPadding(int t, int b) {
-        mListView.setPadding(mListView.getPaddingLeft(), t, mListView.getPaddingRight(), b);
-    }
-
-    @Override
-    public void onFitSystemWindows(int l, int t, int r, int b) {
-        Ui.translucent(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
-
-        for (TranslucentPreferenceFragment f : mFragments) {
-            if (f.isVisible()) {
-                f.adjustPadding(t, b);
-                return;
-            }
-        }
-        adjustPadding(t, b);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,23 +90,12 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
         // Set random color
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
         getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));
+        Ui.colorStatusBarL(this, mThemeColor);
 
         // Menu
         MaterialIndicatorDrawable materialIndicator = new MaterialIndicatorDrawable(this, Color.WHITE, Stroke.THIN);
         materialIndicator.setIconState(MaterialIndicatorDrawable.IconState.ARROW);
         Ui.setMaterialIndicator(getActionBar(), materialIndicator);
-
-        mFragments = new LinkedList<TranslucentPreferenceFragment>();
-
-        mListView = getListView();
-        mListView.setClipToPadding(false);
-
-
-        FrameLayout fl = (FrameLayout) getWindow().getDecorView().findViewById(android.R.id.content);
-        mStandard = new FitWindowView(this);
-        mStandard.addOnFitSystemWindowsListener(this);
-        fl.addView(mStandard, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
     @Override
@@ -143,10 +107,6 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public List<TranslucentPreferenceFragment> getFragments() {
-        return mFragments;
     }
 
     @Override
@@ -171,47 +131,7 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
         return false;
     }
 
-    public static abstract class TranslucentPreferenceFragment extends PreferenceFragment {
-
-        protected SettingsActivity mActivity;
-        private ListView mListView;
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            mActivity = (SettingsActivity) getActivity();
-
-            String fragmentName = getClass().getName();
-            int fragmentIndex = -1;
-            for (int i = 0; i < ENTRY_FRAGMENTS.length; i++) {
-                if (ENTRY_FRAGMENTS[i].equals(fragmentName)) {
-                    fragmentIndex = i;
-                    break;
-                }
-            }
-            if (fragmentIndex >= 0)
-                mActivity.getActionBar().setIcon(FRAGMENT_ICONS[fragmentIndex]);
-        }
-
-        @Override
-        public void onViewCreated(View view, Bundle savedInstanceState) {
-            SettingsActivity activity = (SettingsActivity) getActivity();
-            activity.getFragments().add(this);
-
-            View child;
-            if (view instanceof ViewGroup && (child = ((ViewGroup) view).getChildAt(0)) != null
-                    && child instanceof ListView) {
-                mListView = (ListView) child;
-                mListView.setClipToPadding(false);
-            }
-        }
-
-        public void adjustPadding(int t, int b) {
-            mListView.setPadding(mListView.getPaddingLeft(), t, mListView.getPaddingRight(), b);
-        }
-    }
-
-    public static class DisplayFragment extends TranslucentPreferenceFragment implements
+    public static class DisplayFragment extends PreferenceFragment implements
             Preference.OnPreferenceChangeListener {
 
         private static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
@@ -240,7 +160,7 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final String key = preference.getKey();
             if (KEY_SCREEN_ORIENTATION.equals(key)) {
-                mActivity.setRequestedOrientation(Config.screenOriPre2Value(Integer.parseInt((String) newValue)));
+                getActivity().setRequestedOrientation(Config.screenOriPre2Value(Integer.parseInt((String) newValue)));
 
             } else if (KEY_RANDOM_THEME_COLOR.equals(key)) {
                 MaterialToast.showToast(R.string.restart_to_take_effect);
@@ -251,7 +171,7 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
         }
     }
 
-    public static class EhFragment extends TranslucentPreferenceFragment implements
+    public static class EhFragment extends PreferenceFragment implements
             Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
         private static final int[] EXCULDE_TAG_GROUP_RESID = { R.id.tag_group_reclass, R.id.tag_group_language,
@@ -324,7 +244,7 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
             final String key = preference.getKey();
             if (KEY_PREVIEW_MODE.equals(key)) {
                 String newPreviewMode = (String) newValue;
-                EhInfo.getInstance(mActivity).setPreviewMode(newPreviewMode);
+                EhInfo.getInstance(getActivity()).setPreviewMode(newPreviewMode);
             }
             return true;
         }
@@ -335,10 +255,10 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
             final String key = preference.getKey();
             if (KEY_LIST_DEFAULT_CATEGORY.equals(key)) {
                 int defaultCat = Config.getDefaultCat();
-                final CategoryTable ct = new CategoryTable(mActivity);
+                final CategoryTable ct = new CategoryTable(getActivity());
                 ct.setCategory(defaultCat);
 
-                new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.list_default_category_title)
+                new MaterialAlertDialog.Builder(getActivity()).setTitle(R.string.list_default_category_title)
                         .setView(ct, true).setPositiveButton(android.R.string.ok)
                         .setNegativeButton(android.R.string.cancel)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
@@ -347,48 +267,48 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
                                 if (which == MaterialAlertDialog.POSITIVE) {
                                     int defaultCat = ct.getCategory();
                                     Config.setDefaultCat(defaultCat);
-                                    EhInfo.getInstance(mActivity).setDefaultCat(defaultCat);
+                                    EhInfo.getInstance(getActivity()).setDefaultCat(defaultCat);
                                 }
                                 return true;
                             }
                         }).show();
 
             } else if (KEY_EXCULDE_TAG_GROUP.equals(key)) {
-                LayoutInflater inflater = LayoutInflater.from(mActivity);
+                LayoutInflater inflater = LayoutInflater.from(getActivity());
                 final TableLayout tl = (TableLayout) inflater.inflate(R.layout.exculde_tag_group, null);
                 setExculdeTagGroup(tl, Config.getExculdeTagGroup());
 
-                new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.exculde_tag_group_title).setView(tl, true)
+                new MaterialAlertDialog.Builder(getActivity()).setTitle(R.string.exculde_tag_group_title).setView(tl, true)
                         .setPositiveButton(android.R.string.ok).setNegativeButton(android.R.string.cancel)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                             @Override
                             public boolean onClick(MaterialAlertDialog dialog, int which) {
                                 int newValue = getExculdeTagGroup(tl);
                                 Config.setExculdeTagGroup(newValue);
-                                EhInfo.getInstance(mActivity).setExculdeTagGroup(newValue);
+                                EhInfo.getInstance(getActivity()).setExculdeTagGroup(newValue);
                                 return true;
                             }
                         }).show();
 
             } else if (KEY_EXCULDE_LANGUAGE.equals(key)) {
-                LayoutInflater inflater = LayoutInflater.from(mActivity);
+                LayoutInflater inflater = LayoutInflater.from(getActivity());
                 final TableLayout tl = (TableLayout) inflater.inflate(R.layout.exculde_language, null);
                 setExculdeLanguage(tl, Config.getExculdeLanguage());
 
-                new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.exculde_language_title).setView(tl, true)
+                new MaterialAlertDialog.Builder(getActivity()).setTitle(R.string.exculde_language_title).setView(tl, true)
                         .setPositiveButton(android.R.string.ok).setNegativeButton(android.R.string.cancel)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                             @Override
                             public boolean onClick(MaterialAlertDialog dialog, int which) {
                                 String newValue = getExculdeLanguage(tl);
                                 Config.setExculdeLanguage(newValue);
-                                EhInfo.getInstance(mActivity).setExculdeLanguage(newValue);
+                                EhInfo.getInstance(getActivity()).setExculdeLanguage(newValue);
                                 return true;
                             }
                         }).show();
 
             } else if (KEY_CLEAR_SUGGESTIONS.equals(key)) {
-                SearchRecentSuggestions suggestions = SuggestionHelper.getInstance(mActivity,
+                SearchRecentSuggestions suggestions = SuggestionHelper.getInstance(getActivity(),
                         SimpleSuggestionProvider.AUTHORITY, SimpleSuggestionProvider.MODE);
                 suggestions.clearHistory();
             }
@@ -445,7 +365,7 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
         }
     }
 
-    public static class ReadFragment extends TranslucentPreferenceFragment implements
+    public static class ReadFragment extends PreferenceFragment implements
             Preference.OnPreferenceClickListener {
 
         private static final String KEY_CUSTOM_CODEC = "custom_codec";
@@ -506,8 +426,8 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
                     MaterialToast.showToast(R.string.no_redundancy);
                     break;
                 case STATE_START:
-                    if (!mActivity.isFinishing()) {
-                        mMaterialProgressDialog = MaterialProgressDialog.create(mActivity, mActivity.getString(R.string.clean_redundancy_title), false);
+                    if (!getActivity().isFinishing()) {
+                        mMaterialProgressDialog = MaterialProgressDialog.create(getActivity(), getActivity().getString(R.string.clean_redundancy_title), false);
                         mMaterialProgressDialog.show();
                     }
                     break;
@@ -584,7 +504,7 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
         }
     }
 
-    public static class DownloadFragment extends TranslucentPreferenceFragment implements
+    public static class DownloadFragment extends PreferenceFragment implements
             Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
         private static final String KEY_DOWNLOAD_PATH = "download_path";
@@ -631,7 +551,7 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
         public boolean onPreferenceClick(Preference preference) {
             final String key = preference.getKey();
             if (KEY_DOWNLOAD_PATH.equals(key)) {
-                View view = LayoutInflater.from(mActivity).inflate(R.layout.dir_selection, null);
+                View view = LayoutInflater.from(getActivity()).inflate(R.layout.dir_selection, null);
                 final FileExplorerView fileExplorerView = (FileExplorerView) view.findViewById(R.id.file_list);
                 final TextView warning = (TextView) view.findViewById(R.id.warning);
 
@@ -653,7 +573,7 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
                 else
                     warning.setVisibility(View.VISIBLE);
 
-                mDirSelectDialog = new MaterialAlertDialog.Builder(mActivity)
+                mDirSelectDialog = new MaterialAlertDialog.Builder(getActivity())
                         .setTitle(downloadPath)
                         .setView(view, false,
                                 new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Ui.dp2pix(360)))
@@ -664,7 +584,7 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
                             public boolean onClick(MaterialAlertDialog dialog, int which) {
                                 switch (which) {
                                 case MaterialAlertDialog.ACTION:
-                                    final EditText et = new EditText(mActivity);
+                                    final EditText et = new EditText(getActivity());
                                     et.setText("New folder"); // TODO
                                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                                             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -674,7 +594,7 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
                                     lp.rightMargin = x;
                                     lp.topMargin = x;
                                     lp.bottomMargin = x;
-                                    new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.new_folder)
+                                    new MaterialAlertDialog.Builder(getActivity()).setTitle(R.string.new_folder)
                                             .setView(et, true, lp).setPositiveButton(R.string._new)
                                             .setNegativeButton(android.R.string.cancel)
                                             .setButtonListener(new MaterialAlertDialog.OnClickListener() {
@@ -721,7 +641,7 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
         }
     }
 
-    public static class AdvancedFragment extends TranslucentPreferenceFragment implements
+    public static class AdvancedFragment extends PreferenceFragment implements
             Preference.OnPreferenceClickListener {
 
         private static final String KEY_FIX_DIRNAME = "fix_dirname";
@@ -838,7 +758,7 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
         }
     }
 
-    public static class AboutFragment extends TranslucentPreferenceFragment implements
+    public static class AboutFragment extends PreferenceFragment implements
             Preference.OnPreferenceClickListener {
 
         private static final String KEY_AUTHOR = "author";
@@ -896,7 +816,7 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
                 startActivity(i);
 
             } else if (KEY_TWITTER.equals(key)) {
-                new MaterialAlertDialog.Builder(mActivity)
+                new MaterialAlertDialog.Builder(getActivity())
                         .setTitle(R.string.twitter_title)
                         .setItems(new CharSequence[] { "@EhViewer", "@jkjvinn" },
                                 new MaterialAlertDialog.OnClickListener() {
@@ -920,16 +840,16 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
                                 }).setNegativeButton(android.R.string.cancel).show();
 
             } else if (KEY_CHANGELOG.equals(key)) {
-                InputStream is = mActivity.getResources().openRawResource(R.raw.change_log);
-                new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.changelog)
+                InputStream is = getActivity().getResources().openRawResource(R.raw.change_log);
+                new MaterialAlertDialog.Builder(getActivity()).setTitle(R.string.changelog)
                         .setMessage(Utils.InputStream2String(is, "utf-8")).setNegativeButton(android.R.string.cancel)
                         .show();
 
             } else if (KEY_THANKS.equals(key)) {
-                InputStream is = mActivity.getResources().openRawResource(R.raw.thanks);
-                final WebView webView = new WebView(mActivity);
+                InputStream is = getActivity().getResources().openRawResource(R.raw.thanks);
+                final WebView webView = new WebView(getActivity());
                 webView.loadData(Utils.InputStream2String(is, "utf-8"), "text/html; charset=UTF-8", null);
-                new MaterialAlertDialog.Builder(mActivity)// .setTitle(R.string.thanks)
+                new MaterialAlertDialog.Builder(getActivity())// .setTitle(R.string.thanks)
                         .setView(webView, true).setNegativeButton(android.R.string.cancel).show();
 
             } else if (KEY_WEBSITE.equals(key)) {
@@ -945,27 +865,27 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
             } else if (KEY_CHECK_UPDATE.equals(key)) {
                 mCheckUpdate.setSummary(R.string.checking_update);
                 mCheckUpdate.setEnabled(false);
-                new UpdateHelper((AppContext) mActivity.getApplication()).SetOnCheckUpdateListener(
+                new UpdateHelper((AppContext) getActivity().getApplication()).SetOnCheckUpdateListener(
                         new UpdateHelper.OnCheckUpdateListener() {
                             @Override
                             public void onSuccess(String version, long size, final String url, final String fileName,
                                     String info) {
                                 mCheckUpdate.setSummary(R.string.found_update);
                                 String sizeStr = Utils.sizeToString(size);
-                                AlertDialog dialog = DialogUtils.createUpdateDialog(mActivity, version, sizeStr, info,
+                                AlertDialog dialog = DialogUtils.createUpdateDialog(getActivity(), version, sizeStr, info,
                                         new MaterialAlertDialog.OnClickListener() {
                                             @Override
                                             public boolean onClick(MaterialAlertDialog dialog, int which) {
                                                 if (which == MaterialAlertDialog.POSITIVE) {
-                                                    HttpHelper hh = new HttpHelper(mActivity);
+                                                    HttpHelper hh = new HttpHelper(getActivity());
                                                     hh.downloadInThread(url, new File(Config.getDownloadPath()),
                                                             fileName, false, null, new UpdateHelper.UpdateListener(
-                                                                    mActivity, fileName));
+                                                                    getActivity(), fileName));
                                                 }
                                                 return true;
                                             }
                                         }).create();
-                                if (!mActivity.isFinishing())
+                                if (!getActivity().isFinishing())
                                     dialog.show();
                             }
 
@@ -990,7 +910,7 @@ public class SettingsActivity extends AbsPreferenceActivity implements FitWindow
                 startActivity(intent);
 
             } else if (KEY_ABOUT_ANALYICS.equals(key)) {
-                new MaterialAlertDialog.Builder(mActivity).setTitle(R.string.about_analyics_title)
+                new MaterialAlertDialog.Builder(getActivity()).setTitle(R.string.about_analyics_title)
                         .setMessageAutoLink(Linkify.WEB_URLS).setMessage(R.string.about_analyics_comment)
                         .setNegativeButton(android.R.string.cancel).show();
 

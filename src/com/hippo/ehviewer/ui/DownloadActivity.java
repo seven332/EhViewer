@@ -81,7 +81,7 @@ public class DownloadActivity extends AbsActivity implements FitWindowView.OnFit
     public void onFitSystemWindows(int l, int t, int r, int b) {
         mList.setPadding(mList.getPaddingLeft(), t, mList.getPaddingRight(), b);
 
-        Ui.translucent(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
+        Ui.colorStatusBarKK(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
     }
 
     @Override
@@ -121,6 +121,7 @@ public class DownloadActivity extends AbsActivity implements FitWindowView.OnFit
 
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
         getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));
+        Ui.colorStatusBarL(this, mThemeColor);
     }
 
     @Override

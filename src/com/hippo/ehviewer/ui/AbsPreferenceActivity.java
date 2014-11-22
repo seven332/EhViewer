@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.ui;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
@@ -26,21 +25,13 @@ import com.hippo.ehviewer.util.Ui;
 
 public abstract class AbsPreferenceActivity extends PreferenceActivity {
 
-    private static final int[] padding = new int[2];
+    private static final String TAG = AbsPreferenceActivity.class.getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Ui.adjustOrientation(this);
-        Ui.updateTranslucent(this);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        Ui.updateTranslucent(this);
     }
 
     @Override
@@ -48,7 +39,6 @@ public abstract class AbsPreferenceActivity extends PreferenceActivity {
         super.onResume();
 
         Ui.adjustOrientation(this);
-        Ui.updateTranslucent(this);
     }
 
     @Override

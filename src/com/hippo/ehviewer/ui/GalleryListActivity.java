@@ -952,7 +952,7 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
         mQuickSearchList.setPadding(mQuickSearchList.getPaddingLeft(), mQuickSearchList.getPaddingTop(),
                 mQuickSearchList.getPaddingRight(), b);
 
-        Ui.translucent(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
+        Ui.colorStatusBarKK(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
     }
 
     @Override
@@ -1238,9 +1238,9 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
         // Set random color
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
         mActionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
-
         mLeftMenu.setBackgroundColor(mThemeColor);
         mRightMenu.setBackgroundColor(mThemeColor);
+        Ui.colorStatusBarL(this, mThemeColor);
 
         // Update user panel
         setUserPanel();

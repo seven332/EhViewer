@@ -387,6 +387,7 @@ public class GalleryDetailActivity extends AbsActivity
         mPreviewWait.setColor(mThemeColor);
         mPreviewRefresh.setRoundBackground(true, mThemeColor, 0);
         mReply.setColor(mThemeColor);
+        Ui.colorStatusBarL(this, mThemeColor);
 
         // Set ripple
         mWindowsAnimate.addRippleEffect(mDownloadButton, true);
@@ -1002,7 +1003,7 @@ public class GalleryDetailActivity extends AbsActivity
                 mCommentList.getPaddingRight(), b + Ui.dp2pix(16 + 56 + 16));
         ((FrameLayout.LayoutParams)mReply.getLayoutParams()).bottomMargin = Ui.dp2pix(16) + b;
 
-        Ui.translucent(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
+        Ui.colorStatusBarKK(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
     }
 
     @Override

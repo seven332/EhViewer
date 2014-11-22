@@ -274,9 +274,10 @@ public class Ui {
             Configuration c = activity.getResources().getConfiguration();
             Window w = activity.getWindow();
 
-            if (c.orientation == Configuration.ORIENTATION_PORTRAIT)
+            if (c.orientation == Configuration.ORIENTATION_PORTRAIT ||
+                    !activity.getResources().getBoolean(R.bool.navigation_bar_can_move))
                 w.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            else if (c.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            else
                 w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 
             // For KK set a color view at top to make color status bar
@@ -296,8 +297,7 @@ public class Ui {
             activity.setRequestedOrientation(screenOri);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static void translucent(Activity activity, int color, int height) {
+    public static void colorStatusBarKK(Activity activity, int color, int height) {
         int darkColor = Theme.getDarkerColor(color);
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             View statusBarBgView;
@@ -321,8 +321,17 @@ public class Ui {
                 lp.gravity = Gravity.TOP;
                 decorViewGroup.addView(statusBarBgView, lp);
             }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            activity.getWindow().setStatusBarColor(Theme.getDarkerColor(darkColor));
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public static void colorStatusBarL(Activity activity, int color) {
+        int darkColor = Theme.getDarkerColor(color);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window w = activity.getWindow();
+            w.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            w.setStatusBarColor(Theme.getDarkerColor(darkColor));
         }
     }
 

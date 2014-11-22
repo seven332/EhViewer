@@ -280,6 +280,7 @@ public class FavouriteActivity extends AbsActivity
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
         mActionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
         mMenu.setBackgroundColor(mThemeColor);
+        Ui.colorStatusBarL(this, mThemeColor);
 
         // Check login
         if (!mClient.isLogin()) {
@@ -306,7 +307,7 @@ public class FavouriteActivity extends AbsActivity
         ((SlidingDrawerLayout.LayoutParams) mMenu.getLayoutParams()).topMargin = t;
         mMenu.setPadding(mMenu.getPaddingLeft(), mMenu.getPaddingTop(), mMenu.getPaddingRight(), b);
 
-        Ui.translucent(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
+        Ui.colorStatusBarKK(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
     }
 
     @Override
