@@ -58,6 +58,7 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
@@ -79,7 +80,6 @@ import com.hippo.ehviewer.drawable.OvalDrawable;
 import com.hippo.ehviewer.ehclient.DetailUrlParser;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
-import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Favorite;
@@ -114,12 +114,11 @@ public class GalleryDetailActivity extends AbsActivity
 
     public static final String KEY_G_INFO = "gallery_info";
 
+    private AppContext mAppContext;
     private Resources mResources;
     private EhClient mClient;
     private WindowsAnimate mWindowsAnimate;
     private GalleryInfo mGalleryInfo;
-    private final DownloadServiceConnection mServiceConn =
-            new DownloadServiceConnection();
 
     private int mRunningAnimateNum = 0;
     private boolean isCheckmark = false;
@@ -271,7 +270,6 @@ public class GalleryDetailActivity extends AbsActivity
     protected void onDestroy() {
         super.onDestroy();
         mWindowsAnimate.free();
-        unbindService(mServiceConn);
     }
 
     @Override
@@ -286,6 +284,7 @@ public class GalleryDetailActivity extends AbsActivity
         setContentView(R.layout.gallery_detail);
         setTitle(String.valueOf(mGalleryInfo.gid));
 
+        mAppContext = (AppContext) getApplication();
         mClient = EhClient.getInstance();
         mWindowsAnimate = new WindowsAnimate();
         mWindowsAnimate.init(this);
@@ -421,10 +420,6 @@ public class GalleryDetailActivity extends AbsActivity
         mRefreshText.setDefaultRefresh("点击重试", this);
 
         doPreLayout();
-
-        // Download service
-        Intent it = new Intent(GalleryDetailActivity.this, DownloadService.class);
-        bindService(it, mServiceConn, BIND_AUTO_CREATE);
     }
 
     @Override
@@ -809,7 +804,7 @@ public class GalleryDetailActivity extends AbsActivity
         if (v == mDownloadButton) {
             Intent it = new Intent(GalleryDetailActivity.this, DownloadService.class);
             startService(it);
-            mServiceConn.getService().add(mGalleryInfo);
+            mAppContext.getDownloadServiceConnection().getService().add(mGalleryInfo);
             MaterialToast.showToast(R.string.toast_add_download);
         } else if (v == mReadButton) {
             //mData.addRead(mGalleryInfo);

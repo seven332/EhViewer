@@ -83,7 +83,6 @@ import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.service.DownloadService;
-import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.tile.TileSalon;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.DialogUtils;
@@ -151,6 +150,7 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
     public static final int LIST_MODE_DETAIL = 0x0;
     public static final int LIST_MODE_THUMB = 0x1;
 
+    private AppContext mAppContext;
     private EhClient mClient;
     private Resources mResources;
     private WindowsAnimate mWindowsAnimate;
@@ -210,8 +210,6 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
     private static final int BACK_PRESSED_INTERVAL = 2000;
 
     private String mTitle;
-
-    private final DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
 
     private int mListMode;
 
@@ -566,7 +564,7 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
                         case 1:
                             Intent it = new Intent(GalleryListActivity.this, DownloadService.class);
                             startService(it);
-                            mServiceConn.getService().add(gi);
+                            mAppContext.getDownloadServiceConnection().getService().add(gi);
                             MaterialToast.showToast(R.string.toast_add_download);
                             break;
                         }
@@ -973,6 +971,7 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery_list);
 
+        mAppContext = (AppContext) getApplication();
         mData = Data.getInstance();
         mClient = EhClient.getInstance();
         mResources = getResources();
@@ -998,10 +997,6 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
             mShowDrawer = false;
         else
             mShowDrawer = true;
-
-        // Download service
-        Intent it = new Intent(GalleryListActivity.this, DownloadService.class);
-        bindService(it, mServiceConn, BIND_AUTO_CREATE);
 
         // Init dialog
         loginDialog = createLoginDialog();
@@ -1511,7 +1506,6 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(mServiceConn);
 
         mWindowsAnimate.free();
     }

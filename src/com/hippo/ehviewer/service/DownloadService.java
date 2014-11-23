@@ -78,8 +78,13 @@ public class DownloadService extends Service
     }
 
     private synchronized void handleIntent(Intent intent) {
-        if (intent == null)
+        if (intent == null) {
+            if (!Config.getKeepDownloadService()) {
+                mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
+                stopSelf();
+            }
             return;
+        }
 
         String action = intent.getAction();
         if (ACTION_STOP.equals(action)) {
@@ -96,10 +101,8 @@ public class DownloadService extends Service
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         handleIntent(intent);
-
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     @Override
@@ -131,6 +134,8 @@ public class DownloadService extends Service
         mCurDownloadInfo.state = DownloadInfo.STATE_DOWNLOAD;
         mCurDownloadInfo.download = -1;
         mCurDownloadInfo.total = -1;
+        // To update download state
+        mData.addDownload(mCurDownloadInfo);
 
         GalleryInfo gi = mCurDownloadInfo.galleryInfo;
         mCurExDownloader = mEdManager.getExDownloader(gi.gid,
@@ -150,6 +155,8 @@ public class DownloadService extends Service
         if ((di = mData.getDownload(gid)) != null) {
             if (di.state != DownloadInfo.STATE_DOWNLOAD) {
                 di.state = DownloadInfo.STATE_WAIT;
+                // To update download state
+                mData.addDownload(di);
                 notifyDownloadInfoChanged();
                 notifyUpdate();
             }

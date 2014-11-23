@@ -239,6 +239,9 @@
     <string name="media_scan_summary_on">请避免他人翻看你的图库应用</string>
     <string name="media_scan_summary_off">大多数图库应用将不会显示下载目录中的图片</string>
     <string name="download_thread_title">下载线程数</string>
+    <string name="keep_download_service_title">保持下载服务</string>
+    <string name="keep_download_service_summary_on">下载时，若应用被系统或用户强制关闭，下载服务会重新启动</string>
+    <string name="keep_download_service_summary_off">下载时，若应用被系统或用户强制关闭，下载服务不会重新启动</string>
 
     <string name="advanced_settings_title">高级</string>
     <string name="http_advanced_settings_title">HTTP</string>

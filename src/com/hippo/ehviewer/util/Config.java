@@ -349,6 +349,9 @@ public final class Config {
     private static final String KEY_DOWNLOAD_THREAD = "download_thread";
     private static final int DEFAULT_DOWNLOAD_THREAD = 3;
 
+    private static final String KEY_KEEP_DOWNLOAD_SERVICE = "keep_download_service";
+    private static final boolean DEFAULT_KEEP_DOWNLOAD_SERVICE = true;
+
     public static String getDownloadPath() {
         return getString(KEY_DOWNLOAD_PATH, DEFAULT_DOWNLOAD_PATH);
     }
@@ -363,6 +366,10 @@ public final class Config {
 
     public static int getDownloadThread() {
         return getIntFromStr(KEY_DOWNLOAD_THREAD, DEFAULT_DOWNLOAD_THREAD);
+    }
+
+    public static boolean getKeepDownloadService() {
+        return getBoolean(KEY_KEEP_DOWNLOAD_SERVICE, DEFAULT_KEEP_DOWNLOAD_SERVICE);
     }
 
 

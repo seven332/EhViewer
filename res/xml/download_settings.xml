@@ -38,4 +38,11 @@
         auto:etpMin="1"
         auto:etpMax="10" />
 
+    <CheckBoxPreference
+        android:key="keep_download_service"
+        android:title="@string/keep_download_service_title"
+        android:summaryOn="@string/keep_download_service_summary_on"
+        android:summaryOff="@string/keep_download_service_summary_off"
+        android:defaultValue="true" />
+
 </PreferenceScreen>

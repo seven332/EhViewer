@@ -68,7 +68,7 @@
             auto:etpMax="100000" />
 
     </PreferenceCategory>
-    
+
     <PreferenceCategory
         android:title="@string/eh_others_settings_title">
 

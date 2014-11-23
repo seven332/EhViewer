@@ -63,8 +63,6 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
 import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.ehclient.EhClient;
-import com.hippo.ehviewer.service.DownloadService;
-import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Theme;
@@ -120,8 +118,6 @@ public class FavouriteActivity extends AbsActivity
     private List<GalleryInfo> mLastModifyGiList = null;
     private int mLastModifyPageNum = 0;
 
-    private final DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -162,10 +158,6 @@ public class FavouriteActivity extends AbsActivity
 
         mActionBar = getActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
-
-        // Download service
-        Intent it = new Intent(FavouriteActivity.this, DownloadService.class);
-        bindService(it, mServiceConn, BIND_AUTO_CREATE);
 
         // Menu
         MaterialIndicatorDrawable materialIndicator = new MaterialIndicatorDrawable(this, Color.WHITE, Stroke.THIN);
@@ -337,7 +329,6 @@ public class FavouriteActivity extends AbsActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(mServiceConn);
     }
 
     private void showToastBar(final ActionClickedListener listener, int descriptionIconResourceId,

@@ -21,12 +21,16 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.SparseArray;
 
 import com.hippo.ehviewer.Analytics;
+import com.hippo.ehviewer.AppContext;
+import com.hippo.ehviewer.AppHandler;
+import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.MathUtils;
@@ -268,6 +272,8 @@ public class Data {
 
     /****** download ******/
     private synchronized void getDownloads() {
+        boolean startService = false;
+        boolean keepDownloadService = Config.getKeepDownloadService();
         mDownloads = new ArrayList<DownloadInfo>();
 
         Cursor cursor = mDatabase.rawQuery("select * from " + TABLE_DOWNLOAD
@@ -285,8 +291,14 @@ public class Data {
                 int mode = cursor.getInt(1);
                 int state = cursor.getInt(2);
                 int legacy = cursor.getInt(3);
-                if (state == DownloadInfo.STATE_WAIT || state == DownloadInfo.STATE_DOWNLOAD)
-                    state = DownloadInfo.STATE_NONE;
+                if (state == DownloadInfo.STATE_WAIT || state == DownloadInfo.STATE_DOWNLOAD) {
+                    if (keepDownloadService) {
+                        state = DownloadInfo.STATE_WAIT;
+                        startService = true;
+                    } else {
+                        state = DownloadInfo.STATE_NONE;
+                    }
+                }
 
                 DownloadInfo downloadInfo = new DownloadInfo(
                         galleryInfo, mode, state, legacy);
@@ -296,7 +308,24 @@ public class Data {
             }
         }
         cursor.close();
+
+        if (startService)
+            AppHandler.getInstance().postDelayed(mRestartDownload, 100);
     }
+
+    private final Runnable mRestartDownload = new Runnable() {
+        @Override
+        public void run() {
+            DownloadService ds = ((AppContext) mContext.getApplicationContext()).getDownloadServiceConnection().getService();
+            if (ds != null) {
+                Intent it = new Intent(mContext, DownloadService.class);
+                mContext.startService(it);
+                ds.notifyDownloadInfoChanged();
+            } else {
+                AppHandler.getInstance().postDelayed(this, 100);
+            }
+        }
+    };
 
     /**
      * Return null if not found
@@ -327,6 +356,12 @@ public class Data {
         return re;
     }
 
+    /**
+     * If exits, just update
+     *
+     * @param downloadInfo
+     * @return
+     */
     public synchronized boolean addDownload(DownloadInfo downloadInfo) {
         GalleryInfo galleryInfo = downloadInfo.galleryInfo;
         int gid = galleryInfo.gid;

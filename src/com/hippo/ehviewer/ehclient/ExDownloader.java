@@ -33,7 +33,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import android.content.Context;
 import android.os.Process;
 
-import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.AutoExpandArray;
 import com.hippo.ehviewer.util.BgThread;
@@ -122,8 +121,8 @@ public class ExDownloader implements Runnable {
         public void onDownloadOver(int gid, int legacy);
     }
 
-    ExDownloader(int gid, String token, String title, int mode) {
-        mContext = AppContext.getInstance();
+    ExDownloader(Context context, int gid, String token, String title, int mode) {
+        mContext = context;
         mManager = ExDownloaderManager.getInstance();
         mGid = gid;
         mToken = token;

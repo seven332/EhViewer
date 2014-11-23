@@ -37,6 +37,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
@@ -47,7 +48,6 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
 import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.service.DownloadService;
-import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Theme;
@@ -60,6 +60,7 @@ import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 
 public class DownloadActivity extends AbsActivity implements FitWindowView.OnFitSystemWindowsListener {
 
+    private AppContext mAppContext;
     private WindowsAnimate mWindowsAnimate;
     private int mThemeColor;
     private List<DownloadInfo> mDownloads;
@@ -68,7 +69,6 @@ public class DownloadActivity extends AbsActivity implements FitWindowView.OnFit
     private ExpandingListView mList;
     private ListAdapter mAdapter;
 
-    private final DownloadServiceConnection mServiceConn = new DownloadServiceConnection();
     private final BroadcastReceiver mReceiver = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -89,13 +89,12 @@ public class DownloadActivity extends AbsActivity implements FitWindowView.OnFit
         super.onCreate(savedInstanceState);
         setContentView(R.layout.download);
 
+        mAppContext = (AppContext) getApplication();
+
         // Init windows animate
         mWindowsAnimate = new WindowsAnimate();
         mWindowsAnimate.init(this);
 
-        // Service
-        Intent it = new Intent(this, DownloadService.class);
-        bindService(it, mServiceConn, BIND_AUTO_CREATE);
         // Receiver
         IntentFilter filter = new IntentFilter();
         filter.addAction(DownloadService.ACTION_UPDATE);
@@ -128,7 +127,6 @@ public class DownloadActivity extends AbsActivity implements FitWindowView.OnFit
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver);
-        unbindService(mServiceConn);
         mWindowsAnimate.free();
     }
 
@@ -150,13 +148,13 @@ public class DownloadActivity extends AbsActivity implements FitWindowView.OnFit
         case R.id.action_start:
             it = new Intent(DownloadActivity.this, DownloadService.class);
             startService(it);
-            mServiceConn.getService().startAll();
+            mAppContext.getDownloadServiceConnection().getService().startAll();
             return true;
 
         case R.id.action_stop:
             it = new Intent(DownloadActivity.this, DownloadService.class);
             startService(it);
-            mServiceConn.getService().stopAll();
+            mAppContext.getDownloadServiceConnection().getService().stopAll();
             return true;
 
         default:
@@ -342,7 +340,7 @@ public class DownloadActivity extends AbsActivity implements FitWindowView.OnFit
                             if (which == MaterialAlertDialog.POSITIVE) {
                                 Intent it = new Intent(DownloadActivity.this, DownloadService.class);
                                 startService(it);
-                                mServiceConn.getService().delete(mDownloadInfo);
+                                mAppContext.getDownloadServiceConnection().getService().delete(mDownloadInfo);
                                 // Delete dir
                                 if (cb.isChecked()) {
                                     GalleryInfo gi = mDownloadInfo.galleryInfo;
@@ -372,7 +370,7 @@ public class DownloadActivity extends AbsActivity implements FitWindowView.OnFit
 
                 Intent it = new Intent(DownloadActivity.this, DownloadService.class);
                 startService(it);
-                mServiceConn.getService().notifyDownloadInfoChanged();
+                mAppContext.getDownloadServiceConnection().getService().notifyDownloadInfoChanged();
                 mAdapter.notifyDataSetChanged();
             }
         }
@@ -391,7 +389,7 @@ public class DownloadActivity extends AbsActivity implements FitWindowView.OnFit
         public void onClick(View v) {
             Intent it = new Intent(DownloadActivity.this, DownloadService.class);
             startService(it);
-            mServiceConn.getService().stop(mDownloadInfo);
+            mAppContext.getDownloadServiceConnection().getService().stop(mDownloadInfo);
             mAdapter.notifyDataSetChanged();
         }
     }

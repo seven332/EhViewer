@@ -19,8 +19,6 @@ package com.hippo.ehviewer.ehclient;
 import android.content.Context;
 import android.util.SparseArray;
 
-import com.hippo.ehviewer.AppContext;
-
 public class ExDownloaderManager {
 
     private static final String TAG = ExDownloaderManager.class.getSimpleName();
@@ -30,23 +28,23 @@ public class ExDownloaderManager {
 
     private static ExDownloaderManager sInstance;
 
-    public static void createInstance() {
-        sInstance = new ExDownloaderManager();
+    public static void createInstance(Context context) {
+        sInstance = new ExDownloaderManager(context.getApplicationContext());
     }
 
     public static ExDownloaderManager getInstance() {
         return sInstance;
     }
 
-    private ExDownloaderManager() {
-        mContext = AppContext.getInstance();
+    private ExDownloaderManager(Context context) {
+        mContext = context;
         mExDownloadList = new SparseArray<ExDownloader>();
     }
 
     public synchronized ExDownloader getExDownloader(int gid, String token, String title, int mode) {
         ExDownloader exDownloader = mExDownloadList.get(gid);
         if (exDownloader == null) {
-            exDownloader = new ExDownloader(gid, token, title, mode);
+            exDownloader = new ExDownloader(mContext, gid, token, title, mode);
             mExDownloadList.append(gid, exDownloader);
         }
         exDownloader.occupy();

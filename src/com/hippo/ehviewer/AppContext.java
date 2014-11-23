@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import android.app.Application;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 
@@ -32,6 +33,8 @@ import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.ehclient.ExDownloaderManager;
 import com.hippo.ehviewer.network.HttpHelper;
+import com.hippo.ehviewer.service.DownloadService;
+import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.EhUtils;
@@ -45,25 +48,26 @@ import com.hippo.ehviewer.widget.SlidingDrawerLayout;
 public class AppContext extends Application implements UncaughtExceptionHandler {
 
     @SuppressWarnings("unused")
-    private static final String TAG = "AppContext";
+    private static final String TAG = AppContext.class.getSimpleName();
 
     public static final boolean DEBUG = true;
 
     private Thread.UncaughtExceptionHandler mDefaultHandler;
 
-    private static AppContext sInstance;
-
-    public static AppContext getInstance() {
-        return sInstance;
-    }
-
-    public AppContext() {
-        sInstance = this;
-    }
+    private DownloadServiceConnection mServiceConn;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Do catch error prepare
+        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(this);
+
+        // Set download service connect
+        mServiceConn = new DownloadServiceConnection();
+        Intent it = new Intent(this, DownloadService.class);
+        bindService(it, mServiceConn, BIND_AUTO_CREATE);
 
         // Init everything
         Config.init(this);
@@ -73,14 +77,11 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         EhClient.createInstance(this);
         Favorite.init(this);
         Data.createInstance(this);
-        ExDownloaderManager.createInstance();
+        ExDownloaderManager.createInstance(this);
         MaterialToast.setContext(this);
 
+        // Set drawer margin
         SlidingDrawerLayout.setDefaultMinDrawerMargin(Ui.ACTION_BAR_HEIGHT);
-
-        // Do catch error prepare
-        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler(this);
 
         // Add .nomedia or delete it
         File nomedia = new File(Config.getDownloadPath(), ".nomedia");
@@ -141,6 +142,15 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
             PackageInfo pi= getPackageManager().getPackageInfo(getPackageName(), 0);
             Config.setInt(keyVersionCode, pi.versionCode);
         } catch (NameNotFoundException e) {}
+    }
+
+    @Override
+    protected void finalize() {
+        unbindService(mServiceConn);
+    }
+
+    public DownloadServiceConnection getDownloadServiceConnection() {
+        return mServiceConn;
     }
 
     /**
