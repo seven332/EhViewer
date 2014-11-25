@@ -59,7 +59,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
@@ -78,6 +77,7 @@ import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.ListUrls;
 import com.hippo.ehviewer.data.Tag;
+import com.hippo.ehviewer.drawable.FreeMaterialDrawable;
 import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
 import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.ehclient.EhClient;
@@ -92,6 +92,7 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.CategoryTable;
+import com.hippo.ehviewer.widget.DrawerListView;
 import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.GalleryListView;
 import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
@@ -169,8 +170,8 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
 
     private StaggeredGridView mStaggeredGridView;
 
-    private LinearLayout mUserPanel;
-    private ListView mMenuList;
+    private View mUserPanel;
+    private DrawerListView mMenuList;
     private ImageView mAvatar;
     private TextView mUsernameView;
     private Button mLoginButton;
@@ -427,7 +428,7 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
                                 mTitle = lus.getTag();
                                 break;
                             case ListUrls.MODE_POPULAR:
-                                mTitle = getString(R.string.popular);
+                                mTitle = getString(R.string.whatshot);
                             case ListUrls.MODE_NORMAL:
                             default:
                                 if (search == null || search.isEmpty())
@@ -964,10 +965,11 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
         mMaterialIndicator.onSaveInstanceState(outState);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     @SuppressLint("InflateParams")
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery_list);
 
@@ -1026,8 +1028,8 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
 
         mStaggeredGridView = (StaggeredGridView) mGalleryListView.getContentView();
 
-        mUserPanel = (LinearLayout) mLeftMenu.findViewById(R.id.user_panel);
-        mMenuList = (ListView) mLeftMenu.findViewById(R.id.list_menu_item_list);
+        mUserPanel = mLeftMenu.findViewById(R.id.user_panel);
+        mMenuList = (DrawerListView) mLeftMenu.findViewById(R.id.list_menu_item_list);
         mAvatar = (ImageView) mUserPanel.findViewById(R.id.avatar);
         mUsernameView = (TextView) mUserPanel.findViewById(R.id.user);
         mLoginButton = (Button) mUserPanel.findViewById(R.id.login);
@@ -1054,51 +1056,33 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
         mGalleryListView.getPullViewGroup().setAgainstToChildPadding(true);
 
         // leftDrawer
-        final int[] menuListData = {
-                R.drawable.ic_action_home, R.string.homepage,
-                R.drawable.ic_action_panda, R.string.mode,
-                R.drawable.ic_action_search, android.R.string.search_go,
-                R.drawable.ic_action_favorite, R.string.favourite,
-                R.drawable.ic_action_popular, R.string.popular,
-                R.drawable.ic_action_history, R.string.history,
-                R.drawable.ic_setting_download, R.string.download,
-                R.drawable.ic_action_settings, R.string.action_settings};
+        mUserPanel.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        mUserPanel.setBackgroundDrawable(new FreeMaterialDrawable());
 
-        mMenuList.setSelector(new ColorDrawable(Color.TRANSPARENT));
+        final Drawable[] drawableArray = new Drawable[] {
+                mResources.getDrawable(R.drawable.ic_drawer_home),
+                mResources.getDrawable(R.drawable.ic_drawer_panda),
+                mResources.getDrawable(R.drawable.ic_drawer_search),
+                mResources.getDrawable(R.drawable.ic_drawer_favorite),
+                mResources.getDrawable(R.drawable.ic_drawer_whatshot),
+                mResources.getDrawable(R.drawable.ic_drawer_history),
+                mResources.getDrawable(R.drawable.ic_drawer_download),
+                mResources.getDrawable(R.drawable.ic_drawer_settings),
+        };
+        final CharSequence[] titleArray = new CharSequence[] {
+                mResources.getString(R.string.homepage),
+                mResources.getString(R.string.mode),
+                mResources.getString(android.R.string.search_go),
+                mResources.getString(R.string.favourite),
+                mResources.getString(R.string.whatshot),
+                mResources.getString(R.string.history),
+                mResources.getString(R.string.download),
+                mResources.getString(R.string.action_settings)
+        };
+
+        // mMenuList.setSelector(new ColorDrawable(Color.TRANSPARENT));
         mMenuList.setClipToPadding(false);
-        mMenuList.setAdapter(new BaseAdapter() {
-            @Override
-            public int getCount() {
-                return menuListData.length / 2;
-            }
-
-            @Override
-            public Object getItem(int position) {
-                return new int[] { menuListData[position * 2], menuListData[position * 2 + 1] };
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return position;
-            }
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                TextView tv;
-                if (convertView == null) {
-                    tv = (TextView) LayoutInflater.from(GalleryListActivity.this).inflate(R.layout.menu_item, parent,
-                            false);
-                } else {
-                    tv = (TextView) convertView;
-                }
-                Drawable d = mResources.getDrawable(menuListData[position * 2]);
-                d.setBounds(0, 0, Ui.dp2pix(36), Ui.dp2pix(36));
-                tv.setCompoundDrawables(d, null, null, null);
-                tv.setCompoundDrawablePadding(Ui.dp2pix(8));
-                tv.setText(menuListData[position * 2 + 1]);
-                return tv;
-            }
-        });
+        mMenuList.setData(drawableArray, titleArray);
         mMenuList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -1128,7 +1112,7 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
                 case 4: // Popular
                     lus = new ListUrls();
                     lus.setMode(ListUrls.MODE_POPULAR);
-                    mTitle = mResources.getString(R.string.popular);
+                    mTitle = mResources.getString(R.string.whatshot);
                     setTitle(mTitle);
                     mGalleryListView.refresh();
                     mDrawerLayout.closeDrawers();
@@ -1233,7 +1217,7 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
         // Set random color
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
         mActionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
-        mLeftMenu.setBackgroundColor(mThemeColor);
+        //mLeftMenu.setBackgroundColor(mThemeColor);
         mRightMenu.setBackgroundColor(mThemeColor);
         Ui.colorStatusBarL(this, mThemeColor);
 
@@ -1562,27 +1546,27 @@ public class GalleryListActivity extends AbsActivity implements View.OnClickList
         switch (state) {
         case LOGIN:
             mAvatar.setImageBitmap(mClient.getAvatar());
-            mUsernameView.setVisibility(View.GONE);
+            mUsernameView.setVisibility(View.INVISIBLE);
             mLoginButton.setVisibility(View.VISIBLE);
             mRegisterButton.setVisibility(View.VISIBLE);
-            mLogoutButton.setVisibility(View.GONE);
-            mWaitLogView.setVisibility(View.GONE);
+            mLogoutButton.setVisibility(View.INVISIBLE);
+            mWaitLogView.setVisibility(View.INVISIBLE);
             break;
         case LOGOUT:
             mAvatar.setImageBitmap(mClient.getAvatar());
             mUsernameView.setText(mClient.getDisplayname());
             mUsernameView.setVisibility(View.VISIBLE);
-            mLoginButton.setVisibility(View.GONE);
-            mRegisterButton.setVisibility(View.GONE);
+            mLoginButton.setVisibility(View.INVISIBLE);
+            mRegisterButton.setVisibility(View.INVISIBLE);
             mLogoutButton.setVisibility(View.VISIBLE);
-            mWaitLogView.setVisibility(View.GONE);
+            mWaitLogView.setVisibility(View.INVISIBLE);
             break;
         case WAIT:
             mAvatar.setImageBitmap(mClient.getAvatar());
-            mUsernameView.setVisibility(View.GONE);
-            mLoginButton.setVisibility(View.GONE);
-            mRegisterButton.setVisibility(View.GONE);
-            mLogoutButton.setVisibility(View.GONE);
+            mUsernameView.setVisibility(View.INVISIBLE);
+            mLoginButton.setVisibility(View.INVISIBLE);
+            mRegisterButton.setVisibility(View.INVISIBLE);
+            mLogoutButton.setVisibility(View.INVISIBLE);
             mWaitLogView.setVisibility(View.VISIBLE);
             break;
         }

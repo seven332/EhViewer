@@ -371,7 +371,7 @@
     <!-- Util -->
     <string name="filter">filter</string>
     <string name="clear">clear</string>
-    <string name="history">history</string>
+    <string name="history">History</string>
     <string name="warning">Warning</string>
     <string name="close">Close</string>
     <string name="select">Select</string>
@@ -429,7 +429,7 @@
     <string name="homepage">Homepage</string>
     <string name="mode">Mode</string>
     <string name="favourite">Favourite</string>
-    <string name="popular">Popular</string>
+    <string name="whatshot">What\'s hot</string>
     <string name="download">Download</string>
     <string name="star_2">2 stars</string>
     <string name="star_3">3 stars</string>

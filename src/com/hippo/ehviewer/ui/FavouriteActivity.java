@@ -237,7 +237,7 @@ public class FavouriteActivity extends AbsActivity
                 TextView tv = (TextView)convertView;
                 tv.setText(Favorite.FAVORITE_TITLES[position]);
                 if (position == 0) {
-                    Drawable dr = mResources.getDrawable(R.drawable.ic_action_panda);
+                    Drawable dr = mResources.getDrawable(R.drawable.ic_setting_panda_light);
                     dr.setBounds(0, 0, Ui.dp2pix(36), Ui.dp2pix(36));
                     tv.setCompoundDrawables(dr, null, null, null);
                     tv.setCompoundDrawablePadding(Ui.dp2pix(8));

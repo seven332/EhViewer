@@ -39,7 +39,8 @@ public final class Theme {
      * @return
      */
     public static int getRandomDarkColor() {
-        return DARK_COLOR_TABLE[Math.abs(MathUtils.random(DARK_COLOR_TABLE.length))];
+        // return DARK_COLOR_TABLE[Math.abs(MathUtils.random(DARK_COLOR_TABLE.length))];
+        return 0xff009688;
     }
 
     /**

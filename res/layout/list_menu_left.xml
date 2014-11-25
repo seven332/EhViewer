@@ -13,28 +13,25 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ 
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/list_menu_left"
     style="@style/Drawer"
     android:layout_gravity="left|start"
     android:orientation="vertical" >
 
     <include
-        layout="@layout/user_panel"
-        android:id="@+id/user_panel" />
+        layout="@layout/user_panel" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1.0dp"
-        android:background="@color/divider" />
-
-    <ListView
+    <com.hippo.ehviewer.widget.DrawerListView
         android:id="@+id/list_menu_item_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:choiceMode="singleChoice"
         android:clickable="true"
         android:divider="@android:color/transparent"
-        android:dividerHeight="0dp" >
-    </ListView>
+        android:dividerHeight="0dp"
+        android:background="@android:color/white" >
+    </com.hippo.ehviewer.widget.DrawerListView>
+
 </LinearLayout>

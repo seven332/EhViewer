@@ -15,5 +15,5 @@
  -->
 
 <resources>
-    <bool name="is_table">true</bool>
+    <bool name="is_table">false</bool>
 </resources>

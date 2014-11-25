@@ -70,6 +70,10 @@
         <item name="@android:textSize">@dimen/text_medium</item>
     </style>
 
+    <style name="TextAppearance.Large">
+        <item name="@android:textSize">@dimen/text_large</item>
+    </style>
+
     <style name="TextAppearance.DialogTitle">
         <item name="@android:textSize">@dimen/text_little_large</item>
     </style>

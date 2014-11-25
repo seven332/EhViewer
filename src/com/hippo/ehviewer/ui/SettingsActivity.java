@@ -118,7 +118,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             ReadFragment.class.getName(), DownloadFragment.class.getName(), AdvancedFragment.class.getName(),
             AboutFragment.class.getName() };
 
-    private static final int[] FRAGMENT_ICONS = { R.drawable.ic_setting_display, R.drawable.ic_action_panda,
+    private static final int[] FRAGMENT_ICONS = { R.drawable.ic_setting_display, R.drawable.ic_setting_panda_light,
             R.drawable.ic_setting_read, R.drawable.ic_setting_download, R.drawable.ic_setting_advanced,
             R.drawable.ic_setting_about };
 

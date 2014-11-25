@@ -19,31 +19,31 @@
     <header
         android:fragment="com.hippo.ehviewer.ui.SettingsActivity$DisplayFragment"
         android:title="@string/display_settings_title"
-        android:icon="@drawable/ic_setting_display_dark" />
+        android:icon="@drawable/ic_setting_display" />
 
     <header
         android:fragment="com.hippo.ehviewer.ui.SettingsActivity$EhFragment"
         android:title="@string/eh_settings_title"
-        android:icon="@drawable/ic_action_panda_dark" />
+        android:icon="@drawable/ic_setting_panda" />
 
     <header
         android:fragment="com.hippo.ehviewer.ui.SettingsActivity$ReadFragment"
         android:title="@string/read_settings_title"
-        android:icon="@drawable/ic_setting_read_dark" />
+        android:icon="@drawable/ic_setting_read" />
 
     <header
         android:fragment="com.hippo.ehviewer.ui.SettingsActivity$DownloadFragment"
         android:title="@string/download_settings_title"
-        android:icon="@drawable/ic_setting_download_dark" />
+        android:icon="@drawable/ic_setting_download" />
 
     <header
         android:fragment="com.hippo.ehviewer.ui.SettingsActivity$AdvancedFragment"
         android:title="@string/advanced_settings_title"
-        android:icon="@drawable/ic_setting_advanced_dark" />
+        android:icon="@drawable/ic_setting_advanced" />
 
     <header
         android:fragment="com.hippo.ehviewer.ui.SettingsActivity$AboutFragment"
         android:title="@string/about_settings_title"
-        android:icon="@drawable/ic_setting_about_dark" />
+        android:icon="@drawable/ic_setting_about" />
 
 </preference-headers>

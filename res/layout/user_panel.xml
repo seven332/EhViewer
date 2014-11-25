@@ -14,76 +14,69 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:auto="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/user_panel"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:padding="16dp" >
 
-    <ImageView
-        android:id="@+id/avatar"
-        android:layout_width="64.0dp"
-        android:layout_height="64.0dp"
-        android:layout_margin="8.0dp" />
-
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/user_info"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="64dp"
+            android:layout_height="64dp" />
 
         <TextView
             android:id="@+id/user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="8.0dp"
-            android:layout_marginTop="8.0dp"
-            android:singleLine="true"
-            android:textColor="@android:color/white"
-            android:textSize="16.0sp" />
+            android:layout_marginLeft="16dp"
+            android:textSize="@dimen/text_little_small"
+            android:textColor="@android:color/white" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="8.0dp"
-            android:layout_marginLeft="8.0dp"
-            android:orientation="vertical" >
+    </LinearLayout>
 
-            <com.hippo.ehviewer.widget.SuperButton
-                android:id="@+id/register"
-                style="@style/SuperButton.Tile.Small"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10.0dp"
-                android:singleLine="true"
-                android:text="@string/register" />
+    <com.hippo.ehviewer.widget.MaterialProgress
+        android:id="@+id/wait"
+        style="@style/MaterialProgress"
+        android:layout_centerInParent="true" />
 
-            <com.hippo.ehviewer.widget.SuperButton
-                android:id="@+id/login"
-                style="@style/SuperButton.Tile.Small"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="@string/login" />
-        </LinearLayout>
+    <com.hippo.ehviewer.widget.SuperButton
+        android:id="@+id/login"
+        style="@style/SuperButton.Tile.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/user_info"
+        android:layout_marginTop="16dp"
+        android:layout_alignParentRight="true"
+        android:text="@string/login" />
 
-        <com.hippo.ehviewer.widget.SuperButton
-            android:id="@+id/logout"
-            style="@style/SuperButton.Tile.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="8.0dp"
-            android:layout_marginLeft="8.0dp"
-            android:text="@string/logout" />
+    <com.hippo.ehviewer.widget.SuperButton
+        android:id="@+id/register"
+        style="@style/SuperButton.Tile.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/user_info"
+        android:layout_marginTop="16dp"
+        android:layout_toLeftOf="@id/login"
+        android:layout_marginRight="16dp"
+        android:text="@string/register" />
 
-        <com.hippo.ehviewer.widget.MaterialProgress
-            android:id="@+id/wait"
-            style="@style/MaterialProgress"
-            android:layout_centerInParent="true" />
-    </RelativeLayout>
+    <com.hippo.ehviewer.widget.SuperButton
+        android:id="@+id/logout"
+        style="@style/SuperButton.Tile.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/user_info"
+        android:layout_marginTop="16dp"
+        android:layout_alignParentRight="true"
+        android:text="@string/logout" />
 
-</LinearLayout>
+</RelativeLayout>
