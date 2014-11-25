@@ -127,6 +127,10 @@ public final class MathUtils {
         return (float) Math.tan(angle);
     }
 
+    public static int lerp(int start, int stop, float amount) {
+        return start + (int) ((stop - start) * amount);
+    }
+
     public static float lerp(float start, float stop, float amount) {
         return start + (stop - start) * amount;
     }

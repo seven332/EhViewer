@@ -84,6 +84,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     private View mContentView;
     private View mLeftDrawer;
     private View mRightDrawer;
+    private ShadowView mShadow;
 
     private ViewDragHelper mDragHelper;
     private float mInitialMotionX;
@@ -522,6 +523,9 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             mLeftDrawer.setClickable(true);
         if (mRightDrawer != null)
             mRightDrawer.setClickable(true);
+
+        mShadow = new ShadowView(getContext());
+        addView(mShadow, 1);
     }
 
     /**
@@ -586,6 +590,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                         lp.topMargin + lp.bottomMargin,
                         lp.height);
                 child.measure(drawerWidthSpec, drawerHeightSpec);
+            } else if (child == mShadow) {
+                child.measure(widthMeasureSpec, heightMeasureSpec);
             } else {
                 throw new IllegalStateException("Don't call addView");
             }
@@ -610,6 +616,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                 child.layout(lp.leftMargin, lp.topMargin,
                         lp.leftMargin + child.getMeasuredWidth(),
                         lp.topMargin + child.getMeasuredHeight());
+            } else if (child == mShadow) {
+                child.layout(l, t, r, b);
             } else { // Drawer, if it wasn't onMeasure would have thrown an exception.
                 final int childWidth = child.getMeasuredWidth();
                 final int childHeight = child.getMeasuredHeight();
@@ -727,7 +735,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     public void onAnimationUpdate(ValueAnimator animation) {
         float value = (Float) animation.getAnimatedValue();
         int oldLeft = mTargetView.getLeft();
-        int newLeft = (int) MathUtils.lerp(mStartLeft, mEndLeft, value);
+        int newLeft = MathUtils.lerp(mStartLeft, mEndLeft, value);
         if (mTargetView == mLeftDrawer)
             slideLeftDrawer(newLeft - oldLeft);
         else
@@ -978,6 +986,9 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             mRightPercent = percent;
         }
 
+        if (update)
+            mShadow.setPercent(percent);
+
         // Callback
         if (update && mListener != null) {
             mListener.onDrawerSlide(drawerView, percent);
@@ -1112,7 +1123,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             if (!mIntercepted)
                 return child.getLeft();
 
-            if (child == mContentView) {
+            if (child == mContentView || child == mShadow) {
                 if (mLeftState == STATE_CLOSED && mRightState == STATE_CLOSED) {
                     if (dx > 0 && mLeftDrawer != null && mLeftLockMode == LOCK_MODE_UNLOCKED) {
                         slideLeftDrawer(dx);
@@ -1146,6 +1157,28 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         @Override
         public int getViewHorizontalDragRange(View child) {
             return Integer.MAX_VALUE;
+        }
+    }
+
+    private class ShadowView extends View {
+
+        private final int mForm = 0x0;
+        private final int mTo = 0x61;
+        private float mPercent = 0;
+
+        public ShadowView(Context context) {
+            super(context);
+        }
+
+        public void setPercent(float percent) {
+            mPercent = percent;
+
+            invalidate();
+        }
+
+        @Override
+        protected void onDraw(Canvas c) {
+            c.drawARGB(MathUtils.lerp(mForm, mTo, mPercent), 0, 0, 0);
         }
     }
 }
