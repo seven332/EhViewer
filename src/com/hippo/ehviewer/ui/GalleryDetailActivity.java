@@ -100,7 +100,7 @@ import com.hippo.ehviewer.widget.SimpleGridLayout;
 import com.hippo.ehviewer.widget.SuperButton;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 
-public class GalleryDetailActivity extends AbsActivity
+public class GalleryDetailActivity extends AbsTranslucentActivity
         implements View.OnClickListener,
         ResponedScrollView.OnScrollStateChangedListener,
         View.OnTouchListener , ViewSwitcher.ViewFactory,

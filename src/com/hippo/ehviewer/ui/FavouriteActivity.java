@@ -78,7 +78,7 @@ import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RatingView;
 import com.hippo.ehviewer.widget.SlidingDrawerLayout;
 
-public class FavouriteActivity extends AbsActivity
+public class FavouriteActivity extends AbsTranslucentActivity
         implements ListView.MultiChoiceModeListener,
         View.OnTouchListener, GalleryListView.GalleryListViewHelper,
         FitWindowView.OnFitSystemWindowsListener {

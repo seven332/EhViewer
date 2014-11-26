@@ -58,7 +58,7 @@ import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 
-public class DownloadActivity extends AbsActivity implements FitWindowView.OnFitSystemWindowsListener {
+public class DownloadActivity extends AbsTranslucentActivity implements FitWindowView.OnFitSystemWindowsListener {
 
     private AppContext mAppContext;
     private WindowsAnimate mWindowsAnimate;

@@ -17,7 +17,6 @@
 package com.hippo.ehviewer.ui;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -44,7 +43,7 @@ import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.ColorView;
 
-public class GalleryActivity extends Activity
+public class GalleryActivity extends AbsActivity
         implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener,
         FullScreenHelper.OnFullScreenBrokenListener, MaterialAlertDialog.OnClickListener {
 

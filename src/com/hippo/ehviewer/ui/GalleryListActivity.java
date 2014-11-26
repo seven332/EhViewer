@@ -129,7 +129,7 @@ import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
  *
  * @author Hippo
  */
-public class GalleryListActivity extends AbsActivity implements View.OnClickListener,
+public class GalleryListActivity extends AbsTranslucentActivity implements View.OnClickListener,
         SearchView.OnQueryTextListener, SearchView.OnFocusChangeListener,
         SlidingDrawerLayout.DrawerListener, EhClient.OnLoginListener,
         GalleryListView.GalleryListViewHelper, FitWindowView.OnFitSystemWindowsListener {

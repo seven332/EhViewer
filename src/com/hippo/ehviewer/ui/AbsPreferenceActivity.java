@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.ui;
 
-import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -26,13 +25,6 @@ import com.hippo.ehviewer.util.Ui;
 public abstract class AbsPreferenceActivity extends PreferenceActivity {
 
     private static final String TAG = AbsPreferenceActivity.class.getSimpleName();
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        Ui.adjustOrientation(this);
-    }
 
     @Override
     protected void onResume() {

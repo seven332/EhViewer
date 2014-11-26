@@ -55,7 +55,7 @@ import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RatingView;
 
-public class HistoryActivity extends AbsActivity
+public class HistoryActivity extends AbsTranslucentActivity
         implements AdapterView.OnItemClickListener, MaterialAlertDialog.OnClickListener,
         GalleryListView.GalleryListViewHelper, FitWindowView.OnFitSystemWindowsListener {
 
