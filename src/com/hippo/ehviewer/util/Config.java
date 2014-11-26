@@ -105,6 +105,14 @@ public final class Config {
         mConfigPre.edit().putString(key, Integer.toString(value)).apply();
     }
 
+    public static float getFloat(String key, float defValue) {
+        return mConfigPre.getFloat(key, defValue);
+    }
+
+    public static void setFloat(String key, float value) {
+        mConfigPre.edit().putFloat(key, value).apply();
+    }
+
 
     /****** Display ******/
 

@@ -19,14 +19,13 @@ package com.hippo.ehviewer.ui;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -40,9 +39,10 @@ import com.hippo.ehviewer.gallery.GalleryView;
 import com.hippo.ehviewer.gallery.data.ImageSet;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.FullScreenHelper;
+import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.widget.ColorView;
 
 public class GalleryActivity extends Activity
         implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener,
@@ -53,6 +53,9 @@ public class GalleryActivity extends Activity
 
     public final static String KEY_GALLERY_INFO = "gallery_info";
     public final static String KEY_START_INDEX = "start_index";
+
+    public final static String KEY_LIGHTNESS = "lightness";
+    public final static float DEFAULT_LIGHTNESS = 0.5f;
 
     private View mFooter;
     private TextView mSeekerBubble;
@@ -65,11 +68,14 @@ public class GalleryActivity extends Activity
 
     private GalleryView mGalleryView;
 
+    private ColorView mMaskView;
+
     private GalleryInfo mGi;
 
     private FullScreenHelper mFullScreenHelper;
 
-    private boolean mFirstTime = true;
+    private float mLightness;
+    private int mLightnessScale = 0;
 
     private final Runnable mFullScreenTask = new Runnable() {
         @Override public void run() {
@@ -88,33 +94,7 @@ public class GalleryActivity extends Activity
     void setFullScreen(final boolean fullScreen) {
 
         mFullScreenHelper.setFullScreen(fullScreen);
-
-        if (!mFirstTime) {
-            AlphaAnimation aa = fullScreen ? new AlphaAnimation(1.0f, 0.0f) :
-                    new AlphaAnimation(0.0f, 1.0f);
-            aa.setDuration(Constants.ANIMATE_TIME);
-            aa.setAnimationListener(new AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    if (!fullScreen)
-                        mFooter.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if (fullScreen)
-                        mFooter.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                    // Empty
-                }
-            });
-            mFooter.startAnimation(aa);
-        } else {
-            mFirstTime = false;
-        }
+        mFooter.setVisibility(fullScreen ? View.GONE : View.VISIBLE);
 
         if (!fullScreen)
             startFullScreenTask();
@@ -135,9 +115,34 @@ public class GalleryActivity extends Activity
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Need update mLightnessScale
+        mLightnessScale = 0;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         setFullScreen(true);
+    }
+
+    private void setLightness(float l) {
+        l = MathUtils.clamp(l, -1.0f, 1.0f);
+        Window w = getWindow();
+        WindowManager.LayoutParams lp = w.getAttributes();
+        if (l >= 0.0f) {
+            lp.screenBrightness = l;
+            w.setAttributes(lp);
+            mMaskView.setColor(0);
+        } else {
+            if (lp.screenBrightness != 0.0f) {
+                lp.screenBrightness = 0.0f;
+                w.setAttributes(lp);
+            }
+            mMaskView.setColor(MathUtils.lerp(0x00, 0xde, -l) << 24);
+        }
     }
 
     @Override
@@ -152,6 +157,7 @@ public class GalleryActivity extends Activity
         mFooter = findViewById(R.id.footer);
         mPageSeeker = (SeekBar) findViewById(R.id.page_seeker);
         mSeekerBubble = (TextView) findViewById(R.id.seeker_bubble);
+        mMaskView = (ColorView)findViewById(R.id.mask);
         mActionBar = getActionBar();
 
         Intent intent = getIntent();
@@ -211,6 +217,10 @@ public class GalleryActivity extends Activity
                         .setButtonListener(this)
                         .show();
             }
+
+            // lightness
+            mLightness = Config.getFloat(KEY_LIGHTNESS, DEFAULT_LIGHTNESS);
+            setLightness(mLightness);
         }
     }
 
@@ -268,6 +278,16 @@ public class GalleryActivity extends Activity
         updateTitle();
         mPageSeeker.setMax(size - 1);
         mPageSeeker.setProgress(mGalleryView.getCurIndex() + 1);
+    }
+
+    @Override
+    public void onSlideBottom(float dx) {
+        if (mLightnessScale == 0)
+            mLightnessScale = mMaskView.getWidth();
+
+        mLightness = MathUtils.clamp(mLightness - (dx / mLightnessScale), -1.0f, 1.0f);
+        setLightness(mLightness);
+        Config.setFloat(KEY_LIGHTNESS, mLightness);
     }
 
     private void showSeekBubble() {

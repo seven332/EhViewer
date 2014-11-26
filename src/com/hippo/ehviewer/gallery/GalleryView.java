@@ -95,6 +95,9 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             5 / 7.0f, 1 };
     private static final float[] CENTER_AREA_SCALE = { 2 / 7.0f, 3 / 8.0f,
             5 / 7.0f, 5 / 8.0f };
+    private static final float[] LIGHTNESS_SLIDING_AREA = {
+        0, 5 / 6.0f, 1, 1 };
+
 
     private static final float MILLSEC_PER_DIX = 0.2f;
     private static final float CHANGE_PAGE_PROPORTION = 0.1f;
@@ -148,6 +151,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
     private int[] rightArea;
     private int[] bottomArea;
     private int[] centerArea;
+    private int[] mLightnessSlidingArea;
 
     private Text leftText;
     private Text topText;
@@ -156,6 +160,8 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
     private Text centerText;
 
     private boolean mDoubleTapAnimating = false;
+
+    private boolean mLightnessSliding = false;
 
     private boolean mShowTapArea = false;
     private boolean mShowTapAreaTurn = false;
@@ -172,6 +178,8 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         public void onPageChanged(int index);
 
         public void onSizeUpdate(int size);
+
+        public void onSlideBottom(float dx);
     }
 
     public interface OnTapTextListener {
@@ -602,6 +610,10 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                 (int) (CENTER_AREA_SCALE[1] * mScreenHeight),
                 (int) (CENTER_AREA_SCALE[2] * mScreenWidth),
                 (int) (CENTER_AREA_SCALE[3] * mScreenHeight) };
+        mLightnessSlidingArea = new int[] { (int) (LIGHTNESS_SLIDING_AREA[0] * mScreenWidth),
+                (int) (LIGHTNESS_SLIDING_AREA[1] * mScreenHeight),
+                (int) (LIGHTNESS_SLIDING_AREA[2] * mScreenWidth),
+                (int) (LIGHTNESS_SLIDING_AREA[3] * mScreenHeight) };
 
         if (leftText == null)
             leftText = new Text(mContext.getString(R.string.pre_page),
@@ -1188,16 +1200,17 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         }
 
         @Override
-        public boolean onScrollBegin(float dx, float dy, float totalX,
-                float totalY) {
-            return onScroll(dx, dy, totalX, totalY);
+        public boolean onScrollBegin(float dx, float dy, MotionEvent e1, MotionEvent e2) {
+            mLightnessSliding = Utils.isInArea(mLightnessSlidingArea,
+                    (int) e2.getX(), (int) e2.getY());
+            return onScroll(dx, dy, e1, e2);
         }
 
         /**
          * dx 和 totalX 符号相反，为啥
          */
         @Override
-        public boolean onScroll(float dx, float dy, float totalX, float totalY) {
+        public boolean onScroll(float dx, float dy, MotionEvent e1, MotionEvent e2) {
 
             if (isScale)
                 return false;
@@ -1209,6 +1222,15 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
             if (mDoubleTapAnimating)
                 return false;
+
+            if (mLightnessSliding) {
+                if (mGalleryViewListener != null)
+                    mGalleryViewListener.onSlideBottom(dx);
+                return true;
+            }
+
+            float totalX = e2.getX() - e1.getX();
+            float totalY = e2.getY() - e1.getY();
 
             switch (mScrollState) {
             case SCROLL_ANIME_LEFT:
@@ -1299,6 +1321,8 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             if (isScale)
                 return false;
             if (mDoubleTapAnimating)
+                return false;
+            if (mLightnessSliding)
                 return false;
 
             switch (mScrollState) {

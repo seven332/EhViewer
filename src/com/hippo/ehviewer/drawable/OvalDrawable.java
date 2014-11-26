@@ -20,21 +20,29 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
 public class OvalDrawable extends Drawable {
 
     private final Paint mPaint;
+    private final RectF mRectF;
 
     public OvalDrawable(int color) {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
         mPaint.setColor(color);
+        mRectF = new RectF();
+    }
+
+    @Override
+    protected void onBoundsChange(Rect bounds) {
+        mRectF.set(bounds);
     }
 
     @Override
     public void draw(Canvas canvas) {
-        canvas.drawOval(new RectF(this.getBounds()), mPaint);
+        canvas.drawOval(mRectF, mPaint);
     }
 
     @Override

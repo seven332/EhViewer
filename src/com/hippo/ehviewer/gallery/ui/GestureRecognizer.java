@@ -33,8 +33,8 @@ public class GestureRecognizer {
         boolean onDoubleTap(float x, float y);
         boolean onDoubleTapConfirmed(float x, float y);
         void onLongPress(MotionEvent e);
-        boolean onScrollBegin(float dx, float dy, float totalX, float totalY);
-        boolean onScroll(float dx, float dy, float totalX, float totalY);
+        boolean onScrollBegin(float dx, float dy, MotionEvent e1, MotionEvent e2);
+        boolean onScroll(float dx, float dy, MotionEvent e1, MotionEvent e2);
         boolean onScrollEnd(float totalX, float totalY);
         boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY);
         boolean onScaleBegin(float focusX, float focusY);
@@ -107,18 +107,15 @@ public class GestureRecognizer {
         }
 
         @Override
-        public boolean onScroll(
-                MotionEvent e1, MotionEvent e2, float dx, float dy) {
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float dx, float dy) {
             if (e1.getX() != firstX || e1.getY() != firstY) {
                 mStillScroll = true;
                 firstX = e1.getX();
                 firstY = e1.getY();
-                return mListener.onScrollBegin(
-                        dx, dy, e2.getX() - e1.getX(), e2.getY() - e1.getY());
+                return mListener.onScrollBegin(dx, dy, e1, e2);
+            } else {
+                return mListener.onScroll(dx, dy, e1, e2);
             }
-            else
-                return mListener.onScroll(
-                        dx, dy, e2.getX() - e1.getX(), e2.getY() - e1.getY());
         }
 
         @Override
