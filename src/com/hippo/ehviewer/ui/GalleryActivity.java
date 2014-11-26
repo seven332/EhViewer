@@ -282,11 +282,17 @@ public class GalleryActivity extends Activity
 
     @Override
     public void onSlideBottom(float dx) {
-        if (mLightnessScale == 0)
-            mLightnessScale = mMaskView.getWidth();
+        if (mLightnessScale == 0) {
+            int w = mMaskView.getWidth();
+            mLightnessScale = w > 0 ? w : 1024;
+        }
 
         mLightness = MathUtils.clamp(mLightness - (dx / mLightnessScale), -1.0f, 1.0f);
         setLightness(mLightness);
+    }
+
+    @Override
+    public void onSlideBottomOver() {
         Config.setFloat(KEY_LIGHTNESS, mLightness);
     }
 

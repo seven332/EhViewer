@@ -180,6 +180,8 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         public void onSizeUpdate(int size);
 
         public void onSlideBottom(float dx);
+
+        public void onSlideBottomOver();
     }
 
     public interface OnTapTextListener {
@@ -1322,8 +1324,11 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                 return false;
             if (mDoubleTapAnimating)
                 return false;
-            if (mLightnessSliding)
-                return false;
+            if (mLightnessSliding) {
+                if (mGalleryViewListener != null)
+                    mGalleryViewListener.onSlideBottomOver();
+                return true;
+            }
 
             switch (mScrollState) {
             case SCROLL_ANIME_LEFT:
