@@ -18,7 +18,13 @@
     <item
         android:id="@+id/action_refresh"
         android:title="@string/refresh"
-        android:icon="@drawable/ic_action_refresh_secondary"
+        android:icon="@drawable/ic_action_g_refresh"
         android:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/preference_settings_title"
+        android:icon="@drawable/ic_action_g_settings"
+        android:showAsAction="ifRoom" />
 
 </menu>

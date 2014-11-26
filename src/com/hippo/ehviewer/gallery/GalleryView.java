@@ -96,7 +96,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
     private static final float[] CENTER_AREA_SCALE = { 2 / 7.0f, 3 / 8.0f,
             5 / 7.0f, 5 / 8.0f };
     private static final float[] LIGHTNESS_SLIDING_AREA = {
-        0, 5 / 6.0f, 1, 1 };
+        0.0f, 0.0f, 0.166f, 1.0f };
 
 
     private static final float MILLSEC_PER_DIX = 0.2f;
@@ -1204,7 +1204,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         @Override
         public boolean onScrollBegin(float dx, float dy, MotionEvent e1, MotionEvent e2) {
             mLightnessSliding = Utils.isInArea(mLightnessSlidingArea,
-                    (int) e2.getX(), (int) e2.getY());
+                    (int) e2.getX(), (int) e2.getY()) && Math.abs(dy / dx) > 1.0f;
             return onScroll(dx, dy, e1, e2);
         }
 
@@ -1227,7 +1227,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
             if (mLightnessSliding) {
                 if (mGalleryViewListener != null)
-                    mGalleryViewListener.onSlideBottom(dx);
+                    mGalleryViewListener.onSlideBottom(dy);
                 return true;
             }
 

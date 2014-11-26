@@ -43,4 +43,10 @@
 
     </style>
 
+    <style name="AppTheme.Gallery" parent="@android:Theme.Material">
+        <item name="android:icon">@android:color/transparent</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Gallery</item>
+    </style>
+
 </resources>

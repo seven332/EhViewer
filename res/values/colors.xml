@@ -13,6 +13,17 @@
      See the License for the specific language governing permissions and
      limitations under the License.
  -->
+
+<!--
+    light
+        enabled ffffff 80%
+        disabled ffffff 30%
+    dark
+        enabled 333333 60%
+        disabled 333333 30%
+    gallery action icon ffffff 38%
+ -->
+
 <resources>
 
     <integer-array name="refresh_colors">

@@ -238,6 +238,9 @@ public class GalleryActivity extends AbsActivity
             startFullScreenTask();
             return true;
 
+        case R.id.action_settings:
+            return true;
+
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -282,11 +285,11 @@ public class GalleryActivity extends AbsActivity
     @Override
     public void onSlideBottom(float dx) {
         if (mLightnessScale == 0) {
-            int w = mMaskView.getWidth();
+            int w = mMaskView.getHeight();
             mLightnessScale = w > 0 ? w : 1024;
         }
 
-        mLightness = MathUtils.clamp(mLightness - (dx / mLightnessScale), -1.0f, 1.0f);
+        mLightness = MathUtils.clamp(mLightness + (dx / mLightnessScale), -1.0f, 1.0f);
         setLightness(mLightness);
     }
 
