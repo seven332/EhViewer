@@ -509,7 +509,7 @@ public final class Config {
     private static final boolean DEFAULT_AUTO_CHECK_FOR_UPDATE = true;
 
     private static final String KEY_UPDATE_SERVER = "update_server";
-    private static final String DEFAULT_UPDATE_SERVER = "2";
+    private static final int DEFAULT_UPDATE_SERVER = 1;
 
     private static final String KEY_ALLOW_ANALYTICS = "allow_analyics";
     private static final boolean DEFAULT_ALLOW_ANALYTICS = false;
@@ -535,14 +535,7 @@ public final class Config {
     }
 
     public static String getUpdateServer() {
-
-        int value = 1;
-        try {
-            value = Integer.parseInt(mConfigPre.getString(KEY_UPDATE_SERVER, null));
-        } catch (Exception e) {
-            mConfigPre.edit().putString(KEY_UPDATE_SERVER, DEFAULT_UPDATE_SERVER)
-                    .apply();
-        }
+        int value = getIntFromStr(KEY_UPDATE_SERVER, DEFAULT_UPDATE_SERVER);
         switch (value) {
         case 1:
             return "qiniu";
