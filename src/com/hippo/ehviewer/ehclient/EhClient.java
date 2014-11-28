@@ -30,6 +30,8 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Process;
 
@@ -283,7 +285,7 @@ public class EhClient {
     /**
      * Return avatar, if not return default avatar
      */
-    public Bitmap getAvatar() {
+    public Drawable getAvatar() {
         return mInfo.getAvatar();
     }
 
@@ -394,7 +396,7 @@ public class EhClient {
                 Bitmap avatar = hp.getImage(avatarUrl);
                 // Set avatar if not null
                 if (avatar != null)
-                    mInfo.setAvatar(avatar);
+                    mInfo.setAvatar(new BitmapDrawable(EhClient.this.mContext.getResources(), avatar));
                 // notification
                 listener.onGetAvatar(GET_AVATAR_OK);
             }

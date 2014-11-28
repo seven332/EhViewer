@@ -1545,7 +1545,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
         switch (state) {
         case LOGIN:
-            mAvatar.setImageBitmap(mClient.getAvatar());
+            mAvatar.setImageDrawable(mClient.getAvatar());
             mUsernameView.setVisibility(View.GONE);
             mLoginButton.setVisibility(View.VISIBLE);
             mRegisterButton.setVisibility(View.VISIBLE);
@@ -1553,7 +1553,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
             mWaitLogView.setVisibility(View.GONE);
             break;
         case LOGOUT:
-            mAvatar.setImageBitmap(mClient.getAvatar());
+            mAvatar.setImageDrawable(mClient.getAvatar());
             mUsernameView.setText(mClient.getDisplayname());
             mUsernameView.setVisibility(View.VISIBLE);
             mLoginButton.setVisibility(View.GONE);
@@ -1562,7 +1562,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
             mWaitLogView.setVisibility(View.GONE);
             break;
         case WAIT:
-            mAvatar.setImageBitmap(mClient.getAvatar());
+            mAvatar.setImageDrawable(mClient.getAvatar());
             mUsernameView.setVisibility(View.GONE);
             mLoginButton.setVisibility(View.GONE);
             mRegisterButton.setVisibility(View.GONE);

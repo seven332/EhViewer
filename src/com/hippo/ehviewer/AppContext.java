@@ -23,9 +23,11 @@ import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.view.ContextThemeWrapper;
 
 import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.Data;
@@ -69,16 +71,18 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         Intent it = new Intent(this, DownloadService.class);
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
 
+        Context mContextThemeWrapper = new ContextThemeWrapper(this, R.style.AppTheme);
+
         // Init everything
-        Config.init(this);
-        Log.init(this);
-        Ui.init(this);
-        Crash.init(this);
-        EhClient.createInstance(this);
-        Favorite.init(this);
-        Data.createInstance(this);
-        ExDownloaderManager.createInstance(this);
-        MaterialToast.setContext(this);
+        Config.init(mContextThemeWrapper);
+        Log.init(mContextThemeWrapper);
+        Ui.init(mContextThemeWrapper);
+        Crash.init(mContextThemeWrapper);
+        EhClient.createInstance(mContextThemeWrapper);
+        Favorite.init(mContextThemeWrapper);
+        Data.createInstance(mContextThemeWrapper);
+        ExDownloaderManager.createInstance(mContextThemeWrapper);
+        MaterialToast.setContext(mContextThemeWrapper);
 
         // Set drawer margin
         SlidingDrawerLayout.setDefaultMinDrawerMargin(Ui.ACTION_BAR_HEIGHT * 2);
@@ -94,13 +98,13 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         }
 
         // Update proxy urls
-        HttpHelper.updateProxyUrls(this);
+        HttpHelper.updateProxyUrls(mContextThemeWrapper);
 
         String keyVersionCode = "version_code";
         int oldVersion = Config.getInt(keyVersionCode, Integer.MAX_VALUE);
         // Fix <=22 login error
         if (oldVersion <= 22)
-            EhInfo.getInstance(this).logout();
+            EhInfo.getInstance(mContextThemeWrapper).logout();
 
         // Fix <=25 Update
         if (oldVersion <= 25) {

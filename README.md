@@ -28,6 +28,8 @@ Just import into Eclipse and build. Do it youself if you prefer Android Studio.
     - 按钮控件
 - [GIFLIB](http://giflib.sourceforge.net)
     - gif 解码
+- [Gloria Hallelujah](https://www.google.com/fonts/specimen/Gloria+Hallelujah)
+    - 启动界面字体
 - [libjpeg-turbo](http://www.libjpeg-turbo.org)
     - jpge 解码
 - [libpng](http://www.libpng.org/pub/png/libpng.html)
@@ -37,11 +39,13 @@ Just import into Eclipse and build. Do it youself if you prefer Android Studio.
 - [OpenCC](https://github.com/BYVoid/OpenCC)
     - 繁化工作
 - [Slabo](https://github.com/TiroTypeworks/Slabo)
-    - 字体
+    - 图标字体
 - [SlidingMenu](https://github.com/jfeinstein10/SlidingMenu)
     - 曾作为抽屉控件
 - [source-code-pro](https://github.com/adobe/source-code-pro)
-    - 字体
+    - 刷新控件字体
+- [svg-android](https://code.google.com/p/svg-android/)
+    - svg 解析
 - [SystemBarTint](https://github.com/jgilfelt/SystemBarTint)
     - 状态栏背景设置
 - [zlib](http://www.zlib.net)

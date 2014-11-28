@@ -28,11 +28,13 @@ import java.util.List;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Utils;
+import com.larvalabs.svgandroid.SVGParser;
 
 /**
  *
@@ -46,7 +48,7 @@ public class EhInfo {
     private static final String DIR_NAME = "file";
     private static final String AVATAR_NAME = "avatar.png";
     private static final Bitmap.CompressFormat AVATAR_FORMAT = Bitmap.CompressFormat.PNG;
-    private static Bitmap DEFAULT_AVATAR;
+    private static Drawable DEFAULT_AVATAR;
 
     public static final String EX_HOST = "exhentai.org";
     public static final String[] COOKIABLE_HOSTS = {"exhentai.org",
@@ -69,14 +71,14 @@ public class EhInfo {
     private boolean mIsLogin;
     private String mUsername;
     private String mDisplayname;
-    private Bitmap mAvatar;
+    private BitmapDrawable mAvatar;
     private int mDefaultCat;
     private String mPreviewMode;
     private int mExculdeTagGroup;
     private String mExculdeLanguage;
     private static EhInfo sInstance;
 
-    private Bitmap getAvatarFromFile() {
+    private BitmapDrawable getAvatarFromFile() {
         File dir = mContext.getDir(DIR_NAME, 0);
         File avatarFile = new File(dir, AVATAR_NAME);
         if (!avatarFile.exists())
@@ -85,7 +87,7 @@ public class EhInfo {
         InputStream is = null;
         try {
             is = new FileInputStream(avatarFile);
-            return BitmapFactory.decodeStream(is);
+            return (BitmapDrawable) BitmapDrawable.createFromStream(is, null);
         } catch (FileNotFoundException e) {
             return null;
         } finally {
@@ -97,8 +99,7 @@ public class EhInfo {
         mContext = context;
         mInfoPref = mContext.getSharedPreferences(PREF_NAME, 0);
         if (DEFAULT_AVATAR == null)
-            DEFAULT_AVATAR = BitmapFactory.decodeStream(
-                    context.getResources().openRawResource(R.drawable.default_avatar));
+            DEFAULT_AVATAR = SVGParser.getSVGFromResource(context.getResources(), R.raw.default_avatar).createPictureDrawable();
 
         mIsLogin = mInfoPref.getBoolean(KEY_LOGIN, DEFAULT_LOGIN);
         mUsername = mInfoPref.getString(KEY_USERNAME, DEFAULT_NAME);
@@ -201,7 +202,7 @@ public class EhInfo {
         mIsLogin = false;
         // Remove avatar
         if (mAvatar != null) {
-            mAvatar.recycle();
+            mAvatar.getBitmap().recycle();
             mAvatar = null;
             File dir = mContext.getDir(DIR_NAME, 0);
             File avatarFile = new File(dir, AVATAR_NAME);
@@ -221,11 +222,11 @@ public class EhInfo {
         return mDisplayname;
     }
 
-    public Bitmap getAvatar() {
+    public Drawable getAvatar() {
         return isLogin() && mAvatar != null ? mAvatar : DEFAULT_AVATAR;
     }
 
-    public void setAvatar(Bitmap avatar) {
+    public void setAvatar(BitmapDrawable avatar) {
         mAvatar = avatar;
 
         File dir = mContext.getDir(DIR_NAME, 0);
@@ -233,7 +234,7 @@ public class EhInfo {
         OutputStream os = null;
         try {
             os = new FileOutputStream(avatarFile);
-            avatar.compress(AVATAR_FORMAT, 100, os);
+            avatar.getBitmap().compress(AVATAR_FORMAT, 100, os);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {

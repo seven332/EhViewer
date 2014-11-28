@@ -51,6 +51,7 @@
     <dimen name="color_scheme_dialog_row_padding">8.0dip</dimen>
 
     <!-- Text size -->
+    <dimen name="text_super_large">24sp</dimen>
     <dimen name="text_large">22sp</dimen>
     <dimen name="text_little_large">20sp</dimen>
     <dimen name="text_medium">18sp</dimen>

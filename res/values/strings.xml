@@ -17,6 +17,7 @@
 <resources>
 
     <string name="app_name" translatable="false">EhViewer</string>
+    <string name="do_not_be_a_sad_pandroid" translatable="false">Do not be a\nsad pandroid</string>
 
     <!-- Warning -->
     <string name="dailog_waring_title">Waring</string>
