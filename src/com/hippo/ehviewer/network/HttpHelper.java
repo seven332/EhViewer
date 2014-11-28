@@ -178,21 +178,21 @@ public class HttpHelper {
             return c.getString(R.string.em_unknown_error);
 
         else if (e instanceof MalformedURLException)
-            return c.getString(R.string.em_url_format_error);
+            return c.getString(R.string.em_url_format_error) + ": " + e.getMessage();
 
         else if (e instanceof ConnectTimeoutException ||
                 e instanceof SocketTimeoutException)
-            return c.getString(R.string.em_timeout);
+            return c.getString(R.string.em_timeout) + ": " + e.getMessage();
 
         else if (e instanceof UnknownHostException)
-            return c.getString(R.string.em_unknown_host);
+            return c.getString(R.string.em_unknown_host) + ": " + e.getMessage();
 
         else if (e instanceof ResponseCodeException)
             return String.format(c.getString(R.string.em_unexpected_response_code),
-                    ((ResponseCodeException)e).getResponseCode());
+                    ((ResponseCodeException)e).getResponseCode())  + ": " + e.getMessage();
 
         else if (e instanceof RedirectionException)
-            return c.getString(R.string.em_redirection_error);
+            return c.getString(R.string.em_redirection_error)  + ": " + e.getMessage();
 
         else if (e instanceof SocketException)
             return "SocketException: " + e.getMessage();
