@@ -1546,27 +1546,27 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         switch (state) {
         case LOGIN:
             mAvatar.setImageBitmap(mClient.getAvatar());
-            mUsernameView.setVisibility(View.INVISIBLE);
+            mUsernameView.setVisibility(View.GONE);
             mLoginButton.setVisibility(View.VISIBLE);
             mRegisterButton.setVisibility(View.VISIBLE);
-            mLogoutButton.setVisibility(View.INVISIBLE);
-            mWaitLogView.setVisibility(View.INVISIBLE);
+            mLogoutButton.setVisibility(View.GONE);
+            mWaitLogView.setVisibility(View.GONE);
             break;
         case LOGOUT:
             mAvatar.setImageBitmap(mClient.getAvatar());
             mUsernameView.setText(mClient.getDisplayname());
             mUsernameView.setVisibility(View.VISIBLE);
-            mLoginButton.setVisibility(View.INVISIBLE);
-            mRegisterButton.setVisibility(View.INVISIBLE);
+            mLoginButton.setVisibility(View.GONE);
+            mRegisterButton.setVisibility(View.GONE);
             mLogoutButton.setVisibility(View.VISIBLE);
-            mWaitLogView.setVisibility(View.INVISIBLE);
+            mWaitLogView.setVisibility(View.GONE);
             break;
         case WAIT:
             mAvatar.setImageBitmap(mClient.getAvatar());
-            mUsernameView.setVisibility(View.INVISIBLE);
-            mLoginButton.setVisibility(View.INVISIBLE);
-            mRegisterButton.setVisibility(View.INVISIBLE);
-            mLogoutButton.setVisibility(View.INVISIBLE);
+            mUsernameView.setVisibility(View.GONE);
+            mLoginButton.setVisibility(View.GONE);
+            mRegisterButton.setVisibility(View.GONE);
+            mLogoutButton.setVisibility(View.GONE);
             mWaitLogView.setVisibility(View.VISIBLE);
             break;
         }

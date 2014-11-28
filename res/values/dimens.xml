@@ -17,7 +17,7 @@
 
     <dimen name="action_bar_height">56dp</dimen>
 
-    <dimen name="drawer_max_width">320dip</dimen>
+    <dimen name="drawer_max_width">264dip</dimen>
 
     <dimen name="dialog_title_height">64dp</dimen>
 

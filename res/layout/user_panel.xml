@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:auto="http://schemas.android.com/apk/res-auto"
     android:id="@+id/user_panel"
     android:layout_width="match_parent"
@@ -24,8 +24,9 @@
 
     <LinearLayout
         android:id="@+id/user_info"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="left|center_vertical"
         android:orientation="horizontal" >
 
         <ImageView
@@ -43,40 +44,39 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:orientation="vertical" >
+
+        <com.hippo.ehviewer.widget.SuperButton
+            android:id="@+id/register"
+            style="@style/SuperButton.Tile.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/register" />
+
+        <com.hippo.ehviewer.widget.SuperButton
+            android:id="@+id/login"
+            style="@style/SuperButton.Tile.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/login" />
+
+        <com.hippo.ehviewer.widget.SuperButton
+            android:id="@+id/logout"
+            style="@style/SuperButton.Tile.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/logout" />
+
+    </LinearLayout>
+
     <com.hippo.ehviewer.widget.MaterialProgress
         android:id="@+id/wait"
         style="@style/MaterialProgress"
-        android:layout_centerInParent="true" />
+        android:layout_gravity="center" />
 
-    <com.hippo.ehviewer.widget.SuperButton
-        android:id="@+id/login"
-        style="@style/SuperButton.Tile.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/user_info"
-        android:layout_marginTop="16dp"
-        android:layout_alignParentRight="true"
-        android:text="@string/login" />
-
-    <com.hippo.ehviewer.widget.SuperButton
-        android:id="@+id/register"
-        style="@style/SuperButton.Tile.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/user_info"
-        android:layout_marginTop="16dp"
-        android:layout_toLeftOf="@id/login"
-        android:layout_marginRight="16dp"
-        android:text="@string/register" />
-
-    <com.hippo.ehviewer.widget.SuperButton
-        android:id="@+id/logout"
-        style="@style/SuperButton.Tile.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/user_info"
-        android:layout_marginTop="16dp"
-        android:layout_alignParentRight="true"
-        android:text="@string/logout" />
-
-</RelativeLayout>
+</FrameLayout>

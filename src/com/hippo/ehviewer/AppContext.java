@@ -81,7 +81,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         MaterialToast.setContext(this);
 
         // Set drawer margin
-        SlidingDrawerLayout.setDefaultMinDrawerMargin(Ui.ACTION_BAR_HEIGHT);
+        SlidingDrawerLayout.setDefaultMinDrawerMargin(Ui.ACTION_BAR_HEIGHT * 2);
 
         // Add .nomedia or delete it
         File nomedia = new File(Config.getDownloadPath(), ".nomedia");
