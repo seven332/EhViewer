@@ -16,6 +16,14 @@
 -->
 <resources>
 
+    <declare-styleable name="Theme">
+        <attr name="themeColor" format="color"/>
+        <attr name="textColor" format="color"/>
+        <attr name="textColorHint" format="color"/>
+        <attr name="textColorTitle" format="color"/>
+        <attr name="dialogBackground" format="reference|color"/>
+    </declare-styleable>
+
     <declare-styleable name="AutoWrapLayout">
         <attr name="alignment">
             <enum name="top" value="0" />

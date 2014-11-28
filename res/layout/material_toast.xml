@@ -30,7 +30,6 @@
         android:layout_weight="1"
         android:layout_gravity="center_horizontal"
         android:textAppearance="@style/TextAppearance.Toast"
-        android:textColor="@color/primary_text_light"
         android:shadowColor="#BB000000"
         android:shadowRadius="2.75" />
 

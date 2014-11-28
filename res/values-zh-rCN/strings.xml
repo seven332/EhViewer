@@ -186,8 +186,6 @@
     <string name="screen_display_settings_title">屏幕</string>
     <string name="screen_orientation_title">屏幕方向</string>
     <string name="read_display_settings_title">阅读</string>
-    <string name="page_scaling_title">页面缩放</string>
-    <string name="start_position_title">开页位置</string>
     <string name="list_display_settings_title">列表</string>
     <string name="list_mode_title">列表模式</string>
     <string name="list_thumb_columns">列表缩略图列数</string>
@@ -217,6 +215,8 @@
     <string name="max_history_count_title">最大历史记录条数</string>
 
     <string name="read_settings_title">阅读</string>
+    <string name="page_scaling_title">页面缩放</string>
+    <string name="start_position_title">开页位置</string>
     <string name="keep_screen_on_title">阅读时屏幕常亮</string>
     <string name="gallery_show_clock_title">显示时间</string>
     <string name="gallery_show_battery_title">显示电量</string>

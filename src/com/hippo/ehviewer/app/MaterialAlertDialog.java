@@ -53,8 +53,7 @@ public class MaterialAlertDialog extends AlertDialog implements
     private Button mNeutralButton;
 
     protected MaterialAlertDialog(Builder builder) {
-        // super(builder.mContext);
-        super(new ContextThemeWrapper(builder.mContext, R.style.AppTheme_Main));
+        super(builder.mContext);
         mContext = builder.mContext;
         mBuilder = builder;
 
@@ -63,8 +62,8 @@ public class MaterialAlertDialog extends AlertDialog implements
 
     @SuppressLint("InflateParams")
     private void init() {
-        mRootView = LayoutInflater.from(mContext).inflate(
-                R.layout.alert_dialog_material, null);
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        mRootView = inflater.inflate(R.layout.alert_dialog_material, null);
 
         // Check in scroll view or not
         boolean inScrollView;
@@ -258,32 +257,39 @@ public class MaterialAlertDialog extends AlertDialog implements
 
     public static class Builder {
 
-        protected final Context mContext;
+        protected Context mContext;
+        private boolean mUpdateContext = false;
 
-        protected CharSequence mTitle;
-        protected CharSequence mMessage;
-        protected CharSequence mActionButtonText;
-        protected CharSequence mPositiveButtonText;
-        protected CharSequence mNegativeButtonText;
-        protected CharSequence mNeutralButtonText;
-        protected OnClickListener mButtonListener;
-        protected View mCustomView;
-        protected LinearLayout.LayoutParams mCustomLp;
-        protected boolean mInScrollView = true;
-        protected boolean mCancelable = true;
-        protected int mAutoLinkMask = -1;
+        private boolean mDarkTheme = false;
+        private CharSequence mTitle;
+        private CharSequence mMessage;
+        private CharSequence mActionButtonText;
+        private CharSequence mPositiveButtonText;
+        private CharSequence mNegativeButtonText;
+        private CharSequence mNeutralButtonText;
+        private OnClickListener mButtonListener;
+        private View mCustomView;
+        private LinearLayout.LayoutParams mCustomLp;
+        private boolean mInScrollView = true;
+        private boolean mCancelable = true;
+        private int mAutoLinkMask = -1;
 
-        protected OnCancelListener mOnCancelListener;
+        private OnCancelListener mOnCancelListener;
 
-        protected ListAdapter mAdapter;
-        protected OnClickListener mOnClickListener;
-        protected int mCheckedItem;
-        protected boolean mIsSingleChoice;
+        private ListAdapter mAdapter;
+        private OnClickListener mOnClickListener;
+        private int mCheckedItem;
+        private boolean mIsSingleChoice;
 
-        protected DialogInterface.OnDismissListener mOnDismissListener;
+        private DialogInterface.OnDismissListener mOnDismissListener;
 
         public Builder(Context context) {
             mContext = context;
+        }
+
+        public Builder setDrakTheme(boolean darkTheme) {
+            mDarkTheme = darkTheme;
+            return this;
         }
 
         public Builder setTitle(CharSequence title) {
@@ -382,6 +388,19 @@ public class MaterialAlertDialog extends AlertDialog implements
             return this;
         }
 
+        public Builder setView(int resId, boolean inScrollView, ViewHolder vh) {
+            if (!mUpdateContext) {
+                mUpdateContext = true;
+                mContext = new ContextThemeWrapper(mContext, mDarkTheme ?
+                        R.style.AppTheme_Dark_Dialog : R.style.AppTheme_Dialog);
+            }
+            mCustomView = LayoutInflater.from(mContext).inflate(resId, null);
+            mInScrollView = inScrollView;
+            if (vh != null)
+                vh.setView(mCustomView);
+            return this;
+        }
+
         public Builder setCancelable(boolean cancelable) {
             mCancelable = cancelable;
             return this;
@@ -460,6 +479,11 @@ public class MaterialAlertDialog extends AlertDialog implements
         }
 
         public MaterialAlertDialog create() {
+            if (!mUpdateContext) {
+                mUpdateContext = true;
+                mContext = new ContextThemeWrapper(mContext, mDarkTheme ?
+                        R.style.AppTheme_Dark_Dialog : R.style.AppTheme_Dialog);
+            }
             return new MaterialAlertDialog(this);
         }
 
@@ -467,6 +491,18 @@ public class MaterialAlertDialog extends AlertDialog implements
             MaterialAlertDialog dialog = create();
             dialog.show();
             return dialog;
+        }
+    }
+
+    public static class ViewHolder {
+        private View mView;
+
+        private void setView(View v) {
+            mView = v;
+        }
+
+        public View getView() {
+            return mView;
         }
     }
 }

@@ -18,6 +18,7 @@ package com.hippo.ehviewer.widget;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -30,7 +31,7 @@ public class MaterialToast extends Toast {
     private static Context sContext;
 
     public static void setContext(Context context) {
-        sContext = context;
+        sContext = new ContextThemeWrapper(context, R.style.AppTheme);
     }
 
     @SuppressLint("InflateParams")

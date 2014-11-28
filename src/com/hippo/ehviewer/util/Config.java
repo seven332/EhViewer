@@ -44,6 +44,14 @@ public final class Config {
     private static Context mContext;
     private static SharedPreferences mConfigPre;
 
+    private static OnGallerySettingsChangedListener mOnGallerySettingsChangedListener;
+
+    public static interface OnGallerySettingsChangedListener {
+        public void onPageScalingChanged(int value);
+
+        public void onStartPositionChanged(int value);
+    }
+
     /**
      * Init Config
      *
@@ -71,6 +79,14 @@ public final class Config {
      */
     public static boolean isInit() {
         return mInit;
+    }
+
+    public static void setOnGallerySettingsChangedListener(OnGallerySettingsChangedListener l) {
+        mOnGallerySettingsChangedListener = l;
+    }
+
+    public static void removeOnGallerySettingsChangedListener() {
+        mOnGallerySettingsChangedListener = null;
     }
 
     public static boolean getBoolean(String key, boolean defValue) {
@@ -302,8 +318,8 @@ public final class Config {
     private static final String KEY_START_POSITION = "start_position";
     private static final int DEFAULT_START_POSITION = 1;
 
-    private static final String KEY_GALLERY_SHOW_TIME = "gallery_show_clock";
-    private static final boolean DEFAULT_GALLERY_SHOW_TIME = true;
+    private static final String KEY_GALLERY_SHOW_CLOCK = "gallery_show_clock";
+    private static final boolean DEFAULT_GALLERY_SHOW_CLOCK = true;
 
     private static final String KEY_KEEP_SCREEN_ON = "keep_screen_on";
     private static final boolean DEFAULT_KEEP_SCREEN_ON = false;
@@ -316,32 +332,107 @@ public final class Config {
     private static final String KEY_DECODE_FORMAT = "decode_format";
     private static final int DEFAULT_DECODE_FORMAT = 0;
 
-    public static int getPageScalingMode() {
+    public static int getPageScaling() {
         return getIntFromStr(KEY_PAGE_SCALING, DEFAULT_PAGE_SCALING);
+    }
+
+    public static void setPageScaling(int value) {
+        setIntToStr(KEY_PAGE_SCALING, value);
+
+        if (mOnGallerySettingsChangedListener != null)
+            mOnGallerySettingsChangedListener.onPageScalingChanged(value);
     }
 
     public static int getStartPosition() {
         return getIntFromStr(KEY_START_POSITION, DEFAULT_START_POSITION);
     }
 
+    public static void setStartPosition(int value) {
+        setIntToStr(KEY_START_POSITION, value);
+
+        if (mOnGallerySettingsChangedListener != null)
+            mOnGallerySettingsChangedListener.onStartPositionChanged(value);
+    }
+
     public static boolean getKeepSreenOn() {
         return getBoolean(KEY_KEEP_SCREEN_ON, DEFAULT_KEEP_SCREEN_ON);
     }
 
-    public static boolean getGShowTime() {
-        return getBoolean(KEY_GALLERY_SHOW_TIME, DEFAULT_GALLERY_SHOW_TIME);
+    public static void setKeepSreenOn(boolean value) {
+        setBoolean(KEY_KEEP_SCREEN_ON, value);
     }
 
-    public static boolean getGShowBattery() {
+    public static boolean getShowClock() {
+        return getBoolean(KEY_GALLERY_SHOW_CLOCK, DEFAULT_GALLERY_SHOW_CLOCK);
+    }
+
+    public static void setShowClock(boolean value) {
+        setBoolean(KEY_GALLERY_SHOW_CLOCK, value);
+    }
+
+    public static boolean getShowBattery() {
         return getBoolean(KEY_GALLERY_SHOW_BATTERY, DEFAULT_GALLERY_SHOW_BATTERY);
+    }
+
+    public static void setShowBattery(boolean value) {
+        setBoolean(KEY_GALLERY_SHOW_BATTERY, value);
     }
 
     public static boolean getCustomCodec() {
         return getBoolean(KEY_CUSTOM_CODEC, Utils.SUPPORT_IMAGE);
     }
 
+    public static void setCustomCodec(boolean value) {
+        setBoolean(KEY_CUSTOM_CODEC, value);
+    }
+
     public static int getDecodeFormat() {
         return getIntFromStr(KEY_DECODE_FORMAT, DEFAULT_DECODE_FORMAT);
+    }
+
+    public static int getDecodeFormatIndex() {
+        int index = getIntFromStr(KEY_DECODE_FORMAT, DEFAULT_DECODE_FORMAT);
+        switch (index) {
+        case 6409:
+            index = 1;
+            break;
+        case 6410:
+            index = 2;
+            break;
+        case 6407:
+            index = 2;
+            break;
+        case 6408:
+            index = 4;
+            break;
+        case 0:
+        default:
+            index = 0;
+            break;
+        }
+        return index;
+    }
+
+    public static void setDecodeFormatFromIndex(int index) {
+        switch (index) {
+        case 1:
+            index = 6409;
+            break;
+        case 2:
+            index = 6410;
+            break;
+        case 3:
+            index = 6407;
+            break;
+        case 4:
+            index = 6408;
+            break;
+        case 0:
+        default:
+            index = 0;
+            break;
+        }
+        setIntToStr(KEY_DECODE_FORMAT, index);
     }
 
 

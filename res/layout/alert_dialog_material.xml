@@ -20,7 +20,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/dialog_background_material" >
+    android:background="?dialogBackground" >
 
     <ScrollView android:id="@+id/scroll_view"
         android:layout_width="match_parent"
@@ -50,7 +50,6 @@
 
             <TextView
                 android:id="@+id/message"
-                style="@style/DialogMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center" />
@@ -129,7 +128,7 @@
                 style="@style/DialogButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/holo_blue_light"
+                android:textColor="?attr/themeColor"
                 android:gravity="center" />
 
         </LinearLayout>

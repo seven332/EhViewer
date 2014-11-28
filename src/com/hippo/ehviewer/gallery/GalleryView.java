@@ -50,7 +50,7 @@ import com.hippo.ehviewer.util.ZInterpolator;
 import com.hippo.ehviewer.widget.MaterialToast;
 
 public class GalleryView extends GLView implements ImageSet.ImageListener,
-        Runnable {
+        Runnable, Config.OnGallerySettingsChangedListener {
     @SuppressWarnings("unused")
     private static final String TAG = GalleryView.class.getSimpleName();
 
@@ -126,8 +126,8 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
     private final ImageSet mImageSet;
     private int mState;
     // scale and scroll only can choose one
-    private final int scaleMode;
-    private final int startMode;
+    private int scaleMode;
+    private int startMode;
     private int mScrollState = SCROLL_NONE;
     private int scrollXOffset = 0;
     private int scrollYOffset = 0;
@@ -198,6 +198,16 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         mGalleryViewListener = l;
     }
 
+    @Override
+    public void onPageScalingChanged(int value) {
+        scaleMode = value;
+    }
+
+    @Override
+    public void onStartPositionChanged(int value) {
+        startMode = value;
+    }
+
     public GalleryView(Context context, ImageSet imageSet, int startIndex) {
         mContext = context;
         mImageSet = imageSet;
@@ -216,8 +226,9 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                 .intColorToFloatARGBArray(BACKGROUND_COLOR));
 
         // Init config
-        scaleMode = Config.getPageScalingMode();
+        scaleMode = Config.getPageScaling();
         startMode = Config.getStartPosition();
+        Config.setOnGallerySettingsChangedListener(this);
 
         mImageSet.setImageListener(this);
 

@@ -54,8 +54,8 @@
 
     <!-- SuperButton -->
     <style name="TextAppearance">
-        <item name="@android:textColor">@color/primary_text_dark</item>
-        <item name="@android:textColorHint">@color/secondary_text_dark</item>
+        <item name="@android:textColor">?attr/textColor</item>
+        <item name="@android:textColorHint">?attr/textColorHint</item>
         <item name="@android:textColorHighlight">#6640c4ff</item>
         <item name="@android:textColorLink">#ff00bcd4</item>
         <item name="@android:textSize">@dimen/text_small</item>
@@ -64,6 +64,10 @@
     </style>
 
     <style name="TextAppearance.Small">
+    </style>
+
+    <style name="TextAppearance.LittleSmall">
+        <item name="@android:textSize">@dimen/text_little_small</item>
     </style>
 
     <style name="TextAppearance.Medium">
@@ -75,11 +79,11 @@
     </style>
 
     <style name="TextAppearance.DialogTitle">
+        <item name="@android:textColor">?attr/textColorTitle</item>
         <item name="@android:textSize">@dimen/text_little_large</item>
     </style>
 
     <style name="TextAppearance.DialogMessage">
-        <item name="@android:textColor">@color/secondary_text_dark</item>
         <item name="@android:textSize">@dimen/text_little_small</item>
     </style>
 
@@ -96,9 +100,19 @@
         <item name="@android:textSize">13sp</item>
     </style>
 
-    <style name="TextAppearance.DialogButton">
+    <style name="TextAppearance.DialogButton" parent="TextAppearance.LittleSmall">
+        <item name="@android:textColor">?attr/textColorTitle</item>
         <item name="@android:textAllCaps">true</item>
-        <item name="@android:textSize">@dimen/text_little_small</item>
+    </style>
+
+    <style name="TextView" parent="@android:style/Widget.TextView">
+    </style>
+
+    <style name="TextView.Dialog">
+        <item name="@android:textAppearance">@style/TextAppearance.LittleSmall</item>
+    </style>
+
+    <style name="TextView.Dark.Dialog" parent="@style/TextView.Dialog">
     </style>
 
     <style name="DialogMessage">
@@ -110,6 +124,8 @@
     <style name="DialogButton" parent="@android:Widget.Button">
         <item name="@android:background">@null</item>
         <item name="@android:textAppearance">@style/TextAppearance.DialogButton</item>
+        <item name="@android:textColor">?attr/textColorTitle</item>
+        <item name="@android:minWidth">48dp</item>
         <item name="@android:minHeight">36dp</item>
         <item name="@android:maxLines">2</item>
         <item name="@android:paddingLeft">16dp</item>
@@ -232,6 +248,7 @@
     </style>
 
     <style name="TextAppearance.Toast">
+        <item name="@android:textColor">@color/primary_text_light</item>
         <item name="@android:textSize">@dimen/text_little_small</item>
         <item name="@android:textStyle">normal</item>
         <item name="@android:fontFamily">sans-serif-condensed</item>

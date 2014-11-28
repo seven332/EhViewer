@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.ui;
 
 import android.app.ActionBar;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -25,7 +26,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.AppHandler;
@@ -58,6 +61,8 @@ public class GalleryActivity extends AbsActivity
 
     private View mFooter;
     private TextView mSeekerBubble;
+    private View mClock;
+    private View mBattery;
 
     private ActionBar mActionBar;
 
@@ -73,6 +78,8 @@ public class GalleryActivity extends AbsActivity
 
     private FullScreenHelper mFullScreenHelper;
 
+    private Dialog mSettingsDialog;
+
     private float mLightness;
     private int mLightnessScale = 0;
 
@@ -81,6 +88,70 @@ public class GalleryActivity extends AbsActivity
             setFullScreen(true);
         }
     };
+
+    private Dialog createSettingsDialog() {
+
+        MaterialAlertDialog.ViewHolder viewHolder = new MaterialAlertDialog.ViewHolder();
+        MaterialAlertDialog.Builder builder = new MaterialAlertDialog.Builder(this)
+                .setDrakTheme(true).setTitle(R.string.preference_settings_title)
+                .setView(R.layout.read_config, true, viewHolder);
+        View view = viewHolder.getView();
+        final Spinner pageScaling = (Spinner) view.findViewById(R.id.page_scaling);
+        final Spinner startPosition = (Spinner) view.findViewById(R.id.start_position);
+        final CheckBox keepScreenOn = (CheckBox) view.findViewById(R.id.keep_screen_on);
+        final CheckBox showClock = (CheckBox) view.findViewById(R.id.gallery_show_clock);
+        final CheckBox showBattery = (CheckBox) view.findViewById(R.id.gallery_show_battery);
+        final CheckBox customCodec = (CheckBox) view.findViewById(R.id.custom_codec);
+        final Spinner decodeFormat = (Spinner) view.findViewById(R.id.decode_format);
+
+        pageScaling.setSelection(Config.getPageScaling());
+        startPosition.setSelection(Config.getStartPosition());
+        keepScreenOn.setChecked(Config.getKeepSreenOn());
+        showClock.setChecked(Config.getShowClock());
+        showBattery.setChecked(Config.getShowBattery());
+        customCodec.setChecked(Config.getCustomCodec());
+        decodeFormat.setSelection(Config.getDecodeFormatIndex());
+
+        builder.setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE)
+                .setActionButton("更多设置") // TODO
+                .setButtonListener(new MaterialAlertDialog.OnClickListener() {
+                    @Override
+                    public boolean onClick(MaterialAlertDialog dialog, int which) {
+                        switch (which) {
+                        case MaterialAlertDialog.ACTION:
+                            Intent intent = new Intent(GalleryActivity.this, SettingsActivity.class);
+                            startActivity(intent);
+                            return false;
+                        case MaterialAlertDialog.POSITIVE:
+                            Config.setPageScaling(pageScaling.getSelectedItemPosition());
+                            Config.setStartPosition(startPosition.getSelectedItemPosition());
+                            boolean isShowClock = showClock.isChecked();
+                            boolean isShowBattery = showBattery.isChecked();
+                            Config.setShowClock(isShowClock);
+                            Config.setShowBattery(isShowBattery);
+                            mClock.setVisibility(isShowClock ? View.VISIBLE : View.GONE);
+                            mBattery.setVisibility(isShowBattery ? View.VISIBLE : View.GONE);
+                            Config.setCustomCodec(customCodec.isChecked());
+                            Config.setDecodeFormatFromIndex(decodeFormat.getSelectedItemPosition());
+                            mGalleryView.requestLayout();
+                            return true;
+                        case MaterialAlertDialog.NEGATIVE:
+                            pageScaling.setSelection(Config.getPageScaling());
+                            startPosition.setSelection(Config.getStartPosition());
+                            keepScreenOn.setChecked(Config.getKeepSreenOn());
+                            showClock.setChecked(Config.getShowClock());
+                            showBattery.setChecked(Config.getShowBattery());
+                            customCodec.setChecked(Config.getCustomCodec());
+                            decodeFormat.setSelection(Config.getDecodeFormatIndex());
+                            return true;
+                        default:
+                            return false;
+                        }
+                    }
+                });
+
+        return builder.create();
+    }
 
     private void startFullScreenTask() {
         AppHandler.getInstance().postDelayed(mFullScreenTask, 2000);
@@ -157,7 +228,17 @@ public class GalleryActivity extends AbsActivity
         mPageSeeker = (SeekBar) findViewById(R.id.page_seeker);
         mSeekerBubble = (TextView) findViewById(R.id.seeker_bubble);
         mMaskView = (ColorView)findViewById(R.id.mask);
+        mClock = findViewById(R.id.clock);
+        mBattery = findViewById(R.id.battery);
         mActionBar = getActionBar();
+
+        mSettingsDialog = createSettingsDialog();
+
+        // Hide or show
+        if (!Config.getShowClock())
+            mClock.setVisibility(View.GONE);
+        if (!Config.getShowBattery())
+            mBattery.setVisibility(View.GONE);
 
         Intent intent = getIntent();
         mGi = (GalleryInfo) intent.getParcelableExtra(KEY_GALLERY_INFO);
@@ -192,12 +273,6 @@ public class GalleryActivity extends AbsActivity
             GLRootView glrv= (GLRootView)findViewById(R.id.gl_root_view);
             glrv.setContentPane(mGalleryView);
 
-            // Hide or show
-            if (!Config.getGShowTime())
-                findViewById(R.id.clock).setVisibility(View.GONE);
-            if (!Config.getGShowBattery())
-                findViewById(R.id.battery).setVisibility(View.GONE);
-
             // Set listener
             mGalleryView.setGalleryViewListener(this);
             mPageSeeker.setOnSeekBarChangeListener(this);
@@ -231,6 +306,10 @@ public class GalleryActivity extends AbsActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Reset full screen task
+        cancelFullScreenTask();
+        startFullScreenTask();
+
         switch (item.getItemId()) {
         case R.id.action_refresh:
             mImageSet.redownload(mGalleryView.getCurIndex());
@@ -239,6 +318,8 @@ public class GalleryActivity extends AbsActivity
             return true;
 
         case R.id.action_settings:
+            if (!mSettingsDialog.isShowing() && !isFinishing())
+                mSettingsDialog.show();
             return true;
 
         default:
@@ -255,13 +336,14 @@ public class GalleryActivity extends AbsActivity
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
 
         if (mImageSet != null)
             mImageSet.free();
         if (mGalleryView != null)
             mGalleryView.free();
+        Config.removeOnGallerySettingsChangedListener();
     }
 
     @Override
