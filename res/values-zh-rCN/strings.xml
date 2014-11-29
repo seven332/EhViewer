@@ -148,6 +148,7 @@
     <string name="not_loaded">尚未加载</string>
     <string name="loading_percent">正在加载 %d%%</string>
     <string name="wait_for_more">等待获取页面信息</string>
+    <string name="more_settings">更多设置</string>
 
     <!-- Action -->
     <string name="action_refresh">刷新</string>

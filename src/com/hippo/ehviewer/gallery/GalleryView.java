@@ -1766,6 +1766,8 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
     }
 
     private class Text extends ShowItem {
+        private final int mSize = Ui.sp2pix(32);
+
         private StringTexture mTexture;
 
         public Text(String str) {
@@ -1777,7 +1779,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         }
 
         public void load(String str) {
-            load(str, 100, 0xdeffffff);
+            load(str, mSize, 0xdeffffff);
         }
 
         public void load(String str, float size, int color) {

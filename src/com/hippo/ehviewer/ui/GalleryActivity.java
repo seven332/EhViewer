@@ -44,6 +44,7 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.FullScreenHelper;
 import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.ColorView;
 
 public class GalleryActivity extends AbsActivity
@@ -109,11 +110,13 @@ public class GalleryActivity extends AbsActivity
         keepScreenOn.setChecked(Config.getKeepSreenOn());
         showClock.setChecked(Config.getShowClock());
         showBattery.setChecked(Config.getShowBattery());
+        if (!Utils.SUPPORT_IMAGE)
+            customCodec.setEnabled(false);
         customCodec.setChecked(Config.getCustomCodec());
         decodeFormat.setSelection(Config.getDecodeFormatIndex());
 
         builder.setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE)
-                .setActionButton("更多设置") // TODO
+                .setActionButton(R.string.more_settings)
                 .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
                     public boolean onClick(MaterialAlertDialog dialog, int which) {
@@ -285,7 +288,7 @@ public class GalleryActivity extends AbsActivity
             String keyGalleryFirst = "gallery_first";
             if (Config.getBoolean(keyGalleryFirst, true)) {
                 Config.setBoolean(keyGalleryFirst, false);
-                new MaterialAlertDialog.Builder(this).setTitle(R.string.tip)
+                new MaterialAlertDialog.Builder(this).setDrakTheme(true).setTitle(R.string.tip)
                         .setMessage(R.string.gallery_tip)
                         .setNegativeButton(android.R.string.cancel)
                         .setButtonListener(this)

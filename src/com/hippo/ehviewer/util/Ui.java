@@ -53,6 +53,7 @@ public class Ui {
     private static final BitmapFactory.Options opt = new BitmapFactory.Options();
 
     public static float mDensity;
+    public static float mScaledDensity;
 
     public static int HOLO_BLUE_DARK;
 
@@ -87,6 +88,7 @@ public class Ui {
         mResources = mContext.getResources();
 
         mDensity = mResources.getDisplayMetrics().density;
+        mScaledDensity = mResources.getDisplayMetrics().scaledDensity;
 
         // init color
         HOLO_BLUE_DARK = mResources.getColor(android.R.color.holo_blue_dark);
@@ -190,6 +192,14 @@ public class Ui {
 
     public static float pix2dp(int pix) {
         return pix/mDensity;
+    }
+
+    public static int sp2pix(float sp) {
+        return (int) (sp * mScaledDensity + 0.5f);
+    }
+
+    public static float pix2sp(float pix) {
+        return pix / mScaledDensity;
     }
 
     /**
