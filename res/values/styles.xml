@@ -162,7 +162,7 @@
         <item name="@android:layout_height">48dp</item>
         <item name="mpWidth">48dp</item>
         <item name="mpHeight">48dp</item>
-        <item name="mpColor">@color/material_progress_blue</item>
+        <item name="mpColor">?attr/themeColor</item>
         <item name="mpThickness">4dp</item>
         <item name="mpInnerRadius">19dp</item>
     </style>
@@ -172,7 +172,6 @@
         <item name="@android:layout_height">16dp</item>
         <item name="mpWidth">16dp</item>
         <item name="mpHeight">16dp</item>
-        <item name="mpColor">@color/material_progress_blue</item>
         <item name="mpThickness">2dp</item>
         <item name="mpInnerRadius">6dp</item>
     </style>

@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -182,12 +181,14 @@ public class StartActivity extends AbsActivity {
                 }).create();
     }
 
-    @SuppressWarnings("deprecation")
-    @SuppressLint("InlinedApi")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_activity);
+
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        decorView.setSystemUiVisibility(uiOptions);
 
         View main = findViewById(R.id.main);
         TextView text = (TextView) findViewById(R.id.text);
@@ -199,7 +200,7 @@ public class StartActivity extends AbsActivity {
         // Show welcome in progress
         AlphaAnimation aa = new AlphaAnimation(0.3f, 1.0f);
         aa.setDuration(2000);
-        aa.setInterpolator(new DecelerateInterpolator(3.0f));
+        aa.setInterpolator(new DecelerateInterpolator(4.0f));
         aa.setAnimationListener(new AnimationListener() {
             @Override
             public void onAnimationEnd(Animation arg0) {

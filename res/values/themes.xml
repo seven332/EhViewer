@@ -122,8 +122,13 @@
         <item name="android:windowBackground">@color/background_little_light</item>
     </style>
 
+    <style name="AppTheme.NoActionBar.Fullscreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
     <!-- Theme for start activity -->
-    <style name="AppTheme.NoActionBar.Transparent">
+    <style name="AppTheme.NoActionBar.Fullscreen.Transparent">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>

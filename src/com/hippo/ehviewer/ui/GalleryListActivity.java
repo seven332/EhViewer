@@ -179,6 +179,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
     private Button mLogoutButton;
     private View mWaitLogView;
 
+    private View mRightDrawerBg;
     private TagListView mQuickSearchList;
     private View mQuickSearchTip;
 
@@ -1037,9 +1038,9 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         mLogoutButton = (Button) mUserPanel.findViewById(R.id.logout);
         mWaitLogView = mUserPanel.findViewById(R.id.wait);
 
+        mRightDrawerBg = mRightMenu.findViewById(R.id.background);
         mQuickSearchList = (TagListView) mRightMenu.findViewById(R.id.list_menu_tag_list);
         mQuickSearchTip = mRightMenu.findViewById(R.id.tip_text);
-
 
         mLoginButton.setOnClickListener(this);
         mRegisterButton.setOnClickListener(this);
@@ -1136,8 +1137,10 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
             }
         });
 
-        List<String> keys = mData.getAllTagNames();
+        mRightDrawerBg.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        mRightDrawerBg.setBackgroundDrawable(new FreeMaterialDrawable().setBgIndex(2).setKeepTop(true));
 
+        List<String> keys = mData.getAllTagNames();
         for (int i = 0; i < keys.size(); i++)
             listMenuTag.add(keys.get(i));
         tagsAdapter = new TagsAdapter(this, R.layout.menu_tag, listMenuTag);
@@ -1154,6 +1157,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
             mQuickSearchTip.setVisibility(View.VISIBLE);
         else
             mQuickSearchTip.setVisibility(View.GONE);
+
         mQuickSearchList.setClipToPadding(false);
         mQuickSearchList.setAdapter(tagsAdapter);
         mQuickSearchList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -1218,7 +1222,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
         mActionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
         //mLeftMenu.setBackgroundColor(mThemeColor);
-        mRightMenu.setBackgroundColor(mThemeColor);
+        //mRightMenu.setBackgroundColor(mThemeColor);
         Ui.colorStatusBarL(this, mThemeColor);
 
         // Update user panel

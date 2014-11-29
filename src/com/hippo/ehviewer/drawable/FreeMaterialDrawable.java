@@ -38,6 +38,8 @@ public class FreeMaterialDrawable extends Drawable {
     private static final int SPRITE_SHAPE_ROUND = 1;
     private static final int SPRITE_SHAPE_MAX = 2;
 
+    private boolean mKeepTop;
+    private int mBgIndex;
     private int mBgColor;
     private final Paint mPaint;
     private int mSpriteNum;
@@ -55,6 +57,16 @@ public class FreeMaterialDrawable extends Drawable {
         mPaint.setShadowLayer(Ui.dp2pix(3), 0, 0, 0x8a000000);
     }
 
+    public FreeMaterialDrawable setBgIndex(int bgIndex) {
+        mBgIndex = bgIndex;
+        return this;
+    }
+
+    public FreeMaterialDrawable setKeepTop(boolean keepTop) {
+        mKeepTop = keepTop;
+        return this;
+    }
+
     private int getColor(int[] copyOfColorArray) {
         int index = MathUtils.random(0, copyOfColorArray.length);
         int color = copyOfColorArray[index];
@@ -70,7 +82,12 @@ public class FreeMaterialDrawable extends Drawable {
         int h = bounds.height();
         Sprite s;
         int[] copyOfColorArray = Arrays.copyOf(sColorArray, sColorArray.length);
-        mBgColor = getColor(copyOfColorArray);
+        if (mBgIndex >= 0) {
+            mBgColor = copyOfColorArray[mBgIndex];
+            copyOfColorArray[mBgIndex] = -1;
+        } else {
+            mBgColor = getColor(copyOfColorArray);
+        }
         mSpriteNum = MathUtils.random(4, MAX_SPRITE_NUM + 1);
         for (int i = 0; i < mSpriteNum; i++) {
             switch (SPRITE_SHAPE_ROUND) {//MathUtils.random(0, SPRITE_SHAPE_MAX)) {
@@ -156,10 +173,10 @@ public class FreeMaterialDrawable extends Drawable {
         public Round(int w, int h, int color) {
             super(w, h, color);
 
-            mX = MathUtils.random(w);
-            mY = MathUtils.random(h);
             int t = (w + h) / 2;
             mRadius = MathUtils.random(t / 8, t / 4);
+            mX = MathUtils.random(w);
+            mY = MathUtils.random(mKeepTop ? mRadius + 10 : 0, h);
         }
 
         @Override
