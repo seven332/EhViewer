@@ -35,15 +35,6 @@ public final class Theme {
     };
 
     /**
-     * Get random deep color, alpha is 0xff
-     * @return
-     */
-    public static int getRandomDarkColor() {
-        // return DARK_COLOR_TABLE[Math.abs(MathUtils.random(DARK_COLOR_TABLE.length))];
-        return 0xff009688;
-    }
-
-    /**
      * get darker color of target color, alpha not change
      * @param color
      * @return

@@ -40,9 +40,7 @@
 
     <color name="holo_purple_light_light">#ffd7a2e6</color>
 
-    <color name="ab_bg">@android:color/holo_blue_dark</color>
     <color name="tag_bg">#bbffffff</color>
-    <color name="holo_blue_light_light">#ff81d3f7</color>
 
     <color name="light_gray">#aaa</color>
     <color name="lighter_gray">#ddd</color>

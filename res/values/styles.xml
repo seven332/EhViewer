@@ -17,9 +17,9 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="ActionBar" parent="@android:style/Widget.Holo.ActionBar">
-        <item name="@android:background">@android:color/holo_blue_dark</item>
+        <item name="@android:background">?attr/themeColor</item>
         <item name="@android:backgroundStacked">@color/tag_bg</item>
-        <item name="@android:backgroundSplit">@android:color/holo_blue_dark</item>
+        <item name="@android:backgroundSplit">?attr/themeColor</item>
         <item name="@android:titleTextStyle">@style/ActionBarTitleFont</item>
     </style>
 

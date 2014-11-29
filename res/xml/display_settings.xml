@@ -20,15 +20,16 @@
         android:title="@string/theme_display_settings_title">
 
         <CheckBoxPreference
-            android:key="random_theme_color"
-            android:title="@string/random_theme_color_title"
-            android:summaryOn="@string/random_theme_color_summary_on"
-            android:summaryOff="@string/random_theme_color_summary_off"
-            android:defaultValue="true" />
+            android:key="custom_theme_color"
+            android:title="@string/custom_theme_color_title"
+            android:summaryOn="@string/custom_theme_color_summary_on"
+            android:summaryOff="@string/custom_theme_color_summary_off"
+            android:defaultValue="false" />
 
         <com.hippo.ehviewer.preference.ColorPreference
             android:key="theme_color"
-            android:title="@string/theme_color_title" />
+            android:title="@string/theme_color_title"
+            android:dependency="custom_theme_color" />
 
     </PreferenceCategory>
 

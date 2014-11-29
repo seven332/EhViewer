@@ -83,7 +83,6 @@ import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Favorite;
-import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
@@ -174,6 +173,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
 
     private CommentAdapter mCommentAdapter;
 
+    private int mPaddingTop = -1;
     private int mThemeColor;
     private int mCurPreviewPage = 0;
     private boolean mShowPreview = false;
@@ -369,24 +369,9 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         mPreview.setColumnCountLandscape(
                 Config.getPreviewColumnsLandscape());
 
-        // Set random color
-        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
-        getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));
-        mDownloadButton.setRoundBackground(true, false, mResources.getColor(R.color.background_light), mThemeColor);
-        mDownloadButton.setTextColor(mThemeColor);
-        mReadButton.setRoundBackground(true, mThemeColor, 0);
-        ((TextView)findViewById(R.id.detail_more_text)).setTextColor(mThemeColor);
-        mCommentMoreText.setTextColor(mThemeColor);
-        mPreviewPage.setRoundBackground(true, false, mResources.getColor(R.color.background_light), mThemeColor);
-        mPreviewPage.setTextColor(mThemeColor);
-        mPreviewBack.setRoundBackground(true, false, mResources.getColor(R.color.background_light), mThemeColor);
-        mPreviewBack.setTextColor(mThemeColor);
-        mPreviewFront.setRoundBackground(true, false, mResources.getColor(R.color.background_light), mThemeColor);
-        mPreviewFront.setTextColor(mThemeColor);
-        mPreviewWait.setColor(mThemeColor);
-        mPreviewRefresh.setRoundBackground(true, mThemeColor, 0);
-        mReply.setColor(mThemeColor);
-        Ui.colorStatusBarL(this, mThemeColor);
+        // Set theme color
+        setThemeColor(mThemeColor = Config.getCustomThemeColor() ? Config.getThemeColor() :
+            (mGalleryInfo.title == null ? Ui.THEME_COLOR : Ui.getCategoryColor(mGalleryInfo.category)));
 
         // Set ripple
         mWindowsAnimate.addRippleEffect(mDownloadButton, true);
@@ -420,6 +405,28 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         mRefreshText.setDefaultRefresh("点击重试", this);
 
         doPreLayout();
+    }
+
+    private void setThemeColor(int themeColor) {
+        mThemeColor = themeColor;
+        getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));
+        mDownloadButton.setRoundBackground(true, false, mResources.getColor(R.color.background_light), mThemeColor);
+        mDownloadButton.setTextColor(mThemeColor);
+        mReadButton.setRoundBackground(true, mThemeColor, 0);
+        ((TextView)findViewById(R.id.detail_more_text)).setTextColor(mThemeColor);
+        mCommentMoreText.setTextColor(mThemeColor);
+        mPreviewPage.setRoundBackground(true, false, mResources.getColor(R.color.background_light), mThemeColor);
+        mPreviewPage.setTextColor(mThemeColor);
+        mPreviewBack.setRoundBackground(true, false, mResources.getColor(R.color.background_light), mThemeColor);
+        mPreviewBack.setTextColor(mThemeColor);
+        mPreviewFront.setRoundBackground(true, false, mResources.getColor(R.color.background_light), mThemeColor);
+        mPreviewFront.setTextColor(mThemeColor);
+        mPreviewWait.setColor(mThemeColor);
+        mPreviewRefresh.setRoundBackground(true, mThemeColor, 0);
+        mReply.setColor(mThemeColor);
+        Ui.colorStatusBarL(this, mThemeColor);
+        if (mPaddingTop != -1)
+            Ui.colorStatusBarKK(this, mPaddingTop - Ui.ACTION_BAR_HEIGHT, mThemeColor);
     }
 
     @Override
@@ -584,6 +591,8 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
     private void doLayout() {
         if (mDetailScroll.getVisibility() == View.GONE) {
             // If not set header in doPreLayout
+            // Set theme
+            setThemeColor(Ui.getCategoryColor(mGalleryInfo.category));
             // Add history first
             Data.getInstance().addHistory(mGalleryInfo, Data.BROWSE);
             mDetailScroll.setVisibility(View.VISIBLE);
@@ -998,7 +1007,8 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
                 mCommentList.getPaddingRight(), b + Ui.dp2pix(16 + 56 + 16));
         ((FrameLayout.LayoutParams)mReply.getLayoutParams()).bottomMargin = Ui.dp2pix(16) + b;
 
-        Ui.colorStatusBarKK(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
+        mPaddingTop = t;
+        Ui.colorStatusBarKK(this, mThemeColor, mPaddingTop - Ui.ACTION_BAR_HEIGHT);
     }
 
     @Override

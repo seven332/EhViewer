@@ -74,9 +74,9 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         Context mContextThemeWrapper = new ContextThemeWrapper(this, R.style.AppTheme);
 
         // Init everything
+        Ui.init(mContextThemeWrapper);
         Config.init(mContextThemeWrapper);
         Log.init(mContextThemeWrapper);
-        Ui.init(mContextThemeWrapper);
         Crash.init(mContextThemeWrapper);
         EhClient.createInstance(mContextThemeWrapper);
         Favorite.init(mContextThemeWrapper);

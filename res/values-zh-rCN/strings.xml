@@ -180,9 +180,9 @@
     <!-- Settings -->
     <string name="display_settings_title">显示</string>
     <string name="theme_display_settings_title">主题</string>
-    <string name="random_theme_color_title">随机主题颜色</string>
-    <string name="random_theme_color_summary_on">色彩斑斓！</string>
-    <string name="random_theme_color_summary_off">在下方指定主题颜色</string>
+    <string name="custom_theme_color_title">自定义主题颜色</string>
+    <string name="custom_theme_color_summary_on">在下方指定主题颜色</string>
+    <string name="custom_theme_color_summary_off">使用默认主题颜色</string>
     <string name="theme_color_title">主题颜色</string>
     <string name="screen_display_settings_title">屏幕</string>
     <string name="screen_orientation_title">屏幕方向</string>

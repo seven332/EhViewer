@@ -132,11 +132,11 @@ public final class Config {
 
     /****** Display ******/
 
-    private static final String KEY_RANDOM_THEME_COLOR = "random_theme_color";
-    private static final boolean DEFAULT_RANDOM_THEME_COLOR = true;
+    private static final String KEY_CUSTOM_THEME_COLOR = "custom_theme_color";
+    private static final boolean DEFAULT_CUSTOM_THEME_COLOR = false;
 
     private static final String KEY_THEME_COLOR = "theme_color";
-    private static final int DEFAULT_THEME_COLOR = 0xff0099cc;
+    private static final int DEFAULT_THEME_COLOR = Ui.THEME_COLOR;
 
     private static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
     private static final int DEFAULT_SCREEN_ORIENTATION = 0;
@@ -159,8 +159,8 @@ public final class Config {
     private static final String KEY_SHOW_POPULAR_UPDATE_TIME = "show_popular_update_time";
     private static final boolean DEFAULT_SHOW_POPULAR_UPDATE_TIME = false;
 
-    public static boolean getRandomThemeColor() {
-        return getBoolean(KEY_RANDOM_THEME_COLOR, DEFAULT_RANDOM_THEME_COLOR);
+    public static boolean getCustomThemeColor() {
+        return getBoolean(KEY_CUSTOM_THEME_COLOR, DEFAULT_CUSTOM_THEME_COLOR);
     }
 
     public static int getThemeColor() {

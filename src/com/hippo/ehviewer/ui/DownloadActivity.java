@@ -50,7 +50,6 @@ import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
-import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.ExpandingListView;
@@ -118,7 +117,7 @@ public class DownloadActivity extends AbsTranslucentActivity implements FitWindo
         mList.setSelector(new ColorDrawable(Color.TRANSPARENT));
         mList.setExpandingId(R.id.buttons);
 
-        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
+        mThemeColor = Config.getCustomThemeColor() ? Config.getThemeColor() : Ui.THEME_COLOR;
         getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));
         Ui.colorStatusBarL(this, mThemeColor);
     }

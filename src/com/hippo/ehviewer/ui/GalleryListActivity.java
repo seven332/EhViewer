@@ -87,7 +87,6 @@ import com.hippo.ehviewer.tile.TileSalon;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.DialogUtils;
 import com.hippo.ehviewer.util.Favorite;
-import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.util.ViewUtils;
@@ -1219,7 +1218,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         });
 
         // Set random color
-        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
+        mThemeColor = Config.getCustomThemeColor() ? Config.getThemeColor() : Ui.THEME_COLOR;
         mActionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
         //mLeftMenu.setBackgroundColor(mThemeColor);
         //mRightMenu.setBackgroundColor(mThemeColor);

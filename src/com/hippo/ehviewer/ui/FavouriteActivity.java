@@ -65,7 +65,6 @@ import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Favorite;
-import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.ActionableToastBar;
 import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
@@ -269,7 +268,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
         });
 
         // Set random color
-        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
+        mThemeColor = Config.getCustomThemeColor() ? Config.getThemeColor() : Ui.THEME_COLOR;
         mActionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
         mMenu.setBackgroundColor(mThemeColor);
         Ui.colorStatusBarL(this, mThemeColor);

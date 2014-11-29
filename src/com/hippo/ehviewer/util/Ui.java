@@ -55,8 +55,6 @@ public class Ui {
     public static float mDensity;
     public static float mScaledDensity;
 
-    public static int HOLO_BLUE_DARK;
-
     public static int DOUJINSHI_BG_COLOR;
     public static int MANGA_BG_COLOR;
     public static int ARTIST_CG_BG_COLOR;
@@ -68,6 +66,8 @@ public class Ui {
     public static int ASIAN_PORN_BG_COLOR;
     public static int MISC_BG_COLOR;
     public static int UNKNOWN_BG_COLOR;
+
+    public static int THEME_COLOR;
 
     public static Drawable transparentDrawable;
 
@@ -91,7 +91,6 @@ public class Ui {
         mScaledDensity = mResources.getDisplayMetrics().scaledDensity;
 
         // init color
-        HOLO_BLUE_DARK = mResources.getColor(android.R.color.holo_blue_dark);
 
         DOUJINSHI_BG_COLOR = mResources.getColor(R.color.doujinshi_bg);
         MANGA_BG_COLOR = mResources.getColor(R.color.manga_bg);
@@ -104,6 +103,8 @@ public class Ui {
         ASIAN_PORN_BG_COLOR = mResources.getColor(R.color.asian_porn_bg);
         MISC_BG_COLOR = mResources.getColor(R.color.misc_bg);
         UNKNOWN_BG_COLOR = mResources.getColor(R.color.unknown_bg);
+
+        THEME_COLOR = mResources.getColor(R.color.theme);
 
         // init drawable
         transparentDrawable = new ColorDrawable(Color.TRANSPARENT);

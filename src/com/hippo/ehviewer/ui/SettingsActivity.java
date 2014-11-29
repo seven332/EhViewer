@@ -69,7 +69,6 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.DialogUtils;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Favorite;
-import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.CategoryTable;
@@ -88,7 +87,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         super.onCreate(savedInstanceState);
 
         // Set random color
-        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
+        mThemeColor = Config.getCustomThemeColor() ? Config.getThemeColor() : Ui.THEME_COLOR;
         getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));
         Ui.colorStatusBarL(this, mThemeColor);
 
@@ -135,12 +134,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             Preference.OnPreferenceChangeListener {
 
         private static final String KEY_SCREEN_ORIENTATION = "screen_orientation";
-        private static final String KEY_RANDOM_THEME_COLOR = "random_theme_color";
-        private static final String KEY_THEME_COLOR = "theme_color";
 
         private ListPreference mScreenOrientation;
-        private CheckBoxPreference mRandomThemeColor;
-        private Preference mThemeColor;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -149,11 +144,6 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
             mScreenOrientation = (ListPreference) findPreference(KEY_SCREEN_ORIENTATION);
             mScreenOrientation.setOnPreferenceChangeListener(this);
-            mRandomThemeColor = (CheckBoxPreference) findPreference(KEY_RANDOM_THEME_COLOR);
-            mRandomThemeColor.setOnPreferenceChangeListener(this);
-            mThemeColor = findPreference(KEY_THEME_COLOR);
-
-            mThemeColor.setEnabled(!mRandomThemeColor.isChecked());
         }
 
         @Override
@@ -162,9 +152,6 @@ public class SettingsActivity extends AbsPreferenceActivity {
             if (KEY_SCREEN_ORIENTATION.equals(key)) {
                 getActivity().setRequestedOrientation(Config.screenOriPre2Value(Integer.parseInt((String) newValue)));
 
-            } else if (KEY_RANDOM_THEME_COLOR.equals(key)) {
-                MaterialToast.showToast(R.string.restart_to_take_effect);
-                mThemeColor.setEnabled(!(Boolean) newValue);
             }
 
             return true;

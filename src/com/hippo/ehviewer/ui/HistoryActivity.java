@@ -46,7 +46,6 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
 import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Theme;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.GalleryListView;
@@ -171,7 +170,7 @@ public class HistoryActivity extends AbsTranslucentActivity
         Ui.setMaterialIndicator(getActionBar(), materialIndicator);
 
         // Theme
-        mThemeColor = Config.getRandomThemeColor() ? Theme.getRandomDarkColor() : Config.getThemeColor();
+        mThemeColor = Config.getCustomThemeColor() ? Config.getThemeColor() : Ui.THEME_COLOR;
         getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));
         Ui.colorStatusBarL(this, mThemeColor);
 
