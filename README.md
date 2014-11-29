@@ -59,7 +59,8 @@ Just import into Eclipse and build. Do it youself if you prefer Android Studio.
 
 本项目内容采用 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0) 授权，
 部分文件采用 [Creative Commons Attribution 3.0 Unported License](http://creativecommons.org/licenses/by/3.0/) 授权（[列表](rc/list1)），
-部分文件可随意使用（[列表](rc/list2)）。<br>
+部分文件采用 [SIL Open Font License, 1.1](http://scripts.sil.org/OFL) 授权（[列表](rc/list2)）。
+<br>
 The content of this project itself is licensed under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0),
 some files are licensed under the [Creative Commons Attribution 3.0 Unported License](http://creativecommons.org/licenses/by/3.0/) ([list](rc/list1)),
-some files are free to use ([list](rc/list2)).
+some files are licensed under the [SIL Open Font License, 1.1](http://scripts.sil.org/OFL) ([list](rc/list2)).
