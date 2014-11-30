@@ -19,7 +19,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:focusableInTouchMode="true" >
 
     <com.hippo.ehviewer.widget.CategoryTable
         android:id="@+id/category_table"
@@ -43,7 +44,6 @@
         android:ems="10"
         android:hint="@string/hint_no_keyword"
         android:singleLine="true"
-        android:dropDownVerticalOffset="38dp"
         android:textSize="@dimen/text_little_small" />
 
     <CheckBox

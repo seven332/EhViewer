@@ -67,7 +67,8 @@ public class SuggestionHelper extends SearchRecentSuggestions {
     @Override
     public void saveRecentQuery(final String queryString, final String line2) {
         super.saveRecentQuery(queryString, line2);
-        mQueryList.add(0, queryString);
+        if (!mQueryList.contains(queryString))
+            mQueryList.add(0, queryString);
         truncateHistory(MAX_HISTORY_COUNT);
     }
 
