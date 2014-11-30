@@ -29,7 +29,6 @@ import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -60,7 +59,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -98,6 +96,7 @@ import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.RatingView;
+import com.hippo.ehviewer.widget.SearchView;
 import com.hippo.ehviewer.widget.SlidingDrawerLayout;
 import com.hippo.ehviewer.widget.SuggestionHelper;
 import com.hippo.ehviewer.widget.SuggestionTextView;
@@ -131,7 +130,8 @@ import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 public class GalleryListActivity extends AbsTranslucentActivity implements View.OnClickListener,
         SearchView.OnQueryTextListener, SearchView.OnFocusChangeListener,
         SlidingDrawerLayout.DrawerListener, EhClient.OnLoginListener,
-        GalleryListView.GalleryListViewHelper, FitWindowView.OnFitSystemWindowsListener {
+        GalleryListView.GalleryListViewHelper, FitWindowView.OnFitSystemWindowsListener,
+        SearchView.OnActionViewExpandedListener {
 
     @SuppressWarnings("unused")
     private static final String TAG = GalleryListActivity.class.getSimpleName();
@@ -819,11 +819,6 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         updateGridView();
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
-
     /**
      * Get
      *
@@ -1213,8 +1208,6 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         // Set random color
         mThemeColor = Config.getCustomThemeColor() ? Config.getThemeColor() : Ui.THEME_COLOR;
         mActionBar.setBackgroundDrawable(new ColorDrawable(mThemeColor));
-        //mLeftMenu.setBackgroundColor(mThemeColor);
-        //mRightMenu.setBackgroundColor(mThemeColor);
         Ui.colorStatusBarL(this, mThemeColor);
 
         // Update user panel
@@ -1307,6 +1300,12 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
     }
 
     @Override
+    public void onActionViewExpanded() {
+        if (mSearchView != null && lus != null)
+            mSearchView.setQuery(lus.toString(), false);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (mDrawerLayout.isDrawerOpen(mRightMenu))
             getMenuInflater().inflate(R.menu.quick_search, menu);
@@ -1321,6 +1320,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         mSearchView.setOnQueryTextListener(this);
         mSearchView.setOnQueryTextFocusChangeListener(this);
+        mSearchView.setOnActionViewExpandedListener(this);
 
         // Make search view custom look
         int searchTextID = mResources.getIdentifier("android:id/search_src_text", null, null);

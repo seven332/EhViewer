@@ -315,4 +315,20 @@ public class ListUrls {
             return ub.build();
         }
     }
+
+
+    @Override
+    public String toString() {
+        switch (mMode) {
+        case MODE_NORMAL:
+        case MODE_UPLOADER:
+            return search;
+        case MODE_TAG:
+            return mTag;
+        case MODE_POPULAR:
+        case MODE_IMAGE_SEARCH:
+        default:
+            return null;
+        }
+    }
 }
