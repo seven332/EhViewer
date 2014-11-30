@@ -22,11 +22,10 @@
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="wrap_content" >
 
         <CheckBox
             android:id="@+id/tag_group_reclass"
-            style="@style/Dialog.CheckBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -35,7 +34,6 @@
 
         <CheckBox
             android:id="@+id/tag_group_language"
-            style="@style/Dialog.CheckBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -49,7 +47,6 @@
 
         <CheckBox
             android:id="@+id/tag_group_parody"
-            style="@style/Dialog.CheckBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -58,7 +55,6 @@
 
         <CheckBox
             android:id="@+id/tag_group_character"
-            style="@style/Dialog.CheckBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -72,7 +68,6 @@
 
         <CheckBox
             android:id="@+id/tag_group_group"
-            style="@style/Dialog.CheckBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -81,7 +76,6 @@
 
         <CheckBox
             android:id="@+id/tag_group_artist"
-            style="@style/Dialog.CheckBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -95,7 +89,6 @@
 
         <CheckBox
             android:id="@+id/tag_group_male"
-            style="@style/Dialog.CheckBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -104,7 +97,6 @@
 
         <CheckBox
             android:id="@+id/tag_group_female"
-            style="@style/Dialog.CheckBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

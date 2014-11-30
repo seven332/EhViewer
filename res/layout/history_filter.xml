@@ -23,7 +23,6 @@
 
         <CheckBox
             android:id="@+id/just_browse"
-            style="@style/Dialog.CheckBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -31,7 +30,6 @@
 
         <CheckBox
             android:id="@+id/have_read"
-            style="@style/Dialog.CheckBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

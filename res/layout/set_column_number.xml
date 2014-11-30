@@ -25,7 +25,6 @@
         android:orientation="horizontal" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
@@ -35,7 +34,6 @@
 
         <EditText
             android:id="@+id/portrait"
-            style="@style/DialogMessage"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
@@ -49,7 +47,6 @@
         android:orientation="horizontal" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
@@ -59,7 +56,6 @@
 
         <EditText
             android:id="@+id/landscape"
-            style="@style/DialogMessage"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"

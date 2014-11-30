@@ -52,6 +52,7 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
+import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.ExpandingListView;
 import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.LoadImageView;
@@ -322,8 +323,7 @@ public class DownloadActivity extends AbsTranslucentActivity implements FitWindo
         @Override
         @SuppressLint("InflateParams")
         public void onClick(View v) {
-            final View view = LayoutInflater.from(DownloadActivity.this).inflate(
-                    R.layout.dialog_message_checkbox, null);
+            final View view = ViewUtils.inflateDialogView(R.layout.dialog_message_checkbox, false);
             final TextView message = (TextView) view.findViewById(R.id.message);
             final CheckBox cb = (CheckBox) view.findViewById(R.id.checkbox);
             message.setText(R.string.delete_item);

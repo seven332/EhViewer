@@ -115,10 +115,14 @@
     <style name="TextView.Dark.Dialog" parent="@style/TextView.Dialog">
     </style>
 
-    <style name="DialogMessage">
-        <item name="@android:textAppearance">@style/TextAppearance.DialogMessage</item>
-        <item name="@android:textColor">@color/secondary_text_dark</item>
-        <item name="@android:textSize">@dimen/text_little_small</item>
+    <style name="EditText" parent="@android:style/Widget.EditText">
+    </style>
+
+    <style name="EditText.Dialog">
+        <item name="@android:textAppearance">@style/TextAppearance.LittleSmall</item>
+    </style>
+
+    <style name="EditText.Dark.Dialog" parent="@style/EditText.Dialog">
     </style>
 
     <style name="DialogButton" parent="@android:Widget.Button">
@@ -293,14 +297,6 @@
     <style name="FloatingActionButton.Small">
         <item name="@android:minWidth">44dp</item>
         <item name="@android:minHeight">44dp</item>
-    </style>
-
-    <!-- Dialog -->
-    <style name="Dialog" parent="DialogMessage">
-    </style>
-
-    <style name="Dialog.CheckBox">
-        <item name="@android:button">@drawable/btn_check_dialog_material</item>
     </style>
 
 </resources>

@@ -44,6 +44,7 @@ import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
+import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.SlidingDrawerLayout;
 
@@ -72,6 +73,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         bindService(it, mServiceConn, BIND_AUTO_CREATE);
 
         Context mContextThemeWrapper = new ContextThemeWrapper(this, R.style.AppTheme);
+        ViewUtils.initDialogViewInflater(this);
 
         // Init everything
         Ui.init(mContextThemeWrapper);

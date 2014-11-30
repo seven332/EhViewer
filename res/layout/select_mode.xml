@@ -25,13 +25,11 @@
         android:orientation="horizontal" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:gravity="center"
             android:text="@string/content" />
 
         <Spinner
@@ -39,7 +37,7 @@
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
-            android:layout_weight="3"
+            android:layout_weight="2"
             android:layout_gravity="center"
             android:entries="@array/mode_list" />
     </LinearLayout>
@@ -50,13 +48,11 @@
         android:orientation="horizontal" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:gravity="center"
             android:text="@string/api" />
 
         <Spinner
@@ -64,7 +60,7 @@
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
-            android:layout_weight="3"
+            android:layout_weight="2"
             android:layout_gravity="center"
             android:entries="@array/api_mode_list" />
     </LinearLayout>
@@ -75,13 +71,11 @@
         android:orientation="horizontal" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:gravity="center"
             android:text="@string/lofi_resolution" />
 
         <Spinner
@@ -89,7 +83,7 @@
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
-            android:layout_weight="3"
+            android:layout_weight="2"
             android:layout_gravity="center"
             android:entries="@array/lofi_resolution_list" />
     </LinearLayout>

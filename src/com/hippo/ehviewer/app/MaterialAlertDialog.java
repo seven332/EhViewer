@@ -32,6 +32,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.ViewUtils;
 
 public class MaterialAlertDialog extends AlertDialog implements
         View.OnClickListener, AdapterView.OnItemClickListener {
@@ -258,7 +259,6 @@ public class MaterialAlertDialog extends AlertDialog implements
     public static class Builder {
 
         protected Context mContext;
-        private boolean mUpdateContext = false;
 
         private boolean mDarkTheme = false;
         private CharSequence mTitle;
@@ -389,12 +389,7 @@ public class MaterialAlertDialog extends AlertDialog implements
         }
 
         public Builder setView(int resId, boolean inScrollView, ViewHolder vh) {
-            if (!mUpdateContext) {
-                mUpdateContext = true;
-                mContext = new ContextThemeWrapper(mContext, mDarkTheme ?
-                        R.style.AppTheme_Dark_Dialog : R.style.AppTheme_Dialog);
-            }
-            mCustomView = LayoutInflater.from(mContext).inflate(resId, null);
+            mCustomView = ViewUtils.inflateDialogView(resId, mDarkTheme);
             mInScrollView = inScrollView;
             if (vh != null)
                 vh.setView(mCustomView);
@@ -417,7 +412,8 @@ public class MaterialAlertDialog extends AlertDialog implements
         }
 
         public Builder setItems(int itemsId, final OnClickListener listener) {
-            mAdapter = new ArrayAdapter<CharSequence>(mContext,
+            mAdapter = new ArrayAdapter<CharSequence>(
+                    mDarkTheme ? ViewUtils.sDarkContextThemeWrapper : ViewUtils.sContextThemeWrapper,
                     R.layout.select_dialog_item, android.R.id.text1, mContext
                             .getResources().getTextArray(itemsId));
             mOnClickListener = listener;
@@ -427,7 +423,8 @@ public class MaterialAlertDialog extends AlertDialog implements
 
         public Builder setItems(CharSequence[] items,
                 final OnClickListener listener) {
-            mAdapter = new ArrayAdapter<CharSequence>(mContext,
+            mAdapter = new ArrayAdapter<CharSequence>(
+                    mDarkTheme ? ViewUtils.sDarkContextThemeWrapper : ViewUtils.sContextThemeWrapper,
                     R.layout.select_dialog_item, android.R.id.text1, items);
             mOnClickListener = listener;
             mIsSingleChoice = false;
@@ -444,7 +441,8 @@ public class MaterialAlertDialog extends AlertDialog implements
 
         public Builder setSingleChoiceItems(int itemsId, int checkedItem,
                 final OnClickListener listener) {
-            mAdapter = new ArrayAdapter<CharSequence>(mContext,
+            mAdapter = new ArrayAdapter<CharSequence>(
+                    mDarkTheme ? ViewUtils.sDarkContextThemeWrapper : ViewUtils.sContextThemeWrapper,
                     R.layout.select_dialog_singlechoice, android.R.id.text1,
                     mContext.getResources().getTextArray(itemsId));
             mOnClickListener = listener;
@@ -455,7 +453,8 @@ public class MaterialAlertDialog extends AlertDialog implements
 
         public Builder setSingleChoiceItems(CharSequence[] items,
                 int checkedItem, final OnClickListener listener) {
-            mAdapter = new ArrayAdapter<CharSequence>(mContext,
+            mAdapter = new ArrayAdapter<CharSequence>(
+                    mDarkTheme ? ViewUtils.sDarkContextThemeWrapper : ViewUtils.sContextThemeWrapper,
                     R.layout.select_dialog_singlechoice, android.R.id.text1,
                     items);
             mOnClickListener = listener;
@@ -479,11 +478,8 @@ public class MaterialAlertDialog extends AlertDialog implements
         }
 
         public MaterialAlertDialog create() {
-            if (!mUpdateContext) {
-                mUpdateContext = true;
-                mContext = new ContextThemeWrapper(mContext, mDarkTheme ?
-                        R.style.AppTheme_Dark_Dialog : R.style.AppTheme_Dialog);
-            }
+            mContext = new ContextThemeWrapper(mContext, mDarkTheme ?
+                    R.style.AppTheme_Dark_Dialog : R.style.AppTheme_Dialog);
             return new MaterialAlertDialog(this);
         }
 

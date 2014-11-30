@@ -47,8 +47,12 @@
         <!-- Text -->
         <item name="textColor">@color/secondary_text_dark</item>
         <item name="textColorTitle">@color/primary_text_dark</item>
+        <item name="android:editTextColor">?attr/textColor</item>
 
         <item name="android:textViewStyle">@style/TextView.Dialog</item>
+        <item name="android:editTextStyle">@style/EditText.Dialog</item>
+
+        <item name="android:textAppearance">@style/TextAppearance.LittleSmall</item>
 
         <!-- spinner -->
         <item name="android:spinnerDropDownItemStyle">@style/DropDownItem.Spinner</item>
@@ -78,16 +82,20 @@
         <item name="android:actionBarStyle">@style/ActionBar</item>
         <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
 
-        <item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_material</item>
-        <item name="android:listChoiceIndicatorMultiple">@drawable/btn_check_material</item>
+        <item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_material_dark</item>
+        <item name="android:listChoiceIndicatorMultiple">@drawable/btn_check_material_dark</item>
     </style>
 
     <style name="AppTheme.Dark.Dialog">
         <!-- Text -->
         <item name="textColor">@color/secondary_text_light</item>
         <item name="textColorTitle">@color/primary_text_light</item>
+        <item name="android:editTextColor">?attr/textColor</item>
 
         <item name="android:textViewStyle">@style/TextView.Dark.Dialog</item>
+        <item name="android:editTextStyle">@style/EditText.Dark.Dialog</item>
+
+        <item name="android:textAppearance">@style/TextAppearance.LittleSmall</item>
 
         <!-- spinner -->
         <item name="android:spinnerDropDownItemStyle">@style/DropDownItem.Spinner</item>

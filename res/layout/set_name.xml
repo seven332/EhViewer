@@ -19,14 +19,12 @@
     android:orientation="vertical" >
 
     <TextView
-        style="@style/DialogMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/tag_name" />
 
     <EditText
         android:id="@+id/set_name_edit"
-        style="@style/DialogMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"

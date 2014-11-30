@@ -26,7 +26,6 @@ import android.graphics.PixelFormat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -82,8 +81,7 @@ public class ColorPreference extends DialogPreference implements ColorPickerView
     @Override
     @SuppressLint("InflateParams")
     protected View onCreateDialogView() {
-        LayoutInflater mInflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        return mInflater.inflate(R.layout.color_scheme_dialog, null);
+        return ViewUtils.inflateDialogView(R.layout.color_scheme_dialog, false);
     }
 
     private void setUpPresets(View view, final int which) {

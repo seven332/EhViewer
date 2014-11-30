@@ -15,6 +15,7 @@
  -->
 
 <!--
+icon
     light
         enabled ffffff 80%
         disabled ffffff 30%
@@ -22,6 +23,16 @@
         enabled 333333 60%
         disabled 333333 30%
     gallery action icon ffffff 38%
+
+component
+    light
+        actived theme color
+        not actived 000000 54%
+        disabled 000000 26%
+    dark
+        actived theme color
+        not actived ffffff 70%
+        disabled ffffff 30%
  -->
 
 <resources>

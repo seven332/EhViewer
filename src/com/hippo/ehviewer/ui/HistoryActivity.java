@@ -47,6 +47,7 @@ import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
 import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.GalleryListView;
 import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
@@ -126,7 +127,7 @@ public class HistoryActivity extends AbsTranslucentActivity
 
     @SuppressLint("InflateParams")
     private void createFilterDialog() {
-        View view = LayoutInflater.from(this).inflate(R.layout.history_filter, null);
+        View view = ViewUtils.inflateDialogView(R.layout.history_filter, false);
         mJustBrowse = (CheckBox) view.findViewById(R.id.just_browse);
         mHaveRead = (CheckBox) view.findViewById(R.id.have_read);
 

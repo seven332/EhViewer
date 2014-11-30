@@ -14,6 +14,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -29,32 +30,28 @@
 
     <CheckBox
         android:id="@+id/checkbox_uploader"
-        style="@style/DialogMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dp"
-        android:button="@drawable/btn_check_dialog_material"
         android:text="@string/checkbox_uploader" />
 
     <com.hippo.ehviewer.widget.SuggestionTextView
         android:id="@+id/search_text"
-        style="@style/DialogMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:ems="10"
         android:hint="@string/hint_no_keyword"
         android:singleLine="true"
-        android:dropDownVerticalOffset="38dp" />
+        android:dropDownVerticalOffset="38dp"
+        android:textSize="@dimen/text_little_small" />
 
     <CheckBox
         android:id="@+id/checkbox_advance"
-        style="@style/DialogMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:layout_marginBottom="16dp"
-        android:button="@drawable/btn_check_dialog_material"
         android:text="@string/checkbox_advance" />
 
     <TableLayout
@@ -69,24 +66,20 @@
 
             <CheckBox
                 android:id="@+id/checkbox_sname"
-                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:checked="true"
-                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/checkbox_sname" />
 
             <CheckBox
                 android:id="@+id/checkbox_stags"
-                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:checked="true"
-                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/checkbox_stags" />
         </TableRow>
 
@@ -96,22 +89,18 @@
 
             <CheckBox
                 android:id="@+id/checkbox_sdesc"
-                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/checkbox_sdesc" />
 
             <CheckBox
                 android:id="@+id/checkbox_storr"
-                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/checkbox_storr" />
         </TableRow>
 
@@ -121,22 +110,18 @@
 
             <CheckBox
                 android:id="@+id/checkbox_sto"
-                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/checkbox_sto" />
 
             <CheckBox
                 android:id="@+id/checkbox_sdt1"
-                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/checkbox_sdt1" />
         </TableRow>
 
@@ -146,22 +131,18 @@
 
             <CheckBox
                 android:id="@+id/checkbox_sdt2"
-                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/checkbox_sdt2" />
 
             <CheckBox
                 android:id="@+id/checkbox_sh"
-                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/checkbox_sh" />
         </TableRow>
 
@@ -171,22 +152,18 @@
 
             <CheckBox
                 android:id="@+id/checkbox_sr"
-                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/checkbox_sr" />
 
             <Spinner
                 android:id="@+id/spinner_min_rating"
-                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:button="@drawable/btn_check_dialog_material"
                 android:entries="@array/min_rating" >
             </Spinner>
         </TableRow>

@@ -20,7 +20,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.Resources;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -84,8 +83,7 @@ public class Favorite {
 
         // TODO List do not work final
 
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.add_to_favorite, null);
+        View view = ViewUtils.inflateDialogView(R.layout.add_to_favorite, false);
         final CheckBox cb = (CheckBox) view.findViewById(R.id.set_default);
         ListView lv = (ListView) view.findViewById(R.id.list);
         lv.setAdapter(new ArrayAdapter<String>(mContext,

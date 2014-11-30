@@ -20,7 +20,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
@@ -28,6 +27,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.app.MaterialAlertDialog.Builder;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.MaterialToast;
 
 public class NumberOfColumnsPreference extends DialogPreference {
@@ -84,8 +84,7 @@ public class NumberOfColumnsPreference extends DialogPreference {
     @Override
     @SuppressLint("InflateParams")
     protected View onCreateDialogView() {
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        return inflater.inflate(R.layout.set_column_number, null);
+        return ViewUtils.inflateDialogView(R.layout.set_column_number, false);
     }
 
     @Override

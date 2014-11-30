@@ -261,8 +261,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
     @SuppressLint("InflateParams")
     private AlertDialog createLoginDialog() {
-        LayoutInflater inflater = this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.login, null);
+        View view = ViewUtils.inflateDialogView(R.layout.login, false);
 
         return new MaterialAlertDialog.Builder(this).setCancelable(false).setTitle(R.string.login).setView(view, true)
                 .setPositiveButton(android.R.string.ok).setNegativeButton(android.R.string.cancel)
@@ -291,9 +290,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
     @SuppressLint("InflateParams")
     private AlertDialog createModeDialog() {
-
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View cv = inflater.inflate(R.layout.select_mode, null);
+        View cv = ViewUtils.inflateDialogView(R.layout.select_mode, false);
 
         final Spinner modeSpinner = (Spinner) cv.findViewById(R.id.mode_list);
         modeSpinner.setSelection(Config.getMode());
@@ -379,8 +376,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
     @SuppressLint("InflateParams")
     private AlertDialog createSearchDialog() {
-        LayoutInflater inflater = this.getLayoutInflater();
-        final View view = inflater.inflate(R.layout.search, null);
+        final View view = ViewUtils.inflateDialogView(R.layout.search, false);
         final View searchNormal = view.findViewById(R.id.search_normal);
         final View searchTag = view.findViewById(R.id.search_tag);
         final View searchImage = view.findViewById(R.id.search_image);
@@ -576,8 +572,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
     @SuppressLint("InflateParams")
     private AlertDialog createJumpDialog() {
-        LayoutInflater inflater = this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.jump, null);
+        View view = ViewUtils.inflateDialogView(R.layout.jump, false);
         TextView tv = (TextView) view.findViewById(R.id.list_jump_sum);
         // For lofi, can not get page num, so use Integer.MAX_VALUE
         tv.setText(String.format(getString(R.string.jump_summary), mGalleryListView.getCurPage() + 1,
@@ -627,8 +622,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
      */
     @SuppressLint("InflateParams")
     private AlertDialog createSetNameDialog(final String hint, final String oldStr, final OnSetNameListener listener) {
-        LayoutInflater inflater = this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.set_name, null);
+        View view = ViewUtils.inflateDialogView(R.layout.set_name, false);
         final EditText et = (EditText) view.findViewById(R.id.set_name_edit);
         if (hint != null)
             et.setText(hint);
@@ -661,8 +655,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
     @SuppressLint("InflateParams")
     private AlertDialog createModifyTagDialog(final int position) {
-        LayoutInflater inflater = this.getLayoutInflater();
-        final View view = inflater.inflate(R.layout.search, null);
+        final View view = ViewUtils.inflateDialogView(R.layout.search, false);
         final View searchNormal = view.findViewById(R.id.search_normal);
         final View searchTag = view.findViewById(R.id.search_tag);
         final View searchImage = view.findViewById(R.id.search_image);
@@ -1457,7 +1450,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         case R.id.action_add:
             // TODO
             if (lus != null) {
-                View view = LayoutInflater.from(this).inflate(R.layout.set_name, null);
+                View view = ViewUtils.inflateDialogView(R.layout.set_name, false);
                 final EditText et = (EditText) view.findViewById(R.id.set_name_edit);
                 new MaterialAlertDialog.Builder(this).setTitle("添加当前状态至快速搜索")
                         .setView(view, true)

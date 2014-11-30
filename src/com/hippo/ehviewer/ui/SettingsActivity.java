@@ -37,7 +37,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.provider.SearchRecentSuggestions;
 import android.text.util.Linkify;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
@@ -71,6 +70,7 @@ import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
+import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.FileExplorerView;
 import com.hippo.ehviewer.widget.MaterialToast;
@@ -261,8 +261,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         }).show();
 
             } else if (KEY_EXCULDE_TAG_GROUP.equals(key)) {
-                LayoutInflater inflater = LayoutInflater.from(getActivity());
-                final TableLayout tl = (TableLayout) inflater.inflate(R.layout.exculde_tag_group, null);
+                final TableLayout tl = (TableLayout) ViewUtils.inflateDialogView(R.layout.exculde_tag_group, false);
                 setExculdeTagGroup(tl, Config.getExculdeTagGroup());
 
                 new MaterialAlertDialog.Builder(getActivity()).setTitle(R.string.exculde_tag_group_title).setView(tl, true)
@@ -278,8 +277,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         }).show();
 
             } else if (KEY_EXCULDE_LANGUAGE.equals(key)) {
-                LayoutInflater inflater = LayoutInflater.from(getActivity());
-                final TableLayout tl = (TableLayout) inflater.inflate(R.layout.exculde_language, null);
+                final TableLayout tl = (TableLayout) ViewUtils.inflateDialogView(R.layout.exculde_language, false);
                 setExculdeLanguage(tl, Config.getExculdeLanguage());
 
                 new MaterialAlertDialog.Builder(getActivity()).setTitle(R.string.exculde_language_title).setView(tl, true)
@@ -538,7 +536,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         public boolean onPreferenceClick(Preference preference) {
             final String key = preference.getKey();
             if (KEY_DOWNLOAD_PATH.equals(key)) {
-                View view = LayoutInflater.from(getActivity()).inflate(R.layout.dir_selection, null);
+                View view = ViewUtils.inflateDialogView(R.layout.dir_selection, false);
                 final FileExplorerView fileExplorerView = (FileExplorerView) view.findViewById(R.id.file_list);
                 final TextView warning = (TextView) view.findViewById(R.id.warning);
 

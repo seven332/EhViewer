@@ -16,15 +16,37 @@
 
 package com.hippo.ehviewer.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import com.hippo.ehviewer.R;
+
 public final class ViewUtils {
+
+    public static ContextThemeWrapper sContextThemeWrapper;
+    public static ContextThemeWrapper sDarkContextThemeWrapper;
+    private static LayoutInflater sDialogViewInflater;
+    private static LayoutInflater sDarkDialogViewInflater;
+
+    public static final void initDialogViewInflater(Context context) {
+        sContextThemeWrapper = new ContextThemeWrapper(context, R.style.AppTheme_Dialog);
+        sDarkContextThemeWrapper = new ContextThemeWrapper(context, R.style.AppTheme_Dark_Dialog);
+        sDialogViewInflater = LayoutInflater.from(sContextThemeWrapper);
+        sDarkDialogViewInflater = LayoutInflater.from(sDarkContextThemeWrapper);
+    }
+
+    public static final View inflateDialogView(int resId, boolean dark) {
+        LayoutInflater inflater = dark ? sDarkDialogViewInflater : sDialogViewInflater;
+        return inflater.inflate(resId, null);
+    }
 
     /**
      * Get view center location in window
@@ -88,7 +110,7 @@ public final class ViewUtils {
 
     /**
      * Returns a bitmap showing a screenshot of the view passed in.
-     * 
+     *
      * @param v
      * @return
      */
@@ -119,7 +141,7 @@ public final class ViewUtils {
      * {@link View}.<br/>
      * <br/>
      * Check AOSP notice:<br/>
-     * 
+     *
      * <pre>
      * 'ComposeShader can only contain shaders of different types (a BitmapShader and a
      * LinearGradient for instance, but not two instances of BitmapShader)'. But, 'If your

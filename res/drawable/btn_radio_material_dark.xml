@@ -16,16 +16,15 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_enabled="false" android:state_checked="true">
-        <bitmap android:src="@drawable/btn_check_on_disabled" />
+        <bitmap android:src="@drawable/btn_radio_on_dark_disabled" />
     </item>
     <item android:state_enabled="false">
-        <bitmap android:src="@drawable/btn_check_off_disabled" />
+        <bitmap android:src="@drawable/btn_radio_off_dark_disabled" />
     </item>
     <item android:state_checked="true">
-        <bitmap android:src="@drawable/btn_check_on_dialog" />
+        <bitmap android:src="@drawable/btn_radio_on_dark" />
     </item>
     <item>
-        <bitmap android:src="@drawable/btn_check_off_dialog" />
+        <bitmap android:src="@drawable/btn_radio_off_dark" />
     </item>
 </selector>
-

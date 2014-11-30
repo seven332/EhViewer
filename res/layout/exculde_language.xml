@@ -30,7 +30,6 @@
             android:layout_weight="1" />
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -38,7 +37,6 @@
             tools:ignore="HardcodedText" />
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -46,7 +44,6 @@
             tools:ignore="HardcodedText" />
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -59,7 +56,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -74,15 +70,13 @@
             android:id="@+id/el_japanese_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_japanese_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -90,7 +84,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -100,22 +93,19 @@
             android:id="@+id/el_english_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_english_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_english_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -123,7 +113,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -133,22 +122,19 @@
             android:id="@+id/el_chinese_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_chinese_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_chinese_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -156,7 +142,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -166,22 +151,19 @@
             android:id="@+id/el_dutch_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_dutch_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_dutch_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -189,7 +171,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -199,22 +180,19 @@
             android:id="@+id/el_french_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_french_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_french_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -222,7 +200,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -232,22 +209,19 @@
             android:id="@+id/el_german_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_german_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_german_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -255,7 +229,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -265,22 +238,19 @@
             android:id="@+id/el_hungarian_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_hungarian_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_hungarian_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -288,7 +258,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -298,22 +267,19 @@
             android:id="@+id/el_italian_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_italian_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_italian_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -321,7 +287,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -331,22 +296,19 @@
             android:id="@+id/el_korean_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_korean_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_korean_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -354,7 +316,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -364,22 +325,19 @@
             android:id="@+id/el_polish_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_polish_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_polish_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -387,7 +345,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -397,22 +354,19 @@
             android:id="@+id/el_portuguese_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_portuguese_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_portuguese_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -420,7 +374,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -430,22 +383,19 @@
             android:id="@+id/el_russian_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_russian_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_russian_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -453,7 +403,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -463,22 +412,19 @@
             android:id="@+id/el_spanish_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_spanish_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_spanish_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -486,7 +432,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -496,22 +441,19 @@
             android:id="@+id/el_thai_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_thai_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_thai_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -519,7 +461,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -529,22 +470,19 @@
             android:id="@+id/el_vietnamese_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_vietnamese_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_vietnamese_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
     <TableRow
@@ -552,7 +490,6 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            style="@style/DialogMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
@@ -562,22 +499,19 @@
             android:id="@+id/el_other_original"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_other_translated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
 
         <CheckBox
             android:id="@+id/el_other_rewrite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@drawable/btn_check_dialog_material" />
+            android:layout_weight="1" />
     </TableRow>
 
 </TableLayout>

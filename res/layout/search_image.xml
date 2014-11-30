@@ -29,23 +29,19 @@
 
             <CheckBox
                 android:id="@+id/checkboxSimilar"
-                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:checked="true"
-                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/use_similarity_scan" />
 
             <CheckBox
                 android:id="@+id/checkboxCovers"
-                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/only_search_covers" />
         </TableRow>
 
@@ -55,12 +51,10 @@
 
             <CheckBox
                 android:id="@+id/checkboxExp"
-                style="@style/DialogMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:button="@drawable/btn_check_dialog_material"
                 android:text="@string/show_expunged" />
         </TableRow>
     </TableLayout>
@@ -75,7 +69,6 @@
 
     <TextView
         android:id="@+id/target_image"
-        style="@style/DialogMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
