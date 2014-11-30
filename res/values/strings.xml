@@ -152,6 +152,7 @@
     <string name="not_loaded">Not loaded</string>
     <string name="loading_percent">Loading %d%%</string>
     <string name="wait_for_more">Waiting to get page information</string>
+    <string name="more_settings">More settings</string>
 
     <!-- Action -->
     <string name="action_refresh">Refresh</string>
@@ -183,9 +184,9 @@
     <!-- Settings -->
     <string name="display_settings_title">Display</string>
     <string name="theme_display_settings_title">Theme</string>
-    <string name="random_theme_color_title">Random theme color</string>
-    <string name="random_theme_color_summary_on">Colorful !</string>
-    <string name="random_theme_color_summary_off">Specify the theme color below</string>
+    <string name="custom_theme_color_title">Custom theme color</string>
+    <string name="custom_theme_color_summary_on">Specify the theme color below</string>
+    <string name="custom_theme_color_summary_off">Default theme color</string>
     <string name="theme_color_title">Theme color</string>
     <string name="screen_display_settings_title">Screen</string>
     <string name="screen_orientation_title">Screen orientation</string>
@@ -243,6 +244,9 @@
     <string name="media_scan_summary_on">Please keep your gallery apps away from other people</string>
     <string name="media_scan_summary_off">Most gallery apps will ignore pictures in download path</string>
     <string name="download_thread_title">Download threads</string>
+    <string name="keep_download_service_title">Keep download service</string>
+    <string name="keep_download_service_summary_on">Download service will be restarted when the application is killed if it is running</string>
+    <string name="keep_download_service_summary_off">Download service will not be restarted when the application is killed if it is running</string>
 
     <string name="advanced_settings_title">Advanced</string>
     <string name="http_advanced_settings_title">HTTP</string>
