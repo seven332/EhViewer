@@ -190,9 +190,6 @@
     <string name="theme_color_title">Theme color</string>
     <string name="screen_display_settings_title">Screen</string>
     <string name="screen_orientation_title">Screen orientation</string>
-    <string name="read_display_settings_title">Read</string>
-    <string name="page_scaling_title">Page scaling</string>
-    <string name="start_position_title">Start position</string>
     <string name="list_display_settings_title">List</string>
     <string name="list_mode_title">List mode</string>
     <string name="list_thumb_columns">Number of List thumb columns</string>
@@ -222,6 +219,8 @@
     <string name="max_history_count_title">The maximum number of history records</string>
 
     <string name="read_settings_title">Reading</string>
+    <string name="page_scaling_title">Page scaling</string>
+    <string name="start_position_title">Start position</string>
     <string name="keep_screen_on_title">Keep screen when reading</string>
     <string name="gallery_show_clock_title">Show clock</string>
     <string name="gallery_show_battery_title">Show battery</string>

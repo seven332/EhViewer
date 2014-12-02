@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.gallery;
 
+import java.util.Arrays;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Movie;
@@ -61,25 +63,31 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
     private static final int STATE_NONE = 0x0;
 
     // scale mode
-    private static final int ORGIN = 0x0;
-    private static final int FIT_WIDTH = 0x1;
-    private static final int FIT_HEIGHT = 0x2;
-    private static final int FIT = 0x3;
-    private static final int FIXED = 0x4;
+    private static final int ORGIN = 0;
+    private static final int FIT_WIDTH = 1;
+    private static final int FIT_HEIGHT = 2;
+    private static final int FIT = 3;
+    private static final int FIXED = 4;
+
+    // Reading direction
+    private static final int DIRECTION_LEFT_RIGHT = 0;
+    private static final int DIRECTION_RIGHT_LEFT = 1;
+    private static final int DIRECTION_TOP_BOTTOM = 2;
+    private static final int DIRECTION_BOTTOM_TOP = 3;
 
     // start position mode
-    private static final int TOP_LEFT = 0x0;
-    private static final int TOP_RIGHT = 0x1;
-    private static final int BOTTOM_LEFT = 0x2;
-    private static final int BOTTOM_RIGHT = 0x3;
-    private static final int CENTER = 0x4;
+    private static final int TOP_LEFT = 0;
+    private static final int TOP_RIGHT = 1;
+    private static final int BOTTOM_LEFT = 2;
+    private static final int BOTTOM_RIGHT = 3;
+    private static final int CENTER = 4;
 
     // Scroll state
-    private static final int SCROLL_NONE = 0x0;
-    private static final int SCROLL_LEFT = 0x1;
-    private static final int SCROLL_RIGHT = 0x2;
-    private static final int SCROLL_ANIME_LEFT = 0x3;
-    private static final int SCROLL_ANIME_RIGHT = 0x4;
+    private static final int SCROLL_NONE = 0;
+    private static final int SCROLL_PRE = 1;
+    private static final int SCROLL_NEXT = 2;
+    private static final int SCROLL_ANIME_PRE = 3;
+    private static final int SCROLL_ANIME_NEXT = 4;
 
     private static final int PRE_TARGET_INDEX = 0;
     private static final int CUR_TARGET_INDEX = 1;
@@ -98,10 +106,8 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
     private static final float[] LIGHTNESS_SLIDING_AREA = {
         0.0f, 0.0f, 0.166f, 1.0f };
 
-
     private static final float MILLSEC_PER_DIX = 0.2f;
     private static final float CHANGE_PAGE_PROPORTION = 0.1f;
-    private static final float SLIDE_SENSITIVITY = 0;
     private static final float BORDER_TIP_SENSITIVITY = Ui.dp2pix(48);
 
     private static final int ANIMATE_MIN = 200;
@@ -125,19 +131,25 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
     private final ImageSet mImageSet;
     private int mState;
-    // scale and scroll only can choose one
-    private int scaleMode;
-    private int startMode;
+
+    private int mReadingDirection;
+    private int mPageScaling;
+    private int mStartPosition;
+
     private int mScrollState = SCROLL_NONE;
     private int scrollXOffset = 0;
     private int scrollYOffset = 0;
     private int stopScrollXOffset = 0;
-    @SuppressWarnings("unused")
     private int stopScrollYOffset = 0;
     private float mScale = 1;
 
     private int mScreenWidth = -1;
     private int mScreenHeight = -1;
+
+    private final int mSumOffsetXStore[];
+    private final int mSumOffsetYStore[];
+    private final int mToNextOffsetXStore[];
+    private final int mToNextOffsetYStore[];
 
     // at most keep three item
     private volatile ShowItem[] showItems;
@@ -163,11 +175,8 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
     private boolean mLightnessSliding = false;
 
-    private boolean mShowTapArea = false;
+    private final boolean mShowTapArea = false;
     private boolean mShowTapAreaTurn = false;
-
-    // private boolean mLocked = false;
-    // private boolean mLocked = false;
 
     private OnTapTextListener mOnTapTextListener;
     private GalleryViewListener mGalleryViewListener;
@@ -182,6 +191,8 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         public void onSlideBottom(float dx);
 
         public void onSlideBottomOver();
+
+        public void onRightToLeftChanged(boolean value);
     }
 
     public interface OnTapTextListener {
@@ -199,16 +210,36 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
     }
 
     @Override
+    public void onReadingDirectionChanged(int value) {
+        // TODO It is not safe when scroll
+        boolean oldIsRTL = isRightToLeft();
+        mReadingDirection = value;
+        boolean newIsRTL = isRightToLeft();
+        if (oldIsRTL != newIsRTL && mGalleryViewListener != null)
+            mGalleryViewListener.onRightToLeftChanged(newIsRTL);
+    }
+
+    @Override
     public void onPageScalingChanged(int value) {
-        scaleMode = value;
+        mPageScaling = value;
     }
 
     @Override
     public void onStartPositionChanged(int value) {
-        startMode = value;
+        mStartPosition = value;
     }
 
     public GalleryView(Context context, ImageSet imageSet, int startIndex) {
+
+        mSumOffsetXStore = new int[12];
+        mSumOffsetYStore = new int[12];
+        mToNextOffsetXStore = new int[4];
+        mToNextOffsetYStore = new int[4];
+        Arrays.fill(mSumOffsetXStore, 0, 12, 0);
+        Arrays.fill(mSumOffsetYStore, 0, 12, 0);
+        Arrays.fill(mToNextOffsetXStore, 0, 4, 0);
+        Arrays.fill(mToNextOffsetYStore, 0, 4, 0);
+
         mContext = context;
         mImageSet = imageSet;
         mCurIndex = startIndex;
@@ -226,8 +257,9 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                 .intColorToFloatARGBArray(BACKGROUND_COLOR));
 
         // Init config
-        scaleMode = Config.getPageScaling();
-        startMode = Config.getStartPosition();
+        mReadingDirection = Config.getReadingDirection();
+        mPageScaling = Config.getPageScaling();
+        mStartPosition = Config.getStartPosition();
         Config.setOnGallerySettingsChangedListener(this);
 
         mImageSet.setImageListener(this);
@@ -410,8 +442,8 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                 needRefresh |= true;
             break;
 
-        case SCROLL_LEFT:
-        case SCROLL_ANIME_LEFT:
+        case SCROLL_PRE:
+        case SCROLL_ANIME_PRE:
             item = showItems[PRE_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas, scrollXOffset, scrollYOffset);
@@ -429,8 +461,8 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                 needRefresh |= true;
             break;
 
-        case SCROLL_RIGHT:
-        case SCROLL_ANIME_RIGHT:
+        case SCROLL_NEXT:
+        case SCROLL_ANIME_NEXT:
             item = showItems[CUR_TARGET_INDEX];
             if (item != null)
                 item.draw(canvas, scrollXOffset, scrollYOffset);
@@ -449,10 +481,6 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             break;
         }
 
-        // Add mInit to make show the leftArea or other is not null
-        if (mShowTapArea && mInit)
-            drawTapArea(canvas);
-
         // TODO Mask to reduce brightness
 
         if (needRefresh)
@@ -465,26 +493,23 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         resetSizePosition(NEXT_TARGET_INDEX);
     }
 
-    private void resetSizePosition(int targeIndex) {
-        ShowItem showItem = showItems[targeIndex];
+    /**
+     * Reset target index show item position base on mReadingDirection
+     * or current next previous
+     *
+     * @param targetIndex
+     */
+    private void resetSizePosition(int targetIndex) {
+        ShowItem showItem = showItems[targetIndex];
         if (showItem == null)
             return;
 
-        int sumXOffset;
-        switch (targeIndex) {
-        case PRE_TARGET_INDEX:
-            sumXOffset = -mScreenWidth;
-            break;
-        case NEXT_TARGET_INDEX:
-            sumXOffset = mScreenWidth;
-            break;
-        case CUR_TARGET_INDEX:
-        default:
-            sumXOffset = 0;
-            break;
-        }
+        int index = mReadingDirection * TARGET_INDEX_SIZE + targetIndex;
+        int sumXOffset = mSumOffsetXStore[index];
+        int sumYOffset = mSumOffsetYStore[index];
 
         if (showItem instanceof Text) {
+            // Make text in center
             Text text = (Text) showItem;
             int xOffset;
             int yOffset;
@@ -492,7 +517,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             xOffset = (mScreenWidth - text.width) / 2;
             yOffset = (mScreenHeight - text.height) / 2;
             rect.left = sumXOffset + xOffset;
-            rect.top = yOffset;
+            rect.top = sumYOffset + yOffset;
             rect.right = rect.left + text.width;
             rect.bottom = rect.top + text.height;
         } else if (showItem instanceof BasicItem) {
@@ -502,7 +527,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             int showWidth = 0;
             int showHeight = 0;
             Rect rect = image.mRect;
-            switch (scaleMode) {
+            switch (mPageScaling) {
             case ORGIN:
                 image.imageScale = 1;
                 showWidth = image.width;
@@ -554,7 +579,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             // set start position
             int xOffset;
             int yOffset;
-            switch (startMode) {
+            switch (mStartPosition) {
             case TOP_LEFT:
                 xOffset = 0;
                 yOffset = 0;
@@ -580,7 +605,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
             rect.left = sumXOffset + xOffset;
             rect.right = rect.left + showWidth;
-            rect.top = yOffset;
+            rect.top = sumYOffset + yOffset;
             rect.bottom = rect.top + showHeight;
 
             // adjust position
@@ -657,6 +682,38 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         // Get View size
         mScreenWidth = right - left;
         mScreenHeight = bottom - top;
+
+        // Fill store
+        mSumOffsetXStore[0] = -mScreenWidth;
+        mSumOffsetXStore[1] = 0;
+        mSumOffsetXStore[2] = mScreenWidth;
+        mSumOffsetXStore[3] = mScreenWidth;
+        mSumOffsetXStore[4] = 0;
+        mSumOffsetXStore[5] = -mScreenWidth;
+        mSumOffsetXStore[6] = 0;
+        mSumOffsetXStore[7] = 0;
+        mSumOffsetXStore[8] = 0;
+        mSumOffsetXStore[9] = 0;
+        mSumOffsetXStore[10] = 0;
+        mSumOffsetXStore[11] = 0;
+
+        mSumOffsetYStore[0] = 0;
+        mSumOffsetYStore[1] = 0;
+        mSumOffsetYStore[2] = 0;
+        mSumOffsetYStore[3] = 0;
+        mSumOffsetYStore[4] = 0;
+        mSumOffsetYStore[5] = 0;
+        mSumOffsetYStore[6] = -mScreenHeight;
+        mSumOffsetYStore[7] = 0;
+        mSumOffsetYStore[8] = mScreenHeight;
+        mSumOffsetYStore[9] = mScreenHeight;
+        mSumOffsetYStore[10] = 0;
+        mSumOffsetYStore[11] = -mScreenHeight;
+
+        mToNextOffsetXStore[DIRECTION_LEFT_RIGHT] = mScreenWidth;
+        mToNextOffsetXStore[DIRECTION_RIGHT_LEFT] = -mScreenWidth;
+        mToNextOffsetYStore[DIRECTION_TOP_BOTTOM] = mScreenHeight;
+        mToNextOffsetYStore[DIRECTION_BOTTOM_TOP] = -mScreenHeight;
 
         if (!mInit) {
             mInit = true;
@@ -793,13 +850,11 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
         // adjust rect
         showItem = showItems[NEXT_TARGET_INDEX];
-        if (showItem != null) {
-            showItem.mRect.offset(mScreenWidth, 0);
-        }
+        if (showItem != null)
+            showItem.mRect.offset(mToNextOffsetXStore[mReadingDirection], mToNextOffsetYStore[mReadingDirection]);
         showItem = showItems[CUR_TARGET_INDEX];
-        if (showItem != null) {
-            showItem.mRect.offset(mScreenWidth, 0);
-        }
+        if (showItem != null)
+            showItem.mRect.offset(mToNextOffsetXStore[mReadingDirection], mToNextOffsetYStore[mReadingDirection]);
 
         mCurIndex--;
         setState();
@@ -833,13 +888,11 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         showItems[NEXT_TARGET_INDEX] = null;
         // adjust rect
         showItem = showItems[PRE_TARGET_INDEX];
-        if (showItem != null) {
-            showItem.mRect.offset(-mScreenWidth, 0);
-        }
+        if (showItem != null)
+            showItem.mRect.offset(-mToNextOffsetXStore[mReadingDirection], -mToNextOffsetYStore[mReadingDirection]);
         showItem = showItems[CUR_TARGET_INDEX];
-        if (showItem != null) {
-            showItem.mRect.offset(-mScreenWidth, 0);
-        }
+        if (showItem != null)
+            showItem.mRect.offset(-mToNextOffsetXStore[mReadingDirection], -mToNextOffsetYStore[mReadingDirection]);
 
         mCurIndex++;
         setState();
@@ -918,6 +971,13 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         return true;
     }
 
+    public boolean isRightToLeft() {
+        if (mReadingDirection == DIRECTION_RIGHT_LEFT || mReadingDirection == DIRECTION_BOTTOM_TOP)
+            return true;
+        else
+            return false;
+    }
+
     private class MyGestureListener implements GestureRecognizer.Listener {
 
         private boolean isScale = false;
@@ -926,11 +986,13 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         private final TimeRunner mToPreTimeRunner = new TimeRunner() {
             @Override
             protected void onStart() {
+                // Empty
             }
 
             @Override
             protected void onRun(float interpolatedTime, int runningTime) {
-                scrollXOffset = (int) (stopScrollXOffset + ((mScreenWidth - stopScrollXOffset) * interpolatedTime));
+                scrollXOffset = (int) (stopScrollXOffset + ((mToNextOffsetXStore[mReadingDirection] - stopScrollXOffset) * interpolatedTime));
+                scrollYOffset = (int) (stopScrollYOffset + ((mToNextOffsetYStore[mReadingDirection] - stopScrollYOffset) * interpolatedTime));
                 invalidate();
             }
 
@@ -945,23 +1007,27 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                 }
 
                 scrollXOffset = 0;
+                scrollYOffset = 0;
                 goToPrePage();
                 mScrollState = SCROLL_NONE;
             }
 
             @Override
             protected void onCancel() {
+                // Empty
             }
         };
 
         private final TimeRunner mToNextTimeRunner = new TimeRunner() {
             @Override
             protected void onStart() {
+                // Empty
             }
 
             @Override
             protected void onRun(float interpolatedTime, int runningTime) {
-                scrollXOffset = (int) (stopScrollXOffset + ((-mScreenWidth - stopScrollXOffset) * interpolatedTime));
+                scrollXOffset = (int) (stopScrollXOffset + ((-mToNextOffsetXStore[mReadingDirection] - stopScrollXOffset) * interpolatedTime));
+                scrollYOffset = (int) (stopScrollYOffset + ((-mToNextOffsetYStore[mReadingDirection] - stopScrollYOffset) * interpolatedTime));
                 invalidate();
             }
 
@@ -976,23 +1042,27 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                 }
 
                 scrollXOffset = 0;
+                scrollYOffset = 0;
                 goToNextPage();
                 mScrollState = SCROLL_NONE;
             }
 
             @Override
             protected void onCancel() {
+                // Empty
             }
         };
 
         private final TimeRunner mReturnTimeRunner = new TimeRunner() {
             @Override
             protected void onStart() {
+                // Empty
             }
 
             @Override
             protected void onRun(float interpolatedTime, int runningTime) {
                 scrollXOffset = (int) ((1 - interpolatedTime) * stopScrollXOffset);
+                scrollYOffset = (int) ((1 - interpolatedTime) * stopScrollYOffset);
                 invalidate();
             }
 
@@ -1007,12 +1077,14 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                 }
 
                 scrollXOffset = 0;
+                scrollYOffset = 0;
                 mScrollState = SCROLL_NONE;
                 invalidate();
             }
 
             @Override
             protected void onCancel() {
+                // Empty
             }
         };
 
@@ -1126,6 +1198,25 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             mDoubleTapRunner.setInterpolator(new ZInterpolator(0.5f));
         }
 
+        private void onTapPre() {
+            // TODO goto bottom first the to pre page
+            resetSizePosition(PRE_TARGET_INDEX);
+            if (!goToPrePage()) {
+                // Get to first page
+                MaterialToast.showToast(mContext.getString(R.string.first_page));
+            }
+        }
+
+        private void onTapNext() {
+            // TODO goto bottom first the to pre page
+            resetSizePosition(NEXT_TARGET_INDEX);
+            if (!goToNextPage()) {
+                // Get to last page
+                MaterialToast.showToast(mContext.getString(isEnsureSize ?
+                        R.string.the_last_page : R.string.wait_for_more));
+            }
+        }
+
         @Override
         public boolean onSingleTapConfirmed(float x, float y) {
             if (mScrollState != SCROLL_NONE) {
@@ -1150,33 +1241,27 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                 return true;
 
             if (Utils.isInArea(leftArea, (int) x, (int) y)) {
-                // TODO goto bottom first the to pre page
-                resetSizePosition(PRE_TARGET_INDEX);
-                if (!goToPrePage()) {
-                    // Get to first page
-                    MaterialToast.showToast(mContext
-                            .getString(R.string.first_page));
-                }
+                if (isRightToLeft())
+                    onTapNext();
+                else
+                    onTapPre();
+
             } else if (Utils.isInArea(topArea, (int) x, (int) y)) {
                 zoom(true);
+
             } else if (Utils.isInArea(rightArea, (int) x, (int) y)) {
-                // TODO goto bottom first the to pre page
-                resetSizePosition(NEXT_TARGET_INDEX);
-                if (!goToNextPage()) {
-                    // Get to last page
-                    MaterialToast.showToast(mContext
-                            .getString(isEnsureSize ? R.string.the_last_page
-                                    : R.string.wait_for_more));
-                }
+                if (isRightToLeft())
+                    onTapPre();
+                else
+                    onTapNext();
+
             } else if (Utils.isInArea(bottomArea, (int) x, (int) y)) {
                 zoom(false);
+
             } else if (Utils.isInArea(centerArea, (int) x, (int) y)) {
                 if (mGalleryViewListener != null)
                     mGalleryViewListener.onTapCenter();
 
-                // mShowTapArea = true;
-                // mShowTapAreaTurn = true;
-                // invalidate();
             } else {
                 // Can't catch tap
             }
@@ -1220,6 +1305,52 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         }
 
         /**
+         * SCROLL_NONE, SCROLL_PRE or SCROLL_NEXT
+         *
+         * @param showItem
+         * @param dx
+         * @param dy
+         * @param totalX
+         * @param totalY
+         * @return
+         */
+        private int getScrollState(ShowItem showItem, float dx, float dy, float totalX, float totalY) {
+            Rect rect = showItem.mRect;
+            boolean needCheckBound = showItem instanceof BasicItem;
+
+            switch (mReadingDirection) {
+            case DIRECTION_LEFT_RIGHT:
+            case DIRECTION_RIGHT_LEFT:
+                if (Math.abs(totalX / totalY) > 1) {
+                    if (dx < 0 && (rect.left >= 0 || !needCheckBound))
+                        return mReadingDirection == DIRECTION_LEFT_RIGHT ? SCROLL_PRE : SCROLL_NEXT;
+                    else if (dx > 0 && (rect.right <= mScreenWidth || !needCheckBound))
+                        return mReadingDirection == DIRECTION_LEFT_RIGHT ? SCROLL_NEXT : SCROLL_PRE;
+                    else
+                        return SCROLL_NONE;
+                } else {
+                    return SCROLL_NONE;
+                }
+
+            case DIRECTION_TOP_BOTTOM:
+            case DIRECTION_BOTTOM_TOP:
+                if (Math.abs(totalY / totalX) > 1) {
+                    if (dy < 0 && (rect.top >= 0 || !needCheckBound))
+                        return mReadingDirection == DIRECTION_TOP_BOTTOM ? SCROLL_PRE : SCROLL_NEXT;
+                    else if (dy > 0 && (rect.bottom <= mScreenHeight || !needCheckBound))
+                        return mReadingDirection == DIRECTION_TOP_BOTTOM ? SCROLL_NEXT : SCROLL_PRE;
+                    else
+                        return SCROLL_NONE;
+                } else {
+                    return SCROLL_NONE;
+                }
+
+            default:
+                return SCROLL_NONE;
+            }
+        }
+
+        /**
          * dx 和 totalX 符号相反，为啥
          */
         @Override
@@ -1246,8 +1377,8 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             float totalY = e2.getY() - e1.getY();
 
             switch (mScrollState) {
-            case SCROLL_ANIME_LEFT:
-            case SCROLL_ANIME_RIGHT:
+            case SCROLL_ANIME_PRE:
+            case SCROLL_ANIME_NEXT:
                 return false;
             case SCROLL_NONE:
                 // Stop animated image
@@ -1258,42 +1389,32 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                         ((ImageItem) showItem).stop();
                 }
 
-                // If it is true, page will move
-                boolean movePage = false;
                 Rect rect = curShowItem.mRect;
+                mScrollState = getScrollState(curShowItem, dx, dy, totalX, totalY);
 
-                // If show item is null or TextItem, just move
-                // Check finger move left or right
-                // Check min sensitivity
-                if (curShowItem == null
-                        || !(curShowItem instanceof BasicItem)
-                        || (Math.abs(totalX / totalY) > 1 && ((totalX > SLIDE_SENSITIVITY
-                                && dx < 0 && rect.left >= 0) || (totalX < -SLIDE_SENSITIVITY
-                                && dx > 0 && rect.right <= mScreenWidth)))) {
-                    movePage = true;
-                }
-                if (movePage) { // If change page
-                    if (dx < 0) { // Go to left
-                        if (!isFirstPage()) { // Not first page
-                            scrollXOffset = 0;
-                            mScrollState = SCROLL_LEFT;
-                            // Prepare previous show item
-                            resetSizePosition(PRE_TARGET_INDEX);
-                        } else {
-                            movePage = false;
-                        }
-                    } else { // Go to righ
-                        if (!isLastPage()) { // Not last page
-                            scrollXOffset = 0;
-                            mScrollState = SCROLL_RIGHT;
-                            // Prepare next show item
-                            resetSizePosition(NEXT_TARGET_INDEX);
-                        } else {
-                            movePage = false;
-                        }
+                switch (mScrollState) {
+                case SCROLL_PRE:
+                    if (isFirstPage()) {
+                        mScrollState = SCROLL_NONE;
+                    } else {
+                        scrollXOffset = 0;
+                        scrollYOffset = 0;
+                        // Prepare previous show item
+                        resetSizePosition(PRE_TARGET_INDEX);
                     }
+                    break;
+                case SCROLL_NEXT:
+                    if (isLastPage()) {
+                        mScrollState = SCROLL_NONE;
+                    } else {
+                        scrollXOffset = 0;
+                        scrollYOffset = 0;
+                        // Prepare next show item
+                        resetSizePosition(NEXT_TARGET_INDEX);
+                    }
+                    break;
                 }
-                if (!movePage) { // Move cur image
+                if (mScrollState == SCROLL_NONE) {
                     int actDx = -(int) dx;
                     int actDy = -(int) dy;
                     if (rect.width() <= mScreenWidth)
@@ -1307,24 +1428,103 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                 }
                 break;
 
-            case SCROLL_LEFT:
-                scrollXOffset -= dx;
-                if (scrollXOffset <= 0) {
-                    scrollXOffset = 0;
-                    mScrollState = SCROLL_NONE;
-                }
-                break;
-
-            case SCROLL_RIGHT:
-                scrollXOffset -= dx;
-                if (scrollXOffset >= 0) {
-                    scrollXOffset = 0;
-                    mScrollState = SCROLL_NONE;
+            case SCROLL_PRE:
+            case SCROLL_NEXT:
+                if ((mScrollState == SCROLL_PRE && mReadingDirection == DIRECTION_LEFT_RIGHT) ||
+                        (mScrollState == SCROLL_NEXT && mReadingDirection == DIRECTION_RIGHT_LEFT)) {
+                    scrollXOffset -= dx;
+                    if (scrollXOffset <= 0) {
+                        scrollXOffset = 0;
+                        mScrollState = SCROLL_NONE;
+                    }
+                } else if ((mScrollState == SCROLL_NEXT && mReadingDirection == DIRECTION_LEFT_RIGHT) ||
+                        (mScrollState == SCROLL_PRE && mReadingDirection == DIRECTION_RIGHT_LEFT)) {
+                    scrollXOffset -= dx;
+                    if (scrollXOffset >= 0) {
+                        scrollXOffset = 0;
+                        mScrollState = SCROLL_NONE;
+                    }
+                } else if ((mScrollState == SCROLL_PRE && mReadingDirection == DIRECTION_TOP_BOTTOM) ||
+                        (mScrollState == SCROLL_NEXT && mReadingDirection == DIRECTION_BOTTOM_TOP)) {
+                    scrollYOffset -= dy;
+                    if (scrollYOffset <= 0) {
+                        scrollYOffset = 0;
+                        mScrollState = SCROLL_NONE;
+                    }
+                } else if ((mScrollState == SCROLL_NEXT && mReadingDirection == DIRECTION_TOP_BOTTOM) ||
+                        (mScrollState == SCROLL_PRE && mReadingDirection == DIRECTION_BOTTOM_TOP)) {
+                    scrollYOffset -= dy;
+                    if (scrollYOffset >= 0) {
+                        scrollYOffset = 0;
+                        mScrollState = SCROLL_NONE;
+                    }
                 }
                 break;
             }
 
             invalidate();
+            return true;
+        }
+
+        private boolean atPreEdge() {
+            ShowItem showItem = showItems[CUR_TARGET_INDEX];
+            if (showItem == null)
+                return true;
+
+            Rect rect = showItem.mRect;
+            switch (mReadingDirection) {
+            case DIRECTION_LEFT_RIGHT:
+                if (rect.left >= 0)
+                    return true;
+                else
+                    return false;
+            case DIRECTION_RIGHT_LEFT:
+                if (rect.right <= mScreenWidth)
+                    return true;
+                else
+                    return false;
+            case DIRECTION_TOP_BOTTOM:
+                if (rect.top >= 0)
+                    return true;
+                else
+                    return false;
+            case DIRECTION_BOTTOM_TOP:
+                if (rect.bottom <= mScreenHeight)
+                    return true;
+                else
+                    return false;
+            }
+            return true;
+        }
+
+        private boolean atNextEdge() {
+            ShowItem showItem = showItems[CUR_TARGET_INDEX];
+            if (showItem == null)
+                return true;
+
+            Rect rect = showItem.mRect;
+            switch (mReadingDirection) {
+            case DIRECTION_LEFT_RIGHT:
+                if (rect.right <= mScreenWidth)
+                    return true;
+                else
+                    return false;
+            case DIRECTION_RIGHT_LEFT:
+                if (rect.left >= 0)
+                    return true;
+                else
+                    return false;
+            case DIRECTION_TOP_BOTTOM:
+                if (rect.bottom <= mScreenHeight)
+                    return true;
+                else
+                    return false;
+            case DIRECTION_BOTTOM_TOP:
+                if (rect.top >= 0)
+                    return true;
+                else
+                    return false;
+            }
             return true;
         }
 
@@ -1341,53 +1541,34 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                 return true;
             }
 
+            boolean isHorizon = mReadingDirection == DIRECTION_TOP_BOTTOM || mReadingDirection == DIRECTION_BOTTOM_TOP;
             switch (mScrollState) {
-            case SCROLL_ANIME_LEFT:
-            case SCROLL_ANIME_RIGHT:
+            case SCROLL_ANIME_PRE:
+            case SCROLL_ANIME_NEXT:
                 return false;
 
-            case SCROLL_LEFT:
+            case SCROLL_PRE:
+            case SCROLL_NEXT:
                 stopScrollXOffset = scrollXOffset;
                 stopScrollYOffset = scrollYOffset;
+                mScrollState = mScrollState == SCROLL_PRE ? SCROLL_ANIME_PRE : SCROLL_ANIME_NEXT;
+                int absStopScrollXOffset = Math.abs(stopScrollXOffset);
+                int absStopScrollYOffset = Math.abs(stopScrollYOffset);
 
-                mScrollState = SCROLL_ANIME_LEFT;
-                if (stopScrollXOffset > mScreenWidth * CHANGE_PAGE_PROPORTION) { // Go
-                                                                                 // to
-                                                                                 // pre
-                                                                                 // page
-                    mToPreTimeRunner
-                            .setDuration(Math
-                                    .max((int) (MILLSEC_PER_DIX * (mScreenWidth - stopScrollXOffset)),
-                                            ANIMATE_MIN));
-                    mToPreTimeRunner.start();
+                if (Math.abs(stopScrollXOffset) > mScreenWidth * CHANGE_PAGE_PROPORTION ||
+                        Math.abs(stopScrollYOffset) > mScreenHeight * CHANGE_PAGE_PROPORTION) {
+                    TimeRunner runner = mScrollState == SCROLL_ANIME_PRE ? mToPreTimeRunner : mToNextTimeRunner;
+                    if (isHorizon)
+                        runner.setDuration(Math.max((int) (MILLSEC_PER_DIX * (mScreenHeight - absStopScrollYOffset)), ANIMATE_MIN));
+                    else
+                        runner.setDuration(Math.max((int) (MILLSEC_PER_DIX * (mScreenWidth - absStopScrollXOffset)), ANIMATE_MIN));
+                    runner.start();
                 } else {
-                    mReturnTimeRunner.setDuration(Math.max(
-                            (int) (MILLSEC_PER_DIX * stopScrollXOffset),
-                            ANIMATE_MIN));
+                    mReturnTimeRunner.setDuration(Math.max((int) (MILLSEC_PER_DIX * (isHorizon ? absStopScrollYOffset : absStopScrollXOffset)), ANIMATE_MIN));
                     mReturnTimeRunner.start();
                 }
                 break;
-            case SCROLL_RIGHT:
-                stopScrollXOffset = scrollXOffset;
-                stopScrollYOffset = scrollYOffset;
 
-                mScrollState = SCROLL_ANIME_RIGHT;
-                if (-stopScrollXOffset > mScreenWidth * CHANGE_PAGE_PROPORTION) { // Go
-                                                                                  // to
-                                                                                  // next
-                                                                                  // page
-                    mToNextTimeRunner
-                            .setDuration(Math
-                                    .max((int) (MILLSEC_PER_DIX * (mScreenWidth + stopScrollXOffset)),
-                                            ANIMATE_MIN));
-                    mToNextTimeRunner.start();
-                } else {
-                    mReturnTimeRunner.setDuration(Math.max(
-                            (int) (MILLSEC_PER_DIX * (-stopScrollXOffset)),
-                            ANIMATE_MIN));
-                    mReturnTimeRunner.start();
-                }
-                break;
             case SCROLL_NONE:
                 // Start animated image
                 ShowItem showItem;
@@ -1398,17 +1579,11 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                 }
 
                 showItem = showItems[CUR_TARGET_INDEX];
-                if (showItem != null
-                        && Math.abs(totalX) - BORDER_TIP_SENSITIVITY > 0) {
-                    if (isFirstPage() && showItem.mRect.left >= 0)
-                        MaterialToast.showToast(mContext
-                                .getString(R.string.first_page));
-                    else if (isLastPage()
-                            && showItem.mRect.right <= mScreenWidth)
-                        MaterialToast
-                                .showToast(mContext
-                                        .getString(isEnsureSize ? R.string.the_last_page
-                                                : R.string.wait_for_more));
+                if (isHorizon ? Math.abs(totalY) - BORDER_TIP_SENSITIVITY > 0 : Math.abs(totalX) - BORDER_TIP_SENSITIVITY > 0) {
+                    if (isFirstPage() && atPreEdge())
+                        MaterialToast.showToast(mContext.getString(R.string.first_page));
+                    else if (isLastPage() && atNextEdge())
+                        MaterialToast.showToast(mContext.getString(isEnsureSize ? R.string.the_last_page : R.string.wait_for_more));
                 }
             }
             return true;
@@ -1434,11 +1609,11 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             if (mDoubleTapAnimating)
                 return false;
 
-            if (mScrollState == SCROLL_ANIME_LEFT
-                    || mScrollState == SCROLL_ANIME_RIGHT)
+            if (mScrollState == SCROLL_ANIME_PRE
+                    || mScrollState == SCROLL_ANIME_NEXT)
                 return true;
 
-            if (mScrollState == SCROLL_LEFT || mScrollState == SCROLL_RIGHT) {
+            if (mScrollState == SCROLL_PRE || mScrollState == SCROLL_NEXT) {
                 scrollXOffset = 0;
                 scrollYOffset = 0;
                 mScrollState = SCROLL_NONE;
@@ -1482,46 +1657,34 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
         @Override
         public void onDown(float x, float y) {
-            mShowTapArea = false;
-            invalidate();
+            // Empty
         }
 
         @Override
         public void onUp() {
-
-            // if use onSingleTapUp, use below
-            /*
-             * if (mShowTapAreaTurn) { mShowTapAreaTurn = false;
-             */
+            // Empty
         }
     }
 
     /**
+     *
      * If side is shorter then parent's, make it in parent's center If side is
      * longer then parent's, make sure it fill parent
      *
      * @param showItem
      */
     private void adjustPosition(ShowItem showItem) {
+        int targetIndex = getTargetIndex(showItem);
+        if (targetIndex == INVALID_ID)
+            return;
+
         Rect rect = showItem.mRect;
         int showWidth = rect.width();
         int showHeight = rect.height();
 
-        int sumXOffset;
-        int sumYOffset = 0;
-
-        int targetIndex = getTargetIndex(showItem);
-        switch (targetIndex) {
-        case PRE_TARGET_INDEX:
-            sumXOffset = -mScreenWidth;
-            break;
-        case NEXT_TARGET_INDEX:
-            sumXOffset = mScreenWidth;
-            break;
-        case CUR_TARGET_INDEX:
-        default:
-            sumXOffset = 0;
-        }
+        int index = mReadingDirection * TARGET_INDEX_SIZE + targetIndex;
+        int sumXOffset = mSumOffsetXStore[index];
+        int sumYOffset = mSumOffsetYStore[index];
 
         if (showWidth > mScreenWidth) {
             int fixXOffset = rect.left - sumXOffset;
@@ -1596,37 +1759,22 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             if (mTexture == null)
                 return;
 
-            int targetIndex;
-            if ((targetIndex = getTargetIndex(this)) == INVALID_ID)
+            if (getTargetIndex(this) == INVALID_ID)
                 mTexture.draw(canvas, mRect.left + xOffset,
                         mRect.top + yOffset, mRect.width(), mRect.height());
             else {
-                int leftBound = mScreenWidth;
+                int leftBound = 0;
                 int topBound = 0;
-                int rightBound = 2 * mScreenWidth;
+                int rightBound = mScreenWidth;
                 int bottomBound = mScreenHeight;
 
-                switch (targetIndex) {
-                case PRE_TARGET_INDEX:
-                    leftBound = -leftBound;
-                    rightBound = 0;
-                    break;
-                case CUR_TARGET_INDEX:
-                    rightBound = leftBound;
-                    leftBound = 0;
-                    break;
-                case NEXT_TARGET_INDEX:
-                default:
-                    break;
-                }
-
-                int left = mRect.left;
-                int top = mRect.top;
-                int right = mRect.right;
-                int bottom = mRect.bottom;
+                int left = mRect.left + xOffset;
+                int top = mRect.top + yOffset;
+                int right = mRect.right + xOffset;
+                int bottom = mRect.bottom + yOffset;
 
                 // Only show what in the own box
-                // TODO only what can be seen
+                // Only what can be seen
                 if (left < leftBound || top < topBound || right > rightBound
                         || bottom > bottomBound) {
 
@@ -1646,30 +1794,22 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                     }
                     if (right > rightBound) {
                         target.right = rightBound;
-                        source.right = width
-                                - ((right - rightBound) / imageScale);
+                        source.right = width - ((right - rightBound) / imageScale);
                     } else {
                         target.right = right;
                         source.right = width;
                     }
                     if (bottom > bottomBound) {
                         target.bottom = bottomBound;
-                        source.bottom = height
-                                - ((bottom - bottomBound) / imageScale);
+                        source.bottom = height - ((bottom - bottomBound) / imageScale);
                     } else {
                         target.bottom = bottom;
                         source.bottom = height;
                     }
 
-                    target.left += xOffset;
-                    target.top += yOffset;
-                    target.right += xOffset;
-                    target.bottom += yOffset;
-
                     mTexture.draw(canvas, source, target);
                 } else {
-                    mTexture.draw(canvas, left + xOffset, top + yOffset, right
-                            - left, bottom - top);
+                    mTexture.draw(canvas, left, top, right - left, bottom - top);
                 }
             }
         }

@@ -44,38 +44,6 @@
         <item>@string/gallery_of_he</item>
     </string-array>
 
-    <string-array name="page_scaling_entries">
-        <item>@string/actual_size</item>
-        <item>@string/fit_to_width</item>
-        <item>@string/fit_to_height</item>
-        <item>@string/fit_to_screen</item>
-        <item>@string/fixed_scale</item>
-    </string-array>
-
-    <string-array name="page_scaling_entry_values" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
-
-    <string-array name="start_position_entries">
-        <item>@string/top_left</item>
-        <item>@string/top_right</item>
-        <item>@string/bottom_left</item>
-        <item>@string/bottom_right</item>
-        <item>@string/center</item>
-    </string-array>
-
-    <string-array name="start_position_values" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
-
     <string-array name="list_item_long_click">
         <item>@string/add_to_favourite</item>
         <item>@string/download</item>
@@ -147,6 +115,52 @@
     <string-array name="preview_mode_entry_values" translatable="false">
         <item>m</item>
         <item>l</item>
+    </string-array>
+
+    <string-array name="reading_direction_entries">
+        <item>@string/left_to_right</item>
+        <item>@string/right_to_Left</item>
+        <item>@string/top_to_bottom</item>
+        <item>@string/bottom_to_top</item>
+    </string-array>
+
+    <string-array name="reading_direction_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="page_scaling_entries">
+        <item>@string/actual_size</item>
+        <item>@string/fit_to_width</item>
+        <item>@string/fit_to_height</item>
+        <item>@string/fit_to_screen</item>
+        <item>@string/fixed_scale</item>
+    </string-array>
+
+    <string-array name="page_scaling_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="start_position_entries">
+        <item>@string/top_left</item>
+        <item>@string/top_right</item>
+        <item>@string/bottom_left</item>
+        <item>@string/bottom_right</item>
+        <item>@string/center</item>
+    </string-array>
+
+    <string-array name="start_position_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
     </string-array>
 
     <string-array name="decode_format_entries">

@@ -186,7 +186,6 @@
     <string name="theme_color_title">主题颜色</string>
     <string name="screen_display_settings_title">屏幕</string>
     <string name="screen_orientation_title">屏幕方向</string>
-    <string name="read_display_settings_title">阅读</string>
     <string name="list_display_settings_title">列表</string>
     <string name="list_mode_title">列表模式</string>
     <string name="list_thumb_columns">列表缩略图列数</string>
@@ -216,6 +215,11 @@
     <string name="max_history_count_title">最大历史记录条数</string>
 
     <string name="read_settings_title">阅读</string>
+    <string name="reading_direction_title">开页方向</string>
+    <string name="left_to_right">从左至右</string>
+    <string name="right_to_Left">从右至左</string>
+    <string name="top_to_bottom">从上至下</string>
+    <string name="bottom_to_top">从下至上</string>
     <string name="page_scaling_title">页面缩放</string>
     <string name="start_position_title">开页位置</string>
     <string name="keep_screen_on_title">阅读时屏幕常亮</string>

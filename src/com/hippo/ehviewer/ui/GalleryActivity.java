@@ -16,10 +16,12 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -97,6 +99,7 @@ public class GalleryActivity extends AbsActivity
                 .setDrakTheme(true).setTitle(R.string.preference_settings_title)
                 .setView(R.layout.read_config, true, viewHolder);
         View view = viewHolder.getView();
+        final Spinner readingDirection = (Spinner) view.findViewById(R.id.reading_direction);
         final Spinner pageScaling = (Spinner) view.findViewById(R.id.page_scaling);
         final Spinner startPosition = (Spinner) view.findViewById(R.id.start_position);
         final CheckBox keepScreenOn = (CheckBox) view.findViewById(R.id.keep_screen_on);
@@ -105,6 +108,7 @@ public class GalleryActivity extends AbsActivity
         final CheckBox customCodec = (CheckBox) view.findViewById(R.id.custom_codec);
         final Spinner decodeFormat = (Spinner) view.findViewById(R.id.decode_format);
 
+        readingDirection.setSelection(Config.getReadingDirection());
         pageScaling.setSelection(Config.getPageScaling());
         startPosition.setSelection(Config.getStartPosition());
         keepScreenOn.setChecked(Config.getKeepSreenOn());
@@ -126,6 +130,7 @@ public class GalleryActivity extends AbsActivity
                             startActivity(intent);
                             return false;
                         case MaterialAlertDialog.POSITIVE:
+                            Config.setReadingDirection(readingDirection.getSelectedItemPosition());
                             Config.setPageScaling(pageScaling.getSelectedItemPosition());
                             Config.setStartPosition(startPosition.getSelectedItemPosition());
                             boolean isShowClock = showClock.isChecked();
@@ -139,6 +144,7 @@ public class GalleryActivity extends AbsActivity
                             mGalleryView.requestLayout();
                             return true;
                         case MaterialAlertDialog.NEGATIVE:
+                            readingDirection.setSelection(Config.getReadingDirection());
                             pageScaling.setSelection(Config.getPageScaling());
                             startPosition.setSelection(Config.getStartPosition());
                             keepScreenOn.setChecked(Config.getKeepSreenOn());
@@ -283,6 +289,7 @@ public class GalleryActivity extends AbsActivity
             updateTitle();
             mPageSeeker.setMax(mGalleryView.getSize() - 1);
             mPageSeeker.setProgress(startIndex);
+            onRightToLeftChanged(mGalleryView.isRightToLeft());
 
             // Show first tip
             String keyGalleryFirst = "gallery_first";
@@ -383,6 +390,17 @@ public class GalleryActivity extends AbsActivity
         Config.setFloat(KEY_LIGHTNESS, mLightness);
     }
 
+    @Override
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public void onRightToLeftChanged(boolean value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            int nevLd = value ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR;
+            if (mPageSeeker.getLayoutDirection() != nevLd) {
+                mPageSeeker.setLayoutDirection(nevLd);
+            }
+        }
+    }
+
     private void showSeekBubble() {
         mSeekerBubble.setVisibility(View.VISIBLE);
     }
@@ -391,14 +409,23 @@ public class GalleryActivity extends AbsActivity
         mSeekerBubble.setVisibility(View.GONE);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void updateSeekBubble(int progress, int max, int thumbOffset) {
         if (max == 0)
             // Avoid divide by zero
             return;
 
+        int offsetX;
+        int width = getWindow().getDecorView().getWidth();
         thumbOffset = thumbOffset + Ui.dp2pix(12);
-        int x = (getWindow().getDecorView().getWidth() - 2 * thumbOffset) * progress / max + thumbOffset;
-        mSeekerBubble.setX(x);
+        int totalOffsetX = (width - 2 * thumbOffset) * progress / max;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
+                mPageSeeker.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL)
+            offsetX = width - thumbOffset - totalOffsetX;
+        else
+            offsetX = totalOffsetX / max + thumbOffset;
+
+        mSeekerBubble.setX(offsetX);
         mSeekerBubble.setText(String.valueOf(progress + 1));
     }
 

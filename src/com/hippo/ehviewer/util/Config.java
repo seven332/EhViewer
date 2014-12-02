@@ -50,6 +50,8 @@ public final class Config {
         public void onPageScalingChanged(int value);
 
         public void onStartPositionChanged(int value);
+
+        public void onReadingDirectionChanged(int value);
     }
 
     /**
@@ -312,6 +314,9 @@ public final class Config {
 
     /****** Read ******/
 
+    private static final String KEY_READING_DIRECTION = "reading_direction";
+    private static final int DEFAULT_READING_DIRECTION = 0;
+
     private static final String KEY_PAGE_SCALING = "page_scaling";
     private static final int DEFAULT_PAGE_SCALING = 3;
 
@@ -331,6 +336,17 @@ public final class Config {
 
     private static final String KEY_DECODE_FORMAT = "decode_format";
     private static final int DEFAULT_DECODE_FORMAT = 0;
+
+    public static int getReadingDirection() {
+        return getIntFromStr(KEY_READING_DIRECTION, DEFAULT_READING_DIRECTION);
+    }
+
+    public static void setReadingDirection(int value) {
+        setIntToStr(KEY_READING_DIRECTION, value);
+
+        if (mOnGallerySettingsChangedListener != null)
+            mOnGallerySettingsChangedListener.onReadingDirectionChanged(value);
+    }
 
     public static int getPageScaling() {
         return getIntFromStr(KEY_PAGE_SCALING, DEFAULT_PAGE_SCALING);

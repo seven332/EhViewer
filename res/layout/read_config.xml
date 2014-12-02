@@ -32,6 +32,29 @@
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
+            android:text="@string/reading_direction_title" />
+
+        <Spinner
+            android:id="@+id/reading_direction"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_weight="2"
+            android:layout_gravity="center_vertical"
+            android:entries="@array/reading_direction_entries" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:text="@string/page_scaling_title" />
 
         <Spinner

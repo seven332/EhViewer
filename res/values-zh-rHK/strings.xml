@@ -174,7 +174,6 @@
     <string name="theme_color_title">主題顏色</string>
     <string name="screen_display_settings_title">屏幕</string>
     <string name="screen_orientation_title">屏幕方向</string>
-    <string name="read_display_settings_title">閱讀</string>
     <string name="list_display_settings_title">列表</string>
     <string name="list_mode_title">列表模式</string>
     <string name="list_thumb_columns">列表縮略圖列數</string>
