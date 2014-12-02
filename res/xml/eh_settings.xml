@@ -50,7 +50,6 @@
             android:entries="@array/preview_mode_entries"
             android:entryValues="@array/preview_mode_entry_values"
             android:key="preview_mode"
-            android:summary="%s"
             android:title="@string/preview_mode_title" />
 
     </PreferenceCategory>
@@ -61,8 +60,7 @@
             android:key="default_favorite"
             android:title="@string/default_favorite"
             android:entryValues="@array/default_favorite_entry_values"
-            android:defaultValue="-2"
-            android:summary="%s" />
+            android:defaultValue="-2" />
 
     </PreferenceCategory>
 

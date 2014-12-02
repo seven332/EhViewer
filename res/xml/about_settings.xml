@@ -64,7 +64,6 @@
             android:entryValues="@array/update_server_entry_values"
             android:key="update_server"
             android:title="@string/update_server_title"
-            android:summary="%s"
             android:defaultValue="1" />
 
         <Preference
