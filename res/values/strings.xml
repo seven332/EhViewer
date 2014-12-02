@@ -64,6 +64,7 @@
     <!-- Send Crash -->
     <string name="dialog_send_crash_title">It is important</string>
     <string name="dialog_send_crash_plain">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ? (via e-mail)</string>
+    <string name="add_description">You may add some description about the crash below.</string>
     <string name="dialog_wait_send_crash_msg">Please close the dialog after sending logcat</string>
 
     <!-- List item long click -->
@@ -219,6 +220,11 @@
     <string name="max_history_count_title">The maximum number of history records</string>
 
     <string name="read_settings_title">Reading</string>
+    <string name="reading_direction_title">Reading direction</string>
+    <string name="left_to_right">Left to right</string>
+    <string name="right_to_Left">Right to left</string>
+    <string name="top_to_bottom">Top to bottom</string>
+    <string name="bottom_to_top">Bottom to top</string>
     <string name="page_scaling_title">Page scaling</string>
     <string name="start_position_title">Start position</string>
     <string name="keep_screen_on_title">Keep screen when reading</string>

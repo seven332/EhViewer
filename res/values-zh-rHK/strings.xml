@@ -48,6 +48,7 @@
     <!-- Send Crash -->
     <string name="dialog_send_crash_title">這很重要</string>
     <string name="dialog_send_crash_plain">上次該應用崩潰了。你願意把錯誤日誌發送給開發者以便以後得到更好的用戶體驗麼？（以電子郵件的形式發送）</string>
+    <string name="add_description">你可以在下方添加一些信息，譬如應用崩潰前所作的操作。</string>
     <string name="dialog_wait_send_crash_msg">請在發送完日誌後關閉該窗口</string>
 
     <!-- List item long click -->
@@ -203,6 +204,11 @@
     <string name="max_history_count_title">最大歷史記錄條數</string>
 
     <string name="read_settings_title">閱讀</string>
+    <string name="reading_direction_title">開頁方向</string>
+    <string name="left_to_right">從左至右</string>
+    <string name="right_to_Left">從右至左</string>
+    <string name="top_to_bottom">從上至下</string>
+    <string name="bottom_to_top">從下至上</string>
     <string name="page_scaling_title">頁面縮放</string>
     <string name="start_position_title">開頁位置</string>
     <string name="keep_screen_on_title">閱讀時屏幕常亮</string>
