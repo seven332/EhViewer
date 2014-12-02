@@ -423,7 +423,7 @@ public class GalleryActivity extends AbsActivity
                 mPageSeeker.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL)
             offsetX = width - thumbOffset - totalOffsetX;
         else
-            offsetX = totalOffsetX / max + thumbOffset;
+            offsetX = totalOffsetX + thumbOffset;
 
         mSeekerBubble.setX(offsetX);
         mSeekerBubble.setText(String.valueOf(progress + 1));
