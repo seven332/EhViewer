@@ -56,16 +56,26 @@ component
     <color name="light_gray">#aaa</color>
     <color name="lighter_gray">#ddd</color>
 
-    <color name="doujinshi_bg">#ffff2d2d</color>
-    <color name="manga_bg">#ffff9933</color>
-    <color name="artist_cg_bg">#ffffcc55</color>
-    <color name="game_cg_bg">#ff009966</color>
-    <color name="western_bg">#ff99cc99</color>
-    <color name="non_h_bg">#ff66ccff</color>
-    <color name="image_set_bg">#ff3366cc</color>
-    <color name="cosplay_bg">#ff9966cc</color>
-    <color name="asian_porn_bg">#ffcc99ff</color>
-    <color name="misc_bg">#ffffaaff</color>
+    <!-- Red -->
+    <color name="doujinshi_bg">#fff44336</color>
+    <!-- Deep Orange -->
+    <color name="manga_bg">#ffff5722</color>
+    <!-- Orange -->
+    <color name="artist_cg_bg">#ffff9800</color>
+    <!-- Green -->
+    <color name="game_cg_bg">#ff4caf50</color>
+    <!-- Light Green 600 -->
+    <color name="western_bg">#ff7cb342</color>
+    <!-- Blue -->
+    <color name="non_h_bg">#ff2196f3</color>
+    <!-- Indigo -->
+    <color name="image_set_bg">#ff3f51b5</color>
+    <!-- Purple -->
+    <color name="cosplay_bg">#ff9c27b0</color>
+    <!-- Deep Purple 300 -->
+    <color name="asian_porn_bg">#ff9575cd</color>
+    <!-- Pink 300 -->
+    <color name="misc_bg">#fff06292</color>
     <color name="unknown_bg">@android:color/black</color>
 
     <color name="detail_title_secondary">#ff777777</color>
