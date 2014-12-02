@@ -22,6 +22,8 @@
 
 -keep class com.hippo.**
 
+-keep class com.hippo.ehviewer.widget.SearchView {*;}
+
 -keep class com.hippo.ehviewer.gallery.image.Image {*;}
 
 -keep class com.hippo.ehviewer.gallery.image.GifImage {*;}
