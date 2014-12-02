@@ -23,7 +23,7 @@ import android.util.Log;
 
 import com.hippo.ehviewer.gallery.image.Image;
 
-public class ImageTexture extends BasicTexture {
+public class ImageTexture extends BasicTexture implements Uploaded {
 
     private static final String TAG = ImageTexture.class.getSimpleName();
 
@@ -65,6 +65,7 @@ public class ImageTexture extends BasicTexture {
     /**
      * Whether the content on GPU is valid.
      */
+    @Override
     public boolean isContentValid() {
         return isLoaded() && mContentValid;
     }
@@ -107,7 +108,8 @@ public class ImageTexture extends BasicTexture {
         mContentValid = true;
     }
 
-    private void updateContent(GLCanvas canvas) {
+    @Override
+    public void updateContent(GLCanvas canvas) {
         if (!isLoaded()) {
             uploadToCanvas(canvas);
         } else if (isAnimated()) {

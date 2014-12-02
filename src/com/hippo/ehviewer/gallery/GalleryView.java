@@ -36,6 +36,7 @@ import com.hippo.ehviewer.gallery.glrenderer.GLPaint;
 import com.hippo.ehviewer.gallery.glrenderer.ImageTexture;
 import com.hippo.ehviewer.gallery.glrenderer.MovieTexture;
 import com.hippo.ehviewer.gallery.glrenderer.StringTexture;
+import com.hippo.ehviewer.gallery.glrenderer.Uploaded;
 import com.hippo.ehviewer.gallery.image.Image;
 import com.hippo.ehviewer.gallery.ui.GLRoot;
 import com.hippo.ehviewer.gallery.ui.GLView;
@@ -429,6 +430,16 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         // If it is not render thread, do not render
         super.render(canvas);
 
+        // First of all, upload if needed
+        for (int i = 0; i < TARGET_INDEX_SIZE; i++) {
+            ShowItem item = showItems[i];
+            if (item instanceof UploadedItem) {
+                UploadedItem ui = (UploadedItem) item;
+                if (!ui.isContentValid())
+                    ui.updateContent(canvas);
+            }
+        }
+
         boolean needRefresh = false;
         ShowItem item;
         switch (mScrollState) {
@@ -478,10 +489,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                 needRefresh |= true;
             if (item instanceof MovieItem)
                 needRefresh |= true;
-            break;
         }
-
-        // TODO Mask to reduce brightness
 
         if (needRefresh)
             invalidate();
@@ -1754,6 +1762,10 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             imageScale = 1;
         }
 
+        public BasicTexture getTexture() {
+            return mTexture;
+        }
+
         @Override
         public void draw(GLCanvas canvas, int xOffset, int yOffset) {
             if (mTexture == null)
@@ -1815,7 +1827,18 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         }
     }
 
-    private class BitmapItem extends BasicItem {
+    private abstract class UploadedItem extends BasicItem {
+
+        public boolean isContentValid() {
+            return ((Uploaded) getTexture()).isContentValid();
+        }
+
+        public void updateContent(GLCanvas canvas) {
+            ((Uploaded) getTexture()).updateContent(canvas);
+        }
+    }
+
+    private class BitmapItem extends UploadedItem {
         private BitmapTexture mTexture;
         private Bitmap mContextBmp;
 
@@ -1843,7 +1866,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         }
     }
 
-    private class ImageItem extends BasicItem {
+    private class ImageItem extends UploadedItem {
         private ImageTexture mTexture;
 
         public void load(Image image) {

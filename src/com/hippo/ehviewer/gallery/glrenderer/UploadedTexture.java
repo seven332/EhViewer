@@ -39,7 +39,7 @@ import android.opengl.GLUtils;
 //
 // By default an UploadedTexture is opaque (so it can be drawn faster without
 // blending). The user or subclass can override it using setOpaque().
-public abstract class UploadedTexture extends BasicTexture {
+public abstract class UploadedTexture extends BasicTexture implements Uploaded {
 
     // To prevent keeping allocation the borders, we store those used borders here.
     // Since the length will be power of two, it won't use too much memory.
@@ -174,6 +174,7 @@ public abstract class UploadedTexture extends BasicTexture {
     /**
      * Whether the content on GPU is valid.
      */
+    @Override
     public boolean isContentValid() {
         return isLoaded() && mContentValid;
     }
@@ -182,6 +183,7 @@ public abstract class UploadedTexture extends BasicTexture {
      * Updates the content on GPU's memory.
      * @param canvas
      */
+    @Override
     public void updateContent(GLCanvas canvas) {
         if (!isLoaded()) {
             if (mThrottled && ++sUploadedCount > UPLOAD_LIMIT) {
