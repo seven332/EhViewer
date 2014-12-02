@@ -27,6 +27,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,6 +37,7 @@ import com.hippo.ehviewer.ui.AbsActivity;
 import com.hippo.ehviewer.ui.GalleryListActivity;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
+import com.hippo.ehviewer.util.ViewUtils;
 import com.larvalabs.svgandroid.SVGParser;
 
 public class StartActivity extends AbsActivity {
@@ -136,11 +138,12 @@ public class StartActivity extends AbsActivity {
     }
 
     private AlertDialog createSendCrashDialog() {
+        View view = ViewUtils.inflateDialogView(R.layout.send_crash, false);
+        final EditText et = (EditText) view.findViewById(R.id.description_of_user);
         return new MaterialAlertDialog.Builder(this).setCancelable(false)
                 .setTitle(R.string.dialog_send_crash_title)
-                .setMessage(R.string.dialog_send_crash_plain)
-                .setPositiveButton(android.R.string.ok)
-                .setNegativeButton(android.R.string.cancel)
+                .setView(view, true)
+                .setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE)
                 .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
                     public boolean onClick(MaterialAlertDialog dialog, int which) {
@@ -150,24 +153,20 @@ public class StartActivity extends AbsActivity {
                             new MaterialAlertDialog.Builder(StartActivity.this)
                                     .setCancelable(false)
                                     .setTitle(R.string.wait)
-                                    .setMessage(
-                                            R.string.dialog_wait_send_crash_msg)
+                                    .setMessage(R.string.dialog_wait_send_crash_msg)
                                     .setPositiveButton(android.R.string.ok)
                                     .setButtonListener(
                                             new MaterialAlertDialog.OnClickListener() {
                                                 @Override
-                                                public boolean onClick(
-                                                        MaterialAlertDialog dialog,
-                                                        int which) {
+                                                public boolean onClick(MaterialAlertDialog dialog, int which) {
                                                     checkOver();
                                                     return true;
                                                 }
                                             }).show();
                             Intent i = new Intent(Intent.ACTION_SENDTO);
                             i.setData(Uri.parse("mailto:ehviewersu@gmail.com"));
-                            i.putExtra(Intent.EXTRA_SUBJECT,
-                                    "I found a bug in EhViewer !");
-                            i.putExtra(Intent.EXTRA_TEXT, lastCrash);
+                            i.putExtra(Intent.EXTRA_SUBJECT, "I found a bug in EhViewer !");
+                            i.putExtra(Intent.EXTRA_TEXT, lastCrash + "======== Description ========\n" + et.getText().toString());
                             startActivity(i);
                             lastCrash = null;
                             break;

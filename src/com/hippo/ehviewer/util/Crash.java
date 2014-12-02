@@ -91,8 +91,7 @@ public class Crash {
 
         String result = getThrowableInfo(ex);
         Log.e(TAG, result);
-        sb.append("======== CrashInfo ========\n");
-        sb.append(result);
+        sb.append("======== CrashInfo ========\n").append(result).append("\n");
         try {
             long timestamp = System.currentTimeMillis();
             String time = Utils.sDate.format(System.currentTimeMillis());
