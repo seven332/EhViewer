@@ -23,10 +23,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.util.Linkify;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -185,9 +181,9 @@ public class StartActivity extends AbsActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_activity);
 
-        View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        decorView.setSystemUiVisibility(uiOptions);
+        // View decorView = getWindow().getDecorView();
+        // int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        // decorView.setSystemUiVisibility(uiOptions);
 
         View main = findViewById(R.id.main);
         TextView text = (TextView) findViewById(R.id.text);
@@ -197,26 +193,14 @@ public class StartActivity extends AbsActivity {
         image.setImageDrawable(SVGParser.getSVGFromResource(getResources(), R.raw.sad_pandroid).createPictureDrawable());
 
         // Show welcome in progress
-        AlphaAnimation aa = new AlphaAnimation(0.3f, 1.0f);
-        aa.setDuration(2000);
-        aa.setInterpolator(new DecelerateInterpolator(4.0f));
-        aa.setAnimationListener(new AnimationListener() {
+        AppHandler.getInstance().postDelayed(new Runnable() {
             @Override
-            public void onAnimationEnd(Animation arg0) {
+            public void run() {
                 if (isCheckOver)
                     redirectTo();
                 isAnimationOver = true;
             }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-        });
-        main.startAnimation(aa);
+        }, 2000);
         check(CHECK_WARING);
     }
 
