@@ -24,6 +24,8 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
+import com.hippo.ehviewer.util.MathUtils;
+
 public class BatteryDrawable extends Drawable {
 
     @SuppressWarnings("unused")
@@ -34,10 +36,41 @@ public class BatteryDrawable extends Drawable {
     private int mColor = Color.WHITE;
     private int mWarnColor = Color.RED;
     private int mElect = -1;
-    private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
+    private final Paint mBoundPaint;
+    private final Paint mBodyPaint;
+
+    private final Rect mBoundRect;
+    private final Rect mHeadRect;
+    private final Rect mElectRect;
+    private int mStart;
+    private int mStop;
 
     public BatteryDrawable() {
+        mBoundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBoundPaint.setStyle(Paint.Style.STROKE);
+        mBodyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBodyPaint.setStyle(Paint.Style.FILL);
+        mBoundRect = new Rect();
+        mHeadRect = new Rect();
+        mElectRect = new Rect();
         updatePaint();
+    }
+
+    @Override
+    protected void onBoundsChange(Rect bounds) {
+        int width = bounds.width();
+        int height = bounds.height();
+        int strokeWidth = (int) (Math.sqrt(width * width + height * height) * 0.06f);
+        int halfStrokeWidth = strokeWidth / 2;
+        int turn1 = width * 6 / 7;
+        int turn2 = height / 3;
+        mStart = strokeWidth;
+        mStop = turn1 - strokeWidth;
+
+        mBoundPaint.setStrokeWidth(strokeWidth);
+        mBoundRect.set(halfStrokeWidth, halfStrokeWidth, turn1 - halfStrokeWidth, height - halfStrokeWidth);
+        mHeadRect.set(turn1, turn2, width, height - turn2);
+        mElectRect.set(mStart, strokeWidth, mStop, height - strokeWidth);
     }
 
     @Override
@@ -45,28 +78,11 @@ public class BatteryDrawable extends Drawable {
         if (mElect == -1)
             return;
 
-        Rect bounds = getBounds();
-        int width = bounds.width();
-        int height = bounds.height();
-        int strokeWidth = (int)(Math.sqrt(width * width + height * height) * 0.06f);
-        int halfStrokeWidth = strokeWidth / 2;
-        int turn1 = width * 6 / 7;
-        int turn2 = height / 3;
-        int start = strokeWidth;
-        int stop = turn1 - halfStrokeWidth;
-        int levelEnd = start + (stop - start) * mElect / 100;
+        mElectRect.right = MathUtils.lerp(mStart, mStop, mElect / 100.0f);
 
-        float[] drawPoints = {
-                halfStrokeWidth, 0 + strokeWidth, halfStrokeWidth, height - strokeWidth,
-                0, halfStrokeWidth, turn1 - halfStrokeWidth, halfStrokeWidth,
-                0, height - halfStrokeWidth, turn1 - halfStrokeWidth, height - halfStrokeWidth,
-                turn1, 0, turn1, turn2,
-                turn1, height, turn1, height - turn2};
-
-        mPaint.setStrokeWidth(strokeWidth);
-        canvas.drawLines(drawPoints, mPaint);
-        canvas.drawRect(turn1 - halfStrokeWidth, turn2, width, height - turn2, mPaint);
-        canvas.drawRect(start, 0 + strokeWidth, levelEnd, height - strokeWidth, mPaint);
+        canvas.drawRect(mBoundRect, mBoundPaint);
+        canvas.drawRect(mHeadRect, mBodyPaint);
+        canvas.drawRect(mElectRect, mBodyPaint);
     }
 
     private boolean isWarn() {
@@ -79,7 +95,8 @@ public class BatteryDrawable extends Drawable {
 
         mColor = color;
         if (!isWarn()) {
-            mPaint.setColor(mColor);
+            mBoundPaint.setColor(mColor);
+            mBodyPaint.setColor(mColor);
             invalidateSelf();
         }
     }
@@ -90,7 +107,8 @@ public class BatteryDrawable extends Drawable {
 
         mWarnColor = color;
         if (isWarn()) {
-            mPaint.setColor(mWarnColor);
+            mBoundPaint.setColor(mWarnColor);
+            mBodyPaint.setColor(mWarnColor);
             invalidateSelf();
         }
     }
@@ -116,10 +134,13 @@ public class BatteryDrawable extends Drawable {
     }
 
     private void updatePaint(boolean warn) {
-        if (warn)
-            mPaint.setColor(mWarnColor);
-        else
-            mPaint.setColor(mColor);
+        if (warn) {
+            mBoundPaint.setColor(mWarnColor);
+            mBodyPaint.setColor(mWarnColor);
+        } else {
+            mBoundPaint.setColor(mColor);
+            mBodyPaint.setColor(mColor);
+        }
         invalidateSelf();
     }
 
