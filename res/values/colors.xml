@@ -58,14 +58,14 @@ component
 
     <!-- Red -->
     <color name="doujinshi_bg">#fff44336</color>
-    <!-- Deep Orange -->
-    <color name="manga_bg">#ffff5722</color>
     <!-- Orange -->
-    <color name="artist_cg_bg">#ffff9800</color>
+    <color name="manga_bg">#ffff9800</color>
+    <!-- Yellow 700 -->
+    <color name="artist_cg_bg">#ffFbc02d</color>
     <!-- Green -->
     <color name="game_cg_bg">#ff4caf50</color>
-    <!-- Light Green 600 -->
-    <color name="western_bg">#ff7cb342</color>
+    <!-- Light Green -->
+    <color name="western_bg">#ff8bc34a</color>
     <!-- Blue -->
     <color name="non_h_bg">#ff2196f3</color>
     <!-- Indigo -->
