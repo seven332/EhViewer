@@ -37,13 +37,6 @@ component
 
 <resources>
 
-    <integer-array name="refresh_colors">
-        <item>@color/refresh_color_1</item>
-        <item>@color/refresh_color_2</item>
-        <item>@color/refresh_color_3</item>
-        <item>@color/refresh_color_4</item>
-    </integer-array>
-
     <color name="refresh_color_1">#f4b400</color>
     <color name="refresh_color_2">#3e802f</color>
     <color name="refresh_color_3">#427fed</color>
@@ -54,7 +47,6 @@ component
     <color name="tag_bg">#bbffffff</color>
 
     <color name="light_gray">#aaa</color>
-    <color name="lighter_gray">#ddd</color>
 
     <!-- Red -->
     <color name="doujinshi_bg">#fff44336</color>
@@ -77,12 +69,6 @@ component
     <!-- Pink 300 -->
     <color name="misc_bg">#fff06292</color>
     <color name="unknown_bg">@android:color/black</color>
-
-    <color name="detail_title_secondary">#ff777777</color>
-
-    <color name="btn_bg_color_default">#ff2196f3</color>
-
-    <color name="btn_white_default">#fff0f0f0</color>
 
     <color name="divider">#22000000</color>
 
@@ -108,10 +94,6 @@ component
     <color name="theme_blue">#ff3367d6</color>
     <color name="theme_purple">#ff9c27b0</color>
     <color name="theme_brown">#ff795548</color>
-
-    <color name="material_progress_blue">#ff40c4ff</color>
-
-    <color name="edit_text_gb">#11000000</color>
 
     <color name="material_deep_teal_200">#ff80cbc4</color>
     <color name="material_deep_teal_500">#ff009688</color>

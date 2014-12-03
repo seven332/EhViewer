@@ -19,33 +19,11 @@
 
     <dimen name="drawer_max_width">264dip</dimen>
 
-    <dimen name="dialog_title_height">64dp</dimen>
-
-    <dimen name="shadow_width">12dp</dimen>
-
     <dimen name="title_large">20.0sp</dimen>
     <dimen name="title_medium">18.0sp</dimen>
 
-    <dimen name="tab_text">16.0sp</dimen>
-
     <dimen name="list_thumb_width">80dp</dimen>
     <dimen name="list_thumb_height">120dp</dimen>
-
-    <dimen name="detail_thumb_width">100.0dp</dimen>
-    <dimen name="detail_thumb_height">150.0dp</dimen>
-
-    <!-- Button -->
-    <dimen name="button_size">18.0sp</dimen>
-    <dimen name="button_small_size">14.0sp</dimen>
-    <dimen name="button_small_padding_x">12.0dp</dimen>
-    <dimen name="button_small_padding_y">2.0dp</dimen>
-
-    <dimen name="button_tag_padding_x">8.0dp</dimen>
-    <dimen name="button_tag_padding_y">2.0dp</dimen>
-
-    <!-- Rating bar -->
-    <dimen name="rating_bar_small_height">14.0dip</dimen>
-    <dimen name="rating_bar_large_height">57.0dip</dimen>
 
     <!-- Color scheme dialog -->
     <dimen name="color_scheme_dialog_row_padding">8.0dip</dimen>
