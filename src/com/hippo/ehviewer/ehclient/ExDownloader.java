@@ -41,11 +41,19 @@ import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Utils;
 
+// TODO what a mess
 public class ExDownloader implements Runnable {
 
     private static final String TAG = ExDownloader.class.getSimpleName();
 
     private static final int IO_BUFFER_SIZE = 8 * 1024;
+
+    private static final String[] URL_ARRAY_509 = new String[] {
+        "http://ehgt.org/g/509.gif",
+        "http://ehgt.org/g/509s.gif",
+        "http://st.exhentai.net/img/509.gif",
+        "http://st.exhentai.net/img/509s.gif"
+    };
 
     private final Context mContext;
     private final ExDownloaderManager mManager;
@@ -631,6 +639,7 @@ public class ExDownloader implements Runnable {
             }
         }
 
+        // TODO what if download failed ? what to do ?
         @Override
         public void run() {
             HttpDownloadListener listener = new HttpDownloadListener();
@@ -709,6 +718,13 @@ public class ExDownloader implements Runnable {
                         // Download image
                         HttpHelper.DownloadControlor c = mControlorArray[mIndex];
                         String imageUrl = ipp.imageUrl;
+
+                        //Check 509 gif
+                        for (String url509 : URL_ARRAY_509)
+                            if (url509.equals(imageUrl))
+                                // Get 509 gif here
+                                break;
+
                         String filename = EhUtils.getImageFilename(targetIndex, Utils.getExtension(imageUrl, "jpg"));
                         // Just put filename to mImageFilenameArray
                         mImageFilenameArray.set(targetIndex, filename);
