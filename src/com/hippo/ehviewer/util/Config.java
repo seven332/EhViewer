@@ -195,7 +195,7 @@ public final class Config {
     }
 
     public static void setListMode(int listMode) {
-        setIntToStr(KEY_LIST_MODE, DEFAULT_LIST_MODE);
+        setIntToStr(KEY_LIST_MODE, listMode);
     }
 
     public static int getListThumbColumnsPortrait() {
