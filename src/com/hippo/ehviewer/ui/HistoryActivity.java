@@ -21,26 +21,23 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
-import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
@@ -48,28 +45,31 @@ import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
+import com.hippo.ehviewer.widget.EasyRecyclerView;
 import com.hippo.ehviewer.widget.FitWindowView;
+import com.hippo.ehviewer.widget.FooterAdapter;
 import com.hippo.ehviewer.widget.GalleryListView;
 import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
 import com.hippo.ehviewer.widget.LoadImageView;
-import com.hippo.ehviewer.widget.PullViewGroup;
 import com.hippo.ehviewer.widget.RatingView;
 
 public class HistoryActivity extends AbsTranslucentActivity
-        implements AdapterView.OnItemClickListener, MaterialAlertDialog.OnClickListener,
+        implements EasyRecyclerView.OnItemClickListener, MaterialAlertDialog.OnClickListener,
         GalleryListView.GalleryListViewHelper, FitWindowView.OnFitSystemWindowsListener {
 
     private static final String TAG = HistoryActivity.class.getSimpleName();
+
+    public static final int LIST_MODE_DETAIL = 0;
+    public static final int LIST_MODE_THUMB = 1;
 
     private Data mData;
     private int mThemeColor;
 
     private FitWindowView mStandard;
     private GalleryListView mGalleryListView;
-    private PullViewGroup mPullViewGroup;
-    private ListView mList;
 
-    private BaseAdapter mAdapter;
+    private HistoryAdapter mAdapter;
+
     private int mFilterMode;
 
     private Dialog mFilterDialog;
@@ -146,7 +146,7 @@ public class HistoryActivity extends AbsTranslucentActivity
 
     @Override
     public void onFitSystemWindows(int l, int t, int r, int b) {
-        mList.setPadding(mList.getPaddingLeft(), t, mList.getPaddingRight(), b);
+        mGalleryListView.setPadding(t, b);
         Ui.colorStatusBarKK(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
     }
 
@@ -177,20 +177,14 @@ public class HistoryActivity extends AbsTranslucentActivity
 
         mStandard = (FitWindowView) findViewById(R.id.standard);
         mGalleryListView = (GalleryListView) findViewById(R.id.gallery_list);
-        mPullViewGroup = mGalleryListView.getPullViewGroup();
-        mList = (ListView) mGalleryListView.getContentView();
 
         mGalleryListView.setGalleryListViewHelper(this);
         mStandard.addOnFitSystemWindowsListener(this);
-        mPullViewGroup.setAgainstToChildPadding(true);
-        mPullViewGroup.setEnabledHeader(false);
-        mPullViewGroup.setEnabledFooter(false);
 
-        mAdapter = new ListAdapter(mGalleryListView.getGalleryList());
-        mList.setAdapter(mAdapter);
-        mList.setClipToPadding(false);
-        mList.setDivider(null);
-        mList.setOnItemClickListener(this);
+        // Do not need header an footer
+        mGalleryListView.setEnabledHeader(false);
+        mGalleryListView.setEnabledFooter(false);
+        mGalleryListView.setOnItemClickListener(this);
 
         createFilterDialog();
         createClearDialog();
@@ -237,21 +231,154 @@ public class HistoryActivity extends AbsTranslucentActivity
         if (url.equals(HISTORY_URL)) {
             List<GalleryInfo> giList = new ArrayList<GalleryInfo>(mData.getHistory(mFilterMode, true));
             if (giList == null || giList.size() == 0)
-                listener.onSuccess(mAdapter, taskStamp, giList, 0);
+                listener.onSuccess(taskStamp, giList, 0);
             else
-                listener.onSuccess(mAdapter, taskStamp, giList, 1);
+                listener.onSuccess(taskStamp, giList, 1);
         }
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,
-            long id) {
+    public boolean onItemClick(EasyRecyclerView parent, View view,
+            int position, long id) {
         Intent intent = new Intent(this, GalleryDetailActivity.class);
         GalleryInfo gi = mGalleryListView.getGalleryInfo(position);
         intent.putExtra(GalleryDetailActivity.KEY_G_INFO, gi);
         startActivity(intent);
+        return true;
     }
 
+
+
+
+
+
+
+    private class HistoryViewHolder extends RecyclerView.ViewHolder {
+
+        public int viewType;
+        public LoadImageView thumb;
+        public TextView title;
+        public TextView uploader;
+        public TextView category;
+        public RatingView rate;
+        public TextView posted;
+        public TextView simpleLanguage;
+
+        public HistoryViewHolder(View itemView, int viewType) {
+            super(itemView);
+
+            this.viewType = viewType;
+            switch (viewType) {
+            case LIST_MODE_DETAIL:
+                title = (TextView) itemView.findViewById(R.id.title);
+                uploader = (TextView) itemView.findViewById(R.id.uploader);
+                rate = (RatingView) itemView.findViewById(R.id.rate);
+                posted = (TextView) itemView.findViewById(R.id.posted);
+            case LIST_MODE_THUMB:
+                thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
+                category = (TextView) itemView.findViewById(R.id.category);
+                simpleLanguage = (TextView) itemView.findViewById(R.id.simple_language);
+            }
+        }
+    }
+
+    public class HistoryAdapter extends FooterAdapter<HistoryViewHolder> {
+
+        private final Context mContext;
+        private final List<GalleryInfo> mGiList;
+        private final ImageLoader mImageLoader;
+        private final LayoutInflater mInflater;
+
+        public HistoryAdapter(Context context, List<GalleryInfo> gilist) {
+            mContext = context;
+            mGiList = gilist;
+            mImageLoader = ImageLoader.getInstance(mContext);
+            mInflater = LayoutInflater.from(mContext);
+        }
+
+        @Override
+        public HistoryViewHolder onCreateAndBindFooterViewHolder(
+                ViewGroup parent, View footerView) {
+            return new HistoryViewHolder(footerView, FooterAdapter.TYPE_FOOTER);
+        }
+
+        @Override
+        public HistoryViewHolder onCreateViewHolderActual(ViewGroup parent,
+                int viewType) {
+            int resId;
+            if (viewType == LIST_MODE_DETAIL)
+                resId = R.layout.gallery_list_detail_item;
+            else
+                resId = R.layout.gallery_list_thumb_item;
+            View view = mInflater.inflate(resId, parent, false);
+            return new HistoryViewHolder(view, viewType);
+        }
+
+        @Override
+        public void onBindViewHolderActual(HistoryViewHolder holder,
+                int position) {
+            GalleryInfo gi = mGiList.get(position);
+            final LoadImageView thumb = holder.thumb;
+            if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
+                // Set new thumb
+                thumb.setImageDrawable(null);
+                thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));
+                mImageLoader.add(gi.thumb, String.valueOf(gi.gid),
+                        new LoadImageView.SimpleImageGetListener(thumb).setFixScaleType(true));
+            }
+            // Set category
+            TextView category = holder.category;
+            String newText = Ui.getCategoryText(gi.category);
+            if (!newText.equals(category.getText())) {
+                category.setText(newText);
+                category.setBackgroundColor(Ui.getCategoryColor(gi.category));
+            }
+            // Set simple language
+            TextView simpleLanguage = holder.simpleLanguage;
+            if (gi.simpleLanguage == null) {
+                simpleLanguage.setVisibility(View.GONE);
+            } else {
+                simpleLanguage.setVisibility(View.VISIBLE);
+                simpleLanguage.setText(gi.simpleLanguage);
+            }
+
+            // For detail mode
+            if (holder.viewType == LIST_MODE_DETAIL) {
+                // Set manga title
+                TextView title = holder.title;
+                title.setText(gi.title);
+                // Set uploder
+                TextView uploader = holder.uploader;
+                uploader.setText(gi.uploader);
+                // Set star
+                RatingView rate = holder.rate;
+                rate.setRating(gi.rating);
+                // set posted
+                TextView posted = holder.posted;
+                posted.setText(gi.posted);
+            }
+        }
+
+        @Override
+        public int getItemViewTypeActual(int position) {
+            return LIST_MODE_DETAIL;
+        }
+
+        @Override
+        public int getItemCountActual() {
+            return mGiList.size();
+        }
+    }
+
+
+
+
+
+
+
+
+
+    /*
     public class ListAdapter extends BaseAdapter {
         private final List<GalleryInfo> mGiList;
         private final ImageLoader mImageLoader;
@@ -334,5 +461,5 @@ public class HistoryActivity extends AbsTranslucentActivity
             }
             return convertView;
         }
-    }
+    }*/
 }

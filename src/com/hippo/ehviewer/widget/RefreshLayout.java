@@ -17,29 +17,27 @@
 package com.hippo.ehviewer.widget;
 
 import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
 
-public abstract class PullViewGroup extends SuperSwipeRefreshLayout
-        implements AbsListView.OnScrollListener{
+public class RefreshLayout extends SwipeRefreshLayout {
 
     private final static int FOOTER_REFRESHING = 0;
     private final static int FOOTER_SUCCESS = 1;
     private final static int FOOTER_FAIL = 2;
 
-    private final Context mContext;
-    private final AbsListView mContentView;
+    private EasyRecyclerView mEasyRecyclerView;
+    private View mFooterView;
 
-    private View mFooter;
     private TextView mFooterTipTextView;
     private View mFooterProgressBar;
-    private int footerState = FOOTER_SUCCESS;
+    private int mFooterState = FOOTER_SUCCESS;
     private OnFooterRefreshListener mFooterRefreshListener;
 
     // Footer String to show
@@ -50,68 +48,50 @@ public abstract class PullViewGroup extends SuperSwipeRefreshLayout
     private boolean mIsEnabledHeader = true;
     private boolean mIsEnabledFooter = true;
 
-    public PullViewGroup(Context context) {
+    public RefreshLayout(Context context) {
         super(context);
-        mContext = context;
-        mContentView = initContentView(context);
-        init();
+        init(context, null);
     }
 
-    public PullViewGroup(Context context, AttributeSet attrs) {
+    public RefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
-        mContentView = initContentView(context, attrs);
-        init();
+        init(context, attrs);
     }
 
-    /**
-     * Init content view here
-     * @param context
-     */
-    protected abstract AbsListView initContentView(Context context);
+    private void init(Context context, AttributeSet attrs) {
+        if (attrs == null)
+            mEasyRecyclerView = new EasyRecyclerView(context);
+        else
+            mEasyRecyclerView = new EasyRecyclerView(context, attrs);
+        addView(mEasyRecyclerView);
 
-    /**
-     * Init content view here
-     * @param context
-     */
-    protected abstract AbsListView initContentView(Context context, AttributeSet attrs);
-
-    protected abstract void addFooterView(View view);
-
-    protected abstract void removeFooterView(View view);
-
-    public abstract void setSelectionFromTop(int position, int y);
-
-    private void init() {
-        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        addView(mContentView, lp);
-
-        mContentView.setOnScrollListener(this);
-        mFooter = LayoutInflater.from(mContext)
-                .inflate(R.layout.pull_list_view_footer, null);
-        mFooterTipTextView = (TextView)mFooter.findViewById(R.id.footer_tip_text);
-        mFooterProgressBar = mFooter.findViewById(R.id.footer_progressBar);
-        mFooter.setOnClickListener(new View.OnClickListener() {
+        // Footer view
+        mFooterView = LayoutInflater.from(context).inflate(R.layout.pull_list_view_footer, null);
+        mFooterTipTextView = (TextView) mFooterView.findViewById(R.id.footer_tip_text);
+        mFooterProgressBar = mFooterView.findViewById(R.id.footer_progressBar);
+        mFooterView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isRefreshing() && footerState == FOOTER_FAIL)
+                if (!isRefreshing() && mFooterState == FOOTER_FAIL)
                     footerRefresh();
             }
         });
-        changeFooterViewByState();
-        addFooterView(mFooter);
     }
 
-    public AbsListView getContentView() {
-        return mContentView;
+    public EasyRecyclerView getEasyRecyclerView() {
+        return mEasyRecyclerView;
     }
 
-    /**
-     * Just a alias
-     * @param l
-     */
+    public void addFooterView() {
+        ((FooterAdapter<?>) mEasyRecyclerView.getAdapter()).setFooterView(mFooterView);
+        mEasyRecyclerView.setHasFooterView(true);
+    }
+
+    public void removeFooterView() {
+        ((FooterAdapter<?>) mEasyRecyclerView.getAdapter()).setFooterView(null);
+        mEasyRecyclerView.setHasFooterView(false);
+    }
+
     public void setOnHeaderRefreshListener(OnRefreshListener l) {
         super.setOnRefreshListener(l);
     }
@@ -122,7 +102,7 @@ public abstract class PullViewGroup extends SuperSwipeRefreshLayout
 
     private void footerRefresh() {
         if (mFooterRefreshListener.onFooterRefresh()) {
-            footerState = FOOTER_REFRESHING;
+            mFooterState = FOOTER_REFRESHING;
             changeFooterViewByState();
 
             // Disable header refresh
@@ -143,7 +123,7 @@ public abstract class PullViewGroup extends SuperSwipeRefreshLayout
         mFooterSuccessStr = successStr;
         mFooterFailStr = failStr;
 
-        switch (footerState) {
+        switch (mFooterState) {
         case FOOTER_REFRESHING:
             mFooterTipTextView.setText(mFooterRefreshStr);
             break;
@@ -160,7 +140,7 @@ public abstract class PullViewGroup extends SuperSwipeRefreshLayout
      * Refresh footer UI
      */
     private void changeFooterViewByState() {
-        switch (footerState) {
+        switch (mFooterState) {
         case FOOTER_REFRESHING:
             mFooterTipTextView.setText(mFooterRefreshStr);
             mFooterProgressBar.setVisibility(View.VISIBLE);
@@ -176,15 +156,17 @@ public abstract class PullViewGroup extends SuperSwipeRefreshLayout
         }
     }
 
+
+
     public void setHeaderRefreshComplete() {
         super.setRefreshing(false);
     }
 
     public void setFooterRefreshComplete(boolean isSuccess) {
         if (isSuccess)
-            footerState = FOOTER_SUCCESS;
+            mFooterState = FOOTER_SUCCESS;
         else
-            footerState = FOOTER_FAIL;
+            mFooterState = FOOTER_FAIL;
         changeFooterViewByState();
 
         // enable header refresh
@@ -212,7 +194,7 @@ public abstract class PullViewGroup extends SuperSwipeRefreshLayout
      * @return True if footer is refreshing
      */
     public boolean isFooterRefreshing() {
-        return footerState == FOOTER_REFRESHING;
+        return mFooterState == FOOTER_REFRESHING;
     }
 
     /**
@@ -224,16 +206,8 @@ public abstract class PullViewGroup extends SuperSwipeRefreshLayout
                 | (mIsEnabledFooter ? isFooterRefreshing() : false);
     }
 
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {}
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem,
-            int visibleItemCount, int totalItemCount) {
-        if (mIsEnabledFooter
-                && firstVisibleItem + visibleItemCount == totalItemCount
-                && !isRefreshing() && totalItemCount > 1
-                && footerState != FOOTER_FAIL)
+    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+        if (mIsEnabledFooter && mFooterView.isShown() && mFooterState != FOOTER_FAIL)
             footerRefresh();
     }
 
@@ -250,9 +224,9 @@ public abstract class PullViewGroup extends SuperSwipeRefreshLayout
             return;
 
         if (mIsEnabledFooter = enabled)
-            addFooterView(mFooter);
+            addFooterView();
         else
-            removeFooterView(mFooter);
+            removeFooterView();
     }
 
     public interface OnFooterRefreshListener {

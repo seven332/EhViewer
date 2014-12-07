@@ -24,7 +24,6 @@ import java.util.Set;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -45,19 +44,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.app.MaterialProgressDialog;
-import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
@@ -68,21 +63,22 @@ import com.hippo.ehviewer.util.Favorite;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.ActionableToastBar;
 import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
+import com.hippo.ehviewer.widget.EasyRecyclerView;
 import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.GalleryListView;
 import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
-import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialToast;
-import com.hippo.ehviewer.widget.PullViewGroup;
-import com.hippo.ehviewer.widget.RatingView;
 import com.hippo.ehviewer.widget.SlidingDrawerLayout;
 
 public class FavouriteActivity extends AbsTranslucentActivity
-        implements ListView.MultiChoiceModeListener,
+        implements EasyRecyclerView.MultiChoiceModeListener,
         View.OnTouchListener, GalleryListView.GalleryListViewHelper,
-        FitWindowView.OnFitSystemWindowsListener {
-    @SuppressWarnings("unused")
-    private static final String TAG = "FavouriteActivity";
+        FitWindowView.OnFitSystemWindowsListener, EasyRecyclerView.OnItemClickListener {
+
+    private static final String TAG = FavouriteActivity.class.getSimpleName();
+
+    public static final int LIST_MODE_DETAIL = 0;
+    public static final int LIST_MODE_THUMB = 1;
 
     private static final String LOCAL_FAVORITE_URL = "ehviewer://local_favorite";
 
@@ -97,10 +93,6 @@ public class FavouriteActivity extends AbsTranslucentActivity
     private FrameLayout mContentView;
     private FitWindowView mStandard;
     private GalleryListView mGalleryListView;
-    private PullViewGroup mPullViewGroup;
-    private ListView mList;
-
-    private BaseAdapter mAdapter;
 
     private ActionableToastBar mActionableToastBar;
 
@@ -133,15 +125,15 @@ public class FavouriteActivity extends AbsTranslucentActivity
     }
 
     private void initLocalFavorite() {
-        mPullViewGroup.setEnabledHeader(false);
-        mPullViewGroup.setEnabledFooter(false);
+        mGalleryListView.setEnabledHeader(false);
+        mGalleryListView.setEnabledFooter(false);
         setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
         mGalleryListView.refresh();
     }
 
     private void initFavorite() {
-        mPullViewGroup.setEnabledHeader(true);
-        mPullViewGroup.setEnabledFooter(true);
+        mGalleryListView.setEnabledHeader(true);
+        mGalleryListView.setEnabledFooter(true);
         setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
         mGalleryListView.refresh();
     }
@@ -169,8 +161,6 @@ public class FavouriteActivity extends AbsTranslucentActivity
         mContentView = (FrameLayout) mDrawerLayout.findViewById(R.id.content);
         mStandard = (FitWindowView) mDrawerLayout.findViewById(R.id.standard);
         mGalleryListView = (GalleryListView) mDrawerLayout.findViewById(R.id.gallery_list);
-        mPullViewGroup = mGalleryListView.getPullViewGroup();
-        mList = (ListView) mGalleryListView.getContentView();
 
         mActionableToastBar = new ActionableToastBar(this);
         mActionableToastBar.setBackgroundColor(mResources.getColor(android.R.color.holo_purple));
@@ -179,28 +169,15 @@ public class FavouriteActivity extends AbsTranslucentActivity
 
         mGalleryListView.setGalleryListViewHelper(this);
         mStandard.addOnFitSystemWindowsListener(this);
-        mPullViewGroup.setAgainstToChildPadding(true);
+        //mPullViewGroup.setAgainstToChildPadding(true);
 
         mChoiceGiSet = new LinkedHashSet<GalleryInfo>();
         mChoiceGiSetCopy = new LinkedHashSet<GalleryInfo>();
 
-        mList.setDivider(null);
-        mList.setOnTouchListener(this);
-        mList.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1,
-                    int position, long arg3) {
-                Intent intent = new Intent(FavouriteActivity.this,
-                        GalleryDetailActivity.class);
-                GalleryInfo gi = mGalleryListView.getGalleryInfo(position);
-                intent.putExtra(GalleryDetailActivity.KEY_G_INFO, gi);
-                startActivity(intent);
-            }
-        });
-        mList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        mList.setMultiChoiceModeListener(this);
-        mAdapter = new ListAdapter(this, mGalleryListView.getGalleryList());
-        mList.setAdapter(mAdapter);
+        //mList.setOnTouchListener(this);
+        mGalleryListView.setOnItemClickListener(this);
+        mGalleryListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        mGalleryListView.setMultiChoiceModeListener(this);
 
         mMenu.setClipToPadding(false);
         mMenu.setAdapter(new BaseAdapter() {
@@ -294,7 +271,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
         lp.leftMargin = magicSpacing;
         lp.rightMargin = magicSpacing;
         mActionableToastBar.setLayoutParams(lp);
-        mList.setPadding(mList.getPaddingLeft(), t, mList.getPaddingRight(), b);
+        mGalleryListView.setPadding(t, b);
         ((SlidingDrawerLayout.LayoutParams) mMenu.getLayoutParams()).topMargin = t;
         mMenu.setPadding(mMenu.getPaddingLeft(), mMenu.getPaddingTop(), mMenu.getPaddingRight(), b);
 
@@ -348,13 +325,21 @@ public class FavouriteActivity extends AbsTranslucentActivity
     }
 
     @Override
+    public boolean onItemClick(EasyRecyclerView parent, View view,
+            int position, long id) {
+        Intent intent = new Intent(this, GalleryDetailActivity.class);
+        GalleryInfo gi = mGalleryListView.getGalleryInfo(position);
+        intent.putExtra(GalleryDetailActivity.KEY_G_INFO, gi);
+        startActivity(intent);
+        return true;
+    }
+
+    @Override
     @SuppressLint("ClickableViewAccessibility")
     public boolean onTouch(View v, MotionEvent event) {
         hideToastBar(event);
         return super.onTouchEvent(event);
     }
-
-    // ListView.MultiChoiceModeListener
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -400,7 +385,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
                     mSetIter.remove();
                     mData.deleteLocalFavourite(mTargetGi.gid);
                     mGalleryListView.getGalleryList().remove(mTargetGi);
-                    mAdapter.notifyDataSetChanged();
+                    mGalleryListView.notifyDataSetChanged();
                     // set mGiLocal2Cloud null for above
                     mTargetGi = null;
                     mProgressDialog.setProgress(mProgressDialog.getProgress() + 1);
@@ -408,7 +393,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
                 }
                 @Override
                 public void onFailure(String eMsg) {
-                    mAdapter.notifyDataSetChanged();
+                    mGalleryListView.notifyDataSetChanged();
                     mProgressDialog.dismiss();
                     mProgressDialog = null;
                     showToastBar(new ActionClickedListener() {
@@ -454,7 +439,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
                                 mClient.modifyFavorite(getGids(mChoiceGiSetCopy), mTargetCat,
                                         mMenuIndex -1, new Modify(mResources.getString(R.string.move_successfully),
                                                 mResources.getString(R.string.failed_to_move), true));
-                                mPullViewGroup.setRefreshing(true);
+                                mGalleryListView.setHeaderRefreshing(true);
                             } else { // change cloud dir
                                 mMoveDialog.dismiss();
                                 mMoveDialog = null;
@@ -462,7 +447,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
                                 mClient.modifyFavorite(getGids(mChoiceGiSetCopy), mTargetCat,
                                         mMenuIndex -1, new Modify(mResources.getString(R.string.move_successfully),
                                                 mResources.getString(R.string.failed_to_move), false));
-                                mPullViewGroup.setRefreshing(true);
+                                mGalleryListView.setHeaderRefreshing(true);
                             }
                         }
                         return true;
@@ -489,7 +474,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
                 mClient.modifyFavorite(getGids(mChoiceGiSet), mTargetCat,
                         mMenuIndex -1, new Modify(mResources.getString(R.string.delete_successfully),
                                 mResources.getString(R.string.failed_to_delete), false));
-                mPullViewGroup.setRefreshing(true);
+                mGalleryListView.setHeaderRefreshing(true);
             }
             mode.finish();
             return true;
@@ -530,25 +515,25 @@ public class FavouriteActivity extends AbsTranslucentActivity
             final OnGetListListener listener) {
         // If get local favorite
         if (mLastModifyGiList != null) {
-            listener.onSuccess(mAdapter, taskStamp, mLastModifyGiList, mLastModifyPageNum);
+            listener.onSuccess(taskStamp, mLastModifyGiList, mLastModifyPageNum);
             mLastModifyGiList = null;
             mLastModifyPageNum = 0;
         } else if (LOCAL_FAVORITE_URL.equals(url)) {
             List<GalleryInfo> giList = mData.getAllLocalFavourites();
             if (giList == null || giList.size() == 0)
-                listener.onSuccess(mAdapter, taskStamp, giList, 0);
+                listener.onSuccess(taskStamp, giList, 0);
             else
-                listener.onSuccess(mAdapter, taskStamp, giList, 1);
+                listener.onSuccess(taskStamp, giList, 1);
         } else { // If get cloud favorite
             mClient.getGList(url, Config.getApiMode(), null, new EhClient.OnGetGListListener() {
                 @Override
                 public void onSuccess(Object checkFlag, List<GalleryInfo> giList,
                         int maxPage) {
-                    listener.onSuccess(mAdapter, taskStamp, giList, maxPage);
+                    listener.onSuccess(taskStamp, giList, maxPage);
                 }
                 @Override
                 public void onFailure(Object checkFlag, String eMsg) {
-                    listener.onFailure(mAdapter, taskStamp, eMsg);
+                    listener.onFailure(taskStamp, eMsg);
                 }
             });
         }
@@ -579,7 +564,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
         }
         @Override
         public void onFailure(String eMsg) {
-            mPullViewGroup.setRefreshing(false);
+            mGalleryListView.setHeaderRefreshing(false);
             showToastBar(new Remodify(mSuccStr, mFailStr, mToLocal), 0, mFailStr + ": " + eMsg,
                     R.drawable.ic_action_redo, mResources.getString(R.string.retry), true);
         }
@@ -604,88 +589,6 @@ public class FavouriteActivity extends AbsTranslucentActivity
         @Override
         public void onActionClicked() {
             mClient.modifyFavorite(getGids(mChoiceGiSetCopy), -1, mMenuIndex -1, new Modify(mSuccStr, mFailStr, mToLocal));
-        }
-    }
-
-    public class ListAdapter extends BaseAdapter {
-        private final List<GalleryInfo> mGiList;
-        private final ImageLoader mImageLoader;
-
-        public ListAdapter(Context context, List<GalleryInfo> gilist) {
-            mGiList = gilist;
-            mImageLoader =ImageLoader.getInstance(FavouriteActivity.this);
-        }
-
-        @Override
-        public int getCount() {
-            return mGiList.size();
-        }
-        @Override
-        public Object getItem(int position) {
-            return mGiList == null ? 0 : mGiList.get(position);
-        }
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            GalleryInfo gi= mGiList.get(position);
-            if (convertView == null || !(convertView instanceof LinearLayout)) {
-                convertView = LayoutInflater.from(FavouriteActivity.this)
-                        .inflate(R.layout.favorite_list_item, parent, false);
-                CardViewSalon.reformWithShadow(((ViewGroup)convertView).getChildAt(0), new int[][]{
-                                new int[]{android.R.attr.state_pressed},
-                                new int[]{android.R.attr.state_activated},
-                                new int[]{}},
-                                new int[]{0xff84cae4, 0xff33b5e5, 0xFFFAFAFA}, null, false);
-            }
-            final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.thumb);
-            if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
-                // Set margin top 8dp if position is 0, otherwise 4dp
-                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)
-                        convertView.findViewById(R.id.card_view).getLayoutParams();
-                if (position == 0)
-                    lp.topMargin = Ui.dp2pix(8);
-                else
-                    lp.topMargin = Ui.dp2pix(4);
-
-                // Set new thumb
-                thumb.setImageDrawable(null);
-                thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));
-                mImageLoader.add(gi.thumb, String.valueOf(gi.gid),
-                        new LoadImageView.SimpleImageGetListener(thumb).setFixScaleType(true));
-            }
-            // Set manga name
-            TextView name = (TextView) convertView.findViewById(R.id.title);
-            name.setText(gi.title);
-            // Set uploder
-            TextView uploader = (TextView) convertView.findViewById(R.id.uploader);
-            uploader.setText(gi.uploader);
-            // Set category
-            TextView category = (TextView) convertView.findViewById(R.id.category);
-            String newText = Ui.getCategoryText(gi.category);
-            if (!newText.equals(category.getText())) {
-                category.setText(newText);
-                category.setBackgroundColor(Ui.getCategoryColor(gi.category));
-            }
-            // Set star
-            RatingView rate = (RatingView) convertView
-                    .findViewById(R.id.rate);
-            rate.setRating(gi.rating);
-            // set posted
-            TextView posted = (TextView)convertView.findViewById(R.id.posted);
-            posted.setText(gi.posted);
-            // Set simple language
-            TextView simpleLanguage = (TextView)convertView.findViewById(R.id.simple_language);
-            if (gi.simpleLanguage == null) {
-                simpleLanguage.setVisibility(View.GONE);
-            } else {
-                simpleLanguage.setVisibility(View.VISIBLE);
-                simpleLanguage.setText(gi.simpleLanguage);
-            }
-            return convertView;
         }
     }
 }

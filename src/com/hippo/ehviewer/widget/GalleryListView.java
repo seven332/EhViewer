@@ -21,54 +21,78 @@ import java.util.List;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.content.res.Configuration;
 import android.os.Build;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.BaseAdapter;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ListView;
+import android.widget.TextView;
 
+import com.hippo.ehviewer.AppHandler;
+import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.cache.ImageCache;
+import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.GalleryInfo;
-import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.ListParser;
+import com.hippo.ehviewer.util.Ui;
 
-public class GalleryListView extends FrameLayout implements PullViewGroup.OnFooterRefreshListener,
-        PullViewGroup.OnRefreshListener, ListView.OnScrollListener {
+public class GalleryListView extends FrameLayout implements RefreshLayout.OnFooterRefreshListener,
+        RefreshLayout.OnRefreshListener {
 
     private static final String TAG = GalleryListView.class.getSimpleName();
 
-    private static final int MODE_REFRESH = 0x0;
-    private static final int MODE_NEXT_PAGE = 0x1;
-    private static final int MODE_PRE_PAGE = 0x2;
-    private static final int MODE_SOMEWHERE = 0x3;
+    public static final int LIST_MODE_DETAIL = 0;
+    public static final int LIST_MODE_THUMB = 1;
+
+    private static final int MODE_REFRESH = 0;
+    private static final int MODE_NEXT_PAGE = 1;
+    private static final int MODE_PRE_PAGE = 2;
+    private static final int MODE_SOMEWHERE = 3;
 
     private Context mContext;
-    private EhClient mClient;
     private GalleryListViewHelper mHelper;
 
     private List<GalleryInfo> mGiList;
 
-    private PullViewGroup mPullViewGroup;
-    private AbsListView mContentView;
+    private RefreshLayout mRefreshLayout;
+    private EasyRecyclerView mEasyRecyclerView;
     private RefreshTextView mRefreshTextView;
+
+    private int mListMode = LIST_MODE_DETAIL;
+    private int mOrientation = Configuration.ORIENTATION_PORTRAIT;
+
+    private GalleryAdapter mAdapter;
+    private StaggeredGridLayoutManager mLayoutManager;
+    private MarginItemDecoration mItemDecoration;
+    private final int[] mFirstPositionTemp = new int[10]; // TODO
 
     private long mTaskStamp;
 
+    /**
+     * First index of current page
+     */
     private int mFirstIndex;
+    /**
+     * Last index of current page
+     */
     private int mLastIndex;
     private int mCurPage;
     private int mFirstPage = 0;
     private int mLastPage = 0;
+    /**
+     * The number of page in sum
+     */
     private int mPageNum;
     private int mItemPerPage;
     private int mGetMode;
+
+    private OnGetListListener mListener;
 
     /**
      * If true, list will make showed item not changed after get
@@ -98,44 +122,24 @@ public class GalleryListView extends FrameLayout implements PullViewGroup.OnFoot
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         mContext = context;
         mGiList = new ArrayList<GalleryInfo>();
+        mListener = new OnGetGalleryListListener();
 
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.GalleryListView, defStyleAttr, defStyleRes);
-        int index = a.getInt(R.styleable.GalleryListView_glvContent, -1);
-        a.recycle();
+        LayoutInflater.from(mContext).inflate(R.layout.gallery_list_view, this);
 
-        int resId;
-        switch(index) {
-        case 0:
-            resId = R.layout.gallery_list_listview;
-            break;
-        case 1:
-        default:
-            resId = R.layout.gallery_list_staggeredgridview;
-            break;
-        }
-
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        inflater.inflate(resId, this);
-
-        mPullViewGroup = (PullViewGroup) findViewById(R.id.pull_list);
-        mContentView = mPullViewGroup.getContentView();
+        mRefreshLayout = (RefreshLayout) findViewById(R.id.refresh_layout);
+        mEasyRecyclerView = mRefreshLayout.getEasyRecyclerView();
         mRefreshTextView = (RefreshTextView) findViewById(R.id.refresh_text);
 
-        mPullViewGroup.setColorScheme(
-                R.color.refresh_color_1,
-                R.color.refresh_color_2,
-                R.color.refresh_color_3,
-                R.color.refresh_color_4);
-        mPullViewGroup.setOnHeaderRefreshListener(this);
-        mPullViewGroup.setOnFooterRefreshListener(this);
-        mPullViewGroup.setFooterString(
-                mContext.getString(R.string.footer_loading),
-                mContext.getString(R.string.footer_loaded),
-                mContext.getString(R.string.footer_fail));
-
-        mContentView.setOnScrollListener(this);
-        mContentView.setSelector(new ColorDrawable(Color.TRANSPARENT));
-        mContentView.setClipToPadding(false);
+        mAdapter = new GalleryAdapter(mContext, mGiList);
+        mLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        mItemDecoration = new MarginItemDecoration(Ui.dp2pix(8)); // TODO for tablet margin should be greater
+        mEasyRecyclerView.setOnScrollListener(new OnScrollListener());
+        mEasyRecyclerView.setClipToPadding(false);
+        mEasyRecyclerView.setAdapter(mAdapter);
+        mEasyRecyclerView.setLayoutManager(mLayoutManager);
+        mEasyRecyclerView.addItemDecoration(mItemDecoration);
+        mEasyRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mEasyRecyclerView.setHasFixedSize(true);
 
         mRefreshTextView.setDefaultRefresh(R.string.click_retry, new RefreshTextView.OnRefreshListener() {
             @Override
@@ -143,23 +147,97 @@ public class GalleryListView extends FrameLayout implements PullViewGroup.OnFoot
                 retry();
             }
         });
+
+        mRefreshLayout.setColorSchemeResources(
+                R.color.refresh_color_1,
+                R.color.refresh_color_2,
+                R.color.refresh_color_3,
+                R.color.refresh_color_4);
+        mRefreshLayout.setOnHeaderRefreshListener(this);
+        mRefreshLayout.setOnFooterRefreshListener(this);
+        mRefreshLayout.setFooterString(
+                mContext.getString(R.string.footer_loading),
+                mContext.getString(R.string.footer_loaded),
+                mContext.getString(R.string.footer_fail));
+        mRefreshLayout.addFooterView();
+    }
+
+    public int getListMode() {
+        return mListMode;
+    }
+
+    public void setListMode(int listMode) {
+        if (mListMode != listMode) {
+            mListMode = listMode;
+            // Update span
+            updateSpanCount();
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void setOrientation(int orientation) {
+        if (mOrientation != orientation) {
+            mOrientation = orientation;
+            // Update span
+            updateSpanCount();
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    // TODO get span from config
+    // mOrientation
+    private void updateSpanCount() {
+        switch (mListMode) {
+        case LIST_MODE_DETAIL:
+            mLayoutManager.setSpanCount(1);
+            break;
+        case LIST_MODE_THUMB:
+            mLayoutManager.setSpanCount(4);
+        }
     }
 
     public void setGalleryListViewHelper(GalleryListViewHelper h) {
         mHelper = h;
     }
 
-    public PullViewGroup getPullViewGroup() {
-        return mPullViewGroup;
+    public void setPadding(int top, int bottom) {
+        setPadding(getPaddingLeft(), top, getPaddingRight(), getPaddingBottom());
+        mEasyRecyclerView.setPadding(mEasyRecyclerView.getPaddingLeft(), mEasyRecyclerView.getPaddingTop(),
+                mEasyRecyclerView.getPaddingRight(), bottom);
     }
 
-    public AbsListView getContentView() {
-        return mContentView;
+    public void setEnabledHeader(boolean enabled) {
+        mRefreshLayout.setEnabledFooter(enabled);
     }
 
-    public RefreshTextView getRefreshTextView() {
-        return mRefreshTextView;
+    public void setEnabledFooter(boolean enabled) {
+        mRefreshLayout.setEnabledFooter(enabled);
     }
+
+    public void setHeaderRefreshing(boolean refreshing) {
+        mRefreshLayout.setRefreshing(refreshing);
+    }
+
+    public void setOnItemClickListener(EasyRecyclerView.OnItemClickListener l) {
+        mEasyRecyclerView.setOnItemClickListener(l);
+    }
+
+    public void setOnItemLongClickListener(EasyRecyclerView.OnItemLongClickListener l) {
+        mEasyRecyclerView.setOnItemLongClickListener(l);
+    }
+
+    public void setChoiceMode(int choiceMode) {
+        mEasyRecyclerView.setChoiceMode(choiceMode);
+    }
+
+    public void setMultiChoiceModeListener(EasyRecyclerView.MultiChoiceModeListener listener) {
+        mEasyRecyclerView.setMultiChoiceModeListener(listener);
+    }
+
+    public void notifyDataSetChanged() {
+        mAdapter.notifyDataSetChanged();
+    }
+
 
     public void setNoneText(CharSequence text) {
         mRefreshTextView.setVisibility(View.VISIBLE);
@@ -167,13 +245,13 @@ public class GalleryListView extends FrameLayout implements PullViewGroup.OnFoot
     }
 
     public void onlyShowList() {
-        mPullViewGroup.setVisibility(View.VISIBLE);
+        mRefreshLayout.setVisibility(View.VISIBLE);
         mRefreshTextView.setRefreshing(false);
         mRefreshTextView.setVisibility(View.GONE);
     }
 
     public void onlyShowNone() {
-        mPullViewGroup.setVisibility(View.GONE);
+        mRefreshLayout.setVisibility(View.GONE);
         mRefreshTextView.setVisibility(View.VISIBLE);
         mRefreshTextView.setEmesg(R.string.none, false);
     }
@@ -186,7 +264,7 @@ public class GalleryListView extends FrameLayout implements PullViewGroup.OnFoot
     }
 
     @Override
-    public void onHeaderRefresh() {
+    public void onRefresh() {
         // It is invokened by user pull, so no need to
         if (mFirstPage > 0) {
             getPrePage(true);
@@ -209,7 +287,7 @@ public class GalleryListView extends FrameLayout implements PullViewGroup.OnFoot
 
     public void firstTimeRefresh() {
         // set mPullViewGroup gone, make wait view show
-        mPullViewGroup.setVisibility(View.GONE);
+        mRefreshLayout.setVisibility(View.GONE);
         mRefreshTextView.setVisibility(View.VISIBLE);
         mRefreshTextView.setRefreshing(true);
 
@@ -217,12 +295,12 @@ public class GalleryListView extends FrameLayout implements PullViewGroup.OnFoot
     }
 
     private void setGallerysLayout() {
-        if (mPullViewGroup.getVisibility() == View.VISIBLE) {
+        if (mRefreshLayout.getVisibility() == View.VISIBLE) {
             if (!isFootRefresh)
-                mPullViewGroup.setRefreshing(true);
+                mRefreshLayout.setRefreshing(true);
             mRefreshTextView.setVisibility(View.GONE);
         } else {
-            mPullViewGroup.setVisibility(View.GONE);
+            mRefreshLayout.setVisibility(View.GONE);
             mRefreshTextView.setVisibility(View.VISIBLE);
             mRefreshTextView.setRefreshing(true);
         }
@@ -233,13 +311,6 @@ public class GalleryListView extends FrameLayout implements PullViewGroup.OnFoot
         mTargetUrl = mHelper.getTargetUrl(mTargetPage);
         getGallerys();
         return true;
-    }
-
-    private void setListPosition(int position) {
-        if (position == 0)
-            mPullViewGroup.setSelectionFromTop(position, Integer.MAX_VALUE);
-        else
-            mPullViewGroup.setSelectionFromTop(position, 0);
     }
 
     /**
@@ -299,7 +370,7 @@ public class GalleryListView extends FrameLayout implements PullViewGroup.OnFoot
     public void jumpTo(int page) {
         if (page >= mFirstPage && page <= mLastPage) {
             int position = (page - mFirstPage) * mItemPerPage;
-            setListPosition(position);
+            mLayoutManager.scrollToPosition(position);
         } else if (page == mFirstPage - 1) {
             getPrePage(false);
         } else if (page == mLastPage + 1) {
@@ -313,11 +384,11 @@ public class GalleryListView extends FrameLayout implements PullViewGroup.OnFoot
      * @return True if actionbar or footer is refreshing
      */
     public boolean isRefreshing() {
-        return mPullViewGroup.isRefreshing();
+        return mRefreshLayout.isRefreshing();
     }
 
     public boolean isGetGalleryOk() {
-        return mPullViewGroup.getVisibility() == View.VISIBLE;
+        return mRefreshLayout.getVisibility() == View.VISIBLE;
     }
 
     public int getPageNum() {
@@ -336,46 +407,26 @@ public class GalleryListView extends FrameLayout implements PullViewGroup.OnFoot
         return mGiList.get(position);
     }
 
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        mPullViewGroup.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
-
-        if (visibleItemCount < 2 || mItemPerPage == 0)
-            return;
-        if (mLastIndex == 0)
-            mLastIndex = mItemPerPage - 1;
-        int pageChanged = (firstVisibleItem - mFirstIndex) / mItemPerPage;
-        if (pageChanged == 0)
-            pageChanged = (firstVisibleItem + visibleItemCount - mLastIndex - 1) / mItemPerPage;
-
-        if (pageChanged != 0) {
-            mCurPage = mCurPage + pageChanged;
-            mFirstIndex += pageChanged * mItemPerPage;
-            mLastIndex += pageChanged * mItemPerPage;
-        }
+    public static interface OnGetListListener {
+        public void onSuccess(long taskStamp, List<GalleryInfo> gis, int maxPage);
+        public void onFailure(long taskStamp, String eMsg);
     }
 
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-        switch (scrollState) {
-        case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-            ImageCache.getInstance(mContext).setPauseDiskCache(true);
-            break;
-        case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-            ImageCache.getInstance(mContext).setPauseDiskCache(false);
-            break;
-        }
-    }
+    private class OnGetGalleryListListener implements OnGetListListener, Runnable {
 
-    public interface OnGetListListener {
-        public void onSuccess(BaseAdapter adapter, long taskStamp, List<GalleryInfo> gis, int maxPage);
-        public void onFailure(BaseAdapter adapter, long taskStamp, String eMsg);
-    }
-
-    private final OnGetListListener mListener = new OnGetListListener() {
         @Override
-        public void onSuccess(BaseAdapter adapter, long taskStamp,
-                List<GalleryInfo> gis, int pageNum) {
+        public void run() {
+            int preIndex = mLayoutManager.findFirstVisibleItemPositions(mFirstPositionTemp)[0] - 1;
+            if (preIndex >= 0)
+                mEasyRecyclerView.smoothScrollToPosition(preIndex);
+        }
+
+        public void smoothScrollToPrePosition() {
+            AppHandler.getInstance().post(this);
+        }
+
+        @Override
+        public void onSuccess(long taskStamp, List<GalleryInfo> gis, int pageNum) {
             if (mTaskStamp != taskStamp)
                 return;
 
@@ -394,53 +445,54 @@ public class GalleryListView extends FrameLayout implements PullViewGroup.OnFoot
                 mFirstPage = 0;
                 mLastPage = 0;
                 mGiList.clear();
-                adapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
             } else {
                 onlyShowList();
 
+                int start;
                 switch (mGetMode) {
                 case MODE_REFRESH:
                     mFirstPage = 0;
                     mLastPage = 0;
                     mGiList.clear();
                     mGiList.addAll(gis);
-                    adapter.notifyDataSetChanged();
+                    mAdapter.notifyDataSetChanged();
                     // For current page
                     mFirstIndex = 0;
                     mLastIndex = gis.size() - 1;
                     mCurPage = 0;
 
-                    setListPosition(0);
+                    mLayoutManager.scrollToPosition(0);
                     break;
 
                 case MODE_PRE_PAGE:
                     mFirstPage--;
                     mGiList.addAll(0, gis);
-                    adapter.notifyDataSetChanged();
+                    mAdapter.notifyItemRangeInserted(0, gis.size());
 
                     if (mIsKeepPosition) {
                         mFirstIndex += gis.size();
                         mLastIndex += gis.size();
-                        int position = mContentView.getFirstVisiblePosition() + gis.size();
-                        setListPosition(position);
-                        mContentView.smoothScrollToPosition(position -1);
+                        smoothScrollToPrePosition();
                     } else {
                         mFirstIndex = 0;
                         mLastIndex = gis.size()-1;
                         mCurPage = mTargetPage;
-                        setListPosition(0);
+                        mLayoutManager.scrollToPosition(0);
                     }
                     break;
 
                 case MODE_NEXT_PAGE:
                     mLastPage++;
+                    start = mGiList.size();
                     mGiList.addAll(gis);
-                    adapter.notifyDataSetChanged();
+                    mAdapter.notifyItemRangeInserted(start, gis.size());
+
                     if (!mIsKeepPosition) {
                         mFirstIndex = mGiList.size() - gis.size();
                         mLastIndex = mGiList.size() - 1;
                         mCurPage = mTargetPage;
-                        setListPosition(mFirstIndex);
+                        mLayoutManager.scrollToPosition(0);
                     }
                     break;
 
@@ -449,28 +501,28 @@ public class GalleryListView extends FrameLayout implements PullViewGroup.OnFoot
                     mLastPage = mTargetPage;
                     mGiList.clear();
                     mGiList.addAll(gis);
-                    adapter.notifyDataSetChanged();
+                    mAdapter.notifyDataSetChanged();
                     // For current page
                     mFirstIndex = 0;
                     mLastIndex = gis.size() - 1;
                     mCurPage = mTargetPage;
 
-                    setListPosition(0);
+                    mLayoutManager.scrollToPosition(0);
                 }
             }
 
-            mPullViewGroup.setAnyRefreshComplete(true);
+            mRefreshLayout.setAnyRefreshComplete(true);
         }
 
         @Override
-        public void onFailure(BaseAdapter adapter, long taskStamp, String eMsg) {
+        public void onFailure(long taskStamp, String eMsg) {
             if (mTaskStamp != taskStamp)
                 return;
 
             switch (mGetMode) {
             case MODE_REFRESH:
             case MODE_SOMEWHERE:
-                mPullViewGroup.setVisibility(View.GONE);
+                mRefreshLayout.setVisibility(View.GONE);
                 mRefreshTextView.setVisibility(View.VISIBLE);
                 if (eMsg.equals(mContext.getString(R.string.em_index_error))) {
                     mRefreshTextView.setEmesg(eMsg, mContext.getString(R.string.click_first_page),
@@ -490,9 +542,9 @@ public class GalleryListView extends FrameLayout implements PullViewGroup.OnFoot
                 mRefreshTextView.setVisibility(View.GONE);
                 MaterialToast.showToast(eMsg);
             }
-            mPullViewGroup.setAnyRefreshComplete(false);
+            mRefreshLayout.setAnyRefreshComplete(false);
         }
-    };
+    }
 
     public static interface GalleryListViewHelper {
         /**
@@ -514,4 +566,177 @@ public class GalleryListView extends FrameLayout implements PullViewGroup.OnFoot
         public void doGetGallerys(String url, long taskStamp, OnGetListListener listener);
     }
 
+    public class OnScrollListener extends RecyclerView.OnScrollListener {
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            switch (newState) {
+            case RecyclerView.SCROLL_STATE_DRAGGING:
+                ImageCache.getInstance(mContext).setPauseDiskCache(true);
+                break;
+            case RecyclerView.SCROLL_STATE_IDLE:
+                ImageCache.getInstance(mContext).setPauseDiskCache(false);
+                break;
+            }
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            mRefreshLayout.onScrolled(recyclerView, dx, dy);
+
+            int itemCount = mLayoutManager.getChildCount();
+            int firstVisibleItem = mLayoutManager.findFirstVisibleItemPositions(mFirstPositionTemp)[0];
+
+            // itemCount might include some view can't be seen
+            // Just check each child
+            int visibleItemCount = itemCount;
+            int height = mEasyRecyclerView.getHeight();
+            for (int i = 0; i < itemCount; i++) {
+                View view = mLayoutManager.getChildAt(i);
+                if (view.getBottom() <= 0 || view.getTop() > height)
+                    visibleItemCount--;
+            }
+
+            if (mItemPerPage == 0)
+                return;
+            if (mLastIndex == 0)
+                mLastIndex = mItemPerPage - 1;
+            int pageChanged = (firstVisibleItem - mFirstIndex) / mItemPerPage;
+            if (pageChanged == 0)
+                pageChanged = (firstVisibleItem + visibleItemCount - mLastIndex - 1) / mItemPerPage;
+
+            if (pageChanged != 0) {
+                mCurPage = mCurPage + pageChanged;
+                mFirstIndex += pageChanged * mItemPerPage;
+                mLastIndex += pageChanged * mItemPerPage;
+            }
+        }
+    }
+
+    private static class GalleryViewHolder extends RecyclerView.ViewHolder {
+
+        public int viewType;
+        public LoadImageView thumb;
+        public TextView title;
+        public TextView uploader;
+        public TextView category;
+        public RatingView rate;
+        public TextView posted;
+        public TextView simpleLanguage;
+
+        public GalleryViewHolder(View itemView, int viewType) {
+            super(itemView);
+
+            this.viewType = viewType;
+            switch (viewType) {
+            case LIST_MODE_DETAIL:
+                title = (TextView) itemView.findViewById(R.id.title);
+                uploader = (TextView) itemView.findViewById(R.id.uploader);
+                rate = (RatingView) itemView.findViewById(R.id.rate);
+                posted = (TextView) itemView.findViewById(R.id.posted);
+            case LIST_MODE_THUMB:
+                thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
+                category = (TextView) itemView.findViewById(R.id.category);
+                simpleLanguage = (TextView) itemView.findViewById(R.id.simple_language);
+            }
+        }
+    }
+
+    public class GalleryAdapter extends FooterAdapter<GalleryViewHolder> {
+
+        private final Context mContext;
+        private final List<GalleryInfo> mGiList;
+        private final ImageLoader mImageLoader;
+        private final LayoutInflater mInflater;
+
+        public GalleryAdapter(Context context, List<GalleryInfo> gilist) {
+            mContext = context;
+            mGiList = gilist;
+            mImageLoader = ImageLoader.getInstance(mContext);
+            mInflater = LayoutInflater.from(mContext);
+        }
+
+        @Override
+        public GalleryViewHolder onCreateAndBindFooterViewHolder(
+                ViewGroup parent, View footerView) {
+            return new GalleryViewHolder(footerView, FooterAdapter.TYPE_FOOTER);
+        }
+
+        @Override
+        public GalleryViewHolder onCreateViewHolderActual(ViewGroup parent,
+                int viewType) {
+            int resId;
+            if (viewType == LIST_MODE_DETAIL)
+                resId = R.layout.gallery_list_detail_item;
+            else
+                resId = R.layout.gallery_list_thumb_item;
+            View view = mInflater.inflate(resId, parent, false);
+            CardViewSalon.reformWithShadow(view, new int[][]{
+                    new int[]{android.R.attr.state_pressed},
+                    new int[]{android.R.attr.state_activated},
+                    new int[]{}},
+                    new int[]{0xff84cae4, 0xff33b5e5, 0xFFFAFAFA}, null, false);
+            return new GalleryViewHolder(view, viewType);
+        }
+
+        @Override
+        public void onBindViewHolderActual(GalleryViewHolder holder,
+                int position) {
+            // TODO It is a bug of EasyRecyclerView
+            // EasyRecyclerView should reset checked state
+            EasyRecyclerView.setViewChecked(holder.itemView,
+                    mEasyRecyclerView.isItemChecked(position));
+
+            GalleryInfo gi = mGiList.get(position);
+            final LoadImageView thumb = holder.thumb;
+            if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
+                // Set new thumb
+                thumb.setImageDrawable(null);
+                thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));
+                mImageLoader.add(gi.thumb, String.valueOf(gi.gid),
+                        new LoadImageView.SimpleImageGetListener(thumb).setFixScaleType(true));
+            }
+            // Set category
+            TextView category = holder.category;
+            String newText = Ui.getCategoryText(gi.category);
+            if (!newText.equals(category.getText())) {
+                category.setText(newText);
+                category.setBackgroundColor(Ui.getCategoryColor(gi.category));
+            }
+            // Set simple language
+            TextView simpleLanguage = holder.simpleLanguage;
+            if (gi.simpleLanguage == null) {
+                simpleLanguage.setVisibility(View.GONE);
+            } else {
+                simpleLanguage.setVisibility(View.VISIBLE);
+                simpleLanguage.setText(gi.simpleLanguage);
+            }
+
+            // For detail mode
+            if (holder.viewType == LIST_MODE_DETAIL) {
+                // Set manga title
+                TextView title = holder.title;
+                title.setText(gi.title);
+                // Set uploder
+                TextView uploader = holder.uploader;
+                uploader.setText(gi.uploader);
+                // Set star
+                RatingView rate = holder.rate;
+                rate.setRating(gi.rating);
+                // set posted
+                TextView posted = holder.posted;
+                posted.setText(gi.posted);
+            }
+        }
+
+        @Override
+        public int getItemViewTypeActual(int position) {
+            return mListMode;
+        }
+
+        @Override
+        public int getItemCountActual() {
+            return mGiList.size();
+        }
+    }
 }

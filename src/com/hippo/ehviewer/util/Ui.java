@@ -298,6 +298,19 @@ public class Ui {
     }
 
     /**
+     * Return Configuration.ORIENTATION_PORTRAIT only
+     * if orientation != Configuration.ORIENTATION_LANDSCAPE
+     *
+     * @param orientation
+     * @return
+     */
+    public static int filterOrientation(int orientation) {
+        if (orientation != Configuration.ORIENTATION_LANDSCAPE)
+            orientation = Configuration.ORIENTATION_PORTRAIT;
+        return orientation;
+    }
+
+    /**
      * Set config Orientation
      *
      * @param activity

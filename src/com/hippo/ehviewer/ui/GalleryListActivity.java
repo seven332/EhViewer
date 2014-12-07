@@ -29,6 +29,7 @@ import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -47,12 +48,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AutoCompleteTextView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -62,7 +60,6 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.etsy.android.grid.StaggeredGridView;
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.ImageLoader;
@@ -70,7 +67,6 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.SimpleSuggestionProvider;
 import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
-import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.ListUrls;
@@ -81,7 +77,6 @@ import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.service.DownloadService;
-import com.hippo.ehviewer.tile.TileSalon;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.DialogUtils;
 import com.hippo.ehviewer.util.Favorite;
@@ -90,10 +85,10 @@ import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.DrawerListView;
+import com.hippo.ehviewer.widget.EasyRecyclerView;
 import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.GalleryListView;
 import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
-import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.RatingView;
 import com.hippo.ehviewer.widget.SearchView;
@@ -131,7 +126,8 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         SearchView.OnQueryTextListener, SearchView.OnFocusChangeListener,
         SlidingDrawerLayout.DrawerListener, EhClient.OnLoginListener,
         GalleryListView.GalleryListViewHelper, FitWindowView.OnFitSystemWindowsListener,
-        SearchView.OnActionViewExpandedListener {
+        SearchView.OnActionViewExpandedListener, EasyRecyclerView.OnItemClickListener,
+        EasyRecyclerView.OnItemLongClickListener {
 
     @SuppressWarnings("unused")
     private static final String TAG = GalleryListActivity.class.getSimpleName();
@@ -146,9 +142,6 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
     public static final String KEY_UPLOADER = "uploader";
     public static final String KEY_IMAGE_KEY = "image_key";
     public static final String KEY_IMAGE_URL = "image_url";
-
-    public static final int LIST_MODE_DETAIL = 0x0;
-    public static final int LIST_MODE_THUMB = 0x1;
 
     private AppContext mAppContext;
     private EhClient mClient;
@@ -167,8 +160,6 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
     private FitWindowView mStandard;
     private GalleryListView mGalleryListView;
 
-    private StaggeredGridView mStaggeredGridView;
-
     private View mUserPanel;
     private DrawerListView mMenuList;
     private ImageView mAvatar;
@@ -186,8 +177,6 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
     private SearchView mSearchView;
     private MenuItem mSearchItem;
-
-    private BaseAdapter mAdapter;
 
     private TagsAdapter tagsAdapter;
 
@@ -211,8 +200,6 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
     private static final int BACK_PRESSED_INTERVAL = 2000;
 
     private String mTitle;
-
-    private int mListMode;
 
     private int mListDetailThumbWidth;
     private int mListDetailThumbHeight;
@@ -815,8 +802,15 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
     @Override
     protected void onResume() {
         super.onResume();
-        mListMode = Config.getListMode();
-        updateGridView();
+        mGalleryListView.setListMode(Config.getListMode());
+        mGalleryListView.setOrientation(Ui.filterOrientation(mResources.getConfiguration().orientation));
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        mGalleryListView.setOrientation(Ui.filterOrientation(newConfig.orientation));
     }
 
     /**
@@ -930,8 +924,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
     @Override
     public void onFitSystemWindows(int l, int t, int r, int b) {
-        mStaggeredGridView.setPadding(mStaggeredGridView.getPaddingLeft(), t,
-                mStaggeredGridView.getPaddingRight(), b);
+        mGalleryListView.setPadding(t, b);
         ((SlidingDrawerLayout.LayoutParams) mLeftMenu.getLayoutParams()).topMargin = t;
         ((SlidingDrawerLayout.LayoutParams) mRightMenu.getLayoutParams()).topMargin = t;
         mMenuList.setPadding(mMenuList.getPaddingLeft(), mMenuList.getPaddingTop(),
@@ -951,6 +944,24 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
     @Override protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mMaterialIndicator.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public boolean onItemClick(EasyRecyclerView parent, View view,
+            int position, long id) {
+        Intent intent = new Intent(GalleryListActivity.this, GalleryDetailActivity.class);
+        GalleryInfo gi = mGalleryListView.getGalleryInfo(position);
+        intent.putExtra(GalleryDetailActivity.KEY_G_INFO, gi);
+        startActivity(intent);
+        return true;
+    }
+
+    @Override
+    public boolean onItemLongClick(EasyRecyclerView parent, View view,
+            int position, long id) {
+        longClickItemIndex = position;
+        longClickDialog.show();
+        return true;
     }
 
     @SuppressWarnings("deprecation")
@@ -1014,8 +1025,6 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         mStandard = (FitWindowView) mDrawerLayout.findViewById(R.id.standard);
         mGalleryListView = (GalleryListView) mDrawerLayout.findViewById(R.id.gallery_list);
 
-        mStaggeredGridView = (StaggeredGridView) mGalleryListView.getContentView();
-
         mUserPanel = mLeftMenu.findViewById(R.id.user_panel);
         mMenuList = (DrawerListView) mLeftMenu.findViewById(R.id.list_menu_item_list);
         mAvatar = (ImageView) mUserPanel.findViewById(R.id.avatar);
@@ -1041,7 +1050,8 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         // Content
         mGalleryListView.setGalleryListViewHelper(this);
         mStandard.addOnFitSystemWindowsListener(this);
-        mGalleryListView.getPullViewGroup().setAgainstToChildPadding(true);
+        // TODO
+        // mGalleryListView.getPullViewGroup().setAgainstToChildPadding(true);
 
         // leftDrawer
         mUserPanel.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -1068,7 +1078,6 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
                 mResources.getString(R.string.action_settings)
         };
 
-        // mMenuList.setSelector(new ColorDrawable(Color.TRANSPARENT));
         mMenuList.setClipToPadding(false);
         mMenuList.setData(drawableArray, titleArray);
         mMenuList.setOnItemClickListener(new OnItemClickListener() {
@@ -1185,25 +1194,8 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         });
 
         // Listview
-        mAdapter = new ListAdapter(this, mGalleryListView.getGalleryList());
-        mStaggeredGridView.setAdapter(mAdapter);
-        mStaggeredGridView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                Intent intent = new Intent(GalleryListActivity.this, GalleryDetailActivity.class);
-                GalleryInfo gi = mGalleryListView.getGalleryInfo(position);
-                intent.putExtra(GalleryDetailActivity.KEY_G_INFO, gi);
-                startActivity(intent);
-            }
-        });
-        mStaggeredGridView.setOnItemLongClickListener(new OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                longClickItemIndex = position;
-                longClickDialog.show();
-                return true;
-            }
-        });
+        mGalleryListView.setOnItemClickListener(this);
+        mGalleryListView.setOnItemLongClickListener(this);
 
         // Set random color
         mThemeColor = Config.getCustomThemeColor() ? Config.getThemeColor() : Ui.THEME_COLOR;
@@ -1212,10 +1204,6 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
         // Update user panel
         setUserPanel();
-
-        // Set list mode
-        mListMode = Config.getListMode();
-        updateGridView();
 
         // get MangeList
         mGalleryListView.firstTimeRefresh();
@@ -1250,20 +1238,6 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
             new MaterialAlertDialog.Builder(this).setTitle("注意")
                     .setMessage("正體中文的翻譯由 OpenCC 自動完成，若有任何錯誤或不妥之處歡迎指出。")
                     .show();
-        }
-    }
-
-    private void updateGridView() {
-        if (mStaggeredGridView != null) {
-            switch (mListMode) {
-            case LIST_MODE_DETAIL:
-                mStaggeredGridView.setColumnCountPortrait(1); // TODO
-                mStaggeredGridView.setColumnCountLandscape(2);
-                break;
-            case LIST_MODE_THUMB:
-                mStaggeredGridView.setColumnCountPortrait(Config.getListThumbColumnsPortrait());
-                mStaggeredGridView.setColumnCountLandscape(Config.getListThumbColumnsLandscape());
-            }
         }
     }
 
@@ -1380,9 +1354,9 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         }
 
         // Hide some menu item
-        if (mListMode == LIST_MODE_DETAIL)
+        if (mGalleryListView.getListMode() == GalleryListView.LIST_MODE_DETAIL)
             menu.removeItem(R.id.action_detail);
-        else if (mListMode == LIST_MODE_THUMB)
+        else if (mGalleryListView.getListMode() == GalleryListView.LIST_MODE_THUMB)
             menu.removeItem(R.id.action_thumb);
 
         return true;
@@ -1432,19 +1406,13 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
                 jump();
             return true;
         case R.id.action_detail:
-            mListMode = LIST_MODE_DETAIL;
-            Config.setListMode(mListMode);
-            updateGridView();
-            if (mStaggeredGridView != null)
-                mStaggeredGridView.invalidateChildren();
+            mGalleryListView.setListMode(GalleryListView.LIST_MODE_DETAIL);
+            Config.setListMode(GalleryListView.LIST_MODE_DETAIL);
             invalidateOptionsMenu();
             return true;
         case R.id.action_thumb:
-            mListMode = LIST_MODE_THUMB;
-            Config.setListMode(mListMode);
-            updateGridView();
-            if (mStaggeredGridView != null)
-                mStaggeredGridView.invalidateChildren();
+            mGalleryListView.setListMode(GalleryListView.LIST_MODE_THUMB);
+            Config.setListMode(GalleryListView.LIST_MODE_THUMB);
             invalidateOptionsMenu();
             return true;
         case R.id.action_add:
@@ -1594,16 +1562,16 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
                                                         System.out.println(giList.size());
 
                                                         lus.setSearchResult(newUrl);
-                                                        listener.onSuccess(mAdapter, taskStamp, giList, maxPage);
+                                                        listener.onSuccess(taskStamp, giList, maxPage);
                                                     }
 
                                                     @Override
                                                     public void onFailure(Object checkFlag, String eMsg) {
-                                                        listener.onFailure(mAdapter, taskStamp, eMsg); // TODO
+                                                        listener.onFailure(taskStamp, eMsg); // TODO
                                                     }
                                                 });
                                     } else {
-                                        listener.onFailure(mAdapter, taskStamp, "~~~~~~~~~~"); // TODO
+                                        listener.onFailure(taskStamp, "~~~~~~~~~~"); // TODO
                                     }
                                 }
                             });
@@ -1615,12 +1583,12 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
                                 public void onSuccess(Object checkFlag, List<GalleryInfo> giList, int maxPage,
                                         String newUrl) {
                                     lus.setSearchResult(newUrl);
-                                    listener.onSuccess(mAdapter, taskStamp, giList, maxPage);
+                                    listener.onSuccess(taskStamp, giList, maxPage);
                                 }
 
                                 @Override
                                 public void onFailure(Object checkFlag, String eMsg) {
-                                    listener.onFailure(mAdapter, taskStamp, eMsg);
+                                    listener.onFailure(taskStamp, eMsg);
                                 }
                             });
                 }
@@ -1629,12 +1597,12 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
                 mClient.getGList(url, null, new EhClient.OnGetGListListener() {
                     @Override
                     public void onSuccess(Object checkFlag, List<GalleryInfo> lmdArray, int pageNum) {
-                        listener.onSuccess(mAdapter, taskStamp, lmdArray, pageNum);
+                        listener.onSuccess(taskStamp, lmdArray, pageNum);
                     }
 
                     @Override
                     public void onFailure(Object checkFlag, String eMsg) {
-                        listener.onFailure(mAdapter, taskStamp, eMsg);
+                        listener.onFailure(taskStamp, eMsg);
                     }
                 });
             }
@@ -1642,7 +1610,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
             mClient.getPopular(new EhClient.OnGetPopularListener() {
                 @Override
                 public void onSuccess(List<GalleryInfo> gis, long timeStamp) {
-                    listener.onSuccess(mAdapter, taskStamp, gis, gis.size() == 0 ? 0 : 1);
+                    listener.onSuccess(taskStamp, gis, gis.size() == 0 ? 0 : 1);
                     // Show update time
                     if (timeStamp != -1 && Config.getShowPopularUpdateTime())
                         MaterialToast.showToast(String.format(getString(R.string.popular_update_time),
@@ -1651,140 +1619,21 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
                 @Override
                 public void onFailure(String eMsg) {
-                    listener.onFailure(mAdapter, taskStamp, eMsg);
+                    listener.onFailure(taskStamp, eMsg);
                 }
             });
         } else {
             mClient.getGList(url, null, new EhClient.OnGetGListListener() {
                 @Override
                 public void onSuccess(Object checkFlag, List<GalleryInfo> lmdArray, int pageNum) {
-                    listener.onSuccess(mAdapter, taskStamp, lmdArray, pageNum);
+                    listener.onSuccess(taskStamp, lmdArray, pageNum);
                 }
 
                 @Override
                 public void onFailure(Object checkFlag, String eMsg) {
-                    listener.onFailure(mAdapter, taskStamp, eMsg);
+                    listener.onFailure(taskStamp, eMsg);
                 }
             });
-        }
-    }
-
-    private class ViewHolder {
-        public LoadImageView thumb;
-        public TextView category;
-        public TextView simpleLanguage;
-        public TextView title;
-        public TextView uploader;
-        public RatingView rate;
-        public TextView posted;
-    }
-
-    public class ListAdapter extends BaseAdapter {
-        private final List<GalleryInfo> mGiList;
-        private final ImageLoader mImageLoader;
-
-        public ListAdapter(Context context, List<GalleryInfo> gilist) {
-            mGiList = gilist;
-            mImageLoader = ImageLoader.getInstance(GalleryListActivity.this);
-        }
-
-        @Override
-        public int getCount() {
-            return mGiList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mGiList == null ? 0 : mGiList.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            GalleryInfo gi = mGiList.get(position);
-
-            if (convertView == null
-                    || (mListMode == LIST_MODE_DETAIL && convertView.getId() != R.id.gallery_list_detail)
-                    || (mListMode == LIST_MODE_THUMB && convertView.getId() != R.id.gallery_list_thumb)) {
-                // Get new view
-                ViewHolder viewHolder = new ViewHolder();
-                switch (mListMode) {
-                case LIST_MODE_DETAIL:
-                    convertView = LayoutInflater.from(GalleryListActivity.this).inflate(
-                            R.layout.gallery_list_detail_item, parent, false);
-                    CardViewSalon.reformWithShadow(convertView, new int[][] {
-                            new int[] { android.R.attr.state_pressed }, new int[] { android.R.attr.state_activated },
-                            new int[] {} }, new int[] { 0xff84cae4, 0xff33b5e5, 0xFFFAFAFA }, null, false); // TODO
-                    viewHolder.thumb = (LoadImageView) convertView.findViewById(R.id.thumb);
-                    ViewGroup.LayoutParams lp = viewHolder.thumb.getLayoutParams();
-                    lp.width = mListDetailThumbWidth;
-                    lp.height = mListDetailThumbHeight;
-                    viewHolder.category = (TextView) convertView.findViewById(R.id.category);
-                    viewHolder.simpleLanguage = (TextView) convertView.findViewById(R.id.simple_language);
-                    viewHolder.title = (TextView) convertView.findViewById(R.id.title);
-                    viewHolder.uploader = (TextView) convertView.findViewById(R.id.uploader);
-                    viewHolder.rate = (RatingView) convertView.findViewById(R.id.rate);
-                    viewHolder.posted = (TextView) convertView.findViewById(R.id.posted);
-                    convertView.setTag(viewHolder);
-                    break;
-                case LIST_MODE_THUMB:
-                    convertView = LayoutInflater.from(GalleryListActivity.this).inflate(
-                            R.layout.gallery_list_thumb_item, parent, false);
-                    TileSalon.reform(convertView, 0xFFFAFAFA); // TODO
-                    viewHolder.thumb = (LoadImageView) convertView.findViewById(R.id.thumb);
-                    viewHolder.category = (TextView) convertView.findViewById(R.id.category);
-                    viewHolder.simpleLanguage = (TextView) convertView.findViewById(R.id.simple_language);
-                    convertView.setTag(viewHolder);
-                    break;
-                }
-            }
-
-            ViewHolder viewHolder = (ViewHolder) convertView.getTag();
-            final LoadImageView thumb = viewHolder.thumb;
-            if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
-                // Set new thumb
-                thumb.setImageDrawable(null);
-                thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));
-                mImageLoader.add(gi.thumb, String.valueOf(gi.gid),
-                        new LoadImageView.SimpleImageGetListener(thumb).setFixScaleType(true));
-            }
-            // Set category
-            TextView category = viewHolder.category;
-            String newText = Ui.getCategoryText(gi.category);
-            if (!newText.equals(category.getText())) {
-                category.setText(newText);
-                category.setBackgroundColor(Ui.getCategoryColor(gi.category));
-            }
-            // Set simple language
-            TextView simpleLanguage = viewHolder.simpleLanguage;
-            if (gi.simpleLanguage == null) {
-                simpleLanguage.setVisibility(View.GONE);
-            } else {
-                simpleLanguage.setVisibility(View.VISIBLE);
-                simpleLanguage.setText(gi.simpleLanguage);
-            }
-
-            // For detail mode
-            if (mListMode == LIST_MODE_DETAIL) {
-                // Set manga title
-                TextView title = viewHolder.title;
-                title.setText(gi.title);
-                // Set uploder
-                TextView uploader = viewHolder.uploader;
-                uploader.setText(gi.uploader);
-                // Set star
-                RatingView rate = viewHolder.rate;
-                rate.setRating(gi.rating);
-                // set posted
-                TextView posted = viewHolder.posted;
-                posted.setText(gi.posted);
-            }
-
-            return convertView;
         }
     }
 }

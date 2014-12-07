@@ -16,13 +16,10 @@
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <com.hippo.ehviewer.widget.PullStaggeredGridView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/pull_list"
+    <com.hippo.ehviewer.widget.RefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:saveEnabled="false"
-        app:item_margin="8dp" />
+        android:layout_height="match_parent" />
 
     <com.hippo.ehviewer.widget.RefreshTextView
         android:id="@+id/refresh_text"
