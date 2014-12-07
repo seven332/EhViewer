@@ -18,7 +18,6 @@ package com.hippo.ehviewer.widget;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
 /**
@@ -29,55 +28,19 @@ import android.view.View;
  */
 public class MarginItemDecoration extends RecyclerView.ItemDecoration {
 
-    private int mMargin;
-
-    public MarginItemDecoration(int margin) {
-        mMargin = margin;
-    }
+    private int mHalfMargin;
 
     @Override
     public void getItemOffsets(Rect outRect, View view,
             RecyclerView parent, RecyclerView.State state) {
-
-        StaggeredGridLayoutManager lm = (StaggeredGridLayoutManager) parent.getLayoutManager();
-        FooterAdapter<?> adapter = (FooterAdapter<?>) parent.getAdapter();
-
-        int position = ((RecyclerView.LayoutParams) view.getLayoutParams()).getViewPosition();
-        int spanCount = lm.getSpanCount();
-        int actualCount = adapter.getItemCountActual();
-        int halfMargin = mMargin / 2;
-        boolean hasFooterView = adapter.getFooterView() != null;
-
-        int left = halfMargin;
-        int top = halfMargin;
-        int right = halfMargin;
-        int bottom = halfMargin;
-
-        if (position == actualCount) {
-            left = mMargin;
-            right = mMargin;
-            bottom = mMargin;
-            if (actualCount == 0)
-                top = mMargin;
-        } else {
-            if (position < spanCount)
-                top = mMargin;
-            if (!hasFooterView && position >= (actualCount - 1) / spanCount * spanCount)
-                bottom = mMargin;
-            if (position % spanCount == 0)
-                left = mMargin;
-            if (position % spanCount == spanCount - 1)
-                right = mMargin;
-        }
-
-        outRect.set(left, top, right, bottom);
+        outRect.set(mHalfMargin, mHalfMargin, mHalfMargin, mHalfMargin);
     }
 
     public void setMargin(int margin) {
-        mMargin = margin;
+        mHalfMargin = margin / 2;
     }
 
     public int getMargin() {
-        return mMargin;
+        return mHalfMargin * 2;
     }
 }

@@ -41,6 +41,7 @@ import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.ListParser;
 import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.util.ViewUtils;
 
 public class GalleryListView extends FrameLayout implements RefreshLayout.OnFooterRefreshListener,
         RefreshLayout.OnRefreshListener {
@@ -103,6 +104,11 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
     private String mTargetUrl;
     private boolean isFootRefresh = false;
 
+    private LayoutInflater mInflater;
+
+    private int mListDetailThumbWidth;
+    private int mListDetailThumbHeight;
+
     public GalleryListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs, 0, 0);
@@ -132,7 +138,7 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
 
         mAdapter = new GalleryAdapter(mContext, mGiList);
         mLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-        mItemDecoration = new MarginItemDecoration(Ui.dp2pix(8)); // TODO for tablet margin should be greater
+        mItemDecoration = new MarginItemDecoration();
         mEasyRecyclerView.setOnScrollListener(new OnScrollListener());
         mEasyRecyclerView.setClipToPadding(false);
         mEasyRecyclerView.setAdapter(mAdapter);
@@ -140,6 +146,7 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
         mEasyRecyclerView.addItemDecoration(mItemDecoration);
         mEasyRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mEasyRecyclerView.setHasFixedSize(true);
+        setItemMargin(Ui.dp2pix(8)); // TODO for tablet margin should be greater
 
         mRefreshTextView.setDefaultRefresh(R.string.click_retry, new RefreshTextView.OnRefreshListener() {
             @Override
@@ -160,6 +167,17 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
                 mContext.getString(R.string.footer_loaded),
                 mContext.getString(R.string.footer_fail));
         mRefreshLayout.addFooterView();
+
+        // Caculate gallery detail height
+        mInflater = LayoutInflater.from(mContext);
+        View v = mInflater.inflate(R.layout.test_gallery_list_detail_thumb, null);
+        ((TextView) v.findViewById(R.id.title)).setText("haha\nhaha");
+        ((TextView) v.findViewById(R.id.uploader)).setText("haha");
+        ((RatingView) v.findViewById(R.id.rate)).setRating(2.3f);
+        ((TextView) v.findViewById(R.id.category)).setText("haha");
+        ViewUtils.measureView(v);
+        mListDetailThumbHeight = Math.max(v.getMeasuredHeight(), Ui.dp2pix(120));
+        mListDetailThumbWidth = mListDetailThumbHeight * 2 / 3;
     }
 
     public int getListMode() {
@@ -200,10 +218,18 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
         mHelper = h;
     }
 
-    public void setPadding(int top, int bottom) {
+    public void setPaddingTopAndBottom(int top, int bottom) {
         setPadding(getPaddingLeft(), top, getPaddingRight(), getPaddingBottom());
         mEasyRecyclerView.setPadding(mEasyRecyclerView.getPaddingLeft(), mEasyRecyclerView.getPaddingTop(),
                 mEasyRecyclerView.getPaddingRight(), bottom);
+    }
+
+    private void setItemMargin(int margin) {
+        int halfMargin = margin / 2;
+        mItemDecoration.setMargin(margin);
+        setPadding(halfMargin, getPaddingTop(), halfMargin, getPaddingBottom());
+        mEasyRecyclerView.setPadding(mEasyRecyclerView.getPaddingLeft(), halfMargin,
+                mEasyRecyclerView.getPaddingRight(), mEasyRecyclerView.getPaddingBottom());
     }
 
     public void setEnabledHeader(boolean enabled) {
@@ -613,7 +639,7 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
         }
     }
 
-    private static class GalleryViewHolder extends RecyclerView.ViewHolder {
+    private class GalleryViewHolder extends RecyclerView.ViewHolder {
 
         public int viewType;
         public LoadImageView thumb;
@@ -630,10 +656,18 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
             this.viewType = viewType;
             switch (viewType) {
             case LIST_MODE_DETAIL:
+                thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
                 title = (TextView) itemView.findViewById(R.id.title);
+                category = (TextView) itemView.findViewById(R.id.category);
                 uploader = (TextView) itemView.findViewById(R.id.uploader);
                 rate = (RatingView) itemView.findViewById(R.id.rate);
                 posted = (TextView) itemView.findViewById(R.id.posted);
+                simpleLanguage = (TextView) itemView.findViewById(R.id.simple_language);
+
+                ViewGroup.LayoutParams lp = thumb.getLayoutParams();
+                lp.width = mListDetailThumbWidth;
+                lp.height = mListDetailThumbHeight;
+                break;
             case LIST_MODE_THUMB:
                 thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
                 category = (TextView) itemView.findViewById(R.id.category);
@@ -647,13 +681,12 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
         private final Context mContext;
         private final List<GalleryInfo> mGiList;
         private final ImageLoader mImageLoader;
-        private final LayoutInflater mInflater;
+
 
         public GalleryAdapter(Context context, List<GalleryInfo> gilist) {
             mContext = context;
             mGiList = gilist;
             mImageLoader = ImageLoader.getInstance(mContext);
-            mInflater = LayoutInflater.from(mContext);
         }
 
         @Override

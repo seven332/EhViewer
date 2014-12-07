@@ -271,7 +271,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
         lp.leftMargin = magicSpacing;
         lp.rightMargin = magicSpacing;
         mActionableToastBar.setLayoutParams(lp);
-        mGalleryListView.setPadding(t, b);
+        mGalleryListView.setPaddingTopAndBottom(t, b);
         ((SlidingDrawerLayout.LayoutParams) mMenu.getLayoutParams()).topMargin = t;
         mMenu.setPadding(mMenu.getPaddingLeft(), mMenu.getPaddingTop(), mMenu.getPaddingRight(), b);
 

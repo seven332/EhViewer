@@ -146,7 +146,7 @@ public class HistoryActivity extends AbsTranslucentActivity
 
     @Override
     public void onFitSystemWindows(int l, int t, int r, int b) {
-        mGalleryListView.setPadding(t, b);
+        mGalleryListView.setPaddingTopAndBottom(t, b);
         Ui.colorStatusBarKK(this, mThemeColor, t - Ui.ACTION_BAR_HEIGHT);
     }
 

@@ -924,7 +924,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
     @Override
     public void onFitSystemWindows(int l, int t, int r, int b) {
-        mGalleryListView.setPadding(t, b);
+        mGalleryListView.setPaddingTopAndBottom(t, b);
         ((SlidingDrawerLayout.LayoutParams) mLeftMenu.getLayoutParams()).topMargin = t;
         ((SlidingDrawerLayout.LayoutParams) mRightMenu.getLayoutParams()).topMargin = t;
         mMenuList.setPadding(mMenuList.getPaddingLeft(), mMenuList.getPaddingTop(),
