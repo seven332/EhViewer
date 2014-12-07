@@ -25,9 +25,11 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.SparseBooleanArray;
+import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.HapticFeedbackConstants;
+import android.view.InputDevice;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -121,6 +123,8 @@ public class EasyRecyclerView extends RecyclerView {
     private boolean mHasFooterView = false;
 
     private RecyclerView.Adapter mAdapter;
+
+    private float mVerticalScrollFactor = 0;
 
     public EasyRecyclerView(Context context) {
         super(context);
@@ -546,6 +550,43 @@ public class EasyRecyclerView extends RecyclerView {
      */
     public void setHasFooterView(boolean hasFooterView) {
         mHasFooterView = hasFooterView;
+    }
+
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        if ((event.getSource() & InputDevice.SOURCE_CLASS_POINTER) != 0) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_SCROLL: {
+                    if (getScrollState() != SCROLL_STATE_DRAGGING) {
+                        final float vscroll = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
+                        if (vscroll != 0) {
+                            final int delta = (int) (vscroll * getVerticalScrollFactor());
+                            scrollBy(0, -delta);
+                        }
+                    }
+                }
+            }
+        }
+        return super.onGenericMotionEvent(event);
+    }
+
+    /**
+     * Gets a scale factor that determines the distance the view should scroll
+     * vertically in response to {@link MotionEvent#ACTION_SCROLL}.
+     * @return The vertical scroll scale factor.
+     */
+    protected float getVerticalScrollFactor() {
+        if (mVerticalScrollFactor == 0) {
+            TypedValue outValue = new TypedValue();
+            if (!getContext().getTheme().resolveAttribute(
+                    0x0101004d, outValue, true)) {//com.android.internal.R.attr.listPreferredItemHeight
+                throw new IllegalStateException(
+                        "Expected theme to define listPreferredItemHeight.");
+            }
+            mVerticalScrollFactor = outValue.getDimension(
+                    getContext().getResources().getDisplayMetrics());
+        }
+        return mVerticalScrollFactor;
     }
 
     /*
