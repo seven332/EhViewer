@@ -227,9 +227,8 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
     private void setItemMargin(int margin) {
         int halfMargin = margin / 2;
         mItemDecoration.setMargin(margin);
-        setPadding(halfMargin, getPaddingTop(), halfMargin, getPaddingBottom());
-        mEasyRecyclerView.setPadding(mEasyRecyclerView.getPaddingLeft(), halfMargin,
-                mEasyRecyclerView.getPaddingRight(), mEasyRecyclerView.getPaddingBottom());
+        mEasyRecyclerView.setPadding(halfMargin, halfMargin,
+                halfMargin, mEasyRecyclerView.getPaddingBottom());
     }
 
     public void setEnabledHeader(boolean enabled) {
