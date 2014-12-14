@@ -613,10 +613,22 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
             int firstVisibleItem = mLayoutManager.findFirstVisibleItemPositions(mFirstPositionTemp)[0];
 
             // itemCount might include some view can't be seen
-            // Just check each child
+            // Just check top line child and bottom line child
             int visibleItemCount = itemCount;
             int height = mEasyRecyclerView.getHeight();
-            for (int i = 0; i < itemCount; i++) {
+            int span = mLayoutManager.getSpanCount();
+            // Top line
+            int start = 0;
+            int end = Math.min(span, itemCount);
+            for (int i = start; i < end; i++) {
+                View view = mLayoutManager.getChildAt(i);
+                if (view.getBottom() <= 0 || view.getTop() > height)
+                    visibleItemCount--;
+            }
+            // Bottom line
+            start = Math.max(itemCount - 1 - span, 0);
+            end = itemCount;
+            for (int i = start; i < end; i++) {
                 View view = mLayoutManager.getChildAt(i);
                 if (view.getBottom() <= 0 || view.getTop() > height)
                     visibleItemCount--;
