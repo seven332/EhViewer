@@ -1339,7 +1339,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
         int closeViewID = mResources.getIdentifier("android:id/search_close_btn", null, null);
         ImageView closeView = null;
-        Drawable closeImage = mResources.getDrawable(R.drawable.ic_clear);
+        Drawable closeImage = mResources.getDrawable(R.drawable.ic_action_close);
         if (closeViewID > 0 && (closeView = (ImageView) mSearchView.findViewById(closeViewID)) != null
                 && closeImage != null) {
             closeView.setImageDrawable(closeImage);
@@ -1347,7 +1347,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
         int voiceViewID = mResources.getIdentifier("android:id/search_voice_btn", null, null);
         ImageView voiceView = null;
-        Drawable voiceImage = mResources.getDrawable(R.drawable.ic_voice_search);
+        Drawable voiceImage = mResources.getDrawable(R.drawable.ic_action_voice_search);
         if (voiceViewID > 0 && (voiceView = (ImageView) mSearchView.findViewById(voiceViewID)) != null
                 && voiceImage != null) {
             voiceView.setImageDrawable(voiceImage);

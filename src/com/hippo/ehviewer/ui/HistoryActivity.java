@@ -21,21 +21,15 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.TextView;
 
-import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.data.Data;
@@ -47,11 +41,8 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.EasyRecyclerView;
 import com.hippo.ehviewer.widget.FitWindowView;
-import com.hippo.ehviewer.widget.FooterAdapter;
 import com.hippo.ehviewer.widget.GalleryListView;
 import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
-import com.hippo.ehviewer.widget.LoadImageView;
-import com.hippo.ehviewer.widget.RatingView;
 
 public class HistoryActivity extends AbsTranslucentActivity
         implements EasyRecyclerView.OnItemClickListener, MaterialAlertDialog.OnClickListener,
@@ -67,8 +58,6 @@ public class HistoryActivity extends AbsTranslucentActivity
 
     private FitWindowView mStandard;
     private GalleryListView mGalleryListView;
-
-    private HistoryAdapter mAdapter;
 
     private int mFilterMode;
 
@@ -246,220 +235,4 @@ public class HistoryActivity extends AbsTranslucentActivity
         startActivity(intent);
         return true;
     }
-
-
-
-
-
-
-
-    private class HistoryViewHolder extends RecyclerView.ViewHolder {
-
-        public int viewType;
-        public LoadImageView thumb;
-        public TextView title;
-        public TextView uploader;
-        public TextView category;
-        public RatingView rate;
-        public TextView posted;
-        public TextView simpleLanguage;
-
-        public HistoryViewHolder(View itemView, int viewType) {
-            super(itemView);
-
-            this.viewType = viewType;
-            switch (viewType) {
-            case LIST_MODE_DETAIL:
-                title = (TextView) itemView.findViewById(R.id.title);
-                uploader = (TextView) itemView.findViewById(R.id.uploader);
-                rate = (RatingView) itemView.findViewById(R.id.rate);
-                posted = (TextView) itemView.findViewById(R.id.posted);
-            case LIST_MODE_THUMB:
-                thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
-                category = (TextView) itemView.findViewById(R.id.category);
-                simpleLanguage = (TextView) itemView.findViewById(R.id.simple_language);
-            }
-        }
-    }
-
-    public class HistoryAdapter extends FooterAdapter<HistoryViewHolder> {
-
-        private final Context mContext;
-        private final List<GalleryInfo> mGiList;
-        private final ImageLoader mImageLoader;
-        private final LayoutInflater mInflater;
-
-        public HistoryAdapter(Context context, List<GalleryInfo> gilist) {
-            mContext = context;
-            mGiList = gilist;
-            mImageLoader = ImageLoader.getInstance(mContext);
-            mInflater = LayoutInflater.from(mContext);
-        }
-
-        @Override
-        public HistoryViewHolder onCreateAndBindFooterViewHolder(
-                ViewGroup parent, View footerView) {
-            return new HistoryViewHolder(footerView, FooterAdapter.TYPE_FOOTER);
-        }
-
-        @Override
-        public HistoryViewHolder onCreateViewHolderActual(ViewGroup parent,
-                int viewType) {
-            int resId;
-            if (viewType == LIST_MODE_DETAIL)
-                resId = R.layout.gallery_list_detail_item;
-            else
-                resId = R.layout.gallery_list_thumb_item;
-            View view = mInflater.inflate(resId, parent, false);
-            return new HistoryViewHolder(view, viewType);
-        }
-
-        @Override
-        public void onBindViewHolderActual(HistoryViewHolder holder,
-                int position) {
-            GalleryInfo gi = mGiList.get(position);
-            final LoadImageView thumb = holder.thumb;
-            if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
-                // Set new thumb
-                thumb.setImageDrawable(null);
-                thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));
-                mImageLoader.add(gi.thumb, String.valueOf(gi.gid),
-                        new LoadImageView.SimpleImageGetListener(thumb).setFixScaleType(true));
-            }
-            // Set category
-            TextView category = holder.category;
-            String newText = Ui.getCategoryText(gi.category);
-            if (!newText.equals(category.getText())) {
-                category.setText(newText);
-                category.setBackgroundColor(Ui.getCategoryColor(gi.category));
-            }
-            // Set simple language
-            TextView simpleLanguage = holder.simpleLanguage;
-            if (gi.simpleLanguage == null) {
-                simpleLanguage.setVisibility(View.GONE);
-            } else {
-                simpleLanguage.setVisibility(View.VISIBLE);
-                simpleLanguage.setText(gi.simpleLanguage);
-            }
-
-            // For detail mode
-            if (holder.viewType == LIST_MODE_DETAIL) {
-                // Set manga title
-                TextView title = holder.title;
-                title.setText(gi.title);
-                // Set uploder
-                TextView uploader = holder.uploader;
-                uploader.setText(gi.uploader);
-                // Set star
-                RatingView rate = holder.rate;
-                rate.setRating(gi.rating);
-                // set posted
-                TextView posted = holder.posted;
-                posted.setText(gi.posted);
-            }
-        }
-
-        @Override
-        public int getItemViewTypeActual(int position) {
-            return LIST_MODE_DETAIL;
-        }
-
-        @Override
-        public int getItemCountActual() {
-            return mGiList.size();
-        }
-    }
-
-
-
-
-
-
-
-
-
-    /*
-    public class ListAdapter extends BaseAdapter {
-        private final List<GalleryInfo> mGiList;
-        private final ImageLoader mImageLoader;
-
-        public ListAdapter(List<GalleryInfo> gilist) {
-            mGiList = gilist;
-            mImageLoader =ImageLoader.getInstance(HistoryActivity.this);
-        }
-
-        @Override
-        public int getCount() {
-            return mGiList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mGiList == null ? 0 : mGiList.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            GalleryInfo gi= mGiList.get(position);
-            if (convertView == null || !(convertView instanceof LinearLayout)) {
-                convertView = LayoutInflater.from(HistoryActivity.this)
-                        .inflate(R.layout.favorite_list_item, parent, false);
-                CardViewSalon.reformWithShadow(((ViewGroup)convertView).getChildAt(0), new int[][]{
-                                new int[]{android.R.attr.state_pressed},
-                                new int[]{android.R.attr.state_activated},
-                                new int[]{}},
-                                new int[]{0xff84cae4, 0xff33b5e5, 0xFFFAFAFA}, null, false);
-            }
-            final LoadImageView thumb = (LoadImageView)convertView.findViewById(R.id.thumb);
-            if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
-                // Set margin top 8dp if position is 0, otherwise 4dp
-                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)
-                        convertView.findViewById(R.id.card_view).getLayoutParams();
-                if (position == 0)
-                    lp.topMargin = Ui.dp2pix(8);
-                else
-                    lp.topMargin = Ui.dp2pix(4);
-
-                // Set new thumb
-                thumb.setImageDrawable(null);
-                thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));
-                mImageLoader.add(gi.thumb, String.valueOf(gi.gid),
-                        new LoadImageView.SimpleImageGetListener(thumb).setFixScaleType(true));
-            }
-            // Set manga name
-            TextView name = (TextView) convertView.findViewById(R.id.title);
-            name.setText(gi.title);
-            // Set uploder
-            TextView uploader = (TextView) convertView.findViewById(R.id.uploader);
-            uploader.setText(gi.uploader);
-            // Set category
-            TextView category = (TextView) convertView.findViewById(R.id.category);
-            String newText = Ui.getCategoryText(gi.category);
-            if (!newText.equals(category.getText())) {
-                category.setText(newText);
-                category.setBackgroundColor(Ui.getCategoryColor(gi.category));
-            }
-            // Set star
-            RatingView rate = (RatingView) convertView
-                    .findViewById(R.id.rate);
-            rate.setRating(gi.rating);
-            // set posted
-            TextView posted = (TextView)convertView.findViewById(R.id.posted);
-            posted.setText(gi.posted);
-            // Set simple language
-            TextView simpleLanguage = (TextView)convertView.findViewById(R.id.simple_language);
-            if (gi.simpleLanguage == null) {
-                simpleLanguage.setVisibility(View.GONE);
-            } else {
-                simpleLanguage.setVisibility(View.VISIBLE);
-                simpleLanguage.setText(gi.simpleLanguage);
-            }
-            return convertView;
-        }
-    }*/
 }

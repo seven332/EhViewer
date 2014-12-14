@@ -232,7 +232,7 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
     }
 
     public void setEnabledHeader(boolean enabled) {
-        mRefreshLayout.setEnabledFooter(enabled);
+        mRefreshLayout.setEnabledHeader(enabled);
     }
 
     public void setEnabledFooter(boolean enabled) {

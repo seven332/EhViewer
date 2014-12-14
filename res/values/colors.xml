@@ -15,24 +15,13 @@
  -->
 
 <!--
-icon
-    light
-        enabled ffffff 80%
-        disabled ffffff 30%
-    dark
-        enabled 333333 60%
-        disabled 333333 30%
-    gallery action icon ffffff 38%
+    The standard opacity for an active icon on a light background is 54% (#000000).
+    An inactive icon, which is lower in the visual hierarchy, should have an
+    opacity of 26% (#000000).
 
-component
-    light
-        actived theme color
-        not actived 000000 54%
-        disabled 000000 26%
-    dark
-        actived theme color
-        not actived ffffff 70%
-        disabled ffffff 30%
+    The standard opacity for an active icon on a dark background is 100% (#FFFFFF).
+    An inactive icon, which is lower in the visual hierarchy, should have an
+    opacity of 30% (#FFFFFF).
  -->
 
 <resources>

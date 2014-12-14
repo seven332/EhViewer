@@ -91,7 +91,6 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:configChanges="orientation|screenSize|uiMode"
-            android:icon="@drawable/ic_action_settings"
             android:label="@string/preference_settings_title"
             android:screenOrientation="behind" >
         </activity>
@@ -99,7 +98,6 @@
         <activity
             android:name=".ui.FavouriteActivity"
             android:configChanges="orientation|screenSize|uiMode"
-            android:icon="@drawable/ic_action_favorite"
             android:label="@string/favourite"
             android:screenOrientation="behind"
             android:theme="@style/AppTheme.ListActivity" >
@@ -108,7 +106,6 @@
         <activity
             android:name=".ui.HistoryActivity"
             android:configChanges="orientation|screenSize|uiMode"
-            android:icon="@drawable/ic_action_history"
             android:label="@string/history"
             android:screenOrientation="behind"
             android:theme="@style/AppTheme.ListActivity" >
@@ -117,7 +114,6 @@
         <activity
             android:name=".ui.DownloadActivity"
             android:configChanges="orientation|screenSize|uiMode"
-            android:icon="@drawable/ic_setting_download"
             android:label="@string/download"
             android:launchMode="singleTask"
             android:screenOrientation="behind"

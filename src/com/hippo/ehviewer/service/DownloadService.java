@@ -268,12 +268,12 @@ public class DownloadService extends Service
         Intent stopIntent = new Intent(this, DownloadService.class);
         stopIntent.setAction(ACTION_STOP);
         PendingIntent piStop = PendingIntent.getService(this, 0, stopIntent, 0);
-        mBuilder.addAction(R.drawable.ic_clear2, getString(R.string.stop), piStop);
+        mBuilder.addAction(R.drawable.ic_action_stop, getString(R.string.stop), piStop);
 
         Intent stopAllIntent = new Intent(this, DownloadService.class);
         stopAllIntent.setAction(ACTION_STOP_ALL);
         PendingIntent piStopAll = PendingIntent.getService(this, 0, stopAllIntent, 0);
-        mBuilder.addAction(R.drawable.ic_clear, getString(R.string.stop_all), piStopAll);
+        mBuilder.addAction(R.drawable.ic_action_close, getString(R.string.stop_all), piStopAll);
     }
 
     @Override
