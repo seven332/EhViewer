@@ -70,7 +70,7 @@
     <!-- GalleryListActivity -->
     <string name="no_found">未找到</string>
     <string name="none">无</string>
-    <string name="quick_search_tip">您可以再左侧栏搜索项中添加快速搜索</string>
+    <string name="quick_search_tip">您可以在左侧栏搜索项中添加快速搜索</string>
     <string name="no_avatar">无头像</string>
     <string name="get_avatar_error">获取头像失败</string>
     <string name="image_search">图像搜索</string>
