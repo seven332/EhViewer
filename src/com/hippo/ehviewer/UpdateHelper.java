@@ -28,11 +28,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
-import android.os.Process;
 import android.support.v4.app.NotificationCompat;
 
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.network.HttpHelper;
+import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Utils;
 
@@ -129,9 +129,7 @@ public class UpdateHelper implements Runnable {
     }
 
     public void checkUpdate() {
-        Thread thread = new Thread(this);
-        thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
-        thread.start();
+        new BgThread(this).start();
     }
 
     private class Respond implements Runnable {

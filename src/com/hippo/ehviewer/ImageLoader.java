@@ -24,6 +24,7 @@ import android.os.Message;
 
 import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.network.HttpHelper;
+import com.hippo.ehviewer.util.BgThread;
 
 public class ImageLoader {
     @SuppressWarnings("unused")
@@ -56,9 +57,7 @@ public class ImageLoader {
         mContext = context;
         mImageCache = ImageCache.getInstance(mContext);
 
-        Thread thread = new Thread(new LoadFromCacheTask());
-        thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-        thread.start();
+        new BgThread(new LoadFromCacheTask()).start();
     }
 
     public final static ImageLoader getInstance(final Context context) {
@@ -115,9 +114,7 @@ public class ImageLoader {
             synchronized (mDownloadTasks) {
                 mDownloadTasks.push(loadTask);
                 if (mWorkingThreadNum < MAX_DOWNLOAD_THREADS) {
-                    Thread thread = new Thread(new DownloadImageTask());
-                    thread.setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-                    thread.start();
+                    new BgThread(new DownloadImageTask()).start();
                     mWorkingThreadNum++;
                 }
             }
