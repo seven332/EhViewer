@@ -147,14 +147,14 @@ public class DownloadActivity extends AbsTranslucentActivity implements FitWindo
 
         case R.id.action_start:
             it = new Intent(DownloadActivity.this, DownloadService.class);
+            it.setAction(DownloadService.ACTION_START_ALL);
             startService(it);
-            mAppContext.getDownloadServiceConnection().getService().startAll();
             return true;
 
         case R.id.action_stop:
             it = new Intent(DownloadActivity.this, DownloadService.class);
+            it.setAction(DownloadService.ACTION_STOP_ALL);
             startService(it);
-            mAppContext.getDownloadServiceConnection().getService().stopAll();
             return true;
 
         default:
@@ -338,8 +338,9 @@ public class DownloadActivity extends AbsTranslucentActivity implements FitWindo
                         public boolean onClick(MaterialAlertDialog dialog, int which) {
                             if (which == MaterialAlertDialog.POSITIVE) {
                                 Intent it = new Intent(DownloadActivity.this, DownloadService.class);
+                                it.setAction(DownloadService.ACTION_DELETE);
+                                it.putExtra(DownloadService.KEY_GID, mDownloadInfo.galleryInfo.gid);
                                 startService(it);
-                                mAppContext.getDownloadServiceConnection().getService().delete(mDownloadInfo);
                                 // Delete dir
                                 if (cb.isChecked()) {
                                     GalleryInfo gi = mDownloadInfo.galleryInfo;
@@ -365,11 +366,11 @@ public class DownloadActivity extends AbsTranslucentActivity implements FitWindo
         public void onClick(View v) {
             if (mDownloadInfo.state == DownloadInfo.STATE_NONE ||
                     mDownloadInfo.state == DownloadInfo.STATE_FINISH) {
-                mDownloadInfo.state = DownloadInfo.STATE_WAIT;
 
                 Intent it = new Intent(DownloadActivity.this, DownloadService.class);
+                it.setAction(DownloadService.ACTION_START);
+                it.putExtra(DownloadService.KEY_GID, mDownloadInfo.galleryInfo.gid);
                 startService(it);
-                mAppContext.getDownloadServiceConnection().getService().notifyDownloadInfoChanged();
                 mAdapter.notifyDataSetChanged();
             }
         }
@@ -387,8 +388,9 @@ public class DownloadActivity extends AbsTranslucentActivity implements FitWindo
         @Override
         public void onClick(View v) {
             Intent it = new Intent(DownloadActivity.this, DownloadService.class);
+            it.setAction(DownloadService.ACTION_STOP);
+            it.putExtra(DownloadService.KEY_GID, mDownloadInfo.galleryInfo.gid);
             startService(it);
-            mAppContext.getDownloadServiceConnection().getService().stop(mDownloadInfo);
             mAdapter.notifyDataSetChanged();
         }
     }

@@ -40,23 +40,33 @@ import com.hippo.ehviewer.util.Utils;
 
 public class DownloadService extends Service
         implements ExDownloader.ListenerForDownload {
+
     @SuppressWarnings("unused")
     private static final String TAG = DownloadService.class.getSimpleName();
+
     private static final int DOWNLOADING_NOTIFY_ID = -1;
     private static final int DOWNLOAD_NOTIFY_ID = -2;
-    //private static final int DOWNLOAD_FAILED_NOTIFY_ID = -3;
 
     public static final String ACTION_UPDATE = "com.hippo.ehviewer.service.DownloadService.UPDATE";
+
+    public static final String ACTION_ADD = "com.hippo.ehviewer.service.DownloadService.ADD";
+    public static final String ACTION_START = "com.hippo.ehviewer.service.DownloadService.START";
+    public static final String ACTION_START_ALL = "com.hippo.ehviewer.service.DownloadService.START_ALL";
     public static final String ACTION_STOP = "com.hippo.ehviewer.service.DownloadService.STOP";
+    public static final String ACTION_STOP_CURRENT = "com.hippo.ehviewer.service.DownloadService.STOP_CURRENT";
     public static final String ACTION_STOP_ALL = "com.hippo.ehviewer.service.DownloadService.STOP_ALL";
+    public static final String ACTION_DELETE = "com.hippo.ehviewer.service.DownloadService.DELETE";
     public static final String ACTION_CLEAR = "com.hippo.ehviewer.service.DownloadService.ACTION_CLEAR";
+
+    public static final String KEY_GID = "gid";
+    public static final String KEY_GALLERY_INFO = "gallery_info";
 
     private Context mContext;
     private Data mData;
     private ExDownloaderManager mEdManager;
     private volatile DownloadInfo mCurDownloadInfo = null;
     private volatile ExDownloader mCurExDownloader = null;
-    private ServiceBinder mBinder = null;
+    private Binder mBinder = null;
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
     private String mSpeedStr = null;
@@ -72,31 +82,75 @@ public class DownloadService extends Service
         mData = Data.getInstance();
         mEdManager = ExDownloaderManager.getInstance();
 
-        mBinder = new ServiceBinder();
+        mBinder = new Binder();
         mNotifyManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     private synchronized void handleIntent(Intent intent) {
+        boolean startDownload = false;
+
         if (intent == null) {
             if (!Config.getKeepDownloadService()) {
                 mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
                 stopSelf();
+                return;
+            } else {
+                startDownload = true;
             }
-            return;
+        } else {
+            String action = intent.getAction();
+            if (ACTION_ADD.equals(action)) {
+                GalleryInfo gi = intent.getParcelableExtra(KEY_GALLERY_INFO);
+                if (gi != null)
+                    add(gi);
+                else
+                    startDownload = true;
+
+            } else if (ACTION_START.equals(action)) {
+                int gid = intent.getIntExtra(KEY_GID, -1);
+                if (gid != -1)
+                    start(gid);
+                else
+                    startDownload = true;
+
+            } else if (ACTION_START_ALL.equals(action)) {
+                startAll();
+
+            } else if (ACTION_STOP.equals(action)) {
+                int gid = intent.getIntExtra(KEY_GID, -1);
+                if (gid != -1)
+                    stop(gid);
+                else
+                    startDownload = true;
+
+            } else if (ACTION_STOP_CURRENT.equals(action)) {
+                stopCurrentTask();
+                mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
+
+            } else if (ACTION_STOP_ALL.equals(action)) {
+                stopAll();
+                mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
+
+            } else if (ACTION_DELETE.equals(action)) {
+                int gid = intent.getIntExtra(KEY_GID, -1);
+                if (gid != -1)
+                    delete(gid);
+                else
+                    startDownload = true;
+
+            } else if (ACTION_CLEAR.equals(action)) {
+                mDownloadOk.clear();
+                mDownloadFailed.clear();
+                startDownload = true;
+
+            } else {
+                startDownload = true;
+            }
         }
 
-        String action = intent.getAction();
-        if (ACTION_STOP.equals(action)) {
-            stopCurrentTask();
-            mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
-        } else if (ACTION_STOP_ALL.equals(action)) {
-            stopAll();
-            mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
-        } else if (ACTION_CLEAR.equals(action)) {
-            mDownloadOk.clear();
-            mDownloadFailed.clear();
-        }
+        if (startDownload)
+            tryToStartDownload();
     }
 
     @Override
@@ -120,8 +174,10 @@ public class DownloadService extends Service
         mNotifyManager = null;
     }
 
-    // Try to start download
-    public synchronized void notifyDownloadInfoChanged() {
+    /**
+     * Try to start download, if there is no item to start, stop itself
+     */
+    private synchronized void tryToStartDownload() {
         if (mCurDownloadInfo != null || mCurExDownloader != null)
             return;
 
@@ -141,7 +197,16 @@ public class DownloadService extends Service
         mCurExDownloader = mEdManager.getExDownloader(gi.gid,
                 gi.token, gi.title, mCurDownloadInfo.mode);
         mCurExDownloader.setListenerDownload(this);
+        // setDownloadMode will start download thread
         mCurExDownloader.setDownloadMode(true);
+    }
+
+    /**
+     * notify download info has changed
+     */
+    private void notifyUpdate() {
+        Intent it = new Intent(ACTION_UPDATE);
+        sendBroadcast(it);
     }
 
     /**
@@ -149,15 +214,13 @@ public class DownloadService extends Service
      * @param galleryInfo
      * @return
      */
-    public boolean add(GalleryInfo galleryInfo) {
+    private boolean add(GalleryInfo galleryInfo) {
         int gid = galleryInfo.gid;
         DownloadInfo di;
         if ((di = mData.getDownload(gid)) != null) {
             if (di.state != DownloadInfo.STATE_DOWNLOAD) {
-                di.state = DownloadInfo.STATE_WAIT;
-                // To update download state
-                mData.addDownload(di);
-                notifyDownloadInfoChanged();
+                mData.setDownloadState(gid, DownloadInfo.STATE_WAIT);
+                tryToStartDownload();
                 notifyUpdate();
             }
             return false;
@@ -165,20 +228,45 @@ public class DownloadService extends Service
             di = new DownloadInfo(galleryInfo, Config.getMode());
             di.state = DownloadInfo.STATE_WAIT;
             mData.addDownload(di);
-            notifyDownloadInfoChanged();
+            tryToStartDownload();
             notifyUpdate();
             return true;
         }
     }
 
-    public synchronized void stop(DownloadInfo di) {
+    private synchronized void start(int gid) {
+        DownloadInfo di = mData.getDownload(gid);
+        if (di != null)
+            start(di);
+    }
+
+    private synchronized void start(DownloadInfo di) {
+        if (mCurDownloadInfo != di && di.state != DownloadInfo.STATE_WAIT) {
+            mData.setDownloadState(di, DownloadInfo.STATE_WAIT);
+            notifyUpdate();
+        }
+        tryToStartDownload();
+    }
+
+    public void startAll() {
+        mData.startAllDownload();
+        tryToStartDownload();
+        notifyUpdate();
+    }
+
+    private synchronized void stop(int gid) {
+        DownloadInfo di = mData.getDownload(gid);
+        if (di != null)
+            stop(di);
+    }
+
+    private synchronized void stop(DownloadInfo di) {
         if (mCurDownloadInfo == di) {
             // Cancel download notification
             mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
 
             // Target downloadinfo is downloading
-            mCurDownloadInfo.state = DownloadInfo.STATE_NONE;
-            mData.addDownload(mCurDownloadInfo);
+            mData.setDownloadState(mCurDownloadInfo, DownloadInfo.STATE_NONE);
             mCurDownloadInfo = null;
 
             mCurExDownloader.setListenerDownload(null);
@@ -186,10 +274,11 @@ public class DownloadService extends Service
             mEdManager.freeExDownloader(mCurExDownloader);
             mCurExDownloader = null;
 
-            notifyDownloadInfoChanged();
+            tryToStartDownload();
             notifyUpdate();
         } else {
             di.state = DownloadInfo.STATE_NONE;
+            tryToStartDownload();
             notifyUpdate();
         }
     }
@@ -197,60 +286,25 @@ public class DownloadService extends Service
     public void stopCurrentTask() {
         if (mCurDownloadInfo != null)
             stop(mCurDownloadInfo);
-    }
-
-    public void startAll() {
-        for (DownloadInfo di : mData.getAllDownloads()) {
-            if (di.state == DownloadInfo.STATE_NONE ||
-                    (di.state == DownloadInfo.STATE_FINISH && di.legacy != 0))
-                di.state = DownloadInfo.STATE_WAIT;
-        }
-        notifyDownloadInfoChanged();
-        notifyUpdate();
+        else
+            tryToStartDownload();
     }
 
     public synchronized void stopAll() {
-        for (DownloadInfo di : mData.getAllDownloads()) {
-            if (di.state == DownloadInfo.STATE_WAIT ||
-                    di.state == DownloadInfo.STATE_DOWNLOAD) {
-                if (mCurDownloadInfo == di) {
-                    // Cancel download notification
-                    mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
+        mData.stopAllDownload();
+        stopCurrentTask();
+    }
 
-                    // Target downloadinfo is downloading
-                    mCurDownloadInfo.state = DownloadInfo.STATE_NONE;
-                    mData.addDownload(mCurDownloadInfo);
-                    mCurDownloadInfo = null;
-
-                    mCurExDownloader.setListenerDownload(null);
-                    mCurExDownloader.setDownloadMode(false);
-                    mEdManager.freeExDownloader(mCurExDownloader);
-                    mCurExDownloader = null;
-                } else {
-                    di.state = DownloadInfo.STATE_NONE;
-                }
-            }
-        }
-
-        notifyDownloadInfoChanged();
-        notifyUpdate();
+    private synchronized void delete(int gid) {
+        DownloadInfo di = mData.getDownload(gid);
+        if (di != null)
+            delete(di);
     }
 
     public void delete(DownloadInfo di) {
         stop(di);
         mData.deleteDownload(di.galleryInfo.gid);
         notifyUpdate();
-    }
-
-    private void notifyUpdate() {
-        Intent it = new Intent(ACTION_UPDATE);
-        sendBroadcast(it);
-    }
-
-    public class ServiceBinder extends Binder{
-        public DownloadService getService(){
-            return DownloadService.this;
-        }
     }
 
     private void ensureNotification() {
@@ -266,7 +320,7 @@ public class DownloadService extends Service
 
         // Add action
         Intent stopIntent = new Intent(this, DownloadService.class);
-        stopIntent.setAction(ACTION_STOP);
+        stopIntent.setAction(ACTION_STOP_CURRENT);
         PendingIntent piStop = PendingIntent.getService(this, 0, stopIntent, 0);
         mBuilder.addAction(R.drawable.ic_action_stop, getString(R.string.stop), piStop);
 
@@ -291,6 +345,24 @@ public class DownloadService extends Service
                 .setProgress(0, 0, true);
         mNotifyManager.notify(DOWNLOADING_NOTIFY_ID, mBuilder.build());
         mNotifyManager.cancel(gid);
+
+        notifyUpdate();
+    }
+
+    @Override
+    public void onGetSum(int gid, int sum) {
+        if (mCurDownloadInfo == null)
+            return;
+
+        mCurDownloadInfo.download = 0;
+        mCurDownloadInfo.total = sum;
+
+        ensureNotification();
+
+        mBuilder.setContentTitle(getString(R.string.downloading)  + " " + gid)
+                .setContentText(null)
+                .setProgress(mCurDownloadInfo.total, mCurDownloadInfo.download, false);
+        mNotifyManager.notify(DOWNLOADING_NOTIFY_ID, mBuilder.build());
 
         notifyUpdate();
     }
@@ -325,8 +397,7 @@ public class DownloadService extends Service
 
         mBuilder.setContentTitle(getString(R.string.downloading)  + " " + gid)
                 .setContentText(mSpeedStr)
-                .setProgress(mCurDownloadInfo.total, mCurDownloadInfo.download,
-                        mCurDownloadInfo.total == -1 ? true :false);
+                .setProgress(mCurDownloadInfo.total, mCurDownloadInfo.download, false);
         mNotifyManager.notify(DOWNLOADING_NOTIFY_ID, mBuilder.build());
 
         notifyUpdate();
@@ -398,7 +469,7 @@ public class DownloadService extends Service
         mEdManager.freeExDownloader(mCurExDownloader);
         mCurExDownloader = null;
 
-        notifyDownloadInfoChanged();
+        tryToStartDownload();
         notifyUpdate();
     }
 }

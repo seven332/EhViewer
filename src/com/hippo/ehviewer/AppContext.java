@@ -24,7 +24,6 @@ import java.lang.Thread.UncaughtExceptionHandler;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.view.ContextThemeWrapper;
@@ -35,8 +34,6 @@ import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.ehclient.ExDownloaderManager;
 import com.hippo.ehviewer.network.HttpHelper;
-import com.hippo.ehviewer.service.DownloadService;
-import com.hippo.ehviewer.service.DownloadServiceConnection;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.EhUtils;
@@ -57,8 +54,6 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
 
     private Thread.UncaughtExceptionHandler mDefaultHandler;
 
-    private DownloadServiceConnection mServiceConn;
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -66,11 +61,6 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         // Do catch error prepare
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
-
-        // Set download service connect
-        mServiceConn = new DownloadServiceConnection();
-        Intent it = new Intent(this, DownloadService.class);
-        bindService(it, mServiceConn, BIND_AUTO_CREATE);
 
         Context mContextThemeWrapper = new ContextThemeWrapper(this, R.style.AppTheme);
         ViewUtils.initDialogViewInflater(this);
@@ -148,15 +138,6 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
             PackageInfo pi= getPackageManager().getPackageInfo(getPackageName(), 0);
             Config.setInt(keyVersionCode, pi.versionCode);
         } catch (NameNotFoundException e) {}
-    }
-
-    @Override
-    protected void finalize() {
-        unbindService(mServiceConn);
-    }
-
-    public DownloadServiceConnection getDownloadServiceConnection() {
-        return mServiceConn;
     }
 
     /**

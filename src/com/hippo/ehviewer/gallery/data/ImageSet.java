@@ -29,6 +29,7 @@ import com.hippo.ehviewer.ehclient.ExDownloader;
 import com.hippo.ehviewer.ehclient.ExDownloaderManager;
 import com.hippo.ehviewer.gallery.image.Image;
 import com.hippo.ehviewer.util.AutoExpandArray;
+import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Log;
@@ -192,7 +193,7 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
         mEdManager.freeExDownloader(mExDownloader);
     }
 
-    private class DecodeWorker extends Thread {
+    private class DecodeWorker extends BgThread {
         @Override
         public void run() {
             DecodeInfo decodeInfo;

@@ -812,8 +812,9 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
 
         if (v == mDownloadButton) {
             Intent it = new Intent(GalleryDetailActivity.this, DownloadService.class);
+            it.setAction(DownloadService.ACTION_ADD);
+            it.putExtra(DownloadService.KEY_GALLERY_INFO, mGalleryInfo);
             startService(it);
-            mAppContext.getDownloadServiceConnection().getService().add(mGalleryInfo);
             MaterialToast.showToast(R.string.toast_add_download);
         } else if (v == mReadButton) {
             //mData.addRead(mGalleryInfo);

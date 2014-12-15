@@ -547,8 +547,9 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
                             break;
                         case 1:
                             Intent it = new Intent(GalleryListActivity.this, DownloadService.class);
+                            it.setAction(DownloadService.ACTION_ADD);
+                            it.putExtra(DownloadService.KEY_GALLERY_INFO, gi);
                             startService(it);
-                            mAppContext.getDownloadServiceConnection().getService().add(gi);
                             MaterialToast.showToast(R.string.toast_add_download);
                             break;
                         }

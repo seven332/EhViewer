@@ -124,6 +124,7 @@ public class ExDownloader implements Runnable {
      */
     public interface ListenerForDownload {
         public void onStart(int gid);
+        public void onGetSum(int gid, int sum);
         public void onDownload(int gid, int downloadSize, int totalSize);
         public void onUpdateSpeed(int gid, int speed);
         public void onDownloadOver(int gid, int legacy);
@@ -296,7 +297,7 @@ public class ExDownloader implements Runnable {
         if (mMainThread != null)
             return;
 
-        mMainThread = new Thread(this);
+        mMainThread = new BgThread(this);
         mMainThread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
         mMainThread.start();
     }
@@ -522,6 +523,8 @@ public class ExDownloader implements Runnable {
                 getDetailInfo(0, ediFile, true);
             }
 
+            mLfd.onGetSum(mGid, mImageNum);
+
             ensureWorkers();
 
             // A loop to get page token
@@ -584,7 +587,7 @@ public class ExDownloader implements Runnable {
         Log.d(TAG, "ExDownloader over");
     }
 
-    private class Worker extends Thread {
+    private class Worker extends BgThread {
 
         private final int mIndex;
 

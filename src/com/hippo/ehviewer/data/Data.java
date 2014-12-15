@@ -28,8 +28,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.SparseArray;
 
 import com.hippo.ehviewer.Analytics;
-import com.hippo.ehviewer.AppContext;
-import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Log;
@@ -309,23 +307,11 @@ public class Data {
         }
         cursor.close();
 
-        if (startService)
-            AppHandler.getInstance().postDelayed(mRestartDownload, 100);
-    }
-
-    private final Runnable mRestartDownload = new Runnable() {
-        @Override
-        public void run() {
-            DownloadService ds = ((AppContext) mContext.getApplicationContext()).getDownloadServiceConnection().getService();
-            if (ds != null) {
-                Intent it = new Intent(mContext, DownloadService.class);
-                mContext.startService(it);
-                ds.notifyDownloadInfoChanged();
-            } else {
-                AppHandler.getInstance().postDelayed(this, 100);
-            }
+        if (startService) {
+            Intent it = new Intent(mContext, DownloadService.class);
+            mContext.startService(it);
         }
-    };
+    }
 
     /**
      * Return null if not found
@@ -438,6 +424,48 @@ public class Data {
                 return di;
         }
         return null;
+    }
+
+    public synchronized void setDownloadState(int gid, int state) {
+        setDownloadState(getDownload(gid), state);
+    }
+
+    public synchronized void setDownloadState(DownloadInfo di, int state) {
+        if (di == null || di.state == state)
+            return;
+
+        di.state = state;
+        // Update in db
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_STATE, state);
+        mDatabase.update(TABLE_DOWNLOAD, values,
+                COLUMN_GID + "=?", new String[]{String.valueOf(di.galleryInfo.gid)});
+    }
+
+    /**
+     * If state is STATE_NONE or state is STATE_FINISH and legacy is not 0,
+     * make state STATE_WAIT
+     */
+    public synchronized void startAllDownload() {
+        for (DownloadInfo di : mDownloads) {
+            if (di.state == DownloadInfo.STATE_NONE ||
+                    (di.state == DownloadInfo.STATE_FINISH && di.legacy != 0)) {
+                setDownloadState(di, DownloadInfo.STATE_WAIT);
+            }
+        }
+    }
+
+    /**
+     * If state is STATE_WAIT or STATE_DOWNLOAD,
+     * make state STATE_NONE
+     */
+    public synchronized void stopAllDownload() {
+        for (DownloadInfo di : mDownloads) {
+            if (di.state == DownloadInfo.STATE_WAIT ||
+                    di.state == DownloadInfo.STATE_DOWNLOAD) {
+                setDownloadState(di, DownloadInfo.STATE_NONE);
+            }
+        }
     }
 
     /****** local favourite ******/
