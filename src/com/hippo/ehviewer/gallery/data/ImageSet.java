@@ -95,8 +95,8 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
         // Init ExDownloader
         mEdManager = ExDownloaderManager.getInstance();
         mExDownloader = mEdManager.getExDownloader(gid, token, title, Config.getMode());
-        mExDownloader.setStartIndex(startIndex);
         mExDownloader.setListenerForImageSet(this);
+        mExDownloader.setStartIndex(startIndex);
 
         mImageFilenameArray = mExDownloader.getImageFilenameArray();
 

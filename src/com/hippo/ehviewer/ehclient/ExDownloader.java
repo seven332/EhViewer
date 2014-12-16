@@ -218,7 +218,7 @@ public class ExDownloader implements Runnable {
                 setStartIndex(0);
                 if (mDownloadIndexSet == null)
                     mDownloadIndexSet = new HashSet<Integer>();
-                if (mLfd != null)
+                if (mDownloadMode && mLfd != null)
                     mLfd.onStart(mGid);
             } else {
                 mDownloadIndexSet = null;
@@ -523,7 +523,8 @@ public class ExDownloader implements Runnable {
                 getDetailInfo(0, ediFile, true);
             }
 
-            mLfd.onGetSum(mGid, mImageNum);
+            if (mLfd != null)
+                mLfd.onGetSum(mGid, mImageNum);
 
             ensureWorkers();
 
