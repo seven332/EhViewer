@@ -92,7 +92,7 @@ public class DownloadService extends Service
 
         if (intent == null) {
             if (!Config.getKeepDownloadService()) {
-                mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
+                stopForeground(true);
                 stopSelf();
                 return;
             } else {
@@ -126,11 +126,9 @@ public class DownloadService extends Service
 
             } else if (ACTION_STOP_CURRENT.equals(action)) {
                 stopCurrentTask();
-                mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
 
             } else if (ACTION_STOP_ALL.equals(action)) {
                 stopAll();
-                mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
 
             } else if (ACTION_DELETE.equals(action)) {
                 int gid = intent.getIntExtra(KEY_GID, -1);
@@ -168,7 +166,7 @@ public class DownloadService extends Service
     public void onDestroy() {
         super.onDestroy();
 
-        mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
+        stopForeground(true);
 
         mBinder = null;
         mNotifyManager = null;
@@ -263,7 +261,7 @@ public class DownloadService extends Service
     private synchronized void stop(DownloadInfo di) {
         if (mCurDownloadInfo == di) {
             // Cancel download notification
-            mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
+            stopForeground(true);
 
             // Target downloadinfo is downloading
             mData.setDownloadState(mCurDownloadInfo, DownloadInfo.STATE_NONE);
@@ -343,8 +341,7 @@ public class DownloadService extends Service
         mBuilder.setContentTitle(getString(R.string.start_download)  + " " + gid)
                 .setContentText(null)
                 .setProgress(0, 0, true);
-        mNotifyManager.notify(DOWNLOADING_NOTIFY_ID, mBuilder.build());
-        mNotifyManager.cancel(gid);
+        startForeground(DOWNLOADING_NOTIFY_ID, mBuilder.build());
 
         notifyUpdate();
     }
@@ -362,7 +359,7 @@ public class DownloadService extends Service
         mBuilder.setContentTitle(getString(R.string.downloading)  + " " + gid)
                 .setContentText(null)
                 .setProgress(mCurDownloadInfo.total, mCurDownloadInfo.download, false);
-        mNotifyManager.notify(DOWNLOADING_NOTIFY_ID, mBuilder.build());
+        startForeground(DOWNLOADING_NOTIFY_ID, mBuilder.build());
 
         notifyUpdate();
     }
@@ -380,7 +377,7 @@ public class DownloadService extends Service
         mBuilder.setContentTitle(getString(R.string.downloading)  + " " + gid)
                 .setContentText(mSpeedStr)
                 .setProgress(totalSize, downloadSize, false);
-        mNotifyManager.notify(DOWNLOADING_NOTIFY_ID, mBuilder.build());
+        startForeground(DOWNLOADING_NOTIFY_ID, mBuilder.build());
 
         notifyUpdate();
     }
@@ -398,7 +395,7 @@ public class DownloadService extends Service
         mBuilder.setContentTitle(getString(R.string.downloading)  + " " + gid)
                 .setContentText(mSpeedStr)
                 .setProgress(mCurDownloadInfo.total, mCurDownloadInfo.download, false);
-        mNotifyManager.notify(DOWNLOADING_NOTIFY_ID, mBuilder.build());
+        startForeground(DOWNLOADING_NOTIFY_ID, mBuilder.build());
 
         notifyUpdate();
     }
@@ -457,7 +454,7 @@ public class DownloadService extends Service
                 .setDeleteIntent(piClear)
                 .setOngoing(false).setAutoCancel(true);
         mNotifyManager.notify(DOWNLOAD_NOTIFY_ID, builder.build());
-        mNotifyManager.cancel(DOWNLOADING_NOTIFY_ID);
+        stopForeground(true);
 
         mCurDownloadInfo.legacy = legacy;
         mCurDownloadInfo.state = DownloadInfo.STATE_FINISH;
