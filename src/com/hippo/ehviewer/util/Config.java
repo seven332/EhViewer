@@ -44,16 +44,6 @@ public final class Config {
     private static Context mContext;
     private static SharedPreferences mConfigPre;
 
-    private static OnGallerySettingsChangedListener mOnGallerySettingsChangedListener;
-
-    public static interface OnGallerySettingsChangedListener {
-        public void onPageScalingChanged(int value);
-
-        public void onStartPositionChanged(int value);
-
-        public void onReadingDirectionChanged(int value);
-    }
-
     /**
      * Init Config
      *
@@ -81,14 +71,6 @@ public final class Config {
      */
     public static boolean isInit() {
         return mInit;
-    }
-
-    public static void setOnGallerySettingsChangedListener(OnGallerySettingsChangedListener l) {
-        mOnGallerySettingsChangedListener = l;
-    }
-
-    public static void removeOnGallerySettingsChangedListener() {
-        mOnGallerySettingsChangedListener = null;
     }
 
     public static boolean getBoolean(String key, boolean defValue) {
@@ -332,6 +314,12 @@ public final class Config {
     private static final String KEY_GALLERY_SHOW_BATTERY = "gallery_show_battery";
     private static final boolean DEFAULT_GALLERY_SHOW_BATTERY = true;
 
+    private static final String KEY_CUSTOM_LIGHTNESS = "custom_lightness";
+    private static final boolean DEFAULT_CUSTOM_LIGHTNESS = false;
+
+    private static final String KEY_CUSTOM_LIGHTNESS_VALUE = "custom_lightness_value";
+    private static final int DEFAULT_CUSTOM_LIGHTNESS_VALUE = 120;
+
     private static final String KEY_CUSTOM_CODEC = "custom_codec";
 
     private static final String KEY_DECODE_FORMAT = "decode_format";
@@ -343,9 +331,6 @@ public final class Config {
 
     public static void setReadingDirection(int value) {
         setIntToStr(KEY_READING_DIRECTION, value);
-
-        if (mOnGallerySettingsChangedListener != null)
-            mOnGallerySettingsChangedListener.onReadingDirectionChanged(value);
     }
 
     public static int getPageScaling() {
@@ -354,9 +339,6 @@ public final class Config {
 
     public static void setPageScaling(int value) {
         setIntToStr(KEY_PAGE_SCALING, value);
-
-        if (mOnGallerySettingsChangedListener != null)
-            mOnGallerySettingsChangedListener.onPageScalingChanged(value);
     }
 
     public static int getStartPosition() {
@@ -365,9 +347,6 @@ public final class Config {
 
     public static void setStartPosition(int value) {
         setIntToStr(KEY_START_POSITION, value);
-
-        if (mOnGallerySettingsChangedListener != null)
-            mOnGallerySettingsChangedListener.onStartPositionChanged(value);
     }
 
     public static boolean getKeepSreenOn() {
@@ -392,6 +371,22 @@ public final class Config {
 
     public static void setShowBattery(boolean value) {
         setBoolean(KEY_GALLERY_SHOW_BATTERY, value);
+    }
+
+    public static boolean getCustomLightness() {
+        return getBoolean(KEY_CUSTOM_LIGHTNESS, DEFAULT_CUSTOM_LIGHTNESS);
+    }
+
+    public static void setCustomLightness(boolean value) {
+        setBoolean(KEY_CUSTOM_LIGHTNESS, value);
+    }
+
+    public static int getCustomLightnessValue() {
+        return getIntFromStr(KEY_CUSTOM_LIGHTNESS_VALUE, DEFAULT_CUSTOM_LIGHTNESS_VALUE);
+    }
+
+    public static void setCustomLightnessValue(int value) {
+        setIntToStr(KEY_CUSTOM_LIGHTNESS_VALUE, value);
     }
 
     public static boolean getCustomCodec() {

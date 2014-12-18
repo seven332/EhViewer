@@ -22,37 +22,29 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.widget.EditText;
+import android.widget.SeekBar;
 
-import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
-import com.hippo.ehviewer.widget.MaterialToast;
+import com.hippo.ehviewer.app.MaterialAlertDialog.Builder;
+import com.hippo.ehviewer.util.Utils;
 
-public class EditTextPreference extends DialogPreference {
+public class SeekBarDialogPreference extends DialogPreference {
 
-    private EditText mEditText;
+    private SeekBar mSeekBar;
 
-    private int mMax;
-    private int mMin;
-
-    public EditTextPreference(Context context, AttributeSet attrs) {
+    public SeekBarDialogPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs, 0);
     }
 
-    public EditTextPreference(Context context, AttributeSet attrs, int defStyle) {
+    public SeekBarDialogPreference(Context context, AttributeSet attrs,
+            int defStyle) {
         super(context, attrs, defStyle);
         init(context, attrs, defStyle);
     }
 
     private void init(Context context, AttributeSet attrs, int defStyle) {
-        mEditText = new EditText(context, attrs);
-
-        TypedArray a = context.obtainStyledAttributes(attrs,
-                R.styleable.EditTextPreference, defStyle, 0);
-        mMax = a.getInt(R.styleable.EditTextPreference_etpMax, Integer.MAX_VALUE);
-        mMin = a.getInt(R.styleable.EditTextPreference_etpMin, Integer.MIN_VALUE);
-        a.recycle();
+        mSeekBar = new SeekBar(context, attrs);
     }
 
     @Override
@@ -63,22 +55,20 @@ public class EditTextPreference extends DialogPreference {
     @Override
     protected View onCreateDialogView() {
         // Make sure mEditText is an orphan
-        ViewParent oldParent = mEditText.getParent();
+        ViewParent oldParent = mSeekBar.getParent();
         if (oldParent != null)
-            ((ViewGroup) oldParent).removeView(mEditText);
+            ((ViewGroup) oldParent).removeView(mSeekBar);
 
-        mEditText.setTextColor(getContext().getResources().getColor(
-                R.color.secondary_text_dark));
-        return mEditText;
+        return mSeekBar;
     }
 
     @Override
     protected void onBindDialogView(View view) {
-        mEditText.setText(getPersistedString(null));
+        mSeekBar.setProgress(Utils.parseIntSafely(getPersistedString(null), 120));
     }
 
     @Override
-    protected void onPrepareDialogBuilder(MaterialAlertDialog.Builder builder) {
+    protected void onPrepareDialogBuilder(Builder builder) {
         // Empty
     }
 
@@ -96,36 +86,12 @@ public class EditTextPreference extends DialogPreference {
             persistString((String) defaultValue);
     }
 
-    // Return true for close and save
-    private boolean checkBorder(String value) {
-        boolean re;
-        if (mMax == Integer.MAX_VALUE && mMin == Integer.MIN_VALUE) {
-            return true;
-        } else {
-            try {
-                int intValue = Integer.parseInt(value);
-                if (intValue > mMax || intValue < mMin)
-                    re = false;
-                else
-                    re = true;
-            } catch (Throwable e) {
-                re = false;
-            }
-        }
-
-        // Show Toast
-        if (!re)
-            MaterialToast.showToast(R.string.invalid_input);
-
-        return re;
-    }
-
     @Override
     public boolean onClick(MaterialAlertDialog dialog, int which) {
         super.onClick(dialog, which);
         if (which == MaterialAlertDialog.POSITIVE) {
-            String value = mEditText.getText().toString();
-            if (checkBorder(value) && callChangeListener(value)) {
+            String value = Integer.toString(mSeekBar.getProgress());
+            if (callChangeListener(value)) {
                 persistString(value);
                 setSummary(value);
                 return true;
@@ -136,4 +102,5 @@ public class EditTextPreference extends DialogPreference {
             return true;
         }
     }
+
 }

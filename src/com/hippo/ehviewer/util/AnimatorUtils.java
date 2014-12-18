@@ -16,23 +16,15 @@
 
 package com.hippo.ehviewer.util;
 
-import android.animation.TimeInterpolator;
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 
-public class ZInterpolator implements TimeInterpolator {
+public final class AnimatorUtils {
 
-    private final float focalLength;
-
-    public ZInterpolator() {
-        this(0.5f);
+    public static Animator createDelayAnimator(long delay) {
+        Animator anim = ValueAnimator.ofFloat(0f, 1f);
+        anim.setDuration(delay);;
+        return anim;
     }
 
-    public ZInterpolator(float foc) {
-        focalLength = foc;
-    }
-
-    @Override
-    public float getInterpolation(float input) {
-        return (1.0f - focalLength / (focalLength + input)) /
-            (1.0f - focalLength / (focalLength + 1.0f));
-    }
 }

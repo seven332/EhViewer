@@ -226,6 +226,8 @@
     <string name="keep_screen_on_title">阅读时屏幕常亮</string>
     <string name="gallery_show_clock_title">显示时间</string>
     <string name="gallery_show_battery_title">显示电量</string>
+    <string name="custom_lightness_title">阅读时使用自定义屏幕亮度</string>
+    <string name="custom_lightness_value_title">自定义屏幕亮度</string>
     <string name="custom_codec_title">自定义解码</string>
     <string name="custom_codec_summary">自定义解码可能会更使用更少内存，解码更快</string>
     <string name="custom_codec_summary_not">自定义解码暂不支持 x86, mips</string>

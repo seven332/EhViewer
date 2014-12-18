@@ -17,7 +17,6 @@
 package com.hippo.ehviewer.util;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Build;
 import android.view.View;
@@ -48,13 +47,13 @@ public final class FullScreenHelper implements View.OnSystemUiVisibilityChangeLi
 
     private final int FULL_SCREEN_KITKAT =
             NOT_FULL_SCREEN_KITKAT |
+            View.SYSTEM_UI_FLAG_LOW_PROFILE |
             View.SYSTEM_UI_FLAG_FULLSCREEN |
             View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
     private boolean mFullScreen;
     private final Activity mActivity;
-    private final ActionBar mActionBar;
     private final Window mWindow;
     private final View mDecorView;
 
@@ -74,7 +73,6 @@ public final class FullScreenHelper implements View.OnSystemUiVisibilityChangeLi
     public FullScreenHelper(Activity activity) {
         mFullScreen = false;
         mActivity = activity;
-        mActionBar = mActivity.getActionBar();
         mWindow = mActivity.getWindow();
         mDecorView = mWindow.getDecorView();
         mDecorView.setOnSystemUiVisibilityChangeListener(this);
@@ -107,31 +105,25 @@ public final class FullScreenHelper implements View.OnSystemUiVisibilityChangeLi
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
                 // Empty
             } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                mActionBar.hide();
                 mWindow.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                         WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
             } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                mActionBar.hide();
                 mDecorView.setSystemUiVisibility(FULL_SCREEN_JELLY_BEAN);
 
             } else {
-                mActionBar.hide();
                 mDecorView.setSystemUiVisibility(FULL_SCREEN_KITKAT);
             }
         } else {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
                 // Empty
             } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                mActionBar.show();
                 mWindow.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
             } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                mActionBar.show();
                 mDecorView.setSystemUiVisibility(NOT_FULL_SCREEN_JELLY_BEAN);
 
             } else {
-                mActionBar.show();
                 mDecorView.setSystemUiVisibility(NOT_FULL_SCREEN_KITKAT);
             }
         }

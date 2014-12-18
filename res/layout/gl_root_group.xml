@@ -44,46 +44,16 @@
         android:textColor="@color/secondary_text_light"
         auto:bvColor="@color/secondary_text_light" />
 
-    <FrameLayout
+    <com.hippo.ehviewer.widget.SlidingLayout
+        android:id="@+id/config_sliding"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:fitsSystemWindows="true" >
 
-        <FrameLayout
-            android:id="@+id/footer"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_gravity="bottom"
-            android:background="@color/background_little_dark"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:visibility="gone" >
+        <include
+            layout="@layout/reading_quick_settings" />
 
-            <SeekBar
-                android:id="@+id/page_seeker"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_gravity="center" />
-
-        </FrameLayout>
-
-        <TextView
-            android:id="@+id/seeker_bubble"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="52dp"
-            android:ellipsize="start"
-            android:singleLine="true"
-            android:textColor="@color/secondary_text_light"
-            android:textSize="@dimen/text_medium"
-            android:visibility="gone"
-            android:background="@drawable/seeker_bubble" />
-
-    </FrameLayout>
+    </com.hippo.ehviewer.widget.SlidingLayout>
 
     <com.hippo.ehviewer.widget.ColorView
         android:id="@+id/mask"

@@ -85,7 +85,7 @@
             android:name=".ui.GalleryActivity"
             android:configChanges="orientation|screenSize|uiMode"
             android:screenOrientation="behind"
-            android:theme="@style/AppTheme.Gallery" >
+            android:theme="@style/AppTheme.Dark.NoActionBar" >
         </activity>
 
         <activity

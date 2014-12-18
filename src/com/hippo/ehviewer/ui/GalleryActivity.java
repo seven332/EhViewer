@@ -17,23 +17,20 @@
 package com.hippo.ehviewer.ui;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.data.Data;
@@ -45,13 +42,14 @@ import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.FullScreenHelper;
 import com.hippo.ehviewer.util.MathUtils;
-import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.ColorView;
+import com.hippo.ehviewer.widget.SlidingLayout;
 
 public class GalleryActivity extends AbsActivity
         implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener,
-        FullScreenHelper.OnFullScreenBrokenListener, MaterialAlertDialog.OnClickListener {
+        FullScreenHelper.OnFullScreenBrokenListener, CompoundButton.OnCheckedChangeListener,
+        SlidingLayout.OnChildHideListener, AdapterView.OnItemSelectedListener {
 
     @SuppressWarnings("unused")
     private final static String TAG = GalleryActivity.class.getSimpleName();
@@ -62,15 +60,28 @@ public class GalleryActivity extends AbsActivity
     public final static String KEY_LIGHTNESS = "lightness";
     public final static float DEFAULT_LIGHTNESS = 0.5f;
 
-    private View mFooter;
-    private TextView mSeekerBubble;
+    public final static String KEY_FIRST_READ_CONFIG_V1 = "first_read_config_v1";
+    public final static boolean DEFAULT_FIRST_READ_CONFIG_V1 = true;
+
     private View mClock;
     private View mBattery;
 
-    private ActionBar mActionBar;
-
+    private SlidingLayout mConfigSliding;
     /** It store index, start from 0, so max is samller than size **/
+    private TextView mCurrentPage;
+    private TextView mPageSum;
     private SeekBar mPageSeeker;
+    private Spinner mReadingDirection;
+    private Spinner mPageScaling;
+    private Spinner mStartPosition;
+    private CheckBox mKeepScreenOn;
+    private CheckBox mShowClock;
+    private CheckBox mShowBattery;
+    private CheckBox mCustomLightness;
+    private SeekBar mCustomLightnessValue;
+    private CheckBox mCustomCodec;
+    private Spinner mDecodeFormat;
+
     private ImageSet mImageSet;
 
     private GalleryView mGalleryView;
@@ -81,147 +92,80 @@ public class GalleryActivity extends AbsActivity
 
     private FullScreenHelper mFullScreenHelper;
 
-    private Dialog mSettingsDialog;
-
-    private float mLightness;
-    private int mLightnessScale = 0;
-
-    private final Runnable mFullScreenTask = new Runnable() {
-        @Override public void run() {
-            setFullScreen(true);
-        }
-    };
-
-    private Dialog createSettingsDialog() {
-
-        MaterialAlertDialog.ViewHolder viewHolder = new MaterialAlertDialog.ViewHolder();
-        MaterialAlertDialog.Builder builder = new MaterialAlertDialog.Builder(this)
-                .setDrakTheme(true).setTitle(R.string.preference_settings_title)
-                .setView(R.layout.read_config, true, viewHolder);
-        View view = viewHolder.getView();
-        final Spinner readingDirection = (Spinner) view.findViewById(R.id.reading_direction);
-        final Spinner pageScaling = (Spinner) view.findViewById(R.id.page_scaling);
-        final Spinner startPosition = (Spinner) view.findViewById(R.id.start_position);
-        final CheckBox keepScreenOn = (CheckBox) view.findViewById(R.id.keep_screen_on);
-        final CheckBox showClock = (CheckBox) view.findViewById(R.id.gallery_show_clock);
-        final CheckBox showBattery = (CheckBox) view.findViewById(R.id.gallery_show_battery);
-        final CheckBox customCodec = (CheckBox) view.findViewById(R.id.custom_codec);
-        final Spinner decodeFormat = (Spinner) view.findViewById(R.id.decode_format);
-
-        readingDirection.setSelection(Config.getReadingDirection());
-        pageScaling.setSelection(Config.getPageScaling());
-        startPosition.setSelection(Config.getStartPosition());
-        keepScreenOn.setChecked(Config.getKeepSreenOn());
-        showClock.setChecked(Config.getShowClock());
-        showBattery.setChecked(Config.getShowBattery());
-        if (!Utils.SUPPORT_IMAGE)
-            customCodec.setEnabled(false);
-        customCodec.setChecked(Config.getCustomCodec());
-        decodeFormat.setSelection(Config.getDecodeFormatIndex());
-
-        builder.setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE)
-                .setActionButton(R.string.more_settings)
-                .setButtonListener(new MaterialAlertDialog.OnClickListener() {
-                    @Override
-                    public boolean onClick(MaterialAlertDialog dialog, int which) {
-                        switch (which) {
-                        case MaterialAlertDialog.ACTION:
-                            Intent intent = new Intent(GalleryActivity.this, SettingsActivity.class);
-                            startActivity(intent);
-                            return false;
-                        case MaterialAlertDialog.POSITIVE:
-                            Config.setReadingDirection(readingDirection.getSelectedItemPosition());
-                            Config.setPageScaling(pageScaling.getSelectedItemPosition());
-                            Config.setStartPosition(startPosition.getSelectedItemPosition());
-                            boolean isShowClock = showClock.isChecked();
-                            boolean isShowBattery = showBattery.isChecked();
-                            Config.setShowClock(isShowClock);
-                            Config.setShowBattery(isShowBattery);
-                            mClock.setVisibility(isShowClock ? View.VISIBLE : View.GONE);
-                            mBattery.setVisibility(isShowBattery ? View.VISIBLE : View.GONE);
-                            Config.setCustomCodec(customCodec.isChecked());
-                            Config.setDecodeFormatFromIndex(decodeFormat.getSelectedItemPosition());
-                            mGalleryView.requestLayout();
-                            return true;
-                        case MaterialAlertDialog.NEGATIVE:
-                            readingDirection.setSelection(Config.getReadingDirection());
-                            pageScaling.setSelection(Config.getPageScaling());
-                            startPosition.setSelection(Config.getStartPosition());
-                            keepScreenOn.setChecked(Config.getKeepSreenOn());
-                            showClock.setChecked(Config.getShowClock());
-                            showBattery.setChecked(Config.getShowBattery());
-                            customCodec.setChecked(Config.getCustomCodec());
-                            decodeFormat.setSelection(Config.getDecodeFormatIndex());
-                            return true;
-                        default:
-                            return false;
-                        }
-                    }
-                });
-
-        return builder.create();
-    }
-
-    private void startFullScreenTask() {
-        AppHandler.getInstance().postDelayed(mFullScreenTask, 2000);
-    }
-
-    private void cancelFullScreenTask() {
-        AppHandler.getInstance().removeCallbacks(mFullScreenTask);
-    }
-
-    void setFullScreen(final boolean fullScreen) {
-
-        mFullScreenHelper.setFullScreen(fullScreen);
-        mFooter.setVisibility(fullScreen ? View.GONE : View.VISIBLE);
-
-        if (!fullScreen)
-            startFullScreenTask();
-        else
-            cancelFullScreenTask();
-    }
-
-    @Override
-    public boolean onClick(MaterialAlertDialog dialog, int which) {
-        // When dialog show, full screen may be broken
-        setFullScreen(true);
-        return true;
-    }
-
     @Override
     public void onFullScreenBroken(boolean fullScreen) {
-        setFullScreen(!fullScreen);
+        // TODO For some MIUI system, onSystemUiVisibilityChange() do not work fine
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
-        // Need update mLightnessScale
-        mLightnessScale = 0;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setFullScreen(true);
+
+        updateState();
+        mFullScreenHelper.setFullScreen(!mConfigSliding.isShowing());
     }
 
-    private void setLightness(float l) {
-        l = MathUtils.clamp(l, -1.0f, 1.0f);
+    private void setScreenLightness(boolean enable, int lightness) {
         Window w = getWindow();
         WindowManager.LayoutParams lp = w.getAttributes();
-        if (l >= 0.0f) {
-            lp.screenBrightness = l;
-            w.setAttributes(lp);
-            mMaskView.setColor(0);
-        } else {
-            if (lp.screenBrightness != 0.0f) {
-                lp.screenBrightness = 0.0f;
-                w.setAttributes(lp);
+        if (enable) {
+            lightness = MathUtils.clamp(lightness, 0, 200);
+            if (lightness > 100) {
+                mMaskView.setColor(0);
+                lp.screenBrightness = Math.max((lightness - 100) / 100.0f, 0.05f);
+            } else {
+                mMaskView.setColor(MathUtils.lerp(0xde, 0x00, lightness / 100.0f) << 24);
+                lp.screenBrightness = 0.05f;
             }
-            mMaskView.setColor(MathUtils.lerp(0x00, 0xde, -l) << 24);
+        } else {
+            mMaskView.setColor(0);
+            lp.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
         }
+        w.setAttributes(lp);
+    }
+
+    private void updateState() {
+        mReadingDirection.setSelection(Config.getReadingDirection());
+        mPageScaling.setSelection(Config.getPageScaling());
+        mStartPosition.setSelection(Config.getStartPosition());
+        mGalleryView.setReadingDirection(Config.getReadingDirection());
+        mGalleryView.setPageScaling(Config.getPageScaling());
+        mGalleryView.setStartPosition(Config.getStartPosition());
+
+        mKeepScreenOn.setChecked(Config.getKeepSreenOn());
+        if (Config.getKeepSreenOn())
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        else
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        mShowClock.setChecked(Config.getShowClock());
+        mShowBattery.setChecked(Config.getShowBattery());
+        mClock.setVisibility(Config.getShowClock() ? View.VISIBLE : View.GONE);
+        mBattery.setVisibility(Config.getShowBattery() ? View.VISIBLE : View.GONE);
+
+        mCustomLightness.setChecked(Config.getCustomLightness());
+        if (mCustomLightness.isChecked())
+            mCustomLightnessValue.setEnabled(true);
+        else
+            mCustomLightnessValue.setEnabled(false);
+        mCustomLightnessValue.setProgress(Config.getCustomLightnessValue());
+        setScreenLightness(mCustomLightness.isChecked(), mCustomLightnessValue.getProgress());
+
+        if (Utils.SUPPORT_IMAGE)
+            mCustomCodec.setEnabled(true);
+        else
+            mCustomCodec.setEnabled(false);
+        mCustomCodec.setChecked(Config.getCustomCodec());
+        if (Utils.SUPPORT_IMAGE && mCustomCodec.isChecked())
+            mDecodeFormat.setEnabled(true);
+        else
+            mDecodeFormat.setEnabled(false);
+        mDecodeFormat.setSelection(Config.getDecodeFormatIndex());
     }
 
     @Override
@@ -233,21 +177,26 @@ public class GalleryActivity extends AbsActivity
         mFullScreenHelper.setOnFullScreenBrokenListener(this);
         mFullScreenHelper.setFullScreen(true);
 
-        mFooter = findViewById(R.id.footer);
-        mPageSeeker = (SeekBar) findViewById(R.id.page_seeker);
-        mSeekerBubble = (TextView) findViewById(R.id.seeker_bubble);
         mMaskView = (ColorView)findViewById(R.id.mask);
         mClock = findViewById(R.id.clock);
         mBattery = findViewById(R.id.battery);
-        mActionBar = getActionBar();
 
-        mSettingsDialog = createSettingsDialog();
+        mConfigSliding = (SlidingLayout) findViewById(R.id.config_sliding);
+        mCurrentPage = (TextView) mConfigSliding.findViewById(R.id.current_page);
+        mPageSum = (TextView) mConfigSliding.findViewById(R.id.page_sum);
+        mPageSeeker = (SeekBar) mConfigSliding.findViewById(R.id.page_seeker);
+        mReadingDirection = (Spinner) mConfigSliding.findViewById(R.id.reading_direction);
+        mPageScaling = (Spinner) mConfigSliding.findViewById(R.id.page_scaling);
+        mStartPosition = (Spinner) mConfigSliding.findViewById(R.id.start_position);
+        mKeepScreenOn = (CheckBox) mConfigSliding.findViewById(R.id.keep_screen_on);
+        mShowClock = (CheckBox) mConfigSliding.findViewById(R.id.gallery_show_clock);
+        mShowBattery = (CheckBox) mConfigSliding.findViewById(R.id.gallery_show_battery);
+        mCustomLightness = (CheckBox) mConfigSliding.findViewById(R.id.custom_lightness);
+        mCustomLightnessValue = (SeekBar) mConfigSliding.findViewById(R.id.custom_lightness_value);
+        mCustomCodec = (CheckBox) mConfigSliding.findViewById(R.id.custom_codec);
+        mDecodeFormat = (Spinner) mConfigSliding.findViewById(R.id.decode_format);
 
-        // Hide or show
-        if (!Config.getShowClock())
-            mClock.setVisibility(View.GONE);
-        if (!Config.getShowBattery())
-            mBattery.setVisibility(View.GONE);
+        mConfigSliding.hide();
 
         Intent intent = getIntent();
         mGi = (GalleryInfo) intent.getParcelableExtra(KEY_GALLERY_INFO);
@@ -272,10 +221,6 @@ public class GalleryActivity extends AbsActivity
             if (startIndex == -1)
                 startIndex = ExDownloader.readCurReadIndex(mGi.gid, mGi.title);
 
-            // Keep screen on
-            if (Config.getKeepSreenOn())
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
             mImageSet = new ImageSet(mGi.gid, mGi.token, mGi.title, startIndex);
             mGalleryView = new GalleryView(getApplicationContext(), mImageSet, startIndex);
 
@@ -283,12 +228,31 @@ public class GalleryActivity extends AbsActivity
             glrv.setContentPane(mGalleryView);
 
             // Set listener
+            mConfigSliding.setOnChildHideListener(this);
             mGalleryView.setGalleryViewListener(this);
             mPageSeeker.setOnSeekBarChangeListener(this);
+            mReadingDirection.setOnItemSelectedListener(this);
+            mPageScaling.setOnItemSelectedListener(this);
+            mStartPosition.setOnItemSelectedListener(this);
+            mDecodeFormat.setOnItemSelectedListener(this);
+            mKeepScreenOn.setOnCheckedChangeListener(this);
+            mShowClock.setOnCheckedChangeListener(this);
+            mShowBattery.setOnCheckedChangeListener(this);
+            mCustomLightness.setOnCheckedChangeListener(this);
+            mCustomLightnessValue.setOnSeekBarChangeListener(this);
+            mCustomCodec.setOnCheckedChangeListener(this);
 
-            updateTitle();
+            mKeepScreenOn = (CheckBox) mConfigSliding.findViewById(R.id.keep_screen_on);
+            mShowClock = (CheckBox) mConfigSliding.findViewById(R.id.gallery_show_clock);
+            mShowBattery = (CheckBox) mConfigSliding.findViewById(R.id.gallery_show_battery);
+            mCustomCodec = (CheckBox) mConfigSliding.findViewById(R.id.custom_codec);
+
             mPageSeeker.setMax(mGalleryView.getSize() - 1);
             mPageSeeker.setProgress(startIndex);
+
+            mCurrentPage.setText(Integer.toString(startIndex + 1));
+            mPageSum.setText(Integer.toString(mGalleryView.getSize()));
+
             onRightToLeftChanged(mGalleryView.isRightToLeft());
 
             // Show first tip
@@ -298,51 +262,18 @@ public class GalleryActivity extends AbsActivity
                 new MaterialAlertDialog.Builder(this).setDrakTheme(true).setTitle(R.string.tip)
                         .setMessage(R.string.gallery_tip)
                         .setNegativeButton(android.R.string.cancel)
-                        .setButtonListener(this)
-                        .show();
+                        .setButtonListener(new MaterialAlertDialog.OnClickListener() {
+                            @Override
+                            public boolean onClick(MaterialAlertDialog dialog, int which) {
+                                mFullScreenHelper.setFullScreen(true);
+                                return true;
+                            }
+                        }).show();
             }
 
-            // lightness
-            mLightness = Config.getFloat(KEY_LIGHTNESS, DEFAULT_LIGHTNESS);
-            setLightness(mLightness);
+            // Update state
+            updateState();
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.gallery, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Reset full screen task
-        cancelFullScreenTask();
-        startFullScreenTask();
-
-        switch (item.getItemId()) {
-        case R.id.action_refresh:
-            mImageSet.redownload(mGalleryView.getCurIndex());
-            cancelFullScreenTask();
-            startFullScreenTask();
-            return true;
-
-        case R.id.action_settings:
-            if (!mSettingsDialog.isShowing() && !isFinishing())
-                mSettingsDialog.show();
-            return true;
-
-        default:
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void updateTitle() {
-        StringBuilder sb = new StringBuilder(30);
-        sb.append(mGalleryView.getCurIndex() + 1).append("/")
-                .append(mGalleryView.getSize())
-                .append(" - ").append(mGi.gid);
-        mActionBar.setTitle(sb.toString());
     }
 
     @Override
@@ -353,41 +284,42 @@ public class GalleryActivity extends AbsActivity
             mImageSet.free();
         if (mGalleryView != null)
             mGalleryView.free();
-        Config.removeOnGallerySettingsChangedListener();
     }
 
     @Override
     public void onTapCenter() {
-        setFullScreen(!mFullScreenHelper.getFullScreen());
+        if (!mConfigSliding.isShowing()) {
+            mFullScreenHelper.setFullScreen(false);
+
+            boolean firstTime = Config.getBoolean(KEY_FIRST_READ_CONFIG_V1, DEFAULT_FIRST_READ_CONFIG_V1);
+            mConfigSliding.toReservedLevel(firstTime);
+            if (firstTime)
+                Config.setBoolean(KEY_FIRST_READ_CONFIG_V1, false);
+        }
     }
 
     @Override
     public void onPageChanged(int index) {
-        updateTitle();
         mPageSeeker.setProgress(index);
+        mCurrentPage.setText(Integer.toString(index + 1));
     }
 
     @Override
     public void onSizeUpdate(int size) {
-        updateTitle();
         mPageSeeker.setMax(size - 1);
         mPageSeeker.setProgress(mGalleryView.getCurIndex() + 1);
+        mCurrentPage.setText(Integer.toString(mGalleryView.getCurIndex() + 1));
+        mPageSum.setText(Integer.toString(size));
     }
 
     @Override
     public void onSlideBottom(float dx) {
-        if (mLightnessScale == 0) {
-            int w = mMaskView.getHeight();
-            mLightnessScale = w > 0 ? w : 1024;
-        }
-
-        mLightness = MathUtils.clamp(mLightness + (dx / mLightnessScale), -1.0f, 1.0f);
-        setLightness(mLightness);
+        // Empty
     }
 
     @Override
     public void onSlideBottomOver() {
-        Config.setFloat(KEY_LIGHTNESS, mLightness);
+        // Empty
     }
 
     @Override
@@ -401,50 +333,84 @@ public class GalleryActivity extends AbsActivity
         }
     }
 
-    private void showSeekBubble() {
-        mSeekerBubble.setVisibility(View.VISIBLE);
-    }
-
-    private void hideSeekBubble() {
-        mSeekerBubble.setVisibility(View.GONE);
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public void updateSeekBubble(int progress, int max, int thumbOffset) {
-        if (max == 0)
-            // Avoid divide by zero
-            return;
-
-        int offsetX;
-        int width = getWindow().getDecorView().getWidth();
-        thumbOffset = thumbOffset + Ui.dp2pix(12);
-        int totalOffsetX = (width - 2 * thumbOffset) * progress / max;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
-                mPageSeeker.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL)
-            offsetX = width - thumbOffset - totalOffsetX;
-        else
-            offsetX = totalOffsetX + thumbOffset;
-
-        mSeekerBubble.setX(offsetX);
-        mSeekerBubble.setText(String.valueOf(progress + 1));
-    }
-
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress,
             boolean fromUser) {
-        updateSeekBubble(progress, seekBar.getMax(), seekBar.getThumbOffset());
+        if (seekBar == mPageSeeker) {
+            mCurrentPage.setText(Integer.toString(progress + 1));
+        } else if (seekBar == mCustomLightnessValue) {
+            setScreenLightness(mCustomLightness.isChecked(), progress);
+        }
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        cancelFullScreenTask();
-        showSeekBubble();
+        // Empty
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        startFullScreenTask();
-        hideSeekBubble();
-        mGalleryView.goToPage(seekBar.getProgress());
+        if (seekBar == mPageSeeker) {
+            mGalleryView.goToPage(seekBar.getProgress());
+        } else if (seekBar == mCustomLightnessValue) {
+            Config.setCustomLightnessValue(seekBar.getProgress());
+        }
+    }
+
+    @Override
+    public void onChildHide() {
+        mFullScreenHelper.setFullScreen(true);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position,
+            long id) {
+        if (parent == mReadingDirection) {
+            Config.setReadingDirection(mReadingDirection.getSelectedItemPosition());
+            mGalleryView.setReadingDirection(position);
+        } else if (parent == mPageScaling) {
+            Config.setPageScaling(mPageScaling.getSelectedItemPosition());
+            mGalleryView.setPageScaling(position);
+        } else if (parent == mStartPosition) {
+            Config.setStartPosition(mStartPosition.getSelectedItemPosition());
+            mGalleryView.setStartPosition(position);
+        } else if (parent == mDecodeFormat) {
+            Config.setDecodeFormatFromIndex(mDecodeFormat.getSelectedItemPosition());
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Empty
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (buttonView == mShowClock) {
+            Config.setShowClock(isChecked);
+            mClock.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+        } else if (buttonView == mShowBattery) {
+            Config.setShowBattery(isChecked);
+            mBattery.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+        } else if (buttonView == mKeepScreenOn) {
+            Config.setKeepSreenOn(isChecked);
+            if (isChecked)
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            else
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else if (buttonView == mCustomLightness) {
+            Config.setCustomLightness(isChecked);
+            if (isChecked)
+                mCustomLightnessValue.setEnabled(true);
+            else
+                mCustomLightnessValue.setEnabled(false);
+            setScreenLightness(isChecked, mCustomLightnessValue.getProgress());
+        } else if (buttonView == mCustomCodec) {
+            Config.setCustomCodec(isChecked);
+            if (Utils.SUPPORT_IMAGE && mCustomCodec.isChecked())
+                mDecodeFormat.setEnabled(true);
+            else
+                mDecodeFormat.setEnabled(false);
+        }
     }
 }

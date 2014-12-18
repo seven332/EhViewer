@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2014 The Android Open Source Project
+     Copyright (C) 2014 Hippo Seven
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,12 +14,72 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_little_dark" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp" >
+
+        <TextView
+            android:id="@+id/current_page"
+            android:layout_width="32dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_horizontal" />
+
+        <SeekBar
+            android:id="@+id/page_seeker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/page_sum"
+            android:layout_width="32dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_horizontal" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="12dp" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="重新加载" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="发送" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="更多设置" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,6 +92,7 @@
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
+            android:paddingLeft="12dp"
             android:text="@string/reading_direction_title" />
 
         <Spinner
@@ -55,6 +116,7 @@
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
+            android:paddingLeft="12dp"
             android:text="@string/page_scaling_title" />
 
         <Spinner
@@ -78,6 +140,7 @@
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
+            android:paddingLeft="12dp"
             android:text="@string/start_position_title" />
 
         <Spinner
@@ -95,6 +158,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
+        android:paddingLeft="12dp"
         android:text="@string/keep_screen_on_title" />
 
     <CheckBox
@@ -102,6 +166,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
+        android:paddingLeft="12dp"
         android:text="@string/gallery_show_clock_title" />
 
     <CheckBox
@@ -109,13 +174,47 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
+        android:paddingLeft="12dp"
         android:text="@string/gallery_show_battery_title" />
+
+    <CheckBox
+        android:id="@+id/custom_lightness"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:paddingLeft="12dp"
+        android:text="@string/custom_lightness_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="12dp"
+            android:text="@string/custom_lightness_value_title" />
+
+        <SeekBar
+            android:id="@+id/custom_lightness_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_weight="2"
+            android:layout_gravity="center_vertical" 
+            android:max="200"/>
+    </LinearLayout>
 
     <CheckBox
         android:id="@+id/custom_codec"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
+        android:paddingLeft="12dp"
         android:text="@string/custom_codec_title" />
 
     <LinearLayout
@@ -129,6 +228,7 @@
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
+            android:paddingLeft="12dp"
             android:text="@string/decode_format_title" />
 
         <Spinner

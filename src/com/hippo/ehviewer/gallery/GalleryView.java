@@ -53,7 +53,7 @@ import com.hippo.ehviewer.util.ZInterpolator;
 import com.hippo.ehviewer.widget.MaterialToast;
 
 public class GalleryView extends GLView implements ImageSet.ImageListener,
-        Runnable, Config.OnGallerySettingsChangedListener {
+        Runnable {
     @SuppressWarnings("unused")
     private static final String TAG = GalleryView.class.getSimpleName();
 
@@ -174,7 +174,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
     private boolean mDoubleTapAnimating = false;
 
-    private boolean mLightnessSliding = false;
+    private final boolean mLightnessSliding = false;
 
     private final boolean mShowTapArea = false;
     private boolean mShowTapAreaTurn = false;
@@ -210,8 +210,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         mGalleryViewListener = l;
     }
 
-    @Override
-    public void onReadingDirectionChanged(int value) {
+    public void setReadingDirection(int value) {
         // TODO It is not safe when scroll
         boolean oldIsRTL = isRightToLeft();
         mReadingDirection = value;
@@ -220,13 +219,11 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             mGalleryViewListener.onRightToLeftChanged(newIsRTL);
     }
 
-    @Override
-    public void onPageScalingChanged(int value) {
+    public void setPageScaling(int value) {
         mPageScaling = value;
     }
 
-    @Override
-    public void onStartPositionChanged(int value) {
+    public void setStartPosition(int value) {
         mStartPosition = value;
     }
 
@@ -261,7 +258,6 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         mReadingDirection = Config.getReadingDirection();
         mPageScaling = Config.getPageScaling();
         mStartPosition = Config.getStartPosition();
-        Config.setOnGallerySettingsChangedListener(this);
 
         mImageSet.setImageListener(this);
 
@@ -1307,8 +1303,8 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
         @Override
         public boolean onScrollBegin(float dx, float dy, MotionEvent e1, MotionEvent e2) {
-            mLightnessSliding = Utils.isInArea(mLightnessSlidingArea,
-                    (int) e2.getX(), (int) e2.getY()) && Math.abs(dy / dx) > 1.0f;
+            //mLightnessSliding = Utils.isInArea(mLightnessSlidingArea,
+                    //(int) e2.getX(), (int) e2.getY()) && Math.abs(dy / dx) > 1.0f;
             return onScroll(dx, dy, e1, e2);
         }
 
