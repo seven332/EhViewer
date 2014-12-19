@@ -103,6 +103,8 @@ public class SlidingLayout extends ViewGroup {
     private int m5Top;
     private int mFullScreenTop;
 
+    private boolean mInHideAnimate = false;
+
     private OnChildHideListener mOnChildHideListener;
 
     private static final ZInterpolator ZINTERPOLATOR = new ZInterpolator();
@@ -142,7 +144,7 @@ public class SlidingLayout extends ViewGroup {
         mToBaseLevelAnimate.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                // Empty
+                mInHideAnimate = true;
             }
 
             @Override
@@ -153,11 +155,13 @@ public class SlidingLayout extends ViewGroup {
 
                 if (mOnChildHideListener != null)
                     mOnChildHideListener.onChildHide();
+
+                mInHideAnimate = false;
             }
 
             @Override
             public void onAnimationCancel(Animator animation) {
-                // Empty
+                mInHideAnimate = false;
             }
 
             @Override
@@ -474,6 +478,10 @@ public class SlidingLayout extends ViewGroup {
 
     public boolean isShowing() {
         return mChild.getVisibility() == View.VISIBLE;
+    }
+
+    public boolean isInHideAnimate() {
+        return mInHideAnimate;
     }
 
     public void toReservedLevel(boolean withShake) {

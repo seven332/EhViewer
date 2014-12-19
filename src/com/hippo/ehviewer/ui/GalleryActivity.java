@@ -35,6 +35,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.DirSelectDialog;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
@@ -108,6 +109,20 @@ public class GalleryActivity extends AbsActivity
     private File mCurImageFile;
 
     private Dialog mSendDialog;
+
+    private final Runnable mFullScreenTask = new Runnable() {
+        @Override public void run() {
+            mFullScreenHelper.setFullScreen(true);
+        }
+    };
+
+    private void startFullScreenTask() {
+        AppHandler.getInstance().postDelayed(mFullScreenTask, 2000);
+    }
+
+    private void cancelFullScreenTask() {
+        AppHandler.getInstance().removeCallbacks(mFullScreenTask);
+    }
 
     @Override
     public void onCopyOver(boolean success, File src, File dst) {
@@ -372,6 +387,17 @@ public class GalleryActivity extends AbsActivity
     }
 
     @Override
+    public void onBackPressed() {
+        if (mConfigSliding.isInHideAnimate())
+            return;
+
+        if (mConfigSliding.isShowing())
+            mConfigSliding.toBaseLevel();
+        else
+            finish();
+    }
+
+    @Override
     public void onClick(View v) {
         if (v == mRefresh) {
             mImageSet.redownload(mGalleryView.getCurIndex());
@@ -391,6 +417,8 @@ public class GalleryActivity extends AbsActivity
     @Override
     public void onTapCenter() {
         if (!mConfigSliding.isShowing()) {
+            if (mFullScreenHelper.willHideNavBar())
+                cancelFullScreenTask();
             mFullScreenHelper.setFullScreen(false);
 
             boolean firstTime = Config.getBoolean(KEY_FIRST_READ_CONFIG_V1, DEFAULT_FIRST_READ_CONFIG_V1);
@@ -461,7 +489,10 @@ public class GalleryActivity extends AbsActivity
 
     @Override
     public void onChildHide() {
-        mFullScreenHelper.setFullScreen(true);
+        if (mFullScreenHelper.willHideNavBar())
+            startFullScreenTask();
+        else
+            mFullScreenHelper.setFullScreen(true);
     }
 
     @Override

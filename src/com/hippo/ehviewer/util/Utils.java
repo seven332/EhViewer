@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -713,4 +714,53 @@ public final class Utils {
         }
         return type;
     }
+
+
+    /**
+     * If get error return "";
+     *
+     * @param key
+     * @return
+     */
+    public static String getSystemProperties(String key) {
+        try {
+            Class c = Class.forName("android.os.SystemProperties");
+            Method m = c.getDeclaredMethod("get", String.class);
+            m.setAccessible(true);
+            return (String) m.invoke(null, key);
+        } catch (Throwable e) {
+            return "";
+        }
+    }
+
+    /*
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        try {
+
+
+            sNavBarOverride =
+        } catch (Throwable e) {
+            sNavBarOverride = null;
+        }
+    }
+
+
+    public static boolean hasNavBar(Context context) {
+        Resources res = context.getResources();
+        int resourceId = res.getIdentifier(SHOW_NAV_BAR_RES_NAME, "bool", "android");
+        if (resourceId != 0) {
+            boolean hasNav = res.getBoolean(resourceId);
+            // check override flag (see static block)
+            if ("1".equals(sNavBarOverride)) {
+                hasNav = false;
+            } else if ("0".equals(sNavBarOverride)) {
+                hasNav = true;
+            }
+            return hasNav;
+        } else { // fallback
+            return !ViewConfiguration.get(context).hasPermanentMenuKey();
+        }
+    }
+
+    */
 }
