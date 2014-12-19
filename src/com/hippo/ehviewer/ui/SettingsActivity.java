@@ -534,7 +534,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
             final String key = preference.getKey();
             if (KEY_DOWNLOAD_PATH.equals(key)) {
                 mDirSelectDialog = DirSelectDialog.create(new MaterialAlertDialog.Builder(getActivity())
-                        .setTitle("下载路径")
+                        .setTitle(R.string.download_path_title)
                         .setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE)
                         .setActionButton(R.string._new)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
@@ -544,7 +544,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                                 switch (which) {
                                 case MaterialAlertDialog.ACTION:
                                     final EditText et = new EditText(getActivity());
-                                    et.setText("New folder"); // TODO
+                                    et.setText(R.string.new_folder);
                                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                                             LinearLayout.LayoutParams.MATCH_PARENT,
                                             LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -643,7 +643,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                                 @Override
                                 public void run() {
                                     mFixDirname.setEnabled(true);
-                                    MaterialToast.showToast("未发现可修正项"); // TODO
+                                    MaterialToast.showToast(R.string.no_need_fixing);
                                 }
                             });
                             return;
@@ -651,7 +651,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                             AppHandler.getInstance().post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    MaterialToast.showToast("开始修正"); // TODO
+                                    MaterialToast.showToast(R.string.start_fixing);
                                 }
                             });
                         }
@@ -707,7 +707,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                             @Override
                             public void run() {
                                 mFixDirname.setEnabled(true);
-                                MaterialToast.showToast("共修正 " + _handleNum + " 项"); // TODO
+                                MaterialToast.showToast(String.format(getString(R.string.fixing_over), _handleNum));
                             }
                         });
                     }

@@ -268,6 +268,9 @@
     <string name="eh_others_settings_title">其他</string>
     <string name="fix_dirname_title">修正下载文件夹名</string>
     <string name="fix_dirname_title_summary">将下载文件夹名由 gid 改为 gid-title，不进行修正不会影响使用</string>
+    <string name="start_fixing">开始修正</string>
+    <string name="no_need_fixing">未发现可修正项</string>
+    <string name="fixing_over">共修正 %d 项</string>
 
     <string name="about_settings_title">关于</string>
     <string name="author_title">作者</string>
