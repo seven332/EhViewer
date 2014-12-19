@@ -209,7 +209,12 @@ public final class Utils {
             for (File f : files)
                 deleteFile(f);
         }
-        file.delete();
+        final File to = new File(file.getAbsolutePath()
+                + System.currentTimeMillis());
+        if (file.renameTo(to))
+            to.delete();
+        else
+            file.delete();
     }
 
     /**
