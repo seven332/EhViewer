@@ -30,9 +30,12 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Process;
+import android.support.v4.app.NotificationCompat;
 
+import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.AutoExpandArray;
 import com.hippo.ehviewer.util.BgThread;
@@ -42,7 +45,7 @@ import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Utils;
 
 // TODO what a mess
-public class ExDownloader implements Runnable {
+public final class ExDownloader implements Runnable {
 
     private static final String TAG = ExDownloader.class.getSimpleName();
 
@@ -516,6 +519,18 @@ public class ExDownloader implements Runnable {
         }
     }
 
+    private static final int BE_NOTIFY_ID = -3;
+
+    private static final void show509Notification(Context context) {
+        NotificationManager notifyManager = (NotificationManager) context
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+        mBuilder.setSmallIcon(R.drawable.ic_stat_eh).setContentTitle(context.getString(R.string.notification_be_title))
+                .setContentText("")
+                .setOngoing(false).setAutoCancel(true);
+        notifyManager.notify(BE_NOTIFY_ID, mBuilder.build());
+    }
+
     // TODO for download , when to claim download completed
     @Override
     public void run() {
@@ -728,10 +743,19 @@ public class ExDownloader implements Runnable {
                         String imageUrl = ipp.imageUrl;
 
                         //Check 509 gif
-                        for (String url509 : URL_ARRAY_509)
-                            if (url509.equals(imageUrl))
+                        boolean get509 = false;
+                        int length = URL_ARRAY_509.length;
+                        for (int j = 0; j < length; j++) {
+                            if (URL_ARRAY_509[j].equals(imageUrl)) {
                                 // Get 509 gif here
+                                get509 = true;
                                 break;
+                            }
+                        }
+                        if (get509) {
+                            show509Notification(mContext);
+                            break;
+                        }
 
                         String filename = EhUtils.getImageFilename(targetIndex, Utils.getExtension(imageUrl, "jpg"));
                         // Just put filename to mImageFilenameArray

@@ -108,6 +108,8 @@
     <string name="download_6">下载成功 %1$d 项, 下载失败 %2$d 项</string>
     <string name="delete_item">该下载项将被删除</string>
     <string name="pic_included">包括图片</string>
+    <string name="notification_be_title">下载流量不足</string>
+    <string name="notification_be_mesg">错误码 509，请稍后完成下载</string>
 
     <!-- ErrorMessage -->
     <string name="em_network_error">网络错误</string>
