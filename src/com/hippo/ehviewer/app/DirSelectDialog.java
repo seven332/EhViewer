@@ -71,4 +71,12 @@ public class DirSelectDialog extends MaterialAlertDialog {
     public String getCurrentPath() {
         return mFileExplorerView.getCurPath();
     }
+
+    public void refresh() {
+        mFileExplorerView.refresh();
+    }
+
+    public boolean canWrite() {
+        return mFileExplorerView.canWrite();
+    }
 }

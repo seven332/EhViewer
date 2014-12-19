@@ -38,20 +38,18 @@ import android.preference.PreferenceFragment;
 import android.provider.SearchRecentSuggestions;
 import android.text.util.Linkify;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.WebView;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
-import android.widget.TextView;
 
 import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.SimpleSuggestionProvider;
 import com.hippo.ehviewer.UpdateHelper;
+import com.hippo.ehviewer.app.DirSelectDialog;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.app.MaterialProgressDialog;
 import com.hippo.ehviewer.data.ApiGalleryInfo;
@@ -72,7 +70,6 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.CategoryTable;
-import com.hippo.ehviewer.widget.FileExplorerView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.SuggestionHelper;
 
@@ -495,7 +492,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_DOWNLOAD_PATH = "download_path";
         private static final String KEY_MEDIA_SCAN = "media_scan";
 
-        private AlertDialog mDirSelectDialog;
+        private DirSelectDialog mDirSelectDialog;
 
         private Preference mDownloadPath;
         private CheckBoxPreference mMediaScan;
@@ -536,37 +533,14 @@ public class SettingsActivity extends AbsPreferenceActivity {
         public boolean onPreferenceClick(Preference preference) {
             final String key = preference.getKey();
             if (KEY_DOWNLOAD_PATH.equals(key)) {
-                View view = ViewUtils.inflateDialogView(R.layout.dir_selection, false);
-                final FileExplorerView fileExplorerView = (FileExplorerView) view.findViewById(R.id.file_list);
-                final TextView warning = (TextView) view.findViewById(R.id.warning);
-
-                String downloadPath = Config.getDownloadPath();
-                fileExplorerView.setPath(downloadPath);
-                fileExplorerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        fileExplorerView.onItemClick(parent, view, position, id);
-                        mDirSelectDialog.setTitle(fileExplorerView.getCurPath());
-                        if (fileExplorerView.canWrite())
-                            warning.setVisibility(View.GONE);
-                        else
-                            warning.setVisibility(View.VISIBLE);
-                    }
-                });
-                if (fileExplorerView.canWrite())
-                    warning.setVisibility(View.GONE);
-                else
-                    warning.setVisibility(View.VISIBLE);
-
-                mDirSelectDialog = new MaterialAlertDialog.Builder(getActivity())
-                        .setTitle(downloadPath)
-                        .setView(view, false,
-                                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Ui.dp2pix(360)))
-                        .setActionButton(R.string._new).setPositiveButton(android.R.string.ok)
-                        .setNegativeButton(android.R.string.cancel)
+                mDirSelectDialog = DirSelectDialog.create(new MaterialAlertDialog.Builder(getActivity())
+                        .setTitle("下载路径")
+                        .setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE)
+                        .setActionButton(R.string._new)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                             @Override
-                            public boolean onClick(MaterialAlertDialog dialog, int which) {
+                            public boolean onClick(MaterialAlertDialog dialog,
+                                    int which) {
                                 switch (which) {
                                 case MaterialAlertDialog.ACTION:
                                     final EditText et = new EditText(getActivity());
@@ -586,21 +560,21 @@ public class SettingsActivity extends AbsPreferenceActivity {
                                                 @Override
                                                 public boolean onClick(MaterialAlertDialog dialog, int which) {
                                                     if (which == MaterialAlertDialog.POSITIVE) {
-                                                        File dir = new File(fileExplorerView.getCurPath(), et.getText()
+                                                        File dir = new File(mDirSelectDialog.getCurrentPath(), et.getText()
                                                                 .toString());
                                                         dir.mkdirs();
-                                                        fileExplorerView.refresh();
+                                                        mDirSelectDialog.refresh();
                                                     }
                                                     return true;
                                                 }
                                             }).show();
                                     return false;
                                 case MaterialAlertDialog.POSITIVE:
-                                    if (!fileExplorerView.canWrite()) {
+                                    if (!mDirSelectDialog.canWrite()) {
                                         MaterialToast.showToast(R.string.cur_dir_not_writable);
                                         return false;
                                     }
-                                    String downloadPath = fileExplorerView.getCurPath();
+                                    String downloadPath = mDirSelectDialog.getCurrentPath();
                                     // Update .nomedia file
                                     // TODO Should I delete .nomedia in old
                                     // download dir ?
@@ -618,7 +592,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                                     return true;
                                 }
                             }
-                        }).create();
+                        }) , Config.getDownloadPath());
                 mDirSelectDialog.show();
             }
 
