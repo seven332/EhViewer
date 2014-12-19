@@ -526,7 +526,7 @@ public final class ExDownloader implements Runnable {
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setSmallIcon(R.drawable.ic_stat_eh).setContentTitle(context.getString(R.string.notification_be_title))
-                .setContentText("")
+                .setContentText(context.getString(R.string.notification_be_mesg))
                 .setOngoing(false).setAutoCancel(true);
         notifyManager.notify(BE_NOTIFY_ID, mBuilder.build());
     }
@@ -732,51 +732,96 @@ public final class ExDownloader implements Runnable {
                 }
 
                 // Parser image page
+                boolean refreshImageUrl = false;
                 for (int i = 0; i < 2 && !mStopWork && !mPauseWork; i++) {
                     hh.reset();
                     ipp.reset();
                     String body = hh.get(EhClient.getPageUrl(mGid, pageToken, targetIndex + 1, mMode)
-                            + (i == 1 ? "?nl=48" : ""));
+                            + (refreshImageUrl ? "?nl=48" : ""));
                     if (ipp.parser(body, mMode)) {
                         // Download image
                         HttpHelper.DownloadControlor c = mControlorArray[mIndex];
-                        String imageUrl = ipp.imageUrl;
 
-                        //Check 509 gif
-                        boolean get509 = false;
-                        int length = URL_ARRAY_509.length;
-                        for (int j = 0; j < length; j++) {
-                            if (URL_ARRAY_509[j].equals(imageUrl)) {
-                                // Get 509 gif here
-                                get509 = true;
+                        if (Config.getDownloadOriginImage() && ipp.originalImageUrl != null) {
+
+                            Log.d(TAG, "Download origin image");
+
+                            // Download orgin image
+                            String imageUrl = ipp.originalImageUrl;
+                            // Guess filename
+                            String filename = EhUtils.getImageFilename(targetIndex, "jpg");
+                            // Download
+                            hh.reset();
+                            if (hh.downloadOriginEhImage(imageUrl, mDir, filename, false, c, listener) == null) {
+                                if (hh.getException() instanceof HttpHelper.BandwidthExceededException) {
+                                    // Get 509
+                                    show509Notification(mContext);
+                                    break;
+                                } else {
+                                    String newImageUrl = hh.getLastUrl();
+                                    if (newImageUrl != null) {
+                                        // Try download from proxy
+                                        hh.reset();
+                                        if (hh.downloadEhImage(newImageUrl, mDir, filename, true, c, listener) == null) {
+                                            // Download failed
+                                            Log.d(TAG, "Download failed");
+                                        } else {
+                                            // Download successful
+                                            Log.d(TAG, "Download successful");
+                                        }
+                                    } else {
+                                        // Download failed
+                                        Log.d(TAG, "Download failed");
+                                    }
+                                }
+                            } else {
+                                // Download successful
+                                Log.d(TAG, "Download successful");
+                            }
+
+                            // No need to refresh image url
+                            break;
+                        } else {
+                            // Download scale image
+                            String imageUrl = ipp.imageUrl;
+
+                            //Check 509 gif
+                            boolean get509 = false;
+                            int length = URL_ARRAY_509.length;
+                            for (int j = 0; j < length; j++) {
+                                if (URL_ARRAY_509[j].equals(imageUrl)) {
+                                    // Get 509 gif here
+                                    get509 = true;
+                                    break;
+                                }
+                            }
+                            if (get509) {
+                                show509Notification(mContext);
                                 break;
                             }
-                        }
-                        if (get509) {
-                            show509Notification(mContext);
-                            break;
-                        }
 
-                        String filename = EhUtils.getImageFilename(targetIndex, Utils.getExtension(imageUrl, "jpg"));
-                        // Just put filename to mImageFilenameArray
-                        mImageFilenameArray.set(targetIndex, filename);
-                        hh.reset();
-                        if (hh.download(imageUrl, mDir, filename, false, c, listener) == null) {
+                            // Guess filename
+                            String filename = EhUtils.getImageFilename(targetIndex, Utils.getExtension(imageUrl, "jpg"));
+                            // Don't put into mImageFilenameArray, because extension maybe be wrong
+                            // mImageFilenameArray.set(targetIndex, filename);
                             hh.reset();
-                            if (hh.download(imageUrl, mDir, filename, true, c, listener) == null) {
-                                if (i == 1) {
-                                    // TODO download error
-                                    Log.d(TAG, "download error");
+                            if (hh.downloadEhImage(imageUrl, mDir, filename, false, c, listener) == null) {
+                                hh.reset();
+                                if (hh.downloadEhImage(imageUrl, mDir, filename, true, c, listener) == null) {
+                                    if (i == 1) {
+                                        // TODO download error
+                                        Log.d(TAG, "download error");
+                                    }
+                                } else {
+                                    // download ok
+                                    Log.d(TAG, "download ok proxy");
+                                    break;
                                 }
                             } else {
                                 // download ok
-                                Log.d(TAG, "download ok proxy");
+                                Log.d(TAG, "download ok");
                                 break;
                             }
-                        } else {
-                            // download ok
-                            Log.d(TAG, "download ok");
-                            break;
                         }
                     } else {
                         // TODO parser error, Do somthing

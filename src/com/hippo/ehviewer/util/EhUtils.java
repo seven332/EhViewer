@@ -104,9 +104,21 @@ public final class EhUtils {
         return String.format("%08d.%s", index + 1, extension);
     }
 
+    public static String[] POSSIBLE_IMAGE_EXTENSION_ARRAY = new String[] {
+        "jpg", "jpeg", "png", "gif"
+    };
+
+    public static String DEFAULT_IMAGE_EXTENSION = POSSIBLE_IMAGE_EXTENSION_ARRAY[0];
+
     public static String[] getPossibleImageFilenames(int index) {
         String prefix = String.format("%08d.", index + 1);
-        return new String[] { prefix + "jpg", prefix + "jpeg", prefix + "png", prefix + "gif" };
+
+        int length = POSSIBLE_IMAGE_EXTENSION_ARRAY.length;
+        String[] strs = new String[length];
+        for (int i = 0; i < length; i++)
+            strs[i] = prefix + POSSIBLE_IMAGE_EXTENSION_ARRAY[i];
+
+        return strs;
     }
 
 }

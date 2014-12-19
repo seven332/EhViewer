@@ -39,6 +39,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Vibrator;
+import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
 import com.hippo.ehviewer.AppHandler;
@@ -612,21 +613,6 @@ public final class Utils {
     }
 
     /**
-     * Get extension from target string, int lower case
-     *
-     * @param name
-     * @param defautl
-     * @return
-     */
-    public static String getExtension(String name, String defautl) {
-        int index = name.lastIndexOf('.');
-        if (index == -1 || index == name.length() - 1)
-            return defautl;
-        else
-            return name.substring(index + 1).toLowerCase();
-    }
-
-    /**
      * Return true if point is in the rect
      *
      * @param area
@@ -700,6 +686,20 @@ public final class Utils {
     }
 
     /**
+     * Get extension from target string, int lower case
+     *
+     * @param name
+     * @param defautl
+     * @return
+     */
+    public static String getExtension(String name, String defautl) {
+        String ext = MimeTypeMap.getFileExtensionFromUrl(name);
+        if (TextUtils.isEmpty(ext))
+            ext = defautl;
+        return ext;
+    }
+
+    /**
      * It will return null if can't find mime
      *
      * @param url
@@ -732,35 +732,4 @@ public final class Utils {
             return "";
         }
     }
-
-    /*
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        try {
-
-
-            sNavBarOverride =
-        } catch (Throwable e) {
-            sNavBarOverride = null;
-        }
-    }
-
-
-    public static boolean hasNavBar(Context context) {
-        Resources res = context.getResources();
-        int resourceId = res.getIdentifier(SHOW_NAV_BAR_RES_NAME, "bool", "android");
-        if (resourceId != 0) {
-            boolean hasNav = res.getBoolean(resourceId);
-            // check override flag (see static block)
-            if ("1".equals(sNavBarOverride)) {
-                hasNav = false;
-            } else if ("0".equals(sNavBarOverride)) {
-                hasNav = true;
-            }
-            return hasNav;
-        } else { // fallback
-            return !ViewConfiguration.get(context).hasPermanentMenuKey();
-        }
-    }
-
-    */
 }

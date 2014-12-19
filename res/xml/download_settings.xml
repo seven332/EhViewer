@@ -39,6 +39,12 @@
         auto:etpMax="10" />
 
     <CheckBoxPreference
+        android:key="download_origin_image"
+        android:title="@string/download_origin_image_title"
+        android:summary="@string/download_origin_image_summary"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
         android:key="keep_download_service"
         android:title="@string/keep_download_service_title"
         android:summaryOn="@string/keep_download_service_summary_on"

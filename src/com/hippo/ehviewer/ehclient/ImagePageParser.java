@@ -24,11 +24,13 @@ import com.hippo.ehviewer.util.Utils;
 public class ImagePageParser {
 
     public String imageUrl;
+    public String originalImageUrl;
     public int gid;
     public String token;
 
     public void reset() {
         imageUrl = null;
+        originalImageUrl = null;
         gid = 0;
         token = null;
     }
@@ -63,11 +65,17 @@ public class ImagePageParser {
                     + ".+?"
                     + "<div id=\"i5\"><div class=\"sb\"><a href=\"(?:http|https)://.+?/g/(\\d+)/(\\w+)");
             m = p.matcher(body);
-
             if (m.find()) {
                 imageUrl = Utils.unescapeXml(m.group(1));
                 gid = Integer.parseInt(m.group(2));
                 token = m.group(3);
+
+                p = Pattern.compile("<a href=\"([^\"]+)fullimg.php([^\"]+)\">");
+                m = p.matcher(body);
+                if (m.find()) {
+                    originalImageUrl = Utils.unescapeXml(
+                            new StringBuilder(m.group(1)).append("fullimg.php").append(m.group(2)).toString());
+                }
                 return true;
             } else {
                 return false;

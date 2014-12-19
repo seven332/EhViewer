@@ -45,6 +45,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Message;
+import android.webkit.MimeTypeMap;
 
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
@@ -54,6 +55,7 @@ import com.hippo.ehviewer.exception.StopRequestException;
 import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
+import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.FastByteArrayOutputStream;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.MathUtils;
@@ -173,6 +175,10 @@ public class HttpHelper {
         return getEMsg(mContext, mException);
     }
 
+    public Exception getException() {
+        return mException;
+    }
+
     public static String getEMsg(Context c, Exception e) {
         if (e == null)
             return c.getString(R.string.em_unknown_error);
@@ -234,7 +240,7 @@ public class HttpHelper {
             int redirectionCount = 0;
             boolean firstTime = true;
             try {
-                url = rh.getUrl();
+                url = (mLastUrl == null ? rh.getUrl() : new URL(mLastUrl));
 
                 isCookiable = isUrlCookiable(url);
 
@@ -250,7 +256,6 @@ public class HttpHelper {
                         }
                     }
                 }
-
 
                 Log.d(TAG, "Requst " + url.toString());
                 while (redirectionCount++ < Constants.MAX_REDIRECTS) {
@@ -275,8 +280,9 @@ public class HttpHelper {
                     case HttpURLConnection.HTTP_PARTIAL:
                         // Test sad panda
                         if (url.getHost().equals(EhInfo.EX_HOST)) {
-                            String contentType = conn.getHeaderField("Content-Type");
-                            if (contentType != null && contentType.equals("image/gif"))
+                            String contentType = conn.getContentType();
+                            if (contentType != null && contentType.equals("image/gif")
+                                    && conn.getContentLength() == 9615)
                                 throw new SadPandaException();
                         }
                         // Store cookie if necessary
@@ -747,7 +753,7 @@ public class HttpHelper {
 
         private final String mUrl;
         private final File mDir;
-        private final String mFileName;
+        private String mFileName;
         private File mFile;
         private File mTempFile;
         private final boolean mIsProxy;
@@ -821,15 +827,42 @@ public class HttpHelper {
             return contentLength;
         }
 
+        protected String fixNewExtension(String ext) {
+            return ext;
+        }
+
         @Override
         public Object onAfterConnect(HttpURLConnection conn) throws Exception {
             // Check stop
             if (mControlor != null && mControlor.isStop())
                 throw new StopRequestException();
 
+            String contentType = conn.getContentType();
+            int index = contentType.indexOf(';');
+            if (index != -1)
+                contentType = contentType.substring(0, index);
+
             mContentLength = getContentLength(conn);
             if (mListener != null)
                 mListener.onDownloadStartDownload(mContentLength);
+
+            // Fix extension
+            MimeTypeMap mime = MimeTypeMap.getSingleton();
+            String newExtension = mime.getExtensionFromMimeType(contentType);
+            if (newExtension == null) {
+                index = contentType.lastIndexOf('/');
+                if (index != -1)
+                    newExtension = contentType.substring(index + 1);
+            }
+            newExtension = fixNewExtension(newExtension);
+            if (newExtension != null) {
+                index = mFileName.lastIndexOf('.');
+                if (index == -1) {
+                    mFileName = mFileName + '.' + newExtension;
+                } else {
+                    mFileName = mFileName.substring(0, index) + '.' + newExtension;
+                }
+            }
 
             // Make sure parent exist
             mDir.mkdirs();
@@ -838,7 +871,6 @@ public class HttpHelper {
             // Transfer
             transferData(conn.getInputStream(), new FileOutputStream(mTempFile));
             // Get ok, rename
-            // TODO what if rename fail
             mTempFile.renameTo(mFile);
             // Callback
             if (mListener != null)
@@ -882,10 +914,52 @@ public class HttpHelper {
             }
 
             if (mContentLength != -1 && mReceivedSize != mContentLength)
-                throw new UncompletedException();
+                throw new UncompletedException("Received size is " + mReceivedSize
+                        + ", but ContentLength is " + mContentLength);
         }
 
     }
+
+
+    private class DownloadEhImageHelper extends DownloadHelper {
+
+        public DownloadEhImageHelper(String url, File dir, String fileName,
+                boolean isProxy, DownloadControlor controlor,
+                OnDownloadListener listener) {
+            super(url, dir, fileName, isProxy, controlor, listener);
+        }
+
+        @Override
+        protected String fixNewExtension(String ext) {
+            int length = EhUtils.POSSIBLE_IMAGE_EXTENSION_ARRAY.length;
+            int i;
+            for (i = 0; i < length; i++) {
+                if (EhUtils.POSSIBLE_IMAGE_EXTENSION_ARRAY[i].equals(ext))
+                    break;
+            }
+            if (i == length)
+                ext = EhUtils.DEFAULT_IMAGE_EXTENSION;
+            return ext;
+        }
+    }
+
+    private class DownloadOriginEhImageHelper extends DownloadEhImageHelper {
+
+        public DownloadOriginEhImageHelper(String url, File dir, String fileName,
+                boolean isProxy, DownloadControlor controlor,
+                OnDownloadListener listener) {
+            super(url, dir, fileName, isProxy, controlor, listener);
+        }
+
+        @Override
+        public Object onAfterConnect(HttpURLConnection conn) throws Exception {
+            if (mLastUrl == null)
+                throw new BandwidthExceededException();
+
+            return super.onAfterConnect(conn);
+        }
+    }
+
 
     /**
      * Check Sad Panda.
@@ -942,12 +1016,12 @@ public class HttpHelper {
      * @return
      */
     public Bitmap getImage(String url) {
-        return (Bitmap)requst(new GetImageHelper(url));
+        return (Bitmap) requst(new GetImageHelper(url));
     }
 
     public String download(String url, File dir, String file, boolean isProxy,
             DownloadControlor controlor, OnDownloadListener listener) {
-        return (String)requst(new DownloadHelper(url, dir, file, isProxy,
+        return (String) requst(new DownloadHelper(url, dir, file, isProxy,
                 controlor, listener));
     }
 
@@ -960,6 +1034,18 @@ public class HttpHelper {
                 download(url, dir, file, isProxy, controlor, listener);
             }
         }.start();
+    }
+
+    public String downloadEhImage(String url, File dir, String file, boolean isProxy,
+            DownloadControlor controlor, OnDownloadListener listener) {
+        return (String) requst(new DownloadEhImageHelper(url, dir, file, isProxy,
+                controlor, listener));
+    }
+
+    public String downloadOriginEhImage(String url, File dir, String file, boolean isProxy,
+            DownloadControlor controlor, OnDownloadListener listener) {
+        return (String) requst(new DownloadOriginEhImageHelper(url, dir, file, isProxy,
+                controlor, listener));
     }
 
     /** Exceptions **/
@@ -977,6 +1063,11 @@ public class HttpHelper {
     }
 
     public class UncompletedException extends Exception {
+
+        public UncompletedException(String string) {
+            super(string);
+        }
+
         private static final long serialVersionUID = 1L;
     }
 
@@ -998,5 +1089,11 @@ public class HttpHelper {
         public int getResponseCode() {
             return mResponseCode;
         }
+    }
+
+    public class BandwidthExceededException extends Exception {
+
+        private static final long serialVersionUID = 1L;
+
     }
 }

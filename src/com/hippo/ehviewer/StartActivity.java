@@ -202,6 +202,23 @@ public class StartActivity extends AbsActivity {
             }
         }, 2000);
         check(CHECK_WARING);
+
+
+
+
+        /*
+        HttpHelper hh = new HttpHelper(StartActivity.this);
+        hh.downloadInThread("http://exhentai.org/fullimg.php?gid=767110&page=15&key=84c2b5f9aa", new File("/sdcard"), "aaa.txt", false, null, null);
+
+        new Thread() {
+            @Override
+            public void run() {
+
+
+                //
+            }
+        }.start();
+*/
     }
 
     /**
