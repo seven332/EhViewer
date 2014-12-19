@@ -133,6 +133,18 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
         mExDownloader.setCurReadIndex(index);
     }
 
+    public String getTitle() {
+        return mExDownloader.getTitle();
+    }
+
+    public File getImageFile(int index) {
+        File file = null;
+        String name = getImageFilename(index);
+        if (name != null)
+            file = new File(mDir, name);
+        return file;
+    }
+
     private String getImageFilename(int index) {
         String filename = mImageFilenameArray.get(index);
         if (filename == null) {

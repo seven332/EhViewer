@@ -260,28 +260,28 @@ public class MaterialAlertDialog extends AlertDialog implements
 
         protected Context mContext;
 
-        private boolean mDarkTheme = false;
-        private CharSequence mTitle;
-        private CharSequence mMessage;
-        private CharSequence mActionButtonText;
-        private CharSequence mPositiveButtonText;
-        private CharSequence mNegativeButtonText;
-        private CharSequence mNeutralButtonText;
-        private OnClickListener mButtonListener;
-        private View mCustomView;
-        private LinearLayout.LayoutParams mCustomLp;
-        private boolean mInScrollView = true;
-        private boolean mCancelable = true;
-        private int mAutoLinkMask = -1;
+        protected boolean mDarkTheme = false;
+        protected CharSequence mTitle;
+        protected CharSequence mMessage;
+        protected CharSequence mActionButtonText;
+        protected CharSequence mPositiveButtonText;
+        protected CharSequence mNegativeButtonText;
+        protected CharSequence mNeutralButtonText;
+        protected OnClickListener mButtonListener;
+        protected View mCustomView;
+        protected LinearLayout.LayoutParams mCustomLp;
+        protected boolean mInScrollView = true;
+        protected boolean mCancelable = true;
+        protected int mAutoLinkMask = -1;
 
-        private OnCancelListener mOnCancelListener;
+        protected OnCancelListener mOnCancelListener;
 
-        private ListAdapter mAdapter;
-        private OnClickListener mOnClickListener;
-        private int mCheckedItem;
-        private boolean mIsSingleChoice;
+        protected ListAdapter mAdapter;
+        protected OnClickListener mOnClickListener;
+        protected int mCheckedItem;
+        protected boolean mIsSingleChoice;
 
-        private DialogInterface.OnDismissListener mOnDismissListener;
+        protected DialogInterface.OnDismissListener mOnDismissListener;
 
         public Builder(Context context) {
             mContext = context;

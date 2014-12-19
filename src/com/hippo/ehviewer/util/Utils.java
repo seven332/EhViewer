@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +38,9 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Vibrator;
+import android.webkit.MimeTypeMap;
+
+import com.hippo.ehviewer.AppHandler;
 
 public final class Utils {
     @SuppressWarnings("unused")
@@ -80,6 +84,36 @@ public final class Utils {
         os.flush();
         os.close();
         buffer = null;
+    }
+
+    public static boolean copy(File src, File dst) {
+        try {
+            copy(new FileInputStream(src), new FileOutputStream(dst));
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static interface OnCopyOverListener {
+        public void onCopyOver(boolean success, File src, File dst);
+    }
+
+    public static void copyInNewThread(final File src, final File dst, final OnCopyOverListener l) {
+        new BgThread(new Runnable() {
+            @Override
+            public void run() {
+                final boolean ok = copy(src, dst);
+                if (l != null) {
+                    AppHandler.getInstance().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            l.onCopyOver(ok, src, dst);
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 
     public static boolean isNumber(String str) {
@@ -662,5 +696,21 @@ public final class Utils {
     public static <T> T checkNotNull(T object) {
         if (object == null) throw new NullPointerException();
         return object;
+    }
+
+    /**
+     * It will return null if can't find mime
+     *
+     * @param url
+     * @return
+     */
+    public static String getMimeType(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
+            MimeTypeMap mime = MimeTypeMap.getSingleton();
+            type = mime.getMimeTypeFromExtension(extension);
+        }
+        return type;
     }
 }

@@ -105,8 +105,7 @@ public class FileExplorerView extends ListView
                 mCurDir = null;
         }
         if (mCurDir == null)
-            // TODO what if no sdcard
-            mCurDir = Environment.getExternalStorageDirectory();
+            mCurDir = getSafeDir();
 
         a.recycle();
 
@@ -117,7 +116,7 @@ public class FileExplorerView extends ListView
         mContext = context;
 
         mFilter = Filter.ALL;
-        mCurDir = Environment.getExternalStorageDirectory();
+        mCurDir = getSafeDir();
 
         init();
     }
@@ -244,6 +243,14 @@ public class FileExplorerView extends ListView
 
             return convertView;
         }
+    }
+
+    private static File getSafeDir() {
+        File mDir;
+        mDir = Environment.getExternalStorageDirectory();
+        if (mDir == null || !mDir.isDirectory())
+            mDir = new File("/");
+        return mDir;
     }
 
     static class DirFileFilter implements FileFilter {

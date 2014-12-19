@@ -16,9 +16,13 @@
 
 package com.hippo.ehviewer.ui;
 
+import java.io.File;
+
 import android.annotation.TargetApi;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -32,6 +36,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.app.DirSelectDialog;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
@@ -44,12 +49,14 @@ import com.hippo.ehviewer.util.FullScreenHelper;
 import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.ColorView;
+import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.SlidingLayout;
 
 public class GalleryActivity extends AbsActivity
         implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener,
         FullScreenHelper.OnFullScreenBrokenListener, CompoundButton.OnCheckedChangeListener,
-        SlidingLayout.OnChildHideListener, AdapterView.OnItemSelectedListener {
+        SlidingLayout.OnChildHideListener, AdapterView.OnItemSelectedListener,
+        View.OnClickListener, Utils.OnCopyOverListener {
 
     @SuppressWarnings("unused")
     private final static String TAG = GalleryActivity.class.getSimpleName();
@@ -63,6 +70,9 @@ public class GalleryActivity extends AbsActivity
     public final static String KEY_FIRST_READ_CONFIG_V1 = "first_read_config_v1";
     public final static boolean DEFAULT_FIRST_READ_CONFIG_V1 = true;
 
+    public final static String KEY_LAST_SAVE_IMAGE_FILE_PATH = "last_save_image_file_path";
+    public final static String DEFAULT_LAST_SAVE_IMAGE_FILE_PATH = null;
+
     private View mClock;
     private View mBattery;
 
@@ -71,6 +81,9 @@ public class GalleryActivity extends AbsActivity
     private TextView mCurrentPage;
     private TextView mPageSum;
     private SeekBar mPageSeeker;
+    private TextView mRefresh;
+    private TextView mSend;
+    private TextView mMoreSettings;
     private Spinner mReadingDirection;
     private Spinner mPageScaling;
     private Spinner mStartPosition;
@@ -91,6 +104,70 @@ public class GalleryActivity extends AbsActivity
     private GalleryInfo mGi;
 
     private FullScreenHelper mFullScreenHelper;
+
+    private File mCurImageFile;
+
+    private Dialog mSendDialog;
+
+    @Override
+    public void onCopyOver(boolean success, File src, File dst) {
+        MaterialToast.showToast(success ? String.format(getString(R.string.save_successful), dst.getPath())
+                : getString(R.string.save_failed));
+        if (success)
+            Config.setString(KEY_LAST_SAVE_IMAGE_FILE_PATH, dst.getParent());
+    }
+
+    private Dialog createSaveImageDialog() {
+        return DirSelectDialog.create(
+                new MaterialAlertDialog.Builder(GalleryActivity.this)
+                        .setDrakTheme(true).setTitle(R.string.select_save_dir)
+                        .setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE)
+                        .setButtonListener(new MaterialAlertDialog.OnClickListener() {
+                            @Override
+                            public boolean onClick(MaterialAlertDialog dialog, int which) {
+                                if (which == MaterialAlertDialog.POSITIVE) {
+                                    String targetPath = ((DirSelectDialog) dialog).getCurrentPath();
+                                    StringBuilder sb = new StringBuilder();
+                                    sb.append(mImageSet.getTitle()).append("-").append(mGalleryView.getCurIndex() + 1)
+                                            .append(".").append(Utils.getExtension(mCurImageFile.getName(), "jpg"));
+                                    Utils.copyInNewThread(mCurImageFile, new File(targetPath, Utils.standardizeFilename(sb.toString())),
+                                            GalleryActivity.this);
+                                }
+                                return true;
+                            }
+                        }),
+                Config.getString(KEY_LAST_SAVE_IMAGE_FILE_PATH, null));
+    }
+
+    private Dialog createSendDialog() {
+        return new MaterialAlertDialog.Builder(this).setDrakTheme(true).setTitle(R.string.send)
+                .setItems(R.array.send_entries, new MaterialAlertDialog.OnClickListener() {
+                    @Override
+                    public boolean onClick(MaterialAlertDialog dialog, int which) {
+                        // Check current image file again
+                        if (mCurImageFile == null || !mCurImageFile.exists()) {
+                            MaterialToast.showToast(R.string.current_image_not_downloaded);
+                            return false;
+                        }
+
+                        switch (which) {
+                        case 0:
+                            createSaveImageDialog().show();
+                            break;
+                        case 1:
+                            Uri uri = Uri.fromFile(mCurImageFile);
+                            Intent shareIntent = new Intent();
+                            shareIntent.setAction(Intent.ACTION_SEND);
+                            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                            shareIntent.setType(Utils.getMimeType(uri.toString()));
+                            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_image)));
+                            break;
+                        }
+                        return true;
+                    }
+                }).setNegativeButton(android.R.string.cancel).create();
+    }
+
 
     @Override
     public void onFullScreenBroken(boolean fullScreen) {
@@ -185,6 +262,9 @@ public class GalleryActivity extends AbsActivity
         mCurrentPage = (TextView) mConfigSliding.findViewById(R.id.current_page);
         mPageSum = (TextView) mConfigSliding.findViewById(R.id.page_sum);
         mPageSeeker = (SeekBar) mConfigSliding.findViewById(R.id.page_seeker);
+        mRefresh = (TextView) mConfigSliding.findViewById(R.id.refresh);
+        mSend = (TextView) mConfigSliding.findViewById(R.id.send);
+        mMoreSettings = (TextView) mConfigSliding.findViewById(R.id.more_settings);
         mReadingDirection = (Spinner) mConfigSliding.findViewById(R.id.reading_direction);
         mPageScaling = (Spinner) mConfigSliding.findViewById(R.id.page_scaling);
         mStartPosition = (Spinner) mConfigSliding.findViewById(R.id.start_position);
@@ -197,6 +277,8 @@ public class GalleryActivity extends AbsActivity
         mDecodeFormat = (Spinner) mConfigSliding.findViewById(R.id.decode_format);
 
         mConfigSliding.hide();
+
+        mSendDialog = createSendDialog();
 
         Intent intent = getIntent();
         mGi = (GalleryInfo) intent.getParcelableExtra(KEY_GALLERY_INFO);
@@ -231,6 +313,9 @@ public class GalleryActivity extends AbsActivity
             mConfigSliding.setOnChildHideListener(this);
             mGalleryView.setGalleryViewListener(this);
             mPageSeeker.setOnSeekBarChangeListener(this);
+            mRefresh.setOnClickListener(this);
+            mSend.setOnClickListener(this);
+            mMoreSettings.setOnClickListener(this);
             mReadingDirection.setOnItemSelectedListener(this);
             mPageScaling.setOnItemSelectedListener(this);
             mStartPosition.setOnItemSelectedListener(this);
@@ -284,6 +369,23 @@ public class GalleryActivity extends AbsActivity
             mImageSet.free();
         if (mGalleryView != null)
             mGalleryView.free();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == mRefresh) {
+            mImageSet.redownload(mGalleryView.getCurIndex());
+        } else if (v == mSend) {
+            mCurImageFile = mImageSet.getImageFile(mGalleryView.getCurIndex());
+            if (mCurImageFile == null || !mCurImageFile.exists())
+                MaterialToast.showToast(R.string.current_image_not_downloaded);
+            else
+                mSendDialog.show();
+
+        } else if (v == mMoreSettings) {
+            Intent intent = new Intent(GalleryActivity.this, SettingsActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override

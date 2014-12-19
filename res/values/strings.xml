@@ -166,7 +166,7 @@
     <string name="failed_to_add">Failed to add</string>
     <string name="where_to_move">Where to move ?</string>
     <string name="moving">Moving…</string>
-    <string name="move_successfully">Move successfully</string>
+    <string name="move_successful">Move successful</string>
     <string name="failed_to_move">Failed to move</string>
     <string name="dst_src_same">The same Source and Destination</string>
     <string name="delete_successfully">Delete successfully</string>

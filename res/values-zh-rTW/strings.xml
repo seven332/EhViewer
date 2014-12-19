@@ -150,7 +150,7 @@
     <string name="failed_to_add">添加失敗</string>
     <string name="where_to_move">移動至何處？</string>
     <string name="moving">正在移動…</string>
-    <string name="move_successfully">移動成功</string>
+    <string name="move_successful">移動成功</string>
     <string name="failed_to_move">移動失敗</string>
     <string name="dst_src_same">目標與源相同</string>
     <string name="delete_successfully">刪除成功</string>

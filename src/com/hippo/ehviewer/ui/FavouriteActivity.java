@@ -411,7 +411,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
             mSetIter = null;
             mProgressDialog.dismiss();
             mProgressDialog = null;
-            MaterialToast.showToast(R.string.move_successfully);
+            MaterialToast.showToast(R.string.move_successful);
         }
     }
 
@@ -437,7 +437,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
                                 mMoveDialog = null;
 
                                 mClient.modifyFavorite(getGids(mChoiceGiSetCopy), mTargetCat,
-                                        mMenuIndex -1, new Modify(mResources.getString(R.string.move_successfully),
+                                        mMenuIndex -1, new Modify(mResources.getString(R.string.move_successful),
                                                 mResources.getString(R.string.failed_to_move), true));
                                 mGalleryListView.setHeaderRefreshing(true);
                             } else { // change cloud dir
@@ -445,7 +445,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
                                 mMoveDialog = null;
 
                                 mClient.modifyFavorite(getGids(mChoiceGiSetCopy), mTargetCat,
-                                        mMenuIndex -1, new Modify(mResources.getString(R.string.move_successfully),
+                                        mMenuIndex -1, new Modify(mResources.getString(R.string.move_successful),
                                                 mResources.getString(R.string.failed_to_move), false));
                                 mGalleryListView.setHeaderRefreshing(true);
                             }

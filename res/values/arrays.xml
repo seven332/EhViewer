@@ -168,4 +168,9 @@
         <item>6408</item>
     </string-array>
 
+    <string-array name="send_entries">
+        <item>@string/save_to_local_storage</item>
+        <item>@string/share</item>
+    </string-array>
+
 </resources>

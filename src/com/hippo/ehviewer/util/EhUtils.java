@@ -57,7 +57,7 @@ public final class EhUtils {
 
     /**
      * Get gallery for read and download Gid is constant, but title may be
-     * changed 非要标题，记一下 gid 不行么
+     * changed
      *
      * @param gid
      * @param title

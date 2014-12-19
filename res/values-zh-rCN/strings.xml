@@ -150,6 +150,12 @@
     <string name="loading_percent">正在加载 %d%%</string>
     <string name="wait_for_more">等待获取页面信息</string>
     <string name="more_settings">更多设置</string>
+    <string name="save_to_local_storage">保存到本地</string>
+    <string name="save_successful">已保存至 %s</string>
+    <string name="save_failed">保存失败</string>
+    <string name="select_save_dir">选择保存文件夹</string>
+    <string name="current_image_not_downloaded">当前图片未完成下载</string>
+    <string name="share_image">分享图片</string>
 
     <!-- Action -->
     <string name="action_refresh">刷新</string>
@@ -162,7 +168,7 @@
     <string name="failed_to_add">添加失败</string>
     <string name="where_to_move">移动至何处？</string>
     <string name="moving">正在移动…</string>
-    <string name="move_successfully">移动成功</string>
+    <string name="move_successful">移动成功</string>
     <string name="failed_to_move">移动失败</string>
     <string name="dst_src_same">目标与源相同</string>
     <string name="delete_successfully">删除成功</string>
@@ -358,6 +364,7 @@
     <string name="rating0">…</string>
 
     <!-- Utils -->
+    <string name="share">分享</string>
     <string name="filter">过滤</string>
     <string name="clear">清除</string>
     <string name="history">历史</string>

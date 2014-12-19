@@ -53,7 +53,7 @@ public class SlidingLayout extends ViewGroup {
     private int mLevel = LEVEL_BASE;
 
     private View mChild;
-    private int mMaxWidth; // 480dp
+    private int mMaxWidth;
     private int mSlop;
     private float mShowPercent = 0.0f;
     private boolean isBottom = true;
@@ -114,7 +114,7 @@ public class SlidingLayout extends ViewGroup {
 
     private void init() {
         mMaxWidth = Ui.dp2pix(480);
-        mSlop = Ui.dp2pix(2);
+        mSlop = Ui.dp2pix(0);
 
         mToBaseLevelAnimate = new ValueAnimator();
         mToBaseLevelListener = new SetYListener();

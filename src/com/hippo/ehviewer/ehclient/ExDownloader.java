@@ -212,6 +212,10 @@ public class ExDownloader implements Runnable {
         return mToken;
     }
 
+    public String getTitle() {
+        return mTitle;
+    }
+
     public void setDownloadMode(boolean downloadMode) {
         synchronized (mDownloadLock) {
             if (downloadMode) {

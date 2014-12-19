@@ -59,25 +59,34 @@
         android:paddingBottom="12dp" >
 
         <TextView
+            android:id="@+id/refresh"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="重新加载" />
+            android:text="@string/refresh"
+            android:drawableTop="@drawable/ic_reading_action_refresh"
+            android:drawablePadding="4dp" />
 
         <TextView
+            android:id="@+id/send"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="发送" />
+            android:text="@string/send"
+            android:drawableTop="@drawable/ic_reading_action_send"
+            android:drawablePadding="4dp" />
 
         <TextView
+            android:id="@+id/more_settings"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="更多设置" />
+            android:text="@string/more_settings"
+            android:drawableTop="@drawable/ic_reading_action_settings"
+            android:drawablePadding="4dp" />
 
     </LinearLayout>
 
