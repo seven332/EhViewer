@@ -77,6 +77,24 @@ public class SlidingLayout extends ViewGroup {
     private int mMinTop;
     private int mMaxTop;
 
+    /*
+     * ---------------------- mFullScreenTop
+     *
+     * ---------------------- m5Top
+     *
+     *
+     * ---------------------- m4Top
+     *
+     * ---------------------- mReservedTop
+     *
+     * ---------------------- m2Top
+     *
+     *
+     * ---------------------- m1Top
+     *
+     * ---------------------- mBaseTop
+     */
+
     private int mBaseTop;
     private int m1Top;
     private int m2Top;
@@ -286,6 +304,9 @@ public class SlidingLayout extends ViewGroup {
 
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         final int vgrav = lp.gravity & Gravity.VERTICAL_GRAVITY_MASK;
+        final int maxGap = Ui.dp2pix(32);
+        final int brGap = Math.min(Math.abs((mBaseTop - mReservedTop) / 3), maxGap);
+        final int rfGap = Math.min(Math.abs((mReservedTop - mFullScreenTop) / 3), maxGap);
         switch (vgrav) {
             case Gravity.TOP: {
                 isBottom = false;
@@ -294,6 +315,11 @@ public class SlidingLayout extends ViewGroup {
                 mBaseTop = mMinTop;
                 mReservedTop = mMinTop + reservedLength;
                 mFullScreenTop = mMinTop + fullScreenLength;
+
+                m1Top = mBaseTop + brGap;
+                m2Top = mReservedTop - brGap;
+                m4Top = mReservedTop + rfGap;
+                m5Top = mFullScreenTop - rfGap;
 
                 int childBottom = mMinTop + showHeight;
                 child.layout(childLeft, childBottom - childHeight, childLeft + childWidth, childBottom);
@@ -308,15 +334,16 @@ public class SlidingLayout extends ViewGroup {
                 mReservedTop = mMaxTop - reservedLength;
                 mFullScreenTop = mMaxTop - fullScreenLength;
 
+                m1Top = mBaseTop - brGap;
+                m2Top = mReservedTop + brGap;
+                m4Top = mReservedTop - rfGap;
+                m5Top = mFullScreenTop + rfGap;
+
                 int childTop = mMaxTop - showHeight;
                 child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
                 break;
             }
         }
-        m1Top = MathUtils.lerp(mBaseTop, mReservedTop, 1.0f / 3.0f);
-        m2Top = MathUtils.lerp(mBaseTop, mReservedTop, 2.0f / 3.0f);
-        m4Top = MathUtils.lerp(mReservedTop, mFullScreenTop, 1.0f / 3.0f);
-        m5Top = MathUtils.lerp(mReservedTop, mFullScreenTop, 2.0f / 3.0f);
     }
 
     @Override
@@ -368,7 +395,6 @@ public class SlidingLayout extends ViewGroup {
         final int action = MotionEventCompat.getActionMasked(ev);
         final float x = ev.getX();
         final float y = ev.getY();
-        final boolean isChildUnder = ViewUtils.isViewUnder(mChild, (int) x, (int) y);
         boolean getTouchEvent = false;
 
         cancelAnimator();
@@ -379,7 +405,7 @@ public class SlidingLayout extends ViewGroup {
             mInitialMotionX = x;
             mInitialMotionY = y;
             mLastMotionY = mInitialMotionY;
-            if (isChildUnder)
+            if (isShowing())
                 getTouchEvent = true;
             break;
         case MotionEvent.ACTION_MOVE:
