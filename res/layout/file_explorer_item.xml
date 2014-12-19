@@ -14,26 +14,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/text"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="46.0dp" >
-
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="8dp"
-        android:src="@drawable/ic_dir_dark_dialog" />
-
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_margin="8.0dp"
-        android:layout_toRightOf="@id/icon" />
-
-</RelativeLayout>
+    android:gravity="center_vertical"
+    android:padding="8dp"
+    android:drawableLeft="@drawable/ic_dir_dark_dialog"
+    android:drawablePadding="8dp" />

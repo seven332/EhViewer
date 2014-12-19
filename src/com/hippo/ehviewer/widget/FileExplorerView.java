@@ -232,7 +232,7 @@ public class FileExplorerView extends ListView
             if (convertView == null)
                 convertView = mInflater.inflate(R.layout.file_explorer_item, parent, false);
 
-            TextView tv = (TextView)convertView.findViewById(R.id.text);
+            TextView tv = (TextView) convertView;
             File file = mFileList.get(position);
             String name;
             if (file == PARENT_DIR)
