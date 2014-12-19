@@ -159,18 +159,18 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
     private boolean isEnsureSize;
     private boolean mInit = false;
 
-    private int[] leftArea;
-    private int[] topArea;
-    private int[] rightArea;
-    private int[] bottomArea;
-    private int[] centerArea;
-    private int[] mLightnessSlidingArea;
+    private final int[] leftArea;
+    private final int[] topArea;
+    private final int[] rightArea;
+    private final int[] bottomArea;
+    private final int[] centerArea;
+    private final int[] mLightnessSlidingArea;
 
-    private Text leftText;
-    private Text topText;
-    private Text rightText;
-    private Text bottomText;
-    private Text centerText;
+    private final Text leftText;
+    private final Text topText;
+    private final Text rightText;
+    private final Text bottomText;
+    private final Text centerText;
 
     private boolean mDoubleTapAnimating = false;
 
@@ -237,6 +237,24 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         Arrays.fill(mSumOffsetYStore, 0, 12, 0);
         Arrays.fill(mToNextOffsetXStore, 0, 4, 0);
         Arrays.fill(mToNextOffsetYStore, 0, 4, 0);
+
+        leftArea = new int[4];
+        topArea = new int[4];
+        rightArea = new int[4];
+        bottomArea = new int[4];
+        centerArea = new int[4];
+        mLightnessSlidingArea = new int[4];
+
+        leftText = new Text(context.getString(R.string.pre_page),
+                TAP_AREA_TEXT_SIZE, TAP_AREA_TEXT_COLOR);
+        topText = new Text(context.getString(R.string.zoom_in),
+                TAP_AREA_TEXT_SIZE, TAP_AREA_TEXT_COLOR);
+        rightText = new Text(context.getString(R.string.next_page),
+                TAP_AREA_TEXT_SIZE, TAP_AREA_TEXT_COLOR);
+        bottomText = new Text(context.getString(R.string.zoom_out),
+                TAP_AREA_TEXT_SIZE, TAP_AREA_TEXT_COLOR);
+        centerText = new Text(context.getString(R.string.menu),
+                TAP_AREA_TEXT_SIZE, TAP_AREA_TEXT_COLOR);
 
         mContext = context;
         mImageSet = imageSet;
@@ -451,13 +469,15 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
         case SCROLL_PRE:
         case SCROLL_ANIME_PRE:
-            item = showItems[PRE_TARGET_INDEX];
-            if (item != null)
-                item.draw(canvas, scrollXOffset, scrollYOffset);
-            if (item instanceof ImageItem && ((ImageItem) item).isAnimated())
-                needRefresh |= true;
-            if (item instanceof MovieItem)
-                needRefresh |= true;
+            if (scrollXOffset != 0 || scrollYOffset != 0) {
+                item = showItems[PRE_TARGET_INDEX];
+                if (item != null)
+                    item.draw(canvas, scrollXOffset, scrollYOffset);
+                if (item instanceof ImageItem && ((ImageItem) item).isAnimated())
+                    needRefresh |= true;
+                if (item instanceof MovieItem)
+                    needRefresh |= true;
+            }
 
             item = showItems[CUR_TARGET_INDEX];
             if (item != null)
@@ -478,13 +498,16 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             if (item instanceof MovieItem)
                 needRefresh |= true;
 
-            item = showItems[NEXT_TARGET_INDEX];
-            if (item != null)
-                item.draw(canvas, scrollXOffset, scrollYOffset);
-            if (item instanceof ImageItem && ((ImageItem) item).isAnimated())
-                needRefresh |= true;
-            if (item instanceof MovieItem)
-                needRefresh |= true;
+            if (scrollXOffset != 0 || scrollYOffset != 0) {
+                item = showItems[NEXT_TARGET_INDEX];
+                if (item != null)
+                    item.draw(canvas, scrollXOffset, scrollYOffset);
+                if (item instanceof ImageItem && ((ImageItem) item).isAnimated())
+                    needRefresh |= true;
+                if (item instanceof MovieItem)
+                    needRefresh |= true;
+            }
+            break;
         }
 
         if (needRefresh)
@@ -632,46 +655,15 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
     }
 
     private void setTapArea() {
-        leftArea = new int[] { (int) (LEFT_AREA_SCALE[0] * mScreenWidth),
-                (int) (LEFT_AREA_SCALE[1] * mScreenHeight),
-                (int) (LEFT_AREA_SCALE[2] * mScreenWidth),
-                (int) (LEFT_AREA_SCALE[3] * mScreenHeight) };
-        topArea = new int[] { (int) (TOP_AREA_SCALE[0] * mScreenWidth),
-                (int) (TOP_AREA_SCALE[1] * mScreenHeight),
-                (int) (TOP_AREA_SCALE[2] * mScreenWidth),
-                (int) (TOP_AREA_SCALE[3] * mScreenHeight) };
-        rightArea = new int[] { (int) (RIGHT_AREA_SCALE[0] * mScreenWidth),
-                (int) (RIGHT_AREA_SCALE[1] * mScreenHeight),
-                (int) (RIGHT_AREA_SCALE[2] * mScreenWidth),
-                (int) (RIGHT_AREA_SCALE[3] * mScreenHeight) };
-        bottomArea = new int[] { (int) (BOTTOM_AREA_SCALE[0] * mScreenWidth),
-                (int) (BOTTOM_AREA_SCALE[1] * mScreenHeight),
-                (int) (BOTTOM_AREA_SCALE[2] * mScreenWidth),
-                (int) (BOTTOM_AREA_SCALE[3] * mScreenHeight) };
-        centerArea = new int[] { (int) (CENTER_AREA_SCALE[0] * mScreenWidth),
-                (int) (CENTER_AREA_SCALE[1] * mScreenHeight),
-                (int) (CENTER_AREA_SCALE[2] * mScreenWidth),
-                (int) (CENTER_AREA_SCALE[3] * mScreenHeight) };
-        mLightnessSlidingArea = new int[] { (int) (LIGHTNESS_SLIDING_AREA[0] * mScreenWidth),
-                (int) (LIGHTNESS_SLIDING_AREA[1] * mScreenHeight),
-                (int) (LIGHTNESS_SLIDING_AREA[2] * mScreenWidth),
-                (int) (LIGHTNESS_SLIDING_AREA[3] * mScreenHeight) };
-
-        if (leftText == null)
-            leftText = new Text(mContext.getString(R.string.pre_page),
-                    TAP_AREA_TEXT_SIZE, TAP_AREA_TEXT_COLOR);
-        if (topText == null)
-            topText = new Text(mContext.getString(R.string.zoom_in),
-                    TAP_AREA_TEXT_SIZE, TAP_AREA_TEXT_COLOR);
-        if (rightText == null)
-            rightText = new Text(mContext.getString(R.string.next_page),
-                    TAP_AREA_TEXT_SIZE, TAP_AREA_TEXT_COLOR);
-        if (bottomText == null)
-            bottomText = new Text(mContext.getString(R.string.zoom_out),
-                    TAP_AREA_TEXT_SIZE, TAP_AREA_TEXT_COLOR);
-        if (centerText == null)
-            centerText = new Text(mContext.getString(R.string.menu),
-                    TAP_AREA_TEXT_SIZE, TAP_AREA_TEXT_COLOR);
+        for (int i = 0; i < 4; i++) {
+            int length = (i % 2 == 0 ? mScreenWidth : mScreenHeight);
+            leftArea[i] = (int) (LEFT_AREA_SCALE[i] * length);
+            topArea[i] = (int) (TOP_AREA_SCALE[i] * length);
+            rightArea[i] = (int) (RIGHT_AREA_SCALE[i] * length);
+            bottomArea[i] = (int) (BOTTOM_AREA_SCALE[i] * length);
+            centerArea[i] = (int) (CENTER_AREA_SCALE[i] * length);
+            mLightnessSlidingArea[i] = (int) (LIGHTNESS_SLIDING_AREA[i] * length);
+        }
 
         setCenterInArea(leftArea, leftText);
         setCenterInArea(topArea, topText);
@@ -689,29 +681,13 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
         // Fill store
         mSumOffsetXStore[0] = -mScreenWidth;
-        mSumOffsetXStore[1] = 0;
         mSumOffsetXStore[2] = mScreenWidth;
         mSumOffsetXStore[3] = mScreenWidth;
-        mSumOffsetXStore[4] = 0;
         mSumOffsetXStore[5] = -mScreenWidth;
-        mSumOffsetXStore[6] = 0;
-        mSumOffsetXStore[7] = 0;
-        mSumOffsetXStore[8] = 0;
-        mSumOffsetXStore[9] = 0;
-        mSumOffsetXStore[10] = 0;
-        mSumOffsetXStore[11] = 0;
 
-        mSumOffsetYStore[0] = 0;
-        mSumOffsetYStore[1] = 0;
-        mSumOffsetYStore[2] = 0;
-        mSumOffsetYStore[3] = 0;
-        mSumOffsetYStore[4] = 0;
-        mSumOffsetYStore[5] = 0;
         mSumOffsetYStore[6] = -mScreenHeight;
-        mSumOffsetYStore[7] = 0;
         mSumOffsetYStore[8] = mScreenHeight;
         mSumOffsetYStore[9] = mScreenHeight;
-        mSumOffsetYStore[10] = 0;
         mSumOffsetYStore[11] = -mScreenHeight;
 
         mToNextOffsetXStore[DIRECTION_LEFT_RIGHT] = mScreenWidth;
@@ -1168,6 +1144,9 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
             @Override
             protected void onEnd() {
+                // Update global scale
+                mScale = image.imageScale;
+
                 mDoubleTapAnimating = false;
                 setImageRect(mScreenWidth / 2, mScreenHeight / 2, endScale);
                 invalidate();
@@ -1175,6 +1154,9 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
             @Override
             protected void onCancel() {
+                // Update global scale
+                mScale = image.imageScale;
+
                 mDoubleTapAnimating = false;
             }
 
@@ -1239,10 +1221,6 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
                     mOnTapTextListener.onTapText(mCurIndex);
                 // return true;
             }
-
-            if (leftArea == null || topArea == null || rightArea == null
-                    || bottomArea == null || centerArea == null)
-                return true;
 
             if (Utils.isInArea(leftArea, (int) x, (int) y)) {
                 if (isRightToLeft())
@@ -1748,6 +1726,7 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         private final RectF source = new RectF();
         private final RectF target = new RectF();
 
+
         /**
          * You must call init before draw
          *
@@ -1763,23 +1742,48 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
         }
 
         @Override
-        public void draw(GLCanvas canvas, int xOffset, int yOffset) {
+        public void draw(GLCanvas canvas, int offsetX, int offsetY) {
             if (mTexture == null)
                 return;
 
-            if (getTargetIndex(this) == INVALID_ID)
-                mTexture.draw(canvas, mRect.left + xOffset,
-                        mRect.top + yOffset, mRect.width(), mRect.height());
+            int index = getTargetIndex(this);
+            if (index == INVALID_ID)
+                mTexture.draw(canvas, mRect.left + offsetX,
+                        mRect.top + offsetY, mRect.width(), mRect.height());
             else {
                 int leftBound = 0;
                 int topBound = 0;
                 int rightBound = mScreenWidth;
                 int bottomBound = mScreenHeight;
+                // Fix show bound
+                switch (index) {
+                case CUR_TARGET_INDEX:
+                    if (offsetX < 0)
+                        rightBound = rightBound + offsetX;
+                    else if (offsetX > 0)
+                        leftBound = offsetX; // leftBound + offsetX
+                    if (offsetY < 0)
+                        bottomBound = bottomBound + offsetX;
+                    else if (offsetY > 0)
+                        topBound = offsetY; // topBound + offsetY
+                    break;
+                case PRE_TARGET_INDEX:
+                case NEXT_TARGET_INDEX:
+                    if (offsetX < 0)
+                        leftBound = rightBound + offsetX;
+                    else if (offsetX > 0)
+                        rightBound = offsetX; // leftBound + offsetX
+                    if (offsetY < 0)
+                        topBound = bottomBound + offsetY;
+                    else if (offsetY > 0)
+                        bottomBound = offsetY; // topBound + offsetY
+                    break;
+                }
 
-                int left = mRect.left + xOffset;
-                int top = mRect.top + yOffset;
-                int right = mRect.right + xOffset;
-                int bottom = mRect.bottom + yOffset;
+                int left = mRect.left + offsetX;
+                int top = mRect.top + offsetY;
+                int right = mRect.right + offsetX;
+                int bottom = mRect.bottom + offsetY;
 
                 // Only show what in the own box
                 // Only what can be seen
