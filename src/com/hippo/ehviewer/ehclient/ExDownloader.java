@@ -732,12 +732,11 @@ public final class ExDownloader implements Runnable {
                 }
 
                 // Parser image page
-                boolean refreshImageUrl = false;
                 for (int i = 0; i < 2 && !mStopWork && !mPauseWork; i++) {
                     hh.reset();
                     ipp.reset();
                     String body = hh.get(EhClient.getPageUrl(mGid, pageToken, targetIndex + 1, mMode)
-                            + (refreshImageUrl ? "?nl=48" : ""));
+                            + ((i == 1) ? "?nl=48" : ""));
                     if (ipp.parser(body, mMode)) {
                         // Download image
                         HttpHelper.DownloadControlor c = mControlorArray[mIndex];
