@@ -57,8 +57,17 @@
 
         <com.hippo.ehviewer.preference.NumberOfColumnsPreference
             xmlns:auto="http://schemas.android.com/apk/res-auto"
+            android:key="list_detail_columns"
+            android:title="@string/list_detail_columns_title"
+            auto:keyPortrait="list_detail_columns_portrait"
+            auto:keyLandscape="list_detail_columns_landscape"
+            auto:defValuePortrait="1"
+            auto:defValueLandscape="2" />
+
+        <com.hippo.ehviewer.preference.NumberOfColumnsPreference
+            xmlns:auto="http://schemas.android.com/apk/res-auto"
             android:key="list_thumb_columns"
-            android:title="@string/list_thumb_columns"
+            android:title="@string/list_thumb_columns_title"
             auto:keyPortrait="list_thumb_columns_portrait"
             auto:keyLandscape="list_thumb_columns_landscape"
             auto:defValuePortrait="3"

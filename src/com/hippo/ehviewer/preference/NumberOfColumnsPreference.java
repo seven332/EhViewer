@@ -109,8 +109,8 @@ public class NumberOfColumnsPreference extends DialogPreference {
                 EditText editTextLandscape = (EditText) dialog.findViewById(R.id.landscape);
                 int newPortrait = Integer.valueOf(editTextPortrait.getText().toString());
                 int newLandscape = Integer.valueOf(editTextLandscape.getText().toString());
-                if (newPortrait > 0 && newPortrait < 100 &&
-                        newLandscape > 0 && newLandscape < 100) { // TODO Need a better range
+                if (newPortrait > 0 && newPortrait < 25 &&
+                        newLandscape > 0 && newLandscape < 25) { // TODO Need a better range
                     Config.setInt(keyPortrait, newPortrait);
                     Config.setInt(keyLandscape, newLandscape);
                     updateSummary(newPortrait, newLandscape);

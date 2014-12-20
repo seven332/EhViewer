@@ -209,6 +209,8 @@ public class GalleryActivity extends AbsActivity
             lightness = MathUtils.clamp(lightness, 0, 200);
             if (lightness > 100) {
                 mMaskView.setColor(0);
+                // Avoid BRIGHTNESS_OVERRIDE_OFF,
+                // screen may be off when lp.screenBrightness is 0.0f
                 lp.screenBrightness = Math.max((lightness - 100) / 100.0f, 0.05f);
             } else {
                 mMaskView.setColor(MathUtils.lerp(0xde, 0x00, lightness / 100.0f) << 24);

@@ -193,7 +193,7 @@
     <string name="screen_orientation_title">Screen orientation</string>
     <string name="list_display_settings_title">List</string>
     <string name="list_mode_title">List mode</string>
-    <string name="list_thumb_columns">Number of List thumb columns</string>
+    <string name="list_thumb_columns_title">Number of List thumb columns</string>
     <string name="preview_display_settings_title">Preview</string>
     <string name="preview_columns">Number of preview columns</string>
     <string name="popular_display_settings_title">Popular</string>

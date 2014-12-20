@@ -804,14 +804,13 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
     protected void onResume() {
         super.onResume();
         mGalleryListView.setListMode(Config.getListMode());
-        mGalleryListView.setOrientation(Ui.filterOrientation(mResources.getConfiguration().orientation));
+        mGalleryListView.updateSpanCount();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
-        mGalleryListView.setOrientation(Ui.filterOrientation(newConfig.orientation));
+        mGalleryListView.updateSpanCount();
     }
 
     /**
@@ -1051,8 +1050,6 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         // Content
         mGalleryListView.setGalleryListViewHelper(this);
         mStandard.addOnFitSystemWindowsListener(this);
-        // TODO
-        // mGalleryListView.getPullViewGroup().setAgainstToChildPadding(true);
 
         // leftDrawer
         mUserPanel.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -1421,7 +1418,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
             if (lus != null) {
                 View view = ViewUtils.inflateDialogView(R.layout.set_name, false);
                 final EditText et = (EditText) view.findViewById(R.id.set_name_edit);
-                new MaterialAlertDialog.Builder(this).setTitle("添加当前状态至快速搜索")
+                new MaterialAlertDialog.Builder(this).setTitle("添加当前状态至快速搜索") // TODO
                         .setView(view, true)
                         .setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {

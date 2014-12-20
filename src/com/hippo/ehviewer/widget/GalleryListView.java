@@ -40,6 +40,7 @@ import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.ListParser;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
 
@@ -66,12 +67,11 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
     private RefreshTextView mRefreshTextView;
 
     private int mListMode = LIST_MODE_DETAIL;
-    private int mOrientation = Configuration.ORIENTATION_PORTRAIT;
 
     private GalleryAdapter mAdapter;
     private StaggeredGridLayoutManager mLayoutManager;
     private MarginItemDecoration mItemDecoration;
-    private final int[] mFirstPositionTemp = new int[10]; // TODO
+    private final int[] mFirstPositionTemp = new int[50]; // TODO
 
     private long mTaskStamp;
 
@@ -193,24 +193,26 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
         }
     }
 
-    public void setOrientation(int orientation) {
-        if (mOrientation != orientation) {
-            mOrientation = orientation;
-            // Update span
-            updateSpanCount();
-            mAdapter.notifyDataSetChanged();
-        }
+    private boolean isLandscape() {
+        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
-    // TODO get span from config
-    // mOrientation
-    private void updateSpanCount() {
-        switch (mListMode) {
-        case LIST_MODE_DETAIL:
-            mLayoutManager.setSpanCount(1);
-            break;
-        case LIST_MODE_THUMB:
-            mLayoutManager.setSpanCount(4);
+    private static final String[] KEY_SPAN_COUNT_ARRAY = {
+        "list_detail_columns_portrait", "list_detail_columns_landscape",
+        "list_thumb_columns_portrait", "list_thumb_columns_landscape"
+    };
+
+    private static final int[] DEFAULT_SPAN_COUNT_ARRAY = {
+        1, 2, 3, 5
+    };
+
+    public void updateSpanCount() {
+        int index = mListMode * 2 + (isLandscape() ? 1 : 0);
+        try {
+            mLayoutManager.setSpanCount(Config.getInt(KEY_SPAN_COUNT_ARRAY[index],
+                    DEFAULT_SPAN_COUNT_ARRAY[index]));
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 

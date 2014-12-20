@@ -177,7 +177,7 @@
     <string name="screen_orientation_title">螢幕方向</string>
     <string name="list_display_settings_title">列表</string>
     <string name="list_mode_title">列表模式</string>
-    <string name="list_thumb_columns">列表縮圖列數</string>
+    <string name="list_thumb_columns_title">列表縮圖列數</string>
     <string name="preview_display_settings_title">預覽</string>
     <string name="preview_columns">預覽圖列數</string>
     <string name="popular_display_settings_title">熱門</string>
