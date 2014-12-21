@@ -26,9 +26,10 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.ConfigurationInfo;
 import android.graphics.Matrix;
-import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Process;
@@ -36,6 +37,7 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.View;
 
 import com.hippo.ehviewer.gallery.anim.CanvasAnimation;
 import com.hippo.ehviewer.gallery.glrenderer.BasicTexture;
@@ -43,7 +45,6 @@ import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLES11Canvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLES20Canvas;
 import com.hippo.ehviewer.gallery.glrenderer.UploadedTexture;
-import com.hippo.ehviewer.gallery.util.ApiHelper;
 import com.hippo.ehviewer.gallery.util.GalleryUtils;
 import com.hippo.ehviewer.gallery.util.MotionEventHelper;
 import com.hippo.ehviewer.util.Log;
@@ -104,30 +105,32 @@ public class GLRootView extends GLSurfaceView
 
     private boolean mInDownState = false;
 
+    private final boolean mSupportGLES20;
+
     public GLRootView(Context context) {
         this(context, null);
+    }
+
+    private static boolean checkGLES20Support(Context context) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        ConfigurationInfo info = am.getDeviceConfigurationInfo();
+        return info.reqGlEsVersion >= 0x20000;
     }
 
     @SuppressWarnings("deprecation")
     public GLRootView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mSupportGLES20 = checkGLES20Support(context);
         mFlags |= FLAG_INITIALIZED;
         setBackgroundDrawable(null);
-        setEGLContextClientVersion(ApiHelper.HAS_GLES20_REQUIRED ? 2 : 1);
-        if (ApiHelper.USE_888_PIXEL_FORMAT) {
-            // From setEGLConfigChooser(8, 8, 8, 0, 0, 0) to setEGLConfigChooser(8, 8, 8, 8, 0, 0)
-            // Fix "No configs match configSpec" for some deivces,
-            // may introduced same error for the other devices ?
-            setEGLConfigChooser(8, 8, 8, 8, 0, 0);
-        } else {
-            setEGLConfigChooser(5, 6, 5, 0, 0, 0);
-        }
+        setEGLContextClientVersion(mSupportGLES20 ? 2 : 1);
+
+        // We can't detect 888_PIXEL_FORMAT by Build.VERSION.SDK_INT,
+        // for example CyanogenMod use ro.opengles.surface.rgb565,
+        // so just use default EGLConfigChooser.
+        // And we do not need depth buffer
+        setEGLConfigChooser(false);
         setRenderer(this);
-        if (ApiHelper.USE_888_PIXEL_FORMAT) {
-            getHolder().setFormat(PixelFormat.RGB_888);
-        } else {
-            getHolder().setFormat(PixelFormat.RGB_565);
-        }
 
         // Uncomment this to enable gl error check.
         // setDebugFlags(DEBUG_CHECK_GL_ERROR);
@@ -187,7 +190,7 @@ public class GLRootView extends GLSurfaceView
         }
         if (mRenderRequested) return;
         mRenderRequested = true;
-        if (ApiHelper.HAS_POST_ON_ANIMATION) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             postOnAnimation(mRequestRenderOnAnimationFrame);
         } else {
             super.requestRender();
@@ -288,7 +291,7 @@ public class GLRootView extends GLSurfaceView
         mRenderLock.lock();
         try {
             mGL = gl;
-            mCanvas = ApiHelper.HAS_GLES20_REQUIRED ? new GLES20Canvas() : new GLES11Canvas(gl);
+            mCanvas = mSupportGLES20 ? new GLES20Canvas() : new GLES11Canvas(gl);
             BasicTexture.invalidateAllTextures();
         } finally {
             mRenderLock.unlock();
@@ -531,16 +534,13 @@ public class GLRootView extends GLSurfaceView
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void setLightsOutMode(boolean enabled) {
-        if (!ApiHelper.HAS_SET_SYSTEM_UI_VISIBILITY) return;
-
         int flags = 0;
         if (enabled) {
-            flags = STATUS_BAR_HIDDEN;
-            if (ApiHelper.HAS_VIEW_SYSTEM_UI_FLAG_LAYOUT_STABLE) {
-                flags |= (SYSTEM_UI_FLAG_FULLSCREEN | SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            flags = View.SYSTEM_UI_FLAG_LOW_PROFILE ;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                flags |= (View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             }
         }
         setSystemUiVisibility(flags);

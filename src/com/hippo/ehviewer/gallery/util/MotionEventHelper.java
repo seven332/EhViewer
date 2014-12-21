@@ -16,8 +16,8 @@
 package com.hippo.ehviewer.gallery.util;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.graphics.Matrix;
+import android.os.Build;
 import android.view.MotionEvent;
 import android.view.MotionEvent.PointerCoords;
 
@@ -27,7 +27,7 @@ public final class MotionEventHelper {
     public static MotionEvent transformEvent(MotionEvent e, Matrix m) {
         // We try to use the new transform method if possible because it uses
         // less memory.
-        if (ApiHelper.HAS_MOTION_EVENT_TRANSFORM) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             return transformEventNew(e, m);
         } else {
             return transformEventOld(e, m);
@@ -35,7 +35,6 @@ public final class MotionEventHelper {
     }
 
     @SuppressLint("Recycle")
-    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
     private static MotionEvent transformEventNew(MotionEvent e, Matrix m) {
         MotionEvent newEvent = MotionEvent.obtain(e);
         newEvent.transform(m);
