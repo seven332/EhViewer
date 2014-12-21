@@ -21,5 +21,6 @@
     <item type="id" name="edittextpreference_edittext"></item>
     <item type="id" name="custom"></item>
     <item type="id" name="translucent_view"></item>
+    <item type="id" name="easy_recycler_view"></item>
 
 </resources>

@@ -31,11 +31,9 @@
             android:layout_height="match_parent" />
 
         <com.hippo.ehviewer.widget.GalleryListView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/gallery_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:glvContent="staggeredgridview" />
+            android:layout_height="match_parent" />
 
     </FrameLayout>
 

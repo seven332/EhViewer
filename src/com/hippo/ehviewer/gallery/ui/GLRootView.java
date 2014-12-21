@@ -115,7 +115,10 @@ public class GLRootView extends GLSurfaceView
         setBackgroundDrawable(null);
         setEGLContextClientVersion(ApiHelper.HAS_GLES20_REQUIRED ? 2 : 1);
         if (ApiHelper.USE_888_PIXEL_FORMAT) {
-            setEGLConfigChooser(8, 8, 8, 0, 0, 0);
+            // From setEGLConfigChooser(8, 8, 8, 0, 0, 0) to setEGLConfigChooser(8, 8, 8, 8, 0, 0)
+            // Fix "No configs match configSpec" for some deivces,
+            // may introduced same error for the other devices ?
+            setEGLConfigChooser(8, 8, 8, 8, 0, 0);
         } else {
             setEGLConfigChooser(5, 6, 5, 0, 0, 0);
         }

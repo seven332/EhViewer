@@ -63,6 +63,7 @@ public class RefreshLayout extends SwipeRefreshLayout {
             mEasyRecyclerView = new EasyRecyclerView(context);
         else
             mEasyRecyclerView = new EasyRecyclerView(context, attrs);
+        mEasyRecyclerView.setId(R.id.easy_recycler_view);
         addView(mEasyRecyclerView);
 
         // Footer view
