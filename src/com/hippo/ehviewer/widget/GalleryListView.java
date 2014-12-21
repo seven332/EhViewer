@@ -43,6 +43,7 @@ import com.hippo.ehviewer.ehclient.ListParser;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
+import com.hippo.ehviewer.widget.EasyRecyclerView.FooterAdapter;
 
 public class GalleryListView extends FrameLayout implements RefreshLayout.OnFooterRefreshListener,
         RefreshLayout.OnRefreshListener {
@@ -689,7 +690,7 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
         }
     }
 
-    public class GalleryAdapter extends FooterAdapter<GalleryViewHolder> {
+    public class GalleryAdapter extends EasyRecyclerView.FooterAdapter<GalleryViewHolder> {
 
         private final Context mContext;
         private final List<GalleryInfo> mGiList;
@@ -728,11 +729,6 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
         @Override
         public void onBindViewHolderActual(GalleryViewHolder holder,
                 int position) {
-            // TODO It is a bug of EasyRecyclerView
-            // EasyRecyclerView should reset checked state
-            EasyRecyclerView.setViewChecked(holder.itemView,
-                    mEasyRecyclerView.isItemChecked(position));
-
             GalleryInfo gi = mGiList.get(position);
             final LoadImageView thumb = holder.thumb;
             if (!String.valueOf(gi.gid).equals(thumb.getKey())) {

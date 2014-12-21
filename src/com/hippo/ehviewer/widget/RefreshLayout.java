@@ -84,13 +84,11 @@ public class RefreshLayout extends SwipeRefreshLayout {
     }
 
     public void addFooterView() {
-        ((FooterAdapter<?>) mEasyRecyclerView.getAdapter()).setFooterView(mFooterView);
-        mEasyRecyclerView.setHasFooterView(true);
+        ((EasyRecyclerView.FooterAdapter<?>) mEasyRecyclerView.getAdapter()).setFooterView(mFooterView);
     }
 
     public void removeFooterView() {
-        ((FooterAdapter<?>) mEasyRecyclerView.getAdapter()).setFooterView(null);
-        mEasyRecyclerView.setHasFooterView(false);
+        ((EasyRecyclerView.FooterAdapter<?>) mEasyRecyclerView.getAdapter()).setFooterView(null);
     }
 
     public void setOnHeaderRefreshListener(OnRefreshListener l) {

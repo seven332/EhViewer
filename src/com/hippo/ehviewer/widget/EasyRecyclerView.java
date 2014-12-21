@@ -20,22 +20,18 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.support.v4.util.LongSparseArray;
-import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.ActionMode;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.HapticFeedbackConstants;
 import android.view.InputDevice;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.SoundEffectConstants;
 import android.view.View;
-import android.view.accessibility.AccessibilityEvent;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
@@ -47,7 +43,8 @@ import android.widget.ListAdapter;
  * @author Hippo
  *
  */
-public class EasyRecyclerView extends RecyclerView {
+public class EasyRecyclerView extends RecyclerView implements View.OnClickListener,
+        View.OnLongClickListener {
 
     private static final String TAG = EasyRecyclerView.class.getSimpleName();
 
@@ -115,14 +112,12 @@ public class EasyRecyclerView extends RecyclerView {
      */
     private LongSparseArray<Integer> mCheckedIdStates;
 
-    private TouchListener mTouchListener;
-
     private OnItemClickListener mOnItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
+    private boolean mNeedOnClickListener = false;
+    private boolean mNeedOnLongClickListener = false;
 
-    private boolean mHasFooterView = false;
-
-    private RecyclerView.Adapter mAdapter;
+    private FooterAdapter mAdapter;
 
     private float mVerticalScrollFactor = 0;
 
@@ -138,6 +133,94 @@ public class EasyRecyclerView extends RecyclerView {
         super(context, attrs, defStyle);
     }
 
+    public View getFootView() {
+        if (mAdapter != null)
+            return mAdapter.getFooterView();
+        else
+            return null;
+    }
+
+    private boolean isNeedOnClickListener() {
+        if (mOnItemClickListener == null && mChoiceMode == CHOICE_MODE_NONE)
+            return false;
+        else
+            return true;
+    }
+
+    private boolean isNeedOnLongClickListener() {
+        if (mOnItemLongClickListener != null || mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL)
+            return true;
+        else
+            return false;
+    }
+
+    private void setAllOnClickListener() {
+        final int count = getChildCount();
+        final View footView = getFootView();
+        for (int i = 0; i < count; i++) {
+            View child = getChildAt(i);
+            if (child != footView) {
+                child.setOnClickListener(this);
+            }
+        }
+    }
+
+    private void resetAllOnClickListener() {
+        final int count = getChildCount();
+        final View footView = getFootView();
+        for (int i = 0; i < count; i++) {
+            View child = getChildAt(i);
+            if (child != footView) {
+                child.setOnClickListener(null);
+                child.setClickable(false);
+            }
+        }
+    }
+
+    private void setAllOnLongClickListener() {
+        final int count = getChildCount();
+        final View footView = getFootView();
+        for (int i = 0; i < count; i++) {
+            View child = getChildAt(i);
+            if (child != footView) {
+                child.setOnLongClickListener(this);
+            }
+        }
+    }
+
+    private void resetAllOnLongClickListener() {
+        final int count = getChildCount();
+        final View footView = getFootView();
+        for (int i = 0; i < count; i++) {
+            View child = getChildAt(i);
+            if (child != footView) {
+                child.setOnLongClickListener(null);
+                child.setLongClickable(false);
+            }
+        }
+    }
+
+    public void updateOnClickState() {
+        boolean newNeedOnClickListener = isNeedOnClickListener();
+        if (mNeedOnClickListener != newNeedOnClickListener) {
+            mNeedOnClickListener = newNeedOnClickListener;
+            if (mNeedOnClickListener)
+                setAllOnClickListener();
+            else
+                resetAllOnClickListener();
+        }
+    }
+
+    public void updateOnLongClickState() {
+        boolean newNeedOnLongClickListener = isNeedOnLongClickListener();
+        if (mNeedOnLongClickListener != newNeedOnLongClickListener) {
+            mNeedOnLongClickListener = newNeedOnLongClickListener;
+            if (mNeedOnLongClickListener)
+                setAllOnLongClickListener();
+            else
+                resetAllOnLongClickListener();
+        }
+    }
 
     /**
      * Register a callback to be invoked when an item in the
@@ -146,12 +229,8 @@ public class EasyRecyclerView extends RecyclerView {
      * @param listener The callback that will be invoked.
      */
     public void setOnItemClickListener(OnItemClickListener listener) {
-        if (mTouchListener == null) {
-            mTouchListener = new TouchListener(this);
-            addOnItemTouchListener(mTouchListener);
-        }
-
         mOnItemClickListener = listener;
+        updateOnClickState();
     }
 
     /**
@@ -161,20 +240,20 @@ public class EasyRecyclerView extends RecyclerView {
      * @param listener The callback that will be invoked.
      */
     public void setOnItemLongClickListener(OnItemLongClickListener listener) {
-        if (mTouchListener == null) {
-            mTouchListener = new TouchListener(this);
-            addOnItemTouchListener(mTouchListener);
-        }
-
-        setLongClickable(true);
         mOnItemLongClickListener = listener;
+        updateOnLongClickState();
     }
 
+    /**
+     *
+     * adapter must be {@link com.hippo.ehviewer.widget.EasyRecyclerView.FooterAdapter}
+     */
     @Override
     public void setAdapter(RecyclerView.Adapter adapter) {
         super.setAdapter(adapter);
 
-        mAdapter = getAdapter();
+        mAdapter = (FooterAdapter) adapter;
+        mAdapter.mHolder = this;
         if (adapter != null) {
             if (mChoiceMode != CHOICE_MODE_NONE && adapter.hasStableIds() &&
                     mCheckedIdStates == null) {
@@ -404,9 +483,11 @@ public class EasyRecyclerView extends RecyclerView {
             // Modal multi-choice mode only has choices when the mode is active. Clear them.
             if (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL) {
                 clearChoices();
-                setLongClickable(true);
             }
         }
+
+        updateOnClickState();
+        updateOnLongClickState();
     }
 
     /**
@@ -423,73 +504,6 @@ public class EasyRecyclerView extends RecyclerView {
             mMultiChoiceModeCallback = new MultiChoiceModeWrapper();
         }
         mMultiChoiceModeCallback.setWrapped(listener);
-    }
-
-    private boolean performItemClick(View view, int position, long id) {
-        // Ingore footer view
-        if (mHasFooterView && position == mAdapter.getItemCount() - 1)
-            return false;
-
-        boolean handled = false;
-        boolean dispatchItemClick = true;
-
-        if (mChoiceMode != CHOICE_MODE_NONE) {
-            handled = true;
-            boolean checkedStateChanged = false;
-
-            if (mChoiceMode == CHOICE_MODE_MULTIPLE ||
-                    (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL && mChoiceActionMode != null)) {
-                boolean checked = !mCheckStates.get(position, false);
-                mCheckStates.put(position, checked);
-                if (mCheckedIdStates != null && mAdapter.hasStableIds()) {
-                    if (checked) {
-                        mCheckedIdStates.put(mAdapter.getItemId(position), position);
-                    } else {
-                        mCheckedIdStates.delete(mAdapter.getItemId(position));
-                    }
-                }
-                if (checked) {
-                    mCheckedItemCount++;
-                } else {
-                    mCheckedItemCount--;
-                }
-                if (mChoiceActionMode != null) {
-                    mMultiChoiceModeCallback.onItemCheckedStateChanged(mChoiceActionMode,
-                            position, id, checked);
-                    dispatchItemClick = false;
-                }
-                checkedStateChanged = true;
-            } else if (mChoiceMode == CHOICE_MODE_SINGLE) {
-                boolean checked = !mCheckStates.get(position, false);
-                if (checked) {
-                    mCheckStates.clear();
-                    mCheckStates.put(position, true);
-                    if (mCheckedIdStates != null && mAdapter.hasStableIds()) {
-                        mCheckedIdStates.clear();
-                        mCheckedIdStates.put(mAdapter.getItemId(position), position);
-                    }
-                    mCheckedItemCount = 1;
-                } else if (mCheckStates.size() == 0 || !mCheckStates.valueAt(0)) {
-                    mCheckedItemCount = 0;
-                }
-                checkedStateChanged = true;
-            }
-
-            if (checkedStateChanged) {
-                updateOnScreenCheckedViews();
-            }
-        }
-
-        if (dispatchItemClick) {
-            playSoundEffect(SoundEffectConstants.CLICK);
-            mOnItemClickListener.onItemClick(this, view, position, id);
-            if (view != null) {
-                view.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);
-            }
-            handled = true;
-        }
-
-        return handled;
     }
 
     /**
@@ -514,42 +528,6 @@ public class EasyRecyclerView extends RecyclerView {
         } else if (useActivated) {
             view.setActivated(checked);
         }
-    }
-
-    private boolean performLongPress(View view, int position, long id) {
-        // Ingore footer view
-        if (mHasFooterView && position == mAdapter.getItemCount() - 1)
-            return false;
-
-        // CHOICE_MODE_MULTIPLE_MODAL takes over long press.
-        if (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL) {
-            if (mChoiceActionMode == null &&
-                    (mChoiceActionMode = startActionMode(mMultiChoiceModeCallback)) != null) {
-                setItemChecked(position, true);
-                performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-            }
-            return true;
-        }
-
-        boolean handled = false;
-        if (mOnItemLongClickListener != null) {
-            handled = mOnItemLongClickListener.onItemLongClick(this, view,
-                    position, id);
-        }
-        if (handled) {
-            performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-        }
-        return handled;
-    }
-
-    /**
-     * You must call it when you add or remove footer view in FooterAdapter,
-     * It will ingore footer view about touch event
-     *
-     * @param hasFooterView
-     */
-    public void setHasFooterView(boolean hasFooterView) {
-        mHasFooterView = hasFooterView;
     }
 
     @Override
@@ -650,144 +628,91 @@ public class EasyRecyclerView extends RecyclerView {
     }
 
 
-    private static class TouchListener implements EasyRecyclerView.OnItemTouchListener {
+    /*
+     * EasyRecyclerView.OnItemTouchListener will not work fine
+     * when item view's child need click action, because they make
+     * touch event deliver different
+     */
 
-        private final GestureDetectorCompat mGestureDetector;
+    @Override
+    public void onClick(View view) {
+        final int position = getChildPosition(view);
+        final long id = mAdapter.getItemId(position);
 
-        public TouchListener(EasyRecyclerView hostView) {
-            mGestureDetector = new ItemClickGestureDetector(hostView.getContext(),
-                    new ItemClickGestureListener(hostView));
+        boolean dispatchItemClick = true;
+
+        if (mChoiceMode != CHOICE_MODE_NONE) {
+            boolean checkedStateChanged = false;
+
+            if (mChoiceMode == CHOICE_MODE_MULTIPLE ||
+                    (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL && mChoiceActionMode != null)) {
+                boolean checked = !mCheckStates.get(position, false);
+                mCheckStates.put(position, checked);
+                if (mCheckedIdStates != null && mAdapter.hasStableIds()) {
+                    if (checked) {
+                        mCheckedIdStates.put(mAdapter.getItemId(position), position);
+                    } else {
+                        mCheckedIdStates.delete(mAdapter.getItemId(position));
+                    }
+                }
+                if (checked) {
+                    mCheckedItemCount++;
+                } else {
+                    mCheckedItemCount--;
+                }
+                if (mChoiceActionMode != null) {
+                    mMultiChoiceModeCallback.onItemCheckedStateChanged(mChoiceActionMode,
+                            position, id, checked);
+                    dispatchItemClick = false;
+                }
+                checkedStateChanged = true;
+            } else if (mChoiceMode == CHOICE_MODE_SINGLE) {
+                boolean checked = !mCheckStates.get(position, false);
+                if (checked) {
+                    mCheckStates.clear();
+                    mCheckStates.put(position, true);
+                    if (mCheckedIdStates != null && mAdapter.hasStableIds()) {
+                        mCheckedIdStates.clear();
+                        mCheckedIdStates.put(mAdapter.getItemId(position), position);
+                    }
+                    mCheckedItemCount = 1;
+                } else if (mCheckStates.size() == 0 || !mCheckStates.valueAt(0)) {
+                    mCheckedItemCount = 0;
+                }
+                checkedStateChanged = true;
+            }
+
+            if (checkedStateChanged) {
+                updateOnScreenCheckedViews();
+            }
         }
 
-        @TargetApi(Build.VERSION_CODES.KITKAT)
-        private boolean isAttachedToWindow(RecyclerView hostView) {
-            if (Build.VERSION.SDK_INT >= 19) {
-                return hostView.isAttachedToWindow();
-            } else {
-                return (hostView.getHandler() != null);
+        if (dispatchItemClick && mOnItemClickListener != null) {
+            mOnItemClickListener.onItemClick(this, view, position, id);
+        }
+    }
+
+
+    @Override
+    public boolean onLongClick(View view) {
+        final int position = getChildPosition(view);
+        final long id = mAdapter.getItemId(position);
+
+        // CHOICE_MODE_MULTIPLE_MODAL takes over long press.
+        if (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL) {
+            if (mChoiceActionMode == null &&
+                    (mChoiceActionMode = startActionMode(mMultiChoiceModeCallback)) != null) {
+                setItemChecked(position, true);
             }
+            return true;
         }
 
-        private boolean hasAdapter(RecyclerView hostView) {
-            return (hostView.getAdapter() != null);
+        boolean handled = false;
+        if (mOnItemLongClickListener != null) {
+            handled = mOnItemLongClickListener.onItemLongClick(this, view,
+                    position, id);
         }
-
-        @Override
-        public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent event) {
-            if (!isAttachedToWindow(recyclerView) || !hasAdapter(recyclerView)) {
-                return false;
-            }
-
-            mGestureDetector.onTouchEvent(event);
-            return false;
-        }
-
-        @Override
-        public void onTouchEvent(RecyclerView recyclerView, MotionEvent event) {
-            // We can silently track tap and and long presses by silently
-            // intercepting touch events in the host RecyclerView.
-        }
-
-        private class ItemClickGestureDetector extends GestureDetectorCompat {
-            private final ItemClickGestureListener mGestureListener;
-
-            public ItemClickGestureDetector(Context context, ItemClickGestureListener listener) {
-                super(context, listener);
-                mGestureListener = listener;
-            }
-
-            @Override
-            public boolean onTouchEvent(MotionEvent event) {
-                final boolean handled = super.onTouchEvent(event);
-
-                final int action = event.getAction() & MotionEventCompat.ACTION_MASK;
-                if (action == MotionEvent.ACTION_UP) {
-                    mGestureListener.dispatchSingleTapUpIfNeeded(event);
-                }
-
-                return handled;
-            }
-        }
-
-        private class ItemClickGestureListener extends SimpleOnGestureListener {
-            private final EasyRecyclerView mHostView;
-            private View mTargetChild;
-
-            public ItemClickGestureListener(EasyRecyclerView hostView) {
-                mHostView = hostView;
-            }
-
-            public void dispatchSingleTapUpIfNeeded(MotionEvent event) {
-                // When the long press hook is called but the long press listener
-                // returns false, the target child will be left around to be
-                // handled later. In this case, we should still treat the gesture
-                // as potential item click.
-                if (mTargetChild != null) {
-                    onSingleTapUp(event);
-                }
-            }
-
-            @Override
-            public boolean onDown(MotionEvent event) {
-                final int x = (int) event.getX();
-                final int y = (int) event.getY();
-
-                mTargetChild = mHostView.findChildViewUnder(x, y);
-                return (mTargetChild != null);
-            }
-
-            @Override
-            public void onShowPress(MotionEvent event) {
-                if (mTargetChild != null) {
-                    mTargetChild.setPressed(true);
-                }
-            }
-
-            @Override
-            public boolean onSingleTapUp(MotionEvent event) {
-                boolean handled = false;
-
-                if (mTargetChild != null) {
-                    mTargetChild.setPressed(false);
-
-                    final int position = mHostView.getChildPosition(mTargetChild);
-                    final long id = mHostView.getAdapter().getItemId(position);
-                    handled = mHostView.performItemClick(mTargetChild, position, id);
-
-                    mTargetChild = null;
-                }
-
-                return handled;
-            }
-
-            @Override
-            public boolean onScroll(MotionEvent event, MotionEvent event2, float v, float v2) {
-                if (mTargetChild != null) {
-                    mTargetChild.setPressed(false);
-                    mTargetChild = null;
-
-                    return true;
-                }
-
-                return false;
-            }
-
-            @Override
-            public void onLongPress(MotionEvent event) {
-                if (mTargetChild == null) {
-                    return;
-                }
-
-                final int position = mHostView.getChildPosition(mTargetChild);
-                final long id = mHostView.getAdapter().getItemId(position);
-                final boolean handled = mHostView.performLongPress(mTargetChild, position, id);
-
-                if (handled) {
-                    mTargetChild.setPressed(false);
-                    mTargetChild = null;
-                }
-            }
-        }
+        return handled;
     }
 
     /**
@@ -825,7 +750,6 @@ public class EasyRecyclerView extends RecyclerView {
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             if (mWrapped.onCreateActionMode(mode, menu)) {
                 // Initialize checked graphic state?
-                setLongClickable(false);
                 return true;
             }
             return false;
@@ -850,8 +774,6 @@ public class EasyRecyclerView extends RecyclerView {
             clearChoices();
 
             requestLayout();
-
-            setLongClickable(true);
         }
 
         @Override
@@ -864,5 +786,104 @@ public class EasyRecyclerView extends RecyclerView {
                 mode.finish();
             }
         }
+    }
+
+    public static abstract class FooterAdapter<VH extends ViewHolder> extends RecyclerView.Adapter<VH> {
+
+        public static final int TYPE_FOOTER = Integer.MAX_VALUE;
+
+        private EasyRecyclerView mHolder;
+        private View mFooterView;
+
+        public boolean hasFootView() {
+            return mFooterView != null;
+        }
+
+        /**
+         * footerView == null to remove foot view
+         * @param footerView
+         */
+        public void setFooterView(View footerView) {
+            if (mFooterView == footerView)
+                return;
+
+            int itemCountActual = getItemCountActual();
+            View originView = mFooterView;
+            mFooterView = footerView;
+            if (originView != null) {
+                if (mFooterView != null)
+                    notifyItemChanged(itemCountActual);
+                else
+                    notifyItemRemoved(itemCountActual);
+            } else {
+                notifyItemInserted(itemCountActual);
+            }
+        }
+
+        public View getFooterView() {
+            return mFooterView;
+        }
+
+        @Override
+        public final VH onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (mFooterView != null && viewType == TYPE_FOOTER) {
+                StaggeredGridLayoutManager.LayoutParams lp = new StaggeredGridLayoutManager.LayoutParams(
+                        StaggeredGridLayoutManager.LayoutParams.WRAP_CONTENT,
+                        StaggeredGridLayoutManager.LayoutParams.WRAP_CONTENT);
+                lp.setFullSpan(true);
+                mFooterView.setLayoutParams(lp);
+                return onCreateAndBindFooterViewHolder(parent, mFooterView);
+            } else {
+                return onCreateViewHolderActual(parent, viewType);
+            }
+        }
+
+        @Override
+        public final void onBindViewHolder(VH holder, int position) {
+            if (mFooterView == null || position != getItemCountActual()) {
+                onBindViewHolderActual(holder, position);
+                if (mHolder.mNeedOnClickListener)
+                    holder.itemView.setOnClickListener(mHolder);
+                if (mHolder.mNeedOnLongClickListener)
+                    holder.itemView.setOnLongClickListener(mHolder);
+                EasyRecyclerView.setViewChecked(holder.itemView,
+                        mHolder.isItemChecked(position));
+            }
+        }
+
+        @Override
+        public final int getItemViewType(int position) {
+            if (mFooterView != null && position == getItemCountActual())
+                return TYPE_FOOTER;
+            else
+                return getItemViewTypeActual(position);
+        }
+
+        @Override
+        public final int getItemCount() {
+            int itemCount = getItemCountActual();
+            if (mFooterView != null)
+                itemCount++;
+            return itemCount;
+        }
+
+        public abstract VH onCreateAndBindFooterViewHolder(ViewGroup parent, View footerView);
+
+        public abstract VH onCreateViewHolderActual(ViewGroup parent, int viewType);
+
+        public abstract void onBindViewHolderActual(VH holder, int position);
+
+        /**
+         * Foot view type is Integer.MAX_VALUE, do not be the same
+         *
+         * @param position
+         * @return
+         */
+        public int getItemViewTypeActual(int position) {
+            return 0;
+        }
+
+        public abstract int getItemCountActual();
+
     }
 }
