@@ -56,8 +56,8 @@
     <style name="TextAppearance">
         <item name="@android:textColor">?attr/textColor</item>
         <item name="@android:textColorHint">?attr/textColorHint</item>
-        <item name="@android:textColorHighlight">#6640c4ff</item>
-        <item name="@android:textColorLink">#ff00bcd4</item>
+        <item name="@android:textColorHighlight">@color/theme_dark</item>
+        <item name="@android:textColorLink">@color/theme</item>
         <item name="@android:textSize">@dimen/text_small</item>
         <item name="@android:fontFamily">sans-serif</item>
         <item name="@android:textStyle">normal</item>

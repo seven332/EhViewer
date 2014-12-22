@@ -16,10 +16,9 @@
 
 package com.hippo.ehviewer.widget;
 
-import java.lang.reflect.Field;
-
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -37,49 +36,12 @@ public class FixedAspectImageView extends ImageView {
 
     private static final String TAG = FixedAspectImageView.class.getSimpleName();
 
-    private static Field mDrawableWidthField;
-    private static Field mDrawableHeightField;
-    private static Field mAdjustViewBoundsField;
-    private static Field mMaxWidthField;
-    private static Field mMaxHeightField;
+    private int mMaxWidth = Integer.MAX_VALUE;
+    private int mMaxHeight = Integer.MAX_VALUE;
+    private boolean mAdjustViewBounds = false;
 
     private boolean mAdjustViewBoundsCompat = false;
     private float mAspect = -1f;
-
-    static {
-        Class<ImageView> imageViewClass = ImageView.class;
-
-        try {
-            mDrawableWidthField = imageViewClass.getDeclaredField("mDrawableWidth");
-            mDrawableWidthField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            mDrawableWidthField = null;
-        }
-        try {
-            mDrawableHeightField = imageViewClass.getDeclaredField("mDrawableHeight");
-            mDrawableHeightField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            mDrawableHeightField = null;
-        }
-        try {
-            mAdjustViewBoundsField = imageViewClass.getDeclaredField("mAdjustViewBounds");
-            mAdjustViewBoundsField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            mAdjustViewBoundsField = null;
-        }
-        try {
-            mMaxWidthField = imageViewClass.getDeclaredField("mMaxWidth");
-            mMaxWidthField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            mMaxWidthField = null;
-        }
-        try {
-            mMaxHeightField = imageViewClass.getDeclaredField("mMaxHeight");
-            mMaxHeightField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            mMaxHeightField = null;
-        }
-    }
 
     public FixedAspectImageView(Context context) {
         super(context);
@@ -96,6 +58,24 @@ public class FixedAspectImageView extends ImageView {
                 attrs, R.styleable.FixedAspectImageView, defStyle, 0);
         setAspect(typedArray.getFloat(R.styleable.FixedAspectImageView_aspect, -1f));
         typedArray.recycle();
+    }
+
+    @Override
+    public void setMaxWidth(int maxWidth) {
+        super.setMaxWidth(maxWidth);
+        mMaxWidth = maxWidth;
+    }
+
+    @Override
+    public void setMaxHeight(int maxHeight) {
+        super.setMaxHeight(maxHeight);
+        mMaxHeight = maxHeight;
+    }
+
+    @Override
+    public void setAdjustViewBounds(boolean adjustViewBounds) {
+        super.setAdjustViewBounds(adjustViewBounds);
+        mAdjustViewBounds = adjustViewBounds;
     }
 
     public void init() {
@@ -151,21 +131,6 @@ public class FixedAspectImageView extends ImageView {
         int w = 0;
         int h = 0;
 
-        int maxWidth = Integer.MAX_VALUE;
-        int maxHeight = Integer.MAX_VALUE;
-        if (mMaxWidthField != null)
-            try {
-                maxWidth = mMaxWidthField.getInt(this);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        if (mMaxHeightField != null)
-            try {
-                maxHeight = mMaxHeightField.getInt(this);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
         // Desired aspect ratio of the view's contents (not including padding)
         float desiredAspect = 0.0f;
 
@@ -178,56 +143,30 @@ public class FixedAspectImageView extends ImageView {
         final int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
         final int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
 
-        if (getDrawable() == null) {
+        Drawable drawable = getDrawable();
+        if (drawable == null) {
             // If no drawable, its intrinsic size is 0.
-            if (mDrawableWidthField != null)
-                try {
-                    mDrawableWidthField.setInt(this, -1);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            if (mDrawableHeightField != null)
-                try {
-                    mDrawableHeightField.setInt(this, -1);
-                } catch (Exception e) {}
             w = h = 0;
 
-            try {
-                if (mAdjustViewBoundsField != null && mAdjustViewBoundsField.getBoolean(this)
-                        && mAspect > 0) {
-                    resizeWidth = widthSpecMode != MeasureSpec.EXACTLY;
-                    resizeHeight = heightSpecMode != MeasureSpec.EXACTLY;
-                    desiredAspect = mAspect;
-                }
-            } catch (Exception e) {}
+            if (mAdjustViewBounds && mAspect > 0.0f) {
+                resizeWidth = widthSpecMode != MeasureSpec.EXACTLY;
+                resizeHeight = heightSpecMode != MeasureSpec.EXACTLY;
+                desiredAspect = mAspect;
+            }
         } else {
-            if (mDrawableWidthField != null)
-                try {
-                    w = mDrawableWidthField.getInt(this);
-                } catch (Exception e) {}
-            else
-                w = getDrawable().getIntrinsicWidth();
-
-            if (mDrawableHeightField != null)
-                try {
-                    h = mDrawableHeightField.getInt(this);
-                } catch (Exception e) {}
-            else
-                h = getDrawable().getIntrinsicHeight();
+            w = drawable.getIntrinsicWidth();
+            h = drawable.getIntrinsicHeight();
             if (w <= 0) w = 1;
             if (h <= 0) h = 1;
 
             // We are supposed to adjust view bounds to match the aspect
             // ratio of our drawable. See if that is possible.
-            try {
-                if (mAdjustViewBoundsField != null && mAdjustViewBoundsField.getBoolean(this)) {
-                    resizeWidth = widthSpecMode != MeasureSpec.EXACTLY;
-                    resizeHeight = heightSpecMode != MeasureSpec.EXACTLY;
+            if (mAdjustViewBounds) {
+                resizeWidth = widthSpecMode != MeasureSpec.EXACTLY;
+                resizeHeight = heightSpecMode != MeasureSpec.EXACTLY;
 
-                    desiredAspect = (float) w / (float) h;
-                    desiredAspect = mAspect <= 0 ? desiredAspect : mAspect;
-                }
-            } catch (Exception e) {}
+                desiredAspect = mAspect <= 0.0f ? ((float) w / (float) h) : mAspect;
+            }
         }
 
         int pleft = getPaddingLeft();
@@ -244,10 +183,10 @@ public class FixedAspectImageView extends ImageView {
             // least one dimension.
 
             // Get the max possible width given our constraints
-            widthSize = resolveAdjustedSize(w + pleft + pright, maxWidth, widthMeasureSpec);
+            widthSize = resolveAdjustedSize(w + pleft + pright, mMaxWidth, widthMeasureSpec);
 
             // Get the max possible height given our constraints
-            heightSize = resolveAdjustedSize(h + ptop + pbottom, maxHeight, heightMeasureSpec);
+            heightSize = resolveAdjustedSize(h + ptop + pbottom, mMaxHeight, heightMeasureSpec);
 
             if (desiredAspect != 0.0f) {
                 // See what our actual aspect ratio is
@@ -264,7 +203,7 @@ public class FixedAspectImageView extends ImageView {
 
                         // Allow the width to outgrow its original estimate if height is fixed.
                         if (!resizeHeight && !mAdjustViewBoundsCompat) {
-                            widthSize = resolveAdjustedSize(newWidth, maxWidth, widthMeasureSpec);
+                            widthSize = resolveAdjustedSize(newWidth, mMaxWidth, widthMeasureSpec);
                         }
 
                         if (newWidth <= widthSize) {
@@ -280,7 +219,7 @@ public class FixedAspectImageView extends ImageView {
 
                         // Allow the height to outgrow its original estimate if width is fixed.
                         if (!resizeWidth && !mAdjustViewBoundsCompat) {
-                            heightSize = resolveAdjustedSize(newHeight, maxHeight,
+                            heightSize = resolveAdjustedSize(newHeight, mMaxHeight,
                                     heightMeasureSpec);
                         }
 
