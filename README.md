@@ -30,6 +30,8 @@ Just import into Eclipse and build. Do it youself if you prefer Android Studio.
     - gif 解码
 - [Gloria Hallelujah](https://www.google.com/fonts/specimen/Gloria+Hallelujah)
     - 启动界面字体
+- [ImageLoadingPattern](https://github.com/rnrneverdies/ImageLoadingPattern)
+    - 图片过渡效果
 - [libjpeg-turbo](http://www.libjpeg-turbo.org)
     - jpge 解码
 - [libpng](http://www.libpng.org/pub/png/libpng.html)
@@ -48,6 +50,8 @@ Just import into Eclipse and build. Do it youself if you prefer Android Studio.
     - svg 解析
 - [SystemBarTint](https://github.com/jgilfelt/SystemBarTint)
     - 状态栏背景设置
+- [twoway-view](https://github.com/lucasr/twoway-view)
+    - RecyclerView 使用方法
 - [zlib](http://www.zlib.net)
     - 辅助 png 解码
 - [Android Open Source Project](http://source.android.com)
