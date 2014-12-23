@@ -16,8 +16,6 @@
 
 package com.hippo.ehviewer.effect;
 
-import android.animation.ObjectAnimator;
-import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -26,50 +24,26 @@ import android.graphics.drawable.Drawable;
 public class DrawableTransition {
 
     public static void transit(final Drawable drawable, boolean fromDark, long duration) {
-        AlphaSatColorMatrixEvaluator evaluator = new AlphaSatColorMatrixEvaluator(fromDark);
-        final AnimateColorMatrixColorFilter filter = new AnimateColorMatrixColorFilter(evaluator.getColorMatrix());
-        drawable.setColorFilter(filter.getColorFilter());
+        final AlphaSatColorMatrixEvaluator evaluator = new AlphaSatColorMatrixEvaluator(fromDark);
+        evaluator.setFraction(0.0f);
+        drawable.setColorFilter(new ColorMatrixColorFilter(evaluator.getColorMatrix()));
 
-        ObjectAnimator animator = ObjectAnimator.ofObject(filter, "colorMatrix", evaluator,
-                evaluator.getColorMatrix());
-        animator.addUpdateListener( new ValueAnimator.AnimatorUpdateListener() {
+        ValueAnimator animator = ValueAnimator.ofFloat(0.0f, 1.0f);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                drawable.setColorFilter (filter.getColorFilter());
+                float f = (Float) animation.getAnimatedValue();
+                evaluator.setFraction(f);
+                drawable.setColorFilter(new ColorMatrixColorFilter(evaluator.getColorMatrix()));
             }
         });
         animator.setDuration(duration);
         animator.start();
     }
 
-    // From rnr.tests.imageloadingpattern.MainActivity.AnimateColorMatrixColorFilter
-    /// Thanks to @DavidCrawford \
-    /// see http://stackoverflow.com/a/27301389/2573335
-    private static class AnimateColorMatrixColorFilter {
-        private ColorMatrixColorFilter mFilter;
-        private ColorMatrix mMatrix;
-
-        public AnimateColorMatrixColorFilter(ColorMatrix matrix) {
-            setColorMatrix(matrix);
-        }
-
-        public ColorMatrixColorFilter getColorFilter() {
-            return mFilter;
-        }
-
-        public void setColorMatrix(ColorMatrix matrix) {
-            mMatrix = matrix;
-            mFilter = new ColorMatrixColorFilter(matrix);
-        }
-
-        public ColorMatrix getColorMatrix() {
-            return mMatrix;
-        }
-    }
-
     // From rnr.tests.imageloadingpattern.AlphaSatColorMatrixEvaluator
     // with modification
-    private static class AlphaSatColorMatrixEvaluator implements TypeEvaluator {
+    private static class AlphaSatColorMatrixEvaluator {
         private final ColorMatrix colorMatrix;
         private final float[] elements = new float[20];
         private final boolean mFromDark;
@@ -83,8 +57,7 @@ public class DrawableTransition {
             return colorMatrix;
         }
 
-        @Override
-        public Object evaluate(float fraction, Object startValue, Object endValue) {
+        public void setFraction(float fraction) {
             // There are 4 phases so we multiply fraction by that amount
             float phase = fraction * 4;
 
@@ -109,7 +82,6 @@ public class DrawableTransition {
             elements[10] = R;           elements[11] = G;           elements[12] = B + fraction;
 
             colorMatrix.set(elements);
-            return colorMatrix;
         }
     }
 }
