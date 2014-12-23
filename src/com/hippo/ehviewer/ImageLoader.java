@@ -50,7 +50,7 @@ public class ImageLoader {
     private final ImageCache mImageCache;
     private final ImageDownloader mImageDownloader;
 
-    public ImageLoader(Context context) {
+    private ImageLoader(Context context) {
         mLoadTasks = new Stack<LoadTask>();
         mImageDownloader = new ImageDownloader();
 
