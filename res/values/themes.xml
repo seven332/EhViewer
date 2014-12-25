@@ -125,6 +125,9 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
+    <style name="AppTheme.NoActionBar.Transparent.Translucent">
+    </style>
+
     <style name="AppTheme.Dark.NoActionBar">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
