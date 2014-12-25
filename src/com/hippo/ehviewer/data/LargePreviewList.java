@@ -113,7 +113,7 @@ public class LargePreviewList extends PreviewList {
         }
 
         @Override
-        public void onGetImage(String key, Bitmap bmp) {
+        public void onGetImage(String key, Bitmap bmp, int state) {
             if (mTargetPage != mHolder.getCurPreviewPage())
                 return;
 

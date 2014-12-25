@@ -25,7 +25,6 @@ import com.hippo.ehviewer.util.Constants;
 
 public class AppHandler extends Handler {
 
-    public static final int IMAGE_LOADER_TAG = 0x0;
     public static final int HTTP_HELPER_TAG = 0x1;
 
     private static Handler sInstance;
@@ -43,10 +42,6 @@ public class AppHandler extends Handler {
     @Override
     public void handleMessage(Message msg) {
         switch(msg.what) {
-        case IMAGE_LOADER_TAG:
-            ImageLoader.LoadTask task = (ImageLoader.LoadTask)msg.obj;
-            task.listener.onGetImage(task.key, task.bitmap);
-            break;
 
         case HTTP_HELPER_TAG:
             HttpHelper.Package p = (HttpHelper.Package)msg.obj;

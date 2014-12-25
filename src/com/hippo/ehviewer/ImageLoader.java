@@ -20,7 +20,6 @@ import java.util.Stack;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Message;
 
 import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.network.HttpHelper;
@@ -30,6 +29,11 @@ public class ImageLoader {
     @SuppressWarnings("unused")
     private static final String TAG = ImageLoader.class.getSimpleName();
 
+    public static final int STATE_NONE = 0;
+    public static final int STATE_FROM_MEMORY = 1;
+    public static final int STATE_FROM_DISK = 2;
+    public static final int STATE_FROM_NETWORK = 3;
+
     private static ImageLoader sInstance;
 
     class LoadTask {
@@ -37,6 +41,7 @@ public class ImageLoader {
         public String key;
         public OnGetImageListener listener;
         public Bitmap bitmap;
+        public int state;
 
         public LoadTask(String url, String key, OnGetImageListener listener) {
             this.url = url;
@@ -74,6 +79,20 @@ public class ImageLoader {
         }
     }
 
+    private class LoadImageCallback implements Runnable {
+
+        private final LoadTask mLoadTask;
+
+        private LoadImageCallback(LoadTask task) {
+            mLoadTask = task;
+        }
+
+        @Override
+        public void run() {
+            mLoadTask.listener.onGetImage(mLoadTask.key, mLoadTask.bitmap, mLoadTask.state);
+        }
+    }
+
     private class LoadFromCacheTask implements Runnable {
         @Override
         public void run() {
@@ -89,12 +108,13 @@ public class ImageLoader {
                     loadTask = mLoadTasks.pop();
                 }
 
+                int[] state = new int[1];
                 String key = loadTask.key;
-                loadTask.bitmap = mImageCache.getCachedBitmap(key);
+                loadTask.bitmap = mImageCache.getCachedBitmap(key, state);
+                loadTask.state = state[0];
 
                 if (loadTask.bitmap != null)
-                    AppHandler.getInstance().sendMessage(
-                            Message.obtain(null, AppHandler.IMAGE_LOADER_TAG, loadTask));
+                    AppHandler.getInstance().post(new LoadImageCallback(loadTask));
                 else
                     mImageDownloader.add(loadTask);
             }
@@ -137,10 +157,14 @@ public class ImageLoader {
 
                     // TODO use proxy to get image
                     loadTask.bitmap = httpHelper.getImage(loadTask.url);
-                    mImageCache.addBitmapToCache(loadTask.key, loadTask.bitmap);
+                    if (loadTask.bitmap != null) {
+                        mImageCache.addBitmapToCache(loadTask.key, loadTask.bitmap);
+                        loadTask.state = STATE_FROM_NETWORK;
+                    } else {
+                        loadTask.state = STATE_NONE;
+                    }
 
-                    AppHandler.getInstance().sendMessage(
-                            Message.obtain(null, AppHandler.IMAGE_LOADER_TAG, loadTask));
+                    AppHandler.getInstance().post(new LoadImageCallback(loadTask));
                 }
             }
         }
@@ -152,6 +176,6 @@ public class ImageLoader {
          * @param key
          * @param bmp
          */
-        void onGetImage(String key, Bitmap bmp);
+        void onGetImage(String key, Bitmap bmp, int state);
     }
 }

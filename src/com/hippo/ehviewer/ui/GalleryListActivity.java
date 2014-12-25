@@ -1533,7 +1533,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
                     ImageLoader.getInstance(GalleryListActivity.this).add(lus.getSearchImageUrl(),
                             lus.getSearchImageKey(), new ImageLoader.OnGetImageListener() {
                                 @Override
-                                public void onGetImage(String key, Bitmap bmp) {
+                                public void onGetImage(String key, Bitmap bmp, int state) {
                                     if (bmp != null) {
                                         mClient.getGListFromImageSearch(bmp, lus.getImageSearchMode(), taskStamp,
                                                 new EhClient.OnGetGListFromImageSearchListener() {

@@ -379,6 +379,11 @@ public final class ImageCache {
         return null;
     }
 
+    public static final int STATE_NONE = 0;
+    public static final int STATE_FROM_MEMORY = 1;
+    public static final int STATE_FROM_DISK = 2;
+
+
     /**
      * Tries to return a cached image from memory cache before fetching from the
      * disk cache
@@ -386,19 +391,26 @@ public final class ImageCache {
      * @param data Unique identifier for which item to get
      * @return The {@link Bitmap} if found in cache, null otherwise
      */
-    public final Bitmap getCachedBitmap(final String data) {
+    public final Bitmap getCachedBitmap(final String data, int[] state) {
         if (data == null) {
             return null;
         }
         Bitmap cachedImage = getBitmapFromMemCache(data);
         if (cachedImage == null) {
             cachedImage = getBitmapFromDiskCache(data);
+            if (cachedImage != null) {
+                addBitmapToMemCache(data, cachedImage);
+                if (state != null)
+                    state[0] = STATE_FROM_DISK;
+            } else {
+                if (state != null)
+                    state[0] = STATE_NONE;
+            }
+        } else {
+            if (state != null)
+                state[0] = STATE_FROM_MEMORY;
         }
-        if (cachedImage != null) {
-            addBitmapToMemCache(data, cachedImage);
-            return cachedImage;
-        }
-        return null;
+        return cachedImage;
     }
 
     /**

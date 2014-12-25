@@ -96,10 +96,12 @@ public class LoadImageView extends FixedAspectImageView {
      * Load target bmp, set progressive animation
      * @param bmp
      */
-    public void setContextImage(Bitmap bmp) {
+    public void setContextImage(Bitmap bmp, int state) {
         setImageBitmap(bmp);
-        final Drawable drawable = getDrawable();
-        DrawableTransition.transit(drawable, false, 1000);
+        if (state != ImageLoader.STATE_FROM_MEMORY) {
+            final Drawable drawable = getDrawable();
+            DrawableTransition.transit(drawable, false, 1000);
+        }
     }
 
     public static class SimpleImageGetListener
@@ -129,7 +131,7 @@ public class LoadImageView extends FixedAspectImageView {
         }
 
         @Override
-        public void onGetImage(String key, Bitmap bmp) {
+        public void onGetImage(String key, Bitmap bmp, int state) {
             if (isVaild(key) && mLiv.getState() == LoadImageView.LOADING) {
                 if (bmp != null) {
                     if (mFixScaleType) {
@@ -141,7 +143,7 @@ public class LoadImageView extends FixedAspectImageView {
                     }
 
                     if (mTransitabled)
-                        mLiv.setContextImage(bmp);
+                        mLiv.setContextImage(bmp, state);
                     else
                         mLiv.setImageBitmap(bmp);
                     mLiv.setState(LoadImageView.LOADED);
