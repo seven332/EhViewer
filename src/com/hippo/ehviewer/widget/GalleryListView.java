@@ -738,13 +738,6 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
                 mImageLoader.add(gi.thumb, String.valueOf(gi.gid),
                         new LoadImageView.SimpleImageGetListener(thumb).setFixScaleType(true));
             }
-            // Set category
-            TextView category = holder.category;
-            String newText = Ui.getCategoryText(gi.category);
-            if (!newText.equals(category.getText())) {
-                category.setText(newText);
-                category.setBackgroundColor(Ui.getCategoryColor(gi.category));
-            }
             // Set simple language
             TextView simpleLanguage = holder.simpleLanguage;
             if (gi.simpleLanguage == null) {
@@ -756,6 +749,13 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
 
             // For detail mode
             if (holder.viewType == LIST_MODE_DETAIL) {
+                // Set category
+                TextView category = holder.category;
+                String newText = Ui.getCategoryText(gi.category);
+                if (!newText.equals(category.getText())) {
+                    category.setText(newText);
+                    category.setBackgroundColor(Ui.getCategoryColor(gi.category));
+                }
                 // Set manga title
                 TextView title = holder.title;
                 title.setText(gi.title);
@@ -768,6 +768,15 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
                 // set posted
                 TextView posted = holder.posted;
                 posted.setText(gi.posted);
+            } else {
+                // Set category
+                TextView category = holder.category;
+                String newText = Ui.getCategoryText(gi.category);
+                if (!newText.equals(category.getText())) {
+                    category.setText(newText);
+                    category.setBackgroundColor(Ui.getCategoryColor(gi.category)
+                            & 0x00ffffff | 0xca000000);
+                }
             }
         }
 

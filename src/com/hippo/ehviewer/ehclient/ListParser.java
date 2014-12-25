@@ -134,7 +134,7 @@ public class ListParser {
 
             p = Pattern.compile("<td class=\"itdc\">(?:<a.+?>)?<img.+?alt=\"(.+?)\".+?/>(?:</a>)?</td>" // category
                     + "<td.+?>(.+?)</td>" // posted
-                    + "<td.+?><div.+?><div.+?>"
+                    + "<td.+?><div.+?><div.+?height:(\\d+)px; width:(\\d+)px\">"
                     + "(?:<img.+?src=\"(.+?)\".+?alt=\"(.+?)\" style.+?/>"
                     + "|init~([^<>\"~]+~[^<>\"~]+)~([^<>]+))" // thumb and title
                     + "</div>"
@@ -150,26 +150,29 @@ public class ListParser {
 
                 gi.category = EhUtils.getCategory(m.group(1));
                 gi.posted = m.group(2);
-                if (m.group(3) == null) {
+                gi.thumbHeight = Integer.parseInt(m.group(3));
+                gi.thumbWidth = Integer.parseInt(m.group(4));
+
+                if (m.group(5) == null) {
                     gi.thumb = Utils.unescapeXml("http://"
-                            + m.group(5).replace('~', '/'));
-                    gi.title = Utils.unescapeXml(m.group(6));
+                            + m.group(7).replace('~', '/'));
+                    gi.title = Utils.unescapeXml(m.group(8));
                 } else {
-                    gi.thumb = Utils.unescapeXml(m.group(3));
-                    gi.title = Utils.unescapeXml(m.group(4));
+                    gi.thumb = Utils.unescapeXml(m.group(5));
+                    gi.title = Utils.unescapeXml(m.group(6));
                 }
 
                 Pattern pattern = Pattern
                         .compile("/(\\d+)/(\\w+)");
-                Matcher matcher = pattern.matcher(m.group(7));
+                Matcher matcher = pattern.matcher(m.group(9));
                 if (matcher.find()) {
                     gi.gid = Integer.parseInt(matcher.group(1));
                     gi.token = matcher.group(2);
                 } else
                     continue;
 
-                gi.rating = Float.parseFloat(getRate(m.group(9)));
-                gi.uploader = m.group(10);
+                gi.rating = Float.parseFloat(getRate(m.group(11)));
+                gi.uploader = m.group(12);
                 gi.generateSLang();
 
                 giList.add(gi);

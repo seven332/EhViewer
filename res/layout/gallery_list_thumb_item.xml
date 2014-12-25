@@ -30,7 +30,7 @@
         android:id="@+id/category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/thumb"
+        android:layout_alignBottom="@id/thumb"
         android:gravity="center"
         android:singleLine="true"
         android:textColor="@color/primary_text_light" />
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:background="@android:color/holo_blue_light"
+        android:background="#ca80cbc4"
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
         android:textColor="@android:color/white" />

@@ -76,7 +76,6 @@ public class GalleryInfo implements Parcelable {
         "[(\\[]dutch[)\\]]",
     };
 
-
     public int gid;
     public String token;
     public String title;
@@ -85,6 +84,14 @@ public class GalleryInfo implements Parcelable {
     public String thumb;
     public String uploader;
     public float rating;
+    /**
+     * Will not be recond
+     */
+    public int thumbWidth;
+    /**
+     * Will not be recond
+     */
+    public int thumbHeight;
     /**
      * language get from title
      */
