@@ -285,6 +285,7 @@
     <string name="thanks_title">感谢</string>
     <string name="website_title">网站</string>
     <string name="source_title">源码</string>
+    <string name="version_title">应用版本</string>
     <string name="update_about_settings_title">更新</string>
     <string name="auto_check_for_update_title">自动检查更新</string>
     <string name="auto_check_for_update_summary_on">每日第一次启动时检查更新</string>
@@ -370,6 +371,8 @@
     <string name="rating2">瞎眼</string>
     <string name="rating1">快要窒息了</string>
     <string name="rating0">…</string>
+
+    <string name="photo_footnotes">Hippo 摄于成都大熊猫繁育研究基地</string>
 
     <!-- Utils -->
     <string name="share">分享</string>

@@ -178,21 +178,18 @@ public class StartActivity extends AbsActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // Disable animate
+        overridePendingTransition(0, 0);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_activity);
 
-        // View decorView = getWindow().getDecorView();
-        // int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        // decorView.setSystemUiVisibility(uiOptions);
-
-        View main = findViewById(R.id.main);
         TextView text = (TextView) findViewById(R.id.text);
         text.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/GloriaHallelujah.ttf"));
         ImageView image = (ImageView) findViewById(R.id.image);
         image.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         image.setImageDrawable(SVGParser.getSVGFromResource(getResources(), R.raw.sad_pandroid).createPictureDrawable());
 
-        // Show welcome in progress
         AppHandler.getInstance().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -200,7 +197,7 @@ public class StartActivity extends AbsActivity {
                     redirectTo();
                 isAnimationOver = true;
             }
-        }, 2000);
+        }, 3000);
         check(CHECK_WARING);
     }
 

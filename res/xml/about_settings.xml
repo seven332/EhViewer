@@ -47,6 +47,10 @@
     <PreferenceCategory
         android:title="@string/update_about_settings_title">
 
+        <Preference
+            android:key="version"
+            android:title="@string/version_title" />
+
         <CheckBoxPreference
             android:key="auto_check_for_update"
             android:title="@string/auto_check_for_update_title"

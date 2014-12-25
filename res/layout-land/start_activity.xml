@@ -14,17 +14,17 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.hippo.ehviewer.widget.TransitionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/themeColor"
     android:orientation="horizontal" >
 
     <View
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:background="?attr/themeColor" />
 
     <TextView
         android:id="@+id/text"
@@ -33,13 +33,15 @@
         android:layout_weight="2"
         android:gravity="center"
         android:textSize="32sp"
-        android:text="@string/do_not_be_a_sad_pandroid" />
+        android:text="@string/do_not_be_a_sad_pandroid"
+        android:background="?attr/themeColor" />
 
     <ImageView
         android:id="@+id/image"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="6"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"
+        android:background="?attr/themeColor" />
 
-</LinearLayout>
+</com.hippo.ehviewer.widget.TransitionLayout>

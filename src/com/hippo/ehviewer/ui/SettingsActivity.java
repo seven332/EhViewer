@@ -22,16 +22,22 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -726,6 +732,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_THANKS = "thanks";
         private static final String KEY_WEBSITE = "website";
         private static final String KEY_SOURCE = "source";
+        private static final String KEY_VERSION = "version";
         private static final String KEY_CHECK_UPDATE = "check_for_update";
         private static final String KEY_CLOUD_DRIVE = "cloud_drive";
         private static final String KEY_ABOUT_ANALYICS = "about_analyics";
@@ -736,9 +743,12 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private Preference mThanks;
         private Preference mWebsite;
         private Preference mSource;
+        private Preference mVersion;
         private Preference mCheckUpdate;
         private Preference mCloudDrive;
         private Preference mAboutAnalyics;
+
+        private final long[] mHits = new long[3];
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -757,18 +767,36 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mWebsite.setOnPreferenceClickListener(this);
             mSource = findPreference(KEY_SOURCE);
             mSource.setOnPreferenceClickListener(this);
+            mVersion = findPreference(KEY_VERSION);
+            mVersion.setOnPreferenceClickListener(this);
             mCheckUpdate = findPreference(KEY_CHECK_UPDATE);
             mCheckUpdate.setOnPreferenceClickListener(this);
             mCloudDrive = findPreference(KEY_CLOUD_DRIVE);
             mCloudDrive.setOnPreferenceClickListener(this);
             mAboutAnalyics = findPreference(KEY_ABOUT_ANALYICS);
             mAboutAnalyics.setOnPreferenceClickListener(this);
+
+            try {
+                Context c = getActivity().getApplicationContext();
+                PackageInfo pi= c.getPackageManager().getPackageInfo(c.getPackageName(), 0);
+                mVersion.setSummary(pi.versionName);
+            } catch (NameNotFoundException e) {}
         }
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
             final String key = preference.getKey();
-            if (KEY_AUTHOR.equals(key)) {
+            if (KEY_VERSION.equals(key)) {
+                System.arraycopy(mHits, 1, mHits, 0, mHits.length-1);
+                mHits[mHits.length-1] = SystemClock.uptimeMillis();
+                if (mHits[0] >= (SystemClock.uptimeMillis() - 500)) {
+                    Arrays.fill(mHits, 0);
+                    Activity a = getActivity();
+                    Intent intent = new Intent(a, SecretActivity.class);
+                    a.startActivity(intent);
+                    getActivity().overridePendingTransition(0, 0);
+                }
+            } else if (KEY_AUTHOR.equals(key)) {
                 Intent i = new Intent(Intent.ACTION_SENDTO);
                 i.setData(Uri.parse("mailto:ehviewersu@gmail.com"));
                 i.putExtra(Intent.EXTRA_SUBJECT, "About EhViewer");

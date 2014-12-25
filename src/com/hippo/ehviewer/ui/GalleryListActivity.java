@@ -44,7 +44,6 @@ import android.provider.MediaStore;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -90,7 +89,6 @@ import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.GalleryListView;
 import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
 import com.hippo.ehviewer.widget.MaterialToast;
-import com.hippo.ehviewer.widget.RatingView;
 import com.hippo.ehviewer.widget.SearchView;
 import com.hippo.ehviewer.widget.SlidingDrawerLayout;
 import com.hippo.ehviewer.widget.SuggestionHelper;
@@ -200,9 +198,6 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
     private static final int BACK_PRESSED_INTERVAL = 2000;
 
     private String mTitle;
-
-    private int mListDetailThumbWidth;
-    private int mListDetailThumbHeight;
 
     // private int mListModeThumbHeight;
 
@@ -980,17 +975,6 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         mWindowsAnimate.init(this);
         mSuggestions = SuggestionHelper.getInstance(GalleryListActivity.this, SimpleSuggestionProvider.AUTHORITY,
                 SimpleSuggestionProvider.MODE);
-
-        // Caculate gallery detail height
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View v = inflater.inflate(R.layout.test_gallery_list_detail_thumb, null);
-        ((TextView) v.findViewById(R.id.title)).setText("haha\nhaha");
-        ((TextView) v.findViewById(R.id.uploader)).setText("haha");
-        ((RatingView) v.findViewById(R.id.rate)).setRating(2.3f);
-        ((TextView) v.findViewById(R.id.category)).setText("haha");
-        ViewUtils.measureView(v);
-        mListDetailThumbHeight = Math.max(v.getMeasuredHeight(), Ui.dp2pix(120));
-        mListDetailThumbWidth = mListDetailThumbHeight * 2 / 3;
 
         handleIntent(getIntent());
         // Check show drawer or not

@@ -176,7 +176,7 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
         ((TextView) v.findViewById(R.id.uploader)).setText("haha");
         ((RatingView) v.findViewById(R.id.rate)).setRating(2.3f);
         ((TextView) v.findViewById(R.id.category)).setText("haha");
-        ViewUtils.measureView(v);
+        ViewUtils.measureView(v, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         mListDetailThumbHeight = Math.max(v.getMeasuredHeight(), Ui.dp2pix(120));
         mListDetailThumbWidth = mListDetailThumbHeight * 2 / 3;
     }

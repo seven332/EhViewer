@@ -14,22 +14,22 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-    <com.hippo.ehviewer.widget.RefreshLayout
-        android:id="@+id/refresh_layout"
+    <com.hippo.ehviewer.widget.FitWindowView
+        android:id="@+id/standard"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.hippo.ehviewer.widget.RefreshTextView
-        android:id="@+id/refresh_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="12dp"
-        android:maxWidth="480dp"
-        android:gravity="center_horizontal"
-        android:textColor="@android:color/holo_blue_dark"
-        android:textSize="24sp" />
+    <ImageView
+        android:id="@+id/bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-</merge>
+    <include
+        layout="@layout/start_activity"
+        android:visibility="visible" />
+
+</FrameLayout>

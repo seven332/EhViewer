@@ -411,7 +411,7 @@ public final class Config {
             index = 2;
             break;
         case 6407:
-            index = 2;
+            index = 3;
             break;
         case 6408:
             index = 4;

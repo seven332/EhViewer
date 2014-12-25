@@ -115,7 +115,13 @@ public final class ViewUtils {
      * @return
      */
     public static Bitmap getBitmapFromView(View v) {
-        Bitmap bitmap = Bitmap.createBitmap(v.getWidth(), v.getHeight(),
+        int width = v.getWidth();
+        int height = v.getHeight();
+        if (width == 0 && height == 0) {
+            width = v.getMeasuredWidth();
+            height = v.getMeasuredHeight();
+        }
+        Bitmap bitmap = Bitmap.createBitmap(width, height,
                 Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         // TODO I need to know why I need it, when ScrollView
@@ -159,17 +165,23 @@ public final class ViewUtils {
         }
     }
 
-    public static void measureView(View v) {
-        ViewGroup.LayoutParams oldLp = v.getLayoutParams();
-        ViewGroup.LayoutParams newLp = new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        v.setLayoutParams(newLp);
-        int measureSpec = MeasureSpec.makeMeasureSpec(0,
-                MeasureSpec.UNSPECIFIED);
-        v.measure(measureSpec, measureSpec);
-        if (oldLp != null)
-            v.setLayoutParams(oldLp);
+    public static void measureView(View v, int width, int height) {
+        int widthMeasureSpec;
+        int heightMeasureSpec;
+        if (width == ViewGroup.LayoutParams.WRAP_CONTENT)
+            widthMeasureSpec = MeasureSpec.makeMeasureSpec(0,
+                    MeasureSpec.UNSPECIFIED);
+        else
+            widthMeasureSpec = MeasureSpec.makeMeasureSpec(Math.max(width, 0),
+                    MeasureSpec.EXACTLY);
+        if (height == ViewGroup.LayoutParams.WRAP_CONTENT)
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(0,
+                    MeasureSpec.UNSPECIFIED);
+        else
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(Math.max(height, 0),
+                    MeasureSpec.EXACTLY);
+
+        v.measure(widthMeasureSpec, heightMeasureSpec);
     }
 
     /**

@@ -40,9 +40,10 @@
 
         <activity
             android:name=".StartActivity"
+            android:configChanges="orientation|screenSize|uiMode"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.Fullscreen.Transparent" >
+            android:theme="@style/AppTheme.NoActionBar.Transparent" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -121,6 +122,13 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.GalleryListActivity" />
+        </activity>
+
+        <activity
+            android:name=".ui.SecretActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:screenOrientation="behind"
+            android:theme="@style/AppTheme.NoActionBar.Transparent" >
         </activity>
 
         <service
