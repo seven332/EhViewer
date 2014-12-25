@@ -26,6 +26,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Typeface;
 import android.view.ContextThemeWrapper;
 
 import com.hippo.ehviewer.cache.ImageCache;
@@ -54,6 +55,8 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
 
     private Thread.UncaughtExceptionHandler mDefaultHandler;
 
+    private Typeface mFaceTypeface;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -75,6 +78,8 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         Data.createInstance(mContextThemeWrapper);
         ExDownloaderManager.createInstance(mContextThemeWrapper);
         MaterialToast.setContext(mContextThemeWrapper);
+
+        mFaceTypeface = Typeface.createFromAsset(getAssets(),"fonts/face.ttf");
 
         // Set drawer margin
         SlidingDrawerLayout.setDefaultMinDrawerMargin(Ui.ACTION_BAR_HEIGHT * 2);
@@ -163,5 +168,9 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
             return false;
         Crash.saveCrashInfo2File(ex);
         return true;
+    }
+
+    public Typeface getFaceTypeface() {
+        return mFaceTypeface;
     }
 }

@@ -17,24 +17,18 @@
 package com.hippo.ehviewer.widget;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.view.View;
+import android.widget.TextView;
 
-import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.AppContext;
 
-public class RatingView extends View {
-    private static boolean mInit = false;
-    private static Bitmap EMPTY_START;
-    private static Bitmap HALF_START;
-    private static Bitmap FULL_START;
-    private static int mAWidth;
-    private static int mHeight;
+public class RatingView extends TextView {
 
-    private int mRating;
+    private static final char START_EMPTY = '\uFA73';
+    private static final char START_HALF = '\uFA74';
+    private static final char START_FULL = '\uFA75';
+
+    private int mRating = -1;
 
     public RatingView(Context context) {
         super(context);
@@ -50,42 +44,21 @@ public class RatingView extends View {
     }
 
     private void init(Context context) {
-        if (mInit)
-            return;
-
-        Resources resources = context.getResources();
-        FULL_START = BitmapFactory.decodeResource(resources, R.drawable.star_small);
-        HALF_START = BitmapFactory.decodeResource(resources, R.drawable.star_small_half);
-        EMPTY_START = BitmapFactory.decodeResource(resources, R.drawable.star_small_empty);
-        mAWidth = FULL_START.getWidth();
-        mHeight = FULL_START.getHeight();
-        mInit = true;
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(mAWidth * 5, mHeight);
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        int step = 0;
-        int fullNum = mRating / 2;
-        int halfNum = mRating % 2;
-        int emptyNum = 5 - fullNum - halfNum;
-
-        for (int i = 0; i < fullNum; i++, step++)
-            canvas.drawBitmap(FULL_START, step * mAWidth, 0, null);
-        for (int i = 0; i < halfNum; i++, step++)
-            canvas.drawBitmap(HALF_START, step * mAWidth, 0, null);
-        for (int i = 0; i < emptyNum; i++, step++)
-            canvas.drawBitmap(EMPTY_START, step * mAWidth, 0, null);
+        setTypeface(((AppContext)context.getApplicationContext()).getFaceTypeface());
     }
 
     public void setRating(float rating) {
         mRating = Math.min(10, Math.round(rating * 2));
-        invalidate();
+        int fullNum = mRating / 2;
+        int halfNum = mRating % 2;
+        int emptyNum = 5 - fullNum - halfNum;
+        StringBuilder sb = new StringBuilder(5);
+        for (int i = 0; i < fullNum; i++)
+            sb.append(START_FULL);
+        if (halfNum == 1)
+            sb.append(START_HALF);
+        for (int i = 0; i < emptyNum; i++)
+            sb.append(START_EMPTY);
+        setText(sb.toString());
     }
 }

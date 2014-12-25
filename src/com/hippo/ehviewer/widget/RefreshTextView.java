@@ -17,11 +17,11 @@
 package com.hippo.ehviewer.widget;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
+import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.AppHandler;
 
 // TODO add animation
@@ -42,23 +42,21 @@ public class RefreshTextView extends TextView
 
     public RefreshTextView(Context context) {
         super(context);
-        init();
+        init(context);
     }
 
     public RefreshTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
     }
 
     public RefreshTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(context);
     }
 
-    public void init() {
-        Typeface type = Typeface.createFromAsset(getContext().getAssets(),"fonts/face.ttf");
-        setTypeface(type);
-
+    public void init(Context context) {
+        setTypeface(((AppContext)context.getApplicationContext()).getFaceTypeface());
         setOnClickListener(this);
     }
 
