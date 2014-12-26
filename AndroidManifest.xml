@@ -135,6 +135,12 @@
             android:name=".service.DownloadService"
             android:label="DownloadService" />
 
+        <receiver android:name=".receiver.NetworkChangeReceiver">
+            <intent-filter >
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name=".SimpleSuggestionProvider"
             android:authorities="com.hippo.ehviewer.SimpleSuggestionProvider"

@@ -112,6 +112,8 @@
     <string name="download_6">Download OK %1$d items, Download failed %2$d items</string>
     <string name="delete_item">The item will be deleted</string>
     <string name="pic_included">pictures included</string>
+    <string name="notification_be_title">Reach download limit</string>
+    <string name="notification_be_mesg">Error 509, please wait a few minutes</string>
 
     <!-- ErrorMessage -->
     <string name="em_network_error">Network Error</string>
@@ -154,6 +156,12 @@
     <string name="loading_percent">Loading %d%%</string>
     <string name="wait_for_more">Waiting to get page information</string>
     <string name="more_settings">More settings</string>
+    <string name="save_to_local_storage">Save to local storage</string>
+    <string name="save_successful">Saved to %s</string>
+    <string name="save_failed">Save failed</string>
+    <string name="select_save_dir">Select dir to save</string>
+    <string name="current_image_not_downloaded">The image is not available</string>
+    <string name="share_image">Share image</string>
 
     <!-- Action -->
     <string name="action_refresh">Refresh</string>
@@ -193,6 +201,7 @@
     <string name="screen_orientation_title">Screen orientation</string>
     <string name="list_display_settings_title">List</string>
     <string name="list_mode_title">List mode</string>
+    <string name="list_detail_columns_title">Number of List detail columns</string>
     <string name="list_thumb_columns_title">Number of List thumb columns</string>
     <string name="preview_display_settings_title">Preview</string>
     <string name="preview_columns">Number of preview columns</string>
@@ -230,6 +239,8 @@
     <string name="keep_screen_on_title">Keep screen when reading</string>
     <string name="gallery_show_clock_title">Show clock</string>
     <string name="gallery_show_battery_title">Show battery</string>
+    <string name="custom_lightness_title">Custom lightness when reading</string>
+    <string name="custom_lightness_value_title">Custom lightness</string>
     <string name="custom_codec_title">Custom codec</string>
     <string name="custom_codec_summary">Custom codec may cost less memory, decode faster</string>
     <string name="custom_codec_summary_not">Custom codec do not support x86, mips</string>
@@ -249,6 +260,8 @@
     <string name="media_scan_summary_on">Please keep your gallery apps away from other people</string>
     <string name="media_scan_summary_off">Most gallery apps will ignore pictures in download path</string>
     <string name="download_thread_title">Download threads</string>
+    <string name="download_origin_image_title">Download original image</string>
+    <string name="download_origin_image_summary">It is dangerous! You may get 509 error.</string>
     <string name="keep_download_service_title">Keep download service</string>
     <string name="keep_download_service_summary_on">Download service will be restarted when the application is killed if it is running</string>
     <string name="keep_download_service_summary_off">Download service will not be restarted when the application is killed if it is running</string>
@@ -264,6 +277,9 @@
     <string name="eh_others_settings_title">Others</string>
     <string name="fix_dirname_title">Fix download folder name</string>
     <string name="fix_dirname_title_summary">Download folder name will be human readable. It is OK to leave me alone.</string>
+    <string name="start_fixing">Start fixing</string>
+    <string name="no_need_fixing">No need to fix</string>
+    <string name="fixing_over">%d item(s) fixed</string>
 
     <string name="about_settings_title">About</string>
     <string name="author_title">Author</string>
@@ -276,6 +292,7 @@
     <string name="website_summary" translatable="false">http://www.ehviewer.com</string>
     <string name="source_title">Source</string>
     <string name="source_summary" translatable="false">https://github.com/seven332/EhViewer</string>
+    <string name="version_title">Application version</string>
     <string name="update_about_settings_title">Update</string>
     <string name="auto_check_for_update_title">Check for update automatically</string>
     <string name="auto_check_for_update_summary_on">Check for update once a day</string>
@@ -378,7 +395,10 @@
     <string name="rating1">UNBEARABLE</string>
     <string name="rating0">DISASTER</string>
 
+    <string name="photo_footnotes">Taken by Hippo at Chengdu Research Base of Giant Panda Breeding</string>
+
     <!-- Util -->
+    <string name="share">share</string>
     <string name="filter">filter</string>
     <string name="clear">clear</string>
     <string name="history">History</string>
@@ -441,6 +461,7 @@
     <string name="favourite">Favourite</string>
     <string name="whatshot">What\'s hot</string>
     <string name="download">Download</string>
+    <string name="downloaded">Downloaded</string>
     <string name="star_2">2 stars</string>
     <string name="star_3">3 stars</string>
     <string name="star_4">4 stars</string>

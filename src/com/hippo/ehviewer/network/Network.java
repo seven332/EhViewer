@@ -29,8 +29,7 @@ public final class Network {
     public static int getNetworkState(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        NetworkInfo mMobile = cm
-                .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        NetworkInfo mMobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
         if (mWifi != null && mWifi.isConnected())
             return NETWORK_STATE_WIFI;
