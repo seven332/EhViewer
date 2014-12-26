@@ -66,6 +66,7 @@ import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.ApiGalleryDetail;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.Data;
+import com.hippo.ehviewer.data.DownloadInfo;
 import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.ListUrls;
@@ -402,7 +403,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         mPreviewFront.setOnClickListener(this);
         mPreviewRefresh.setOnClickListener(this);
         mReply.setOnClickListener(this);
-        mRefreshText.setDefaultRefresh("点击重试", this);
+        mRefreshText.setDefaultRefresh(R.string.click_retry, this);
 
         doPreLayout();
     }
@@ -526,7 +527,6 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
             tagGroupLayout.setOrientation(LinearLayout.HORIZONTAL);
             AutoWrapLayout tagLayout = new AutoWrapLayout(this);
 
-
             // Group name
             final String groupName = tagGroup.getKey();
             TextView groupNameView = new TextView(ctw);
@@ -583,6 +583,16 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         return pageNum == Integer.MAX_VALUE ? "??" : String.valueOf(pageNum);
     }
 
+    private void updateDownloadButton() {
+        int gid = mGalleryInfo.gid;
+        DownloadInfo di = Data.getInstance().getDownload(gid);
+        if (di == null) {
+            mDownloadButton.setText(R.string.download);
+        } else {
+            mDownloadButton.setText(R.string.downloaded);
+        }
+    }
+
     /**
      * GalleryDetail
      * LofiGalleryDetail
@@ -606,6 +616,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
 
         // Button
         mDetailButtons.setVisibility(View.VISIBLE);
+        updateDownloadButton();
 
         // waring
         mWarning.setVisibility(View.VISIBLE);
@@ -815,9 +826,9 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
             it.setAction(DownloadService.ACTION_ADD);
             it.putExtra(DownloadService.KEY_GALLERY_INFO, mGalleryInfo);
             startService(it);
+            mDownloadButton.setText(R.string.downloaded);
             MaterialToast.showToast(R.string.toast_add_download);
         } else if (v == mReadButton) {
-            //mData.addRead(mGalleryInfo);
             Intent intent = new Intent(this,
                     GalleryActivity.class);
             intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, mGalleryInfo);
