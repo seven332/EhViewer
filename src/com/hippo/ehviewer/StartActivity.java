@@ -33,6 +33,7 @@ import com.hippo.ehviewer.ui.AbsActivity;
 import com.hippo.ehviewer.ui.GalleryListActivity;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
+import com.hippo.ehviewer.util.Secret;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.larvalabs.svgandroid.SVGParser;
 
@@ -189,6 +190,12 @@ public class StartActivity extends AbsActivity {
         ImageView image = (ImageView) findViewById(R.id.image);
         image.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         image.setImageDrawable(SVGParser.getSVGFromResource(getResources(), R.raw.sad_pandroid).createPictureDrawable());
+
+        // Update secret image here
+        int state = Network.getNetworkState(this);
+        if (state == Network.NETWORK_STATE_WIFI) {
+            Secret.updateSecretImage(this);
+        }
 
         AppHandler.getInstance().postDelayed(new Runnable() {
             @Override

@@ -16,8 +16,10 @@
 
 package com.hippo.ehviewer.ui;
 
+
 import java.util.Arrays;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.View;
@@ -26,27 +28,45 @@ import android.widget.ImageView;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.effect.DrawableTransition;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Secret;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.MaterialToast;
 
 public class SecretActivity extends AbsActivity implements View.OnClickListener {
 
     private final long[] mHits = new long[3];
+    private Bitmap mBmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mBmp = Secret.getSecretImage(this);
+        if (mBmp == null) {
+            finish();
+            return;
+        }
 
         int themeColor = Config.getCustomThemeColor() ? Config.getThemeColor() : Ui.THEME_COLOR;
         Ui.colorStatusBarL(this, themeColor);
 
         ImageView iv = new ImageView(this);
         iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        iv.setImageResource(R.drawable.pandas);
+        iv.setImageBitmap(mBmp);
         iv.setOnClickListener(this);
         iv.setSoundEffectsEnabled(false);
         setContentView(iv);
         DrawableTransition.transit(iv.getDrawable(), false, 3000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mBmp != null) {
+            mBmp.recycle();
+            mBmp = null;
+        }
     }
 
     @Override

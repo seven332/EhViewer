@@ -828,7 +828,7 @@ public class HttpHelper {
         }
 
         protected String fixNewExtension(String ext) {
-            return ext;
+            return null;
         }
 
         @Override

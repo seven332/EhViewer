@@ -22,13 +22,20 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 
 import com.hippo.ehviewer.network.Network;
+import com.hippo.ehviewer.util.Secret;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
         if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
+
+            // Update secret image here
             int state = Network.getNetworkState(context);
+            if (state == Network.NETWORK_STATE_WIFI) {
+                Secret.updateSecretImage(context);
+            }
+
             // TODO stop download when mobile network
         }
     }

@@ -72,6 +72,7 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.DialogUtils;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Favorite;
+import com.hippo.ehviewer.util.Secret;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.util.ViewUtils;
@@ -792,10 +793,13 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 if (mHits[0] >= (SystemClock.uptimeMillis() - 500)) {
                     Arrays.fill(mHits, 0);
                     Activity a = getActivity();
-                    Intent intent = new Intent(a, SecretActivity.class);
-                    a.startActivity(intent);
-                    getActivity().overridePendingTransition(0, 0);
+                    if (Secret.hasSecretImage(a)) {
+                        Intent intent = new Intent(a, SecretActivity.class);
+                        a.startActivity(intent);
+                        getActivity().overridePendingTransition(0, 0);
+                    }
                 }
+
             } else if (KEY_AUTHOR.equals(key)) {
                 Intent i = new Intent(Intent.ACTION_SENDTO);
                 i.setData(Uri.parse("mailto:ehviewersu@gmail.com"));
