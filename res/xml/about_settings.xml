@@ -27,6 +27,10 @@
         android:summary="@string/twitter_summary" />
 
     <Preference
+        android:key="google_plus"
+        android:title="@string/google_plus_title" />
+
+    <Preference
         android:key="changelog"
         android:title="@string/changelog_title" />
 

@@ -729,6 +729,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
         private static final String KEY_AUTHOR = "author";
         private static final String KEY_TWITTER = "twitter";
+        private static final String KEY_GOOGLE_PLUS = "google_plus";
         private static final String KEY_CHANGELOG = "changelog";
         private static final String KEY_THANKS = "thanks";
         private static final String KEY_WEBSITE = "website";
@@ -740,6 +741,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
         private Preference mAuthor;
         private Preference mTwitter;
+        private Preference mGooglePlus;
         private Preference mChangelog;
         private Preference mThanks;
         private Preference mWebsite;
@@ -760,6 +762,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mAuthor.setOnPreferenceClickListener(this);
             mTwitter = findPreference(KEY_TWITTER);
             mTwitter.setOnPreferenceClickListener(this);
+            mGooglePlus = findPreference(KEY_GOOGLE_PLUS);
+            mGooglePlus.setOnPreferenceClickListener(this);
             mChangelog = findPreference(KEY_CHANGELOG);
             mChangelog.setOnPreferenceClickListener(this);
             mThanks = findPreference(KEY_THANKS);
@@ -829,6 +833,11 @@ public class SettingsActivity extends AbsPreferenceActivity {
                                         return true;
                                     }
                                 }).setNegativeButton(android.R.string.cancel).show();
+
+            } else if (KEY_GOOGLE_PLUS.equals(key)) {
+                Uri uri = Uri.parse("https://plus.google.com/communities/103823982034655188459");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
 
             } else if (KEY_CHANGELOG.equals(key)) {
                 InputStream is = getActivity().getResources().openRawResource(R.raw.change_log);

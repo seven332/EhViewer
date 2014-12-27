@@ -286,6 +286,7 @@
     <string name="author_summary" translatable="false">Hippo &lt;ehviewersu@gmail.com&gt;</string>
     <string name="twitter_title">Twitter</string>
     <string name="twitter_summary">\@jkjvinn is in charge</string>
+    <string name="google_plus_title" translatable="false">Google+</string>
     <string name="changelog_title">Changelog</string>
     <string name="thanks_title">Thanks</string>
     <string name="website_title">Website</string>
