@@ -72,7 +72,12 @@ public final class Secret {
         @Override
         public void run() {
             // TODO check usable space
-            if (!hasSecretImage(mContext)) {
+            File dir = mContext.getExternalFilesDir(DIR_NAME);
+            File image = new File(dir, IMAGE_NAME);
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+            opts.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(image.getAbsolutePath(), opts);
+            if (opts.outWidth <= 0 || opts.outHeight <= 0) {
                 // Get image error, try to get image from internet
                 HttpHelper hh = new HttpHelper(mContext);
                 hh.download(SERCET_IMAGE_URL, mContext.getExternalFilesDir(DIR_NAME),
