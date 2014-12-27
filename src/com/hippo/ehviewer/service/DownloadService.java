@@ -364,6 +364,8 @@ public class DownloadService extends Service
         notifyUpdate();
     }
 
+    private long mLastStartForegroundTime = 0;
+
     @Override
     public void onDownload(int gid, int downloadSize, int totalSize) {
         if (mCurDownloadInfo == null)
@@ -377,7 +379,12 @@ public class DownloadService extends Service
         mBuilder.setContentTitle(getString(R.string.downloading)  + " " + gid)
                 .setContentText(mSpeedStr)
                 .setProgress(totalSize, downloadSize, false);
-        startForeground(DOWNLOADING_NOTIFY_ID, mBuilder.build());
+
+        long now = System.currentTimeMillis();
+        if (now - mLastStartForegroundTime > 500) {
+            startForeground(DOWNLOADING_NOTIFY_ID, mBuilder.build());
+            mLastStartForegroundTime = now;
+        }
 
         notifyUpdate();
     }
