@@ -91,7 +91,7 @@
     <string name="update_failed">Download the update Failed</string>
 
     <!-- GalleryDetialActivity -->
-    <string name="we_feel">We fell %s</string>
+    <string name="we_feel">We feel %s</string>
     <string name="more_of_uploader">More of uploader</string>
     <string name="no_more_comment">No more comments</string>
     <string name="no_comment">No comment</string>
