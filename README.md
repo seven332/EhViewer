@@ -1,7 +1,7 @@
 # EhViewer
 
-这是一个 Android 平台上的 E-Hentai 阅读应用。<br>
-E-Hentai Application for Android.
+这是一个 Android 平台上的 E-Hentai 阅读应用。访问 [EhViewer](http://www.ehviewer.com/) 网站以获取更多信息。<br>
+EhViewer is an E-Hentai Application for Android. Visit [EhViewer](http://www.ehviewer.com/)(Chinese Only) website for more information.
 
 # Build
 
