@@ -18,15 +18,14 @@ package com.hippo.ehviewer.util;
 
 import java.util.Random;
 
+// Get code from android.util.MathUtils
 public final class MathUtils {
     private static final Random sRandom = new Random();
-
-    private static final float DEG_TO_RAD = 0.01745329F;
-
-    private static final float RAD_TO_DEG = 57.295784F;
+    private static final float DEG_TO_RAD = 3.1415926f / 180.0f;
+    private static final float RAD_TO_DEG = 180.0f / 3.1415926f;
 
     public static float abs(float v) {
-        return v > 0.0F ? v : -v;
+        return v > 0 ? v : -v;
     }
 
     public static float log(float a) {
@@ -50,11 +49,11 @@ public final class MathUtils {
     }
 
     public static float max(float a, float b, float c) {
-        return b > c ? b : a > b ? c : a > c ? a : c;
+        return a > b ? (a > c ? a : c) : (b > c ? b : c);
     }
 
     public static float max(int a, int b, int c) {
-        return a > b ? a > c ? a : c : b > c ? b : c;
+        return a > b ? (a > c ? a : c) : (b > c ? b : c);
     }
 
     public static float min(float a, float b) {
@@ -66,29 +65,28 @@ public final class MathUtils {
     }
 
     public static float min(float a, float b, float c) {
-        return b < c ? b : a < b ? c : a < c ? a : c;
+        return a < b ? (a < c ? a : c) : (b < c ? b : c);
     }
 
     public static float min(int a, int b, int c) {
-        return a < b ? a < c ? a : c : b < c ? b : c;
+        return a < b ? (a < c ? a : c) : (b < c ? b : c);
     }
 
     public static float dist(float x1, float y1, float x2, float y2) {
-        float x = x2 - x1;
-        float y = y2 - y1;
-        return (float) Math.sqrt(x * x + y * y);
+        final float x = (x2 - x1);
+        final float y = (y2 - y1);
+        return (float) Math.hypot(x, y);
     }
 
-    public static float dist(float x1, float y1, float z1, float x2, float y2,
-            float z2) {
-        float x = x2 - x1;
-        float y = y2 - y1;
-        float z = z2 - z1;
+    public static float dist(float x1, float y1, float z1, float x2, float y2, float z2) {
+        final float x = (x2 - x1);
+        final float y = (y2 - y1);
+        final float z = (z2 - z1);
         return (float) Math.sqrt(x * x + y * y + z * z);
     }
 
     public static float mag(float a, float b) {
-        return (float) Math.sqrt(a * a + b * b);
+        return (float) Math.hypot(a, b);
     }
 
     public static float mag(float a, float b, float c) {
@@ -100,11 +98,11 @@ public final class MathUtils {
     }
 
     public static float radians(float degrees) {
-        return degrees * 0.01745329F;
+        return degrees * DEG_TO_RAD;
     }
 
     public static float degrees(float radians) {
-        return radians * 57.295784F;
+        return radians * RAD_TO_DEG;
     }
 
     public static float acos(float value) {
@@ -139,10 +137,8 @@ public final class MathUtils {
         return (value - start) / (stop - start);
     }
 
-    public static float map(float minStart, float minStop, float maxStart,
-            float maxStop, float value) {
-        return maxStart + (maxStart - maxStop)
-                * ((value - minStart) / (minStop - minStart));
+    public static float map(float minStart, float minStop, float maxStart, float maxStop, float value) {
+        return maxStart + (maxStart - maxStop) * ((value - minStart) / (minStop - minStart));
     }
 
     /**
