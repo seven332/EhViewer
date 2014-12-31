@@ -46,7 +46,7 @@ import com.hippo.ehviewer.AppHandler;
 
 public final class Utils {
     @SuppressWarnings("unused")
-    private static String TAG = "Util";
+    private static String TAG = Utils.class.getSimpleName();
 
     public static final boolean SUPPORT_IMAGE;
     @SuppressLint("SimpleDateFormat")
@@ -626,6 +626,9 @@ public final class Utils {
      * @return
      */
     public static boolean isInArea(int[] area, int x, int y) {
+        if (area == null)
+            throw new NullPointerException("area is null in "
+                    + Utils.class.getName() + ".isInArea");
         if (area.length != 4)
             throw new IllegalArgumentException(
                     "area's length should be 4, but it's length is " + area.length);
