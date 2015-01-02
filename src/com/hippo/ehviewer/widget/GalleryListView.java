@@ -43,7 +43,9 @@ import com.hippo.ehviewer.ehclient.ListParser;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
-import com.hippo.ehviewer.widget.EasyRecyclerView.FooterAdapter;
+import com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView;
+import com.hippo.ehviewer.widget.recyclerview.MarginItemDecoration;
+import com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView.FooterAdapter;
 
 public class GalleryListView extends FrameLayout implements RefreshLayout.OnFooterRefreshListener,
         RefreshLayout.OnRefreshListener {

@@ -39,10 +39,10 @@ import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
-import com.hippo.ehviewer.widget.EasyRecyclerView;
 import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.GalleryListView;
 import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
+import com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView;
 
 public class HistoryActivity extends AbsTranslucentActivity
         implements EasyRecyclerView.OnItemClickListener, MaterialAlertDialog.OnClickListener,

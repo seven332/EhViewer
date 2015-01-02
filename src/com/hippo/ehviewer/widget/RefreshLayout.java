@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView;
 
 public class RefreshLayout extends SwipeRefreshLayout {
 

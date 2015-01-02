@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.widget;
+package com.hippo.ehviewer.widget.recyclerview;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -246,7 +246,7 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
 
     /**
      *
-     * adapter must be {@link com.hippo.ehviewer.widget.EasyRecyclerView.FooterAdapter}
+     * adapter must be {@link com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView.FooterAdapter}
      */
     @Override
     public void setAdapter(RecyclerView.Adapter adapter) {

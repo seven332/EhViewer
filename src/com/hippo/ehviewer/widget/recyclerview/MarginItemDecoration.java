@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.widget;
+package com.hippo.ehviewer.widget.recyclerview;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;

@@ -103,6 +103,7 @@ public final class WindowsAnimate
      *        and ripple start where you pressed. Attention, it will
      *        setOnTouchListener, to get position.
      */
+    /*
     public void addRippleEffect(View view, boolean keepBound) {
         ensureCanvas();
 
@@ -110,7 +111,7 @@ public final class WindowsAnimate
         if (keepBound) {
             view.setOnTouchListener(this);
         }
-    }
+    }*/
 
     void addRenderingSprite(Sprite sprite) {
         if (mAnimateCanvas != null)

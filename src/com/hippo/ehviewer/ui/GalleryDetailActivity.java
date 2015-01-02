@@ -30,6 +30,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -37,6 +38,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.text.Html;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
@@ -47,12 +49,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
@@ -78,6 +77,7 @@ import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
 import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.drawable.OvalDrawable;
+import com.hippo.ehviewer.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.ehclient.DetailUrlParser;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.service.DownloadService;
@@ -98,6 +98,8 @@ import com.hippo.ehviewer.widget.RefreshTextView;
 import com.hippo.ehviewer.widget.ResponedScrollView;
 import com.hippo.ehviewer.widget.SimpleGridLayout;
 import com.hippo.ehviewer.widget.SuperButton;
+import com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView;
+import com.hippo.ehviewer.widget.recyclerview.LinearDividerItemDecoration;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 
 public class GalleryDetailActivity extends AbsTranslucentActivity
@@ -105,8 +107,8 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         ResponedScrollView.OnScrollStateChangedListener,
         View.OnTouchListener , ViewSwitcher.ViewFactory,
         ProgressiveRatingBar.OnUserRateListener, PreviewList.PreviewHolder,
-        View.OnLayoutChangeListener, AdapterView.OnItemClickListener,
-        AdapterView.OnItemLongClickListener, RefreshTextView.OnRefreshListener,
+        View.OnLayoutChangeListener, EasyRecyclerView.OnItemClickListener,
+        EasyRecyclerView.OnItemLongClickListener, RefreshTextView.OnRefreshListener,
         FitWindowView.OnFitSystemWindowsListener {
 
     @SuppressWarnings("unused")
@@ -165,7 +167,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
     private View mDividerCP;
     private LinearLayout mDetailPreview;
 
-    private ListView mCommentList;
+    private EasyRecyclerView mCommentList;
     private FloatingActionButton mReply;
 
     private OvalDrawable mCategoryDrawable;
@@ -300,48 +302,48 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         // Get view
         mStandard = (FitWindowView) findViewById(R.id.standard);
 
-        mDetailScroll = (ResponedScrollView)findViewById(R.id.detail_scroll);
-        mMoreDetailScroll = (ScrollView)findViewById(R.id.more_detail_scroll);
+        mDetailScroll = (ResponedScrollView) findViewById(R.id.detail_scroll);
+        mMoreDetailScroll = (ScrollView) findViewById(R.id.more_detail_scroll);
         mMoreComment = findViewById(R.id.more_comment);
-        mRefreshText = (RefreshTextView)findViewById(R.id.refresh_text);
+        mRefreshText = (RefreshTextView) findViewById(R.id.refresh_text);
 
         mDetailHeader = findViewById(R.id.detail_header);
         mDetailButtons = findViewById(R.id.detail_buttons);
-        mWarning = (TextView)findViewById(R.id.warning);
+        mWarning = (TextView) findViewById(R.id.warning);
         mDetailActions = findViewById(R.id.detail_actions);
         mDividerAM = findViewById(R.id.detail_divider_a_m);
         mDetailMore = findViewById(R.id.detail_more);
         mDividerMR = findViewById(R.id.detail_divider_m_r);
         mDetailRate = findViewById(R.id.detail_rate);
         mDividerRT = findViewById(R.id.detail_divider_r_t);
-        mDetailTag = (LinearLayout)findViewById(R.id.detail_tag);
+        mDetailTag = (LinearLayout) findViewById(R.id.detail_tag);
         mDividerTC = findViewById(R.id.detail_divider_t_c);
-        mDetailComment = (LinearLayout)findViewById(R.id.detail_comment);
+        mDetailComment = (LinearLayout) findViewById(R.id.detail_comment);
         mDividerCP = findViewById(R.id.detail_divider_c_p);
-        mDetailPreview = (LinearLayout)findViewById(R.id.detail_preview);
+        mDetailPreview = (LinearLayout) findViewById(R.id.detail_preview);
 
-        mThumb = (LoadImageView)findViewById(R.id.thumb);
-        mTitle = (TextView)findViewById(R.id.title);
-        mUploader = (TextView)findViewById(R.id.uploader);
-        mDownloadButton = (SuperButton)findViewById(R.id.download);
-        mReadButton = (SuperButton)findViewById(R.id.read);
-        mCategory = (TextView)findViewById(R.id.category);
-        mMoreOfUploader = (TextView)findViewById(R.id.more_of_uploader);
-        mSimilar = (TextView)findViewById(R.id.similar);
-        mRatingText = (TextSwitcher)mDetailRate.findViewById(R.id.rating_text);
-        mRating = (ProgressiveRatingBar)mDetailRate.findViewById(R.id.rating);
-        mFavorite = (TextView)findViewById(R.id.favorite);
-        mRate = (TextView)findViewById(R.id.rate);
-        mCommentMoreText = (TextView)findViewById(R.id.comment_more_text);
-        mPreview = (SimpleGridLayout)findViewById(R.id.preview);
-        mPreviewPage = (SuperButton)findViewById(R.id.preview_num);
-        mPreviewBack = (SuperButton)findViewById(R.id.back);
-        mPreviewFront = (SuperButton)findViewById(R.id.front);
-        mPreviewWait = (MaterialProgress)findViewById(R.id.preview_wait);
-        mPreviewRefresh = (SuperButton)findViewById(R.id.preview_refresh);
+        mThumb = (LoadImageView) findViewById(R.id.thumb);
+        mTitle = (TextView) findViewById(R.id.title);
+        mUploader = (TextView) findViewById(R.id.uploader);
+        mDownloadButton = (SuperButton) findViewById(R.id.download);
+        mReadButton = (SuperButton) findViewById(R.id.read);
+        mCategory = (TextView) findViewById(R.id.category);
+        mMoreOfUploader = (TextView) findViewById(R.id.more_of_uploader);
+        mSimilar = (TextView) findViewById(R.id.similar);
+        mRatingText = (TextSwitcher) mDetailRate.findViewById(R.id.rating_text);
+        mRating = (ProgressiveRatingBar) mDetailRate.findViewById(R.id.rating);
+        mFavorite = (TextView) findViewById(R.id.favorite);
+        mRate = (TextView) findViewById(R.id.rate);
+        mCommentMoreText = (TextView) findViewById(R.id.comment_more_text);
+        mPreview = (SimpleGridLayout) findViewById(R.id.preview);
+        mPreviewPage = (SuperButton) findViewById(R.id.preview_num);
+        mPreviewBack = (SuperButton) findViewById(R.id.back);
+        mPreviewFront = (SuperButton) findViewById(R.id.front);
+        mPreviewWait = (MaterialProgress) findViewById(R.id.preview_wait);
+        mPreviewRefresh = (SuperButton) findViewById(R.id.preview_refresh);
 
-        mCommentList = (ListView)findViewById(R.id.comment_list);
-        mReply = (FloatingActionButton)findViewById(R.id.reply);
+        mCommentList = (EasyRecyclerView) findViewById(R.id.comment_list);
+        mReply = (FloatingActionButton) findViewById(R.id.reply);
 
         // Set Drawable
         Rect rect = new Rect(0, 0, Ui.dp2pix(48), Ui.dp2pix(48));
@@ -370,17 +372,22 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         mPreview.setColumnCountLandscape(
                 Config.getPreviewColumnsLandscape());
 
+        // Comment
+        mCommentList.setLayoutManager(new LinearLayoutManager(this));
+
         // Set theme color
         setThemeColor(mThemeColor = Config.getCustomThemeColor() ? Config.getThemeColor() :
             (mGalleryInfo.title == null ? Ui.THEME_COLOR : Ui.getCategoryColor(mGalleryInfo.category)));
 
         // Set ripple
+        /*
         mWindowsAnimate.addRippleEffect(mDownloadButton, true);
         mWindowsAnimate.addRippleEffect(mFavorite, false);
         mWindowsAnimate.addRippleEffect(mRate, false);
         mWindowsAnimate.addRippleEffect(mPreviewPage, true);
         mWindowsAnimate.addRippleEffect(mPreviewBack, true);
         mWindowsAnimate.addRippleEffect(mPreviewFront, true);
+        */
 
         // Set listener
         mStandard.addOnFitSystemWindowsListener(this);
@@ -724,8 +731,14 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
                         i, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT));
             }
+
+            LinearDividerItemDecoration itemDecorationnew = new LinearDividerItemDecoration(
+                    LinearDividerItemDecoration.VERTICAL, 0x22000000, Ui.dp2pix(1)); // TODO
+            itemDecorationnew.setPadding(Ui.dp2pix(16));
             mCommentAdapter = new CommentAdapter();
+            mCommentList.setHasFixedSize(true);
             mCommentList.setAdapter(mCommentAdapter);
+            mCommentList.addItemDecoration(itemDecorationnew);
             mCommentList.setOnItemClickListener(this);
             mCommentList.setOnItemLongClickListener(this);
         }
@@ -779,7 +792,8 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         if (contentView == null) {
             contentView = LayoutInflater.from(this).inflate(R.layout.comments_item, null);
             if (!restrict) {
-                mWindowsAnimate.addRippleEffect(contentView, true);
+                RippleSalon.addRipple(contentView, ColorStateList.valueOf(0x40000000));
+                //mWindowsAnimate.addRippleEffect(contentView, true);
             }
         }
         ((TextView)contentView.findViewById(R.id.user)).setText(comment.user);
@@ -920,7 +934,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
             mReplyPositive = false;
             final EditText et = new EditText(this);
             et.setGravity(Gravity.TOP);
-            et.setHint("评论内容");
+            et.setHint("评论内容"); // TODO
             et.setTextColor(getResources().getColor(R.color.secondary_text_dark));
             et.setBackgroundDrawable(null);
             et.setText(mOldReply);
@@ -998,9 +1012,8 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
             int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
         if (v == mMoreDetailScroll) {
             mMoreDetailScroll.scrollTo(0, 0);
-            System.out.print("sssss");
         } else if (v == mCommentList) {
-            mCommentList.setSelection(0);
+            //mCommentList.setSelection(0);
         } else if (v == mDetailScroll) {
             if (mShowPreview) {
                 mShowPreview = false;
@@ -1078,23 +1091,25 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,
+    public boolean onItemClick(EasyRecyclerView parent, View view, int position,
             long id) {
         // Handler url here
-        LinkifyTextView comment = ((LinkifyTextView)view.findViewById(R.id.comment));
+        LinkifyTextView comment = ((LinkifyTextView) view.findViewById(R.id.comment));
         String url = comment.getTouchedUrl();
         if (url != null) {
             comment.clearTouchedUrl();
             Uri uri = Uri.parse(url);
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
+            return true;
         }
+        return false;
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view,
+    public boolean onItemLongClick(EasyRecyclerView parent, View view,
             int position, long id) {
-        final Comment c = (Comment)parent.getItemAtPosition(position);
+        final Comment c = ((GalleryDetail) mGalleryInfo).comments.get(position);
 
         new MaterialAlertDialog.Builder(this).setTitle(R.string.what_to_do)
                 .setNegativeButton(android.R.string.cancel)
@@ -1228,9 +1243,56 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         }
     }
 
-    private class CommentAdapter extends BaseAdapter {
+
+    private class CommentHolder extends EasyRecyclerView.ViewHolder {
+        private final TextView userView;
+        private final TextView timeView;
+        private final TextView commentView;
+
+        public CommentHolder(View itemView) {
+            super(itemView);
+
+            userView = (TextView) itemView.findViewById(R.id.user);
+            timeView = (TextView) itemView.findViewById(R.id.time);
+            commentView = (TextView) itemView.findViewById(R.id.comment);
+        }
+
+    }
+
+    private class CommentAdapter extends EasyRecyclerView.FooterAdapter<CommentHolder> {
+
+        private final LayoutInflater mInflater;
+
+        public CommentAdapter() {
+            mInflater = LayoutInflater.from(GalleryDetailActivity.this);
+        }
+
         @Override
-        public int getCount() {
+        public CommentHolder onCreateAndBindFooterViewHolder(ViewGroup parent,
+                View footerView) {
+            // No footer
+            return null;
+        }
+
+        @Override
+        public CommentHolder onCreateViewHolderActual(ViewGroup parent,
+                int viewType) {
+            View view = mInflater.inflate(R.layout.comments_item, parent, false);
+            RippleSalon.addRipple(view, ColorStateList.valueOf(0x40000000)); // TODO
+            return new CommentHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolderActual(CommentHolder holder, int position) {
+            final Comment comment = ((GalleryDetail) mGalleryInfo).comments.get(position);
+
+            holder.userView.setText(comment.user);
+            holder.timeView.setText(comment.time);
+            holder.commentView.setText(Html.fromHtml(comment.comment));
+        }
+
+        @Override
+        public int getItemCountActual() {
             if (mGalleryInfo instanceof GalleryDetail) {
                 GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
                 if (galleryDetail.comments == null)
@@ -1242,21 +1304,6 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
             }
         }
 
-        @Override
-        public Object getItem(int position) {
-            return ((GalleryDetail)mGalleryInfo).comments.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view = getCommentView(convertView,
-                    ((GalleryDetail)mGalleryInfo).comments.get(position), false);
-            return view;
-        }
     }
+
 }
