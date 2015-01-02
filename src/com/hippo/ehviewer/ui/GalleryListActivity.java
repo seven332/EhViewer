@@ -87,7 +87,6 @@ import com.hippo.ehviewer.widget.DrawerListView;
 import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.GalleryListView;
 import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
-import com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.SearchView;
 import com.hippo.ehviewer.widget.SlidingDrawerLayout;
@@ -95,6 +94,7 @@ import com.hippo.ehviewer.widget.SuggestionHelper;
 import com.hippo.ehviewer.widget.SuggestionTextView;
 import com.hippo.ehviewer.widget.TagListView;
 import com.hippo.ehviewer.widget.TagsAdapter;
+import com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 
 /*
@@ -855,7 +855,10 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
                 break;
 
             default:
-                // TODO just do somthing
+                // Get error, go to home page
+                lus = new ListUrls();
+                mTitle = mResources.getString(R.string.homepage);
+                setTitle(mTitle);
                 break;
             }
         } else {
