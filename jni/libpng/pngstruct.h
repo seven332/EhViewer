@@ -28,7 +28,7 @@
    /* We must ensure that zlib uses 'const' in declarations. */
 #  define ZLIB_CONST
 #endif
-#include "../zlib/zlib.h"
+#include "zlib.h"
 #ifdef const
    /* zlib.h sometimes #defines const to nothing, undo this. */
 #  undef const
@@ -274,7 +274,7 @@ struct png_struct_def
 #ifdef PNG_READ_GAMMA_SUPPORTED
    png_color_16 background_1; /* background normalized to gamma 1.0 */
 #endif
-#endif /* PNG_bKGD_SUPPORTED */
+#endif /* bKGD */
 
 #ifdef PNG_WRITE_FLUSH_SUPPORTED
    png_flush_ptr output_flush_fn; /* Function for flushing output */
@@ -331,7 +331,7 @@ struct png_struct_def
    int process_mode;                 /* what push library is currently doing */
    int cur_palette;                  /* current push library palette index */
 
-#endif /* PNG_PROGRESSIVE_READ_SUPPORTED */
+#endif /* PROGRESSIVE_READ */
 
 #if defined(__TURBOC__) && !defined(_Windows) && !defined(__FLAT__)
 /* For the Borland special 64K segment handler */

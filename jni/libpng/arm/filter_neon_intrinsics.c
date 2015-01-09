@@ -1,11 +1,11 @@
 
 /* filter_neon_intrinsics.c - NEON optimised filter functions
  *
- * Copyright (c) 2013 Glenn Randers-Pehrson
+ * Copyright (c) 2014 Glenn Randers-Pehrson
  * Written by James Yu <james.yu at linaro.org>, October 2013.
  * Based on filter_neon.S, written by Mans Rullgard, 2011.
  *
- * Last changed in libpng 1.6.8 [December 19, 2013]
+ * Last changed in libpng 1.6.16 [December 22, 2014]
  *
  * This code is released under the libpng license.
  * For conditions of distribution and use, see the disclaimer
@@ -13,6 +13,8 @@
  */
 
 #include "../pngpriv.h"
+
+#ifdef PNG_READ_SUPPORTED
 
 /* This code requires -mfpu=neon on the command line: */
 #if PNG_ARM_NEON_IMPLEMENTATION == 1 /* intrinsics code from pngpriv.h */
@@ -35,7 +37,6 @@
 #define png_ldr(type,pointer)\
    (temp_pointer = png_ptr(type,pointer), *temp_pointer)
 
-#ifdef PNG_READ_SUPPORTED
 #if PNG_ARM_NEON_OPT > 0
 
 void
@@ -368,5 +369,5 @@ png_read_filter_row_paeth4_neon(png_row_infop row_info, png_bytep row,
 }
 
 #endif /* PNG_ARM_NEON_OPT > 0 */
-#endif /* PNG_READ_SUPPORTED */
 #endif /* PNG_ARM_NEON_IMPLEMENTATION == 1 (intrinsics) */
+#endif /* READ */

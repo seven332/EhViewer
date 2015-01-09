@@ -121,7 +121,7 @@ struct png_info_def
    int num_text; /* number of comments read or comments to write */
    int max_text; /* current size of text array */
    png_textp text; /* array of comments read or comments to write */
-#endif /* PNG_TEXT_SUPPORTED */
+#endif /* TEXT */
 
 #ifdef PNG_tIME_SUPPORTED
    /* The tIME chunk holds the last time the displayed image data was
