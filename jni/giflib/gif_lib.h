@@ -7,9 +7,13 @@ gif_lib.h - service library for decoding and encoding GIF images
 #ifndef _GIF_LIB_H_
 #define _GIF_LIB_H_ 1
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #define GIFLIB_MAJOR 5
 #define GIFLIB_MINOR 1
-#define GIFLIB_RELEASE 0
+#define GIFLIB_RELEASE 1
 
 #define GIF_ERROR   0
 #define GIF_OK      1
@@ -297,6 +301,9 @@ extern void GifDrawBoxedText8x8(SavedImage *Image,
                           const char *legend,
                           const int border, const int bg, const int fg);
 
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 #endif /* _GIF_LIB_H */
 
 /* end */
