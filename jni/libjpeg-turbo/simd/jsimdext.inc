@@ -177,9 +177,12 @@ section .note.GNU-stack noalloc noexec nowrite progbits
 
 ; --------------------------------------------------------------------------
 ;  External Symbol Name
-;
+;  wocao
+; %ifndef EXTN
+; %define EXTN(name)   _ %+ name          ; foo() -> _foo
+; %endif
 %ifndef EXTN
-%define EXTN(name)   _ %+ name          ; foo() -> _foo
+%define EXTN(name)   name
 %endif
 
 ; --------------------------------------------------------------------------

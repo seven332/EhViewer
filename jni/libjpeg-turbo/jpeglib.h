@@ -875,6 +875,16 @@ struct jpeg_memory_mgr {
 typedef boolean (*jpeg_marker_parser_method) (j_decompress_ptr cinfo);
 
 
+/* Originally, this macro was used as a way of defining function prototypes
+ * for both modern compilers as well as older compilers that did not support
+ * prototype parameters.  libjpeg-turbo has never supported these older,
+ * non-ANSI compilers, but the macro is still included because there is some
+ * software out there that uses it.
+ */
+
+#define JPP(arglist)    arglist
+
+
 /* Default error-management setup */
 EXTERN(struct jpeg_error_mgr *) jpeg_std_error (struct jpeg_error_mgr * err);
 

@@ -41,9 +41,7 @@ libjpeg-turbo/jmemmgr.c \
 libjpeg-turbo/jmemnobs.c \
 libjpeg-turbo/jquant1.c \
 libjpeg-turbo/jquant2.c \
-libjpeg-turbo/jutils.c \
-libjpeg-turbo/transupp.c \
-libjpeg-turbo/turbojpeg.c
+libjpeg-turbo/jutils.c
 LOCAL_CFLAGS := -O3 -DANDROID
 
 ifeq ($(TARGET_ARCH_ABI),$(filter $(TARGET_ARCH_ABI), armeabi armeabi-v7a))
@@ -99,8 +97,26 @@ ifeq ($(TARGET_ARCH_ABI),x86)
     libjpeg-turbo/simd/jidctred-sse2.asm \
     libjpeg-turbo/simd/jquantf-sse2.asm \
     libjpeg-turbo/simd/jquanti-sse2.asm
+endif
 
-    LOCAL_ASMFLAGS:= -Plibjpeg-turbo/simd/jsimdcfg.inc
+ifeq ($(TARGET_ARCH_ABI),x86_64)
+    LOCAL_SRC_FILES += \
+    libjpeg-turbo/simd/jsimd_x86_64.c \
+    libjpeg-turbo/simd/jfdctflt-sse-64.asm \
+    libjpeg-turbo/simd/jccolor-sse2-64.asm \
+    libjpeg-turbo/simd/jcgray-sse2-64.asm \
+    libjpeg-turbo/simd/jcsample-sse2-64.asm \
+    libjpeg-turbo/simd/jdcolor-sse2-64.asm \
+    libjpeg-turbo/simd/jdmerge-sse2-64.asm \
+    libjpeg-turbo/simd/jdsample-sse2-64.asm \
+    libjpeg-turbo/simd/jfdctfst-sse2-64.asm \
+    libjpeg-turbo/simd/jfdctint-sse2-64.asm \
+    libjpeg-turbo/simd/jidctflt-sse2-64.asm \
+    libjpeg-turbo/simd/jidctfst-sse2-64.asm \
+    libjpeg-turbo/simd/jidctint-sse2-64.asm \
+    libjpeg-turbo/simd/jidctred-sse2-64.asm \
+    libjpeg-turbo/simd/jquantf-sse2-64.asm \
+    libjpeg-turbo/simd/jquanti-sse2-64.asm
 endif
 
 ifeq ($(TARGET_ARCH_ABI),mips)

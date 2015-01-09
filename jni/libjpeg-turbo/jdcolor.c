@@ -588,6 +588,7 @@ cmyk_rgb_convert (j_decompress_ptr cinfo,
   }
 }
 
+
 /*
  * Adobe-style YCCK->CMYK conversion.
  * We convert YCbCr to R=1-C, G=1-M, and B=1-Y using the same
@@ -869,9 +870,8 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
     } else if (cinfo->jpeg_color_space == JCS_CMYK) {
       cconvert->pub.color_convert = cmyk_gray_convert;
       build_rgb_y_table(cinfo);
-    } else {
+    } else
       ERREXIT(cinfo, JERR_CONVERSION_NOTIMPL);
-    }
     break;
 
   case JCS_RGB:
@@ -887,9 +887,9 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
   case JCS_EXT_ARGB:
     cinfo->out_color_components = rgb_pixelsize[cinfo->out_color_space];
     if (cinfo->jpeg_color_space == JCS_YCbCr) {
-      if (jsimd_can_ycc_rgb()) {
+      if (jsimd_can_ycc_rgb())
         cconvert->pub.color_convert = jsimd_ycc_rgb_convert;
-      } else {
+      else {
         cconvert->pub.color_convert = ycc_rgb_convert;
         build_ycc_rgb_table(cinfo);
       }
@@ -905,9 +905,8 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
         cconvert->pub.color_convert = rgb_rgb_convert;
     } else if (cinfo->jpeg_color_space == JCS_CMYK) {
       cconvert->pub.color_convert = cmyk_rgb_convert;
-    } else {
+    } else
       ERREXIT(cinfo, JERR_CONVERSION_NOTIMPL);
-    }
     break;
 
   case JCS_RGB565:

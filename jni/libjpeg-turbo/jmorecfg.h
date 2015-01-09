@@ -180,6 +180,24 @@ typedef unsigned int JDIMENSION;
 #define EXTERN(type)            extern type
 
 
+/* Originally, this macro was used as a way of defining function prototypes
+ * for both modern compilers as well as older compilers that did not support
+ * prototype parameters.  libjpeg-turbo has never supported these older,
+ * non-ANSI compilers, but the macro is still included because there is some
+ * software out there that uses it.
+ */
+
+#define JMETHOD(type,methodname,arglist)  type (*methodname) arglist
+
+
+/* libjpeg-turbo no longer supports platforms that have far symbols (MS-DOS),
+ * but again, some software relies on this macro.
+ */
+
+#undef FAR
+#define FAR
+
+
 /*
  * On a few systems, type boolean and/or its values FALSE, TRUE may appear
  * in standard header files.  Or you may have conflicts with application-

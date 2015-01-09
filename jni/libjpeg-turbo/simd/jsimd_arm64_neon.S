@@ -6,6 +6,7 @@
  * Author: Siarhei Siamashka <siarhei.siamashka@nokia.com>
  * Copyright (C) 2013-2014, Linaro Limited
  * Author: Ragesh Radhakrishnan <ragesh.r@linaro.org>
+ * Copyright (C) 2014, D. R. Commander.  All rights reserved.
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the authors be held liable for any damages
@@ -197,21 +198,21 @@ _\fname:
     tmp13 = q1;                                                               \
 }
 
-#define XFIX_0_899976223                    v0.4h[0]
-#define XFIX_0_541196100                    v0.4h[1]
-#define XFIX_2_562915447                    v0.4h[2]
-#define XFIX_0_298631336_MINUS_0_899976223  v0.4h[3]
-#define XFIX_1_501321110_MINUS_0_899976223  v1.4h[0]
-#define XFIX_2_053119869_MINUS_2_562915447  v1.4h[1]
-#define XFIX_0_541196100_PLUS_0_765366865   v1.4h[2]
-#define XFIX_1_175875602                    v1.4h[3]
-#define XFIX_1_175875602_MINUS_0_390180644  v2.4h[0]
-#define XFIX_0_541196100_MINUS_1_847759065  v2.4h[1]
-#define XFIX_3_072711026_MINUS_2_562915447  v2.4h[2]
-#define XFIX_1_175875602_MINUS_1_961570560  v2.4h[3]
+#define XFIX_0_899976223                    v0.h[0]
+#define XFIX_0_541196100                    v0.h[1]
+#define XFIX_2_562915447                    v0.h[2]
+#define XFIX_0_298631336_MINUS_0_899976223  v0.h[3]
+#define XFIX_1_501321110_MINUS_0_899976223  v1.h[0]
+#define XFIX_2_053119869_MINUS_2_562915447  v1.h[1]
+#define XFIX_0_541196100_PLUS_0_765366865   v1.h[2]
+#define XFIX_1_175875602                    v1.h[3]
+#define XFIX_1_175875602_MINUS_0_390180644  v2.h[0]
+#define XFIX_0_541196100_MINUS_1_847759065  v2.h[1]
+#define XFIX_3_072711026_MINUS_2_562915447  v2.h[2]
+#define XFIX_1_175875602_MINUS_1_961570560  v2.h[3]
 
 .balign 16
-jsimd_idct_islow_neon_consts:
+Ljsimd_idct_islow_neon_consts:
     .short FIX_0_899976223                    /* d0[0] */
     .short FIX_0_541196100                    /* d0[1] */
     .short FIX_2_562915447                    /* d0[2] */
@@ -256,54 +257,54 @@ asm_function jsimd_idct_islow_neon
     /* Save all NEON registers and x15 (32 NEON registers * 8 bytes + 16) */
     sub             sp, sp, 272
     str             x15, [sp], 16
-    adr             x15, jsimd_idct_islow_neon_consts
-    st1             {v0.8b - v3.8b}, [sp], 32
-    st1             {v4.8b - v7.8b}, [sp], 32
-    st1             {v8.8b - v11.8b}, [sp], 32
-    st1             {v12.8b - v15.8b}, [sp], 32
-    st1             {v16.8b - v19.8b}, [sp], 32
-    st1             {v20.8b - v23.8b}, [sp], 32
-    st1             {v24.8b - v27.8b}, [sp], 32
-    st1             {v28.8b - v31.8b}, [sp], 32
+    adr             x15, Ljsimd_idct_islow_neon_consts
+    st1             {v0.8b, v1.8b, v2.8b, v3.8b}, [sp], 32
+    st1             {v4.8b, v5.8b, v6.8b, v7.8b}, [sp], 32
+    st1             {v8.8b, v9.8b, v10.8b, v11.8b}, [sp], 32
+    st1             {v12.8b, v13.8b, v14.8b, v15.8b}, [sp], 32
+    st1             {v16.8b, v17.8b, v18.8b, v19.8b}, [sp], 32
+    st1             {v20.8b, v21.8b, v22.8b, v23.8b}, [sp], 32
+    st1             {v24.8b, v25.8b, v26.8b, v27.8b}, [sp], 32
+    st1             {v28.8b, v29.8b, v30.8b, v31.8b}, [sp], 32
     ld1             {v16.4h, v17.4h, v18.4h, v19.4h}, [COEF_BLOCK], 32
     ld1             {v0.4h, v1.4h, v2.4h, v3.4h}, [DCT_TABLE], 32
     ld1             {v20.4h, v21.4h, v22.4h, v23.4h}, [COEF_BLOCK], 32
     mul             v16.4h, v16.4h, v0.4h
     mul             v17.4h, v17.4h, v1.4h
-    ins             v16.2d[1], v17.2d[0]  /* 128 bit q8 */
+    ins             v16.d[1], v17.d[0]  /* 128 bit q8 */
     ld1             {v4.4h, v5.4h, v6.4h, v7.4h}, [DCT_TABLE], 32
     mul             v18.4h, v18.4h, v2.4h
     mul             v19.4h, v19.4h, v3.4h
-    ins             v18.2d[1], v19.2d[0]  /* 128 bit q9 */
+    ins             v18.d[1], v19.d[0]  /* 128 bit q9 */
     ld1             {v24.4h, v25.4h, v26.4h, v27.4h}, [COEF_BLOCK], 32
     mul             v20.4h, v20.4h, v4.4h
     mul             v21.4h, v21.4h, v5.4h
-    ins             v20.2d[1], v21.2d[0]  /* 128 bit q10 */
+    ins             v20.d[1], v21.d[0]  /* 128 bit q10 */
     ld1             {v0.4h, v1.4h, v2.4h, v3.4h}, [DCT_TABLE], 32
     mul             v22.4h, v22.4h, v6.4h
     mul             v23.4h, v23.4h, v7.4h
-    ins             v22.2d[1], v23.2d[0]  /* 128 bit q11 */
+    ins             v22.d[1], v23.d[0]  /* 128 bit q11 */
     ld1             {v28.4h, v29.4h, v30.4h, v31.4h}, [COEF_BLOCK]
     mul             v24.4h, v24.4h, v0.4h
     mul             v25.4h, v25.4h, v1.4h
-    ins             v24.2d[1], v25.2d[0]  /* 128 bit q12 */
+    ins             v24.d[1], v25.d[0]  /* 128 bit q12 */
     ld1             {v4.4h, v5.4h, v6.4h, v7.4h}, [DCT_TABLE], 32
     mul             v28.4h, v28.4h, v4.4h
     mul             v29.4h, v29.4h, v5.4h
-    ins             v28.2d[1], v29.2d[0]  /* 128 bit q14 */
+    ins             v28.d[1], v29.d[0]  /* 128 bit q14 */
     mul             v26.4h, v26.4h, v2.4h
     mul             v27.4h, v27.4h, v3.4h
-    ins             v26.2d[1], v27.2d[0]  /* 128 bit q13 */
+    ins             v26.d[1], v27.d[0]  /* 128 bit q13 */
     ld1             {v0.4h, v1.4h, v2.4h, v3.4h}, [x15]  /* load constants */
     add             x15, x15, #16
     mul             v30.4h, v30.4h, v6.4h
     mul             v31.4h, v31.4h, v7.4h
-    ins             v30.2d[1], v31.2d[0]  /* 128 bit q15 */
+    ins             v30.d[1], v31.d[0]  /* 128 bit q15 */
     /* Go to the bottom of the stack */
     sub             sp, sp, 352
     stp             x4, x5, [sp], 16
-    st1             {v8.4h - v11.4h}, [sp], 32  /* save NEON registers */
-    st1             {v12.4h - v15.4h}, [sp], 32
+    st1             {v8.4h, v9.4h, v10.4h, v11.4h}, [sp], 32  /* save NEON registers */
+    st1             {v12.4h, v13.4h, v14.4h, v15.4h}, [sp], 32
     /* 1-D IDCT, pass 1, left 4x8 half */
     add             v4.4h,    ROW7L.4h, ROW3L.4h
     add             v5.4h,    ROW5L.4h, ROW1L.4h
@@ -378,7 +379,7 @@ asm_function jsimd_idct_islow_neon
     rshrn           ROW0L.4h, v12.4s,   #11
     rshrn           ROW4L.4h, v6.4s,    #11
 
-      beq             3f /* Go to do some special handling for the sparse right 4x8 half */
+      b.eq          3f /* Go to do some special handling for the sparse right 4x8 half */
 
     /* 1-D IDCT, pass 1, right 4x8 half */
     ld1             {v2.4h},  [x15]    /* reload constants */
@@ -553,33 +554,33 @@ asm_function jsimd_idct_islow_neon
     shrn            ROW4R.4h, v6.4s,    #16
 
 2:  /* Descale to 8-bit and range limit */
-    ins             v16.2d[1], v17.2d[0]
-    ins             v18.2d[1], v19.2d[0]
-    ins             v20.2d[1], v21.2d[0]
-    ins             v22.2d[1], v23.2d[0]
+    ins             v16.d[1], v17.d[0]
+    ins             v18.d[1], v19.d[0]
+    ins             v20.d[1], v21.d[0]
+    ins             v22.d[1], v23.d[0]
     sqrshrn         v16.8b,   v16.8h,   #2
     sqrshrn2        v16.16b,  v18.8h,   #2
     sqrshrn         v18.8b,   v20.8h,   #2
     sqrshrn2        v18.16b,  v22.8h,   #2
 
     /* vpop            {v8.4h - d15.4h} */ /* restore NEON registers */
-    ld1             {v8.4h - v11.4h}, [sp], 32
-    ld1             {v12.4h - v15.4h}, [sp], 32
-    ins             v24.2d[1], v25.2d[0]
+    ld1             {v8.4h, v9.4h, v10.4h, v11.4h}, [sp], 32
+    ld1             {v12.4h, v13.4h, v14.4h, v15.4h}, [sp], 32
+    ins             v24.d[1], v25.d[0]
 
     sqrshrn         v20.8b,   v24.8h,   #2
       /* Transpose the final 8-bit samples and do signed->unsigned conversion */
     /* trn1            v16.8h,    v16.8h,  v18.8h */
     transpose       v16, v18, v3, .16b, .8h
-    ins             v26.2d[1], v27.2d[0]
-    ins             v28.2d[1], v29.2d[0]
-    ins             v30.2d[1], v31.2d[0]
+    ins             v26.d[1], v27.d[0]
+    ins             v28.d[1], v29.d[0]
+    ins             v30.d[1], v31.d[0]
     sqrshrn2        v20.16b,  v26.8h,   #2
     sqrshrn         v22.8b,   v28.8h,   #2
     movi            v0.16b,   #(CENTERJSAMPLE)
     sqrshrn2        v22.16b,  v30.8h,   #2
-    transpose_single v16, v17, v3, .2d, .8b
-    transpose_single v18, v19, v3, .2d, .8b
+    transpose_single v16, v17, v3, .d, .8b
+    transpose_single v18, v19, v3, .d, .8b
     add             v16.8b,   v16.8b,   v0.8b
     add             v17.8b,   v17.8b,   v0.8b
     add             v18.8b,   v18.8b,   v0.8b
@@ -590,7 +591,7 @@ asm_function jsimd_idct_islow_neon
     add             TMP1,     TMP1,     OUTPUT_COL
     add             TMP2,     TMP2,     OUTPUT_COL
     st1             {v16.8b}, [TMP1]
-    transpose_single v20, v21, v3, .2d, .8b
+    transpose_single v20, v21, v3, .d, .8b
     st1             {v17.8b}, [TMP2]
     ldp             TMP1,     TMP2,     [OUTPUT_BUF], 16
     add             TMP1,     TMP1,     OUTPUT_COL
@@ -605,7 +606,7 @@ asm_function jsimd_idct_islow_neon
     add             TMP2,     TMP2,     OUTPUT_COL
     add             TMP3,     TMP3,     OUTPUT_COL
     add             TMP4,     TMP4,     OUTPUT_COL
-    transpose_single v22, v23, v3, .2d, .8b
+    transpose_single v22, v23, v3, .d, .8b
     st1             {v20.8b}, [TMP1]
     add             v22.8b,   v22.8b,   v0.8b
     add             v23.8b,   v23.8b,   v0.8b
@@ -613,14 +614,14 @@ asm_function jsimd_idct_islow_neon
     st1             {v22.8b}, [TMP3]
     st1             {v23.8b}, [TMP4]
     ldr             x15, [sp], 16
-    ld1             {v0.8b - v3.8b}, [sp], 32
-    ld1             {v4.8b - v7.8b}, [sp], 32
-    ld1             {v8.8b - v11.8b}, [sp], 32
-    ld1             {v12.8b - v15.8b}, [sp], 32
-    ld1             {v16.8b - v19.8b}, [sp], 32
-    ld1             {v20.8b - v23.8b}, [sp], 32
-    ld1             {v24.8b - v27.8b}, [sp], 32
-    ld1             {v28.8b - v31.8b}, [sp], 32
+    ld1             {v0.8b, v1.8b, v2.8b, v3.8b}, [sp], 32
+    ld1             {v4.8b, v5.8b, v6.8b, v7.8b}, [sp], 32
+    ld1             {v8.8b, v9.8b, v10.8b, v11.8b}, [sp], 32
+    ld1             {v12.8b, v13.8b, v14.8b, v15.8b}, [sp], 32
+    ld1             {v16.8b, v17.8b, v18.8b, v19.8b}, [sp], 32
+    ld1             {v20.8b, v21.8b, v22.8b, v23.8b}, [sp], 32
+    ld1             {v24.8b, v25.8b, v26.8b, v27.8b}, [sp], 32
+    ld1             {v28.8b, v29.8b, v30.8b, v31.8b}, [sp], 32
     blr             x30
 
 3:  /* Left 4x8 half is done, right 4x8 half contains mostly zeros */
@@ -636,17 +637,17 @@ asm_function jsimd_idct_islow_neon
     transpose       ROW0L, ROW2L, v3, .16b, .2s
     transpose       ROW5L, ROW7L, v3, .16b, .2s
     cmp             x0, #0
-    beq             4f /* Right 4x8 half has all zeros, go to 'sparse' second pass */
+    b.eq            4f /* Right 4x8 half has all zeros, go to 'sparse' second pass */
 
     /* Only row 0 is non-zero for the right 4x8 half  */
-    dup             ROW1R.4h, ROW0R.4h[1]
-    dup             ROW2R.4h, ROW0R.4h[2]
-    dup             ROW3R.4h, ROW0R.4h[3]
-    dup             ROW4R.4h, ROW0R.4h[0]
-    dup             ROW5R.4h, ROW0R.4h[1]
-    dup             ROW6R.4h, ROW0R.4h[2]
-    dup             ROW7R.4h, ROW0R.4h[3]
-    dup             ROW0R.4h, ROW0R.4h[0]
+    dup             ROW1R.4h, ROW0R.h[1]
+    dup             ROW2R.4h, ROW0R.h[2]
+    dup             ROW3R.4h, ROW0R.h[3]
+    dup             ROW4R.4h, ROW0R.h[0]
+    dup             ROW5R.4h, ROW0R.h[1]
+    dup             ROW6R.4h, ROW0R.h[2]
+    dup             ROW7R.4h, ROW0R.h[3]
+    dup             ROW0R.4h, ROW0R.h[0]
     b               1b /* Go to 'normal' second pass */
 
 4:  /* 1-D IDCT, pass 2 (sparse variant with zero rows 4-7), left 4x8 half */
@@ -770,13 +771,13 @@ asm_function jsimd_idct_islow_neon
  * per 1-D IDCT pass, totalling to 5 VQDMULH and 35 VADD/VSUB instructions.
  */
 
-#define XFIX_1_082392200 v0.4h[0]
-#define XFIX_1_414213562 v0.4h[1]
-#define XFIX_1_847759065 v0.4h[2]
-#define XFIX_2_613125930 v0.4h[3]
+#define XFIX_1_082392200 v0.h[0]
+#define XFIX_1_414213562 v0.h[1]
+#define XFIX_1_847759065 v0.h[2]
+#define XFIX_2_613125930 v0.h[3]
 
 .balign 16
-jsimd_idct_ifast_neon_consts:
+Ljsimd_idct_ifast_neon_consts:
     .short (277 * 128 - 256 * 128) /* XFIX_1_082392200 */
     .short (362 * 128 - 256 * 128) /* XFIX_1_414213562 */
     .short (473 * 128 - 256 * 128) /* XFIX_1_847759065 */
@@ -810,12 +811,12 @@ asm_function jsimd_idct_ifast_neon
     /* Save NEON registers used in fast IDCT */
     sub             sp, sp, #176
     stp             x22, x23, [sp], 16
-    adr             x23, jsimd_idct_ifast_neon_consts
-    st1             {v0.8b - v3.8b}, [sp], 32
-    st1             {v4.8b - v7.8b}, [sp], 32
-    st1             {v8.8b - v11.8b}, [sp], 32
-    st1             {v12.8b - v15.8b}, [sp], 32
-    st1             {v16.8b - v19.8b}, [sp], 32
+    adr             x23, Ljsimd_idct_ifast_neon_consts
+    st1             {v0.8b, v1.8b, v2.8b, v3.8b}, [sp], 32
+    st1             {v4.8b, v5.8b, v6.8b, v7.8b}, [sp], 32
+    st1             {v8.8b, v9.8b, v10.8b, v11.8b}, [sp], 32
+    st1             {v12.8b, v13.8b, v14.8b, v15.8b}, [sp], 32
+    st1             {v16.8b, v17.8b, v18.8b, v19.8b}, [sp], 32
     ld1             {v8.8h, v9.8h}, [COEF_BLOCK], 32
     ld1             {v0.8h, v1.8h}, [DCT_TABLE], 32
     ld1             {v10.8h, v11.8h}, [COEF_BLOCK], 32
@@ -909,24 +910,24 @@ asm_function jsimd_idct_ifast_neon
     trn2            v15.4s,   v18.4s,   v15.4s
     /* vswp            v14.4h,   v10-MSB.4h */
     umov            x22, v14.d[0]
-    ins             v14.2d[0], v10.2d[1]
-    ins             v10.2d[1], x22
+    ins             v14.d[0], v10.d[1]
+    ins             v10.d[1], x22
     /* vswp            v13.4h,   v9MSB.4h */
 
     umov            x22, v13.d[0]
-    ins             v13.2d[0], v9.2d[1]
-    ins             v9.2d[1], x22
+    ins             v13.d[0], v9.d[1]
+    ins             v9.d[1], x22
     /* 1-D IDCT, pass 2 */
     sub             v2.8h,    v10.8h,   v14.8h
     /* vswp            v15.4h,   v11MSB.4h */
     umov            x22, v15.d[0]
-    ins             v15.2d[0], v11.2d[1]
-    ins             v11.2d[1], x22
+    ins             v15.d[0], v11.d[1]
+    ins             v11.d[1], x22
     add             v14.8h,   v10.8h,   v14.8h
     /* vswp            v12.4h,   v8-MSB.4h */
     umov            x22, v12.d[0]
-    ins             v12.2d[0], v8.2d[1]
-    ins             v8.2d[1], x22
+    ins             v12.d[0], v8.d[1]
+    ins             v8.d[1],  x22
     sub             v1.8h,    v11.8h,   v13.8h
     add             v13.8h,   v11.8h,   v13.8h
     sub             v5.8h,    v9.8h,    v15.8h
@@ -997,13 +998,13 @@ asm_function jsimd_idct_ifast_neon
     trn1            v9.4s,    v9.4s,    v11.4s
     trn2            v11.4s,   v18.4s,   v11.4s
     /* make copy */
-    ins             v17.2d[0], v8.2d[1]
+    ins             v17.d[0], v8.d[1]
     /* Transpose  d16-d17-msb */
     mov             v18.16b,  v8.16b
     trn1            v8.8b,    v8.8b,    v17.8b
     trn2            v17.8b,   v18.8b,   v17.8b
     /* make copy */
-    ins             v19.2d[0], v9.2d[1]
+    ins             v19.d[0], v9.d[1]
     mov             v18.16b,  v9.16b
     trn1            v9.8b,    v9.8b,    v19.8b
     trn2            v19.8b,   v18.8b,   v19.8b
@@ -1018,7 +1019,7 @@ asm_function jsimd_idct_ifast_neon
     add             TMP2,     TMP2,     OUTPUT_COL
     st1             {v9.8b},  [TMP1]
     /* make copy */
-    ins             v7.2d[0], v10.2d[1]
+    ins             v7.d[0],  v10.d[1]
     mov             v18.16b,  v10.16b
     trn1            v10.8b,   v10.8b,   v7.8b
     trn2            v7.8b,    v18.8b,   v7.8b
@@ -1031,7 +1032,7 @@ asm_function jsimd_idct_ifast_neon
     add             TMP5,     TMP5,     OUTPUT_COL
     st1             {v10.8b}, [TMP1]
     /* make copy */
-    ins             v16.2d[0], v11.2d[1]
+    ins             v16.d[0], v11.d[1]
     mov             v18.16b,  v11.16b
     trn1            v11.8b,   v11.8b,   v16.8b
     trn2            v16.8b,   v18.8b,   v16.8b
@@ -1040,11 +1041,11 @@ asm_function jsimd_idct_ifast_neon
     st1             {v16.8b}, [TMP5]
     sub             sp, sp, #176
     ldp             x22, x23, [sp], 16
-    ld1             {v0.8b - v3.8b}, [sp], 32
-    ld1             {v4.8b - v7.8b}, [sp], 32
-    ld1             {v8.8b - v11.8b}, [sp], 32
-    ld1             {v12.8b - v15.8b}, [sp], 32
-    ld1             {v16.8b - v19.8b}, [sp], 32
+    ld1             {v0.8b, v1.8b, v2.8b, v3.8b}, [sp], 32
+    ld1             {v4.8b, v5.8b, v6.8b, v7.8b}, [sp], 32
+    ld1             {v8.8b, v9.8b, v10.8b, v11.8b}, [sp], 32
+    ld1             {v12.8b, v13.8b, v14.8b, v15.8b}, [sp], 32
+    ld1             {v16.8b, v17.8b, v18.8b, v19.8b}, [sp], 32
     blr             x30
 
     .unreq          DCT_TABLE
@@ -1095,38 +1096,38 @@ asm_function jsimd_idct_ifast_neon
 #define FIX_3_624509785  (29692) /* FIX(3.624509785) */
 
 .balign 16
-jsimd_idct_4x4_neon_consts:
-    .short     FIX_1_847759065     /* v0.4h[0] */
-    .short     -FIX_0_765366865    /* v0.4h[1] */
-    .short     -FIX_0_211164243    /* v0.4h[2] */
-    .short     FIX_1_451774981     /* v0.4h[3] */
+Ljsimd_idct_4x4_neon_consts:
+    .short     FIX_1_847759065     /* v0.h[0] */
+    .short     -FIX_0_765366865    /* v0.h[1] */
+    .short     -FIX_0_211164243    /* v0.h[2] */
+    .short     FIX_1_451774981     /* v0.h[3] */
     .short     -FIX_2_172734803    /* d1[0] */
     .short     FIX_1_061594337     /* d1[1] */
     .short     -FIX_0_509795579    /* d1[2] */
     .short     -FIX_0_601344887    /* d1[3] */
-    .short     FIX_0_899976223     /* v2.4h[0] */
-    .short     FIX_2_562915447     /* v2.4h[1] */
-    .short     1 << (CONST_BITS+1) /* v2.4h[2] */
-    .short     0                   /* v2.4h[3] */
+    .short     FIX_0_899976223     /* v2.h[0] */
+    .short     FIX_2_562915447     /* v2.h[1] */
+    .short     1 << (CONST_BITS+1) /* v2.h[2] */
+    .short     0                   /* v2.h[3] */
 
 .macro idct_helper x4, x6, x8, x10, x12, x14, x16, shift, y26, y27, y28, y29
-    smull           v28.4s, \x4,    v2.4h[2]
-    smlal           v28.4s, \x8,    v0.4h[0]
-    smlal           v28.4s, \x14,   v0.4h[1]
+    smull           v28.4s, \x4,    v2.h[2]
+    smlal           v28.4s, \x8,    v0.h[0]
+    smlal           v28.4s, \x14,   v0.h[1]
 
-    smull           v26.4s, \x16,   v1.4h[2]
-    smlal           v26.4s, \x12,   v1.4h[3]
-    smlal           v26.4s, \x10,   v2.4h[0]
-    smlal           v26.4s, \x6,    v2.4h[1]
+    smull           v26.4s, \x16,   v1.h[2]
+    smlal           v26.4s, \x12,   v1.h[3]
+    smlal           v26.4s, \x10,   v2.h[0]
+    smlal           v26.4s, \x6,    v2.h[1]
 
-    smull           v30.4s, \x4,    v2.4h[2]
-    smlsl           v30.4s, \x8,    v0.4h[0]
-    smlsl           v30.4s, \x14,   v0.4h[1]
+    smull           v30.4s, \x4,    v2.h[2]
+    smlsl           v30.4s, \x8,    v0.h[0]
+    smlsl           v30.4s, \x14,   v0.h[1]
 
-    smull           v24.4s, \x16,   v0.4h[2]
-    smlal           v24.4s, \x12,   v0.4h[3]
-    smlal           v24.4s, \x10,   v1.4h[0]
-    smlal           v24.4s, \x6,    v1.4h[1]
+    smull           v24.4s, \x16,   v0.h[2]
+    smlal           v24.4s, \x12,   v0.h[3]
+    smlal           v24.4s, \x10,   v1.h[0]
+    smlal           v24.4s, \x6,    v1.h[1]
 
     add             v20.4s, v28.4s, v26.4s
     sub             v28.4s, v28.4s, v26.4s
@@ -1171,15 +1172,15 @@ asm_function jsimd_idct_4x4_neon
     sub             sp, sp, 272
     str             x15, [sp], 16
     /* Load constants (v3.4h is just used for padding) */
-    adr             TMP4, jsimd_idct_4x4_neon_consts
-    st1             {v0.8b - v3.8b}, [sp], 32
-    st1             {v4.8b - v7.8b}, [sp], 32
-    st1             {v8.8b - v11.8b}, [sp], 32
-    st1             {v12.8b - v15.8b}, [sp], 32
-    st1             {v16.8b - v19.8b}, [sp], 32
-    st1             {v20.8b - v23.8b}, [sp], 32
-    st1             {v24.8b - v27.8b}, [sp], 32
-    st1             {v28.8b - v31.8b}, [sp], 32
+    adr             TMP4, Ljsimd_idct_4x4_neon_consts
+    st1             {v0.8b, v1.8b, v2.8b, v3.8b}, [sp], 32
+    st1             {v4.8b, v5.8b, v6.8b, v7.8b}, [sp], 32
+    st1             {v8.8b, v9.8b, v10.8b, v11.8b}, [sp], 32
+    st1             {v12.8b, v13.8b, v14.8b, v15.8b}, [sp], 32
+    st1             {v16.8b, v17.8b, v18.8b, v19.8b}, [sp], 32
+    st1             {v20.8b, v21.8b, v22.8b, v23.8b}, [sp], 32
+    st1             {v24.8b, v25.8b, v26.8b, v27.8b}, [sp], 32
+    st1             {v28.8b, v29.8b, v30.8b, v31.8b}, [sp], 32
     ld1             {v0.4h, v1.4h, v2.4h, v3.4h}, [TMP4]
 
     /* Load all COEF_BLOCK into NEON registers with the following allocation:
@@ -1203,45 +1204,45 @@ asm_function jsimd_idct_4x4_neon
     ld1             {v18.4h, v19.4h, v20.4h, v21.4h}, [DCT_TABLE], 32
     mul             v4.4h, v4.4h, v18.4h
     mul             v5.4h, v5.4h, v19.4h
-    ins             v4.2d[1], v5.2d[0]    /* 128 bit q4 */
+    ins             v4.d[1], v5.d[0]    /* 128 bit q4 */
     ld1             {v22.4h, v23.4h, v24.4h, v25.4h}, [DCT_TABLE], 32
     mul             v6.4h, v6.4h, v20.4h
     mul             v7.4h, v7.4h, v21.4h
-    ins             v6.2d[1], v7.2d[0]    /* 128 bit q6 */
+    ins             v6.d[1], v7.d[0]    /* 128 bit q6 */
     mul             v8.4h, v8.4h, v22.4h
     mul             v9.4h, v9.4h, v23.4h
-    ins             v8.2d[1], v9.2d[0]    /* 128 bit q8 */
+    ins             v8.d[1], v9.d[0]    /* 128 bit q8 */
     add             DCT_TABLE, DCT_TABLE, #16
     ld1             {v26.4h, v27.4h, v28.4h, v29.4h}, [DCT_TABLE], 32
     mul             v10.4h, v10.4h, v24.4h
     mul             v11.4h, v11.4h, v25.4h
-    ins             v10.2d[1], v11.2d[0]  /* 128 bit q10 */
+    ins             v10.d[1], v11.d[0]  /* 128 bit q10 */
     mul             v12.4h, v12.4h, v26.4h
     mul             v13.4h, v13.4h, v27.4h
-    ins             v12.2d[1], v13.2d[0]  /* 128 bit q12 */
+    ins             v12.d[1], v13.d[0]  /* 128 bit q12 */
     ld1             {v30.4h, v31.4h}, [DCT_TABLE], 16
     mul             v14.4h, v14.4h, v28.4h
     mul             v15.4h, v15.4h, v29.4h
-    ins             v14.2d[1], v15.2d[0]  /* 128 bit q14 */
+    ins             v14.d[1], v15.d[0]  /* 128 bit q14 */
     mul             v16.4h, v16.4h, v30.4h
     mul             v17.4h, v17.4h, v31.4h
-    ins             v16.2d[1], v17.2d[0]  /* 128 bit q16 */
+    ins             v16.d[1], v17.d[0]  /* 128 bit q16 */
 
     /* Pass 1 */
     idct_helper     v4.4h, v6.4h, v8.4h, v10.4h, v12.4h, v14.4h, v16.4h, 12, v4.4h, v6.4h, v8.4h, v10.4h
     transpose_4x4   v4, v6, v8, v10, v3
-    ins             v10.2d[1], v11.2d[0]
+    ins             v10.d[1], v11.d[0]
     idct_helper     v5.4h, v7.4h, v9.4h, v11.4h, v13.4h, v15.4h, v17.4h, 12, v5.4h, v7.4h, v9.4h, v11.4h
     transpose_4x4   v5, v7, v9, v11, v3
-    ins             v10.2d[1], v11.2d[0]
+    ins             v10.d[1], v11.d[0]
     /* Pass 2 */
     idct_helper     v4.4h, v6.4h, v8.4h, v10.4h, v7.4h, v9.4h, v11.4h, 19, v26.4h, v27.4h, v28.4h, v29.4h
     transpose_4x4   v26, v27, v28, v29, v3
 
     /* Range limit */
     movi            v30.8h, #0x80
-    ins             v26.2d[1], v27.2d[0]
-    ins             v28.2d[1], v29.2d[0]
+    ins             v26.d[1], v27.d[0]
+    ins             v28.d[1], v29.d[0]
     add             v26.8h, v26.8h, v30.8h
     add             v28.8h, v28.8h, v30.8h
     sqxtun          v26.8b, v26.8h
@@ -1286,14 +1287,14 @@ asm_function jsimd_idct_4x4_neon
     /* vpop            {v8.4h - v15.4h}    ;not available */
     sub             sp, sp, #272
     ldr             x15, [sp], 16
-    ld1             {v0.8b - v3.8b}, [sp], 32
-    ld1             {v4.8b - v7.8b}, [sp], 32
-    ld1             {v8.8b - v11.8b}, [sp], 32
-    ld1             {v12.8b - v15.8b}, [sp], 32
-    ld1             {v16.8b - v19.8b}, [sp], 32
-    ld1             {v20.8b - v23.8b}, [sp], 32
-    ld1             {v24.8b - v27.8b}, [sp], 32
-    ld1             {v28.8b - v31.8b}, [sp], 32
+    ld1             {v0.8b, v1.8b, v2.8b, v3.8b}, [sp], 32
+    ld1             {v4.8b, v5.8b, v6.8b, v7.8b}, [sp], 32
+    ld1             {v8.8b, v9.8b, v10.8b, v11.8b}, [sp], 32
+    ld1             {v12.8b, v13.8b, v14.8b, v15.8b}, [sp], 32
+    ld1             {v16.8b, v17.8b, v18.8b, v19.8b}, [sp], 32
+    ld1             {v20.8b, v21.8b, v22.8b, v23.8b}, [sp], 32
+    ld1             {v24.8b, v25.8b, v26.8b, v27.8b}, [sp], 32
+    ld1             {v28.8b, v29.8b, v30.8b, v31.8b}, [sp], 32
     blr             x30
 
     .unreq          DCT_TABLE
@@ -1325,7 +1326,7 @@ asm_function jsimd_idct_4x4_neon
  */
 
 .balign 8
-jsimd_idct_2x2_neon_consts:
+Ljsimd_idct_2x2_neon_consts:
     .short     -FIX_0_720959822    /* v14[0] */
     .short     FIX_0_850430095     /* v14[1] */
     .short     -FIX_1_272758580    /* v14[2] */
@@ -1333,10 +1334,10 @@ jsimd_idct_2x2_neon_consts:
 
 .macro idct_helper x4, x6, x10, x12, x16, shift, y26, y27
     sshll      v15.4s, \x4,    #15
-    smull      v26.4s, \x6,    v14.4h[3]
-    smlal      v26.4s, \x10,   v14.4h[2]
-    smlal      v26.4s, \x12,   v14.4h[1]
-    smlal      v26.4s, \x16,   v14.4h[0]
+    smull      v26.4s, \x6,    v14.h[3]
+    smlal      v26.4s, \x10,   v14.h[2]
+    smlal      v26.4s, \x12,   v14.h[1]
+    smlal      v26.4s, \x16,   v14.h[0]
 
     add        v20.4s, v15.4s, v26.4s
     sub        v15.4s, v15.4s, v26.4s
@@ -1367,14 +1368,14 @@ asm_function jsimd_idct_2x2_neon
     str             x15, [sp], 16
 
     /* Load constants */
-    adr             TMP2, jsimd_idct_2x2_neon_consts
-    st1             {v4.8b - v7.8b}, [sp], 32
-    st1             {v8.8b - v11.8b}, [sp], 32
-    st1             {v12.8b - v15.8b}, [sp], 32
-    st1             {v16.8b - v19.8b}, [sp], 32
-    st1             {v21.8b - v22.8b}, [sp], 16
-    st1             {v24.8b - v27.8b}, [sp], 32
-    st1             {v30.8b - v31.8b}, [sp], 16
+    adr             TMP2, Ljsimd_idct_2x2_neon_consts
+    st1             {v4.8b, v5.8b, v6.8b, v7.8b}, [sp], 32
+    st1             {v8.8b, v9.8b, v10.8b, v11.8b}, [sp], 32
+    st1             {v12.8b, v13.8b, v14.8b, v15.8b}, [sp], 32
+    st1             {v16.8b, v17.8b, v18.8b, v19.8b}, [sp], 32
+    st1             {v21.8b, v22.8b}, [sp], 16
+    st1             {v24.8b, v25.8b, v26.8b, v27.8b}, [sp], 32
+    st1             {v30.8b, v31.8b}, [sp], 16
     ld1             {v14.4h}, [TMP2]
 
     /* Load all COEF_BLOCK into NEON registers with the following allocation:
@@ -1400,25 +1401,25 @@ asm_function jsimd_idct_2x2_neon
     ld1             {v18.4h, v19.4h, v20.4h, v21.4h}, [DCT_TABLE], 32
     mul             v4.4h, v4.4h, v18.4h
     mul             v5.4h, v5.4h, v19.4h
-    ins             v4.2d[1], v5.2d[0]
+    ins             v4.d[1], v5.d[0]
     mul             v6.4h, v6.4h, v20.4h
     mul             v7.4h, v7.4h, v21.4h
-    ins             v6.2d[1], v7.2d[0]
+    ins             v6.d[1], v7.d[0]
     add             DCT_TABLE, DCT_TABLE, #16
     ld1             {v24.4h, v25.4h}, [DCT_TABLE], 16
     mul             v10.4h, v10.4h, v24.4h
     mul             v11.4h, v11.4h, v25.4h
-    ins             v10.2d[1], v11.2d[0]
+    ins             v10.d[1], v11.d[0]
     add             DCT_TABLE, DCT_TABLE, #16
     ld1             {v26.4h, v27.4h}, [DCT_TABLE], 16
     mul             v12.4h, v12.4h, v26.4h
     mul             v13.4h, v13.4h, v27.4h
-    ins             v12.2d[1], v13.2d[0]
+    ins             v12.d[1], v13.d[0]
     add             DCT_TABLE, DCT_TABLE, #16
     ld1             {v30.4h, v31.4h}, [DCT_TABLE], 16
     mul             v16.4h, v16.4h, v30.4h
     mul             v17.4h, v17.4h, v31.4h
-    ins             v16.2d[1], v17.2d[0]
+    ins             v16.d[1], v17.d[0]
 
     /* Pass 1 */
 #if 0
@@ -1427,14 +1428,14 @@ asm_function jsimd_idct_2x2_neon
     idct_helper     v5.4h, v7.4h, v11.4h, v13.4h, v17.4h, 13, v5.4h, v7.4h
     transpose_4x4   v5.4h, v7.4h, v9.4h,  v11.4h
 #else
-    smull           v26.4s, v6.4h,  v14.4h[3]
-    smlal           v26.4s, v10.4h, v14.4h[2]
-    smlal           v26.4s, v12.4h, v14.4h[1]
-    smlal           v26.4s, v16.4h, v14.4h[0]
-    smull           v24.4s, v7.4h,  v14.4h[3]
-    smlal           v24.4s, v11.4h, v14.4h[2]
-    smlal           v24.4s, v13.4h, v14.4h[1]
-    smlal           v24.4s, v17.4h, v14.4h[0]
+    smull           v26.4s, v6.4h,  v14.h[3]
+    smlal           v26.4s, v10.4h, v14.h[2]
+    smlal           v26.4s, v12.4h, v14.h[1]
+    smlal           v26.4s, v16.4h, v14.h[0]
+    smull           v24.4s, v7.4h,  v14.h[3]
+    smlal           v24.4s, v11.4h, v14.h[2]
+    smlal           v24.4s, v13.4h, v14.h[1]
+    smlal           v24.4s, v17.4h, v14.h[0]
     sshll           v15.4s, v4.4h,  #15
     sshll           v30.4s, v5.4h,  #15
     add             v20.4s, v15.4s, v26.4s
@@ -1445,12 +1446,12 @@ asm_function jsimd_idct_2x2_neon
     sub             v15.4s, v30.4s, v24.4s
     rshrn           v5.4h,  v20.4s, #13
     rshrn           v7.4h,  v15.4s, #13
-    ins             v4.2d[1], v5.2d[0]
-    ins             v6.2d[1], v7.2d[0]
+    ins             v4.d[1], v5.d[0]
+    ins             v6.d[1], v7.d[0]
     transpose       v4, v6, v3, .16b, .8h
     transpose       v6, v10, v3, .16b, .4s
-    ins             v11.2d[0], v10.2d[1]
-    ins             v7.2d[0], v6.2d[1]
+    ins             v11.d[0], v10.d[1]
+    ins             v7.d[0], v6.d[1]
 #endif
 
     /* Pass 2 */
@@ -1458,10 +1459,10 @@ asm_function jsimd_idct_2x2_neon
 
     /* Range limit */
     movi            v30.8h, #0x80
-    ins             v26.2d[1], v27.2d[0]
+    ins             v26.d[1], v27.d[0]
     add             v26.8h, v26.8h, v30.8h
     sqxtun          v30.8b, v26.8h
-    ins             v26.2d[0], v30.2d[0]
+    ins             v26.d[0], v30.d[0]
     sqxtun          v27.8b, v26.8h
 
     /* Store results to the output buffer */
@@ -1476,13 +1477,13 @@ asm_function jsimd_idct_2x2_neon
 
     sub             sp, sp, #208
     ldr             x15, [sp], 16
-    ld1             {v4.8b - v7.8b}, [sp], 32
-    ld1             {v8.8b - v11.8b}, [sp], 32
-    ld1             {v12.8b - v15.8b}, [sp], 32
-    ld1             {v16.8b - v19.8b}, [sp], 32
-    ld1             {v21.8b - v22.8b}, [sp], 16
-    ld1             {v24.8b - v27.8b}, [sp], 32
-    ld1             {v30.8b - v31.8b}, [sp], 16
+    ld1             {v4.8b, v5.8b, v6.8b, v7.8b}, [sp], 32
+    ld1             {v8.8b, v9.8b, v10.8b, v11.8b}, [sp], 32
+    ld1             {v12.8b, v13.8b, v14.8b, v15.8b}, [sp], 32
+    ld1             {v16.8b, v17.8b, v18.8b, v19.8b}, [sp], 32
+    ld1             {v21.8b, v22.8b}, [sp], 16
+    ld1             {v24.8b, v25.8b, v26.8b, v27.8b}, [sp], 32
+    ld1             {v30.8b, v31.8b}, [sp], 16
     blr             x30
 
     .unreq          DCT_TABLE
@@ -1514,9 +1515,9 @@ asm_function jsimd_idct_2x2_neon
         ld1  {v4.8b}, [U], 8
         ld1  {v5.8b}, [V], 8
         ld1  {v0.8b}, [Y], 8
-        prfm PLDL1KEEP, [U, #64]
-        prfm PLDL1KEEP, [V, #64]
-        prfm PLDL1KEEP, [Y, #64]
+        prfm pldl1keep, [U, #64]
+        prfm pldl1keep, [V, #64]
+        prfm pldl1keep, [Y, #64]
     .elseif \size == 4
         ld1  {v4.b}[0], [U], 1
         ld1  {v4.b}[1], [U], 1
@@ -1606,14 +1607,14 @@ asm_function jsimd_idct_2x2_neon
 .macro do_yuv_to_rgb_stage1
     uaddw        v6.8h, v2.8h, v4.8b     /* q3 = u - 128 */
     uaddw        v8.8h, v2.8h, v5.8b     /* q2 = v - 128 */
-    smull        v20.4s, v6.4h, v1.4h[1] /* multiply by -11277 */
-    smlal        v20.4s, v8.4h, v1.4h[2] /* multiply by -23401 */
-    smull2       v22.4s, v6.8h, v1.4h[1] /* multiply by -11277 */
-    smlal2       v22.4s, v8.8h, v1.4h[2] /* multiply by -23401 */
-    smull        v24.4s, v8.4h, v1.4h[0] /* multiply by 22971 */
-    smull2       v26.4s, v8.8h, v1.4h[0] /* multiply by 22971 */
-    smull        v28.4s, v6.4h, v1.4h[3] /* multiply by 29033 */
-    smull2       v30.4s, v6.8h, v1.4h[3] /* multiply by 29033 */
+    smull        v20.4s, v6.4h, v1.h[1]  /* multiply by -11277 */
+    smlal        v20.4s, v8.4h, v1.h[2]  /* multiply by -23401 */
+    smull2       v22.4s, v6.8h, v1.h[1]  /* multiply by -11277 */
+    smlal2       v22.4s, v8.8h, v1.h[2]  /* multiply by -23401 */
+    smull        v24.4s, v8.4h, v1.h[0]  /* multiply by 22971 */
+    smull2       v26.4s, v8.8h, v1.h[0]  /* multiply by 22971 */
+    smull        v28.4s, v6.4h, v1.h[3]  /* multiply by 29033 */
+    smull2       v30.4s, v6.8h, v1.h[3]  /* multiply by 29033 */
 .endm
 
 .macro do_yuv_to_rgb_stage2
@@ -1656,18 +1657,18 @@ asm_function jsimd_idct_2x2_neon
     sqxtun       v1\g_offs\defsize, v20.8h
     ld1          {v0.8b}, [Y], 8
     sqxtun       v1\r_offs\defsize, v24.8h
-    prfm         PLDL1KEEP, [U, #64]
-    prfm         PLDL1KEEP, [V, #64]
-    prfm         PLDL1KEEP, [Y, #64]
+    prfm         pldl1keep, [U, #64]
+    prfm         pldl1keep, [V, #64]
+    prfm         pldl1keep, [Y, #64]
     sqxtun       v1\b_offs\defsize, v28.8h
     uaddw        v6.8h, v2.8h, v4.8b     /* v6.16b = u - 128 */
     uaddw        v8.8h, v2.8h, v5.8b     /* q2 = v - 128 */
-    smull        v20.4s, v6.4h, v1.4h[1] /* multiply by -11277 */
-    smlal        v20.4s, v8.4h, v1.4h[2] /* multiply by -23401 */
-    smull2       v22.4s, v6.8h, v1.4h[1] /* multiply by -11277 */
-    smlal2       v22.4s, v8.8h, v1.4h[2] /* multiply by -23401 */
-    smull        v24.4s, v8.4h, v1.4h[0] /* multiply by 22971 */
-    smull2       v26.4s, v8.8h, v1.4h[0] /* multiply by 22971 */
+    smull        v20.4s, v6.4h, v1.h[1]  /* multiply by -11277 */
+    smlal        v20.4s, v8.4h, v1.h[2]  /* multiply by -23401 */
+    smull2       v22.4s, v6.8h, v1.h[1]  /* multiply by -11277 */
+    smlal2       v22.4s, v8.8h, v1.h[2]  /* multiply by -23401 */
+    smull        v24.4s, v8.4h, v1.h[0]  /* multiply by 22971 */
+    smull2       v26.4s, v8.8h, v1.h[0]  /* multiply by 22971 */
 .else /**************************** rgb565 ***********************************/
     sqshlu       v21.8h, v20.8h, #8
     sqshlu       v25.8h, v24.8h, #8
@@ -1675,21 +1676,21 @@ asm_function jsimd_idct_2x2_neon
     uaddw        v6.8h, v2.8h, v4.8b     /* v6.16b = u - 128 */
     uaddw        v8.8h, v2.8h, v5.8b     /* q2 = v - 128 */
     ld1          {v0.8b}, [Y], 8
-    smull        v20.4s, v6.4h, v1.4h[1] /* multiply by -11277 */
-    smlal        v20.4s, v8.4h, v1.4h[2] /* multiply by -23401 */
-    smull2       v22.4s, v6.8h, v1.4h[1] /* multiply by -11277 */
-    smlal2       v22.4s, v8.8h, v1.4h[2] /* multiply by -23401 */
+    smull        v20.4s, v6.4h, v1.h[1]  /* multiply by -11277 */
+    smlal        v20.4s, v8.4h, v1.h[2]  /* multiply by -23401 */
+    smull2       v22.4s, v6.8h, v1.h[1]  /* multiply by -11277 */
+    smlal2       v22.4s, v8.8h, v1.h[2]  /* multiply by -23401 */
     sri          v25.8h, v21.8h, #5
-    smull        v24.4s, v8.4h, v1.4h[0] /* multiply by 22971 */
-    smull2       v26.4s, v8.8h, v1.4h[0] /* multiply by 22971 */
-    prfm         PLDL1KEEP, [U, #64]
-    prfm         PLDL1KEEP, [V, #64]
-    prfm         PLDL1KEEP, [Y, #64]
+    smull        v24.4s, v8.4h, v1.h[0]  /* multiply by 22971 */
+    smull2       v26.4s, v8.8h, v1.h[0]  /* multiply by 22971 */
+    prfm         pldl1keep, [U, #64]
+    prfm         pldl1keep, [V, #64]
+    prfm         pldl1keep, [Y, #64]
     sri          v25.8h, v29.8h, #11
 .endif
     do_store     \bpp, 8
-    smull        v28.4s, v6.4h, v1.4h[3] /* multiply by 29033 */
-    smull2       v30.4s, v6.8h, v1.4h[3] /* multiply by 29033 */
+    smull        v28.4s, v6.4h, v1.h[3]  /* multiply by 29033 */
+    smull2       v30.4s, v6.8h, v1.h[3]  /* multiply by 29033 */
 .endm
 
 .macro do_yuv_to_rgb
@@ -1702,7 +1703,7 @@ asm_function jsimd_idct_2x2_neon
  */
 
 .balign 16
-jsimd_ycc_\colorid\()_neon_consts:
+Ljsimd_ycc_\colorid\()_neon_consts:
     .short          0,      0,     0,      0
     .short          22971, -11277, -23401, 29033
     .short          -128,  -128,   -128,   -128
@@ -1717,7 +1718,7 @@ asm_function jsimd_ycc_\colorid\()_convert_neon
 
     INPUT_BUF0      .req x5
     INPUT_BUF1      .req x6
-    INPUT_BUF2      .req INPUT_BUF
+    INPUT_BUF2      .req x1
 
     RGB             .req x7
     Y               .req x8
@@ -1728,16 +1729,16 @@ asm_function jsimd_ycc_\colorid\()_convert_neon
     sub             sp, sp, 336
     str             x15, [sp], 16
     /* Load constants to d1, d2, d3 (v0.4h is just used for padding) */
-    adr             x15, jsimd_ycc_\colorid\()_neon_consts
+    adr             x15, Ljsimd_ycc_\colorid\()_neon_consts
     /* Save NEON registers */
-    st1             {v0.8b - v3.8b}, [sp], 32
-    st1             {v4.8b - v7.8b}, [sp], 32
-    st1             {v8.8b - v11.8b}, [sp], 32
-    st1             {v12.8b - v15.8b}, [sp], 32
-    st1             {v16.8b - v19.8b}, [sp], 32
-    st1             {v20.8b - v23.8b}, [sp], 32
-    st1             {v24.8b - v27.8b}, [sp], 32
-    st1             {v28.8b - v31.8b}, [sp], 32
+    st1             {v0.8b, v1.8b, v2.8b, v3.8b}, [sp], 32
+    st1             {v4.8b, v5.8b, v6.8b, v7.8b}, [sp], 32
+    st1             {v8.8b, v9.8b, v10.8b, v11.8b}, [sp], 32
+    st1             {v12.8b, v13.8b, v14.8b, v15.8b}, [sp], 32
+    st1             {v16.8b, v17.8b, v18.8b, v19.8b}, [sp], 32
+    st1             {v20.8b, v21.8b, v22.8b, v23.8b}, [sp], 32
+    st1             {v24.8b, v25.8b, v26.8b, v27.8b}, [sp], 32
+    st1             {v28.8b, v29.8b, v30.8b, v31.8b}, [sp], 32
     ld1             {v0.4h, v1.4h}, [x15], 16
     ld1             {v2.8h}, [x15]
 
@@ -1748,8 +1749,8 @@ asm_function jsimd_ycc_\colorid\()_convert_neon
     stp             x8, x9, [sp], 16
     stp             x10, x30, [sp], 16
     ldr             INPUT_BUF0, [INPUT_BUF]
-    ldr             INPUT_BUF1, [INPUT_BUF, 8]
-    ldr             INPUT_BUF2, [INPUT_BUF, 16]
+    ldr             INPUT_BUF1, [INPUT_BUF, #8]
+    ldr             INPUT_BUF2, [INPUT_BUF, #16]
     .unreq          INPUT_BUF
 
     /* Initially set v10, v11.4h, v12.8b, d13 to 0xFF */
@@ -1758,7 +1759,7 @@ asm_function jsimd_ycc_\colorid\()_convert_neon
 
     /* Outer loop over scanlines */
     cmp             NUM_ROWS, #1
-    blt             9f
+    b.lt            9f
 0:
     lsl             x16, INPUT_ROW, #3
     ldr             Y, [INPUT_BUF0, x16]
@@ -1770,60 +1771,60 @@ asm_function jsimd_ycc_\colorid\()_convert_neon
 
     /* Inner loop over pixels */
     subs            N, N, #8
-    blt             3f
+    b.lt            3f
     do_load         8
     do_yuv_to_rgb_stage1
     subs            N, N, #8
-    blt             2f
+    b.lt            2f
 1:
     do_yuv_to_rgb_stage2_store_load_stage1
     subs            N, N, #8
-    bge             1b
+    b.ge            1b
 2:
     do_yuv_to_rgb_stage2
     do_store        \bpp, 8
     tst             N, #7
-    beq             8f
+    b.eq            8f
 3:
     tst             N, #4
-    beq             3f
+    b.eq            3f
     do_load         4
 3:
     tst             N, #2
-    beq             4f
+    b.eq            4f
     do_load         2
 4:
     tst             N, #1
-    beq             5f
+    b.eq            5f
     do_load         1
 5:
     do_yuv_to_rgb
     tst             N, #4
-    beq             6f
+    b.eq            6f
     do_store        \bpp, 4
 6:
     tst             N, #2
-    beq             7f
+    b.eq            7f
     do_store        \bpp, 2
 7:
     tst             N, #1
-    beq             8f
+    b.eq            8f
     do_store        \bpp, 1
 8:
     subs            NUM_ROWS, NUM_ROWS, #1
-    bgt             0b
+    b.gt            0b
 9:
     /* Restore all registers and return */
     sub             sp, sp, #336
     ldr             x15, [sp], 16
-    ld1             {v0.8b - v3.8b}, [sp], 32
-    ld1             {v4.8b - v7.8b}, [sp], 32
-    ld1             {v8.8b - v11.8b}, [sp], 32
-    ld1             {v12.8b - v15.8b}, [sp], 32
-    ld1             {v16.8b - v19.8b}, [sp], 32
-    ld1             {v20.8b - v23.8b}, [sp], 32
-    ld1             {v24.8b - v27.8b}, [sp], 32
-    ld1             {v28.8b - v31.8b}, [sp], 32
+    ld1             {v0.8b, v1.8b, v2.8b, v3.8b}, [sp], 32
+    ld1             {v4.8b, v5.8b, v6.8b, v7.8b}, [sp], 32
+    ld1             {v8.8b, v9.8b, v10.8b, v11.8b}, [sp], 32
+    ld1             {v12.8b, v13.8b, v14.8b, v15.8b}, [sp], 32
+    ld1             {v16.8b, v17.8b, v18.8b, v19.8b}, [sp], 32
+    ld1             {v20.8b, v21.8b, v22.8b, v23.8b}, [sp], 32
+    ld1             {v24.8b, v25.8b, v26.8b, v27.8b}, [sp], 32
+    ld1             {v28.8b, v29.8b, v30.8b, v31.8b}, [sp], 32
     /* pop             {r4, r5, r6, r7, r8, r9, r10, pc} */
     ldp             x4, x5, [sp], 16
     ldp             x6, x7, [sp], 16
