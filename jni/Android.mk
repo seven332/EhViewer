@@ -125,6 +125,11 @@ ifeq ($(TARGET_ARCH_ABI),mips)
     libjpeg-turbo/simd/jsimd_mips_dspr2.S
 endif
 
+ifeq ($(TARGET_ARCH_ABI),mips64)
+    LOCAL_SRC_FILES += \
+    libjpeg-turbo/jsimd_none.c
+endif
+
 include $(BUILD_STATIC_LIBRARY)
 
 
