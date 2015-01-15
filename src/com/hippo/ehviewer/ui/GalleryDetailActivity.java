@@ -434,7 +434,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         mReply.setColor(mThemeColor);
         Ui.colorStatusBarL(this, mThemeColor);
         if (mPaddingTop != -1)
-            Ui.colorStatusBarKK(this, mPaddingTop - Ui.ACTION_BAR_HEIGHT, mThemeColor);
+            Ui.colorStatusBarKK(this, mThemeColor, mPaddingTop - Ui.ACTION_BAR_HEIGHT);
     }
 
     @Override
