@@ -198,7 +198,8 @@ public final class ViewUtils {
      * Set the enabled state of this view.
      *
      * @param v the view to set the enabled state
-     * @param visibility One of GONE, INVISIBLE, or GONE.
+     * @param visibility One of {@link android.view.View#GONE},
+     * {@link android.view.View#INVISIBLE}, or {@link android.view.View#GONE}.
      */
     public static void setVisibility(View v, int visibility) {
         if (visibility != v.getVisibility()) {
