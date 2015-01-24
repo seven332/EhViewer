@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2015 Hippo Seven
+  ~ Copyright (C) 2014-2015 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,5 +14,18 @@
   ~ limitations under the License.
   -->
 <resources>
+
+    <color name="material_teal_500">#ff009688</color>
+    <color name="material_teal_700">#ff00796b</color>
+
+    <color name="material_deep_orange_500">#ffff5722</color>
+
+    <color name="material_orange_500">#ffff9800</color>
+
+    <color name="material_amber_500">#ffffc107</color>
+
+    <color name="primary">@color/material_teal_500</color>
+    <color name="primary_dark">@color/material_teal_700</color>
+    <color name="accent">#ffff6977</color>
 
 </resources>

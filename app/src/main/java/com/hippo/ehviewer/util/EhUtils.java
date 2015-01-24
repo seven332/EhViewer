@@ -78,6 +78,4 @@ public final class EhUtils {
         }
         return CATEGORY_STRINGS[i][0];
     }
-
-
 }
