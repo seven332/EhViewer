@@ -46,16 +46,7 @@ public class EhClient {
 
     public static final String API_EHVIEWER = "http://www.ehviewer.com/API";
 
-    /**
-     * Get gallery list
-     *
-     * @param source the source, one of {@link #SOURCE_G}, {@link #SOURCE_EX} and
-     *               {@link #SOURCE_LOFI}
-     * @param url the url to get gallery list
-     * @return a array with {@code GalleryInfo[]} gallery info array and
-     * {@code int} pages number
-     */
-    public Object[] doGetGalleryList(int source, String url) throws Exception {
+    private Object[] doGetGalleryList(int source, String url) throws Exception {
         EhHttpHelper ehh = new EhHttpHelper();
         String body = ehh.get(url);
         
@@ -162,9 +153,17 @@ public class EhClient {
             mListener.onSuccess(mGlArray, mPageNum);
         }
     }
-    
+
+    /**
+     * Get gallery list
+     * 
+     * @param source the source, one of {@link #SOURCE_G}, {@link #SOURCE_EX} and
+     *               {@link #SOURCE_LOFI}
+     * @param url the url to get gallery list
+     * @param listener the listener for callback
+     */
     public void getGalleryList(int source, String url, OnGetGalleryListListener listener) {
         doBgJob(new GetGalleryListHelper(source, url, listener));
     }
-    
+
 }
