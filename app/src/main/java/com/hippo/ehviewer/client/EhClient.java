@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.network.EhHttpHelper;
+import com.hippo.network.ResponseCodeException;
 import com.hippo.util.Utils;
 
 public class EhClient {
@@ -57,39 +58,113 @@ public class EhClient {
     public Object[] doGetGalleryList(int source, String url) throws Exception {
         EhHttpHelper ehh = new EhHttpHelper();
         String body = ehh.get(url);
+        
+        final int responseCode = ehh.getResponseCode();
+        if (responseCode >= 400) {
+            throw new ResponseCodeException(responseCode);
+        }
 
         ListParser parser = new ListParser();
         parser.parse(body, source);
         return new Object[]{parser.giArray, parser.pageNum};
     }
 
+    public static interface EhClientListener {
+        public void onFailure(Exception e);
+    }
+    
+    public abstract static class OnGetGalleryListListener implements EhClientListener {
+        public abstract void onSuccess(GalleryInfo[] glArray, int pageNum);
+    }
+
     private void doBgJob(BgJobHelper bjh) {
-        Utils.execute(false, new AsyncTask<Object, Void, Object[]>() {
+        Utils.execute(false, new AsyncTask<Object, Void, BgJobHelper>() {
             @Override
-            protected Object[] doInBackground(Object... params) {
+            protected BgJobHelper doInBackground(Object... params) {
                 BgJobHelper bjh = (BgJobHelper) params[0];
-                return new Object[]{bjh.doInBackground(), bjh};
+                bjh.doInBackground();
+                return bjh;
             }
 
             @Override
-            protected void onPostExecute(Object[] resultPackage) {
-                Object result = resultPackage[0];
-                BgJobHelper bjh = (BgJobHelper) resultPackage[1];
-                bjh.onPostExecute(result);
+            protected void onPostExecute(BgJobHelper bjh) {
+                bjh.onPostExecute();
             }
         }, bjh);
     }
 
-    private static interface BgJobHelper {
-        public Object doInBackground();
+    private interface BgJobHelper {
+        public void doInBackground();
 
-        public void onPostExecute(Object result);
+        public void onPostExecute();
     }
+    
+    private abstract class SimpleBgJobHelper implements BgJobHelper {
 
-    public interface OnGetGalleryListListener {
-        public void onSuccess(GalleryInfo[] glArray, int pageNum);
+        private EhClientListener mListener;
+        private Exception mException;
+        
+        public SimpleBgJobHelper(EhClientListener listener) {
+            mListener = listener;
+        }
 
-        public void onFailure(Exception e);
+        @Override
+        public void doInBackground() {
+            try {
+                doBgJob();
+            } catch (Exception e) {
+                mException = e;
+            }
+        }
+
+        @Override
+        public void onPostExecute() {
+            if (mListener != null) {
+                if (mException == null) {
+                    doSuccessCallback();
+                } else {
+                    mListener.onFailure(mException);
+                }
+            }
+        }
+
+        public abstract void doBgJob() throws Exception;
+
+        public abstract void doSuccessCallback();
+
     }
+    
+    private final class GetGalleryListHelper extends SimpleBgJobHelper {
 
+        private int mSource;
+        private String mUrl;
+        private OnGetGalleryListListener mListener;
+
+        private GalleryInfo[] mGlArray;
+        private int mPageNum;
+        
+        public GetGalleryListHelper(int source, String url, OnGetGalleryListListener listener) {
+            super(listener);
+            mSource = source;
+            mUrl = url;
+            mListener = listener;
+        }
+
+        @Override
+        public void doBgJob() throws Exception {
+            Object[] objs = doGetGalleryList(mSource, mUrl);
+            mGlArray = (GalleryInfo[]) objs[0];
+            mPageNum = (int) objs[1];
+        }
+
+        @Override
+        public void doSuccessCallback() {
+            mListener.onSuccess(mGlArray, mPageNum);
+        }
+    }
+    
+    public void getGalleryList(int source, String url, OnGetGalleryListListener listener) {
+        doBgJob(new GetGalleryListHelper(source, url, listener));
+    }
+    
 }

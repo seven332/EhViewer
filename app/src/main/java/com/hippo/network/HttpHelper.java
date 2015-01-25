@@ -17,11 +17,11 @@ package com.hippo.network;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.MimeTypeMap;
 
 import com.hippo.util.FastByteArrayOutputStream;
+import com.hippo.util.Log;
 import com.hippo.util.Utils;
 
 import org.json.JSONObject;

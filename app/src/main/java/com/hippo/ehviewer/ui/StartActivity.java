@@ -20,6 +20,8 @@ import android.os.Bundle;
 import com.hippo.ehviewer.R;
 
 public class StartActivity extends AbsActionBarActivity {
+    
+    private static final String TAG = StartActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
