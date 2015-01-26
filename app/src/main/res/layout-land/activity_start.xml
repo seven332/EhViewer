@@ -16,29 +16,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:background="?attr/colorPrimary">
 
     <com.hippo.widget.Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
 
     <TextView
         android:id="@+id/text_welcome"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="2"
         android:gravity="center"
         android:textSize="32sp"
         android:textColor="@color/primary_text_dark"
-        android:text="@string/tip_welcome"/>
+        android:text="@string/tip_welcome" />
 
     <ImageView
         android:id="@+id/image_mascot"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="6"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter" />
 
 </LinearLayout>

@@ -15,9 +15,16 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
+import com.hippo.util.ViewUtils;
+import com.larvalabs.svgandroid.SVG;
+import com.larvalabs.svgandroid.SVGBuilder;
+import com.larvalabs.svgandroid.SVGParseException;
 
 public class StartActivity extends AbsActionBarActivity {
     
@@ -27,5 +34,25 @@ public class StartActivity extends AbsActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+
+        TextView text = (TextView) findViewById(R.id.text_welcome);
+        text.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/GloriaHallelujah.ttf"));
+
+        try {
+            SVG svg = new SVGBuilder().readFromResource(getResources(), R.raw.sad_pandroid).build();
+            ImageView image = (ImageView) findViewById(R.id.image_mascot);
+            ViewUtils.removeHardwareAccelerationSupport(image);
+            image.setImageDrawable(svg.getDrawable());
+        } catch (SVGParseException e) {
+            // Empty, I think this exception will never be caught.
+        }
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // TODO
+            }
+        }, 3000);
+
     }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
-  ~ Copyright (C) 2015 Hippo Seven
+  ~ Copyright (C) 2014-2015 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,9 +16,9 @@
   -->
 <resources>
 
-    <string name="app_name">EhViewer</string>
-
-    <!-- Start activity -->
-    <string name="tip_welcome">Do not be a\nsad pandroid</string>
+    <style name="AppTheme.NoActionBar.Translucent">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
 
 </resources>
