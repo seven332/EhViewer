@@ -30,7 +30,7 @@ public abstract class Scene {
 
     private StageActivity mStageActivity;
     private FrameLayout mStageView;
-    private View mRootViewOfScence;
+    private View mRootView;
 
     void setStageActivity(StageActivity stageActivity) {
         mStageActivity = stageActivity;
@@ -38,37 +38,40 @@ public abstract class Scene {
     }
 
     public void setContentView(int layoutResID) {
-        mRootViewOfScence = mStageActivity.getLayoutInflater()
+        mRootView = mStageActivity.getLayoutInflater()
                 .inflate(layoutResID, mStageView, false);
     }
 
     public void setContentView(View view) {
-        mRootViewOfScence = view;
+        mRootView = view;
     }
 
     public View findViewById(int id) {
         AssertUtils.assertNotNull("Call setContentView before findViewById",
-                mRootViewOfScence);
+                mRootView);
 
-        return mRootViewOfScence.findViewById(id);
+        return mRootView.findViewById(id);
     }
 
-
-    public void startScene(Class<?> sceneClass) {
-        mStageActivity.pushScene(sceneClass);
+    View getRootView() {
+        return mRootView;
     }
 
-    private void addToStage() {
+    public void startScene(Class sceneClass) {
+        mStageActivity.startScene(this, sceneClass);
+    }
 
+    public final void finish() {
+        mStageActivity.finishScene(this);
     }
 
     void create() {
         onCreate();
 
         AssertUtils.assertNotNull("You have to call setContentView in onCreate",
-                mRootViewOfScence);
+                mRootView);
 
-        mStageActivity.addScenseView(mRootViewOfScence);
+        mStageActivity.addSceneView(this);
     }
 
     void pause() {
@@ -98,14 +101,7 @@ public abstract class Scene {
      * This method should be called to remove when it need to remove
      */
     public final void dispatchRemove() {
-        mStageActivity.removeScenseView(mRootViewOfScence);
-    }
-
-    /**
-     * This method should be called to remove when it need to hide
-     */
-    public final void dispatchHide() {
-        mStageActivity.removeScenseView(mRootViewOfScence);
+        mStageActivity.stopSceneRetain(this);
     }
 
 }
