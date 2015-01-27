@@ -18,6 +18,7 @@ package com.hippo.widget.recyclerview;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -113,8 +114,19 @@ public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration {
         int itemCount = parent.getAdapter().getItemCount();
 
         if (mOrientation == VERTICAL) {
-            final int left = parent.getPaddingLeft() + mPaddingStart;
-            final int right = parent.getWidth() - parent.getPaddingRight() - mPaddingEnd;
+            final boolean isRtl =  ViewCompat.getLayoutDirection(parent) ==  ViewCompat.LAYOUT_DIRECTION_RTL;
+            int mPaddingLeft;
+            int mPaddingRight;
+            if (isRtl) {
+                mPaddingLeft = mPaddingEnd;
+                mPaddingRight = mPaddingStart;
+            } else {
+                mPaddingLeft = mPaddingStart;
+                mPaddingRight = mPaddingEnd;
+            }
+
+            final int left = parent.getPaddingLeft() + mPaddingLeft;
+            final int right = parent.getWidth() - parent.getPaddingRight() - mPaddingRight;
             final int childCount = parent.getChildCount();
 
             for (int i = 0; i < childCount; i++) {
