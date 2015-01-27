@@ -15,4 +15,15 @@
   -->
 <resources>
 
+    <!-- FloatingActionButton -->
+    <style name="FloatingActionButton">
+        <item name="android:minWidth">60dp</item>
+        <item name="android:minHeight">60dp</item>
+    </style>
+
+    <style name="FloatingActionButton.Small">
+        <item name="android:minWidth">44dp</item>
+        <item name="android:minHeight">44dp</item>
+    </style>
+
 </resources>

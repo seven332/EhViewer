@@ -245,4 +245,31 @@ public final class ViewUtils {
         return result | (childMeasuredState&MEASURED_STATE_MASK);
     }
 
+    /**
+     * Utility to return a default size. Uses the supplied size if the
+     * MeasureSpec imposed no constraints. Will get suitable if allowed
+     * by the MeasureSpec.
+     *
+     * @param size Default size for this view
+     * @param measureSpec Constraints imposed by the parent
+     * @return The size this view should be.
+     */
+    public static int getSuitableSize(int size, int measureSpec) {
+        int result = size;
+        int specMode = View.MeasureSpec.getMode(measureSpec);
+        int specSize = View.MeasureSpec.getSize(measureSpec);
+
+        switch (specMode) {
+            case View.MeasureSpec.UNSPECIFIED:
+                result = size;
+                break;
+            case View.MeasureSpec.EXACTLY:
+                result = specSize;
+                break;
+            case View.MeasureSpec.AT_MOST:
+                result = size == 0 ? specSize : size;
+        }
+        return result;
+    }
+
 }
