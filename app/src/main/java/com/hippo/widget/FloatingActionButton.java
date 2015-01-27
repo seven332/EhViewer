@@ -17,23 +17,23 @@ package com.hippo.widget;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.hippo.ehviewer.R;
 import com.hippo.util.UiUtils;
 import com.hippo.util.ViewUtils;
 
 public class FloatingActionButton extends View {
-
-    private static final int[] BACKGROUND_ATTR = {android.R.attr.colorBackground};
-    private static final int[] DRAWABLE_ATTR = {android.R.attr.drawable};
 
     private static final int DRAWABLE_WIDTH = UiUtils.dp2pix(24);
 
@@ -56,24 +56,25 @@ public class FloatingActionButton extends View {
         init(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         TypedArray a;
 
-        // Background color
-        a = context.obtainStyledAttributes(attrs, BACKGROUND_ATTR, defStyleAttr, defStyleRes);
-        int bgColor = a.getColor(0, Color.BLACK);
+        a = context.obtainStyledAttributes(attrs, R.styleable.FloatingActionButton, defStyleAttr, defStyleRes);
+        int bgColor = a.getColor(R.styleable.FloatingActionButton_fabColor, Color.BLACK);
+        mDrawable = a.getDrawable(R.styleable.FloatingActionButton_fabDrawable);
         a.recycle();
 
-        // Drawable
-        a = context.obtainStyledAttributes(attrs, DRAWABLE_ATTR, defStyleAttr, defStyleRes);
-        mDrawable = a.getDrawable(0);
-        a.recycle();
-
-        mGasketDrawer = new GasketDrawer(this, bgColor);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mGasketDrawer = new GasketDrawerLollipop(this, bgColor);
+        } else {
+            mGasketDrawer = new GasketDrawerOld(this, bgColor);
+        }
     }
 
+    @Override
     protected void drawableStateChanged() {
+        super.drawableStateChanged();
+
         int[] stateSet = getDrawableState();
         mGasketDrawer.onStateChange(stateSet);
     }
@@ -113,12 +114,21 @@ public class FloatingActionButton extends View {
         invalidate();
     }
 
-    static class GasketDrawer {
+    interface GasketDrawer {
+        void onStateChange(int[] stateSet);
+
+        void draw(Canvas canvas);
+
+        void setColor(int color);
+    }
+
+
+    static class GasketDrawerOld implements GasketDrawer {
 
         private static final int SHADOW_RADIOUS = UiUtils.dp2pix(3);
         private static final int SHADOW_OFFSET_Y = UiUtils.dp2pix(1);
         private static final int GASKET_PADDING = SHADOW_RADIOUS + SHADOW_OFFSET_Y; // 4dp
-        private static final int SHADOW_COLOR = 0x8a000000;
+        private static final int SHADOW_COLOR = 0x43000000;
 
         private View mView;
 
@@ -130,7 +140,7 @@ public class FloatingActionButton extends View {
 
         private boolean mIsDark;
 
-        private GasketDrawer(View view, int color) {
+        private GasketDrawerOld(View view, int color) {
             mView = view;
             mBounds = new RectF();
             mColor = color;
@@ -143,7 +153,7 @@ public class FloatingActionButton extends View {
             ViewUtils.removeHardwareAccelerationSupport(mView);
         }
 
-        protected void onStateChange(int[] stateSet) {
+        public void onStateChange(int[] stateSet) {
             boolean enabled = false;
             boolean pressed = false;
             boolean focused = false;
@@ -191,6 +201,59 @@ public class FloatingActionButton extends View {
             mColor = color;
             mDarkerColor = UiUtils.getDarkerColor(color);
             updateColor();
+        }
+    }
+
+    static class GasketDrawerLollipop implements GasketDrawer {
+
+        private static final int ELEVATION = UiUtils.dp2pix(5);
+
+        private static final int[][] STATES = new int[][]{
+                new int[]{-android.R.attr.state_enabled},
+                new int[]{android.R.attr.state_pressed},
+                new int[]{android.R.attr.state_focused},
+                new int[]{}
+        };
+
+        private View mView;
+        private int mColor;
+
+        private GradientDrawable mGradientDrawable;
+
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        public GasketDrawerLollipop(View view, int color) {
+            mView = view;
+            mColor = color;
+
+            int darkColor = UiUtils.getDarkerColor(color);
+            mGradientDrawable = new GradientDrawable();
+            mGradientDrawable.setShape(GradientDrawable.OVAL);
+            mGradientDrawable.setColor(new ColorStateList(STATES,
+                    new int[] {darkColor, darkColor, darkColor, color}));
+
+            mView.setBackground(mGradientDrawable);
+            mView.setElevation(ELEVATION);
+        }
+
+        @Override
+        public void onStateChange(int[] stateSet) {
+            // Empty
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            // Empty
+        }
+
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void setColor(int color) {
+            if (mColor != color) {
+                mColor = color;
+                int darkColor = UiUtils.getDarkerColor(color);
+                mGradientDrawable.setColor(new ColorStateList(STATES,
+                        new int[] {darkColor, darkColor, darkColor, color}));
+            }
         }
     }
 }
