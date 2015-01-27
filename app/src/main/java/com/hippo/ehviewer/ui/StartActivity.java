@@ -15,6 +15,7 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -50,7 +51,9 @@ public class StartActivity extends AbsActionBarActivity {
         postDelayed(new Runnable() {
             @Override
             public void run() {
-                // TODO
+                finish();
+                Intent intent = new Intent(StartActivity.this, ContentActivity.class);
+                startActivity(intent);
             }
         }, 3000);
 

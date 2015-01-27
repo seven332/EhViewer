@@ -24,6 +24,7 @@ android {
 }
 
 dependencies {
+    compile 'com.android.support:support-v4:21.0.3'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:recyclerview-v7:21.0.3'
     compile 'com.github.japgolly.android:svg-android:2.0.6'

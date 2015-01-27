@@ -24,7 +24,7 @@ import com.hippo.util.AssertUtils;
  * {@link com.hippo.scene.Scene} is a {@code Activity} of {@link android.app.Activity}.
  * <p>
  * When start a new {@code Scene}, previous {@code Scene} can stay at screen for
- * a while.
+ * a while. Or retain for a while before destroy.
  */
 public abstract class Scene {
 
@@ -74,12 +74,14 @@ public abstract class Scene {
         mStageActivity.addSceneView(this);
     }
 
-    void pause() {
-        onPause();
-    }
-
     void resume() {
         onResume();
+
+        mStageActivity.addSceneView(this);
+    }
+
+    void pause() {
+        onPause();
     }
 
     void destroy() {
@@ -91,9 +93,9 @@ public abstract class Scene {
      */
     public abstract void onCreate();
 
-    public abstract void onPause();
-
     public abstract void onResume();
+
+    public abstract void onPause();
 
     public abstract void onDestroy();
 

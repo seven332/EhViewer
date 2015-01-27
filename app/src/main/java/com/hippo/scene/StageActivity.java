@@ -49,6 +49,7 @@ public abstract class StageActivity extends AbsActionBarActivity {
 
         Scene lastScene = mCurrentScene;
         mCurrentScene = scene;
+        mCurrentScene.create();
         if (lastScene != null) {
             // It is not the first scense
             mSceneStack.push(lastScene);
@@ -56,7 +57,6 @@ public abstract class StageActivity extends AbsActionBarActivity {
             mRetainedScene = lastScene;
             lastScene.pause();
         }
-        mCurrentScene.create();
     }
 
     private void popScense() {
@@ -67,10 +67,10 @@ public abstract class StageActivity extends AbsActionBarActivity {
         } else {
             Scene previousScene = mCurrentScene;
             mCurrentScene = mSceneStack.pop();
-
             mRetainedScene = previousScene;
-            previousScene.destroy();
+
             mCurrentScene.resume();
+            previousScene.destroy();
         }
     }
 
@@ -107,6 +107,15 @@ public abstract class StageActivity extends AbsActionBarActivity {
                 mScenseActionQueue.poll().doAction();
             }
         }
+    }
+
+    protected void startFirstScene(Class sceneClass) {
+        if (mCurrentScene != null) {
+            throw new IllegalStateException("Only call startFirstScene to start " +
+                    "first scene.");
+        }
+
+        pushScene(sceneClass);
     }
 
     void startScene(Scene fromScene, Class sceneClass) {
