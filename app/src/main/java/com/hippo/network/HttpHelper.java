@@ -394,7 +394,7 @@ public class HttpHelper {
             DataOutputStream out = new DataOutputStream(conn.getOutputStream());
             String body = mJo.toString();
             Log.d(TAG, "Post json: " + body);
-            out.writeBytes(body);
+            out.write(body.getBytes("utf-8"));
             out.flush();
             out.close();
         }
