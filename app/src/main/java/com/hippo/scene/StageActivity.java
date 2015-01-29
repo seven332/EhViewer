@@ -133,9 +133,11 @@ public abstract class StageActivity extends AbsActionBarActivity {
 
     void finishScene(Scene scene) {
         if (scene != mRetainedScene && scene != mCurrentScene) {
-            // Remove with out animation
-            getStageView().removeView(scene.getRootView());
-            mSceneStack.remove(scene);
+            if (mSceneStack.contains(scene)) {
+                // Remove without animation
+                getStageView().removeView(scene.getRootView());
+                mSceneStack.remove(scene);
+            }
         } else {
             if (mRetainedScene == null) {
                 // Because scene can't be null, so scene == mCurrentScene
@@ -149,10 +151,8 @@ public abstract class StageActivity extends AbsActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        if (mRetainedScene == null) {
-            // No retained scene, no animation
-            // If not, just miss it.
-            popScense();
+        if (mCurrentScene != null) {
+            mCurrentScene.onBackPressed();
         }
     }
 

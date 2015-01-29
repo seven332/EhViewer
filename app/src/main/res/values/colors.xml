@@ -29,6 +29,9 @@
     <color name="primary_text_light">#deffffff</color>
     <color name="secondary_text_light">#61ffffff</color>
 
+    <color name="background_dark">#ff303030</color>
+    <color name="background_light">#ffeeeeee</color>
+
     <color name="primary">@color/material_teal_500</color>
     <color name="primary_dark">@color/material_teal_700</color>
     <color name="accent">#ffff6977</color>

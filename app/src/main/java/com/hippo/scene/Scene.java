@@ -106,4 +106,8 @@ public abstract class Scene {
         mStageActivity.stopSceneRetain(this);
     }
 
+    public void onBackPressed() {
+        finish();
+    }
+
 }

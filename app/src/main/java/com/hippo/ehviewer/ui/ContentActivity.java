@@ -16,6 +16,7 @@
 package com.hippo.ehviewer.ui;
 
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.widget.FrameLayout;
 
 import com.hippo.ehviewer.R;
@@ -24,6 +25,7 @@ import com.hippo.scene.StageActivity;
 
 public class ContentActivity extends StageActivity {
 
+    private DrawerLayout mDrawerLayout;
     private FrameLayout mStage;
 
     @Override
@@ -31,7 +33,9 @@ public class ContentActivity extends StageActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
 
-        mStage = (FrameLayout) findViewById(R.id.stage);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        mStage = (FrameLayout) mDrawerLayout.findViewById(R.id.stage);
+
 
         startFirstScene(GalleryListScene.class);
     }
