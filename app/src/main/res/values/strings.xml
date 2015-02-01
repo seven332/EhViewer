@@ -15,9 +15,22 @@
   -->
 <resources>
 
-    <string name="app_name">EhViewer</string>
+    <string name="app_name" translatable="false">EhViewer</string>
 
     <!-- Start activity -->
-    <string name="tip_welcome">Do not be a\nsad pandroid</string>
+    <string name="tip_welcome" translatable="false">Do not be a\nsad pandroid</string>
+
+    <!-- Category -->
+    <string name="doujinshi" translatable="false">DOUJINSHI</string>
+    <string name="manga" translatable="false">MANGA</string>
+    <string name="artist_cg" translatable="false">ARTIST CG</string>
+    <string name="game_cg" translatable="false">GAME CG</string>
+    <string name="western" translatable="false">WESTERN</string>
+    <string name="non_h" translatable="false">NON-H</string>
+    <string name="image_set" translatable="false">IMAGE SET</string>
+    <string name="cosplay" translatable="false">COSPLAY</string>
+    <string name="asian_porn" translatable="false">ASIAN PORN</string>
+    <string name="misc" translatable="false">MISC</string>
+    <string name="unknown" translatable="false">UNKNOWN</string>
 
 </resources>

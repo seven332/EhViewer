@@ -13,9 +13,12 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/viewPager"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<resources>
 
-</android.support.v4.view.ViewPager>
+    <!-- Search view padding in its container -->
+    <dimen name="search_padding_start">0dp</dimen>
+    <dimen name="search_padding_end">0dp</dimen>
+    <dimen name="search_padding_top">0dp</dimen>
+    <dimen name="search_padding_bottom">0dp</dimen>
+
+</resources>

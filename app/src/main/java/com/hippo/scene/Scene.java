@@ -15,6 +15,7 @@
 
 package com.hippo.scene;
 
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -110,4 +111,11 @@ public abstract class Scene {
         finish();
     }
 
+    /**
+     * Return the FragmentManager for interacting with fragments associated
+     * with StageActivity.
+     */
+    public FragmentManager getSupportFragmentManager() {
+        return mStageActivity.getSupportFragmentManager();
+    }
 }

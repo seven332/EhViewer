@@ -15,6 +15,28 @@
   -->
 <resources>
 
+    <!-- Red -->
+    <color name="doujinshi">#fff44336</color>
+    <!-- Orange -->
+    <color name="manga">#ffff9800</color>
+    <!-- Yellow 700 -->
+    <color name="artist_cg">#ffFbc02d</color>
+    <!-- Green -->
+    <color name="game_cg">#ff4caf50</color>
+    <!-- Light Green -->
+    <color name="western">#ff8bc34a</color>
+    <!-- Blue -->
+    <color name="non_h">#ff2196f3</color>
+    <!-- Indigo -->
+    <color name="image_set">#ff3f51b5</color>
+    <!-- Purple -->
+    <color name="cosplay">#ff9c27b0</color>
+    <!-- Deep Purple 300 -->
+    <color name="asian_porn">#ff9575cd</color>
+    <!-- Pink 300 -->
+    <color name="misc">#fff06292</color>
+    <color name="unknown_bg">@android:color/black</color>
+
     <color name="material_teal_500">#ff009688</color>
     <color name="material_teal_700">#ff00796b</color>
 
@@ -31,6 +53,7 @@
 
     <color name="background_dark">#ff303030</color>
     <color name="background_light">#ffeeeeee</color>
+    <color name="background_light_card">#ffe1e1e0</color>
 
     <color name="primary">@color/material_teal_500</color>
     <color name="primary_dark">@color/material_teal_700</color>

@@ -148,7 +148,6 @@ public abstract class StageActivity extends AbsActionBarActivity {
         }
     }
 
-
     @Override
     public void onBackPressed() {
         if (mCurrentScene != null) {

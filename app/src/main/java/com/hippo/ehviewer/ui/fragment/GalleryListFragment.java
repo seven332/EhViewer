@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Hippo Seven
+ * Copyright (C) 2015 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.data;
+package com.hippo.ehviewer.ui.fragment;
 
-public class ListUrlBuilder {
+import android.support.v4.app.Fragment;
 
+public class GalleryListFragment extends Fragment{
 }

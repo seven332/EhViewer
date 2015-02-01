@@ -26,4 +26,12 @@
         <item name="android:minHeight">44dp</item>
     </style>
 
+    <!-- CategoryText -->
+    <style name="CategoryText">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Subhead</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">40dp</item>
+    </style>
+
 </resources>
