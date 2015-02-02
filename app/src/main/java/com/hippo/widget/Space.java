@@ -34,23 +34,23 @@ public final class Space extends View {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public Space(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        if (getVisibility() == VISIBLE) {
-            setVisibility(INVISIBLE);
-        }
+        init();
     }
 
     /**
      * {@inheritDoc}
      */
     public Space(Context context, AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
+        super(context, attrs, defStyleAttr);
+        init();
     }
 
     /**
      * {@inheritDoc}
      */
     public Space(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs, 0);
+        init();
     }
 
     /**
@@ -58,7 +58,14 @@ public final class Space extends View {
      */
     public Space(Context context) {
         //noinspection NullableProblems
-        this(context, null);
+        super(context, null);
+        init();
+    }
+
+    private void init() {
+        if (getVisibility() == VISIBLE) {
+            setVisibility(INVISIBLE);
+        }
     }
 
     /**
