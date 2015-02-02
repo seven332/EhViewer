@@ -28,4 +28,13 @@
         <attr name="fabDrawable" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="FloatLabelEditText">
+        <attr name="fllLabelAppearance" format="reference" />
+        <attr name="fllHint" format="string" />
+        <attr name="fllTrigger" format="enum">
+            <enum name="text" value="0" />
+            <enum name="focus" value="1" />
+        </attr>
+    </declare-styleable>
+
 </resources>
