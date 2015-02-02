@@ -61,15 +61,21 @@ public class FloatLabelEditText extends FrameLayout {
 
     public FloatLabelEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs, 0);
+        init(context, attrs);
     }
 
     public FloatLabelEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs, defStyleAttr);
+        init(context, attrs);
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public FloatLabelEditText(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init(context, attrs);
+    }
+
+    private void init(Context context, AttributeSet attrs) {
         mLabel = new TextView(context);
         mLabel.setVisibility(View.INVISIBLE);
 
