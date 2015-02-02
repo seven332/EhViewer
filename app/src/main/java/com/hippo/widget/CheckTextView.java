@@ -17,7 +17,6 @@ package com.hippo.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
@@ -26,9 +25,8 @@ import android.widget.TextView;
 
 public class CheckTextView extends TextView implements OnClickListener{
 
-    private static int MASK = 0xba000000;
+    private static int MASK = 0x61000000;
 
-    private Paint mPaint;
     private Rect mRect = new Rect();
 
     private boolean mChecked = false;
@@ -48,8 +46,6 @@ public class CheckTextView extends TextView implements OnClickListener{
     }
 
     private void init() {
-        mPaint = new Paint();
-        mPaint.setColor(MASK);
         setOnClickListener(this);
     }
 
@@ -70,7 +66,7 @@ public class CheckTextView extends TextView implements OnClickListener{
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (mChecked) {
-            canvas.drawRect(mRect, mPaint);
+            canvas.drawColor(MASK);
         }
     }
 
