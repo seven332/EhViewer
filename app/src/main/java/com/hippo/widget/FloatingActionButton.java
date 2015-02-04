@@ -206,7 +206,7 @@ public class FloatingActionButton extends View {
 
     static class GasketDrawerLollipop implements GasketDrawer {
 
-        private static final int ELEVATION = UiUtils.dp2pix(5);
+        private static final int ELEVATION = UiUtils.dp2pix(4);
 
         private static final int[][] STATES = new int[][]{
                 new int[]{-android.R.attr.state_enabled},
