@@ -19,10 +19,20 @@ import com.hippo.ehviewer.BuildConfig;
 
 public class Log {
 
-    public static final String avoidNull(String str) {
+    private static final String TAG = Log.class.getSimpleName();
+
+    private static final String avoidNull(String str) {
         return str == null ? TextUtils.STRING_NULL : str;
     }
-    
+
+    /**
+     * Call {@link android.util.Log#v(String, String)} with default tag.
+     * @param msg The message you would like logged.
+     */
+    public static int v(String msg) {
+        return v(TAG, msg);
+    }
+
     /**
      * It is {@link android.util.Log#v(String, String)}, only work when debug.
      * @param tag Used to identify the source of a log message.  It usually identifies
@@ -50,6 +60,14 @@ public class Log {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Call {@link android.util.Log#d(String, String)} with default tag.
+     * @param msg The message you would like logged.
+     */
+    public static int d(String msg) {
+        return d(TAG, msg);
     }
 
     /**
@@ -82,6 +100,14 @@ public class Log {
     }
 
     /**
+     * Call {@link android.util.Log#i(String, String)} with default tag.
+     * @param msg The message you would like logged.
+     */
+    public static int i(String msg) {
+        return i(TAG, msg);
+    }
+
+    /**
      * It is {@link android.util.Log#i(String, String)}, only work when debug.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
@@ -108,6 +134,14 @@ public class Log {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Call {@link android.util.Log#w(String, String)} with default tag.
+     * @param msg The message you would like logged.
+     */
+    public static int w(String msg) {
+        return w(TAG, msg);
     }
 
     /**
@@ -151,6 +185,14 @@ public class Log {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Call {@link android.util.Log#e(String, String)} with default tag.
+     * @param msg The message you would like logged.
+     */
+    public static int e(String msg) {
+        return e(TAG, msg);
     }
 
     /**
