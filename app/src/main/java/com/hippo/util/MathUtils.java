@@ -278,6 +278,31 @@ public final class MathUtils {
         return (a >= standard && b >= standard) || (a <= standard && b <= standard);
     }
 
+    /**
+     * Get coverage radius of a area
+     *
+     * @param w
+     * @param h
+     * @param x
+     * @param y
+     * @return
+     */
+    public static float coverageRadius(float w, float h, float x, float y) {
+        float x2;
+        float y2;
+        if (x > w / 2) {
+            x2 = 0;
+        } else {
+            x2 = w;
+        }
+        if (y > h / 2) {
+            y2 = 0;
+        } else {
+            y2 = h;
+        }
+        return dist(x, y, x2, y2);
+    }
+
     public static int random(int howbig) {
         return (int) (sRandom.nextFloat() * howbig);
     }

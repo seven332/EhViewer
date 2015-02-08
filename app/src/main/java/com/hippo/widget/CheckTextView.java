@@ -17,19 +17,28 @@ package com.hippo.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Rect;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-public class CheckTextView extends TextView implements OnClickListener{
+import com.hippo.util.MathUtils;
+import com.nineoldandroids.animation.ObjectAnimator;
 
-    private static int MASK = 0x61000000;
+public class CheckTextView extends TextView implements OnClickListener, Hotspotable {
 
-    private Rect mRect = new Rect();
+    private static final int MASK = 0x8a000000;
+    private static final long ANIMATION_DURATION = 150;
 
     private boolean mChecked = false;
+
+    private float mX;
+    private float mY;
+    private float mRadius = 0f;
+    private float mMaxRadius;
+
+    private Paint mPaint;
 
     public CheckTextView(Context context) {
         super(context);
@@ -46,27 +55,54 @@ public class CheckTextView extends TextView implements OnClickListener{
     }
 
     private void init() {
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
+        mPaint.setColor(MASK);
+
+        setOnTouchListener(new HotspotTouchHelper(this));
         setOnClickListener(this);
+    }
+
+    @Override
+    public void setHotspot(float x, float y) {
+        mX = x;
+        mY = y;
+        mMaxRadius = MathUtils.coverageRadius(getWidth(), getHeight(), x, y);
+    }
+
+    public void setRadius(float radius) {
+        float bigger = Math.max(mRadius, radius);
+        mRadius = radius;
+        invalidate((int) (mX - bigger), (int) (mY - bigger), (int) (mX + bigger), (int) (mY + bigger));
+    }
+
+    public float getRadius() {
+        return mRadius;
     }
 
     @Override
     public void onClick(View v) {
         mChecked = !mChecked;
-        invalidate();
-    }
 
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-
-        mRect.set(0, 0, right - left, bottom - top);
+        ObjectAnimator radiusAnim;
+        if (mChecked) {
+            radiusAnim = ObjectAnimator.ofFloat(this, "radius",
+                    0f, mMaxRadius);
+        } else {
+            radiusAnim = ObjectAnimator.ofFloat(this, "radius",
+                    mMaxRadius, 0f);
+        }
+        radiusAnim.setAutoCancel(true);
+        radiusAnim.setDuration(ANIMATION_DURATION); // TODO decide duration according to mMaxRadius
+        radiusAnim.start();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (mChecked) {
-            canvas.drawColor(MASK);
+
+        float radius = mRadius;
+        if (radius > 0f) {
+            canvas.drawCircle(mX, mY, radius, mPaint);
         }
     }
 
@@ -78,4 +114,5 @@ public class CheckTextView extends TextView implements OnClickListener{
     public boolean isChecked() {
         return mChecked;
     }
+
 }
