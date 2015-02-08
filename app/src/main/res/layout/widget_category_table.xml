@@ -17,20 +17,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <TableRow>
-
         <com.hippo.widget.CheckTextView
             android:id="@+id/button_doujinshi"
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="4dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="4dp"
             android:layout_marginRight="4dp"
-            android:textColor="@color/doujinshi"
+            android:background="@color/doujinshi"
+            android:textColor="@android:color/white"
             android:text="@string/doujinshi" />
 
         <com.hippo.widget.CheckTextView
@@ -39,18 +35,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="4dp"
-            android:layout_marginStart="4dp"
             android:layout_marginLeft="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:textColor="@color/manga"
+            android:background="@color/manga"
+            android:textColor="@android:color/white"
             android:text="@string/manga" />
     </TableRow>
 
     <TableRow>
-
         <com.hippo.widget.CheckTextView
             android:id="@+id/button_artistcg"
             style="@style/CategoryText"
@@ -59,11 +51,9 @@
             android:layout_weight="1"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="4dp"
             android:layout_marginRight="4dp"
-            android:textColor="@color/artist_cg"
+            android:background="@color/artist_cg"
+            android:textColor="@android:color/white"
             android:text="@string/artist_cg" />
 
         <com.hippo.widget.CheckTextView
@@ -74,16 +64,13 @@
             android:layout_weight="1"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:layout_marginStart="4dp"
             android:layout_marginLeft="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:textColor="@color/game_cg"
+            android:background="@color/game_cg"
+            android:textColor="@android:color/white"
             android:text="@string/game_cg" />
     </TableRow>
 
     <TableRow>
-
         <com.hippo.widget.CheckTextView
             android:id="@+id/button_western"
             style="@style/CategoryText"
@@ -92,11 +79,9 @@
             android:layout_weight="1"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="4dp"
             android:layout_marginRight="4dp"
-            android:textColor="@color/western"
+            android:background="@color/western"
+            android:textColor="@android:color/white"
             android:text="@string/western" />
 
         <com.hippo.widget.CheckTextView
@@ -107,16 +92,13 @@
             android:layout_weight="1"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:layout_marginStart="4dp"
             android:layout_marginLeft="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:textColor="@color/non_h"
+            android:background="@color/non_h"
+            android:textColor="@android:color/white"
             android:text="@string/non_h" />
     </TableRow>
 
     <TableRow>
-
         <com.hippo.widget.CheckTextView
             android:id="@+id/button_imageset"
             style="@style/CategoryText"
@@ -125,11 +107,9 @@
             android:layout_weight="1"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="4dp"
             android:layout_marginRight="4dp"
-            android:textColor="@color/image_set"
+            android:background="@color/image_set"
+            android:textColor="@android:color/white"
             android:text="@string/image_set" />
 
         <com.hippo.widget.CheckTextView
@@ -140,16 +120,13 @@
             android:layout_weight="1"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:layout_marginStart="4dp"
             android:layout_marginLeft="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:textColor="@color/cosplay"
+            android:background="@color/cosplay"
+            android:textColor="@android:color/white"
             android:text="@string/cosplay" />
     </TableRow>
 
     <TableRow>
-
         <com.hippo.widget.CheckTextView
             android:id="@+id/button_asianporn"
             style="@style/CategoryText"
@@ -157,12 +134,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="4dp"
             android:layout_marginRight="4dp"
-            android:textColor="@color/asian_porn"
+            android:background="@color/asian_porn"
+            android:textColor="@android:color/white"
             android:text="@string/asian_porn" />
 
         <com.hippo.widget.CheckTextView
@@ -172,12 +146,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="4dp"
             android:layout_marginLeft="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:textColor="@color/misc"
+            android:background="@color/misc"
+            android:textColor="@android:color/white"
             android:text="@string/misc" />
     </TableRow>
 

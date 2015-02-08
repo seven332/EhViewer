@@ -53,8 +53,6 @@ public class CategoryTable extends TableLayout {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         inflater.inflate(R.layout.widget_category_table, this);
 
-        setStretchAllColumns(true);
-
         mDoujinshi = (CheckTextView)findViewById(R.id.button_doujinshi);
         mManga = (CheckTextView)findViewById(R.id.button_manga);
         mArtistCG = (CheckTextView)findViewById(R.id.button_artistcg);

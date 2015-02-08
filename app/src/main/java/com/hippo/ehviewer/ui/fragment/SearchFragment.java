@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.GalleryListUrlBuilder;
+import com.hippo.ehviewer.widget.AdvanceSearchTable;
 import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.util.UiUtils;
 import com.hippo.util.ViewUtils;
@@ -64,6 +65,8 @@ public class SearchFragment extends Fragment implements CompoundButton.OnChecked
     private CheckBox mCheckSpecifyAuthor;
     private PrefixEditText mTextSearch;
     private CheckBox mCheckEnableAdvance;
+    private View mAdvanceView;
+    private AdvanceSearchTable mTableAdvanceSearch;
 
     private LinearLayoutManager mLayoutManager;
     private SearchAdapter mAdapter;
@@ -93,6 +96,7 @@ public class SearchFragment extends Fragment implements CompoundButton.OnChecked
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (buttonView == mCheckSpecifyAuthor) {
             mTextSearch.setPrefix(isChecked ? "uploader:" : null);
+
         } else if (buttonView == mCheckEnableAdvance) {
             mEnableAdvance = isChecked;
             if (mSearchType == SEARCH_TYPE_NORMAL) {
@@ -204,6 +208,15 @@ public class SearchFragment extends Fragment implements CompoundButton.OnChecked
 
         private void bindAdvanceView(SearchHolder holder) {
             holder.title.setText(R.string.search_advance);
+
+            if (mAdvanceView == null) {
+                mInflater.inflate(R.layout.search_advance, holder.content);
+                mAdvanceView = holder.content.getChildAt(0);
+                mTableAdvanceSearch = (AdvanceSearchTable) mAdvanceView.findViewById(R.id.search_advance_search_table);
+            } else {
+                ViewUtils.removeFromParent(mAdvanceView);
+                holder.content.addView(mAdvanceView);
+            }
         }
 
         private void bindTagView(SearchHolder holder) {

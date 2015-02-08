@@ -28,16 +28,12 @@
         android:id="@+id/search_specify_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/search_category_widget_margin_start"
-        android:layout_marginRight="@dimen/search_category_widget_margin_end"
         android:text="@string/search_specify_author"/>
 
     <com.hippo.widget.PrefixEditText
         android:id="@+id/search_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/search_category_widget_margin_start"
-        android:layout_marginRight="@dimen/search_category_widget_margin_end"
         android:hint="@string/hint_no_keyword"
         android:singleLine="true"/>
 
@@ -45,8 +41,6 @@
         android:id="@+id/search_enable_advance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/search_category_widget_margin_start"
-        android:layout_marginRight="@dimen/search_category_widget_margin_end"
         android:text="@string/search_enable_advance"/>
 
 </LinearLayout>

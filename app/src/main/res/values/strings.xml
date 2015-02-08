@@ -40,6 +40,23 @@
     <string name="search_image">Image</string>
     <string name="search_specify_author">Specify Uploader</string>
     <string name="search_enable_advance">Enable advance options</string>
+
+    <string name="search_sname">Search Gallery</string>
+    <string name="search_stags">Search Gallery Tags</string>
+    <string name="search_sdesc">Search Gallery Description</string>
+    <string name="search_storr">Search Torrent Filenames</string>
+    <string name="search_sto">Only Show Galleries With Torrents</string>
+    <string name="search_sdt1">Search Low-Power Tags</string>
+    <string name="search_sdt2">Search Downvoted Tags</string>
+    <string name="search_sh">Show Expunged Galleries</string>
+    <string name="search_sr">Minimum Rating:</string>
+
     <string name="hint_no_keyword">No keyword is OK</string>
+
+    <!-- search_min_rating -->
+    <string name="star_2">2 stars</string>
+    <string name="star_3">3 stars</string>
+    <string name="star_4">4 stars</string>
+    <string name="star_5">5 stars</string>
 
 </resources>

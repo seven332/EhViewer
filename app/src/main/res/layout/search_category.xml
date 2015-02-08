@@ -37,6 +37,8 @@
     <FrameLayout
         android:id="@+id/category_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/search_category_widget_margin_start"
+        android:paddingRight="@dimen/search_category_widget_margin_start"/>
 
 </LinearLayout>
