@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ Copyright (C) 2015 Hippo Seven
   ~
@@ -13,10 +14,14 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<resources>
 
-</LinearLayout>
+    <style name="AppTheme.Content" parent="AppTheme.NoActionBar">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+</resources>

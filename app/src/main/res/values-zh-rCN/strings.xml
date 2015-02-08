@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ Copyright (C) 2015 Hippo Seven
   ~
@@ -13,10 +14,15 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<resources>
 
-</LinearLayout>
+    <!-- Search -->
+    <string name="search_normal">常规选项</string>
+    <string name="search_advance">高级选项</string>
+    <string name="search_tag">标签搜索</string>
+    <string name="search_image">图片搜索</string>
+    <string name="search_specify_author">指定上传者</string>
+    <string name="search_enable_advance">启用高级选项</string>
+    <string name="hint_no_keyword">没关键字也行</string>
+
+</resources>

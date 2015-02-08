@@ -16,9 +16,9 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+        <item name="colorPrimary">@color/theme_primary</item>
+        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
+        <item name="colorAccent">@color/theme_accent</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -28,6 +28,9 @@
 
     <style name="AppTheme.NoActionBar.Translucent">
         <!-- Only avalible on API 19 and above -->
+    </style>
+
+    <style name="AppTheme.Content" parent="AppTheme.NoActionBar">
     </style>
 
 </resources>

@@ -13,17 +13,45 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
-    <FrameLayout
-        android:id="@+id/stage"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <include
-        layout="@layout/draw_left"/>
+        <android.support.v7.widget.Toolbar
+            xmlns:app="http://schemas.android.com/apk/res-app"
+            android:id="@+id/toolbar"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:minHeight="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"/>
+
+        <FrameLayout
+            android:id="@+id/stage"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <com.hippo.widget.DrawerFrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:maxWidth="320dp"
+        android:background="@color/background_light"
+        android:fitsSystemWindows="true">
+
+        <include
+            layout="@layout/draw_left"/>
+
+    </com.hippo.widget.DrawerFrameLayout>
 
 </android.support.v4.widget.DrawerLayout>

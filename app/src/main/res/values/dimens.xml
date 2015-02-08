@@ -21,4 +21,18 @@
     <dimen name="search_padding_top">0dp</dimen>
     <dimen name="search_padding_bottom">0dp</dimen>
 
+    <!-- Search category padding start / end -->
+    <dimen name="search_category_padding_start">0dp</dimen>
+    <dimen name="search_category_padding_end">0dp</dimen>
+
+    <!-- Search category panel elevation -->
+    <dimen name="search_category_elevation">4dp</dimen>
+
+    <!-- Search category title layout height -->
+    <dimen name="search_category_title_height">48dp</dimen>
+
+    <!-- Search category title margin start -->
+    <dimen name="search_category_widget_margin_start">16dp</dimen>
+    <dimen name="search_category_widget_margin_end">16dp</dimen>
+
 </resources>

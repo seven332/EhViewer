@@ -13,10 +13,10 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<resources>
 
-</LinearLayout>
+    <!-- Search category padding start / end -->
+    <dimen name="search_category_padding_start">4dp</dimen>
+    <dimen name="search_category_padding_end">4dp</dimen>
+
+</resources>

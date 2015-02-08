@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ Copyright (C) 2015 Hippo Seven
   ~
@@ -13,10 +14,10 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<resources>
 
-</LinearLayout>
+    <!-- Search category padding start / end -->
+    <dimen name="search_category_padding_start">16dp</dimen>
+    <dimen name="search_category_padding_end">24dp</dimen>
+
+</resources>

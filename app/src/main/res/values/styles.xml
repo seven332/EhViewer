@@ -15,6 +15,14 @@
   -->
 <resources>
 
+    <style name="TextAppearance" parent="TextAppearance.AppCompat">
+    </style>
+
+    <style name="TextAppearance.CategoryTitle" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/theme_accent</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <!-- FloatingActionButton -->
     <style name="FloatingActionButton">
         <item name="android:minWidth">60dp</item>

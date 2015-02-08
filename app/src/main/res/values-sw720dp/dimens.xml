@@ -20,4 +20,8 @@
     <dimen name="search_padding_start">80dp</dimen>
     <dimen name="search_padding_end">80dp</dimen>
 
+    <!-- Search category padding start / end -->
+    <dimen name="search_category_padding_start">24dp</dimen>
+    <dimen name="search_category_padding_end">24dp</dimen>
+
 </resources>
