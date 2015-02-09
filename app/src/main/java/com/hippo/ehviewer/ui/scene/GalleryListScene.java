@@ -15,6 +15,7 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -60,6 +61,16 @@ public class GalleryListScene extends Scene implements SearchFragment.OnSearchLi
     @Override
     public void onSearch(GalleryListUrlBuilder glub) {
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     public class GalleryListPagerAdapter extends FragmentPagerAdapter {

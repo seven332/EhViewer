@@ -33,7 +33,7 @@
             android:minHeight="?attr/actionBarSize"
             android:background="?attr/colorPrimary"/>
 
-        <FrameLayout
+        <com.hippo.scene.StageLayout
             android:id="@+id/stage"
             android:layout_width="match_parent"
             android:layout_height="0dp"

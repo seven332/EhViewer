@@ -18,6 +18,8 @@ package com.hippo.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,6 +29,9 @@ import com.hippo.util.MathUtils;
 import com.nineoldandroids.animation.ObjectAnimator;
 
 public class CheckTextView extends TextView implements OnClickListener, Hotspotable {
+
+    private static final String STATE_KEY_SUPER = "super";
+    private static final String STATE_KEY_CHECKED = "checked";
 
     private static final int MASK = 0x8a000000;
     private static final long ANIMATION_DURATION = 150;
@@ -113,6 +118,23 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
 
     public boolean isChecked() {
         return mChecked;
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+        final Bundle state = new Bundle();
+        state.putParcelable(STATE_KEY_SUPER, super.onSaveInstanceState());
+        state.putBoolean(STATE_KEY_CHECKED, mChecked);
+        return state;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            final Bundle savedState = (Bundle) state;
+            super.onRestoreInstanceState(savedState.getParcelable(STATE_KEY_SUPER));
+            mChecked = savedState.getBoolean(STATE_KEY_CHECKED);
+        }
     }
 
 }

@@ -15,7 +15,7 @@
 
 package com.hippo.scene;
 
-import android.widget.FrameLayout;
+import android.os.Bundle;
 
 import com.hippo.ehviewer.ui.AbsActionBarActivity;
 
@@ -30,7 +30,7 @@ public abstract class StageActivity extends AbsActionBarActivity {
 
     private Scene mRetainedScene = null;
 
-    public abstract FrameLayout getStageView();
+    public abstract StageLayout getStageView();
 
     private void pushScene(Class sceneClass) {
         Scene scene = null;
@@ -152,6 +152,30 @@ public abstract class StageActivity extends AbsActionBarActivity {
     public void onBackPressed() {
         if (mCurrentScene != null) {
             mCurrentScene.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        for (Scene scene : mSceneStack) {
+            scene.onSaveInstanceState(outState);
+        }
+        if (mCurrentScene != null) {
+            mCurrentScene.onSaveInstanceState(outState);
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        for (Scene scene : mSceneStack) {
+            scene.onRestoreInstanceState(savedInstanceState);
+        }
+        if (mCurrentScene != null) {
+            mCurrentScene.onRestoreInstanceState(savedInstanceState);
         }
     }
 

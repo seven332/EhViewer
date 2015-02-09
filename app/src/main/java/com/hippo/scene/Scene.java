@@ -15,7 +15,10 @@
 
 package com.hippo.scene;
 
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -109,6 +112,20 @@ public abstract class Scene {
 
     public void onBackPressed() {
         finish();
+    }
+
+    protected void onSaveInstanceState(Bundle outState) {
+        SparseArray<Parcelable> states = new SparseArray<>();
+        mRootView.saveHierarchyState(states);
+        outState.putSparseParcelableArray(Integer.toHexString(hashCode()), states);
+    }
+
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        SparseArray<Parcelable> savedStates
+                = savedInstanceState.getSparseParcelableArray(Integer.toHexString(hashCode()));
+        if (savedStates != null) {
+            mRootView.restoreHierarchyState(savedStates);
+        }
     }
 
     /**

@@ -15,12 +15,16 @@
 
 package com.hippo.ehviewer.ui.fragment;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,11 +37,14 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.GalleryListUrlBuilder;
 import com.hippo.ehviewer.widget.AdvanceSearchTable;
 import com.hippo.ehviewer.widget.CategoryTable;
+import com.hippo.util.Log;
 import com.hippo.util.UiUtils;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.PrefixEditText;
 
 public class SearchFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
+
+    private static final String VIEW_STATE_TAG = "android:view_state";
 
     private static final int SEARCH_TYPE_NORMAL = 0;
     private static final int SEARCH_TYPE_TAG = 1;
@@ -59,6 +66,7 @@ public class SearchFragment extends Fragment implements CompoundButton.OnChecked
 
     private OnSearchListener mOnSearchListener;
 
+    private View mRootView;
     private RecyclerView mContainer;
     private View mNormalView;
     private CategoryTable mTableCategory;
@@ -75,11 +83,24 @@ public class SearchFragment extends Fragment implements CompoundButton.OnChecked
         mOnSearchListener = listener;
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null && mRootView != null) {
+            SparseArray<Parcelable> savedStates = savedInstanceState.getSparseParcelableArray(VIEW_STATE_TAG);
+            if (savedStates != null) {
+                mRootView.restoreHierarchyState(savedStates);
+            }
+        }
+    }
+
     public View onCreateView(LayoutInflater inflater,ViewGroup container,
             Bundle savedInstanceState) {
         mActivity = getActivity();
 
-        View mRootView = inflater.inflate(R.layout.fragment_search, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_search, container, false);
 
         mContainer = (RecyclerView) mRootView.findViewById(R.id.search_container);
 
@@ -90,6 +111,13 @@ public class SearchFragment extends Fragment implements CompoundButton.OnChecked
         mContainer.setHasFixedSize(true);
 
         return mRootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mRootView = null;
     }
 
     @Override
@@ -153,6 +181,9 @@ public class SearchFragment extends Fragment implements CompoundButton.OnChecked
 
         @Override
         public SearchHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+            Log.d("TAG", "sdsd", new Exception("onCreateViewHolder"));
+
             View view = mInflater.inflate(R.layout.search_category, parent, false);
 
             ViewCompat.setElevation(view, UiUtils.dp2pix(4)); // TODO
