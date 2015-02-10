@@ -29,6 +29,8 @@ import com.hippo.util.MathUtils;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.ObjectAnimator;
 
+import org.jetbrains.annotations.NotNull;
+
 public class CheckTextView extends TextView implements OnClickListener, Hotspotable {
 
     private static final String STATE_KEY_SUPER = "super";
@@ -78,12 +80,14 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
         mMaxRadius = MathUtils.coverageRadius(getWidth(), getHeight(), x, y);
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public void setRadius(float radius) {
         float bigger = Math.max(mRadius, radius);
         mRadius = radius;
         invalidate((int) (mX - bigger), (int) (mY - bigger), (int) (mX + bigger), (int) (mY + bigger));
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public float getRadius() {
         return mRadius;
     }
@@ -135,7 +139,7 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NotNull Canvas canvas) {
         super.onDraw(canvas);
 
         if (mAimating) {

@@ -20,4 +20,7 @@
     <dimen name="search_category_padding_start">16dp</dimen>
     <dimen name="search_category_padding_end">24dp</dimen>
 
+    <!-- Keyline -->
+    <dimen name="keyline_margin">24dp</dimen>
+
 </resources>

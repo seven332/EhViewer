@@ -35,4 +35,7 @@
     <dimen name="search_category_widget_margin_start">16dp</dimen>
     <dimen name="search_category_widget_margin_end">16dp</dimen>
 
+    <!-- Keyline -->
+    <dimen name="keyline_margin">16dp</dimen>
+
 </resources>

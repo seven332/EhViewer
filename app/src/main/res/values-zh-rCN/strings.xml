@@ -25,4 +25,13 @@
     <string name="search_enable_advance">启用高级选项</string>
     <string name="hint_no_keyword">没关键字也行</string>
 
+    <string name="search_add">添加</string>
+    <string name="search_mode">模式</string>
+
+    <!-- search_min_rating -->
+    <string name="star_2">2 星</string>
+    <string name="star_3">3 星</string>
+    <string name="star_4">4 星</string>
+    <string name="star_5">5 星</string>
+
 </resources>

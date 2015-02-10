@@ -53,6 +53,9 @@
 
     <string name="hint_no_keyword">No keyword is OK</string>
 
+    <string name="search_add">Add</string>
+    <string name="search_mode">Mode</string>
+
     <!-- search_min_rating -->
     <string name="star_2">2 stars</string>
     <string name="star_3">3 stars</string>
