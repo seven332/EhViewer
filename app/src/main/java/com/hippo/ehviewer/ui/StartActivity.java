@@ -28,7 +28,7 @@ import com.larvalabs.svgandroid.SVGBuilder;
 import com.larvalabs.svgandroid.SVGParseException;
 
 public class StartActivity extends AbsActionBarActivity {
-    
+
     private static final String TAG = StartActivity.class.getSimpleName();
 
     @Override
@@ -48,14 +48,16 @@ public class StartActivity extends AbsActionBarActivity {
             // Empty, I think this exception will never be caught.
         }
 
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                finish();
-                Intent intent = new Intent(StartActivity.this, ContentActivity.class);
-                startActivity(intent);
-            }
-        }, 3000);
-
+        if (savedInstanceState == null) {
+            // Only do this when first time
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                    Intent intent = new Intent(StartActivity.this, ContentActivity.class);
+                    startActivity(intent);
+                }
+            }, 3000);
+        }
     }
 }
