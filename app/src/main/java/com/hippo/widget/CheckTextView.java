@@ -26,6 +26,7 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 import com.hippo.util.MathUtils;
+import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.ObjectAnimator;
 
 public class CheckTextView extends TextView implements OnClickListener, Hotspotable {
@@ -37,6 +38,7 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
     private static final long ANIMATION_DURATION = 150;
 
     private boolean mChecked = false;
+    private boolean mAimating = false;
 
     private float mX;
     private float mY;
@@ -44,6 +46,8 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
     private float mMaxRadius;
 
     private Paint mPaint;
+
+    private Animator mCurrentAnimator;
 
     public CheckTextView(Context context) {
         super(context);
@@ -84,10 +88,32 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
         return mRadius;
     }
 
-    @Override
-    public void onClick(View v) {
-        mChecked = !mChecked;
+    private Animator.AnimatorListener mAnimatorListener = new Animator.AnimatorListener() {
+        @Override
+        public void onAnimationStart(Animator animation) {
+            mAimating = true;
+            mCurrentAnimator = animation;
+        }
 
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            mAimating = false;
+            mCurrentAnimator = null;
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+            mAimating = false;
+            mCurrentAnimator = null;
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+            // Empty
+        }
+    };
+
+    private void startAnimator() {
         ObjectAnimator radiusAnim;
         if (mChecked) {
             radiusAnim = ObjectAnimator.ofFloat(this, "radius",
@@ -98,24 +124,64 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
         }
         radiusAnim.setAutoCancel(true);
         radiusAnim.setDuration(ANIMATION_DURATION); // TODO decide duration according to mMaxRadius
+        radiusAnim.addListener(mAnimatorListener);
         radiusAnim.start();
+    }
+
+    @Override
+    public void onClick(View v) {
+        mChecked = !mChecked;
+        startAnimator();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        float radius = mRadius;
-        if (radius > 0f) {
-            canvas.drawCircle(mX, mY, radius, mPaint);
+        if (mAimating) {
+            float radius = mRadius;
+            if (radius > 0f) {
+                canvas.drawCircle(mX, mY, radius, mPaint);
+            }
+        } else {
+            if (mChecked) {
+                canvas.drawColor(MASK);
+            }
         }
     }
 
-    public void setChecked(boolean checked) {
-        mChecked = checked;
-        invalidate();
+    /**
+     * Changes the checked state of this CheckTextView.
+     *
+     * @param checked checked true to check the CheckTextView, false to uncheck it
+     * @param animation true for show animation
+     */
+    public void setChecked(boolean checked, boolean animation) {
+        if (mChecked != checked) {
+            mChecked = checked;
+
+            if (animation) {
+                int w = getWidth();
+                int h = getHeight();
+                mX = w / 2;
+                mY = h / 2;
+                mMaxRadius = (float) Math.hypot(mX, mY);
+
+                startAnimator();
+            } else {
+                if (mCurrentAnimator != null) {
+                    mCurrentAnimator.cancel();
+                }
+                invalidate();
+            }
+        }
     }
 
+    /**
+     * Get the checked state of it.
+     *
+     * @return true is it is checked
+     */
     public boolean isChecked() {
         return mChecked;
     }
@@ -133,7 +199,7 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
         if (state instanceof Bundle) {
             final Bundle savedState = (Bundle) state;
             super.onRestoreInstanceState(savedState.getParcelable(STATE_KEY_SUPER));
-            mChecked = savedState.getBoolean(STATE_KEY_CHECKED);
+            setChecked(savedState.getBoolean(STATE_KEY_CHECKED), false);
         }
     }
 
