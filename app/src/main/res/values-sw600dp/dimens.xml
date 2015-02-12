@@ -46,4 +46,9 @@
     <!-- AdvanceSearchTable -->
     <dimen name="advance_search_table_item_margin_half">8dp</dimen>
 
+    <!-- Content -->
+    <dimen name="content_padding_start">52dp</dimen>
+    <dimen name="content_padding_end">52dp</dimen>
+    <dimen name="content_fab_margin_end">24dp</dimen>
+
 </resources>

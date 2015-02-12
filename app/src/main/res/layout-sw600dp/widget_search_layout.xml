@@ -21,8 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="@dimen/appbar_size"
-        android:paddingLeft="52dp"
-        android:paddingRight="52dp"
+        android:paddingLeft="@dimen/content_padding_start"
+        android:paddingRight="@dimen/content_padding_end"
         android:clipToPadding="false"/>
 
     <com.hippo.widget.FloatingActionButton
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:layout_marginTop="@dimen/appbar_fab_margin_top"
-        android:layout_marginRight="24dp"
+        android:layout_marginRight="@dimen/content_fab_margin_end"
         auto:fabColor="?attr/colorAccent"
         auto:fabDrawable="@drawable/ic_fab_search"/>
 

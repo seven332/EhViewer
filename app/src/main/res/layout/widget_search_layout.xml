@@ -18,7 +18,9 @@
 
     <com.hippo.widget.recyclerview.EasyRecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/content_padding_start"
+        android:paddingRight="@dimen/content_padding_end"/>
 
     <com.hippo.widget.FloatingActionButton
         xmlns:auto="http://schemas.android.com/apk/res-auto"

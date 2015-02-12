@@ -50,6 +50,12 @@
     <!-- AdvanceSearchTable -->
     <dimen name="advance_search_table_item_margin_half">4dp</dimen>
 
+
+    <!-- Content -->
+    <dimen name="content_padding_start">0dp</dimen>
+    <dimen name="content_padding_end">0dp</dimen>
+
+    <!-- Default elevation -->
     <dimen name="default_elevation">4dp</dimen>
 
 </resources>
