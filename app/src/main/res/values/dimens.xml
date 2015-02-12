@@ -20,9 +20,6 @@
     <dimen name="search_category_padding_end">16dp</dimen>
     <dimen name="search_category_padding_bottom">8dp</dimen>
 
-    <!-- Search category panel elevation -->
-    <dimen name="search_category_elevation">4dp</dimen>
-
     <!-- Search category title layout height -->
     <dimen name="search_category_title_height">48dp</dimen>
 
@@ -30,7 +27,7 @@
     <dimen name="search_item_interval">8dp</dimen>
 
     <!-- Search category interval -->
-    <dimen name="search_category_interval">16dp</dimen>
+    <dimen name="search_category_interval">8dp</dimen>
 
     <dimen name="search_action_button_width">0dp</dimen>
 
@@ -43,6 +40,7 @@
     <!-- AppBar -->
     <dimen name="appbar_size">56dp</dimen>
     <dimen name="appbar_height">@dimen/appbar_size</dimen>
+    <dimen name="appbar_shadow_height">8dp</dimen>
     <dimen name="appbar_fab_margin_top">28dp</dimen>
 
     <!-- CategoryTable -->
@@ -51,5 +49,7 @@
 
     <!-- AdvanceSearchTable -->
     <dimen name="advance_search_table_item_margin_half">4dp</dimen>
+
+    <dimen name="default_elevation">4dp</dimen>
 
 </resources>

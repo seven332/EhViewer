@@ -13,10 +13,14 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<resources>
 
-    <!-- Search category padding start / end -->
-    <dimen name="search_category_padding_start">4dp</dimen>
-    <dimen name="search_category_padding_end">4dp</dimen>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
 
-</resources>
+    <gradient
+        android:startColor="@android:color/transparent"
+        android:endColor="@color/shadow_light"
+        android:angle="90"/>
+
+</shape>

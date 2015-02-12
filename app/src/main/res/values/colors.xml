@@ -61,4 +61,6 @@
 
     <color name="search_category_background_color">@android:color/white</color>
 
+    <color name="shadow_light">#38000000</color>
+
 </resources>

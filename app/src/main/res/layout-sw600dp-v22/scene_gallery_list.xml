@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ Copyright (C) 2015 Hippo Seven
   ~
@@ -13,7 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,23 +23,14 @@
     <com.hippo.widget.Appbar
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/appbar_size"
-        android:background="?attr/colorPrimary"/>
+        android:layout_height="@dimen/appbar_height"
+        android:background="?attr/colorPrimary"
+        android:elevation="@dimen/default_elevation"/>
 
-    <FrameLayout
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:elevation="@dimen/default_elevation"/>
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/appbar_shadow_height"
-            android:background="@drawable/drop_shadow"/>
-
-    </FrameLayout>
-
-</LinearLayout>
+</FrameLayout>

@@ -20,11 +20,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.hippo.widget.Appbar
-        android:id="@+id/appbar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/appbar_height"
-        android:background="?attr/colorPrimary"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.hippo.widget.Appbar
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/appbar_height"
+            android:background="?attr/colorPrimary"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/appbar_shadow_height"
+            android:background="@drawable/drop_shadow"/>
+
+    </LinearLayout>
+
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"
