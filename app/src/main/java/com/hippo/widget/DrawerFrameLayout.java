@@ -18,15 +18,20 @@ package com.hippo.widget;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+
+import org.jetbrains.annotations.NotNull;
 
 public class DrawerFrameLayout extends FrameLayout {
 
     private static final int[] MAX_ATTRS = {android.R.attr.maxWidth};
 
     private int mMaxWidth = -1;
+
+    private OnGetPaddingListener mOnGetPaddingListener;
 
     public DrawerFrameLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -50,6 +55,7 @@ public class DrawerFrameLayout extends FrameLayout {
         a.recycle();
     }
 
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -61,5 +67,26 @@ public class DrawerFrameLayout extends FrameLayout {
         }
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    protected boolean fitSystemWindows(@NotNull Rect insets) {
+        if (mOnGetPaddingListener != null) {
+            mOnGetPaddingListener.onGetPadding(insets.left, insets.top,
+                    insets.right, insets.bottom);
+        }
+
+        insets.set(0, 0, 0, 0);
+
+        return super.fitSystemWindows(insets);
+    }
+
+    public void setOnGetPaddingListener(OnGetPaddingListener listener) {
+        mOnGetPaddingListener = listener;
+    }
+
+    public interface OnGetPaddingListener {
+        public void onGetPadding(int l, int t, int r, int b);
     }
 }

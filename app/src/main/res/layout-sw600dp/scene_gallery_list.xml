@@ -14,11 +14,21 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-<resources>
+    <com.hippo.widget.Appbar
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/appbar_height"
+        android:background="?attr/colorPrimary"/>
 
-    <!-- Search view padding in its container -->
-    <dimen name="search_padding_start">128dp</dimen>
-    <dimen name="search_padding_end">128dp</dimen>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
-</resources>
+</FrameLayout>

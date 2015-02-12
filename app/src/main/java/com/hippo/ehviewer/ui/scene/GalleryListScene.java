@@ -26,9 +26,11 @@ import com.hippo.ehviewer.data.GalleryListUrlBuilder;
 import com.hippo.ehviewer.ui.fragment.GalleryListFragment;
 import com.hippo.ehviewer.ui.fragment.SearchFragment;
 import com.hippo.scene.Scene;
+import com.hippo.widget.Appbar;
 
 public class GalleryListScene extends Scene implements SearchFragment.OnSearchListener {
 
+    private Appbar mAppbar;
     private ViewPager mViewPager;
 
     private GalleryListPagerAdapter mAdapter;
@@ -37,10 +39,13 @@ public class GalleryListScene extends Scene implements SearchFragment.OnSearchLi
     public void onCreate() {
         setContentView(R.layout.scene_gallery_list);
 
+        mAppbar = (Appbar) findViewById(R.id.appbar);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
 
         mAdapter = new GalleryListPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
+
+        mAppbar.setTitle("EhViewer");
     }
 
     @Override

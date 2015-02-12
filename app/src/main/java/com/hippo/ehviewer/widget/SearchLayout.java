@@ -16,11 +16,12 @@
 package com.hippo.ehviewer.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -33,7 +34,6 @@ import android.widget.TextView;
 
 import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
-import com.hippo.util.UiUtils;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.FloatingActionButton;
 import com.hippo.widget.PrefixEditText;
@@ -69,6 +69,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     };
 
     private Context mContext;
+    private Resources mResources;
 
     private int mSearchType = SEARCH_TYPE_NORMAL;
     private boolean mEnableAdvance = false;
@@ -80,7 +81,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     private CategoryTable mTableCategory;
     private CheckBox mCheckSpecifyAuthor;
     private PrefixEditText mTextSearch;
-    private CheckBox mCheckEnableAdvance;
+    private SwitchCompat mSwitchEnableAdvance;
 
     private View mAdvanceView;
     private AdvanceSearchTable mTableAdvanceSearch;
@@ -111,6 +112,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
 
     private void init(Context context) {
         mContext = context;
+        mResources = mContext.getResources();
 
         LayoutInflater.from(context).inflate(R.layout.widget_search_layout, this);
 
@@ -162,7 +164,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         if (buttonView == mCheckSpecifyAuthor) {
             mTextSearch.setPrefix(isChecked ? "uploader:" : null);
 
-        } else if (buttonView == mCheckEnableAdvance) {
+        } else if (buttonView == mSwitchEnableAdvance) {
             mEnableAdvance = isChecked;
             if (mSearchType == SEARCH_TYPE_NORMAL) {
                 if (isChecked) {
@@ -241,7 +243,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
                 bindActionView((ActionHolder) holder);
             } else {
                 View view = mInflater.inflate(R.layout.search_category, parent, false);
-                ViewCompat.setElevation(view, UiUtils.dp2pix(4)); // TODO
+                // ViewCompat.setElevation(view, UiUtils.dp2pix(4)); // TODO
                 holder = new SearchHolder(view);
                 switch (viewType) {
                     case ITEM_TYPE_NORMAL:{
@@ -275,7 +277,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
                 mTableCategory = (CategoryTable) mNormalView.findViewById(R.id.search_category_table);
                 mCheckSpecifyAuthor = (CheckBox) mNormalView.findViewById(R.id.search_specify_author);
                 mTextSearch = (PrefixEditText) mNormalView.findViewById(R.id.search_text);
-                mCheckEnableAdvance = (CheckBox) mNormalView.findViewById(R.id.search_enable_advance);
+                mSwitchEnableAdvance = (SwitchCompat) mNormalView.findViewById(R.id.search_enable_advance);
 
                 // Restore state
                 if (mSavedInstanceState != null) {
@@ -283,7 +285,8 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
                 }
 
                 mCheckSpecifyAuthor.setOnCheckedChangeListener(SearchLayout.this);
-                mCheckEnableAdvance.setOnCheckedChangeListener(SearchLayout.this);
+                mSwitchEnableAdvance.setOnCheckedChangeListener(SearchLayout.this);
+                mSwitchEnableAdvance.setSwitchPadding(mResources.getDimensionPixelSize(R.dimen.switch_padding));
             } else {
                 ViewUtils.removeFromParent(mNormalView);
                 holder.content.removeAllViews();

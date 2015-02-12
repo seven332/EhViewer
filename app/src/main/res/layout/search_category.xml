@@ -17,18 +17,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/search_category_interval"
     android:paddingLeft="@dimen/search_category_padding_start"
     android:paddingRight="@dimen/search_category_padding_end"
+    android:paddingBottom="@dimen/search_category_padding_bottom"
     android:orientation="vertical"
-    android:background="@color/search_category_background_color"
-    android:layout_marginBottom="8dip">
+    android:background="@color/search_category_background_color">
 
     <TextView
         android:id="@+id/category_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/search_category_title_height"
-        android:paddingLeft="@dimen/search_category_widget_margin_start"
-        android:paddingRight="@dimen/search_category_widget_margin_start"
         android:singleLine="true"
         android:ellipsize="marquee"
         android:gravity="center_vertical"
@@ -37,9 +36,6 @@
     <FrameLayout
         android:id="@+id/category_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/search_category_widget_margin_start"
-        android:paddingRight="@dimen/search_category_widget_margin_start"
-        android:paddingBottom="@dimen/search_category_widget_margin_start"/>
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

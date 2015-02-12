@@ -16,6 +16,8 @@
 package com.hippo.widget;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextWatcher;
@@ -24,6 +26,9 @@ import android.widget.AutoCompleteTextView;
 
 public class PrefixEditText extends AutoCompleteTextView
         implements TextWatcher {
+
+    private static final String STATE_KEY_SUPER = "super";
+    private static final String STATE_KEY_PREFIX = "prefix";
 
     private Context mContext;
     private String mPrefix;
@@ -92,6 +97,23 @@ public class PrefixEditText extends AutoCompleteTextView
         if(mPrefix != null && !s.toString().startsWith(mPrefix)){
             setText(mPrefix);
             setSelection(mPrefix.length());
+        }
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+        final Bundle state = new Bundle();
+        state.putParcelable(STATE_KEY_SUPER, super.onSaveInstanceState());
+        state.putString(STATE_KEY_PREFIX, mPrefix);
+        return state;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            final Bundle savedState = (Bundle) state;
+            super.onRestoreInstanceState(savedState.getParcelable(STATE_KEY_SUPER));
+            setPrefix(savedState.getString(STATE_KEY_PREFIX));
         }
     }
 

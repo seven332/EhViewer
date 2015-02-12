@@ -27,6 +27,7 @@ dependencies {
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:recyclerview-v7:21.0.3'
+    compile 'com.android.support:cardview-v7:21.0.3'
     compile 'com.github.japgolly.android:svg-android:2.0.6'
     compile 'com.intellij:annotations:12.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])

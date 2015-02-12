@@ -22,25 +22,29 @@
     <com.hippo.ehviewer.widget.CategoryTable
         android:id="@+id/search_category_table"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/search_item_interval"/>
 
     <CheckBox
         android:id="@+id/search_specify_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/search_item_interval"
         android:text="@string/search_specify_author"/>
 
     <com.hippo.widget.PrefixEditText
         android:id="@+id/search_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/search_item_interval"
         android:hint="@string/hint_no_keyword"
         android:singleLine="true"/>
 
-    <CheckBox
+    <android.support.v7.widget.SwitchCompat
         android:id="@+id/search_enable_advance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="right"
         android:text="@string/search_enable_advance"/>
 
 </LinearLayout>

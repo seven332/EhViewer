@@ -15,15 +15,10 @@
   -->
 <resources>
 
-    <!-- Search view padding in its container -->
-    <dimen name="search_padding_start">0dp</dimen>
-    <dimen name="search_padding_end">0dp</dimen>
-    <dimen name="search_padding_top">0dp</dimen>
-    <dimen name="search_padding_bottom">0dp</dimen>
-
-    <!-- Search category padding start / end -->
-    <dimen name="search_category_padding_start">0dp</dimen>
-    <dimen name="search_category_padding_end">0dp</dimen>
+    <!-- Search category padding start / end / bottom -->
+    <dimen name="search_category_padding_start">16dp</dimen>
+    <dimen name="search_category_padding_end">16dp</dimen>
+    <dimen name="search_category_padding_bottom">8dp</dimen>
 
     <!-- Search category panel elevation -->
     <dimen name="search_category_elevation">4dp</dimen>
@@ -31,11 +26,30 @@
     <!-- Search category title layout height -->
     <dimen name="search_category_title_height">48dp</dimen>
 
-    <!-- Search category title margin start -->
-    <dimen name="search_category_widget_margin_start">16dp</dimen>
-    <dimen name="search_category_widget_margin_end">16dp</dimen>
+    <!-- Search item interval -->
+    <dimen name="search_item_interval">8dp</dimen>
+
+    <!-- Search category interval -->
+    <dimen name="search_category_interval">16dp</dimen>
+
+    <dimen name="search_action_button_width">0dp</dimen>
+
+    <!-- Switch padding -->
+    <dimen name="switch_padding">8dp</dimen>
 
     <!-- Keyline -->
     <dimen name="keyline_margin">16dp</dimen>
+
+    <!-- AppBar -->
+    <dimen name="appbar_size">56dp</dimen>
+    <dimen name="appbar_height">@dimen/appbar_size</dimen>
+    <dimen name="appbar_fab_margin_top">28dp</dimen>
+
+    <!-- CategoryTable -->
+    <dimen name="category_table_item_height">40dp</dimen>
+    <dimen name="category_table_item_margin_half">4dp</dimen>
+
+    <!-- AdvanceSearchTable -->
+    <dimen name="advance_search_table_item_margin_half">4dp</dimen>
 
 </resources>

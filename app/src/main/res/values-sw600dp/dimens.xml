@@ -16,11 +16,34 @@
   -->
 <resources>
 
-    <!-- Search category padding start / end -->
-    <dimen name="search_category_padding_start">16dp</dimen>
-    <dimen name="search_category_padding_end">24dp</dimen>
+    <!-- Search category title layout height -->
+    <dimen name="search_category_title_height">64dp</dimen>
+
+    <!-- Search category padding start / end / bottom -->
+    <dimen name="search_category_padding_start">52dp</dimen>
+    <dimen name="search_category_padding_end">52dp</dimen>
+    <dimen name="search_category_padding_bottom">32dp</dimen>
+
+    <!-- Search item interval -->
+    <dimen name="search_item_interval">16dp</dimen>
+
+    <!-- Search category interval -->
+    <dimen name="search_category_interval">16dp</dimen>
+
+    <dimen name="search_action_button_width">160dp</dimen>
 
     <!-- Keyline -->
     <dimen name="keyline_margin">24dp</dimen>
+
+    <!-- AppBar -->
+    <dimen name="appbar_height">224dp</dimen>
+    <dimen name="appbar_fab_margin_top">196dp</dimen>
+
+    <!-- CategoryTable -->
+    <dimen name="category_table_item_height">48dp</dimen>
+    <dimen name="category_table_item_margin_half">8dp</dimen>
+
+    <!-- AdvanceSearchTable -->
+    <dimen name="advance_search_table_item_margin_half">8dp</dimen>
 
 </resources>

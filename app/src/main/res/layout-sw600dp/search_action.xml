@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ Copyright (C) 2015 Hippo Seven
   ~
@@ -18,14 +19,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:paddingBottom="@dimen/search_category_padding_bottom">
+
+    <com.hippo.widget.Space
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
 
     <TextView
         android:id="@+id/search_action_1"
         style="@style/SearchAction"
         android:layout_width="@dimen/search_action_button_width"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:gravity="center"/>
 
     <TextView
@@ -33,7 +38,6 @@
         style="@style/SearchAction"
         android:layout_width="@dimen/search_action_button_width"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:gravity="center"/>
 
 </LinearLayout>
