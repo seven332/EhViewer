@@ -12,8 +12,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.hippo.util;
 
-package com.hippo.ehviewer.ui.fragment;
+public final class IntIdGenerator {
 
-public class GalleryListFragment extends SceneFragment {
+    private int mId = 0;
+
+    private IntIdGenerator() {
+        // Empty
+    }
+
+    public int nextId() {
+        return mId++;
+    }
+
+    public static IntIdGenerator create() {
+        return new IntIdGenerator();
+    }
 }

@@ -93,10 +93,13 @@ public class GalleryListScene extends Scene implements SearchFragment.OnSearchLi
         public Fragment getItem(int i) {
             if (i == 0) {
                 SearchFragment fragment = new SearchFragment();
+                fragment.setScene(GalleryListScene.this);
                 fragment.setOnSearchListener(GalleryListScene.this);
                 return fragment;
             } else {
-                return new GalleryListFragment();
+                GalleryListFragment fragment = new GalleryListFragment();
+                fragment.setScene(GalleryListScene.this);
+                return fragment;
             }
         }
     }

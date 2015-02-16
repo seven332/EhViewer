@@ -17,6 +17,8 @@ package com.hippo.ehviewer.widget;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,11 +32,13 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
 import com.hippo.util.ViewUtils;
+import com.hippo.widget.FloatLabelEditText;
 import com.hippo.widget.FloatingActionButton;
 import com.hippo.widget.PrefixEditText;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
@@ -45,12 +49,12 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         View.OnClickListener {
 
     private static final String STATE_KEY_SUPER = "super";
-    private static final String STATE_KEY_SEARCH_TYPE = "search_type";
+    private static final String STATE_KEY_SEARCH_MODE = "search_mode";
     private static final String STATE_KEY_ENABLE_ADVANCE = "enable_advance";
 
-    private static final int SEARCH_TYPE_NORMAL = 0;
-    private static final int SEARCH_TYPE_TAG = 1;
-    private static final int SEARCH_TYPE_IMAGE = 2;
+    private static final int SEARCH_MODE_NORMAL = 0;
+    private static final int SEARCH_MODE_TAG = 1;
+    private static final int SEARCH_MODE_IMAGE = 2;
 
     private static final int ITEM_TYPE_NORMAL = 0;
     private static final int ITEM_TYPE_NORMAL_ADVANCE = 1;
@@ -71,7 +75,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     private Context mContext;
     private Resources mResources;
 
-    private int mSearchType = SEARCH_TYPE_NORMAL;
+    private int mSearchMode = SEARCH_MODE_NORMAL;
     private boolean mEnableAdvance = false;
 
     private EasyRecyclerView mSearchContainer;
@@ -86,14 +90,26 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     private View mAdvanceView;
     private AdvanceSearchTable mTableAdvanceSearch;
 
+    private FloatLabelEditText mEditTextTag;
+
+    private View mImageView;
+    private TextView mTextSelectImage;
+    private TextView mTextImagePath;
+    private ImageView mImagePreview;
+
     private View mActionView;
     private TextView mAction1;
     private TextView mAction2;
 
     private LinearLayoutManager mLayoutManager;
     private SearchAdapter mAdapter;
+    private SearchItemAnimator mAnimator;
 
     private SparseArray<Parcelable> mSavedInstanceState;
+
+    private SearhLayoutHelper mHelper;
+
+    private Bitmap mSearchImage;
 
     public SearchLayout(Context context) {
         super(context);
@@ -121,9 +137,15 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
 
         mLayoutManager = new LinearLayoutManager(mContext);
         mAdapter = new SearchAdapter();
+        mAnimator = new SearchItemAnimator(mSearchContainer);
         mSearchContainer.setLayoutManager(mLayoutManager);
         mSearchContainer.setAdapter(mAdapter);
         mSearchContainer.setHasFixedSize(true);
+        mSearchContainer.setItemAnimator(mAnimator);
+    }
+
+    public void setHelper(SearhLayoutHelper helper) {
+        mHelper = helper;
     }
 
     @Override
@@ -144,7 +166,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     public Parcelable onSaveInstanceState() {
         final Bundle state = new Bundle();
         state.putParcelable(STATE_KEY_SUPER, super.onSaveInstanceState());
-        state.putInt(STATE_KEY_SEARCH_TYPE, mSearchType);
+        state.putInt(STATE_KEY_SEARCH_MODE, mSearchMode);
         state.putBoolean(STATE_KEY_ENABLE_ADVANCE, mEnableAdvance);
         return state;
     }
@@ -154,7 +176,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         if (state instanceof Bundle) {
             final Bundle savedState = (Bundle) state;
             super.onRestoreInstanceState(savedState.getParcelable(STATE_KEY_SUPER));
-            mSearchType = savedState.getInt(STATE_KEY_SEARCH_TYPE);
+            mSearchMode = savedState.getInt(STATE_KEY_SEARCH_MODE);
             mEnableAdvance = savedState.getBoolean(STATE_KEY_ENABLE_ADVANCE);
         }
     }
@@ -166,7 +188,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
 
         } else if (buttonView == mSwitchEnableAdvance) {
             mEnableAdvance = isChecked;
-            if (mSearchType == SEARCH_TYPE_NORMAL) {
+            if (mSearchMode == SEARCH_MODE_NORMAL) {
                 if (isChecked) {
                     mAdapter.notifyItemInserted(1);
                 } else {
@@ -176,9 +198,44 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         }
     }
 
+    private void taggleSearchMode() {
+        int oldItemCount = mAdapter.getItemCount();
+
+        mSearchMode++;
+        if (mSearchMode > SEARCH_MODE_IMAGE) {
+            mSearchMode = SEARCH_MODE_NORMAL;
+        }
+
+        int newItemCount = mAdapter.getItemCount();
+
+        mAdapter.notifyItemRangeRemoved(0, oldItemCount - 1);
+        mAdapter.notifyItemRangeInserted(0, newItemCount - 1);
+    }
+
     @Override
     public void onClick(View v) {
+        if (v == mAction1) {
+            // TODO add quick search
+        } else if (v == mAction2) {
+            taggleSearchMode();
+        } else if (v == mTextSelectImage) {
+            if (mHelper != null) {
+                mHelper.requestSelectImage();
+            }
+        }
+    }
 
+    public void onSelectImage(@NotNull String imagePath) {
+        mTextImagePath.setText(imagePath);
+
+        if (mSearchImage != null && !mSearchImage.isRecycled()) {
+            mSearchImage.isRecycled();
+        }
+        mSearchImage = BitmapFactory.decodeFile(imagePath);
+        mImagePreview.setImageBitmap(mSearchImage);
+
+        ViewUtils.setVisibility(mTextImagePath, View.VISIBLE);
+        ViewUtils.setVisibility(mImagePreview, View.VISIBLE);
     }
 
     private class SearchHolder extends RecyclerView.ViewHolder {
@@ -217,8 +274,8 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
 
         @Override
         public int getItemCount() {
-            int count = SEARCH_ITEM_COUNT_ARRAY[mSearchType];
-            if (mSearchType == SEARCH_TYPE_NORMAL && !mEnableAdvance) {
+            int count = SEARCH_ITEM_COUNT_ARRAY[mSearchMode];
+            if (mSearchMode == SEARCH_MODE_NORMAL && !mEnableAdvance) {
                 count--;
             }
             return count;
@@ -226,8 +283,8 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
 
         @Override
         public int getItemViewType(int position) {
-            int type = SEARCH_ITEM_TYPE[mSearchType][position];
-            if (mSearchType == SEARCH_TYPE_NORMAL && position == 1 && !mEnableAdvance) {
+            int type = SEARCH_ITEM_TYPE[mSearchMode][position];
+            if (mSearchMode == SEARCH_MODE_NORMAL && position == 1 && !mEnableAdvance) {
                 type = ITEM_TYPE_ACTION;
             }
             return type;
@@ -316,10 +373,43 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
 
         private void bindTagView(SearchHolder holder) {
             holder.title.setText(R.string.search_tag);
+
+            if (mEditTextTag == null) {
+                mInflater.inflate(R.layout.search_tag, holder.content);
+                mEditTextTag = (FloatLabelEditText) holder.content.getChildAt(0);
+
+                // Restore state
+                if (mSavedInstanceState != null) {
+                    holder.content.restoreHierarchyState(mSavedInstanceState);
+                }
+            } else {
+                ViewUtils.removeFromParent(mEditTextTag);
+                holder.content.addView(mEditTextTag);
+            }
         }
 
         private void bindImageView(SearchHolder holder) {
             holder.title.setText(R.string.search_image);
+
+            if (mImageView == null) {
+                mInflater.inflate(R.layout.search_image, holder.content);
+                mImageView = holder.content.getChildAt(0);
+
+                mTextSelectImage = (TextView) mImageView.findViewById(R.id.search_select_image_action);
+                mTextImagePath = (TextView) mImageView.findViewById(R.id.search_select_image_path);
+                mImagePreview = (ImageView) mImageView.findViewById(R.id.search_select_image_image);
+
+                // Restore state
+                if (mSavedInstanceState != null) {
+                    holder.content.restoreHierarchyState(mSavedInstanceState);
+                }
+
+                RippleSalon.addRipple(mTextSelectImage, false);
+                mTextSelectImage.setOnClickListener(SearchLayout.this);
+            } else {
+                ViewUtils.removeFromParent(mImageView);
+                holder.content.addView(mImageView);
+            }
         }
 
         private void bindActionView(ActionHolder holder) {
@@ -340,5 +430,9 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             // Empty, bind view in create view
         }
+    }
+
+    public interface SearhLayoutHelper {
+        public void requestSelectImage();
     }
 }

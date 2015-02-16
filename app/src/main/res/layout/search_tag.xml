@@ -13,27 +13,11 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout
+<com.hippo.widget.FloatLabelEditText
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:auto="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/search_edit_tag"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="8dp">
-
-    <TextView
-        android:id="@+id/search_action_1"
-        style="@style/CardButton"
-        android:layout_width="@dimen/search_action_button_width"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"/>
-
-    <TextView
-        android:id="@+id/search_action_2"
-        style="@style/CardButton"
-        android:layout_width="@dimen/search_action_button_width"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"/>
-
-</LinearLayout>
+    android:hint="@string/search_hint_tag"
+    auto:fllLabelAppearance="@style/TextAppearance.FloatLabelEditText.Lable.Single"/>

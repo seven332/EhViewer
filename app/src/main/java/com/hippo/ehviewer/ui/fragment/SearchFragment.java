@@ -16,9 +16,12 @@
 package com.hippo.ehviewer.ui.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
+import android.provider.MediaStore;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +29,11 @@ import android.view.ViewGroup;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.GalleryListUrlBuilder;
+import com.hippo.ehviewer.widget.SearchLayout;
+import com.hippo.scene.Scene;
 
-public class SearchFragment extends Fragment {
+public class SearchFragment extends SceneFragment implements SearchLayout.SearhLayoutHelper,
+        Scene.ActivityResultListener {
 
     private static final String VIEW_STATE_TAG = "android:view_state";
 
@@ -36,6 +42,7 @@ public class SearchFragment extends Fragment {
     private OnSearchListener mOnSearchListener;
 
     private View mRootView;
+    private SearchLayout mSearchLayout;
 
     public void setOnSearchListener(OnSearchListener listener) {
         mOnSearchListener = listener;
@@ -58,6 +65,9 @@ public class SearchFragment extends Fragment {
         mActivity = getActivity();
 
         mRootView = inflater.inflate(R.layout.fragment_search, container, false);
+        mSearchLayout = (SearchLayout) mRootView.findViewById(R.id.search_layout);
+
+        mSearchLayout.setHelper(this);
 
         return mRootView;
     }
@@ -67,6 +77,31 @@ public class SearchFragment extends Fragment {
         super.onDestroyView();
 
         mRootView = null;
+    }
+
+    @Override
+    public void requestSelectImage() {
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        getScene().startActivityForResult(intent, this);
+    }
+
+    @Override
+    public void onGetResult(int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            Cursor cursor = mActivity.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String imagePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            if (imagePath != null) {
+                mSearchLayout.onSelectImage(imagePath);
+            }
+        }
     }
 
     public interface OnSearchListener {

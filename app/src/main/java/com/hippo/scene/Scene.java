@@ -15,6 +15,7 @@
 
 package com.hippo.scene;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
@@ -128,11 +129,19 @@ public abstract class Scene {
         }
     }
 
+    public void startActivityForResult(Intent intent, ActivityResultListener listener) {
+        mStageActivity.startActivityForResult(intent, listener);
+    }
+
     /**
      * Return the FragmentManager for interacting with fragments associated
      * with StageActivity.
      */
     public FragmentManager getSupportFragmentManager() {
         return mStageActivity.getSupportFragmentManager();
+    }
+
+    public interface ActivityResultListener {
+        public void onGetResult(int resultCode, Intent data);
     }
 }

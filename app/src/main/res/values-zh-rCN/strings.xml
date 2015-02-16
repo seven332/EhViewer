@@ -22,7 +22,7 @@
     <string name="search_tag">标签搜索</string>
     <string name="search_image">图片搜索</string>
     <string name="search_specify_author">指定上传者</string>
-    <string name="hint_no_keyword">没关键字也行</string>
+    <string name="search_hint_no_keyword">没关键字也行</string>
     <string name="search_enable_advance">启用高级选项</string>
 
     <string name="search_sname">搜索画廊</string>
@@ -34,6 +34,10 @@
     <string name="search_sdt2">搜索 Downvoted 标签</string>
     <string name="search_sh">显示 Expunged 画廊</string>
     <string name="search_sr">最低评分：</string>
+
+    <string name="search_hint_tag">标签</string>
+
+    <string name="search_select_image">选择图片</string>
 
     <string name="search_add">添加</string>
     <string name="search_mode">模式</string>

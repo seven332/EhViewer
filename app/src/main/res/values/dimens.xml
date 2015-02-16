@@ -50,6 +50,8 @@
     <!-- AdvanceSearchTable -->
     <dimen name="advance_search_table_item_margin_half">4dp</dimen>
 
+    <!-- CardButton -->
+    <dimen name="card_button_padding">8dp</dimen>
 
     <!-- Content -->
     <dimen name="content_padding_start">0dp</dimen>

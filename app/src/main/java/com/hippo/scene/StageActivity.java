@@ -15,9 +15,12 @@
 
 package com.hippo.scene;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.SparseArray;
 
 import com.hippo.ehviewer.ui.AbsActionBarActivity;
+import com.hippo.util.IntIdGenerator;
 
 import java.util.LinkedList;
 import java.util.Stack;
@@ -27,8 +30,11 @@ public abstract class StageActivity extends AbsActionBarActivity {
     private Stack<Scene> mSceneStack = new Stack<>();
     private LinkedList<SceneAction> mScenseActionQueue = new LinkedList<>();
     private Scene mCurrentScene = null;
-
     private Scene mRetainedScene = null;
+
+    private IntIdGenerator mActivityResultIdGenerator = IntIdGenerator.create();
+    private SparseArray<Scene.ActivityResultListener> mActivityResultListenerMap =
+            new SparseArray<>();
 
     public abstract StageLayout getStageView();
 
@@ -146,6 +152,23 @@ public abstract class StageActivity extends AbsActionBarActivity {
                 mScenseActionQueue.offer(new FinishSceneAction(scene));
             }
         }
+    }
+
+    public void startActivityForResult(Intent intent, Scene.ActivityResultListener listener) {
+        int id = mActivityResultIdGenerator.nextId();
+        mActivityResultListenerMap.put(id, listener);
+        startActivityForResult(intent, id);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Scene.ActivityResultListener listener = mActivityResultListenerMap.get(requestCode);
+        if (listener != null) {
+            listener.onGetResult(resultCode, data);
+        }
+        mActivityResultListenerMap.delete(requestCode);
     }
 
     @Override

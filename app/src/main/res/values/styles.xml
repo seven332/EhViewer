@@ -34,6 +34,15 @@
         <item name="android:minHeight">44dp</item>
     </style>
 
+    <!-- FloatLabelEditText -->
+    <style name="TextAppearance.FloatLabelEditText.Lable" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/secondary_text_dark</item>
+    </style>
+
+    <style name="TextAppearance.FloatLabelEditText.Lable.Single" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/secondary_text_dark</item>
+    </style>
+
     <!-- CategoryText -->
     <style name="CategoryText">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Subhead</item>
@@ -42,11 +51,13 @@
         <item name="android:minHeight">@dimen/category_table_item_height</item>
     </style>
 
-    <style name="SearchAction">
+    <style name="CardButton">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Button</item>
         <item name="android:textStyle">bold</item>
         <item name="android:gravity">center</item>
         <item name="android:minHeight">48dp</item>
+        <item name="android:minWidth">88dp</item>
+        <item name="android:padding">@dimen/card_button_padding</item>
         <item name="android:textColor">?attr/colorPrimary</item>
     </style>
 

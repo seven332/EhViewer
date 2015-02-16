@@ -39,7 +39,7 @@
     <string name="search_tag">Tag</string>
     <string name="search_image">Image</string>
     <string name="search_specify_author">Specify Uploader</string>
-    <string name="hint_no_keyword">No keyword is OK</string>
+    <string name="search_hint_no_keyword">No keyword is OK</string>
     <string name="search_enable_advance">Enable advance options</string>
 
     <string name="search_sname">Search Gallery</string>
@@ -51,6 +51,10 @@
     <string name="search_sdt2">Search Downvoted Tags</string>
     <string name="search_sh">Show Expunged Galleries</string>
     <string name="search_sr">Minimum Rating:</string>
+
+    <string name="search_hint_tag">Tag</string>
+
+    <string name="search_select_image">Select image</string>
 
     <string name="search_add">Add</string>
     <string name="search_mode">Mode</string>

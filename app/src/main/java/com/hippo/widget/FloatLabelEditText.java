@@ -57,7 +57,7 @@ public class FloatLabelEditText extends FrameLayout {
 
     private Trigger mTrigger = Trigger.TEXT;
 
-    private String mHint;
+    private CharSequence mHint;
 
     public FloatLabelEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -84,7 +84,6 @@ public class FloatLabelEditText extends FrameLayout {
         mLabel.setTextAppearance(context,
                 a.getResourceId(R.styleable.FloatLabelEditText_fllLabelAppearance,
                         android.R.style.TextAppearance_Small));
-        mHint = a.getString(R.styleable.FloatLabelEditText_fllHint);
         final int index = a.getInt(R.styleable.FloatLabelEditText_fllTrigger, -1);
         if (index >= 0) {
             setTrigger(sTriggerArray[index]);
@@ -92,8 +91,14 @@ public class FloatLabelEditText extends FrameLayout {
         a.recycle();
         addView(mLabel, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
+        EditText attrCollector = new EditText(context, attrs);
         mEditText = (EditText) LayoutInflater.from(getContext()).inflate(
                 R.layout.widget_float_label_edit_text, this, false);
+
+        // Collect attr
+        mHint = attrCollector.getHint();
+        mEditText.setInputType(attrCollector.getInputType());
+
         final LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.BOTTOM;
         lp.topMargin = (int) mLabel.getTextSize();
