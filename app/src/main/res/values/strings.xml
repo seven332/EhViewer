@@ -34,10 +34,10 @@
     <string name="unknown" translatable="false">UNKNOWN</string>
 
     <!-- Search -->
-    <string name="search_normal">Normal</string>
-    <string name="search_advance">Advance</string>
-    <string name="search_tag">Tag</string>
-    <string name="search_image">Image</string>
+    <string name="search_normal">Normal Search</string>
+    <string name="search_advance">Advance Options</string>
+    <string name="search_tag">Tag Search</string>
+    <string name="search_image">Image Search</string>
     <string name="search_specify_author">Specify Uploader</string>
     <string name="search_hint_no_keyword">No keyword is OK</string>
     <string name="search_enable_advance">Enable advance options</string>
