@@ -24,6 +24,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="@dimen/search_category_min_height"
         android:orientation="vertical"
         android:paddingLeft="@dimen/search_category_padding_start"
         android:paddingRight="@dimen/search_category_padding_end"
@@ -39,9 +40,17 @@
             android:textAppearance="@style/TextAppearance.CategoryTitle"/>
 
         <FrameLayout
-            android:id="@+id/category_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <FrameLayout
+                android:id="@+id/category_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"/>
+
+        </FrameLayout>
 
     </LinearLayout>
 

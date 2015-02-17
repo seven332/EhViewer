@@ -16,20 +16,24 @@
   -->
 <resources>
 
-    <!-- Search category title layout height -->
-    <dimen name="search_category_title_height">64dp</dimen>
+    <!-- Content -->
+    <dimen name="content_padding_start">52dp</dimen>
+    <dimen name="content_padding_end">52dp</dimen>
+    <dimen name="content_fab_margin_end">24dp</dimen>
 
-    <!-- Search category padding start / end / bottom -->
+    <!-- Search category -->
     <dimen name="search_category_padding_start">52dp</dimen>
     <dimen name="search_category_padding_end">52dp</dimen>
     <dimen name="search_category_padding_bottom">32dp</dimen>
-
-    <!-- Search item interval -->
-    <dimen name="search_item_interval">16dp</dimen>
-
-    <!-- Search category interval -->
     <dimen name="search_category_interval">16dp</dimen>
+    <dimen name="search_category_min_height">252dp</dimen>
+    <dimen name="search_category_title_height">64dp</dimen>
 
+    <!-- Search item -->
+    <dimen name="search_item_interval">16dp</dimen>
+    <dimen name="search_item_interval_half">8dp</dimen>
+    <dimen name="select_image_preview_min_height">240dp</dimen>
+    <dimen name="select_image_preview_max_height">480dp</dimen>
     <dimen name="search_action_button_width">160dp</dimen>
 
     <!-- Keyline -->
@@ -41,17 +45,8 @@
 
     <!-- CategoryTable -->
     <dimen name="category_table_item_height">48dp</dimen>
-    <dimen name="category_table_item_margin_half">8dp</dimen>
-
-    <!-- AdvanceSearchTable -->
-    <dimen name="advance_search_table_item_margin_half">8dp</dimen>
 
     <!-- CardButton -->
     <dimen name="card_button_padding">16dp</dimen>
-
-    <!-- Content -->
-    <dimen name="content_padding_start">52dp</dimen>
-    <dimen name="content_padding_end">52dp</dimen>
-    <dimen name="content_fab_margin_end">24dp</dimen>
 
 </resources>

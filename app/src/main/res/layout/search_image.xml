@@ -13,37 +13,8 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout
+<com.hippo.ehviewer.widget.SelectSearchImageLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/search_select_image"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/search_select_image_action"
-        style="@style/CardButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="@dimen/search_item_interval"
-        android:text="@string/search_select_image"/>
-
-    <TextView
-        android:id="@+id/search_select_image_path"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/search_item_interval"
-        android:visibility="gone"/>
-
-    <com.hippo.widget.FixedAspectImageView
-        android:id="@+id/search_select_image_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="@dimen/search_item_interval"
-        android:adjustViewBounds="true"
-        android:maxHeight="240dp"
-        android:visibility="gone"
-        android:contentDescription="@null"/>
-
-</LinearLayout>
+    android:layout_height="wrap_content"/>

@@ -15,6 +15,7 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -30,6 +31,8 @@ import com.hippo.widget.Appbar;
 
 public class GalleryListScene extends Scene implements SearchFragment.OnSearchListener {
 
+    private Resources mResources;
+
     private Appbar mAppbar;
     private ViewPager mViewPager;
 
@@ -39,13 +42,17 @@ public class GalleryListScene extends Scene implements SearchFragment.OnSearchLi
     public void onCreate() {
         setContentView(R.layout.scene_gallery_list);
 
+        mResources = getStageActivity().getResources();
+
         mAppbar = (Appbar) findViewById(R.id.appbar);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
 
         mAdapter = new GalleryListPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
 
-        mAppbar.setTitle("EhViewer");
+        mAppbar.setTitle(mResources.getString(R.string.app_name));
+
+        SearchFragment.setScene(this);
     }
 
     @Override
@@ -61,6 +68,8 @@ public class GalleryListScene extends Scene implements SearchFragment.OnSearchLi
     @Override
     public void onDestroy() {
         dispatchRemove();
+
+        SearchFragment.setScene(null);
     }
 
     @Override
@@ -93,12 +102,9 @@ public class GalleryListScene extends Scene implements SearchFragment.OnSearchLi
         public Fragment getItem(int i) {
             if (i == 0) {
                 SearchFragment fragment = new SearchFragment();
-                fragment.setScene(GalleryListScene.this);
-                fragment.setOnSearchListener(GalleryListScene.this);
                 return fragment;
             } else {
                 GalleryListFragment fragment = new GalleryListFragment();
-                fragment.setScene(GalleryListScene.this);
                 return fragment;
             }
         }

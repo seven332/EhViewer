@@ -156,6 +156,15 @@ public final class ViewUtils {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static void addHardwareAccelerationSupport(View v) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+            if (v.getLayerType() != View.LAYER_TYPE_HARDWARE) {
+                v.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            }
+        }
+    }
+
     public static void measureView(View v, int width, int height) {
         int widthMeasureSpec;
         int heightMeasureSpec;

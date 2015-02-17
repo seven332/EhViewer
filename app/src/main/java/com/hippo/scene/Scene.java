@@ -62,6 +62,10 @@ public abstract class Scene {
         return mRootView;
     }
 
+    public StageActivity getStageActivity() {
+        return mStageActivity;
+    }
+
     public void startScene(Class sceneClass) {
         mStageActivity.startScene(this, sceneClass);
     }

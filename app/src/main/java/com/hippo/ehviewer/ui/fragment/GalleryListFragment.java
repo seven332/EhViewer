@@ -15,5 +15,7 @@
 
 package com.hippo.ehviewer.ui.fragment;
 
-public class GalleryListFragment extends SceneFragment {
+import android.support.v4.app.Fragment;
+
+public class GalleryListFragment extends Fragment {
 }

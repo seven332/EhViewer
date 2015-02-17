@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,20 +33,22 @@ import com.hippo.ehviewer.data.GalleryListUrlBuilder;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.scene.Scene;
 
-public class SearchFragment extends SceneFragment implements SearchLayout.SearhLayoutHelper,
+public class SearchFragment extends Fragment implements SearchLayout.SearhLayoutHelper,
         Scene.ActivityResultListener {
 
     private static final String VIEW_STATE_TAG = "android:view_state";
 
     private Activity mActivity;
 
-    private OnSearchListener mOnSearchListener;
-
     private View mRootView;
     private SearchLayout mSearchLayout;
 
-    public void setOnSearchListener(OnSearchListener listener) {
-        mOnSearchListener = listener;
+    private static Scene sScene;
+    private static OnSearchListener sOnSearchListener;
+
+
+    public static void setScene(Scene scene) {
+        sScene = scene;
     }
 
     @Override
@@ -80,9 +83,9 @@ public class SearchFragment extends SceneFragment implements SearchLayout.SearhL
     }
 
     @Override
-    public void requestSelectImage() {
+    public void onRequestSelectImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        getScene().startActivityForResult(intent, this);
+        sScene.startActivityForResult(intent, this);
     }
 
     @Override
