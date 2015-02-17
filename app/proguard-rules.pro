@@ -15,3 +15,17 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# For bug report
+-keepattributes SourceFile,LineNumberTable
+-keep class com.hippo.**
+
+# For ObjectAnimator
+-keepclassmembers class com.hippo.effect.ripple.Ripple {
+   void set*(***);
+   *** get*();
+}
+-keepclassmembers class com.hippo.effect.ripple.RippleBackground {
+   void set*(***);
+   *** get*();
+}
