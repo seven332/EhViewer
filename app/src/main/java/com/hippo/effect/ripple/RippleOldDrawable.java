@@ -87,7 +87,7 @@ public class RippleOldDrawable extends Drawable implements RippleOwner, Hotspota
     private final Rect mHotspotBounds = new Rect();
 
     /** The current background. May be actively animating or pending entry. */
-    private RippleOldBackground mBackground;
+    private RippleBackground mBackground;
 
     /** Whether we expect to draw a background when visible. */
     private boolean mBackgroundActive;
@@ -312,7 +312,7 @@ public class RippleOldDrawable extends Drawable implements RippleOwner, Hotspota
      */
     private void tryBackgroundEnter() {
         if (mBackground == null) {
-            mBackground = new RippleOldBackground(this, mHotspotBounds);
+            mBackground = new RippleBackground(this, mHotspotBounds);
         }
 
         final int color = mColor.getColorForState(getState(), Color.TRANSPARENT);

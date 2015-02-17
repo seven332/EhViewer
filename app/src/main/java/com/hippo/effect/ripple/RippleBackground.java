@@ -31,7 +31,7 @@ import com.nineoldandroids.animation.ObjectAnimator;
 /**
  * Draws a Material ripple.
  */
-class RippleOldBackground {
+class RippleBackground {
     private static final Interpolator LINEAR_INTERPOLATOR = new LinearInterpolator();
 
     private static final float GLOBAL_SPEED = 1.0f;
@@ -73,7 +73,7 @@ class RippleOldBackground {
     /**
      * Creates a new ripple.
      */
-    public RippleOldBackground(RippleOwner owner, Rect bounds) {
+    public RippleBackground(RippleOwner owner, Rect bounds) {
         mOwner = owner;
         mBounds = bounds;
     }
@@ -228,7 +228,7 @@ class RippleOldBackground {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         final ObjectAnimator outerFadeOutAnim = ObjectAnimator.ofFloat(
-                                RippleOldBackground.this, "outerOpacity", 0);
+                                RippleBackground.this, "outerOpacity", 0);
                         outerFadeOutAnim.setAutoCancel(true);
                         outerFadeOutAnim.setDuration(outerDuration);
                         outerFadeOutAnim.setInterpolator(LINEAR_INTERPOLATOR);
