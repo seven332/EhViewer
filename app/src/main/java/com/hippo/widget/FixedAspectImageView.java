@@ -22,6 +22,7 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 import com.hippo.ehviewer.R;
+import com.hippo.util.MathUtils;
 import com.hippo.util.ViewUtils;
 
 /**
@@ -31,12 +32,19 @@ public class FixedAspectImageView extends ImageView {
 
     private static final String TAG = FixedAspectImageView.class.getSimpleName();
 
-    private static final int[] ATTRS = new int[] {
+    private static final int[] MIN_ATTRS = {
+            android.R.attr.minWidth,
+            android.R.attr.minHeight
+    };
+
+    private static final int[] ATTRS = {
             android.R.attr.adjustViewBounds,
             android.R.attr.maxWidth,
             android.R.attr.maxHeight
     };
 
+    private int mMinWidth = 0;
+    private int mMinHeight = 0;
     private int mMaxWidth = Integer.MAX_VALUE;
     private int mMaxHeight = Integer.MAX_VALUE;
     private boolean mAdjustViewBounds = false;
@@ -57,6 +65,11 @@ public class FixedAspectImageView extends ImageView {
         TypedArray a;
 
         // Make sure we get value from xml
+        a = context.obtainStyledAttributes(attrs, MIN_ATTRS, defStyle, 0);
+        setMinimumWidth(a.getDimensionPixelSize(0, 0));
+        setMinimumHeight(a.getDimensionPixelSize(1, 0));
+        a.recycle();
+
         a = context.obtainStyledAttributes(attrs, ATTRS, defStyle, 0);
         setAdjustViewBounds(a.getBoolean(0, false));
         setMaxWidth(a.getDimensionPixelSize(1, Integer.MAX_VALUE));
@@ -67,6 +80,18 @@ public class FixedAspectImageView extends ImageView {
                 attrs, R.styleable.FixedAspectImageView, defStyle, 0);
         setAspect(a.getFloat(R.styleable.FixedAspectImageView_faiAspect, -1f));
         a.recycle();
+    }
+
+    @Override
+    public void setMinimumWidth(int minWidth) {
+        super.setMinimumWidth(minWidth);
+        mMinWidth = minWidth;
+    }
+
+    @Override
+    public void setMinimumHeight(int minHeight) {
+        super.setMinimumHeight(minHeight);
+        mMinHeight = minHeight;
     }
 
     @Override
@@ -104,30 +129,51 @@ public class FixedAspectImageView extends ImageView {
         requestLayout();
     }
 
-    private int resolveAdjustedSize(int desiredSize, int maxSize,
+    private int resolveAdjustedSize(int desiredSize, int minSize, int maxSize,
             int measureSpec) {
         int result = desiredSize;
         int specMode = MeasureSpec.getMode(measureSpec);
         int specSize =  MeasureSpec.getSize(measureSpec);
         switch (specMode) {
-        case MeasureSpec.UNSPECIFIED:
-            /* Parent says we can be as big as we want. Just don't be larger
-             * than max size imposed on ourselves.
-             */
-            result = Math.min(desiredSize, maxSize);
-            break;
-        case MeasureSpec.AT_MOST:
-            // Parent says we can be as big as we want, up to specSize.
-            // Don't be larger than specSize, and don't be larger than
-            // the max size imposed on ourselves.
-            result = Math.min(Math.min(desiredSize, specSize), maxSize);
-            break;
-        case MeasureSpec.EXACTLY:
-            // No choice. Do what we are told.
-            result = specSize;
-            break;
+            case MeasureSpec.UNSPECIFIED:
+                // Parent says we can be as big as we want. Just don't be smaller
+                // than min size, and don't be larger than max size.
+                result = MathUtils.clamp(desiredSize, minSize, maxSize);
+                break;
+            case MeasureSpec.AT_MOST:
+                // Parent says we can be as big as we want, up to specSize.
+                // Don't be larger than specSize, and don't be smaller
+                // than min size, and don't be larger than max size.
+                result = Math.min(MathUtils.clamp(desiredSize, minSize, maxSize), specSize);
+                break;
+            case MeasureSpec.EXACTLY:
+                // No choice. Do what we are told.
+                result = specSize;
+                break;
         }
         return result;
+    }
+
+    private boolean isSizeAcceptable(int size, int minSize, int maxSize, int measureSpec) {
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize =  MeasureSpec.getSize(measureSpec);
+        switch (specMode) {
+            case MeasureSpec.UNSPECIFIED:
+                // Parent says we can be as big as we want. Just don't be smaller
+                // than min size, and don't be larger than max size.
+                return size >= minSize && size <= maxSize;
+            case MeasureSpec.AT_MOST:
+                // Parent says we can be as big as we want, up to specSize.
+                // Don't be larger than specSize, and don't be smaller
+                // than min size, and don't be larger than max size.
+                return size <= specSize && size >= minSize && size <= maxSize;
+            case MeasureSpec.EXACTLY:
+                // No choice.
+                return size == specSize;
+            default:
+                // WTF? Return true to make you happy. (´・ω・`)
+                return true;
+        }
     }
 
     @Override
@@ -187,10 +233,10 @@ public class FixedAspectImageView extends ImageView {
             // least one dimension.
 
             // Get the max possible width given our constraints
-            widthSize = resolveAdjustedSize(w + pleft + pright, mMaxWidth, widthMeasureSpec);
+            widthSize = resolveAdjustedSize(w + pleft + pright, mMinWidth, mMaxWidth, widthMeasureSpec);
 
             // Get the max possible height given our constraints
-            heightSize = resolveAdjustedSize(h + ptop + pbottom, mMaxHeight, heightMeasureSpec);
+            heightSize = resolveAdjustedSize(h + ptop + pbottom, mMinHeight, mMaxHeight, heightMeasureSpec);
 
             if (desiredAspect != 0.0f) {
                 // See what our actual aspect ratio is
@@ -206,11 +252,11 @@ public class FixedAspectImageView extends ImageView {
                                 pleft + pright;
 
                         // Allow the width to outgrow its original estimate if height is fixed.
-                        if (!resizeHeight) {
-                            widthSize = resolveAdjustedSize(newWidth, mMaxWidth, widthMeasureSpec);
-                        }
+                        //if (!resizeHeight) {
+                            //widthSize = resolveAdjustedSize(newWidth, mMinWidth, mMaxWidth, widthMeasureSpec);
+                        //}
 
-                        if (newWidth <= widthSize) {
+                        if (isSizeAcceptable(newWidth, mMinWidth, mMaxWidth, widthMeasureSpec)) {
                             widthSize = newWidth;
                             done = true;
                         }
@@ -223,11 +269,11 @@ public class FixedAspectImageView extends ImageView {
 
                         // Allow the height to outgrow its original estimate if width is fixed.
                         if (!resizeWidth) {
-                            heightSize = resolveAdjustedSize(newHeight, mMaxHeight,
+                            heightSize = resolveAdjustedSize(newHeight, mMinHeight, mMaxHeight,
                                     heightMeasureSpec);
                         }
 
-                        if (newHeight <= heightSize) {
+                        if (isSizeAcceptable(newHeight, mMinHeight, mMaxHeight, heightMeasureSpec)) {
                             heightSize = newHeight;
                         }
                     }
