@@ -77,10 +77,10 @@ public class SelectSearchImageLayout extends LinearLayout implements View.OnClic
         LayoutInflater.from(context).inflate(R.layout.widget_select_search_image_layout, this);
 
         // TODO It is a bad idea.
-        int childCount = getChildCount();
-        if (childCount == 3) {
+        View firstChild = getChildAt(0);
+        if (firstChild instanceof TextView) {
             setOrientation(LinearLayout.VERTICAL);
-        } else if (childCount == 2) {
+        } else if (firstChild instanceof LinearLayout) {
             setOrientation(LinearLayout.HORIZONTAL);
         } else {
             throw new IllegalStateException("Can't guess orientation, did you changed the layout res ?");

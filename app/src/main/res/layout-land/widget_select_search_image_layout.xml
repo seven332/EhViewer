@@ -21,7 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_gravity="center_vertical"
-        android:paddingRight="@dimen/search_item_interval_half"
         android:orientation="vertical">
 
         <TextView
@@ -41,11 +40,14 @@
 
     </LinearLayout>
 
+    <com.hippo.widget.Space
+        android:layout_width="@dimen/search_item_interval"
+        android:layout_height="match_parent"/>
+
     <FrameLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:paddingLeft="@dimen/search_item_interval_half">
+        android:layout_weight="1">
 
         <com.hippo.widget.FixedAspectImageView
             android:id="@+id/search_select_image_image"
