@@ -16,13 +16,20 @@
 package com.hippo.ehviewer.client;
 
 import android.os.AsyncTask;
+import android.os.Process;
 
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.network.EhHttpHelper;
 import com.hippo.network.ResponseCodeException;
-import com.hippo.util.Utils;
+import com.hippo.util.PriorityThreadFactory;
 
-public class EhClient {
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+public final class EhClient {
 
     @SuppressWarnings("unused")
     private static final String TAG = EhClient.class.getSimpleName();
@@ -46,33 +53,52 @@ public class EhClient {
 
     public static final String API_EHVIEWER = "http://www.ehviewer.com/API";
 
-    private Object[] doGetGalleryList(int source, String url) throws Exception {
-        EhHttpHelper ehh = new EhHttpHelper();
-        String body = ehh.get(url);
-        
-        final int responseCode = ehh.getResponseCode();
-        if (responseCode >= 400) {
-            throw new ResponseCodeException(responseCode);
-        }
+    private final ThreadPoolExecutor mRequestThreadPool;
 
-        ListParser parser = new ListParser();
-        parser.parse(body, source);
-        return new Object[]{parser.giArray, parser.pageNum};
+    private static final EhClient sInstance;
+
+    static {
+        sInstance = new EhClient();
+    }
+
+    public static EhClient getInstance() {
+        return sInstance;
+    }
+
+    private EhClient() {
+        int poolSize = 3;
+        BlockingQueue<Runnable> requestWorkQueue = new LinkedBlockingQueue<>();
+        ThreadFactory threadFactory = new PriorityThreadFactory(TAG,
+                Process.THREAD_PRIORITY_BACKGROUND);
+        mRequestThreadPool = new ThreadPoolExecutor(poolSize, poolSize,
+                1, TimeUnit.SECONDS, requestWorkQueue, threadFactory);
+    }
+
+    public static String getUrlHeader(int mode) {
+        switch (mode) {
+            default:
+            case SOURCE_G:
+                return HEADER_G;
+            case SOURCE_EX:
+                return HEADER_EX;
+            case SOURCE_LOFI:
+                return HEADER_LOFI;
+        }
     }
 
     public static interface EhClientListener {
         public void onFailure(Exception e);
     }
-    
+
     public abstract static class OnGetGalleryListListener implements EhClientListener {
         public abstract void onSuccess(GalleryInfo[] glArray, int pageNum);
     }
 
     private void doBgJob(BgJobHelper bjh) {
-        Utils.execute(false, new AsyncTask<Object, Void, BgJobHelper>() {
+        new AsyncTask<BgJobHelper, Void, BgJobHelper>() {
             @Override
-            protected BgJobHelper doInBackground(Object... params) {
-                BgJobHelper bjh = (BgJobHelper) params[0];
+            protected BgJobHelper doInBackground(BgJobHelper... params) {
+                BgJobHelper bjh = params[0];
                 bjh.doInBackground();
                 return bjh;
             }
@@ -81,7 +107,7 @@ public class EhClient {
             protected void onPostExecute(BgJobHelper bjh) {
                 bjh.onPostExecute();
             }
-        }, bjh);
+        }.executeOnExecutor(mRequestThreadPool, bjh);
     }
 
     private interface BgJobHelper {
@@ -89,12 +115,12 @@ public class EhClient {
 
         public void onPostExecute();
     }
-    
+
     private abstract class SimpleBgJobHelper implements BgJobHelper {
 
         private EhClientListener mListener;
         private Exception mException;
-        
+
         public SimpleBgJobHelper(EhClientListener listener) {
             mListener = listener;
         }
@@ -124,7 +150,25 @@ public class EhClient {
         public abstract void doSuccessCallback();
 
     }
-    
+
+    private void checkRequest(EhHttpHelper ehh) throws ResponseCodeException {
+        final int responseCode = ehh.getResponseCode();
+        if (responseCode >= 400) {
+            throw new ResponseCodeException(responseCode);
+        }
+    }
+
+    private Object[] doGetGalleryList(int source, String url) throws Exception {
+        EhHttpHelper ehh = new EhHttpHelper();
+        String body = ehh.get(url);
+
+        checkRequest(ehh);
+
+        ListParser parser = new ListParser();
+        parser.parse(body, source);
+        return new Object[]{parser.giArray, parser.pageNum};
+    }
+
     private final class GetGalleryListHelper extends SimpleBgJobHelper {
 
         private int mSource;
@@ -133,7 +177,7 @@ public class EhClient {
 
         private GalleryInfo[] mGlArray;
         private int mPageNum;
-        
+
         public GetGalleryListHelper(int source, String url, OnGetGalleryListListener listener) {
             super(listener);
             mSource = source;
@@ -156,7 +200,7 @@ public class EhClient {
 
     /**
      * Get gallery list
-     * 
+     *
      * @param source the source, one of {@link #SOURCE_G}, {@link #SOURCE_EX} and
      *               {@link #SOURCE_LOFI}
      * @param url the url to get gallery list

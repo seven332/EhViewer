@@ -29,7 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.data.GalleryListUrlBuilder;
+import com.hippo.ehviewer.data.ListUrlBuilder;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.scene.Scene;
 
@@ -49,6 +49,10 @@ public class SearchFragment extends Fragment implements SearchLayout.SearhLayout
 
     public static void setScene(Scene scene) {
         sScene = scene;
+    }
+
+    public static void setOnSearchListener(OnSearchListener listener) {
+        sOnSearchListener = listener;
     }
 
     @Override
@@ -89,6 +93,13 @@ public class SearchFragment extends Fragment implements SearchLayout.SearhLayout
     }
 
     @Override
+    public void onRequestSearch(ListUrlBuilder lub) {
+        if (sOnSearchListener != null) {
+            sOnSearchListener.onRequestSearch(lub);
+        }
+    }
+
+    @Override
     public void onGetResult(int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK && data != null) {
             Uri selectedImage = data.getData();
@@ -108,6 +119,6 @@ public class SearchFragment extends Fragment implements SearchLayout.SearhLayout
     }
 
     public interface OnSearchListener {
-        public void onSearch(GalleryListUrlBuilder glub);
+        public void onRequestSearch(ListUrlBuilder lub);
     }
 }

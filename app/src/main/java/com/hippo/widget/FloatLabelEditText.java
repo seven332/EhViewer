@@ -170,6 +170,10 @@ public class FloatLabelEditText extends FrameLayout {
         }
     }
 
+    public Editable getText() {
+        return mEditText.getText();
+    }
+
     private TextWatcher mTextWatcher = new TextWatcher() {
 
         @Override

@@ -26,6 +26,15 @@ import com.hippo.ehviewer.R;
 
 public class AdvanceSearchTable extends TableLayout {
 
+    public static final int SNAME = 0x1;
+    public static final int STAGS = 0x2;
+    public static final int SDESC = 0x4;
+    public static final int STORR = 0x8;
+    public static final int STO = 0x10;
+    public static final int SDT1 = 0x20;
+    public static final int SDT2 = 0x40;
+    public static final int SH = 0x80;
+
     private CheckBox mSname;
     private CheckBox mStags;
     private CheckBox mSdesc;
@@ -61,6 +70,27 @@ public class AdvanceSearchTable extends TableLayout {
         mSh = (CheckBox) findViewById(R.id.search_sh);
         mSr = (CheckBox) findViewById(R.id.search_sr);
         mMinRating = (Spinner) findViewById(R.id.search_min_rating);
+    }
+
+    public int getAdvanceSearch() {
+        int advanceSearch = 0;
+        if (mSname.isChecked()) advanceSearch |= SNAME;
+        if (mStags.isChecked()) advanceSearch |= STAGS;
+        if (mSdesc.isChecked()) advanceSearch |= SDESC;
+        if (mStorr.isChecked()) advanceSearch |= STORR;
+        if (mSto.isChecked()) advanceSearch |= STO;
+        if (mSdt1.isChecked()) advanceSearch |= SDT1;
+        if (mSdt2.isChecked()) advanceSearch |= SDT2;
+        if (mSh.isChecked()) advanceSearch |= SH;
+        return advanceSearch;
+    }
+
+    public int getMinRating() {
+        if (mSr.isChecked()) {
+            return mMinRating.getSelectedItemPosition() + 2;
+        } else {
+            return -1;
+        }
     }
 
 }

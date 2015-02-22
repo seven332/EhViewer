@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Hippo Seven
+ * Copyright (C) 2015 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,9 @@
 
 package com.hippo.ehviewer.data;
 
-public class GalleryListUrlBuilder {
+public class UnsupportedSearch extends Exception {
 
-    /**
-     * Make them the same
-     * @param glub The template
-     */
-    public void set(GalleryListUrlBuilder glub) {
-
+    public UnsupportedSearch(String detailMessage) {
+        super(detailMessage);
     }
-
 }

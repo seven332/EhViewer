@@ -23,6 +23,7 @@ import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import android.widget.TextView;
 
 import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.data.ListUrlBuilder;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.FloatLabelEditText;
 import com.hippo.widget.FloatingActionButton;
@@ -42,6 +44,7 @@ import com.hippo.widget.PrefixEditText;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SearchLayout extends FrameLayout implements CompoundButton.OnCheckedChangeListener,
         View.OnClickListener, SelectSearchImageLayout.SelectSearchImageLayoutHelper {
@@ -104,6 +107,8 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
 
     private SearhLayoutHelper mHelper;
 
+    private ListUrlBuilder mTempListUrlBuilder = new ListUrlBuilder();
+
     private Bitmap mSearchImage;
 
     public SearchLayout(Context context) {
@@ -137,6 +142,8 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         mSearchContainer.setAdapter(mAdapter);
         mSearchContainer.setHasFixedSize(true);
         mSearchContainer.setItemAnimator(mAnimator);
+
+        mFab.setOnClickListener(this);
     }
 
     public void setHelper(SearhLayoutHelper helper) {
@@ -213,6 +220,10 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
             // TODO add quick search
         } else if (v == mAction2) {
             taggleSearchMode();
+        } else if (v == mFab) {
+            if (mHelper != null) {
+                mHelper.onRequestSearch(getListUrlBuilder(null));
+            }
         }
     }
 
@@ -225,6 +236,45 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         if (mHelper != null) {
             mHelper.onRequestSelectImage();
         }
+    }
+
+    public ListUrlBuilder getListUrlBuilder(@Nullable ListUrlBuilder lub) {
+        if (lub == null) {
+            lub = mTempListUrlBuilder;
+        }
+
+        switch (mSearchMode) {
+            default:
+            case SEARCH_MODE_NORMAL:
+                lub.setMode(ListUrlBuilder.MODE_NORMAL);
+                if (mTableCategory != null) {
+                    lub.setCategory(mTableCategory.getCategory());
+                }
+                if (mTextSearch != null) {
+                    String searchKey = mTextSearch.getText().toString();
+                    lub.setSearchKey(TextUtils.isEmpty(searchKey) ? null : searchKey);
+                }
+                if (mSwitchEnableAdvance.isChecked() && mTableAdvanceSearch != null) {
+                    lub.setAdvanceSearch(mTableAdvanceSearch.getAdvanceSearch());
+                    lub.setMinRating(mTableAdvanceSearch.getMinRating());
+                } else {
+                    lub.setAdvanceSearch(-1);
+                    lub.setMinRating(-1);
+                }
+                break;
+            case SEARCH_MODE_TAG:
+                lub.setMode(ListUrlBuilder.MODE_TAG);
+                if (mEditTextTag != null) {
+                    lub.setSearchTag(mEditTextTag.getText().toString());
+                }
+                break;
+            case SEARCH_MODE_IMAGE:
+                lub.setMode(ListUrlBuilder.MODE_IMAGE_SEARCH);
+                // TODO
+                break;
+        }
+
+        return lub;
     }
 
     private class SearchHolder extends RecyclerView.ViewHolder {
@@ -418,5 +468,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
 
     public interface SearhLayoutHelper {
         public void onRequestSelectImage();
+
+        public void onRequestSearch(ListUrlBuilder lub);
     }
 }

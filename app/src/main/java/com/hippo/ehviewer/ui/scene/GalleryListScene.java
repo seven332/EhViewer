@@ -23,7 +23,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.data.GalleryListUrlBuilder;
+import com.hippo.ehviewer.data.ListUrlBuilder;
 import com.hippo.ehviewer.ui.fragment.GalleryListFragment;
 import com.hippo.ehviewer.ui.fragment.SearchFragment;
 import com.hippo.scene.Scene;
@@ -53,6 +53,7 @@ public class GalleryListScene extends Scene implements SearchFragment.OnSearchLi
         mAppbar.setTitle(mResources.getString(R.string.app_name));
 
         SearchFragment.setScene(this);
+        SearchFragment.setOnSearchListener(this);
     }
 
     @Override
@@ -70,10 +71,11 @@ public class GalleryListScene extends Scene implements SearchFragment.OnSearchLi
         dispatchRemove();
 
         SearchFragment.setScene(null);
+        SearchFragment.setOnSearchListener(null);
     }
 
     @Override
-    public void onSearch(GalleryListUrlBuilder glub) {
+    public void onRequestSearch(ListUrlBuilder lub) {
 
     }
 
