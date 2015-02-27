@@ -1086,6 +1086,11 @@ public class HttpHelper {
             mResponseCode = responseCode;
         }
 
+        @Override
+        public String getMessage() {
+            return eMsg + ": " + mResponseCode;
+        }
+
         public int getResponseCode() {
             return mResponseCode;
         }

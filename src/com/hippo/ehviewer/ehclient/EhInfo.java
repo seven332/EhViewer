@@ -181,6 +181,9 @@ public class EhInfo {
             sb.append("; ipb_member_id=").append(id);
         if (hash != null)
             sb.append("; ipb_pass_hash=").append(hash);
+        // Fake
+        sb.append("; igneous=");
+        sb.append("; lv=");
         conn.setRequestProperty("Cookie", sb.toString());
     }
 
