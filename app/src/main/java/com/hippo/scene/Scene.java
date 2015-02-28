@@ -179,16 +179,20 @@ public abstract class Scene {
     }
 
     protected void onSaveInstanceState(Bundle outState) {
-        SparseArray<Parcelable> states = new SparseArray<>();
-        mSceneView.saveHierarchyState(states);
-        outState.putSparseParcelableArray(getStateKey(), states);
+        if (mSceneView != null) {
+            SparseArray<Parcelable> states = new SparseArray<>();
+            mSceneView.saveHierarchyState(states);
+            outState.putSparseParcelableArray(getStateKey(), states);
+        }
     }
 
     protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
-        SparseArray<Parcelable> savedStates
-                = savedInstanceState.getSparseParcelableArray(getStateKey());
-        if (savedStates != null) {
-            mSceneView.restoreHierarchyState(savedStates);
+        if (mSceneView != null) {
+            SparseArray<Parcelable> savedStates
+                    = savedInstanceState.getSparseParcelableArray(getStateKey());
+            if (savedStates != null) {
+                mSceneView.restoreHierarchyState(savedStates);
+            }
         }
     }
 
