@@ -24,7 +24,6 @@ import android.view.View;
 import android.view.ViewParent;
 
 import com.hippo.util.AssertUtils;
-import com.hippo.util.Log;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -140,8 +139,6 @@ public abstract class Scene {
     // Add scene view to stage layout
     void attachToStage() {
         if (mSceneView != null && !isInStage()) {
-
-            Log.d("doAttachToStage();");
             doAttachToStage();
         }
     }
@@ -178,21 +175,31 @@ public abstract class Scene {
         return "scene:" + Integer.toHexString(hashCode());
     }
 
-    protected void onSaveInstanceState(Bundle outState) {
-        if (mSceneView != null) {
-            SparseArray<Parcelable> states = new SparseArray<>();
-            mSceneView.saveHierarchyState(states);
-            outState.putSparseParcelableArray(getStateKey(), states);
-        }
+    void saveInstanceState(Bundle outState) {
+        SparseArray<Parcelable> states = new SparseArray<>();
+        onSaveInstanceState(states);
+        outState.putSparseParcelableArray(getStateKey(), states);
     }
 
-    protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
+    void restoreInstanceState(@NotNull Bundle savedInstanceState) {
         if (mSceneView != null) {
             SparseArray<Parcelable> savedStates
                     = savedInstanceState.getSparseParcelableArray(getStateKey());
             if (savedStates != null) {
-                mSceneView.restoreHierarchyState(savedStates);
+                onRestoreInstanceState(savedStates);
             }
+        }
+    }
+
+    protected void onSaveInstanceState(@NotNull SparseArray<Parcelable> outState) {
+        if (mSceneView != null) {
+            mSceneView.saveHierarchyState(outState);
+        }
+    }
+
+    protected void onRestoreInstanceState(@NotNull SparseArray<Parcelable> savedStates) {
+        if (mSceneView != null) {
+            mSceneView.restoreHierarchyState(savedStates);
         }
     }
 

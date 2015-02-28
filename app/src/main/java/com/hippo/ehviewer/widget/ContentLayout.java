@@ -51,16 +51,16 @@ public class ContentLayout extends StageLayout {
     @SuppressWarnings("deprecation")
     @Override
     protected boolean fitSystemWindows(@NotNull Rect insets) {
-        mFitPaddingLeft = insets.left;
+        mFitPaddingLeft = 0;
         mFitPaddingTop = 0;
-        mFitPaddingRight = insets.right;
+        mFitPaddingRight = 0;
         mFitPaddingBottom = insets.bottom;
         if (mOnGetPaddingListener != null) {
             mOnGetPaddingListener.onGetPadding(mFitPaddingLeft, mFitPaddingTop,
                     mFitPaddingRight, mFitPaddingBottom);
         }
 
-        insets.set(0, insets.top, 0, 0);
+        insets.set(insets.left, insets.top, insets.right, 0);
 
         return super.fitSystemWindows(insets);
     }

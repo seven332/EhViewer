@@ -75,11 +75,13 @@ public abstract class StageActivity extends AbsActionBarActivity {
      *
      * @param intent the intent for new Activity
      * @param listener callback
+     * @return request code
      */
-    public void startActivityForResult(Intent intent, Scene.ActivityResultListener listener) {
+    public int startActivityForResult(Intent intent, Scene.ActivityResultListener listener) {
         int id = mActivityResultIdGenerator.nextId();
         mActivityResultListenerMap.put(id, listener);
         startActivityForResult(intent, id);
+        return id;
     }
 
     @Override

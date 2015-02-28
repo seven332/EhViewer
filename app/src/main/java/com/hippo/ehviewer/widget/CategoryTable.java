@@ -38,7 +38,6 @@ public class CategoryTable extends TableLayout {
     private CheckTextView mAsianPorn;
     private CheckTextView mMisc;
 
-
     public CategoryTable(Context context) {
         super(context);
         init();
@@ -68,7 +67,7 @@ public class CategoryTable extends TableLayout {
     /**
      * Set each button checked or not according to category.
      *
-     * @param category
+     * @param category target category
      */
     public void setCategory(int category) {
         mDoujinshi.setChecked(!Utils.int2boolean(category & EhUtils.DOUJINSHI), false);
@@ -85,7 +84,7 @@ public class CategoryTable extends TableLayout {
 
     /**
      * Get category according to button.
-     * @return
+     * @return the category of this view
      */
     public int getCategory() {
         int category = 0;

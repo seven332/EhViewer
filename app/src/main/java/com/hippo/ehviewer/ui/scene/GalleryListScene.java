@@ -15,33 +15,52 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.os.Parcelable;
+import android.provider.MediaStore;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.data.ListUrlBuilder;
-import com.hippo.ehviewer.ui.fragment.GalleryListFragment;
-import com.hippo.ehviewer.ui.fragment.SearchFragment;
+import com.hippo.ehviewer.data.UnsupportedSearch;
+import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.scene.Scene;
 import com.hippo.scene.StageActivity;
+import com.hippo.util.Log;
 import com.hippo.widget.Appbar;
 
 import org.jetbrains.annotations.NotNull;
 
-public class GalleryListScene extends Scene implements SearchFragment.OnSearchListener {
+public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutHelper,
+        Scene.ActivityResultListener {
+
+    private final static int PAGE_INDEX_SEARCH = 0;
+    private final static int PAGE_INDEX_LIST = 1;
+    private final static int PAGE_NUMBER = 2;
 
     private StageActivity mActivity;
     private Resources mResources;
 
+    private View mSearchView;
+    private SearchLayout mSearchLayout;
+
+    private View mListView;
+
     private Appbar mAppbar;
     private ViewPager mViewPager;
 
-    private GalleryListPagerAdapter mAdapter;
+    private PagerAdapter mPagerAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,71 +70,107 @@ public class GalleryListScene extends Scene implements SearchFragment.OnSearchLi
 
     @Override
     public View onCreateSceneView(Bundle savedInstanceState) {
-        View sceneView = mActivity.getLayoutInflater().inflate(R.layout.scene_gallery_list, null);
+        LayoutInflater inflater = mActivity.getLayoutInflater();
+
+        // Search View
+        mSearchView = inflater.inflate(R.layout.fragment_search, null);
+        mSearchLayout = (SearchLayout) mSearchView.findViewById(R.id.search_layout);
+
+        mSearchLayout.setHelper(this);
+
+        // List View
+        // TODO
+        mListView = new View(mActivity);
+
+        // Main View
+        View sceneView = inflater.inflate(R.layout.scene_gallery_list, null);
         mAppbar = (Appbar) sceneView.findViewById(R.id.appbar);
         mViewPager = (ViewPager) sceneView.findViewById(R.id.viewPager);
 
-        mAdapter = new GalleryListPagerAdapter(getSupportFragmentManager());
-        mViewPager.setAdapter(mAdapter);
-
         mAppbar.setTitle(mResources.getString(R.string.app_name));
 
-        SearchFragment.setScene(this);
-        SearchFragment.setOnSearchListener(this);
+        mPagerAdapter = new SimplePagerAdapter();
+        mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setCurrentItem(PAGE_INDEX_LIST);
 
         return sceneView;
     }
 
     @Override
-    public void onResume() {
-        // Empty
-    }
+    protected void onRestoreInstanceState(@NotNull SparseArray<Parcelable> savedStates) {
+        super.onRestoreInstanceState(savedStates);
 
-    @Override
-    public void onPause() {
-    }
-
-    @Override
-    public void onDestroy() {
-        SearchFragment.setScene(null);
-        SearchFragment.setOnSearchListener(null);
+        // mSearchView and mListView may not in hierarchy
+        mSearchView.restoreHierarchyState(savedStates);
+        mListView.restoreHierarchyState(savedStates);
     }
 
     @Override
     public void onRequestSearch(ListUrlBuilder lub) {
-
+        try {
+            Log.d(lub.build(EhClient.SOURCE_EX));
+        } catch (UnsupportedSearch unsupportedSearch) {
+            unsupportedSearch.printStackTrace();
+        }
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    public void onRequestSelectImage() {
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, this);
     }
 
     @Override
-    protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-    }
+    public void onGetResult(int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-    public class GalleryListPagerAdapter extends FragmentPagerAdapter {
+            Cursor cursor = mActivity.getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
 
-        public GalleryListPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String imagePath = cursor.getString(columnIndex);
+            cursor.close();
 
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            if (i == 0) {
-                SearchFragment fragment = new SearchFragment();
-                return fragment;
-            } else {
-                GalleryListFragment fragment = new GalleryListFragment();
-                return fragment;
+            if (imagePath != null) {
+                mSearchLayout.onSelectImage(imagePath);
             }
         }
     }
+
+    private class SimplePagerAdapter extends PagerAdapter {
+        @Override
+        public int getCount() {
+            return PAGE_NUMBER;
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup view, int position) {
+            View v;
+            switch (position) {
+                default:
+                case PAGE_INDEX_SEARCH:
+                    v = mSearchView;
+                    break;
+                case PAGE_INDEX_LIST:
+                    v = mListView;
+                    break;
+            }
+            view.addView(v);
+            return v;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup view, int position, Object object) {
+            view.removeView((View) object);
+        }
+    }
+
 }

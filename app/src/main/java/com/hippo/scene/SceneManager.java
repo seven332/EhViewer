@@ -105,7 +105,7 @@ class SceneManager {
 
     protected void onSaveInstanceState(Bundle outState) {
         for (Scene scene : mSceneStack) {
-            scene.onSaveInstanceState(outState);
+            scene.saveInstanceState(outState);
         }
     }
 
@@ -114,7 +114,7 @@ class SceneManager {
             // Recreate
             scene.create(savedInstanceState);
             scene.resume();
-            scene.onRestoreInstanceState(savedInstanceState);
+            scene.restoreInstanceState(savedInstanceState);
         }
     }
 }
