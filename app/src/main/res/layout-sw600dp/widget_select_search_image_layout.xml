@@ -40,7 +40,7 @@
 
     </LinearLayout>
 
-    <com.hippo.widget.Space
+    <Space
         android:layout_width="@dimen/search_item_interval"
         android:layout_height="match_parent"/>
 

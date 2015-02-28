@@ -15,6 +15,9 @@
 
 package com.hippo.widget;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -31,9 +34,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.nineoldandroids.animation.ObjectAnimator;
+import com.hippo.util.ApiHelper;
 
 // Get code from https://gist.github.com/jromero/233cfd8ef22a8b8c29ea
 /**
@@ -125,19 +126,23 @@ public class FloatLabelEditText extends FrameLayout {
     /**
      * Show the label using an animation
      */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     protected void showLabel() {
         if (mLabel.getVisibility() != View.VISIBLE) {
             mLabel.setVisibility(View.VISIBLE);
 
             final ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(mLabel, "alpha",
                     0f, 1f);
-            alphaAnim.setAutoCancel(true);
             alphaAnim.setDuration(ANIMATION_DURATION);
 
             final ObjectAnimator translationYAnim = ObjectAnimator.ofFloat(mLabel,
                     "translationY", mLabel.getHeight(), 0f);
-            translationYAnim.setAutoCancel(true);
             translationYAnim.setDuration(ANIMATION_DURATION);
+
+            if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+                alphaAnim.setAutoCancel(true);
+                translationYAnim.setAutoCancel(true);
+            }
 
             alphaAnim.start();
             translationYAnim.start();
@@ -147,16 +152,15 @@ public class FloatLabelEditText extends FrameLayout {
     /**
      * Hide the label using an animation
      */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     protected void hideLabel() {
         if (mLabel.getVisibility() != View.GONE) {
             final ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(mLabel, "alpha",
                     1f, 0f);
-            alphaAnim.setAutoCancel(true);
             alphaAnim.setDuration(ANIMATION_DURATION);
 
             final ObjectAnimator translationYAnim = ObjectAnimator.ofFloat(mLabel,
                     "translationY", 0f, mLabel.getHeight());
-            translationYAnim.setAutoCancel(true);
             translationYAnim.setDuration(ANIMATION_DURATION);
             translationYAnim.addListener(new AnimatorListenerAdapter() {
                 @Override
@@ -164,6 +168,11 @@ public class FloatLabelEditText extends FrameLayout {
                     mLabel.setVisibility(View.GONE);
                 }
             });
+
+            if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+                alphaAnim.setAutoCancel(true);
+                translationYAnim.setAutoCancel(true);
+            }
 
             alphaAnim.start();
             translationYAnim.start();

@@ -14,17 +14,15 @@
  */
 package com.hippo.ehviewer.widget;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorCompat;
 import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
-
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.animation.ValueAnimator;
-import com.nineoldandroids.view.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -215,7 +213,7 @@ public class SearchItemAnimator extends RecyclerView.ItemAnimator {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         animation.removeAllListeners();
-                        ViewHelper.setTranslationX(view, 0);
+                        view.setTranslationX(0);
                         dispatchRemoveFinished(holder);
                         mRemoveAnimations.remove(holder);
                         dispatchFinishedWhenDone();
@@ -238,7 +236,7 @@ public class SearchItemAnimator extends RecyclerView.ItemAnimator {
     @Override
     public boolean animateAdd(final ViewHolder holder) {
         endAnimation(holder);
-        ViewHelper.setAlpha(holder.itemView, 0f);
+        holder.itemView.setAlpha(0f);
         mPendingAdditions.add(holder);
         return true;
     }
@@ -265,7 +263,7 @@ public class SearchItemAnimator extends RecyclerView.ItemAnimator {
 
                     @Override
                     public void onAnimationCancel(Animator animation) {
-                        ViewHelper.setAlpha(view, 1f);
+                        view.setAlpha(1f);
                     }
 
                     @Override

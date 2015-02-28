@@ -20,7 +20,7 @@
     android:orientation="horizontal"
     android:paddingBottom="@dimen/search_category_padding_bottom">
 
-    <com.hippo.widget.Space
+    <Space
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"/>

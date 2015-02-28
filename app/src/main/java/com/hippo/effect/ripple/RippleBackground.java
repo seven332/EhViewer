@@ -15,18 +15,21 @@
 
 package com.hippo.effect.ripple;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.os.Build;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
+import com.hippo.util.ApiHelper;
 import com.hippo.util.MathUtils;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.nineoldandroids.animation.ObjectAnimator;
 
 /**
  * Draws a Material ripple.
@@ -153,14 +156,17 @@ class RippleBackground {
     /**
      * Starts the enter animation.
      */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void enter() {
         cancel();
 
         final int outerDuration = (int) (1000 * 1.0f / WAVE_OUTER_OPACITY_ENTER_VELOCITY);
         final ObjectAnimator outer = ObjectAnimator.ofFloat(this, "outerOpacity", 0, 1);
-        outer.setAutoCancel(true);
         outer.setDuration(outerDuration);
         outer.setInterpolator(LINEAR_INTERPOLATOR);
+        if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+            outer.setAutoCancel(true);
+        }
 
         mAnimOuterOpacity = outer;
 
@@ -211,15 +217,18 @@ class RippleBackground {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void exitSoftware(int opacityDuration, int inflectionDuration, int inflectionOpacity) {
         final ObjectAnimator outerOpacityAnim;
         if (inflectionDuration > 0) {
             // Outer opacity continues to increase for a bit.
             outerOpacityAnim = ObjectAnimator.ofFloat(this,
                     "outerOpacity", inflectionOpacity / 255.0f);
-            outerOpacityAnim.setAutoCancel(true);
             outerOpacityAnim.setDuration(inflectionDuration);
             outerOpacityAnim.setInterpolator(LINEAR_INTERPOLATOR);
+            if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+                outerOpacityAnim.setAutoCancel(true);
+            }
 
             // Chain the outer opacity exit animation.
             final int outerDuration = opacityDuration - inflectionDuration;
@@ -229,9 +238,11 @@ class RippleBackground {
                     public void onAnimationEnd(Animator animation) {
                         final ObjectAnimator outerFadeOutAnim = ObjectAnimator.ofFloat(
                                 RippleBackground.this, "outerOpacity", 0);
-                        outerFadeOutAnim.setAutoCancel(true);
                         outerFadeOutAnim.setDuration(outerDuration);
                         outerFadeOutAnim.setInterpolator(LINEAR_INTERPOLATOR);
+                        if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+                            outerFadeOutAnim.setAutoCancel(true);
+                        }
 
                         mAnimOuterOpacity = outerFadeOutAnim;
 
@@ -246,8 +257,10 @@ class RippleBackground {
             }
         } else {
             outerOpacityAnim = ObjectAnimator.ofFloat(this, "outerOpacity", 0);
-            outerOpacityAnim.setAutoCancel(true);
             outerOpacityAnim.setDuration(opacityDuration);
+            if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+                outerOpacityAnim.setAutoCancel(true);
+            }
         }
 
         mAnimOuterOpacity = outerOpacityAnim;

@@ -16,18 +16,21 @@
 
 package com.hippo.effect.ripple;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.os.Build;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
+import com.hippo.util.ApiHelper;
 import com.hippo.util.MathUtils;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.nineoldandroids.animation.ObjectAnimator;
 
 /**
  * Draws a Material ripple.
@@ -232,6 +235,7 @@ class Ripple {
     /**
      * Starts the enter animation.
      */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void enter() {
         cancel();
 
@@ -239,22 +243,25 @@ class Ripple {
                 (1000 * Math.sqrt(mOuterRadius / WAVE_TOUCH_DOWN_ACCELERATION * mDensity) + 0.5);
 
         final ObjectAnimator radius = ObjectAnimator.ofFloat(this, "radiusGravity", 1);
-        radius.setAutoCancel(true);
         radius.setDuration(radiusDuration);
         radius.setInterpolator(LINEAR_INTERPOLATOR);
         radius.setStartDelay(RIPPLE_ENTER_DELAY);
 
         final ObjectAnimator cX = ObjectAnimator.ofFloat(this, "xGravity", 1);
-        cX.setAutoCancel(true);
         cX.setDuration(radiusDuration);
         cX.setInterpolator(LINEAR_INTERPOLATOR);
         cX.setStartDelay(RIPPLE_ENTER_DELAY);
 
         final ObjectAnimator cY = ObjectAnimator.ofFloat(this, "yGravity", 1);
-        cY.setAutoCancel(true);
         cY.setDuration(radiusDuration);
         cY.setInterpolator(LINEAR_INTERPOLATOR);
         cY.setStartDelay(RIPPLE_ENTER_DELAY);
+
+        if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+            radius.setAutoCancel(true);
+            cX.setAutoCancel(true);
+            cY.setAutoCancel(true);
+        }
 
         mAnimRadius = radius;
         mAnimX = cX;
@@ -321,27 +328,31 @@ class Ripple {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void exitSoftware(int radiusDuration, int opacityDuration) {
         final ObjectAnimator radiusAnim = ObjectAnimator.ofFloat(this, "radiusGravity", 1);
-        radiusAnim.setAutoCancel(true);
         radiusAnim.setDuration(radiusDuration);
         radiusAnim.setInterpolator(DECEL_INTERPOLATOR);
 
         final ObjectAnimator xAnim = ObjectAnimator.ofFloat(this, "xGravity", 1);
-        xAnim.setAutoCancel(true);
         xAnim.setDuration(radiusDuration);
         xAnim.setInterpolator(DECEL_INTERPOLATOR);
 
         final ObjectAnimator yAnim = ObjectAnimator.ofFloat(this, "yGravity", 1);
-        yAnim.setAutoCancel(true);
         yAnim.setDuration(radiusDuration);
         yAnim.setInterpolator(DECEL_INTERPOLATOR);
 
         final ObjectAnimator opacityAnim = ObjectAnimator.ofFloat(this, "opacity", 0);
-        opacityAnim.setAutoCancel(true);
         opacityAnim.setDuration(opacityDuration);
         opacityAnim.setInterpolator(LINEAR_INTERPOLATOR);
         opacityAnim.addListener(mAnimationListener);
+
+        if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+            radiusAnim.setAutoCancel(true);
+            xAnim.setAutoCancel(true);
+            yAnim.setAutoCancel(true);
+            opacityAnim.setAutoCancel(true);
+        }
 
         mAnimRadius = radiusAnim;
         mAnimOpacity = opacityAnim;

@@ -15,9 +15,13 @@
 
 package com.hippo.widget;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -25,9 +29,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
+import com.hippo.util.ApiHelper;
 import com.hippo.util.MathUtils;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.ObjectAnimator;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -117,6 +120,7 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
         }
     };
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void startAnimator() {
         ObjectAnimator radiusAnim;
         if (mChecked) {
@@ -126,9 +130,11 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
             radiusAnim = ObjectAnimator.ofFloat(this, "radius",
                     mMaxRadius, 0f);
         }
-        radiusAnim.setAutoCancel(true);
         radiusAnim.setDuration(ANIMATION_DURATION); // TODO decide duration according to mMaxRadius
         radiusAnim.addListener(mAnimatorListener);
+        if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+            radiusAnim.setAutoCancel(true);
+        }
         radiusAnim.start();
     }
 
