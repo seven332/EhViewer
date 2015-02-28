@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Hippo Seven
+ * Copyright (C) 2015 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,22 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer;
+package com.hippo.scene;
 
-import com.hippo.scene.SceneApplication;
-import com.hippo.util.UiUtils;
+import android.app.Application;
 
-public class EhApplication extends SceneApplication {
+public class SceneApplication extends Application {
+
+    private SceneManager mSceneManager;
 
     @Override
     public void onCreate() {
-        super.onCreate();
+        mSceneManager = new SceneManager();
+        StageActivity.setSceneManager(mSceneManager);
+        Scene.setSceneManager(mSceneManager);
+    }
 
-        UiUtils.init(this);
+    public SceneManager getSceneManager() {
+        return mSceneManager;
     }
 }

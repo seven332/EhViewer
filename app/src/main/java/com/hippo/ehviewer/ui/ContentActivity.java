@@ -21,6 +21,7 @@ import android.support.v4.widget.DrawerLayout;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
+import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.StageLayout;
 
@@ -29,7 +30,7 @@ public class ContentActivity extends StageActivity {
     private Resources mResources;
 
     private DrawerLayout mDrawerLayout;
-    private StageLayout mStage;
+    private ContentLayout mContentLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,15 +40,21 @@ public class ContentActivity extends StageActivity {
         mResources = getResources();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        mStage = (StageLayout) mDrawerLayout.findViewById(R.id.stage);
+        mContentLayout = (ContentLayout) mDrawerLayout.findViewById(R.id.stage);
 
         mDrawerLayout.setStatusBarBackground(R.color.theme_primary_dark);
 
-        startFirstScene(GalleryListScene.class);
+        if (savedInstanceState == null) {
+            startScene(GalleryListScene.class, null);
+        }
+    }
+
+    public int getFitPaddingBottom() {
+        return mContentLayout.getFitPaddingBottom();
     }
 
     @Override
-    public StageLayout getStageView() {
-        return mStage;
+    public StageLayout getStageLayout() {
+        return mContentLayout;
     }
 }

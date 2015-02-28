@@ -17,22 +17,29 @@ package com.hippo.util;
 
 public class AssertUtils {
 
-    public static void assertNotNull(Object object) throws NullPointerException {
-        assertNotNull(null, object);
-    }
-
-    public static void assertNotNull(String message, Object object)
-            throws NullPointerException {
+    public static void assertNotNull(String message, Object object) {
         if (object == null) {
-            throw new NullPointerException(message);
+            throw new AssertError(message);
         }
     }
 
-    public static void assertEquals(String message, int expected, int actual)
-            throws NotEqualsException {
+    public static void assertEquals(String message, int expected, int actual) {
         if (expected != actual) {
-            throw new NotEqualsException(message);
+            throw new AssertError(message);
         }
     }
 
+    public static void assertNotNullEx(String message, Object object)
+            throws AssertException {
+        if (object == null) {
+            throw new AssertException(message);
+        }
+    }
+
+    public static void assertEqualsEx(String message, int expected, int actual)
+            throws AssertException {
+        if (expected != actual) {
+            throw new AssertException(message);
+        }
+    }
 }

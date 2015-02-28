@@ -21,16 +21,21 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.ListUrlBuilder;
 import com.hippo.ehviewer.ui.fragment.GalleryListFragment;
 import com.hippo.ehviewer.ui.fragment.SearchFragment;
 import com.hippo.scene.Scene;
+import com.hippo.scene.StageActivity;
 import com.hippo.widget.Appbar;
+
+import org.jetbrains.annotations.NotNull;
 
 public class GalleryListScene extends Scene implements SearchFragment.OnSearchListener {
 
+    private StageActivity mActivity;
     private Resources mResources;
 
     private Appbar mAppbar;
@@ -39,13 +44,16 @@ public class GalleryListScene extends Scene implements SearchFragment.OnSearchLi
     private GalleryListPagerAdapter mAdapter;
 
     @Override
-    public void onCreate() {
-        setContentView(R.layout.scene_gallery_list);
+    public void onCreate(Bundle savedInstanceState) {
+        mActivity = getStageActivity();
+        mResources = mActivity.getResources();
+    }
 
-        mResources = getStageActivity().getResources();
-
-        mAppbar = (Appbar) findViewById(R.id.appbar);
-        mViewPager = (ViewPager) findViewById(R.id.viewPager);
+    @Override
+    public View onCreateSceneView(Bundle savedInstanceState) {
+        View sceneView = mActivity.getLayoutInflater().inflate(R.layout.scene_gallery_list, null);
+        mAppbar = (Appbar) sceneView.findViewById(R.id.appbar);
+        mViewPager = (ViewPager) sceneView.findViewById(R.id.viewPager);
 
         mAdapter = new GalleryListPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
@@ -54,6 +62,8 @@ public class GalleryListScene extends Scene implements SearchFragment.OnSearchLi
 
         SearchFragment.setScene(this);
         SearchFragment.setOnSearchListener(this);
+
+        return sceneView;
     }
 
     @Override
@@ -63,13 +73,10 @@ public class GalleryListScene extends Scene implements SearchFragment.OnSearchLi
 
     @Override
     public void onPause() {
-        dispatchRemove();
     }
 
     @Override
     public void onDestroy() {
-        dispatchRemove();
-
         SearchFragment.setScene(null);
         SearchFragment.setOnSearchListener(null);
     }
@@ -85,7 +92,7 @@ public class GalleryListScene extends Scene implements SearchFragment.OnSearchLi
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
     }
 

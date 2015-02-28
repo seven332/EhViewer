@@ -15,28 +15,8 @@
 
 package com.hippo.ehviewer.ui.scene;
 
-import com.hippo.ehviewer.R;
 import com.hippo.scene.Scene;
 
 public class GalleryDetailScene extends Scene {
 
-    @Override
-    public void onCreate() {
-        setContentView(R.layout.scene_gallery_detail);
-    }
-
-    @Override
-    public void onResume() {
-        // Empty
-    }
-
-    @Override
-    public void onPause() {
-        dispatchRemove();
-    }
-
-    @Override
-    public void onDestroy() {
-        dispatchRemove();
-    }
 }

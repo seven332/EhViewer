@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Hippo Seven
+ * Copyright (C) 2015 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,11 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer;
+package com.hippo.util;
 
-import com.hippo.scene.SceneApplication;
-import com.hippo.util.UiUtils;
+public class AssertException extends Exception {
 
-public class EhApplication extends SceneApplication {
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        UiUtils.init(this);
+    public AssertException(String detailMessage) {
+        super(detailMessage);
     }
 }

@@ -15,9 +15,9 @@
 
 package com.hippo.util;
 
-public class NotEqualsException extends Exception {
+public class AssertError extends Error {
 
-    public NotEqualsException(String detailMessage) {
+    public AssertError(String detailMessage) {
         super(detailMessage);
     }
 }

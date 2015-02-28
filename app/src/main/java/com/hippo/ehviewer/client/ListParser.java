@@ -18,8 +18,8 @@ package com.hippo.ehviewer.client;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.LofiGalleryInfo;
 import com.hippo.ehviewer.util.EhUtils;
+import com.hippo.util.AssertException;
 import com.hippo.util.AssertUtils;
-import com.hippo.util.NotEqualsException;
 import com.hippo.util.Utils;
 
 import java.util.ArrayList;
@@ -224,10 +224,9 @@ public class ListParser {
 
     private static final String PAU_SPACER = " by ";
 
-    private void getPostedAndUploader(String raw, String[] pau)
-            throws NotEqualsException {
+    private void getPostedAndUploader(String raw, String[] pau) throws AssertException {
         int index = raw.indexOf(PAU_SPACER);
-        AssertUtils.assertEquals("Can not parse posted and uploader", index, -1);
+        AssertUtils.assertEqualsEx("Can not parse posted and uploader", index, -1);
         pau[0] = raw.substring(0, index);
         pau[1] = raw.substring(index + PAU_SPACER.length());
     }

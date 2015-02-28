@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.ListUrlBuilder;
+import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.scene.Scene;
 
@@ -38,7 +39,7 @@ public class SearchFragment extends Fragment implements SearchLayout.SearhLayout
 
     private static final String VIEW_STATE_TAG = "android:view_state";
 
-    private Activity mActivity;
+    private ContentActivity mActivity;
 
     private View mRootView;
     private SearchLayout mSearchLayout;
@@ -69,12 +70,18 @@ public class SearchFragment extends Fragment implements SearchLayout.SearhLayout
 
     public View onCreateView(LayoutInflater inflater,ViewGroup container,
             Bundle savedInstanceState) {
-        mActivity = getActivity();
+        mActivity = (ContentActivity) getActivity();
 
         mRootView = inflater.inflate(R.layout.fragment_search, container, false);
         mSearchLayout = (SearchLayout) mRootView.findViewById(R.id.search_layout);
 
         mSearchLayout.setHelper(this);
+
+        // Set fit padding bottom
+        int fixPaddingBottom = mActivity.getFitPaddingBottom();
+        if (fixPaddingBottom != -1) {
+            mSearchLayout.setFitPaddingBottom(mActivity.getFitPaddingBottom());
+        }
 
         return mRootView;
     }

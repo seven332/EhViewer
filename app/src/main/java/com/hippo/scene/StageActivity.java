@@ -22,138 +22,60 @@ import android.util.SparseArray;
 import com.hippo.ehviewer.ui.AbsActionBarActivity;
 import com.hippo.util.IntIdGenerator;
 
-import java.util.LinkedList;
-import java.util.Stack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class StageActivity extends AbsActionBarActivity {
-
-    private Stack<Scene> mSceneStack = new Stack<>();
-    private LinkedList<SceneAction> mScenseActionQueue = new LinkedList<>();
-    private Scene mCurrentScene = null;
-    private Scene mRetainedScene = null;
 
     private IntIdGenerator mActivityResultIdGenerator = IntIdGenerator.create();
     private SparseArray<Scene.ActivityResultListener> mActivityResultListenerMap =
             new SparseArray<>();
 
-    public abstract StageLayout getStageView();
+    private static SceneManager sSceneManager;
 
-    private void pushScene(Class sceneClass) {
-        Scene scene = null;
-        try {
-            scene = (Scene) sceneClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new IllegalStateException("Can't instance " + sceneClass.getName());
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException("The constructor of " +
-                    sceneClass.getName() + " is not vivible");
-        } catch (ClassCastException e) {
-            throw new IllegalStateException(sceneClass.getName() + " can not cast to scene");
-        }
-
-        scene.setStageActivity(this);
-
-        Scene lastScene = mCurrentScene;
-        mCurrentScene = scene;
-        mCurrentScene.create();
-        if (lastScene != null) {
-            // It is not the first scense
-            mSceneStack.push(lastScene);
-
-            mRetainedScene = lastScene;
-            lastScene.pause();
-        }
+    static void setSceneManager(SceneManager sceneManager) {
+        sSceneManager = sceneManager;
     }
 
-    private void popScense() {
-        if (mSceneStack.isEmpty()) {
-            // It is the last scene
-            mRetainedScene = mCurrentScene;
-            mCurrentScene.destroy();
-        } else {
-            Scene previousScene = mCurrentScene;
-            mCurrentScene = mSceneStack.pop();
-            mRetainedScene = previousScene;
+    public abstract StageLayout getStageLayout();
 
-            mCurrentScene.resume();
-            previousScene.destroy();
-        }
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        ((SceneApplication) getApplication()).getSceneManager().setStageActivity(this);
     }
 
-    void addSceneView(Scene scene) {
-        if (scene != mCurrentScene) {
-            throw new IllegalStateException("This scene should be current scene.");
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
-        getStageView().addView(scene.getRootView());
+        ((SceneApplication) getApplication()).getSceneManager().setStageActivity(null);
     }
 
-    void stopSceneRetain(Scene scene) {
-        if (mRetainedScene == null) {
-            throw new IllegalStateException("Do not call dispatchRemove more than " +
-                    "once.");
-        }
-        if (mRetainedScene != scene) {
-            throw new IllegalStateException("Only call dispatchRemove in onPause " +
-                    "and onDestroy");
-        }
-
-        Scene retainScene = mRetainedScene;
-        mRetainedScene = null;
-        getStageView().removeView(scene.getRootView());
-
-        if (retainScene == mCurrentScene) {
-            // No need to handle scene action
-            mScenseActionQueue.clear();
-            // It is the last scene, let's finish the activity.
-            finish();
-        } else {
-            // Handle SceneAction
-            if (!mScenseActionQueue.isEmpty()) {
-                mScenseActionQueue.poll().doAction();
-            }
-        }
+    void attachSceneToStage(Scene scene) {
+        getStageLayout().addView(scene.getSceneView());
     }
 
-    protected void startFirstScene(Class sceneClass) {
-        if (mCurrentScene != null) {
-            throw new IllegalStateException("Only call startFirstScene to start " +
-                    "first scene.");
-        }
-
-        pushScene(sceneClass);
+    void attachSceneToStageAsPreScene(Scene scene) {
+        StageLayout stageLayout = getStageLayout();
+        stageLayout.addView(scene.getSceneView(), stageLayout.getChildCount() - 1);
     }
 
-    void startScene(Scene fromScene, Class sceneClass) {
-        if (mRetainedScene == null) {
-            // No retained scene, no animation
-            if (fromScene == mCurrentScene) {
-                // Only current scene can start new scene.
-                // If not, just miss it.
-                pushScene(sceneClass);
-            }
-        } else {
-            mScenseActionQueue.offer(new StartSceneAction(fromScene, sceneClass));
-        }
+    void detachSceneFromStage(Scene scene) {
+        getStageLayout().removeView(scene.getSceneView());
     }
 
-    void finishScene(Scene scene) {
-        if (scene != mRetainedScene && scene != mCurrentScene) {
-            if (mSceneStack.contains(scene)) {
-                // Remove without animation
-                getStageView().removeView(scene.getRootView());
-                mSceneStack.remove(scene);
-            }
-        } else {
-            if (mRetainedScene == null) {
-                // Because scene can't be null, so scene == mCurrentScene
-                popScense();
-            } else {
-                mScenseActionQueue.offer(new FinishSceneAction(scene));
-            }
-        }
+    public void startScene(@NotNull Class sceneClass, @Nullable Announcer announcer) {
+        sSceneManager.startScene(sceneClass, announcer);
     }
 
+    /**
+     * Start new Activity for result to listener
+     *
+     * @param intent the intent for new Activity
+     * @param listener callback
+     */
     public void startActivityForResult(Intent intent, Scene.ActivityResultListener listener) {
         int id = mActivityResultIdGenerator.nextId();
         mActivityResultListenerMap.put(id, listener);
@@ -173,8 +95,8 @@ public abstract class StageActivity extends AbsActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        if (mCurrentScene != null) {
-            mCurrentScene.onBackPressed();
+        if (!sSceneManager.onBackPressed()) {
+            super.onBackPressed();
         }
     }
 
@@ -182,56 +104,13 @@ public abstract class StageActivity extends AbsActionBarActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        for (Scene scene : mSceneStack) {
-            scene.onSaveInstanceState(outState);
-        }
-        if (mCurrentScene != null) {
-            mCurrentScene.onSaveInstanceState(outState);
-        }
+        sSceneManager.onSaveInstanceState(outState);
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        for (Scene scene : mSceneStack) {
-            scene.onRestoreInstanceState(savedInstanceState);
-        }
-        if (mCurrentScene != null) {
-            mCurrentScene.onRestoreInstanceState(savedInstanceState);
-        }
+        sSceneManager.onRestoreInstanceState(savedInstanceState);
     }
-
-    interface SceneAction {
-        public void doAction();
-    }
-
-    class StartSceneAction implements SceneAction {
-        private Scene mFromScene;
-        private Class mSceneClass;
-
-        public StartSceneAction(Scene fromScene, Class sceneClass) {
-            mFromScene = fromScene;
-            mSceneClass = sceneClass;
-        }
-
-        @Override
-        public void doAction() {
-            startScene(mFromScene, mSceneClass);
-        }
-    }
-
-    class FinishSceneAction implements SceneAction {
-        private Scene mScene;
-
-        public FinishSceneAction(Scene scene) {
-            mScene = scene;
-        }
-
-        @Override
-        public void doAction() {
-            finishScene(mScene);
-        }
-    }
-
 }

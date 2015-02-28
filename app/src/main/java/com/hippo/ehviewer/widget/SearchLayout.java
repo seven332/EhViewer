@@ -146,6 +146,15 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         mFab.setOnClickListener(this);
     }
 
+    public void setFitPaddingBottom(int paddingBottom) {
+        mSearchContainer.setClipToPadding(false);
+        mSearchContainer.setPadding(
+                mSearchContainer.getPaddingLeft(),
+                mSearchContainer.getPaddingTop(),
+                mSearchContainer.getPaddingRight(),
+                paddingBottom);
+    }
+
     public void setHelper(SearhLayoutHelper helper) {
         mHelper = helper;
     }
