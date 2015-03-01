@@ -18,7 +18,6 @@
 
     <TableRow>
         <com.hippo.widget.CheckTextView
-            android:id="@+id/button_doujinshi"
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -30,7 +29,6 @@
             android:text="@string/doujinshi" />
 
         <com.hippo.widget.CheckTextView
-            android:id="@+id/button_manga"
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -44,7 +42,6 @@
 
     <TableRow>
         <com.hippo.widget.CheckTextView
-            android:id="@+id/button_artistcg"
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -57,7 +54,6 @@
             android:text="@string/artist_cg" />
 
         <com.hippo.widget.CheckTextView
-            android:id="@+id/button_gamecg"
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -72,7 +68,6 @@
 
     <TableRow>
         <com.hippo.widget.CheckTextView
-            android:id="@+id/button_western"
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -85,7 +80,6 @@
             android:text="@string/western" />
 
         <com.hippo.widget.CheckTextView
-            android:id="@+id/button_non_h"
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -100,7 +94,6 @@
 
     <TableRow>
         <com.hippo.widget.CheckTextView
-            android:id="@+id/button_imageset"
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -113,7 +106,6 @@
             android:text="@string/image_set" />
 
         <com.hippo.widget.CheckTextView
-            android:id="@+id/button_cosplay"
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -128,7 +120,6 @@
 
     <TableRow>
         <com.hippo.widget.CheckTextView
-            android:id="@+id/button_asianporn"
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -140,7 +131,6 @@
             android:text="@string/asian_porn" />
 
         <com.hippo.widget.CheckTextView
-            android:id="@+id/button_misc"
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

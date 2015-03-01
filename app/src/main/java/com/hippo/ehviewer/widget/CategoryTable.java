@@ -16,8 +16,11 @@
 package com.hippo.ehviewer.widget;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.TableLayout;
 
 import com.hippo.ehviewer.R;
@@ -26,6 +29,9 @@ import com.hippo.util.Utils;
 import com.hippo.widget.CheckTextView;
 
 public class CategoryTable extends TableLayout {
+
+    private static final String STATE_KEY_SUPER = "super";
+    private static final String STATE_KEY_CATEGORY = "category";
 
     private CheckTextView mDoujinshi;
     private CheckTextView mManga;
@@ -52,16 +58,25 @@ public class CategoryTable extends TableLayout {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         inflater.inflate(R.layout.widget_category_table, this);
 
-        mDoujinshi = (CheckTextView)findViewById(R.id.button_doujinshi);
-        mManga = (CheckTextView)findViewById(R.id.button_manga);
-        mArtistCG = (CheckTextView)findViewById(R.id.button_artistcg);
-        mGameCG = (CheckTextView)findViewById(R.id.button_gamecg);
-        mWestern = (CheckTextView)findViewById(R.id.button_western);
-        mNonH = (CheckTextView)findViewById(R.id.button_non_h);
-        mImageSets = (CheckTextView)findViewById(R.id.button_imageset);
-        mCosplay = (CheckTextView)findViewById(R.id.button_cosplay);
-        mAsianPorn = (CheckTextView)findViewById(R.id.button_asianporn);
-        mMisc = (CheckTextView)findViewById(R.id.button_misc);
+        ViewGroup row0 = (ViewGroup) getChildAt(0);
+        mDoujinshi = (CheckTextView) row0.getChildAt(0);
+        mManga = (CheckTextView) row0.getChildAt(1);
+
+        ViewGroup row1 = (ViewGroup) getChildAt(1);
+        mArtistCG = (CheckTextView) row1.getChildAt(0);
+        mGameCG = (CheckTextView) row1.getChildAt(1);
+
+        ViewGroup row2 = (ViewGroup) getChildAt(2);
+        mWestern = (CheckTextView) row2.getChildAt(0);
+        mNonH = (CheckTextView) row2.getChildAt(1);
+
+        ViewGroup row3 = (ViewGroup) getChildAt(3);
+        mImageSets = (CheckTextView) row3.getChildAt(0);
+        mCosplay = (CheckTextView) row3.getChildAt(1);
+
+        ViewGroup row4 = (ViewGroup) getChildAt(4);
+        mAsianPorn = (CheckTextView) row4.getChildAt(0);
+        mMisc = (CheckTextView) row4.getChildAt(1);
     }
 
     /**
@@ -99,5 +114,22 @@ public class CategoryTable extends TableLayout {
         if (!mAsianPorn.isChecked()) category |= EhUtils.ASIAN_PORN;
         if (!mMisc.isChecked()) category |= EhUtils.MISC;
         return category;
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+        final Bundle state = new Bundle();
+        state.putParcelable(STATE_KEY_SUPER, super.onSaveInstanceState());
+        state.putInt(STATE_KEY_CATEGORY, getCategory());
+        return state;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            final Bundle savedState = (Bundle) state;
+            super.onRestoreInstanceState(savedState.getParcelable(STATE_KEY_SUPER));
+            setCategory(savedState.getInt(STATE_KEY_CATEGORY));
+        }
     }
 }
