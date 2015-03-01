@@ -15,6 +15,7 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -31,25 +32,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.data.ListUrlBuilder;
-import com.hippo.ehviewer.data.UnsupportedSearch;
+import com.hippo.ehviewer.ui.ContentActivity;
+import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.scene.Scene;
-import com.hippo.scene.StageActivity;
-import com.hippo.util.Log;
 import com.hippo.widget.Appbar;
 
 import org.jetbrains.annotations.NotNull;
 
 public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutHelper,
-        Scene.ActivityResultListener {
+        Scene.ActivityResultListener, ContentLayout.OnGetFitPaddingListener {
 
     private final static int PAGE_INDEX_SEARCH = 0;
     private final static int PAGE_INDEX_LIST = 1;
     private final static int PAGE_NUMBER = 2;
 
-    private StageActivity mActivity;
+    private ContentActivity mActivity;
     private Resources mResources;
 
     private View mSearchView;
@@ -64,10 +63,11 @@ public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutH
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        mActivity = getStageActivity();
+        mActivity = (ContentActivity) getStageActivity();
         mResources = mActivity.getResources();
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View onCreateSceneView(Bundle savedInstanceState) {
         LayoutInflater inflater = mActivity.getLayoutInflater();
@@ -93,7 +93,18 @@ public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutH
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setCurrentItem(PAGE_INDEX_LIST);
 
+        // Fit Padding Bottom
+        mActivity.setOnGetFitPaddingListener(this);
+        int fitPaddingBottom = mActivity.getFitPaddingBottom();
+        if (fitPaddingBottom != -1) {
+            setFitPaddingBottom(fitPaddingBottom);
+        }
+
         return sceneView;
+    }
+
+    private void setFitPaddingBottom(int fitPaddingBottom) {
+        mSearchLayout.setFitPaddingBottom(fitPaddingBottom);
     }
 
     @Override
@@ -107,11 +118,7 @@ public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutH
 
     @Override
     public void onRequestSearch(ListUrlBuilder lub) {
-        try {
-            Log.d(lub.build(EhClient.SOURCE_EX));
-        } catch (UnsupportedSearch unsupportedSearch) {
-            unsupportedSearch.printStackTrace();
-        }
+        // TODO
     }
 
     @Override
@@ -138,6 +145,11 @@ public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutH
                 mSearchLayout.onSelectImage(imagePath);
             }
         }
+    }
+
+    @Override
+    public void onGetFitPadding(int l, int t, int r, int b) {
+        setFitPaddingBottom(b);
     }
 
     private class SimplePagerAdapter extends PagerAdapter {

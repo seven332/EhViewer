@@ -25,13 +25,21 @@
 
     <!-- FloatingActionButton -->
     <style name="FloatingActionButton">
-        <item name="android:minWidth">60dp</item>
-        <item name="android:minHeight">60dp</item>
+        <item name="android:minWidth">@dimen/fab_size</item>
+        <item name="android:minHeight">@dimen/fab_size</item>
     </style>
 
     <style name="FloatingActionButton.Small">
-        <item name="android:minWidth">44dp</item>
-        <item name="android:minHeight">44dp</item>
+        <item name="android:minWidth">@dimen/fab_size_small</item>
+        <item name="android:minHeight">@dimen/fab_size_small</item>
+    </style>
+
+    <style name="FloatingActionButton.Content">
+        <item name="android:layout_gravity">right|bottom</item>
+        <item name="android:layout_marginLeft">@dimen/content_fab_margin_start</item>
+        <item name="android:layout_marginRight">@dimen/content_fab_margin_end</item>
+        <item name="android:layout_marginTop">@dimen/content_fab_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/content_fab_margin_bottom</item>
     </style>
 
     <!-- FloatLabelEditText -->

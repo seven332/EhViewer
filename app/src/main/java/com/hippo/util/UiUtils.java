@@ -19,6 +19,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 
+import com.hippo.ehviewer.R;
+
 public class UiUtils {
 
     private static float sDensity;
@@ -86,5 +88,16 @@ public class UiUtils {
         Color.colorToHSV(color, hsv);
         hsv[2] *= 0.9f;
         return Color.HSVToColor(hsv);
+    }
+
+    /**
+     * Is this device is table.
+     * For sw600dp is true
+     *
+     * @param context the context
+     * @return true for table
+     */
+    public static boolean isTable(Context context) {
+        return context.getResources().getBoolean(R.bool.is_table);
     }
 }

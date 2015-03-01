@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015 Hippo Seven
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<resources>
+
+    <!-- FloatingActionButton -->
+    <style name="FloatingActionButton.Content">
+        <item name="android:layout_gravity">right</item>
+        <item name="android:layout_marginLeft">@dimen/content_fab_margin_start</item>
+        <item name="android:layout_marginRight">@dimen/content_fab_margin_end</item>
+        <item name="android:layout_marginTop">@dimen/content_fab_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/content_fab_margin_bottom</item>
+    </style>
+
+</resources>

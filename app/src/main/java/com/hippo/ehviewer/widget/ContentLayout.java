@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ContentLayout extends StageLayout {
 
-    private OnGetPaddingListener mOnGetPaddingListener;
+    private OnGetFitPaddingListener mOnGetFitPaddingListener;
 
     private int mFitPaddingLeft = -1;
     private int mFitPaddingTop = -1;
@@ -55,8 +55,8 @@ public class ContentLayout extends StageLayout {
         mFitPaddingTop = 0;
         mFitPaddingRight = 0;
         mFitPaddingBottom = insets.bottom;
-        if (mOnGetPaddingListener != null) {
-            mOnGetPaddingListener.onGetPadding(mFitPaddingLeft, mFitPaddingTop,
+        if (mOnGetFitPaddingListener != null) {
+            mOnGetFitPaddingListener.onGetFitPadding(mFitPaddingLeft, mFitPaddingTop,
                     mFitPaddingRight, mFitPaddingBottom);
         }
 
@@ -65,8 +65,8 @@ public class ContentLayout extends StageLayout {
         return super.fitSystemWindows(insets);
     }
 
-    public void setOnGetPaddingListener(OnGetPaddingListener listener) {
-        mOnGetPaddingListener = listener;
+    public void setOnGetFitPaddingListener(OnGetFitPaddingListener listener) {
+        mOnGetFitPaddingListener = listener;
     }
 
     public int getFitPaddingLeft() {
@@ -85,7 +85,7 @@ public class ContentLayout extends StageLayout {
         return mFitPaddingBottom;
     }
 
-    public interface OnGetPaddingListener {
-        public void onGetPadding(int l, int t, int r, int b);
+    public interface OnGetFitPaddingListener {
+        public void onGetFitPadding(int l, int t, int r, int b);
     }
 }

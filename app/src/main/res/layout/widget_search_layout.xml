@@ -20,16 +20,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/content_padding_start"
-        android:paddingRight="@dimen/content_padding_end"/>
+        android:paddingRight="@dimen/content_padding_end"
+        android:paddingTop="@dimen/content_padding_top"
+        android:paddingBottom="@dimen/content_padding_bottom"
+        android:clipToPadding="false"/>
 
     <com.hippo.widget.FloatingActionButton
         xmlns:auto="http://schemas.android.com/apk/res-auto"
-        style="@style/FloatingActionButton"
+        style="@style/FloatingActionButton.Content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
-        android:layout_marginRight="@dimen/keyline_margin"
-        android:layout_marginBottom="@dimen/keyline_margin"
         auto:fabColor="?attr/colorAccent"
         auto:fabDrawable="@drawable/ic_fab_search"/>
 

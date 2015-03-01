@@ -18,7 +18,12 @@
     <!-- Search Content -->
     <dimen name="content_padding_start">0dp</dimen>
     <dimen name="content_padding_end">0dp</dimen>
-    <dimen name="content_fab_margin_end">0dp</dimen>
+    <dimen name="content_padding_top">0dp</dimen>
+    <dimen name="content_padding_bottom">72dp</dimen>
+    <dimen name="content_fab_margin_start">0dp</dimen>
+    <dimen name="content_fab_margin_end">@dimen/keyline_margin</dimen>
+    <dimen name="content_fab_margin_top">0dp</dimen>
+    <dimen name="content_fab_margin_bottom">@dimen/keyline_margin</dimen>
 
     <!-- Search category -->
     <dimen name="search_category_padding_start">16dp</dimen>
@@ -59,5 +64,9 @@
 
     <!-- Default elevation -->
     <dimen name="default_elevation">4dp</dimen>
+
+    <!-- Fab -->
+    <dimen name="fab_size">60dp</dimen>
+    <dimen name="fab_size_small">44dp</dimen>
 
 </resources>

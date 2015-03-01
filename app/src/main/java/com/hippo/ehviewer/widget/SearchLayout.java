@@ -37,6 +37,7 @@ import android.widget.TextView;
 import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.ListUrlBuilder;
+import com.hippo.util.UiUtils;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.FloatLabelEditText;
 import com.hippo.widget.FloatingActionButton;
@@ -111,6 +112,9 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
 
     private Bitmap mSearchImage;
 
+    private int mFabMarginBottomOrigin;
+    private int mSearchPaddingBottomOrigin;
+
     public SearchLayout(Context context) {
         super(context);
         init(context);
@@ -144,15 +148,22 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         mSearchContainer.setItemAnimator(mAnimator);
 
         mFab.setOnClickListener(this);
+        mFabMarginBottomOrigin = mResources.getDimensionPixelSize(R.dimen.content_fab_margin_bottom);
+        mSearchPaddingBottomOrigin = mResources.getDimensionPixelSize(R.dimen.content_padding_bottom);
     }
 
     public void setFitPaddingBottom(int paddingBottom) {
-        mSearchContainer.setClipToPadding(false);
         mSearchContainer.setPadding(
                 mSearchContainer.getPaddingLeft(),
                 mSearchContainer.getPaddingTop(),
                 mSearchContainer.getPaddingRight(),
-                paddingBottom);
+                mSearchPaddingBottomOrigin + paddingBottom);
+
+        if (!UiUtils.isTable(mContext)) {
+            LayoutParams lp = (LayoutParams) mFab.getLayoutParams();
+            lp.bottomMargin = mFabMarginBottomOrigin + paddingBottom;
+            mFab.setLayoutParams(lp);
+        }
     }
 
     public void setHelper(SearhLayoutHelper helper) {

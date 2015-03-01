@@ -53,6 +53,10 @@ public class ContentActivity extends StageActivity {
         return mContentLayout.getFitPaddingBottom();
     }
 
+    public void setOnGetFitPaddingListener(ContentLayout.OnGetFitPaddingListener listener) {
+        mContentLayout.setOnGetFitPaddingListener(listener);
+    }
+
     @Override
     public StageLayout getStageLayout() {
         return mContentLayout;
