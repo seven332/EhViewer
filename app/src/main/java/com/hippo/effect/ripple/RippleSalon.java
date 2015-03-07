@@ -21,7 +21,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.view.View;
 
@@ -47,17 +46,18 @@ public final class RippleSalon {
         addRipple(v, color, v.getBackground());
     }
 
-    @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void addRipple(View v, ColorStateList color, Drawable content) {
         if (USE_OLD_RIPPLE) {
-            RippleOldDrawable rippleOldDrawable = new RippleOldDrawable(color, content);
-            v.setOnTouchListener(new HotspotTouchHelper(rippleOldDrawable));
-            v.setBackgroundDrawable(rippleOldDrawable);
+            RippleDrawable rippleDrawable = new RippleDrawable(color, content);
+            v.setOnTouchListener(new HotspotTouchHelper(rippleDrawable));
+            //noinspection deprecation
+            v.setBackgroundDrawable(rippleDrawable);
         } else {
-            RippleDrawable rippleDrawable = new RippleDrawable(color, content, MASK);
+            android.graphics.drawable.RippleDrawable rippleDrawable =
+                    new android.graphics.drawable.RippleDrawable(color, content, MASK);
+            //noinspection deprecation
             v.setBackgroundDrawable(rippleDrawable);
         }
     }
-
 }

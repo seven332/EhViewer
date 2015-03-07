@@ -76,9 +76,9 @@ import java.util.Arrays;
  *
  * @attr ref android.R.styleable#RippleDrawable_color
  */
-public class RippleOldDrawable extends Drawable implements RippleOwner, Hotspotable {
+public class RippleDrawable extends Drawable implements RippleOwner, Hotspotable {
     @SuppressWarnings("unused")
-    private static final String TAG = RippleOldDrawable.class.getSimpleName();
+    private static final String TAG = RippleDrawable.class.getSimpleName();
 
     /** The maximum number of ripples supported. */
     private static final int MAX_RIPPLES = 10;
@@ -132,7 +132,7 @@ public class RippleOldDrawable extends Drawable implements RippleOwner, Hotspota
 
     private final Drawable mContent;
 
-    RippleOldDrawable(ColorStateList color, Drawable content) {
+    RippleDrawable(ColorStateList color, Drawable content) {
         setColor(color);
 
         mContent = content;
