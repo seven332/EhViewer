@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2014 Hippo Seven
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+<resources>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="@android:Theme.Material.Light.DarkActionBar">
+        <item name="themeColor">@color/theme</item>
+        <!-- Text -->
+        <item name="textColor">@color/primary_text_dark</item>
+        <item name="textColorHint">@color/secondary_text_dark</item>
+        <item name="textColorTitle">@color/primary_text_dark</item>
+        <item name="dialogBackground">@drawable/dialog_background_material</item>
+
+        <item name="android:textColorPrimaryDisableOnly">?attr/textColor</item>
+
+        <item name="android:textAppearance">@style/TextAppearance</item>
+        <item name="android:textAppearanceSmall">@style/TextAppearance.Small</item>
+        <item name="android:textAppearanceMedium">@style/TextAppearance.Medium</item>
+        <item name="android:textAppearanceLarge">@style/TextAppearance.Large</item>
+        <item name="android:windowBackground">@color/background_light</item>
+
+        <!-- ActionBar -->
+        <item name="android:windowTitleSize">@dimen/action_bar_height</item>
+        <item name="android:actionBarSize">@dimen/action_bar_height</item>
+        <item name="android:actionBarStyle">@style/ActionBar</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
+
+        <!-- color -->
+        <item name="android:colorAccent">?attr/themeColor</item>
+        <item name="android:colorControlNormal">?attr/textColorHint</item>
+
+    </style>
+
+    <style name="AppTheme.Dark" parent="@android:Theme.Material">
+        <item name="themeColor">@color/theme_dark</item>
+        <!-- Text -->
+        <item name="textColor">@color/primary_text_light</item>
+        <item name="textColorHint">@color/secondary_text_light</item>
+        <item name="textColorTitle">@color/primary_text_light</item>
+        <item name="dialogBackground">@drawable/dialog_background_material_dark</item>
+
+        <item name="android:textColorPrimaryDisableOnly">?attr/textColor</item>
+
+        <item name="android:textAppearance">@style/TextAppearance</item>
+        <item name="android:textAppearanceSmall">@style/TextAppearance.Small</item>
+        <item name="android:textAppearanceMedium">@style/TextAppearance.Medium</item>
+        <item name="android:textAppearanceLarge">@style/TextAppearance.Large</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+
+        <!-- ActionBar -->
+        <!--  TODO some is not dark -->
+        <item name="android:windowTitleSize">@dimen/action_bar_height</item>
+        <item name="android:actionBarSize">@dimen/action_bar_height</item>
+        <item name="android:actionBarStyle">@style/ActionBar</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
+
+        <!-- color -->
+        <item name="android:colorAccent">?attr/themeColor</item>
+        <item name="android:colorControlNormal">?attr/textColorHint</item>
+    </style>
+
+</resources>

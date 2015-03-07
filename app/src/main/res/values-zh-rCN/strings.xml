@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2014 Hippo Seven
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources>
+
+    <!-- Warning -->
+    <string name="dailog_waring_title">警告</string>
+    <string name="dailog_waring_plain">该应用内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。该应用作者不会对由该应用造成的后果负责。您是否愿意继续使用该应用？</string>
+
+    <!-- Analyics -->
+    <string name="dailog_analyics_title">数据统计</string>
+    <string name="dailog_analyics_plain">您是否愿意将使用情况发送给开发者？这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本、当前IP地址）（注意：某些设备信息可能可以推测出某些用户信息，譬如当前IP地址可能可以大概推测出用户当前的位置）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）或可永久性标识某台设备的数据（譬如IMEI、MAC地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/cn.html\nGoogle隐私权和条款：http://www.google.com/intl/zh-CN/policies\n\n您以后可以在设置中修改选择</string>
+
+    <!-- Network -->
+    <string name="dailog_network_mobile_title">您正在使用移动网络，可能会消耗大量的资费，是否继续使用？</string>
+    <string name="dailog_network_none_title">未检测到网络连接，是否继续使用？</string>
+
+    <!-- Exit -->
+    <string name="exit_tip">再按一次退出</string>
+
+    <!-- Mode -->
+    <string name="content">内容</string>
+    <string name="lofi_resolution">Lofi 分辨率</string>
+
+    <!-- Search -->
+    <string name="hint_no_keyword">没关键字也行</string>
+    <string name="checkbox_uploader">指定上传者</string>
+    <string name="checkbox_advance">高级选项</string>
+    <string name="checkbox_sname">搜索本子</string>
+    <string name="checkbox_stags">搜索本子标签</string>
+    <string name="checkbox_sdesc">搜索本子描述</string>
+    <string name="checkbox_storr">搜索种子文件名</string>
+    <string name="checkbox_sto">仅搜索有种子的本子</string>
+    <string name="checkbox_sdt1">搜索 Low-Power 标签</string>
+    <string name="checkbox_sdt2">搜索差评标签</string>
+    <string name="checkbox_sh">搜索被遗弃的资源</string>
+    <string name="checkbox_sr">最低评分：</string>
+    <string name="use_similarity_scan">使用相似搜索</string>
+    <string name="only_search_covers">只搜索封面</string>
+    <string name="show_expunged">显示被遗弃的资源</string>
+
+    <!-- Jump -->
+    <string name="jump_summary">第 %1$d 页，共 %2$s 页</string>
+    <string name="jump_to">跳至：</string>
+    <string name="toast_invalid_page">非法页面</string>
+
+    <!-- Send Crash -->
+    <string name="dialog_send_crash_title">这很重要</string>
+    <string name="dialog_send_crash_plain">上次该应用崩溃了。你愿意把错误日志发送给开发者以便以后得到更好的用户体验么？（以电子邮件的形式发送）</string>
+    <string name="add_description">你可以在下方添加一些信息，譬如应用崩溃前所作的操作。</string>
+    <string name="dialog_wait_send_crash_msg">请在发送完日志后关闭该窗口</string>
+
+    <!-- List item long click -->
+    <string name="toast_add_favourite">已添加到收藏</string>
+    <string name="toast_add_download">已添加到下载列表</string>
+
+    <!-- GalleryListActivity -->
+    <string name="no_found">未找到</string>
+    <string name="none">无</string>
+    <string name="quick_search_tip">您可以在左侧栏搜索项中添加快速搜索</string>
+    <string name="no_avatar">无头像</string>
+    <string name="get_avatar_error">获取头像失败</string>
+    <string name="image_search">图像搜索</string>
+    <string name="image_not_exist">图像不存在</string>
+    <string name="image_not_readable">图像不可读</string>
+
+    <!-- Update -->
+    <string name="update_message">发现新版本：%1$s\n大小：%2$s\n%3$s\n\n是否更新？</string>
+    <string name="checking_update">正在检查更新</string>
+    <string name="up_to_date">已是最新版</string>
+    <string name="found_update">发现新版本</string>
+    <string name="start_update">开始下载更新</string>
+    <string name="download_update">正在下载更新</string>
+    <string name="update_failed">下载更新失败</string>
+
+    <!-- GalleryDetialActivity -->
+    <string name="we_feel">大家觉得 %s</string>
+    <string name="more_of_uploader">上传者更多内容</string>
+    <string name="no_more_comment">没有更多评论</string>
+    <string name="no_comment">暂无评论，就等你了</string>
+
+    <!-- AbsGalleryActivity -->
+    <string name="click_retry">点击重试</string>
+    <string name="click_first_page">点击回第一页</string>
+
+    <!-- Download -->
+    <string name="legacy_pages">%d 页未下载</string>
+    <string name="download_over">下载结束</string>
+    <string name="start_download">开始下载</string>
+    <string name="download_1">下载成功 %d</string>
+    <string name="download_2">下载成功 %d 项</string>
+    <string name="download_3">下载失败 %d</string>
+    <string name="download_4">下载失败 %d 项</string>
+    <string name="download_5">下载成功 %1$d, 下载失败 %2$d</string>
+    <string name="download_6">下载成功 %1$d 项, 下载失败 %2$d 项</string>
+    <string name="delete_item">该下载项将被删除</string>
+    <string name="pic_included">包括图片</string>
+    <string name="notification_be_title">下载配额不足</string>
+    <string name="notification_be_mesg">错误码 509，请稍后阅读或完成下载</string>
+
+    <!-- ErrorMessage -->
+    <string name="em_network_error">网络错误</string>
+    <string name="em_timeout">超时</string>
+    <string name="em_response_code_error">响应码错误</string>
+    <string name="em_parser_error">网页分析错误</string>
+    <string name="em_open_input_stream_error">打开输入流错误</string>
+    <string name="em_read_input_stream_error">读取输入流错误</string>
+    <string name="em_client_protocol">无效的请求或无效的响应</string>
+    <string name="em_put_cache_error">存入缓存错误</string>
+    <string name="em_url_format_error">网址错误</string>
+    <string name="em_login_error">用户名或密码错误</string>
+    <string name="em_check_login_error">获取用户信息错误</string>
+    <string name="em_logout_error">退出错误</string>
+    <string name="em_url_error">网址错误</string>
+    <string name="em_retry">重试</string>
+    <string name="em_retry_times">重试次数：%d</string>
+    <string name="em_unknown_error">未知错误</string>
+    <string name="em_no_network">无网络连接</string>
+    <string name="em_can_not_reach">你所在的网络无法连接到 e-hentai</string>
+    <string name="em_no_network_2">无网络连接？</string>
+    <string name="em_request_error">请求错误</string>
+    <string name="em_unknown_host">无法解析主机</string>
+    <string name="em_unexpected_response_code">非预期的响应码：%d</string>
+    <string name="em_redirection_error">太多重定向</string>
+    <string name="em_host_error">主机错误</string>
+    <string name="em_get_body_error">获取正文失败</string>
+    <string name="em_invalid_request">无效的请求</string>
+    <string name="em_no_sdcard">未挂载 SD卡</string>
+    <string name="em_index_error">索引错误</string>
+    <string name="em_requst_null">请求内容为空</string>
+
+    <!-- GalleryActivity -->
+    <string name="ga_data_error">数据错误！</string>
+
+    <!-- Gallery -->
+    <string name="gallery_tip">长按屏幕，可使下载从当前页面开始。若该项正在下载，则仅优先加载当前页面。</string>
+    <string name="read_image_error">读取图片错误</string>
+    <string name="not_loaded">尚未加载</string>
+    <string name="loading_percent">正在加载 %d%%</string>
+    <string name="wait_for_more">等待获取页面信息</string>
+    <string name="more_settings">更多设置</string>
+    <string name="save_to_local_storage">保存到本地</string>
+    <string name="save_successful">已保存至 %s</string>
+    <string name="save_failed">保存失败</string>
+    <string name="select_save_dir">选择保存文件夹</string>
+    <string name="current_image_not_downloaded">当前图片未完成下载</string>
+    <string name="share_image">分享图片</string>
+
+    <!-- Action -->
+    <string name="action_refresh">刷新</string>
+    <string name="action_settings">设置</string>
+
+    <!-- Favorite -->
+    <string name="local_favorite">本地收藏</string>
+    <string name="select_item">选择项目</string>
+    <string name="where_to_add">添加至何处？</string>
+    <string name="failed_to_add">添加失败</string>
+    <string name="where_to_move">移动至何处？</string>
+    <string name="moving">正在移动…</string>
+    <string name="move_successful">移动成功</string>
+    <string name="failed_to_move">移动失败</string>
+    <string name="dst_src_same">目标与源相同</string>
+    <string name="delete_successfully">删除成功</string>
+    <string name="failed_to_delete">删除失败</string>
+    <string name="set_default_favorite">设为默认收藏夹</string>
+    <string name="favorite_warning">未检测到登陆状态，账号收藏可被他人修改。而且由于开发者水平问题，本地收藏不可靠。</string>
+
+    <!-- Popular -->
+    <string name="popular_update_time">更新时间 %s</string>
+
+    <!-- History -->
+    <string name="clear_history_message">所有历史记录将被清除</string>
+    <string name="just_browse">仅浏览过</string>
+    <string name="have_read">已阅读过</string>
+
+    <!-- Settings -->
+    <string name="display_settings_title">显示</string>
+    <string name="theme_display_settings_title">主题</string>
+    <string name="custom_theme_color_title">自定义主题颜色</string>
+    <string name="custom_theme_color_summary_on">在下方指定主题颜色</string>
+    <string name="custom_theme_color_summary_off">使用默认主题颜色</string>
+    <string name="theme_color_title">主题颜色</string>
+    <string name="screen_display_settings_title">屏幕</string>
+    <string name="screen_orientation_title">屏幕方向</string>
+    <string name="list_display_settings_title">列表</string>
+    <string name="list_mode_title">列表模式</string>
+    <string name="list_detail_columns_title">列表详情列数</string>
+    <string name="list_thumb_columns_title">列表缩略图列数</string>
+    <string name="preview_display_settings_title">预览</string>
+    <string name="preview_columns">预览图列数</string>
+    <string name="popular_display_settings_title">热门</string>
+    <string name="show_popular_update_time_title">显示热门更新时间</string>
+
+    <string name="eh_settings_title">EH</string>
+    <string name="list_eh_settings_title">列表</string>
+    <string name="list_default_category_title">列表默认分类</string>
+    <string name="list_default_category_summary">首页显示的默认分类</string>
+    <string name="exculde_tag_group_title">排除标签类别</string>
+    <string name="exculde_tag_group_summary">在标签搜索中排除特定标签类别</string>
+    <string name="exculde_language_title">排除语言</string>
+    <string name="exculde_language_summary">在列表与搜索中排除特定语言</string>
+    <string name="search_eh_settings_title">搜索</string>
+    <string name="clear_suggestions_title">清除搜索记录</string>
+    <string name="clear_suggestions_summary">删除您已执行的所有搜索</string>
+    <string name="detail_eh_settings_title">详情</string>
+    <string name="preview_mode_title">预览图模式</string>
+    <string name="preview_mode_normal">正常预览图</string>
+    <string name="preview_mode_large">大预览图</string>
+    <string name="favorite_eh_settings_title">收藏</string>
+    <string name="default_favorite">默认收藏夹</string>
+    <string name="history_eh_settings_title">历史</string>
+    <string name="max_history_count_title">最大历史记录条数</string>
+
+    <string name="read_settings_title">阅读</string>
+    <string name="reading_direction_title">开页方向</string>
+    <string name="left_to_right">从左至右</string>
+    <string name="right_to_Left">从右至左</string>
+    <string name="top_to_bottom">从上至下</string>
+    <string name="bottom_to_top">从下至上</string>
+    <string name="page_scaling_title">页面缩放</string>
+    <string name="start_position_title">开页位置</string>
+    <string name="keep_screen_on_title">阅读时屏幕常亮</string>
+    <string name="gallery_show_clock_title">显示时间</string>
+    <string name="gallery_show_battery_title">显示电量</string>
+    <string name="custom_lightness_title">阅读时使用自定义屏幕亮度</string>
+    <string name="custom_lightness_value_title">自定义屏幕亮度</string>
+    <string name="custom_codec_title">自定义解码</string>
+    <string name="custom_codec_summary">自定义解码可能会更使用更少内存，解码更快</string>
+    <string name="custom_codec_summary_not">自定义解码暂不支持 x86, mips</string>
+    <string name="clean_redundancy_title">清理阅读冗余</string>
+    <string name="no_redundancy">未发现冗余</string>
+    <string name="clean_redundancy">完成冗余清理，共清理 %d 项</string>
+    <string name="decode_format_title">解码格式</string>
+    <string name="decode_format_auto">自动</string>
+    <string name="decode_format_gray">黑白</string>
+    <string name="decode_format_gray_alpha">黑白（透明）</string>
+    <string name="decode_format_rgb">彩色</string>
+    <string name="decode_format_rgba">彩色（透明）</string>
+
+    <string name="download_settings_title">下载</string>
+    <string name="download_path_title">下载路径</string>
+    <string name="media_scan_title">允许媒体扫描</string>
+    <string name="media_scan_summary_on">请避免他人翻看你的图库应用</string>
+    <string name="media_scan_summary_off">大多数图库应用将不会显示下载目录中的图片</string>
+    <string name="download_thread_title">下载线程数</string>
+    <string name="download_origin_image_title">下载原图</string>
+    <string name="download_origin_image_summary">这很危险！勾选此项会导致下载配额迅速流失</string>
+    <string name="keep_download_service_title">保持下载服务</string>
+    <string name="keep_download_service_summary_on">下载时，若应用被系统或用户强制关闭，下载服务会重新启动</string>
+    <string name="keep_download_service_summary_off">下载时，若应用被系统或用户强制关闭，下载服务不会重新启动</string>
+
+    <string name="advanced_settings_title">高级</string>
+    <string name="http_advanced_settings_title">HTTP</string>
+    <string name="http_warning_title">以下选项会影响所有 HTTP 连接</string>
+    <string name="http_retry_title">连接重试次数</string>
+    <string name="http_connect_timeout_title">连接超时 (ms)</string>
+    <string name="http_read_timeout_title">读取超时 (ms)</string>
+    <string name="eh_advanced_settings_title">EH</string>
+    <string name="eh_min_interval_title">EH 站点最小连接间隔 (ms)</string>
+    <string name="eh_others_settings_title">其他</string>
+    <string name="fix_dirname_title">修正下载文件夹名</string>
+    <string name="fix_dirname_title_summary">将下载文件夹名由 gid 改为 gid-title，不进行修正不会影响使用</string>
+    <string name="start_fixing">开始修正</string>
+    <string name="no_need_fixing">未发现可修正项</string>
+    <string name="fixing_over">共修正 %d 项</string>
+
+    <string name="about_settings_title">关于</string>
+    <string name="author_title">作者</string>
+    <string name="twitter_title">Twitter</string>
+    <string name="twitter_summary">目前由 @jkjvinn 管理更新</string>
+    <string name="changelog_title">日志</string>
+    <string name="thanks_title">感谢</string>
+    <string name="website_title">网站</string>
+    <string name="source_title">源码</string>
+    <string name="version_title">应用版本</string>
+    <string name="update_about_settings_title">更新</string>
+    <string name="auto_check_for_update_title">自动检查更新</string>
+    <string name="auto_check_for_update_summary_on">每日第一次启动时检查更新</string>
+    <string name="auto_check_for_update_summary_off">从不自动检查更新</string>
+    <string name="check_for_update_title">检查更新</string>
+    <string name="check_for_update_summary">点击检查更新</string>
+    <string name="update_server_title">更新服务器</string>
+    <string name="cloud_drive_title">如果更新失败点击此处</string>
+    <string name="analytics_about_settings_title">数据统计</string>
+    <string name="allow_analyics_title">启用数据统计</string>
+    <string name="allow_analyics_summary_on">感谢您对本应用的支持</string>
+    <string name="allow_analyics_summary_off">感谢您使用本应用</string>
+    <string name="about_analyics_title">关于数据统计</string>
+    <string name="about_analyics_comment">若您启用了数据统计，本应用会将您的使用情况发送给开发者。这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本、当前IP地址）（注意：某些设备信息可能可以推测出某些用户信息，譬如当前IP地址可能可以大概推测出用户当前的位置）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）或可永久性标识某台设备的数据（譬如IMEI、MAC地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/cn.html\nGoogle隐私权和条款：http://www.google.com/intl/zh-CN/policies</string>
+    <string name="portrait">竖屏</string>
+    <string name="landscape">横屏</string>
+    <string name="preference_settings_title">设置</string>
+    <string name="list_mode_detail">详情</string>
+    <string name="list_mode_thumb">缩略图</string>
+    <string name="new_folder">新建文件夹</string>
+    <string name="_new">新建</string>
+    <string name="color_picker_title">配色方案</string>
+    <string name="current_color">当前</string>
+    <string name="new_color">新的</string>
+
+    <!-- Language -->
+    <string name="language_japanese">日语</string>
+    <string name="language_english">英语</string>
+    <string name="language_chinese">汉语</string>
+    <string name="language_dutch">荷兰语</string>
+    <string name="language_french">法语</string>
+    <string name="language_german">德语</string>
+    <string name="language_hungarian">匈牙利语</string>
+    <string name="language_italian">意大利语</string>
+    <string name="language_korean">韩语</string>
+    <string name="language_polish">波兰语</string>
+    <string name="language_portuguese">葡萄牙语</string>
+    <string name="language_russian">俄语</string>
+    <string name="language_spanish">西班牙语</string>
+    <string name="language_thai">泰语</string>
+    <string name="language_vietnamese">越南语</string>
+    <string name="language_other">其他</string>
+
+    <!-- server -->
+    <string name="update_server_google">Google</string>
+    <string name="update_server_qiniu">七牛</string>
+
+    <!-- Tag -->
+    <string name="add_tag">添加标签</string>
+    <string name="tag_name">标签名称：</string>
+    <string name="tag_name_empty">标签名称不能为空</string>
+    <string name="tag_change_name">修改名称</string>
+    <string name="new_tag_name">新名称：%s</string>
+
+    <!-- Pull -->
+    <string name="footer_loading">正在加载更多…</string>
+    <string name="footer_loaded">已全部加载</string>
+    <string name="footer_fail">加载失败，点击继续加载</string>
+
+    <!-- GalleryView -->
+    <string name="pre_page">上一页</string>
+    <string name="next_page">下一页</string>
+    <string name="zoom_in">放大</string>
+    <string name="zoom_out">缩小</string>
+    <string name="menu">菜单</string>
+
+    <!-- Rate -->
+    <string name="invalid_rating">非法评分</string>
+    <string name="rate_succeeded">评分成功</string>
+    <string name="rate_sensibly">理智评分</string>
+    <string name="rate_failed">评分失败</string>
+    <string name="gallery_of_he">该用户上传的内容</string>
+
+    <!-- rating -->
+    <string name="rating10">根本把持不住</string>
+    <string name="rating9">好极了</string>
+    <string name="rating8">很棒</string>
+    <string name="rating7">不错</string>
+    <string name="rating6">还行</string>
+    <string name="rating5">一般般</string>
+    <string name="rating4">不行</string>
+    <string name="rating3">糟糕</string>
+    <string name="rating2">瞎眼</string>
+    <string name="rating1">快要窒息了</string>
+    <string name="rating0">…</string>
+
+    <string name="photo_footnotes">Hippo 摄于成都大熊猫繁育研究基地</string>
+
+    <!-- Utils -->
+    <string name="share">分享</string>
+    <string name="filter">过滤</string>
+    <string name="clear">清除</string>
+    <string name="history">历史</string>
+    <string name="warning">警告</string>
+    <string name="close">关闭</string>
+    <string name="select">选择</string>
+    <string name="click_more">点击查看更多</string>
+    <string name="similar_content">相似内容</string>
+    <string name="_unknown">未知</string>
+    <string name="language">语言</string>
+    <string name="pages">页面</string>
+    <string name="size">大小</string>
+    <string name="tip">提示</string>
+    <string name="not_started">未启动</string>
+    <string name="waiting">等待中</string>
+    <string name="done">已完成</string>
+    <string name="first_page">第一页</string>
+    <string name="the_last_page">最后一页</string>
+    <string name="downloading">正在下载</string>
+    <string name="attention">注意</string>
+    <string name="start">开始</string>
+    <string name="stop">停止</string>
+    <string name="stop_all">全部停止</string>
+    <string name="invalid_input">无效的输入</string>
+    <string name="never_show">不再显示</string>
+    <string name="retry">重试</string>
+    <string name="local">本地</string>
+    <string name="tag">标签</string>
+    <string name="copyed">已复制</string>
+    <string name="send">发送</string>
+    <string name="detail">详情</string>
+    <string name="comment">评论</string>
+    <string name="info">信息</string>
+    <string name="reply">回复</string>
+    <string name="read">阅读</string>
+    <string name="rate">评价</string>
+    <string name="last_page">最后一页</string>
+    <string name="unfinished">未完成的功能</string>
+    <string name="period">。</string>
+    <string name="refresh">刷新</string>
+    <string name="error">错误</string>
+    <string name="changelog">日志</string>
+    <string name="register">注册</string>
+    <string name="login">登陆</string>
+    <string name="logout">退出</string>
+    <string name="wait">请稍后</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+    <string name="add">添加</string>
+    <string name="what_to_do">你想做什么？</string>
+    <string name="jump">跳页</string>
+    <string name="some_page">第 %d 页</string>
+    <string name="_default">默认</string>
+    <string name="delete">删除</string>
+    <string name="move">移动</string>
+    <string name="list">列表</string>
+    <string name="homepage">首页</string>
+    <string name="mode">模式</string>
+    <string name="favourite">收藏</string>
+    <string name="whatshot">热门</string>
+    <string name="download">下载</string>
+    <string name="downloaded">已下载</string>
+    <string name="star_2">2 星</string>
+    <string name="star_3">3 星</string>
+    <string name="star_4">4 星</string>
+    <string name="star_5">5 星</string>
+    <string name="actual_size">原始尺寸</string>
+    <string name="fit_to_width">匹配宽度</string>
+    <string name="fit_to_height">匹配长度</string>
+    <string name="fit_to_screen">匹配屏幕</string>
+    <string name="fixed_scale">固定缩放</string>
+    <string name="top_left">左上角</string>
+    <string name="top_right">右上角</string>
+    <string name="bottom_left">左下角</string>
+    <string name="bottom_right">右下角</string>
+    <string name="center">中心</string>
+    <string name="add_to_favourite">收藏</string>
+    <string name="remove">移除</string>
+    <string name="remove_info_data">移除信息与数据</string>
+    <string name="update">更新</string>
+    <string name="thanks">感谢</string>
+    <string name="develop">开发</string>
+    <string name="advance_search_left">左划更多</string>
+    <string name="restart_to_take_effect">重启应用以便生效</string>
+    <string name="cur_dir_not_writable">当前文件夹不可写</string>
+
+</resources>

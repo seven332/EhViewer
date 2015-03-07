@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2014 Hippo Seven
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+<resources>
+
+    <string-array name="min_rating">
+        <item>@string/star_2</item>
+        <item>@string/star_3</item>
+        <item>@string/star_4</item>
+        <item>@string/star_5</item>
+    </string-array>
+
+    <string-array name="mode_list"  translatable="false">
+        <item>g.e-hentai.org</item>
+        <item>exhentai.org</item>
+        <item>lofi.e-hentai.org</item>
+    </string-array>
+
+    <string-array name="api_mode_list"  translatable="false">
+        <item>g.e-hentai.org</item>
+        <item>exhentai.org</item>
+    </string-array>
+
+    <string-array name="lofi_resolution_list"  translatable="false">
+        <item>460x</item>
+        <item>780x</item>
+        <item>980x</item>
+    </string-array>
+
+    <string-array name="comment_long_click">
+        <item>@android:string/copy</item>
+        <item>@string/gallery_of_he</item>
+    </string-array>
+
+    <string-array name="list_item_long_click">
+        <item>@string/add_to_favourite</item>
+        <item>@string/download</item>
+    </string-array>
+
+    <string-array name="screen_orientation_entries">
+        <item>@string/portrait</item>
+        <item>@string/landscape</item>
+        <item>@string/_default</item>
+    </string-array>
+
+    <string-array name="screen_orientation_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="update_server_entries" translatable="false">
+        <item>@string/update_server_google</item>
+        <item>@string/update_server_qiniu</item>
+    </string-array>
+
+    <string-array name="update_server_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="default_favorite_entry_values" translatable="false">
+        <item>-2</item>
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+
+    <string-array name="list_mode_entries">
+        <item>@string/list_mode_detail</item>
+        <item>@string/list_mode_thumb</item>
+    </string-array>
+
+    <string-array name="list_mode_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="preview_mode_entries">
+        <item>@string/preview_mode_normal</item>
+        <item>@string/preview_mode_large</item>
+    </string-array>
+
+    <string-array name="preview_mode_entry_values" translatable="false">
+        <item>m</item>
+        <item>l</item>
+    </string-array>
+
+    <string-array name="reading_direction_entries">
+        <item>@string/left_to_right</item>
+        <item>@string/right_to_Left</item>
+        <item>@string/top_to_bottom</item>
+        <item>@string/bottom_to_top</item>
+    </string-array>
+
+    <string-array name="reading_direction_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="page_scaling_entries">
+        <item>@string/actual_size</item>
+        <item>@string/fit_to_width</item>
+        <item>@string/fit_to_height</item>
+        <item>@string/fit_to_screen</item>
+        <item>@string/fixed_scale</item>
+    </string-array>
+
+    <string-array name="page_scaling_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="start_position_entries">
+        <item>@string/top_left</item>
+        <item>@string/top_right</item>
+        <item>@string/bottom_left</item>
+        <item>@string/bottom_right</item>
+        <item>@string/center</item>
+    </string-array>
+
+    <string-array name="start_position_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="decode_format_entries">
+        <item>@string/decode_format_auto</item>
+        <item>@string/decode_format_gray</item>
+        <item>@string/decode_format_gray_alpha</item>
+        <item>@string/decode_format_rgb</item>
+        <item>@string/decode_format_rgba</item>
+    </string-array>
+
+    <string-array name="decode_format_values" translatable="false">
+        <item>0</item>
+        <item>6409</item>
+        <item>6410</item>
+        <item>6407</item>
+        <item>6408</item>
+    </string-array>
+
+    <string-array name="send_entries">
+        <item>@string/save_to_local_storage</item>
+        <item>@string/share</item>
+    </string-array>
+
+</resources>

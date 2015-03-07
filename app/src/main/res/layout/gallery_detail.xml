@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2014 Hippo Seven
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:auto="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.hippo.ehviewer.widget.FitWindowView
+        android:id="@+id/standard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.hippo.ehviewer.widget.ResponedScrollView
+        android:id="@+id/detail_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:visibility="gone" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp" >
+
+            <!-- Header -->
+
+            <RelativeLayout
+                android:id="@+id/detail_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" >
+
+                <com.hippo.ehviewer.widget.LoadImageView
+                    android:id="@+id/thumb"
+                    android:layout_width="120dp"
+                    android:layout_height="180dp" />
+
+                <TextView
+                    android:id="@+id/title"
+                    style="@style/DetailTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_toRightOf="@id/thumb" />
+
+                <TextView
+                    android:id="@+id/uploader"
+                    style="@style/DetailSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/title"
+                    android:layout_below="@id/title"
+                    android:layout_marginTop="8dp" />
+            </RelativeLayout>
+
+            <!-- Bottons -->
+
+            <LinearLayout
+                android:id="@+id/detail_buttons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                android:visibility="gone" >
+
+                <com.hippo.ehviewer.widget.SuperButton
+                    android:id="@+id/download"
+                    style="@style/SuperButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="4dp"
+                    android:layout_weight="1"
+                    android:text="@string/download" />
+
+                <com.hippo.ehviewer.widget.SuperButton
+                    android:id="@+id/read"
+                    style="@style/SuperButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_weight="1"
+                    android:text="@string/read"
+                    android:textColor="@color/primary_text_light" />
+            </LinearLayout>
+
+            <!-- Waring text can be shown here -->
+
+            <TextView
+                android:id="@+id/warning"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:visibility="gone" />
+
+            <!-- Actions -->
+
+            <LinearLayout
+                android:id="@+id/detail_actions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:maxWidth="52dp"
+                    android:textSize="@dimen/text_super_small" />
+
+                <TextView
+                    android:id="@+id/more_of_uploader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:maxWidth="52dp"
+                    android:text="@string/more_of_uploader"
+                    android:textSize="@dimen/text_super_small" />
+
+                <TextView
+                    android:id="@+id/similar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:maxWidth="52dp"
+                    android:text="@string/similar_content"
+                    android:textSize="@dimen/text_super_small" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/detail_divider_a_m"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:visibility="gone" />
+
+            <!-- More detail -->
+
+            <RelativeLayout
+                android:id="@+id/detail_more"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/language"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true" />
+
+                <TextView
+                    android:id="@+id/posted"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true" />
+
+                <TextView
+                    android:id="@+id/pages"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/language"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:id="@+id/size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/posted"
+                    android:layout_marginTop="8dp" />
+
+                <!-- Theme color -->
+
+                <TextView
+                    android:id="@+id/detail_more_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/size"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/click_more" />
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/detail_divider_m_r"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:visibility="gone" />
+
+            <!-- Rate -->
+            <RelativeLayout
+                android:id="@+id/detail_rate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                android:visibility="gone" >
+
+                <TextSwitcher
+                    android:id="@+id/rating_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:inAnimation="@anim/anim_fade_in"
+                    android:outAnimation="@anim/anim_fade_out" />
+
+                <com.hippo.ehviewer.widget.ProgressiveRatingBar
+                    android:id="@+id/rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/rating_text"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8.0dp"
+                    android:isIndicator="false"
+                    android:numStars="5"
+                    android:stepSize="0.5" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/rating"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/favorite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="32dp"
+                        android:gravity="center"
+                        android:maxWidth="52dp"
+                        android:text="@string/favourite"
+                        android:textSize="@dimen/text_super_small" />
+
+                    <TextView
+                        android:id="@+id/rate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="32dp"
+                        android:gravity="center"
+                        android:maxWidth="52dp"
+                        android:text="@string/rate"
+                        android:textSize="@dimen/text_super_small" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/detail_divider_r_t"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:visibility="gone" />
+
+            <!-- Tags -->
+            <LinearLayout
+                android:id="@+id/detail_tag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                android:orientation="vertical"
+                android:visibility="gone" >
+            </LinearLayout>
+
+            <View
+                android:id="@+id/detail_divider_t_c"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:visibility="gone" />
+
+            <!-- Comments -->
+            <LinearLayout
+                android:id="@+id/detail_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/comment_more_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/detail_divider_c_p"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:visibility="gone" />
+
+            <include
+                android:id="@+id/detail_preview"
+                layout="@layout/preview_list"
+                android:visibility="gone" />
+        </LinearLayout>
+    </com.hippo.ehviewer.widget.ResponedScrollView>
+
+    <ScrollView
+        android:id="@+id/more_detail_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_light"
+        android:clipToPadding="false"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/more_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:textIsSelectable="true"
+            android:textSize="@dimen/text_little_small" />
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/more_comment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_light"
+        android:visibility="gone" >
+
+        <com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView
+            android:id="@+id/comment_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false" />
+
+        <com.hippo.ehviewer.widget.FloatingActionButton
+            xmlns:auto="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/reply"
+            style="@style/FloatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            auto:fabDrawable="@drawable/ic_reply" />
+    </FrameLayout>
+
+    <com.hippo.ehviewer.widget.RefreshTextView
+        android:id="@+id/refresh_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="12dp"
+        android:gravity="center"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="24sp" />
+
+</FrameLayout>

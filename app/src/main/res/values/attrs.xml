@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2014 Hippo Seven
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources>
+
+    <declare-styleable name="Theme">
+        <attr name="themeColor" format="color"/>
+        <attr name="textColor" format="color"/>
+        <attr name="textColorHint" format="color"/>
+        <attr name="textColorTitle" format="color"/>
+        <attr name="dialogBackground" format="reference|color"/>
+    </declare-styleable>
+
+    <declare-styleable name="AutoWrapLayout">
+        <attr name="alignment">
+            <enum name="top" value="0" />
+            <enum name="center" value="1" />
+            <enum name="bottom" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="FileExplorerView">
+        <attr name="path" format="string" />
+        <attr name="filter">
+            <enum name="all" value="0" />
+            <enum name="dir" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="SimpleGridLayout">
+        <attr name="sgl_column_count" format="integer" />
+        <attr name="sgl_column_count_portrait" format="integer" />
+        <attr name="sgl_column_count_landscape" format="integer" />
+        <attr name="sgl_item_margin" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="FixedAspectImageView">
+        <attr name="aspect" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="SuperButton">
+        <attr name="backgroundType">
+            <enum name="round" value="0" />
+            <enum name="tile" value="1" />
+        </attr>
+        <attr name="backgroundColor" format="color" />
+        <attr name="boundColor" format="color" />
+        <attr name="withShadow" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="MaterialProgress">
+        <attr name="mpWidth" format="dimension" />
+        <attr name="mpHeight" format="dimension" />
+        <attr name="mpColor" format="color" />
+        <attr name="mpThickness" format="dimension" />
+        <attr name="mpInnerRadius" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="BatteryView">
+        <attr name="bvColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="NumberOfColumnsPreference">
+        <attr name="keyPortrait" format="string" />
+        <attr name="keyLandscape" format="string" />
+        <attr name="defValuePortrait" format="integer" />
+        <attr name="defValueLandscape" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="EditTextPreference">
+        <attr name="etpMax" format="integer" />
+        <attr name="etpMin" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="GalleryListView">
+        <attr name="glvContent">
+            <enum name="listview" value="0" />
+            <enum name="staggeredgridview" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="FloatingActionButton">
+        <attr name="fabDrawable" format="integer"/>
+        <attr name="fabColor" format="color"/>
+        <attr name="fabShadowRadius" format="dimension"/>
+        <attr name="fabShadowDx" format="dimension"/>
+        <attr name="fabShadowDy" format="dimension"/>
+        <attr name="fabShadowColor" format="color"/>
+        <attr name="fabDrawableSide" format="dimension"/>
+    </declare-styleable>
+
+</resources>

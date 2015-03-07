@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<resources>
+
+    <string name="ga_trackingId">UA-51287788-1</string>
+    <bool name="ga_autoActivityTracking">true</bool>
+    <bool name="ga_reportUncaughtExceptions">false</bool>
+    <string name="ga_sampleFrequency">100.0</string>
+    <string name="ga_logLevel">error</string>
+
+</resources>

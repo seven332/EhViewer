@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2014 Hippo Seven
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="ActionBar" parent="@android:style/Widget.Holo.ActionBar">
+        <item name="@android:background">?attr/themeColor</item>
+        <item name="@android:backgroundStacked">@color/tag_bg</item>
+        <item name="@android:backgroundSplit">?attr/themeColor</item>
+        <item name="@android:titleTextStyle">@style/ActionBarTitleFont</item>
+    </style>
+
+    <style name="ActionBar.Gallery" parent="@android:style/Widget.Holo.ActionBar">
+        <item name="@android:background">@color/background_little_dark</item>
+        <item name="@android:backgroundStacked">@color/tag_bg</item>
+        <item name="@android:backgroundSplit">@color/background_little_dark</item>
+        <item name="@android:titleTextStyle">@style/ActionBarTitleFont.Gallery</item>
+    </style>
+
+    <style name="ActionBarTitleFont" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="@android:textStyle">bold</item>
+        <item name="@android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="ActionBarTitleFont.Gallery" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="@android:textColor">@color/secondary_text_light</item>
+    </style>
+
+    <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="@android:src">@drawable/ic_action_core_overflow</item>
+    </style>
+
+    <style name="PopupMenu" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
+    </style>
+
+    <!-- Drawer -->
+    <style name="Drawer">
+        <item name="android:layout_width">@dimen/drawer_max_width</item>
+        <item name="android:layout_height">fill_parent</item>
+    </style>
+
+    <!-- SuperButton -->
+    <style name="TextAppearance">
+        <item name="@android:textColor">?attr/textColor</item>
+        <item name="@android:textColorHint">?attr/textColorHint</item>
+        <item name="@android:textColorHighlight">@color/theme_dark</item>
+        <item name="@android:textColorLink">@color/theme</item>
+        <item name="@android:textSize">@dimen/text_small</item>
+        <item name="@android:fontFamily">sans-serif</item>
+        <item name="@android:textStyle">normal</item>
+    </style>
+
+    <style name="TextAppearance.Small">
+    </style>
+
+    <style name="TextAppearance.LittleSmall">
+        <item name="@android:textSize">@dimen/text_little_small</item>
+    </style>
+
+    <style name="TextAppearance.Medium">
+        <item name="@android:textSize">@dimen/text_medium</item>
+    </style>
+
+    <style name="TextAppearance.Large">
+        <item name="@android:textSize">@dimen/text_large</item>
+    </style>
+
+    <style name="TextAppearance.DialogTitle">
+        <item name="@android:textColor">?attr/textColorTitle</item>
+        <item name="@android:textSize">@dimen/text_little_large</item>
+    </style>
+
+    <style name="TextAppearance.DialogMessage">
+        <item name="@android:textSize">@dimen/text_little_small</item>
+    </style>
+
+    <style name="TextAppearance.DropDownItem" parent="TextAppearance.DialogMessage">
+    </style>
+
+    <style name="TextAppearance.SuperButton">
+        <item name="@android:fontFamily">sans-serif-medium</item>
+        <item name="@android:textAllCaps">true</item>
+        <item name="@android:singleLine">true</item>
+    </style>
+
+    <style name="TextAppearance.SuperButton.Small">
+        <item name="@android:textSize">13sp</item>
+    </style>
+
+    <style name="TextAppearance.DialogButton" parent="TextAppearance.LittleSmall">
+        <item name="@android:textColor">?attr/textColorTitle</item>
+        <item name="@android:textAllCaps">true</item>
+    </style>
+
+    <style name="TextView" parent="@android:style/Widget.TextView">
+    </style>
+
+    <style name="TextView.Dialog">
+        <item name="@android:textAppearance">@style/TextAppearance.LittleSmall</item>
+    </style>
+
+    <style name="TextView.Dark.Dialog" parent="@style/TextView.Dialog">
+    </style>
+
+    <style name="EditText" parent="@android:style/Widget.EditText">
+    </style>
+
+    <style name="EditText.Dialog">
+        <item name="@android:textAppearance">@style/TextAppearance.LittleSmall</item>
+    </style>
+
+    <style name="EditText.Dark.Dialog" parent="@style/EditText.Dialog">
+    </style>
+
+    <style name="DialogButton" parent="@android:Widget.Button">
+        <item name="@android:background">@null</item>
+        <item name="@android:textAppearance">@style/TextAppearance.DialogButton</item>
+        <item name="@android:textColor">?attr/textColorTitle</item>
+        <item name="@android:minWidth">48dp</item>
+        <item name="@android:minHeight">36dp</item>
+        <item name="@android:maxLines">2</item>
+        <item name="@android:paddingLeft">16dp</item>
+        <item name="@android:paddingRight">16dp</item>
+    </style>
+
+    <style name="SuperButton" parent="@android:Widget.Button">
+        <item name="backgroundColor">@color/background_light</item>
+        <item name="@android:textAppearance">@style/TextAppearance.SuperButton</item>
+        <item name="@android:minHeight">0dp</item>
+        <item name="@android:minWidth">0dp</item>
+        <item name="@android:paddingTop">12dp</item>
+        <item name="@android:paddingBottom">14dp</item>
+        <item name="@android:paddingLeft">24dp</item>
+        <item name="@android:paddingRight">24dp</item>
+    </style>
+
+    <style name="SuperButton.Small">
+        <item name="@android:textAppearance">@style/TextAppearance.SuperButton.Small</item>
+        <item name="@android:paddingTop">2dp</item>
+        <item name="@android:paddingBottom">4dp</item>
+        <item name="@android:paddingLeft">18dp</item>
+        <item name="@android:paddingRight">18dp</item>
+    </style>
+
+    <style name="SuperButton.Tile.Small" parent="@style/SuperButton.Small">
+        <item name="@android:paddingTop">2dp</item>
+        <item name="@android:paddingBottom">2dp</item>
+        <item name="backgroundType">tile</item>
+    </style>
+
+    <style name="MaterialProgress">
+        <item name="@android:layout_width">48dp</item>
+        <item name="@android:layout_height">48dp</item>
+        <item name="mpWidth">48dp</item>
+        <item name="mpHeight">48dp</item>
+        <item name="mpColor">?attr/themeColor</item>
+        <item name="mpThickness">4dp</item>
+        <item name="mpInnerRadius">19dp</item>
+    </style>
+
+    <style name="MaterialProgress.small">
+        <item name="@android:layout_width">16dp</item>
+        <item name="@android:layout_height">16dp</item>
+        <item name="mpWidth">16dp</item>
+        <item name="mpHeight">16dp</item>
+        <item name="mpThickness">2dp</item>
+        <item name="mpInnerRadius">6dp</item>
+    </style>
+
+    <!-- Text -->
+    <style name="TextAppearance.CardTitle">
+        <item name="@android:textSize">@dimen/text_little_small</item>
+    </style>
+
+    <style name="CardTitle">
+        <item name="@android:textAppearance">@style/TextAppearance.CardTitle</item>
+        <item name="@android:ellipsize">end</item>
+        <item name="@android:maxLines">2</item>
+        <item name="@android:lineSpacingExtra">0sp</item>
+    </style>
+
+    <style name="TextAppearance.CardMessage">
+        <item name="@android:textColor">@color/secondary_text_dark</item>
+    </style>
+
+    <style name="CardMessage">
+        <item name="@android:textAppearance">@style/TextAppearance.CardMessage</item>
+        <item name="@android:ellipsize">end</item>
+        <item name="@android:singleLine">true</item>
+    </style>
+
+    <style name="TextAppearance.DetailTitle">
+        <item name="@android:textSize">@dimen/text_medium</item>
+        <item name="@android:textColor">@color/primary_text_dark</item>
+    </style>
+
+    <style name="DetailTitle">
+        <item name="@android:textAppearance">@style/TextAppearance.DetailTitle</item>
+        <item name="@android:maxLines">6</item>
+        <item name="@android:ellipsize">end</item>
+    </style>
+
+    <style name="TextAppearance.DetailSubtitle">
+        <item name="@android:textSize">@dimen/text_little_small</item>
+        <item name="@android:textColor">@color/secondary_text_dark</item>
+    </style>
+
+    <style name="DetailSubtitle">
+        <item name="@android:textAppearance">@style/TextAppearance.DetailSubtitle</item>
+        <item name="@android:singleLine">true</item>
+        <item name="@android:ellipsize">marquee</item>
+    </style>
+
+    <style name="TextTag">
+        <item name="@android:textSize">@dimen/text_small</item>
+        <item name="@android:textColor">@color/primary_text_light</item>
+        <item name="@android:background">@color/background_dark</item>
+        <item name="@android:ellipsize">marquee</item>
+        <item name="@android:singleLine">true</item>
+        <item name="@android:paddingTop">4dp</item>
+        <item name="@android:paddingBottom">4dp</item>
+        <item name="@android:paddingLeft">8dp</item>
+        <item name="@android:paddingRight">8dp</item>
+    </style>
+
+    <style name="TextAppearance.SearchCategory">
+        <item name="@android:textStyle">bold</item>
+        <item name="@android:textSize">@dimen/text_little_small</item>
+        <item name="@android:singleLine">true</item>
+    </style>
+
+    <style name="SearchCategory">
+        <item name="@android:textAppearance">@style/TextAppearance.SearchCategory</item>
+        <item name="@android:paddingTop">4dp</item>
+        <item name="@android:paddingBottom">4dp</item>
+        <item name="@android:gravity">center</item>
+        <item name="@android:ellipsize">marquee</item>
+    </style>
+
+    <style name="TextAppearance.Toast">
+        <item name="@android:textColor">@color/primary_text_light</item>
+        <item name="@android:textSize">@dimen/text_little_small</item>
+        <item name="@android:textStyle">normal</item>
+        <item name="@android:fontFamily">sans-serif-condensed</item>
+    </style>
+
+    <style name="TextAppearance.EmbedButton">
+        <item name="@android:textSize">@dimen/text_medium</item>
+        <item name="@android:textStyle">bold</item>
+        <item name="@android:singleLine">true</item>
+    </style>
+
+    <style name="EmbedButton">
+        <item name="@android:textAppearance">@style/TextAppearance.EmbedButton</item>
+        <item name="@android:minHeight">48dp</item>
+        <item name="@android:gravity">center</item>
+    </style>
+    
+    
+    <style name="EmbedButton.Dialog">
+        <item name="@android:textColor">@color/secondary_text_dark</item>
+    </style>
+
+    <style name="DropDownItem" parent="@android:Widget.DropDownItem">
+        <item name="@android:textAppearance">@style/TextAppearance.DropDownItem</item>
+        <item name="@android:paddingLeft">8dp</item>
+        <item name="@android:paddingRight">8dp</item>
+    </style>
+
+    <style name="DropDownItem.Spinner">
+    </style>
+
+    <!-- Dialog -->
+    <style name="FloatingActionButton">
+        <item name="@android:minWidth">60dp</item>
+        <item name="@android:minHeight">60dp</item>
+        <item name="fabShadowRadius">2dp</item>
+        <item name="fabShadowDx">0dp</item>
+        <item name="fabShadowDy">1dp</item>
+        <item name="fabShadowColor">@color/secondary_text_dark</item>
+        <item name="fabDrawableSide">24dp</item>
+    </style>
+
+    <style name="FloatingActionButton.Small">
+        <item name="@android:minWidth">44dp</item>
+        <item name="@android:minHeight">44dp</item>
+    </style>
+
+</resources>

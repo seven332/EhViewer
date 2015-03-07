@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2014 Hippo Seven
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<!--
+    The standard opacity for an active icon on a light background is 54% (#000000).
+    An inactive icon, which is lower in the visual hierarchy, should have an
+    opacity of 26% (#000000).
+
+    The standard opacity for an active icon on a dark background is 100% (#FFFFFF).
+    An inactive icon, which is lower in the visual hierarchy, should have an
+    opacity of 30% (#FFFFFF).
+ -->
+
+<resources>
+
+    <color name="refresh_color_1">#f4b400</color>
+    <color name="refresh_color_2">#3e802f</color>
+    <color name="refresh_color_3">#427fed</color>
+    <color name="refresh_color_4">#b23424</color>
+
+    <color name="holo_purple_light_light">#ffd7a2e6</color>
+
+    <color name="tag_bg">#bbffffff</color>
+
+    <color name="light_gray">#aaa</color>
+
+    <!-- Red -->
+    <color name="doujinshi_bg">#fff44336</color>
+    <!-- Orange -->
+    <color name="manga_bg">#ffff9800</color>
+    <!-- Yellow 700 -->
+    <color name="artist_cg_bg">#ffFbc02d</color>
+    <!-- Green -->
+    <color name="game_cg_bg">#ff4caf50</color>
+    <!-- Light Green -->
+    <color name="western_bg">#ff8bc34a</color>
+    <!-- Blue -->
+    <color name="non_h_bg">#ff2196f3</color>
+    <!-- Indigo -->
+    <color name="image_set_bg">#ff3f51b5</color>
+    <!-- Purple -->
+    <color name="cosplay_bg">#ff9c27b0</color>
+    <!-- Deep Purple 300 -->
+    <color name="asian_porn_bg">#ff9575cd</color>
+    <!-- Pink 300 -->
+    <color name="misc_bg">#fff06292</color>
+    <color name="unknown_bg">@android:color/black</color>
+
+    <color name="divider">#22000000</color>
+
+    <color name="warning_red">#ffe51c23</color>
+
+    <color name="background_light">#fffafafa</color>
+    <color name="background_dark">#ff212121</color>
+    <color name="background_little_light">#ffe5e5e5</color>
+    <color name="background_little_dark">#ff353535</color>
+
+    <color name="primary_text_dark">#de000000</color>
+    <color name="secondary_text_dark">#8a000000</color>
+    <color name="primary_text_light">#deffffff</color>
+    <color name="secondary_text_light">#61ffffff</color>
+
+    <color name="disabled_mask">#61000000</color>
+
+    <color name="theme_red">#ffc53929</color>
+    <color name="theme_orange">#ffff9100</color>
+    <color name="theme_lime">#ffafb42b</color>
+    <color name="theme_green">#ff0b8043</color>
+    <color name="theme_teal">#ff0097a7</color>
+    <color name="theme_blue">#ff3367d6</color>
+    <color name="theme_purple">#ff9c27b0</color>
+    <color name="theme_brown">#ff795548</color>
+
+    <color name="material_deep_teal_200">#ff80cbc4</color>
+    <color name="material_deep_teal_500">#ff009688</color>
+
+    <color name="theme">@color/material_deep_teal_500</color>
+    <color name="theme_dark">@color/material_deep_teal_200</color>
+
+</resources>

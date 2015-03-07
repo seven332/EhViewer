@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2014 Hippo Seven
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.hippo.ehviewer">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <application
+        android:name=".AppContext"
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:largeHeap="true"
+        android:supportsRtl="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme.Normal">
+
+        <activity
+            android:name=".StartActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Transparent.Translucent" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.GalleryListActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:screenOrientation="behind"
+            android:theme="@style/AppTheme.Main.ListActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+
+        <activity
+            android:name=".ui.GalleryDetailActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="adjustPan|adjustUnspecified|stateHidden" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" />
+                <data android:host="exhentai.org" />
+                <data android:host="g.e-hentai.org" />
+                <data android:host="lofi.e-hentai.org" />
+                <data android:pathPrefix="/g/" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.GalleryActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:screenOrientation="behind"
+            android:theme="@style/AppTheme.Dark.NoActionBar" >
+        </activity>
+
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:label="@string/preference_settings_title"
+            android:screenOrientation="behind" >
+        </activity>
+
+        <activity
+            android:name=".ui.FavouriteActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:label="@string/favourite"
+            android:screenOrientation="behind"
+            android:theme="@style/AppTheme.ListActivity" >
+        </activity>
+
+        <activity
+            android:name=".ui.HistoryActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:label="@string/history"
+            android:screenOrientation="behind"
+            android:theme="@style/AppTheme.ListActivity" >
+        </activity>
+
+        <activity
+            android:name=".ui.DownloadActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:label="@string/download"
+            android:launchMode="singleTask"
+            android:screenOrientation="behind"
+            android:theme="@style/AppTheme.ListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.GalleryListActivity" />
+        </activity>
+
+        <activity
+            android:name=".ui.SecretActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:screenOrientation="behind"
+            android:theme="@style/AppTheme.NoActionBar.Transparent" >
+        </activity>
+
+        <service
+            android:name=".service.DownloadService"
+            android:label="DownloadService" />
+
+        <receiver android:name=".receiver.NetworkChangeReceiver">
+            <intent-filter >
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name=".SimpleSuggestionProvider"
+            android:authorities="com.hippo.ehviewer.SimpleSuggestionProvider"
+            android:exported="false" />
+
+    </application>
+
+</manifest>

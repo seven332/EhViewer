@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2014 Hippo Seven
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources>
+
+    <string name="app_name" translatable="false">EhViewer</string>
+    <string name="do_not_be_a_sad_pandroid" translatable="false">Do not be a\nsad pandroid</string>
+
+    <!-- Warning -->
+    <string name="dailog_waring_title">Waring</string>
+    <string name="dailog_waring_plain">本应用中内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。该应用作者不会对由本应用造成的后果负责。您是否愿意继续使用该应用？</string>
+
+    <!-- Analyics -->
+    <string name="dailog_analyics_title">Usage statistics</string>
+    <string name="dailog_analyics_plain">您是否愿意将使用情况发送给开发者？这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/us.html\nGoogle隐私权和条款：http://www.google.com/intl/us/policies\n\n您以后可以在设置中修改选择</string>
+
+    <!-- Network -->
+    <string name="dailog_network_mobile_title">You are using the mobile network, it may consume a large amount of charges, whether to continue to use ?</string>
+    <string name="dailog_network_none_title">Does not detect a network connection, whether to continue to use ?</string>
+
+    <!-- Exit -->
+    <string name="exit_tip">Click again to exit</string>
+
+    <!-- Mode -->
+    <string name="content">Content</string>
+    <string name="api" translatable="false">API</string>
+    <string name="lofi_resolution">Lofi resolution</string>
+
+    <!-- Search -->
+    <string name="hint_no_keyword">No keyword is OK</string>
+    <string name="checkbox_uploader">Specify Uploader</string>
+    <string name="checkbox_advance">Advanced Options</string>
+    <string name="checkbox_sname">Search Gallery</string>
+    <string name="checkbox_stags">Search Gallery Tags</string>
+    <string name="checkbox_sdesc">Search Gallery Description</string>
+    <string name="checkbox_storr">Search Torrent Filenames</string>
+    <string name="checkbox_sto">Only Show Galleries With Torrents</string>
+    <string name="checkbox_sdt1">Search Low-Power Tags</string>
+    <string name="checkbox_sdt2">Search Downvoted Tags</string>
+    <string name="checkbox_sh">Show Expunged Galleries</string>
+    <string name="checkbox_sr">Minimum Rating:</string>
+    <string name="use_similarity_scan">Use similarity scan</string>
+    <string name="only_search_covers">Only search covers</string>
+    <string name="show_expunged">Show expunged</string>
+
+    <!-- Jump -->
+    <string name="jump_summary">Page %1$d, %2$s pages in total</string>
+    <string name="jump_to">Jump to : </string>
+    <string name="toast_invalid_page">Invalid page</string>
+
+    <!-- Send Crash -->
+    <string name="dialog_send_crash_title">It is important</string>
+    <string name="dialog_send_crash_plain">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ? (via e-mail)</string>
+    <string name="add_description">You may add some description about the crash below.</string>
+    <string name="dialog_wait_send_crash_msg">Please close the dialog after sending logcat</string>
+
+    <!-- List item long click -->
+    <string name="toast_add_favourite">Add to favourite</string>
+    <string name="toast_add_download">Add to download list</string>
+
+    <!-- GalleryListActivity -->
+    <string name="no_found">No hits found</string>
+    <string name="none">None</string>
+    <string name="quick_search_tip">Quick search can be added via search in left drawer</string>
+    <string name="no_avatar">No avatar</string>
+    <string name="get_avatar_error">Get avatar error</string>
+    <string name="image_search">Image search</string>
+    <string name="image_not_exist">Image does not exist</string>
+    <string name="image_not_readable">Image is not readable</string>
+
+    <!-- Update -->
+    <string name="update_message">Found new version : %1$s\nSize : %2$s\n%3$s\n\nUpdate ?</string>
+    <string name="checking_update">checking updating</string>
+    <string name="up_to_date">Up to date</string>
+    <string name="found_update">Found update</string>
+    <string name="start_update">Start downloading the update</string>
+    <string name="download_update">Downloading the update</string>
+    <string name="update_failed">Download the update Failed</string>
+
+    <!-- GalleryDetialActivity -->
+    <string name="we_feel">We feel %s</string>
+    <string name="more_of_uploader">More of uploader</string>
+    <string name="no_more_comment">No more comments</string>
+    <string name="no_comment">No comment</string>
+
+    <!-- AbsGalleryActivity -->
+    <string name="click_retry">Click to retry</string>
+    <string name="click_first_page">Click to go to first page</string>
+
+    <!-- Download -->
+    <string name="legacy_pages">%d pages leaved</string>
+    <string name="download_over">Download over</string>
+    <string name="start_download">Start downloading</string>
+    <string name="download_1">Download OK %d</string>
+    <string name="download_2">Download OK %d items</string>
+    <string name="download_3">Download failed %d</string>
+    <string name="download_4">Download failed %d items</string>
+    <string name="download_5">Download OK %1$d, Download failed %2$d</string>
+    <string name="download_6">Download OK %1$d items, Download failed %2$d items</string>
+    <string name="delete_item">The item will be deleted</string>
+    <string name="pic_included">pictures included</string>
+    <string name="notification_be_title">Reach download limit</string>
+    <string name="notification_be_mesg">Error 509, please wait a few minutes</string>
+
+    <!-- ErrorMessage -->
+    <string name="em_network_error">Network Error</string>
+    <string name="em_timeout">Time out</string>
+    <string name="em_response_code_error">Response code is not HTTP_OK</string>
+    <string name="em_parser_error">Parser Error</string>
+    <string name="em_open_input_stream_error">Open input stream error</string>
+    <string name="em_read_input_stream_error">Read input stream error</string>
+    <string name="em_client_protocol">Invalid request or invalid response</string>
+    <string name="em_put_cache_error">Put cache error</string>
+    <string name="em_url_format_error">Url format error</string>
+    <string name="em_login_error">Username or password error</string>
+    <string name="em_check_login_error">Get user info error</string>
+    <string name="em_logout_error">Logout error</string>
+    <string name="em_url_error">Url error</string>
+    <string name="em_retry">Retry</string>
+    <string name="em_retry_times">Retry times : %d</string>
+    <string name="em_unknown_error">Unknown error</string>
+    <string name="em_no_network">No network</string>
+    <string name="em_can_not_reach">Your network can not reach e-hentai</string>
+    <string name="em_no_network_2">No network ?</string>
+    <string name="em_request_error">Request error</string>
+    <string name="em_unknown_host">Hostname can not be resolved</string>
+    <string name="em_unexpected_response_code">Unexpected response code : %d</string>
+    <string name="em_redirection_error">Too many redirects</string>
+    <string name="em_host_error">Host error</string>
+    <string name="em_get_body_error">Get body error</string>
+    <string name="em_invalid_request">Invalid request</string>
+    <string name="em_no_sdcard">SD card is Unmounted</string>
+    <string name="em_index_error">Index error</string>
+    <string name="em_requst_null">Requst content is null</string>
+
+    <!-- GalleryActivity -->
+    <string name="ga_data_error">Data Error !</string>
+
+    <!-- Gallery -->
+    <string name="gallery_tip">Long press the screen to download from the current page. If the item is being downloaded, just load current page first.</string>
+    <string name="read_image_error">Read image error</string>
+    <string name="not_loaded">Not loaded</string>
+    <string name="loading_percent">Loading %d%%</string>
+    <string name="wait_for_more">Waiting to get page information</string>
+    <string name="more_settings">More settings</string>
+    <string name="save_to_local_storage">Save to local storage</string>
+    <string name="save_successful">Saved to %s</string>
+    <string name="save_failed">Save failed</string>
+    <string name="select_save_dir">Select dir to save</string>
+    <string name="current_image_not_downloaded">The image is not available</string>
+    <string name="share_image">Share image</string>
+
+    <!-- Action -->
+    <string name="action_refresh">Refresh</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Favorite -->
+    <string name="local_favorite">Local Favorite</string>
+    <string name="select_item">Select item</string>
+    <string name="where_to_add">Where to add ?</string>
+    <string name="failed_to_add">Failed to add</string>
+    <string name="where_to_move">Where to move ?</string>
+    <string name="moving">Moving…</string>
+    <string name="move_successful">Move successful</string>
+    <string name="failed_to_move">Failed to move</string>
+    <string name="dst_src_same">The same Source and Destination</string>
+    <string name="delete_successfully">Delete successfully</string>
+    <string name="failed_to_delete">Failed to delete</string>
+    <string name="set_default_favorite">Set it as default favorite</string>
+    <string name="favorite_warning">Not logged in, account favorite can be modified by someone else. And due to the developer, local favorite is unreliable.</string>
+
+    <!-- Popular -->
+    <string name="popular_update_time">Update at %s</string>
+
+    <!-- History -->
+    <string name="clear_history_message">Clear history records</string>
+    <string name="just_browse">just browse</string>
+    <string name="have_read">have read</string>
+
+    <!-- Settings -->
+    <string name="display_settings_title">Display</string>
+    <string name="theme_display_settings_title">Theme</string>
+    <string name="custom_theme_color_title">Custom theme color</string>
+    <string name="custom_theme_color_summary_on">Specify the theme color below</string>
+    <string name="custom_theme_color_summary_off">Default theme color</string>
+    <string name="theme_color_title">Theme color</string>
+    <string name="screen_display_settings_title">Screen</string>
+    <string name="screen_orientation_title">Screen orientation</string>
+    <string name="list_display_settings_title">List</string>
+    <string name="list_mode_title">List mode</string>
+    <string name="list_detail_columns_title">Number of List detail columns</string>
+    <string name="list_thumb_columns_title">Number of List thumb columns</string>
+    <string name="preview_display_settings_title">Preview</string>
+    <string name="preview_columns">Number of preview columns</string>
+    <string name="popular_display_settings_title">Popular</string>
+    <string name="show_popular_update_time_title">Show popular update time</string>
+
+    <string name="eh_settings_title">EH</string>
+    <string name="list_eh_settings_title">List</string>
+    <string name="list_default_category_title">List default categories</string>
+    <string name="list_default_category_summary">The categories to view as default on the front page</string>
+    <string name="exculde_tag_group_title">Exculde tag groups</string>
+    <string name="exculde_tag_group_summary">Exclude certain tag groups from a default tag search</string>
+    <string name="exculde_language_title">Exculde language</string>
+    <string name="exculde_language_summary">To hide galleries in certain languages from the gallery list and searches</string>
+    <string name="search_eh_settings_title">Search</string>
+    <string name="clear_suggestions_title">Clear search history</string>
+    <string name="clear_suggestions_summary">Remove all the searches you have performed</string>
+    <string name="detail_eh_settings_title">Detail</string>
+    <string name="preview_mode_title">Preview mode</string>
+    <string name="preview_mode_normal">Normal</string>
+    <string name="preview_mode_large">Large</string>
+    <string name="favorite_eh_settings_title">Favorite</string>
+    <string name="default_favorite">Default Favorite</string>
+    <string name="history_eh_settings_title">History</string>
+    <string name="max_history_count_title">The maximum number of history records</string>
+
+    <string name="read_settings_title">Reading</string>
+    <string name="reading_direction_title">Reading direction</string>
+    <string name="left_to_right">Left to right</string>
+    <string name="right_to_Left">Right to left</string>
+    <string name="top_to_bottom">Top to bottom</string>
+    <string name="bottom_to_top">Bottom to top</string>
+    <string name="page_scaling_title">Page scaling</string>
+    <string name="start_position_title">Start position</string>
+    <string name="keep_screen_on_title">Keep screen when reading</string>
+    <string name="gallery_show_clock_title">Show clock</string>
+    <string name="gallery_show_battery_title">Show battery</string>
+    <string name="custom_lightness_title">Custom lightness when reading</string>
+    <string name="custom_lightness_value_title">Custom lightness</string>
+    <string name="custom_codec_title">Custom codec</string>
+    <string name="custom_codec_summary">Custom codec may cost less memory, decode faster</string>
+    <string name="custom_codec_summary_not">Custom codec do not support x86, mips</string>
+    <string name="clean_redundancy_title">Clean redundancy</string>
+    <string name="no_redundancy">No redundancy</string>
+    <string name="clean_redundancy">Redundancy cleaning completed, clean-up %d items totally</string>
+    <string name="decode_format_title">Decode format</string>
+    <string name="decode_format_auto">Auto</string>
+    <string name="decode_format_gray">Gray</string>
+    <string name="decode_format_gray_alpha">Gray (alpha)</string>
+    <string name="decode_format_rgb">RGB</string>
+    <string name="decode_format_rgba">RGB (alpha)</string>
+
+    <string name="download_settings_title">Download</string>
+    <string name="download_path_title">Download path</string>
+    <string name="media_scan_title">Allow media scan</string>
+    <string name="media_scan_summary_on">Please keep your gallery apps away from other people</string>
+    <string name="media_scan_summary_off">Most gallery apps will ignore pictures in download path</string>
+    <string name="download_thread_title">Download threads</string>
+    <string name="download_origin_image_title">Download original image</string>
+    <string name="download_origin_image_summary">It is dangerous! You may get 509 error.</string>
+    <string name="keep_download_service_title">Keep download service</string>
+    <string name="keep_download_service_summary_on">Download service will be restarted when the application is killed if it is running</string>
+    <string name="keep_download_service_summary_off">Download service will not be restarted when the application is killed if it is running</string>
+
+    <string name="advanced_settings_title">Advanced</string>
+    <string name="http_advanced_settings_title">HTTP</string>
+    <string name="http_warning_title">Options below will affect all HTTP connections</string>
+    <string name="http_retry_title">Retry times</string>
+    <string name="http_connect_timeout_title">Connect timeout (ms)</string>
+    <string name="http_read_timeout_title">Read timeout (ms)</string>
+    <string name="eh_advanced_settings_title">EH</string>
+    <string name="eh_min_interval_title">The minimum connection interval of EH site (ms)</string>
+    <string name="eh_others_settings_title">Others</string>
+    <string name="fix_dirname_title">Fix download folder name</string>
+    <string name="fix_dirname_title_summary">Download folder name will be human readable. It is OK to leave me alone.</string>
+    <string name="start_fixing">Start fixing</string>
+    <string name="no_need_fixing">No need to fix</string>
+    <string name="fixing_over">%d item(s) fixed</string>
+
+    <string name="about_settings_title">About</string>
+    <string name="author_title">Author</string>
+    <string name="author_summary" translatable="false">Hippo &lt;ehviewersu@gmail.com&gt;</string>
+    <string name="twitter_title">Twitter</string>
+    <string name="twitter_summary">\@jkjvinn is in charge</string>
+    <string name="google_plus_title" translatable="false">Google+</string>
+    <string name="changelog_title">Changelog</string>
+    <string name="thanks_title">Thanks</string>
+    <string name="website_title">Website</string>
+    <string name="website_summary" translatable="false">http://www.ehviewer.com</string>
+    <string name="source_title">Source</string>
+    <string name="source_summary" translatable="false">https://github.com/seven332/EhViewer</string>
+    <string name="version_title">Application version</string>
+    <string name="update_about_settings_title">Update</string>
+    <string name="auto_check_for_update_title">Check for update automatically</string>
+    <string name="auto_check_for_update_summary_on">Check for update once a day</string>
+    <string name="auto_check_for_update_summary_off">Never check for update without your permission</string>
+    <string name="check_for_update_title">Check for update</string>
+    <string name="check_for_update_summary">Tap to check for update</string>
+    <string name="update_server_title">Update server</string>
+    <string name="cloud_drive_title">Click here if update failed</string>
+    <string name="analytics_about_settings_title">Statistics</string>
+    <string name="allow_analyics_title">Enable statistics</string>
+    <string name="allow_analyics_summary_on">Thanks for you help</string>
+    <string name="allow_analyics_summary_off">Anyway, thanks being my little hippo</string>
+    <string name="about_analyics_title">About statistics</string>
+    <string name="about_analyics_comment">若您启用了数据统计，本应用会将您的使用情况发送给开发者。这对开发者维护该应用有很大帮助。在发送使用情况的同时也会发送部分设备信息（譬如设备型号、系统版本）。开发者承诺不收集任何个人身份信息数据（譬如姓名、电话号码、电邮地址）。\n\n数据收集过程采用 Google Analytics。\nGOOGLE ANALYTICS（分析）服务条款：http://www.google.com/analytics/terms/cn.html\nGoogle隐私权和条款：http://www.google.com/intl/zh-CN/policies</string>
+    <string name="portrait">Portrait</string>
+    <string name="landscape">Landscape</string>
+    <string name="preference_settings_title">Settings</string>
+    <string name="list_mode_detail">Detail</string>
+    <string name="list_mode_thumb">Thumb</string>
+    <string name="new_folder">New folder</string>
+    <string name="_new">New</string>
+    <string name="color_picker_title">Color scheme</string>
+    <string name="current_color">Current</string>
+    <string name="new_color">New</string>
+    <string name="hex" translatable="false">#</string>
+
+    <!-- Language -->
+    <string name="language_japanese">Japanese</string>
+    <string name="language_english">English</string>
+    <string name="language_chinese">Chinese</string>
+    <string name="language_dutch">Dutch</string>
+    <string name="language_french">French</string>
+    <string name="language_german">German</string>
+    <string name="language_hungarian">Hungarian</string>
+    <string name="language_italian">Italian</string>
+    <string name="language_korean">Korean</string>
+    <string name="language_polish">Polish</string>
+    <string name="language_portuguese">Portuguese</string>
+    <string name="language_russian">Russian</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_thai">Thai</string>
+    <string name="language_vietnamese">Vietnamese</string>
+    <string name="language_other">Other</string>
+
+    <!-- server -->
+    <string name="update_server_google">Google</string>
+    <string name="update_server_qiniu">Qiniu</string>
+
+    <!-- Tag -->
+    <string name="add_tag">Add tag</string>
+    <string name="tag_name">Tag name : </string>
+    <string name="tag_name_empty">Tag name can\'t be empty</string>
+    <string name="tag_change_name">Change name</string>
+    <string name="new_tag_name">New name : %s</string>
+
+    <!-- Pull -->
+    <string name="footer_loading">Loading more…</string>
+    <string name="footer_loaded">All loaded</string>
+    <string name="footer_fail">Load fail，click to reload</string>
+
+    <!-- Download -->
+
+    <!-- GalleryView -->
+    <string name="pre_page">Previous page</string>
+    <string name="next_page">Next page</string>
+    <string name="zoom_in">Zoom in</string>
+    <string name="zoom_out">Zoom out</string>
+    <string name="menu">Menu</string>
+
+    <!-- Rate -->
+    <string name="invalid_rating">Invalid rating</string>
+    <string name="rate_succeeded">Rate successfully</string>
+    <string name="rate_sensibly">Rate sensibly</string>
+    <string name="rate_failed">Failed to rate</string>
+    <string name="gallery_of_he">Galleries of this guy</string>
+
+    <!-- Category -->
+    <string name="doujinshi" translatable="false">DOUJINSHI</string>
+    <string name="manga" translatable="false">MANGA</string>
+    <string name="artist_cg" translatable="false">ARTIST CG</string>
+    <string name="game_cg" translatable="false">GAME CG</string>
+    <string name="western" translatable="false">WESTERN</string>
+    <string name="non_h" translatable="false">NON-H</string>
+    <string name="image_set" translatable="false">IMAGE SET</string>
+    <string name="cosplay" translatable="false">COSPLAY</string>
+    <string name="asian_porn" translatable="false">ASIAN PORN</string>
+    <string name="misc" translatable="false">MISC</string>
+    <string name="unknown" translatable="false">UNKNOWN</string>
+
+    <!-- rating -->
+    <string name="rating10">MASTERPIECE</string>
+    <string name="rating9">AMAZING</string>
+    <string name="rating8">GREAT</string>
+    <string name="rating7">GOOD</string>
+    <string name="rating6">OKAY</string>
+    <string name="rating5">MEDIOCRE</string>
+    <string name="rating4">BAD</string>
+    <string name="rating3">AWFUL</string>
+    <string name="rating2">PAINFUL</string>
+    <string name="rating1">UNBEARABLE</string>
+    <string name="rating0">DISASTER</string>
+
+    <string name="photo_footnotes">Taken by Hippo at Chengdu Research Base of Giant Panda Breeding</string>
+
+    <!-- Util -->
+    <string name="share">share</string>
+    <string name="filter">filter</string>
+    <string name="clear">clear</string>
+    <string name="history">History</string>
+    <string name="warning">Warning</string>
+    <string name="close">Close</string>
+    <string name="select">Select</string>
+    <string name="click_more">Click for more</string>
+    <string name="similar_content">Similar content</string>
+    <string name="_unknown">Unknown</string>
+    <string name="language">Language</string>
+    <string name="pages">Pages</string>
+    <string name="size">Size</string>
+    <string name="tip">Tip</string>
+    <string name="not_started">Not started</string>
+    <string name="waiting">Waiting</string>
+    <string name="done">Done</string>
+    <string name="first_page">First page</string>
+    <string name="the_last_page">The last page</string>
+    <string name="downloading">Downloading</string>
+    <string name="attention">Attention</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="stop_all">Stop all</string>
+    <string name="invalid_input">Invalid Input</string>
+    <string name="never_show">Never show me this dialog</string>
+    <string name="retry">Retry</string>
+    <string name="local">Local</string>
+    <string name="tag">Tag</string>
+    <string name="copyed">Copyed</string>
+    <string name="send">Send</string>
+    <string name="detail">Detail</string>
+    <string name="comment">Comment</string>
+    <string name="info">Info</string>
+    <string name="reply">Reply</string>
+    <string name="read">Read</string>
+    <string name="rate">Rate</string>
+    <string name="last_page">Last page</string>
+    <string name="sadpanda" translatable="false">Sad Panda</string>
+    <string name="unfinished">Unfinished</string>
+    <string name="period">.&#160;</string>
+    <string name="refresh">Refresh</string>
+    <string name="error">Error</string>
+    <string name="changelog">Changelog</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="wait">Please wait</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="add">Add</string>
+    <string name="what_to_do">What can I do for you ?</string>
+    <string name="jump">Jump</string>
+    <string name="some_page">Page %d</string>
+    <string name="_default">Default</string>
+    <string name="delete">Delete</string>
+    <string name="move">Move</string>
+    <string name="list">List</string>
+    <string name="homepage">Homepage</string>
+    <string name="mode">Mode</string>
+    <string name="favourite">Favourite</string>
+    <string name="whatshot">What\'s hot</string>
+    <string name="download">Download</string>
+    <string name="downloaded">Downloaded</string>
+    <string name="star_2">2 stars</string>
+    <string name="star_3">3 stars</string>
+    <string name="star_4">4 stars</string>
+    <string name="star_5">5 stars</string>
+    <string name="actual_size">Actual size</string>
+    <string name="fit_to_width">Fit to width</string>
+    <string name="fit_to_height">Fit to height</string>
+    <string name="fit_to_screen">Fit to screen</string>
+    <string name="fixed_scale">Fixed</string>
+    <string name="top_left">Top left</string>
+    <string name="top_right">Top right</string>
+    <string name="bottom_left">Bottom left</string>
+    <string name="bottom_right">Bottom right</string>
+    <string name="center">Center</string>
+    <string name="add_to_favourite">Add to favourite</string>
+    <string name="remove">Remove</string>
+    <string name="remove_info_data">Remove information and data</string>
+    <string name="update">Update</string>
+    <string name="thanks">Thanks</string>
+    <string name="develop">Develop</string>
+    <string name="advance_search_left">Swipe left</string>
+    <string name="restart_to_take_effect">Restart the application to take effect</string>
+    <string name="cur_dir_not_writable">Current directory is not writable</string>
+
+</resources>
