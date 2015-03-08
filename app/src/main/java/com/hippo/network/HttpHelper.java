@@ -489,7 +489,7 @@ public class HttpHelper {
     }
 
     public static class PostFormDataHelper extends GetStringHelper {
-        private static final String BOUNDARY = "------WebKitFormBoundary7eDB0hDQ91s22Tkf";
+        private static final String BOUNDARY = "----WebKitFormBoundary7eDB0hDQ91s22Tkf";
 
         private final List<FormData> mDataList;
 
@@ -507,15 +507,17 @@ public class HttpHelper {
             conn.setUseCaches(false);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type",
-                    "multipart/form-data; boundary=----WebKitFormBoundary7eDB0hDQ91s22Tkf");
+                    "multipart/form-data; boundary=" + BOUNDARY);
 
             DataOutputStream out = new DataOutputStream(conn.getOutputStream());
 
             for (FormData data : mDataList) {
+                out.write("--".getBytes());
                 out.write(BOUNDARY.getBytes());
                 out.write("\r\n".getBytes());
                 data.doOutPut(out);
             }
+            out.write("--".getBytes());
             out.write(BOUNDARY.getBytes());
             out.write("--".getBytes());
 
@@ -549,7 +551,6 @@ public class HttpHelper {
             // Bitmap bmp = BitmapFactory.decodeStream(conn.getInputStream(), null, Ui.getBitmapOpt());
             // bitmap might be incomplete.
             int size = conn.getContentLength();
-            ByteArrayOutputStream a;
             FastByteArrayOutputStream fbaos = new FastByteArrayOutputStream(size == -1 ? 24 * 1024 : (size + 100));
             Utils.copy(conn.getInputStream(), fbaos);
             Bitmap bmp = BitmapFactory.decodeByteArray(fbaos.getBuffer(), 0, fbaos.size(), null);

@@ -21,7 +21,7 @@ public class Log {
 
     private static final String TAG = Log.class.getSimpleName();
 
-    private static final String avoidNull(String str) {
+    private static String avoidNull(String str) {
         return str == null ? TextUtils.STRING_NULL : str;
     }
 
@@ -45,6 +45,15 @@ public class Log {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Call {@link android.util.Log#v(String, String, Throwable)} with default tag.
+     * @param msg The message you would like logged.
+     * @param tr An exception to log
+     */
+    public static int v(String msg, Throwable tr) {
+        return v(TAG, msg, tr);
     }
 
     /**
@@ -85,6 +94,15 @@ public class Log {
     }
 
     /**
+     * Call {@link android.util.Log#d(String, String, Throwable)} with default tag.
+     * @param msg The message you would like logged.
+     * @param tr An exception to log
+     */
+    public static int d(String msg, Throwable tr) {
+        return d(TAG, msg, tr);
+    }
+
+    /**
      * It is {@link android.util.Log#d(String, String, Throwable)}, only work when debug.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
@@ -119,6 +137,15 @@ public class Log {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Call {@link android.util.Log#i(String, String, Throwable)} with default tag.
+     * @param msg The message you would like logged.
+     * @param tr An exception to log
+     */
+    public static int i(String msg, Throwable tr) {
+        return i(TAG, msg, tr);
     }
 
     /**
@@ -159,6 +186,15 @@ public class Log {
     }
 
     /**
+     * Call {@link android.util.Log#w(String, String, Throwable)} with default tag.
+     * @param msg The message you would like logged.
+     * @param tr An exception to log
+     */
+    public static int w(String msg, Throwable tr) {
+        return w(TAG, msg, tr);
+    }
+
+    /**
      * It is {@link android.util.Log#w(String, String, Throwable)}, only work when debug.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
@@ -168,20 +204,6 @@ public class Log {
     public static int w(String tag, String msg, Throwable tr) {
         if (BuildConfig.DEBUG) {
             return android.util.Log.w(tag, avoidNull(msg), tr);
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * It is {@link android.util.Log#w(String, Throwable)}, only work when debug.
-     * @param tag Used to identify the source of a log message.  It usually identifies
-     *        the class or activity where the log call occurs.
-     * @param tr An exception to log
-     */
-    public static int w(String tag, Throwable tr) {
-        if (BuildConfig.DEBUG) {
-            return android.util.Log.w(tag, tr);
         } else {
             return 0;
         }
@@ -207,6 +229,15 @@ public class Log {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Call {@link android.util.Log#e(String, String, Throwable)} with default tag.
+     * @param msg The message you would like logged.
+     * @param tr An exception to log
+     */
+    public static int e(String msg, Throwable tr) {
+        return e(TAG, msg, tr);
     }
 
     /**

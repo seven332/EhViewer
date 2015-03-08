@@ -15,7 +15,6 @@
 
 package com.hippo.effect.ripple;
 
-import android.annotation.TargetApi;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -30,9 +29,6 @@ import com.hippo.widget.HotspotTouchHelper;
 
 public final class RippleSalon {
 
-    private static final boolean USE_OLD_RIPPLE =
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP;
-
     private static final Drawable MASK = new ColorDrawable(Color.BLACK);
 
     public static void addRipple(View c, boolean dark) {
@@ -46,9 +42,8 @@ public final class RippleSalon {
         addRipple(v, color, v.getBackground());
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void addRipple(View v, ColorStateList color, Drawable content) {
-        if (USE_OLD_RIPPLE) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             RippleDrawable rippleDrawable = new RippleDrawable(color, content);
             v.setOnTouchListener(new HotspotTouchHelper(rippleDrawable));
             //noinspection deprecation
