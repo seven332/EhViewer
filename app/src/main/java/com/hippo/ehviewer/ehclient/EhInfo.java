@@ -148,22 +148,24 @@ public class EhInfo {
     }
 
     public void storeCookie(HttpURLConnection conn) {
-        String ipb_member_id;
-        String ipb_pass_hash;
-
         List<String> cookieList = conn.getHeaderFields().get("Set-Cookie");
         if (cookieList == null)
             return;
-        SharedPreferences.Editor editor = mInfoPref.edit();
-        for (String str : cookieList) {
-            ipb_member_id = getCookie(str, KEY_MEMBER_ID);
-            ipb_pass_hash = getCookie(str, KEY_PASS_HASH);
 
-            if (ipb_member_id != null)
-                editor.putString(KEY_MEMBER_ID, ipb_member_id);
-            if (ipb_pass_hash != null)
-                editor.putString(KEY_PASS_HASH, ipb_pass_hash);
+        for (String str : cookieList) {
+            setCookie(str);
         }
+    }
+
+    public void setCookie(String cookie) {
+        SharedPreferences.Editor editor = mInfoPref.edit();
+        String ipb_member_id = getCookie(cookie, KEY_MEMBER_ID);
+        String ipb_pass_hash = getCookie(cookie, KEY_PASS_HASH);
+
+        if (ipb_member_id != null)
+            editor.putString(KEY_MEMBER_ID, ipb_member_id);
+        if (ipb_pass_hash != null)
+            editor.putString(KEY_PASS_HASH, ipb_pass_hash);
         editor.apply();
     }
 

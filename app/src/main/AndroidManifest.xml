@@ -61,6 +61,15 @@
         </activity>
 
         <activity
+            android:name=".ui.WebViewLoginActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:label="@string/login"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity
             android:name=".ui.GalleryDetailActivity"
             android:configChanges="orientation|screenSize|uiMode"
             android:screenOrientation="behind"
@@ -129,12 +138,6 @@
         <service
             android:name=".service.DownloadService"
             android:label="DownloadService" />
-
-        <receiver android:name=".receiver.NetworkChangeReceiver">
-            <intent-filter >
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-            </intent-filter>
-        </receiver>
 
         <provider
             android:name=".SimpleSuggestionProvider"

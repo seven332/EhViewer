@@ -16,15 +16,10 @@
 
 package com.hippo.ehviewer.ui;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -97,6 +92,12 @@ import com.hippo.ehviewer.widget.TagsAdapter;
 import com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 /*
  *
  *    Footer 显示产生的 refresh     手动 pull 显示产生的 refresh     按键或其他产生的 refresh
@@ -130,7 +131,8 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
     @SuppressWarnings("unused")
     private static final String TAG = GalleryListActivity.class.getSimpleName();
 
-    private static int RESULT_LOAD_SEARCH_IMAGE = 1;
+    private static int REQUST_WEB_WIEW_LOGIN = 0;
+    private static int REQUST_LOAD_SEARCH_IMAGE = 1;
 
     public static final String ACTION_GALLERY_LIST = "com.hippo.ehviewer.intent.action.GALLERY_LIST";
 
@@ -246,25 +248,31 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         View view = ViewUtils.inflateDialogView(R.layout.login, false);
 
         return new MaterialAlertDialog.Builder(this).setCancelable(false).setTitle(R.string.login).setView(view, true)
-                .setPositiveButton(android.R.string.ok).setNegativeButton(android.R.string.cancel)
-                .setNeutralButton(R.string.register).setButtonListener(new MaterialAlertDialog.OnClickListener() {
+                .setPositiveButton(android.R.string.ok)
+                .setNegativeButton(android.R.string.cancel)
+                .setNeutralButton(R.string.register)
+                .setActionButton(" ! ")
+                .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
                     public boolean onClick(MaterialAlertDialog dialog, int which) {
                         switch (which) {
-                        case MaterialAlertDialog.POSITIVE:
-                            setUserPanel(WAIT);
-                            String username = ((EditText) loginDialog.findViewById(R.id.username)).getText().toString();
-                            String password = ((EditText) loginDialog.findViewById(R.id.password)).getText().toString();
-                            mClient.login(username, password, GalleryListActivity.this);
-                            return true;
-                        case MaterialAlertDialog.NEGATIVE:
-                            setUserPanel();
-                            return true;
-                        case MaterialAlertDialog.NEUTRAL:
-                            toRegister();
-                            return false;
-                        default:
-                            return false;
+                            case MaterialAlertDialog.POSITIVE:
+                                setUserPanel(WAIT);
+                                String username = ((EditText) loginDialog.findViewById(R.id.username)).getText().toString();
+                                String password = ((EditText) loginDialog.findViewById(R.id.password)).getText().toString();
+                                mClient.login(username, password, GalleryListActivity.this);
+                                return true;
+                            case MaterialAlertDialog.NEGATIVE:
+                                setUserPanel();
+                                return true;
+                            case MaterialAlertDialog.NEUTRAL:
+                                toRegister();
+                                return false;
+                            case MaterialAlertDialog.ACTION:
+                                Intent intent = new Intent(GalleryListActivity.this, WebViewLoginActivity.class);
+                                startActivityForResult(intent, REQUST_WEB_WIEW_LOGIN);
+                            default:
+                                return false;
                         }
                     }
                 }).create();
@@ -300,7 +308,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RESULT_LOAD_SEARCH_IMAGE && resultCode == RESULT_OK && null != data) {
+        if (requestCode == REQUST_LOAD_SEARCH_IMAGE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
@@ -313,6 +321,11 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
             mSearchImageText.setVisibility(View.VISIBLE);
             mSearchImageText.setText(ImagePath);
+        } else if (REQUST_WEB_WIEW_LOGIN == requestCode) {
+            if (resultCode == Activity.RESULT_OK) {
+                loginDialog.dismiss();
+                onSuccess();
+            }
         }
 
     }
@@ -351,7 +364,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(i, RESULT_LOAD_SEARCH_IMAGE);
+                startActivityForResult(i, REQUST_LOAD_SEARCH_IMAGE);
             }
         });
     }

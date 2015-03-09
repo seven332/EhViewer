@@ -16,18 +16,6 @@
 
 package com.hippo.ehviewer.ehclient;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -51,6 +39,18 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Utils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class EhClient {
     @SuppressWarnings("unused")
     private static final String TAG = EhClient.class.getSimpleName();
@@ -66,7 +66,7 @@ public class EhClient {
     public static final long APIUID = 1363542;
     public static final String APIKEY = "f4b5407ab1727b9d08d7";
 
-    private static final String LOGIN_URL = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
+    public static final String LOGIN_URL = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
     private static final String FORUMS_URL = "http://forums.e-hentai.org/index.php";
 
     public static final String HEADER_G = "http://g.e-hentai.org/";
