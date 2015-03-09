@@ -251,7 +251,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
                 .setPositiveButton(android.R.string.ok)
                 .setNegativeButton(android.R.string.cancel)
                 .setNeutralButton(R.string.register)
-                .setActionButton(" ! ")
+                .setActionButton("WEB")
                 .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                     @Override
                     public boolean onClick(MaterialAlertDialog dialog, int which) {
