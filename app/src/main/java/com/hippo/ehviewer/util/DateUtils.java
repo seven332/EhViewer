@@ -16,17 +16,15 @@
 
 package com.hippo.ehviewer.util;
 
-import android.text.format.DateFormat;
-
 public final class DateUtils {
 
-    @SuppressWarnings("deprecation")
+    public  static final char QUOTE = '\'';
+    public  static final char SECONDS = 's';
+
     public static boolean hasSeconds(CharSequence inFormat) {
-        return hasDesignator(inFormat, DateFormat.SECONDS);
+        return hasDesignator(inFormat, SECONDS);
     }
 
-
-    @SuppressWarnings("deprecation")
     public static boolean hasDesignator(CharSequence inFormat, char designator) {
         if (inFormat == null) return false;
 
@@ -39,7 +37,7 @@ public final class DateUtils {
             count = 1;
             c = inFormat.charAt(i);
 
-            if (c == DateFormat.QUOTE) {
+            if (c == QUOTE) {
                 count = skipQuotedText(inFormat, i, length);
             } else if (c == designator) {
                 return true;
@@ -49,9 +47,8 @@ public final class DateUtils {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     private static int skipQuotedText(CharSequence s, int i, int len) {
-        if (i + 1 < len && s.charAt(i + 1) == DateFormat.QUOTE) {
+        if (i + 1 < len && s.charAt(i + 1) == QUOTE) {
             return 2;
         }
 
@@ -62,10 +59,10 @@ public final class DateUtils {
         while (i < len) {
             char c = s.charAt(i);
 
-            if (c == DateFormat.QUOTE) {
+            if (c == QUOTE) {
                 count++;
                 //  QUOTEQUOTE -> QUOTE
-                if (i + 1 < len && s.charAt(i + 1) == DateFormat.QUOTE) {
+                if (i + 1 < len && s.charAt(i + 1) == QUOTE) {
                     i++;
                 } else {
                     break;
