@@ -19,7 +19,6 @@ package com.hippo.ehviewer.ui;
 import android.app.Activity;
 
 import com.google.analytics.tracking.android.EasyTracker;
-import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 
@@ -46,7 +45,5 @@ public abstract class AbsActivity extends Activity {
 
         if (Config.getAllowAnalyics())
             EasyTracker.getInstance(this).activityStop(this);
-
-        ImageCache.getInstance(this).flush();
     }
 }

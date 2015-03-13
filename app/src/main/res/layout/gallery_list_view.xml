@@ -16,10 +16,17 @@
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <com.hippo.ehviewer.widget.RefreshLayout
+    <com.hippo.ehviewer.widget.refreshlayout.RefreshLayout
         android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView
+            android:id="@+id/easy_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </com.hippo.ehviewer.widget.refreshlayout.RefreshLayout>
 
     <com.hippo.ehviewer.widget.RefreshTextView
         android:id="@+id/refresh_text"

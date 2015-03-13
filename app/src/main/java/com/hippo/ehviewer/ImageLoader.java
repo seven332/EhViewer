@@ -19,8 +19,9 @@ package com.hippo.ehviewer;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.network.HttpHelper;
+import com.hippo.ehviewer.cache.AnyCache;
+import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.util.BgThread;
 
 import java.util.Stack;
@@ -52,7 +53,7 @@ public class ImageLoader {
 
     private final Context mContext;
     private final Stack<LoadTask> mLoadTasks;
-    private final ImageCache mImageCache;
+    private final AnyCache<Bitmap> mImageCache;
     private final ImageDownloader mImageDownloader;
 
     private ImageLoader(Context context) {
@@ -60,7 +61,7 @@ public class ImageLoader {
         mImageDownloader = new ImageDownloader();
 
         mContext = context;
-        mImageCache = ImageCache.getInstance(mContext);
+        mImageCache = ImageCache.getImageCache(mContext);
 
         new BgThread(new LoadFromCacheTask()).start();
     }
@@ -110,7 +111,7 @@ public class ImageLoader {
 
                 int[] state = new int[1];
                 String key = loadTask.key;
-                loadTask.bitmap = mImageCache.getCachedBitmap(key, state);
+                loadTask.bitmap = mImageCache.get(key);
                 loadTask.state = state[0];
 
                 if (loadTask.bitmap != null)
@@ -158,7 +159,7 @@ public class ImageLoader {
                     // TODO use proxy to get image
                     loadTask.bitmap = httpHelper.getImage(loadTask.url);
                     if (loadTask.bitmap != null) {
-                        mImageCache.addBitmapToCache(loadTask.key, loadTask.bitmap);
+                        mImageCache.put(loadTask.key, loadTask.bitmap);
                         loadTask.state = STATE_FROM_NETWORK;
                     } else {
                         loadTask.state = STATE_NONE;

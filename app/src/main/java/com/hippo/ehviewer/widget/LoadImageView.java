@@ -96,9 +96,19 @@ public class LoadImageView extends FixedAspectImageView {
      * Load target bmp, set progressive animation
      * @param bmp
      */
-    public void setContextImage(Bitmap bmp, int state) {
+    public void setContextImage(Bitmap bmp, boolean fixScaleType, boolean transit) {
+        if (fixScaleType) {
+            float aspectRatio = (float)bmp.getHeight() / bmp.getWidth();
+            if (aspectRatio < 1.7 && aspectRatio > 1.3)
+                setScaleType(ImageView.ScaleType.CENTER_CROP);
+            else
+                setScaleType(ImageView.ScaleType.FIT_CENTER);
+        } else {
+            setScaleType(ImageView.ScaleType.FIT_CENTER);
+        }
+
         setImageBitmap(bmp);
-        if (state != ImageLoader.STATE_FROM_MEMORY) {
+        if (transit) {
             final Drawable drawable = getDrawable();
             DrawableTransition.transit(drawable, false, 1000);
         }
@@ -134,16 +144,8 @@ public class LoadImageView extends FixedAspectImageView {
         public void onGetImage(String key, Bitmap bmp, int state) {
             if (isVaild(key) && mLiv.getState() == LoadImageView.LOADING) {
                 if (bmp != null) {
-                    if (mFixScaleType) {
-                        float aspectRatio = (float)bmp.getHeight() / bmp.getWidth();
-                        if (aspectRatio < 1.7 && aspectRatio > 1.3)
-                            mLiv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                        else
-                            mLiv.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    }
-
                     if (mTransitabled)
-                        mLiv.setContextImage(bmp, state);
+                        mLiv.setContextImage(bmp, mFixScaleType, true);
                     else
                         mLiv.setImageBitmap(bmp);
                     mLiv.setState(LoadImageView.LOADED);

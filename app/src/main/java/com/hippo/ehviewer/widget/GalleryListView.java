@@ -16,12 +16,10 @@
 
 package com.hippo.ehviewer.widget;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
@@ -36,19 +34,23 @@ import android.widget.TextView;
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.ListParser;
+import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView;
-import com.hippo.ehviewer.widget.recyclerview.MarginItemDecoration;
 import com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView.FooterAdapter;
+import com.hippo.ehviewer.widget.recyclerview.MarginItemDecoration;
+import com.hippo.ehviewer.widget.refreshlayout.RefreshLayout;
 
-public class GalleryListView extends FrameLayout implements RefreshLayout.OnFooterRefreshListener,
-        RefreshLayout.OnRefreshListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class GalleryListView extends FrameLayout implements RefreshLayout.OnHeaderRefreshListener,
+        RefreshLayout.OnFooterRefreshListener {
 
     private static final String TAG = GalleryListView.class.getSimpleName();
 
@@ -112,6 +114,8 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
     private int mListDetailThumbWidth;
     private int mListDetailThumbHeight;
 
+    private int mOldPaddingBottom;
+
     public GalleryListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs, 0, 0);
@@ -130,13 +134,13 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         mContext = context;
-        mGiList = new ArrayList<GalleryInfo>();
+        mGiList = new ArrayList<>();
         mListener = new OnGetGalleryListListener();
 
         LayoutInflater.from(mContext).inflate(R.layout.gallery_list_view, this);
 
         mRefreshLayout = (RefreshLayout) findViewById(R.id.refresh_layout);
-        mEasyRecyclerView = mRefreshLayout.getEasyRecyclerView();
+        mEasyRecyclerView = (EasyRecyclerView) mRefreshLayout.findViewById(R.id.easy_recycler_view);
         mRefreshTextView = (RefreshTextView) findViewById(R.id.refresh_text);
 
         mAdapter = new GalleryAdapter(mContext, mGiList);
@@ -158,18 +162,24 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
             }
         });
 
-        mRefreshLayout.setColorSchemeResources(
+        mRefreshLayout.setHeaderEnable(true);
+        mRefreshLayout.setFooterEnable(true);
+        mRefreshLayout.setHeaderColorSchemeResources(
                 R.color.refresh_color_1,
                 R.color.refresh_color_2,
                 R.color.refresh_color_3,
-                R.color.refresh_color_4);
+                R.color.refresh_color_4
+        );
+        mRefreshLayout.setFooterColorSchemeResources(
+                R.color.refresh_color_1,
+                R.color.refresh_color_2,
+                R.color.refresh_color_3,
+                R.color.refresh_color_4
+        );
         mRefreshLayout.setOnHeaderRefreshListener(this);
         mRefreshLayout.setOnFooterRefreshListener(this);
-        mRefreshLayout.setFooterString(
-                mContext.getString(R.string.footer_loading),
-                mContext.getString(R.string.footer_loaded),
-                mContext.getString(R.string.footer_fail));
-        mRefreshLayout.addFooterView();
+
+        mOldPaddingBottom = mEasyRecyclerView.getPaddingBottom();
 
         // Caculate gallery detail height
         mInflater = LayoutInflater.from(mContext);
@@ -226,7 +236,7 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
     public void setPaddingTopAndBottom(int top, int bottom) {
         setPadding(getPaddingLeft(), top, getPaddingRight(), getPaddingBottom());
         mEasyRecyclerView.setPadding(mEasyRecyclerView.getPaddingLeft(), mEasyRecyclerView.getPaddingTop(),
-                mEasyRecyclerView.getPaddingRight(), mEasyRecyclerView.getPaddingBottom() + bottom);
+                mEasyRecyclerView.getPaddingRight(), mOldPaddingBottom + bottom);
     }
 
     private void setItemMargin(int margin) {
@@ -237,15 +247,15 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
     }
 
     public void setEnabledHeader(boolean enabled) {
-        mRefreshLayout.setEnabledHeader(enabled);
+        mRefreshLayout.setHeaderEnable(enabled);
     }
 
     public void setEnabledFooter(boolean enabled) {
-        mRefreshLayout.setEnabledFooter(enabled);
+        mRefreshLayout.setFooterEnable(enabled);
     }
 
     public void setHeaderRefreshing(boolean refreshing) {
-        mRefreshLayout.setRefreshing(refreshing);
+        mRefreshLayout.setHeaderRefreshing(refreshing);
     }
 
     public void setOnItemClickListener(EasyRecyclerView.OnItemClickListener l) {
@@ -294,7 +304,7 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
     }
 
     @Override
-    public void onRefresh() {
+    public void onHeaderRefresh() {
         // It is invokened by user pull, so no need to
         if (mFirstPage > 0) {
             getPrePage(true);
@@ -327,7 +337,7 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
     private void setGallerysLayout() {
         if (mRefreshLayout.getVisibility() == View.VISIBLE) {
             if (!isFootRefresh)
-                mRefreshLayout.setRefreshing(true);
+                mRefreshLayout.setHeaderRefreshing(true);
             mRefreshTextView.setVisibility(View.GONE);
         } else {
             mRefreshLayout.setVisibility(View.GONE);
@@ -541,7 +551,8 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
                 }
             }
 
-            mRefreshLayout.setAnyRefreshComplete(true);
+            mRefreshLayout.setHeaderRefreshing(false);
+            mRefreshLayout.setFooterRefreshing(false);
         }
 
         @Override
@@ -572,7 +583,8 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
                 mRefreshTextView.setVisibility(View.GONE);
                 MaterialToast.showToast(eMsg);
             }
-            mRefreshLayout.setAnyRefreshComplete(false);
+            mRefreshLayout.setHeaderRefreshing(false);
+            mRefreshLayout.setFooterRefreshing(false);
         }
     }
 
@@ -602,17 +614,17 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             switch (newState) {
             case RecyclerView.SCROLL_STATE_DRAGGING:
-                ImageCache.getInstance(mContext).setPauseDiskCache(true);
+                ImageCache.getImageCache(mContext).setPauseDiskCache(true);
                 break;
             case RecyclerView.SCROLL_STATE_IDLE:
-                ImageCache.getInstance(mContext).setPauseDiskCache(false);
+                ImageCache.getImageCache(mContext).setPauseDiskCache(false);
                 break;
             }
         }
 
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            mRefreshLayout.onScrolled(recyclerView, dx, dy);
+            // mRefreshLayout.onScrolled(recyclerView, dx, dy);
 
             int itemCount = mLayoutManager.getChildCount();
             int firstVisibleItem = mLayoutManager.findFirstVisibleItemPositions(mFirstPositionTemp)[0];
@@ -733,12 +745,18 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnFoot
                 int position) {
             GalleryInfo gi = mGiList.get(position);
             final LoadImageView thumb = holder.thumb;
-            if (!String.valueOf(gi.gid).equals(thumb.getKey())) {
+            final String key = String.valueOf(gi.gid);
+            if (!key.equals(thumb.getKey())) {
                 // Set new thumb
                 thumb.setImageDrawable(null);
-                thumb.setLoadInfo(gi.thumb, String.valueOf(gi.gid));
-                mImageLoader.add(gi.thumb, String.valueOf(gi.gid),
-                        new LoadImageView.SimpleImageGetListener(thumb).setFixScaleType(true));
+                thumb.setLoadInfo(gi.thumb, key);
+                Bitmap b = ImageCache.getImageCache(getContext()).getFromMemory(key);
+                if (b != null) {
+                    thumb.setContextImage(b, true, false);
+                } else {
+                    mImageLoader.add(gi.thumb, String.valueOf(gi.gid),
+                            new LoadImageView.SimpleImageGetListener(thumb).setFixScaleType(true));
+                }
             }
             // Set simple language
             TextView simpleLanguage = holder.simpleLanguage;

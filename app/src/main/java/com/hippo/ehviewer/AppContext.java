@@ -23,12 +23,12 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Typeface;
 import android.view.ContextThemeWrapper;
 
-import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.ehclient.ExDownloaderManager;
 import com.hippo.ehviewer.network.HttpHelper;
+import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.EhUtils;
@@ -148,7 +148,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
      */
     @Override
     public void onLowMemory() {
-        ImageCache.getInstance(this).evictAll();
+        ImageCache.getImageCache(this).evictAll();
         super.onLowMemory();
     }
 

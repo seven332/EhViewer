@@ -27,6 +27,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
@@ -56,7 +57,6 @@ import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
-import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.ApiGalleryDetail;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.Data;
@@ -75,6 +75,8 @@ import com.hippo.ehviewer.drawable.OvalDrawable;
 import com.hippo.ehviewer.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.ehclient.DetailUrlParser;
 import com.hippo.ehviewer.ehclient.EhClient;
+import com.hippo.ehviewer.cache.AnyCache;
+import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
@@ -1159,7 +1161,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
     @Override
     public void onScrollStateChanged(ResponedScrollView view, int state) {
         if (view == mDetailScroll) {
-            ImageCache imageCache = ImageCache.getInstance(this);
+            AnyCache<Bitmap> imageCache = ImageCache.getImageCache(this);
             if (state == ResponedScrollView.SCROLL_START)
                 imageCache.setPauseDiskCache(true);
             else
