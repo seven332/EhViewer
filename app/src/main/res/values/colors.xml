@@ -14,13 +14,13 @@
   ~ limitations under the License.
   -->
 <!--
-    The standard opacity for an active icon on a light background is 54% (#000000).
+    The standard opacity for an active icon on a light background is 54% (#8A000000).
     An inactive icon, which is lower in the visual hierarchy, should have an
-    opacity of 26% (#000000).
+    opacity of 26% (#42000000).
 
     The standard opacity for an active icon on a dark background is 100% (#FFFFFF).
     An inactive icon, which is lower in the visual hierarchy, should have an
-    opacity of 30% (#FFFFFF).
+    opacity of 30% (#4DFFFFFF).
  -->
 <resources>
 

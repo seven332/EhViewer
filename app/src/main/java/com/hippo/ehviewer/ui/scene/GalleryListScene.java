@@ -80,7 +80,7 @@ public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutH
 
         // List View
         // TODO
-        mListView = new View(mActivity);
+        mListView = inflater.inflate(R.layout.fragment_list, null);
 
         // Main View
         View sceneView = inflater.inflate(R.layout.scene_gallery_list, null);

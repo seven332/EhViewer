@@ -15,10 +15,12 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 
+import com.hippo.content.VectorContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
 import com.hippo.ehviewer.widget.ContentLayout;
@@ -60,5 +62,10 @@ public class ContentActivity extends StageActivity {
     @Override
     public StageLayout getStageLayout() {
         return mContentLayout;
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(VectorContext.wrapContext(newBase));
     }
 }
