@@ -15,12 +15,30 @@
 
 package com.hippo.ehviewer.network;
 
+import android.support.annotation.NonNull;
+
 import com.hippo.network.HttpHelper;
+import com.hippo.util.Pool;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class EhHttpHelper extends HttpHelper {
+
+    private static final Pool<EhHttpHelper> sPool = new Pool<>(10);
+
+    public static @NonNull EhHttpHelper obtain() {
+        EhHttpHelper ehh = sPool.obtain();
+        if (ehh == null) {
+            ehh = new EhHttpHelper();
+        }
+        return ehh;
+    }
+
+    public static void recycle(@NonNull EhHttpHelper ehh) {
+        ehh.reset();
+        sPool.recycle(ehh);
+    }
 
     @Override
     protected String getCookie(URL url) {
