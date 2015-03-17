@@ -44,7 +44,7 @@
 
     <!-- FloatLabelEditText -->
     <style name="TextAppearance.FloatLabelEditText.Lable" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/secondary_text_dark</item>
+        <item name="android:textColor">@color/float_label_edit_text_light</item>
     </style>
 
     <style name="TextAppearance.FloatLabelEditText.Lable.Single" parent="TextAppearance.AppCompat.Small">

@@ -60,8 +60,8 @@ public class FloatingActionButton extends View {
         TypedArray a;
 
         a = context.obtainStyledAttributes(attrs, R.styleable.FloatingActionButton, defStyleAttr, defStyleRes);
-        int bgColor = a.getColor(R.styleable.FloatingActionButton_fabColor, Color.BLACK);
-        mDrawable = a.getDrawable(R.styleable.FloatingActionButton_fabDrawable);
+        int bgColor = a.getColor(R.styleable.FloatingActionButton_color, Color.BLACK);
+        mDrawable = a.getDrawable(R.styleable.FloatingActionButton_drawable);
         a.recycle();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

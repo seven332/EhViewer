@@ -30,7 +30,7 @@
         style="@style/FloatingActionButton.Content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        auto:fabColor="?attr/colorAccent"
-        auto:fabDrawable="@drawable/ic_fab_search"/>
+        auto:color="?attr/colorAccent"
+        auto:drawable="@drawable/ic_fab_search"/>
 
 </merge>

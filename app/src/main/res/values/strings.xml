@@ -65,4 +65,7 @@
     <string name="star_4">4 stars</string>
     <string name="star_5">5 stars</string>
 
+
+    <string name="keyword">Keyword</string>
+
 </resources>

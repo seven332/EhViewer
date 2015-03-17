@@ -32,13 +32,16 @@
         android:layout_marginBottom="@dimen/search_item_interval"
         android:text="@string/search_specify_author"/>
 
-    <com.hippo.widget.PrefixEditText
+    <com.hippo.widget.FloatLabelEditText
+        xmlns:auto="http://schemas.android.com/apk/res-auto"
         android:id="@+id/search_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/search_item_interval"
         android:hint="@string/search_hint_no_keyword"
-        android:singleLine="true"/>
+        android:singleLine="true"
+        auto:labelHint="@string/keyword"
+        auto:labelAppearance="@style/TextAppearance.FloatLabelEditText.Lable"/>
 
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/search_enable_advance"

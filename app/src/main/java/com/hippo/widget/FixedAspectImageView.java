@@ -78,7 +78,7 @@ public class FixedAspectImageView extends ImageView {
 
         a = context.obtainStyledAttributes(
                 attrs, R.styleable.FixedAspectImageView, defStyle, 0);
-        setAspect(a.getFloat(R.styleable.FixedAspectImageView_faiAspect, -1f));
+        setAspect(a.getFloat(R.styleable.FixedAspectImageView_aspect, -1f));
         a.recycle();
     }
 

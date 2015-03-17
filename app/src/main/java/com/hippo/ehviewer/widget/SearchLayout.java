@@ -43,7 +43,6 @@ import com.hippo.util.UiUtils;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.FloatLabelEditText;
 import com.hippo.widget.FloatingActionButton;
-import com.hippo.widget.PrefixEditText;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 
 public class SearchLayout extends FrameLayout implements CompoundButton.OnCheckedChangeListener,
@@ -85,7 +84,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     private View mNormalView;
     private CategoryTable mTableCategory;
     private CheckBox mCheckSpecifyAuthor;
-    private PrefixEditText mTextSearch;
+    private FloatLabelEditText mTextSearch;
     private SwitchCompat mSwitchEnableAdvance;
 
     private View mAdvanceView;
@@ -391,7 +390,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
                 mNormalView = holder.content.getChildAt(0);
                 mTableCategory = (CategoryTable) mNormalView.findViewById(R.id.search_category_table);
                 mCheckSpecifyAuthor = (CheckBox) mNormalView.findViewById(R.id.search_specify_author);
-                mTextSearch = (PrefixEditText) mNormalView.findViewById(R.id.search_text);
+                mTextSearch = (FloatLabelEditText) mNormalView.findViewById(R.id.search_text);
                 mSwitchEnableAdvance = (SwitchCompat) mNormalView.findViewById(R.id.search_enable_advance);
 
                 // Restore state

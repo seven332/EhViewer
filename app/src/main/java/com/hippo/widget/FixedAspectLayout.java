@@ -54,7 +54,7 @@ public class FixedAspectLayout extends FrameLayout {
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         TypedArray a = context.obtainStyledAttributes(
                 attrs, R.styleable.FixedAspectLayout, defStyleAttr, defStyleRes);
-        setAspect(a.getFloat(R.styleable.FixedAspectLayout_falAspect, -1f));
+        setAspect(a.getFloat(R.styleable.FixedAspectLayout_aspect, -1f));
         a.recycle();
     }
 

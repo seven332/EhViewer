@@ -16,28 +16,29 @@
 <resources>
 
     <declare-styleable name="FixedAspectImageView">
-        <attr name="faiAspect" format="float"/>
+        <attr name="aspect" format="float"/>
     </declare-styleable>
 
     <declare-styleable name="FixedAspectLayout">
-        <attr name="falAspect" format="float"/>
+        <attr name="aspect"/>
     </declare-styleable>
 
     <declare-styleable name="FloatingActionButton">
-        <attr name="fabColor" format="color"/>
-        <attr name="fabDrawable" format="reference"/>
+        <attr name="color"/>
+        <attr name="drawable"/>
     </declare-styleable>
 
     <declare-styleable name="FloatLabelEditText">
-        <attr name="fllLabelAppearance" format="reference"/>
-        <attr name="fllTrigger" format="enum">
+        <attr name="labelAppearance" format="reference"/>
+        <attr name="labelHint" format="string"/>
+        <attr name="trigger" format="enum">
             <enum name="text" value="0"/>
             <enum name="focus" value="1"/>
         </attr>
     </declare-styleable>
 
     <declare-styleable name="Appbar">
-        <attr name="abTitleAppearance" format="reference"/>
+        <attr name="titleAppearance" format="reference"/>
     </declare-styleable>
 
     <!-- ********** -->
