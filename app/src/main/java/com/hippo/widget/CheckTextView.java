@@ -24,6 +24,7 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,8 +32,6 @@ import android.widget.TextView;
 
 import com.hippo.util.ApiHelper;
 import com.hippo.util.MathUtils;
-
-import org.jetbrains.annotations.NotNull;
 
 public class CheckTextView extends TextView implements OnClickListener, Hotspotable {
 
@@ -145,7 +144,7 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
     }
 
     @Override
-    protected void onDraw(@NotNull Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
         if (mAimating) {

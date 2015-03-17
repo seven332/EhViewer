@@ -18,15 +18,14 @@ package com.hippo.scene;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewParent;
 
 import com.hippo.util.AssertUtils;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * {@link com.hippo.scene.Scene} is a {@code Activity} of {@link android.app.Activity}.
@@ -55,7 +54,7 @@ public abstract class Scene {
         return mSceneView;
     }
 
-    public void startScene(@NotNull Class sceneClass, @Nullable Announcer announcer) {
+    public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer) {
         sSceneManager.startScene(sceneClass, announcer);
     }
 
@@ -181,7 +180,7 @@ public abstract class Scene {
         outState.putSparseParcelableArray(getStateKey(), states);
     }
 
-    void restoreInstanceState(@NotNull Bundle savedInstanceState) {
+    void restoreInstanceState(@NonNull Bundle savedInstanceState) {
         if (mSceneView != null) {
             SparseArray<Parcelable> savedStates
                     = savedInstanceState.getSparseParcelableArray(getStateKey());
@@ -191,13 +190,13 @@ public abstract class Scene {
         }
     }
 
-    protected void onSaveInstanceState(@NotNull SparseArray<Parcelable> outState) {
+    protected void onSaveInstanceState(@NonNull SparseArray<Parcelable> outState) {
         if (mSceneView != null) {
             mSceneView.saveHierarchyState(outState);
         }
     }
 
-    protected void onRestoreInstanceState(@NotNull SparseArray<Parcelable> savedStates) {
+    protected void onRestoreInstanceState(@NonNull SparseArray<Parcelable> savedStates) {
         if (mSceneView != null) {
             mSceneView.restoreHierarchyState(savedStates);
         }

@@ -19,11 +19,10 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.widget.FrameLayout;
-
-import org.jetbrains.annotations.NotNull;
 
 public class StageLayout extends FrameLayout {
 
@@ -45,12 +44,12 @@ public class StageLayout extends FrameLayout {
     }
 
     @Override
-    protected void dispatchSaveInstanceState(@NotNull SparseArray<Parcelable> container) {
+    protected void dispatchSaveInstanceState(@NonNull SparseArray<Parcelable> container) {
         // Do nothing
     }
 
     @Override
-    protected void dispatchRestoreInstanceState(@NotNull SparseArray<Parcelable> container) {
+    protected void dispatchRestoreInstanceState(@NonNull SparseArray<Parcelable> container) {
         // Do nothing
     }
 }

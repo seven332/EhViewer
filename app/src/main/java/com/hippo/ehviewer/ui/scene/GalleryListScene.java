@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.SparseArray;
@@ -38,8 +39,6 @@ import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.scene.Scene;
 import com.hippo.widget.Appbar;
-
-import org.jetbrains.annotations.NotNull;
 
 public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutHelper,
         Scene.ActivityResultListener, ContentLayout.OnGetFitPaddingListener {
@@ -108,7 +107,7 @@ public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutH
     }
 
     @Override
-    protected void onRestoreInstanceState(@NotNull SparseArray<Parcelable> savedStates) {
+    protected void onRestoreInstanceState(@NonNull SparseArray<Parcelable> savedStates) {
         super.onRestoreInstanceState(savedStates);
 
         // mSearchView and mListView may not in hierarchy

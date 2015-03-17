@@ -23,7 +23,7 @@
         android:layout_width="240dp"
         android:layout_height="240dp"
         android:layout_gravity="center"
-        android:src="@drawable/ic_vector_happy"
+        android:src="@drawable/ic_happy"
         android:scaleType="fitXY"
         android:contentDescription="@null"/>
 

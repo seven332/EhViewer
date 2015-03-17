@@ -22,6 +22,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,8 +35,6 @@ import com.hippo.ehviewer.R;
 import com.hippo.util.ViewUtils;
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGBuilder;
-
-import org.jetbrains.annotations.NotNull;
 
 public class SelectSearchImageLayout extends LinearLayout implements View.OnClickListener{
 
@@ -115,7 +114,7 @@ public class SelectSearchImageLayout extends LinearLayout implements View.OnClic
         }
     }
 
-    public void onSelectImage(@NotNull String selectPath) {
+    public void onSelectImage(@NonNull String selectPath) {
         mSelectedPath = selectPath;
 
         mTextPath.setText(selectPath);

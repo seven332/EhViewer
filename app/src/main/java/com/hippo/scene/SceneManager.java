@@ -16,11 +16,10 @@
 package com.hippo.scene;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.hippo.util.Log;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Stack;
 
@@ -43,7 +42,7 @@ class SceneManager {
         return mStageActivity;
     }
 
-    void startScene(@NotNull Class sceneClass, @Nullable Announcer announcer) {
+    void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer) {
         Scene scene;
         try {
             scene = (Scene) sceneClass.newInstance();
@@ -67,7 +66,7 @@ class SceneManager {
         scene.resume();
     }
 
-    void finishScene(@NotNull Scene scene) {
+    void finishScene(@NonNull Scene scene) {
         if (mSceneStack.remove(scene)) {
             scene.destroy();
         } else {
@@ -109,7 +108,7 @@ class SceneManager {
         }
     }
 
-    protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         for (Scene scene : mSceneStack) {
             // Recreate
             scene.create(savedInstanceState);

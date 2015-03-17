@@ -17,11 +17,9 @@ package com.hippo.ehviewer.data;
 
 import android.os.Parcel;
 
-import org.jetbrains.annotations.NotNull;
-
 public class LofiGalleryInfo extends GalleryInfo {
 
-    public @NotNull String[] lofiTags;
+    public String[] lofiTags;
 
     public static final Creator<LofiGalleryInfo> CREATOR =
             new Creator<LofiGalleryInfo>() {

@@ -17,13 +17,12 @@ package com.hippo.scene;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.SparseArray;
 
 import com.hippo.ehviewer.ui.AbsActionBarActivity;
 import com.hippo.util.IntIdGenerator;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class StageActivity extends AbsActionBarActivity {
 
@@ -66,7 +65,7 @@ public abstract class StageActivity extends AbsActionBarActivity {
         getStageLayout().removeView(scene.getSceneView());
     }
 
-    public void startScene(@NotNull Class sceneClass, @Nullable Announcer announcer) {
+    public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer) {
         sSceneManager.startScene(sceneClass, announcer);
     }
 
@@ -110,7 +109,7 @@ public abstract class StageActivity extends AbsActionBarActivity {
     }
 
     @Override
-    protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
         sSceneManager.onRestoreInstanceState(savedInstanceState);

@@ -20,6 +20,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
@@ -43,9 +45,6 @@ import com.hippo.widget.FloatLabelEditText;
 import com.hippo.widget.FloatingActionButton;
 import com.hippo.widget.PrefixEditText;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class SearchLayout extends FrameLayout implements CompoundButton.OnCheckedChangeListener,
         View.OnClickListener, SelectSearchImageLayout.SelectSearchImageLayoutHelper {
@@ -171,14 +170,14 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     }
 
     @Override
-    protected void dispatchSaveInstanceState(@NotNull SparseArray<Parcelable> container) {
+    protected void dispatchSaveInstanceState(@NonNull SparseArray<Parcelable> container) {
         super.dispatchSaveInstanceState(container);
 
         mSavedInstanceState = null;
     }
 
     @Override
-    protected void dispatchRestoreInstanceState(@NotNull SparseArray<Parcelable> container) {
+    protected void dispatchRestoreInstanceState(@NonNull SparseArray<Parcelable> container) {
         super.dispatchRestoreInstanceState(container);
 
         mSavedInstanceState = container;
@@ -247,7 +246,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         }
     }
 
-    public void onSelectImage(@NotNull String imagePath) {
+    public void onSelectImage(@NonNull String imagePath) {
         mImageView.onSelectImage(imagePath);
     }
 

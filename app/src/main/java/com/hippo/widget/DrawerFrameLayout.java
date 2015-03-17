@@ -20,10 +20,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
-
-import org.jetbrains.annotations.NotNull;
 
 public class DrawerFrameLayout extends FrameLayout {
 
@@ -76,7 +75,7 @@ public class DrawerFrameLayout extends FrameLayout {
 
     @SuppressWarnings("deprecation")
     @Override
-    protected boolean fitSystemWindows(@NotNull Rect insets) {
+    protected boolean fitSystemWindows(@NonNull Rect insets) {
         mFitPaddingLeft = insets.left;
         mFitPaddingTop = insets.top;
         mFitPaddingRight = insets.right;

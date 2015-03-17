@@ -17,11 +17,10 @@ package com.hippo.ehviewer.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 
 import com.hippo.scene.StageLayout;
-
-import org.jetbrains.annotations.NotNull;
 
 public class ContentLayout extends StageLayout {
 
@@ -50,7 +49,7 @@ public class ContentLayout extends StageLayout {
 
     @SuppressWarnings("deprecation")
     @Override
-    protected boolean fitSystemWindows(@NotNull Rect insets) {
+    protected boolean fitSystemWindows(@NonNull Rect insets) {
         mFitPaddingLeft = 0;
         mFitPaddingTop = 0;
         mFitPaddingRight = 0;
