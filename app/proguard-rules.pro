@@ -47,3 +47,6 @@
     void set*(***);
     *** get*();
 }
+
+# I want to track the error in them
+-keep class android.support.v7.widget.StaggeredGridLayoutManager {*;}
