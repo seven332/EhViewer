@@ -140,8 +140,8 @@ public class DetailParser {
                             //+ "<tr><td[^<>]*>Resized:</td><td[^<>]*>([^<>]+)</td></tr>" // resized
                             + "<tr><td[^<>]*>Parent:</td><td[^<>]*>(?:<a[^<>]*>)?([^<>]+)(?:</a>)?</td></tr>" // parent
                             + "<tr><td[^<>]*>Visible:</td><td[^<>]*>([^<>]+)</td></tr>" // visible
-                            + "<tr><td[^<>]*>Language:</td><td[^<>]*>([^<>]+)</td></tr>" // language
-                            + "<tr><td[^<>]*>File Size:</td><td[^<>]*>([^<>]+)<span[^<>]*>([^<>]+)</span></td></tr>" // File size and resize
+                            + "<tr><td[^<>]*>Language:</td><td[^<>]*>([^<>]+)(?:<span[^<>]*>[^<>]*</span>)?</td></tr>" // language
+                            + "<tr><td[^<>]*>File Size:</td><td[^<>]*>([^<>]+)(?:<span[^<>]*>([^<>]+)</span>)?</td></tr>" // File size and resize
                             + "<tr><td[^<>]*>Length:</td><td[^<>]*>([\\d|,]+) pages</td></tr>" // pages
                             + "<tr><td[^<>]*>Favorited:</td><[^<>]*>([^<>]+)</td></tr>" // Favorite times  ([\d|,]+) times or Never
                             + ".+"
