@@ -16,12 +16,12 @@
 
 package com.hippo.ehviewer.ehclient;
 
+import com.hippo.ehviewer.util.Log;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.hippo.ehviewer.util.Log;
 
 public class EdDetailParser {
 
@@ -80,7 +80,7 @@ public class EdDetailParser {
                     return false;
                 }
 
-                p = Pattern.compile("<td class=\"gdt1\">Images:</td><td class=\"gdt2\">([\\d,]+) ");
+                p = Pattern.compile("<tr><td[^<>]*>Length:</td><td[^<>]*>([\\d|,]+) pages</td></tr>");
                 m = p.matcher(body);
                 if (m.find())
                     imageNum = Integer.valueOf(m.group(1).replace(",", ""));

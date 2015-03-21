@@ -16,19 +16,19 @@
 
 package com.hippo.ehviewer.ehclient;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.LargePreviewList;
 import com.hippo.ehviewer.data.NormalPreviewList;
 import com.hippo.ehviewer.data.PreviewList;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Utils;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DetailParser {
 
@@ -125,24 +125,27 @@ public class DetailParser {
         // Get detail
         if ((mode & DETAIL) != 0) {
             p = Pattern
-                    .compile("<div id=\"gd1\"><img src=\"([^\"]+)\"[^<>]+/></div>" //  thumb
+                    .compile("<div id=\"gd1\"><img src=\"([^\"]+)\"[^<>]+></div>" //  thumb
                             + "</div>"
                             + "<div id=\"gd2\">"
                             + "<h1 id=\"gn\">([^<>]+)</h1>" // title
                             + "<h1 id=\"gj\">([^<>]*)</h1>" // title_jpn might be empty string
                             + "</div>"
                             + ".+"
-                            + "<div id=\"gdc\"><a[^<>]+><[^<>]*alt=\"([\\w|\\-]+)\"[^<>]*/></a></div>" // category
+                            + "<div id=\"gdc\"><a[^<>]+><[^<>]*alt=\"([\\w|\\-]+)\"[^<>]*></a></div>" // category
                             + "<div id=\"gdn\"><a[^<>]+>([^<>]+)</a>" // uploader
                             + ".+"
                             + "<tr><td[^<>]*>Posted:</td><td[^<>]*>([\\w|\\-|\\s|:]+)</td></tr>" // posted
-                            + "<tr><td[^<>]*>Images:</td><td[^<>]*>([\\d]+) @ ([\\w|\\.|\\s]+)</td></tr>" // pages and size
-                            + "<tr><td[^<>]*>Resized:</td><td[^<>]*>([^<>]+)</td></tr>" // resized
+                            //+ "<tr><td[^<>]*>Images:</td><td[^<>]*>([\\d]+) @ ([\\w|\\.|\\s]+)</td></tr>" // pages and size
+                            //+ "<tr><td[^<>]*>Resized:</td><td[^<>]*>([^<>]+)</td></tr>" // resized
                             + "<tr><td[^<>]*>Parent:</td><td[^<>]*>(?:<a[^<>]*>)?([^<>]+)(?:</a>)?</td></tr>" // parent
                             + "<tr><td[^<>]*>Visible:</td><td[^<>]*>([^<>]+)</td></tr>" // visible
                             + "<tr><td[^<>]*>Language:</td><td[^<>]*>([^<>]+)</td></tr>" // language
+                            + "<tr><td[^<>]*>File Size:</td><td[^<>]*>([^<>]+)<span[^<>]*>([^<>]+)</span></td></tr>" // File size and resize
+                            + "<tr><td[^<>]*>Length:</td><td[^<>]*>([\\d|,]+) pages</td></tr>" // pages
+                            + "<tr><td[^<>]*>Favorited:</td><[^<>]*>([^<>]+)</td></tr>" // Favorite times  ([\d|,]+) times or Never
                             + ".+"
-                            + "<td id=\"grt3\">\\(<span id=\"rating_count\">([\\d|,]+)</span>\\)</td>" // people
+                            + "<td id=\"grt3\"><span id=\"rating_count\">([\\d|,]+)</span></td>" // people
                             + "</tr>"
                             + "<tr><td[^<>]*>([^<>]+)</td>" // rating
                             + ".+"
@@ -157,27 +160,28 @@ public class DetailParser {
                 category = EhUtils.getCategory(m.group(4));
                 uploader = m.group(5);
                 posted = m.group(6);
-                pages = Integer.parseInt(m.group(7));
-                size = m.group(8);
-                resized = m.group(9);
-                parent = m.group(10);
-                visible = m.group(11);
-                language = m.group(12);
-                people = Integer.parseInt(m.group(13).replace(",", ""));
+                parent = m.group(7);
+                visible = m.group(8);
+                language = Utils.unescapeXml(m.group(9)).trim();
+                size = Utils.unescapeXml(m.group(10)).trim();
+                resized = m.group(11);
+                pages = Integer.parseInt(m.group(12).replace(",", ""));
+                // favoriteTimes = m.group(13)
+                people = Integer.parseInt(m.group(14).replace(",", ""));
 
                 Pattern pattern = Pattern.compile("([\\d|\\.]+)");
-                Matcher matcher = pattern.matcher(m.group(14));
+                Matcher matcher = pattern.matcher(m.group(15));
                 if (matcher.find())
                     rating = Float.parseFloat(matcher.group(1));
                 else
                     rating = Float.NaN;
 
-                firstPage = m.group(15);
+                firstPage = m.group(16);
             }
         }
         // Get tag
         if ((mode & TAG) != 0) {
-            tags = new LinkedHashMap<String, LinkedList<String>>();
+            tags = new LinkedHashMap<>();
             p = Pattern
                     .compile("<tr><td[^<>]+>([\\w\\s]+):</td><td>(?:<div[^<>]+><a[^<>]+>[\\w\\s]+</a></div>)+</td></tr>");
             m = p.matcher(body);
