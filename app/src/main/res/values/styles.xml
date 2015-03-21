@@ -15,6 +15,7 @@
   -->
 <resources>
 
+    <!-- TextAppearance -->
     <style name="TextAppearance" parent="TextAppearance.AppCompat">
     </style>
 
@@ -67,6 +68,19 @@
         <item name="android:minWidth">88dp</item>
         <item name="android:padding">@dimen/card_button_padding</item>
         <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
+    <!-- Progress Bar -->
+    <style name="ProgressBar" parent="android:Widget.ProgressBar">
+        <item name="android:indeterminateDrawable">@drawable/progress_medium_material</item>
+    </style>
+
+    <style name="ProgressBar.Small" parent="android:Widget.ProgressBar.Small">
+        <item name="android:indeterminateDrawable">@drawable/progress_small_material</item>
+    </style>
+
+    <style name="ProgressBar.Large" parent="android:Widget.ProgressBar.Large">
+        <item name="android:indeterminateDrawable">@drawable/progress_large_material</item>
     </style>
 
 </resources>

@@ -19,12 +19,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.hippo.widget.FixedAspectImageView
-        android:layout_width="240dp"
-        android:layout_height="240dp"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_happy"
-        android:scaleType="fitXY"
-        android:contentDescription="@null"/>
+    <ProgressBar
+        style="@style/ProgressBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_gravity="left|top"/>
 
+    <ProgressBar
+        style="@style/ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar2"
+        android:layout_gravity="left|center_vertical"/>
+
+    <ProgressBar
+        style="@style/ProgressBar.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar3"
+        android:layout_gravity="left|bottom"/>
 </FrameLayout>
