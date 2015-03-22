@@ -16,15 +16,6 @@
 
 package com.hippo.ehviewer.ui;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -67,6 +58,7 @@ import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.preference.ListPreference;
+import com.hippo.ehviewer.util.AppUtils;
 import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.DialogUtils;
@@ -79,6 +71,15 @@ import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.CategoryTable;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.SuggestionHelper;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class SettingsActivity extends AbsPreferenceActivity {
     @SuppressWarnings("unused")
@@ -805,10 +806,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 }
 
             } else if (KEY_AUTHOR.equals(key)) {
-                Intent i = new Intent(Intent.ACTION_SENDTO);
-                i.setData(Uri.parse("mailto:ehviewersu@gmail.com"));
-                i.putExtra(Intent.EXTRA_SUBJECT, "About EhViewer");
-                startActivity(i);
+                AppUtils.sendEmail(getActivity(), "ehviewersu@gmail.com",
+                        "About EhViewer", null);
 
             } else if (KEY_TWITTER.equals(key)) {
                 new MaterialAlertDialog.Builder(getActivity())

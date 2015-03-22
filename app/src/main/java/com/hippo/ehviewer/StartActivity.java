@@ -19,7 +19,6 @@ package com.hippo.ehviewer;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.util.Linkify;
 import android.view.View;
@@ -31,6 +30,7 @@ import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.network.Network;
 import com.hippo.ehviewer.ui.AbsActivity;
 import com.hippo.ehviewer.ui.GalleryListActivity;
+import com.hippo.ehviewer.util.AppUtils;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.Secret;
@@ -160,11 +160,9 @@ public class StartActivity extends AbsActivity {
                                                     return true;
                                                 }
                                             }).show();
-                            Intent i = new Intent(Intent.ACTION_SENDTO);
-                            i.setData(Uri.parse("mailto:ehviewersu@gmail.com"));
-                            i.putExtra(Intent.EXTRA_SUBJECT, "I found a bug in EhViewer !");
-                            i.putExtra(Intent.EXTRA_TEXT, lastCrash + "======== Description ========\n" + et.getText().toString());
-                            startActivity(i);
+                            AppUtils.sendEmail(StartActivity.this, "ehviewersu@gmail.com",
+                                    "I found a bug in EhViewer !",
+                                    lastCrash + "======== Description ========\n" + et.getText().toString());
                             lastCrash = null;
                             break;
                         case MaterialAlertDialog.NEGATIVE:
