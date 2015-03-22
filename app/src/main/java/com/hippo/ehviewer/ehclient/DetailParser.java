@@ -236,7 +236,7 @@ public class DetailParser {
         // Get comment
         if ((mode & COMMENT) != 0) {
             p = Pattern
-                    .compile("<div class=\"c3\">Posted on ([^<>]+) by <a[^<>]+>([^<>]+)</a>.+?<div class=\"c6\"[^>]*>(.+?)</div><div class=\"c[78]\"");
+                    .compile("<div class=\"c3\">Posted on ([^<>]+) by: &nbsp; <a[^<>]+>([^<>]+)</a>.+?<div class=\"c6\"[^>]*>(.+?)</div><div class=\"c[78]\"");
             m = p.matcher(body);
             comments = new LinkedList<Comment>();
             while (m.find()) {
