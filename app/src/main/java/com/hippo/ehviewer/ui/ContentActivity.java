@@ -18,6 +18,7 @@ package com.hippo.ehviewer.ui;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 
 import com.hippo.content.VectorContext;
@@ -60,7 +61,7 @@ public class ContentActivity extends StageActivity {
     }
 
     @Override
-    public StageLayout getStageLayout() {
+    public @NonNull StageLayout getStageLayout() {
         return mContentLayout;
     }
 

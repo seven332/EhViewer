@@ -153,9 +153,10 @@ public abstract class Scene {
         }
     }
 
+    /*
     void attachToStageAsPreScene() {
-        // TODO
     }
+    */
 
     // Remove scene view from stage layout
     void detachFromeStage() {
@@ -168,9 +169,11 @@ public abstract class Scene {
         getStageActivity().attachSceneToStage(this);
     }
 
+    /*
     void doAttachToStageAsPreScene() {
         getStageActivity().attachSceneToStageAsPreScene(this);
     }
+    */
 
     void doDetachFromeStage() {
         getStageActivity().detachSceneFromStage(this);
@@ -226,6 +229,6 @@ public abstract class Scene {
     }
 
     public interface ActivityResultListener {
-        public void onGetResult(int resultCode, Intent data);
+        void onGetResult(int resultCode, Intent data);
     }
 }

@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.SparseArray;
+import android.view.View;
 
 import com.hippo.ehviewer.ui.AbsActionBarActivity;
 import com.hippo.util.IntIdGenerator;
@@ -36,7 +37,7 @@ public abstract class StageActivity extends AbsActionBarActivity {
         sSceneManager = sceneManager;
     }
 
-    public abstract StageLayout getStageLayout();
+    public abstract @NonNull StageLayout getStageLayout();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,16 +54,27 @@ public abstract class StageActivity extends AbsActionBarActivity {
     }
 
     void attachSceneToStage(Scene scene) {
-        getStageLayout().addView(scene.getSceneView());
+        View sceneView = scene.getSceneView();
+        if (sceneView != null) {
+            getStageLayout().addView(sceneView);
+        }
     }
 
+    /*
     void attachSceneToStageAsPreScene(Scene scene) {
         StageLayout stageLayout = getStageLayout();
-        stageLayout.addView(scene.getSceneView(), stageLayout.getChildCount() - 1);
+        View sceneView = scene.getSceneView();
+        if (sceneView != null) {
+            stageLayout.addView(sceneView, stageLayout.getChildCount() - 1);
+        }
     }
+    */
 
     void detachSceneFromStage(Scene scene) {
-        getStageLayout().removeView(scene.getSceneView());
+        View sceneView = scene.getSceneView();
+        if (sceneView != null) {
+            getStageLayout().removeView(sceneView);
+        }
     }
 
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer) {
