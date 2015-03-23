@@ -21,15 +21,10 @@
 
     <ImageView
         android:id="@+id/haha"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_happy"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Click"
-        android:id="@+id/test_button"
-        android:layout_gravity="center_horizontal|bottom"/>
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="bottom|right"
+        android:src="@drawable/ic_happy"
+        android:scaleType="fitXY"/>
 
 </FrameLayout>

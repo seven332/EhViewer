@@ -44,18 +44,27 @@ public abstract class Scene {
     }
 
     // If there is no StageActivity for SceneManager, yout will get AssertError
-    public StageActivity getStageActivity() {
+    public @NonNull StageActivity getStageActivity() {
         StageActivity stageActivity = sSceneManager.getStageActivity();
         AssertUtils.assertNotNull("StageActivity is null", stageActivity);
         return stageActivity;
     }
 
-    View getSceneView() {
+    @Nullable View getSceneView() {
         return mSceneView;
     }
 
+    public void startScene(@NonNull Class sceneClass) {
+        sSceneManager.startScene(sceneClass, null, null);
+    }
+
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer) {
-        sSceneManager.startScene(sceneClass, announcer);
+        sSceneManager.startScene(sceneClass, announcer, null);
+    }
+
+    public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer,
+            @Nullable Curtain curtain) {
+        sSceneManager.startScene(sceneClass, announcer, curtain);
     }
 
     public final void finish() {
@@ -78,11 +87,13 @@ public abstract class Scene {
         onPause();
     }
 
-    void destroy() {
+    void destroy(boolean removeScene) {
         onDestroy();
 
-        // Make sure scene view is detached from stage
-        detachFromeStage();
+        if (removeScene) {
+            // Make sure scene view is detached from stage
+            detachFromeStage();
+        }
     }
 
     /**

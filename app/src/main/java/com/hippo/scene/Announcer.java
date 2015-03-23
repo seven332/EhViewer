@@ -17,12 +17,13 @@ package com.hippo.scene;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import java.io.Serializable;
 
 public class Announcer {
 
-    private Bundle mExtras;
+    private @Nullable Bundle mExtras;
 
     public boolean getBooleanExtra(String name, boolean defaultValue) {
         return mExtras == null ? defaultValue :

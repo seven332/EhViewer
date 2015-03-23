@@ -15,5 +15,20 @@
 
 package com.hippo.scene;
 
-public class Curtain {
+import android.support.annotation.NonNull;
+
+public abstract class Curtain {
+
+    public abstract void open(@NonNull Scene enter, @NonNull Scene exit);
+
+    public abstract void close(@NonNull Scene enter, @NonNull Scene exit);
+
+    /**
+     * Call it after {@link #close}
+     *
+     * @param scene the scene
+     */
+    protected void dispatchDetachFromeStage(Scene scene) {
+        scene.detachFromeStage();
+    }
 }

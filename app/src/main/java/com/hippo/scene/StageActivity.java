@@ -66,7 +66,7 @@ public abstract class StageActivity extends AbsActionBarActivity {
     }
 
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer) {
-        sSceneManager.startScene(sceneClass, announcer);
+        sSceneManager.startScene(sceneClass, announcer, null);
     }
 
     /**

@@ -31,6 +31,7 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.ListUrlBuilder;
@@ -38,6 +39,7 @@ import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.scene.Scene;
+import com.hippo.scene.TransitionCurtain;
 import com.hippo.widget.Appbar;
 
 public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutHelper,
@@ -80,6 +82,16 @@ public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutH
         // List View
         // TODO
         mListView = inflater.inflate(R.layout.fragment_list, null);
+
+        Button bb = (Button) mListView.findViewById(R.id.test_button);
+        bb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startScene(TestScene.class, null, new TransitionCurtain(new TransitionCurtain.ViewPair[] {
+                        new TransitionCurtain.ViewPair(R.id.haha, R.id.haha)
+                }));
+            }
+        });
 
         // Main View
         View sceneView = inflater.inflate(R.layout.scene_gallery_list, null);

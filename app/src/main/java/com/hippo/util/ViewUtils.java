@@ -22,6 +22,7 @@ import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.ViewTreeObserver;
 
 public final class ViewUtils {
 
@@ -44,6 +45,17 @@ public final class ViewUtils {
      * @param location an array of two integers in which to hold the coordinates
      */
     public static void getLocationInWindow(View view, int[] location) {
+        getLocationInAncestor(view, location, android.R.id.content);
+    }
+
+    /**
+     * Get view location in ths ancestor
+     *
+     * @param view
+     * @param location
+     * @param ancestorId
+     */
+    public static void getLocationInAncestor(View view, int[] location, int ancestorId) {
         if (location == null || location.length < 2) {
             throw new IllegalArgumentException(
                     "location must be an array of two integers");
@@ -57,7 +69,45 @@ public final class ViewUtils {
         ViewParent viewParent = view.getParent();
         while (viewParent instanceof View) {
             view = (View) viewParent;
-            if (view.getId() == android.R.id.content) {
+            if (view.getId() == ancestorId) {
+                break;
+            }
+
+            position[0] -= view.getScrollX();
+            position[1] -= view.getScrollY();
+
+            position[0] += view.getLeft();
+            position[1] += view.getTop();
+
+            viewParent = view.getParent();
+        }
+
+        location[0] = (int) (position[0] + 0.5f);
+        location[1] = (int) (position[1] + 0.5f);
+    }
+
+    /**
+     * Get view location in ths ancestor
+     *
+     * @param view
+     * @param location
+     * @param ancestor
+     */
+    public static void getLocationInAncestor(View view, int[] location, View ancestor) {
+        if (location == null || location.length < 2) {
+            throw new IllegalArgumentException(
+                    "location must be an array of two integers");
+        }
+
+        float[] position = new float[2];
+
+        position[0] = view.getLeft();
+        position[1] = view.getTop();
+
+        ViewParent viewParent = view.getParent();
+        while (viewParent instanceof View) {
+            view = (View) viewParent;
+            if (viewParent == ancestor) {
                 break;
             }
 
@@ -281,4 +331,18 @@ public final class ViewUtils {
         return result;
     }
 
+    /**
+     * removeOnGlobalLayoutListener
+     *
+     * @param vto
+     * @param l
+     */
+    public static void removeOnGlobalLayoutListener(ViewTreeObserver vto,
+            ViewTreeObserver.OnGlobalLayoutListener l) {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            vto.removeGlobalOnLayoutListener(l);
+        } else {
+            vto.removeOnGlobalLayoutListener(l);
+        }
+    }
 }

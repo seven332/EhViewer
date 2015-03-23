@@ -18,6 +18,7 @@ package com.hippo.scene;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
 
 import com.hippo.util.Log;
 
@@ -27,7 +28,7 @@ class SceneManager {
 
     private static final String TAG = SceneManager.class.getSimpleName();
 
-    private Stack<Scene> mSceneStack = new Stack<>();
+    private Stack<Pair<Scene, Curtain>> mSceneStack = new Stack<>();
     private StageActivity mStageActivity;
 
     // Should only be called by SceneApplication
@@ -42,7 +43,8 @@ class SceneManager {
         return mStageActivity;
     }
 
-    void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer) {
+    void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer,
+            @Nullable Curtain curtain) {
         Scene scene;
         try {
             scene = (Scene) sceneClass.newInstance();
@@ -55,23 +57,53 @@ class SceneManager {
             throw new IllegalStateException(sceneClass.getName() + " can not cast to scene");
         }
 
-        Scene topScene = getTopState();
-        if (topScene != null) {
-            topScene.pause();
+        Scene previousState = getTopState();
+        if (previousState != null) {
+            previousState.pause();
         }
 
-        mSceneStack.push(scene);
+        mSceneStack.push(new Pair<>(scene, curtain));
 
         scene.create(null);
         scene.resume();
+
+        // Do animation via curtain
+        if (curtain != null && previousState != null) {
+            curtain.open(scene, previousState);
+        }
     }
 
     void finishScene(@NonNull Scene scene) {
-        if (mSceneStack.remove(scene)) {
-            scene.destroy();
+        int index = getSceneIndex(scene);
+        if (index >= 0 && index < mSceneStack.size()) {
+            Pair<Scene, Curtain> pair = mSceneStack.remove(index);
+            Curtain curtain = pair.second;
+            Scene previousState = getTopState();
+
+            // Do animation via curtain
+            if (curtain != null) {
+                scene.destroy(false);
+
+                if (previousState != null) {
+                    curtain.open(previousState, scene);
+                }
+            } else {
+                scene.destroy(true);
+            }
         } else {
             Log.e(TAG, "The scene is not in stage");
         }
+    }
+
+    private int getSceneIndex(@NonNull Scene scene) {
+        int size  = mSceneStack.size();
+        while (--size >= 0) {
+            Pair<Scene, Curtain> pair = mSceneStack.get(size);
+            if (scene.equals(pair.first)) {
+                return size;
+            }
+        }
+        return -1;
     }
 
     boolean onBackPressed() {
@@ -87,29 +119,32 @@ class SceneManager {
 
     private Scene getTopState() {
         if (!mSceneStack.isEmpty()) {
-            return mSceneStack.peek();
+            return mSceneStack.peek().first;
         } else {
             return null;
         }
     }
 
+    /*
     private Scene getSecondTopState() {
         int secondTopIndex = mSceneStack.size() - 2;
         if (secondTopIndex >= 0) {
-            return mSceneStack.get(secondTopIndex);
+            return mSceneStack.get(secondTopIndex).first;
         } else {
             return null;
         }
     }
+    */
 
     protected void onSaveInstanceState(Bundle outState) {
-        for (Scene scene : mSceneStack) {
-            scene.saveInstanceState(outState);
+        for (Pair<Scene, Curtain> p : mSceneStack) {
+            p.first.saveInstanceState(outState);
         }
     }
 
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        for (Scene scene : mSceneStack) {
+        for (Pair<Scene, Curtain> p : mSceneStack) {
+            Scene scene = p.first;
             // Recreate
             scene.create(savedInstanceState);
             scene.resume();
