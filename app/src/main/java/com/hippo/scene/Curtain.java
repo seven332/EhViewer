@@ -16,8 +16,23 @@
 package com.hippo.scene;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 public abstract class Curtain {
+
+    private int mPreviousSceneCode;
+
+    void setPreviousScene(@Nullable Scene pScene) {
+        if (pScene == null) {
+            mPreviousSceneCode = -1;
+        } else {
+            mPreviousSceneCode = pScene.hashCode();
+        }
+    }
+
+    boolean isPreviousScene(@Nullable Scene scene) {
+        return scene != null && scene.hashCode() == mPreviousSceneCode;
+    }
 
     /**
      * Called when
@@ -40,10 +55,10 @@ public abstract class Curtain {
     public abstract boolean isInAnimation();
 
     protected void dispatchOpenFinished(@NonNull Scene enter, @NonNull Scene exit) {
-
+        exit.openFinished();
     }
 
     protected void dispatchCloseFinished(@NonNull Scene enter, @NonNull Scene exit) {
-        exit.detachFromeStage();
+        exit.closeFinished();
     }
 }

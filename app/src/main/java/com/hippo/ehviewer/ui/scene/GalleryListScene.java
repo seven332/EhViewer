@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -64,8 +63,8 @@ public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutH
 
     @SuppressLint("InflateParams")
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreate() {
+        super.onCreate();
 
         mActivity = (ContentActivity) getStageActivity();
         mResources = mActivity.getResources();

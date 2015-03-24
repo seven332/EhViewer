@@ -38,6 +38,8 @@ public class TransitionCurtain extends Curtain {
 
     private List<ObjectAnimator> mAnimList = new LinkedList<>();
 
+    private boolean mClearList = true;
+
     public TransitionCurtain(ViewPair[] viewPairArray) {
         mViewPairArray = viewPairArray;
     }
@@ -59,11 +61,14 @@ public class TransitionCurtain extends Curtain {
         colorAnim.addListener(new SimpleAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mAnimList.clear();
+                if (mClearList) {
+                    mAnimList.clear();
+                }
             }
         });
 
         colorAnim.start();
+
 
         mAnimList.add(colorAnim);
 
@@ -111,7 +116,11 @@ public class TransitionCurtain extends Curtain {
                     yAnim.addListener(new SimpleAnimatorListener() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
+                            dispatchOpenFinished(enter, exit);
                             ViewUtils.setVisibility(exitView, View.VISIBLE);
+
+                            // Hide previous scene
+                            // TODO remove from stage ?
                             ViewUtils.setVisibility(exit.getSceneView(), View.GONE);
                         }
                     });
@@ -133,8 +142,8 @@ public class TransitionCurtain extends Curtain {
     }
 
     @Override
-    public void close(@NonNull Scene enter, final @NonNull Scene exit) {
-
+    public void close(final @NonNull Scene enter, final @NonNull Scene exit) {
+        // Show previous scene
         ViewUtils.setVisibility(enter.getSceneView(), View.VISIBLE);
 
         // Handle background
@@ -142,7 +151,19 @@ public class TransitionCurtain extends Curtain {
         colorAnim.setEvaluator(ArgbEvaluator.getInstance());
         colorAnim.setDuration(ANIMATE_TIME);
 
+        colorAnim.addListener(new SimpleAnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (mClearList) {
+                    mAnimList.clear();
+                }
+            }
+        });
+
         colorAnim.start();
+
+        mAnimList.add(colorAnim);
+
 
         // Handle transit part
         for (ViewPair pair : mViewPairArray) {
@@ -180,13 +201,7 @@ public class TransitionCurtain extends Curtain {
             yAnim.addListener(new SimpleAnimatorListener() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    dispatchDetachFromeStage(exit);
-                    ViewUtils.setVisibility(enterView, View.VISIBLE);
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-                    dispatchDetachFromeStage(exit);
+                    dispatchCloseFinished(enter, exit);
                     ViewUtils.setVisibility(enterView, View.VISIBLE);
                 }
             });
@@ -196,15 +211,23 @@ public class TransitionCurtain extends Curtain {
             xAnim.start();
             yAnim.start();
 
+            mAnimList.add(scaleXAnim);
+            mAnimList.add(scaleYAnim);
+            mAnimList.add(xAnim);
+            mAnimList.add(yAnim);
+
             // TODO show other part progressively
         }
     }
 
     @Override
     public void endAnimation() {
+        mClearList = false;
         for (ObjectAnimator oa : mAnimList) {
             oa.end();
         }
+        mClearList = true;
+        mAnimList.clear();
     }
 
     @Override

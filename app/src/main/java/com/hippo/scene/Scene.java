@@ -44,16 +44,26 @@ public abstract class Scene {
     static final int SCENE_STATE_CLOSE = 4;
     static final int SCENE_STATE_PAUSE = 5;
 
+    private @Nullable Curtain mCurtain;
+
     private @Nullable FrameLayout mSceneView;
 
     private int mBackgroundColor = 0xffeeeeee; // TODO Need a better to set background color
 
-    private int mState = SCENE_STATE_CREATE;
+    private int mState;
 
     private static SceneManager sSceneManager;
 
     static void setSceneManager(SceneManager sceneManager) {
         sSceneManager = sceneManager;
+    }
+
+    void setCurtain(@Nullable Curtain curtain) {
+        mCurtain = curtain;
+    }
+
+    @Nullable Curtain getCurtain() {
+        return mCurtain;
     }
 
     // If there is no StageActivity for SceneManager, yout will get AssertError
@@ -97,8 +107,8 @@ public abstract class Scene {
         sSceneManager.finishScene(this);
     }
 
-    void create(Bundle savedInstanceState) {
-        onCreate(savedInstanceState);
+    void create() {
+        onCreate();
 
         if (mSceneView == null) {
             mSceneView = new FrameLayout(getStageActivity());
@@ -109,29 +119,28 @@ public abstract class Scene {
         attachToStage();
     }
 
-    void resume() {
-        onResume();
+    void destroy() {
+        onDestroy();
+    }
+
+    void open() {
+        onOpen();
+    }
+
+    void close() {
+        onClose();
     }
 
     void pause() {
         onPause();
     }
 
-    void destroy(boolean removeScene) {
-        onDestroy();
-
-        if (removeScene) {
-            // Make sure scene view is detached from stage
-            detachFromeStage();
-        }
+    void resume() {
+        onResume();
     }
 
-    /**
-     * It is called when scene is created
-     *
-     * @param savedInstanceState null for first time, non null for recrearte
-     */
-    protected void onCreate(Bundle savedInstanceState) {
+    void out() {
+        onOut();
     }
 
     public void setBackgroundColor(int bgColor) {
@@ -149,8 +158,6 @@ public abstract class Scene {
     }
 
     protected void setContentView(int resId) {
-        AssertUtils.assertNull("Only call setContentView once", mSceneView);
-
         StageActivity sa = getStageActivity();
         mSceneView = new FrameLayout(sa);
         initBackground(mSceneView);
@@ -159,8 +166,6 @@ public abstract class Scene {
     }
 
     protected void setContentView(View view) {
-        AssertUtils.assertNull("Only call setContentView once", mSceneView);
-
         StageActivity sa = getStageActivity();
         mSceneView = new FrameLayout(sa);
         initBackground(mSceneView);
@@ -173,15 +178,26 @@ public abstract class Scene {
         bg.setClickable(true);
     }
 
-    protected void onResume() {
-    }
-
-    protected void onPause() {
+    protected void onCreate() {
     }
 
     protected void onDestroy() {
     }
 
+    protected void onOpen() {
+    }
+
+    protected void onClose() {
+    }
+
+    protected void onPause() {
+    }
+
+    protected void onResume() {
+    }
+
+    protected void onOut() {
+    }
 
     /**
      * Finds a view that was identified by the id attribute from the XML that
@@ -228,11 +244,6 @@ public abstract class Scene {
         }
     }
 
-    /*
-    void attachToStageAsPreScene() {
-    }
-    */
-
     // Remove scene view from stage layout
     void detachFromeStage() {
         if (mSceneView != null && isInStage()) {
@@ -244,19 +255,29 @@ public abstract class Scene {
         getStageActivity().attachSceneToStage(this);
     }
 
-    /*
-    void doAttachToStageAsPreScene() {
-        getStageActivity().attachSceneToStageAsPreScene(this);
-    }
-    */
-
     void doDetachFromeStage() {
         getStageActivity().detachSceneFromStage(this);
     }
 
     public void onBackPressed() {
         // TODO First click to show finish animation, click again to finish the animation at once and it is finished
-        finish();
+
+        if (mCurtain != null && mCurtain.isInAnimation()) {
+            mCurtain.endAnimation();
+        } else if (!sSceneManager.endLegacyScene()) {
+            sSceneManager.finishScene(this);
+        }
+    }
+
+    void openFinished() {
+        open();
+        setState(Scene.SCENE_STATE_RUN);
+    }
+
+    void closeFinished() {
+        sSceneManager.removeLegacyScene(this);
+        setState(Scene.SCENE_STATE_DESTROY);
+        detachFromeStage();
     }
 
     // It is constant

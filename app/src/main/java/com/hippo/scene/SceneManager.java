@@ -18,7 +18,6 @@ package com.hippo.scene;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
 
 import com.hippo.util.Log;
 
@@ -28,8 +27,10 @@ class SceneManager {
 
     private static final String TAG = SceneManager.class.getSimpleName();
 
-    private Stack<Pair<Scene, Curtain>> mSceneStack = new Stack<>();
+    private Stack<Scene> mSceneStack = new Stack<>();
     private StageActivity mStageActivity;
+
+    private Scene mLegacyScene;
 
     // Should only be called by SceneApplication
     SceneManager() {
@@ -43,6 +44,7 @@ class SceneManager {
         return mStageActivity;
     }
 
+    // TODO check previousState state
     void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer,
             @Nullable Curtain curtain) {
         Scene scene;
@@ -56,56 +58,102 @@ class SceneManager {
         } catch (ClassCastException e) {
             throw new IllegalStateException(sceneClass.getName() + " can not cast to scene");
         }
+        scene.setCurtain(curtain);
 
         Scene previousState = getTopState();
+        mSceneStack.push(scene);
+
+        if (curtain != null) {
+            curtain.setPreviousScene(previousState);
+        }
+
         if (previousState != null) {
             previousState.pause();
+            scene.setState(Scene.SCENE_STATE_PAUSE);
         }
 
-        mSceneStack.push(new Pair<>(scene, curtain));
+        scene.setState(Scene.SCENE_STATE_CREATE);
+        scene.create();
 
-        scene.create(null);
-        scene.resume();
-
-        // Do animation via curtain
         if (curtain != null && previousState != null) {
+            scene.setState(Scene.SCENE_STATE_OPEN);
             curtain.open(scene, previousState);
+            // Set state run by curtain
+        } else {
+            scene.setState(Scene.SCENE_STATE_RUN);
         }
+    }
+
+    boolean endLegacyScene() {
+        if (mLegacyScene != null) {
+            Curtain curtain = mLegacyScene.getCurtain();
+            if (curtain != null && curtain.isInAnimation()) {
+                curtain.endAnimation();
+                mLegacyScene = null;
+                return true;
+            }
+        }
+        mLegacyScene = null;
+        return false;
     }
 
     void finishScene(@NonNull Scene scene) {
         int index = getSceneIndex(scene);
         if (index >= 0 && index < mSceneStack.size()) {
-            Pair<Scene, Curtain> pair = mSceneStack.remove(index);
-            Curtain curtain = pair.second;
-            Scene previousState = getTopState();
 
-            // Do animation via curtain
-            if (curtain != null) {
-                scene.destroy(false);
+            endLegacyScene();
+
+            if (index == 0) {
+                // It is the last scene, just finish the activity
+                mSceneStack.remove(index);
+                scene.destroy();
+                scene.setState(Scene.SCENE_STATE_DESTROY);
+                getStageActivity().finish();
+            } else {
+                // TODO check scene state
+                mSceneStack.remove(index);
+                Scene previousState = getTopState();
 
                 if (previousState != null) {
-                    curtain.close(previousState, scene);
+                    previousState.resume();
+                    scene.setState(Scene.SCENE_STATE_RUN);
                 }
-            } else {
-                scene.destroy(true);
+
+                scene.destroy();
+
+                Curtain curtain = scene.getCurtain();
+                if (curtain != null && previousState != null && curtain.isPreviousScene(previousState)) {
+                    scene.setState(Scene.SCENE_STATE_CLOSE);
+                    mLegacyScene = scene;
+                    curtain.close(previousState, scene);
+                    // detachFromeStage by curtain
+                } else {
+                    scene.setState(Scene.SCENE_STATE_DESTROY);
+                    scene.detachFromeStage();
+                }
             }
         } else {
             Log.e(TAG, "The scene is not in stage");
         }
     }
 
+    void removeLegacyScene(Scene scene) {
+        if (mLegacyScene == scene) {
+            mLegacyScene = null;
+        }
+    }
+
     private int getSceneIndex(@NonNull Scene scene) {
         int size  = mSceneStack.size();
         while (--size >= 0) {
-            Pair<Scene, Curtain> pair = mSceneStack.get(size);
-            if (scene.equals(pair.first)) {
+            if (scene.equals(mSceneStack.get(size))) {
                 return size;
             }
         }
         return -1;
     }
 
+    // TODO What if this scene is closing
     boolean onBackPressed() {
         Scene scene = getTopState();
         if (scene != null) {
@@ -119,36 +167,23 @@ class SceneManager {
 
     private Scene getTopState() {
         if (!mSceneStack.isEmpty()) {
-            return mSceneStack.peek().first;
+            return mSceneStack.peek();
         } else {
             return null;
         }
     }
-
-    /*
-    private Scene getSecondTopState() {
-        int secondTopIndex = mSceneStack.size() - 2;
-        if (secondTopIndex >= 0) {
-            return mSceneStack.get(secondTopIndex).first;
-        } else {
-            return null;
-        }
-    }
-    */
 
     protected void onSaveInstanceState(Bundle outState) {
-        for (Pair<Scene, Curtain> p : mSceneStack) {
-            Scene scene = p.first;
+        for (Scene scene : mSceneStack) {
             scene.saveInstanceState(outState);
         }
     }
 
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        for (Pair<Scene, Curtain> p : mSceneStack) {
-            Scene scene = p.first;
+        for (Scene scene : mSceneStack) {
             // Recreate
-            scene.create(savedInstanceState);
-            scene.resume();
+            // TODO might hide sceneView, curtain do it ?
+            scene.create();
             scene.restoreInstanceState(savedInstanceState);
         }
     }

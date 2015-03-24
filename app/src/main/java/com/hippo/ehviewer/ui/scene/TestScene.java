@@ -16,7 +16,6 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.content.res.Resources;
-import android.os.Bundle;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.ContentActivity;
@@ -28,8 +27,8 @@ public class TestScene extends Scene {
     private Resources mResources;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreate() {
+        super.onCreate();
         setContentView(R.layout.scene_test);
 
         mActivity = (ContentActivity) getStageActivity();
