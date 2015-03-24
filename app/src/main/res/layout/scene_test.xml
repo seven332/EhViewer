@@ -27,4 +27,12 @@
         android:src="@drawable/ic_happy"
         android:scaleType="fitXY"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Textaaaaaaaaaaaaaaaaaaaaaa"
+        android:id="@+id/bbbbbb"
+        android:layout_gravity="left|bottom"/>
+
 </FrameLayout>

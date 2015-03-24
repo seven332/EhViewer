@@ -19,16 +19,31 @@ import android.support.annotation.NonNull;
 
 public abstract class Curtain {
 
+    /**
+     * Called when
+     *
+     * @param enter the scene on the top of the scene stack
+     * @param exit the scene behind the enter scene
+     */
     public abstract void open(@NonNull Scene enter, @NonNull Scene exit);
 
     public abstract void close(@NonNull Scene enter, @NonNull Scene exit);
 
     /**
-     * Call it after {@link #close}
-     *
-     * @param scene the scene
+     * End open or close animation
      */
-    protected void dispatchDetachFromeStage(Scene scene) {
-        scene.detachFromeStage();
+    public abstract void endAnimation();
+
+    /**
+     * Is open or close animation running
+     */
+    public abstract boolean isInAnimation();
+
+    protected void dispatchOpenFinished(@NonNull Scene enter, @NonNull Scene exit) {
+
+    }
+
+    protected void dispatchCloseFinished(@NonNull Scene enter, @NonNull Scene exit) {
+        exit.detachFromeStage();
     }
 }

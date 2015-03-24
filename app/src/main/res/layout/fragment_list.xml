@@ -32,4 +32,12 @@
         android:id="@+id/test_button"
         android:layout_gravity="right|center_vertical"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/bbbbbb"
+        android:layout_gravity="center_horizontal|top"/>
+
 </FrameLayout>

@@ -87,7 +87,8 @@ public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutH
             @Override
             public void onClick(View v) {
                 startScene(TestScene.class, null, new TransitionCurtain(new TransitionCurtain.ViewPair[] {
-                        new TransitionCurtain.ViewPair(R.id.haha, R.id.haha)
+                        new TransitionCurtain.ViewPair(R.id.haha, R.id.haha),
+                        new TransitionCurtain.ViewPair(R.id.bbbbbb, R.id.bbbbbb)
                 }));
             }
         });

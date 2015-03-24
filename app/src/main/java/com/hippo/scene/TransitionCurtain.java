@@ -24,14 +24,19 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 
 import com.hippo.animation.ArgbEvaluator;
+import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.util.ViewUtils;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class TransitionCurtain extends Curtain {
 
-    private static long ANIMATE_DELAY = 500L;
     private static long ANIMATE_TIME = 800L;
 
     private ViewPair[] mViewPairArray;
+
+    private List<ObjectAnimator> mAnimList = new LinkedList<>();
 
     public TransitionCurtain(ViewPair[] viewPairArray) {
         mViewPairArray = viewPairArray;
@@ -51,7 +56,16 @@ public class TransitionCurtain extends Curtain {
         colorAnim.setEvaluator(ArgbEvaluator.getInstance());
         colorAnim.setDuration(ANIMATE_TIME);
 
+        colorAnim.addListener(new SimpleAnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mAnimList.clear();
+            }
+        });
+
         colorAnim.start();
+
+        mAnimList.add(colorAnim);
 
         // Handle transit part
         for (ViewPair pair : mViewPairArray) {
@@ -98,11 +112,7 @@ public class TransitionCurtain extends Curtain {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             ViewUtils.setVisibility(exitView, View.VISIBLE);
-                        }
-
-                        @Override
-                        public void onAnimationCancel(Animator animation) {
-                            ViewUtils.setVisibility(exitView, View.VISIBLE);
+                            ViewUtils.setVisibility(exit.getSceneView(), View.GONE);
                         }
                     });
 
@@ -110,6 +120,11 @@ public class TransitionCurtain extends Curtain {
                     scaleYAnim.start();
                     xAnim.start();
                     yAnim.start();
+
+                    mAnimList.add(scaleXAnim);
+                    mAnimList.add(scaleYAnim);
+                    mAnimList.add(xAnim);
+                    mAnimList.add(yAnim);
 
                     // TODO show other part progressively
                 }
@@ -119,6 +134,8 @@ public class TransitionCurtain extends Curtain {
 
     @Override
     public void close(@NonNull Scene enter, final @NonNull Scene exit) {
+
+        ViewUtils.setVisibility(enter.getSceneView(), View.VISIBLE);
 
         // Handle background
         ObjectAnimator colorAnim = ObjectAnimator.ofInt(exit, "backgroundColor", Color.TRANSPARENT);
@@ -183,6 +200,18 @@ public class TransitionCurtain extends Curtain {
         }
     }
 
+    @Override
+    public void endAnimation() {
+        for (ObjectAnimator oa : mAnimList) {
+            oa.end();
+        }
+    }
+
+    @Override
+    public boolean isInAnimation() {
+        return !mAnimList.isEmpty();
+    }
+
     public static class ViewPair {
 
         private int[] mIds;
@@ -196,26 +225,23 @@ public class TransitionCurtain extends Curtain {
             mHelper = helper;
         }
 
-        private @Nullable View getFromView(Scene scene) {
-            View sceneView = scene.getSceneView();
-
-            if (mIds != null && sceneView != null) {
-                return sceneView.findViewById(mIds[0]);
+        private @Nullable View getFromView(@NonNull Scene scene) {
+            if (mIds != null) {
+                return scene.findViewById(mIds[0]);
             }
             if (mHelper != null) {
-                return mHelper.getFromView(sceneView);
+                return mHelper.getFromView(scene.getSceneView());
             }
             return null;
         }
 
-        private @Nullable View getToView(Scene scene) {
-            View sceneView = scene.getSceneView();
+        private @Nullable View getToView(@NonNull Scene scene) {
 
-            if (mIds != null && sceneView != null) {
-                return sceneView.findViewById(mIds[1]);
+            if (mIds != null) {
+                return scene.findViewById(mIds[1]);
             }
             if (mHelper != null) {
-                return mHelper.getToView(sceneView);
+                return mHelper.getToView(scene.getSceneView());
             }
             return null;
         }
@@ -226,24 +252,5 @@ public class TransitionCurtain extends Curtain {
         public abstract View getFromView(@Nullable View sceneView);
 
         public abstract View getToView(@Nullable View sceneView);
-    }
-
-    public class SimpleAnimatorListener implements Animator.AnimatorListener {
-
-        @Override
-        public void onAnimationStart(Animator animation) {
-        }
-
-        @Override
-        public void onAnimationEnd(Animator animation) {
-        }
-
-        @Override
-        public void onAnimationCancel(Animator animation) {
-        }
-
-        @Override
-        public void onAnimationRepeat(Animator animation) {
-        }
     }
 }

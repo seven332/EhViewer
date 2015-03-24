@@ -16,6 +16,8 @@
 <resources>
 
     <style name="AppTheme.Content" parent="AppTheme.NoActionBar">
+        <item name="android:windowBackground">@null</item>
+
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">true</item>
 

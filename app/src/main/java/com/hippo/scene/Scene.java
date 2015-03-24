@@ -37,9 +37,18 @@ import com.hippo.util.AssertUtils;
  */
 public abstract class Scene {
 
+    static final int SCENE_STATE_CREATE = 0;
+    static final int SCENE_STATE_RUN = 1;
+    static final int SCENE_STATE_DESTROY = 2;
+    static final int SCENE_STATE_OPEN = 3;
+    static final int SCENE_STATE_CLOSE = 4;
+    static final int SCENE_STATE_PAUSE = 5;
+
     private @Nullable FrameLayout mSceneView;
 
     private int mBackgroundColor = 0xffeeeeee; // TODO Need a better to set background color
+
+    private int mState = SCENE_STATE_CREATE;
 
     private static SceneManager sSceneManager;
 
@@ -74,6 +83,14 @@ public abstract class Scene {
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer,
             @Nullable Curtain curtain) {
         sSceneManager.startScene(sceneClass, announcer, curtain);
+    }
+
+    int getState() {
+        return mState;
+    }
+
+    void setState(int state) {
+        mState = state;
     }
 
     public final void finish() {
@@ -130,8 +147,6 @@ public abstract class Scene {
     public int getBackgroundColor() {
         return mBackgroundColor;
     }
-
-
 
     protected void setContentView(int resId) {
         AssertUtils.assertNull("Only call setContentView once", mSceneView);
@@ -240,6 +255,7 @@ public abstract class Scene {
     }
 
     public void onBackPressed() {
+        // TODO First click to show finish animation, click again to finish the animation at once and it is finished
         finish();
     }
 
