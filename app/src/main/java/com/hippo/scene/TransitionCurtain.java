@@ -15,17 +15,21 @@
 
 package com.hippo.scene;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
+import com.hippo.animation.ArgbEvaluator;
 import com.hippo.util.ViewUtils;
 
 public class TransitionCurtain extends Curtain {
 
-    private static long ANIMATE_TIME = 300L;
+    private static long ANIMATE_DELAY = 500L;
+    private static long ANIMATE_TIME = 800L;
 
     private ViewPair[] mViewPairArray;
 
@@ -33,14 +37,28 @@ public class TransitionCurtain extends Curtain {
         mViewPairArray = viewPairArray;
     }
 
+
+    // Make background from transport to default.
+    // Invisible other
     @Override
     public void open(final @NonNull Scene enter, final @NonNull Scene exit) {
 
+        // Handle background
+        final int bgColor = enter.getBackgroundColor();
+        enter.setBackgroundColor(Color.TRANSPARENT);
+
+        ObjectAnimator colorAnim = ObjectAnimator.ofInt(enter, "backgroundColor", bgColor);
+        colorAnim.setEvaluator(ArgbEvaluator.getInstance());
+        colorAnim.setDuration(ANIMATE_TIME);
+
+        colorAnim.start();
+
+        // Handle transit part
         for (ViewPair pair : mViewPairArray) {
             final View enterView = pair.getToView(enter);
             final View exitView = pair.getFromView(exit);
             if (enterView == null || exitView == null) {
-                // Can't get to view
+                // Can't get view
                 continue;
             }
 
@@ -53,9 +71,9 @@ public class TransitionCurtain extends Curtain {
                     ViewUtils.removeOnGlobalLayoutListener(enterView.getViewTreeObserver(), this);
 
                     int[] startloaction = new int[2];
-                    ViewUtils.getLocationInAncestor(exitView, startloaction, exit.getStageActivity().getStageLayout());
+                    ViewUtils.getLocationInAncestor(exitView, startloaction, exit.getSceneView());
                     int[] endloaction = new int[2];
-                    ViewUtils.getLocationInAncestor(enterView, endloaction, enter.getStageActivity().getStageLayout());
+                    ViewUtils.getLocationInAncestor(enterView, endloaction, enter.getSceneView());
                     int startWidth = exitView.getWidth();
                     int startHeight = exitView.getHeight();
                     int endWidth = enterView.getWidth();
@@ -63,6 +81,8 @@ public class TransitionCurtain extends Curtain {
 
                     ViewUtils.setVisibility(exitView, View.INVISIBLE);
                     ViewUtils.setVisibility(enterView, View.VISIBLE);
+                    enterView.setPivotX(0);
+                    enterView.setPivotY(0);
 
                     // Start animation
                     ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(enterView, "scaleX", (float) startWidth / endWidth, 1f);
@@ -74,18 +94,93 @@ public class TransitionCurtain extends Curtain {
                     ObjectAnimator yAnim = ObjectAnimator.ofFloat(enterView, "y", startloaction[1], endloaction[1]);
                     yAnim.setDuration(ANIMATE_TIME);
 
+                    yAnim.addListener(new SimpleAnimatorListener() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            ViewUtils.setVisibility(exitView, View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+                            ViewUtils.setVisibility(exitView, View.VISIBLE);
+                        }
+                    });
+
                     scaleXAnim.start();
                     scaleYAnim.start();
                     xAnim.start();
                     yAnim.start();
+
+                    // TODO show other part progressively
                 }
             });
         }
     }
 
     @Override
-    public void close(@NonNull Scene enter, @NonNull Scene exit) {
-        dispatchDetachFromeStage(exit);
+    public void close(@NonNull Scene enter, final @NonNull Scene exit) {
+
+        // Handle background
+        ObjectAnimator colorAnim = ObjectAnimator.ofInt(exit, "backgroundColor", Color.TRANSPARENT);
+        colorAnim.setEvaluator(ArgbEvaluator.getInstance());
+        colorAnim.setDuration(ANIMATE_TIME);
+
+        colorAnim.start();
+
+        // Handle transit part
+        for (ViewPair pair : mViewPairArray) {
+            final View enterView = pair.getFromView(enter);
+            final View exitView = pair.getToView(exit);
+            if (enterView == null || exitView == null) {
+                // Can't get view
+                continue;
+            }
+
+            int[] startloaction = new int[2];
+            ViewUtils.getLocationInAncestor(exitView, startloaction, exit.getSceneView());
+            int[] endloaction = new int[2];
+            ViewUtils.getLocationInAncestor(enterView, endloaction, enter.getSceneView());
+            int startWidth = exitView.getWidth();
+            int startHeight = exitView.getHeight();
+            int endWidth = enterView.getWidth();
+            int endHeight = enterView.getHeight();
+
+            ViewUtils.setVisibility(exitView, View.VISIBLE);
+            ViewUtils.setVisibility(enterView, View.INVISIBLE);
+            exitView.setPivotX(0);
+            exitView.setPivotY(0);
+
+            // Start animation
+            ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(exitView, "scaleX", (float) endWidth / startWidth);
+            scaleXAnim.setDuration(ANIMATE_TIME);
+            ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(exitView, "scaleY", (float) endHeight / startHeight);
+            scaleYAnim.setDuration(ANIMATE_TIME);
+            ObjectAnimator xAnim = ObjectAnimator.ofFloat(exitView, "x", endloaction[0]);
+            xAnim.setDuration(ANIMATE_TIME);
+            ObjectAnimator yAnim = ObjectAnimator.ofFloat(exitView, "y", endloaction[1]);
+            yAnim.setDuration(ANIMATE_TIME);
+
+            yAnim.addListener(new SimpleAnimatorListener() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    dispatchDetachFromeStage(exit);
+                    ViewUtils.setVisibility(enterView, View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    dispatchDetachFromeStage(exit);
+                    ViewUtils.setVisibility(enterView, View.VISIBLE);
+                }
+            });
+
+            scaleXAnim.start();
+            scaleYAnim.start();
+            xAnim.start();
+            yAnim.start();
+
+            // TODO show other part progressively
+        }
     }
 
     public static class ViewPair {
@@ -131,5 +226,24 @@ public class TransitionCurtain extends Curtain {
         public abstract View getFromView(@Nullable View sceneView);
 
         public abstract View getToView(@Nullable View sceneView);
+    }
+
+    public class SimpleAnimatorListener implements Animator.AnimatorListener {
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+        }
     }
 }

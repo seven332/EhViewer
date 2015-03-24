@@ -62,15 +62,14 @@ public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutH
 
     private PagerAdapter mPagerAdapter;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        mActivity = (ContentActivity) getStageActivity();
-        mResources = mActivity.getResources();
-    }
-
     @SuppressLint("InflateParams")
     @Override
-    public View onCreateSceneView(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mActivity = (ContentActivity) getStageActivity();
+        mResources = mActivity.getResources();
+
         LayoutInflater inflater = mActivity.getLayoutInflater();
 
         // Search View
@@ -94,9 +93,9 @@ public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutH
         });
 
         // Main View
-        View sceneView = inflater.inflate(R.layout.scene_gallery_list, null);
-        mAppbar = (Appbar) sceneView.findViewById(R.id.appbar);
-        mViewPager = (ViewPager) sceneView.findViewById(R.id.viewPager);
+        setContentView(R.layout.scene_gallery_list);
+        mAppbar = (Appbar) findViewById(R.id.appbar);
+        mViewPager = (ViewPager) findViewById(R.id.viewPager);
 
         mAppbar.setTitle(mResources.getString(R.string.app_name));
 
@@ -110,8 +109,6 @@ public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutH
         if (fitPaddingBottom != -1) {
             setFitPaddingBottom(fitPaddingBottom);
         }
-
-        return sceneView;
     }
 
     private void setFitPaddingBottom(int fitPaddingBottom) {
@@ -195,5 +192,4 @@ public class GalleryListScene extends Scene implements SearchLayout.SearhLayoutH
             view.removeView((View) object);
         }
     }
-
 }

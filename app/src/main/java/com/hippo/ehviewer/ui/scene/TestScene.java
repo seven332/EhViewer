@@ -17,8 +17,6 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.ContentActivity;
@@ -31,14 +29,10 @@ public class TestScene extends Scene {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.scene_test);
+
         mActivity = (ContentActivity) getStageActivity();
         mResources = mActivity.getResources();
-    }
-
-    @SuppressWarnings("InflateParams")
-    public View onCreateSceneView(Bundle savedInstanceState) {
-        LayoutInflater inflater = mActivity.getLayoutInflater();
-
-        return inflater.inflate(R.layout.scene_test, null);
     }
 }

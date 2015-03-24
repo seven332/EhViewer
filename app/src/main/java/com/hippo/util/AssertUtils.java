@@ -17,6 +17,12 @@ package com.hippo.util;
 
 public class AssertUtils {
 
+    public static void assertNull(String message, Object object) {
+        if (object != null) {
+            throw new AssertError(message);
+        }
+    }
+
     public static void assertNotNull(String message, Object object) {
         if (object == null) {
             throw new AssertError(message);
@@ -26,6 +32,13 @@ public class AssertUtils {
     public static void assertEquals(String message, int expected, int actual) {
         if (expected != actual) {
             throw new AssertError(message);
+        }
+    }
+
+    public static void assertNullEx(String message, Object object)
+            throws AssertException {
+        if (object != null) {
+            throw new AssertException(message);
         }
     }
 

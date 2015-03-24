@@ -23,7 +23,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.FrameLayout;
 
 import com.hippo.util.AssertUtils;
 
@@ -35,7 +37,9 @@ import com.hippo.util.AssertUtils;
  */
 public abstract class Scene {
 
-    private @Nullable View mSceneView;
+    private @Nullable FrameLayout mSceneView;
+
+    private int mBackgroundColor = 0xffeeeeee; // TODO Need a better to set background color
 
     private static SceneManager sSceneManager;
 
@@ -50,7 +54,12 @@ public abstract class Scene {
         return stageActivity;
     }
 
-    @Nullable View getSceneView() {
+    /**
+     * You will get null before onCreate and after onDestroy mostly
+     *
+     * @return Null or nonull
+     */
+    public @Nullable View getSceneView() {
         return mSceneView;
     }
 
@@ -73,7 +82,11 @@ public abstract class Scene {
 
     void create(Bundle savedInstanceState) {
         onCreate(savedInstanceState);
-        mSceneView = onCreateSceneView(savedInstanceState);
+
+        if (mSceneView == null) {
+            mSceneView = new FrameLayout(getStageActivity());
+            initBackground(mSceneView);
+        }
 
         // Make sure scene view is attach from stage
         attachToStage();
@@ -104,15 +117,45 @@ public abstract class Scene {
     protected void onCreate(Bundle savedInstanceState) {
     }
 
-    /**
-     * It is called after {@link #onCreate(android.os.Bundle)}.
-     * Create view of the scene.
-     *
-     * @param savedInstanceState null for first time, non null for recrearte
-     * @return the view of the scene
-     */
-    protected @Nullable View onCreateSceneView(Bundle savedInstanceState) {
-        return null;
+    public void setBackgroundColor(int bgColor) {
+        if (mBackgroundColor != bgColor) {
+            mBackgroundColor = bgColor;
+            View sceneView = getSceneView();
+            if (sceneView != null) {
+                sceneView.setBackgroundColor(bgColor);
+            }
+        }
+    }
+
+    public int getBackgroundColor() {
+        return mBackgroundColor;
+    }
+
+
+
+    protected void setContentView(int resId) {
+        AssertUtils.assertNull("Only call setContentView once", mSceneView);
+
+        StageActivity sa = getStageActivity();
+        mSceneView = new FrameLayout(sa);
+        initBackground(mSceneView);
+        mSceneView.setBackgroundColor(mBackgroundColor);
+        sa.getLayoutInflater().inflate(resId, mSceneView);
+    }
+
+    protected void setContentView(View view) {
+        AssertUtils.assertNull("Only call setContentView once", mSceneView);
+
+        StageActivity sa = getStageActivity();
+        mSceneView = new FrameLayout(sa);
+        initBackground(mSceneView);
+        mSceneView.addView(view, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+    }
+
+    private void initBackground(@NonNull View bg) {
+        bg.setBackgroundColor(mBackgroundColor);
+        bg.setClickable(true);
     }
 
     protected void onResume() {
@@ -122,6 +165,23 @@ public abstract class Scene {
     }
 
     protected void onDestroy() {
+    }
+
+
+    /**
+     * Finds a view that was identified by the id attribute from the XML that
+     * was processed in {@link #onCreate}.
+     *
+     * @param resId the Id
+     * @return The view if found or null otherwise.
+     */
+    public View findViewById(int resId) {
+        View sceneView = getSceneView();
+        if (sceneView != null) {
+            return sceneView.findViewById(resId);
+        } else {
+            return null;
+        }
     }
 
 

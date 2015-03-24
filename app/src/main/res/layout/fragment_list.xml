@@ -30,6 +30,6 @@
         android:layout_height="wrap_content"
         android:text="Click"
         android:id="@+id/test_button"
-        android:layout_gravity="center_horizontal|bottom"/>
+        android:layout_gravity="right|center_vertical"/>
 
 </FrameLayout>

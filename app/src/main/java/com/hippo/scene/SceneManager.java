@@ -85,7 +85,7 @@ class SceneManager {
                 scene.destroy(false);
 
                 if (previousState != null) {
-                    curtain.open(previousState, scene);
+                    curtain.close(previousState, scene);
                 }
             } else {
                 scene.destroy(true);
@@ -138,7 +138,8 @@ class SceneManager {
 
     protected void onSaveInstanceState(Bundle outState) {
         for (Pair<Scene, Curtain> p : mSceneStack) {
-            p.first.saveInstanceState(outState);
+            Scene scene = p.first;
+            scene.saveInstanceState(outState);
         }
     }
 
