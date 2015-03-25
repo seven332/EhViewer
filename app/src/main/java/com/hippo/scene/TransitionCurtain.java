@@ -25,12 +25,15 @@ import android.view.ViewTreeObserver;
 
 import com.hippo.animation.ArgbEvaluator;
 import com.hippo.animation.SimpleAnimatorListener;
+import com.hippo.util.Log;
 import com.hippo.util.ViewUtils;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class TransitionCurtain extends Curtain {
+
+    private static final String TAG = TransitionCurtain.class.getSimpleName();
 
     private static long ANIMATE_TIME = 800L;
 
@@ -61,6 +64,9 @@ public class TransitionCurtain extends Curtain {
         colorAnim.addListener(new SimpleAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
+                dispatchOpenFinished(enter, exit);
+                hideSceneOnOpen(exit);
+
                 if (mClearList) {
                     mAnimList.clear();
                 }
@@ -116,12 +122,7 @@ public class TransitionCurtain extends Curtain {
                     yAnim.addListener(new SimpleAnimatorListener() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            dispatchOpenFinished(enter, exit);
                             ViewUtils.setVisibility(exitView, View.VISIBLE);
-
-                            // Hide previous scene
-                            // TODO remove from stage ?
-                            ViewUtils.setVisibility(exit.getSceneView(), View.GONE);
                         }
                     });
 
@@ -143,8 +144,7 @@ public class TransitionCurtain extends Curtain {
 
     @Override
     public void close(final @NonNull Scene enter, final @NonNull Scene exit) {
-        // Show previous scene
-        ViewUtils.setVisibility(enter.getSceneView(), View.VISIBLE);
+        showSceneOnClose(enter);
 
         // Handle background
         ObjectAnimator colorAnim = ObjectAnimator.ofInt(exit, "backgroundColor", Color.TRANSPARENT);
@@ -154,6 +154,7 @@ public class TransitionCurtain extends Curtain {
         colorAnim.addListener(new SimpleAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
+                dispatchCloseFinished(enter, exit);
                 if (mClearList) {
                     mAnimList.clear();
                 }
@@ -169,8 +170,12 @@ public class TransitionCurtain extends Curtain {
         for (ViewPair pair : mViewPairArray) {
             final View enterView = pair.getFromView(enter);
             final View exitView = pair.getToView(exit);
-            if (enterView == null || exitView == null) {
-                // Can't get view
+            if (enterView == null) {
+                Log.w(TAG, "Can't get enterView when close");
+                continue;
+            }
+            if (exitView == null) {
+                Log.w(TAG, "Can't get exitView when close");
                 continue;
             }
 
@@ -201,7 +206,6 @@ public class TransitionCurtain extends Curtain {
             yAnim.addListener(new SimpleAnimatorListener() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    dispatchCloseFinished(enter, exit);
                     ViewUtils.setVisibility(enterView, View.VISIBLE);
                 }
             });

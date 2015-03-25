@@ -25,9 +25,11 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
 import com.hippo.util.AssertUtils;
+import com.hippo.util.ViewUtils;
 
 /**
  * {@link com.hippo.scene.Scene} is a {@code Activity} of {@link android.app.Activity}.
@@ -107,8 +109,8 @@ public abstract class Scene {
         sSceneManager.finishScene(this);
     }
 
-    void create() {
-        onCreate();
+    void create(@Nullable Bundle savedInstanceState) {
+        onCreate(savedInstanceState);
 
         if (mSceneView == null) {
             mSceneView = new FrameLayout(getStageActivity());
@@ -117,6 +119,17 @@ public abstract class Scene {
 
         // Make sure scene view is attach from stage
         attachToStage();
+
+        // Hide it if it is hidden
+        if (savedInstanceState != null && savedInstanceState.getBoolean(getIsGoneKey(), false)) {
+            mSceneView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    ViewUtils.removeOnGlobalLayoutListener(mSceneView.getViewTreeObserver(), this);
+                    ViewUtils.setVisibility(mSceneView, View.GONE);
+                }
+            });
+        }
     }
 
     void destroy() {
@@ -178,7 +191,7 @@ public abstract class Scene {
         bg.setClickable(true);
     }
 
-    protected void onCreate() {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
     }
 
     protected void onDestroy() {
@@ -296,10 +309,18 @@ public abstract class Scene {
         return "scene:" + Integer.toHexString(hashCode());
     }
 
+    private String getIsGoneKey() {
+        return getStateKey() + ":gone";
+    }
+
     void saveInstanceState(Bundle outState) {
         SparseArray<Parcelable> states = new SparseArray<>();
         onSaveInstanceState(states);
         outState.putSparseParcelableArray(getStateKey(), states);
+
+        if (mSceneView != null) {
+            outState.putBoolean(getIsGoneKey(), mSceneView.getVisibility() == View.GONE);
+        }
     }
 
     void restoreInstanceState(@NonNull Bundle savedInstanceState) {

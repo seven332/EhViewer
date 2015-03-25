@@ -19,6 +19,7 @@ import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -260,7 +261,11 @@ public final class ViewUtils {
      * @param visibility One of {@link android.view.View#GONE},
      * {@link android.view.View#INVISIBLE}, or {@link android.view.View#GONE}.
      */
-    public static void setVisibility(View v, int visibility) {
+    public static void setVisibility(@Nullable View v, int visibility) {
+        if (v == null) {
+            return;
+        }
+
         if (visibility != v.getVisibility()) {
             v.setVisibility(visibility);
         }

@@ -73,7 +73,7 @@ class SceneManager {
         }
 
         scene.setState(Scene.SCENE_STATE_CREATE);
-        scene.create();
+        scene.create(null);
 
         if (curtain != null && previousState != null) {
             scene.setState(Scene.SCENE_STATE_OPEN);
@@ -186,8 +186,7 @@ class SceneManager {
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         for (Scene scene : mSceneStack) {
             // Recreate
-            // TODO might hide sceneView, curtain do it ?
-            scene.create();
+            scene.create(savedInstanceState);
             scene.restoreInstanceState(savedInstanceState);
         }
     }

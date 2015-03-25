@@ -17,6 +17,9 @@ package com.hippo.scene;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.View;
+
+import com.hippo.util.ViewUtils;
 
 public abstract class Curtain {
 
@@ -60,5 +63,13 @@ public abstract class Curtain {
 
     protected void dispatchCloseFinished(@NonNull Scene enter, @NonNull Scene exit) {
         exit.closeFinished();
+    }
+
+    protected void hideSceneOnOpen(@NonNull Scene exit) {
+        ViewUtils.setVisibility(exit.getSceneView(), View.GONE);
+    }
+
+    protected void showSceneOnClose(@NonNull Scene enter) {
+        ViewUtils.setVisibility(enter.getSceneView(), View.VISIBLE);
     }
 }

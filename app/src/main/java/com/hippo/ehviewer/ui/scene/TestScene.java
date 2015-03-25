@@ -16,6 +16,8 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.content.res.Resources;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.ContentActivity;
@@ -27,8 +29,8 @@ public class TestScene extends Scene {
     private Resources mResources;
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.scene_test);
 
         mActivity = (ContentActivity) getStageActivity();
