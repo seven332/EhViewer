@@ -260,13 +260,22 @@ public abstract class Scene {
     }
 
     public void onBackPressed() {
-        // TODO First click to show finish animation, click again to finish the animation at once and it is finished
-
-        if (mCurtain != null && mCurtain.isInAnimation()) {
-            mCurtain.endAnimation();
-        } else if (!sSceneManager.endLegacyScene()) {
+        if (!endCurtainAnimation() && !sSceneManager.endLegacyScene()) {
             sSceneManager.finishScene(this);
         }
+    }
+
+    /**
+     * End curtainAnimation if it is running
+     *
+     * @return True if curtain animation is running
+     */
+    boolean endCurtainAnimation() {
+        if (mCurtain != null && mCurtain.isInAnimation()) {
+            mCurtain.endAnimation();
+            return true;
+        }
+        return false;
     }
 
     void openFinished() {
@@ -276,6 +285,8 @@ public abstract class Scene {
 
     void closeFinished() {
         sSceneManager.removeLegacyScene(this);
+
+        close();
         setState(Scene.SCENE_STATE_DESTROY);
         detachFromeStage();
     }

@@ -84,16 +84,17 @@ class SceneManager {
         }
     }
 
+    /**
+     * End legacy scene close animation at once
+     *
+     * @return True if legacy scene exist and its curtain animation is running
+     */
     boolean endLegacyScene() {
         if (mLegacyScene != null) {
-            Curtain curtain = mLegacyScene.getCurtain();
-            if (curtain != null && curtain.isInAnimation()) {
-                curtain.endAnimation();
-                mLegacyScene = null;
-                return true;
-            }
+            boolean result = mLegacyScene.endCurtainAnimation();
+            mLegacyScene = null;
+            return result;
         }
-        mLegacyScene = null;
         return false;
     }
 
@@ -103,6 +104,7 @@ class SceneManager {
 
             endLegacyScene();
 
+            // Scene state might be SCENE_STATE_RUN, SCENE_STATE_OPEN, SCENE_STATE_PAUSE
             if (index == 0) {
                 // It is the last scene, just finish the activity
                 mSceneStack.remove(index);
@@ -111,8 +113,11 @@ class SceneManager {
                 getStageActivity().finish();
             } else {
                 // TODO check scene state
+
                 mSceneStack.remove(index);
                 Scene previousState = getTopState();
+
+                // If Scene is CLOSE
 
                 if (previousState != null) {
                     previousState.resume();
@@ -153,7 +158,6 @@ class SceneManager {
         return -1;
     }
 
-    // TODO What if this scene is closing
     boolean onBackPressed() {
         Scene scene = getTopState();
         if (scene != null) {
