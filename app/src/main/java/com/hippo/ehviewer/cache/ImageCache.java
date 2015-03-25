@@ -21,12 +21,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.support.annotation.NonNull;
 
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class ImageCache {
+public class ImageCache extends AnyCache<Bitmap>{
 
     private static final String TAG = "ImageCache";
 
@@ -45,29 +46,50 @@ public class ImageCache {
      */
     private static final int COMPRESS_QUALITY = 98;
 
-    private static AnyCache<Bitmap> sImageCache;
+    private static ImageCache sImageCache;
 
-    public static AnyCache<Bitmap> getImageCache(Context context) {
+    public static @NonNull ImageCache getImageCache(@NonNull Context context) {
         if (sImageCache == null) {
-            AnyCache.Builder builder = new AnyCache.Builder();
-
-            final ActivityManager activityManager = (ActivityManager)context
-                    .getSystemService(Context.ACTIVITY_SERVICE);
-            final int memoryCacheMax = Math.round(MEM_CACHE_DIVIDER * activityManager.getMemoryClass()
-                    * 1024 * 1024);
-            builder.setMemoryCache(memoryCacheMax, new BitmapMemoryCacheHelper());
-
-            File diskCacheDir = getDiskCacheDir(context, TAG);
-            if (diskCacheDir != null) {
-                if (!diskCacheDir.exists()) {
-                    diskCacheDir.mkdirs();
-                }
-                builder.setDiskCache(diskCacheDir, 20 * 1024 * 1024, new BitmapDiskCacheHelper());
-            }
-
-            sImageCache = builder.build();
+            sImageCache = new ImageCache(context.getApplicationContext());
         }
         return sImageCache;
+    }
+
+
+    private ImageCache(Context context) {
+        final ActivityManager activityManager = (ActivityManager)context
+                .getSystemService(Context.ACTIVITY_SERVICE);
+        final int memoryCacheMax = Math.round(MEM_CACHE_DIVIDER * activityManager.getMemoryClass()
+                * 1024 * 1024);
+        setMemoryCache(memoryCacheMax);
+
+        File diskCacheDir = getDiskCacheDir(context, TAG);
+        if (diskCacheDir != null) {
+            if (!diskCacheDir.exists()) {
+                diskCacheDir.mkdirs();
+            }
+            setDiskCache(diskCacheDir, 20 * 1024 * 1024);
+        }
+    }
+
+
+    @Override
+    protected int sizeOf(String key, Bitmap value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return value.getAllocationByteCount();
+        } else {
+            return value.getByteCount();
+        }
+    }
+
+    @Override
+    protected Bitmap read(InputStream is) {
+        return BitmapFactory.decodeStream(is);
+    }
+
+    @Override
+    protected boolean write(OutputStream os, Bitmap value) {
+        return value.compress(COMPRESS_FORMAT, COMPRESS_QUALITY, os);
     }
 
     /**
@@ -76,7 +98,7 @@ public class ImageCache {
      * @param context The {@link Context} to use
      * @return The external cache directory
      */
-    public static File getExternalCacheDir(final Context context) {
+    private static File getExternalCacheDir(final Context context) {
         return context.getExternalCacheDir();
     }
 
@@ -88,35 +110,11 @@ public class ImageCache {
      *            directory
      * @return The cache directory
      */
-    public static File getDiskCacheDir(final Context context, final String uniqueName) {
+    private static File getDiskCacheDir(final Context context, final String uniqueName) {
         // getExternalCacheDir(context) returns null if external storage is not ready
         final String cachePath = getExternalCacheDir(context) != null
                 ? getExternalCacheDir(context).getPath()
                 : context.getCacheDir().getPath();
         return new File(cachePath, uniqueName);
-    }
-
-    private static class BitmapMemoryCacheHelper extends AnyCache.MemoryCacheHelper<Bitmap> {
-        @Override
-        public int sizeOf(String key, android.graphics.Bitmap bitmap) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                return bitmap.getAllocationByteCount();
-            } else {
-                return bitmap.getByteCount();
-            }
-        }
-    }
-
-    private static class BitmapDiskCacheHelper extends AnyCache.DiskCacheHelper<Bitmap> {
-        @Override
-        public Bitmap get(InputStream is) {
-            return BitmapFactory.decodeStream(is);
-        }
-
-        @Override
-        public boolean put(OutputStream os, Bitmap value) {
-            value.compress(COMPRESS_FORMAT, COMPRESS_QUALITY, os);
-            return true;
-        }
     }
 }

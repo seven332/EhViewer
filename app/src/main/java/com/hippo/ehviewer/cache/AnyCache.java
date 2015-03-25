@@ -17,7 +17,10 @@
 package com.hippo.ehviewer.cache;
 
 import android.os.Looper;
+import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
+
+import com.hippo.ehviewer.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -28,10 +31,12 @@ import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class AnyCache<V> {
+public abstract class AnyCache<V> {
 
-    private LruCache<String, V> mMemoryCache;
-    private DiskCache<V> mDiskCache;
+    private static final String TAG = AnyCache.class.getSimpleName();
+
+    private @Nullable LruCache<String, V> mMemoryCache;
+    private @Nullable DiskCache<V> mDiskCache;
 
     /**
      * Used to temporarily pause the disk cache while scrolling
@@ -39,19 +44,21 @@ public class AnyCache<V> {
     public boolean mPauseDiskAccess = false;
     private final Object mPauseLock = new Object();
 
-    private AnyCache(Builder builder) {
-        if (builder.mMemoryCacheMaxSize > 0 && builder.mMemoryCacheHelper != null) {
-            mMemoryCache = new MemoryCahce<V>(
-                    builder.mMemoryCacheMaxSize, builder.mMemoryCacheHelper);
-        }
-        if (builder.mDiskCacheDir != null && builder.mDiskCacheMaxSize > 0 &&
-                builder.mDiskCacheHelper != null) {
-            try {
-                mDiskCache = new DiskCache<V>(
-                        builder.mDiskCacheDir, builder.mDiskCacheMaxSize, builder.mDiskCacheHelper);
-            } catch (IOException e) {
-                // Can't create disk cache
-            }
+    protected abstract int sizeOf(String key, V value);
+
+    protected abstract V read(InputStream is);
+
+    protected abstract boolean write(OutputStream os, V value);
+
+    public void setMemoryCache(int maxSize) {
+        mMemoryCache = new MemoryCahce<V>(maxSize, this);
+    }
+
+    public void setDiskCache(File cacheDir, int maxSize) {
+        try {
+            mDiskCache = new DiskCache<V>(cacheDir, maxSize, this);
+        } catch (IOException e) {
+            Log.w(TAG, "Can't create disk cache", e);
         }
     }
 
@@ -271,68 +278,32 @@ public class AnyCache<V> {
         return builder.toString();
     }
 
-    public static class Builder {
-
-        private int mMemoryCacheMaxSize;
-        private MemoryCacheHelper mMemoryCacheHelper;
-
-        private File mDiskCacheDir;
-        private int mDiskCacheMaxSize;
-        private DiskCacheHelper mDiskCacheHelper;
-
-        public Builder setMemoryCache(int maxSize, MemoryCacheHelper helper) {
-            mMemoryCacheMaxSize = maxSize;
-            mMemoryCacheHelper = helper;
-            return this;
-        }
-
-        /**
-         * Set this dir to store disk cache.
-         *
-         * @param cacheDir this dir to store disk cache, null for no disk cache
-         * @return the Builder
-         */
-        public Builder setDiskCache(File cacheDir, int maxSize, DiskCacheHelper helper) {
-            mDiskCacheDir = cacheDir;
-            mDiskCacheMaxSize = maxSize;
-            mDiskCacheHelper = helper;
-            return this;
-        }
-
-        public AnyCache build() {
-            return new AnyCache(this);
-        }
-    }
-
     public class MemoryCahce<E> extends LruCache<String, E> {
 
-        private MemoryCacheHelper<E> mHelper;
+        public AnyCache<E> mParent;
 
-        public MemoryCahce(int maxSize, MemoryCacheHelper<E> helper) {
+        public MemoryCahce(int maxSize, AnyCache<E> parent) {
             super(maxSize);
-            mHelper = helper;
+            mParent = parent;
         }
 
         @Override
         protected int sizeOf(String key, E value) {
-            return mHelper.sizeOf(key, value);
+            return mParent.sizeOf(key, value);
         }
     }
 
-    public abstract static class MemoryCacheHelper<E> {
-        public abstract int sizeOf(String key, E value);
-    }
 
     public static class DiskCache<E> {
 
         private static final int IO_BUFFER_SIZE = 8 * 1024;
 
         public DiskLruCache mDiskLruCache;
-        public DiskCacheHelper<E> mHelper;
+        public AnyCache<E> mParent;
 
-        public DiskCache(File cacheDir, int size, DiskCacheHelper<E> helper) throws IOException {
+        public DiskCache(File cacheDir, int size, AnyCache<E> parent) throws IOException {
             mDiskLruCache = DiskLruCache.open(cacheDir, 1, 1, size);
-            mHelper = helper;
+            mParent = parent;
         }
 
         public E get(String key) {
@@ -348,7 +319,7 @@ public class AnyCache<V> {
                 if (in != null) {
                     final BufferedInputStream buffIn =
                             new BufferedInputStream(in, IO_BUFFER_SIZE);
-                    return mHelper.get(buffIn);
+                    return mParent.read(buffIn);
                 } else {
                     // Can't get InputStream
                     return null;
@@ -375,7 +346,7 @@ public class AnyCache<V> {
                 if (os != null) {
                     final BufferedOutputStream buffOut =
                             new BufferedOutputStream(os, IO_BUFFER_SIZE);
-                    boolean result = mHelper.put(buffOut, value);
+                    boolean result = mParent.write(buffOut, value);
                     mDiskLruCache.flush();
                     editor.commit();
                     return result;
@@ -395,11 +366,5 @@ public class AnyCache<V> {
                 return false;
             }
         }
-    }
-
-    public abstract static class DiskCacheHelper<E> {
-        public abstract E get(InputStream is);
-
-        public abstract boolean put(OutputStream os, E value);
     }
 }
