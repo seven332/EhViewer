@@ -78,4 +78,12 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/hah_eh_settings_title" >
+
+        <Preference
+            android:key="hah_proxy"
+            android:title="@string/hah_proxy_title"/>
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

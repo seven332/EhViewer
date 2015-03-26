@@ -10,10 +10,10 @@
 
     <!-- Analyics -->
     <string name="dailog_analyics_title">資料統計</string>
-    <string name="dailog_analyics_plain">您是否願意將使用情況發送給開發者？這對開發者維護該應用有很大幫助。在發送使用情況的同時也會發送部分裝置資訊（譬如裝置型號、系統版本、當前IP地址）（注意：某些裝置資訊可能可以推測出某些使用者資訊，譬如當前IP地址可能可以大概推測出使用者當前的位置）。開發者承諾不收集任何個人身份資訊資料（譬如姓名、電話號碼、電郵地址）或可永久性標識某臺裝置的資料（譬如IMEI、MAC地址）。\n\n資料收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies\n\n您以後可以在設定中修改選擇</string>
+    <string name="dailog_analyics_plain">您是否願意將使用情況傳送給開發者？這對開發者維護該應用有很大幫助。在傳送使用情況的同時也會發送部分裝置資訊（譬如裝置型號、系統版本、當前IP地址）（注意：某些裝置資訊可能可以推測出某些使用者資訊，譬如當前IP地址可能可以大概推測出使用者當前的位置）。開發者承諾不收集任何個人身份資訊資料（譬如姓名、電話號碼、電郵地址）或可永久性標識某臺裝置的資料（譬如IMEI、MAC地址）。\n\n資料收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies\n\n您以後可以在設定中修改選擇</string>
 
     <!-- Network -->
-    <string name="dailog_network_mobile_title">您正在使用移動網路，可能會消耗大量的資費，是否繼續使用？</string>
+    <string name="dailog_network_mobile_title">您正在使用行動網路，可能會消耗大量的資費，是否繼續使用？</string>
     <string name="dailog_network_none_title">未檢測到網路連線，是否繼續使用？</string>
 
     <!-- Exit -->
@@ -27,17 +27,17 @@
     <string name="hint_no_keyword">沒關鍵字也行</string>
     <string name="checkbox_uploader">指定上傳者</string>
     <string name="checkbox_advance">高階選項</string>
-    <string name="checkbox_sname">搜索本子</string>
-    <string name="checkbox_stags">搜索本子標籤</string>
-    <string name="checkbox_sdesc">搜索本子描述</string>
-    <string name="checkbox_storr">搜索種子檔名</string>
-    <string name="checkbox_sto">僅搜索有種子的本子</string>
-    <string name="checkbox_sdt1">搜索 Low-Power 標籤</string>
-    <string name="checkbox_sdt2">搜索差評標籤</string>
-    <string name="checkbox_sh">搜索被遺棄的資源</string>
+    <string name="checkbox_sname">搜尋本子</string>
+    <string name="checkbox_stags">搜尋本子標籤</string>
+    <string name="checkbox_sdesc">搜尋本子描述</string>
+    <string name="checkbox_storr">搜尋種子檔名</string>
+    <string name="checkbox_sto">僅搜尋有種子的本子</string>
+    <string name="checkbox_sdt1">搜尋 Low-Power 標籤</string>
+    <string name="checkbox_sdt2">搜尋差評標籤</string>
+    <string name="checkbox_sh">搜尋被遺棄的資源</string>
     <string name="checkbox_sr">最低評分：</string>
-    <string name="use_similarity_scan">使用相似搜索</string>
-    <string name="only_search_covers">只搜索封面</string>
+    <string name="use_similarity_scan">使用相似搜尋</string>
+    <string name="only_search_covers">只搜尋封面</string>
     <string name="show_expunged">顯示被遺棄的資源</string>
 
     <!-- Jump -->
@@ -47,21 +47,21 @@
 
     <!-- Send Crash -->
     <string name="dialog_send_crash_title">這很重要</string>
-    <string name="dialog_send_crash_plain">上次該應用崩潰了。你願意把錯誤日誌發送給開發者以便以後得到更好的使用者體驗麼？（以電子郵件的形式發送）</string>
-    <string name="add_description">你可以在下方添加一些資訊，譬如應用崩潰前所作的操作。</string>
-    <string name="dialog_wait_send_crash_msg">請在發送完日誌後關閉該視窗</string>
+    <string name="dialog_send_crash_plain">上次該應用崩潰了。你願意把錯誤日誌傳送給開發者以便以後得到更好的使用者體驗麼？（以電子郵件的形式傳送）</string>
+    <string name="add_description">你可以在下方新增一些資訊，譬如應用崩潰前所作的操作。</string>
+    <string name="dialog_wait_send_crash_msg">請在傳送完日誌後關閉該視窗</string>
 
     <!-- List item long click -->
-    <string name="toast_add_favourite">已添加到收藏</string>
-    <string name="toast_add_download">已添加到下載列表</string>
+    <string name="toast_add_favourite">已新增到收藏</string>
+    <string name="toast_add_download">已新增到下載列表</string>
 
     <!-- GalleryListActivity -->
     <string name="no_found">未找到</string>
     <string name="none">無</string>
-    <string name="quick_search_tip">您可以在左側欄搜索項中添加快速搜索</string>
+    <string name="quick_search_tip">您可以在左側欄搜尋項中新增快速搜尋</string>
     <string name="no_avatar">無頭像</string>
     <string name="get_avatar_error">獲取頭像失敗</string>
-    <string name="image_search">影象搜索</string>
+    <string name="image_search">影象搜尋</string>
     <string name="image_not_exist">影象不存在</string>
     <string name="image_not_readable">影象不可讀</string>
 
@@ -154,8 +154,8 @@
     <!-- Favorite -->
     <string name="local_favorite">本地收藏</string>
     <string name="select_item">選擇項目</string>
-    <string name="where_to_add">添加至何處？</string>
-    <string name="failed_to_add">添加失敗</string>
+    <string name="where_to_add">新增至何處？</string>
+    <string name="failed_to_add">新增失敗</string>
     <string name="where_to_move">移動至何處？</string>
     <string name="moving">正在移動…</string>
     <string name="move_successful">移動成功</string>
@@ -163,7 +163,7 @@
     <string name="dst_src_same">目標與源相同</string>
     <string name="delete_successfully">刪除成功</string>
     <string name="failed_to_delete">刪除失敗</string>
-    <string name="set_default_favorite">設為默認收藏夾</string>
+    <string name="set_default_favorite">設為預設收藏夾</string>
     <string name="favorite_warning">未檢測到登陸狀態，賬號收藏可被他人修改。而且由於開發者水平問題，本地收藏不可靠。</string>
 
     <!-- Popular -->
@@ -179,7 +179,7 @@
     <string name="theme_display_settings_title">主題</string>
     <string name="custom_theme_color_title">自定義主題顏色</string>
     <string name="custom_theme_color_summary_on">在下方指定主題顏色</string>
-    <string name="custom_theme_color_summary_off">使用默認主題顏色</string>
+    <string name="custom_theme_color_summary_off">使用預設主題顏色</string>
     <string name="theme_color_title">主題顏色</string>
     <string name="screen_display_settings_title">螢幕</string>
     <string name="screen_orientation_title">螢幕方向</string>
@@ -194,23 +194,27 @@
 
     <string name="eh_settings_title">EH</string>
     <string name="list_eh_settings_title">列表</string>
-    <string name="list_default_category_title">列表默認分類</string>
-    <string name="list_default_category_summary">首頁顯示的默認分類</string>
+    <string name="list_default_category_title">列表預設分類</string>
+    <string name="list_default_category_summary">首頁顯示的預設分類</string>
     <string name="exculde_tag_group_title">排除標籤類別</string>
-    <string name="exculde_tag_group_summary">在標籤搜索中排除特定標籤類別</string>
+    <string name="exculde_tag_group_summary">在標籤搜尋中排除特定標籤類別</string>
     <string name="exculde_language_title">排除語言</string>
-    <string name="exculde_language_summary">在列表與搜索中排除特定語言</string>
-    <string name="search_eh_settings_title">搜索</string>
-    <string name="clear_suggestions_title">清除搜索記錄</string>
-    <string name="clear_suggestions_summary">刪除您已執行的所有搜索</string>
+    <string name="exculde_language_summary">在列表與搜尋中排除特定語言</string>
+    <string name="search_eh_settings_title">搜尋</string>
+    <string name="clear_suggestions_title">清除搜尋記錄</string>
+    <string name="clear_suggestions_summary">刪除您已執行的所有搜尋</string>
     <string name="detail_eh_settings_title">詳情</string>
     <string name="preview_mode_title">預覽圖模式</string>
     <string name="preview_mode_normal">正常預覽圖</string>
     <string name="preview_mode_large">大預覽圖</string>
     <string name="favorite_eh_settings_title">收藏</string>
-    <string name="default_favorite">默認收藏夾</string>
+    <string name="default_favorite">預設收藏夾</string>
     <string name="history_eh_settings_title">歷史</string>
     <string name="max_history_count_title">最大歷史記錄條數</string>
+    <string name="hah_proxy_title">Hentai@Home 伺服器</string>
+    <string name="hah_ip">IP 地址</string>
+    <string name="hah_port">埠</string>
+    <string name="hah_passkey">金鑰（可選）</string>
 
     <string name="read_settings_title">閱讀</string>
     <string name="reading_direction_title">開頁方向</string>
@@ -226,7 +230,7 @@
     <string name="custom_lightness_title">閱讀時使用自定義螢幕亮度</string>
     <string name="custom_lightness_value_title">自定義螢幕亮度</string>
     <string name="custom_codec_title">自定義解碼</string>
-    <string name="custom_codec_summary">自定義解碼可能會更使用更少內存，解碼更快</string>
+    <string name="custom_codec_summary">自定義解碼可能會更使用更少記憶體，解碼更快</string>
     <string name="custom_codec_summary_not">自定義解碼暫不支援 x86, mips</string>
     <string name="clean_redundancy_title">清理閱讀冗餘</string>
     <string name="no_redundancy">未發現冗餘</string>
@@ -241,8 +245,8 @@
     <string name="download_settings_title">下載</string>
     <string name="download_path_title">下載路徑</string>
     <string name="media_scan_title">允許媒體掃描</string>
-    <string name="media_scan_summary_on">請避免他人翻看你的圖庫應用</string>
-    <string name="media_scan_summary_off">大多數圖庫應用將不會顯示下載目錄中的圖片</string>
+    <string name="media_scan_summary_on">請避免他人翻看你的相簿應用</string>
+    <string name="media_scan_summary_off">大多數相簿應用將不會顯示下載目錄中的圖片</string>
     <string name="download_thread_title">下載執行緒數</string>
     <string name="download_origin_image_title">下載原圖</string>
     <string name="download_origin_image_summary">這很危險！勾選此項會導致下載配額迅速流失</string>
@@ -287,7 +291,7 @@
     <string name="allow_analyics_summary_on">感謝您對本應用的支援</string>
     <string name="allow_analyics_summary_off">感謝您使用本應用</string>
     <string name="about_analyics_title">關於資料統計</string>
-    <string name="about_analyics_comment">若您啟用了資料統計，本應用會將您的使用情況發送給開發者。這對開發者維護該應用有很大幫助。在發送使用情況的同時也會發送部分裝置資訊（譬如裝置型號、系統版本、當前IP地址）（注意：某些裝置資訊可能可以推測出某些使用者資訊，譬如當前IP地址可能可以大概推測出使用者當前的位置）。開發者承諾不收集任何個人身份資訊資料（譬如姓名、電話號碼、電郵地址）或可永久性標識某臺裝置的資料（譬如IMEI、MAC地址）。\n\n資料收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies</string>
+    <string name="about_analyics_comment">若您啟用了資料統計，本應用會將您的使用情況傳送給開發者。這對開發者維護該應用有很大幫助。在傳送使用情況的同時也會發送部分裝置資訊（譬如裝置型號、系統版本、當前IP地址）（注意：某些裝置資訊可能可以推測出某些使用者資訊，譬如當前IP地址可能可以大概推測出使用者當前的位置）。開發者承諾不收集任何個人身份資訊資料（譬如姓名、電話號碼、電郵地址）或可永久性標識某臺裝置的資料（譬如IMEI、MAC地址）。\n\n資料收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies</string>
     <string name="portrait">豎屏</string>
     <string name="landscape">橫屏</string>
     <string name="preference_settings_title">設定</string>
@@ -322,9 +326,9 @@
     <string name="update_server_qiniu">七牛</string>
 
     <!-- Tag -->
-    <string name="add_tag">添加標籤</string>
-    <string name="tag_name">標簽名稱：</string>
-    <string name="tag_name_empty">標簽名稱不能為空</string>
+    <string name="add_tag">新增標籤</string>
+    <string name="tag_name">標籤名稱：</string>
+    <string name="tag_name_empty">標籤名稱不能為空</string>
     <string name="tag_change_name">修改名稱</string>
     <string name="new_tag_name">新名稱：%s</string>
 
@@ -393,7 +397,7 @@
     <string name="local">本地</string>
     <string name="tag">標籤</string>
     <string name="copyed">已複製</string>
-    <string name="send">發送</string>
+    <string name="send">傳送</string>
     <string name="detail">詳情</string>
     <string name="comment">評論</string>
     <string name="info">資訊</string>
@@ -412,11 +416,11 @@
     <string name="wait">請稍後</string>
     <string name="username">使用者名</string>
     <string name="password">密碼</string>
-    <string name="add">添加</string>
+    <string name="add">新增</string>
     <string name="what_to_do">你想做什麼？</string>
     <string name="jump">跳頁</string>
     <string name="some_page">第 %d 頁</string>
-    <string name="_default">默認</string>
+    <string name="_default">預設</string>
     <string name="delete">刪除</string>
     <string name="move">移動</string>
     <string name="list">列表</string>

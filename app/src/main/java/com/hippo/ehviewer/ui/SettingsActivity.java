@@ -198,6 +198,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_CLEAR_SUGGESTIONS = "clear_suggestions";
         private static final String KEY_PREVIEW_MODE = "preview_mode";
         private static final String KEY_DEFAULT_FAVORITE = "default_favorite";
+        private static final String KEY_HAH_PROXY = "hah_proxy";
 
         private Preference mListDefaultCategory;
         private Preference mExculdeTagGroup;
@@ -205,6 +206,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private Preference mClearSuggestions;
         private ListPreference mPreviewMode;
         private ListPreference mDefaultFavorite;
+        private Preference mHAHProxy;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -222,6 +224,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mPreviewMode = (ListPreference) findPreference(KEY_PREVIEW_MODE);
             mPreviewMode.setOnPreferenceChangeListener(this);
             mDefaultFavorite = (ListPreference) findPreference(KEY_DEFAULT_FAVORITE);
+            mHAHProxy = findPreference(KEY_HAH_PROXY);
+            mHAHProxy.setOnPreferenceClickListener(this);
 
             int i = 0;
             String[] entrise = new String[Favorite.FAVORITE_TITLES.length + 1];
@@ -274,9 +278,11 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                             @Override
                             public boolean onClick(MaterialAlertDialog dialog, int which) {
-                                int newValue = getExculdeTagGroup(tl);
-                                Config.setExculdeTagGroup(newValue);
-                                EhInfo.getInstance(getActivity()).setExculdeTagGroup(newValue);
+                                if (which == MaterialAlertDialog.POSITIVE) {
+                                    int newValue = getExculdeTagGroup(tl);
+                                    Config.setExculdeTagGroup(newValue);
+                                    EhInfo.getInstance(getActivity()).setExculdeTagGroup(newValue);
+                                }
                                 return true;
                             }
                         }).show();
@@ -290,9 +296,11 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                             @Override
                             public boolean onClick(MaterialAlertDialog dialog, int which) {
-                                String newValue = getExculdeLanguage(tl);
-                                Config.setExculdeLanguage(newValue);
-                                EhInfo.getInstance(getActivity()).setExculdeLanguage(newValue);
+                                if (which == MaterialAlertDialog.POSITIVE) {
+                                    String newValue = getExculdeLanguage(tl);
+                                    Config.setExculdeLanguage(newValue);
+                                    EhInfo.getInstance(getActivity()).setExculdeLanguage(newValue);
+                                }
                                 return true;
                             }
                         }).show();
@@ -301,6 +309,34 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 SearchRecentSuggestions suggestions = SuggestionHelper.getInstance(getActivity(),
                         SimpleSuggestionProvider.AUTHORITY, SimpleSuggestionProvider.MODE);
                 suggestions.clearHistory();
+
+            } else if (KEY_HAH_PROXY.equals(key)) {
+                LinearLayout ll = (LinearLayout) ViewUtils.inflateDialogView(R.layout.hah_proxy, false);
+                final EditText hahIp = (EditText) ll.findViewById(R.id.hah_ip);
+                final EditText hahPort = (EditText) ll.findViewById(R.id.hah_port);
+                final EditText hahPasskey = (EditText) ll.findViewById(R.id.hah_passkey);
+
+                hahIp.setText(Config.getHAHIp());
+                hahPort.setText(Config.getHAHPort());
+                hahPasskey.setText(Config.getHAHPasskey());
+
+                new MaterialAlertDialog.Builder(getActivity()).setTitle(R.string.hah_proxy_title)
+                        .setView(ll, true).setPositiveButton(android.R.string.ok).setNegativeButton(android.R.string.cancel)
+                        .setButtonListener(new MaterialAlertDialog.OnClickListener() {
+                            @Override
+                            public boolean onClick(MaterialAlertDialog dialog, int which) {
+                                if (which == MaterialAlertDialog.POSITIVE) {
+                                    String ip = hahIp.getText().toString();
+                                    String port = hahPort.getText().toString();
+                                    String passkey = hahPasskey.getText().toString();
+                                    Config.setHAHIp(ip);
+                                    Config.setHAHPort(port);
+                                    Config.setHAHPasskey(passkey);
+                                    EhInfo.getInstance(getActivity()).setHAHProxy(ip, port, passkey);
+                                }
+                                return true;
+                            }
+                        }).show();
             }
             return true;
         }

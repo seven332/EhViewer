@@ -10,7 +10,7 @@
 
     <!-- Analyics -->
     <string name="dailog_analyics_title">數據統計</string>
-    <string name="dailog_analyics_plain">您是否願意將使用情況發送給開發者？這對開發者維護該應用有很大幫助。在發送使用情況的同時也會發送部分設備信息（譬如設備型號、系統版本、當前IP地址）（注意：某些設備信息可能可以推測出某些用戶信息，譬如當前IP地址可能可以大概推測出用戶當前的位置）。開發者承諾不收集任何個人身份信息數據（譬如姓名、電話號碼、電郵地址）或可永久性標識某臺設備的數據（譬如IMEI、MAC地址）。\n\n數據收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies\n\n您以後可以在設置中修改選擇</string>
+    <string name="dailog_analyics_plain">您是否願意將使用情況發送給開發者？這對開發者維護該應用有很大幫助。在發送使用情況的同時也會發送部分設備信息（譬如設備型號、系統版本、當前IP地址）（注意：某些設備信息可能可以推測出某些用户信息，譬如當前IP地址可能可以大概推測出用户當前的位置）。開發者承諾不收集任何個人身份信息數據（譬如姓名、電話號碼、電郵地址）或可永久性標識某台設備的數據（譬如IMEI、MAC地址）。\n\n數據收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies\n\n您以後可以在設置中修改選擇</string>
 
     <!-- Network -->
     <string name="dailog_network_mobile_title">您正在使用移動網絡，可能會消耗大量的資費，是否繼續使用？</string>
@@ -47,7 +47,7 @@
 
     <!-- Send Crash -->
     <string name="dialog_send_crash_title">這很重要</string>
-    <string name="dialog_send_crash_plain">上次該應用崩潰了。你願意把錯誤日誌發送給開發者以便以後得到更好的用戶體驗麼？（以電子郵件的形式發送）</string>
+    <string name="dialog_send_crash_plain">上次該應用崩潰了。你願意把錯誤日誌發送給開發者以便以後得到更好的用户體驗麼？（以電子郵件的形式發送）</string>
     <string name="add_description">你可以在下方添加一些信息，譬如應用崩潰前所作的操作。</string>
     <string name="dialog_wait_send_crash_msg">請在發送完日誌後關閉該窗口</string>
 
@@ -97,7 +97,7 @@
     <string name="delete_item">該下載項將被刪除</string>
     <string name="pic_included">包括圖片</string>
     <string name="notification_be_title">下載配額不足</string>
-    <string name="notification_be_mesg">錯誤碼 509，請稍後閱讀或完成下載</string>
+    <string name="notification_be_mesg">錯誤碼 509，請稍後閲讀或完成下載</string>
 
     <!-- ErrorMessage -->
     <string name="em_network_error">網絡錯誤</string>
@@ -109,8 +109,8 @@
     <string name="em_client_protocol">無效的請求或無效的響應</string>
     <string name="em_put_cache_error">存入緩存錯誤</string>
     <string name="em_url_format_error">網址錯誤</string>
-    <string name="em_login_error">用戶名或密碼錯誤</string>
-    <string name="em_check_login_error">獲取用戶信息錯誤</string>
+    <string name="em_login_error">用户名或密碼錯誤</string>
+    <string name="em_check_login_error">獲取用户信息錯誤</string>
     <string name="em_logout_error">退出錯誤</string>
     <string name="em_url_error">網址錯誤</string>
     <string name="em_retry">重試</string>
@@ -128,7 +128,7 @@
     <string name="em_invalid_request">無效的請求</string>
     <string name="em_no_sdcard">未掛載 SD卡</string>
     <string name="em_index_error">索引錯誤</string>
-    <string name="em_requst_null">請求內容爲空</string>
+    <string name="em_requst_null">請求內容為空</string>
 
     <!-- GalleryActivity -->
     <string name="ga_data_error">數據錯誤！</string>
@@ -163,7 +163,7 @@
     <string name="dst_src_same">目標與源相同</string>
     <string name="delete_successfully">刪除成功</string>
     <string name="failed_to_delete">刪除失敗</string>
-    <string name="set_default_favorite">設爲默認收藏夾</string>
+    <string name="set_default_favorite">設為默認收藏夾</string>
     <string name="favorite_warning">未檢測到登陸狀態，賬號收藏可被他人修改。而且由於開發者水平問題，本地收藏不可靠。</string>
 
     <!-- Popular -->
@@ -172,7 +172,7 @@
     <!-- History -->
     <string name="clear_history_message">所有歷史記錄將被清除</string>
     <string name="just_browse">僅瀏覽過</string>
-    <string name="have_read">已閱讀過</string>
+    <string name="have_read">已閲讀過</string>
 
     <!-- Settings -->
     <string name="display_settings_title">顯示</string>
@@ -211,8 +211,12 @@
     <string name="default_favorite">默認收藏夾</string>
     <string name="history_eh_settings_title">歷史</string>
     <string name="max_history_count_title">最大歷史記錄條數</string>
+    <string name="hah_proxy_title">Hentai@Home 服務器</string>
+    <string name="hah_ip">IP 地址</string>
+    <string name="hah_port">端口</string>
+    <string name="hah_passkey">密鑰（可選）</string>
 
-    <string name="read_settings_title">閱讀</string>
+    <string name="read_settings_title">閲讀</string>
     <string name="reading_direction_title">開頁方向</string>
     <string name="left_to_right">從左至右</string>
     <string name="right_to_Left">從右至左</string>
@@ -220,17 +224,17 @@
     <string name="bottom_to_top">從下至上</string>
     <string name="page_scaling_title">頁面縮放</string>
     <string name="start_position_title">開頁位置</string>
-    <string name="keep_screen_on_title">閱讀時屏幕常亮</string>
+    <string name="keep_screen_on_title">閲讀時屏幕常亮</string>
     <string name="gallery_show_clock_title">顯示時間</string>
     <string name="gallery_show_battery_title">顯示電量</string>
-    <string name="custom_lightness_title">閱讀時使用自定義屏幕亮度</string>
+    <string name="custom_lightness_title">閲讀時使用自定義屏幕亮度</string>
     <string name="custom_lightness_value_title">自定義屏幕亮度</string>
     <string name="custom_codec_title">自定義解碼</string>
     <string name="custom_codec_summary">自定義解碼可能會更使用更少內存，解碼更快</string>
     <string name="custom_codec_summary_not">自定義解碼暫不支持 x86, mips</string>
-    <string name="clean_redundancy_title">清理閱讀冗餘</string>
-    <string name="no_redundancy">未發現冗餘</string>
-    <string name="clean_redundancy">完成冗餘清理，共清理 %d 項</string>
+    <string name="clean_redundancy_title">清理閲讀宂餘</string>
+    <string name="no_redundancy">未發現宂餘</string>
+    <string name="clean_redundancy">完成宂餘清理，共清理 %d 項</string>
     <string name="decode_format_title">解碼格式</string>
     <string name="decode_format_auto">自動</string>
     <string name="decode_format_gray">黑白</string>
@@ -247,8 +251,8 @@
     <string name="download_origin_image_title">下載原圖</string>
     <string name="download_origin_image_summary">這很危險！勾選此項會導致下載配額迅速流失</string>
     <string name="keep_download_service_title">保持下載服務</string>
-    <string name="keep_download_service_summary_on">下載時，若應用被系統或用戶強制關閉，下載服務會重新啓動</string>
-    <string name="keep_download_service_summary_off">下載時，若應用被系統或用戶強制關閉，下載服務不會重新啓動</string>
+    <string name="keep_download_service_summary_on">下載時，若應用被系統或用户強制關閉，下載服務會重新啟動</string>
+    <string name="keep_download_service_summary_off">下載時，若應用被系統或用户強制關閉，下載服務不會重新啟動</string>
 
     <string name="advanced_settings_title">高級</string>
     <string name="http_advanced_settings_title">HTTP</string>
@@ -260,7 +264,7 @@
     <string name="eh_min_interval_title">EH 站點最小連接間隔 (ms)</string>
     <string name="eh_others_settings_title">其他</string>
     <string name="fix_dirname_title">修正下載文件夾名</string>
-    <string name="fix_dirname_title_summary">將下載文件夾名由 gid 改爲 gid-title，不進行修正不會影響使用</string>
+    <string name="fix_dirname_title_summary">將下載文件夾名由 gid 改為 gid-title，不進行修正不會影響使用</string>
     <string name="start_fixing">開始修正</string>
     <string name="no_need_fixing">未發現可修正項</string>
     <string name="fixing_over">共修正 %d 項</string>
@@ -276,18 +280,18 @@
     <string name="version_title">應用版本</string>
     <string name="update_about_settings_title">更新</string>
     <string name="auto_check_for_update_title">自動檢查更新</string>
-    <string name="auto_check_for_update_summary_on">每日第一次啓動時檢查更新</string>
+    <string name="auto_check_for_update_summary_on">每日第一次啟動時檢查更新</string>
     <string name="auto_check_for_update_summary_off">從不自動檢查更新</string>
     <string name="check_for_update_title">檢查更新</string>
     <string name="check_for_update_summary">點擊檢查更新</string>
     <string name="update_server_title">更新服務器</string>
     <string name="cloud_drive_title">如果更新失敗點擊此處</string>
     <string name="analytics_about_settings_title">數據統計</string>
-    <string name="allow_analyics_title">啓用數據統計</string>
+    <string name="allow_analyics_title">啟用數據統計</string>
     <string name="allow_analyics_summary_on">感謝您對本應用的支持</string>
     <string name="allow_analyics_summary_off">感謝您使用本應用</string>
     <string name="about_analyics_title">關於數據統計</string>
-    <string name="about_analyics_comment">若您啓用了數據統計，本應用會將您的使用情況發送給開發者。這對開發者維護該應用有很大幫助。在發送使用情況的同時也會發送部分設備信息（譬如設備型號、系統版本、當前IP地址）（注意：某些設備信息可能可以推測出某些用戶信息，譬如當前IP地址可能可以大概推測出用戶當前的位置）。開發者承諾不收集任何個人身份信息數據（譬如姓名、電話號碼、電郵地址）或可永久性標識某臺設備的數據（譬如IMEI、MAC地址）。\n\n數據收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies</string>
+    <string name="about_analyics_comment">若您啟用了數據統計，本應用會將您的使用情況發送給開發者。這對開發者維護該應用有很大幫助。在發送使用情況的同時也會發送部分設備信息（譬如設備型號、系統版本、當前IP地址）（注意：某些設備信息可能可以推測出某些用户信息，譬如當前IP地址可能可以大概推測出用户當前的位置）。開發者承諾不收集任何個人身份信息數據（譬如姓名、電話號碼、電郵地址）或可永久性標識某台設備的數據（譬如IMEI、MAC地址）。\n\n數據收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies</string>
     <string name="portrait">豎屏</string>
     <string name="landscape">橫屏</string>
     <string name="preference_settings_title">設置</string>
@@ -323,8 +327,8 @@
 
     <!-- Tag -->
     <string name="add_tag">添加標籤</string>
-    <string name="tag_name">標簽名稱：</string>
-    <string name="tag_name_empty">標簽名稱不能爲空</string>
+    <string name="tag_name">標籤名稱：</string>
+    <string name="tag_name_empty">標籤名稱不能為空</string>
     <string name="tag_change_name">修改名稱</string>
     <string name="new_tag_name">新名稱：%s</string>
 
@@ -345,7 +349,7 @@
     <string name="rate_succeeded">評分成功</string>
     <string name="rate_sensibly">理智評分</string>
     <string name="rate_failed">評分失敗</string>
-    <string name="gallery_of_he">該用戶上傳的內容</string>
+    <string name="gallery_of_he">該用户上傳的內容</string>
 
     <!-- rating -->
     <string name="rating10">根本把持不住</string>
@@ -377,7 +381,7 @@
     <string name="pages">頁面</string>
     <string name="size">大小</string>
     <string name="tip">提示</string>
-    <string name="not_started">未啓動</string>
+    <string name="not_started">未啟動</string>
     <string name="waiting">等待中</string>
     <string name="done">已完成</string>
     <string name="first_page">第一頁</string>
@@ -398,7 +402,7 @@
     <string name="comment">評論</string>
     <string name="info">信息</string>
     <string name="reply">回覆</string>
-    <string name="read">閱讀</string>
+    <string name="read">閲讀</string>
     <string name="rate">評價</string>
     <string name="last_page">最後一頁</string>
     <string name="unfinished">未完成的功能</string>
@@ -410,7 +414,7 @@
     <string name="login">登陸</string>
     <string name="logout">退出</string>
     <string name="wait">請稍後</string>
-    <string name="username">用戶名</string>
+    <string name="username">用户名</string>
     <string name="password">密碼</string>
     <string name="add">添加</string>
     <string name="what_to_do">你想做什麼？</string>
@@ -447,7 +451,7 @@
     <string name="thanks">感謝</string>
     <string name="develop">開發</string>
     <string name="advance_search_left">左劃更多</string>
-    <string name="restart_to_take_effect">重啓應用以便生效</string>
+    <string name="restart_to_take_effect">重啟應用以便生效</string>
     <string name="cur_dir_not_writable">當前文件夾不可寫</string>
 
 </resources>

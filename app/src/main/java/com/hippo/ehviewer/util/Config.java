@@ -253,6 +253,15 @@ public final class Config {
     private static final String KEY_MAX_HISTORY_COUNT = "max_history_count";
     private static final int DEFAULT_MAX_HISTORY_COUNT = 100;
 
+    private static final String KEY_HAH_IP = "hah_ip";
+    private static final String DEFAULT_HAH_IP = "";
+
+    private static final String KEY_HAH_PORT = "hah_port";
+    private static final String DEFAULT_HAH_PORT = "";
+
+    private static final String KEY_HAH_PASSKEY = "hah_passkey";
+    private static final String DEFAULT_HAH_PASSKEY = "";
+
     public static int getDefaultCat() {
         return getInt(KEY_DEFAULT_CAT, DEFAULT_DEFAULT_CAT);
     }
@@ -291,6 +300,30 @@ public final class Config {
 
     public static int getMaxHistoryCount() {
         return getIntFromStr(KEY_MAX_HISTORY_COUNT, DEFAULT_MAX_HISTORY_COUNT);
+    }
+
+    public static void setHAHIp(String hahIp) {
+        setString(KEY_HAH_IP, hahIp);
+    }
+
+    public static String getHAHIp() {
+        return getString(KEY_HAH_IP, DEFAULT_HAH_IP);
+    }
+
+    public static void setHAHPort(String hahPort) {
+        setString(KEY_HAH_PORT, hahPort);
+    }
+
+    public static String getHAHPort() {
+        return getString(KEY_HAH_PORT, DEFAULT_HAH_PORT);
+    }
+
+    public static void setHAHPasskey(String hahPasskey) {
+        setString(KEY_HAH_PASSKEY, hahPasskey);
+    }
+
+    public static String getHAHPasskey() {
+        return getString(KEY_HAH_PASSKEY, DEFAULT_HAH_PASSKEY);
     }
 
 

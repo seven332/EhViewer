@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Config;
@@ -76,6 +77,11 @@ public class EhInfo {
     private String mPreviewMode;
     private int mExculdeTagGroup;
     private String mExculdeLanguage;
+
+    private String mHAHIp;
+    private String mHAHPort;
+    private String mHAHPasskey;
+
     private static EhInfo sInstance;
 
     private BitmapDrawable getAvatarFromFile() {
@@ -110,16 +116,28 @@ public class EhInfo {
         mPreviewMode = Config.getPreviewMode();
         mExculdeTagGroup = Config.getExculdeTagGroup();
         mExculdeLanguage = Config.getExculdeLanguage();
+        mHAHIp = Config.getHAHIp();
+        mHAHPort = Config.getHAHPort();
+        mHAHPasskey = Config.getHAHPasskey();
         updateUconfig();
-    };
+    }
 
     private String getUconfigString(String previewMode) {
-        return new StringBuilder().append("cats_").append(mDefaultCat)
-                .append("-ts_").append(previewMode == null ? mPreviewMode : previewMode)
-                .append("-xns_").append(mExculdeTagGroup)
-                .append("-xl_").append(mExculdeLanguage)
-                .append("-tl_m-uh_y-tr_2-prn_n-dm_l-ar_0-rc_0-rx_0-ry_0-sa_y-oi_n-qb_n-tf_n-hp_-hk_-ms_n-mt_n")
-                .toString();
+        String proxy;
+        if (TextUtils.isEmpty(mHAHIp) || TextUtils.isEmpty(mHAHPort)) {
+            proxy = "";
+        } else {
+            proxy = mHAHIp + "%3A" + mHAHPort;
+        }
+
+        return "cats_" + mDefaultCat
+                + "-ts_" + (previewMode == null ? mPreviewMode : previewMode)
+                + "-xns_" + mExculdeTagGroup
+                + "-xl_" + mExculdeLanguage
+                + "-hp_" + proxy
+                + "-hk_" + mHAHPasskey
+                + "-prn_" + (TextUtils.isEmpty(proxy) ? "n" : "y")
+                + "-tl_m-uh_y-tr_2-dm_l-ar_0-rc_0-rx_0-ry_0-sa_y-oi_n-qb_n-tf_n-ms_n-mt_n";
     }
 
     private void updateUconfig() {
@@ -186,6 +204,7 @@ public class EhInfo {
         // Fake
         sb.append("; igneous=");
         sb.append("; lv=");
+
         conn.setRequestProperty("Cookie", sb.toString());
     }
 
@@ -264,6 +283,13 @@ public class EhInfo {
 
     public void setExculdeLanguage(String exculdeLanguage) {
         mExculdeLanguage = exculdeLanguage;
+        updateUconfig();
+    }
+
+    public void setHAHProxy(String ip, String port, String passkey) {
+        mHAHIp = ip;
+        mHAHPort = port;
+        mHAHPasskey = passkey;
         updateUconfig();
     }
 }
