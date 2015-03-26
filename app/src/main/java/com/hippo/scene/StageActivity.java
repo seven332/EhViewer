@@ -24,6 +24,7 @@ import android.view.View;
 
 import com.hippo.ehviewer.ui.AbsActionBarActivity;
 import com.hippo.util.IntIdGenerator;
+import com.hippo.widget.StageBar;
 
 public abstract class StageActivity extends AbsActionBarActivity {
 
@@ -38,6 +39,8 @@ public abstract class StageActivity extends AbsActionBarActivity {
     }
 
     public abstract @NonNull StageLayout getStageLayout();
+
+    public abstract @NonNull StageBar getStageBar();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,16 +62,6 @@ public abstract class StageActivity extends AbsActionBarActivity {
             getStageLayout().addView(sceneView);
         }
     }
-
-    /*
-    void attachSceneToStageAsPreScene(Scene scene) {
-        StageLayout stageLayout = getStageLayout();
-        View sceneView = scene.getSceneView();
-        if (sceneView != null) {
-            stageLayout.addView(sceneView, stageLayout.getChildCount() - 1);
-        }
-    }
-    */
 
     void detachSceneFromStage(Scene scene) {
         View sceneView = scene.getSceneView();

@@ -16,46 +16,32 @@
 package com.hippo.util;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
 
 import com.hippo.ehviewer.R;
 
 public class UiUtils {
 
-    private static float sDensity;
-    private static float sScaledDensity;
-
-    /**
-     * Init UiUtils. Do is in Application.onCreate()
-     *
-     * @param context
-     */
-    public static void init(Context context) {
-        Resources resources = context.getResources();
-
-        sDensity = resources.getDisplayMetrics().density;
-        sScaledDensity = resources.getDisplayMetrics().scaledDensity;
-    }
-
     /**
      * dp conversion to pix
      *
+     * @param context The context
      * @param dp The value you want to conversion
      * @return value in pix
      */
-    public static int dp2pix(float dp) {
-        return (int) (sDensity * dp + 0.5f);
+    public static int dp2pix(Context context, float dp) {
+        return (int) (dp * context.getResources().getDisplayMetrics().density + 0.5f);
     }
 
     /**
      * pix conversion to dp
      *
+     * @param context The context
      * @param pix The value you want to conversion
      * @return value in dp
      */
-    public static float pix2dp(int pix) {
-        return pix / sDensity;
+    public static float pix2dp(Context context, int pix) {
+        return pix / context.getResources().getDisplayMetrics().density;
     }
 
     /**
@@ -64,8 +50,8 @@ public class UiUtils {
      * @param sp The value you want to conversion
      * @return value in pix
      */
-    public static int sp2pix(float sp) {
-        return (int) (sp * sScaledDensity + 0.5f);
+    public static int sp2pix(Context context, float sp) {
+        return (int) (sp * context.getResources().getDisplayMetrics().scaledDensity + 0.5f);
     }
 
     /**
@@ -74,8 +60,8 @@ public class UiUtils {
      * @param pix The value you want to conversion
      * @return value in sp
      */
-    public static float pix2sp(float pix) {
-        return pix / sScaledDensity;
+    public static float pix2sp(Context context, float pix) {
+        return pix / context.getResources().getDisplayMetrics().scaledDensity;
     }
 
     /**

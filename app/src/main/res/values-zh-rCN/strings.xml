@@ -49,5 +49,6 @@
 
 
     <string name="keyword">关键字</string>
+    <string name="search">搜索</string>
 
 </resources>

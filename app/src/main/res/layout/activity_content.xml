@@ -26,6 +26,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"/>
 
+    <!-- Left Drawer -->
     <com.hippo.widget.DrawerFrameLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

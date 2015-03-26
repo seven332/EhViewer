@@ -163,7 +163,6 @@ public class TransitionCurtain extends Curtain {
 
         mAnimList.add(colorAnim);
 
-
         // Handle transit part
         for (ViewPair pair : mViewPairArray) {
             final View enterView = pair.getFromView(enter);
@@ -177,8 +176,6 @@ public class TransitionCurtain extends Curtain {
                 continue;
             }
 
-            //int[] startloaction = new int[2];
-            //ViewUtils.getLocationInAncestor(exitView, startloaction, exit.getSceneView());
             int[] endloaction = new int[2];
             ViewUtils.getLocationInAncestor(enterView, endloaction, enter.getSceneView());
             int startWidth = exitView.getWidth();

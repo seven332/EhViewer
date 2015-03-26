@@ -18,6 +18,7 @@ package com.hippo.scene;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import com.hippo.util.Log;
 
@@ -136,6 +137,10 @@ class SceneManager {
                     scene.setState(Scene.SCENE_STATE_DESTROY);
                     scene.detachFromeStage();
                 }
+
+                // Switch stage bar
+                View stageBarContent = scene.onCreateStageBar();
+                getStageActivity().getStageBar().updateContent(stageBarContent);
             }
         } else {
             Log.e(TAG, "The scene is not in stage");

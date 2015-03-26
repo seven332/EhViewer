@@ -16,14 +16,11 @@
 package com.hippo.ehviewer;
 
 import com.hippo.scene.SceneApplication;
-import com.hippo.util.UiUtils;
 
 public class EhApplication extends SceneApplication {
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        UiUtils.init(this);
     }
 }

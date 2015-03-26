@@ -182,8 +182,7 @@ public abstract class Scene {
         StageActivity sa = getStageActivity();
         mSceneView = new FrameLayout(sa);
         initBackground(mSceneView);
-        mSceneView.addView(view, new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mSceneView.addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
     private void initBackground(@NonNull View bg) {
@@ -210,6 +209,10 @@ public abstract class Scene {
     }
 
     protected void onOut() {
+    }
+
+    public View onCreateStageBar() {
+        return null;
     }
 
     /**

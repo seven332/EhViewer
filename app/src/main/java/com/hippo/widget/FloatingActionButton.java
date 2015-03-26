@@ -35,10 +35,10 @@ import com.hippo.util.ViewUtils;
 
 public class FloatingActionButton extends View {
 
-    private static final int DRAWABLE_WIDTH = UiUtils.dp2pix(24);
-
     private GasketDrawer mGasketDrawer;
     private Drawable mDrawable;
+
+    private int mDrawableWidth;
 
     public FloatingActionButton(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -57,6 +57,8 @@ public class FloatingActionButton extends View {
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        mDrawableWidth = UiUtils.dp2pix(context, 24);
+
         TypedArray a;
 
         a = context.obtainStyledAttributes(attrs, R.styleable.FloatingActionButton, defStyleAttr, defStyleRes);
@@ -95,11 +97,11 @@ public class FloatingActionButton extends View {
             int bottom;
             int width = getWidth();
             int height = getHeight();
-            int halfDrawableWidth = DRAWABLE_WIDTH / 2;
+            int halfDrawableWidth = mDrawableWidth / 2;
             left = width / 2 - halfDrawableWidth;
             top = height / 2 - halfDrawableWidth;
-            right = left + DRAWABLE_WIDTH;
-            bottom = top + DRAWABLE_WIDTH;
+            right = left + mDrawableWidth;
+            bottom = top + mDrawableWidth;
             mDrawable.setBounds(left, top, right, bottom);
             mDrawable.draw(canvas);
         }
@@ -125,9 +127,6 @@ public class FloatingActionButton extends View {
 
     static class GasketDrawerOld implements GasketDrawer {
 
-        private static final int SHADOW_RADIOUS = UiUtils.dp2pix(3);
-        private static final int SHADOW_OFFSET_Y = UiUtils.dp2pix(1);
-        private static final int GASKET_PADDING = SHADOW_RADIOUS + SHADOW_OFFSET_Y; // 4dp
         private static final int SHADOW_COLOR = 0x43000000;
 
         private View mView;
@@ -140,7 +139,17 @@ public class FloatingActionButton extends View {
 
         private boolean mIsDark;
 
+        private final int mShadowRadious;
+        private final int mShadowOffsetY;
+        private final int mGasketPadding;
+
         private GasketDrawerOld(View view, int color) {
+            Context context = view.getContext();
+
+            mShadowRadious = UiUtils.dp2pix(context, 3);
+            mShadowOffsetY = UiUtils.dp2pix(context, 1);
+            mGasketPadding = mShadowRadious + mShadowOffsetY;
+
             mView = view;
             mBounds = new RectF();
             mColor = color;
@@ -149,7 +158,7 @@ public class FloatingActionButton extends View {
             mPaint.setColor(mColor);
             mPaint.setStyle(Paint.Style.FILL);
 
-            mPaint.setShadowLayer(SHADOW_RADIOUS, 0, SHADOW_OFFSET_Y, SHADOW_COLOR);
+            mPaint.setShadowLayer(mShadowRadious, 0, mShadowOffsetY, SHADOW_COLOR);
             ViewUtils.removeHardwareAccelerationSupport(mView);
         }
 
@@ -190,10 +199,10 @@ public class FloatingActionButton extends View {
         }
 
         public void draw(Canvas canvas) {
-            mBounds.left = GASKET_PADDING;
-            mBounds.top = GASKET_PADDING;
-            mBounds.right = mView.getWidth() - GASKET_PADDING;
-            mBounds.bottom = mView.getHeight() - GASKET_PADDING;
+            mBounds.left = mGasketPadding;
+            mBounds.top = mGasketPadding;
+            mBounds.right = mView.getWidth() - mGasketPadding;
+            mBounds.bottom = mView.getHeight() - mGasketPadding;
             canvas.drawOval(mBounds, mPaint);
         }
 
@@ -205,8 +214,6 @@ public class FloatingActionButton extends View {
     }
 
     static class GasketDrawerLollipop implements GasketDrawer {
-
-        private static final int ELEVATION = UiUtils.dp2pix(4);
 
         private static final int[][] STATES = new int[][]{
                 new int[]{-android.R.attr.state_enabled},
@@ -220,8 +227,12 @@ public class FloatingActionButton extends View {
 
         private GradientDrawable mGradientDrawable;
 
+        private final int mElevation;
+
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         public GasketDrawerLollipop(View view, int color) {
+            mElevation = UiUtils.dp2pix(view.getContext(), 4);
+
             mView = view;
             mColor = color;
 
@@ -232,7 +243,7 @@ public class FloatingActionButton extends View {
                     new int[] {darkColor, darkColor, darkColor, color}));
 
             mView.setBackground(mGradientDrawable);
-            mView.setElevation(ELEVATION);
+            mView.setElevation(mElevation);
         }
 
         @Override
