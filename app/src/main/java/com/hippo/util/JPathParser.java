@@ -1,34 +1,38 @@
 /*
- * Copyright (C) 2015 Hippo Seven
+ * Copyright (C) 2014 The Android Open Source Project
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 
-package com.hippo.animation;
+package com.hippo.util;
 
 import android.util.Log;
+
+import com.hippo.graphics.JPath;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-class IpPathParser {
-    static final String LOGTAG = IpPathParser.class.getSimpleName();
+/**
+ * @hide
+ */
+public class JPathParser {
+    static final String LOGTAG = JPathParser.class.getSimpleName();
 
     /**
      * @param pathData The string representing a path, the same as "d" string in svg file.
      * @return the generated Path object.
      */
-    public static PathInterpolator.Path createPathFromPathData(String pathData) {
-        PathInterpolator.Path path = new PathInterpolator.Path();
+    public static JPath createPathFromPathData(String pathData) {
+        JPath path = new JPath();
         PathDataNode[] nodes = createNodesFromPathData(pathData);
         if (nodes != null) {
             PathDataNode.nodesToPath(nodes, path);
@@ -250,7 +254,7 @@ class IpPathParser {
          * @param node The source array of PathDataNode.
          * @param path The target Path object.
          */
-        public static void nodesToPath(PathDataNode[] node, PathInterpolator.Path path) {
+        public static void nodesToPath(PathDataNode[] node, JPath path) {
             float[] current = new float[4];
             char previousCommand = 'm';
             for (int i = 0; i < node.length; i++) {
@@ -276,7 +280,7 @@ class IpPathParser {
             }
         }
 
-        private static void addCommand(PathInterpolator.Path path, float[] current,
+        private static void addCommand(JPath path, float[] current,
                 char previousCmd, char cmd, float[] val) {
 
             int incr = 2;
@@ -499,7 +503,7 @@ class IpPathParser {
             current[3] = ctrlPointY;
         }
 
-        private static void drawArc(PathInterpolator.Path p,
+        private static void drawArc(JPath p,
                 float x0,
                 float y0,
                 float x1,
@@ -590,7 +594,7 @@ class IpPathParser {
          * @param start The start angle of the arc on the ellipse
          * @param sweep The angle (positive or negative) of the sweep of the arc on the ellipse
          */
-        private static void arcToBezier(PathInterpolator.Path p,
+        private static void arcToBezier(JPath p,
                 double cx,
                 double cy,
                 double a,
