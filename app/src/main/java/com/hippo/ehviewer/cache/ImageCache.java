@@ -20,7 +20,6 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.support.annotation.NonNull;
 
 import java.io.File;
@@ -55,7 +54,6 @@ public class ImageCache extends AnyCache<Bitmap>{
         return sImageCache;
     }
 
-
     private ImageCache(Context context) {
         final ActivityManager activityManager = (ActivityManager)context
                 .getSystemService(Context.ACTIVITY_SERVICE);
@@ -72,14 +70,9 @@ public class ImageCache extends AnyCache<Bitmap>{
         }
     }
 
-
     @Override
     protected int sizeOf(String key, Bitmap value) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            return value.getAllocationByteCount();
-        } else {
-            return value.getByteCount();
-        }
+        return value.getByteCount();
     }
 
     @Override
