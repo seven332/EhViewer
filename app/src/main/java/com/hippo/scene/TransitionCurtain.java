@@ -17,6 +17,7 @@ package com.hippo.scene;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -82,8 +83,12 @@ public class TransitionCurtain extends Curtain {
         for (ViewPair pair : mViewPairArray) {
             final View enterView = pair.getToView(enter);
             final View exitView = pair.getFromView(exit);
-            if (enterView == null || exitView == null) {
-                // Can't get view
+            if (enterView == null) {
+                Log.w(TAG, "Can't get enterView when close");
+                continue;
+            }
+            if (exitView == null) {
+                Log.w(TAG, "Can't get exitView when close");
                 continue;
             }
 
@@ -110,31 +115,24 @@ public class TransitionCurtain extends Curtain {
                     enterView.setPivotY(0);
 
                     // Start animation
-                    ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(enterView, "scaleX", (float) startWidth / endWidth, 1f);
-                    scaleXAnim.setDuration(ANIMATE_TIME);
-                    ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(enterView, "scaleY", (float) startHeight / endHeight, 1f);
-                    scaleYAnim.setDuration(ANIMATE_TIME);
-                    ObjectAnimator xAnim = ObjectAnimator.ofFloat(enterView, "x", startloaction[0], endloaction[0]);
-                    xAnim.setDuration(ANIMATE_TIME);
-                    ObjectAnimator yAnim = ObjectAnimator.ofFloat(enterView, "y", startloaction[1], endloaction[1]);
-                    yAnim.setDuration(ANIMATE_TIME);
+                    PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", (float) startWidth / endWidth, 1f);
+                    PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", (float) startHeight / endHeight, 1f);
+                    PropertyValuesHolder xPvh = PropertyValuesHolder.ofFloat("x", startloaction[0], endloaction[0]);
+                    PropertyValuesHolder yPvh = PropertyValuesHolder.ofFloat("y", startloaction[1], endloaction[1]);
 
-                    yAnim.addListener(new SimpleAnimatorListener() {
+                    ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(enterView, scaleXPvh, scaleYPvh, xPvh, yPvh);
+                    anim.setDuration(ANIMATE_TIME);
+
+                    anim.addListener(new SimpleAnimatorListener() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             ViewUtils.setVisibility(exitView, View.VISIBLE);
                         }
                     });
 
-                    scaleXAnim.start();
-                    scaleYAnim.start();
-                    xAnim.start();
-                    yAnim.start();
+                    anim.start();
 
-                    mAnimList.add(scaleXAnim);
-                    mAnimList.add(scaleYAnim);
-                    mAnimList.add(xAnim);
-                    mAnimList.add(yAnim);
+                    mAnimList.add(anim);
 
                     // TODO show other part progressively
                 }
@@ -179,8 +177,8 @@ public class TransitionCurtain extends Curtain {
                 continue;
             }
 
-            int[] startloaction = new int[2];
-            ViewUtils.getLocationInAncestor(exitView, startloaction, exit.getSceneView());
+            //int[] startloaction = new int[2];
+            //ViewUtils.getLocationInAncestor(exitView, startloaction, exit.getSceneView());
             int[] endloaction = new int[2];
             ViewUtils.getLocationInAncestor(enterView, endloaction, enter.getSceneView());
             int startWidth = exitView.getWidth();
@@ -194,32 +192,24 @@ public class TransitionCurtain extends Curtain {
             exitView.setPivotY(0);
 
             // Start animation
-            ObjectAnimator scaleXAnim = ObjectAnimator.ofFloat(exitView, "scaleX", (float) endWidth / startWidth);
-            scaleXAnim.setDuration(ANIMATE_TIME);
-            ObjectAnimator scaleYAnim = ObjectAnimator.ofFloat(exitView, "scaleY", (float) endHeight / startHeight);
-            scaleYAnim.setDuration(ANIMATE_TIME);
-            ObjectAnimator xAnim = ObjectAnimator.ofFloat(exitView, "x", endloaction[0]);
-            xAnim.setDuration(ANIMATE_TIME);
-            ObjectAnimator yAnim = ObjectAnimator.ofFloat(exitView, "y", endloaction[1]);
-            yAnim.setDuration(ANIMATE_TIME);
+            PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", (float) endWidth / startWidth);
+            PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", (float) endHeight / startHeight);
+            PropertyValuesHolder xPvh = PropertyValuesHolder.ofFloat("x", endloaction[0]);
+            PropertyValuesHolder yPvh = PropertyValuesHolder.ofFloat("y", endloaction[1]);
 
-            yAnim.addListener(new SimpleAnimatorListener() {
+            ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(exitView, scaleXPvh, scaleYPvh, xPvh, yPvh);
+            anim.setDuration(ANIMATE_TIME);
+
+            anim.addListener(new SimpleAnimatorListener() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     ViewUtils.setVisibility(enterView, View.VISIBLE);
                 }
             });
 
-            scaleXAnim.start();
-            scaleYAnim.start();
-            xAnim.start();
-            yAnim.start();
+            anim.start();
 
-            mAnimList.add(scaleXAnim);
-            mAnimList.add(scaleYAnim);
-            mAnimList.add(xAnim);
-            mAnimList.add(yAnim);
-
+            mAnimList.add(anim);
             // TODO show other part progressively
         }
     }
