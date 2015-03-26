@@ -16,7 +16,7 @@
 <resources>
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="@android:Theme.Holo.Light.DarkActionBar">
+    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="themeColor">@color/theme</item>
         <!-- Text -->
         <item name="textColor">@color/primary_text_dark</item>
@@ -59,7 +59,7 @@
         <item name="android:spinnerItemStyle">@style/DropDownItem.Spinner</item>
     </style>
 
-    <style name="AppTheme.Dark" parent="@android:Theme.Holo">
+    <style name="AppTheme.Dark" parent="android:Theme.Holo">
         <item name="themeColor">@color/theme_dark</item>
         <!-- Text -->
         <item name="textColor">@color/primary_text_light</item>

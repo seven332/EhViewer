@@ -16,7 +16,7 @@
 <resources>
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="@android:Theme.Material.Light.DarkActionBar">
+    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
         <item name="themeColor">@color/theme</item>
         <!-- Text -->
         <item name="textColor">@color/primary_text_dark</item>
@@ -44,7 +44,7 @@
 
     </style>
 
-    <style name="AppTheme.Dark" parent="@android:Theme.Material">
+    <style name="AppTheme.Dark" parent="android:Theme.Material">
         <item name="themeColor">@color/theme_dark</item>
         <!-- Text -->
         <item name="textColor">@color/primary_text_light</item>
