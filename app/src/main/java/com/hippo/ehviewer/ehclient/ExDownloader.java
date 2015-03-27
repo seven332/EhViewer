@@ -16,20 +16,6 @@
 
 package com.hippo.ehviewer.ehclient;
 
-import java.io.BufferedInputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Process;
@@ -43,6 +29,20 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Utils;
+
+import java.io.BufferedInputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 // TODO what a mess
 public final class ExDownloader implements Runnable {
@@ -106,7 +106,7 @@ public final class ExDownloader implements Runnable {
     private volatile long mLastUpdateSpeedTime = 0;
     private volatile long mAccumulateSize;
     private volatile HashSet<Integer> mDownloadIndexSet;
-    private volatile Object mDownloadLock = new Object();
+    private final Object mDownloadLock = new Object();
 
     private int mCurReadIndex = 0;
 
@@ -476,7 +476,7 @@ public final class ExDownloader implements Runnable {
             if (edp.isLastPage) {
                 mPreviewPageNum = pageIndex + 1;
                 mImageNum = pageIndex * mPreviewPerPage + pageTokenArray.size();
-            } else if (!edp.isLastPage && mPreviewPageNum == -1) {
+            } else if (mPreviewPageNum == -1) {
                 mCurMaxPreviewPage = Math.max(mCurMaxPreviewPage, pageIndex + 1);
             }
         } else {

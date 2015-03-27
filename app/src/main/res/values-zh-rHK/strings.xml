@@ -233,6 +233,7 @@
     <string name="custom_codec_summary">自定義解碼可能會更使用更少內存，解碼更快</string>
     <string name="custom_codec_summary_not">自定義解碼暫不支持 x86, mips</string>
     <string name="clean_redundancy_title">清理閲讀宂餘</string>
+    <string name="clean_redundancy_mesg">你確定要清理閲讀宂餘嗎？不在下載列表中的畫廊圖片文件文件將被刪除。</string>
     <string name="no_redundancy">未發現宂餘</string>
     <string name="clean_redundancy">完成宂餘清理，共清理 %d 項</string>
     <string name="decode_format_title">解碼格式</string>
@@ -365,6 +366,10 @@
     <string name="rating0">…</string>
 
     <string name="photo_footnotes">Hippo 攝於成都大熊貓繁育研究基地</string>
+
+    <!-- Dialog sure -->
+    <string name="are_you_sure_no">算了</string>
+    <string name="are_you_sure_sure">確定</string>
 
     <!-- Utils -->
     <string name="share">分享</string>

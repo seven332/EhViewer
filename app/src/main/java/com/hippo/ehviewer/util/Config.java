@@ -41,7 +41,6 @@ public final class Config {
 
     private static boolean mInit = false;
 
-    private static Context mContext;
     private static SharedPreferences mConfigPre;
 
     /**
@@ -54,8 +53,7 @@ public final class Config {
             return;
         mInit = true;
 
-        mContext = context;
-        mConfigPre = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mConfigPre = PreferenceManager.getDefaultSharedPreferences(context);
 
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             sExternalDir = new File(Environment.getExternalStorageDirectory(), EXTERANL_DIR_NAME);
