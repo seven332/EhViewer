@@ -16,10 +16,10 @@
 
 package com.hippo.ehviewer.ehclient;
 
+import com.hippo.ehviewer.util.Utils;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.hippo.ehviewer.util.Utils;
 
 public class ImagePageParser {
 
@@ -61,9 +61,10 @@ public class ImagePageParser {
             }
 
         } else {
-            p = Pattern.compile("<div id=\"i3\">.+?<img id=\"img\" src=\"(.+?)\""
-                    + ".+?"
-                    + "<div id=\"i5\"><div class=\"sb\"><a href=\"(?:http|https)://.+?/g/(\\d+)/(\\w+)");
+            p = Pattern.compile(
+                    "<(?:/iframe|div id=\"i3\")[^>]*><a[^>]*><img[^>]*src=\"(.+?)\"" +
+                    ".+?" +
+                    "<div class=\"sb\"><a href=\"(?:http|https)://.+?/g/(\\d+)/(\\w+)");
             m = p.matcher(body);
             if (m.find()) {
                 imageUrl = Utils.unescapeXml(m.group(1));
