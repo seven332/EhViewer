@@ -32,6 +32,7 @@ import android.os.SystemClock;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import android.provider.SearchRecentSuggestions;
 import android.text.util.Linkify;
 import android.view.MenuItem;
@@ -199,6 +200,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private static final String KEY_PREVIEW_MODE = "preview_mode";
         private static final String KEY_DEFAULT_FAVORITE = "default_favorite";
         private static final String KEY_HAH_PROXY = "hah_proxy";
+        private static final String KEY_HAH_PROXY_CONFIG = "hah_proxy_config";
 
         private Preference mListDefaultCategory;
         private Preference mExculdeTagGroup;
@@ -206,7 +208,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
         private Preference mClearSuggestions;
         private ListPreference mPreviewMode;
         private ListPreference mDefaultFavorite;
-        private Preference mHAHProxy;
+        private SwitchPreference mHAHProxy;
+        private Preference mHAHProxyConfig;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -224,8 +227,10 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mPreviewMode = (ListPreference) findPreference(KEY_PREVIEW_MODE);
             mPreviewMode.setOnPreferenceChangeListener(this);
             mDefaultFavorite = (ListPreference) findPreference(KEY_DEFAULT_FAVORITE);
-            mHAHProxy = findPreference(KEY_HAH_PROXY);
-            mHAHProxy.setOnPreferenceClickListener(this);
+            mHAHProxy = (SwitchPreference) findPreference(KEY_HAH_PROXY);
+            mHAHProxy.setOnPreferenceChangeListener(this);
+            mHAHProxyConfig = findPreference(KEY_HAH_PROXY_CONFIG);
+            mHAHProxyConfig.setOnPreferenceClickListener(this);
 
             int i = 0;
             String[] entrise = new String[Favorite.FAVORITE_TITLES.length + 1];
@@ -241,6 +246,9 @@ public class SettingsActivity extends AbsPreferenceActivity {
             if (KEY_PREVIEW_MODE.equals(key)) {
                 String newPreviewMode = (String) newValue;
                 EhInfo.getInstance(getActivity()).setPreviewMode(newPreviewMode);
+            } else if (KEY_HAH_PROXY.equals(key)) {
+                boolean hahProxy = (Boolean) newValue;
+                EhInfo.getInstance(getActivity()).setHAHProxy(hahProxy);
             }
             return true;
         }
@@ -310,8 +318,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         SimpleSuggestionProvider.AUTHORITY, SimpleSuggestionProvider.MODE);
                 suggestions.clearHistory();
 
-            } else if (KEY_HAH_PROXY.equals(key)) {
-                LinearLayout ll = (LinearLayout) ViewUtils.inflateDialogView(R.layout.hah_proxy, false);
+            } else if (KEY_HAH_PROXY_CONFIG.equals(key)) {
+                LinearLayout ll = (LinearLayout) ViewUtils.inflateDialogView(R.layout.hah_proxy_config, false);
                 final EditText hahIp = (EditText) ll.findViewById(R.id.hah_ip);
                 final EditText hahPort = (EditText) ll.findViewById(R.id.hah_port);
                 final EditText hahPasskey = (EditText) ll.findViewById(R.id.hah_passkey);

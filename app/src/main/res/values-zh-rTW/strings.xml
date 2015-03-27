@@ -211,7 +211,8 @@
     <string name="default_favorite">預設收藏夾</string>
     <string name="history_eh_settings_title">歷史</string>
     <string name="max_history_count_title">最大歷史記錄條數</string>
-    <string name="hah_proxy_title">Hentai@Home 伺服器</string>
+    <string name="hah_proxy_title">H@H 伺服器</string>
+    <string name="hah_proxy_config_title">H@H 伺服器設定</string>
     <string name="hah_ip">IP 地址</string>
     <string name="hah_port">埠</string>
     <string name="hah_passkey">金鑰（可選）</string>

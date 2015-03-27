@@ -80,9 +80,14 @@
 
     <PreferenceCategory android:title="@string/hah_eh_settings_title" >
 
-        <Preference
+        <SwitchPreference
             android:key="hah_proxy"
             android:title="@string/hah_proxy_title"/>
+
+        <Preference
+            android:key="hah_proxy_config"
+            android:dependency="hah_proxy"
+            android:title="@string/hah_proxy_config_title"/>
 
     </PreferenceCategory>
 

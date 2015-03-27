@@ -227,8 +227,9 @@
     <string name="default_favorite">Default Favorite</string>
     <string name="history_eh_settings_title">History</string>
     <string name="max_history_count_title">The maximum number of history records</string>
-    <string name="hah_eh_settings_title" translatable="false">H@H</string>
-    <string name="hah_proxy_title">Hentai@Home Proxy</string>
+    <string name="hah_eh_settings_title" translatable="false">Hentai@Home</string>
+    <string name="hah_proxy_title">H@H proxy</string>
+    <string name="hah_proxy_config_title">H@H proxy config</string>
     <string name="hah_ip">IP Address</string>
     <string name="hah_port">Port</string>
     <string name="hah_passkey">Passkey (Optional)</string>

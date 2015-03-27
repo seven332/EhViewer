@@ -253,6 +253,9 @@ public final class Config {
     private static final String KEY_MAX_HISTORY_COUNT = "max_history_count";
     private static final int DEFAULT_MAX_HISTORY_COUNT = 100;
 
+    private static final String KEY_HAH_PROXY = "hah_proxy";
+    private static final boolean DEFAULT_HAH_PROXY = false;
+
     private static final String KEY_HAH_IP = "hah_ip";
     private static final String DEFAULT_HAH_IP = "";
 
@@ -300,6 +303,10 @@ public final class Config {
 
     public static int getMaxHistoryCount() {
         return getIntFromStr(KEY_MAX_HISTORY_COUNT, DEFAULT_MAX_HISTORY_COUNT);
+    }
+
+    public static boolean getHAHProxy() {
+        return getBoolean(KEY_HAH_PROXY, DEFAULT_HAH_PROXY);
     }
 
     public static void setHAHIp(String hahIp) {

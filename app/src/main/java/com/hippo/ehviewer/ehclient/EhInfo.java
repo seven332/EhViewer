@@ -78,6 +78,7 @@ public class EhInfo {
     private int mExculdeTagGroup;
     private String mExculdeLanguage;
 
+    private boolean mHAHProxy;
     private String mHAHIp;
     private String mHAHPort;
     private String mHAHPasskey;
@@ -116,6 +117,7 @@ public class EhInfo {
         mPreviewMode = Config.getPreviewMode();
         mExculdeTagGroup = Config.getExculdeTagGroup();
         mExculdeLanguage = Config.getExculdeLanguage();
+        mHAHProxy = Config.getHAHProxy();
         mHAHIp = Config.getHAHIp();
         mHAHPort = Config.getHAHPort();
         mHAHPasskey = Config.getHAHPasskey();
@@ -124,7 +126,7 @@ public class EhInfo {
 
     private String getUconfigString(String previewMode) {
         String proxy;
-        if (TextUtils.isEmpty(mHAHIp) || TextUtils.isEmpty(mHAHPort)) {
+        if (!mHAHProxy || TextUtils.isEmpty(mHAHIp) || TextUtils.isEmpty(mHAHPort)) {
             proxy = "";
         } else {
             proxy = mHAHIp + "%3A" + mHAHPort;
@@ -283,6 +285,11 @@ public class EhInfo {
 
     public void setExculdeLanguage(String exculdeLanguage) {
         mExculdeLanguage = exculdeLanguage;
+        updateUconfig();
+    }
+
+    public void setHAHProxy(boolean hahProxy) {
+        mHAHProxy = hahProxy;
         updateUconfig();
     }
 
