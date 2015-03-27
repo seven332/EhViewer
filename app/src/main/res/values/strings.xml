@@ -251,6 +251,7 @@
     <string name="custom_codec_summary">Custom codec may cost less memory, decode faster</string>
     <string name="custom_codec_summary_not">Custom codec do not support x86, mips</string>
     <string name="clean_redundancy_title">Clean redundancy</string>
+    <string name="clean_redundancy_mesg">Are you sure you want to clean redundancy? It will delete all gallery files which is not in the download list.</string>
     <string name="no_redundancy">No redundancy</string>
     <string name="clean_redundancy">Redundancy cleaning completed, clean-up %d items totally</string>
     <string name="decode_format_title">Decode format</string>
@@ -403,6 +404,10 @@
     <string name="rating0">DISASTER</string>
 
     <string name="photo_footnotes">Taken by Hippo at Chengdu Research Base of Giant Panda Breeding</string>
+
+    <!-- Dialog sure -->
+    <string name="are_you_sure_no">No</string>
+    <string name="are_you_sure_sure">Sure</string>
 
     <!-- Util -->
     <string name="share">share</string>

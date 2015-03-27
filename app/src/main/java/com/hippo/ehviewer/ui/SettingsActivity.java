@@ -486,55 +486,70 @@ public class SettingsActivity extends AbsPreferenceActivity {
         public boolean onPreferenceClick(Preference preference) {
             final String key = preference.getKey();
             if (KEY_CLEAN_REDUNDANCY.equals(key)) {
-
-                // Create a thread to do clean task
-                new BgThread() {
-                    @Override
-                    public void run() {
-                        Data data = Data.getInstance();
-                        List<DownloadInfo> diList = data.getAllDownloads();
-                        File downloadDir = new File(Config.getDownloadPath());
-                        String[] files = downloadDir.list();
-                        Handler handler = AppHandler.getInstance();
-                        List<File> targetDirList = new ArrayList<File>();
-
-                        if (files == null) {
-                            // Check files null
-                            handler.post(new CleanResponder(CleanResponder.STATE_NONE, 0, 0));
-                            return;
-                        }
-
-                        for (String filename : files) {
-                            // If in download list, just continue
-                            if (isInDownloadList(diList, filename))
-                                continue;
-                            File dir = new File(downloadDir, filename);
-                            // If there is no tag file, just continue
-                            if (!new File(dir, EhUtils.EH_DOWNLOAD_FILENAME).exists())
-                                continue;
-                            // Add to list
-                            targetDirList.add(dir);
-                        }
-
-                        if (targetDirList.isEmpty()) {
-                            handler.post(new CleanResponder(CleanResponder.STATE_NONE, 0, 0));
-                            return;
-                        } else {
-                            handler.post(new CleanResponder(CleanResponder.STATE_START, 0, 0));
-                        }
-                        // Do delete
-                        for (int i = 0; i < targetDirList.size(); i++) {
-                            File dir = targetDirList.get(i);
-                            Utils.deleteFile(dir);
-                            handler.post(new CleanResponder(CleanResponder.STATE_DOING, targetDirList.size(), i + 1));
-                        }
-                        // Close windows
-                        handler.post(new CleanResponder(CleanResponder.STATE_DONE, targetDirList.size(), targetDirList
-                                .size()));
-                    }
-                }.start();
+                new MaterialAlertDialog.Builder(getActivity()).setTitle(R.string.warning)
+                        .setMessage(R.string.clean_redundancy_mesg)
+                        .setPositiveButton(R.string.are_you_sure_sure)
+                        .setNegativeButton(R.string.are_you_sure_no)
+                        .setButtonListener(new MaterialAlertDialog.OnClickListener() {
+                            @Override
+                            public boolean onClick(MaterialAlertDialog dialog, int which) {
+                                if (which == MaterialAlertDialog.POSITIVE) {
+                                    cleanRedundancy();
+                                } return true;
+                            }
+                        }).show();
             }
             return true;
+        }
+
+
+        private void cleanRedundancy() {
+            // Create a thread to do clean task
+            new BgThread() {
+                @Override
+                public void run() {
+                    Data data = Data.getInstance();
+                    List<DownloadInfo> diList = data.getAllDownloads();
+                    File downloadDir = new File(Config.getDownloadPath());
+                    String[] files = downloadDir.list();
+                    Handler handler = AppHandler.getInstance();
+                    List<File> targetDirList = new ArrayList<File>();
+
+                    if (files == null) {
+                        // Check files null
+                        handler.post(new CleanResponder(CleanResponder.STATE_NONE, 0, 0));
+                        return;
+                    }
+
+                    for (String filename : files) {
+                        // If in download list, just continue
+                        if (isInDownloadList(diList, filename))
+                            continue;
+                        File dir = new File(downloadDir, filename);
+                        // If there is no tag file, just continue
+                        if (!new File(dir, EhUtils.EH_DOWNLOAD_FILENAME).exists())
+                            continue;
+                        // Add to list
+                        targetDirList.add(dir);
+                    }
+
+                    if (targetDirList.isEmpty()) {
+                        handler.post(new CleanResponder(CleanResponder.STATE_NONE, 0, 0));
+                        return;
+                    } else {
+                        handler.post(new CleanResponder(CleanResponder.STATE_START, 0, 0));
+                    }
+                    // Do delete
+                    for (int i = 0; i < targetDirList.size(); i++) {
+                        File dir = targetDirList.get(i);
+                        Utils.deleteFile(dir);
+                        handler.post(new CleanResponder(CleanResponder.STATE_DOING, targetDirList.size(), i + 1));
+                    }
+                    // Close windows
+                    handler.post(new CleanResponder(CleanResponder.STATE_DONE, targetDirList.size(), targetDirList
+                            .size()));
+                }
+            }.start();
         }
     }
 
