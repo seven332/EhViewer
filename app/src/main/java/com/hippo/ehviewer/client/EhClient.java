@@ -71,7 +71,7 @@ public final class EhClient {
         ThreadFactory threadFactory = new PriorityThreadFactory(TAG,
                 Process.THREAD_PRIORITY_BACKGROUND);
         mRequestThreadPool = new ThreadPoolExecutor(poolSize, poolSize,
-                1, TimeUnit.SECONDS, requestWorkQueue, threadFactory);
+                1L, TimeUnit.SECONDS, requestWorkQueue, threadFactory);
     }
 
     public static String getUrlHeader(int mode) {
@@ -86,8 +86,8 @@ public final class EhClient {
         }
     }
 
-    public static interface EhClientListener {
-        public void onFailure(Exception e);
+    public interface EhClientListener {
+        void onFailure(Exception e);
     }
 
     public abstract static class OnGetGalleryListListener implements EhClientListener {
@@ -111,9 +111,9 @@ public final class EhClient {
     }
 
     private interface BgJobHelper {
-        public void doInBackground();
+        void doInBackground();
 
-        public void onPostExecute();
+        void onPostExecute();
     }
 
     private abstract class SimpleBgJobHelper implements BgJobHelper {

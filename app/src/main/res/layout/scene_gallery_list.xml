@@ -13,32 +13,9 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout
+<com.hippo.ehviewer.widget.ContentLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/content_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <com.hippo.widget.Appbar
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/appbar_size"
-        android:background="?attr/colorPrimary"/>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/appbar_shadow_height"
-            android:background="@drawable/drop_shadow"/>
-
-    </FrameLayout>
-
-</LinearLayout>
+    android:orientation="vertical"/>

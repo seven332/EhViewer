@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015 Hippo Seven
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!--suppress Annotator -->
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ProgressBar
+        style="@style/ProgressBar.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:background="@drawable/ic_sad"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="@dimen/keyline_margin"
+            android:paddingBottom="@dimen/keyline_margin"
+            tools:ignore="RtlHardcoded"/>
+
+    </LinearLayout>
+
+    <com.hippo.widget.refreshlayout.RefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.hippo.widget.recyclerview.EasyRecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/content_padding_start"
+            android:paddingRight="@dimen/content_padding_end"
+            tools:ignore="RtlHardcoded"/>
+
+    </com.hippo.widget.refreshlayout.RefreshLayout>
+
+</merge>

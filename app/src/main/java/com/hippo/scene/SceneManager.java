@@ -18,7 +18,6 @@ package com.hippo.scene;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.View;
 
 import com.hippo.util.Log;
 
@@ -32,6 +31,8 @@ class SceneManager {
     private StageActivity mStageActivity;
 
     private Scene mLegacyScene;
+
+    private int[] mTemp = new int[2];
 
     // Should only be called by SceneApplication
     SceneManager() {
@@ -75,6 +76,12 @@ class SceneManager {
 
         scene.setState(Scene.SCENE_STATE_CREATE);
         scene.create(null);
+
+        // Update fit padding
+        int fitPaddingBottom = getStageActivity().getStageLayout().getFitPaddingBottom();
+        if (fitPaddingBottom != -1) {
+            scene.getFitPaddingBottom(fitPaddingBottom);
+        }
 
         if (curtain != null && previousState != null) {
             scene.setState(Scene.SCENE_STATE_OPEN);
@@ -138,9 +145,11 @@ class SceneManager {
                     scene.detachFromeStage();
                 }
 
+                /*
                 // Switch stage bar
                 View stageBarContent = scene.onCreateStageBar();
                 getStageActivity().getStageBar().updateContent(stageBarContent);
+                */
             }
         } else {
             Log.e(TAG, "The scene is not in stage");
@@ -180,6 +189,10 @@ class SceneManager {
         } else {
             return null;
         }
+    }
+
+    Stack<Scene> getSceneStack() {
+        return mSceneStack;
     }
 
     protected void onSaveInstanceState(Bundle outState) {

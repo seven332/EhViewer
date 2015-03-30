@@ -15,7 +15,6 @@
  */
 package com.hippo.util;
 
-
 import android.os.Process;
 
 import java.util.concurrent.ThreadFactory;
@@ -45,5 +44,4 @@ public class PriorityThreadFactory implements ThreadFactory {
             }
         };
     }
-
 }

@@ -24,9 +24,9 @@ import android.view.View;
 
 import com.hippo.ehviewer.ui.AbsActionBarActivity;
 import com.hippo.util.IntIdGenerator;
-import com.hippo.widget.StageBar;
 
-public abstract class StageActivity extends AbsActionBarActivity {
+public abstract class StageActivity extends AbsActionBarActivity
+        implements StageLayout.OnGetFitPaddingBottomListener {
 
     private IntIdGenerator mActivityResultIdGenerator = IntIdGenerator.create();
     private SparseArray<Scene.ActivityResultListener> mActivityResultListenerMap =
@@ -40,7 +40,7 @@ public abstract class StageActivity extends AbsActionBarActivity {
 
     public abstract @NonNull StageLayout getStageLayout();
 
-    public abstract @NonNull StageBar getStageBar();
+    // public abstract @NonNull StageBar getStageBar();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,11 +49,22 @@ public abstract class StageActivity extends AbsActionBarActivity {
         ((SceneApplication) getApplication()).getSceneManager().setStageActivity(this);
     }
 
+    protected void onCreateStageLayout(StageLayout stageLayout) {
+        stageLayout.setOnGetFitPaddingListener(this);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
         ((SceneApplication) getApplication()).getSceneManager().setStageActivity(null);
+    }
+
+    @Override
+    public void onGetFitPaddingBottom(int b) {
+        for (Scene scene : sSceneManager.getSceneStack()) {
+            scene.getFitPaddingBottom(b);
+        }
     }
 
     void attachSceneToStage(Scene scene) {

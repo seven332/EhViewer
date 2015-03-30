@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.hippo.widget;
+package com.hippo.scene;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;
@@ -58,7 +58,4 @@ public class StageBar extends CardView {
         // TODO
         return false;
     }
-
-
-
 }

@@ -20,7 +20,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <com.hippo.ehviewer.widget.ContentLayout
+    <com.hippo.scene.StageLayout
         android:id="@+id/stage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

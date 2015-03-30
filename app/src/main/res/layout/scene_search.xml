@@ -13,22 +13,8 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout
+<com.hippo.ehviewer.widget.SearchLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/search_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <com.hippo.widget.Appbar
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/appbar_size"
-        android:background="?attr/colorPrimary"
-        android:elevation="@dimen/default_elevation"/>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-</LinearLayout>
+    android:layout_height="match_parent"/>

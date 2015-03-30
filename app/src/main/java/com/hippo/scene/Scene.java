@@ -56,6 +56,8 @@ public abstract class Scene {
 
     private static SceneManager sSceneManager;
 
+    private int mFitPaddingBottom = -1;
+
     static void setSceneManager(SceneManager sceneManager) {
         sSceneManager = sceneManager;
     }
@@ -156,6 +158,13 @@ public abstract class Scene {
         onOut();
     }
 
+    void getFitPaddingBottom(int b) {
+        if (mFitPaddingBottom != b) {
+            mFitPaddingBottom = b;
+            onGetFitPaddingBottom(b);
+        }
+    }
+
     public void setBackgroundColor(int bgColor) {
         if (mBackgroundColor != bgColor) {
             mBackgroundColor = bgColor;
@@ -210,6 +219,10 @@ public abstract class Scene {
 
     protected void onOut() {
     }
+
+    protected void onGetFitPaddingBottom(int b) {
+    }
+
 
     public View onCreateStageBar() {
         return null;

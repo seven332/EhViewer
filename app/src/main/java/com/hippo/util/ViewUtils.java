@@ -350,4 +350,25 @@ public final class ViewUtils {
             vto.removeOnGlobalLayoutListener(l);
         }
     }
+
+    /**
+     * Get index in parent
+     *
+     * @param view The view
+     * @return The index
+     */
+    public static int getIndexInParent(View view) {
+        ViewParent parent =  view.getParent();
+        if (parent instanceof ViewGroup) {
+            ViewGroup viewParent = (ViewGroup) parent;
+            int count = viewParent.getChildCount();
+            for (int i = 0; i < count; i++) {
+                View v = viewParent.getChildAt(i);
+                if (v == view) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
 }

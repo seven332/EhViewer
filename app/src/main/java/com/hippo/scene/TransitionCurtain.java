@@ -76,7 +76,6 @@ public class TransitionCurtain extends Curtain {
 
         colorAnim.start();
 
-
         mAnimList.add(colorAnim);
 
         // Handle transit part

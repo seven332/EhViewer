@@ -30,10 +30,10 @@
     android:viewportHeight="24.0">
 
     <path
-        auto:pathData="@string/pd_happy"
+        auto:pathData="@string/pd_sad"
         auto:fillColor="#8A000000"
 
-        android:pathData="@string/pd_happy"
+        android:pathData="@string/pd_sad"
         android:fillColor="#8A000000"/>
 
 </vector>

@@ -16,75 +16,177 @@
 package com.hippo.ehviewer.widget;
 
 import android.content.Context;
-import android.graphics.Rect;
-import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
-import com.hippo.scene.StageLayout;
+import com.hippo.ehviewer.R;
+import com.hippo.util.IntIdGenerator;
+import com.hippo.util.ViewUtils;
+import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.widget.refreshlayout.RefreshLayout;
 
-public class ContentLayout extends StageLayout {
+import java.util.ArrayList;
+import java.util.List;
 
-    private OnGetFitPaddingListener mOnGetFitPaddingListener;
+public class ContentLayout extends FrameLayout {
 
-    private int mFitPaddingLeft = -1;
-    private int mFitPaddingTop = -1;
-    private int mFitPaddingRight = -1;
-    private int mFitPaddingBottom = -1;
+    private ProgressBar mProgressBar;
+    private ViewGroup mItView;
+    private RefreshLayout mRefreshLayout;
+    private View mImageView;
+    private TextView mTextView;
 
     public ContentLayout(Context context) {
         super(context);
+        init(context);
     }
 
     public ContentLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context);
     }
 
     public ContentLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(context);
     }
 
-    public ContentLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
+    private void init(Context context) {
+        LayoutInflater.from(context).inflate(R.layout.widget_content_layout, this);
+
+        mProgressBar = (ProgressBar) getChildAt(0);
+        mItView = (ViewGroup) getChildAt(1);
+        mRefreshLayout = (RefreshLayout) getChildAt(2);
+        mImageView = mItView.getChildAt(0);
+        mTextView = (TextView) mItView.getChildAt(1);
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    protected boolean fitSystemWindows(@NonNull Rect insets) {
-        mFitPaddingLeft = 0;
-        mFitPaddingTop = 0;
-        mFitPaddingRight = 0;
-        mFitPaddingBottom = insets.bottom;
-        if (mOnGetFitPaddingListener != null) {
-            mOnGetFitPaddingListener.onGetFitPadding(mFitPaddingLeft, mFitPaddingTop,
-                    mFitPaddingRight, mFitPaddingBottom);
+    public void showProgressBar() {
+        ViewUtils.setVisibility(mProgressBar, View.VISIBLE);
+        ViewUtils.setVisibility(mItView, View.GONE);
+        ViewUtils.setVisibility(mRefreshLayout, View.GONE);
+    }
+
+    public void showText(CharSequence text) {
+        ViewUtils.setVisibility(mProgressBar, View.GONE);
+        ViewUtils.setVisibility(mItView, View.VISIBLE);
+        ViewUtils.setVisibility(mRefreshLayout, View.GONE);
+
+        mTextView.setText(text);
+    }
+
+    private abstract static class ContentHelper<E, VH extends RecyclerView.ViewHolder>
+            extends EasyRecyclerView.Adapter<VH>
+            implements RefreshLayout.OnHeaderRefreshListener,
+            RefreshLayout.OnFooterRefreshListener {
+
+        private RecyclerView mRecyclerView;
+        private StaggeredGridLayoutManager mLayoutManager;
+
+        /**
+         * Store data
+         */
+        private List<E> mList;
+
+        private IntIdGenerator mIdGenerator;
+
+        /**
+         * First index index of current page
+         */
+        private int mFirstIndex;
+        /**
+         * Last index index of current page
+         */
+        private int mLastIndex;
+        /**
+         * Current page index
+         */
+        private int mCurrentPage;
+        /**
+         * First shown page index
+         */
+        private int mFirstPage;
+        /**
+         * Last shown page index
+         */
+        private int mLastPage;
+        /**
+         * The number of page in sum
+         */
+        private int mPageNum;
+
+        private int mCurrentTaskId;
+        private int mCurrentTaskType;
+
+        private ContentHelper(RecyclerView recyclerView,
+                StaggeredGridLayoutManager layoutManager) {
+            mRecyclerView = recyclerView;
+            mLayoutManager = layoutManager;
+
+            mList = new ArrayList<>();
+            mIdGenerator = IntIdGenerator.create();
         }
 
-        insets.set(insets.left, insets.top, insets.right, 0);
+        /**
+         *
+         * @param location
+         * @return
+         * @throws IndexOutOfBoundsException
+         *                if {@code location < 0 || location >= size()}
+         */
+        public E getDataAt(int location) {
+            return mList.get(location);
+        }
 
-        return super.fitSystemWindows(insets);
-    }
+        public abstract E[] getPageData(int page);
 
-    public void setOnGetFitPaddingListener(OnGetFitPaddingListener listener) {
-        mOnGetFitPaddingListener = listener;
-    }
+        public void onGetPageData(int mTaskId, int page, E[] data) {
 
-    public int getFitPaddingLeft() {
-        return mFitPaddingLeft;
-    }
+        }
 
-    public int getFitPaddingTop() {
-        return mFitPaddingTop;
-    }
+        @Override
+        public boolean onFooterRefresh() {
+            return false;
+        }
 
-    public int getFitPaddingRight() {
-        return mFitPaddingRight;
-    }
+        @Override
+        public void onHeaderRefresh() {
 
-    public int getFitPaddingBottom() {
-        return mFitPaddingBottom;
-    }
+        }
 
-    public interface OnGetFitPaddingListener {
-        public void onGetFitPadding(int l, int t, int r, int b);
+        public void refresh() {
+
+        }
+
+        public void goTo(int page) {
+            if (page < 0 || page >= mPageNum) {
+                throw new IndexOutOfBoundsException("Page number is " + mPageNum + ", page is " + page);
+            }
+
+            if (page > mFirstIndex) {
+
+            }
+
+
+
+        }
+
+        abstract public void onScrollStateChanged(RecyclerView recyclerView, int newState);
+
+        public class OnScrollListener extends RecyclerView.OnScrollListener {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                ContentHelper.this.onScrollStateChanged(recyclerView, newState);
+            }
+
+
+        }
     }
 }
