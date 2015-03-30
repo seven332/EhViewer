@@ -221,7 +221,7 @@ public abstract class AnyCache<V> {
                     }
                 }
                 if (mDiskCache != null) {
-                    mDiskCache.put(key, value);
+                    mDiskCache.put(diskKey, value);
                     return true;
                 } else {
                     return false;
