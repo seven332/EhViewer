@@ -148,7 +148,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
      */
     @Override
     public void onLowMemory() {
-        ImageCache.getImageCache(this).evictAll();
+        ImageCache.getImageCache(this).clearMemory();
         super.onLowMemory();
     }
 

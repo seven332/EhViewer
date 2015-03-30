@@ -19,6 +19,7 @@ package com.hippo.ehviewer.ui;
 import android.app.Activity;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 
@@ -29,6 +30,13 @@ public abstract class AbsActivity extends Activity {
         super.onResume();
 
         Ui.adjustOrientation(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        ImageCache.getImageCache(this).flush();
     }
 
     @Override

@@ -35,8 +35,11 @@ public abstract class AnyCache<V> {
 
     private static final String TAG = AnyCache.class.getSimpleName();
 
-    private @Nullable LruCache<String, V> mMemoryCache;
+    private LruCache<String, V> mMemoryCache;
     private @Nullable DiskCache<V> mDiskCache;
+
+    private final boolean mHasMemoryCache;
+    private final boolean mHasDiskCache;
 
     /**
      * Used to temporarily pause the disk cache while scrolling
@@ -44,23 +47,50 @@ public abstract class AnyCache<V> {
     public boolean mPauseDiskAccess = false;
     private final Object mPauseLock = new Object();
 
+    private final Object mDiskCacheLock = new Object();
+    private boolean mDiskCacheStarting = true;
+
+
+    public AnyCache(AnyCacheParams params) {
+        params.isValid();
+        mHasMemoryCache = params.hasMemoryCache;
+        mHasDiskCache = params.hasDiskCache;
+
+        if (mHasMemoryCache) {
+            initMemoryCache(params.memoryCacheMaxSize);
+        }
+
+        if (mHasDiskCache) {
+            initDiskCache(params.diskCacheDir, params.diskCacheMaxSize);
+        }
+    }
+
+
+    private void initMemoryCache(int maxSize) {
+        mMemoryCache = new MemoryCahce<>(maxSize, this);
+    }
+
+    private void initDiskCache(File cacheDir, int maxSize) {
+        // Set up disk cache
+        synchronized (mDiskCacheLock) {
+            try {
+                mDiskCache = new DiskCache<>(cacheDir, maxSize, this);
+            } catch (IOException e) {
+                Log.e(TAG, "Can't create disk cache", e);
+            }
+
+            // Set up disk cache finished
+            mDiskCacheStarting = false;
+            mDiskCacheLock.notifyAll();
+        }
+    }
+
+
     protected abstract int sizeOf(String key, V value);
 
     protected abstract V read(InputStream is);
 
     protected abstract boolean write(OutputStream os, V value);
-
-    public void setMemoryCache(int maxSize) {
-        mMemoryCache = new MemoryCahce<V>(maxSize, this);
-    }
-
-    public void setDiskCache(File cacheDir, int maxSize) {
-        try {
-            mDiskCache = new DiskCache<V>(cacheDir, maxSize, this);
-        } catch (IOException e) {
-            Log.w(TAG, "Can't create disk cache", e);
-        }
-    }
 
     /**
      * Check if have memory cache
@@ -68,7 +98,7 @@ public abstract class AnyCache<V> {
      * @return true if have memory cache
      */
     public boolean hasMemoryCache() {
-        return mMemoryCache != null;
+        return mHasMemoryCache;
     }
 
     /**
@@ -77,7 +107,7 @@ public abstract class AnyCache<V> {
      * @return true if have disk cache
      */
     public boolean hasDiskCache() {
-        return mDiskCache != null;
+        return mHasDiskCache;
     }
 
     /**
@@ -87,7 +117,7 @@ public abstract class AnyCache<V> {
      * @return the value you get, null for miss or no memory cache
      */
     public V getFromMemory(String key) {
-        if (mMemoryCache != null) {
+        if (mHasMemoryCache) {
             return mMemoryCache.get(key);
         } else {
             return null;
@@ -101,12 +131,26 @@ public abstract class AnyCache<V> {
      * @return the value you get, null for miss or no memory cache or get error
      */
     public V getFromDisk(String key) {
-        if (mDiskCache != null) {
+        if (mHasDiskCache) {
             // Wait for pause
             waitUntilUnpaused();
 
             String diskKey = hashKeyForDisk(key);
-            return mDiskCache.get(diskKey);
+
+            synchronized (mDiskCacheLock) {
+                while (mDiskCacheStarting) {
+                    try {
+                        mDiskCacheLock.wait();
+                    } catch (InterruptedException e) {
+                        // Just ignore
+                    }
+                }
+                if (mDiskCache != null) {
+                    return mDiskCache.get(diskKey);
+                } else {
+                    return null;
+                }
+            }
         } else {
             return null;
         }
@@ -120,28 +164,22 @@ public abstract class AnyCache<V> {
      * @return the value you get
      */
     public V get(String key) {
-        V value;
-        if (mMemoryCache != null) {
-            value = mMemoryCache.get(key);
-            if (value != null) {
-                return value;
-            }
-        }
+        V value = getFromMemory(key);
 
-        if (mDiskCache != null) {
-            // Wait for pause
-            waitUntilUnpaused();
-
-            String diskKey = hashKeyForDisk(key);
-            value = mDiskCache.get(diskKey);
-            // Put value to memory cach
-            if (value != null && mMemoryCache != null) {
-                mMemoryCache.put(key, value);
-            }
+        if (value != null) {
+            // Get it in memory cache
             return value;
-        } else {
-            return null;
         }
+
+        value = getFromDisk(key);
+
+        if (value != null) {
+            // Get it in disk cache
+            putToMemory(key, value);
+            return value;
+        }
+
+        return null;
     }
 
     /**
@@ -152,7 +190,7 @@ public abstract class AnyCache<V> {
      * @return false if no memory cache
      */
     public boolean putToMemory(String key, V value) {
-        if (mMemoryCache != null) {
+        if (mHasMemoryCache) {
             mMemoryCache.put(key, value);
             return true;
         } else {
@@ -168,12 +206,27 @@ public abstract class AnyCache<V> {
      * @return false if no disk cache or get error
      */
     public boolean putToDisk(String key, V value) {
-        if (mDiskCache != null) {
+        if (mHasDiskCache) {
             // Wait for pause
             waitUntilUnpaused();
 
             String diskKey = hashKeyForDisk(key);
-            return mDiskCache.put(diskKey, value);
+
+            synchronized (mDiskCacheLock) {
+                while (mDiskCacheStarting) {
+                    try {
+                        mDiskCacheLock.wait();
+                    } catch (InterruptedException e) {
+                        // Just ignore
+                    }
+                }
+                if (mDiskCache != null) {
+                    mDiskCache.put(key, value);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         } else {
             return false;
         }
@@ -186,17 +239,8 @@ public abstract class AnyCache<V> {
      * @param value the value
      */
     public void put(String key, V value) {
-        if (mMemoryCache != null) {
-            mMemoryCache.put(key, value);
-        }
-
-        if (mDiskCache != null) {
-            // Wait for pause
-            waitUntilUnpaused();
-
-            String diskKey = hashKeyForDisk(key);
-            mDiskCache.put(diskKey, value);
-        }
+        putToMemory(key, value);
+        putToDisk(key, value);
     }
 
     /**
@@ -231,14 +275,53 @@ public abstract class AnyCache<V> {
     }
 
     /**
+     * Evicts all of the items from the memory cache
+     */
+    public void clearMemory() {
+        if (mHasMemoryCache) {
+            mMemoryCache.evictAll();
+        }
+    }
+
+    /**
+     * Clear disk cache
+     */
+    public void clearDisk() {
+        synchronized (mDiskCacheLock) {
+            mDiskCacheStarting = true;
+            if (mDiskCache != null && !mDiskCache.isClosed()) {
+                try {
+                    mDiskCache.delete();
+                } catch (IOException e) {
+                    Log.e(TAG, "AnyCache clearCache", e);
+                }
+                File cacheDir = mDiskCache.getCacheDir();
+                int maxSize = mDiskCache.getMaxSize();
+                mDiskCache = null;
+                initDiskCache(cacheDir, maxSize);
+            }
+        }
+    }
+
+    public void flush() {
+        synchronized (mDiskCacheLock) {
+            if (mDiskCache != null) {
+                try {
+                    mDiskCache.flush();
+                } catch (IOException e) {
+                    Log.e(TAG, "AnyCache flush", e);
+                }
+            }
+        }
+    }
+
+    /**
      * Evicts all of the items from the memory cache and lets the system know
      * now would be a good time to garbage collect
      */
-    public void evictAll() {
-        if (mMemoryCache != null) {
-            mMemoryCache.evictAll();
-        }
-        System.gc();
+    public void clear() {
+        clearMemory();
+        clearDisk();
     }
 
     /**
@@ -278,6 +361,43 @@ public abstract class AnyCache<V> {
         return builder.toString();
     }
 
+    /**
+     * A holder class that contains cache parameters.
+     */
+    public static class AnyCacheParams {
+
+        public boolean hasMemoryCache = false;
+        public int memoryCacheMaxSize = 0;
+        public boolean hasDiskCache = false;
+        public File diskCacheDir = null;
+        public int diskCacheMaxSize = 0;
+
+        /**
+         * Check AnyCacheParams is valid
+         *
+         * @throws IllegalStateException
+         */
+        public void isValid() throws IllegalStateException {
+            if (!hasMemoryCache && !hasDiskCache) {
+                throw new IllegalStateException("No memory cache and no disk cache. What can I do for you?");
+            }
+
+            if (hasMemoryCache && memoryCacheMaxSize <= 0) {
+                throw new IllegalStateException("Memory cache max size must be bigger than 0.");
+            }
+
+            if (hasDiskCache) {
+                if (diskCacheDir == null) {
+                    throw new IllegalStateException("Disk cache dir can't be null.");
+                }
+                if (diskCacheMaxSize <= 0) {
+                    throw new IllegalStateException("Disk cache max size must be bigger than 0.");
+                }
+            }
+        }
+    }
+
+
     public class MemoryCahce<E> extends LruCache<String, E> {
 
         public AnyCache<E> mParent;
@@ -298,12 +418,38 @@ public abstract class AnyCache<V> {
 
         private static final int IO_BUFFER_SIZE = 8 * 1024;
 
-        public DiskLruCache mDiskLruCache;
-        public AnyCache<E> mParent;
+        private DiskLruCache mDiskLruCache;
+        private AnyCache<E> mParent;
+
+        private File mCacheDir;
+        private int mMaxSize;
 
         public DiskCache(File cacheDir, int size, AnyCache<E> parent) throws IOException {
             mDiskLruCache = DiskLruCache.open(cacheDir, 1, 1, size);
             mParent = parent;
+
+            mCacheDir = cacheDir;
+            mMaxSize = size;
+        }
+
+        public File getCacheDir() {
+            return mCacheDir;
+        }
+
+        public int getMaxSize() {
+            return mMaxSize;
+        }
+
+        public boolean isClosed() {
+            return mDiskLruCache.isClosed();
+        }
+
+        public void delete() throws IOException {
+            mDiskLruCache.delete();
+        }
+
+        public void flush() throws IOException {
+            mDiskLruCache.flush();
         }
 
         public E get(String key) {
@@ -347,7 +493,6 @@ public abstract class AnyCache<V> {
                     final BufferedOutputStream buffOut =
                             new BufferedOutputStream(os, IO_BUFFER_SIZE);
                     boolean result = mParent.write(buffOut, value);
-                    mDiskLruCache.flush();
                     editor.commit();
                     return result;
                 } else {

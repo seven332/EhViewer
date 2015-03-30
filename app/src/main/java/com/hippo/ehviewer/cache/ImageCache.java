@@ -49,25 +49,25 @@ public class ImageCache extends AnyCache<Bitmap>{
 
     public static @NonNull ImageCache getImageCache(@NonNull Context context) {
         if (sImageCache == null) {
-            sImageCache = new ImageCache(context.getApplicationContext());
+            final ActivityManager activityManager = (ActivityManager)context
+                    .getSystemService(Context.ACTIVITY_SERVICE);
+            final int memoryCacheMax = Math.round(MEM_CACHE_DIVIDER * activityManager.getMemoryClass()
+                    * 1024 * 1024);
+
+            AnyCacheParams params = new AnyCacheParams();
+            params.hasMemoryCache = true;
+            params.memoryCacheMaxSize = memoryCacheMax;
+            params.hasDiskCache = true;
+            params.diskCacheDir = getDiskCacheDir(context, TAG);
+            params.diskCacheMaxSize = 20 * 1024 * 1024;
+
+            sImageCache = new ImageCache(params);
         }
         return sImageCache;
     }
 
-    private ImageCache(Context context) {
-        final ActivityManager activityManager = (ActivityManager)context
-                .getSystemService(Context.ACTIVITY_SERVICE);
-        final int memoryCacheMax = Math.round(MEM_CACHE_DIVIDER * activityManager.getMemoryClass()
-                * 1024 * 1024);
-        setMemoryCache(memoryCacheMax);
-
-        File diskCacheDir = getDiskCacheDir(context, TAG);
-        if (diskCacheDir != null) {
-            if (!diskCacheDir.exists()) {
-                diskCacheDir.mkdirs();
-            }
-            setDiskCache(diskCacheDir, 20 * 1024 * 1024);
-        }
+    public ImageCache(AnyCacheParams params) {
+        super(params);
     }
 
     @Override
