@@ -48,8 +48,6 @@ public abstract class AnyCache<V> {
     private final Object mPauseLock = new Object();
 
     private final Object mDiskCacheLock = new Object();
-    private boolean mDiskCacheStarting = true;
-
 
     public AnyCache(AnyCacheParams params) {
         params.isValid();
@@ -78,10 +76,6 @@ public abstract class AnyCache<V> {
             } catch (IOException e) {
                 Log.e(TAG, "Can't create disk cache", e);
             }
-
-            // Set up disk cache finished
-            mDiskCacheStarting = false;
-            mDiskCacheLock.notifyAll();
         }
     }
 
@@ -138,13 +132,6 @@ public abstract class AnyCache<V> {
             String diskKey = hashKeyForDisk(key);
 
             synchronized (mDiskCacheLock) {
-                while (mDiskCacheStarting) {
-                    try {
-                        mDiskCacheLock.wait();
-                    } catch (InterruptedException e) {
-                        // Just ignore
-                    }
-                }
                 if (mDiskCache != null) {
                     return mDiskCache.get(diskKey);
                 } else {
@@ -213,13 +200,6 @@ public abstract class AnyCache<V> {
             String diskKey = hashKeyForDisk(key);
 
             synchronized (mDiskCacheLock) {
-                while (mDiskCacheStarting) {
-                    try {
-                        mDiskCacheLock.wait();
-                    } catch (InterruptedException e) {
-                        // Just ignore
-                    }
-                }
                 if (mDiskCache != null) {
                     mDiskCache.put(diskKey, value);
                     return true;
@@ -287,29 +267,32 @@ public abstract class AnyCache<V> {
      * Clear disk cache
      */
     public void clearDisk() {
-        synchronized (mDiskCacheLock) {
-            mDiskCacheStarting = true;
-            if (mDiskCache != null && !mDiskCache.isClosed()) {
-                try {
-                    mDiskCache.delete();
-                } catch (IOException e) {
-                    Log.e(TAG, "AnyCache clearCache", e);
+        if (mHasDiskCache) {
+            synchronized (mDiskCacheLock) {
+                if (mDiskCache != null && !mDiskCache.isClosed()) {
+                    try {
+                        mDiskCache.delete();
+                    } catch (IOException e) {
+                        Log.e(TAG, "AnyCache clearCache", e);
+                    }
+                    File cacheDir = mDiskCache.getCacheDir();
+                    int maxSize = mDiskCache.getMaxSize();
+                    mDiskCache = null;
+                    initDiskCache(cacheDir, maxSize);
                 }
-                File cacheDir = mDiskCache.getCacheDir();
-                int maxSize = mDiskCache.getMaxSize();
-                mDiskCache = null;
-                initDiskCache(cacheDir, maxSize);
             }
         }
     }
 
     public void flush() {
-        synchronized (mDiskCacheLock) {
-            if (mDiskCache != null) {
-                try {
-                    mDiskCache.flush();
-                } catch (IOException e) {
-                    Log.e(TAG, "AnyCache flush", e);
+        if (mHasDiskCache) {
+            synchronized (mDiskCacheLock) {
+                if (mDiskCache != null) {
+                    try {
+                        mDiskCache.flush();
+                    } catch (IOException e) {
+                        Log.e(TAG, "AnyCache flush", e);
+                    }
                 }
             }
         }
