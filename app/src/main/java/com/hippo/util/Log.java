@@ -15,14 +15,110 @@
 
 package com.hippo.util;
 
+import android.os.Looper;
+import android.os.Process;
+
 import com.hippo.ehviewer.BuildConfig;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class Log {
 
     private static final String TAG = Log.class.getSimpleName();
 
+    private static final String NO_MESSAGE = "No Message";
+
+    private static final SaveLogThreadPool mSaveLogThreadPool;
+    private static final Pool<SaveMsgTask> mSaveLogTaskPool;
+
+    private static final File sLogFile = new File("/sdcard/EhViewer/log.log"); // TODO
+
+    static {
+        mSaveLogThreadPool = new SaveLogThreadPool();
+        mSaveLogTaskPool = new Pool<>(10);
+    }
+
     private static String avoidNull(String str) {
-        return str == null ? TextUtils.STRING_NULL : str;
+        return str == null ? "null" : str;
+    }
+
+    public static void f(String msg) {
+        appendSaveLogTask(System.currentTimeMillis(), msg, null);
+    }
+
+    public static void f(String msg, Throwable tr) {
+        appendSaveLogTask(System.currentTimeMillis(), msg, tr);
+    }
+
+    private static void appendSaveLogTask(long time, String msg, Throwable tr) {
+        SaveMsgTask task = mSaveLogTaskPool.obtain();
+        if (task == null) {
+            task = new SaveMsgTask();
+        }
+        task.setParams(time, msg, tr);
+
+        try {
+            mSaveLogThreadPool.execute(task);
+        } catch (Throwable t) {
+            Log.e("Get error when save message to file", t);
+        }
+    }
+
+    // TODO Need a better serial thread executor
+    private static class SaveLogThreadPool extends ThreadPoolExecutor {
+
+        public SaveLogThreadPool() {
+            super(0, 1, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
+                    new PriorityThreadFactory("SaveLog", Process.THREAD_PRIORITY_BACKGROUND));
+        }
+
+        protected void afterExecute(Runnable r, Throwable t) {
+            if (r instanceof SaveMsgTask) {
+                SaveMsgTask task = (SaveMsgTask) r;
+                task.clear();
+                mSaveLogTaskPool.recycle(task);
+            }
+        }
+    }
+
+    private static class SaveMsgTask implements Runnable {
+
+        private long mTime;
+        private String mMsg;
+        private Throwable mTr;
+
+        public void clear() {
+            setParams(0, null, null);
+        }
+
+        public void setParams(long time, String msg, Throwable tr) {
+            mTime = time;
+            mMsg = msg;
+            mTr = tr;
+        }
+
+        @Override
+        public void run() {
+
+            Log.d("MainLooper thread is " + Looper.getMainLooper().getThread().toString());
+            Log.d("This thread is " + Thread.currentThread().toString());
+
+            FileWriter fw = null;
+            try {
+                fw = new FileWriter(sLogFile, true);
+                fw.append(Long.toString(mTime)).append(" : ").append(mMsg).append("\n")
+                        .append(Log.getStackTraceString(mTr));
+                fw.flush(); // TODO Only do flush when the thread is about to close
+            } catch (IOException e) {
+                Log.e("Get error when save message to file", e);
+                Utils.closeQuietly(fw);
+            }
+        }
     }
 
     /**
@@ -45,6 +141,15 @@ public class Log {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Call {@link android.util.Log#v(String, String, Throwable)} with default tag
+     * and no message.
+     * @param tr An exception to log
+     */
+    public static int v(Throwable tr) {
+        return v(TAG, NO_MESSAGE, tr);
     }
 
     /**
@@ -94,6 +199,15 @@ public class Log {
     }
 
     /**
+     * Call {@link android.util.Log#d(String, String, Throwable)} with default tag
+     * and no message.
+     * @param tr An exception to log
+     */
+    public static int d(Throwable tr) {
+        return d(TAG, NO_MESSAGE, tr);
+    }
+
+    /**
      * Call {@link android.util.Log#d(String, String, Throwable)} with default tag.
      * @param msg The message you would like logged.
      * @param tr An exception to log
@@ -137,6 +251,15 @@ public class Log {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Call {@link android.util.Log#i(String, String, Throwable)} with default tag
+     * and no message.
+     * @param tr An exception to log
+     */
+    public static int i(Throwable tr) {
+        return i(TAG, NO_MESSAGE, tr);
     }
 
     /**
@@ -186,6 +309,15 @@ public class Log {
     }
 
     /**
+     * Call {@link android.util.Log#w(String, String, Throwable)} with default tag
+     * and no message.
+     * @param tr An exception to log
+     */
+    public static int w(Throwable tr) {
+        return w(TAG, NO_MESSAGE, tr);
+    }
+
+    /**
      * Call {@link android.util.Log#w(String, String, Throwable)} with default tag.
      * @param msg The message you would like logged.
      * @param tr An exception to log
@@ -229,6 +361,15 @@ public class Log {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Call {@link android.util.Log#e(String, String, Throwable)} with default tag
+     * and no message.
+     * @param tr An exception to log
+     */
+    public static int e(Throwable tr) {
+        return e(TAG, NO_MESSAGE, tr);
     }
 
     /**
