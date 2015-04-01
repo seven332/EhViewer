@@ -51,11 +51,9 @@ public final class ExDownloader implements Runnable {
 
     private static final int IO_BUFFER_SIZE = 8 * 1024;
 
-    private static final String[] URL_ARRAY_509 = new String[] {
-        "http://ehgt.org/g/509.gif",
-        "http://ehgt.org/g/509s.gif",
-        "http://st.exhentai.net/img/509.gif",
-        "http://st.exhentai.net/img/509s.gif"
+    private static final String[] URL_509_SUFFIX_ARRAY = {
+            "/509.gif",
+            "/509s.gif"
     };
 
     private final Context mContext;
@@ -786,9 +784,8 @@ public final class ExDownloader implements Runnable {
 
                             //Check 509 gif
                             boolean get509 = false;
-                            int length = URL_ARRAY_509.length;
-                            for (int j = 0; j < length; j++) {
-                                if (URL_ARRAY_509[j].equals(imageUrl)) {
+                            for (String suffix : URL_509_SUFFIX_ARRAY) {
+                                if (imageUrl.endsWith(suffix)) {
                                     // Get 509 gif here
                                     get509 = true;
                                     break;
