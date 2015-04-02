@@ -636,8 +636,13 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-        final int position = getChildPosition(view);
+        final int position = getChildAdapterPosition(view);
         final long id = mAdapter.getItemId(position);
+
+        if (position < 0) {
+            // I don't know why, but something wrong happend.
+            return;
+        }
 
         boolean dispatchItemClick = true;
 
