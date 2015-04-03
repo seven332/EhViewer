@@ -15,7 +15,6 @@
 
 package com.hippo.util;
 
-import android.os.Looper;
 import android.os.Process;
 
 import com.hippo.ehviewer.BuildConfig;
@@ -23,8 +22,11 @@ import com.hippo.ehviewer.BuildConfig;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class Log {
@@ -33,14 +35,20 @@ public class Log {
 
     private static final String NO_MESSAGE = "No Message";
 
-    private static final SaveLogThreadPool mSaveLogThreadPool;
-    private static final Pool<SaveMsgTask> mSaveLogTaskPool;
+    private static final SaveLogThreadExecutor sSaveLogThreadPool;
+    private static final Pool<SaveMsgTask> sSaveLogTaskPool;
 
-    private static final File sLogFile = new File("/sdcard/EhViewer/log.log"); // TODO
+    private static final DateFormat sDataFormat;
+
+    private static final File sLogFile;
+    private static final boolean sSupportSaveLog;
 
     static {
-        mSaveLogThreadPool = new SaveLogThreadPool();
-        mSaveLogTaskPool = new Pool<>(10);
+        sSaveLogThreadPool = new SaveLogThreadExecutor();
+        sSaveLogTaskPool = new Pool<>(10);
+        sDataFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH);
+        sLogFile = AppConfig.getFileInAppFolder("ehviewer.log");
+        sSupportSaveLog = FileUtils.ensureFile(sLogFile);
     }
 
     private static String avoidNull(String str) {
@@ -56,24 +64,27 @@ public class Log {
     }
 
     private static void appendSaveLogTask(long time, String msg, Throwable tr) {
-        SaveMsgTask task = mSaveLogTaskPool.obtain();
+        if (!sSupportSaveLog) {
+            return;
+        }
+
+        SaveMsgTask task = sSaveLogTaskPool.obtain();
         if (task == null) {
             task = new SaveMsgTask();
         }
         task.setParams(time, msg, tr);
 
         try {
-            mSaveLogThreadPool.execute(task);
+            sSaveLogThreadPool.execute(task);
         } catch (Throwable t) {
             Log.e("Get error when save message to file", t);
         }
     }
 
-    // TODO Need a better serial thread executor
-    private static class SaveLogThreadPool extends ThreadPoolExecutor {
+    private static class SaveLogThreadExecutor extends SerialThreadExecutor {
 
-        public SaveLogThreadPool() {
-            super(0, 1, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
+        public SaveLogThreadExecutor() {
+            super(10L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
                     new PriorityThreadFactory("SaveLog", Process.THREAD_PRIORITY_BACKGROUND));
         }
 
@@ -81,7 +92,7 @@ public class Log {
             if (r instanceof SaveMsgTask) {
                 SaveMsgTask task = (SaveMsgTask) r;
                 task.clear();
-                mSaveLogTaskPool.recycle(task);
+                sSaveLogTaskPool.recycle(task);
             }
         }
     }
@@ -104,15 +115,13 @@ public class Log {
 
         @Override
         public void run() {
-
-            Log.d("MainLooper thread is " + Looper.getMainLooper().getThread().toString());
-            Log.d("This thread is " + Thread.currentThread().toString());
-
             FileWriter fw = null;
             try {
                 fw = new FileWriter(sLogFile, true);
-                fw.append(Long.toString(mTime)).append(" : ").append(mMsg).append("\n")
-                        .append(Log.getStackTraceString(mTr));
+                fw.append(sDataFormat.format(new Date(mTime))).append("    ").append(mMsg).append("\n");
+                if (mTr != null) {
+                    fw.append(Log.getStackTraceString(mTr)).append("\n");
+                }
                 fw.flush(); // TODO Only do flush when the thread is about to close
             } catch (IOException e) {
                 Log.e("Get error when save message to file", e);

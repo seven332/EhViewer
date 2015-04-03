@@ -15,5 +15,23 @@
 
 package com.hippo.util;
 
-public final class Storage {
+import java.io.File;
+
+public final class FileUtils {
+
+    public static boolean ensureFile(File file) {
+        return file != null && (!file.exists() || file.isFile());
+    }
+
+    public static boolean ensureDirectory(File file) {
+        if (file != null) {
+            if (file.exists()) {
+                return file.isDirectory();
+            } else {
+                return file.mkdirs();
+            }
+        } else {
+            return false;
+        }
+    }
 }
