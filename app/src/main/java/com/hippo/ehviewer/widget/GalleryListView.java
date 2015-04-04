@@ -34,15 +34,14 @@ import android.widget.TextView;
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.cardview.CardViewSalon;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.ListParser;
-import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView;
-import com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView.FooterAdapter;
 import com.hippo.ehviewer.widget.recyclerview.MarginItemDecoration;
 import com.hippo.ehviewer.widget.refreshlayout.RefreshLayout;
 
@@ -704,7 +703,7 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnHead
         }
     }
 
-    public class GalleryAdapter extends EasyRecyclerView.FooterAdapter<GalleryViewHolder> {
+    public class GalleryAdapter extends RecyclerView.Adapter<GalleryViewHolder> {
 
         private final Context mContext;
         private final List<GalleryInfo> mGiList;
@@ -718,13 +717,7 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnHead
         }
 
         @Override
-        public GalleryViewHolder onCreateAndBindFooterViewHolder(
-                ViewGroup parent, View footerView) {
-            return new GalleryViewHolder(footerView, FooterAdapter.TYPE_FOOTER);
-        }
-
-        @Override
-        public GalleryViewHolder onCreateViewHolderActual(ViewGroup parent,
+        public GalleryViewHolder onCreateViewHolder(ViewGroup parent,
                 int viewType) {
             int resId;
             if (viewType == LIST_MODE_DETAIL)
@@ -741,8 +734,10 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnHead
         }
 
         @Override
-        public void onBindViewHolderActual(GalleryViewHolder holder,
+        public void onBindViewHolder(GalleryViewHolder holder,
                 int position) {
+            mEasyRecyclerView.checkItemCheckedState(holder.itemView, position);
+
             GalleryInfo gi = mGiList.get(position);
             final LoadImageView thumb = holder.thumb;
             final String key = String.valueOf(gi.gid);
@@ -801,12 +796,12 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnHead
         }
 
         @Override
-        public int getItemViewTypeActual(int position) {
+        public int getItemViewType(int position) {
             return mListMode;
         }
 
         @Override
-        public int getItemCountActual() {
+        public int getItemCount() {
             return mGiList.size();
         }
     }

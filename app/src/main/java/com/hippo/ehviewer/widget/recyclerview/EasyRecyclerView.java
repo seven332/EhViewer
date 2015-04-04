@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Hippo Seven
+ * Copyright (C) 2014-2015 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -8,7 +8,6 @@
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -16,37 +15,34 @@
 
 package com.hippo.ehviewer.widget.recyclerview;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.support.v4.util.LongSparseArray;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.ActionMode;
+import android.view.HapticFeedbackConstants;
 import android.view.InputDevice;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
+import android.view.ViewConfiguration;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Checkable;
-import android.widget.ListAdapter;
+
+import com.hippo.ehviewer.util.MathUtils;
+import com.hippo.ehviewer.util.ViewUtils;
 
 /**
- *
- * Get some code from twoway-view and AbsListView
- *
- * @author Hippo
- *
+ * Add setOnItemClickListener, setOnItemLongClickListener and setChoiceMode for
+ * RecyclerView
  */
-public class EasyRecyclerView extends RecyclerView implements View.OnClickListener,
-        View.OnLongClickListener {
-
-    private static final String TAG = EasyRecyclerView.class.getSimpleName();
+// Get some code from twoway-view and AbsListView.
+public class EasyRecyclerView extends RecyclerView {
 
     private static final String STATE_KEY_CHOICE_MODE = "choiceMode";
     private static final String STATE_KEY_CHECKED_STATES = "checkedStates";
@@ -112,14 +108,26 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
      */
     private LongSparseArray<Integer> mCheckedIdStates;
 
-    private OnItemClickListener mOnItemClickListener;
-    private OnItemLongClickListener mOnItemLongClickListener;
-    private boolean mNeedOnClickListener = false;
-    private boolean mNeedOnLongClickListener = false;
-
-    private FooterAdapter mAdapter;
+    private Adapter mAdapter;
 
     private float mVerticalScrollFactor = 0;
+
+    // For click and long click
+    private boolean mPrePressed = false;
+    private boolean mHasPerformedLongPress = false;
+    private View mMotionView;
+    private int mMotionPosition;
+    private CheckForTap mPendingCheckForTap;
+    private CheckForLongPress mPendingCheckForLongPress;
+    private UnsetPressedState mUnsetPressedState;
+    private PerformClick mPerformClick;
+    private final float[] mTmpPoint = new float[2];
+    private int mTouchSlop = -1;
+    private float mStartX;
+    private float mStartY;
+    private OnItemClickListener mOnItemClickListener;
+    private OnItemLongClickListener mOnItemLongClickListener;
+
 
     public EasyRecyclerView(Context context) {
         super(context);
@@ -133,131 +141,19 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
         super(context, attrs, defStyle);
     }
 
-    public View getFootView() {
-        if (mAdapter != null)
-            return mAdapter.getFooterView();
-        else
-            return null;
-    }
-
-    private boolean isNeedOnClickListener() {
-        if (mOnItemClickListener == null && mChoiceMode == CHOICE_MODE_NONE)
-            return false;
-        else
-            return true;
-    }
-
-    private boolean isNeedOnLongClickListener() {
-        if (mOnItemLongClickListener != null || mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL)
-            return true;
-        else
-            return false;
-    }
-
-    private void setAllOnClickListener() {
-        final int count = getChildCount();
-        final View footView = getFootView();
-        for (int i = 0; i < count; i++) {
-            View child = getChildAt(i);
-            if (child != footView) {
-                child.setOnClickListener(this);
-            }
-        }
-    }
-
-    private void resetAllOnClickListener() {
-        final int count = getChildCount();
-        final View footView = getFootView();
-        for (int i = 0; i < count; i++) {
-            View child = getChildAt(i);
-            if (child != footView) {
-                child.setOnClickListener(null);
-                child.setClickable(false);
-            }
-        }
-    }
-
-    private void setAllOnLongClickListener() {
-        final int count = getChildCount();
-        final View footView = getFootView();
-        for (int i = 0; i < count; i++) {
-            View child = getChildAt(i);
-            if (child != footView) {
-                child.setOnLongClickListener(this);
-            }
-        }
-    }
-
-    private void resetAllOnLongClickListener() {
-        final int count = getChildCount();
-        final View footView = getFootView();
-        for (int i = 0; i < count; i++) {
-            View child = getChildAt(i);
-            if (child != footView) {
-                child.setOnLongClickListener(null);
-                child.setLongClickable(false);
-            }
-        }
-    }
-
-    public void updateOnClickState() {
-        boolean newNeedOnClickListener = isNeedOnClickListener();
-        if (mNeedOnClickListener != newNeedOnClickListener) {
-            mNeedOnClickListener = newNeedOnClickListener;
-            if (mNeedOnClickListener)
-                setAllOnClickListener();
-            else
-                resetAllOnClickListener();
-        }
-    }
-
-    public void updateOnLongClickState() {
-        boolean newNeedOnLongClickListener = isNeedOnLongClickListener();
-        if (mNeedOnLongClickListener != newNeedOnLongClickListener) {
-            mNeedOnLongClickListener = newNeedOnLongClickListener;
-            if (mNeedOnLongClickListener)
-                setAllOnLongClickListener();
-            else
-                resetAllOnLongClickListener();
-        }
-    }
-
     /**
-     * Register a callback to be invoked when an item in the
-     * RecyclerView has been clicked.
-     *
-     * @param listener The callback that will be invoked.
-     */
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        mOnItemClickListener = listener;
-        updateOnClickState();
-    }
-
-    /**
-     * Register a callback to be invoked when an item in the
-     * RecyclerView has been clicked and held.
-     *
-     * @param listener The callback that will be invoked.
-     */
-    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
-        mOnItemLongClickListener = listener;
-        updateOnLongClickState();
-    }
-
-    /**
-     *
-     * adapter must be {@link com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView.FooterAdapter}
+     * {@inheritDoc}
      */
     @Override
     public void setAdapter(RecyclerView.Adapter adapter) {
+
         super.setAdapter(adapter);
 
-        mAdapter = (FooterAdapter) adapter;
-        mAdapter.mHolder = this;
+        mAdapter = adapter;
         if (adapter != null) {
             if (mChoiceMode != CHOICE_MODE_NONE && adapter.hasStableIds() &&
                     mCheckedIdStates == null) {
-                mCheckedIdStates = new LongSparseArray<Integer>();
+                mCheckedIdStates = new LongSparseArray<>();
             }
         }
 
@@ -299,6 +195,7 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
      * @see #setChoiceMode(int)
      */
     public boolean isItemChecked(int position) {
+        //noinspection SimplifiableIfStatement
         if (mChoiceMode != CHOICE_MODE_NONE && mCheckStates != null) {
             return mCheckStates.get(position);
         }
@@ -342,7 +239,7 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
     /**
      * Returns the set of checked items ids. The result is only valid if the
      * choice mode has not been set to {@link #CHOICE_MODE_NONE} and the adapter
-     * has stable IDs. ({@link ListAdapter#hasStableIds()} == {@code true})
+     * has stable IDs. ({@link android.widget.ListAdapter#hasStableIds()} == {@code true})
      *
      * @return A new array which contains the id of each checked item in the
      *         list.
@@ -394,7 +291,7 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
         if (value && mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL && mChoiceActionMode == null) {
             if (mMultiChoiceModeCallback == null ||
                     !mMultiChoiceModeCallback.hasWrappedCallback()) {
-                throw new IllegalStateException("AbsListView: attempted to start selection mode " +
+                throw new IllegalStateException("EasyRecyclerView: attempted to start selection mode " +
                         "for CHOICE_MODE_MULTIPLE_MODAL but no choice mode callback was " +
                         "supplied. Call setMultiChoiceModeListener to set a callback.");
             }
@@ -478,16 +375,14 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
                 mCheckStates = new SparseBooleanArray(0);
             }
             if (mCheckedIdStates == null && mAdapter != null && mAdapter.hasStableIds()) {
-                mCheckedIdStates = new LongSparseArray<Integer>(0);
+                mCheckedIdStates = new LongSparseArray<>(0);
             }
             // Modal multi-choice mode only has choices when the mode is active. Clear them.
             if (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL) {
                 clearChoices();
+                setLongClickable(true);
             }
         }
-
-        updateOnClickState();
-        updateOnLongClickState();
     }
 
     /**
@@ -515,17 +410,15 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
         final int count = getChildCount();
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
-            final int position = getChildPosition(child);
+            final int position = getChildAdapterPosition(child);
             setViewChecked(child, mCheckStates.get(position));
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static void setViewChecked(View view, boolean checked) {
-        final boolean useActivated = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
         if (view instanceof Checkable) {
             ((Checkable) view).setChecked(checked);
-        } else if (useActivated) {
+        } else {
             view.setActivated(checked);
         }
     }
@@ -550,7 +443,7 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
 
     /**
      * Gets a scale factor that determines the distance the view should scroll
-     * vertically in response to {@link MotionEvent#ACTION_SCROLL}.
+     * vertically in response to {@link android.view.MotionEvent#ACTION_SCROLL}.
      * @return The vertical scroll scale factor.
      */
     protected float getVerticalScrollFactor() {
@@ -567,81 +460,179 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
         return mVerticalScrollFactor;
     }
 
-    /*
     @Override
-    public Parcelable onSaveInstanceState() {
-        final Parcelable state = new Bundle(super.onSaveInstanceState());
+    public boolean onTouchEvent(MotionEvent ev) {
+        if (!isEnabled()) {
+            // A disabled view that is clickable still consumes the touch
+            // events, it just doesn't respond to them.
+            return isClickable() || isLongClickable();
+        }
 
-        state.putInt(STATE_KEY_CHOICE_MODE, mChoiceMode);
-        state.putParcelable(STATE_KEY_CHECKED_STATES, mCheckStates);
-        state.putParcelable(STATE_KEY_CHECKED_ID_STATES, mCheckedIdStates);
-        state.putInt(STATE_KEY_CHECKED_COUNT, mCheckedItemCount);
+        switch (ev.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN: {
+                onTouchDown(ev);
+                break;
+            }
 
-        return state;
+            case MotionEvent.ACTION_MOVE: {
+                onTouchMove(ev);
+                break;
+            }
+
+            case MotionEvent.ACTION_UP: {
+                onTouchUp(ev);
+                break;
+            }
+
+            case MotionEvent.ACTION_CANCEL: {
+                onTouchCancel();
+                break;
+            }
+        }
+
+        super.onTouchEvent(ev);
+
+        return true;
     }
 
-    public void onRestoreInstanceState(Bundle state) {
-        mChoiceMode = ChoiceMode.values()[state.getInt(STATE_KEY_CHOICE_MODE)];
-        mCheckedStates = state.getParcelable(STATE_KEY_CHECKED_STATES);
-        mCheckedIdStates = state.getParcelable(STATE_KEY_CHECKED_ID_STATES);
-        mCheckedCount = state.getInt(STATE_KEY_CHECKED_COUNT);
+    private void onTouchDown(MotionEvent ev) {
+        final float x = ev.getX();
+        final float y = ev.getY();
+        mStartX = x;
+        mStartY = y;
 
-        // TODO confirm ids here
-    }*/
+        mMotionView = findChildViewUnder(x, y);
+        mMotionPosition = getChildAdapterPosition(mMotionView);
 
-    /**
-     * Interface definition for a callback to be invoked when an item in the
-     * EasyRecyclerView has been clicked.
-     */
-    public interface OnItemClickListener {
-        /**
-         * Callback method to be invoked when an item in the EasyRecyclerView
-         * has been clicked.
-         *
-         * @param parent The EasyRecyclerView where the click happened.
-         * @param view The view within the EasyRecyclerView that was clicked
-         * @param position The position of the view in the adapter.
-         * @param id The row id of the item that was clicked.
-         *
-         * @return true if the callback consumed the click, false otherwise
-         */
-        boolean onItemClick(EasyRecyclerView parent, View view, int position, long id);
+        if (mMotionView != null && mMotionPosition >= 0) {
+            mHasPerformedLongPress = false;
+
+            mPrePressed = true;
+            if (mPendingCheckForTap == null) {
+                mPendingCheckForTap = new CheckForTap();
+            }
+            mPendingCheckForTap.x = x;
+            mPendingCheckForTap.y = y;
+            mPendingCheckForTap.v = mMotionView;
+            mPendingCheckForTap.p = mMotionPosition;
+            postDelayed(mPendingCheckForTap, ViewConfiguration.getTapTimeout());
+
+        } else {
+            mMotionView = null;
+        }
     }
 
-    /**
-     * Interface definition for a callback to be invoked when an item in the
-     * EasyRecyclerView has been clicked and held.
-     */
-    public interface OnItemLongClickListener {
-        /**
-         * Callback method to be invoked when an item in the EasyRecyclerView
-         * has been clicked and held.
-         *
-         * @param parent The EasyRecyclerView where the click happened
-         * @param view The view within the EasyRecyclerView that was clicked
-         * @param position The position of the view in the list
-         * @param id The row id of the item that was clicked
-         *
-         * @return true if the callback consumed the long click, false otherwise
-         */
-        boolean onItemLongClick(EasyRecyclerView parent, View view, int position, long id);
+    private void onTouchMove(MotionEvent ev) {
+        if (mTouchSlop == -1)
+            mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+
+        if (mMotionView != null && mMotionPosition >= 0 &&
+                !MathUtils.near(mStartX, mStartY, ev.getX(), ev.getY(), mTouchSlop)) {
+            removeTapCallback();
+            if (mMotionView.isPressed()) {
+                // Remove any future long press/tap checks
+                removeLongPressCallback();
+                mMotionView.setPressed(false);
+            }
+        }
     }
 
+    private void onTouchUp(MotionEvent ev) {
+        View motionView = mMotionView;
+        int motionPosition = mMotionPosition;
 
-    /*
-     * EasyRecyclerView.OnItemTouchListener will not work fine
-     * when item view's child need click action, because they make
-     * touch event deliver different
-     */
+        if (motionView != null && motionPosition >= 0) {
+            final float x = ev.getX();
+            final float y = ev.getY();
 
-    @Override
-    public void onClick(View view) {
-        final int position = getChildPosition(view);
-        final long id = mAdapter.getItemId(position);
+            if (motionView.isPressed() || mPrePressed) {
+                // The button is being released before we actually
+                // showed it as pressed.  Make it show the pressed
+                // state now (before scheduling the click) to ensure
+                // the user sees it.
+                final float[] point = mTmpPoint;
+                point[0] = x;
+                point[1] = y;
+                ViewUtils.transformPointToViewLocal(point, EasyRecyclerView.this, motionView);
+                setPressed(motionView, true, point[0], point[1]);
 
+                if (!mHasPerformedLongPress) {
+                    // This is a tap, so remove the longpress check
+                    removeLongPressCallback();
+
+                    // Use a Runnable and post this rather than calling
+                    // performClick directly. This lets other visual state
+                    // of the view update before click actions start.
+                    if (mPerformClick == null) {
+                        mPerformClick = new PerformClick();
+                    }
+                    mPerformClick.v = motionView;
+                    mPerformClick.p = motionPosition;
+                    mPerformClick.rememberWindowAttachCount();
+                    if (!post(mPerformClick)) {
+                        mPerformClick.run();
+                    }
+                }
+
+                if (mUnsetPressedState == null) {
+                    mUnsetPressedState = new UnsetPressedState();
+                }
+
+                mUnsetPressedState.v = motionView;
+                if (mPrePressed) {
+                    postDelayed(mUnsetPressedState, ViewConfiguration.getPressedStateDuration());
+                } else if (!post(mUnsetPressedState)) {
+                    // If the post failed, unpress right now
+                    mUnsetPressedState.run();
+                }
+
+                removeTapCallback();
+            }
+
+            // Release
+            mMotionView = null;
+        }
+    }
+
+    private void onTouchCancel() {
+        if (mMotionView != null && mMotionPosition >= 0) {
+            mMotionView.setPressed(false);
+            removeTapCallback();
+            removeLongPressCallback();
+
+            // Release motion view
+            mMotionView = null;
+        }
+    }
+
+    private void removeTapCallback() {
+        if (mPendingCheckForTap != null) {
+            mPrePressed = false;
+            removeCallbacks(mPendingCheckForTap);
+            mPendingCheckForTap.v = null;
+        }
+    }
+
+    private void removeLongPressCallback() {
+        if (mPendingCheckForLongPress != null) {
+            removeCallbacks(mPendingCheckForLongPress);
+            mPendingCheckForLongPress.v = null;
+        }
+    }
+
+    private void setPressed(View v, boolean pressed, float x, float y){
+        v.setPressed(pressed);
+        if (pressed && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            v.drawableHotspotChanged(x, y);
+        }
+    }
+
+    private boolean performItemClick(View view, int position, long id) {
+        boolean handled = false;
         boolean dispatchItemClick = true;
 
         if (mChoiceMode != CHOICE_MODE_NONE) {
+            handled = true;
             boolean checkedStateChanged = false;
 
             if (mChoiceMode == CHOICE_MODE_MULTIPLE ||
@@ -687,36 +678,244 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
             }
         }
 
-        if (dispatchItemClick && mOnItemClickListener != null) {
-            mOnItemClickListener.onItemClick(this, view, position, id);
+        if (dispatchItemClick) {
+            if (mOnItemClickListener != null) {
+                playSoundEffect(SoundEffectConstants.CLICK);
+                mOnItemClickListener.onItemClick(this, view, position, id);
+                if (view != null) {
+                    view.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);
+                }
+                handled = true;
+            }
         }
+
+        return handled;
     }
 
-
-    @Override
-    public boolean onLongClick(View view) {
-        final int position = getChildPosition(view);
-        final long id = mAdapter.getItemId(position);
-
+    private boolean performItemLongPress(final View child,
+            final int longPressPosition, final long longPressId) {
         // CHOICE_MODE_MULTIPLE_MODAL takes over long press.
         if (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL) {
             if (mChoiceActionMode == null &&
                     (mChoiceActionMode = startActionMode(mMultiChoiceModeCallback)) != null) {
-                setItemChecked(position, true);
+                setItemChecked(longPressPosition, true);
+                performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
             }
             return true;
         }
 
         boolean handled = false;
         if (mOnItemLongClickListener != null) {
-            handled = mOnItemLongClickListener.onItemLongClick(this, view,
-                    position, id);
+            handled = mOnItemLongClickListener.onItemLongClick(this, child,
+                    longPressPosition, longPressId);
+        }
+        if (handled) {
+            performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
         }
         return handled;
     }
 
     /**
-     * A MultiChoiceModeListener receives events for {@link AbsListView#CHOICE_MODE_MULTIPLE_MODAL}.
+     * Register a callback to be invoked when an item in this AdapterView has
+     * been clicked.
+     *
+     * @param listener The callback that will be invoked.
+     */
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mOnItemClickListener = listener;
+    }
+
+
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
+        if (!isLongClickable()) {
+            setLongClickable(true);
+        }
+        mOnItemLongClickListener = listener;
+    }
+
+    /**
+     * If choice mode is set, call it in {@link Adapter#onBindViewHolder}
+     */
+    public void checkItemCheckedState(View view, int position) {
+        setViewChecked(view, isItemChecked(position));
+    }
+
+    /*
+    @Override
+    public Parcelable onSaveInstanceState() {
+        final Parcelable state = new Bundle(super.onSaveInstanceState());
+
+        state.putInt(STATE_KEY_CHOICE_MODE, mChoiceMode);
+        state.putParcelable(STATE_KEY_CHECKED_STATES, mCheckStates);
+        state.putParcelable(STATE_KEY_CHECKED_ID_STATES, mCheckedIdStates);
+        state.putInt(STATE_KEY_CHECKED_COUNT, mCheckedItemCount);
+
+        return state;
+    }
+
+    public void onRestoreInstanceState(Bundle state) {
+        mChoiceMode = ChoiceMode.values()[state.getInt(STATE_KEY_CHOICE_MODE)];
+        mCheckedStates = state.getParcelable(STATE_KEY_CHECKED_STATES);
+        mCheckedIdStates = state.getParcelable(STATE_KEY_CHECKED_ID_STATES);
+        mCheckedCount = state.getInt(STATE_KEY_CHECKED_COUNT);
+
+        // TODO confirm ids here
+    }*/
+
+    private final class CheckForTap implements Runnable {
+        float x;
+        float y;
+        View v;
+        int p;
+
+        @Override
+        public void run() {
+            View view = v;
+            int position = p;
+            if (view != null && position >= 0) {
+
+                mPrePressed = false;
+                final float[] point = mTmpPoint;
+                point[0] = x;
+                point[1] = y;
+                ViewUtils.transformPointToViewLocal(point, EasyRecyclerView.this, view);
+                setPressed(v, true, point[0], point[1]);
+
+                if (isLongClickable()) {
+                    mHasPerformedLongPress = false;
+
+                    if (mPendingCheckForLongPress == null) {
+                        mPendingCheckForLongPress = new CheckForLongPress();
+                    }
+                    mPendingCheckForLongPress.rememberWindowAttachCount();
+                    mPendingCheckForLongPress.v = view;
+                    mPendingCheckForLongPress.p = position;
+                    postDelayed(mPendingCheckForLongPress, ViewConfiguration.getLongPressTimeout() -
+                            ViewConfiguration.getTapTimeout());
+                }
+
+            }
+
+            // Release
+            v = null;
+        }
+    }
+
+
+
+    private class CheckForLongPress extends WindowRunnnable implements Runnable {
+        View v;
+        int p;
+
+        @Override
+        public void run() {
+            View view = v;
+            int position = p;
+            if (view != null && position >= 0 && view.isPressed() && view.getParent() != null) {
+                boolean handled = false;
+
+                if (sameWindow()) {
+                    handled = performItemLongPress(view, position, getAdapter().getItemId(position));
+                }
+                if (handled) {
+                    mHasPerformedLongPress = true;
+                    view.setPressed(false);
+                }
+            }
+
+            // Release
+            v = null;
+        }
+    }
+
+    private final class UnsetPressedState implements Runnable {
+        View v;
+
+        @Override
+        public void run() {
+            if (v != null) {
+                v.setPressed(false);
+
+                // Release
+                v = null;
+            }
+        }
+    }
+
+    private class PerformClick extends WindowRunnnable implements Runnable {
+        View v;
+        int p;
+
+        @Override
+        public void run() {
+            View view = v;
+            int position = p;
+            if (view != null && position >= 0 && sameWindow()) {
+                performItemClick(view, position, mAdapter.getItemId(position));
+            }
+
+            // Release
+            v = null;
+        }
+    }
+
+    /**
+     * A base class for Runnables that will check that their view is still attached to
+     * the original window as when the Runnable was created.
+     *
+     */
+    private class WindowRunnnable {
+        private int mOriginalAttachCount;
+
+        public void rememberWindowAttachCount() {
+            mOriginalAttachCount = getWindowAttachCount();
+        }
+
+        public boolean sameWindow() {
+            return getWindowAttachCount() == mOriginalAttachCount;
+        }
+    }
+
+    /**
+     * Interface definition for a callback to be invoked when an item in the
+     * EasyRecyclerView has been clicked.
+     */
+    public interface OnItemClickListener {
+        /**
+         * Callback method to be invoked when an item in the EasyRecyclerView
+         * has been clicked.
+         *
+         * @param parent The EasyRecyclerView where the click happened.
+         * @param view The view within the EasyRecyclerView that was clicked
+         * @param position The position of the view in the adapter.
+         * @param id The row id of the item that was clicked.
+         *
+         * @return true if the callback consumed the click, false otherwise
+         */
+        boolean onItemClick(EasyRecyclerView parent, View view, int position, long id);
+    }
+
+    /**
+     * Interface definition for a callback to be invoked when an item in the
+     * EasyRecyclerView has been clicked and held.
+     */
+    public interface OnItemLongClickListener {
+        /**
+         * Callback method to be invoked when an item in the EasyRecyclerView
+         * has been clicked and held.
+         *
+         * @param parent The EasyRecyclerView where the click happened
+         * @param view The view within the EasyRecyclerView that was clicked
+         * @param position The position of the view in the list
+         * @param id The row id of the item that was clicked
+         *
+         * @return true if the callback consumed the long click, false otherwise
+         */
+        boolean onItemLongClick(EasyRecyclerView parent, View view, int position, long id);
+    }
+
+    /**
+     * A MultiChoiceModeListener receives events for {@link android.widget.AbsListView#CHOICE_MODE_MULTIPLE_MODAL}.
      * It acts as the {@link ActionMode.Callback} for the selection mode and also receives
      * {@link #onItemCheckedStateChanged(ActionMode, int, long, boolean)} events when the user
      * selects and deselects list items.
@@ -731,7 +930,7 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
          * @param checked <code>true</code> if the item is now checked, <code>false</code>
          *                if the item is now unchecked.
          */
-        public void onItemCheckedStateChanged(ActionMode mode,
+        void onItemCheckedStateChanged(ActionMode mode,
                 int position, long id, boolean checked);
     }
 
@@ -750,6 +949,7 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             if (mWrapped.onCreateActionMode(mode, menu)) {
                 // Initialize checked graphic state?
+                setLongClickable(false);
                 return true;
             }
             return false;
@@ -774,6 +974,8 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
             clearChoices();
 
             requestLayout();
+
+            setLongClickable(true);
         }
 
         @Override
@@ -786,104 +988,5 @@ public class EasyRecyclerView extends RecyclerView implements View.OnClickListen
                 mode.finish();
             }
         }
-    }
-
-    public static abstract class FooterAdapter<VH extends ViewHolder> extends RecyclerView.Adapter<VH> {
-
-        public static final int TYPE_FOOTER = Integer.MAX_VALUE;
-
-        private EasyRecyclerView mHolder;
-        private View mFooterView;
-
-        public boolean hasFootView() {
-            return mFooterView != null;
-        }
-
-        /**
-         * footerView == null to remove foot view
-         * @param footerView
-         */
-        public void setFooterView(View footerView) {
-            if (mFooterView == footerView)
-                return;
-
-            int itemCountActual = getItemCountActual();
-            View originView = mFooterView;
-            mFooterView = footerView;
-            if (originView != null) {
-                if (mFooterView != null)
-                    notifyItemChanged(itemCountActual);
-                else
-                    notifyItemRemoved(itemCountActual);
-            } else {
-                notifyItemInserted(itemCountActual);
-            }
-        }
-
-        public View getFooterView() {
-            return mFooterView;
-        }
-
-        @Override
-        public final VH onCreateViewHolder(ViewGroup parent, int viewType) {
-            if (mFooterView != null && viewType == TYPE_FOOTER) {
-                StaggeredGridLayoutManager.LayoutParams lp = new StaggeredGridLayoutManager.LayoutParams(
-                        StaggeredGridLayoutManager.LayoutParams.WRAP_CONTENT,
-                        StaggeredGridLayoutManager.LayoutParams.WRAP_CONTENT);
-                lp.setFullSpan(true);
-                mFooterView.setLayoutParams(lp);
-                return onCreateAndBindFooterViewHolder(parent, mFooterView);
-            } else {
-                return onCreateViewHolderActual(parent, viewType);
-            }
-        }
-
-        @Override
-        public final void onBindViewHolder(VH holder, int position) {
-            if (mFooterView == null || position != getItemCountActual()) {
-                onBindViewHolderActual(holder, position);
-                if (mHolder.mNeedOnClickListener)
-                    holder.itemView.setOnClickListener(mHolder);
-                if (mHolder.mNeedOnLongClickListener)
-                    holder.itemView.setOnLongClickListener(mHolder);
-                EasyRecyclerView.setViewChecked(holder.itemView,
-                        mHolder.isItemChecked(position));
-            }
-        }
-
-        @Override
-        public final int getItemViewType(int position) {
-            if (mFooterView != null && position == getItemCountActual())
-                return TYPE_FOOTER;
-            else
-                return getItemViewTypeActual(position);
-        }
-
-        @Override
-        public final int getItemCount() {
-            int itemCount = getItemCountActual();
-            if (mFooterView != null)
-                itemCount++;
-            return itemCount;
-        }
-
-        public abstract VH onCreateAndBindFooterViewHolder(ViewGroup parent, View footerView);
-
-        public abstract VH onCreateViewHolderActual(ViewGroup parent, int viewType);
-
-        public abstract void onBindViewHolderActual(VH holder, int position);
-
-        /**
-         * Foot view type is Integer.MAX_VALUE, do not be the same
-         *
-         * @param position
-         * @return
-         */
-        public int getItemViewTypeActual(int position) {
-            return 0;
-        }
-
-        public abstract int getItemCountActual();
-
     }
 }

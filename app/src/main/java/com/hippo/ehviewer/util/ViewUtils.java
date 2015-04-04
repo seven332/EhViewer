@@ -202,4 +202,9 @@ public final class ViewUtils {
                 y >= view.getTop() &&
                 y < view.getBottom();
     }
+
+    public static void transformPointToViewLocal(float[] point, View parent, View child) {
+        point[0] += parent.getScrollX() - child.getLeft();
+        point[1] += parent.getScrollY() - child.getTop();
+    }
 }

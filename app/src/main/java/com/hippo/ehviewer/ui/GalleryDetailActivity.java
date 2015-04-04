@@ -35,6 +35,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
@@ -57,6 +58,8 @@ import com.hippo.ehviewer.AppContext;
 import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
+import com.hippo.ehviewer.cache.AnyCache;
+import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.data.ApiGalleryDetail;
 import com.hippo.ehviewer.data.Comment;
 import com.hippo.ehviewer.data.Data;
@@ -75,8 +78,6 @@ import com.hippo.ehviewer.drawable.OvalDrawable;
 import com.hippo.ehviewer.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.ehclient.DetailUrlParser;
 import com.hippo.ehviewer.ehclient.EhClient;
-import com.hippo.ehviewer.cache.AnyCache;
-import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
@@ -1262,7 +1263,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
 
     }
 
-    private class CommentAdapter extends EasyRecyclerView.FooterAdapter<CommentHolder> {
+    private class CommentAdapter extends RecyclerView.Adapter<CommentHolder> {
 
         private final LayoutInflater mInflater;
 
@@ -1271,14 +1272,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         }
 
         @Override
-        public CommentHolder onCreateAndBindFooterViewHolder(ViewGroup parent,
-                View footerView) {
-            // No footer
-            return null;
-        }
-
-        @Override
-        public CommentHolder onCreateViewHolderActual(ViewGroup parent,
+        public CommentHolder onCreateViewHolder(ViewGroup parent,
                 int viewType) {
             View view = mInflater.inflate(R.layout.comments_item, parent, false);
             RippleSalon.addRipple(view, ColorStateList.valueOf(0x40000000)); // TODO
@@ -1286,7 +1280,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         }
 
         @Override
-        public void onBindViewHolderActual(CommentHolder holder, int position) {
+        public void onBindViewHolder(CommentHolder holder, int position) {
             final Comment comment = ((GalleryDetail) mGalleryInfo).comments.get(position);
 
             holder.userView.setText(comment.user);
@@ -1295,7 +1289,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         }
 
         @Override
-        public int getItemCountActual() {
+        public int getItemCount() {
             if (mGalleryInfo instanceof GalleryDetail) {
                 GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
                 if (galleryDetail.comments == null)
