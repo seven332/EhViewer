@@ -16,15 +16,13 @@
 
 package com.hippo.ehviewer.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +41,10 @@ import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.GalleryListView;
 import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
 import com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView;
+import com.hippo.ehviewer.widget.recyclerview.SwipeToDismissTouchListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HistoryActivity extends AbsTranslucentActivity
         implements EasyRecyclerView.OnItemClickListener, MaterialAlertDialog.OnClickListener,
@@ -175,6 +177,37 @@ public class HistoryActivity extends AbsTranslucentActivity
         mGalleryListView.setEnabledFooter(false);
         mGalleryListView.setOnItemClickListener(this);
 
+        SwipeToDismissTouchListener.DismissCallbacks callbacks = new SwipeToDismissTouchListener.DismissCallbacks() {
+            @Override
+            public SwipeToDismissTouchListener.SwipeDirection dismissDirection(int position) {
+                return SwipeToDismissTouchListener.SwipeDirection.BOTH;
+            }
+
+            @Override
+            public void onDismiss(RecyclerView view, List<SwipeToDismissTouchListener.PendingDismissData> dismissData) {
+                for (SwipeToDismissTouchListener.PendingDismissData data : dismissData) {
+                    // TODO After delete all show NONE tip
+                    int position = data.position;
+                    mData.deleteHistory(mGalleryListView.getGalleryInfo(position).gid);
+                    mGalleryListView.removeGalleryInfo(position);
+                    mGalleryListView.getGalleryAdapter().notifyItemRemoved(data.position);
+                }
+            }
+
+            @Override
+            public void onResetMotion() {
+
+            }
+
+            @Override
+            public void onTouchDown() {
+
+            }
+        };
+
+        mGalleryListView.addOnItemTouchListener(
+                new SwipeToDismissTouchListener(mGalleryListView.getEasyRecyclerView(), callbacks));
+
         createFilterDialog();
         createClearDialog();
     }
@@ -219,7 +252,7 @@ public class HistoryActivity extends AbsTranslucentActivity
             OnGetListListener listener) {
         if (url.equals(HISTORY_URL)) {
             List<GalleryInfo> giList = new ArrayList<GalleryInfo>(mData.getHistory(mFilterMode, true));
-            if (giList == null || giList.size() == 0)
+            if (giList.size() == 0)
                 listener.onSuccess(taskStamp, giList, 0);
             else
                 listener.onSuccess(taskStamp, giList, 1);

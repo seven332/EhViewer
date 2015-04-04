@@ -681,7 +681,7 @@ public class Data {
     public static final int READ = 0x2;
 
     public synchronized List<HistoryItem> getHistory(int mode, boolean desc) {
-        List<HistoryItem> history = new ArrayList<HistoryItem>();
+        List<HistoryItem> history = new ArrayList<>();
 
         StringBuilder sb = new StringBuilder();
         sb.append("select * from ").append(TABLE_HISTORY);
@@ -757,6 +757,11 @@ public class Data {
                     COLUMN_GID + "=?", new String[]{String.valueOf(gi.gid)});
             updateGallery(gi);
         }
+    }
+
+    public synchronized void deleteHistory(int gid) {
+        mDatabase.delete(TABLE_HISTORY, COLUMN_GID + "=?", new String[]{String.valueOf(gid)});
+        deleteGallery(gid);
     }
 
     public void clearHistory() {

@@ -228,6 +228,14 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnHead
         }
     }
 
+    public EasyRecyclerView getEasyRecyclerView() {
+        return mEasyRecyclerView;
+    }
+
+    public GalleryAdapter getGalleryAdapter() {
+        return mAdapter;
+    }
+
     public void setGalleryListViewHelper(GalleryListViewHelper h) {
         mHelper = h;
     }
@@ -271,6 +279,10 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnHead
 
     public void setMultiChoiceModeListener(EasyRecyclerView.MultiChoiceModeListener listener) {
         mEasyRecyclerView.setMultiChoiceModeListener(listener);
+    }
+
+    public void addOnItemTouchListener(RecyclerView.OnItemTouchListener listener) {
+        mEasyRecyclerView.addOnItemTouchListener(listener);
     }
 
     public void notifyDataSetChanged() {
@@ -444,6 +456,10 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnHead
 
     public GalleryInfo getGalleryInfo(int position) {
         return mGiList.get(position);
+    }
+
+    public GalleryInfo removeGalleryInfo(int position) {
+        return mGiList.remove(position);
     }
 
     public static interface OnGetListListener {
