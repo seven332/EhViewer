@@ -16,13 +16,8 @@
 
 package com.hippo.ehviewer.gallery.data;
 
-import java.io.File;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import android.graphics.BitmapFactory;
 import android.graphics.Movie;
-import android.util.SparseArray;
 
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.ehclient.ExDownloader;
@@ -34,6 +29,12 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Utils;
+
+import java.io.File;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ImageSet implements ExDownloader.ListenerForImageSet {
 
@@ -52,8 +53,8 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
     private final File mDir;
     private final AutoExpandArray<String> mImageFilenameArray;
     private ImageListener mListener;
-    private final Queue<DecodeInfo> mDecodeQueue = new ConcurrentLinkedQueue<DecodeInfo>();
-    private final SparseArray<Float> mPercentMap = new SparseArray<Float>(5);
+    private final Queue<DecodeInfo> mDecodeQueue = new ConcurrentLinkedQueue<>();
+    private final Map<Integer, Float> mPercentMap = new ConcurrentHashMap<>(5);
     private final DecodeWorker mDecodeWorker;
     /** If true, then wake Worker, worker will stop **/
     private volatile boolean mStopWork = false;
@@ -266,8 +267,7 @@ public class ImageSet implements ExDownloader.ListenerForImageSet {
 
     @Override
     public void onDownloading(final int index, final float percent) {
-        mPercentMap.append(index, percent);
-
+        mPercentMap.put(index, percent);
         AppHandler.getInstance().post(new Runnable() {
             @Override
             public void run() {
