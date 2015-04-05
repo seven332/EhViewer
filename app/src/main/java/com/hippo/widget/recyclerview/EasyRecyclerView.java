@@ -843,7 +843,7 @@ public class EasyRecyclerView extends RecyclerView {
             mCheckedIdStates = ss.checkIdState;
         }
 
-        if (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL) {
+        if (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL && mCheckedItemCount > 0) {
             mChoiceActionMode = mActionBarActivity.startSupportActionMode(mMultiChoiceModeCallback);
         }
         updateOnScreenCheckedViews();
