@@ -734,13 +734,6 @@ public class EasyRecyclerView extends RecyclerView {
         return handled;
     }
 
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-
-        updateOnScreenCheckedViews();
-    }
-
     /**
      * Register a callback to be invoked when an item in this AdapterView has
      * been clicked.
@@ -757,6 +750,13 @@ public class EasyRecyclerView extends RecyclerView {
             setLongClickable(true);
         }
         mOnItemLongClickListener = listener;
+    }
+
+    /**
+     * If choice mode is set, call it in {@link Adapter#onBindViewHolder}
+     */
+    public void checkItemCheckedState(View view, int position) {
+        setViewChecked(view, isItemChecked(position));
     }
 
     /*
