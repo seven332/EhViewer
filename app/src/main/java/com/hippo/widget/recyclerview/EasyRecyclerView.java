@@ -17,6 +17,9 @@ package com.hippo.widget.recyclerview;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.util.LongSparseArray;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -44,11 +47,6 @@ import com.hippo.util.ViewUtils;
  */
 // Get some code from twoway-view and AbsListView.
 public class EasyRecyclerView extends RecyclerView {
-
-    private static final String STATE_KEY_CHOICE_MODE = "choiceMode";
-    private static final String STATE_KEY_CHECKED_STATES = "checkedStates";
-    private static final String STATE_KEY_CHECKED_ID_STATES = "checkedIdStates";
-    private static final String STATE_KEY_CHECKED_COUNT = "checkedCount";
 
     /**
      * Represents an invalid position. All valid positions are in the range 0 to 1 less than the
@@ -759,27 +757,97 @@ public class EasyRecyclerView extends RecyclerView {
         setViewChecked(view, isItemChecked(position));
     }
 
-    /*
-    @Override
-    public Parcelable onSaveInstanceState() {
-        final Parcelable state = new Bundle(super.onSaveInstanceState());
+    static class SavedState extends BaseSavedState {
+        int choiceMode;
+        int checkedItemCount;
+        SparseBooleanArray checkState;
+        LongSparseArray<Integer> checkIdState;
 
-        state.putInt(STATE_KEY_CHOICE_MODE, mChoiceMode);
-        state.putParcelable(STATE_KEY_CHECKED_STATES, mCheckStates);
-        state.putParcelable(STATE_KEY_CHECKED_ID_STATES, mCheckedIdStates);
-        state.putInt(STATE_KEY_CHECKED_COUNT, mCheckedItemCount);
+        /**
+         * Constructor called from {@link #onSaveInstanceState()}
+         */
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
 
-        return state;
+        /**
+         * Constructor called from {@link #CREATOR}
+         */
+        private SavedState(Parcel in) {
+            super(in);
+            choiceMode = in.readInt();
+            checkedItemCount = in.readInt();
+            checkState = in.readSparseBooleanArray();
+            final int N = in.readInt();
+            if (N > 0) {
+                checkIdState = new LongSparseArray<>();
+                for (int i=0; i<N; i++) {
+                    final long key = in.readLong();
+                    final int value = in.readInt();
+                    checkIdState.put(key, value);
+                }
+            }
+        }
+
+        @Override
+        public void writeToParcel(@NonNull Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(choiceMode);
+            out.writeInt(checkedItemCount);
+            out.writeSparseBooleanArray(checkState);
+            final int N = checkIdState != null ? checkIdState.size() : 0;
+            out.writeInt(N);
+            for (int i=0; i<N; i++) {
+                out.writeLong(checkIdState.keyAt(i));
+                out.writeInt(checkIdState.valueAt(i));
+            }
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR
+                = new Parcelable.Creator<SavedState>() {
+            @Override
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            @Override
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
     }
 
-    public void onRestoreInstanceState(Bundle state) {
-        mChoiceMode = ChoiceMode.values()[state.getInt(STATE_KEY_CHOICE_MODE)];
-        mCheckedStates = state.getParcelable(STATE_KEY_CHECKED_STATES);
-        mCheckedIdStates = state.getParcelable(STATE_KEY_CHECKED_ID_STATES);
-        mCheckedCount = state.getInt(STATE_KEY_CHECKED_COUNT);
+    @Override
+    public Parcelable onSaveInstanceState() {
+        final SavedState ss = new SavedState(super.onSaveInstanceState());
 
-        // TODO confirm ids here
-    }*/
+        ss.choiceMode = mChoiceMode;
+        ss.checkedItemCount = mCheckedItemCount;
+        ss.checkState = mCheckStates;
+        ss.checkIdState = mCheckedIdStates;
+
+        return ss;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        SavedState ss = (SavedState) state;
+        super.onRestoreInstanceState(ss.getSuperState());
+
+        setChoiceMode(ss.choiceMode);
+        mCheckedItemCount = ss.checkedItemCount;
+        if (ss.checkState != null) {
+            mCheckStates = ss.checkState;
+        }
+        if (ss.checkIdState != null) {
+            mCheckedIdStates = ss.checkIdState;
+        }
+
+        if (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL) {
+            mChoiceActionMode = mActionBarActivity.startSupportActionMode(mMultiChoiceModeCallback);
+        }
+        updateOnScreenCheckedViews();
+    }
 
     private final class CheckForTap implements Runnable {
         float x;
