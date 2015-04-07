@@ -16,14 +16,6 @@
 
 package com.hippo.ehviewer.util;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -31,6 +23,14 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Environment;
+
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 
 public class Crash {
     private static final String TAG = "Crash";
@@ -119,13 +119,14 @@ public class Crash {
             editor.putBoolean(NEW_CRAHS, true);
             editor.putBoolean(LAST_CRASH_POSITION, position);
             editor.putString(LAST_CRASH_NAME, fileName);
-            editor.commit();
+            editor.apply();
         } catch (Exception e) {
             Log.e(TAG, "An error occured while writing crash file...", e);
         }
     }
 
     private static void collectDeviceInfo(StringBuffer sb) {
+        boolean getPackageInfo = false;
         try {
             PackageManager pm = mContext.getPackageManager();
             PackageInfo pi = pm.getPackageInfo(mContext.getPackageName(), PackageManager.GET_ACTIVITIES);
@@ -133,37 +134,45 @@ public class Crash {
                 String versionName = pi.versionName == null ? "null" : pi.versionName;
                 String versionCode = String.valueOf(pi.versionCode);
                 sb.append("======== PackageInfo ========\n");
-                sb.append("PackageName=" + pi.packageName + "\n");
-                sb.append("VersionName=" + versionName + "\n");
-                sb.append("VersionCode=" + versionCode + "\n");
+                sb.append("PackageName=").append(pi.packageName).append("\n");
+                sb.append("VersionName=").append(versionName).append("\n");
+                sb.append("VersionCode=").append(versionCode).append("\n");
                 sb.append("\n");
+
+                getPackageInfo = true;
             }
         } catch (NameNotFoundException e) {
             Log.e(TAG, "an error occured when collect package info", e);
         }
+        if (!getPackageInfo) {
+            sb.append("======== PackageInfo ========\n");
+            sb.append("Can't get package information\n");
+            sb.append("\n");
+        }
+
         sb.append("======== DeviceInfo ========\n");
-        sb.append("BOARD=" + Build.BOARD + "\n");
-        sb.append("BOOTLOADER=" + Build.BOOTLOADER + "\n");
-        sb.append("CPU_ABI=" + Build.CPU_ABI + "\n");
-        sb.append("CPU_ABI2=" + Build.CPU_ABI2 + "\n");
-        sb.append("DEVICE=" + Build.DEVICE + "\n");
-        sb.append("DISPLAY=" + Build.DISPLAY + "\n");
-        sb.append("FINGERPRINT=" + Build.FINGERPRINT + "\n");
-        sb.append("HARDWARE=" + Build.HARDWARE + "\n");
-        sb.append("HOST=" + Build.HOST + "\n");
-        sb.append("ID=" + Build.ID + "\n");
-        sb.append("MANUFACTURER=" + Build.MANUFACTURER + "\n");
-        sb.append("MODEL=" + Build.MODEL + "\n");
-        sb.append("PRODUCT=" + Build.PRODUCT + "\n");
-        sb.append("RADIO=" + Build.getRadioVersion() + "\n");
-        sb.append("SERIAL=" + Build.SERIAL + "\n");
-        sb.append("TAGS=" + Build.TAGS + "\n");
-        sb.append("TYPE=" + Build.TYPE + "\n");
-        sb.append("USER=" + Build.USER + "\n");
-        sb.append("CODENAME=" + Build.VERSION.CODENAME + "\n");
-        sb.append("INCREMENTAL=" + Build.VERSION.INCREMENTAL + "\n");
-        sb.append("RELEASE=" + Build.VERSION.RELEASE + "\n");
-        sb.append("SDK=" + Build.VERSION.SDK_INT + "\n");
+        sb.append("BOARD=").append(Build.BOARD).append("\n");
+        sb.append("BOOTLOADER=").append(Build.BOOTLOADER).append("\n");
+        sb.append("CPU_ABI=").append(Build.CPU_ABI).append("\n");
+        sb.append("CPU_ABI2=").append(Build.CPU_ABI2).append("\n");
+        sb.append("DEVICE=").append(Build.DEVICE).append("\n");
+        sb.append("DISPLAY=").append(Build.DISPLAY).append("\n");
+        sb.append("FINGERPRINT=").append(Build.FINGERPRINT).append("\n");
+        sb.append("HARDWARE=").append(Build.HARDWARE).append("\n");
+        sb.append("HOST=").append(Build.HOST).append("\n");
+        sb.append("ID=").append(Build.ID).append("\n");
+        sb.append("MANUFACTURER=").append(Build.MANUFACTURER).append("\n");
+        sb.append("MODEL=").append(Build.MODEL).append("\n");
+        sb.append("PRODUCT=").append(Build.PRODUCT).append("\n");
+        sb.append("RADIO=").append(Build.getRadioVersion()).append("\n");
+        sb.append("SERIAL=").append(Build.SERIAL).append("\n");
+        sb.append("TAGS=").append(Build.TAGS).append("\n");
+        sb.append("TYPE=").append(Build.TYPE).append("\n");
+        sb.append("USER=").append(Build.USER).append("\n");
+        sb.append("CODENAME=").append(Build.VERSION.CODENAME).append("\n");
+        sb.append("INCREMENTAL=").append(Build.VERSION.INCREMENTAL).append("\n");
+        sb.append("RELEASE=").append(Build.VERSION.RELEASE).append("\n");
+        sb.append("SDK=").append(Build.VERSION.SDK_INT).append("\n");
         sb.append("\n");
     }
 
@@ -199,7 +208,7 @@ public class Crash {
             DataInputStream din = new DataInputStream(new FileInputStream(lastCrashFile));
             din.readFully(buffer);
             din.close();
-            configPre.edit().putBoolean(NEW_CRAHS, false).commit();
+            configPre.edit().putBoolean(NEW_CRAHS, false).apply();
             return new String(buffer);
         } catch (Exception e) {
             Log.e(TAG, "An error occured while reading crash file...", e);
