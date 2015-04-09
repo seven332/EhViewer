@@ -217,15 +217,6 @@ public class HttpHelper {
         return mLastUrl;
     }
 
-    private boolean isUrlCookiable(URL url) {
-        String host = url.getHost();
-        for (String h : EhInfo.COOKIABLE_HOSTS) {
-            if (h.equals(host))
-                return true;
-        }
-        return false;
-    }
-
     public void setPreviewMode(String previewMode) {
         mPreviewMode = previewMode;
     }
@@ -242,7 +233,7 @@ public class HttpHelper {
             try {
                 url = (mLastUrl == null ? rh.getUrl() : new URL(mLastUrl));
 
-                isCookiable = isUrlCookiable(url);
+                isCookiable = EhInfo.isEhSite(url);
 
                 while (isCookiable) {
                     synchronized(ehLock) {

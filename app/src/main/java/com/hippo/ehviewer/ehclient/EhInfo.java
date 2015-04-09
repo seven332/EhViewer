@@ -25,6 +25,7 @@ import android.text.TextUtils;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.Utils;
 import com.larvalabs.svgandroid.SVGBuilder;
 
@@ -35,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -52,9 +54,9 @@ public class EhInfo {
     private static Drawable DEFAULT_AVATAR;
 
     public static final String EX_HOST = "exhentai.org";
-    public static final String[] COOKIABLE_HOSTS = {"exhentai.org",
-        "g.e-hentai.org", "forums.e-hentai.org", "ul.exhentai.org",
-        "ul.e-hentai.org", "lofi.e-hentai.org"};
+    public static final String[] COOKIABLE_SITE_ARRAY = {
+            "exhentai.org",
+            "e-hentai.org"};
 
     private static final String KEY_LOGIN = "login";
     private static final boolean DEFAULT_LOGIN = false;
@@ -146,10 +148,34 @@ public class EhInfo {
         mUconfig = getUconfigString(null);
     }
 
-    public final static EhInfo getInstance(final Context context) {
+    public static EhInfo getInstance(final Context context) {
         if (sInstance == null)
             sInstance = new EhInfo(context.getApplicationContext());
         return sInstance;
+    }
+
+    public static boolean isEhSite(URL url) {
+        String host = url.getHost();
+        int length = host.length();
+        int dotCount = 0;
+        int i = length;
+        while(i-- != 0) {
+            char ch = host.charAt(i);
+            if (ch == '.') {
+                dotCount++;
+            }
+            if (dotCount == 2) {
+                // Get it
+                break;
+            }
+        }
+        String site = host.substring(MathUtils.clamp(i+1, 0, length));
+
+        for (String h : EhInfo.COOKIABLE_SITE_ARRAY) {
+            if (h.equals(site))
+                return true;
+        }
+        return false;
     }
 
     private String getCookie(String cookieStr, String key) {
