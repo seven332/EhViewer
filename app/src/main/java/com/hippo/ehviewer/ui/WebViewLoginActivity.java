@@ -35,8 +35,8 @@ public class WebViewLoginActivity extends AbsActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        CookieManager.getInstance().removeAllCookie();
         WebView wv = new WebView(this);
+        CookieManager.getInstance().removeAllCookie();
         wv.getSettings().setJavaScriptEnabled(true);
         wv.setWebViewClient(new LoginWebViewClient());
         wv.loadUrl(EhClient.LOGIN_URL);
