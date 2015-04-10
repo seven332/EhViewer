@@ -16,8 +16,6 @@
 
 package com.hippo.ehviewer.ui;
 
-import java.io.File;
-
 import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.Intent;
@@ -25,6 +23,8 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -39,6 +39,7 @@ import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.DirSelectDialog;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
+import com.hippo.ehviewer.content.Messenger;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.ExDownloader;
@@ -53,11 +54,13 @@ import com.hippo.ehviewer.widget.ColorView;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.SlidingLayout;
 
+import java.io.File;
+
 public class GalleryActivity extends AbsActivity
         implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener,
         FullScreenHelper.OnFullScreenBrokenListener, CompoundButton.OnCheckedChangeListener,
         SlidingLayout.OnChildHideListener, AdapterView.OnItemSelectedListener,
-        View.OnClickListener, Utils.OnCopyOverListener {
+        View.OnClickListener, Utils.OnCopyOverListener, Messenger.Receiver {
 
     @SuppressWarnings("unused")
     private final static String TAG = GalleryActivity.class.getSimpleName();
@@ -110,6 +113,8 @@ public class GalleryActivity extends AbsActivity
 
     private Dialog mSendDialog;
 
+    private boolean mVolumePage;
+
     private final Runnable mFullScreenTask = new Runnable() {
         @Override public void run() {
             mFullScreenHelper.setFullScreen(true);
@@ -126,8 +131,7 @@ public class GalleryActivity extends AbsActivity
 
     @Override
     public void onCopyOver(boolean success, File src, File dst) {
-        MaterialToast.showToast(success ? String.format(getString(R.string.save_successful), dst.getPath())
-                : getString(R.string.save_failed));
+        MaterialToast.showToast(success ? String.format(getString(R.string.save_successful), dst.getPath()) : getString(R.string.save_failed));
         if (success)
             Config.setString(KEY_LAST_SAVE_IMAGE_FILE_PATH, dst.getParent());
     }
@@ -265,7 +269,9 @@ public class GalleryActivity extends AbsActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.gl_root_group);
+
+        mVolumePage = Config.getVolumePage();
+        Messenger.getInstance().register(Config.MESSENGER_ID_VOLUME_PAGE, this);
 
         mFullScreenHelper = new FullScreenHelper(this);
         mFullScreenHelper.setOnFullScreenBrokenListener(this);
@@ -298,7 +304,7 @@ public class GalleryActivity extends AbsActivity
         mSendDialog = createSendDialog();
 
         Intent intent = getIntent();
-        mGi = (GalleryInfo) intent.getParcelableExtra(KEY_GALLERY_INFO);
+        mGi = intent.getParcelableExtra(KEY_GALLERY_INFO);
 
         if (mGi == null) {
             // Get error force finish
@@ -382,6 +388,8 @@ public class GalleryActivity extends AbsActivity
     protected void onDestroy() {
         super.onDestroy();
 
+        Messenger.getInstance().unregister(Config.MESSENGER_ID_VOLUME_PAGE, this);
+
         if (mImageSet != null)
             mImageSet.free();
         if (mGalleryView != null)
@@ -413,6 +421,31 @@ public class GalleryActivity extends AbsActivity
         } else if (v == mMoreSettings) {
             Intent intent = new Intent(GalleryActivity.this, SettingsActivity.class);
             startActivity(intent);
+        }
+    }
+
+    @Override
+    public boolean onKeyDown (int keyCode, @NonNull KeyEvent event) {
+        if (mVolumePage) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_VOLUME_DOWN:
+                    mGalleryView.showPreviousPage();
+                    return true;
+                case KeyEvent.KEYCODE_VOLUME_UP:
+                    mGalleryView.showNextPage();
+                    return true;
+                default:
+                    return super.onKeyDown(keyCode, event);
+            }
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    @Override
+    public void onReceive(Object obj) {
+        if (obj instanceof Boolean) {
+            mVolumePage = (Boolean) obj;
         }
     }
 

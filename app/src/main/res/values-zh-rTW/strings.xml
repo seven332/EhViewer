@@ -226,6 +226,7 @@
     <string name="page_scaling_title">頁面縮放</string>
     <string name="start_position_title">開頁位置</string>
     <string name="keep_screen_on_title">閱讀時螢幕常亮</string>
+    <string name="volume_page_title">音量鍵翻頁</string>
     <string name="gallery_show_clock_title">顯示時間</string>
     <string name="gallery_show_battery_title">顯示電量</string>
     <string name="custom_lightness_title">閱讀時使用自定義螢幕亮度</string>
@@ -234,7 +235,7 @@
     <string name="custom_codec_summary">自定義解碼可能會更使用更少記憶體，解碼更快</string>
     <string name="custom_codec_summary_not">自定義解碼暫不支援 x86, mips</string>
     <string name="clean_redundancy_title">清理閱讀冗餘</string>
-    <string name="clean_redundancy_mesg">你確定要清理閱讀冗餘嗎？不在下載列表中的畫廊圖片檔案檔案將被刪除。</string>
+    <string name="clean_redundancy_mesg">你確定要清理閱讀冗餘嗎？不在下載列表中的畫廊圖片檔案將被刪除。</string>
     <string name="no_redundancy">未發現冗餘</string>
     <string name="clean_redundancy">完成冗餘清理，共清理 %d 項</string>
     <string name="decode_format_title">解碼格式</string>

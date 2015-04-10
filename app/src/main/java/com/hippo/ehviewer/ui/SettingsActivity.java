@@ -50,6 +50,7 @@ import com.hippo.ehviewer.UpdateHelper;
 import com.hippo.ehviewer.app.DirSelectDialog;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.app.MaterialProgressDialog;
+import com.hippo.ehviewer.content.Messenger;
 import com.hippo.ehviewer.data.ApiGalleryInfo;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.DownloadInfo;
@@ -81,6 +82,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.prefs.PreferenceChangeListener;
 
 public class SettingsActivity extends AbsPreferenceActivity {
     @SuppressWarnings("unused")
@@ -400,11 +402,13 @@ public class SettingsActivity extends AbsPreferenceActivity {
     }
 
     public static class ReadFragment extends PreferenceFragment implements
-            Preference.OnPreferenceClickListener {
+            Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
+        private static final String KEY_VOLUME_PAGE = "volume_page";
         private static final String KEY_CUSTOM_CODEC = "custom_codec";
         private static final String KEY_CLEAN_REDUNDANCY = "clean_redundancy";
 
+        private CheckBoxPreference mVolumePage;
         private CheckBoxPreference mCustomCodec;
         private Preference mCleanRedundancy;
 
@@ -415,6 +419,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.read_settings);
 
+            mVolumePage = (CheckBoxPreference) findPreference(KEY_VOLUME_PAGE);
+            mVolumePage.setOnPreferenceChangeListener(this);
             mCustomCodec = (CheckBoxPreference) findPreference(KEY_CUSTOM_CODEC);
             mCleanRedundancy = findPreference(KEY_CLEAN_REDUNDANCY);
             mCleanRedundancy.setOnPreferenceClickListener(this);
@@ -426,6 +432,17 @@ public class SettingsActivity extends AbsPreferenceActivity {
             } else {
                 mCustomCodec.setChecked(Config.getCustomCodec());
             }
+        }
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final String key = preference.getKey();
+            switch (key) {
+                case KEY_VOLUME_PAGE:
+                    Messenger.getInstance().notify(Config.MESSENGER_ID_VOLUME_PAGE, newValue);
+                    break;
+            }
+            return true;
         }
 
         private boolean isInDownloadList(List<DownloadInfo> diList, String filename) {

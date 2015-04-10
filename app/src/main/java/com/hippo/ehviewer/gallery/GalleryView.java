@@ -16,8 +16,6 @@
 
 package com.hippo.ehviewer.gallery;
 
-import java.util.Arrays;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Movie;
@@ -51,6 +49,8 @@ import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.util.ZInterpolator;
 import com.hippo.ehviewer.widget.MaterialToast;
+
+import java.util.Arrays;
 
 public class GalleryView extends GLView implements ImageSet.ImageListener,
         Runnable {
@@ -958,6 +958,25 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             return false;
     }
 
+    public void showPreviousPage() {
+        // TODO goto bottom first the to pre page
+        resetSizePosition(PRE_TARGET_INDEX);
+        if (!goToPrePage()) {
+            // Get to first page
+            MaterialToast.showToast(mContext.getString(R.string.first_page));
+        }
+    }
+
+    public void showNextPage() {
+        // TODO goto bottom first the to pre page
+        resetSizePosition(NEXT_TARGET_INDEX);
+        if (!goToNextPage()) {
+            // Get to last page
+            MaterialToast.showToast(mContext.getString(isEnsureSize ?
+                    R.string.the_last_page : R.string.wait_for_more));
+        }
+    }
+
     private class MyGestureListener implements GestureRecognizer.Listener {
 
         private boolean isScale = false;
@@ -1184,25 +1203,6 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
             mDoubleTapRunner.setInterpolator(new ZInterpolator(0.5f));
         }
 
-        private void onTapPre() {
-            // TODO goto bottom first the to pre page
-            resetSizePosition(PRE_TARGET_INDEX);
-            if (!goToPrePage()) {
-                // Get to first page
-                MaterialToast.showToast(mContext.getString(R.string.first_page));
-            }
-        }
-
-        private void onTapNext() {
-            // TODO goto bottom first the to pre page
-            resetSizePosition(NEXT_TARGET_INDEX);
-            if (!goToNextPage()) {
-                // Get to last page
-                MaterialToast.showToast(mContext.getString(isEnsureSize ?
-                        R.string.the_last_page : R.string.wait_for_more));
-            }
-        }
-
         @Override
         public boolean onSingleTapConfirmed(float x, float y) {
             if (mScrollState != SCROLL_NONE) {
@@ -1224,18 +1224,18 @@ public class GalleryView extends GLView implements ImageSet.ImageListener,
 
             if (Utils.isInArea(leftArea, (int) x, (int) y)) {
                 if (isRightToLeft())
-                    onTapNext();
+                    showNextPage();
                 else
-                    onTapPre();
+                    showPreviousPage();
 
             } else if (Utils.isInArea(topArea, (int) x, (int) y)) {
                 zoom(true);
 
             } else if (Utils.isInArea(rightArea, (int) x, (int) y)) {
                 if (isRightToLeft())
-                    onTapPre();
+                    showPreviousPage();
                 else
-                    onTapNext();
+                    showNextPage();
 
             } else if (Utils.isInArea(bottomArea, (int) x, (int) y)) {
                 zoom(false);
