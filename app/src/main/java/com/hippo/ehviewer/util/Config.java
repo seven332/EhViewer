@@ -22,6 +22,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
+import com.hippo.ehviewer.content.Messenger;
 import com.hippo.ehviewer.data.ListUrls;
 import com.hippo.ehviewer.ehclient.EhClient;
 
@@ -42,6 +43,14 @@ public final class Config {
     private static boolean mInit = false;
 
     private static SharedPreferences mConfigPre;
+
+    public static final int MESSENGER_ID_VOLUME_PAGE;
+
+    static {
+        Messenger messenger = Messenger.getInstance();
+        MESSENGER_ID_VOLUME_PAGE = messenger.newId();
+    }
+
 
     /**
      * Init Config
@@ -343,6 +352,9 @@ public final class Config {
     private static final String KEY_START_POSITION = "start_position";
     private static final int DEFAULT_START_POSITION = 1;
 
+    private static final String KEY_VOLUME_PAGE = "volume_page";
+    private static final boolean DEFAULT_VOLUME_PAGE = false;
+
     private static final String KEY_GALLERY_SHOW_CLOCK = "gallery_show_clock";
     private static final boolean DEFAULT_GALLERY_SHOW_CLOCK = true;
 
@@ -394,6 +406,15 @@ public final class Config {
     public static void setKeepSreenOn(boolean value) {
         setBoolean(KEY_KEEP_SCREEN_ON, value);
     }
+
+    public static void setVolumePage(boolean value) {
+        setBoolean(KEY_VOLUME_PAGE, value);
+    }
+
+    public static boolean getVolumePage() {
+        return getBoolean(KEY_VOLUME_PAGE, DEFAULT_VOLUME_PAGE);
+    }
+
 
     public static boolean getShowClock() {
         return getBoolean(KEY_GALLERY_SHOW_CLOCK, DEFAULT_GALLERY_SHOW_CLOCK);

@@ -44,6 +44,11 @@
         android:defaultValue="false" />
 
     <CheckBoxPreference
+        android:key="volume_page"
+        android:title="@string/volume_page_title"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
         android:key="gallery_show_clock"
         android:title="@string/gallery_show_clock_title"
         android:defaultValue="true" />

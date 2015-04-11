@@ -243,6 +243,7 @@
     <string name="page_scaling_title">Page scaling</string>
     <string name="start_position_title">Start position</string>
     <string name="keep_screen_on_title">Keep screen when reading</string>
+    <string name="volume_page_title">Page turn via volume key</string>
     <string name="gallery_show_clock_title">Show clock</string>
     <string name="gallery_show_battery_title">Show battery</string>
     <string name="custom_lightness_title">Custom lightness when reading</string>

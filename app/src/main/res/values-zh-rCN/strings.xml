@@ -238,6 +238,7 @@
     <string name="page_scaling_title">页面缩放</string>
     <string name="start_position_title">开页位置</string>
     <string name="keep_screen_on_title">阅读时屏幕常亮</string>
+    <string name="volume_page_title">音量键翻页</string>
     <string name="gallery_show_clock_title">显示时间</string>
     <string name="gallery_show_battery_title">显示电量</string>
     <string name="custom_lightness_title">阅读时使用自定义屏幕亮度</string>
