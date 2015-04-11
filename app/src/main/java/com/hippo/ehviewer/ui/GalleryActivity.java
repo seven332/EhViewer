@@ -269,6 +269,7 @@ public class GalleryActivity extends AbsActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.gl_root_group);
 
         mVolumePage = Config.getVolumePage();
         Messenger.getInstance().register(Config.MESSENGER_ID_VOLUME_PAGE, this);
@@ -429,10 +430,12 @@ public class GalleryActivity extends AbsActivity
         if (mVolumePage) {
             switch (keyCode) {
                 case KeyEvent.KEYCODE_VOLUME_DOWN:
-                    mGalleryView.showPreviousPage();
+                    String a = null;
+                    a.length();
+                    mGalleryView.showNextPage();
                     return true;
                 case KeyEvent.KEYCODE_VOLUME_UP:
-                    mGalleryView.showNextPage();
+                    mGalleryView.showPreviousPage();
                     return true;
                 default:
                     return super.onKeyDown(keyCode, event);
