@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -85,6 +86,7 @@ public class Crash {
      *
      * @param ex The throwable to store
      */
+    @SuppressLint("CommitPrefEdits")
     public static void saveCrashInfo2File(Throwable ex) {
         StringBuffer sb = new StringBuffer();
         collectDeviceInfo(sb);
@@ -119,7 +121,8 @@ public class Crash {
             editor.putBoolean(NEW_CRAHS, true);
             editor.putBoolean(LAST_CRASH_POSITION, position);
             editor.putString(LAST_CRASH_NAME, fileName);
-            editor.apply();
+            // Save it immediately
+            editor.commit();
         } catch (Exception e) {
             Log.e(TAG, "An error occured while writing crash file...", e);
         }
