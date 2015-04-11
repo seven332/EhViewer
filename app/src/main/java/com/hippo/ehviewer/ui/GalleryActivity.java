@@ -430,8 +430,6 @@ public class GalleryActivity extends AbsActivity
         if (mVolumePage) {
             switch (keyCode) {
                 case KeyEvent.KEYCODE_VOLUME_DOWN:
-                    String a = null;
-                    a.length();
                     mGalleryView.showNextPage();
                     return true;
                 case KeyEvent.KEYCODE_VOLUME_UP:
