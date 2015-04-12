@@ -110,61 +110,67 @@
 
             <!-- Actions -->
 
-            <LinearLayout
-                android:id="@+id/detail_actions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal"
-                android:paddingBottom="16dp"
-                android:paddingTop="16dp"
-                android:visibility="gone" >
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/category"
+                <LinearLayout
+                    android:id="@+id/detail_actions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="16dp"
-                    android:drawablePadding="4dp"
-                    android:gravity="center"
-                    android:maxWidth="52dp"
-                    android:textSize="@dimen/text_super_small" />
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:visibility="gone" >
 
-                <TextView
-                    android:id="@+id/more_of_uploader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:drawablePadding="4dp"
-                    android:gravity="center"
-                    android:maxWidth="52dp"
-                    android:text="@string/more_of_uploader"
-                    android:textSize="@dimen/text_super_small" />
+                    <TextView
+                        android:id="@+id/category"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="16dp"
+                        android:drawablePadding="4dp"
+                        android:gravity="center"
+                        android:maxWidth="52dp"
+                        android:textSize="@dimen/text_super_small" />
 
-                <TextView
-                    android:id="@+id/torrent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:drawablePadding="4dp"
-                    android:gravity="center"
-                    android:maxWidth="52dp"
-                    android:text="@string/torrent"
-                    android:textSize="@dimen/text_super_small" />
+                    <TextView
+                        android:id="@+id/more_of_uploader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:drawablePadding="4dp"
+                        android:gravity="center"
+                        android:maxWidth="52dp"
+                        android:text="@string/more_of_uploader"
+                        android:textSize="@dimen/text_super_small" />
 
-                <TextView
-                    android:id="@+id/similar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:drawablePadding="4dp"
-                    android:gravity="center"
-                    android:maxWidth="52dp"
-                    android:text="@string/similar_content"
-                    android:textSize="@dimen/text_super_small" />
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/torrent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:drawablePadding="4dp"
+                        android:gravity="center"
+                        android:maxWidth="52dp"
+                        android:text="@string/torrent"
+                        android:textSize="@dimen/text_super_small" />
+
+                    <TextView
+                        android:id="@+id/similar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:drawablePadding="4dp"
+                        android:gravity="center"
+                        android:maxWidth="52dp"
+                        android:text="@string/similar_content"
+                        android:textSize="@dimen/text_super_small" />
+                </LinearLayout>
+
+            </HorizontalScrollView>
 
             <View
                 android:id="@+id/detail_divider_a_m"
