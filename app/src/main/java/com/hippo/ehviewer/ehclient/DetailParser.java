@@ -69,6 +69,8 @@ public class DetailParser {
     public LinkedHashMap<String, LinkedList<String>> tags;
     public PreviewList previewList;
     public LinkedList<Comment> comments;
+    public int torrentNumber;
+    public String torrentUrl;
 
     public void reset() {
         eMesg = null;
@@ -92,6 +94,8 @@ public class DetailParser {
         tags = null;
         previewList = null;
         comments = null;
+        torrentNumber = 0;
+        torrentUrl = null;
     }
 
     public int parser(String body, int mode) {
@@ -132,6 +136,8 @@ public class DetailParser {
                             + "<h1 id=\"gj\">([^<>]*)</h1>" // title_jpn might be empty string
                             + "</div>"
                             + ".+"
+                            + "<a[^<>]*onclick=\"return popUp\\('([^']+)'[^)]+\\)\">Torrent Download \\( (\\d+) \\)</a>"
+                            + ".+"
                             + "<div id=\"gdc\"><a[^<>]+><[^<>]*alt=\"([\\w|\\-]+)\"[^<>]*></a></div>" // category
                             + "<div id=\"gdn\"><a[^<>]+>([^<>]+)</a>" // uploader
                             + ".+"
@@ -157,26 +163,28 @@ public class DetailParser {
                 thumb = Utils.unescapeXml(m.group(1));
                 title = Utils.unescapeXml(m.group(2));
                 title_jpn = Utils.unescapeXml(m.group(3));
-                category = EhUtils.getCategory(m.group(4));
-                uploader = m.group(5);
-                posted = m.group(6);
-                parent = m.group(7);
-                visible = m.group(8);
-                language = Utils.unescapeXml(m.group(9)).trim();
-                size = Utils.unescapeXml(m.group(10)).trim();
-                resized = m.group(11);
-                pages = Integer.parseInt(m.group(12).replace(",", ""));
-                // favoriteTimes = m.group(13)
-                people = Integer.parseInt(m.group(14).replace(",", ""));
+                torrentUrl = Utils.unescapeXml(m.group(4));
+                torrentNumber = Utils.parseIntSafely(m.group(5), 0);
+                category = EhUtils.getCategory(m.group(6));
+                uploader = m.group(7);
+                posted = m.group(8);
+                parent = m.group(9);
+                visible = m.group(10);
+                language = Utils.unescapeXml(m.group(11)).trim();
+                size = Utils.unescapeXml(m.group(12)).trim();
+                resized = m.group(13);
+                pages = Integer.parseInt(m.group(14).replace(",", ""));
+                // favoriteTimes = m.group(15)
+                people = Integer.parseInt(m.group(16).replace(",", ""));
 
                 Pattern pattern = Pattern.compile("([\\d|\\.]+)");
-                Matcher matcher = pattern.matcher(m.group(15));
+                Matcher matcher = pattern.matcher(m.group(17));
                 if (matcher.find())
                     rating = Float.parseFloat(matcher.group(1));
                 else
                     rating = Float.NaN;
 
-                firstPage = m.group(16);
+                firstPage = m.group(18);
             }
         }
         // Get tag

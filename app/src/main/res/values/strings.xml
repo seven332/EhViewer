@@ -95,6 +95,9 @@
     <string name="more_of_uploader">More of uploader</string>
     <string name="no_more_comment">No more comments</string>
     <string name="no_comment">No comment</string>
+    <string name="start_saving_torrent">Start saving torrent</string>
+    <string name="save_torrent_successful">Save torrent to %s</string>
+    <string name="save_torrent_failed">Failed to save torrent</string>
 
     <!-- AbsGalleryActivity -->
     <string name="click_retry">Click to retry</string>
@@ -411,6 +414,7 @@
     <string name="are_you_sure_sure">Sure</string>
 
     <!-- Util -->
+    <string name="torrent">Torrent</string>
     <string name="share">share</string>
     <string name="filter">filter</string>
     <string name="clear">clear</string>

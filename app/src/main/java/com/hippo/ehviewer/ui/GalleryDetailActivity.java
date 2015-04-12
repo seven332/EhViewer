@@ -20,6 +20,7 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -34,9 +35,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Pair;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -46,9 +49,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
@@ -78,7 +84,9 @@ import com.hippo.ehviewer.drawable.OvalDrawable;
 import com.hippo.ehviewer.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.ehclient.DetailUrlParser;
 import com.hippo.ehviewer.ehclient.EhClient;
+import com.hippo.ehviewer.miscellaneous.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
+import com.hippo.ehviewer.util.AppConfig;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Favorite;
@@ -100,6 +108,7 @@ import com.hippo.ehviewer.widget.recyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.widget.recyclerview.LinearDividerItemDecoration;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -138,6 +147,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
     private SuperButton mReadButton;
     private TextView mCategory;
     private TextView mMoreOfUploader;
+    private TextView mTorrent;
     private TextView mSimilar;
     private TextSwitcher mRatingText;
     private ProgressiveRatingBar mRating;
@@ -332,6 +342,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         mReadButton = (SuperButton) findViewById(R.id.read);
         mCategory = (TextView) findViewById(R.id.category);
         mMoreOfUploader = (TextView) findViewById(R.id.more_of_uploader);
+        mTorrent = (TextView) findViewById(R.id.torrent);
         mSimilar = (TextView) findViewById(R.id.similar);
         mRatingText = (TextSwitcher) mDetailRate.findViewById(R.id.rating_text);
         mRating = (ProgressiveRatingBar) mDetailRate.findViewById(R.id.rating);
@@ -356,6 +367,9 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         Drawable moreOfUploaderDrawable = mResources.getDrawable(R.drawable.ic_more_of_uploader);
         moreOfUploaderDrawable.setBounds(rect);
         mMoreOfUploader.setCompoundDrawables(null, moreOfUploaderDrawable, null, null);
+        Drawable torrentDrawable = mResources.getDrawable(R.drawable.ic_torrent);
+        torrentDrawable.setBounds(rect);
+        mTorrent.setCompoundDrawables(null, torrentDrawable, null, null);
         Drawable similarDrawable = mResources.getDrawable(R.drawable.ic_similar);
         similarDrawable.setBounds(rect);
         mSimilar.setCompoundDrawables(null, similarDrawable, null, null);
@@ -398,6 +412,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         mReadButton.setOnClickListener(this);
         mCategory.setOnClickListener(this);
         mMoreOfUploader.setOnClickListener(this);
+        mTorrent.setOnClickListener(this);
         mSimilar.setOnClickListener(this);
         mRating.setOnUserRateListener(this);
         mFavorite.setOnClickListener(this);
@@ -635,12 +650,18 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         mDetailActions.setVisibility(View.VISIBLE);
         mCategory.setText(Ui.getCategoryText(mGalleryInfo.category));
         mCategoryDrawable.setColor(Ui.getCategoryColor(mGalleryInfo.category));
+        mTorrent.setVisibility(View.GONE);
 
         // Detail
         mDividerAM.setVisibility(View.VISIBLE);
         mDetailMore.setVisibility(View.VISIBLE);
         if (mGalleryInfo instanceof GalleryDetail) {
             GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
+
+            if (galleryDetail.torrents.length > 0) {
+                mTorrent.setVisibility(View.VISIBLE);
+            }
+
             ((TextView)mDetailMore.findViewById(R.id.language)).setText(
                     getString(R.string.language) + ": " + galleryDetail.language);
             ((TextView)mDetailMore.findViewById(R.id.posted)).setText(galleryDetail.posted);
@@ -864,6 +885,8 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
             intent.putExtra(GalleryListActivity.KEY_MODE, ListUrls.MODE_UPLOADER);
             intent.putExtra(GalleryListActivity.KEY_UPLOADER, mGalleryInfo.uploader);
             startActivity(intent);
+        } else if (v == mTorrent) {
+            showTorrentDialog();
         } else if (v == mSimilar) {
             Intent intent = new Intent(this, GalleryListActivity.class);
             intent.setAction(GalleryListActivity.ACTION_GALLERY_LIST);
@@ -1009,6 +1032,88 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         } else if (v == mPreviewRefresh) {
             refreshPreview();
         }
+    }
+
+    private Dialog mTorrentDialog = null;
+    private View mTorrentProgress = null;
+    private ListView mTorrentListView = null;
+
+    public void showTorrentDialog() {
+        if (mTorrentDialog != null) {
+            return;
+        }
+
+        @SuppressLint("InflateParams")
+        View view = getLayoutInflater().inflate(R.layout.dialog_torrent, null);
+        mTorrentProgress = view.findViewById(R.id.progress);
+        mTorrentListView = (ListView) view.findViewById(R.id.list);
+
+        mTorrentDialog = new MaterialAlertDialog.Builder(this)
+                .setTitle(R.string.torrent)
+                .setView(view, false)
+                .setNegativeButton(android.R.string.cancel)
+                .setOnDismissListener(new MaterialAlertDialog.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        mTorrentDialog = null;
+                        mTorrentProgress = null;
+                        mTorrentListView = null;
+                    }
+                }).show();
+
+        final GalleryDetail galleryDetail = (GalleryDetail) mGalleryInfo;
+        mClient.getTorrent(galleryDetail.torrentUrl, galleryDetail.torrents, new EhClient.OnGetTorrentListener() {
+            @Override
+            public void onSuccess(@NonNull Pair<String, String>[] torrents) {
+                galleryDetail.torrents = torrents;
+
+                if (mTorrentProgress != null && mTorrentListView != null) {
+                    mTorrentProgress.setVisibility(View.GONE);
+                    mTorrentListView.setVisibility(View.VISIBLE);
+
+                    int length = torrents.length;
+                    String[] data = new String[torrents.length];
+                    for (int i = 0; i < length; i++) {
+                        data[i] = torrents[i].second;
+                    }
+                    mTorrentListView.setAdapter(new ArrayAdapter<>(
+                            ViewUtils.sContextThemeWrapper,
+                            R.layout.select_dialog_item,
+                            data));
+                    mTorrentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            if (mTorrentDialog != null) {
+                                mTorrentDialog.dismiss();
+                            }
+
+                            File dir = AppConfig.getTorrentDir();
+                            if (dir == null) {
+                                MaterialToast.showToast("Can't storage device"); // TODO
+                                return;
+                            }
+
+                            final String url = galleryDetail.torrents[position].first;
+                            Downloader d = new Downloader(
+                                    GalleryDetailActivity.this,
+                                    url,
+                                    dir,
+                                    "a.torrent"); // Torrent will be updated
+                            d.startDownload();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(String eMsg) {
+                if (mTorrentDialog != null) {
+                    mTorrentDialog.dismiss();
+                }
+
+                MaterialToast.showToast(eMsg);
+            }
+        });
     }
 
     @Override

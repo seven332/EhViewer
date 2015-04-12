@@ -32,6 +32,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.webkit.MimeTypeMap;
 
 import com.hippo.ehviewer.AppHandler;
@@ -80,13 +83,20 @@ public class HttpHelper {
     public static final int DOWNLOAD_FAIL_CODE = 0x1;
     public static final int DOWNLOAD_STOP_CODE = 0x2;
 
+    // User-Agent from H@H
+    public static final String DEFAULT_USER_AGENT =
+            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.12) " +
+            "Gecko/20080201 Firefox/2.0.0.12";
+    public static final String USER_AGENT = DEFAULT_USER_AGENT;
+            //System.getProperty("http.agent", DEFAULT_USER_AGENT);
+
     private static final String DEFAULT_CHARSET = "utf-8";
     private static final String CHARSET_KEY = "charset=";
 
     // TODO Get proxy list from server
     private static String[] sProxyUrls = Config.DEFAULT_PROXY_URLS;
     private static volatile int sProxyIndex = MathUtils.random(0, sProxyUrls.length);
-    private static Object sProxyIndexLock = new Object();
+    private static final Object sProxyIndexLock = new Object();
 
     public class Package {
         public Object obj;
@@ -252,7 +262,7 @@ public class HttpHelper {
                 while (redirectionCount++ < Constants.MAX_REDIRECTS) {
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setInstanceFollowRedirects(false);
-                    conn.setRequestProperty("User-Agent", Constants.userAgent);
+                    conn.setRequestProperty("User-Agent", USER_AGENT);
                     conn.setConnectTimeout(Config.getHttpConnectTimeout());
                     conn.setReadTimeout(Config.getHttpReadTimeout());
                     // Set cookie if necessary
@@ -336,13 +346,40 @@ public class HttpHelper {
         return null;
     }
 
+    /**
+     * parse string like <code>haha=hehe; fere=bfdgds</code>
+     */
+    public static @NonNull Map<String, String> parseMap(@Nullable String raw) {
+        Map<String, String> map = new HashMap<>();
+        if (raw != null) {
+            String[] pieces = raw.split(";");
+            for (String p : pieces) {
+                int index = p.indexOf('=');
+                if (index != -1) {
+                    String key = p.substring(0, index).trim();
+                    String value = p.substring(index + 1).trim();
+
+                    // value might be "blabla", remove "
+                    int valueLength = value.length();
+                    if (value.length() > 1 && value.charAt(0) == '"' &&
+                            value.charAt(valueLength - 1) == '"') {
+                        value = value.substring(1, valueLength - 1);
+                    }
+                    map.put(key, value);
+                }
+            }
+        }
+
+        return map;
+    }
+
     private interface RequestHelper {
 
         /**
          * Get the URL to connect
          * @return
          */
-        public URL getUrl() throws MalformedURLException;
+        URL getUrl() throws MalformedURLException;
 
         /**
          * Add header or do something else for HttpURLConnection before connect
@@ -350,7 +387,7 @@ public class HttpHelper {
          * @throws Exception
          */
 
-        public void onBeforeConnect(HttpURLConnection conn) throws Exception;
+        void onBeforeConnect(HttpURLConnection conn) throws Exception;
 
         /**
          * Get what do you need from HttpURLConnection after connect
@@ -359,13 +396,13 @@ public class HttpHelper {
          * @return
          * @throws Exception
          */
-        public Object onAfterConnect(HttpURLConnection conn) throws Exception;
+        Object onAfterConnect(HttpURLConnection conn) throws Exception;
 
         /**
          * Handle exception
          * @param e
          */
-        public void onGetException(Exception e);
+        void onGetException(Exception e);
     }
 
     /**
@@ -707,19 +744,18 @@ public class HttpHelper {
         public void onGetException(Exception e) {}
     }
 
-    public static interface OnDownloadListener {
-        public void onDownloadStartConnect();
+    public interface OnDownloadListener {
+        void onDownloadStartConnect();
         /**
          * If totalSize -1 for can't get length info
-         * @param totalSize
          */
-        public void onDownloadStartDownload(int totalSize);
+        void onDownloadStartDownload(int totalSize);
         /**
          * If totalSize -1 for can't get length info
-         * @param totalSize
          */
-        public void onDownloadStatusUpdate(int downloadSize, int totalSize);
-        public void onDownloadOver(int status, String eMsg);
+        void onDownloadStatusUpdate(int downloadSize, int totalSize);
+        void onDownloadOver(int status, String eMsg);
+        void onUpdateFilename(String newFilename);
     }
 
     public static class DownloadControlor {
@@ -822,6 +858,12 @@ public class HttpHelper {
             return null;
         }
 
+        public String getSuitableFilename(HttpURLConnection conn) {
+            String contentDisposition = conn.getHeaderField("Content-Disposition");
+            Map<String, String> map = parseMap(contentDisposition);
+            return map.get("filename");
+        }
+
         @Override
         public Object onAfterConnect(HttpURLConnection conn) throws Exception {
             // Check stop
@@ -836,6 +878,11 @@ public class HttpHelper {
             mContentLength = getContentLength(conn);
             if (mListener != null)
                 mListener.onDownloadStartDownload(mContentLength);
+
+            String filename = getSuitableFilename(conn);
+            if (filename != null) {
+                mFileName = filename;
+            }
 
             // Fix extension
             MimeTypeMap mime = MimeTypeMap.getSingleton();
@@ -853,6 +900,11 @@ public class HttpHelper {
                 } else {
                     mFileName = mFileName.substring(0, index) + '.' + newExtension;
                 }
+            }
+
+            // TODO Should check first
+            if (mListener != null) {
+                mListener.onUpdateFilename(mFileName);
             }
 
             // Make sure parent exist

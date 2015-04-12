@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.data;
 
+import android.util.Pair;
+
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +44,9 @@ public class GalleryDetail extends GalleryInfo
     public int previewPerPage;
     public PreviewList[] previewLists;
     public List<Comment> comments;
+
+    public String torrentUrl;
+    public Pair<String, String>[] torrents;
 
     public GalleryDetail() {}
 

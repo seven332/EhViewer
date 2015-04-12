@@ -91,6 +91,9 @@
     <string name="more_of_uploader">上传者更多内容</string>
     <string name="no_more_comment">没有更多评论</string>
     <string name="no_comment">暂无评论，就等你了</string>
+    <string name="start_saving_torrent">开始保存种子</string>
+    <string name="save_torrent_successful">保存种子至 %s</string>
+    <string name="save_torrent_failed">保存种子失败</string>
 
     <!-- AbsGalleryActivity -->
     <string name="click_retry">点击重试</string>
@@ -386,6 +389,7 @@
     <string name="are_you_sure_sure">确定</string>
 
     <!-- Utils -->
+    <string name="torrent">种子</string>
     <string name="share">分享</string>
     <string name="filter">过滤</string>
     <string name="clear">清除</string>

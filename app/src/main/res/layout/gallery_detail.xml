@@ -143,6 +143,18 @@
                     android:textSize="@dimen/text_super_small" />
 
                 <TextView
+                    android:id="@+id/torrent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:maxWidth="52dp"
+                    android:text="@string/torrent"
+                    android:textSize="@dimen/text_super_small" />
+
+                <TextView
                     android:id="@+id/similar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

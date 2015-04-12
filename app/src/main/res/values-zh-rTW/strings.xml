@@ -79,6 +79,9 @@
     <string name="more_of_uploader">上傳者更多內容</string>
     <string name="no_more_comment">沒有更多評論</string>
     <string name="no_comment">暫無評論，就等你了</string>
+    <string name="start_saving_torrent">開始儲存種子</string>
+    <string name="save_torrent_successful">儲存種子至 %s</string>
+    <string name="save_torrent_failed">儲存種子失敗</string>
 
     <!-- AbsGalleryActivity -->
     <string name="click_retry">點選重試</string>
@@ -374,6 +377,7 @@
     <string name="are_you_sure_sure">確定</string>
 
     <!-- Utils -->
+    <string name="torrent">種子</string>
     <string name="share">分享</string>
     <string name="filter">過濾</string>
     <string name="clear">清除</string>

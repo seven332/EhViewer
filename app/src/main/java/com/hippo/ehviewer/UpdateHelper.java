@@ -16,11 +16,6 @@
 
 package com.hippo.ehviewer;
 
-import java.io.File;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +30,11 @@ import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Utils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
 
 // TODO return onFailure when downloading update or check update
 // TODO add disable to achieve
@@ -253,6 +253,11 @@ public class UpdateHelper implements Runnable {
                 mNotifyManager.notify(NotificationId.UPDATE_ID, builder.build());
             }
             setEnabled(true);
+        }
+
+        @Override
+        public void onUpdateFilename(String newFilename) {
+
         }
     }
 }

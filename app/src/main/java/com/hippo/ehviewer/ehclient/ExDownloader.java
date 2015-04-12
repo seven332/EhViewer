@@ -915,5 +915,10 @@ public final class ExDownloader implements Runnable {
             lastPercent = 0.0f;
             lastDownloadSize = 0;
         }
+
+        @Override
+        public void onUpdateFilename(String newFilename) {
+
+        }
     }
 }

@@ -22,6 +22,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Process;
+import android.support.annotation.NonNull;
+import android.util.Pair;
 
 import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.AppHandler;
@@ -739,6 +741,11 @@ public class EhClient {
                         md.previewLists = new PreviewList[md.previewSum];
                         md.previewLists[0] = parser.previewList;
                         md.comments = parser.comments;
+
+                        md.torrentUrl = parser.torrentUrl;
+                        //noinspection unchecked
+                        md.torrents = new Pair[Math.max(parser.torrentNumber, 0)];
+
                         responder = new GetGDetaiResponder(listener, md);
                     } else if (result == DetailParser.ERROR) {
                         responder = new GetGDetaiResponder(listener, parser.eMesg);
@@ -746,6 +753,62 @@ public class EhClient {
                         responder = new GetGDetaiResponder(listener,
                                 mContext.getString(R.string.em_parser_error));
                     }
+                }
+                mHandler.post(responder);
+            }
+        });
+        thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
+    }
+
+    public interface OnGetTorrentListener {
+        void onSuccess(@NonNull Pair<String, String>[] torrents);
+        void onFailure(String eMsg);
+    }
+
+    private class GetTorrentResponder implements Runnable {
+        private final boolean isOk;
+        private final OnGetTorrentListener listener;
+        private final Pair<String, String>[] torrents;
+        private final String eMesg;
+
+        public GetTorrentResponder(OnGetTorrentListener listener, Pair<String, String>[] torrents) {
+            this.isOk = true;
+            this.listener = listener;
+            this.torrents = torrents;
+            this.eMesg = null;
+        }
+
+        public GetTorrentResponder(OnGetTorrentListener listener, String eMsg) {
+            this.isOk = false;
+            this.listener = listener;
+            this.torrents = null;
+            this.eMesg = eMsg;
+        }
+
+        @Override
+        public void run() {
+            if (isOk)
+                listener.onSuccess(torrents);
+            else
+                listener.onFailure(eMesg);
+        }
+    }
+
+    public void getTorrent(final String url, final Pair<String, String>[] torrents,
+            final OnGetTorrentListener listener) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpHelper hh = new HttpHelper(mContext);
+                String body = hh.get(url);
+                GetTorrentResponder responder;
+                if (body == null) {
+                    responder = new GetTorrentResponder(listener, hh.getEMsg());
+                } else if (!body.contains("<")) {
+                    responder = new GetTorrentResponder(listener, body);
+                } else {
+                    responder = new GetTorrentResponder(listener, TorrentParser.parse(body, torrents));
                 }
                 mHandler.post(responder);
             }
