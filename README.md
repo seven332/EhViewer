@@ -5,9 +5,8 @@ EhViewer is an E-Hentai Application for Android. Visit [EhViewer](http://www.ehv
 
 # Build
 
-本项目使用 Eclipse + ADT 作为开发环境，如果你不清楚如何配置，请自行搜索。clone 之后直接导入 Eclipse 即可编译。我没试过将其迁至 Android Studio，如果你喜欢使用 Android Studio，你需要自己研究下，项目中有 NDK 部分，迁移时要注意。<br>
-目前 Android NDK (r10d) 只对 x86 使用 yasm，而 x86\_64 没有启用 yasm，但是 libjpeg-turbo 使用了汇编代码。如果要编译 x86_64 的 jni 部分需要对 Android NDK 中的脚本进行修改。<br>
-Just import into Eclipse and build. Do it youself if you prefer Android Studio.
+导入 Android Studio 即可。<br>
+Just import into Android Studio.
 
 # Thanks
 
