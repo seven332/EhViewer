@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.hippo.util;
+package com.hippo.ehviewer;
 
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -25,23 +25,40 @@ import java.io.File;
  */
 public final class AppConfig {
 
-    private static final String APP_FOLDER_NAME = "EhViewer";
+    private static final String APP_DIRNAME = "EhViewer";
+    private static final String CRASH_DIRNAME = "crash";
+    private static final String DOWNLOAD_DIRNAME = "download";
+    private static final String TORRENT_DIRNAME = "torrent";
 
-    public static @Nullable File getAppFolder() {
+    public static @Nullable
+    File getAppDir() {
         if (Environment.getExternalStorageState()
-                .equals(android.os.Environment.MEDIA_MOUNTED)) {
-            return new File(Environment.getExternalStorageDirectory(), APP_FOLDER_NAME);
+                .equals(Environment.MEDIA_MOUNTED)) {
+            return new File(Environment.getExternalStorageDirectory(), APP_DIRNAME);
         } else {
             return null;
         }
     }
 
-    public static @Nullable File getFileInAppFolder(String filename) {
-        File appFolder = getAppFolder();
+    public static @Nullable File getFileInAppDir(String filename) {
+        File appFolder = getAppDir();
         if (appFolder != null) {
             return new File(appFolder, filename);
         } else {
             return null;
         }
     }
+
+    public static @Nullable File getCrashDir() {
+        return getFileInAppDir(CRASH_DIRNAME);
+    }
+
+    public static @Nullable File getDownloadDir() {
+        return getFileInAppDir(DOWNLOAD_DIRNAME);
+    }
+
+    public static @Nullable File getTorrentDir() {
+        return getFileInAppDir(TORRENT_DIRNAME);
+    }
 }
+

@@ -17,6 +17,7 @@ package com.hippo.util;
 
 import android.os.Process;
 
+import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.BuildConfig;
 
 import java.io.File;
@@ -34,6 +35,7 @@ public class Log {
     private static final String TAG = Log.class.getSimpleName();
 
     private static final String NO_MESSAGE = "No Message";
+    private static final String LOG_FILENAME = "ehviewer.log";
 
     private static final SaveLogThreadExecutor sSaveLogThreadPool;
     private static final Pool<SaveMsgTask> sSaveLogTaskPool;
@@ -47,7 +49,7 @@ public class Log {
         sSaveLogThreadPool = new SaveLogThreadExecutor();
         sSaveLogTaskPool = new Pool<>(10);
         sDataFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH);
-        sLogFile = AppConfig.getFileInAppFolder("ehviewer.log");
+        sLogFile = AppConfig.getFileInAppDir(LOG_FILENAME);
         sSupportSaveLog = FileUtils.ensureFile(sLogFile);
     }
 
