@@ -60,7 +60,7 @@ import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.ehclient.EhInfo;
 import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.preference.ListPreference;
-import com.hippo.ehviewer.util.AppUtils;
+import com.hippo.ehviewer.miscellaneous.ActivityHelper;
 import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.DialogUtils;
@@ -82,7 +82,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.prefs.PreferenceChangeListener;
 
 public class SettingsActivity extends AbsPreferenceActivity {
     @SuppressWarnings("unused")
@@ -882,8 +881,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 }
 
             } else if (KEY_AUTHOR.equals(key)) {
-                AppUtils.sendEmail(getActivity(), "ehviewersu@gmail.com",
-                        "About EhViewer", null);
+                ActivityHelper.sendEmail(getActivity(), "ehviewersu@gmail.com", "About EhViewer", null);
 
             } else if (KEY_TWITTER.equals(key)) {
                 new MaterialAlertDialog.Builder(getActivity())

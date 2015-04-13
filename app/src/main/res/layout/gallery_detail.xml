@@ -236,10 +236,12 @@
                 android:visibility="gone" />
 
             <!-- Rate -->
-            <RelativeLayout
+            <!-- TODO Use  -->
+            <LinearLayout
                 android:id="@+id/detail_rate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:paddingBottom="16dp"
                 android:paddingTop="16dp"
                 android:visibility="gone" >
@@ -248,6 +250,7 @@
                     android:id="@+id/rating_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:gravity="center"
                     android:inAnimation="@anim/anim_fade_in"
                     android:outAnimation="@anim/anim_fade_out" />
@@ -256,43 +259,58 @@
                     android:id="@+id/rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/rating_text"
-                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginTop="8.0dp"
                     android:isIndicator="false"
                     android:numStars="5"
                     android:stepSize="0.5" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/rating"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal" >
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                    <TextView
-                        android:id="@+id/favorite"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="32dp"
-                        android:gravity="center"
-                        android:maxWidth="52dp"
-                        android:text="@string/favourite"
-                        android:textSize="@dimen/text_super_small" />
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal" >
 
-                    <TextView
-                        android:id="@+id/rate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="32dp"
-                        android:gravity="center"
-                        android:maxWidth="52dp"
-                        android:text="@string/rate"
-                        android:textSize="@dimen/text_super_small" />
-                </LinearLayout>
-            </RelativeLayout>
+                        <TextView
+                            android:id="@+id/favorite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="16dp"
+                            android:gravity="center"
+                            android:maxWidth="52dp"
+                            android:text="@string/favourite"
+                            android:textSize="@dimen/text_super_small" />
+
+                        <TextView
+                            android:id="@+id/share"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:gravity="center"
+                            android:maxWidth="52dp"
+                            android:text="@string/share"
+                            android:textSize="@dimen/text_super_small" />
+
+                        <TextView
+                            android:id="@+id/rate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:gravity="center"
+                            android:maxWidth="52dp"
+                            android:text="@string/rate"
+                            android:textSize="@dimen/text_super_small" />
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
 
             <View
                 android:id="@+id/detail_divider_r_t"

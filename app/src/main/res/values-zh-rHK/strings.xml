@@ -132,6 +132,7 @@
     <string name="em_no_sdcard">未掛載 SD卡</string>
     <string name="em_index_error">索引錯誤</string>
     <string name="em_requst_null">請求內容為空</string>
+    <string name="em_cant_find_activity">無法找到指定的 Activity</string>
 
     <!-- GalleryActivity -->
     <string name="ga_data_error">數據錯誤！</string>

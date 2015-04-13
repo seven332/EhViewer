@@ -30,7 +30,7 @@ import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.network.Network;
 import com.hippo.ehviewer.ui.AbsActivity;
 import com.hippo.ehviewer.ui.GalleryListActivity;
-import com.hippo.ehviewer.util.AppUtils;
+import com.hippo.ehviewer.miscellaneous.ActivityHelper;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.Secret;
@@ -160,9 +160,7 @@ public class StartActivity extends AbsActivity {
                                                     return true;
                                                 }
                                             }).show();
-                            AppUtils.sendEmail(StartActivity.this, "ehviewersu@gmail.com",
-                                    "I found a bug in EhViewer !",
-                                    lastCrash + "======== Description ========\n" + et.getText().toString());
+                            ActivityHelper.sendEmail(StartActivity.this, "ehviewersu@gmail.com", "I found a bug in EhViewer !", lastCrash + "======== Description ========\n" + et.getText().toString());
                             lastCrash = null;
                             break;
                         case MaterialAlertDialog.NEGATIVE:

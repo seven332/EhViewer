@@ -148,6 +148,7 @@
     <string name="em_no_sdcard">SD card is Unmounted</string>
     <string name="em_index_error">Index error</string>
     <string name="em_requst_null">Requst content is null</string>
+    <string name="em_cant_find_activity">Can&apos;t find the specified activity</string>
 
     <!-- GalleryActivity -->
     <string name="ga_data_error">Data Error !</string>

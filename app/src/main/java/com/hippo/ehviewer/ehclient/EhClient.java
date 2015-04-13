@@ -49,7 +49,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -124,7 +123,7 @@ public class EhClient {
      * @param token
      * @return
      */
-    public String getDetailUrl(int gid, String token) {
+    public static String getDetailUrl(int gid, String token) {
         return getDetailUrl(gid, token, 0, Config.getMode());
     }
 
@@ -134,7 +133,7 @@ public class EhClient {
      * @param token
      * @return
      */
-    public String getDetailUrl(int gid, String token, int pageNum) {
+    public static String getDetailUrl(int gid, String token, int pageNum) {
         return getDetailUrl(gid, token, pageNum, Config.getMode());
     }
 
@@ -158,11 +157,15 @@ public class EhClient {
             sb.append(HEADER_G);
             break;
         }
-        return sb.append("g/").append(gid).append("/").append(token)
-                .append("/?p=").append(pageNum).toString();
+        sb.append("g/").append(gid).append('/').append(token).append('/');
+        if (pageNum > 0) {
+            sb.append("?p=").append(pageNum);
+        }
+
+        return sb.toString();
     }
 
-    public String getPageUrl(int gid, String token, int pageNum) {
+    public static String getPageUrl(int gid, String token, int pageNum) {
         return getPageUrl(gid, token, pageNum, Config.getMode());
     }
 
@@ -184,7 +187,7 @@ public class EhClient {
                 .append("-").append(pageNum).toString();
     }
 
-    public String getApiUrl() {
+    public static String getApiUrl() {
         return getApiUrl(Config.getApiMode());
     }
 
@@ -198,7 +201,7 @@ public class EhClient {
         }
     }
 
-    public String getFavoriteUrl(int page) {
+    public static String getFavoriteUrl(int page) {
         return getFavoriteUrl(Config.getApiMode(), page);
     }
 
@@ -216,7 +219,7 @@ public class EhClient {
         return sb.append("favorites.php?page=").append(page).toString();
     }
 
-    public String getFavoriteUrlWithCat(int index, int page) {
+    public static String getFavoriteUrlWithCat(int index, int page) {
         return getFavoriteUrlWithCat(Config.getApiMode(), index, page);
     }
 
@@ -233,26 +236,6 @@ public class EhClient {
         }
         return sb.append("favorites.php?favcat=").append(index).append("&page=")
                 .append(page).toString();
-    }
-
-    public interface OnGetMangaUrlListener {
-        public void onSuccess(Object checkFlag, String[] arg);
-        public void onFailure(Object checkFlag, String eMsg);
-    }
-
-    public interface OnGetImageListener {
-        public void onSuccess(Object checkFlag, Object res);
-        public void onFailure(int eMsgId);
-    }
-
-    public interface OnGetGalleryMetadataListener {
-        public void onSuccess(Map<String, GalleryInfo> lmds);
-        public void onFailure(String eMsg);
-    }
-
-    public interface OnGetGalleryTokensListener {
-        public void onSuccess(Map<String, String> tokens);
-        public void onFailure(String eMsg);
     }
 
     /**

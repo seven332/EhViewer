@@ -87,6 +87,7 @@ import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.miscellaneous.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.util.AppConfig;
+import com.hippo.ehviewer.miscellaneous.ActivityHelper;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Favorite;
@@ -152,6 +153,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
     private TextSwitcher mRatingText;
     private ProgressiveRatingBar mRating;
     private TextView mFavorite;
+    private TextView mShare;
     private TextView mRate;
     private TextView mCommentMoreText;
     private SimpleGridLayout mPreview;
@@ -347,6 +349,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         mRatingText = (TextSwitcher) mDetailRate.findViewById(R.id.rating_text);
         mRating = (ProgressiveRatingBar) mDetailRate.findViewById(R.id.rating);
         mFavorite = (TextView) findViewById(R.id.favorite);
+        mShare = (TextView) findViewById(R.id.share);
         mRate = (TextView) findViewById(R.id.rate);
         mCommentMoreText = (TextView) findViewById(R.id.comment_more_text);
         mPreview = (SimpleGridLayout) findViewById(R.id.preview);
@@ -376,6 +379,9 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         Drawable favoriteDrawable = mResources.getDrawable(R.drawable.ic_favorite);
         favoriteDrawable.setBounds(rect);
         mFavorite.setCompoundDrawables(null, favoriteDrawable, null, null);
+        Drawable shareDrawable = mResources.getDrawable(R.drawable.ic_share);
+        shareDrawable.setBounds(rect);
+        mShare.setCompoundDrawables(null, shareDrawable, null, null);
         mRateDrawable = mResources.getDrawable(R.drawable.ic_rate);
         mRateDrawable.setBounds(rect);
         mCheckmarkDrawable = mResources.getDrawable(R.drawable.ic_checkmark);
@@ -416,6 +422,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         mSimilar.setOnClickListener(this);
         mRating.setOnUserRateListener(this);
         mFavorite.setOnClickListener(this);
+        mShare.setOnClickListener(this);
         mRate.setOnClickListener(this);
         mDetailMore.setOnTouchListener(this);
         mDetailComment.setOnTouchListener(this);
@@ -896,6 +903,8 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
             startActivity(intent);
         } else if (v == mFavorite) {
             Favorite.addToFavorite(this, mGalleryInfo);
+        } else if (v == mShare) {
+            ActivityHelper.share(this, EhClient.getDetailUrl(mGalleryInfo.gid, mGalleryInfo.token));
         } else if (v == mRate) {
             if (isCheckmark) {
                 int rating = (int)(mRating.getRating() * 2 + 0.5);

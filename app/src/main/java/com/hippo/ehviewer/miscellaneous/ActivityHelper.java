@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.util;
+package com.hippo.ehviewer.miscellaneous;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-public final class AppUtils {
+import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.widget.MaterialToast;
 
-    // TODO add common error tip
-    public static void sendEmail(@NonNull Activity from, @NonNull String email,
+public final class ActivityHelper {
+
+    public static boolean sendEmail(@NonNull Activity from, @NonNull String address,
             @Nullable String subject, @Nullable String text) {
         Intent i = new Intent(Intent.ACTION_SENDTO);
-        i.setData(Uri.parse("mailto:" + email));
+        i.setData(Uri.parse("mailto:" + address));
         if (subject != null) {
             i.putExtra(Intent.EXTRA_SUBJECT, subject);
         }
@@ -38,8 +41,25 @@ public final class AppUtils {
 
         try {
             from.startActivity(i);
-        } catch (Exception e) {
-            e.printStackTrace();
+            return true;
+        } catch (ActivityNotFoundException e) {
+            MaterialToast.showToast(R.string.em_cant_find_activity);
+            return false;
+        }
+    }
+
+    public static boolean share(@NonNull Activity from, String text) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+        sendIntent.setType("text/plain");
+
+        try {
+            from.startActivity(sendIntent);
+            return true;
+        } catch (ActivityNotFoundException e) {
+            MaterialToast.showToast(R.string.em_cant_find_activity);
+            return false;
         }
     }
 }
