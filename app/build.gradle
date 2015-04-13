@@ -1,8 +1,10 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "22"
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         applicationId "com.hippo.ehviewer"
@@ -21,6 +23,37 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    // Disable default NdkCompile task
+    // Set new jni lib dir
+    sourceSets.main {
+        jni.srcDirs = []
+        jniLibs.srcDir 'src/main/libs'
+    }
+
+    // noinspection GroovyAssignabilityCheck
+    task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
+        def ndkDir = project.plugins.findPlugin('com.android.application').sdkHandler.getNdkFolder()
+        def ndkBuilder
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            ndkBuilder = 'ndk-build.cmd'
+        } else {
+            ndkBuilder = 'ndk-build'
+        }
+        commandLine "$ndkDir\\$ndkBuilder",
+                '-C', file('src/main/jni').absolutePath,
+                'NDK_DEBUG=0',
+                '-j4'
+    }
+
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn ndkBuild
+    }
+}
+
+clean {
+    delete file('src/main/obj').absolutePath
+    delete file('src/main/libs').absolutePath
 }
 
 dependencies {
