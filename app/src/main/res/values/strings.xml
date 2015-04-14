@@ -98,6 +98,8 @@
     <string name="start_saving_torrent">Start saving torrent</string>
     <string name="save_torrent_successful">Save torrent to %s</string>
     <string name="save_torrent_failed">Failed to save torrent</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="remove_from_favorites">Remove from Favorites</string>
 
     <!-- AbsGalleryActivity -->
     <string name="click_retry">Click to retry</string>

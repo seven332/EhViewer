@@ -59,7 +59,7 @@ import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable;
 import com.hippo.ehviewer.drawable.MaterialIndicatorDrawable.Stroke;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.util.Config;
-import com.hippo.ehviewer.util.Favorite;
+import com.hippo.ehviewer.miscellaneous.FavoriteHelper;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.ActionableToastBar;
 import com.hippo.ehviewer.widget.ActionableToastBar.ActionClickedListener;
@@ -127,14 +127,14 @@ public class FavouriteActivity extends AbsTranslucentActivity
     private void initLocalFavorite() {
         mGalleryListView.setEnabledHeader(false);
         mGalleryListView.setEnabledFooter(false);
-        setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
+        setTitle(FavoriteHelper.FAVORITE_TITLES[mMenuIndex]);
         mGalleryListView.refresh();
     }
 
     private void initFavorite() {
         mGalleryListView.setEnabledHeader(true);
         mGalleryListView.setEnabledFooter(true);
-        setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
+        setTitle(FavoriteHelper.FAVORITE_TITLES[mMenuIndex]);
         mGalleryListView.refresh();
     }
 
@@ -211,7 +211,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
                 if (convertView == null)
                     convertView = LayoutInflater.from(FavouriteActivity.this).inflate(R.layout.menu_item, parent, false);
                 TextView tv = (TextView)convertView;
-                tv.setText(Favorite.FAVORITE_TITLES[position]);
+                tv.setText(FavoriteHelper.FAVORITE_TITLES[position]);
                 if (position == 0) {
                     Drawable dr = mResources.getDrawable(R.drawable.ic_setting_panda_light);
                     dr.setBounds(0, 0, Ui.dp2pix(36), Ui.dp2pix(36));
@@ -236,7 +236,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
                     return;
 
                 mMenuIndex = position;
-                setTitle(Favorite.FAVORITE_TITLES[mMenuIndex]);
+                setTitle(FavoriteHelper.FAVORITE_TITLES[mMenuIndex]);
                 if (mMenuIndex == 0)
                     initLocalFavorite();
                 else
@@ -417,7 +417,7 @@ public class FavouriteActivity extends AbsTranslucentActivity
 
     private AlertDialog createMoveDialog(final ActionMode mode) {
         return new MaterialAlertDialog.Builder(this).setTitle(R.string.where_to_move)
-                .setItems(Favorite.FAVORITE_TITLES, new MaterialAlertDialog.OnClickListener() {
+                .setItems(FavoriteHelper.FAVORITE_TITLES, new MaterialAlertDialog.OnClickListener() {
                     @Override
                     public boolean onClick(MaterialAlertDialog dialog, int position) {
                         if (mMenuIndex == position) {

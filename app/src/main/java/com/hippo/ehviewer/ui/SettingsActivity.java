@@ -65,7 +65,7 @@ import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.DialogUtils;
 import com.hippo.ehviewer.util.EhUtils;
-import com.hippo.ehviewer.util.Favorite;
+import com.hippo.ehviewer.miscellaneous.FavoriteHelper;
 import com.hippo.ehviewer.util.Secret;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
@@ -234,9 +234,9 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mHAHProxyConfig.setOnPreferenceClickListener(this);
 
             int i = 0;
-            String[] entrise = new String[Favorite.FAVORITE_TITLES.length + 1];
+            String[] entrise = new String[FavoriteHelper.FAVORITE_TITLES.length + 1];
             entrise[i++] = getString(R.string.none);
-            for (String str : Favorite.FAVORITE_TITLES)
+            for (String str : FavoriteHelper.FAVORITE_TITLES)
                 entrise[i++] = str;
             mDefaultFavorite.setEntries(entrise);
         }

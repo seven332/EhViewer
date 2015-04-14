@@ -82,6 +82,8 @@
     <string name="start_saving_torrent">開始儲存種子</string>
     <string name="save_torrent_successful">儲存種子至 %s</string>
     <string name="save_torrent_failed">儲存種子失敗</string>
+    <string name="add_to_favorites">新增至收藏</string>
+    <string name="remove_from_favorites">從收藏中移除</string>
 
     <!-- AbsGalleryActivity -->
     <string name="click_retry">點選重試</string>

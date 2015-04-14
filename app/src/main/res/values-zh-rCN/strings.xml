@@ -94,6 +94,8 @@
     <string name="start_saving_torrent">开始保存种子</string>
     <string name="save_torrent_successful">保存种子至 %s</string>
     <string name="save_torrent_failed">保存种子失败</string>
+    <string name="add_to_favorites">添加至收藏</string>
+    <string name="remove_from_favorites">从收藏中移除</string>
 
     <!-- AbsGalleryActivity -->
     <string name="click_retry">点击重试</string>

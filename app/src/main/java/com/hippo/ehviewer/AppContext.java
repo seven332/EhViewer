@@ -32,7 +32,7 @@ import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.EhUtils;
-import com.hippo.ehviewer.util.Favorite;
+import com.hippo.ehviewer.miscellaneous.FavoriteHelper;
 import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
@@ -72,7 +72,7 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
         Log.init(mContextThemeWrapper);
         Crash.init(mContextThemeWrapper);
         EhClient.createInstance(mContextThemeWrapper);
-        Favorite.init(mContextThemeWrapper);
+        FavoriteHelper.init(mContextThemeWrapper);
         Data.createInstance(mContextThemeWrapper);
         ExDownloaderManager.createInstance(mContextThemeWrapper);
         MaterialToast.setContext(mContextThemeWrapper);

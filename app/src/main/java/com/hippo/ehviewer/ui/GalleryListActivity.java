@@ -73,7 +73,7 @@ import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.DialogUtils;
-import com.hippo.ehviewer.util.Favorite;
+import com.hippo.ehviewer.miscellaneous.FavoriteHelper;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.util.ViewUtils;
@@ -551,7 +551,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
                         final GalleryInfo gi = mGalleryListView.getGalleryInfo(longClickItemIndex);
                         switch (position) {
                         case 0: // Add favourite item
-                            Favorite.addToFavorite(GalleryListActivity.this, gi);
+                            FavoriteHelper.addToFavorite(GalleryListActivity.this, gi, null);
                             break;
                         case 1:
                             Intent it = new Intent(GalleryListActivity.this, DownloadService.class);

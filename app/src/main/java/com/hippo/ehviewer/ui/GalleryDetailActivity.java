@@ -86,12 +86,11 @@ import com.hippo.ehviewer.ehclient.DetailUrlParser;
 import com.hippo.ehviewer.ehclient.EhClient;
 import com.hippo.ehviewer.miscellaneous.ActivityHelper;
 import com.hippo.ehviewer.miscellaneous.Downloader;
+import com.hippo.ehviewer.miscellaneous.FavoriteHelper;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.util.AppConfig;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
-import com.hippo.ehviewer.util.Favorite;
-import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
@@ -123,17 +122,22 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         ProgressiveRatingBar.OnUserRateListener, PreviewList.PreviewHolder,
         View.OnLayoutChangeListener, EasyRecyclerView.OnItemClickListener,
         EasyRecyclerView.OnItemLongClickListener, RefreshTextView.OnRefreshListener,
-        FitWindowView.OnFitSystemWindowsListener {
+        FitWindowView.OnFitSystemWindowsListener, FavoriteHelper.OnAddToFavoriteListener {
 
     @SuppressWarnings("unused")
     private static final String TAG = GalleryDetailActivity.class.getSimpleName();
 
     public static final String KEY_G_INFO = "gallery_info";
 
+    private static final int FAVORITE_NONE = 0x0;
+    private static final int FAVORITE_LOCAL = 0x1;
+    private static final int FAVORITE_ACCOUNT = 0x2;
+
     private AppContext mAppContext;
     private Resources mResources;
     private EhClient mClient;
     private WindowsAnimate mWindowsAnimate;
+    private Data mData;
     private GalleryInfo mGalleryInfo;
 
     private int mRunningAnimateNum = 0;
@@ -187,6 +191,8 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
     private FloatingActionButton mReply;
 
     private OvalDrawable mCategoryDrawable;
+    private Drawable mFavoriteDrawable;
+    private Drawable mFavoriteOutlineDrawable;
     private Drawable mRateDrawable;
     private Drawable mCheckmarkDrawable;
 
@@ -200,6 +206,9 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
 
     private String mOldReply;
     private boolean mReplyPositive;
+
+    private int mFavoriteState = FAVORITE_NONE;
+    private boolean mIsDoingFavorite = false;
 
     private AlertDialog createGoToDialog() {
         CharSequence[] items = new CharSequence[((PreviewImpl)mGalleryInfo).getPreviewPageNum()];
@@ -307,6 +316,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         mClient = EhClient.getInstance();
         mWindowsAnimate = new WindowsAnimate();
         mWindowsAnimate.init(this);
+        mData = Data.getInstance();
 
         mResources = getResources();
 
@@ -377,9 +387,10 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         Drawable similarDrawable = mResources.getDrawable(R.drawable.ic_similar);
         similarDrawable.setBounds(rect);
         mSimilar.setCompoundDrawables(null, similarDrawable, null, null);
-        Drawable favoriteDrawable = mResources.getDrawable(R.drawable.ic_favorite);
-        favoriteDrawable.setBounds(rect);
-        mFavorite.setCompoundDrawables(null, favoriteDrawable, null, null);
+        mFavoriteDrawable = mResources.getDrawable(R.drawable.ic_favorite);
+        mFavoriteDrawable.setBounds(rect);
+        mFavoriteOutlineDrawable = mResources.getDrawable(R.drawable.ic_favorite_outline);
+        mFavoriteOutlineDrawable.setBounds(rect);
         Drawable shareDrawable = mResources.getDrawable(R.drawable.ic_share);
         shareDrawable.setBounds(rect);
         mShare.setCompoundDrawables(null, shareDrawable, null, null);
@@ -626,6 +637,16 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         }
     }
 
+    private void updateFavoriteButton() {
+        if (mFavoriteState == FAVORITE_NONE) {
+            mFavorite.setText(R.string.add_to_favorites);
+            mFavorite.setCompoundDrawables(null, mFavoriteOutlineDrawable, null, null);
+        } else {
+            mFavorite.setText(R.string.remove_from_favorites);
+            mFavorite.setCompoundDrawables(null, mFavoriteDrawable, null, null);
+        }
+    }
+
     /**
      * GalleryDetail
      * LofiGalleryDetail
@@ -663,21 +684,26 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         // Detail
         mDividerAM.setVisibility(View.VISIBLE);
         mDetailMore.setVisibility(View.VISIBLE);
+
+        // Favorite
+        if (mData.containsLocalFavourite(mGalleryInfo.gid)) {
+            mFavoriteState |= FAVORITE_LOCAL;
+        }
+
         if (mGalleryInfo instanceof GalleryDetail) {
             GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
 
-            // TODO handle favorite
-            Log.d("TAG", "favorite " + galleryDetail.isFavorite);
+            if (galleryDetail.isFavorite) {
+                mFavoriteState |= FAVORITE_ACCOUNT;
+            }
 
             if (galleryDetail.torrents.length > 0) {
                 mTorrent.setVisibility(View.VISIBLE);
             }
 
-            ((TextView)mDetailMore.findViewById(R.id.language)).setText(
-                    getString(R.string.language) + ": " + galleryDetail.language);
-            ((TextView)mDetailMore.findViewById(R.id.posted)).setText(galleryDetail.posted);
-            ((TextView)mDetailMore.findViewById(R.id.pages)).setText(
-                    getString(R.string.pages) + ": " + String.valueOf(galleryDetail.pages));
+            ((TextView)mDetailMore.findViewById(R.id.language)).setText(getString(R.string.language) + ": " + galleryDetail.language);
+            ((TextView) mDetailMore.findViewById(R.id.posted)).setText(galleryDetail.posted);
+            ((TextView) mDetailMore.findViewById(R.id.pages)).setText(getString(R.string.pages) + ": " + String.valueOf(galleryDetail.pages));
             ((TextView)mDetailMore.findViewById(R.id.size)).setText(
                     getString(R.string.size) + ": " + galleryDetail.size);
             StringBuilder sb = new StringBuilder();
@@ -700,9 +726,10 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
             ((TextView)mMoreDetailScroll.findViewById(R.id.more_detail)).setText(sb.toString());
         } else if (mGalleryInfo instanceof LofiGalleryDetail) {
             LofiGalleryDetail lofiGalleryDetail = (LofiGalleryDetail)mGalleryInfo;
-            ((TextView)mDetailMore.findViewById(R.id.language)).setVisibility(View.GONE);
-            ((TextView)mDetailMore.findViewById(R.id.posted)).setVisibility(View.GONE);
-            ((TextView)mDetailMore.findViewById(R.id.pages)).setVisibility(View.GONE);
+
+            (mDetailMore.findViewById(R.id.language)).setVisibility(View.GONE);
+            (mDetailMore.findViewById(R.id.posted)).setVisibility(View.GONE);
+            (mDetailMore.findViewById(R.id.pages)).setVisibility(View.GONE);
             ((TextView)mDetailMore.findViewById(R.id.size)).setText(lofiGalleryDetail.posted);
             StringBuilder sb = new StringBuilder();
             sb.append("gid: ").append(lofiGalleryDetail.gid).append("\n\n")
@@ -718,6 +745,8 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         } else if (mGalleryInfo instanceof ApiGalleryDetail) {
             // TODO
         }
+
+        updateFavoriteButton();
 
         // Rate
         mDividerMR.setVisibility(View.VISIBLE);
@@ -906,7 +935,36 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
             intent.putExtra(GalleryListActivity.KEY_IMAGE_URL, mGalleryInfo.thumb);
             startActivity(intent);
         } else if (v == mFavorite) {
-            Favorite.addToFavorite(this, mGalleryInfo);
+            if (!mIsDoingFavorite) {
+                if (mFavoriteState == FAVORITE_NONE) {
+                    mIsDoingFavorite = true;
+                    FavoriteHelper.addToFavorite(this, mGalleryInfo, this);
+                } else {
+                    if ((mFavoriteState & FAVORITE_LOCAL) != 0) {
+                        mData.deleteLocalFavourite(mGalleryInfo.gid);
+                        mFavoriteState &= ~FAVORITE_LOCAL;
+
+                        updateFavoriteButton();
+                    }
+                    if ((mFavoriteState & FAVORITE_ACCOUNT) != 0) {
+                        mIsDoingFavorite = true;
+                        mClient.addToFavorite(mGalleryInfo.gid, mGalleryInfo.token, -1, null, new EhClient.OnAddToFavoriteListener() {
+                            @Override
+                            public void onSuccess() {
+                                mIsDoingFavorite = false;
+                                mFavoriteState &= ~FAVORITE_ACCOUNT;
+                                updateFavoriteButton();
+                            }
+
+                            @Override
+                            public void onFailure(String eMsg) {
+                                mIsDoingFavorite = false;
+                                updateFavoriteButton();
+                            }
+                        });
+                    }
+                }
+            }
         } else if (v == mShare) {
             ActivityHelper.share(this, EhClient.getDetailUrl(mGalleryInfo.gid, mGalleryInfo.token));
         } else if (v == mRate) {
@@ -1288,6 +1346,18 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         }
     }
 
+    @Override
+    public void onSuccess(GalleryInfo gi, int slot) {
+        mIsDoingFavorite = false;
+        mFavoriteState |= slot == -1 ? FAVORITE_LOCAL : FAVORITE_ACCOUNT;
+        updateFavoriteButton();
+    }
+
+    @Override
+    public void onFailure(String eMsg, GalleryInfo gi, int slot) {
+        mIsDoingFavorite = false;
+    }
+
     private class GDetailGetListener
             implements EhClient.OnGetGDetailListener {
         @Override
@@ -1418,7 +1488,5 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
                 return 0;
             }
         }
-
     }
-
 }

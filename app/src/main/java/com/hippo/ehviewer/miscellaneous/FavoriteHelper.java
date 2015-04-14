@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.util;
+package com.hippo.ehviewer.miscellaneous;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -31,9 +31,11 @@ import com.hippo.ehviewer.app.MaterialAlertDialog;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.EhClient;
+import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.MaterialToast;
 
-public class Favorite {
+public class FavoriteHelper {
 
     private static Context mContext;
     private static Resources mResources;
@@ -53,15 +55,19 @@ public class Favorite {
         }
     }
 
-    public static void addToFavorite(final Context context, GalleryInfo gi) {
-        int defaultFavorite = Config.getDefaultFavorite();
+    public static void addToFavorite(final Context context, final GalleryInfo gi,
+            final OnAddToFavoriteListener listener) {
+        final int defaultFavorite = Config.getDefaultFavorite();
         switch (defaultFavorite) {
         case -2:
-            Favorite.getAddToFavoriteDialog(context, gi).show();
+            FavoriteHelper.getAddToFavoriteDialog(context, gi, listener).show();
             break;
         case -1:
             Data.getInstance().addLocalFavourite(gi);
             MaterialToast.showToast(R.string.toast_add_favourite);
+            if (listener != null) {
+                listener.onSuccess(gi, -1);
+            }
             break;
         default:
             EhClient.getInstance().addToFavorite(gi.gid,
@@ -69,19 +75,24 @@ public class Favorite {
                 @Override
                 public void onSuccess() {
                     MaterialToast.showToast(R.string.toast_add_favourite);
+                    if (listener != null) {
+                        listener.onSuccess(gi, defaultFavorite);
+                    }
                 }
                 @Override
                 public void onFailure(String eMsg) {
                     MaterialToast.showToast(R.string.failed_to_add);
+                    if (listener != null) {
+                        listener.onFailure(eMsg, gi, defaultFavorite);
+                    }
                 }
             });
         }
     }
 
     @SuppressLint("InflateParams")
-    public static AlertDialog getAddToFavoriteDialog(final Context context, final GalleryInfo gi) {
-
-        // TODO List do not work final
+    public static AlertDialog getAddToFavoriteDialog(final Context context, final GalleryInfo gi,
+            final OnAddToFavoriteListener listener) {
 
         View view = ViewUtils.inflateDialogView(R.layout.add_to_favorite, false);
         final CheckBox cb = (CheckBox) view.findViewById(R.id.set_default);
@@ -97,10 +108,14 @@ public class Favorite {
 
                 if (cb.isChecked())
                     Config.setDefaultFavorite(position - 1);
+                final int favoriteSlot = position - 1;
 
                 switch (position) {
                 case 0:
                     Data.getInstance().addLocalFavourite(gi);
+                    if (listener != null) {
+                        listener.onSuccess(gi, favoriteSlot);
+                    }
                     MaterialToast.showToast(R.string.toast_add_favourite);
                     break;
                 default:
@@ -109,10 +124,16 @@ public class Favorite {
                         @Override
                         public void onSuccess() {
                             MaterialToast.showToast(R.string.toast_add_favourite);
+                            if (listener != null) {
+                                listener.onSuccess(gi, favoriteSlot);
+                            }
                         }
                         @Override
                         public void onFailure(String eMsg) {
                             MaterialToast.showToast(R.string.failed_to_add);
+                            if (listener != null) {
+                                listener.onFailure(eMsg, gi, favoriteSlot);
+                            }
                         }
                     });
                 }
@@ -123,5 +144,10 @@ public class Favorite {
                 .setTitle(R.string.where_to_add)
                 .setView(view, false).setNegativeButton(android.R.string.cancel)
                 .setPositiveButton(android.R.string.ok).create();
+    }
+
+    public interface OnAddToFavoriteListener {
+        void onSuccess(GalleryInfo gi, int slot);
+        void onFailure(String eMsg, GalleryInfo gi, int slot);
     }
 }
