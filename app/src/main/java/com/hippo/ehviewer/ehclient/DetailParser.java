@@ -63,6 +63,7 @@ public class DetailParser {
     public String language;
     public int people;
     public float rating;
+    public boolean isFavorite;
     public String firstPage;
     public int previewPerPage;
     public int previewSum;
@@ -135,12 +136,12 @@ public class DetailParser {
                             + "<h1 id=\"gn\">([^<>]+)</h1>" // title
                             + "<h1 id=\"gj\">([^<>]*)</h1>" // title_jpn might be empty string
                             + "</div>"
-                            + ".+"
+                            + ".+?"
                             + "<a[^<>]*onclick=\"return popUp\\('([^']+)'[^)]+\\)\">Torrent Download \\( (\\d+) \\)</a>"
-                            + ".+"
+                            + ".+?"
                             + "<div id=\"gdc\"><a[^<>]+><[^<>]*alt=\"([\\w|\\-]+)\"[^<>]*></a></div>" // category
                             + "<div id=\"gdn\"><a[^<>]+>([^<>]+)</a>" // uploader
-                            + ".+"
+                            + ".+?"
                             + "<tr><td[^<>]*>Posted:</td><td[^<>]*>([\\w|\\-|\\s|:]+)</td></tr>" // posted
                             //+ "<tr><td[^<>]*>Images:</td><td[^<>]*>([\\d]+) @ ([\\w|\\.|\\s]+)</td></tr>" // pages and size
                             //+ "<tr><td[^<>]*>Resized:</td><td[^<>]*>([^<>]+)</td></tr>" // resized
@@ -150,11 +151,13 @@ public class DetailParser {
                             + "<tr><td[^<>]*>File Size:</td><td[^<>]*>([^<>]+)(?:<span[^<>]*>([^<>]+)</span>)?</td></tr>" // File size and resize
                             + "<tr><td[^<>]*>Length:</td><td[^<>]*>([\\d|,]+) pages</td></tr>" // pages
                             + "<tr><td[^<>]*>Favorited:</td><[^<>]*>([^<>]+)</td></tr>" // Favorite times  ([\d|,]+) times or Never
-                            + ".+"
+                            + ".+?"
                             + "<td id=\"grt3\"><span id=\"rating_count\">([\\d|,]+)</span></td>" // people
                             + "</tr>"
                             + "<tr><td[^<>]*>([^<>]+)</td>" // rating
-                            + ".+"
+                            + ".+?"
+                            + "<a id=\"favoritelink\"[^<>]*>(.+?)</a>"
+                            + ".+?"
                             + "<div id=\"gdt\"><div[^<>]*>(?:<div[^<>]*>)?<a[^<>]*href=\"([^<>\"]+)\"[^<>]*>"); // get firstPage
             m = p.matcher(body);
             if (m.find()) {
@@ -184,7 +187,9 @@ public class DetailParser {
                 else
                     rating = Float.NaN;
 
-                firstPage = m.group(18);
+                isFavorite = "Favorite Gallery".equals(m.group(18));
+
+                firstPage = m.group(19);
             }
         }
         // Get tag

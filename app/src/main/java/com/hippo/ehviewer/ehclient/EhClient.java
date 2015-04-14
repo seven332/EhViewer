@@ -719,6 +719,7 @@ public class EhClient {
                         md.firstPage = parser.firstPage;
                         md.previewPerPage = parser.previewPerPage;
                         md.previewSum = parser.previewSum;
+                        md.isFavorite = parser.isFavorite;
 
                         md.tags = parser.tags;
                         md.previewLists = new PreviewList[md.previewSum];

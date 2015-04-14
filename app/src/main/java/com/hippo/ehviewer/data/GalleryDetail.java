@@ -39,6 +39,8 @@ public class GalleryDetail extends GalleryInfo
      */
     public LinkedHashMap<String, LinkedList<String>> tags;
 
+    public boolean isFavorite;
+
     // For Preview
     public int previewSum;
     public int previewPerPage;

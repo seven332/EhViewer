@@ -84,13 +84,14 @@ import com.hippo.ehviewer.drawable.OvalDrawable;
 import com.hippo.ehviewer.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.ehclient.DetailUrlParser;
 import com.hippo.ehviewer.ehclient.EhClient;
+import com.hippo.ehviewer.miscellaneous.ActivityHelper;
 import com.hippo.ehviewer.miscellaneous.Downloader;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.util.AppConfig;
-import com.hippo.ehviewer.miscellaneous.ActivityHelper;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Favorite;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
@@ -664,6 +665,9 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         mDetailMore.setVisibility(View.VISIBLE);
         if (mGalleryInfo instanceof GalleryDetail) {
             GalleryDetail galleryDetail = (GalleryDetail)mGalleryInfo;
+
+            // TODO handle favorite
+            Log.d("TAG", "favorite " + galleryDetail.isFavorite);
 
             if (galleryDetail.torrents.length > 0) {
                 mTorrent.setVisibility(View.VISIBLE);
