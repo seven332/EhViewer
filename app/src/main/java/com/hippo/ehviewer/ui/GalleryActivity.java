@@ -427,20 +427,31 @@ public class GalleryActivity extends AbsActivity
 
     @Override
     public boolean onKeyDown (int keyCode, @NonNull KeyEvent event) {
-        if (mVolumePage) {
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_VOLUME_DOWN:
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (mVolumePage) {
                     mGalleryView.showNextPage();
                     return true;
-                case KeyEvent.KEYCODE_VOLUME_UP:
+                } else {
+                    break;
+                }
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (mVolumePage) {
                     mGalleryView.showPreviousPage();
                     return true;
-                default:
-                    return super.onKeyDown(keyCode, event);
-            }
-        } else {
-            return super.onKeyDown(keyCode, event);
+                } else {
+                    break;
+                }
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+            case KeyEvent.KEYCODE_PAGE_UP:
+                mGalleryView.showPreviousPage();
+                return true;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+            case KeyEvent.KEYCODE_PAGE_DOWN:
+                mGalleryView.showNextPage();
+                return true;
         }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
