@@ -687,8 +687,10 @@ public class SettingsActivity extends AbsPreferenceActivity {
             Preference.OnPreferenceClickListener {
 
         private static final String KEY_FIX_DIRNAME = "fix_dirname";
+        private static final String KEY_LOGIN_VIA_COOKIE = "login_via_cookie";
 
         private Preference mFixDirname;
+        private Preference mLoginViaCookie;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -697,6 +699,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
             mFixDirname = findPreference(KEY_FIX_DIRNAME);
             mFixDirname.setOnPreferenceClickListener(this);
+            mLoginViaCookie = findPreference(KEY_LOGIN_VIA_COOKIE);
+            mLoginViaCookie.setOnPreferenceClickListener(this);
         }
 
         @Override
@@ -795,6 +799,27 @@ public class SettingsActivity extends AbsPreferenceActivity {
                         });
                     }
                 }.start();
+
+            } else if (KEY_LOGIN_VIA_COOKIE.equals(key)) {
+                LinearLayout ll = (LinearLayout) ViewUtils.inflateDialogView(R.layout.login_via_cookie, false);
+                final EditText ipbMemberId = (EditText) ll.findViewById(R.id.ipb_member_id);
+                final EditText ipbPassHash = (EditText) ll.findViewById(R.id.ipb_pass_hash);
+
+                new MaterialAlertDialog.Builder(getActivity()).setTitle(R.string.hah_proxy_title)
+                        .setView(ll, true).setPositiveButton(android.R.string.ok).setNegativeButton(android.R.string.cancel)
+                        .setButtonListener(new MaterialAlertDialog.OnClickListener() {
+                            @Override
+                            public boolean onClick(MaterialAlertDialog dialog, int which) {
+                                if (which == MaterialAlertDialog.POSITIVE) {
+                                    String id = ipbMemberId.getText().toString();
+                                    String hash = ipbPassHash.getText().toString();
+                                    EhInfo ehInfo = EhInfo.getInstance(getActivity());
+                                    ehInfo.setCookie("ipb_member_id=" + id + "; ipb_pass_hash=" + hash);
+                                    ehInfo.login("User", "User");
+                                }
+                                return true;
+                            }
+                        }).show();
             }
             return true;
         }
