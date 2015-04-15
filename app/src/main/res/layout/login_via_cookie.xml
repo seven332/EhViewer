@@ -11,9 +11,8 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="128sp"
             android:layout_height="wrap_content"
-            android:layout_weight="2.5"
             android:singleLine="true"
             android:text="ipb_member_id:"/>
 
@@ -32,9 +31,8 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="128sp"
             android:layout_height="wrap_content"
-            android:layout_weight="2.5"
             android:singleLine="true"
             android:text="ipb_pass_hash:"/>
 

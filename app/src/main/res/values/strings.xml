@@ -291,10 +291,10 @@
     <string name="eh_others_settings_title">Others</string>
     <string name="fix_dirname_title">Fix download folder name</string>
     <string name="fix_dirname_title_summary">Download folder name will be human readable. It is OK to leave me alone.</string>
-    <string name="login_via_cookie_title">Login via cookie</string>
     <string name="start_fixing">Start fixing</string>
     <string name="no_need_fixing">No need to fix</string>
     <string name="fixing_over">%d item(s) fixed</string>
+    <string name="login_via_cookie_title">Login via cookie</string>
 
     <string name="about_settings_title">About</string>
     <string name="author_title">Author</string>

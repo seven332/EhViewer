@@ -277,6 +277,7 @@
     <string name="start_fixing">開始修正</string>
     <string name="no_need_fixing">未發現可修正項</string>
     <string name="fixing_over">共修正 %d 項</string>
+    <string name="login_via_cookie_title">通過 cookie 登錄</string>
 
     <string name="about_settings_title">關於</string>
     <string name="author_title">作者</string>

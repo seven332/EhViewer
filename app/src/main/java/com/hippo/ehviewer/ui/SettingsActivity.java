@@ -805,7 +805,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                 final EditText ipbMemberId = (EditText) ll.findViewById(R.id.ipb_member_id);
                 final EditText ipbPassHash = (EditText) ll.findViewById(R.id.ipb_pass_hash);
 
-                new MaterialAlertDialog.Builder(getActivity()).setTitle(R.string.hah_proxy_title)
+                new MaterialAlertDialog.Builder(getActivity()).setTitle(R.string.login_via_cookie_title)
                         .setView(ll, true).setPositiveButton(android.R.string.ok).setNegativeButton(android.R.string.cancel)
                         .setButtonListener(new MaterialAlertDialog.OnClickListener() {
                             @Override
