@@ -943,18 +943,30 @@ public class HttpHelper {
                 }
             }
 
-            if (newName == null || !mOption.isAllowFixingName()) {
+            if (newName == null) {
                 newName = originalName;
-            } else {
-                newName = onFixName(newName);
             }
-            if (newExtension == null || mOption.isAllowFixingExtension()) {
-                newExtension = originalExtension;
+            if (mOption.isAllowFixingName()) {
+                newName = onFixName(newName);
             } else {
-                newExtension = onFixExtension(newExtension);
+                newName = originalName;
             }
 
-            return newName + (newExtension == null ? "" : newExtension);
+            if (newExtension == null) {
+                newExtension = originalExtension;
+            }
+            if (mOption.isAllowFixingExtension()) {
+                newExtension = onFixExtension(newExtension);
+            } else {
+                newExtension = originalExtension;
+            }
+
+            String newFilename = newName;
+            if (newExtension != null) {
+                newFilename = newFilename + '.' + newExtension;
+            }
+
+            return newFilename;
         }
 
 
