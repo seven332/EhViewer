@@ -16,32 +16,6 @@
 
 package com.hippo.ehviewer.network;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
-
-import org.apache.http.conn.ConnectTimeoutException;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -64,6 +38,32 @@ import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.util.Utils;
+
+import org.apache.http.conn.ConnectTimeoutException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 /**
  * It is not thread safe
@@ -365,12 +365,23 @@ public class HttpHelper {
                             value.charAt(valueLength - 1) == '"') {
                         value = value.substring(1, valueLength - 1);
                     }
-                    map.put(key, value);
+                    map.put(key.toLowerCase(), value);
                 }
             }
         }
 
         return map;
+    }
+
+    public static @Nullable String getMime(HttpURLConnection conn) {
+        String contentType = conn.getContentType();
+        // looks like text/html; charset=ISO-8859-4 or text/html
+        int index = contentType.indexOf(';');
+        if (index != -1) {
+            return contentType.substring(0, index);
+        } else {
+            return contentType;
+        }
     }
 
     private interface RequestHelper {
@@ -774,34 +785,71 @@ public class HttpHelper {
         }
     }
 
+    public static class DownloadOption {
+
+        public boolean mAllowFixingName = false;
+        public boolean mAllowFixingExtension = false;
+        public boolean mUseProxy = false;
+
+        public boolean isAllowFixingName() {
+            return mAllowFixingName;
+        }
+
+        public void setAllowFixingName(boolean allowFixingName) {
+            mAllowFixingName = allowFixingName;
+        }
+
+        public boolean isAllowFixingExtension() {
+            return mAllowFixingExtension;
+        }
+
+        public void setAllowFixingExtension(boolean allowFixingExtension) {
+            mAllowFixingExtension = allowFixingExtension;
+        }
+
+        public boolean isUseProxy() {
+            return mUseProxy;
+        }
+
+        public void setUseProxy(boolean useProxy) {
+            mUseProxy = useProxy;
+        }
+    }
+
     private class DownloadHelper implements RequestHelper {
 
         private static final String DOWNLOAD_EXTENSION = ".download";
 
-        private final String mUrl;
-        private final File mDir;
-        private String mFileName;
+        private @NonNull final String mUrl;
+        private @NonNull final File mDir;
+        private @NonNull String mFilename;
         private File mFile;
         private File mTempFile;
-        private final boolean mIsProxy;
-        private final DownloadControlor mControlor;
-        private final OnDownloadListener mListener;
+        private @NonNull DownloadOption mOption;
+        private @Nullable final DownloadControlor mControlor;
+        private @Nullable final OnDownloadListener mListener;
         private int mContentLength;
         private int mReceivedSize;
 
-        public DownloadHelper(String url, File dir, String fileName, boolean isProxy,
-                DownloadControlor controlor, OnDownloadListener listener) {
+        public DownloadHelper(@NonNull String url, @NonNull File dir,
+                @NonNull String filename, @Nullable DownloadOption option,
+                @Nullable DownloadControlor controlor,
+                @Nullable OnDownloadListener listener) {
             mUrl = url;
             mDir = dir;
-            mFileName = fileName;
-            mIsProxy = isProxy;
+            mFilename = filename;
+            if (option == null) {
+                mOption = new DownloadOption();
+            } else {
+                mOption = option;
+            }
             mControlor = controlor;
             mListener = listener;
         }
 
         @Override
         public URL getUrl() throws MalformedURLException {
-            return new URL(mIsProxy? getProxyUrl() : mUrl);
+            return new URL(mOption.isUseProxy() ? getProxyUrl() : mUrl);
         }
 
         @Override
@@ -809,7 +857,7 @@ public class HttpHelper {
             if (mControlor != null && mControlor.isStop())
                 throw new StopRequestException();
 
-            if (mIsProxy) {
+            if (mOption.isUseProxy()) {
                 conn.setDoOutput(true);
                 conn.setDoInput(true);
                 conn.setUseCaches(false);
@@ -823,8 +871,10 @@ public class HttpHelper {
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Range", "bytes=0-");
             }
-            if (mListener != null)
+
+            if (mListener != null) {
                 mListener.onDownloadStartConnect();
+            }
         }
 
         private int getContentLength(HttpURLConnection conn) {
@@ -854,63 +904,86 @@ public class HttpHelper {
             return contentLength;
         }
 
-        protected String fixNewExtension(String ext) {
-            return null;
-        }
-
         public String getSuitableFilename(HttpURLConnection conn) {
             String contentDisposition = conn.getHeaderField("Content-Disposition");
             Map<String, String> map = parseMap(contentDisposition);
             return map.get("filename");
         }
 
+        protected String onFixName(String newName) {
+            return newName;
+        }
+
+        protected String onFixExtension(String newExtension) {
+            return newExtension;
+        }
+
+        protected String fixFilename(HttpURLConnection conn) {
+            String originalName;
+            String originalExtension;
+            String newName = null;
+            String newExtension = null;
+            String[] temp = new String[2];
+
+            // get originalName and originalExtension
+            Utils.getNameAndExtension(mFilename, temp);
+            originalName = temp[0];
+            originalExtension = temp[1];
+
+            String suitableFilename = getSuitableFilename(conn);
+            if (suitableFilename != null) {
+                Utils.getNameAndExtension(suitableFilename, temp);
+                newName = temp[0];
+                newExtension = temp[1];
+            } else {
+                String mime = getMime(conn);
+                if (mime != null) {
+                    MimeTypeMap mimeMap = MimeTypeMap.getSingleton();
+                    originalExtension = mimeMap.getExtensionFromMimeType(mime);
+                }
+            }
+
+            if (newName == null || !mOption.isAllowFixingName()) {
+                newName = originalName;
+            } else {
+                newName = onFixName(newName);
+            }
+            if (newExtension == null || mOption.isAllowFixingExtension()) {
+                newExtension = originalExtension;
+            } else {
+                newExtension = onFixExtension(newExtension);
+            }
+
+            return newName + (newExtension == null ? "" : newExtension);
+        }
+
+
         @Override
         public Object onAfterConnect(HttpURLConnection conn) throws Exception {
             // Check stop
-            if (mControlor != null && mControlor.isStop())
+            if (mControlor != null && mControlor.isStop()) {
                 throw new StopRequestException();
+            }
 
-            String contentType = conn.getContentType();
-            int index = contentType.indexOf(';');
-            if (index != -1)
-                contentType = contentType.substring(0, index);
+            String oldFilename = mFilename;
+
+            if (mOption.isAllowFixingName() || mOption.isAllowFixingExtension()) {
+                mFilename = fixFilename(conn);
+            }
+
+            // TODO Should check first
+            if (!oldFilename.equals(mFilename) && mListener != null) {
+                mListener.onUpdateFilename(mFilename);
+            }
 
             mContentLength = getContentLength(conn);
             if (mListener != null)
                 mListener.onDownloadStartDownload(mContentLength);
 
-            String filename = getSuitableFilename(conn);
-            if (filename != null) {
-                mFileName = filename;
-            }
-
-            // Fix extension
-            MimeTypeMap mime = MimeTypeMap.getSingleton();
-            String newExtension = mime.getExtensionFromMimeType(contentType);
-            if (newExtension == null) {
-                index = contentType.lastIndexOf('/');
-                if (index != -1)
-                    newExtension = contentType.substring(index + 1);
-            }
-            newExtension = fixNewExtension(newExtension);
-            if (newExtension != null) {
-                index = mFileName.lastIndexOf('.');
-                if (index == -1) {
-                    mFileName = mFileName + '.' + newExtension;
-                } else {
-                    mFileName = mFileName.substring(0, index) + '.' + newExtension;
-                }
-            }
-
-            // TODO Should check first
-            if (mListener != null) {
-                mListener.onUpdateFilename(mFileName);
-            }
-
             // Make sure parent exist
             mDir.mkdirs();
-            mFile = new File(mDir, mFileName);
-            mTempFile = new File(mDir, mFileName + DOWNLOAD_EXTENSION);
+            mFile = new File(mDir, mFilename);
+            mTempFile = new File(mDir, mFilename + DOWNLOAD_EXTENSION);
             // Transfer
             transferData(conn.getInputStream(), new FileOutputStream(mTempFile));
             // Get ok, rename
@@ -960,44 +1033,48 @@ public class HttpHelper {
                 throw new UncompletedException("Received size is " + mReceivedSize
                         + ", but ContentLength is " + mContentLength);
         }
-
     }
 
 
     private class DownloadEhImageHelper extends DownloadHelper {
 
-        public DownloadEhImageHelper(String url, File dir, String fileName,
-                boolean isProxy, DownloadControlor controlor,
-                OnDownloadListener listener) {
-            super(url, dir, fileName, isProxy, controlor, listener);
+        public DownloadEhImageHelper(@NonNull String url, @NonNull File dir,
+                @NonNull String filename, @Nullable DownloadOption option,
+                @Nullable DownloadControlor controlor,
+                @Nullable OnDownloadListener listener) {
+            super(url, dir, filename, option, controlor, listener);
         }
 
         @Override
-        protected String fixNewExtension(String ext) {
+        protected String onFixExtension(String ext) {
             int length = EhUtils.POSSIBLE_IMAGE_EXTENSION_ARRAY.length;
             int i;
             for (i = 0; i < length; i++) {
-                if (EhUtils.POSSIBLE_IMAGE_EXTENSION_ARRAY[i].equals(ext))
+                if (EhUtils.POSSIBLE_IMAGE_EXTENSION_ARRAY[i].equals(ext)) {
                     break;
+                }
             }
-            if (i == length)
+            if (i == length) {
                 ext = EhUtils.DEFAULT_IMAGE_EXTENSION;
+            }
             return ext;
         }
     }
 
     private class DownloadOriginEhImageHelper extends DownloadEhImageHelper {
 
-        public DownloadOriginEhImageHelper(String url, File dir, String fileName,
-                boolean isProxy, DownloadControlor controlor,
-                OnDownloadListener listener) {
-            super(url, dir, fileName, isProxy, controlor, listener);
+        public DownloadOriginEhImageHelper(@NonNull String url, @NonNull File dir,
+                @NonNull String filename, @Nullable DownloadOption option,
+                @Nullable DownloadControlor controlor,
+                @Nullable OnDownloadListener listener) {
+            super(url, dir, filename, option, controlor, listener);
         }
 
         @Override
         public Object onAfterConnect(HttpURLConnection conn) throws Exception {
-            if (mLastUrl == null)
+            if (mLastUrl == null) {
                 throw new BandwidthExceededException();
+            }
 
             return super.onAfterConnect(conn);
         }
@@ -1046,7 +1123,7 @@ public class HttpHelper {
     /**
      * Post form data, multipart/form-data
      * @param url
-     * @param datas
+     * @param dataList
      * @return
      */
     public String postFormData(String url, List<FormData> dataList) {
@@ -1062,33 +1139,40 @@ public class HttpHelper {
         return (Bitmap) requst(new GetImageHelper(url));
     }
 
-    public String download(String url, File dir, String file, boolean isProxy,
-            DownloadControlor controlor, OnDownloadListener listener) {
-        return (String) requst(new DownloadHelper(url, dir, file, isProxy,
-                controlor, listener));
+    public String download(@NonNull String url, @NonNull File dir,
+            @NonNull String filename, @Nullable DownloadOption option,
+            @Nullable DownloadControlor controlor,
+            @Nullable OnDownloadListener listener) {
+        return (String) requst(new DownloadHelper(url, dir, filename,
+                option, controlor, listener));
     }
 
-    public void downloadInThread(final String url, final File dir,
-            final String file, final boolean isProxy,
-            final DownloadControlor controlor, final OnDownloadListener listener) {
+    public void downloadInThread(@NonNull final String url, @NonNull final File dir,
+            @NonNull final String filename, @Nullable final DownloadOption option,
+            @Nullable final DownloadControlor controlor,
+            @Nullable final OnDownloadListener listener) {
         new BgThread() {
             @Override
             public void run() {
-                download(url, dir, file, isProxy, controlor, listener);
+                download(url, dir, filename, option, controlor, listener);
             }
         }.start();
     }
 
-    public String downloadEhImage(String url, File dir, String file, boolean isProxy,
-            DownloadControlor controlor, OnDownloadListener listener) {
-        return (String) requst(new DownloadEhImageHelper(url, dir, file, isProxy,
-                controlor, listener));
+    public String downloadEhImage(@NonNull String url, @NonNull File dir,
+            @NonNull String filename, @Nullable DownloadOption option,
+            @Nullable DownloadControlor controlor,
+            @Nullable OnDownloadListener listener) {
+        return (String) requst(new DownloadEhImageHelper(url, dir, filename,
+                option, controlor, listener));
     }
 
-    public String downloadOriginEhImage(String url, File dir, String file, boolean isProxy,
-            DownloadControlor controlor, OnDownloadListener listener) {
-        return (String) requst(new DownloadOriginEhImageHelper(url, dir, file, isProxy,
-                controlor, listener));
+    public String downloadOriginEhImage(@NonNull String url, @NonNull File dir,
+            @NonNull String filename, @Nullable DownloadOption option,
+            @Nullable DownloadControlor controlor,
+            @Nullable OnDownloadListener listener) {
+        return (String) requst(new DownloadOriginEhImageHelper(url, dir, filename,
+                option, controlor, listener));
     }
 
     /** Exceptions **/

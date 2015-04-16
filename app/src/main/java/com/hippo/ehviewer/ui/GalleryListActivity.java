@@ -1470,7 +1470,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
                                         if (which == MaterialAlertDialog.POSITIVE) {
                                             HttpHelper hh = new HttpHelper(GalleryListActivity.this);
                                             hh.downloadInThread(url, new File(Config.getDownloadPath()), fileName,
-                                                    false, null, new UpdateHelper.UpdateListener(
+                                                    null, null, new UpdateHelper.UpdateListener(
                                                             GalleryListActivity.this, fileName));
                                         }
                                         return true;

@@ -666,6 +666,9 @@ public final class ExDownloader implements Runnable {
             HttpDownloadListener listener = new HttpDownloadListener();
             HttpHelper hh = new HttpHelper(mContext);
             ImagePageParser ipp = new ImagePageParser();
+            HttpHelper.DownloadOption option = new HttpHelper.DownloadOption();
+
+            option.setAllowFixingExtension(true);
 
             while (true) {
                 // Check stop
@@ -749,7 +752,8 @@ public final class ExDownloader implements Runnable {
                             String filename = EhUtils.getImageFilename(targetIndex, "jpg");
                             // Download
                             hh.reset();
-                            if (hh.downloadOriginEhImage(imageUrl, mDir, filename, false, c, listener) == null) {
+                            option.setUseProxy(false);
+                            if (hh.downloadOriginEhImage(imageUrl, mDir, filename, option, c, listener) == null) {
                                 if (hh.getException() instanceof HttpHelper.BandwidthExceededException) {
                                     // Get 509
                                     show509Notification(mContext);
@@ -759,7 +763,8 @@ public final class ExDownloader implements Runnable {
                                     if (newImageUrl != null) {
                                         // Try download from proxy
                                         hh.reset();
-                                        if (hh.downloadEhImage(newImageUrl, mDir, filename, true, c, listener) == null) {
+                                        option.setUseProxy(true);
+                                        if (hh.downloadEhImage(newImageUrl, mDir, filename, option, c, listener) == null) {
                                             // Download failed
                                             Log.d(TAG, "Download failed");
                                         } else {
@@ -801,9 +806,11 @@ public final class ExDownloader implements Runnable {
                             // Don't put into mImageFilenameArray, because extension maybe be wrong
                             // mImageFilenameArray.set(targetIndex, filename);
                             hh.reset();
-                            if (hh.downloadEhImage(imageUrl, mDir, filename, false, c, listener) == null) {
+                            option.setUseProxy(false);
+                            if (hh.downloadEhImage(imageUrl, mDir, filename, option, c, listener) == null) {
                                 hh.reset();
-                                if (hh.downloadEhImage(imageUrl, mDir, filename, true, c, listener) == null) {
+                                option.setUseProxy(true);
+                                if (hh.downloadEhImage(imageUrl, mDir, filename, option, c, listener) == null) {
                                     if (i == 1) {
                                         // TODO download error
                                         Log.d(TAG, "download error");

@@ -16,13 +16,13 @@
 
 package com.hippo.ehviewer.util;
 
-import java.io.File;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.hippo.ehviewer.network.HttpHelper;
+
+import java.io.File;
 
 public final class Secret {
 
@@ -81,7 +81,7 @@ public final class Secret {
                 // Get image error, try to get image from internet
                 HttpHelper hh = new HttpHelper(mContext);
                 hh.download(SERCET_IMAGE_URL, mContext.getExternalFilesDir(DIR_NAME),
-                        IMAGE_NAME, false, null, null);
+                        IMAGE_NAME, null, null, null);
             }
             sIsGetSecretImage = false;
         }

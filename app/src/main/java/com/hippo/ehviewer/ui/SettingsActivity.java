@@ -977,7 +977,7 @@ public class SettingsActivity extends AbsPreferenceActivity {
                                                 if (which == MaterialAlertDialog.POSITIVE) {
                                                     HttpHelper hh = new HttpHelper(getActivity());
                                                     hh.downloadInThread(url, new File(Config.getDownloadPath()),
-                                                            fileName, false, null, new UpdateHelper.UpdateListener(
+                                                            fileName, null, null, new UpdateHelper.UpdateListener(
                                                                     getActivity(), fileName));
                                                 }
                                                 return true;

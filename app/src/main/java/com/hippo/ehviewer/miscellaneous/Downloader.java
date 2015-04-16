@@ -48,7 +48,7 @@ public class Downloader implements Runnable, HttpHelper.OnDownloadListener {
     public void run() {
         HttpHelper hh = new HttpHelper(mContext);
         final boolean ok = HttpHelper.DOWNLOAD_OK_STR.equals(
-                hh.download(mUrl, mDir, mFilename, false, null, this));
+                hh.download(mUrl, mDir, mFilename, null, null, this));
         post(new Runnable() {
             @Override
             public void run() {

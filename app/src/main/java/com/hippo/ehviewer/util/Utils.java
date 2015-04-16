@@ -39,6 +39,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
@@ -740,6 +741,23 @@ public final class Utils {
             return (String) m.invoke(null, key);
         } catch (Throwable e) {
             return "";
+        }
+    }
+
+    // TODO Move to FileUtils
+    public static void getNameAndExtension(@NonNull String filename,
+            @NonNull String[] container) {
+        if (container.length != 2) {
+            throw new IllegalStateException("container must be an array of two integers");
+        }
+
+        int index = filename.lastIndexOf('.');
+        if (index == -1) {
+            container[0] = filename;
+            container[1] = null;
+        } else {
+            container[0] = filename.substring(0, index);
+            container[1] = filename.substring(index + 1);
         }
     }
 }
