@@ -17,6 +17,8 @@ package com.hippo.network;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.webkit.CookieManager;
 import android.webkit.MimeTypeMap;
 
@@ -40,6 +42,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +74,10 @@ public class HttpHelper {
     private static final CookieManager sCookieManager = CookieManager.getInstance();
 
     private int mResponseCode = -1;
+
+    static {
+        System.setProperty("file.encoding", DEFAULT_CHARSET);
+    }
 
     public void reset() {
         mResponseCode = -1;
@@ -107,6 +114,50 @@ public class HttpHelper {
         conn.setRequestProperty("User-Agent", USER_AGENT);
         conn.setConnectTimeout(CONNECT_TIMEOUT);
         conn.setReadTimeout(READ_TIMEOUT);
+    }
+
+    /**
+     * Is URL.toString is same
+     */
+    public static boolean isURLEquals(URL url1, URL url2) {
+        if (url1 != null && url2 != null) {
+            String urlStr1 = url1.toString();
+            String urlStr2 = url2.toString();
+            if (urlStr1 != null && urlStr2 != null) {
+                return urlStr1.equals(urlStr2);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * parse string like <code>haha=hehe; fere=bfdgds</code>
+     *
+     * @param raw the raw string
+     * @return the key is toLowerCase
+     */
+    public static @NonNull Map<String, String> parseMap(@Nullable String raw) {
+        Map<String, String> map = new HashMap<>();
+        if (raw != null) {
+            String[] pieces = raw.split(";");
+            for (String p : pieces) {
+                int index = p.indexOf('=');
+                if (index != -1) {
+                    String key = p.substring(0, index).trim();
+                    String value = p.substring(index + 1).trim();
+
+                    // value might be "blabla", remove "
+                    int valueLength = value.length();
+                    if (value.length() > 1 && value.charAt(0) == '"' &&
+                            value.charAt(valueLength - 1) == '"') {
+                        value = value.substring(1, valueLength - 1);
+                    }
+                    map.put(key.toLowerCase(), value);
+                }
+            }
+        }
+
+        return map;
     }
 
     private Object doRequst(RequestHelper rh) throws Exception {
@@ -146,12 +197,19 @@ public class HttpHelper {
                 case HttpURLConnection.HTTP_MOVED_TEMP:
                 case HttpURLConnection.HTTP_SEE_OTHER:
                 case HTTP_TEMP_REDIRECT:
+                    // Should not come here,
+                    // because conn.setInstanceFollowRedirects(true)
                     final String location = conn.getHeaderField("Location");
                     Log.d(TAG, "New location: " + location);
                     conn.disconnect();
                     url = new URL(url, location);
                     break;
                 default:
+                    // Check redirect
+                    URL finalURL = conn.getURL();
+                    if (!isURLEquals(url, finalURL)) {
+                        rh.onRedirect(finalURL);
+                    }
                     return rh.onAfterConnect(conn);
                 }
             }
@@ -163,10 +221,11 @@ public class HttpHelper {
         throw new RedirectionException();
     }
 
-    private Object requst(RequestHelper rh) throws Exception {
+    protected Object requst(@NonNull RequestHelper rh) throws Exception {
         Exception exception = null;
-        for (int times = 0;
-                times < MAX_RETRY &&(times == 0 || rh.onRetry(exception));
+        for (
+                int times = 0;
+                times < MAX_RETRY && (times == 0 || rh.onRetry(exception));
                 times++) {
             try {
                 return doRequst(rh);
@@ -180,13 +239,13 @@ public class HttpHelper {
         throw exception;
     }
 
-    public static interface RequestHelper {
+    public interface RequestHelper {
 
         /**
          * Get the URL to connect
          * @return the URL to connect
          */
-        public URL getUrl() throws MalformedURLException;
+        URL getUrl() throws MalformedURLException;
 
         /**
          * Add header or do something else for HttpURLConnection before connect
@@ -194,8 +253,14 @@ public class HttpHelper {
          * @param conn the connection
          * @throws Exception
          */
+        void onBeforeConnect(HttpURLConnection conn) throws Exception;
 
-        public void onBeforeConnect(HttpURLConnection conn) throws Exception;
+        /**
+         * If get redirect
+         *
+         * @param newURL the new URL
+         */
+        void onRedirect(URL newURL);
 
         /**
          * Get what do you need from HttpURLConnection after connect
@@ -205,7 +270,7 @@ public class HttpHelper {
          * @return what you want to return
          * @throws Exception
          */
-        public Object onAfterConnect(HttpURLConnection conn) throws Exception;
+        Object onAfterConnect(HttpURLConnection conn) throws Exception;
 
         /**
          * Retry http connecting, or stop
@@ -213,12 +278,14 @@ public class HttpHelper {
          * @param previousException previous thrown
          * @return true for retry, false for stop
          */
-        public boolean onRetry(Exception previousException);
+        boolean onRetry(Exception previousException);
 
         /**
          * Called when request failed by exception
+         *
+         * @param exception the final exception
          */
-        public void onRequestFailed(Exception exception);
+        void onRequestFailed(Exception exception);
     }
 
     public static abstract class GetStringHelper implements RequestHelper {
@@ -239,21 +306,13 @@ public class HttpHelper {
             conn.addRequestProperty("Accept-Encoding", "gzip");
         }
 
-        private String getCharsetFromContentType(String contentType) {
-            if (contentType == null) {
-                return null;
+        private String getCharset(HttpURLConnection conn) {
+            String charset = parseMap(conn.getContentType()).get("charset");
+            if (charset != null) {
+                return charset;
+            } else {
+                return DEFAULT_CHARSET;
             }
-
-            String[] values = contentType.split(";");
-            for (String value : values) {
-                value = value.trim();
-
-                if (value.toLowerCase().startsWith(CHARSET_KEY)) {
-                    return value.substring(CHARSET_KEY.length());
-                }
-            }
-
-            return null;
         }
 
         private String getBody(HttpURLConnection conn)
@@ -274,20 +333,15 @@ public class HttpHelper {
                     is = new GZIPInputStream(is);
 
                 int length = conn.getContentLength();
-                if (length >= 0)
+                if (length >= 0) {
                     baos = new ByteArrayOutputStream(length);
-                else
+                } else {
                     baos = new ByteArrayOutputStream();
+                }
 
                 Utils.copy(is, baos);
 
-                // Get charset
-                String charset = getCharsetFromContentType(conn.getContentType());
-                if (charset == null) {
-                    charset = DEFAULT_CHARSET;
-                }
-
-                body = baos.toString(charset);
+                body = baos.toString(getCharset(conn));
 
             } finally {
                 Utils.closeQuietly(is);
@@ -298,19 +352,24 @@ public class HttpHelper {
         }
 
         @Override
-        public Object onAfterConnect(HttpURLConnection conn)
+        public void onRedirect(@NonNull URL newURL) {
+            // Empty
+        }
+
+        @Override
+        public Object onAfterConnect(@NonNull HttpURLConnection conn)
                 throws Exception {
             return getBody(conn);
         }
 
         @Override
-        public boolean onRetry(Exception previousException) {
+        public boolean onRetry(@NonNull Exception previousException) {
             // Do not care about exception, just retry
             return true;
         }
 
         @Override
-        public void onRequestFailed(Exception exception) {
+        public void onRequestFailed(@NonNull Exception exception) {
             // Empty
         }
     }
@@ -325,7 +384,7 @@ public class HttpHelper {
         }
 
         @Override
-        public void onBeforeConnect(HttpURLConnection conn)
+        public void onBeforeConnect(@NonNull HttpURLConnection conn)
                 throws Exception {
             super.onBeforeConnect(conn);
             conn.setRequestMethod("GET");
@@ -404,7 +463,7 @@ public class HttpHelper {
         private final Map<String, String> mProperties;
 
         public FormData() {
-            mProperties = new LinkedHashMap<String, String>();
+            mProperties = new LinkedHashMap<>();
         }
 
         public void setProperty(String key, String value) {
@@ -545,6 +604,11 @@ public class HttpHelper {
         }
 
         @Override
+        public void onRedirect(@NonNull URL newURL) {
+            // Empty
+        }
+
+        @Override
         public Object onAfterConnect(HttpURLConnection conn)
                 throws Exception {
             // If just
@@ -573,26 +637,26 @@ public class HttpHelper {
         }
     }
 
-    public static interface OnDownloadListener {
+    public interface OnDownloadListener {
 
         /**
          * Called before connecting
          */
-        public void onStartConnecting();
+        void onStartConnecting();
 
         /**
          * Called after connecting and before downloading
          *
          * @param totalSize content length, -1 for unknown
          */
-        public void onStartDownloading(int totalSize);
+        void onStartDownloading(int totalSize);
 
         /**
          * File name is fixed
          *
          * @param newName new file name
          */
-        public void onNameFix(String newName);
+        void onNameFix(String newName);
 
         /**
          * Called repeatedly during downloading
@@ -600,24 +664,24 @@ public class HttpHelper {
          * @param downloadSize downloaded size
          * @param totalSize content length, -1 for unknown
          */
-        public void onDownload(int downloadSize, int totalSize);
+        void onDownload(int downloadSize, int totalSize);
 
         /**
          * Called when download ok
          */
-        public void onSuccess();
+        void onSuccess();
 
         /**
          * Called when download stop
          */
-        public void onStop();
+        void onStop();
 
         /**
          * Called when download failed
          *
          * @param e the exception why fail
          */
-        public void onFailure(Exception e);
+        void onFailure(Exception e);
     }
 
     public static class DownloadControlor {
@@ -690,26 +754,17 @@ public class HttpHelper {
             if (contentLength == -1 &&
                     (range = conn.getHeaderField("Content-Range")) != null) {
                 // Content-Range looks like bytes 500-999/1234
-                contentLength = 0;
-                int step = 0;
-                boolean isNum = false;
-                char ch;
-                for (int i = 0; i < range.length(); i++) {
-                    ch = range.charAt(i);
-                    if (ch >= '0' && ch <= '9') {
-                        if (!isNum) {
-                            isNum = true;
-                            step++;
-                        }
-                    } else {
-                        isNum = false;
-                    }
-                    if (isNum && step == 3) {
-                        contentLength = contentLength * 10 + ch - '0';
-                    }
+                int index = range.indexOf('/');
+                if (index != -1) {
+                    contentLength = Utils.parseIntSafely(range.substring(index + 1), -1);
                 }
             }
             return contentLength;
+        }
+
+        @Override
+        public void onRedirect(@NonNull URL newURL) {
+            // TODO
         }
 
         /**
