@@ -15,15 +15,16 @@
 
 package com.hippo.ehviewer.ui.scene;
 
-import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.scene.Scene;
+import com.hippo.scene.TransitionCurtain;
 
 public class GalleryListScene extends Scene {
 
@@ -36,7 +37,6 @@ public class GalleryListScene extends Scene {
 
     private ContentLayout mContentLayout;
 
-    @SuppressLint("InflateParams")
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +48,23 @@ public class GalleryListScene extends Scene {
         mContentLayout = (ContentLayout) findViewById(R.id.content_layout);
 
         mContentLayout.showText("无法连接网络");
+
+        View view = getSceneView();
+        assert view != null;
+        view.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                TransitionCurtain tc = new TransitionCurtain(
+                        new TransitionCurtain.ViewPair[]{
+                                new TransitionCurtain.ViewPair(R.id.haha, R.id.haha),
+                                new TransitionCurtain.ViewPair(R.id.bbbbbb, R.id.bbbbbb)
+                        }
+                );
+
+                startScene(TestScene.class, null, tc);
+            }
+        }, 1000);
     }
 
     protected void onGetFitPaddingBottom(int b) {

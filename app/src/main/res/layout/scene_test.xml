@@ -13,26 +13,40 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/haha"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_gravity="right|top"
-        android:src="@drawable/ic_happy"
-        android:scaleType="fitXY"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Large Text"
+            android:id="@+id/bbbbbb"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Textaaaaaaaaaaaaaaaaaaaaaa"
-        android:id="@+id/bbbbbb"
-        android:layout_gravity="left|bottom"/>
+    </FrameLayout>
 
-</FrameLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <ImageView
+            android:id="@+id/haha"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/ic_happy"
+            android:scaleType="fitXY"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="ssssssssssss"/>
+    </FrameLayout>
+
+</LinearLayout>

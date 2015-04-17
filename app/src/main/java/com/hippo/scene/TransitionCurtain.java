@@ -16,151 +16,232 @@
 package com.hippo.scene;
 
 import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.view.ViewTreeObserver;
+import android.view.ViewGroup;
+import android.widget.AbsoluteLayout;
 
 import com.hippo.animation.ArgbEvaluator;
 import com.hippo.animation.SimpleAnimatorListener;
+import com.hippo.util.AssertUtils;
 import com.hippo.util.Log;
 import com.hippo.util.ViewUtils;
+import com.hippo.widget.GlobalLayoutSet;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TransitionCurtain extends Curtain {
 
     private static final String TAG = TransitionCurtain.class.getSimpleName();
 
-    private static long ANIMATE_TIME = 800L;
+    private static long ANIMATE_TIME = 500L;
 
     private ViewPair[] mViewPairArray;
 
-    private List<ObjectAnimator> mAnimList = new LinkedList<>();
-
-    private boolean mClearList = true;
+    private AnimatorSet mAnimatorSet;
 
     public TransitionCurtain(ViewPair[] viewPairArray) {
         mViewPairArray = viewPairArray;
     }
 
+    // TODO what if back key press before move animator start
 
     // Make background from transport to default.
     // Invisible other
     @Override
     public void open(final @NonNull Scene enter, final @NonNull Scene exit) {
 
+        final Set<Animator> animatorCollection = new HashSet<>();
+
         // Handle background
-        final int bgColor = enter.getBackgroundColor();
+        int bgColor = enter.getBackgroundColor();
         enter.setBackgroundColor(Color.TRANSPARENT);
 
         ObjectAnimator colorAnim = ObjectAnimator.ofInt(enter, "backgroundColor", bgColor);
         colorAnim.setEvaluator(ArgbEvaluator.getInstance());
         colorAnim.setDuration(ANIMATE_TIME);
+        animatorCollection.add(colorAnim);
 
-        colorAnim.addListener(new SimpleAnimatorListener() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                dispatchOpenFinished(enter, exit);
-                hideSceneOnOpen(exit);
-
-                if (mClearList) {
-                    mAnimList.clear();
-                }
-            }
-        });
-
-        colorAnim.start();
-
-        mAnimList.add(colorAnim);
+        GlobalLayoutSet globalLayoutSet = new GlobalLayoutSet();
+        Set<TransitionItem> transitionItemSet = new HashSet<>();
 
         // Handle transit part
         for (ViewPair pair : mViewPairArray) {
             final View enterView = pair.getToView(enter);
             final View exitView = pair.getFromView(exit);
             if (enterView == null) {
-                Log.w(TAG, "Can't get enterView when close");
+                Log.e(TAG, "Can't get enterView when close.");
                 continue;
             }
             if (exitView == null) {
-                Log.w(TAG, "Can't get exitView when close");
+                Log.e(TAG, "Can't get exitView when close.");
                 continue;
             }
 
             // First make enter view invisible
             ViewUtils.setVisibility(enterView, View.INVISIBLE);
 
-            enterView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    ViewUtils.removeOnGlobalLayoutListener(enterView.getViewTreeObserver(), this);
+            // Add item
+            TransitionItem item = new TransitionItem();
+            item.enterView = enterView;
+            item.exitView = exitView;
+            transitionItemSet.add(item);
 
-                    int[] startloaction = new int[2];
-                    ViewUtils.getLocationInAncestor(exitView, startloaction, exit.getSceneView());
-                    int[] endloaction = new int[2];
-                    ViewUtils.getLocationInAncestor(enterView, endloaction, enter.getSceneView());
-                    int startWidth = exitView.getWidth();
-                    int startHeight = exitView.getHeight();
-                    int endWidth = enterView.getWidth();
-                    int endHeight = enterView.getHeight();
+            globalLayoutSet.addListenerToObserver(enterView.getViewTreeObserver());
+            // TODO show other part progressively
+        }
 
-                    ViewUtils.setVisibility(exitView, View.INVISIBLE);
-                    ViewUtils.setVisibility(enterView, View.VISIBLE);
-                    enterView.setPivotX(0);
-                    enterView.setPivotY(0);
+        globalLayoutSet.setOnAllLayoutListener(new OpenFirstAllLayoutListener(
+                enter, exit, transitionItemSet, animatorCollection));
+    }
 
-                    // Start animation
-                    PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", (float) startWidth / endWidth, 1f);
-                    PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", (float) startHeight / endHeight, 1f);
-                    PropertyValuesHolder xPvh = PropertyValuesHolder.ofFloat("x", startloaction[0], endloaction[0]);
-                    PropertyValuesHolder yPvh = PropertyValuesHolder.ofFloat("y", startloaction[1], endloaction[1]);
+    private class OpenFirstAllLayoutListener implements GlobalLayoutSet.OnAllLayoutListener{
 
-                    ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(enterView, scaleXPvh, scaleYPvh, xPvh, yPvh);
-                    anim.setDuration(ANIMATE_TIME);
+        Scene mEnterScene;
+        Scene mExitScene;
+        Set<TransitionItem> mTransitionItemSet;
+        Set<Animator> mAnimatorCollection;
 
-                    anim.addListener(new SimpleAnimatorListener() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            ViewUtils.setVisibility(exitView, View.VISIBLE);
-                        }
-                    });
+        public OpenFirstAllLayoutListener(Scene enterScene, Scene exitScene,
+                Set<TransitionItem> transitionItemSet, Set<Animator> animatorCollection) {
+            mEnterScene = enterScene;
+            mExitScene = exitScene;
+            mTransitionItemSet = transitionItemSet;
+            mAnimatorCollection = animatorCollection;
+        }
 
-                    anim.start();
+        @Override
+        public void onAllLayout() {
+            Set<TransitionItem> transitionItemSet = mTransitionItemSet;
 
-                    mAnimList.add(anim);
+            ViewGroup enterSceneView = mEnterScene.getSceneView();
+            AssertUtils.assertNotNull("Enter scene view must not be null.", enterSceneView);
 
-                    // TODO show other part progressively
-                }
-            });
+            GlobalLayoutSet globalLayoutSet = new GlobalLayoutSet();
+
+            for (TransitionItem item : transitionItemSet) {
+                final View enterView = item.enterView;
+                final View exitView = item.exitView;
+
+                int[] startloaction = new int[2];
+                ViewUtils.getLocationInAncestor(exitView, startloaction, mExitScene.getSceneView());
+                int[] endloaction = new int[2];
+                ViewUtils.getLocationInAncestor(enterView, endloaction, mEnterScene.getSceneView());
+                int startWidth = exitView.getWidth();
+                int startHeight = exitView.getHeight();
+                item.endWidth = enterView.getWidth();
+                item.endHeight = enterView.getHeight();
+                item.startWidth = startWidth;
+                item.startHeight = startHeight;
+                item.endloaction = endloaction;
+
+                Bitmap bmp = ViewUtils.getBitmapFromView(enterView);
+                View bmpView = new View(enterView.getContext());
+                item.bmp = bmp;
+                item.bmpView = bmpView;
+
+                bmpView.setBackgroundDrawable(new BitmapDrawable(bmp));
+                AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(
+                        startWidth, startHeight, startloaction[0], startloaction[1]);
+                enterSceneView.addView(bmpView, lp);
+
+                ViewUtils.setVisibility(bmpView, View.INVISIBLE);
+
+                globalLayoutSet.addListenerToObserver(bmpView.getViewTreeObserver());
+            }
+
+            globalLayoutSet.setOnAllLayoutListener(new OpenSecondAllLayoutListener(
+                    mEnterScene, mExitScene, transitionItemSet, mAnimatorCollection));
         }
     }
+
+    private class OpenSecondAllLayoutListener implements GlobalLayoutSet.OnAllLayoutListener{
+
+        Scene mEnterScene;
+        Scene mExitScene;
+        Set<TransitionItem> mTransitionItemSet;
+        Set<Animator> mAnimatorCollection;
+
+        public OpenSecondAllLayoutListener(Scene enterScene, Scene exitScene,
+                Set<TransitionItem> transitionItemSet, Set<Animator> animatorCollection) {
+            mEnterScene = enterScene;
+            mExitScene = exitScene;
+            mTransitionItemSet = transitionItemSet;
+            mAnimatorCollection = animatorCollection;
+        }
+
+        @Override
+        public void onAllLayout() {
+            Set<TransitionItem> transitionItemSet = mTransitionItemSet;
+            Set<Animator> animatorCollection = mAnimatorCollection;
+
+            for (TransitionItem item : transitionItemSet) {
+                View exitView = item.exitView;
+                View bmpView = item.bmpView;
+
+                ViewUtils.setVisibility(exitView, View.INVISIBLE);
+                ViewUtils.setVisibility(bmpView, View.VISIBLE);
+
+                bmpView.setPivotX(0);
+                bmpView.setPivotY(0);
+
+                PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", (float) item.endWidth / item.startWidth);
+                PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", (float) item.endHeight/ item.startHeight);
+                PropertyValuesHolder xPvh = PropertyValuesHolder.ofFloat("x", item.endloaction[0]);
+                PropertyValuesHolder yPvh = PropertyValuesHolder.ofFloat("y", item.endloaction[1]);
+                ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(bmpView, scaleXPvh, scaleYPvh, xPvh, yPvh);
+                anim.setDuration(ANIMATE_TIME);
+
+                animatorCollection.add(anim);
+            }
+
+            mAnimatorSet = new AnimatorSet();
+            mAnimatorSet.playTogether(animatorCollection);
+            mAnimatorSet.addListener(new SimpleAnimatorListener() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    dispatchOpenFinished(mEnterScene, mExitScene);
+                    hideSceneOnOpen(mExitScene);
+                    for (TransitionItem item : mTransitionItemSet) {
+                        ViewUtils.setVisibility(item.enterView, View.VISIBLE);
+                        ViewUtils.setVisibility(item.exitView, View.VISIBLE);
+
+                        ViewGroup enterSceneView = mEnterScene.getSceneView();
+                        AssertUtils.assertNotNull("Enter scene view must not be null.", enterSceneView);
+                        enterSceneView.removeView(item.bmpView);
+
+                        item.bmp.recycle();
+                    }
+                    mAnimatorSet = null;
+                }
+            });
+            mAnimatorSet.start();
+        }
+    }
+
 
     @Override
     public void close(final @NonNull Scene enter, final @NonNull Scene exit) {
         showSceneOnClose(enter);
 
+        final Set<Animator> animatorCollection = new HashSet<>();
+
         // Handle background
         ObjectAnimator colorAnim = ObjectAnimator.ofInt(exit, "backgroundColor", Color.TRANSPARENT);
         colorAnim.setEvaluator(ArgbEvaluator.getInstance());
         colorAnim.setDuration(ANIMATE_TIME);
+        animatorCollection.add(colorAnim);
 
-        colorAnim.addListener(new SimpleAnimatorListener() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                dispatchCloseFinished(enter, exit);
-                if (mClearList) {
-                    mAnimList.clear();
-                }
-            }
-        });
-
-        colorAnim.start();
-
-        mAnimList.add(colorAnim);
+        GlobalLayoutSet globalLayoutSet = new GlobalLayoutSet();
+        Set<TransitionItem> transitionItemSet = new HashSet<>();
 
         // Handle transit part
         for (ViewPair pair : mViewPairArray) {
@@ -175,54 +256,168 @@ public class TransitionCurtain extends Curtain {
                 continue;
             }
 
-            int[] endloaction = new int[2];
-            ViewUtils.getLocationInAncestor(enterView, endloaction, enter.getSceneView());
-            int startWidth = exitView.getWidth();
-            int startHeight = exitView.getHeight();
-            int endWidth = enterView.getWidth();
-            int endHeight = enterView.getHeight();
-
-            ViewUtils.setVisibility(exitView, View.VISIBLE);
+            // First make enter view invisible
             ViewUtils.setVisibility(enterView, View.INVISIBLE);
-            exitView.setPivotX(0);
-            exitView.setPivotY(0);
 
-            // Start animation
-            PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", (float) endWidth / startWidth);
-            PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", (float) endHeight / startHeight);
-            PropertyValuesHolder xPvh = PropertyValuesHolder.ofFloat("x", endloaction[0]);
-            PropertyValuesHolder yPvh = PropertyValuesHolder.ofFloat("y", endloaction[1]);
+            // Add item
+            TransitionItem item = new TransitionItem();
+            item.enterView = enterView;
+            item.exitView = exitView;
+            transitionItemSet.add(item);
 
-            ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(exitView, scaleXPvh, scaleYPvh, xPvh, yPvh);
-            anim.setDuration(ANIMATE_TIME);
+            globalLayoutSet.addListenerToObserver(enterView.getViewTreeObserver());
+            // TODO show other part progressively
+        }
 
-            anim.addListener(new SimpleAnimatorListener() {
+        globalLayoutSet.setOnAllLayoutListener(new CloseFirstAllLayoutListener(
+                enter, exit, transitionItemSet, animatorCollection));
+    }
+
+    private class CloseFirstAllLayoutListener implements GlobalLayoutSet.OnAllLayoutListener{
+
+        Scene mEnterScene;
+        Scene mExitScene;
+        Set<TransitionItem> mTransitionItemSet;
+        Set<Animator> mAnimatorCollection;
+
+        public CloseFirstAllLayoutListener(Scene enterScene, Scene exitScene,
+                Set<TransitionItem> transitionItemSet, Set<Animator> animatorCollection) {
+            mEnterScene = enterScene;
+            mExitScene = exitScene;
+            mTransitionItemSet = transitionItemSet;
+            mAnimatorCollection = animatorCollection;
+        }
+
+        @Override
+        public void onAllLayout() {
+            Set<TransitionItem> transitionItemSet = mTransitionItemSet;
+
+            ViewGroup exitSceneView = mExitScene.getSceneView();
+            AssertUtils.assertNotNull("Exit scene view must not be null.", exitSceneView);
+
+            GlobalLayoutSet globalLayoutSet = new GlobalLayoutSet();
+
+            for (TransitionItem item : transitionItemSet) {
+                final View enterView = item.enterView;
+                final View exitView = item.exitView;
+
+                int[] startloaction = new int[2];
+                ViewUtils.getLocationInAncestor(exitView, startloaction, mExitScene.getSceneView());
+                int[] endloaction = new int[2];
+                ViewUtils.getLocationInAncestor(enterView, endloaction, mEnterScene.getSceneView());
+                int startWidth = exitView.getWidth();
+                int startHeight = exitView.getHeight();
+                item.endWidth = enterView.getWidth();
+                item.endHeight = enterView.getHeight();
+                item.startWidth = startWidth;
+                item.startHeight = startHeight;
+                item.endloaction = endloaction;
+
+                Bitmap bmp = ViewUtils.getBitmapFromView(exitView);
+                View bmpView = new View(exitView.getContext());
+                item.bmp = bmp;
+                item.bmpView = bmpView;
+
+                bmpView.setBackgroundDrawable(new BitmapDrawable(bmp));
+                AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(
+                        startWidth, startHeight, startloaction[0], startloaction[1]);
+                exitSceneView.addView(bmpView, lp);
+
+                ViewUtils.setVisibility(bmpView, View.INVISIBLE);
+
+                globalLayoutSet.addListenerToObserver(bmpView.getViewTreeObserver());
+            }
+
+            globalLayoutSet.setOnAllLayoutListener(new CloseSecondAllLayoutListener(
+                    mEnterScene, mExitScene, transitionItemSet, mAnimatorCollection));
+        }
+    }
+
+    private class CloseSecondAllLayoutListener implements GlobalLayoutSet.OnAllLayoutListener{
+
+        Scene mEnterScene;
+        Scene mExitScene;
+        Set<TransitionItem> mTransitionItemSet;
+        Set<Animator> mAnimatorCollection;
+
+        public CloseSecondAllLayoutListener(Scene enterScene, Scene exitScene,
+                Set<TransitionItem> transitionItemSet, Set<Animator> animatorCollection) {
+            mEnterScene = enterScene;
+            mExitScene = exitScene;
+            mTransitionItemSet = transitionItemSet;
+            mAnimatorCollection = animatorCollection;
+        }
+
+        @Override
+        public void onAllLayout() {
+            Set<TransitionItem> transitionItemSet = mTransitionItemSet;
+            Set<Animator> animatorCollection = mAnimatorCollection;
+
+            for (TransitionItem item : transitionItemSet) {
+                View exitView = item.exitView;
+                View bmpView = item.bmpView;
+
+                ViewUtils.setVisibility(exitView, View.INVISIBLE);
+                ViewUtils.setVisibility(bmpView, View.VISIBLE);
+
+                bmpView.setPivotX(0);
+                bmpView.setPivotY(0);
+
+                PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", (float) item.endWidth / item.startWidth);
+                PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", (float) item.endHeight/ item.startHeight);
+                PropertyValuesHolder xPvh = PropertyValuesHolder.ofFloat("x", item.endloaction[0]);
+                PropertyValuesHolder yPvh = PropertyValuesHolder.ofFloat("y", item.endloaction[1]);
+                ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(bmpView, scaleXPvh, scaleYPvh, xPvh, yPvh);
+                anim.setDuration(ANIMATE_TIME);
+
+                animatorCollection.add(anim);
+            }
+
+            mAnimatorSet = new AnimatorSet();
+            mAnimatorSet.playTogether(animatorCollection);
+            mAnimatorSet.addListener(new SimpleAnimatorListener() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    ViewUtils.setVisibility(enterView, View.VISIBLE);
+                    dispatchCloseFinished(mEnterScene, mExitScene);
+                    for (TransitionItem item : mTransitionItemSet) {
+                        ViewUtils.setVisibility(item.enterView, View.VISIBLE);
+                        ViewUtils.setVisibility(item.exitView, View.VISIBLE);
+
+                        ViewGroup exitSceneView = mExitScene.getSceneView();
+                        AssertUtils.assertNotNull("Exit scene view must not be null.", exitSceneView);
+                        exitSceneView.removeView(item.bmpView);
+
+                        item.bmp.recycle();
+                    }
+                    mAnimatorSet = null;
                 }
             });
-
-            anim.start();
-
-            mAnimList.add(anim);
-            // TODO show other part progressively
+            mAnimatorSet.start();
         }
     }
 
     @Override
     public void endAnimation() {
-        mClearList = false;
-        for (ObjectAnimator oa : mAnimList) {
-            oa.end();
+        if (mAnimatorSet != null) {
+            mAnimatorSet.end();
         }
-        mClearList = true;
-        mAnimList.clear();
     }
 
     @Override
     public boolean isInAnimation() {
-        return !mAnimList.isEmpty();
+        return mAnimatorSet != null;
+    }
+
+    private class TransitionItem {
+        View enterView;
+        View exitView;
+        Bitmap bmp;
+        View bmpView;
+        int[] endloaction;
+        int startWidth;
+        int startHeight;
+        int endWidth;
+        int endHeight;
     }
 
     public static class ViewPair {

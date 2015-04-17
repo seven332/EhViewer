@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver;
+import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 
 import com.hippo.util.AssertUtils;
@@ -48,7 +49,7 @@ public abstract class Scene {
 
     private @Nullable Curtain mCurtain;
 
-    private @Nullable FrameLayout mSceneView;
+    private @Nullable AbsoluteLayout mSceneView;
 
     private int mBackgroundColor = 0xffeeeeee; // TODO Need a better to set background color
 
@@ -82,7 +83,7 @@ public abstract class Scene {
      *
      * @return Null or nonull
      */
-    public @Nullable View getSceneView() {
+    public @Nullable ViewGroup getSceneView() {
         return mSceneView;
     }
 
@@ -115,7 +116,7 @@ public abstract class Scene {
         onCreate(savedInstanceState);
 
         if (mSceneView == null) {
-            mSceneView = new FrameLayout(getStageActivity());
+            mSceneView = new AbsoluteLayout(getStageActivity());
             initBackground(mSceneView);
         }
 
@@ -181,7 +182,7 @@ public abstract class Scene {
 
     protected void setContentView(int resId) {
         StageActivity sa = getStageActivity();
-        mSceneView = new FrameLayout(sa);
+        mSceneView = new AbsoluteLayout(sa);
         initBackground(mSceneView);
         mSceneView.setBackgroundColor(mBackgroundColor);
         sa.getLayoutInflater().inflate(resId, mSceneView);
@@ -189,7 +190,7 @@ public abstract class Scene {
 
     protected void setContentView(View view) {
         StageActivity sa = getStageActivity();
-        mSceneView = new FrameLayout(sa);
+        mSceneView = new AbsoluteLayout(sa);
         initBackground(mSceneView);
         mSceneView.addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }

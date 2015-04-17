@@ -15,7 +15,7 @@
   -->
 <resources>
 
-    <string name="app_name" translatable="false">EhViewer</string>
+    <string name="app_name" translatable="false">EhViewer Test</string>
 
     <!-- Start activity -->
     <string name="tip_welcome" translatable="false">Do not be a\nsad pandroid</string>

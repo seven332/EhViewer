@@ -32,19 +32,20 @@
         android:orientation="vertical">
 
         <View
+            android:id="@+id/haha"
             android:layout_width="180dp"
             android:layout_height="180dp"
             android:background="@drawable/ic_sad"
             android:layout_gravity="center_horizontal"/>
 
         <TextView
+            android:id="@+id/bbbbbb"
             style="@style/TextAppearance.AppCompat.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:paddingTop="@dimen/keyline_margin"
-            android:paddingBottom="@dimen/keyline_margin"
-            tools:ignore="RtlHardcoded"/>
+            android:paddingBottom="@dimen/keyline_margin"/>
 
     </LinearLayout>
 

@@ -144,12 +144,6 @@ class SceneManager {
                     scene.setState(Scene.SCENE_STATE_DESTROY);
                     scene.detachFromeStage();
                 }
-
-                /*
-                // Switch stage bar
-                View stageBarContent = scene.onCreateStageBar();
-                getStageActivity().getStageBar().updateContent(stageBarContent);
-                */
             }
         } else {
             Log.e(TAG, "The scene is not in stage");

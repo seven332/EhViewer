@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
+// TODO Only load register drawable from itself
 /**
  * It is a wrap
  */
@@ -215,5 +216,4 @@ public class VectorResources extends Resources {
         }
         return drawable;
     }
-
 }

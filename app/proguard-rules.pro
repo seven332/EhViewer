@@ -33,3 +33,7 @@
    void set*(***);
    *** get*();
 }
+-keepclassmembers public class * extends com.hippo.scene.Scene {
+   void setBackgroundColor(int);
+   int getBackgroundColor();
+}

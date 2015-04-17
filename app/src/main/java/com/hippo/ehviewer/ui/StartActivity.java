@@ -57,7 +57,7 @@ public class StartActivity extends AbsActionBarActivity {
                     Intent intent = new Intent(StartActivity.this, ContentActivity.class);
                     startActivity(intent);
                 }
-            }, 3000);
+            }, 0);
         }
     }
 }
