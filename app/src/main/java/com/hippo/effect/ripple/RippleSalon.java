@@ -26,7 +26,6 @@ import android.view.View;
 import com.hippo.ehviewer.R;
 import com.hippo.widget.HotspotTouchHelper;
 
-
 public final class RippleSalon {
 
     private static final Drawable MASK = new ColorDrawable(Color.BLACK);

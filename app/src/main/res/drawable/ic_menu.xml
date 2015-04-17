@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ Copyright (C) 2015 Hippo Seven
   ~
@@ -30,10 +31,10 @@
     android:viewportHeight="24">
 
     <path
-        auto:pathData="@string/pd_sad"
+        auto:pathData="@string/pd_menu"
         auto:fillColor="#8A000000"
 
-        android:pathData="@string/pd_sad"
+        android:pathData="@string/pd_menu"
         android:fillColor="#8A000000"/>
 
 </vector>

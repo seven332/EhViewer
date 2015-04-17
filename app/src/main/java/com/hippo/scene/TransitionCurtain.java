@@ -20,7 +20,6 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -63,8 +62,8 @@ public class TransitionCurtain extends Curtain {
 
         // Handle background
         int bgColor = enter.getBackgroundColor();
-        enter.setBackgroundColor(Color.TRANSPARENT);
-
+        int startBgColor = bgColor & 0xffffff;
+        enter.setBackgroundColor(startBgColor);
         ObjectAnimator colorAnim = ObjectAnimator.ofInt(enter, "backgroundColor", bgColor);
         colorAnim.setEvaluator(ArgbEvaluator.getInstance());
         colorAnim.setDuration(ANIMATE_TIME);
@@ -235,7 +234,9 @@ public class TransitionCurtain extends Curtain {
         final Set<Animator> animatorCollection = new HashSet<>();
 
         // Handle background
-        ObjectAnimator colorAnim = ObjectAnimator.ofInt(exit, "backgroundColor", Color.TRANSPARENT);
+        int bgColor = enter.getBackgroundColor();
+        int endBgColor = bgColor & 0xffffff;
+        ObjectAnimator colorAnim = ObjectAnimator.ofInt(exit, "backgroundColor", endBgColor);
         colorAnim.setEvaluator(ArgbEvaluator.getInstance());
         colorAnim.setDuration(ANIMATE_TIME);
         animatorCollection.add(colorAnim);

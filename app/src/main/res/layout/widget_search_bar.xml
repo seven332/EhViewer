@@ -13,26 +13,33 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout
+<merge
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/stage_bar_height">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
+    <com.hippo.widget.SimpleImageView
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="left|center_vertical"
+        android:padding="14dp"
+        android:src="@drawable/ic_menu"
+        tools:ignore="RtlHardcoded"/>
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/vector_search"
-        android:contentDescription="@string/search"/>
+        android:layout_gravity="left|center_vertical"
+        android:paddingLeft="56dp"
+        android:text="@string/app_name"
+        android:textSize="@dimen/text_large"
+        tools:ignore="RtlHardcoded,RtlSymmetry"/>
 
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+    <com.hippo.widget.SimpleImageView
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="right|center_vertical"
+        android:padding="14dp"
+        android:src="@drawable/ic_android_debug_bridge"
+        tools:ignore="RtlHardcoded"/>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/vector_search"
-        android:contentDescription="@string/search"/>
-
-</LinearLayout>
+</merge>

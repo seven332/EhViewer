@@ -15,11 +15,13 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 
 import com.hippo.content.VectorContext;
 import com.hippo.ehviewer.R;
@@ -61,5 +63,14 @@ public class ContentActivity extends StageActivity {
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(VectorContext.wrapContext(newBase));
+    }
+
+    @SuppressLint("RtlHardcoded")
+    public void toggleDrawer() {
+        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT) || mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+            mDrawerLayout.closeDrawers();
+        } else {
+            mDrawerLayout.openDrawer(Gravity.LEFT);
+        }
     }
 }

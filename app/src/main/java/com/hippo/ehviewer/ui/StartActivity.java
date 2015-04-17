@@ -16,7 +16,6 @@
 package com.hippo.ehviewer.ui;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,7 +36,6 @@ public class StartActivity extends AbsActionBarActivity {
         setContentView(R.layout.activity_start);
 
         TextView text = (TextView) findViewById(R.id.text_welcome);
-        text.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/GloriaHallelujah.ttf"));
 
         try {
             SVG svg = new SVGBuilder().readFromResource(getResources(), R.raw.sad_pandroid).build();

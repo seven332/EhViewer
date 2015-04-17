@@ -23,10 +23,11 @@ import android.view.View;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.ehviewer.widget.ContentLayout;
+import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.scene.Scene;
 import com.hippo.scene.TransitionCurtain;
 
-public class GalleryListScene extends Scene {
+public class GalleryListScene extends Scene implements SearchBar.Helper{
 
     private final static int PAGE_INDEX_SEARCH = 0;
     private final static int PAGE_INDEX_LIST = 1;
@@ -35,6 +36,7 @@ public class GalleryListScene extends Scene {
     private ContentActivity mActivity;
     private Resources mResources;
 
+    private SearchBar mSearchBar;
     private ContentLayout mContentLayout;
 
     @Override
@@ -45,8 +47,10 @@ public class GalleryListScene extends Scene {
         mActivity = (ContentActivity) getStageActivity();
         mResources = mActivity.getResources();
 
+        mSearchBar = (SearchBar) findViewById(R.id.search_bar);
         mContentLayout = (ContentLayout) findViewById(R.id.content_layout);
 
+        mSearchBar.setHelper(this);
         mContentLayout.showText("无法连接网络");
 
         View view = getSceneView();
@@ -69,5 +73,10 @@ public class GalleryListScene extends Scene {
 
     protected void onGetFitPaddingBottom(int b) {
         // TODO
+    }
+
+    @Override
+    public void onClickMenu() {
+        mActivity.toggleDrawer();
     }
 }

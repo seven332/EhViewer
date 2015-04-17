@@ -15,6 +15,7 @@
   -->
 <android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -30,11 +31,12 @@
     <com.hippo.widget.DrawerFrameLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
+        android:layout_gravity="left"
         android:maxWidth="320dp"
         android:background="?attr/colorAccent"
         android:fitsSystemWindows="true"
-        android:clickable="true">
+        android:clickable="true"
+        tools:ignore="RtlHardcoded">
 
         <include
             layout="@layout/draw_left"/>
