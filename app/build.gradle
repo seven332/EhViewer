@@ -43,6 +43,7 @@ android {
         commandLine "$ndkDir\\$ndkBuilder",
                 '-C', file('src/main/jni').absolutePath,
                 'NDK_DEBUG=0',
+                'NDK_TOOLCHAIN_VERSION=clang3.5',
                 '-j4'
     }
 
