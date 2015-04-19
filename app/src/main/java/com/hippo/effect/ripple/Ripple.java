@@ -29,7 +29,6 @@ import android.os.Build;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
-import com.hippo.util.ApiHelper;
 import com.hippo.util.MathUtils;
 
 /**
@@ -257,7 +256,7 @@ class Ripple {
         cY.setInterpolator(LINEAR_INTERPOLATOR);
         cY.setStartDelay(RIPPLE_ENTER_DELAY);
 
-        if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             radius.setAutoCancel(true);
             cX.setAutoCancel(true);
             cY.setAutoCancel(true);
@@ -347,7 +346,7 @@ class Ripple {
         opacityAnim.setInterpolator(LINEAR_INTERPOLATOR);
         opacityAnim.addListener(mAnimationListener);
 
-        if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             radiusAnim.setAutoCancel(true);
             xAnim.setAutoCancel(true);
             yAnim.setAutoCancel(true);

@@ -28,7 +28,6 @@ import android.os.Build;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
-import com.hippo.util.ApiHelper;
 import com.hippo.util.MathUtils;
 
 /**
@@ -164,7 +163,7 @@ class RippleBackground {
         final ObjectAnimator outer = ObjectAnimator.ofFloat(this, "outerOpacity", 0, 1);
         outer.setDuration(outerDuration);
         outer.setInterpolator(LINEAR_INTERPOLATOR);
-        if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             outer.setAutoCancel(true);
         }
 
@@ -226,7 +225,7 @@ class RippleBackground {
                     "outerOpacity", inflectionOpacity / 255.0f);
             outerOpacityAnim.setDuration(inflectionDuration);
             outerOpacityAnim.setInterpolator(LINEAR_INTERPOLATOR);
-            if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 outerOpacityAnim.setAutoCancel(true);
             }
 
@@ -240,7 +239,7 @@ class RippleBackground {
                                 RippleBackground.this, "outerOpacity", 0);
                         outerFadeOutAnim.setDuration(outerDuration);
                         outerFadeOutAnim.setInterpolator(LINEAR_INTERPOLATOR);
-                        if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                             outerFadeOutAnim.setAutoCancel(true);
                         }
 
@@ -258,7 +257,7 @@ class RippleBackground {
         } else {
             outerOpacityAnim = ObjectAnimator.ofFloat(this, "outerOpacity", 0);
             outerOpacityAnim.setDuration(opacityDuration);
-            if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 outerOpacityAnim.setAutoCancel(true);
             }
         }

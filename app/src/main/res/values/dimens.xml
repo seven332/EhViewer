@@ -72,6 +72,16 @@
     <dimen name="fab_size">60dp</dimen>
     <dimen name="fab_size_small">44dp</dimen>
 
+    <!-- DrawerArrowDrawable -->
+    <dimen name="dad_drawable_size">24dp</dimen>
+    <dimen name="dad_bar_size">18dp</dimen>
+    <dimen name="dad_top_bottom_bar_arrow_size">11.31dp</dimen>
+    <dimen name="dad_thickness">2dp</dimen>
+    <dimen name="dad_gap_between_bars">3dp</dimen>
+    <dimen name="dad_middle_bar_arrow_size">16dp</dimen>
+
+
+
     <!-- Text size -->
     <dimen name="text_super_large">24sp</dimen>
     <dimen name="text_large">22sp</dimen>

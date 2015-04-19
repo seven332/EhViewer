@@ -31,6 +31,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         auto:color="?attr/colorAccent"
-        auto:drawable="@drawable/ic_fab_search"/>
+        auto:drawable="@drawable/ic_search_dark"/>
 
 </merge>

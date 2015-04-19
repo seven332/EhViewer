@@ -31,9 +31,9 @@
 
     <path
         auto:pathData="@string/pd_search"
-        auto:fillColor="@android:color/white"
+        auto:fillColor="@color/primary_drawable_dark"
 
         android:pathData="@string/pd_search"
-        android:fillColor="@android:color/white"/>
+        android:fillColor="@color/primary_drawable_dark"/>
 
 </vector>

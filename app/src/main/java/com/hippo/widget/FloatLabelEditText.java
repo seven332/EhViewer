@@ -33,7 +33,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
-import com.hippo.util.ApiHelper;
 
 // Get code from https://gist.github.com/jromero/233cfd8ef22a8b8c29ea
 /**
@@ -142,7 +141,7 @@ public class FloatLabelEditText extends FrameLayout {
                     "translationY", mLabel.getHeight(), 0f);
             translationYAnim.setDuration(ANIMATION_DURATION);
 
-            if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 alphaAnim.setAutoCancel(true);
                 translationYAnim.setAutoCancel(true);
             }
@@ -172,7 +171,7 @@ public class FloatLabelEditText extends FrameLayout {
                 }
             });
 
-            if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 alphaAnim.setAutoCancel(true);
                 translationYAnim.setAutoCancel(true);
             }

@@ -15,6 +15,9 @@
 
 package com.hippo.ehviewer;
 
+import android.content.Context;
+
+import com.hippo.content.VectorContext;
 import com.hippo.scene.SceneApplication;
 
 public class EhApplication extends SceneApplication {
@@ -22,5 +25,10 @@ public class EhApplication extends SceneApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(VectorContext.wrapContext(newBase));
     }
 }

@@ -26,8 +26,10 @@ import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.scene.Scene;
 import com.hippo.scene.TransitionCurtain;
+import com.hippo.util.Log;
 
-public class GalleryListScene extends Scene implements SearchBar.Helper{
+public
+class GalleryListScene extends Scene implements SearchBar.Helper{
 
     private final static int PAGE_INDEX_SEARCH = 0;
     private final static int PAGE_INDEX_LIST = 1;
@@ -78,5 +80,15 @@ public class GalleryListScene extends Scene implements SearchBar.Helper{
     @Override
     public void onClickMenu() {
         mActivity.toggleDrawer();
+    }
+
+    @Override
+    public void onClickAdvance() {
+
+    }
+
+    @Override
+    public void onApplySearch(String query) {
+        Log.d("onApplySearch " + query);
     }
 }

@@ -18,22 +18,28 @@
 
 # For bug report
 -keepattributes SourceFile,LineNumberTable
--keep class com.hippo.**
 
 # For ObjectAnimator
 -keepclassmembers class com.hippo.effect.ripple.Ripple {
-   void set*(***);
-   *** get*();
+    void set*(***);
+    *** get*();
 }
 -keepclassmembers class com.hippo.effect.ripple.RippleBackground {
-   void set*(***);
-   *** get*();
+    void set*(***);
+    *** get*();
 }
 -keepclassmembers public class * extends com.hippo.drawable.VectorDrawable.VGroup {
-   void set*(***);
-   *** get*();
+    void set*(***);
+    *** get*();
 }
 -keepclassmembers public class * extends com.hippo.scene.Scene {
-   void setBackgroundColor(int);
-   int getBackgroundColor();
+    void setBackgroundColor(int);
+    int getBackgroundColor();
 }
+-keepclassmembers class com.hippo.drawable.DrawerArrowDrawable {
+    void setProgress(float);
+    float getProgress();
+}
+
+#For VectorResources
+-keep class android.content.res.VectorResources {*;}

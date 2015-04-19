@@ -19,10 +19,11 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class SimpleImageView extends View {
+public class SimpleImageView extends View implements Drawable.Callback {
 
     private Drawable mDrawable;
 
@@ -42,8 +43,24 @@ public class SimpleImageView extends View {
 
     private void init(Context context, AttributeSet attrs) {
         final TypedArray a = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS);
-        mDrawable = a.getDrawable(0);
+        setDrawable(a.getDrawable(0));
         a.recycle();
+    }
+
+    public void setDrawable(Drawable drawable) {
+        if (mDrawable != null) {
+            mDrawable.setCallback(null);
+        }
+        mDrawable = drawable;
+        if (mDrawable != null) {
+            mDrawable.setCallback(this);
+        }
+        requestLayout();
+    }
+
+    @Override
+    public void invalidateDrawable(@NonNull Drawable who) {
+        invalidate();
     }
 
     @Override

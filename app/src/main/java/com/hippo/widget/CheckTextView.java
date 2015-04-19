@@ -30,7 +30,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-import com.hippo.util.ApiHelper;
 import com.hippo.util.MathUtils;
 
 public class CheckTextView extends TextView implements OnClickListener, Hotspotable {
@@ -131,7 +130,7 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
         }
         radiusAnim.setDuration(ANIMATION_DURATION); // TODO decide duration according to mMaxRadius
         radiusAnim.addListener(mAnimatorListener);
-        if (ApiHelper.HAS_AUTO_CANCEL_ON_ANIMATION) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             radiusAnim.setAutoCancel(true);
         }
         radiusAnim.start();
