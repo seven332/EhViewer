@@ -627,6 +627,7 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnHead
 
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            /*
             switch (newState) {
             case RecyclerView.SCROLL_STATE_DRAGGING:
                 ImageCache.getImageCache(mContext).setPauseDiskCache(true);
@@ -635,6 +636,7 @@ public class GalleryListView extends FrameLayout implements RefreshLayout.OnHead
                 ImageCache.getImageCache(mContext).setPauseDiskCache(false);
                 break;
             }
+            */
         }
 
         @Override
