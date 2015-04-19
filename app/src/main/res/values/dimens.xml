@@ -80,7 +80,9 @@
     <dimen name="dad_gap_between_bars">3dp</dimen>
     <dimen name="dad_middle_bar_arrow_size">16dp</dimen>
 
-
+    <!-- AddDeleteDrawable -->
+    <dimen name="add_size">20dp</dimen>
+    <dimen name="add_thickness">2dp</dimen>
 
     <!-- Text size -->
     <dimen name="text_super_large">24sp</dimen>

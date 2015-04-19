@@ -83,8 +83,8 @@ class GalleryListScene extends Scene implements SearchBar.Helper{
     }
 
     @Override
-    public void onClickAdvance() {
-
+    public void onClickAction() {
+        Log.d("onClickAction");
     }
 
     @Override

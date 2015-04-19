@@ -40,6 +40,10 @@
     void setProgress(float);
     float getProgress();
 }
+-keepclassmembers class com.hippo.drawable.AddDeleteDrawable {
+    void setProgress(float);
+    float getProgress();
+}
 
 #For VectorResources
 -keep class android.content.res.VectorResources {*;}

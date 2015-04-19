@@ -29,6 +29,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.ehviewer.R;
 import com.hippo.util.UiUtils;
@@ -42,11 +43,11 @@ public class SearchBar extends CardView implements View.OnClickListener,
 
     private SimpleImageView mMenuButton;
     private TextView mLogoTextView;
-    private View mAdvanceButton;
+    private SimpleImageView mActionButton;
     private SearchEditText mEditText;
-    private View mSearchButton;
 
     private DrawerArrowDrawable mDrawerArrowDrawable;
+    private AddDeleteDrawable mAddDeleteDrawable;
 
     private Helper mHelper;
 
@@ -75,19 +76,19 @@ public class SearchBar extends CardView implements View.OnClickListener,
         LayoutInflater.from(context).inflate(R.layout.widget_search_bar, this);
         mMenuButton = (SimpleImageView) findViewById(R.id.menu);
         mLogoTextView = (TextView) findViewById(R.id.logo);
-        mAdvanceButton = findViewById(R.id.advance_search);
+        mActionButton = (SimpleImageView) findViewById(R.id.action);
         mEditText = (SearchEditText) findViewById(R.id.search_edit_text);
-        mSearchButton = findViewById(R.id.search_action);
 
         mDrawerArrowDrawable = new DrawerArrowDrawable(getContext());
+        mAddDeleteDrawable = new AddDeleteDrawable(getContext());
 
         mMenuButton.setDrawable(mDrawerArrowDrawable);
         mMenuButton.setOnClickListener(this);
         mLogoTextView.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Slabo.ttf"));
-        mAdvanceButton.setOnClickListener(this);
+        mActionButton.setDrawable(mAddDeleteDrawable);
+        mActionButton.setOnClickListener(this);
         mEditText.setSearchBar(this);
         mEditText.setOnEditorActionListener(this);
-        mSearchButton.setOnClickListener(this);
     }
 
     public void setHelper(Helper helper) {
@@ -104,12 +105,12 @@ public class SearchBar extends CardView implements View.OnClickListener,
             } else {
                 mHelper.onClickMenu();
             }
-        } else if (v == mAdvanceButton) {
-            mHelper.onClickAdvance();
-        } else if (v == mSearchButton) {
-            String query = mEditText.getText().toString();
-            if (!TextUtils.isEmpty(query)) {
-                mHelper.onApplySearch(query);
+        } else if (v == mActionButton) {
+            if (mInEditMode) {
+                // TODO when set prefix
+                mEditText.setText("");
+            } else {
+                mHelper.onClickAction();
             }
         }
     }
@@ -133,20 +134,22 @@ public class SearchBar extends CardView implements View.OnClickListener,
             mInEditMode = true;
             setClickable(false);
             ViewUtils.setVisibility(mLogoTextView, View.GONE);
-            ViewUtils.setVisibility(mAdvanceButton, View.GONE);
             ViewUtils.setVisibility(mEditText, View.VISIBLE);
-            ViewUtils.setVisibility(mSearchButton, View.VISIBLE);
             mEditText.requestFocus();
             // show ime
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             // start animator
-            ObjectAnimator oa = ObjectAnimator.ofFloat(mDrawerArrowDrawable, "progress", 0f, 1f);
-            oa.setDuration(ANIMATION_TIME);
+            ObjectAnimator oa1 = ObjectAnimator.ofFloat(mDrawerArrowDrawable, "progress", 0f, 1f);
+            oa1.setDuration(ANIMATION_TIME);
+            ObjectAnimator oa2 = ObjectAnimator.ofFloat(mAddDeleteDrawable, "progress", 0f, 1f);
+            oa2.setDuration(ANIMATION_TIME);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                oa.setAutoCancel(true);
+                oa1.setAutoCancel(true);
+                oa2.setAutoCancel(true);
             }
-            oa.start();
+            oa1.start();
+            oa2.start();
         }
     }
 
@@ -155,25 +158,27 @@ public class SearchBar extends CardView implements View.OnClickListener,
             mInEditMode = false;
             setOnClickListener(this);
             ViewUtils.setVisibility(mLogoTextView, View.VISIBLE);
-            ViewUtils.setVisibility(mAdvanceButton, View.VISIBLE);
             ViewUtils.setVisibility(mEditText, View.GONE);
-            ViewUtils.setVisibility(mSearchButton, View.GONE);
             // hide ime
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(this.getWindowToken(), 0);
             // start animator
-            ObjectAnimator oa = ObjectAnimator.ofFloat(mDrawerArrowDrawable, "progress", 1f, 0f);
-            oa.setDuration(ANIMATION_TIME);
+            ObjectAnimator oa1 = ObjectAnimator.ofFloat(mDrawerArrowDrawable, "progress", 1f, 0f);
+            oa1.setDuration(ANIMATION_TIME);
+            ObjectAnimator oa2 = ObjectAnimator.ofFloat(mAddDeleteDrawable, "progress", 1f, 0f);
+            oa2.setDuration(ANIMATION_TIME);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                oa.setAutoCancel(true);
+                oa1.setAutoCancel(true);
+                oa2.setAutoCancel(true);
             }
-            oa.start();
+            oa1.start();
+            oa2.start();
         }
     }
 
     public interface Helper {
         void onClickMenu();
-        void onClickAdvance();
+        void onClickAction();
         void onApplySearch(String query);
     }
 }

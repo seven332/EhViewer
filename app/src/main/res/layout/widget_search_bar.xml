@@ -45,7 +45,7 @@
                 tools:ignore="RtlHardcoded,RtlSymmetry"/>
 
             <com.hippo.widget.SimpleImageView
-                android:id="@+id/advance_search"
+                android:id="@+id/action"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:layout_gravity="right|center_vertical"
@@ -65,16 +65,6 @@
                 android:visibility="gone"
                 android:imeOptions="actionSearch"
                 android:inputType="textAutoComplete"/>
-
-            <com.hippo.widget.SimpleImageView
-                android:id="@+id/search_action"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_gravity="right|center_vertical"
-                android:padding="14dp"
-                android:src="@drawable/ic_search"
-                android:visibility="gone"
-                tools:ignore="RtlHardcoded"/>
 
         </FrameLayout>
 
