@@ -694,7 +694,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
                 mFavoriteState |= FAVORITE_ACCOUNT;
             }
 
-            if (galleryDetail.torrents.length > 0) {
+            if (galleryDetail.torrents != null && galleryDetail.torrents.length > 0) {
                 mTorrent.setVisibility(View.VISIBLE);
             }
 

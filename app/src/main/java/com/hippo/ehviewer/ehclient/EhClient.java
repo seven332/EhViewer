@@ -693,11 +693,9 @@ public class EhClient {
                             | DetailParser.PREVIEW_INFO | DetailParser.PREVIEW
                             | DetailParser.COMMENT);
                     if (result == DetailParser.OFFENSIVE) {
-                        md.firstPage = "offensive";
-                        responder = new GetGDetaiResponder(listener, md);
+                        responder = new GetGDetaiResponder(listener, "offensive");
                     } else if (result == DetailParser.PINING) {
-                        md.firstPage = "pining";
-                        responder = new GetGDetaiResponder(listener, md);
+                        responder = new GetGDetaiResponder(listener, "pining");
                     } else if ((result & (DetailParser.DETAIL | DetailParser.PREVIEW_INFO |
                             DetailParser.PREVIEW)) == (DetailParser.DETAIL | DetailParser.PREVIEW_INFO |
                             DetailParser.PREVIEW)) {
