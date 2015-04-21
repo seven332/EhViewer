@@ -162,10 +162,15 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
     }
 
     private boolean handleException(Throwable ex) {
-        if (ex == null)
+        if (ex == null) {
             return false;
-        Crash.saveCrashInfo2File(ex);
-        return true;
+        }
+        try {
+            Crash.saveCrashInfo2File(ex);
+            return true;
+        } catch (Throwable tr) {
+            return false;
+        }
     }
 
     public Typeface getFaceTypeface() {
