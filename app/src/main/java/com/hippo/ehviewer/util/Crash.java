@@ -26,6 +26,7 @@ import android.os.Build;
 import android.os.Environment;
 
 import com.hippo.ehviewer.ehclient.EhClient;
+import com.hippo.ehviewer.ui.GalleryDetailActivity;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -155,6 +156,7 @@ public class Crash {
         // Runtime
         sb.append("======== Runtime ========\n");
         sb.append("Source=").append(EhClient.getUrlHeader()).append("\n");
+        sb.append("Gallery=").append(GalleryDetailActivity.getCurrentGallery()).append("\n");
         sb.append("\n");
 
         // Device info

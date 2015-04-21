@@ -130,6 +130,9 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
     private static final int FAVORITE_LOCAL = 0x1;
     private static final int FAVORITE_ACCOUNT = 0x2;
 
+    private static int sGid;
+    private static String sToken;
+
     private AppContext mAppContext;
     private Resources mResources;
     private EhClient mClient;
@@ -230,7 +233,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
 
     private GalleryInfo handleIntent(Intent intent) {
         GalleryInfo gi = null;
-        if (intent.getAction() == "android.intent.action.VIEW") {
+        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             // Start from url
             DetailUrlParser parser = new DetailUrlParser();
             if (parser.parser(intent.getData().getPath())) {
@@ -249,7 +252,7 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
             }
         } else {
             //
-            gi = (GalleryInfo)(intent.getParcelableExtra(KEY_G_INFO));
+            gi = intent.getParcelableExtra(KEY_G_INFO);
             if (gi != null) {
                 // Add history
                 Data.getInstance().addHistory(gi, Data.BROWSE);
@@ -291,10 +294,17 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         }
     }*/
 
+    public static String getCurrentGallery() {
+        return sGid + "/" + sToken;
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mWindowsAnimate.free();
+
+        sGid = 0;
+        sToken = null;
     }
 
     @Override
@@ -305,6 +315,9 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
         if (mGalleryInfo == null)
             // If no GalleryInfo pass, just finish
             finish();
+
+        sGid = mGalleryInfo.gid;
+        sToken = mGalleryInfo.token;
 
         setContentView(R.layout.gallery_detail);
         setTitle(String.valueOf(mGalleryInfo.gid));

@@ -1,5 +1,6 @@
 package com.hippo.ehviewer.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -11,10 +12,11 @@ public final class PackageUtils {
 
     public static String getSignature(Context context, String packageName) {
         try {
+            @SuppressLint("PackageManagerGetSignatures")
             PackageInfo pi = context.getPackageManager().getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
             Signature[] ss = pi.signatures;
             if (ss != null && ss.length >= 1) {
-                return Utils.computeSHA1(ss[1].toByteArray());
+                return Utils.computeSHA1(ss[0].toByteArray());
             } else {
                 Log.e(TAG, "Can't find signature in package " + packageName);
             }
