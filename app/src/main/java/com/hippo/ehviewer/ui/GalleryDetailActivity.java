@@ -89,6 +89,7 @@ import com.hippo.ehviewer.util.AppConfig;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Ui;
+import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.AutoWrapLayout;
 import com.hippo.ehviewer.widget.FitWindowView;
@@ -1175,11 +1176,11 @@ public class GalleryDetailActivity extends AbsTranslucentActivity
                             }
 
                             final String url = galleryDetail.torrents[position].first;
+                            String name = galleryDetail.torrents[position].second;
                             Downloader d = new Downloader(
                                     GalleryDetailActivity.this,
                                     url,
-                                    dir,
-                                    "a.torrent"); // Torrent will be updated
+                                    dir, Utils.standardizeFilename(name + ".torrent")); // Torrent will be updated
                             d.startDownload();
                         }
                     });
