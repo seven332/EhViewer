@@ -16,23 +16,6 @@
 
 package com.hippo.ehviewer.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Method;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -44,6 +27,25 @@ import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
 import com.hippo.ehviewer.AppHandler;
+
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public final class Utils {
     @SuppressWarnings("unused")
@@ -758,6 +760,36 @@ public final class Utils {
         } else {
             container[0] = filename.substring(0, index);
             container[1] = filename.substring(index + 1);
+        }
+    }
+
+    /**
+     * @return looks like A1:43:6B:34... or null
+     */
+    public static String computeSHA1(final byte[] certRaw) {
+        StringBuilder sb = new StringBuilder(59);
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("SHA1");
+            byte[] sha1 = md.digest(certRaw);
+            int length = sha1.length;
+            for (int i = 0; i  < length; i++) {
+                if (i != 0) {
+                    sb.append(':');
+                }
+                byte b = sha1[i];
+                String appendStr = Integer.toString(b & 0xff, 16);
+                if (appendStr.length() == 1) {
+                    sb.append(0);
+                }
+                sb.append(appendStr);
+            }
+
+            return sb.toString().toUpperCase();
+        }
+        catch (NoSuchAlgorithmException ex) {
+            Log.e(TAG, "Can't final Algorithm SHA1", ex);
+            return null;
         }
     }
 }

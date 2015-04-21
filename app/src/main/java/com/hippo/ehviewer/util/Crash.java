@@ -25,6 +25,8 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Environment;
 
+import com.hippo.ehviewer.ehclient.EhClient;
+
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -129,7 +131,6 @@ public class Crash {
     }
 
     private static void collectDeviceInfo(StringBuffer sb) {
-        boolean getPackageInfo = false;
         try {
             PackageManager pm = mContext.getPackageManager();
             PackageInfo pi = pm.getPackageInfo(mContext.getPackageName(), PackageManager.GET_ACTIVITIES);
@@ -140,19 +141,23 @@ public class Crash {
                 sb.append("PackageName=").append(pi.packageName).append("\n");
                 sb.append("VersionName=").append(versionName).append("\n");
                 sb.append("VersionCode=").append(versionCode).append("\n");
+                sb.append("Signature=").append(PackageUtils.getSignature(mContext, pi.packageName)).append("\n");
                 sb.append("\n");
-
-                getPackageInfo = true;
             }
         } catch (NameNotFoundException e) {
             Log.e(TAG, "an error occured when collect package info", e);
-        }
-        if (!getPackageInfo) {
+
             sb.append("======== PackageInfo ========\n");
             sb.append("Can't get package information\n");
             sb.append("\n");
         }
 
+        // Runtime
+        sb.append("======== Runtime ========\n");
+        sb.append("Source=").append(EhClient.getUrlHeader()).append("\n");
+        sb.append("\n");
+
+        // Device info
         sb.append("======== DeviceInfo ========\n");
         sb.append("BOARD=").append(Build.BOARD).append("\n");
         sb.append("BOOTLOADER=").append(Build.BOOTLOADER).append("\n");
