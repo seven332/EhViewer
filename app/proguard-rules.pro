@@ -44,6 +44,10 @@
     void setProgress(float);
     float getProgress();
 }
+-keepclassmembers class com.hippo.ehviewer.widget.SearchBar {
+    void setProgress(float);
+    float getProgress();
+}
 
 #For VectorResources
--keep class android.content.res.VectorResources {*;}
+-keepclassmembers class android.content.res.VectorResources {*;}
