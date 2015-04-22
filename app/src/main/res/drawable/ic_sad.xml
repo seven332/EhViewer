@@ -31,9 +31,9 @@
 
     <path
         auto:pathData="@string/pd_sad"
-        auto:fillColor="#8A000000"
+        auto:fillColor="@color/primary_drawable_light"
 
         android:pathData="@string/pd_sad"
-        android:fillColor="#8A000000"/>
+        android:fillColor="@color/primary_drawable_light"/>
 
 </vector>

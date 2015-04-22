@@ -33,9 +33,9 @@
 
     <path
         auto:pathData="@string/pd_android_debug_bridge"
-        auto:fillColor="#8A000000"
+        auto:fillColor="@color/primary_drawable_light"
 
         android:pathData="@string/pd_android_debug_bridge"
-        android:fillColor="#8A000000"/>
+        android:fillColor="@color/primary_drawable_light"/>
 
 </vector>
