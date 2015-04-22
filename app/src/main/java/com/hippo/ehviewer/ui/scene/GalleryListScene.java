@@ -24,6 +24,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.SearchBar;
+import com.hippo.ehviewer.widget.SearchDatabase;
 import com.hippo.scene.Scene;
 import com.hippo.scene.TransitionCurtain;
 import com.hippo.util.Log;
@@ -37,6 +38,7 @@ class GalleryListScene extends Scene implements SearchBar.Helper{
 
     private ContentActivity mActivity;
     private Resources mResources;
+    private SearchDatabase mSearchDatabase;
 
     private SearchBar mSearchBar;
     private ContentLayout mContentLayout;
@@ -48,6 +50,7 @@ class GalleryListScene extends Scene implements SearchBar.Helper{
 
         mActivity = (ContentActivity) getStageActivity();
         mResources = mActivity.getResources();
+        mSearchDatabase = SearchDatabase.getInstance(getStageActivity());
 
         mSearchBar = (SearchBar) findViewById(R.id.search_bar);
         mContentLayout = (ContentLayout) findViewById(R.id.content_layout);
@@ -73,6 +76,7 @@ class GalleryListScene extends Scene implements SearchBar.Helper{
         }, 1000);
     }
 
+    @Override
     protected void onGetFitPaddingBottom(int b) {
         // TODO
     }
@@ -90,5 +94,7 @@ class GalleryListScene extends Scene implements SearchBar.Helper{
     @Override
     public void onApplySearch(String query) {
         Log.d("onApplySearch " + query);
+        mSearchDatabase.addQuery(query);
+        mSearchBar.setInNormalMode();
     }
 }

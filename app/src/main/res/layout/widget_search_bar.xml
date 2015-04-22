@@ -27,7 +27,7 @@
             android:layout_height="56dp">
 
             <com.hippo.widget.SimpleImageView
-                android:id="@+id/menu"
+                android:id="@+id/search_menu"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:layout_gravity="left|center_vertical"
@@ -35,17 +35,18 @@
                 tools:ignore="RtlHardcoded"/>
 
             <TextView
-                android:id="@+id/logo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|center_vertical"
+                android:id="@+id/search_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="56dp"
+                android:layout_marginRight="56dp"
+                android:gravity="center_vertical"
                 android:text="@string/app_name"
                 android:textSize="@dimen/text_large"
                 tools:ignore="RtlHardcoded,RtlSymmetry"/>
 
             <com.hippo.widget.SimpleImageView
-                android:id="@+id/action"
+                android:id="@+id/search_action"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:layout_gravity="right|center_vertical"

@@ -21,11 +21,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Path;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -49,7 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchBar extends CardView implements View.OnClickListener,
-        TextView.OnEditorActionListener {
+        TextView.OnEditorActionListener, TextWatcher {
 
     private static final long ANIMATION_TIME = 300;
 
@@ -60,7 +61,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
     private float mProgress;
 
     private SimpleImageView mMenuButton;
-    private TextView mLogoTextView;
+    private TextView mTitleTextView;
     private SimpleImageView mActionButton;
     private SearchEditText mEditText;
     private ListView mList;
@@ -68,6 +69,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
     private DrawerArrowDrawable mDrawerArrowDrawable;
     private AddDeleteDrawable mAddDeleteDrawable;
 
+    private SearchDatabase mSearchDatabase;
     private List<String> mSuggestionList;
     private ArrayAdapter mSuggestionAdapter;
 
@@ -93,15 +95,17 @@ public class SearchBar extends CardView implements View.OnClickListener,
     }
 
     private void init(Context context) {
+        mSearchDatabase = SearchDatabase.getInstance(getContext());
+
         setRadius(UiUtils.dp2pix(context, 2));
         setCardElevation(UiUtils.dp2pix(context, 2));
         setCardBackgroundColor(Color.WHITE);
         setOnClickListener(this);
 
         LayoutInflater.from(context).inflate(R.layout.widget_search_bar, this);
-        mMenuButton = (SimpleImageView) findViewById(R.id.menu);
-        mLogoTextView = (TextView) findViewById(R.id.logo);
-        mActionButton = (SimpleImageView) findViewById(R.id.action);
+        mMenuButton = (SimpleImageView) findViewById(R.id.search_menu);
+        mTitleTextView = (TextView) findViewById(R.id.search_title);
+        mActionButton = (SimpleImageView) findViewById(R.id.search_action);
         mEditText = (SearchEditText) findViewById(R.id.search_edit_text);
         mList = (ListView) findViewById(R.id.search_bar_list);
 
@@ -110,20 +114,26 @@ public class SearchBar extends CardView implements View.OnClickListener,
 
         mMenuButton.setDrawable(mDrawerArrowDrawable);
         mMenuButton.setOnClickListener(this);
-        mLogoTextView.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Slabo.ttf"));
         mActionButton.setDrawable(mAddDeleteDrawable);
         mActionButton.setOnClickListener(this);
         mEditText.setSearchBar(this);
         mEditText.setOnEditorActionListener(this);
+        mEditText.addTextChangedListener(this);
 
         mSuggestionList = new ArrayList<>();
-        mSuggestionList.add("aaaaaaaaaaaaaaaaaaaaa");
-        mSuggestionList.add("dfsgfewrewfes");
-        mSuggestionList.add("dehyklrthrhbdsrf");
-        mSuggestionList.add("粉色热污染份额为别人的");
         mSuggestionAdapter = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_list_item_1, mSuggestionList);
         mList.setAdapter(mSuggestionAdapter);
+    }
+
+    private void updateSuggestions() {
+        String prefix = mEditText.getText().toString();
+        String[] suggestions = mSearchDatabase.getSuggestions(prefix);
+        mSuggestionList.clear();
+        for (String suggestion : suggestions) {
+            mSuggestionList.add(suggestion);
+        }
+        mSuggestionAdapter.notifyDataSetChanged();
     }
 
     public void setHelper(Helper helper) {
@@ -142,7 +152,6 @@ public class SearchBar extends CardView implements View.OnClickListener,
             }
         } else if (v == mActionButton) {
             if (mInEditMode) {
-                // TODO when set prefix
                 mEditText.setText("");
             } else {
                 mHelper.onClickAction();
@@ -168,12 +177,14 @@ public class SearchBar extends CardView implements View.OnClickListener,
         if (!mInEditMode) {
             mInEditMode = true;
             setClickable(false);
-            ViewUtils.setVisibility(mLogoTextView, View.GONE);
+            ViewUtils.setVisibility(mTitleTextView, View.GONE);
             ViewUtils.setVisibility(mEditText, View.VISIBLE);
             mEditText.requestFocus();
             // show ime
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            // update suggestion
+            updateSuggestions();
             // start animator
             ObjectAnimator oa1 = ObjectAnimator.ofFloat(mDrawerArrowDrawable, "progress", 0f, 1f);
             oa1.setDuration(ANIMATION_TIME);
@@ -208,7 +219,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
         if (mInEditMode) {
             mInEditMode = false;
             setOnClickListener(this);
-            ViewUtils.setVisibility(mLogoTextView, View.VISIBLE);
+            ViewUtils.setVisibility(mTitleTextView, View.VISIBLE);
             ViewUtils.setVisibility(mEditText, View.GONE);
             // hide ime
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -241,6 +252,10 @@ public class SearchBar extends CardView implements View.OnClickListener,
             oa2.start();
             oa3.start();
         }
+    }
+
+    public void setTitle(String title) {
+        mTitleTextView.setText(title);
     }
 
     @Override
@@ -280,6 +295,21 @@ public class SearchBar extends CardView implements View.OnClickListener,
         } else {
             super.draw(canvas);
         }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        // Empty
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        // Empty
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        updateSuggestions();
     }
 
     public interface Helper {
