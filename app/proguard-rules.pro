@@ -50,4 +50,4 @@
 }
 
 #For VectorResources
--keepclassmembers class android.content.res.VectorResources {*;}
+-keep class android.content.res.VectorResources {*;}
