@@ -32,8 +32,6 @@ class SceneManager {
 
     private Scene mLegacyScene;
 
-    private int[] mTemp = new int[2];
-
     // Should only be called by SceneApplication
     SceneManager() {
     }

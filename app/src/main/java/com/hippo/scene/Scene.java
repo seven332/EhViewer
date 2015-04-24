@@ -166,6 +166,13 @@ public abstract class Scene {
         }
     }
 
+    /**
+     * return true if it is close or about to close
+     */
+    public boolean isFinishing() {
+        return mState == SCENE_STATE_CLOSE || mState == SCENE_STATE_DESTROY;
+    }
+
     public void setBackgroundColor(int bgColor) {
         if (mBackgroundColor != bgColor) {
             mBackgroundColor = bgColor;

@@ -21,6 +21,11 @@
     <com.hippo.ehviewer.widget.ContentLayout
         android:id="@+id/content_layout"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <com.hippo.ehviewer.widget.SearchLayout
+        android:id="@+id/search_layout"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"/>
 
@@ -29,7 +34,10 @@
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_marginLeft="@dimen/search_bar_padding_horizontal"
+        android:layout_marginRight="@dimen/search_bar_padding_horizontal"
+        android:layout_marginTop="@dimen/search_bar_padding_vertical"
+        android:layout_marginBottom="@dimen/search_bar_padding_vertical"
         auto:forceNoElevation="true"/>
 
 </FrameLayout>

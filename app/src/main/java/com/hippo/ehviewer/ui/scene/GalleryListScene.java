@@ -18,19 +18,23 @@ package com.hippo.ehviewer.ui.scene;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
+import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchDatabase;
+import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.scene.Scene;
-import com.hippo.scene.TransitionCurtain;
 import com.hippo.util.Log;
+import com.hippo.util.ViewUtils;
 
 public
-class GalleryListScene extends Scene implements SearchBar.Helper{
+class GalleryListScene extends Scene implements SearchBar.Helper,
+        ViewTreeObserver.OnGlobalLayoutListener {
 
     private final static int PAGE_INDEX_SEARCH = 0;
     private final static int PAGE_INDEX_LIST = 1;
@@ -42,6 +46,9 @@ class GalleryListScene extends Scene implements SearchBar.Helper{
 
     private SearchBar mSearchBar;
     private ContentLayout mContentLayout;
+    private SearchLayout mSearchLayout;
+
+    private ViewTransition mViewTransition;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,31 +61,32 @@ class GalleryListScene extends Scene implements SearchBar.Helper{
 
         mSearchBar = (SearchBar) findViewById(R.id.search_bar);
         mContentLayout = (ContentLayout) findViewById(R.id.content_layout);
+        mSearchLayout = (SearchLayout) findViewById(R.id.search_layout);
 
+        mViewTransition = new ViewTransition(mContentLayout, mSearchLayout);
+
+        // Search Bar
         mSearchBar.setHelper(this);
-        mContentLayout.showText("无法连接网络");
+        ViewUtils.measureView(mSearchBar, ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        View view = getSceneView();
-        assert view != null;
-        view.postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        // Search Layout
+        mSearchLayout.setFitPaddingTop(mSearchBar.getMeasuredHeight() +
+                (int) (2 * mResources.getDimension(R.dimen.search_bar_padding_vertical)));
 
-                TransitionCurtain tc = new TransitionCurtain(
-                        new TransitionCurtain.ViewPair[]{
-                                new TransitionCurtain.ViewPair(R.id.haha, R.id.haha),
-                                new TransitionCurtain.ViewPair(R.id.bbbbbb, R.id.bbbbbb)
-                        }
-                );
 
-                startScene(TestScene.class, null, tc);
-            }
-        }, 1000);
+        // TEST
+        mContentLayout.showText("四姑拉斯基");
     }
 
     @Override
     protected void onGetFitPaddingBottom(int b) {
         // TODO
+    }
+
+    @Override
+    public void onGlobalLayout() {
+
     }
 
     @Override
@@ -88,7 +96,7 @@ class GalleryListScene extends Scene implements SearchBar.Helper{
 
     @Override
     public void onClickAction() {
-        Log.d("onClickAction");
+        mViewTransition.showSecondView();
     }
 
     @Override

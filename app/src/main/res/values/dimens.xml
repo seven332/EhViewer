@@ -15,8 +15,9 @@
   -->
 <resources>
 
-    <!-- Stage Bar -->
-    <dimen name="stage_bar_height">56dp</dimen>
+    <!-- Search Bar -->
+    <dimen name="search_bar_padding_horizontal">16dp</dimen>
+    <dimen name="search_bar_padding_vertical">16dp</dimen>
 
     <!-- Search Content -->
     <dimen name="content_padding_start">0dp</dimen>

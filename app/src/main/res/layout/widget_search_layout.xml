@@ -14,6 +14,7 @@
   ~ limitations under the License.
   -->
 <merge
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <com.hippo.widget.recyclerview.EasyRecyclerView
@@ -23,7 +24,8 @@
         android:paddingRight="@dimen/content_padding_end"
         android:paddingTop="@dimen/content_padding_top"
         android:paddingBottom="@dimen/content_padding_bottom"
-        android:clipToPadding="false"/>
+        android:clipToPadding="false"
+        tools:ignore="RtlHardcoded"/>
 
     <com.hippo.widget.FloatingActionButton
         xmlns:auto="http://schemas.android.com/apk/res-auto"
