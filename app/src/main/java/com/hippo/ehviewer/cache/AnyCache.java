@@ -464,6 +464,7 @@ public abstract class AnyCache<V> {
         public boolean put(String key, E value) {
             DiskLruCache.Editor editor = null;
             OutputStream os = null;
+            boolean completeEdit = false;
             try {
                 editor = mDiskLruCache.edit(key);
                 if (editor == null) {
@@ -476,17 +477,19 @@ public abstract class AnyCache<V> {
                     final BufferedOutputStream buffOut =
                             new BufferedOutputStream(os, IO_BUFFER_SIZE);
                     boolean result = mParent.write(buffOut, value);
+                    completeEdit = true;
                     editor.commit();
                     return result;
                 } else {
                     // Can't get OutputStream
+                    completeEdit = true;
                     editor.abort();
                     return false;
                 }
             } catch (IOException e) {
                 Util.closeQuietly(os);
                 try {
-                    if (editor != null) {
+                    if (!completeEdit && editor != null) {
                         editor.abort();
                     }
                 } catch (IOException ignored) {
