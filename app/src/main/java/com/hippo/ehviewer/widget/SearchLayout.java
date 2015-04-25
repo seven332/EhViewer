@@ -147,8 +147,15 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
 
         mFab.setOnClickListener(this);
         mFabMarginBottomOrigin = mResources.getDimensionPixelSize(R.dimen.content_fab_margin_bottom);
-        mSearchPaddingTopOrigin = 0;
-        mSearchPaddingBottomOrigin = mResources.getDimensionPixelSize(R.dimen.content_padding_bottom);
+
+        // Search Container
+        mSearchPaddingTopOrigin = mSearchContainer.getPaddingTop();
+        mSearchPaddingBottomOrigin = mSearchContainer.getPaddingBottom() +
+                mResources.getDimensionPixelSize(R.dimen.content_padding_bottom);
+        mSearchContainer.setPadding( mSearchContainer.getPaddingLeft(),
+                mSearchContainer.getPaddingTop(),
+                mSearchContainer.getPaddingRight(),
+                mSearchPaddingBottomOrigin);
     }
 
     public void setFitPaddingTop(int fitPaddingTop) {
@@ -160,21 +167,25 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         );
     }
 
-    public void setFitPaddingBottom(int paddingBottom) {
+    public void setFitPaddingBottom(int fitPaddingBottom) {
         mSearchContainer.setPadding(
                 mSearchContainer.getPaddingLeft(),
                 mSearchContainer.getPaddingTop(),
                 mSearchContainer.getPaddingRight(),
-                mSearchPaddingBottomOrigin + paddingBottom
+                mSearchPaddingBottomOrigin + fitPaddingBottom
         );
 
         LayoutParams lp = (LayoutParams) mFab.getLayoutParams();
-        lp.bottomMargin = mFabMarginBottomOrigin + paddingBottom;
+        lp.bottomMargin = mFabMarginBottomOrigin + fitPaddingBottom;
         mFab.setLayoutParams(lp);
     }
 
     public void setHelper(SearhLayoutHelper helper) {
         mHelper = helper;
+    }
+
+    public void scrollSearchContainerToTop() {
+        mLayoutManager.scrollToPositionWithOffset(0, 0);
     }
 
     @Override
@@ -494,8 +505,8 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     }
 
     public interface SearhLayoutHelper {
-        public void onRequestSelectImage();
+        void onRequestSelectImage();
 
-        public void onRequestSearch(ListUrlBuilder lub);
+        void onRequestSearch(ListUrlBuilder lub);
     }
 }

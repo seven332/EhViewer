@@ -37,8 +37,12 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="Appbar">
-        <attr name="titleAppearance" format="reference"/>
+    <declare-styleable name="MonoRecyclerView">
+        <attr name="space" format="dimension"/>
+        <attr name="spaceLeft" format="dimension"/>
+        <attr name="spaceRight" format="dimension"/>
+        <attr name="spaceTop" format="dimension"/>
+        <attr name="spaceBottom" format="dimension"/>
     </declare-styleable>
 
     <!-- ********** -->

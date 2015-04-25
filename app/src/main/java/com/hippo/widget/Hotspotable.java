@@ -17,5 +17,5 @@ package com.hippo.widget;
 
 public interface Hotspotable {
 
-    public void setHotspot(float x, float y);
+    void setHotspot(float x, float y);
 }

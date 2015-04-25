@@ -97,7 +97,7 @@ public class SearchDatabase {
     }
 
     public void deleteQuery(final String query) {
-        mDatabase.delete(TABLE_SUGGESTIONS, COLUMN_DATE + "=?", new String[]{query});
+        mDatabase.delete(TABLE_SUGGESTIONS, COLUMN_QUERY + "=?", new String[]{query});
     }
 
     public void clearQuery() {

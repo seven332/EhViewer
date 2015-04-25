@@ -82,12 +82,16 @@ public class SimpleImageView extends View implements Drawable.Callback {
         super.onLayout(changed, left, top, right, bottom);
         int width = right - left;
         int height = bottom - top;
-        mDrawable.setBounds(getPaddingLeft(), getPaddingTop(),
-                width - getPaddingRight(), height - getPaddingBottom());
+        if (mDrawable != null) {
+            mDrawable.setBounds(getPaddingLeft(), getPaddingTop(),
+                    width - getPaddingRight(), height - getPaddingBottom());
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        mDrawable.draw(canvas);
+        if (mDrawable != null) {
+            mDrawable.draw(canvas);
+        }
     }
 }

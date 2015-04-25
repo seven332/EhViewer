@@ -19,7 +19,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
@@ -33,12 +32,12 @@ import com.hippo.util.Log;
 import com.hippo.util.ViewUtils;
 
 public
-class GalleryListScene extends Scene implements SearchBar.Helper,
-        ViewTreeObserver.OnGlobalLayoutListener {
+class GalleryListScene extends Scene implements SearchBar.Helper {
 
-    private final static int PAGE_INDEX_SEARCH = 0;
-    private final static int PAGE_INDEX_LIST = 1;
-    private final static int PAGE_NUMBER = 2;
+    private final static int STATE_NORMAL = 0;
+    private final static int STATE_SIMPLE_SEARCH = 1;
+    private final static int STATE_SEARCH = 2;
+    private final static int STATE_SEARCH_SHOW_LIST = 3;
 
     private ContentActivity mActivity;
     private Resources mResources;
@@ -49,6 +48,8 @@ class GalleryListScene extends Scene implements SearchBar.Helper,
     private SearchLayout mSearchLayout;
 
     private ViewTransition mViewTransition;
+
+    private int mState = STATE_NORMAL;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,8 +73,7 @@ class GalleryListScene extends Scene implements SearchBar.Helper,
 
         // Search Layout
         mSearchLayout.setFitPaddingTop(mSearchBar.getMeasuredHeight() +
-                (int) (2 * mResources.getDimension(R.dimen.search_bar_padding_vertical)));
-
+                mResources.getDimensionPixelOffset(R.dimen.search_bar_padding_vertical));
 
         // TEST
         mContentLayout.showText("四姑拉斯基");
@@ -81,12 +81,37 @@ class GalleryListScene extends Scene implements SearchBar.Helper,
 
     @Override
     protected void onGetFitPaddingBottom(int b) {
-        // TODO
+        mSearchLayout.setFitPaddingBottom(b);
     }
 
     @Override
-    public void onGlobalLayout() {
+    public void onBackPressed() {
+        switch (mState) {
+            case STATE_NORMAL:
+                super.onBackPressed();
+                break;
+            case STATE_SIMPLE_SEARCH:
+                mSearchBar.setInNormalMode();
+                mState = STATE_NORMAL;
+                break;
+            case STATE_SEARCH:
+                mViewTransition.showFirstView();
+                mSearchBar.setInNormalMode();
+                mState = STATE_NORMAL;
+                break;
+            case STATE_SEARCH_SHOW_LIST:
+                mSearchBar.hideImeAndSuggestionsList();
+                mState = STATE_SEARCH;
+                break;
+        }
+    }
 
+    @Override
+    public void onClickTitle() {
+        if (mState == STATE_NORMAL) {
+            mState = STATE_SIMPLE_SEARCH;
+            mSearchBar.setInEditMode(true);
+        }
     }
 
     @Override
@@ -95,14 +120,35 @@ class GalleryListScene extends Scene implements SearchBar.Helper,
     }
 
     @Override
-    public void onClickAction() {
-        mViewTransition.showSecondView();
+    public void onClickArrow() {
+        onBackPressed();
+    }
+
+    @Override
+    public void onClickAdvanceSearch() {
+        if (mState == STATE_NORMAL) {
+            mViewTransition.showSecondView();
+            mSearchLayout.scrollSearchContainerToTop();
+            mSearchBar.setInEditMode(false);
+            mState = STATE_SEARCH;
+        }
+    }
+
+    @Override
+    public void onSearchEditTextClick() {
+        if (mState == STATE_SEARCH) {
+            mSearchBar.showImeAndSuggestionsList();
+            mState = STATE_SEARCH_SHOW_LIST;
+        }
     }
 
     @Override
     public void onApplySearch(String query) {
         Log.d("onApplySearch " + query);
         mSearchDatabase.addQuery(query);
+
+        mViewTransition.showFirstView();
         mSearchBar.setInNormalMode();
+        mState = STATE_NORMAL;
     }
 }

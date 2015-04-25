@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +48,7 @@ public abstract class Scene {
 
     private @Nullable Curtain mCurtain;
 
+    @SuppressWarnings("deprecation")
     private @Nullable AbsoluteLayout mSceneView;
 
     private int mBackgroundColor = 0xffeeeeee; // TODO Need a better to set background color
@@ -116,6 +116,7 @@ public abstract class Scene {
         onCreate(savedInstanceState);
 
         if (mSceneView == null) {
+            //noinspection deprecation
             mSceneView = new AbsoluteLayout(getStageActivity());
             initBackground(mSceneView);
         }
@@ -189,6 +190,7 @@ public abstract class Scene {
 
     protected void setContentView(int resId) {
         StageActivity sa = getStageActivity();
+        //noinspection deprecation
         mSceneView = new AbsoluteLayout(sa);
         initBackground(mSceneView);
         mSceneView.setBackgroundColor(mBackgroundColor);
@@ -197,6 +199,7 @@ public abstract class Scene {
 
     protected void setContentView(View view) {
         StageActivity sa = getStageActivity();
+        //noinspection deprecation
         mSceneView = new AbsoluteLayout(sa);
         initBackground(mSceneView);
         mSceneView.addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -228,12 +231,11 @@ public abstract class Scene {
     protected void onOut() {
     }
 
+    /**
+     * It will be called if nav bar is transparent.
+     * @param b the nav bar's height
+     */
     protected void onGetFitPaddingBottom(int b) {
-    }
-
-
-    public View onCreateStageBar() {
-        return null;
     }
 
     /**
@@ -371,14 +373,6 @@ public abstract class Scene {
 
     public void startActivityForResult(Intent intent, ActivityResultListener listener) {
         getStageActivity().startActivityForResult(intent, listener);
-    }
-
-    /**
-     * Return the FragmentManager for interacting with fragments associated
-     * with StageActivity.
-     */
-    public FragmentManager getSupportFragmentManager() {
-        return getStageActivity().getSupportFragmentManager();
     }
 
     public interface ActivityResultListener {

@@ -19,11 +19,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.widget.EditText;
 
 public class SearchEditText extends EditText {
 
-    private SearchBar mSearchBar;
+    private SearchEditTextListener mListener;
 
     public SearchEditText(Context context) {
         super(context);
@@ -37,8 +38,8 @@ public class SearchEditText extends EditText {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setSearchBar(SearchBar searchBar) {
-        mSearchBar = searchBar;
+    public void setSearchEditTextListener(SearchEditTextListener listener) {
+        mListener = listener;
     }
 
     @Override
@@ -58,13 +59,26 @@ public class SearchEditText extends EditText {
                     state.handleUpEvent(event);
                 }
                 if (event.isTracking() && !event.isCanceled()) {
-                    if (mSearchBar != null) {
-                        mSearchBar.setInNormalMode();
+                    if (mListener != null) {
+                        mListener.onBackPressed();
                         return true;
                     }
                 }
             }
         }
         return super.onKeyPreIme(keyCode, event);
+    }
+
+    @Override
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_UP && mListener != null) {
+            mListener.onClick();
+        }
+        return super.onTouchEvent(event);
+    }
+
+    public interface SearchEditTextListener {
+        void onClick();
+        void onBackPressed();
     }
 }

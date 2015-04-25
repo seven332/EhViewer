@@ -47,10 +47,12 @@ import com.hippo.util.ViewUtils;
 import com.hippo.widget.SimpleImageView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SearchBar extends CardView implements View.OnClickListener,
-        TextView.OnEditorActionListener, TextWatcher {
+        TextView.OnEditorActionListener, TextWatcher,
+        SearchEditText.SearchEditTextListener {
 
     private static final long ANIMATION_TIME = 300;
 
@@ -100,7 +102,6 @@ public class SearchBar extends CardView implements View.OnClickListener,
         setRadius(UiUtils.dp2pix(context, 2));
         setCardElevation(UiUtils.dp2pix(context, 2));
         setCardBackgroundColor(Color.WHITE);
-        setOnClickListener(this);
 
         LayoutInflater.from(context).inflate(R.layout.widget_search_bar, this);
         mMenuButton = (SimpleImageView) findViewById(R.id.search_menu);
@@ -112,11 +113,12 @@ public class SearchBar extends CardView implements View.OnClickListener,
         mDrawerArrowDrawable = new DrawerArrowDrawable(getContext());
         mAddDeleteDrawable = new AddDeleteDrawable(getContext());
 
+        mTitleTextView.setOnClickListener(this);
         mMenuButton.setDrawable(mDrawerArrowDrawable);
         mMenuButton.setOnClickListener(this);
         mActionButton.setDrawable(mAddDeleteDrawable);
         mActionButton.setOnClickListener(this);
-        mEditText.setSearchBar(this);
+        mEditText.setSearchEditTextListener(this);
         mEditText.setOnEditorActionListener(this);
         mEditText.addTextChangedListener(this);
 
@@ -130,9 +132,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
         String prefix = mEditText.getText().toString();
         String[] suggestions = mSearchDatabase.getSuggestions(prefix);
         mSuggestionList.clear();
-        for (String suggestion : suggestions) {
-            mSuggestionList.add(suggestion);
-        }
+        Collections.addAll(mSuggestionList, suggestions);
         mSuggestionAdapter.notifyDataSetChanged();
     }
 
@@ -142,11 +142,11 @@ public class SearchBar extends CardView implements View.OnClickListener,
 
     @Override
     public void onClick(View v) {
-        if (v == this) {
-            setInEditMode();
+        if (v == mTitleTextView) {
+            mHelper.onClickTitle();
         } else if (v == mMenuButton) {
             if (mInEditMode) {
-                setInNormalMode();
+                mHelper.onClickArrow();
             } else {
                 mHelper.onClickMenu();
             }
@@ -154,7 +154,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             if (mInEditMode) {
                 mEditText.setText("");
             } else {
-                mHelper.onClickAction();
+                mHelper.onClickAdvanceSearch();
             }
         }
     }
@@ -173,26 +173,77 @@ public class SearchBar extends CardView implements View.OnClickListener,
         return false;
     }
 
-    public void setInEditMode() {
+    public void setInEditMode(boolean showList) {
         if (!mInEditMode) {
             mInEditMode = true;
             setClickable(false);
             ViewUtils.setVisibility(mTitleTextView, View.GONE);
             ViewUtils.setVisibility(mEditText, View.VISIBLE);
             mEditText.requestFocus();
-            // show ime
-            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-            // update suggestion
-            updateSuggestions();
             // start animator
-            ObjectAnimator oa1 = ObjectAnimator.ofFloat(mDrawerArrowDrawable, "progress", 0f, 1f);
-            oa1.setDuration(ANIMATION_TIME);
-            ObjectAnimator oa2 = ObjectAnimator.ofFloat(mAddDeleteDrawable, "progress", 0f, 1f);
-            oa2.setDuration(ANIMATION_TIME);
-            ObjectAnimator oa3 = ObjectAnimator.ofFloat(this, "progress", 0f, 1f);
-            oa3.setDuration(ANIMATION_TIME);
-            oa3.addListener(new SimpleAnimatorListener() {
+            if (mDrawerArrowDrawable.getProgress() != 1f) {
+                ObjectAnimator oa1 = ObjectAnimator.ofFloat(mDrawerArrowDrawable, "progress", 0f, 1f);
+                oa1.setDuration(ANIMATION_TIME);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    oa1.setAutoCancel(true);
+                }
+                oa1.start();
+            }
+            if (mAddDeleteDrawable.getProgress() != 1f) {
+                ObjectAnimator oa2 = ObjectAnimator.ofFloat(mAddDeleteDrawable, "progress", 0f, 1f);
+                oa2.setDuration(ANIMATION_TIME);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    oa2.setAutoCancel(true);
+                }
+                oa2.start();
+            }
+            // Show list if needed
+            if (showList) {
+                showImeAndSuggestionsList();
+            }
+        }
+    }
+
+    public void setInNormalMode() {
+        if (mInEditMode) {
+            mInEditMode = false;
+            setOnClickListener(this);
+            ViewUtils.setVisibility(mTitleTextView, View.VISIBLE);
+            ViewUtils.setVisibility(mEditText, View.GONE);
+            // start animator
+            if (mDrawerArrowDrawable.getProgress() != 0f) {
+                ObjectAnimator oa1 = ObjectAnimator.ofFloat(mDrawerArrowDrawable, "progress", 1f, 0f);
+                oa1.setDuration(ANIMATION_TIME);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    oa1.setAutoCancel(true);
+                }
+                oa1.start();
+            }
+            if (mAddDeleteDrawable.getProgress() != 0f) {
+                ObjectAnimator oa2 = ObjectAnimator.ofFloat(mAddDeleteDrawable, "progress", 1f, 0f);
+                oa2.setDuration(ANIMATION_TIME);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    oa2.setAutoCancel(true);
+                }
+                oa2.start();
+            }
+            // Hide ime and suggestions list
+            hideImeAndSuggestionsList();
+        }
+    }
+
+    public void showImeAndSuggestionsList() {
+        // Show ime
+        mEditText.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(mEditText, 0);
+        // update suggestion for show suggestions list
+        updateSuggestions();
+        // Show suggestions list
+        if (mProgress != 1f) {
+            ObjectAnimator oa = ObjectAnimator.ofFloat(this, "progress", 0f, 1f);
+            oa.setDuration(ANIMATION_TIME);
+            oa.addListener(new SimpleAnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     ViewUtils.setVisibility(mList, View.VISIBLE);
@@ -205,33 +256,21 @@ public class SearchBar extends CardView implements View.OnClickListener,
                 }
             });
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                oa1.setAutoCancel(true);
-                oa2.setAutoCancel(true);
-                oa3.setAutoCancel(true);
+                oa.setAutoCancel(true);
             }
-            oa1.start();
-            oa2.start();
-            oa3.start();
+            oa.start();
         }
     }
 
-    public void setInNormalMode() {
-        if (mInEditMode) {
-            mInEditMode = false;
-            setOnClickListener(this);
-            ViewUtils.setVisibility(mTitleTextView, View.VISIBLE);
-            ViewUtils.setVisibility(mEditText, View.GONE);
-            // hide ime
-            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(this.getWindowToken(), 0);
-            // start animator
-            ObjectAnimator oa1 = ObjectAnimator.ofFloat(mDrawerArrowDrawable, "progress", 1f, 0f);
-            oa1.setDuration(ANIMATION_TIME);
-            ObjectAnimator oa2 = ObjectAnimator.ofFloat(mAddDeleteDrawable, "progress", 1f, 0f);
-            oa2.setDuration(ANIMATION_TIME);
-            ObjectAnimator oa3 = ObjectAnimator.ofFloat(this, "progress", 1f, 0f);
-            oa3.setDuration(ANIMATION_TIME);
-            oa3.addListener(new SimpleAnimatorListener() {
+    public void hideImeAndSuggestionsList() {
+        // Hide ime
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(this.getWindowToken(), 0);
+        // Hide suggestions list
+        if (mProgress != 0f) {
+            ObjectAnimator oa = ObjectAnimator.ofFloat(this, "progress", 1f, 0f);
+            oa.setDuration(ANIMATION_TIME);
+            oa.addListener(new SimpleAnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     mInAnimation = true;
@@ -244,13 +283,9 @@ public class SearchBar extends CardView implements View.OnClickListener,
                 }
             });
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                oa1.setAutoCancel(true);
-                oa2.setAutoCancel(true);
-                oa3.setAutoCancel(true);
+                oa.setAutoCancel(true);
             }
-            oa1.start();
-            oa2.start();
-            oa3.start();
+            oa.start();
         }
     }
 
@@ -312,9 +347,23 @@ public class SearchBar extends CardView implements View.OnClickListener,
         updateSuggestions();
     }
 
+    @Override
+    public void onClick() {
+        mHelper.onSearchEditTextClick();
+    }
+
+    @Override
+    public void onBackPressed() {
+        mHelper.onBackPressed();
+    }
+
     public interface Helper {
+        void onClickTitle();
         void onClickMenu();
-        void onClickAction();
+        void onClickArrow();
+        void onClickAdvanceSearch();
+        void onSearchEditTextClick();
         void onApplySearch(String query);
+        void onBackPressed();
     }
 }

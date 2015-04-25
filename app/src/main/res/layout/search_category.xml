@@ -18,13 +18,11 @@
     xmlns:auto="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/search_category_interval"
-    auto:cardElevation="@dimen/default_elevation">
+    auto:forceNoElevation="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/search_category_min_height"
         android:orientation="vertical"
         android:paddingLeft="@dimen/search_category_padding_start"
         android:paddingRight="@dimen/search_category_padding_end"
