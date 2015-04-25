@@ -33,6 +33,9 @@
     <string name="misc" translatable="false">MISC</string>
     <string name="unknown" translatable="false">UNKNOWN</string>
 
+    <!-- Search Bar -->
+    <string name="search_bar_hint">Search %s</string>
+
     <!-- Search -->
     <string name="search_normal">Normal Search</string>
     <string name="search_advance">Advance Options</string>

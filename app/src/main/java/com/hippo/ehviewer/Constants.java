@@ -12,21 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hippo.util;
 
-public final class IntIdGenerator {
+package com.hippo.ehviewer;
 
-    private int mId = 0;
+import com.hippo.util.Messenger;
 
-    private IntIdGenerator() {
-        // Empty
-    }
+public final class Constants {
 
-    public synchronized int nextId() {
-        return mId++;
-    }
+    public static final int MESSENGER_ID_SOURCE;
 
-    public static IntIdGenerator create() {
-        return new IntIdGenerator();
+    static {
+        Messenger messenger = Messenger.getInstance();
+        MESSENGER_ID_SOURCE = messenger.newId();
     }
 }

@@ -47,6 +47,10 @@ public final class EhClient {
             "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
     private static final String FORUMS_URL = "http://forums.e-hentai.org/index.php";
 
+    public static final String HOST_G = "G.E-Hentai";
+    public static final String HOST_EX = "ExHentai";
+    public static final String HOST_LOFI = "Lofi.E-Hentai";
+
     public static final String HEADER_G = "http://g.e-hentai.org/";
     public static final String HEADER_EX = "http://exhentai.org/";
     public static final String HEADER_LOFI = "http://lofi.e-hentai.org/";
@@ -74,8 +78,20 @@ public final class EhClient {
                 1L, TimeUnit.SECONDS, requestWorkQueue, threadFactory);
     }
 
-    public static String getUrlHeader(int mode) {
-        switch (mode) {
+    public static String getReadableHost(int source) {
+        switch (source) {
+            default:
+            case SOURCE_G:
+                return HOST_G;
+            case SOURCE_EX:
+                return HOST_EX;
+            case SOURCE_LOFI:
+                return HOST_LOFI;
+        }
+    }
+
+    public static String getUrlHeader(int source) {
+        switch (source) {
             default:
             case SOURCE_G:
                 return HEADER_G;

@@ -18,15 +18,20 @@ package com.hippo.ehviewer.widget;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Path;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.ImageSpan;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -40,8 +45,11 @@ import android.widget.TextView;
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.drawable.DrawerArrowDrawable;
+import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.client.EhClient;
 import com.hippo.util.MathUtils;
+import com.hippo.util.Messenger;
 import com.hippo.util.UiUtils;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.SimpleImageView;
@@ -52,7 +60,7 @@ import java.util.List;
 
 public class SearchBar extends CardView implements View.OnClickListener,
         TextView.OnEditorActionListener, TextWatcher,
-        SearchEditText.SearchEditTextListener {
+        SearchEditText.SearchEditTextListener, Messenger.Receiver {
 
     private static final long ANIMATION_TIME = 300;
 
@@ -80,6 +88,8 @@ public class SearchBar extends CardView implements View.OnClickListener,
     private boolean mInEditMode = false;
     private boolean mInAnimation = false;
     private boolean mFirstLayout = true;
+
+    private int mSource;
 
     public SearchBar(Context context) {
         super(context);
@@ -123,9 +133,25 @@ public class SearchBar extends CardView implements View.OnClickListener,
         mEditText.addTextChangedListener(this);
 
         mSuggestionList = new ArrayList<>();
+        // TODO
         mSuggestionAdapter = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_list_item_1, mSuggestionList);
         mList.setAdapter(mSuggestionAdapter);
+
+        // TODO get source from config
+        setSource(EhClient.SOURCE_EX);
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        Messenger.getInstance().register(Constants.MESSENGER_ID_SOURCE, this);
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_SOURCE, this);
     }
 
     private void updateSuggestions() {
@@ -134,6 +160,23 @@ public class SearchBar extends CardView implements View.OnClickListener,
         mSuggestionList.clear();
         Collections.addAll(mSuggestionList, suggestions);
         mSuggestionAdapter.notifyDataSetChanged();
+    }
+
+    @SuppressWarnings({"deprecation", "ConstantConditions"})
+    public void setSource(int source) {
+        if (mSource != source) {
+            Resources resources = getContext().getResources();
+            Drawable searchImage = resources.getDrawable(R.drawable.ic_search);
+            SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
+            ssb.append(String.format(resources.getString(R.string.search_bar_hint),
+                    EhClient.getReadableHost(source)));
+            int textSize = (int) (mEditText.getTextSize() * 1.25);
+            searchImage.setBounds(0, 0, textSize, textSize);
+            ssb.setSpan(new ImageSpan(searchImage), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            mEditText.setHint(ssb);
+
+            mSource = source;
+        }
     }
 
     public void setHelper(Helper helper) {
@@ -355,6 +398,16 @@ public class SearchBar extends CardView implements View.OnClickListener,
     @Override
     public void onBackPressed() {
         mHelper.onBackPressed();
+    }
+
+    @Override
+    public void onReceive(int id, Object obj) {
+        if (id == Constants.MESSENGER_ID_SOURCE) {
+            if (obj instanceof Integer) {
+                int source = (Integer) obj;
+                setSource(source);
+            }
+        }
     }
 
     public interface Helper {

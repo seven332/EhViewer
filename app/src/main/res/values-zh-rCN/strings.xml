@@ -15,6 +15,9 @@
   -->
 <resources>
 
+    <!-- Search Bar -->
+    <string name="search_bar_hint">搜索 %s</string>
+
     <!-- Search -->
     <string name="search_normal">常规选项</string>
     <string name="search_advance">高级选项</string>

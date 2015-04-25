@@ -12,21 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.hippo.util;
 
-public final class IntIdGenerator {
+import android.os.Handler;
+import android.os.Looper;
 
-    private int mId = 0;
+public class AppHandler extends Handler {
 
-    private IntIdGenerator() {
-        // Empty
+    private static Handler sInstance;
+
+    public static Handler getInstance() {
+        if (sInstance == null) {
+            sInstance = new AppHandler(Looper.getMainLooper());
+        }
+        return sInstance;
     }
 
-    public synchronized int nextId() {
-        return mId++;
-    }
-
-    public static IntIdGenerator create() {
-        return new IntIdGenerator();
+    public AppHandler(Looper mainLooper) {
+        super(mainLooper);
     }
 }

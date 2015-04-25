@@ -65,7 +65,7 @@
                 android:singleLine="true"
                 android:visibility="gone"
                 android:imeOptions="actionSearch"
-                android:inputType="textAutoComplete"/>
+                android:inputType="text"/>
 
         </FrameLayout>
 
