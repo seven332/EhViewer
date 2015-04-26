@@ -25,7 +25,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -83,7 +82,6 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     private View mNormalView;
     private CategoryTable mTableCategory;
     private CheckBox mCheckSpecifyAuthor;
-    private FloatLabelEditText mTextSearch;
     private SwitchCompat mSwitchEnableAdvance;
 
     private View mAdvanceView;
@@ -224,7 +222,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (buttonView == mCheckSpecifyAuthor) {
-            mTextSearch.setPrefix(isChecked ? "uploader:" : null);
+            // TODO
 
         } else if (buttonView == mSwitchEnableAdvance) {
             mEnableAdvance = isChecked;
@@ -288,10 +286,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
                 if (mTableCategory != null) {
                     lub.setCategory(mTableCategory.getCategory());
                 }
-                if (mTextSearch != null) {
-                    String searchKey = mTextSearch.getText().toString();
-                    lub.setSearchKey(TextUtils.isEmpty(searchKey) ? null : searchKey);
-                }
+                // TODO
                 if (mSwitchEnableAdvance.isChecked() && mTableAdvanceSearch != null) {
                     lub.setAdvanceSearch(mTableAdvanceSearch.getAdvanceSearch());
                     lub.setMinRating(mTableAdvanceSearch.getMinRating());
@@ -377,7 +372,6 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
                 bindActionView((ActionHolder) holder);
             } else {
                 View view = mInflater.inflate(R.layout.search_category, parent, false);
-                // ViewCompat.setElevation(view, UiUtils.dp2pix(4)); // TODO
                 holder = new SearchHolder(view);
                 switch (viewType) {
                     case ITEM_TYPE_NORMAL:{
@@ -410,7 +404,6 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
                 mNormalView = holder.content.getChildAt(0);
                 mTableCategory = (CategoryTable) mNormalView.findViewById(R.id.search_category_table);
                 mCheckSpecifyAuthor = (CheckBox) mNormalView.findViewById(R.id.search_specify_author);
-                mTextSearch = (FloatLabelEditText) mNormalView.findViewById(R.id.search_text);
                 mSwitchEnableAdvance = (SwitchCompat) mNormalView.findViewById(R.id.search_enable_advance);
 
                 // Restore state

@@ -15,6 +15,9 @@
   -->
 <resources>
 
+    <dimen name="simple_dialog_padding">16dp</dimen>
+    <dimen name="simple_dialog_fixed_width">320dp</dimen>
+
     <!-- Search Bar -->
     <dimen name="search_bar_padding_horizontal">8dp</dimen>
     <dimen name="search_bar_padding_vertical">8dp</dimen>

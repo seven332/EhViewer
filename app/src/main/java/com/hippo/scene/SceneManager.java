@@ -44,9 +44,18 @@ class SceneManager {
         return mStageActivity;
     }
 
+    private boolean isStageAlive() {
+        return mStageActivity != null;
+    }
+
     // TODO check previousState state
     void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer,
             @Nullable Curtain curtain) {
+        if (!isStageAlive()) {
+            Log.w(TAG, "Stage is not alive, but attemp to create " + sceneClass.getSimpleName());
+            return;
+        }
+
         Scene scene;
         try {
             scene = (Scene) sceneClass.newInstance();
@@ -58,8 +67,24 @@ class SceneManager {
         } catch (ClassCastException e) {
             throw new IllegalStateException(sceneClass.getName() + " can not cast to scene");
         }
+        scene.setAnnouncer(announcer);
         scene.setCurtain(curtain);
 
+        startScene(scene, curtain);
+    }
+
+    void showDialog(@NonNull SceneDialog dialog, @Nullable Curtain curtain) {
+        if (!isStageAlive()) {
+            Log.w(TAG, "Stage is not alive, but attemp to show dialog " + dialog.toString());
+            return;
+        }
+
+        dialog.setCurtain(curtain);
+
+        startScene(dialog, curtain);
+    }
+
+    private void startScene(Scene scene, Curtain curtain) {
         Scene previousState = getTopState();
         mSceneStack.push(scene);
 

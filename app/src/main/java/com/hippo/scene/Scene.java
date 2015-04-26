@@ -15,6 +15,7 @@
 
 package com.hippo.scene;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -48,6 +49,8 @@ public abstract class Scene {
 
     private @Nullable Curtain mCurtain;
 
+    private @Nullable Announcer mAnnouncer;
+
     @SuppressWarnings("deprecation")
     private @Nullable AbsoluteLayout mSceneView;
 
@@ -55,7 +58,7 @@ public abstract class Scene {
 
     private int mState;
 
-    private static SceneManager sSceneManager;
+    protected static SceneManager sSceneManager;
 
     private int mFitPaddingBottom = -1;
 
@@ -67,8 +70,16 @@ public abstract class Scene {
         mCurtain = curtain;
     }
 
+    void setAnnouncer(@Nullable Announcer announcer) {
+        mAnnouncer = announcer;
+    }
+
     @Nullable Curtain getCurtain() {
         return mCurtain;
+    }
+
+    @Nullable Announcer getAnnouncer() {
+        return mAnnouncer;
     }
 
     // If there is no StageActivity for SceneManager, yout will get AssertError
@@ -108,6 +119,11 @@ public abstract class Scene {
         mState = state;
     }
 
+    @SuppressWarnings("deprecation")
+    protected AbsoluteLayout createSceneView(Context context) {
+        return new AbsoluteLayout(context);
+    }
+
     public final void finish() {
         sSceneManager.finishScene(this);
     }
@@ -116,8 +132,7 @@ public abstract class Scene {
         onCreate(savedInstanceState);
 
         if (mSceneView == null) {
-            //noinspection deprecation
-            mSceneView = new AbsoluteLayout(getStageActivity());
+            mSceneView = createSceneView(getStageActivity());
             initBackground(mSceneView);
         }
 
@@ -190,8 +205,7 @@ public abstract class Scene {
 
     protected void setContentView(int resId) {
         StageActivity sa = getStageActivity();
-        //noinspection deprecation
-        mSceneView = new AbsoluteLayout(sa);
+        mSceneView = createSceneView(sa);
         initBackground(mSceneView);
         mSceneView.setBackgroundColor(mBackgroundColor);
         sa.getLayoutInflater().inflate(resId, mSceneView);
@@ -199,15 +213,18 @@ public abstract class Scene {
 
     protected void setContentView(View view) {
         StageActivity sa = getStageActivity();
-        //noinspection deprecation
-        mSceneView = new AbsoluteLayout(sa);
+        mSceneView = createSceneView(sa);
         initBackground(mSceneView);
-        mSceneView.addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mSceneView.addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
     private void initBackground(@NonNull View bg) {
         bg.setBackgroundColor(mBackgroundColor);
         bg.setClickable(true);
+        bg.setFocusable(true);
+        bg.setFocusableInTouchMode(true);
+        bg.requestFocus();
     }
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {

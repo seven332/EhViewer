@@ -41,7 +41,8 @@
     <string name="search_advance">Advance Options</string>
     <string name="search_tag">Tag Search</string>
     <string name="search_image">Image Search</string>
-    <string name="search_specify_author">Specify Uploader</string>
+    <string name="search_specify_author">Specify uploader</string>
+    <string name="search_specify_tag">Specify tag</string>
     <string name="search_hint_no_keyword">No keyword is OK</string>
     <string name="search_enable_advance">Enable advance options</string>
 
