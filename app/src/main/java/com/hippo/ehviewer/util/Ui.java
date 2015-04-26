@@ -371,6 +371,7 @@ public class Ui {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(d);
             actionBar.setIcon(null);
+            actionBar.setElevation(dp2pix(4.0f));
         }
     }
 }
