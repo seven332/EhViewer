@@ -33,7 +33,7 @@ import java.util.Set;
 
 public class SimpleDialogCurtain extends Curtain {
 
-    private static long ANIMATE_TIME = 500L;
+    private static long ANIMATE_TIME = 300L;
 
     private int mStartX;
     private int mStartY;

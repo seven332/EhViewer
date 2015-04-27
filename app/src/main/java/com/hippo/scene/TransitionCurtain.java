@@ -41,7 +41,7 @@ public class TransitionCurtain extends Curtain {
 
     private static final String TAG = TransitionCurtain.class.getSimpleName();
 
-    private static long ANIMATE_TIME = 500L;
+    private static long ANIMATE_TIME = 300L;
 
     private ViewPair[] mViewPairArray;
 
