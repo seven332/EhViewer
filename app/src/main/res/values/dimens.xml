@@ -15,8 +15,17 @@
   -->
 <resources>
 
+    <!-- Simple Dialog -->
     <dimen name="simple_dialog_padding">16dp</dimen>
     <dimen name="simple_dialog_fixed_width">320dp</dimen>
+    <dimen name="simple_dialog_body_padding_left">24dp</dimen>
+    <dimen name="simple_dialog_body_padding_right">24dp</dimen>
+    <dimen name="simple_dialog_body_padding_top">24dp</dimen>
+    <dimen name="simple_dialog_body_padding_bottom">18dp</dimen>
+    <dimen name="simple_dialog_title_content_gap">18dp</dimen>
+
+    <!-- Scroll View-->
+    <dimen name="scroll_view_indicator_height">1dp</dimen>
 
     <!-- Search Bar -->
     <dimen name="search_bar_padding_horizontal">8dp</dimen>

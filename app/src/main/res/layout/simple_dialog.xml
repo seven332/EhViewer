@@ -15,31 +15,49 @@
   -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/body"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="24dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="@dimen/simple_dialog_body_padding_top"
+        android:paddingBottom="@dimen/simple_dialog_body_padding_bottom"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/title"
-            style="@style/Text.Title"
+            style="@style/Text.Dialog.Title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/simple_dialog_body_padding_left"
+            android:paddingRight="@dimen/simple_dialog_body_padding_right"
+            tools:ignore="RtlHardcoded"/>
 
         <Space
-            android:id="@+id/space_title_message"
+            android:id="@+id/space_title_content"
             android:layout_width="match_parent"
-            android:layout_height="20dp"/>
+            android:layout_height="@dimen/simple_dialog_title_content_gap"/>
 
-        <TextView
-            android:id="@+id/message"
+        <com.hippo.widget.IndicatingScrollView
+            android:id="@+id/content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/message"
+                style="@style/Text.Dialog.Message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/simple_dialog_body_padding_left"
+                android:paddingRight="@dimen/simple_dialog_body_padding_right"
+                tools:ignore="RtlHardcoded"/>
+
+        </com.hippo.widget.IndicatingScrollView>
 
     </LinearLayout>
 
@@ -49,8 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp"
-        android:visibility="gone">
+        android:padding="8dp">
 
         <Space
             android:layout_width="0dp"

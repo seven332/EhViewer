@@ -26,7 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver;
-import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 
 import com.hippo.util.AssertUtils;
@@ -52,7 +51,7 @@ public abstract class Scene {
     private @Nullable Announcer mAnnouncer;
 
     @SuppressWarnings("deprecation")
-    private @Nullable AbsoluteLayout mSceneView;
+    private @Nullable SceneView mSceneView;
 
     private int mBackgroundColor = 0xffeeeeee; // TODO Need a better to set background color
 
@@ -94,7 +93,7 @@ public abstract class Scene {
      *
      * @return Null or nonull
      */
-    public @Nullable ViewGroup getSceneView() {
+    public @Nullable SceneView getSceneView() {
         return mSceneView;
     }
 
@@ -119,9 +118,8 @@ public abstract class Scene {
         mState = state;
     }
 
-    @SuppressWarnings("deprecation")
-    protected AbsoluteLayout createSceneView(Context context) {
-        return new AbsoluteLayout(context);
+    protected SceneView createSceneView(Context context) {
+        return new SceneView(context);
     }
 
     public final void finish() {
@@ -221,7 +219,6 @@ public abstract class Scene {
 
     private void initBackground(@NonNull View bg) {
         bg.setBackgroundColor(mBackgroundColor);
-        bg.setClickable(true);
         bg.setFocusable(true);
         bg.setFocusableInTouchMode(true);
         bg.requestFocus();

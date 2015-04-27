@@ -28,8 +28,6 @@ import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchDatabase;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.scene.Scene;
-import com.hippo.scene.SimpleDialog;
-import com.hippo.util.AppHandler;
 import com.hippo.util.Log;
 import com.hippo.util.ViewUtils;
 
@@ -79,13 +77,6 @@ class GalleryListScene extends Scene implements SearchBar.Helper {
 
         // TEST
         mContentLayout.showText("四姑拉斯基");
-
-        AppHandler.getInstance().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                new SimpleDialog.Builder().setTitle("NIhao").show();
-            }
-        }, 2000);
     }
 
     @Override

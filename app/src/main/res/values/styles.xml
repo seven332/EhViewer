@@ -83,18 +83,26 @@
         <item name="android:indeterminateDrawable">@drawable/progress_large_material</item>
     </style>
 
-    <style name="Text.Title" parent="TextAppearance.AppCompat">
+    <style name="Text.Dialog.Title" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/primary_text_light</item>
-        <item name="android:textSize">@dimen/text_large</item>
+        <item name="android:textSize">@dimen/text_little_large</item>
+        <item name="android:text">sans-serif-medium</item>
     </style>
 
-    <style name="Text.Button.SingleLine" parent="TextAppearance.AppCompat.Medium">
+    <style name="Text.Dialog.Message" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/secondary_text_light</item>
+        <item name="android:textSize">@dimen/text_little_small</item>
+    </style>
+
+    <style name="Text.Button.SingleLine" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/text_button_text</item>
+        <item name="android:textSize">@dimen/text_medium</item>
         <item name="android:minWidth">64dp</item>
         <item name="android:minHeight">36dp</item>
         <item name="android:paddingLeft">8dp</item>
         <item name="android:paddingRight">8dp</item>
         <item name="android:gravity">center</item>
+        <item name="android:clickable">true</item>
     </style>
 
 </resources>

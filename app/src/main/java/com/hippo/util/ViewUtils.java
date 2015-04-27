@@ -244,7 +244,7 @@ public final class ViewUtils {
      * @param y Y position to test in the parent's coordinate system
      * @return true if the supplied view is under the given point, false otherwise
      */
-    public static boolean isViewUnder(View view, int x, int y) {
+    public static boolean isViewUnder(@Nullable View view, int x, int y) {
         if (view == null || view.getVisibility() != View.VISIBLE) {
             return false;
         }

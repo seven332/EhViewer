@@ -67,8 +67,7 @@
     <color name="primary_text_dark">#deffffff</color>
     <color name="secondary_text_dark">#61ffffff</color>
 
-    <!-- -->
-
+    <!-- Background -->
     <color name="background_dark">#ff303030</color>
     <color name="background_light">#ffeeeeee</color>
     <color name="background_light_card">#ffe1e1e0</color>
@@ -80,5 +79,8 @@
     <color name="search_category_background_color">@android:color/white</color>
 
     <color name="shadow_light">#38000000</color>
+
+    <!-- Scroll View -->
+    <color name="scroll_view_indicator">#20000000</color>
 
 </resources>

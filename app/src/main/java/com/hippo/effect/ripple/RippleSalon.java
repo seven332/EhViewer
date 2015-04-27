@@ -28,8 +28,6 @@ import com.hippo.widget.HotspotTouchHelper;
 
 public final class RippleSalon {
 
-    private static final Drawable MASK = new ColorDrawable(Color.BLACK);
-
     public static void addRipple(View c, boolean dark) {
         Resources resources = c.getContext().getResources();
         ColorStateList color = ColorStateList.valueOf(
@@ -41,17 +39,16 @@ public final class RippleSalon {
         addRipple(v, color, v.getBackground());
     }
 
+    @SuppressWarnings("deprecation")
     public static void addRipple(View v, ColorStateList color, Drawable content) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             RippleDrawable rippleDrawable = new RippleDrawable(color, content);
             v.setOnTouchListener(new HotspotTouchHelper(rippleDrawable));
-            //noinspection deprecation
             v.setBackgroundDrawable(rippleDrawable);
         } else {
             android.graphics.drawable.RippleDrawable rippleDrawable =
-                    new android.graphics.drawable.RippleDrawable(color, content, MASK);
-            //noinspection deprecation
-            v.setBackgroundDrawable(rippleDrawable);
+                    new android.graphics.drawable.RippleDrawable(color, content, new ColorDrawable(Color.BLACK));
+            v.setBackground(rippleDrawable);
         }
     }
 }
