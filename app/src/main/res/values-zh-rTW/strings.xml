@@ -6,14 +6,14 @@
 
     <!-- Warning -->
     <string name="dailog_waring_title">警告</string>
-    <string name="dailog_waring_plain">該應用內容來自網際網路，部分內容可能對您的生理及心理造成難以恢復的傷害。該應用作者不會對由該應用造成的後果負責。您是否願意繼續使用該應用？</string>
+    <string name="dailog_waring_plain">該應用內容來自網際網路，部分內容可能對您的生理及心理造成難以恢復的傷害。該程式作者不會對由該程式造成的後果負責。您是否願意繼續使用該程式？</string>
 
     <!-- Analyics -->
     <string name="dailog_analyics_title">資料統計</string>
-    <string name="dailog_analyics_plain">您是否願意將使用情況傳送給開發者？這對開發者維護該應用有很大幫助。在傳送使用情況的同時也會發送部分裝置資訊（譬如裝置型號、系統版本、當前IP地址）（注意：某些裝置資訊可能可以推測出某些使用者資訊，譬如當前IP地址可能可以大概推測出使用者當前的位置）。開發者承諾不收集任何個人身份資訊資料（譬如姓名、電話號碼、電郵地址）或可永久性標識某臺裝置的資料（譬如IMEI、MAC地址）。\n\n資料收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies\n\n您以後可以在設定中修改選擇</string>
+    <string name="dailog_analyics_plain">您是否願意將使用情況傳送給開發者？這對開發者維護該程式有很大幫助。在傳送使用情況的同時也會發送部分裝置資訊（譬如裝置型號、系統版本、目前IP地址）（注意：某些裝置資訊可能可以推測出某些使用者資訊，譬如目前IP地址可能可以大概推測出使用者目前的位置）。開發者承諾不收集任何個人身份資訊資料（譬如姓名、電話號碼、電郵地址）或可永久性標識某臺裝置的資料（譬如IMEI、MAC地址）。\n\n資料收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies\n\n您以後可以在設定中修改選擇</string>
 
     <!-- Network -->
-    <string name="dailog_network_mobile_title">您正在使用行動網路，可能會消耗大量的資費，是否繼續使用？</string>
+    <string name="dailog_network_mobile_title">您正在使用行動網路，可能會消耗大量的流量，是否繼續使用？</string>
     <string name="dailog_network_none_title">未檢測到網路連線，是否繼續使用？</string>
 
     <!-- Exit -->
@@ -47,8 +47,8 @@
 
     <!-- Send Crash -->
     <string name="dialog_send_crash_title">這很重要</string>
-    <string name="dialog_send_crash_plain">上次該應用崩潰了。你願意把錯誤日誌傳送給開發者以便以後得到更好的使用者體驗麼？（以電子郵件的形式傳送）</string>
-    <string name="add_description">你可以在下方新增一些資訊，譬如應用崩潰前所作的操作。</string>
+    <string name="dialog_send_crash_plain">上次該程式崩潰了。你願意把錯誤日誌傳送給開發者以便以後得到更好的使用者體驗嗎？（以電子郵件的形式傳送）</string>
+    <string name="add_description">你可以在下方新增一些資訊，譬如程式崩潰前所作的操作。</string>
     <string name="dialog_wait_send_crash_msg">請在傳送完日誌後關閉該視窗</string>
 
     <!-- List item long click -->
@@ -61,9 +61,9 @@
     <string name="quick_search_tip">您可以在左側欄搜尋項中新增快速搜尋</string>
     <string name="no_avatar">無頭像</string>
     <string name="get_avatar_error">獲取頭像失敗</string>
-    <string name="image_search">影象搜尋</string>
-    <string name="image_not_exist">影象不存在</string>
-    <string name="image_not_readable">影象不可讀</string>
+    <string name="image_search">影像搜尋</string>
+    <string name="image_not_exist">影像不存在</string>
+    <string name="image_not_readable">影像不可讀</string>
 
     <!-- Update -->
     <string name="update_message">發現新版本：%1$s\n大小：%2$s\n%3$s\n\n是否更新？</string>
@@ -146,11 +146,11 @@
     <string name="loading_percent">正在載入 %d%%</string>
     <string name="wait_for_more">等待獲取頁面資訊</string>
     <string name="more_settings">更多設定</string>
-    <string name="save_to_local_storage">儲存到本地</string>
+    <string name="save_to_local_storage">儲存到本機</string>
     <string name="save_successful">已儲存至 %s</string>
     <string name="save_failed">儲存失敗</string>
     <string name="select_save_dir">選擇儲存資料夾</string>
-    <string name="current_image_not_downloaded">當前圖片未完成下載</string>
+    <string name="current_image_not_downloaded">目前圖片未完成下載</string>
     <string name="share_image">分享圖片</string>
 
     <!-- Action -->
@@ -158,7 +158,7 @@
     <string name="action_settings">設定</string>
 
     <!-- Favorite -->
-    <string name="local_favorite">本地收藏</string>
+    <string name="local_favorite">本機收藏</string>
     <string name="select_item">選擇項目</string>
     <string name="where_to_add">新增至何處？</string>
     <string name="failed_to_add">新增失敗</string>
@@ -170,7 +170,7 @@
     <string name="delete_successfully">刪除成功</string>
     <string name="failed_to_delete">刪除失敗</string>
     <string name="set_default_favorite">設為預設收藏夾</string>
-    <string name="favorite_warning">未檢測到登陸狀態，賬號收藏可被他人修改。而且由於開發者水平問題，本地收藏不可靠。</string>
+    <string name="favorite_warning">未檢測到登陸狀態，帳號收藏可被他人修改。而且由於開發者水平問題，本機收藏不可靠。</string>
 
     <!-- Popular -->
     <string name="popular_update_time">更新時間 %s</string>
@@ -254,8 +254,8 @@
     <string name="download_settings_title">下載</string>
     <string name="download_path_title">下載路徑</string>
     <string name="media_scan_title">允許媒體掃描</string>
-    <string name="media_scan_summary_on">請避免他人翻看你的相簿應用</string>
-    <string name="media_scan_summary_off">大多數相簿應用將不會顯示下載目錄中的圖片</string>
+    <string name="media_scan_summary_on">請避免他人翻看你的相簿程式</string>
+    <string name="media_scan_summary_off">大多數相簿程式將不會顯示下載目錄中的圖片</string>
     <string name="download_thread_title">下載執行緒數</string>
     <string name="download_origin_image_title">下載原圖</string>
     <string name="download_origin_image_summary">這很危險！勾選此項會導致下載配額迅速流失</string>
@@ -287,7 +287,7 @@
     <string name="thanks_title">感謝</string>
     <string name="website_title">網站</string>
     <string name="source_title">源碼</string>
-    <string name="version_title">應用版本</string>
+    <string name="version_title">程式版本</string>
     <string name="update_about_settings_title">更新</string>
     <string name="auto_check_for_update_title">自動檢查更新</string>
     <string name="auto_check_for_update_summary_on">每日第一次啟動時檢查更新</string>
@@ -298,12 +298,12 @@
     <string name="cloud_drive_title">如果更新失敗點選此處</string>
     <string name="analytics_about_settings_title">資料統計</string>
     <string name="allow_analyics_title">啟用資料統計</string>
-    <string name="allow_analyics_summary_on">感謝您對本應用的支援</string>
-    <string name="allow_analyics_summary_off">感謝您使用本應用</string>
+    <string name="allow_analyics_summary_on">感謝您對本程式的支援</string>
+    <string name="allow_analyics_summary_off">感謝您使用本式</string>
     <string name="about_analyics_title">關於資料統計</string>
-    <string name="about_analyics_comment">若您啟用了資料統計，本應用會將您的使用情況傳送給開發者。這對開發者維護該應用有很大幫助。在傳送使用情況的同時也會發送部分裝置資訊（譬如裝置型號、系統版本、當前IP地址）（注意：某些裝置資訊可能可以推測出某些使用者資訊，譬如當前IP地址可能可以大概推測出使用者當前的位置）。開發者承諾不收集任何個人身份資訊資料（譬如姓名、電話號碼、電郵地址）或可永久性標識某臺裝置的資料（譬如IMEI、MAC地址）。\n\n資料收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies</string>
-    <string name="portrait">豎屏</string>
-    <string name="landscape">橫屏</string>
+    <string name="about_analyics_comment">若您啟用了資料統計，本應用會將您的使用情況傳送給開發者。這對開發者維護該式有很大幫助。在傳送使用情況的同時也會發送部分裝置資訊（譬如裝置型號、系統版本、目前IP地址）（注意：某些裝置資訊可能可以推測出某些使用者資訊，譬如目前IP地址可能可以大概推測出使用者目前的位置）。開發者承諾不收集任何個人身份資訊資料（譬如姓名、電話號碼、電郵地址）或可永久性標識某臺裝置的資料（譬如IMEI、MAC地址）。\n\n資料收集過程採用 Google Analytics。\nGOOGLE ANALYTICS（分析）服務條款：http://www.google.com/analytics/terms/cn.html\nGoogle隱私權和條款：http://www.google.com/intl/zh-CN/policies</string>
+    <string name="portrait">直向</string>
+    <string name="landscape">橫向</string>
     <string name="preference_settings_title">設定</string>
     <string name="list_mode_detail">詳情</string>
     <string name="list_mode_thumb">縮圖</string>
@@ -426,10 +426,10 @@
     <string name="error">錯誤</string>
     <string name="changelog">日誌</string>
     <string name="register">註冊</string>
-    <string name="login">登陸</string>
-    <string name="logout">退出</string>
+    <string name="login">登入</string>
+    <string name="logout">登出</string>
     <string name="wait">請稍後</string>
-    <string name="username">使用者名</string>
+    <string name="username">使用者名稱</string>
     <string name="password">密碼</string>
     <string name="add">新增</string>
     <string name="what_to_do">你想做什麼？</string>
@@ -466,7 +466,7 @@
     <string name="thanks">感謝</string>
     <string name="develop">開發</string>
     <string name="advance_search_left">左劃更多</string>
-    <string name="restart_to_take_effect">重啟應用以便生效</string>
-    <string name="cur_dir_not_writable">當前資料夾不可寫</string>
+    <string name="restart_to_take_effect">重啟程式以便生效</string>
+    <string name="cur_dir_not_writable">目前資料夾不可寫</string>
 
 </resources>
