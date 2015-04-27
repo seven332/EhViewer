@@ -70,12 +70,21 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
         mPaint.setColor(MASK);
 
-        setOnTouchListener(new HotspotTouchHelper(this));
         setOnClickListener(this);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            setOnTouchListener(new HotspotTouchHelper(this));
+        }
     }
 
     @Override
     public void setHotspot(float x, float y) {
+        mX = x;
+        mY = y;
+        mMaxRadius = MathUtils.coverageRadius(getWidth(), getHeight(), x, y);
+    }
+
+    @Override
+    public void drawableHotspotChanged(float x, float y) {
         mX = x;
         mY = y;
         mMaxRadius = MathUtils.coverageRadius(getWidth(), getHeight(), x, y);
