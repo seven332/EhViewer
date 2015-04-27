@@ -72,8 +72,8 @@ public class SimpleDialogView extends SceneView implements View.OnClickListener,
 
     @Override
     public void onClick(View v) {
-        if (v == this && !ViewUtils.isViewUnder(getChildAt(0), (int) mHostpotX, (int) mHostpotY) &&
-                mOnClickOutOfDialogListener != null) {
+        if (v == this && !ViewUtils.isViewUnder(getChildAt(0), (int) mHostpotX,
+                (int) mHostpotY) && mOnClickOutOfDialogListener != null) {
             mOnClickOutOfDialogListener.onClickOutOfDialog();
         }
     }

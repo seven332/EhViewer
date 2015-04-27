@@ -35,6 +35,12 @@ public class AssertUtils {
         }
     }
 
+    public static void assertInstanceof(String message, Object obj, Class clazz) {
+        if (!clazz.isInstance(obj)) {
+            throw new AssertError(message);
+        }
+    }
+
     public static void assertNullEx(String message, Object object)
             throws AssertException {
         if (object != null) {
@@ -52,6 +58,13 @@ public class AssertUtils {
     public static void assertEqualsEx(String message, int expected, int actual)
             throws AssertException {
         if (expected != actual) {
+            throw new AssertException(message);
+        }
+    }
+
+    public static void assertInstanceofEx(String message, Object obj, Class clazz)
+            throws AssertException {
+        if (!clazz.isInstance(obj)) {
             throw new AssertException(message);
         }
     }

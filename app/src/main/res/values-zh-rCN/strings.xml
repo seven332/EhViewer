@@ -45,6 +45,8 @@
     <string name="search_add">添加</string>
     <string name="search_mode">模式</string>
 
+    <string name="search_tag_help">指定标签会使通过标签搜索出来的结果更精确。每次只允许搜索一个标签。其搜索格式为 &lt;tag&gt; 或 &lt;namespace&gt;:&lt;tag&gt; 。当勾选指定标签时，其他搜索选项会被忽略。</string>
+
     <!-- search_min_rating -->
     <string name="star_2">2 星</string>
     <string name="star_3">3 星</string>

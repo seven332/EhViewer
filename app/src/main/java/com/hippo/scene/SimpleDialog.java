@@ -38,7 +38,7 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
 
     private StageActivity mActivity;
 
-    private SimpleDialogView mSimpleImageView;
+    private SimpleDialogView mSimpleDialogView;
     private SimpleDialogFrame mFrame;
     private View mBody;
     private TextView mTitle;
@@ -50,6 +50,7 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     private View mSpacePositiveNegative;
     private TextView mPositiveButton;
 
+    private int mFitPaddingBottom;
 
     private SimpleDialog(@NonNull Builder builder) {
         mBuilder = builder;
@@ -64,12 +65,12 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
 
         mActivity = getStageActivity();
 
-        mFrame = new SimpleDialogFrame(mActivity);
-        setContentView(mFrame);
+        setContentView(R.layout.simple_dialog_frame);
+        mFrame = (SimpleDialogFrame) findViewById(R.id.simple_dialog_frame);
 
         mActivity.getLayoutInflater().inflate(R.layout.simple_dialog, mFrame);
 
-        mSimpleImageView = (SimpleDialogView) getSceneView();
+        mSimpleDialogView = (SimpleDialogView) getSceneView();
         mBody = findViewById(R.id.body);
         mTitle = (TextView) mBody.findViewById(R.id.title);
         mSpaceTitleContent = (Space) mBody.findViewById(R.id.space_title_content);
@@ -122,7 +123,7 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
             }
         }
 
-        mSimpleImageView.setOnClickOutOfDialogListener(this);
+        mSimpleDialogView.setOnClickOutOfDialogListener(this);
     }
 
     @Override
@@ -132,7 +133,50 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
 
     @Override
     protected void onGetFitPaddingBottom(int b) {
+        mFitPaddingBottom = b;
         mFrame.setFitPaddingBottom(b);
+    }
+
+    public SimpleDialogFrame getFrame() {
+        return mFrame;
+    }
+
+    public void getCenterLocation(int[] location) {
+        if (location == null || location.length < 2) {
+            throw new IllegalArgumentException("location must be an array of two integers");
+        }
+
+        if (mSimpleDialogView == null) {
+            location[0] = 0;
+            location[1] = 0;
+        } else {
+            location[0] = mSimpleDialogView.getWidth() / 2;
+            location[1] = (mSimpleDialogView.getHeight() - mFitPaddingBottom) / 2;
+        }
+    }
+
+    public int getWidth() {
+        if (mFrame == null) {
+            return 0;
+        } else {
+            return mFrame.getWidth();
+        }
+    }
+
+    public int getHeight() {
+        if (mFrame == null) {
+            return 0;
+        } else {
+            return mFrame.getHeight();
+        }
+    }
+
+    public int getStartX() {
+        return mBuilder.mStartX;
+    }
+
+    public int getStartY() {
+        return mBuilder.mStartY;
     }
 
     @Override
@@ -161,6 +205,9 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         private String mNegativeButtonText;
 
         private boolean mCancelable = true;
+
+        private int mStartX;
+        private int mStartY;
 
         public Builder(Context context) {
             mContext = context;
@@ -207,12 +254,25 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
             return this;
         }
 
+        public Builder setStartPoint(int startX, int startY) {
+            mStartX = startX;
+            mStartY = startY;
+            return this;
+        }
+
         public @NonNull SceneDialog build() {
             return new SimpleDialog(this);
         }
 
         public void show() {
-            new SimpleDialog(this).show();
+            show(null);
+        }
+
+        public void show(Curtain curtain) {
+            if (curtain == null) {
+                curtain = new SimpleDialogCurtain(mStartX, mStartY);
+            }
+            new SimpleDialog(this).show(curtain);
         }
     }
 }

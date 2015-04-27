@@ -21,7 +21,7 @@
     <dimen name="simple_dialog_body_padding_left">24dp</dimen>
     <dimen name="simple_dialog_body_padding_right">24dp</dimen>
     <dimen name="simple_dialog_body_padding_top">24dp</dimen>
-    <dimen name="simple_dialog_body_padding_bottom">18dp</dimen>
+    <dimen name="simple_dialog_body_padding_bottom">20dp</dimen>
     <dimen name="simple_dialog_title_content_gap">18dp</dimen>
 
     <!-- Scroll View-->

@@ -20,7 +20,7 @@ import android.support.annotation.Nullable;
 public abstract class SceneDialog extends Scene {
 
     public void show() {
-        sSceneManager.showDialog(this, null);
+        show(null);
     }
 
     public void show(@Nullable Curtain curtain) {

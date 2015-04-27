@@ -38,6 +38,7 @@ import android.widget.TextView;
 import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.ListUrlBuilder;
+import com.hippo.scene.SimpleDialog;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.FloatLabelEditText;
 import com.hippo.widget.FloatingActionButton;
@@ -82,6 +83,8 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     private View mNormalView;
     private CategoryTable mTableCategory;
     private CheckBox mCheckSpecifyAuthor;
+    private CheckBox mCheckSpecifyTag;
+    private View mSearchTagHelp;
     private SwitchCompat mSwitchEnableAdvance;
 
     private View mAdvanceView;
@@ -157,12 +160,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     }
 
     public void setFitPaddingTop(int fitPaddingTop) {
-        mSearchContainer.setPadding(
-                mSearchContainer.getPaddingLeft(),
-                mSearchPaddingTopOrigin + fitPaddingTop,
-                mSearchContainer.getPaddingRight(),
-                mSearchContainer.getPaddingBottom()
-        );
+        mSearchContainer.setPadding(mSearchContainer.getPaddingLeft(), mSearchPaddingTopOrigin + fitPaddingTop, mSearchContainer.getPaddingRight(), mSearchContainer.getPaddingBottom());
     }
 
     public void setFitPaddingBottom(int fitPaddingBottom) {
@@ -260,6 +258,12 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
             if (mHelper != null) {
                 mHelper.onRequestSearch(getListUrlBuilder(null));
             }
+        } else if (v == mSearchTagHelp) {
+            int[] location = new int [2];
+            ViewUtils.getLocationInAncestor(mSearchTagHelp, location, R.id.stage);
+            new SimpleDialog.Builder(getContext()).setTitle(R.string.search_specify_tag)
+                    .setMessage(R.string.search_tag_help)
+                    .setStartPoint(location[0], location[1]).show();
         }
     }
 
@@ -404,6 +408,8 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
                 mNormalView = holder.content.getChildAt(0);
                 mTableCategory = (CategoryTable) mNormalView.findViewById(R.id.search_category_table);
                 mCheckSpecifyAuthor = (CheckBox) mNormalView.findViewById(R.id.search_specify_author);
+                mCheckSpecifyTag = (CheckBox) mNormalView.findViewById(R.id.search_specify_tag);
+                mSearchTagHelp = mNormalView.findViewById(R.id.search_tag_help);
                 mSwitchEnableAdvance = (SwitchCompat) mNormalView.findViewById(R.id.search_enable_advance);
 
                 // Restore state
@@ -412,6 +418,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
                 }
 
                 mCheckSpecifyAuthor.setOnCheckedChangeListener(SearchLayout.this);
+                mSearchTagHelp.setOnClickListener(SearchLayout.this);
                 mSwitchEnableAdvance.setOnCheckedChangeListener(SearchLayout.this);
                 mSwitchEnableAdvance.setSwitchPadding(mResources.getDimensionPixelSize(R.dimen.switch_padding));
             } else {

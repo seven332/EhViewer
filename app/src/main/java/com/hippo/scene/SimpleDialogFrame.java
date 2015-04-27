@@ -32,6 +32,11 @@ public class SimpleDialogFrame extends CardView {
     private float mFixedHeightPercent;
     private int mFitPaddingBottom;
 
+    private int mOriginLeft;
+    private int mOriginTop;
+    private int mDrawLeft;
+    private int mDrawTop;
+
     public SimpleDialogFrame(Context context) {
         super(context);
         init(context);
@@ -87,5 +92,63 @@ public class SimpleDialogFrame extends CardView {
         AbsoluteLayout.LayoutParams lp = (AbsoluteLayout.LayoutParams) getLayoutParams();
         lp.x = (originalWidth - width) / 2;
         lp.y = (originalHeight - mFitPaddingBottom - height) / 2;
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+
+        mDrawLeft = mOriginLeft = left;
+        mDrawTop = mOriginTop = top;
+    }
+
+    /**
+     * I want to set left, but draw start from origin left.
+     */
+    @SuppressWarnings("unused")
+    public void setDrawLeft(int drawLeft) {
+        mDrawLeft = drawLeft;
+        setLeft(drawLeft);
+        setScrollX(drawLeft - mOriginLeft);
+    }
+
+    @SuppressWarnings("unused")
+    public int getDrawLeft() {
+        return mDrawLeft;
+    }
+
+    /**
+     * I want to set top, but draw start from origin top.
+     */
+    @SuppressWarnings("unused")
+    public void setDrawTop(int drawTop) {
+        mDrawTop = drawTop;
+        setTop(drawTop);
+        setScrollY((drawTop - mOriginTop));
+    }
+
+    @SuppressWarnings("unused")
+    public int getDrawTop() {
+        return mDrawTop;
+    }
+
+    @SuppressWarnings("unused")
+    public void setDrawRight(int drawRight) {
+        setRight(drawRight);
+    }
+
+    @SuppressWarnings("unused")
+    public int getDrawRight() {
+        return getRight();
+    }
+
+    @SuppressWarnings("unused")
+    public void setDrawBottom(int drawBottom) {
+        setBottom(drawBottom);
+    }
+
+    @SuppressWarnings("unused")
+    public int getDrawBottom() {
+        return getBottom();
     }
 }
