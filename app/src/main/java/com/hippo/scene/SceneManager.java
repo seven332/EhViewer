@@ -169,7 +169,7 @@ class SceneManager {
                 }
             }
         } else {
-            Log.e(TAG, "The scene is not in stage");
+            Log.e(TAG, "The scene is not in stage, " + scene);
         }
     }
 
