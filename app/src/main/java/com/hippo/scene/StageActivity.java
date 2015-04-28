@@ -25,14 +25,15 @@ import android.view.View;
 import com.hippo.ehviewer.ui.AbsActionBarActivity;
 import com.hippo.util.IntIdGenerator;
 
-public abstract class StageActivity extends AbsActionBarActivity
-        implements StageLayout.OnGetFitPaddingBottomListener {
+public abstract class StageActivity extends AbsActionBarActivity {
 
     private IntIdGenerator mActivityResultIdGenerator = IntIdGenerator.create();
     private SparseArray<Scene.ActivityResultListener> mActivityResultListenerMap =
             new SparseArray<>();
 
     private static SceneManager sSceneManager;
+
+    private int mFitPaddingBottom = -1;
 
     static void setSceneManager(SceneManager sceneManager) {
         sSceneManager = sceneManager;
@@ -49,10 +50,6 @@ public abstract class StageActivity extends AbsActionBarActivity
         ((SceneApplication) getApplication()).getSceneManager().setStageActivity(this);
     }
 
-    protected void onCreateStageLayout(StageLayout stageLayout) {
-        stageLayout.setOnGetFitPaddingListener(this);
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -60,10 +57,16 @@ public abstract class StageActivity extends AbsActionBarActivity
         ((SceneApplication) getApplication()).getSceneManager().setStageActivity(null);
     }
 
-    @Override
-    public void onGetFitPaddingBottom(int b) {
-        for (Scene scene : sSceneManager.getSceneStack()) {
-            scene.getFitPaddingBottom(b);
+    public int getFitPaddingBottom() {
+        return mFitPaddingBottom;
+    }
+
+    public void setFitPaddingBottom(int b) {
+        if (mFitPaddingBottom != b) {
+            mFitPaddingBottom = b;
+            for (Scene scene : sSceneManager.getSceneStack()) {
+                scene.getFitPaddingBottom(b);
+            }
         }
     }
 

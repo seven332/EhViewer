@@ -45,6 +45,10 @@
         <attr name="spaceBottom" format="dimension"/>
     </declare-styleable>
 
+    <declare-styleable name="StatusBarLayout">
+        <attr name="statusBarColor" format="color"/>
+    </declare-styleable>
+
     <!-- ********** -->
     <!-- For Vector -->
     <!-- ********** -->

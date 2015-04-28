@@ -16,16 +16,24 @@
 <android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawerLayout"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
 
-    <com.hippo.scene.StageLayout
-        android:id="@+id/stage"
+    <com.hippo.ehviewer.widget.StatusBarLayout
+        xmlns:auto="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/status_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"/>
+        android:fitsSystemWindows="true"
+        auto:statusBarColor="@color/theme_primary_dark">
+
+        <com.hippo.scene.StageLayout
+            android:id="@+id/stage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </com.hippo.ehviewer.widget.StatusBarLayout>
 
     <!-- Left Drawer -->
     <com.hippo.widget.DrawerFrameLayout

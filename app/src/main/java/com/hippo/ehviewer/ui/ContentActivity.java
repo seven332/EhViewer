@@ -26,14 +26,17 @@ import android.view.Gravity;
 import com.hippo.content.VectorContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
+import com.hippo.ehviewer.widget.StatusBarLayout;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.StageLayout;
 
-public class ContentActivity extends StageActivity {
+public class ContentActivity extends StageActivity
+        implements StatusBarLayout.OnGetFitPaddingBottomListener {
 
     private Resources mResources;
 
     private DrawerLayout mDrawerLayout;
+    private StatusBarLayout mStatusBarLayout;
     private StageLayout mContentLayout;
 
     @Override
@@ -43,16 +46,20 @@ public class ContentActivity extends StageActivity {
 
         mResources = getResources();
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        mContentLayout = (StageLayout) mDrawerLayout.findViewById(R.id.stage);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mStatusBarLayout = (StatusBarLayout) mDrawerLayout.findViewById(R.id.status_bar_layout);
+        mContentLayout = (StageLayout) mStatusBarLayout.findViewById(R.id.stage);
 
-        mDrawerLayout.setStatusBarBackground(R.color.theme_primary_dark);
+        mStatusBarLayout.setOnGetFitPaddingBottomListener(this);
 
         if (savedInstanceState == null) {
             startScene(GalleryListScene.class, null);
         }
+    }
 
-        onCreateStageLayout(mContentLayout);
+    @Override
+    public int getFitPaddingBottom() {
+        return 0;
     }
 
     @Override
@@ -72,5 +79,10 @@ public class ContentActivity extends StageActivity {
         } else {
             mDrawerLayout.openDrawer(Gravity.LEFT);
         }
+    }
+
+    @Override
+    public void onGetFitPaddingBottom(int b) {
+        setFitPaddingBottom(b);
     }
 }
