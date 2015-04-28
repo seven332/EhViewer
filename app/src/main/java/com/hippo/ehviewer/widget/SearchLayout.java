@@ -263,7 +263,8 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
             ViewUtils.getLocationInAncestor(mSearchTagHelp, location, R.id.stage);
             new SimpleDialog.Builder(getContext()).setTitle(R.string.search_specify_tag)
                     .setMessage(R.string.search_tag_help)
-                    .setStartPoint(location[0], location[1]).show();
+                    .setStartPoint(location[0] + mSearchTagHelp.getWidth() / 2,
+                            location[1] + mSearchTagHelp.getHeight() / 2).show();
         }
     }
 
