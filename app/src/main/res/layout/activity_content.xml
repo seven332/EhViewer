@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        auto:statusBarColor="@color/theme_primary_dark">
+        auto:statusBarColor="@android:color/transparent">
 
         <com.hippo.scene.StageLayout
             android:id="@+id/stage"

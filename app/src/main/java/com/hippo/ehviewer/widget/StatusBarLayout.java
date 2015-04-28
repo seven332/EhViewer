@@ -54,12 +54,15 @@ public class StatusBarLayout extends ViewGroup {
 
     private void init(Context context, AttributeSet attrs) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            setWillNotDraw(false);
             mPaint = new Paint();
             if (attrs != null) {
                 TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.StatusBarLayout);
-                mPaint.setColor(a.getColor(R.styleable.StatusBarLayout_statusBarColor, Color.BLACK));
+                int color = a.getColor(R.styleable.StatusBarLayout_statusBarColor, Color.BLACK);
+                mPaint.setColor(color);
+                setWillNotDraw(Color.alpha(color) == 0);
                 a.recycle();
+            } else {
+                setWillNotDraw(false);
             }
         }
     }
@@ -69,6 +72,7 @@ public class StatusBarLayout extends ViewGroup {
             if (mStatusBarColor != color) {
                 mStatusBarColor = color;
                 mPaint.setColor(color);
+                setWillNotDraw(Color.alpha(color) == 0);
                 invalidate();
             }
         }
