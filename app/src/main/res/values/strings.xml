@@ -105,6 +105,16 @@
     <string name="click_retry">Click to retry</string>
     <string name="click_first_page">Click to go to first page</string>
 
+    <!-- PatternProtectionActivity -->
+    <string name="pattern_protection_not_set">Pattern protection has not been set.</string>
+    <string name="pattern_protection_set">Pattern protection has been set.</string>
+    <string name="pattern_protection_warning">NO guarantee for anything.\nOpen a dial application and enter *#*#110722#*#* if you forget password.</string>
+    <string name="reset_pattern_protection">Pattern protection has been reset</string>
+
+    <!-- EnterPatternActivity -->
+    <string name="error_pattern">Error pattern</string>
+    <string name="no_more_retries">No more retries</string>
+
     <!-- Download -->
     <string name="legacy_pages">%d pages leaved</string>
     <string name="download_over">Download over</string>
@@ -295,6 +305,7 @@
     <string name="no_need_fixing">No need to fix</string>
     <string name="fixing_over">%d item(s) fixed</string>
     <string name="login_via_cookie_title">Login via cookie</string>
+    <string name="pattern_protection_title">Pattern protection</string>
 
     <string name="about_settings_title">About</string>
     <string name="author_title">Author</string>

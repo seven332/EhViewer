@@ -81,5 +81,9 @@
             android:key="login_via_cookie"
             android:title="@string/login_via_cookie_title"/>
 
+        <Preference
+            android:key="pattern_protection"
+            android:title="@string/pattern_protection_title"/>
+
     </PreferenceCategory>
 </PreferenceScreen>

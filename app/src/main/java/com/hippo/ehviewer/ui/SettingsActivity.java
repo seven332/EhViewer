@@ -688,9 +688,11 @@ public class SettingsActivity extends AbsPreferenceActivity {
 
         private static final String KEY_FIX_DIRNAME = "fix_dirname";
         private static final String KEY_LOGIN_VIA_COOKIE = "login_via_cookie";
+        private static final String KEY_PATTERN_PROTECTION = "pattern_protection";
 
         private Preference mFixDirname;
         private Preference mLoginViaCookie;
+        private Preference mPatternProtection;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -701,6 +703,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mFixDirname.setOnPreferenceClickListener(this);
             mLoginViaCookie = findPreference(KEY_LOGIN_VIA_COOKIE);
             mLoginViaCookie.setOnPreferenceClickListener(this);
+            mPatternProtection = findPreference(KEY_PATTERN_PROTECTION);
+            mPatternProtection.setOnPreferenceClickListener(this);
         }
 
         @Override
@@ -820,6 +824,9 @@ public class SettingsActivity extends AbsPreferenceActivity {
                                 return true;
                             }
                         }).show();
+            } else if (KEY_PATTERN_PROTECTION.equals(key)) {
+                Intent intent = new Intent(getActivity(), PatternProtectionActivity.class);
+                getActivity().startActivity(intent);
             }
             return true;
         }

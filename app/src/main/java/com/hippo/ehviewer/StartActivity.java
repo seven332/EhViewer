@@ -27,20 +27,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.app.MaterialAlertDialog;
+import com.hippo.ehviewer.miscellaneous.ActivityHelper;
 import com.hippo.ehviewer.network.Network;
 import com.hippo.ehviewer.ui.AbsActivity;
+import com.hippo.ehviewer.ui.EnterPatternActivity;
 import com.hippo.ehviewer.ui.GalleryListActivity;
-import com.hippo.ehviewer.miscellaneous.ActivityHelper;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.Secret;
 import com.hippo.ehviewer.util.ViewUtils;
+import com.hippo.ehviewer.widget.LockPatternUtils;
 import com.larvalabs.svgandroid.SVGBuilder;
 
 public class StartActivity extends AbsActivity {
 
     @SuppressWarnings("unused")
     private static final String TAG = StartActivity.class.getSimpleName();
+
+    private static final int REQUEST_CODE_PATTERN = 0;
 
     private static final int CHECK_WARING = 0;
     private static final int CHECK_ANALYTICS = 1;
@@ -51,6 +55,7 @@ public class StartActivity extends AbsActivity {
     private static final String KEY_SET_ANALYTICS = "set_analyics";
 
     private String lastCrash;
+    private boolean isEnterPattern = false;
     private boolean isAnimationOver = false;
     private boolean isCheckOver = false;
 
@@ -196,12 +201,37 @@ public class StartActivity extends AbsActivity {
         AppHandler.getInstance().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (isCheckOver)
-                    redirectTo();
-                isAnimationOver = true;
+                if (!StartActivity.this.isFinishing()) {
+                    if (isCheckOver && isEnterPattern)
+                        redirectTo();
+                    isAnimationOver = true;
+                }
             }
         }, 3000);
         check(CHECK_WARING);
+
+        // Enter Pattern
+        String pattern = Config.getPatternProtection();
+        if (LockPatternUtils.isPatternVaild(pattern)) {
+            // Start activity to enter pattern
+            Intent intent = new Intent(this, EnterPatternActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_PATTERN);
+        } else {
+            isEnterPattern = true;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_PATTERN) {
+            if (resultCode == RESULT_OK) {
+                if (isAnimationOver && isCheckOver)
+                    redirectTo();
+                isEnterPattern = true;
+            } else {
+                finish();
+            }
+        }
     }
 
     /**
@@ -239,7 +269,7 @@ public class StartActivity extends AbsActivity {
     }
 
     private void checkOver() {
-        if (isAnimationOver)
+        if (isAnimationOver && isEnterPattern)
             redirectTo();
         isCheckOver = true;
     }

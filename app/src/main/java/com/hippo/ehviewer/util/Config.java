@@ -96,6 +96,14 @@ public final class Config {
         mConfigPre.edit().putInt(key, value).apply();
     }
 
+    public static long getLong(String key, long defValue) {
+        return mConfigPre.getLong(key, defValue);
+    }
+
+    public static void setLong(String key, long value) {
+        mConfigPre.edit().putLong(key, value).apply();
+    }
+
     public static String getString(String key, String defValue) {
         return mConfigPre.getString(key, defValue);
     }
@@ -563,6 +571,9 @@ public final class Config {
     private static final String KEY_EH_MIN_INTERVAL = "eh_min_interval";
     private static final int DEFAULT_EH_MIN_INTERVAL = 0;
 
+    private static final String KEY_PATTERN_PROTECTION = "pattern_protection";
+    private static final String DEFAULT_PATTERN_PROTECTION = "";
+
     public static int getHttpRetry() {
         return getIntFromStr(KEY_HTTP_RETRY, DEFAULT_HTTP_RETRY);
     }
@@ -577,6 +588,14 @@ public final class Config {
 
     public static int getEhMinInterval() {
         return getIntFromStr(KEY_EH_MIN_INTERVAL, DEFAULT_EH_MIN_INTERVAL);
+    }
+
+    public static String getPatternProtection() {
+        return getString(KEY_PATTERN_PROTECTION, DEFAULT_PATTERN_PROTECTION);
+    }
+
+    public static void setPatternProtection(String value) {
+        setString(KEY_PATTERN_PROTECTION, value);
     }
 
 

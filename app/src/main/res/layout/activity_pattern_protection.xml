@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_little_small"
+        android:padding="32dp"/>
+
+    <LinearLayout
+        android:id="@+id/button_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="36dp"
+            android:gravity="center"
+            android:text="@android:string/cancel"
+            android:textColor="@color/theme"
+            android:textSize="@dimen/text_medium"/>
+
+        <TextView
+            android:id="@+id/ok"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="36dp"
+            android:gravity="center"
+            android:text="@android:string/ok"
+            android:textColor="@color/theme"
+            android:textSize="@dimen/text_medium"/>
+
+    </LinearLayout>
+
+    <com.hippo.ehviewer.widget.LockPatternView
+        android:id="@+id/pattern_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/button_bar"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"/>
+
+</RelativeLayout>
