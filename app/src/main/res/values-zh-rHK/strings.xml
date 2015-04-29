@@ -89,6 +89,16 @@
     <string name="click_retry">點擊重試</string>
     <string name="click_first_page">點擊回第一頁</string>
 
+    <!-- PatternProtectionActivity -->
+    <string name="pattern_protection_not_set">未設置圖案保護。</string>
+    <string name="pattern_protection_set">已設置圖案保護。</string>
+    <string name="pattern_protection_warning">開發者不對該功能做任何保證。\n如果你忘記了密碼，請打開撥號軟件，輸入 *#*#110722#*#* 。</string>
+    <string name="reset_pattern_protection">圖案保護已重置</string>
+
+    <!-- EnterPatternActivity -->
+    <string name="error_pattern">錯誤的圖案</string>
+    <string name="no_more_retries">不能繼續重試</string>
+
     <!-- Download -->
     <string name="legacy_pages">%d 頁未下載</string>
     <string name="download_over">下載結束</string>
@@ -278,6 +288,7 @@
     <string name="no_need_fixing">未發現可修正項</string>
     <string name="fixing_over">共修正 %d 項</string>
     <string name="login_via_cookie_title">通過 cookie 登錄</string>
+    <string name="pattern_protection_title">圖案保護</string>
 
     <string name="about_settings_title">關於</string>
     <string name="author_title">作者</string>
