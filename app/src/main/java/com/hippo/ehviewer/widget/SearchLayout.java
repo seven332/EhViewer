@@ -44,6 +44,7 @@ import com.hippo.widget.FloatLabelEditText;
 import com.hippo.widget.FloatingActionButton;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 
+// TODO requst returnSearchBarPosition when content of recycler changed
 public class SearchLayout extends FrameLayout implements CompoundButton.OnCheckedChangeListener,
         View.OnClickListener, SelectSearchImageLayout.SelectSearchImageLayoutHelper {
 

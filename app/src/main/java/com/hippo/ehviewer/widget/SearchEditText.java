@@ -59,6 +59,7 @@ public class SearchEditText extends EditText {
                     state.handleUpEvent(event);
                 }
                 if (event.isTracking() && !event.isCanceled()) {
+                    // TODO stopSelectionActionMode
                     if (mListener != null) {
                         mListener.onBackPressed();
                         return true;
