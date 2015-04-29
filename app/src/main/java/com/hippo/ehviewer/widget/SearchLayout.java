@@ -159,8 +159,16 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
                 mSearchPaddingBottomOrigin);
     }
 
+    public EasyRecyclerView getRecyclerView() {
+        return mSearchContainer;
+    }
+
     public void setFitPaddingTop(int fitPaddingTop) {
-        mSearchContainer.setPadding(mSearchContainer.getPaddingLeft(), mSearchPaddingTopOrigin + fitPaddingTop, mSearchContainer.getPaddingRight(), mSearchContainer.getPaddingBottom());
+        mSearchContainer.setPadding(
+                mSearchContainer.getPaddingLeft(),
+                mSearchPaddingTopOrigin + fitPaddingTop,
+                mSearchContainer.getPaddingRight(),
+                mSearchContainer.getPaddingBottom());
     }
 
     public void setFitPaddingBottom(int fitPaddingBottom) {

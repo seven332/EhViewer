@@ -13,7 +13,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<FrameLayout
+<com.hippo.ehviewer.widget.OffsetLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -39,5 +39,5 @@
         android:layout_marginTop="@dimen/search_bar_padding_vertical"
         auto:forceNoElevation="true"/>
 
-</FrameLayout>
+</com.hippo.ehviewer.widget.OffsetLayout>
 

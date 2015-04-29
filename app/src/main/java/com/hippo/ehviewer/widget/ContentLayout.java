@@ -40,6 +40,7 @@ public class ContentLayout extends FrameLayout {
     private ProgressBar mProgressBar;
     private ViewGroup mItView;
     private RefreshLayout mRefreshLayout;
+    private EasyRecyclerView mRecyclerView;
     private View mImageView;
     private TextView mTextView;
 
@@ -64,8 +65,13 @@ public class ContentLayout extends FrameLayout {
         mProgressBar = (ProgressBar) getChildAt(0);
         mItView = (ViewGroup) getChildAt(1);
         mRefreshLayout = (RefreshLayout) getChildAt(2);
+        mRecyclerView = (EasyRecyclerView) mRefreshLayout.getChildAt(1);
         mImageView = mItView.getChildAt(0);
         mTextView = (TextView) mItView.getChildAt(1);
+    }
+
+    public EasyRecyclerView getRecyclerView() {
+        return mRecyclerView;
     }
 
     public void showProgressBar() {
