@@ -16,8 +16,6 @@
 
 package com.hippo.ehviewer.ui;
 
-import java.util.List;
-
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -58,7 +56,13 @@ import com.hippo.ehviewer.widget.FitWindowView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.windowsanimate.WindowsAnimate;
 
+import java.util.List;
+
 public class DownloadActivity extends AbsTranslucentActivity implements FitWindowView.OnFitSystemWindowsListener {
+
+    public static final String ACTION_SPECIFIC_GALLERY = "com.hippo.ehviewer.ui.DownloadActivity.SPECIFIC_GALLERY";
+
+    public static final String KEY_SPECIFIC_GALLERY_GID = "specific_gallery_gid";
 
     private AppContext mAppContext;
     private WindowsAnimate mWindowsAnimate;
@@ -121,6 +125,20 @@ public class DownloadActivity extends AbsTranslucentActivity implements FitWindo
         mThemeColor = Config.getCustomThemeColor() ? Config.getThemeColor() : Ui.THEME_COLOR;
         getActionBar().setBackgroundDrawable(new ColorDrawable(mThemeColor));
         Ui.colorStatusBarL(this, mThemeColor);
+
+        // Go to specific gid
+        Intent intent = getIntent();
+        if (intent != null && ACTION_SPECIFIC_GALLERY.equals(intent.getAction())) {
+            int specificGid = intent.getIntExtra(KEY_SPECIFIC_GALLERY_GID, -1);
+            if (specificGid != -1) {
+                int size = mDownloads.size();
+                for (int i = 0; i < size; i++) {
+                    if (mDownloads.get(i).galleryInfo.gid == specificGid) {
+                        mList.setSelection(i);
+                    }
+                }
+            }
+        }
     }
 
     @Override

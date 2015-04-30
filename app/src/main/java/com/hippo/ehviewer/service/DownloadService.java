@@ -16,9 +16,6 @@
 
 package com.hippo.ehviewer.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -37,6 +34,9 @@ import com.hippo.ehviewer.ehclient.ExDownloaderManager;
 import com.hippo.ehviewer.ui.DownloadActivity;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DownloadService extends Service
         implements ExDownloader.ListenerForDownload {
@@ -311,9 +311,6 @@ public class DownloadService extends Service
 
         mBuilder = new NotificationCompat.Builder(mContext);
         mBuilder.setSmallIcon(android.R.drawable.stat_sys_download);
-        Intent intent = new Intent(DownloadService.this,DownloadActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mBuilder.setContentIntent(pendingIntent);
         mBuilder.setOngoing(true).setAutoCancel(false);
 
         // Add action
@@ -328,6 +325,15 @@ public class DownloadService extends Service
         mBuilder.addAction(R.drawable.ic_action_close, getString(R.string.stop_all), piStopAll);
     }
 
+    private void setPendingIntent() {
+        Intent intent = new Intent(DownloadService.this, DownloadActivity.class);
+        intent.setAction(DownloadActivity.ACTION_SPECIFIC_GALLERY);
+        intent.putExtra(DownloadActivity.KEY_SPECIFIC_GALLERY_GID, mCurDownloadInfo.galleryInfo.gid);
+        PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 0,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(pendingIntent);
+    }
+
     @Override
     public void onStart(int gid) {
         if (mCurDownloadInfo == null)
@@ -337,6 +343,7 @@ public class DownloadService extends Service
         mCurDownloadInfo.total = -1;
 
         ensureNotification();
+        setPendingIntent();
 
         mBuilder.setContentTitle(getString(R.string.start_download)  + " " + gid)
                 .setContentText(null)
@@ -355,6 +362,7 @@ public class DownloadService extends Service
         mCurDownloadInfo.total = sum;
 
         ensureNotification();
+        setPendingIntent();
 
         mBuilder.setContentTitle(getString(R.string.downloading)  + " " + gid)
                 .setContentText(null)
@@ -375,6 +383,7 @@ public class DownloadService extends Service
         mCurDownloadInfo.total = totalSize;
 
         ensureNotification();
+        setPendingIntent();
 
         mBuilder.setContentTitle(getString(R.string.downloading)  + " " + gid)
                 .setContentText(mSpeedStr)
@@ -398,6 +407,7 @@ public class DownloadService extends Service
         mSpeedStr = Utils.sizeToString(speed) + "/S";
 
         ensureNotification();
+        setPendingIntent();
 
         mBuilder.setContentTitle(getString(R.string.downloading)  + " " + gid)
                 .setContentText(mSpeedStr)
