@@ -550,16 +550,16 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
                     public boolean onClick(MaterialAlertDialog dialog, int position) {
                         final GalleryInfo gi = mGalleryListView.getGalleryInfo(longClickItemIndex);
                         switch (position) {
-                        case 0: // Add favourite item
-                            FavoriteHelper.addToFavorite(GalleryListActivity.this, gi, null);
-                            break;
-                        case 1:
-                            Intent it = new Intent(GalleryListActivity.this, DownloadService.class);
-                            it.setAction(DownloadService.ACTION_ADD);
-                            it.putExtra(DownloadService.KEY_GALLERY_INFO, gi);
-                            startService(it);
-                            MaterialToast.showToast(R.string.toast_add_download);
-                            break;
+                            case 0: // Add favourite item
+                                FavoriteHelper.addToFavorite(GalleryListActivity.this, gi, null);
+                                break;
+                            case 1:
+                                Intent it = new Intent(GalleryListActivity.this, DownloadService.class);
+                                it.setAction(DownloadService.ACTION_ADD);
+                                it.putExtra(DownloadService.KEY_GALLERY_INFO, gi);
+                                startService(it);
+                                MaterialToast.showToast(R.string.toast_add_download);
+                                break;
                         }
                         return true;
                     }
@@ -1416,8 +1416,16 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
         case R.id.action_add:
             // TODO
             if (lus != null) {
+                String suggestionName = null;
+                int mode = lus.getMode();
+                if (mode == ListUrls.MODE_NORMAL || mode == ListUrls.MODE_UPLOADER) {
+                    suggestionName = lus.getSearch();
+                } else if (mode == ListUrls.MODE_TAG) {
+                    suggestionName = lus.getTag();
+                }
                 View view = ViewUtils.inflateDialogView(R.layout.set_name, false);
                 final EditText et = (EditText) view.findViewById(R.id.set_name_edit);
+                et.setText(suggestionName);
                 new MaterialAlertDialog.Builder(this).setTitle("添加当前状态至快速搜索") // TODO
                         .setView(view, true)
                         .setDefaultButton(MaterialAlertDialog.POSITIVE | MaterialAlertDialog.NEGATIVE)
