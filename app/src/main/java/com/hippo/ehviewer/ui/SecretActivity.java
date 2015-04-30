@@ -17,8 +17,6 @@
 package com.hippo.ehviewer.ui;
 
 
-import java.util.Arrays;
-
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -27,10 +25,10 @@ import android.widget.ImageView;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.effect.DrawableTransition;
-import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Secret;
-import com.hippo.ehviewer.util.Ui;
 import com.hippo.ehviewer.widget.MaterialToast;
+
+import java.util.Arrays;
 
 public class SecretActivity extends AbsActivity implements View.OnClickListener {
 
@@ -46,9 +44,6 @@ public class SecretActivity extends AbsActivity implements View.OnClickListener 
             finish();
             return;
         }
-
-        int themeColor = Config.getCustomThemeColor() ? Config.getThemeColor() : Ui.THEME_COLOR;
-        Ui.colorStatusBarL(this, themeColor);
 
         ImageView iv = new ImageView(this);
         iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
