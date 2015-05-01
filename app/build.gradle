@@ -10,8 +10,8 @@ android {
         applicationId "com.hippo.ehviewer"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 45
-        versionName "0.6.16.1"
+        versionCode 46
+        versionName "0.6.16.2"
     }
     buildTypes {
         debug {
