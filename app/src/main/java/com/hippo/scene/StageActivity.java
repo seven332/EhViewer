@@ -33,7 +33,7 @@ public abstract class StageActivity extends AbsActionBarActivity {
 
     private static SceneManager sSceneManager;
 
-    private int mFitPaddingBottom = -1;
+    private int mFitPaddingBottom;
 
     static void setSceneManager(SceneManager sceneManager) {
         sSceneManager = sceneManager;

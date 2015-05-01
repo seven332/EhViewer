@@ -58,11 +58,6 @@ public class ContentActivity extends StageActivity
     }
 
     @Override
-    public int getFitPaddingBottom() {
-        return 0;
-    }
-
-    @Override
     public @NonNull StageLayout getStageLayout() {
         return mContentLayout;
     }
