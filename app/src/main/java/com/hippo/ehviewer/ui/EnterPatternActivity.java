@@ -40,7 +40,7 @@ public class EnterPatternActivity extends AbsActivity {
         Ui.setMaterialIndicator(getActionBar(), materialIndicator);
 
         // Can't try if bad retry happened in 10 mins
-        long lastBadRetry = Config.getLong(KEY_LAST_BAD_PATTERN_RETRY, Long.MAX_VALUE);
+        long lastBadRetry = Config.getLong(KEY_LAST_BAD_PATTERN_RETRY, 0);
         if (System.currentTimeMillis() - lastBadRetry < 1000 * 60 * 10) {
             mRetryTimes = 10;
         }
