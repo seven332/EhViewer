@@ -370,7 +370,8 @@ public class Ui {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(d);
-            actionBar.setIcon(null);
+            // actionBar.setIcon(null) may cause crash in Meizu lollipop
+            actionBar.setIcon(new ColorDrawable());
             actionBar.setElevation(dp2pix(4.0f));
         }
     }
