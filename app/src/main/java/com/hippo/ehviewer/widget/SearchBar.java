@@ -29,7 +29,6 @@ import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
 import android.util.AttributeSet;
@@ -183,6 +182,10 @@ public class SearchBar extends CardView implements View.OnClickListener,
         mHelper = helper;
     }
 
+    public String getText() {
+        return mEditText.getText().toString();
+    }
+
     @Override
     public void onClick(View v) {
         if (v == mTitleTextView) {
@@ -207,9 +210,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
         if (v == mEditText) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_NULL) {
                 String query = mEditText.getText().toString();
-                if (!TextUtils.isEmpty(query)) {
-                    mHelper.onApplySearch(query);
-                }
+                mHelper.onApplySearch(query);
                 return true;
             }
         }

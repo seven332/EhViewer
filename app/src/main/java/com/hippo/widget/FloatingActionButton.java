@@ -87,6 +87,7 @@ public class FloatingActionButton extends View {
                 ViewUtils.getSuitableSize(getSuggestedMinimumHeight(), heightMeasureSpec));
     }
 
+    @Override
     protected void onDraw(Canvas canvas) {
         mGasketDrawer.draw(canvas);
 

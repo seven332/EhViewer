@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.hippo.ehviewer.R;
+import com.hippo.util.Log;
 
 public class StatusBarLayout extends ViewGroup {
 

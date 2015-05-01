@@ -41,7 +41,6 @@ import com.hippo.ehviewer.data.ListUrlBuilder;
 import com.hippo.scene.SimpleDialog;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.FloatLabelEditText;
-import com.hippo.widget.FloatingActionButton;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 
 // TODO requst returnSearchBarPosition when content of recycler changed
@@ -79,7 +78,6 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     private boolean mEnableAdvance = false;
 
     private EasyRecyclerView mSearchContainer;
-    private FloatingActionButton mFab;
 
     private View mNormalView;
     private CategoryTable mTableCategory;
@@ -111,7 +109,6 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
 
     private Bitmap mSearchImage;
 
-    private int mFabMarginBottomOrigin;
     private int mSearchPaddingTopOrigin;
     private int mSearchPaddingBottomOrigin;
 
@@ -137,7 +134,6 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         LayoutInflater.from(context).inflate(R.layout.widget_search_layout, this);
 
         mSearchContainer = (EasyRecyclerView) getChildAt(0);
-        mFab = (FloatingActionButton) getChildAt(1);
 
         mLayoutManager = new LinearLayoutManager(mContext);
         mAdapter = new SearchAdapter();
@@ -147,11 +143,9 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         mSearchContainer.setHasFixedSize(true);
         mSearchContainer.setItemAnimator(mAnimator);
 
-        mFab.setOnClickListener(this);
-        mFabMarginBottomOrigin = mResources.getDimensionPixelSize(R.dimen.content_fab_margin_bottom);
-
         // Search Container
         mSearchPaddingTopOrigin = mSearchContainer.getPaddingTop();
+        // Original padding bottom and the padding bottom to make it above fab
         mSearchPaddingBottomOrigin = mSearchContainer.getPaddingBottom() +
                 mResources.getDimensionPixelSize(R.dimen.content_padding_bottom);
         mSearchContainer.setPadding( mSearchContainer.getPaddingLeft(),
@@ -179,10 +173,6 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
                 mSearchContainer.getPaddingRight(),
                 mSearchPaddingBottomOrigin + fitPaddingBottom
         );
-
-        LayoutParams lp = (LayoutParams) mFab.getLayoutParams();
-        lp.bottomMargin = mFabMarginBottomOrigin + fitPaddingBottom;
-        mFab.setLayoutParams(lp);
     }
 
     public void setHelper(SearhLayoutHelper helper) {
@@ -263,10 +253,6 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
             // TODO add quick search
         } else if (v == mAction2) {
             taggleSearchMode();
-        } else if (v == mFab) {
-            if (mHelper != null) {
-                mHelper.onRequestSearch(getListUrlBuilder(null));
-            }
         } else if (v == mSearchTagHelp) {
             int[] location = new int [2];
             ViewUtils.getLocationInAncestor(mSearchTagHelp, location, R.id.stage);

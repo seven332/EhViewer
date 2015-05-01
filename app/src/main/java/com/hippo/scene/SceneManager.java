@@ -103,7 +103,7 @@ class SceneManager {
         // Update fit padding
         int fitPaddingBottom = getStageActivity().getFitPaddingBottom();
         if (fitPaddingBottom > 0) {
-            scene.getFitPaddingBottom(fitPaddingBottom);
+            scene.setFitPaddingBottom(fitPaddingBottom);
         }
 
         if (curtain != null && previousState != null) {

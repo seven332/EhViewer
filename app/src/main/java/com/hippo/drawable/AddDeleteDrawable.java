@@ -79,6 +79,11 @@ public class AddDeleteDrawable extends Drawable {
         canvas.restore();
     }
 
+    public void setColor(int color) {
+        mPaint.setColor(color);
+        invalidateSelf();
+    }
+
     @Override
     public void setAlpha(int alpha) {
         mPaint.setAlpha(alpha);

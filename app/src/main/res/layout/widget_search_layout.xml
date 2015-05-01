@@ -27,12 +27,4 @@
         auto:spaceRight="@dimen/search_layout_space_vertical"
         tools:ignore="RtlHardcoded"/>
 
-    <com.hippo.widget.FloatingActionButton
-        xmlns:auto="http://schemas.android.com/apk/res-auto"
-        style="@style/FloatingActionButton.Content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        auto:color="?attr/colorAccent"
-        auto:drawable="@drawable/ic_search_dark"/>
-
 </merge>

@@ -35,6 +35,10 @@
     <dimen name="search_layout_space">8dp</dimen>
     <dimen name="search_layout_space_vertical">8dp</dimen>
 
+    <!-- Corner fab -->
+    <dimen name="corner_fab_padding_right">16dp</dimen>
+    <dimen name="corner_fab_padding_bottom">16dp</dimen>
+
     <!-- Search Content -->
     <dimen name="content_padding_start">0dp</dimen>
     <dimen name="content_padding_end">0dp</dimen>

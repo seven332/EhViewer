@@ -59,8 +59,6 @@ public abstract class Scene {
 
     protected static SceneManager sSceneManager;
 
-    private int mFitPaddingBottom = -1;
-
     static void setSceneManager(SceneManager sceneManager) {
         sSceneManager = sceneManager;
     }
@@ -173,11 +171,8 @@ public abstract class Scene {
         onOut();
     }
 
-    void getFitPaddingBottom(int b) {
-        if (mFitPaddingBottom != b) {
-            mFitPaddingBottom = b;
-            onGetFitPaddingBottom(b);
-        }
+    void setFitPaddingBottom(int b) {
+        onGetFitPaddingBottom(b);
     }
 
     /**

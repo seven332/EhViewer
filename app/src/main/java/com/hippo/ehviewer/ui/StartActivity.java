@@ -17,6 +17,7 @@ package com.hippo.ehviewer.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,7 +27,7 @@ import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGBuilder;
 import com.larvalabs.svgandroid.SVGParseException;
 
-public class StartActivity extends AbsActionBarActivity {
+public class StartActivity extends AppCompatActivity {
 
     private static final String TAG = StartActivity.class.getSimpleName();
 
@@ -46,16 +47,8 @@ public class StartActivity extends AbsActionBarActivity {
             // Empty, I think this exception will never be caught.
         }
 
-        if (savedInstanceState == null) {
-            // Only do this when first time
-            postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    finish();
-                    Intent intent = new Intent(StartActivity.this, ContentActivity.class);
-                    startActivity(intent);
-                }
-            }, 0);
-        }
+        finish();
+        Intent intent = new Intent(StartActivity.this, ContentActivity.class);
+        startActivity(intent);
     }
 }

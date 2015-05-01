@@ -16,15 +16,23 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.Interpolator;
+import android.widget.FrameLayout;
 
 import com.hippo.animation.SimpleAnimatorListener;
+import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.ContentActivity;
@@ -37,9 +45,11 @@ import com.hippo.scene.Scene;
 import com.hippo.util.Log;
 import com.hippo.util.MathUtils;
 import com.hippo.util.ViewUtils;
+import com.hippo.widget.FloatingActionButton;
 
-public
-class GalleryListScene extends Scene implements SearchBar.Helper {
+// TODO disable click action when animating
+public class GalleryListScene extends Scene implements SearchBar.Helper,
+        View.OnClickListener {
 
     private static final long ANIMATE_TIME = 300l;
 
@@ -47,6 +57,11 @@ class GalleryListScene extends Scene implements SearchBar.Helper {
     private final static int STATE_SIMPLE_SEARCH = 1;
     private final static int STATE_SEARCH = 2;
     private final static int STATE_SEARCH_SHOW_LIST = 3;
+
+    private final static int FAB_STATE_NORMAL = 0;
+    private final static int FAB_STATE_SEARCH = 1;
+
+    private final static Interpolator FAST_OUT_LINEAR_IN_INTERPOLATOR = new FastOutLinearInInterpolator();
 
     private ContentActivity mActivity;
     private Resources mResources;
@@ -57,6 +72,7 @@ class GalleryListScene extends Scene implements SearchBar.Helper {
     private RecyclerView mContentRecyclerView;
     private SearchLayout mSearchLayout;
     private RecyclerView mSearchRecyclerView;
+    private FloatingActionButton mCornerFab;
 
     private ViewTransition mViewTransition;
 
@@ -64,8 +80,14 @@ class GalleryListScene extends Scene implements SearchBar.Helper {
     private int mSearchBarOriginalBottom;
     private ValueAnimator mSearchBarMoveAnimator;
 
-    private int mState = STATE_NORMAL;
+    private int mCornerFabOriginalBottom;
+    private AddDeleteDrawable mAddDeleteDrawable;
+    private Drawable mSearchDrawable;
 
+    private int mState = STATE_NORMAL;
+    private int mFabState = FAB_STATE_NORMAL;
+
+    @SuppressWarnings("deprecation")
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +102,7 @@ class GalleryListScene extends Scene implements SearchBar.Helper {
         mContentRecyclerView = mContentLayout.getRecyclerView();
         mSearchLayout = (SearchLayout) findViewById(R.id.search_layout);
         mSearchRecyclerView = mSearchLayout.getRecyclerView();
+        mCornerFab = (FloatingActionButton) findViewById(R.id.fab);
 
         mViewTransition = new ViewTransition(mContentLayout, mSearchLayout);
 
@@ -95,10 +118,17 @@ class GalleryListScene extends Scene implements SearchBar.Helper {
                 ViewUtils.removeOnGlobalLayoutListener(mSearchBar.getViewTreeObserver(), this);
                 mSearchBarOriginalTop = mSearchBar.getTop();
                 mSearchBarOriginalBottom = mSearchBar.getBottom();
-                mSearchLayout.setFitPaddingTop(mSearchBar.getHeight() +
-                        mResources.getDimensionPixelOffset(R.dimen.search_bar_padding_vertical));
+                mSearchLayout.setFitPaddingTop(mSearchBar.getHeight() + mResources.getDimensionPixelOffset(R.dimen.search_bar_padding_vertical));
             }
         });
+
+        // Corner Fab
+        mCornerFab.setOnClickListener(this);
+        mCornerFabOriginalBottom = mResources.getDimensionPixelOffset(R.dimen.corner_fab_padding_bottom);
+        mAddDeleteDrawable = new AddDeleteDrawable(getStageActivity());
+        mAddDeleteDrawable.setColor(mResources.getColor(R.color.primary_drawable_dark));
+        mSearchDrawable = mResources.getDrawable(R.drawable.ic_search_dark);
+        mCornerFab.setDrawable(mAddDeleteDrawable);
 
         // TEST
         mContentLayout.showText("四姑拉斯基");
@@ -106,7 +136,41 @@ class GalleryListScene extends Scene implements SearchBar.Helper {
 
     @Override
     protected void onGetFitPaddingBottom(int b) {
+        // Search Layout
         mSearchLayout.setFitPaddingBottom(b);
+        // Corner Fab
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mCornerFab.getLayoutParams();
+        lp.bottomMargin = b + mCornerFabOriginalBottom;
+        mCornerFab.setLayoutParams(lp);
+    }
+
+    private void setFabState(int fabState) {
+        if (mFabState != fabState) {
+            mFabState = fabState;
+            Drawable drawable = null;
+            if (mFabState == FAB_STATE_NORMAL) {
+                drawable = mAddDeleteDrawable;
+            } else if (mFabState == FAB_STATE_SEARCH) {
+                drawable = mSearchDrawable;
+            } else {
+                return;
+            }
+            PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", 1f, 0f);
+            PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", 1f, 0f);
+            ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(mCornerFab, scaleXPvh, scaleYPvh);
+            oa.setDuration(ANIMATE_TIME / 2);
+            oa.setInterpolator(FAST_OUT_LINEAR_IN_INTERPOLATOR);
+            oa.setRepeatCount(1);
+            oa.setRepeatMode(ValueAnimator.REVERSE);
+            final Drawable finalDrawable = drawable;
+            oa.addListener(new SimpleAnimatorListener() {
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                    mCornerFab.setDrawable(finalDrawable);
+                }
+            });
+            oa.start();
+        }
     }
 
     @Override
@@ -119,12 +183,14 @@ class GalleryListScene extends Scene implements SearchBar.Helper {
                 mState = STATE_NORMAL;
                 mSearchBar.setInNormalMode();
                 returnSearchBarPosition();
+                setFabState(FAB_STATE_NORMAL);
                 break;
             case STATE_SEARCH:
                 mState = STATE_NORMAL;
                 mViewTransition.showFirstView();
                 mSearchBar.setInNormalMode();
                 returnSearchBarPosition();
+                setFabState(FAB_STATE_NORMAL);
                 break;
             case STATE_SEARCH_SHOW_LIST:
                 mState = STATE_SEARCH;
@@ -135,11 +201,23 @@ class GalleryListScene extends Scene implements SearchBar.Helper {
     }
 
     @Override
+    public void onClick(View v) {
+        if (v == mCornerFab) {
+            if (mFabState == FAB_STATE_NORMAL) {
+                //
+            } else if (mFabState == FAB_STATE_SEARCH) {
+                onApplySearch(mSearchBar.getText());
+            }
+        }
+    }
+
+    @Override
     public void onClickTitle() {
         if (mState == STATE_NORMAL) {
             mState = STATE_SIMPLE_SEARCH;
             mSearchBar.setInEditMode(true);
             returnSearchBarPosition();
+            setFabState(FAB_STATE_SEARCH);
         }
     }
 
@@ -161,6 +239,7 @@ class GalleryListScene extends Scene implements SearchBar.Helper {
             mSearchLayout.scrollSearchContainerToTop();
             mSearchBar.setInEditMode(false);
             returnSearchBarPosition();
+            setFabState(FAB_STATE_SEARCH);
         }
     }
 
@@ -175,6 +254,7 @@ class GalleryListScene extends Scene implements SearchBar.Helper {
 
     @Override
     public void onApplySearch(String query) {
+        // TODO Query may be "", should not do search if it is
         Log.d("onApplySearch " + query);
         mSearchDatabase.addQuery(query);
 
@@ -182,6 +262,7 @@ class GalleryListScene extends Scene implements SearchBar.Helper {
         mViewTransition.showFirstView();
         mSearchBar.setInNormalMode();
         returnSearchBarPosition();
+        setFabState(FAB_STATE_NORMAL);
     }
 
     private RecyclerView getVaildRecyclerView() {
