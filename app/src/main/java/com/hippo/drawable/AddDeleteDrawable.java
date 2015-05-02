@@ -36,10 +36,10 @@ public class AddDeleteDrawable extends Drawable {
     private final Path mPath = new Path();
 
     private final int mSize;
-    private final float mBarThickness;
 
     private float mProgress;
 
+    private boolean mAutoUpdateMirror = false;
     private boolean mVerticalMirror = false;
 
     /**
@@ -49,13 +49,13 @@ public class AddDeleteDrawable extends Drawable {
         Resources resources = context.getResources();
 
         mSize = resources.getDimensionPixelSize(R.dimen.add_size);
-        mBarThickness = Math.round(resources.getDimension(R.dimen.add_thickness));
+        float barThickness = Math.round(resources.getDimension(R.dimen.add_thickness));
 
         mPaint.setColor(resources.getColor(R.color.primary_drawable_light));
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.MITER);
         mPaint.setStrokeCap(Paint.Cap.BUTT);
-        mPaint.setStrokeWidth(mBarThickness);
+        mPaint.setStrokeWidth(barThickness);
 
         float halfSize = mSize / 2;
         mPath.moveTo(0f, -halfSize);
@@ -69,9 +69,9 @@ public class AddDeleteDrawable extends Drawable {
         Rect bounds = getBounds();
         float canvasRotate;
         if (mVerticalMirror) {
-            canvasRotate = MathUtils.lerp(-270, -135f, mProgress);
+            canvasRotate = MathUtils.lerp(270, 135f, mProgress);
         } else {
-            canvasRotate = MathUtils.lerp(0f, -135f, mProgress);
+            canvasRotate = MathUtils.lerp(0f, 135f, mProgress);
         }
 
         canvas.save();
@@ -113,6 +113,10 @@ public class AddDeleteDrawable extends Drawable {
         mVerticalMirror = verticalMirror;
     }
 
+    public void setAutoUpdateMirror(boolean autoUpdateMirror) {
+        mAutoUpdateMirror = autoUpdateMirror;
+    }
+
     @SuppressWarnings("unused")
     public float getProgress() {
         return mProgress;
@@ -120,10 +124,12 @@ public class AddDeleteDrawable extends Drawable {
 
     @SuppressWarnings("unused")
     public void setProgress(float progress) {
-        if (progress == 1f) {
-            setVerticalMirror(true);
-        } else if (progress == 0f) {
-            setVerticalMirror(false);
+        if (mAutoUpdateMirror) {
+            if (progress == 1f) {
+                setVerticalMirror(true);
+            } else if (progress == 0f) {
+                setVerticalMirror(false);
+            }
         }
         mProgress = progress;
         invalidateSelf();

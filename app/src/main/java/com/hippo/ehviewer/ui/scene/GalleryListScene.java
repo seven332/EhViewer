@@ -150,7 +150,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
     private void setFabState(int fabState) {
         if (mFabState != fabState) {
             mFabState = fabState;
-            Drawable drawable = null;
+            Drawable drawable;
             if (mFabState == FAB_STATE_NORMAL) {
                 drawable = mAddDeleteDrawable;
             } else if (mFabState == FAB_STATE_SEARCH) {
@@ -180,7 +180,12 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
     public void onBackPressed() {
         switch (mState) {
             case STATE_NORMAL:
-                super.onBackPressed();
+                if (mFabLayout.getExpanded()) {
+                    mFabLayout.setExpanded(false);
+                    mAddDeleteDrawable.setShape(false, ANIMATE_TIME);
+                } else {
+                    super.onBackPressed();
+                }
                 break;
             case STATE_SIMPLE_SEARCH:
                 mState = STATE_NORMAL;
