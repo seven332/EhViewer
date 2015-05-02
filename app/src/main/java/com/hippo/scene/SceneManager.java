@@ -192,7 +192,7 @@ class SceneManager {
     boolean onBackPressed() {
         Scene scene = getTopState();
         if (scene != null) {
-            scene.onBackPressed();
+            scene.onBackPressedInternal();
             return true;
         } else {
             Log.w(TAG, "There is no scene in the stage");

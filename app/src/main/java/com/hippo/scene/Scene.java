@@ -167,10 +167,6 @@ public abstract class Scene {
         onResume();
     }
 
-    void out() {
-        onOut();
-    }
-
     void setFitPaddingBottom(int b) {
         onGetFitPaddingBottom(b);
     }
@@ -235,9 +231,6 @@ public abstract class Scene {
     }
 
     protected void onResume() {
-    }
-
-    protected void onOut() {
     }
 
     /**
@@ -307,10 +300,17 @@ public abstract class Scene {
         getStageActivity().detachSceneFromStage(this);
     }
 
-    public void onBackPressed() {
+    void onBackPressedInternal() {
         if (!endCurtainAnimation() && !sSceneManager.endLegacyScene()) {
-            sSceneManager.finishScene(this);
+            onBackPressed();
         }
+    }
+
+    /**
+     * Not all back press will call it
+     */
+    public void onBackPressed() {
+        finish();
     }
 
     /**
