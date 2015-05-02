@@ -35,6 +35,16 @@
         <item name="android:minHeight">@dimen/fab_size_small</item>
     </style>
 
+    <style name="FloatingActionButton.ForceNoElevation">
+        <item name="android:minWidth">@dimen/fab_size_fne</item>
+        <item name="android:minHeight">@dimen/fab_size_fne</item>
+    </style>
+
+    <style name="FloatingActionButton.ForceNoElevation.Small">
+        <item name="android:minWidth">@dimen/fab_size_fne_small</item>
+        <item name="android:minHeight">@dimen/fab_size_fne_small</item>
+    </style>
+
     <style name="FloatingActionButton.Content">
         <item name="android:layout_gravity">right|bottom</item>
         <item name="android:layout_marginLeft">@dimen/content_fab_margin_start</item>

@@ -15,6 +15,9 @@
   -->
 <resources>
 
+    <!-- FloatingActionBarLayout -->
+    <dimen name="floating_action_bar_layout_interval">16dp</dimen>
+
     <!-- Simple Dialog -->
     <dimen name="simple_dialog_padding">16dp</dimen>
     <dimen name="simple_dialog_fixed_width">320dp</dimen>
@@ -92,6 +95,9 @@
     <!-- Fab -->
     <dimen name="fab_size">60dp</dimen>
     <dimen name="fab_size_small">44dp</dimen>
+    <dimen name="fab_size_fne">60dp</dimen>
+    <dimen name="fab_size_fne_small">44dp</dimen>
+    <dimen name="fab_drawable_size">24dp</dimen>
 
     <!-- DrawerArrowDrawable -->
     <dimen name="dad_drawable_size">24dp</dimen>

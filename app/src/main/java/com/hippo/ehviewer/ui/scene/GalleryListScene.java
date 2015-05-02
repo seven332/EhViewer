@@ -46,6 +46,7 @@ import com.hippo.util.Log;
 import com.hippo.util.MathUtils;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.FloatingActionButton;
+import com.hippo.widget.FloatingActionButtonLayout;
 
 // TODO disable click action when animating
 public class GalleryListScene extends Scene implements SearchBar.Helper,
@@ -72,6 +73,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
     private RecyclerView mContentRecyclerView;
     private SearchLayout mSearchLayout;
     private RecyclerView mSearchRecyclerView;
+    private FloatingActionButtonLayout mFabLayout;
     private FloatingActionButton mCornerFab;
 
     private ViewTransition mViewTransition;
@@ -102,7 +104,8 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         mContentRecyclerView = mContentLayout.getRecyclerView();
         mSearchLayout = (SearchLayout) findViewById(R.id.search_layout);
         mSearchRecyclerView = mSearchLayout.getRecyclerView();
-        mCornerFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFabLayout = (FloatingActionButtonLayout) findViewById(R.id.fab_layout);
+        mCornerFab = mFabLayout.getPrimaryFab();
 
         mViewTransition = new ViewTransition(mContentLayout, mSearchLayout);
 
@@ -139,9 +142,9 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         // Search Layout
         mSearchLayout.setFitPaddingBottom(b);
         // Corner Fab
-        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mCornerFab.getLayoutParams();
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mFabLayout.getLayoutParams();
         lp.bottomMargin = b + mCornerFabOriginalBottom;
-        mCornerFab.setLayoutParams(lp);
+        mFabLayout.setLayoutParams(lp);
     }
 
     private void setFabState(int fabState) {
@@ -204,7 +207,8 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
     public void onClick(View v) {
         if (v == mCornerFab) {
             if (mFabState == FAB_STATE_NORMAL) {
-                //
+                mFabLayout.toggle();
+                mAddDeleteDrawable.setShape(mFabLayout.getExpanded(), ANIMATE_TIME);
             } else if (mFabState == FAB_STATE_SEARCH) {
                 onApplySearch(mSearchBar.getText());
             }

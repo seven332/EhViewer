@@ -61,7 +61,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
         TextView.OnEditorActionListener, TextWatcher,
         SearchEditText.SearchEditTextListener, Messenger.Receiver {
 
-    private static final long ANIMATION_TIME = 300;
+    private static final long ANIMATE_TIME = 300l;
 
     private Path mPath = new Path();
     private int mWidth;
@@ -227,7 +227,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             // start animator
             if (mDrawerArrowDrawable.getProgress() != 1f) {
                 ObjectAnimator oa1 = ObjectAnimator.ofFloat(mDrawerArrowDrawable, "progress", 0f, 1f);
-                oa1.setDuration(ANIMATION_TIME);
+                oa1.setDuration(ANIMATE_TIME);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     oa1.setAutoCancel(true);
                 }
@@ -235,7 +235,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             }
             if (mAddDeleteDrawable.getProgress() != 1f) {
                 ObjectAnimator oa2 = ObjectAnimator.ofFloat(mAddDeleteDrawable, "progress", 0f, 1f);
-                oa2.setDuration(ANIMATION_TIME);
+                oa2.setDuration(ANIMATE_TIME);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     oa2.setAutoCancel(true);
                 }
@@ -257,7 +257,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             // start animator
             if (mDrawerArrowDrawable.getProgress() != 0f) {
                 ObjectAnimator oa1 = ObjectAnimator.ofFloat(mDrawerArrowDrawable, "progress", 1f, 0f);
-                oa1.setDuration(ANIMATION_TIME);
+                oa1.setDuration(ANIMATE_TIME);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     oa1.setAutoCancel(true);
                 }
@@ -265,7 +265,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             }
             if (mAddDeleteDrawable.getProgress() != 0f) {
                 ObjectAnimator oa2 = ObjectAnimator.ofFloat(mAddDeleteDrawable, "progress", 1f, 0f);
-                oa2.setDuration(ANIMATION_TIME);
+                oa2.setDuration(ANIMATE_TIME);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     oa2.setAutoCancel(true);
                 }
@@ -286,7 +286,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
         // Show suggestions list
         if (mProgress != 1f) {
             ObjectAnimator oa = ObjectAnimator.ofFloat(this, "progress", 0f, 1f);
-            oa.setDuration(ANIMATION_TIME);
+            oa.setDuration(ANIMATE_TIME);
             oa.addListener(new SimpleAnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -313,7 +313,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
         // Hide suggestions list
         if (mProgress != 0f) {
             ObjectAnimator oa = ObjectAnimator.ofFloat(this, "progress", 1f, 0f);
-            oa.setDuration(ANIMATION_TIME);
+            oa.setDuration(ANIMATE_TIME);
             oa.addListener(new SimpleAnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {

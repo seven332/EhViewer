@@ -37,36 +37,32 @@ public class FloatingActionButton extends View {
 
     private GasketDrawer mGasketDrawer;
     private Drawable mDrawable;
-
     private int mDrawableWidth;
+    private Drawable.Callback mDrawableCallback;
 
     public FloatingActionButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs, 0, 0);
+        init(context, attrs);
     }
 
     public FloatingActionButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs, defStyleAttr, 0);
+        init(context, attrs);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public FloatingActionButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context, attrs, defStyleAttr, defStyleRes);
-    }
-
-    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        mDrawableWidth = UiUtils.dp2pix(context, 24);
+    private void init(Context context, AttributeSet attrs) {
+        mDrawableWidth = context.getResources().getDimensionPixelOffset(R.dimen.fab_drawable_size);
+        mDrawableCallback = new DrawableCallback();
 
         TypedArray a;
 
-        a = context.obtainStyledAttributes(attrs, R.styleable.FloatingActionButton, defStyleAttr, defStyleRes);
+        a = context.obtainStyledAttributes(attrs, R.styleable.FloatingActionButton);
         int bgColor = a.getColor(R.styleable.FloatingActionButton_color, Color.BLACK);
-        mDrawable = a.getDrawable(R.styleable.FloatingActionButton_drawable);
+        setDrawable(a.getDrawable(R.styleable.FloatingActionButton_drawable));
+        boolean forceNoElevation = a.getBoolean(R.styleable.FloatingActionButton_forceNoElevation, false);
         a.recycle();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !forceNoElevation) {
             mGasketDrawer = new GasketDrawerLollipop(this, bgColor);
         } else {
             mGasketDrawer = new GasketDrawerOld(this, bgColor);
@@ -83,8 +79,7 @@ public class FloatingActionButton extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(ViewUtils.getSuitableSize(getSuggestedMinimumWidth(), widthMeasureSpec),
-                ViewUtils.getSuitableSize(getSuggestedMinimumHeight(), heightMeasureSpec));
+        setMeasuredDimension(ViewUtils.getSuitableSize(getSuggestedMinimumWidth(), widthMeasureSpec), ViewUtils.getSuitableSize(getSuggestedMinimumHeight(), heightMeasureSpec));
     }
 
     @Override
@@ -113,6 +108,13 @@ public class FloatingActionButton extends View {
     }
 
     public void setDrawable(Drawable drawable) {
+        if (mDrawable != null) {
+            mDrawable.setCallback(null);
+        }
+        if (drawable != null) {
+            drawable.setCallback(mDrawableCallback);
+        }
+
         mDrawable = drawable;
         invalidate();
     }
@@ -125,6 +127,24 @@ public class FloatingActionButton extends View {
         void setColor(int color);
     }
 
+    private class DrawableCallback implements Drawable.Callback {
+        @Override
+        public void invalidateDrawable(Drawable who) {
+            if (who == mDrawable) {
+                invalidate();
+            }
+        }
+
+        @Override
+        public void scheduleDrawable(Drawable who, Runnable what, long when) {
+            // Empty
+        }
+
+        @Override
+        public void unscheduleDrawable(Drawable who, Runnable what) {
+            // Empty
+        }
+    }
 
     static class GasketDrawerOld implements GasketDrawer {
 
@@ -163,6 +183,7 @@ public class FloatingActionButton extends View {
             ViewUtils.removeHardwareAccelerationSupport(mView);
         }
 
+        @Override
         public void onStateChange(int[] stateSet) {
             boolean enabled = false;
             boolean pressed = false;
@@ -199,6 +220,7 @@ public class FloatingActionButton extends View {
             mView.invalidate();
         }
 
+        @Override
         public void draw(Canvas canvas) {
             mBounds.left = mGasketPadding;
             mBounds.top = mGasketPadding;
@@ -207,6 +229,7 @@ public class FloatingActionButton extends View {
             canvas.drawOval(mBounds, mPaint);
         }
 
+        @Override
         public void setColor(int color) {
             mColor = color;
             mDarkerColor = UiUtils.getDarkerColor(color);

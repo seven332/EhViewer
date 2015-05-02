@@ -26,6 +26,7 @@
     <declare-styleable name="FloatingActionButton">
         <attr name="color"/>
         <attr name="drawable"/>
+        <attr name="forceNoElevation"/>
     </declare-styleable>
 
     <declare-styleable name="FloatLabelEditText">

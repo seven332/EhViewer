@@ -15,6 +15,7 @@
 
 package com.hippo.drawable;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -24,6 +25,7 @@ import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 
 import com.hippo.ehviewer.R;
 import com.hippo.util.MathUtils;
@@ -125,6 +127,30 @@ public class AddDeleteDrawable extends Drawable {
         }
         mProgress = progress;
         invalidateSelf();
+    }
+
+    public void setAdd(long duration) {
+        setShape(false, duration);
+    }
+
+    public void setDelete(long duration) {
+        setShape(true, duration);
+    }
+
+    public void setShape(boolean delete, long duration) {
+        if (!((!delete && mProgress == 0f) || (delete && mProgress == 1f))) {
+            float endProgress = delete ? 1f : 0f;
+            if (duration <= 0) {
+                setProgress(endProgress);
+            } else {
+                ObjectAnimator oa = ObjectAnimator.ofFloat(this, "progress", endProgress);
+                oa.setDuration(duration);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    oa.setAutoCancel(true);
+                }
+                oa.start();
+            }
+        }
     }
 
     @Override

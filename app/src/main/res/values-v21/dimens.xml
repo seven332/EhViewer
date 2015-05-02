@@ -19,5 +19,7 @@
     <!-- Fab -->
     <dimen name="fab_size">56dp</dimen>
     <dimen name="fab_size_small">40dp</dimen>
+    <dimen name="fab_size_fne">60dp</dimen>
+    <dimen name="fab_size_fne_small">44dp</dimen>
 
 </resources>
