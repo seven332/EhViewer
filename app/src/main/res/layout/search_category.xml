@@ -16,6 +16,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:auto="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     auto:forceNoElevation="true">
@@ -26,7 +27,8 @@
         android:orientation="vertical"
         android:paddingLeft="@dimen/search_category_padding_start"
         android:paddingRight="@dimen/search_category_padding_end"
-        android:paddingBottom="@dimen/search_category_padding_bottom">
+        android:paddingBottom="@dimen/search_category_padding_bottom"
+        tools:ignore="RtlHardcoded">
 
         <TextView
             android:id="@+id/category_title"
@@ -35,7 +37,8 @@
             android:singleLine="true"
             android:ellipsize="marquee"
             android:gravity="center_vertical"
-            android:textAppearance="@style/TextAppearance.CategoryTitle"/>
+            android:textAppearance="@style/TextAppearance.CategoryTitle"
+            android:saveEnabled="false"/>
 
         <FrameLayout
             android:layout_width="match_parent"

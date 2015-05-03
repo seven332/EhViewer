@@ -15,13 +15,12 @@
 
 package com.hippo.ehviewer.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
@@ -37,14 +36,13 @@ import android.widget.TextView;
 
 import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.data.ListUrlBuilder;
 import com.hippo.scene.SimpleDialog;
 import com.hippo.util.ViewUtils;
-import com.hippo.widget.FloatLabelEditText;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.widget.recyclerview.MonoRecyclerView;
 
 // TODO requst returnSearchBarPosition when content of recycler changed
-public class SearchLayout extends FrameLayout implements CompoundButton.OnCheckedChangeListener,
+public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnCheckedChangeListener,
         View.OnClickListener, SelectSearchImageLayout.SelectSearchImageLayoutHelper {
 
     private static final String STATE_KEY_SUPER = "super";
@@ -52,32 +50,28 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     private static final String STATE_KEY_ENABLE_ADVANCE = "enable_advance";
 
     private static final int SEARCH_MODE_NORMAL = 0;
-    private static final int SEARCH_MODE_TAG = 1;
-    private static final int SEARCH_MODE_IMAGE = 2;
+    private static final int SEARCH_MODE_IMAGE = 1;
 
     private static final int ITEM_TYPE_NORMAL = 0;
     private static final int ITEM_TYPE_NORMAL_ADVANCE = 1;
-    private static final int ITEM_TYPE_TAG = 2;
-    private static final int ITEM_TYPE_IMAGE = 3;
-    private static final int ITEM_TYPE_ACTION = 4;
+    private static final int ITEM_TYPE_IMAGE = 2;
+    private static final int ITEM_TYPE_ACTION = 3;
 
     private static final int[] SEARCH_ITEM_COUNT_ARRAY = {
-            3, 2, 2
+            3, 2
     };
 
     private static final int[][] SEARCH_ITEM_TYPE = {
             {ITEM_TYPE_NORMAL, ITEM_TYPE_NORMAL_ADVANCE, ITEM_TYPE_ACTION}, // SEARCH_TYPE_NORMAL
-            {ITEM_TYPE_TAG, ITEM_TYPE_ACTION}, // SEARCH_TYPE_TAG
             {ITEM_TYPE_IMAGE, ITEM_TYPE_ACTION} // SEARCH_TYPE_IMAGE
     };
 
     private Context mContext;
     private Resources mResources;
+    private LayoutInflater mInflater;
 
     private int mSearchMode = SEARCH_MODE_NORMAL;
     private boolean mEnableAdvance = false;
-
-    private EasyRecyclerView mSearchContainer;
 
     private View mNormalView;
     private CategoryTable mTableCategory;
@@ -89,9 +83,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     private View mAdvanceView;
     private AdvanceSearchTable mTableAdvanceSearch;
 
-    private FloatLabelEditText mEditTextTag;
-
-    private SelectSearchImageLayout mImageView;
+    private SelectSearchImageLayout mImageSearchView;
 
     private View mActionView;
     private TextView mAction1;
@@ -101,21 +93,10 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     private SearchAdapter mAdapter;
     private SearchItemAnimator mAnimator;
 
-    private SparseArray<Parcelable> mSavedInstanceState;
-
     private SearhLayoutHelper mHelper;
-
-    private ListUrlBuilder mTempListUrlBuilder = new ListUrlBuilder();
-
-    private Bitmap mSearchImage;
 
     private int mSearchPaddingTopOrigin;
     private int mSearchPaddingBottomOrigin;
-
-    public SearchLayout(Context context) {
-        super(context);
-        init(context);
-    }
 
     public SearchLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -127,50 +108,71 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         init(context);
     }
 
+    @SuppressLint("InflateParams")
     private void init(Context context) {
         mContext = context;
         mResources = mContext.getResources();
-
-        LayoutInflater.from(context).inflate(R.layout.widget_search_layout, this);
-
-        mSearchContainer = (EasyRecyclerView) getChildAt(0);
+        mInflater = LayoutInflater.from(mContext);
 
         mLayoutManager = new LinearLayoutManager(mContext);
         mAdapter = new SearchAdapter();
-        mAnimator = new SearchItemAnimator(mSearchContainer);
-        mSearchContainer.setLayoutManager(mLayoutManager);
-        mSearchContainer.setAdapter(mAdapter);
-        mSearchContainer.setHasFixedSize(true);
-        mSearchContainer.setItemAnimator(mAnimator);
+        mAnimator = new SearchItemAnimator(this);
+        setLayoutManager(mLayoutManager);
+        setAdapter(mAdapter);
+        setHasFixedSize(true);
+        setItemAnimator(mAnimator);
 
         // Search Container
-        mSearchPaddingTopOrigin = mSearchContainer.getPaddingTop();
+        mSearchPaddingTopOrigin = getPaddingTop();
         // Original padding bottom and the padding bottom to make it above fab
-        mSearchPaddingBottomOrigin = mSearchContainer.getPaddingBottom() +
+        mSearchPaddingBottomOrigin = getPaddingBottom() +
                 mResources.getDimensionPixelSize(R.dimen.content_padding_bottom);
-        mSearchContainer.setPadding( mSearchContainer.getPaddingLeft(),
-                mSearchContainer.getPaddingTop(),
-                mSearchContainer.getPaddingRight(),
-                mSearchPaddingBottomOrigin);
-    }
+        setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), mSearchPaddingBottomOrigin);
 
-    public EasyRecyclerView getRecyclerView() {
-        return mSearchContainer;
+        // Create normal view
+        mNormalView = mInflater.inflate(R.layout.search_normal, null);
+        mTableCategory = (CategoryTable) mNormalView.findViewById(R.id.search_category_table);
+        mCheckSpecifyAuthor = (CheckBox) mNormalView.findViewById(R.id.search_specify_author);
+        mCheckSpecifyTag = (CheckBox) mNormalView.findViewById(R.id.search_specify_tag);
+        mSearchTagHelp = mNormalView.findViewById(R.id.search_tag_help);
+        mSwitchEnableAdvance = (SwitchCompat) mNormalView.findViewById(R.id.search_enable_advance);
+
+        // Init normal view
+        mCheckSpecifyAuthor.setOnCheckedChangeListener(SearchLayout.this);
+        mSearchTagHelp.setOnClickListener(SearchLayout.this);
+        mSwitchEnableAdvance.setOnCheckedChangeListener(SearchLayout.this);
+        mSwitchEnableAdvance.setSwitchPadding(mResources.getDimensionPixelSize(R.dimen.switch_padding));
+
+        // Create advance view
+        mAdvanceView = mInflater.inflate(R.layout.search_advance, null);
+        mTableAdvanceSearch = (AdvanceSearchTable) mAdvanceView.findViewById(R.id.search_advance_search_table);
+
+        // Create image search view
+        mImageSearchView = (SelectSearchImageLayout) mInflater.inflate(R.layout.search_image, null);
+
+        // Init image search view
+        mImageSearchView.setHelper(SearchLayout.this);
+
+        // Create action view
+        mActionView = mInflater.inflate(R.layout.search_action, null);
+        mAction1 = (TextView) mActionView.findViewById(R.id.search_action_1);
+        mAction2 = (TextView) mActionView.findViewById(R.id.search_action_2);
+
+        // Init action view
+        mAction1.setText(mContext.getString(R.string.search_add));
+        mAction2.setText(mContext.getString(R.string.search_mode));
+        RippleSalon.addRipple(mAction1, false);
+        RippleSalon.addRipple(mAction2, false);
+        mAction1.setOnClickListener(SearchLayout.this);
+        mAction2.setOnClickListener(SearchLayout.this);
     }
 
     public void setFitPaddingTop(int fitPaddingTop) {
-        mSearchContainer.setPadding(
-                mSearchContainer.getPaddingLeft(),
-                mSearchPaddingTopOrigin + fitPaddingTop,
-                mSearchContainer.getPaddingRight(),
-                mSearchContainer.getPaddingBottom());
+        setPadding(getPaddingLeft(), mSearchPaddingTopOrigin + fitPaddingTop, getPaddingRight(), getPaddingBottom());
     }
 
     public void setFitPaddingBottom(int fitPaddingBottom) {
-        mSearchContainer.setPadding(
-                mSearchContainer.getPaddingLeft(),
-                mSearchContainer.getPaddingTop(),
-                mSearchContainer.getPaddingRight(),
+        setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(),
                 mSearchPaddingBottomOrigin + fitPaddingBottom
         );
     }
@@ -187,14 +189,20 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     protected void dispatchSaveInstanceState(@NonNull SparseArray<Parcelable> container) {
         super.dispatchSaveInstanceState(container);
 
-        mSavedInstanceState = null;
+        mNormalView.saveHierarchyState(container);
+        mAdvanceView.saveHierarchyState(container);
+        mImageSearchView.saveHierarchyState(container);
+        mActionView.saveHierarchyState(container);
     }
 
     @Override
     protected void dispatchRestoreInstanceState(@NonNull SparseArray<Parcelable> container) {
         super.dispatchRestoreInstanceState(container);
 
-        mSavedInstanceState = container;
+        mNormalView.restoreHierarchyState(container);
+        mAdvanceView.restoreHierarchyState(container);
+        mImageSearchView.restoreHierarchyState(container);
+        mActionView.restoreHierarchyState(container);
     }
 
     @Override
@@ -233,7 +241,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         }
     }
 
-    private void taggleSearchMode() {
+    private void toggleSearchMode() {
         int oldItemCount = mAdapter.getItemCount();
 
         mSearchMode++;
@@ -245,6 +253,10 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
 
         mAdapter.notifyItemRangeRemoved(0, oldItemCount - 1);
         mAdapter.notifyItemRangeInserted(0, newItemCount - 1);
+
+        if (mHelper != null) {
+            mHelper.onChangeSearchMode();
+        }
     }
 
     @Override
@@ -252,7 +264,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         if (v == mAction1) {
             // TODO add quick search
         } else if (v == mAction2) {
-            taggleSearchMode();
+            toggleSearchMode();
         } else if (v == mSearchTagHelp) {
             int[] location = new int [2];
             ViewUtils.getLocationInAncestor(mSearchTagHelp, location, R.id.stage);
@@ -264,7 +276,7 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     }
 
     public void onSelectImage(@NonNull String imagePath) {
-        mImageView.onSelectImage(imagePath);
+        mImageSearchView.onSelectImage(imagePath);
     }
 
     @Override
@@ -274,75 +286,13 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
         }
     }
 
-    public ListUrlBuilder getListUrlBuilder(@Nullable ListUrlBuilder lub) {
-        if (lub == null) {
-            lub = mTempListUrlBuilder;
-        }
-
-        switch (mSearchMode) {
-            default:
-            case SEARCH_MODE_NORMAL:
-                lub.setMode(ListUrlBuilder.MODE_NORMAL);
-                if (mTableCategory != null) {
-                    lub.setCategory(mTableCategory.getCategory());
-                }
-                // TODO
-                if (mSwitchEnableAdvance.isChecked() && mTableAdvanceSearch != null) {
-                    lub.setAdvanceSearch(mTableAdvanceSearch.getAdvanceSearch());
-                    lub.setMinRating(mTableAdvanceSearch.getMinRating());
-                } else {
-                    lub.setAdvanceSearch(-1);
-                    lub.setMinRating(-1);
-                }
-                break;
-            case SEARCH_MODE_TAG:
-                lub.setMode(ListUrlBuilder.MODE_TAG);
-                if (mEditTextTag != null) {
-                    lub.setSearchTag(mEditTextTag.getText().toString());
-                }
-                break;
-            case SEARCH_MODE_IMAGE:
-                lub.setMode(ListUrlBuilder.MODE_IMAGE_SEARCH);
-                // TODO
-                break;
-        }
-
-        return lub;
-    }
-
-    private class SearchHolder extends RecyclerView.ViewHolder {
-
-        public TextView title;
-        public FrameLayout content;
-
-        public SearchHolder(View itemView) {
+    private class SimpleHolder extends RecyclerView.ViewHolder {
+        public SimpleHolder(View itemView) {
             super(itemView);
-
-            title = (TextView) itemView.findViewById(R.id.category_title);
-            content = (FrameLayout) itemView.findViewById(R.id.category_content);
-        }
-    }
-
-    private class ActionHolder extends RecyclerView.ViewHolder {
-
-        private TextView action1;
-        private TextView action2;
-
-        public ActionHolder(View itemView) {
-            super(itemView);
-
-            action1 = (TextView) itemView.findViewById(R.id.search_action_1);
-            action2 = (TextView) itemView.findViewById(R.id.search_action_2);
         }
     }
 
     private class SearchAdapter extends EasyRecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-        LayoutInflater mInflater;
-
-        public SearchAdapter() {
-            mInflater = LayoutInflater.from(mContext);
-        }
 
         @Override
         public int getItemCount() {
@@ -364,134 +314,38 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            RecyclerView.ViewHolder holder;
+            View view;
 
             if (viewType == ITEM_TYPE_ACTION) {
-                View view = mInflater.inflate(R.layout.search_action, parent, false);
-                holder = new ActionHolder(view);
-                bindActionView((ActionHolder) holder);
+                ViewUtils.removeFromParent(mActionView);
+                mActionView.setLayoutParams(new RecyclerView.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+                view = mActionView;
             } else {
-                View view = mInflater.inflate(R.layout.search_category, parent, false);
-                holder = new SearchHolder(view);
+                view = mInflater.inflate(R.layout.search_category, parent, false);
+                TextView title = (TextView) view.findViewById(R.id.category_title);
+                FrameLayout content = (FrameLayout) view.findViewById(R.id.category_content);
                 switch (viewType) {
-                    case ITEM_TYPE_NORMAL:{
-                        bindNormalView((SearchHolder) holder);
+                    case ITEM_TYPE_NORMAL:
+                        title.setText(R.string.search_normal);
+                        ViewUtils.removeFromParent(mNormalView);
+                        content.addView(mNormalView);
                         break;
-                    }
-                    case ITEM_TYPE_NORMAL_ADVANCE: {
-                        bindAdvanceView((SearchHolder) holder);
+                    case ITEM_TYPE_NORMAL_ADVANCE:
+                        title.setText(R.string.search_advance);
+                        ViewUtils.removeFromParent(mAdvanceView);
+                        content.addView(mAdvanceView);
                         break;
-                    }
-                    case ITEM_TYPE_TAG: {
-                        bindTagView((SearchHolder) holder);
+                    case ITEM_TYPE_IMAGE:
+                        title.setText(R.string.search_image);
+                        ViewUtils.removeFromParent(mImageSearchView);
+                        content.addView(mImageSearchView);
                         break;
-                    }
-                    case ITEM_TYPE_IMAGE: {
-                        bindImageView((SearchHolder) holder);
-                        break;
-                    }
                 }
             }
 
-            return holder;
-        }
-
-        private void bindNormalView(SearchHolder holder) {
-            holder.title.setText(R.string.search_normal);
-
-            if (mNormalView == null) {
-                mInflater.inflate(R.layout.search_normal, holder.content);
-                mNormalView = holder.content.getChildAt(0);
-                mTableCategory = (CategoryTable) mNormalView.findViewById(R.id.search_category_table);
-                mCheckSpecifyAuthor = (CheckBox) mNormalView.findViewById(R.id.search_specify_author);
-                mCheckSpecifyTag = (CheckBox) mNormalView.findViewById(R.id.search_specify_tag);
-                mSearchTagHelp = mNormalView.findViewById(R.id.search_tag_help);
-                mSwitchEnableAdvance = (SwitchCompat) mNormalView.findViewById(R.id.search_enable_advance);
-
-                // Restore state
-                if (mSavedInstanceState != null) {
-                    holder.content.restoreHierarchyState(mSavedInstanceState);
-                }
-
-                mCheckSpecifyAuthor.setOnCheckedChangeListener(SearchLayout.this);
-                mSearchTagHelp.setOnClickListener(SearchLayout.this);
-                mSwitchEnableAdvance.setOnCheckedChangeListener(SearchLayout.this);
-                mSwitchEnableAdvance.setSwitchPadding(mResources.getDimensionPixelSize(R.dimen.switch_padding));
-            } else {
-                ViewUtils.removeFromParent(mNormalView);
-                holder.content.removeAllViews();
-                holder.content.addView(mNormalView);
-            }
-
-        }
-
-        private void bindAdvanceView(SearchHolder holder) {
-            holder.title.setText(R.string.search_advance);
-
-            if (mAdvanceView == null) {
-                mInflater.inflate(R.layout.search_advance, holder.content);
-                mAdvanceView = holder.content.getChildAt(0);
-                mTableAdvanceSearch = (AdvanceSearchTable) mAdvanceView.findViewById(R.id.search_advance_search_table);
-
-                // Restore state
-                if (mSavedInstanceState != null) {
-                    holder.content.restoreHierarchyState(mSavedInstanceState);
-                }
-
-            } else {
-                ViewUtils.removeFromParent(mAdvanceView);
-                holder.content.addView(mAdvanceView);
-            }
-        }
-
-        private void bindTagView(SearchHolder holder) {
-            holder.title.setText(R.string.search_tag);
-
-            if (mEditTextTag == null) {
-                mInflater.inflate(R.layout.search_tag, holder.content);
-                mEditTextTag = (FloatLabelEditText) holder.content.getChildAt(0);
-
-                // Restore state
-                if (mSavedInstanceState != null) {
-                    holder.content.restoreHierarchyState(mSavedInstanceState);
-                }
-            } else {
-                ViewUtils.removeFromParent(mEditTextTag);
-                holder.content.addView(mEditTextTag);
-            }
-        }
-
-        private void bindImageView(SearchHolder holder) {
-            holder.title.setText(R.string.search_image);
-
-            if (mImageView == null) {
-                mInflater.inflate(R.layout.search_image, holder.content);
-                mImageView = (SelectSearchImageLayout) holder.content.getChildAt(0);
-
-                // Restore state
-                if (mSavedInstanceState != null) {
-                    holder.content.restoreHierarchyState(mSavedInstanceState);
-                }
-
-                mImageView.setHelper(SearchLayout.this);
-            } else {
-                ViewUtils.removeFromParent(mImageView);
-                holder.content.addView(mImageView);
-            }
-        }
-
-        private void bindActionView(ActionHolder holder) {
-            mActionView = holder.itemView;
-            mAction1 = holder.action1;
-            mAction2 = holder.action2;
-
-            mAction1.setText(mContext.getString(R.string.search_add));
-            mAction2.setText(mContext.getString(R.string.search_mode));
-            RippleSalon.addRipple(mAction1, false);
-            RippleSalon.addRipple(mAction2, false);
-
-            mAction1.setOnClickListener(SearchLayout.this);
-            mAction2.setOnClickListener(SearchLayout.this);
+            return new SimpleHolder(view);
         }
 
         @Override
@@ -501,8 +355,8 @@ public class SearchLayout extends FrameLayout implements CompoundButton.OnChecke
     }
 
     public interface SearhLayoutHelper {
-        void onRequestSelectImage();
+        void onChangeSearchMode();
 
-        void onRequestSearch(ListUrlBuilder lub);
+        void onRequestSelectImage();
     }
 }

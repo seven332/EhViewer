@@ -50,7 +50,8 @@ import com.hippo.widget.FloatingActionButton;
 
 // TODO disable click action when animating
 public class GalleryListScene extends Scene implements SearchBar.Helper,
-        View.OnClickListener, FabLayout.OnCancelListener {
+        View.OnClickListener, FabLayout.OnCancelListener,
+        SearchLayout.SearhLayoutHelper {
 
     private static final long ANIMATE_TIME = 300l;
 
@@ -72,7 +73,6 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
     private ContentLayout mContentLayout;
     private RecyclerView mContentRecyclerView;
     private SearchLayout mSearchLayout;
-    private RecyclerView mSearchRecyclerView;
     private FabLayout mFabLayout;
     private FloatingActionButton mCornerFab;
     private FloatingActionButton mRefreshFab;
@@ -105,7 +105,6 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         mContentLayout = (ContentLayout) findViewById(R.id.content_layout);
         mContentRecyclerView = mContentLayout.getRecyclerView();
         mSearchLayout = (SearchLayout) findViewById(R.id.search_layout);
-        mSearchRecyclerView = mSearchLayout.getRecyclerView();
         mFabLayout = (FabLayout) findViewById(R.id.fab_layout);
         mCornerFab = mFabLayout.getPrimaryFab();
         AssertUtils.assertEquals("FabLayout in GalleryListScene should contain " +
@@ -115,12 +114,12 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
         mViewTransition = new ViewTransition(mContentLayout, mSearchLayout);
 
-        // Search Bar
+        // Init
         mSearchBar.setHelper(this);
         ViewUtils.measureView(mSearchBar, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         SearchBarMoveHelper sbmHelper = new SearchBarMoveHelper();
         mContentRecyclerView.addOnScrollListener(sbmHelper);
-        mSearchRecyclerView.addOnScrollListener(sbmHelper);
+        mSearchLayout.addOnScrollListener(sbmHelper);
         mSearchBar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -130,9 +129,12 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
                 mSearchLayout.setFitPaddingTop(mSearchBar.getHeight() + mResources.getDimensionPixelOffset(R.dimen.search_bar_padding_vertical));
             }
         });
+        mSearchLayout.setHelper(this);
 
+        // Fab Layout
         mFabLayout.setOnCancelListener(this);
 
+        // Secondary Fab
         mRefreshFab.setOnClickListener(this);
         mGoToFab.setOnClickListener(this);
 
@@ -304,7 +306,45 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         if (mState == STATE_NORMAL || mState == STATE_SIMPLE_SEARCH) {
             return mContentRecyclerView;
         } else {
-            return mSearchRecyclerView;
+            return mSearchLayout;
+        }
+    }
+
+    private void showSearchBar(boolean animation) {
+        // Cancel old animator
+        if (mSearchBarMoveAnimator != null) {
+            mSearchBarMoveAnimator.cancel();
+        }
+
+        int offset = mSearchBarOriginalTop - mSearchBar.getTop();
+        if (offset != 0) {
+            if (animation) {
+                final ValueAnimator va = ValueAnimator.ofInt(0, offset);
+                va.setDuration(ANIMATE_TIME);
+                va.addListener(new SimpleAnimatorListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mSearchBarMoveAnimator = null;
+                    }
+                });
+                va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    int lastValue;
+
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        int value = (Integer) animation.getAnimatedValue();
+                        int offsetStep = value - lastValue;
+                        lastValue = value;
+                        mSearchBar.offsetTopAndBottom(offsetStep);
+                        ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offsetStep;
+                    }
+                });
+                mSearchBarMoveAnimator = va;
+                va.start();
+            } else {
+                mSearchBar.offsetTopAndBottom(offset);
+                ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offset;
+            }
         }
     }
 
@@ -360,6 +400,16 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         }
     }
 
+    @Override
+    public void onChangeSearchMode() {
+        showSearchBar(true);
+    }
+
+    @Override
+    public void onRequestSelectImage() {
+        // TODO
+    }
+
     private class SearchBarMoveHelper extends RecyclerView.OnScrollListener {
 
         @Override
@@ -382,7 +432,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
         private boolean isVaildView(RecyclerView view) {
             return (mState == STATE_NORMAL && view == mContentRecyclerView) ||
-                    (mState == STATE_SEARCH && view == mSearchRecyclerView);
+                    (mState == STATE_SEARCH && view == mSearchLayout);
         }
     }
 }

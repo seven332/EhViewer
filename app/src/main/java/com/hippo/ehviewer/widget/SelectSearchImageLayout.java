@@ -170,7 +170,6 @@ public class SelectSearchImageLayout extends LinearLayout implements View.OnClic
     }
 
     public interface SelectSearchImageLayoutHelper {
-        public void onRequstSelectImage();
+        void onRequstSelectImage();
     }
-
 }
