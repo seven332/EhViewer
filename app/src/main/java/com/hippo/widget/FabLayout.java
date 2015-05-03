@@ -20,6 +20,8 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.content.Context;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
@@ -39,7 +41,8 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
     private static long ANIMATE_TIME = 300l;
 
     private static final String STATE_KEY_SUPER = "super";
-    private static final String STATE_KEY_CHECKED = "expanded";
+    private static final String STATE_KEY_AUTO_CANCEL = "auto_cancel";
+    private static final String STATE_KEY_EXPANDED = "expanded";
 
     private int mInterval;
 
@@ -322,6 +325,25 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
     @Override
     protected void dispatchSetPressed(boolean pressed) {
         // Don't dispatch it to children
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+        final Bundle state = new Bundle();
+        state.putParcelable(STATE_KEY_SUPER, super.onSaveInstanceState());
+        state.putBoolean(STATE_KEY_AUTO_CANCEL, mAutoCancel);
+        state.putBoolean(STATE_KEY_EXPANDED, mExpanded);
+        return state;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            final Bundle savedState = (Bundle) state;
+            super.onRestoreInstanceState(savedState.getParcelable(STATE_KEY_SUPER));
+            setAutoCancel(savedState.getBoolean(STATE_KEY_AUTO_CANCEL));
+            setExpanded(savedState.getBoolean(STATE_KEY_EXPANDED), false);
+        }
     }
 
     public interface OnCancelListener {
