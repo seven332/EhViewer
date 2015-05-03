@@ -21,14 +21,20 @@ import android.animation.PropertyValuesHolder;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.view.animation.FastOutLinearInInterpolator;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
 
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.ehviewer.R;
 
 public class FabLayout extends ViewGroup implements View.OnClickListener {
+
+    private final static Interpolator LINEAR_OUT_SLOW_IN_INTERPOLATOR = new LinearOutSlowInInterpolator();
+    private final static Interpolator FAST_OUT_LINEAR_IN_INTERPOLATOR = new FastOutLinearInInterpolator();
 
     private static long ANIMATE_TIME = 300l;
 
@@ -260,18 +266,21 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
         float endTranslationY;
         float startAlpha;
         float endAlpha;
+        Interpolator interpolator;
         if (expanded) {
             startTranslationY = mMainFabCenterY -
                     (child.getTop() + (child.getHeight() / 2));
             endTranslationY = 0f;
             startAlpha = 0f;
             endAlpha = 1f;
+            interpolator = LINEAR_OUT_SLOW_IN_INTERPOLATOR;
         } else {
             startTranslationY = 0f;
             endTranslationY = mMainFabCenterY -
                     (child.getTop() + (child.getHeight() / 2));
             startAlpha = 1f;
             endAlpha = 0f;
+            interpolator = FAST_OUT_LINEAR_IN_INTERPOLATOR;
         }
 
         PropertyValuesHolder translationYPvh = PropertyValuesHolder.ofFloat(
@@ -280,6 +289,7 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
                 "alpha", startAlpha, endAlpha);
         ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(child, translationYPvh, alphaPvh);
         oa.setDuration(ANIMATE_TIME);
+        oa.setInterpolator(interpolator);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             oa.setAutoCancel(true);
         }
