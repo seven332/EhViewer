@@ -28,7 +28,7 @@ import android.view.ViewGroup;
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.ehviewer.R;
 
-public class FloatingActionButtonLayout extends ViewGroup {
+public class FabLayout extends ViewGroup implements View.OnClickListener {
 
     private static long ANIMATE_TIME = 300l;
 
@@ -39,24 +39,28 @@ public class FloatingActionButtonLayout extends ViewGroup {
 
     private boolean mFirst = true;
     private boolean mExpanded = false;
+    private boolean mAutoCancel = true;
     private float mMainFabCenterY = -1f;
 
-    public FloatingActionButtonLayout(Context context) {
+    private OnCancelListener mOnCancelListener;
+
+    public FabLayout(Context context) {
         super(context);
         init(context);
     }
 
-    public FloatingActionButtonLayout(Context context, AttributeSet attrs) {
+    public FabLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public FloatingActionButtonLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public FabLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
 
     private void init(Context context) {
+        setSoundEffectsEnabled(false);
         mInterval = context.getResources().getDimensionPixelOffset(R.dimen.floating_action_bar_layout_interval);
     }
 
@@ -157,11 +161,11 @@ public class FloatingActionButtonLayout extends ViewGroup {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         int interval = mInterval;
-        int top = getPaddingTop();
-        int paddingLeft = getPaddingLeft();
-        int vaildWidth = getMeasuredWidth() - paddingLeft - getPaddingRight();
+        int centerX = 0;
+        int bottom = getMeasuredHeight() - getPaddingBottom();
         int count = getChildCount();
-        for (int i = 0; i < count; i++) {
+        int i = count;
+        while(--i >= 0) {
             View child = getChildAt(i);
             if (child.getVisibility() == View.GONE) {
                 continue;
@@ -169,14 +173,38 @@ public class FloatingActionButtonLayout extends ViewGroup {
 
             int childWidth = child.getMeasuredWidth();
             int childHeight = child.getMeasuredHeight();
-            int left = paddingLeft + ((vaildWidth - childWidth) / 2);
-            child.layout(left, top, left + childWidth, top + childHeight);
+            int right;
+            if (i == count - 1) {
+                right = getMeasuredWidth() - getPaddingRight();
+            } else {
+                right = centerX + (childWidth / 2);
+            }
+            child.layout(right - childWidth, bottom - childHeight, right, bottom);
 
             if (i == count - 1) {
-                mMainFabCenterY = top + (childHeight / 2f);
+                centerX = right - (childWidth / 2);
+                mMainFabCenterY = bottom - (childHeight / 2f);
             }
 
-            top += (childHeight + interval);
+            bottom -= (childHeight + interval);
+        }
+    }
+
+    public void setOnCancelListener(OnCancelListener listener) {
+        mOnCancelListener = listener;
+    }
+
+    public void setAutoCancel(boolean autoCancel) {
+        if (mAutoCancel != autoCancel) {
+            mAutoCancel = autoCancel;
+
+            if (mExpanded) {
+                if (autoCancel) {
+                    setOnClickListener(this);
+                } else {
+                    setClickable(false);
+                }
+            }
         }
     }
 
@@ -195,6 +223,14 @@ public class FloatingActionButtonLayout extends ViewGroup {
     public void setExpanded(boolean expanded, boolean animation) {
         if (mExpanded != expanded) {
             mExpanded = expanded;
+
+            if (mAutoCancel) {
+                if (expanded) {
+                    setOnClickListener(this);
+                } else {
+                    setClickable(false);
+                }
+            }
 
             if (mMainFabCenterY == -1f) {
                 // It is before first onLayout
@@ -263,5 +299,22 @@ public class FloatingActionButtonLayout extends ViewGroup {
             }
         });
         oa.start();
+    }
+
+    @Override
+    public void onClick(View v) {
+        setExpanded(false);
+        if (mOnCancelListener != null) {
+            mOnCancelListener.onCancel(this);
+        }
+    }
+
+    @Override
+    protected void dispatchSetPressed(boolean pressed) {
+        // Don't dispatch it to children
+    }
+
+    public interface OnCancelListener {
+        void onCancel(FabLayout fabLayout);
     }
 }

@@ -29,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Interpolator;
-import android.widget.FrameLayout;
 
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.drawable.AddDeleteDrawable;
@@ -42,15 +41,16 @@ import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchDatabase;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.scene.Scene;
+import com.hippo.util.AssertUtils;
 import com.hippo.util.Log;
 import com.hippo.util.MathUtils;
 import com.hippo.util.ViewUtils;
+import com.hippo.widget.FabLayout;
 import com.hippo.widget.FloatingActionButton;
-import com.hippo.widget.FloatingActionButtonLayout;
 
 // TODO disable click action when animating
 public class GalleryListScene extends Scene implements SearchBar.Helper,
-        View.OnClickListener {
+        View.OnClickListener, FabLayout.OnCancelListener {
 
     private static final long ANIMATE_TIME = 300l;
 
@@ -73,8 +73,10 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
     private RecyclerView mContentRecyclerView;
     private SearchLayout mSearchLayout;
     private RecyclerView mSearchRecyclerView;
-    private FloatingActionButtonLayout mFabLayout;
+    private FabLayout mFabLayout;
     private FloatingActionButton mCornerFab;
+    private FloatingActionButton mRefreshFab;
+    private FloatingActionButton mGoToFab;
 
     private ViewTransition mViewTransition;
 
@@ -104,8 +106,12 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         mContentRecyclerView = mContentLayout.getRecyclerView();
         mSearchLayout = (SearchLayout) findViewById(R.id.search_layout);
         mSearchRecyclerView = mSearchLayout.getRecyclerView();
-        mFabLayout = (FloatingActionButtonLayout) findViewById(R.id.fab_layout);
+        mFabLayout = (FabLayout) findViewById(R.id.fab_layout);
         mCornerFab = mFabLayout.getPrimaryFab();
+        AssertUtils.assertEquals("FabLayout in GalleryListScene should contain " +
+                "two secondary fab.", mFabLayout.getSecondaryFabCount(), 2);
+        mRefreshFab = mFabLayout.getSecondaryFabAt(0);
+        mGoToFab = mFabLayout.getSecondaryFabAt(1);
 
         mViewTransition = new ViewTransition(mContentLayout, mSearchLayout);
 
@@ -125,9 +131,14 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
             }
         });
 
+        mFabLayout.setOnCancelListener(this);
+
+        mRefreshFab.setOnClickListener(this);
+        mGoToFab.setOnClickListener(this);
+
         // Corner Fab
         mCornerFab.setOnClickListener(this);
-        mCornerFabOriginalBottom = mResources.getDimensionPixelOffset(R.dimen.corner_fab_padding_bottom);
+        mCornerFabOriginalBottom = mFabLayout.getPaddingBottom();
         mAddDeleteDrawable = new AddDeleteDrawable(getStageActivity());
         mAddDeleteDrawable.setColor(mResources.getColor(R.color.primary_drawable_dark));
         mSearchDrawable = mResources.getDrawable(R.drawable.ic_search_dark);
@@ -142,9 +153,9 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         // Search Layout
         mSearchLayout.setFitPaddingBottom(b);
         // Corner Fab
-        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mFabLayout.getLayoutParams();
-        lp.bottomMargin = b + mCornerFabOriginalBottom;
-        mFabLayout.setLayoutParams(lp);
+        mFabLayout.setPadding(mFabLayout.getPaddingLeft(),
+                mFabLayout.getPaddingTop(), mFabLayout.getPaddingRight(),
+                mCornerFabOriginalBottom + b);
     }
 
     private void setFabState(int fabState) {
@@ -208,16 +219,31 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         }
     }
 
+    private void toggleFabLayout() {
+        mFabLayout.toggle();
+        mAddDeleteDrawable.setShape(mFabLayout.getExpanded(), ANIMATE_TIME);
+    }
+
     @Override
     public void onClick(View v) {
         if (v == mCornerFab) {
             if (mFabState == FAB_STATE_NORMAL) {
-                mFabLayout.toggle();
-                mAddDeleteDrawable.setShape(mFabLayout.getExpanded(), ANIMATE_TIME);
+                toggleFabLayout();
             } else if (mFabState == FAB_STATE_SEARCH) {
                 onApplySearch(mSearchBar.getText());
             }
+        } else if (v == mRefreshFab) {
+            toggleFabLayout();
+            // TODO do go to top and refresh
+        } else if (v == mGoToFab) {
+            toggleFabLayout();
+            // TODO do go to
         }
+    }
+
+    @Override
+    public void onCancel(FabLayout fabLayout) {
+        mAddDeleteDrawable.setAdd(ANIMATE_TIME);
     }
 
     @Override

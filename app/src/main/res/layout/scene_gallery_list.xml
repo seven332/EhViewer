@@ -41,14 +41,15 @@
         android:layout_marginTop="@dimen/search_bar_padding_vertical"
         auto:forceNoElevation="true"/>
 
-    <com.hippo.widget.FloatingActionButtonLayout
+    <com.hippo.widget.FabLayout
         android:id="@+id/fab_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="bottom|right"
-        android:layout_marginRight="@dimen/corner_fab_padding_right"
-        android:layout_marginBottom="@dimen/corner_fab_padding_bottom"
-        tools:ignore="RtlHardcoded">
+        android:gravity="right|bottom"
+        android:paddingRight="@dimen/corner_fab_padding_right"
+        android:paddingBottom="@dimen/corner_fab_padding_bottom"
+        tools:ignore="RtlHardcoded,RtlSymmetry">
 
         <com.hippo.widget.FloatingActionButton
             style="@style/FloatingActionButton.ForceNoElevation.Small"
@@ -73,7 +74,7 @@
             auto:color="?attr/colorAccent"
             auto:forceNoElevation="true"/>
 
-    </com.hippo.widget.FloatingActionButtonLayout>
+    </com.hippo.widget.FabLayout>
 
 </com.hippo.ehviewer.widget.OffsetLayout>
 
