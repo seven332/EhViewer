@@ -30,7 +30,7 @@ import com.hippo.util.ViewUtils;
 import com.hippo.widget.IndicatingScrollView;
 
 public class SimpleDialog extends SceneDialog implements View.OnClickListener,
-        SimpleDialogView.OnClickOutOfDialogListener {
+        SceneDialogView.OnClickOutOfDialogListener {
 
     private static final int BACKGROUND_COLOR = 0x61000000;
 
@@ -38,7 +38,7 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
 
     private StageActivity mActivity;
 
-    private SimpleDialogView mSimpleDialogView;
+    private SceneDialogView mSceneDialogView;
     private SimpleDialogFrame mFrame;
     private View mBody;
     private TextView mTitle;
@@ -70,7 +70,7 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
 
         mActivity.getLayoutInflater().inflate(R.layout.simple_dialog, mFrame);
 
-        mSimpleDialogView = (SimpleDialogView) getSceneView();
+        mSceneDialogView = (SceneDialogView) getSceneView();
         mBody = findViewById(R.id.body);
         mTitle = (TextView) mBody.findViewById(R.id.title);
         mSpaceTitleContent = (Space) mBody.findViewById(R.id.space_title_content);
@@ -123,12 +123,12 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
             }
         }
 
-        mSimpleDialogView.setOnClickOutOfDialogListener(this);
+        mSceneDialogView.setOnClickOutOfDialogListener(this);
     }
 
     @Override
     protected SceneView createSceneView(Context context) {
-        return new SimpleDialogView(context);
+        return new SceneDialogView(context);
     }
 
     @Override
@@ -146,12 +146,12 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
             throw new IllegalArgumentException("location must be an array of two integers");
         }
 
-        if (mSimpleDialogView == null) {
+        if (mSceneDialogView == null) {
             location[0] = 0;
             location[1] = 0;
         } else {
-            location[0] = mSimpleDialogView.getWidth() / 2;
-            location[1] = (mSimpleDialogView.getHeight() - mFitPaddingBottom) / 2;
+            location[0] = mSceneDialogView.getWidth() / 2;
+            location[1] = (mSceneDialogView.getHeight() - mFitPaddingBottom) / 2;
         }
     }
 

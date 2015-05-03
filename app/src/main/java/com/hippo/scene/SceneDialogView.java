@@ -24,24 +24,24 @@ import com.hippo.util.ViewUtils;
 import com.hippo.widget.HotspotTouchHelper;
 import com.hippo.widget.Hotspotable;
 
-public class SimpleDialogView extends SceneView implements View.OnClickListener, Hotspotable {
+public class SceneDialogView extends SceneView implements View.OnClickListener, Hotspotable {
 
     private float mHostpotX;
     private float mHostpotY;
 
     private OnClickOutOfDialogListener mOnClickOutOfDialogListener;
 
-    public SimpleDialogView(Context context) {
+    public SceneDialogView(Context context) {
         super(context);
         init();
     }
 
-    public SimpleDialogView(Context context, AttributeSet attrs) {
+    public SceneDialogView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public SimpleDialogView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SceneDialogView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
