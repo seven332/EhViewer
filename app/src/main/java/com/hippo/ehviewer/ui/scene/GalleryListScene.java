@@ -22,9 +22,12 @@ import android.animation.ValueAnimator;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -127,6 +130,12 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
                 mSearchBarOriginalTop = mSearchBar.getTop();
                 mSearchBarOriginalBottom = mSearchBar.getBottom();
                 mSearchLayout.setFitPaddingTop(mSearchBar.getHeight() + mResources.getDimensionPixelOffset(R.dimen.search_bar_padding_vertical));
+
+
+                Log.d("mSearchBarOriginalTop = " + mSearchBarOriginalTop);
+                Log.d("mSearchBarOriginalBottom = " + mSearchBarOriginalBottom);
+
+
             }
         });
         mSearchLayout.setHelper(this);
@@ -148,6 +157,32 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
         // TEST
         mContentLayout.showText("四姑拉斯基");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull SparseArray<Parcelable> savedStates) {
+        super.onRestoreInstanceState(savedStates);
+
+        switch (mState) {
+            case STATE_NORMAL:
+            case STATE_SIMPLE_SEARCH:
+                mViewTransition.showFirstView(false);
+                break;
+            case STATE_SEARCH:
+            case STATE_SEARCH_SHOW_LIST:
+                mViewTransition.showSecondView(false);
+                break;
+        }
+
+        // Restore Fab drawable
+        if (mFabState == FAB_STATE_NORMAL) {
+            mAddDeleteDrawable.setShape(mFabLayout.isExpanded(), 0);
+            mCornerFab.setDrawable(mAddDeleteDrawable);
+        } else if (mFabState == FAB_STATE_SEARCH) {
+            mCornerFab.setDrawable(mSearchDrawable);
+        }
+
+        // Do not keep search bar position, keep it shown
     }
 
     @Override
@@ -193,7 +228,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
     public void onBackPressed() {
         switch (mState) {
             case STATE_NORMAL:
-                if (mFabLayout.getExpanded()) {
+                if (mFabLayout.isExpanded()) {
                     mFabLayout.setExpanded(false);
                     mAddDeleteDrawable.setShape(false, ANIMATE_TIME);
                 } else {
@@ -202,20 +237,20 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
                 break;
             case STATE_SIMPLE_SEARCH:
                 mState = STATE_NORMAL;
-                mSearchBar.setInNormalMode();
+                mSearchBar.setState(SearchBar.STATE_NORMAL);
                 returnSearchBarPosition();
                 setFabState(FAB_STATE_NORMAL);
                 break;
             case STATE_SEARCH:
                 mState = STATE_NORMAL;
                 mViewTransition.showFirstView();
-                mSearchBar.setInNormalMode();
+                mSearchBar.setState(SearchBar.STATE_NORMAL);
                 returnSearchBarPosition();
                 setFabState(FAB_STATE_NORMAL);
                 break;
             case STATE_SEARCH_SHOW_LIST:
                 mState = STATE_SEARCH;
-                mSearchBar.hideImeAndSuggestionsList();
+                mSearchBar.setState(SearchBar.STATE_SEARCH);
                 returnSearchBarPosition();
                 break;
         }
@@ -223,7 +258,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
     private void toggleFabLayout() {
         mFabLayout.toggle();
-        mAddDeleteDrawable.setShape(mFabLayout.getExpanded(), ANIMATE_TIME);
+        mAddDeleteDrawable.setShape(mFabLayout.isExpanded(), ANIMATE_TIME);
     }
 
     @Override
@@ -252,7 +287,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
     public void onClickTitle() {
         if (mState == STATE_NORMAL) {
             mState = STATE_SIMPLE_SEARCH;
-            mSearchBar.setInEditMode(true);
+            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
             returnSearchBarPosition();
             setFabState(FAB_STATE_SEARCH);
         }
@@ -274,7 +309,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
             mState = STATE_SEARCH;
             mViewTransition.showSecondView();
             mSearchLayout.scrollSearchContainerToTop();
-            mSearchBar.setInEditMode(false);
+            mSearchBar.setState(SearchBar.STATE_SEARCH);
             returnSearchBarPosition();
             setFabState(FAB_STATE_SEARCH);
         }
@@ -284,7 +319,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
     public void onSearchEditTextClick() {
         if (mState == STATE_SEARCH) {
             mState = STATE_SEARCH_SHOW_LIST;
-            mSearchBar.showImeAndSuggestionsList();
+            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
             returnSearchBarPosition();
         }
     }
@@ -297,7 +332,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
         mState = STATE_NORMAL;
         mViewTransition.showFirstView();
-        mSearchBar.setInNormalMode();
+        mSearchBar.setState(SearchBar.STATE_NORMAL);
         returnSearchBarPosition();
         setFabState(FAB_STATE_NORMAL);
     }
@@ -423,10 +458,19 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             if (mState != STATE_SIMPLE_SEARCH && mState != STATE_SEARCH_SHOW_LIST &&
                     isVaildView(recyclerView)) {
+
+                int oldBottom = mSearchBar.getBottom();
                 int offsetYStep = MathUtils.clamp(-dy,
                         -mSearchBar.getBottom(), mSearchBarOriginalTop - mSearchBar.getTop());
                 mSearchBar.offsetTopAndBottom(offsetYStep);
                 ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offsetYStep;
+                int newBottom = mSearchBar.getBottom();
+
+                // TODO Sometimes if it is out of screen than go into again, it do not show,
+                // so I need to requestLayout
+                if (oldBottom == 0 && newBottom > 0) {
+                    mSearchBar.requestLayout();
+                }
             }
         }
 

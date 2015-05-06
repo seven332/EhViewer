@@ -49,60 +49,78 @@ public class ViewTransition {
     }
 
     public void showFirstView() {
+        showFirstView(true);
+    }
+
+    public void showFirstView(boolean animation) {
         if (mSwitch) {
             mSwitch = false;
 
-            ObjectAnimator oa1 = ObjectAnimator.ofFloat(mView1, "alpha", 0f, 1f);
-            oa1.setDuration(ANIMATE_TIME);
-            oa1.addListener(new SimpleAnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    ViewUtils.setVisibility(mView1, View.VISIBLE);
+            if (animation) {
+                ObjectAnimator oa1 = ObjectAnimator.ofFloat(mView1, "alpha", 0f, 1f);
+                oa1.setDuration(ANIMATE_TIME);
+                oa1.addListener(new SimpleAnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        ViewUtils.setVisibility(mView1, View.VISIBLE);
+                    }
+                });
+                ObjectAnimator oa2 = ObjectAnimator.ofFloat(mView2, "alpha", 1f, 0f);
+                oa2.setDuration(ANIMATE_TIME);
+                oa2.addListener(new SimpleAnimatorListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        ViewUtils.setVisibility(mView2, View.GONE);
+                    }
+                });
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    oa1.setAutoCancel(true);
+                    oa2.setAutoCancel(true);
                 }
-            });
-            ObjectAnimator oa2 = ObjectAnimator.ofFloat(mView2, "alpha", 1f, 0f);
-            oa2.setDuration(ANIMATE_TIME);
-            oa2.addListener(new SimpleAnimatorListener() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    ViewUtils.setVisibility(mView2, View.GONE);
-                }
-            });
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                oa1.setAutoCancel(true);
-                oa2.setAutoCancel(true);
+                oa1.start();
+                oa2.start();
+            } else {
+                ViewUtils.setVisibility(mView1, View.VISIBLE);
+                ViewUtils.setVisibility(mView2, View.GONE);
             }
-            oa1.start();
-            oa2.start();
         }
     }
 
     public void showSecondView() {
+        showSecondView(true);
+    }
+
+    public void showSecondView(boolean animation) {
         if (!mSwitch) {
             mSwitch = true;
 
-            ObjectAnimator oa1 = ObjectAnimator.ofFloat(mView1, "alpha", 1f, 0f);
-            oa1.setDuration(ANIMATE_TIME);
-            oa1.addListener(new SimpleAnimatorListener() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    ViewUtils.setVisibility(mView1, View.GONE);
+            if (animation) {
+                ObjectAnimator oa1 = ObjectAnimator.ofFloat(mView1, "alpha", 1f, 0f);
+                oa1.setDuration(ANIMATE_TIME);
+                oa1.addListener(new SimpleAnimatorListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        ViewUtils.setVisibility(mView1, View.GONE);
+                    }
+                });
+                ObjectAnimator oa2 = ObjectAnimator.ofFloat(mView2, "alpha", 0f, 1f);
+                oa2.setDuration(ANIMATE_TIME);
+                oa2.addListener(new SimpleAnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        ViewUtils.setVisibility(mView2, View.VISIBLE);
+                    }
+                });
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    oa1.setAutoCancel(true);
+                    oa2.setAutoCancel(true);
                 }
-            });
-            ObjectAnimator oa2 = ObjectAnimator.ofFloat(mView2, "alpha", 0f, 1f);
-            oa2.setDuration(ANIMATE_TIME);
-            oa2.addListener(new SimpleAnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    ViewUtils.setVisibility(mView2, View.VISIBLE);
-                }
-            });
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                oa1.setAutoCancel(true);
-                oa2.setAutoCancel(true);
+                oa1.start();
+                oa2.start();
+            } else {
+                ViewUtils.setVisibility(mView1, View.GONE);
+                ViewUtils.setVisibility(mView2, View.VISIBLE);
             }
-            oa1.start();
-            oa2.start();
         }
     }
 }

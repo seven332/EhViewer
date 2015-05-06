@@ -24,6 +24,8 @@ import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.text.Editable;
@@ -35,6 +37,7 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -44,6 +47,7 @@ import android.widget.TextView;
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.drawable.DrawerArrowDrawable;
+import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
@@ -61,7 +65,16 @@ public class SearchBar extends CardView implements View.OnClickListener,
         TextView.OnEditorActionListener, TextWatcher,
         SearchEditText.SearchEditTextListener, Messenger.Receiver {
 
+    private static final String STATE_KEY_SUPER = "super";
+    private static final String STATE_KEY_STATE = "state";
+
     private static final long ANIMATE_TIME = 300l;
+
+    public static final int STATE_NORMAL = 0;
+    public static final int STATE_SEARCH = 1;
+    public static final int STATE_SEARCH_LIST = 2;
+
+    private int mState = STATE_NORMAL;
 
     private Path mPath = new Path();
     private int mWidth;
@@ -75,6 +88,8 @@ public class SearchBar extends CardView implements View.OnClickListener,
     private SearchEditText mEditText;
     private ListView mList;
 
+    private ViewTransition mViewTransition;
+
     private DrawerArrowDrawable mDrawerArrowDrawable;
     private AddDeleteDrawable mAddDeleteDrawable;
 
@@ -84,9 +99,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
 
     private Helper mHelper;
 
-    private boolean mInEditMode = false;
     private boolean mInAnimation = false;
-    private boolean mFirstLayout = true;
 
     private int mSource;
 
@@ -119,6 +132,8 @@ public class SearchBar extends CardView implements View.OnClickListener,
         mEditText = (SearchEditText) findViewById(R.id.search_edit_text);
         mList = (ListView) findViewById(R.id.search_bar_list);
 
+        mViewTransition = new ViewTransition(mTitleTextView, mEditText);
+
         mDrawerArrowDrawable = new DrawerArrowDrawable(getContext());
         mAddDeleteDrawable = new AddDeleteDrawable(getContext());
 
@@ -130,6 +145,11 @@ public class SearchBar extends CardView implements View.OnClickListener,
         mEditText.setSearchEditTextListener(this);
         mEditText.setOnEditorActionListener(this);
         mEditText.addTextChangedListener(this);
+
+        // Get base height
+        ViewUtils.measureView(this, ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        mBaseHeight = getMeasuredHeight();
 
         mSuggestionList = new ArrayList<>();
         // TODO
@@ -191,16 +211,16 @@ public class SearchBar extends CardView implements View.OnClickListener,
         if (v == mTitleTextView) {
             mHelper.onClickTitle();
         } else if (v == mMenuButton) {
-            if (mInEditMode) {
-                mHelper.onClickArrow();
-            } else {
+            if (mState == STATE_NORMAL) {
                 mHelper.onClickMenu();
+            } else {
+                mHelper.onClickArrow();
             }
         } else if (v == mActionButton) {
-            if (mInEditMode) {
-                mEditText.setText("");
-            } else {
+            if (mState == STATE_NORMAL) {
                 mHelper.onClickAdvanceSearch();
+            } else {
+                mEditText.setText("");
             }
         }
     }
@@ -217,75 +237,60 @@ public class SearchBar extends CardView implements View.OnClickListener,
         return false;
     }
 
-    public void setInEditMode(boolean showList) {
-        if (!mInEditMode) {
-            mInEditMode = true;
-            setClickable(false);
-            ViewUtils.setVisibility(mTitleTextView, View.GONE);
-            ViewUtils.setVisibility(mEditText, View.VISIBLE);
-            mEditText.requestFocus();
-            // start animator
-            if (mDrawerArrowDrawable.getProgress() != 1f) {
-                ObjectAnimator oa1 = ObjectAnimator.ofFloat(mDrawerArrowDrawable, "progress", 0f, 1f);
-                oa1.setDuration(ANIMATE_TIME);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    oa1.setAutoCancel(true);
-                }
-                oa1.start();
-            }
-            if (mAddDeleteDrawable.getProgress() != 1f) {
-                ObjectAnimator oa2 = ObjectAnimator.ofFloat(mAddDeleteDrawable, "progress", 0f, 1f);
-                oa2.setDuration(ANIMATE_TIME);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    oa2.setAutoCancel(true);
-                }
-                oa2.start();
-            }
-            // Show list if needed
-            if (showList) {
-                showImeAndSuggestionsList();
+    public void setState(int state) {
+        setState(state, true);
+    }
+
+    public void setState(int state, boolean animation) {
+        if (mState != state) {
+            int oldState = mState;
+            mState = state;
+
+            switch (oldState) {
+                default:
+                case STATE_NORMAL:
+                    mViewTransition.showSecondView(animation);
+                    mEditText.requestFocus();
+                    mDrawerArrowDrawable.setArrow(animation ? ANIMATE_TIME : 0);
+                    mAddDeleteDrawable.setDelete(animation ? ANIMATE_TIME : 0);
+                    if (state == STATE_SEARCH_LIST) {
+                        showImeAndSuggestionsList(animation);
+                    }
+                    break;
+                case STATE_SEARCH:
+                    if (state == STATE_NORMAL) {
+                        mViewTransition.showFirstView(animation);
+                        mDrawerArrowDrawable.setMenu(animation ? ANIMATE_TIME : 0);
+                        mAddDeleteDrawable.setAdd(animation ? ANIMATE_TIME : 0);
+                    } else if (state == STATE_SEARCH_LIST) {
+                        showImeAndSuggestionsList(animation);
+                    }
+                    break;
+                case STATE_SEARCH_LIST:
+                    hideImeAndSuggestionsList(animation);
+                    if (state == STATE_NORMAL) {
+                        mViewTransition.showFirstView(animation);
+                        mDrawerArrowDrawable.setMenu(animation ? ANIMATE_TIME : 0);
+                        mAddDeleteDrawable.setAdd(animation ? ANIMATE_TIME : 0);
+                    }
+                    break;
             }
         }
     }
 
-    public void setInNormalMode() {
-        if (mInEditMode) {
-            mInEditMode = false;
-            setOnClickListener(this);
-            ViewUtils.setVisibility(mTitleTextView, View.VISIBLE);
-            ViewUtils.setVisibility(mEditText, View.GONE);
-            // start animator
-            if (mDrawerArrowDrawable.getProgress() != 0f) {
-                ObjectAnimator oa1 = ObjectAnimator.ofFloat(mDrawerArrowDrawable, "progress", 1f, 0f);
-                oa1.setDuration(ANIMATE_TIME);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    oa1.setAutoCancel(true);
-                }
-                oa1.start();
-            }
-            if (mAddDeleteDrawable.getProgress() != 0f) {
-                ObjectAnimator oa2 = ObjectAnimator.ofFloat(mAddDeleteDrawable, "progress", 1f, 0f);
-                oa2.setDuration(ANIMATE_TIME);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    oa2.setAutoCancel(true);
-                }
-                oa2.start();
-            }
-            // Hide ime and suggestions list
-            hideImeAndSuggestionsList();
-        }
+    private void showImeAndSuggestionsList() {
+        showImeAndSuggestionsList(true);
     }
 
-    public void showImeAndSuggestionsList() {
+    private void showImeAndSuggestionsList(boolean animation) {
         // Show ime
-        mEditText.requestFocus();
         InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(mEditText, 0);
         // update suggestion for show suggestions list
         updateSuggestions();
         // Show suggestions list
-        if (mProgress != 1f) {
-            ObjectAnimator oa = ObjectAnimator.ofFloat(this, "progress", 0f, 1f);
+        if (animation) {
+            ObjectAnimator oa = ObjectAnimator.ofFloat(this, "progress", 1f);
             oa.setDuration(ANIMATE_TIME);
             oa.addListener(new SimpleAnimatorListener() {
                 @Override
@@ -303,16 +308,22 @@ public class SearchBar extends CardView implements View.OnClickListener,
                 oa.setAutoCancel(true);
             }
             oa.start();
+        } else {
+            setProgress(1f);
         }
     }
 
-    public void hideImeAndSuggestionsList() {
+    private void hideImeAndSuggestionsList() {
+        hideImeAndSuggestionsList(true);
+    }
+
+    private void hideImeAndSuggestionsList(boolean animation) {
         // Hide ime
         InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(this.getWindowToken(), 0);
         // Hide suggestions list
-        if (mProgress != 0f) {
-            ObjectAnimator oa = ObjectAnimator.ofFloat(this, "progress", 1f, 0f);
+        if (animation) {
+            ObjectAnimator oa = ObjectAnimator.ofFloat(this, "progress", 0f);
             oa.setDuration(ANIMATE_TIME);
             oa.addListener(new SimpleAnimatorListener() {
                 @Override
@@ -330,6 +341,8 @@ public class SearchBar extends CardView implements View.OnClickListener,
                 oa.setAutoCancel(true);
             }
             oa.start();
+        } else {
+            setProgress(0f);
         }
     }
 
@@ -340,13 +353,9 @@ public class SearchBar extends CardView implements View.OnClickListener,
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (mInEditMode) {
+        if (mList.getVisibility() == View.VISIBLE) {
             mWidth = right - left;
             mHeight = bottom - top;
-        }
-        if (mFirstLayout) {
-            mFirstLayout = false;
-            mBaseHeight = bottom - top;
         }
     }
 
@@ -408,6 +417,23 @@ public class SearchBar extends CardView implements View.OnClickListener,
                 int source = (Integer) obj;
                 setSource(source);
             }
+        }
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+        final Bundle state = new Bundle();
+        state.putParcelable(STATE_KEY_SUPER, super.onSaveInstanceState());
+        state.putInt(STATE_KEY_STATE, mState);
+        return state;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            final Bundle savedState = (Bundle) state;
+            super.onRestoreInstanceState(savedState.getParcelable(STATE_KEY_SUPER));
+            setState(savedState.getInt(STATE_KEY_STATE), false);
         }
     }
 

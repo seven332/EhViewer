@@ -221,7 +221,7 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
         setExpanded(!mExpanded);
     }
 
-    public boolean getExpanded() {
+    public boolean isExpanded() {
         return mExpanded;
     }
 
