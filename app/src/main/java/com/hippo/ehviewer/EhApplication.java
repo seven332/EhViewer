@@ -19,6 +19,7 @@ import android.content.Context;
 
 import com.hippo.content.VectorContext;
 import com.hippo.scene.SceneApplication;
+import com.hippo.util.Log;
 
 public class EhApplication extends SceneApplication {
 
@@ -30,5 +31,12 @@ public class EhApplication extends SceneApplication {
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(VectorContext.wrapContext(newBase));
+    }
+
+    @Override
+    public void onTrimMemory (int level) {
+        if (level == TRIM_MEMORY_UI_HIDDEN) {
+            Log.d("Application hiden");
+        }
     }
 }
