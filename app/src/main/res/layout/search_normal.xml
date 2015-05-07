@@ -43,14 +43,16 @@
             android:id="@+id/search_specify_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:text="@string/search_specify_tag"/>
 
         <com.hippo.widget.SimpleImageView
             android:id="@+id/search_tag_help"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="12dp"
+            android:padding="4dp"
             android:src="@drawable/ic_help_circle"
             tools:ignore="RtlHardcoded"/>
 
