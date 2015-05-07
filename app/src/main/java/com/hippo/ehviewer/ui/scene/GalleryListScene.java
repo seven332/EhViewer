@@ -25,19 +25,18 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.Interpolator;
 
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.ContentActivity;
+import com.hippo.util.InterpolatorUtils;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.OffsetLayout;
 import com.hippo.ehviewer.widget.SearchBar;
@@ -65,8 +64,6 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
     private final static int FAB_STATE_NORMAL = 0;
     private final static int FAB_STATE_SEARCH = 1;
-
-    private final static Interpolator FAST_OUT_LINEAR_IN_INTERPOLATOR = new FastOutLinearInInterpolator();
 
     private ContentActivity mActivity;
     private Resources mResources;
@@ -210,7 +207,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
             PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", 1f, 0f);
             ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(mCornerFab, scaleXPvh, scaleYPvh);
             oa.setDuration(ANIMATE_TIME / 2);
-            oa.setInterpolator(FAST_OUT_LINEAR_IN_INTERPOLATOR);
+            oa.setInterpolator(InterpolatorUtils.SLOW_FAST_INTERPOLATOR);
             oa.setRepeatCount(1);
             oa.setRepeatMode(ValueAnimator.REVERSE);
             final Drawable finalDrawable = drawable;

@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
+import com.hippo.util.InterpolatorUtils;
 import com.hippo.util.MathUtils;
 
 public class CheckTextView extends TextView implements OnClickListener, Hotspotable {
@@ -133,9 +134,11 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
         if (mChecked) {
             radiusAnim = ObjectAnimator.ofFloat(this, "radius",
                     0f, mMaxRadius);
+            radiusAnim.setInterpolator(InterpolatorUtils.FAST_SLOW_INTERPOLATOR);
         } else {
             radiusAnim = ObjectAnimator.ofFloat(this, "radius",
                     mMaxRadius, 0f);
+            radiusAnim.setInterpolator(InterpolatorUtils.SLOW_FAST_INTERPOLATOR);
         }
         radiusAnim.setDuration(ANIMATION_DURATION); // TODO decide duration according to mMaxRadius
         radiusAnim.addListener(mAnimatorListener);
