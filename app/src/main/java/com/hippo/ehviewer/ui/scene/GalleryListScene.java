@@ -127,12 +127,6 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
                 mSearchBarOriginalTop = mSearchBar.getTop();
                 mSearchBarOriginalBottom = mSearchBar.getBottom();
                 mSearchLayout.setFitPaddingTop(mSearchBar.getHeight() + mResources.getDimensionPixelOffset(R.dimen.search_bar_padding_vertical));
-
-
-                Log.d("mSearchBarOriginalTop = " + mSearchBarOriginalTop);
-                Log.d("mSearchBarOriginalBottom = " + mSearchBarOriginalBottom);
-
-
             }
         });
         mSearchLayout.setHelper(this);

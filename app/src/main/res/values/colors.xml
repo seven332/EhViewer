@@ -78,9 +78,10 @@
 
     <color name="search_category_background_color">@android:color/white</color>
 
-    <color name="shadow_light">#38000000</color>
-
     <!-- Scroll View -->
     <color name="scroll_view_indicator">#20000000</color>
+
+    <!-- CheckTextView -->
+    <color name="check_text_view_mask">#8a000000</color>
 
 </resources>

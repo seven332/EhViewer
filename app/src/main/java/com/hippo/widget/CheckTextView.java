@@ -17,19 +17,24 @@ package com.hippo.widget;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.CanvasProperty;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.view.HardwareCanvas;
+import android.view.RenderNodeAnimator;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Interpolator;
 import android.widget.TextView;
 
+import com.hippo.animation.SimpleAnimatorListener;
+import com.hippo.ehviewer.R;
 import com.hippo.util.InterpolatorUtils;
 import com.hippo.util.MathUtils;
 
@@ -38,38 +43,46 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
     private static final String STATE_KEY_SUPER = "super";
     private static final String STATE_KEY_CHECKED = "checked";
 
-    private static final int MASK = 0x8a000000;
-    private static final long ANIMATION_DURATION = 150;
+    private static final long ANIMATION_DURATION = 200;
+
+    private int mMaskColor;
 
     private boolean mChecked = false;
-    private boolean mAimating = false;
+    private boolean mPrepareAnimator = false;
 
-    private float mX;
-    private float mY;
-    private float mRadius = 0f;
-    private float mMaxRadius;
+    private CanvasProperty<Paint> mPropPaint;
+    private CanvasProperty<Float> mPropRadius;
+    private CanvasProperty<Float> mPropX;
+    private CanvasProperty<Float> mPropY;
 
     private Paint mPaint;
+    private float mRadius = 0f;
+    private float mX;
+    private float mY;
 
-    private Animator mCurrentAnimator;
+    Animator mAnimator;
+
+    private float mMaxRadius;
 
     public CheckTextView(Context context) {
         super(context);
-        init();
+        init(context);
     }
 
     public CheckTextView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+        init(context);
     }
 
     public CheckTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(context);
     }
 
-    private void init() {
+    private void init(Context context) {
+        mMaskColor = context.getResources().getColor(R.color.check_text_view_mask);
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
-        mPaint.setColor(MASK);
+        mPaint.setColor(mMaskColor);
 
         setOnClickListener(this);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -91,83 +104,128 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
         mMaxRadius = MathUtils.coverageRadius(getWidth(), getHeight(), x, y);
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public void setRadius(float radius) {
         float bigger = Math.max(mRadius, radius);
         mRadius = radius;
         invalidate((int) (mX - bigger), (int) (mY - bigger), (int) (mX + bigger), (int) (mY + bigger));
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public float getRadius() {
         return mRadius;
     }
 
-    private Animator.AnimatorListener mAnimatorListener = new Animator.AnimatorListener() {
-        @Override
-        public void onAnimationStart(Animator animation) {
-            mAimating = true;
-            mCurrentAnimator = animation;
-        }
-
+    private Animator.AnimatorListener mAnimatorListener = new SimpleAnimatorListener() {
         @Override
         public void onAnimationEnd(Animator animation) {
-            mAimating = false;
-            mCurrentAnimator = null;
-        }
-
-        @Override
-        public void onAnimationCancel(Animator animation) {
-            mAimating = false;
-            mCurrentAnimator = null;
-        }
-
-        @Override
-        public void onAnimationRepeat(Animator animation) {
-            // Empty
+            mAnimator = null;
         }
     };
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void startAnimator() {
-        ObjectAnimator radiusAnim;
+    public void prepareAnimations() {
+        mPrepareAnimator = true;
+    }
+
+    private void createHardwareAnimations(Canvas canvas) {
+        float startRadius;
+        float endRadius;
+        Interpolator interpolator;
         if (mChecked) {
-            radiusAnim = ObjectAnimator.ofFloat(this, "radius",
-                    0f, mMaxRadius);
-            radiusAnim.setInterpolator(InterpolatorUtils.FAST_SLOW_INTERPOLATOR);
+            startRadius = 0;
+            endRadius = mMaxRadius;
+            interpolator = InterpolatorUtils.FAST_SLOW_INTERPOLATOR;
         } else {
-            radiusAnim = ObjectAnimator.ofFloat(this, "radius",
-                    mMaxRadius, 0f);
-            radiusAnim.setInterpolator(InterpolatorUtils.SLOW_FAST_INTERPOLATOR);
+            startRadius = mMaxRadius;
+            endRadius = 0;
+            interpolator = InterpolatorUtils.SLOW_FAST_INTERPOLATOR;
         }
-        radiusAnim.setDuration(ANIMATION_DURATION); // TODO decide duration according to mMaxRadius
+        mPropPaint = CanvasProperty.createPaint(mPaint);
+        mPropRadius = CanvasProperty.createFloat(startRadius);
+        mPropX = CanvasProperty.createFloat(mX);
+        mPropY = CanvasProperty.createFloat(mY);
+
+        final RenderNodeAnimator radiusAnim = new RenderNodeAnimator(mPropRadius, endRadius);
+        radiusAnim.setDuration(ANIMATION_DURATION);
+        radiusAnim.setInterpolator(interpolator);
         radiusAnim.addListener(mAnimatorListener);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            radiusAnim.setAutoCancel(true);
-        }
+        radiusAnim.setTarget(canvas);
         radiusAnim.start();
+        mAnimator = radiusAnim;
+    }
+
+    private void createSoftwareAnimations() {
+        float startRadius;
+        float endRadius;
+        Interpolator interpolator;
+        if (mChecked) {
+            startRadius = 0;
+            endRadius = mMaxRadius;
+            interpolator = InterpolatorUtils.FAST_SLOW_INTERPOLATOR;
+        } else {
+            startRadius = mMaxRadius;
+            endRadius = 0;
+            interpolator = InterpolatorUtils.SLOW_FAST_INTERPOLATOR;
+        }
+        mRadius = startRadius;
+
+        final ObjectAnimator radiusAnim = ObjectAnimator.ofFloat(this, "radius", startRadius, endRadius);
+        radiusAnim.setDuration(ANIMATION_DURATION);
+        radiusAnim.setInterpolator(interpolator);
+        radiusAnim.addListener(mAnimatorListener);
+        radiusAnim.start();
+        mAnimator = radiusAnim;
+    }
+
+    private void cancelAnimations() {
+        if (mAnimator != null) {
+            mAnimator.cancel();
+        }
     }
 
     @Override
     public void onClick(View v) {
-        mChecked = !mChecked;
-        startAnimator();
+        setChecked(!mChecked);
     }
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
-        if (mAimating) {
-            float radius = mRadius;
-            if (radius > 0f) {
-                canvas.drawCircle(mX, mY, radius, mPaint);
+        boolean useHardware = canvas.isHardwareAccelerated() &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+
+        if (mPrepareAnimator) {
+            mPrepareAnimator = false;
+            cancelAnimations();
+            if (useHardware) {
+                createHardwareAnimations(canvas);
+            } else {
+                createSoftwareAnimations();
+            }
+        }
+
+        if (mAnimator != null) {
+            if (useHardware) {
+                drawHardware((HardwareCanvas) canvas);
+            } else {
+                drawSoftware(canvas);
             }
         } else {
             if (mChecked) {
-                canvas.drawColor(MASK);
+                canvas.drawColor(mMaskColor);
             }
         }
+    }
+
+    private void drawHardware(HardwareCanvas c) {
+        c.drawCircle(mPropX, mPropY, mPropRadius, mPropPaint);
+    }
+
+    private void drawSoftware(Canvas c) {
+        c.drawCircle(mX, mY, mRadius, mPaint);
+    }
+
+    public void setChecked(boolean checked) {
+        setChecked(checked, true);
     }
 
     /**
@@ -181,19 +239,9 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
             mChecked = checked;
 
             if (animation) {
-                int w = getWidth();
-                int h = getHeight();
-                mX = w / 2;
-                mY = h / 2;
-                mMaxRadius = (float) Math.hypot(mX, mY);
-
-                startAnimator();
-            } else {
-                if (mCurrentAnimator != null) {
-                    mCurrentAnimator.cancel();
-                }
-                invalidate();
+                prepareAnimations();
             }
+            invalidate();
         }
     }
 
@@ -222,5 +270,4 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
             setChecked(savedState.getBoolean(STATE_KEY_CHECKED), false);
         }
     }
-
 }
