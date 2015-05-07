@@ -44,6 +44,10 @@ public class ContentLayout extends FrameLayout {
     private View mImageView;
     private TextView mTextView;
 
+    private StaggeredGridLayoutManager mLayoutManager;
+
+    private ContentHelper mHelper;
+
     public ContentLayout(Context context) {
         super(context);
         init(context);
@@ -68,10 +72,21 @@ public class ContentLayout extends FrameLayout {
         mRecyclerView = (EasyRecyclerView) mRefreshLayout.getChildAt(1);
         mImageView = mItView.getChildAt(0);
         mTextView = (TextView) mItView.getChildAt(1);
+
+        mLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL); // TODO
+        mRecyclerView.setLayoutManager(mLayoutManager);
     }
 
     public EasyRecyclerView getRecyclerView() {
         return mRecyclerView;
+    }
+
+    public void setHelper(ContentHelper helper) {
+        mHelper = helper;
+        helper.init(mRecyclerView, mLayoutManager);
+        mRefreshLayout.setOnHeaderRefreshListener(helper);
+        mRefreshLayout.setOnFooterRefreshListener(helper);
+        mRecyclerView.addOnScrollListener(helper.getOnScrollListener());
     }
 
     public void showProgressBar() {
@@ -95,6 +110,13 @@ public class ContentLayout extends FrameLayout {
 
         private RecyclerView mRecyclerView;
         private StaggeredGridLayoutManager mLayoutManager;
+
+        private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                ContentHelper.this.onScrolled(recyclerView, dx, dy);
+            }
+        };
 
         /**
          * Store data
@@ -131,13 +153,19 @@ public class ContentLayout extends FrameLayout {
         private int mCurrentTaskId;
         private int mCurrentTaskType;
 
-        private ContentHelper(RecyclerView recyclerView,
+        private ContentHelper() {
+            mList = new ArrayList<>();
+            mIdGenerator = IntIdGenerator.create();
+        }
+
+        private void init(RecyclerView recyclerView,
                 StaggeredGridLayoutManager layoutManager) {
             mRecyclerView = recyclerView;
             mLayoutManager = layoutManager;
+        }
 
-            mList = new ArrayList<>();
-            mIdGenerator = IntIdGenerator.create();
+        RecyclerView.OnScrollListener getOnScrollListener() {
+            return mOnScrollListener;
         }
 
         /**
@@ -179,19 +207,9 @@ public class ContentLayout extends FrameLayout {
             if (page > mFirstIndex) {
 
             }
-
-
-
         }
 
-        abstract public void onScrollStateChanged(RecyclerView recyclerView, int newState);
-
-        public class OnScrollListener extends RecyclerView.OnScrollListener {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                ContentHelper.this.onScrollStateChanged(recyclerView, newState);
-            }
-
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
         }
     }
