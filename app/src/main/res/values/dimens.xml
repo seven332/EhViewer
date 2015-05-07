@@ -15,6 +15,10 @@
   -->
 <resources>
 
+    <!-- StatsActivity -->
+    <dimen name="stats_text_view_padding_top">24dp</dimen>
+    <dimen name="stats_text_view_padding_right">16dp</dimen>
+
     <!-- FloatingActionBarLayout -->
     <dimen name="floating_action_bar_layout_interval">16dp</dimen>
 

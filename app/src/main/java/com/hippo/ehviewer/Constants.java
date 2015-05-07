@@ -20,9 +20,11 @@ import com.hippo.util.Messenger;
 public final class Constants {
 
     public static final int MESSENGER_ID_SOURCE;
+    public static final int MESSENGER_ID_SHOW_APP_STATUS;
 
     static {
         Messenger messenger = Messenger.getInstance();
         MESSENGER_ID_SOURCE = messenger.newId();
+        MESSENGER_ID_SHOW_APP_STATUS = messenger.newId();
     }
 }

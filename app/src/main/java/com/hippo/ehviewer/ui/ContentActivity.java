@@ -40,6 +40,11 @@ public class ContentActivity extends StageActivity
     private StageLayout mContentLayout;
 
     @Override
+    protected boolean isShowStats() {
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);

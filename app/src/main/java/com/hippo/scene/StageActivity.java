@@ -19,13 +19,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.View;
 
+import com.hippo.app.StatsActivity;
 import com.hippo.util.IntIdGenerator;
 
-public abstract class StageActivity extends AppCompatActivity {
+public abstract class StageActivity extends StatsActivity {
 
     private IntIdGenerator mActivityResultIdGenerator = IntIdGenerator.create();
     private SparseArray<Scene.ActivityResultListener> mActivityResultListenerMap =

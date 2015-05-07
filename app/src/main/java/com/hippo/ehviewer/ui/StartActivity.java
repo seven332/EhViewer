@@ -17,19 +17,24 @@ package com.hippo.ehviewer.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hippo.app.StatsActivity;
 import com.hippo.ehviewer.R;
 import com.hippo.util.ViewUtils;
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGBuilder;
 import com.larvalabs.svgandroid.SVGParseException;
 
-public class StartActivity extends AppCompatActivity {
+public class StartActivity extends StatsActivity {
 
     private static final String TAG = StartActivity.class.getSimpleName();
+
+    @Override
+    protected boolean isShowStats() {
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
