@@ -309,6 +309,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             }
             oa.start();
         } else {
+            ViewUtils.setVisibility(mList, View.VISIBLE);
             setProgress(1f);
         }
     }
@@ -343,6 +344,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             oa.start();
         } else {
             setProgress(0f);
+            ViewUtils.setVisibility(mList, View.GONE);
         }
     }
 
