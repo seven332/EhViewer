@@ -28,4 +28,11 @@ public final class Constants {
     public static final int MAX_REDIRECTS = 5;
 
     public static final int BUFFER_SIZE = 4096;
+
+    public static final int MESSENGER_ID_SHOW_APP_STATUS;
+
+    static {
+        Messenger messenger = Messenger.getInstance();
+        MESSENGER_ID_SHOW_APP_STATUS = messenger.newId();
+    }
 }

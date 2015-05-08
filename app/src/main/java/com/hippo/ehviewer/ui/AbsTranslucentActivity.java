@@ -20,13 +20,18 @@ import android.content.res.Configuration;
 
 import com.hippo.ehviewer.util.Ui;
 
-public class AbsTranslucentActivity extends AbsActivity {
+public class AbsTranslucentActivity extends StatsActivity {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
         Ui.updateTranslucent(this);
+    }
+
+    @Override
+    protected boolean isShowStats() {
+        return true;
     }
 
     @Override

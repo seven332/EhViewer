@@ -39,7 +39,6 @@ import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.app.DirSelectDialog;
 import com.hippo.ehviewer.app.MaterialAlertDialog;
-import com.hippo.ehviewer.content.Messenger;
 import com.hippo.ehviewer.data.Data;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ehclient.ExDownloader;
@@ -49,6 +48,7 @@ import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.FullScreenHelper;
 import com.hippo.ehviewer.util.MathUtils;
+import com.hippo.ehviewer.util.Messenger;
 import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.widget.ColorView;
 import com.hippo.ehviewer.widget.MaterialToast;
@@ -56,7 +56,7 @@ import com.hippo.ehviewer.widget.SlidingLayout;
 
 import java.io.File;
 
-public class GalleryActivity extends AbsActivity
+public class GalleryActivity extends StatsActivity
         implements GalleryView.GalleryViewListener, SeekBar.OnSeekBarChangeListener,
         FullScreenHelper.OnFullScreenBrokenListener, CompoundButton.OnCheckedChangeListener,
         SlidingLayout.OnChildHideListener, AdapterView.OnItemSelectedListener,
@@ -267,6 +267,11 @@ public class GalleryActivity extends AbsActivity
     }
 
     @Override
+    protected boolean isShowStats() {
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gl_root_group);
@@ -455,7 +460,7 @@ public class GalleryActivity extends AbsActivity
     }
 
     @Override
-    public void onReceive(Object obj) {
+    public void onReceive(int id, Object obj) {
         if (obj instanceof Boolean) {
             mVolumePage = (Boolean) obj;
         }

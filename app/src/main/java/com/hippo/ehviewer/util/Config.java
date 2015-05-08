@@ -22,7 +22,6 @@ import android.content.pm.ActivityInfo;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
-import com.hippo.ehviewer.content.Messenger;
 import com.hippo.ehviewer.data.ListUrls;
 import com.hippo.ehviewer.ehclient.EhClient;
 
