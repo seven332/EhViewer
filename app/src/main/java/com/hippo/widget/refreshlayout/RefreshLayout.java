@@ -1064,10 +1064,10 @@ public class RefreshLayout extends ViewGroup {
      * triggers a refresh should implement this interface.
      */
     public interface OnHeaderRefreshListener {
-        public void onHeaderRefresh();
+        void onHeaderRefresh();
     }
 
     public interface OnFooterRefreshListener {
-        public boolean onFooterRefresh();
+        boolean onFooterRefresh();
     }
 }

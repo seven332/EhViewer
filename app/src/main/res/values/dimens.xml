@@ -19,6 +19,13 @@
     <dimen name="stats_text_view_padding_top">24dp</dimen>
     <dimen name="stats_text_view_padding_right">16dp</dimen>
 
+    <!-- Snackbar -->
+    <dimen name="snackbar_padding_left">24dp</dimen>
+    <dimen name="snackbar_padding_right">24dp</dimen>
+    <dimen name="snackbar_padding_top">14dp</dimen>
+    <dimen name="snackbar_padding_bottom">14dp</dimen>
+    <dimen name="snackbar_interval">24dp</dimen>
+
     <!-- FloatingActionBarLayout -->
     <dimen name="floating_action_bar_layout_interval">16dp</dimen>
 

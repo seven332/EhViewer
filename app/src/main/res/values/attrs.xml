@@ -50,6 +50,10 @@
         <attr name="statusBarColor" format="color"/>
     </declare-styleable>
 
+    <declare-styleable name="Snackbar">
+        <attr name="message" format="string"/>
+    </declare-styleable>
+
     <!-- ********** -->
     <!-- For Vector -->
     <!-- ********** -->

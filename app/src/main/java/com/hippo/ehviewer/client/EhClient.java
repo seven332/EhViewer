@@ -23,6 +23,7 @@ import com.hippo.ehviewer.network.EhHttpHelper;
 import com.hippo.network.ResponseCodeException;
 import com.hippo.util.PriorityThreadFactory;
 
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -107,7 +108,7 @@ public final class EhClient {
     }
 
     public abstract static class OnGetGalleryListListener implements EhClientListener {
-        public abstract void onSuccess(GalleryInfo[] glArray, int pageNum);
+        public abstract void onSuccess(List<GalleryInfo> glArray, int pageNum);
     }
 
     private void doBgJob(BgJobHelper bjh) {
@@ -182,7 +183,7 @@ public final class EhClient {
 
         ListParser parser = new ListParser();
         parser.parse(body, source);
-        return new Object[]{parser.giArray, parser.pageNum};
+        return new Object[]{parser.giList, parser.pageNum};
     }
 
     private final class GetGalleryListHelper extends SimpleBgJobHelper {
@@ -191,7 +192,7 @@ public final class EhClient {
         private String mUrl;
         private OnGetGalleryListListener mListener;
 
-        private GalleryInfo[] mGlArray;
+        private List<GalleryInfo> mGlList;
         private int mPageNum;
 
         public GetGalleryListHelper(int source, String url, OnGetGalleryListListener listener) {
@@ -204,13 +205,13 @@ public final class EhClient {
         @Override
         public void doBgJob() throws Exception {
             Object[] objs = doGetGalleryList(mSource, mUrl);
-            mGlArray = (GalleryInfo[]) objs[0];
+            mGlList = (List<GalleryInfo>) objs[0];
             mPageNum = (int) objs[1];
         }
 
         @Override
         public void doSuccessCallback() {
-            mListener.onSuccess(mGlArray, mPageNum);
+            mListener.onSuccess(mGlList, mPageNum);
         }
     }
 

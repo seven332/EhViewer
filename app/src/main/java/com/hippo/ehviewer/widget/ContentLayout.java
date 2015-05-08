@@ -28,7 +28,9 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
 import com.hippo.util.IntIdGenerator;
+import com.hippo.util.Log;
 import com.hippo.util.ViewUtils;
+import com.hippo.widget.Snackbar;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.refreshlayout.RefreshLayout;
 
@@ -43,10 +45,13 @@ public class ContentLayout extends FrameLayout {
     private EasyRecyclerView mRecyclerView;
     private View mImageView;
     private TextView mTextView;
+    private Snackbar mSnackbar;
 
     private StaggeredGridLayoutManager mLayoutManager;
 
     private ContentHelper mHelper;
+
+    private int mSnackbarOriginBottom;
 
     public ContentLayout(Context context) {
         super(context);
@@ -69,12 +74,19 @@ public class ContentLayout extends FrameLayout {
         mProgressBar = (ProgressBar) getChildAt(0);
         mItView = (ViewGroup) getChildAt(1);
         mRefreshLayout = (RefreshLayout) getChildAt(2);
+        mSnackbar = (Snackbar) getChildAt(3);
         mRecyclerView = (EasyRecyclerView) mRefreshLayout.getChildAt(1);
         mImageView = mItView.getChildAt(0);
         mTextView = (TextView) mItView.getChildAt(1);
 
-        mLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL); // TODO
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        // Snackbar
+        mSnackbarOriginBottom = mSnackbar.getPaddingBottom();
+        mSnackbar.setAction(context.getString(R.string.retry), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     public EasyRecyclerView getRecyclerView() {
@@ -83,10 +95,18 @@ public class ContentLayout extends FrameLayout {
 
     public void setHelper(ContentHelper helper) {
         mHelper = helper;
-        helper.init(mRecyclerView, mLayoutManager);
+        mLayoutManager = helper.generateLayoutManager();
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(helper);
+        helper.init(mRefreshLayout, mRecyclerView, mLayoutManager);
         mRefreshLayout.setOnHeaderRefreshListener(helper);
         mRefreshLayout.setOnFooterRefreshListener(helper);
         mRecyclerView.addOnScrollListener(helper.getOnScrollListener());
+    }
+
+    public void setFitPaddingBottom(int fitPaddingBottom) {
+        // Snackbar
+        mSnackbar.setPadding(mSnackbar.getPaddingLeft(), mSnackbar.getPaddingTop(), mSnackbar.getPaddingRight(), mSnackbarOriginBottom + fitPaddingBottom);
     }
 
     public void showProgressBar() {
@@ -103,11 +123,25 @@ public class ContentLayout extends FrameLayout {
         mTextView.setText(text);
     }
 
-    private abstract static class ContentHelper<E, VH extends RecyclerView.ViewHolder>
+    public void showContent() {
+        ViewUtils.setVisibility(mProgressBar, View.GONE);
+        ViewUtils.setVisibility(mItView, View.GONE);
+        ViewUtils.setVisibility(mRefreshLayout, View.VISIBLE);
+    }
+
+    public abstract static class ContentHelper<E, VH extends RecyclerView.ViewHolder>
             extends EasyRecyclerView.Adapter<VH>
             implements RefreshLayout.OnHeaderRefreshListener,
             RefreshLayout.OnFooterRefreshListener {
 
+        private static final int TYPE_REFRESH = 0;
+        private static final int TYPE_PRE_PAGE = 1;
+        private static final int TYPE_PRE_PAGE_KEEP_POS = 2;
+        private static final int TYPE_NEXT_PAGE = 3;
+        private static final int TYPE_NEXT_PAGE_KEEP_POS = 4;
+        private static final int TYPE_SOMEWHERE = 5;
+
+        private RefreshLayout mRefreshLayout;
         private RecyclerView mRecyclerView;
         private StaggeredGridLayoutManager mLayoutManager;
 
@@ -121,96 +155,232 @@ public class ContentLayout extends FrameLayout {
         /**
          * Store data
          */
-        private List<E> mList;
+        private List<E> mData;
 
         private IntIdGenerator mIdGenerator;
 
-        /**
-         * First index index of current page
-         */
-        private int mFirstIndex;
-        /**
-         * Last index index of current page
-         */
-        private int mLastIndex;
-        /**
-         * Current page index
-         */
-        private int mCurrentPage;
         /**
          * First shown page index
          */
         private int mFirstPage;
         /**
-         * Last shown page index
+         * Last shown page index + 1
          */
         private int mLastPage;
         /**
-         * The number of page in sum
+         * First index index of current page
          */
-        private int mPageNum;
+        private int mFirstIndex;
+        /**
+         * Last index index of current page + 1
+         */
+        private int mLastIndex;
+        /**
+         * The size of page
+         */
+        private int mPageSize;
+        private int mCurrentPage;
+        private int mPageVolume;
 
         private int mCurrentTaskId;
         private int mCurrentTaskType;
+        private int mCurrentTaskPage;
 
-        private ContentHelper() {
-            mList = new ArrayList<>();
+        public ContentHelper() {
+            mData = new ArrayList<>();
             mIdGenerator = IntIdGenerator.create();
         }
 
-        private void init(RecyclerView recyclerView,
+        private void init(RefreshLayout refreshLayout, RecyclerView recyclerView,
                 StaggeredGridLayoutManager layoutManager) {
+            mRefreshLayout = refreshLayout;
             mRecyclerView = recyclerView;
             mLayoutManager = layoutManager;
         }
 
-        RecyclerView.OnScrollListener getOnScrollListener() {
+        private RecyclerView.OnScrollListener getOnScrollListener() {
             return mOnScrollListener;
         }
 
+        protected abstract StaggeredGridLayoutManager generateLayoutManager();
+
         /**
-         *
-         * @param location
-         * @return
          * @throws IndexOutOfBoundsException
          *                if {@code location < 0 || location >= size()}
          */
         public E getDataAt(int location) {
-            return mList.get(location);
+            return mData.get(location);
         }
 
-        public abstract E[] getPageData(int page);
+        /**
+         * Call {@link #onGetPageData(int, List)} when get data
+         *
+         * @param taskId task id
+         * @param page the page to get
+         */
+        protected abstract void getPageData(int taskId, int page);
 
-        public void onGetPageData(int mTaskId, int page, E[] data) {
+        public void setPageSize(int pageSize) {
+            mPageSize = pageSize;
+        }
 
+        public void onGetPageData(int taskId, List<E> data) {
+            int pageVolume = data.size();
+            mPageVolume = pageVolume;
+            if (mCurrentTaskId == taskId) {
+                switch (mCurrentTaskType) {
+                    case TYPE_REFRESH:
+                        mFirstPage = 0;
+                        mLastPage = 1;
+                        mCurrentPage = 0;
+                        mFirstIndex = 0;
+                        mLastIndex = pageVolume;
+
+                        mData.clear();
+                        mData.addAll(data);
+                        notifyDataSetChanged();
+
+                        mRecyclerView.stopScroll();
+                        mLayoutManager.scrollToPositionWithOffset(0, 0);
+                        break;
+                    case TYPE_PRE_PAGE:
+                    case TYPE_PRE_PAGE_KEEP_POS:
+                        mData.addAll(0, data);
+                        notifyItemRangeInserted(0, pageVolume);
+
+                        mFirstPage--;
+                        if (mCurrentTaskType == TYPE_PRE_PAGE_KEEP_POS) {
+                            mFirstIndex += pageVolume;
+                            mLastIndex += pageVolume;
+                            // TODO
+                        } else {
+                            mCurrentPage = mFirstPage;
+                            mFirstIndex = 0;
+                            mLastIndex = pageVolume;
+
+                            mRecyclerView.stopScroll();
+                            mLayoutManager.scrollToPositionWithOffset(0, 0);
+                        }
+                        break;
+                    case TYPE_NEXT_PAGE:
+                    case TYPE_NEXT_PAGE_KEEP_POS:
+                        int oldDataSize = mData.size();
+                        mData.addAll(data);
+                        notifyItemRangeInserted(oldDataSize, pageVolume);
+
+                        mLastPage++;
+                        if (mCurrentTaskType != TYPE_NEXT_PAGE_KEEP_POS) {
+                            mCurrentPage = mLastPage - 1;
+                            mFirstIndex = mData.size() - pageVolume;
+                            mLastIndex = mData.size();
+
+                            mRecyclerView.stopScroll();
+                            mLayoutManager.scrollToPositionWithOffset(mFirstIndex, 0);
+                        }
+                        break;
+                    case TYPE_SOMEWHERE:
+                        mData.clear();
+                        mData.addAll(data);
+                        notifyDataSetChanged();
+
+                        mFirstPage = mCurrentTaskPage;
+                        mLastPage = mCurrentTaskPage + 1;
+                        mCurrentPage = mCurrentTaskPage;
+                        mFirstIndex = 0;
+                        mLastIndex = pageVolume;
+
+                        mRecyclerView.stopScroll();
+                        mLayoutManager.scrollToPositionWithOffset(0, 0);
+                        break;
+                }
+            }
+
+            mRefreshLayout.setHeaderRefreshing(false);
+            mRefreshLayout.setFooterRefreshing(false);
         }
 
         @Override
         public boolean onFooterRefresh() {
-            return false;
+            if (mLastPage >= mPageSize) {
+                return false;
+            } else {
+                mCurrentTaskId = mIdGenerator.nextId();
+                mCurrentTaskType = TYPE_NEXT_PAGE_KEEP_POS;
+                mCurrentTaskPage = mLastPage;
+                getPageData(mCurrentTaskId, mCurrentTaskPage);
+                return true;
+            }
         }
 
         @Override
         public void onHeaderRefresh() {
+            if (mFirstPage > 0) {
+                mCurrentTaskId = mIdGenerator.nextId();
+                mCurrentTaskType = TYPE_PRE_PAGE_KEEP_POS;
+                mCurrentTaskPage = mFirstPage - 1;
+                getPageData(mCurrentTaskId, mCurrentTaskPage);
+            } else {
+                doRefresh();
+            }
+        }
 
+        private void doRefresh() {
+            Log.d("doRefresh");
+            mCurrentTaskId = mIdGenerator.nextId();
+            mCurrentTaskType = TYPE_REFRESH;
+            mCurrentTaskPage = 0;
+            getPageData(mCurrentTaskId, mCurrentTaskPage);
         }
 
         public void refresh() {
-
+            mRefreshLayout.setHeaderRefreshing(true);
+            doRefresh();
         }
 
         public void goTo(int page) {
-            if (page < 0 || page >= mPageNum) {
-                throw new IndexOutOfBoundsException("Page number is " + mPageNum + ", page is " + page);
+            if (page < 0 || page >= mPageSize) {
+                throw new IndexOutOfBoundsException("Page size is " + mPageSize + ", page is " + page);
+            } else if (page >= mFirstPage && page < mLastPage) {
+                mCurrentPage = page;
+                mFirstIndex = mPageVolume * (page - mFirstPage);
+                mLastIndex = mFirstIndex + mPageVolume;
+                int position = mFirstIndex;
+                mRecyclerView.stopScroll();
+                mLayoutManager.scrollToPositionWithOffset(position, 0);
+            } else if (page == mFirstPage - 1) {
+                mCurrentTaskId = mIdGenerator.nextId();
+                mCurrentTaskType = TYPE_PRE_PAGE;
+                mCurrentTaskPage = page;
+                getPageData(mCurrentTaskId, mCurrentTaskPage);
+            } else if (page == mLastPage) {
+                mCurrentTaskId = mIdGenerator.nextId();
+                mCurrentTaskType = TYPE_NEXT_PAGE;
+                mCurrentTaskPage = page;
+                getPageData(mCurrentTaskId, mCurrentTaskPage);
+            } else {
+                mCurrentTaskId = mIdGenerator.nextId();
+                mCurrentTaskType = TYPE_SOMEWHERE;
+                mCurrentTaskPage = page;
+                getPageData(mCurrentTaskId, mCurrentTaskPage);
             }
+        }
 
-            if (page > mFirstIndex) {
-
-            }
+        public void reload() {
+            notifyDataSetChanged();
+            mCurrentPage = mFirstPage;
+            mFirstIndex = 0;
+            mLastIndex = mPageVolume;
+            mRecyclerView.stopScroll();
+            mLayoutManager.scrollToPositionWithOffset(0, 0);
         }
 
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
+        }
+
+        @Override
+        public int getItemCount() {
+            return mData.size();
         }
     }
 }

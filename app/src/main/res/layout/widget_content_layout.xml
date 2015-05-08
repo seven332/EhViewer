@@ -60,4 +60,12 @@
 
     </com.hippo.widget.refreshlayout.RefreshLayout>
 
+    <com.hippo.widget.Snackbar
+        xmlns:auto="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/snackbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        auto:message="@string/refresh_snackbar_message"/>
+
 </merge>

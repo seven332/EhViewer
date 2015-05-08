@@ -42,7 +42,7 @@ public class ListParser {
      */
     public int pageNum;
 
-    public GalleryInfo[] giArray;
+    public List<GalleryInfo> giList;
 
     private void parse(String body) throws EhException {
         Pattern p;
@@ -61,7 +61,7 @@ public class ListParser {
         }
 
         // Get gallery
-        List<GalleryInfo> giList = new ArrayList<>(DEFAULT_LIST_SIZE);
+        giList = new ArrayList<>(DEFAULT_LIST_SIZE);
 
         p = Pattern.compile("<td class=\"itdc\">(?:<a.+?>)?<img.+?alt=\"(.+?)\".+?/>(?:</a>)?</td>" // category
                 + "<td.+?>(.+?)</td>" // posted
@@ -113,8 +113,6 @@ public class ListParser {
         if (giList.size() == 0) {
             throw new EhException(PARSE_MESSAGE);
         }
-
-        giArray = giList.toArray(new GalleryInfo[giList.size()]);
     }
 
     private void parseLofi(String body) throws Exception {
@@ -122,7 +120,7 @@ public class ListParser {
         Matcher m;
 
         // Get gallery
-        List<LofiGalleryInfo> lgiList = new ArrayList<>(DEFAULT_LIST_SIZE);
+        giList = new ArrayList<>(DEFAULT_LIST_SIZE);
         p = Pattern.compile("<td class=\"ii\"><a href=\"(.+?)\">" // detail url
                 + "<img src=\"(.+?)\".+?/>" // thumb url
                 + ".+?<a class=\"b\" href=\".+?\">(.+?)</a>" // title
@@ -160,10 +158,10 @@ public class ListParser {
                 lgi.rating = getStartNum(rating);
             lgi.generateSLang();
 
-            lgiList.add(lgi);
+            giList.add(lgi);
         }
 
-        if (lgiList.size() == 0) {
+        if (giList.size() == 0) {
             if (body.contains("No hits found</div>")) {
                 pageNum = 0;
             } else if (body.contains("No more hits found</div>")) {
@@ -226,7 +224,7 @@ public class ListParser {
 
     private void getPostedAndUploader(String raw, String[] pau) throws AssertException {
         int index = raw.indexOf(PAU_SPACER);
-        AssertUtils.assertEqualsEx("Can not parse posted and uploader", index, -1);
+        AssertUtils.assertNotEqualsEx("Can not parse posted and uploader", index, -1);
         pau[0] = raw.substring(0, index);
         pau[1] = raw.substring(index + PAU_SPACER.length());
     }

@@ -15,6 +15,9 @@
   -->
 <resources>
 
+    <!-- Snackbar -->
+    <dimen name="snackbar_interval">48dp</dimen>
+
     <!-- Content -->
     <dimen name="content_padding_start">52dp</dimen>
     <dimen name="content_padding_end">52dp</dimen>

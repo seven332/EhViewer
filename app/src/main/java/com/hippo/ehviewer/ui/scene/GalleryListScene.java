@@ -26,17 +26,20 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.TextView;
 
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.client.EhClient;
+import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ui.ContentActivity;
-import com.hippo.util.InterpolatorUtils;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.OffsetLayout;
 import com.hippo.ehviewer.widget.SearchBar;
@@ -44,11 +47,14 @@ import com.hippo.ehviewer.widget.SearchDatabase;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.scene.Scene;
 import com.hippo.util.AssertUtils;
+import com.hippo.util.InterpolatorUtils;
 import com.hippo.util.Log;
 import com.hippo.util.MathUtils;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.FloatingActionButton;
+
+import java.util.List;
 
 // TODO disable click action when animating
 public class GalleryListScene extends Scene implements SearchBar.Helper,
@@ -79,6 +85,8 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
     private FloatingActionButton mGoToFab;
 
     private ViewTransition mViewTransition;
+
+    private GalleryListHelper mGalleryListHelper;
 
     private int mSearchBarOriginalTop;
     private int mSearchBarOriginalBottom;
@@ -131,6 +139,11 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         });
         mSearchLayout.setHelper(this);
 
+        // Content Layout
+        mGalleryListHelper = new GalleryListHelper();
+        mContentLayout.setHelper(mGalleryListHelper);
+        mContentLayout.showContent();
+
         // Fab Layout
         mFabLayout.setOnCancelListener(this);
 
@@ -147,7 +160,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         mCornerFab.setDrawable(mAddDeleteDrawable);
 
         // TEST
-        mContentLayout.showText("四姑拉斯基");
+        mGalleryListHelper.refresh();
     }
 
     @Override
@@ -178,6 +191,8 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
     @Override
     protected void onGetFitPaddingBottom(int b) {
+        // Content Layout
+        mContentLayout.setFitPaddingBottom(b);
         // Search Layout
         mSearchLayout.setFitPaddingBottom(b);
         // Corner Fab
@@ -468,6 +483,47 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         private boolean isVaildView(RecyclerView view) {
             return (mState == STATE_NORMAL && view == mContentRecyclerView) ||
                     (mState == STATE_SEARCH && view == mSearchLayout);
+        }
+    }
+
+    private class GalleryHolder extends RecyclerView.ViewHolder {
+
+        public GalleryHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    private class GalleryListHelper extends ContentLayout.ContentHelper<GalleryInfo, GalleryHolder> {
+
+        @Override
+        protected StaggeredGridLayoutManager generateLayoutManager() {
+            return new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        }
+
+        @Override
+        protected void getPageData(final int taskId, int page) {
+            EhClient.getInstance().getGalleryList(EhClient.SOURCE_LOFI, "http://lofi.e-hentai.org/", new EhClient.OnGetGalleryListListener() {
+                @Override
+                public void onSuccess(List<GalleryInfo> glArray, int pageNum) {
+                    setPageSize(pageNum);
+                    onGetPageData(taskId, glArray);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Log.d("onFailure", e);
+                }
+            });
+        }
+
+        @Override
+        public GalleryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new GalleryHolder(new TextView(mActivity));
+        }
+
+        @Override
+        public void onBindViewHolder(GalleryHolder holder, int position) {
+            ((TextView) holder.itemView).setText(getDataAt(position).title);
         }
     }
 }

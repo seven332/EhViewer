@@ -84,4 +84,8 @@
     <!-- CheckTextView -->
     <color name="check_text_view_mask">#8a000000</color>
 
+    <!-- Snackbar -->
+    <color name="snackbar_background">#ff333333</color>
+    <color name="snackbar_action">#ffeeff41</color>
+
 </resources>
