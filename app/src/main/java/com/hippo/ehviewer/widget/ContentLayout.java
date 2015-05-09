@@ -25,11 +25,11 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
 import com.hippo.util.IntIdGenerator;
 import com.hippo.util.LayoutManagerUtils;
 import com.hippo.util.UiUtils;
-import com.hippo.util.ViewUtils;
 import com.hippo.widget.Snackbar;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.refreshlayout.RefreshLayout;
@@ -40,7 +40,7 @@ import java.util.List;
 public class ContentLayout extends FrameLayout {
 
     private ProgressBar mProgressBar;
-    private ViewGroup mItView;
+    private ViewGroup mTipView;
     private RefreshLayout mRefreshLayout;
     private EasyRecyclerView mRecyclerView;
     private View mImageView;
@@ -70,12 +70,12 @@ public class ContentLayout extends FrameLayout {
         LayoutInflater.from(context).inflate(R.layout.widget_content_layout, this);
 
         mProgressBar = (ProgressBar) getChildAt(0);
-        mItView = (ViewGroup) getChildAt(1);
+        mTipView = (ViewGroup) getChildAt(1);
         mRefreshLayout = (RefreshLayout) getChildAt(2);
         mSnackbar = (Snackbar) getChildAt(3);
         mRecyclerView = (EasyRecyclerView) mRefreshLayout.getChildAt(1);
-        mImageView = mItView.getChildAt(0);
-        mTextView = (TextView) mItView.getChildAt(1);
+        mImageView = mTipView.getChildAt(0);
+        mTextView = (TextView) mTipView.getChildAt(1);
 
         //
         mRecyclerViewOriginTop = mRecyclerView.getPaddingTop();
@@ -134,13 +134,15 @@ public class ContentLayout extends FrameLayout {
         public static final int TYPE_SOMEWHERE = 5;
 
         private ProgressBar mProgressBar;
-        private ViewGroup mItView;
+        private ViewGroup mTipView;
         private RefreshLayout mRefreshLayout;
         private EasyRecyclerView mRecyclerView;
         private View mImageView;
         private TextView mTextView;
         private Snackbar mSnackbar;
         private RecyclerView.LayoutManager mLayoutManager;
+
+        private ViewTransition mViewTransition;
 
         private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
             @Override
@@ -190,13 +192,15 @@ public class ContentLayout extends FrameLayout {
 
         private void init(ContentLayout contentLayout) {
             mProgressBar = contentLayout.mProgressBar;
-            mItView = contentLayout.mItView;
+            mTipView = contentLayout.mTipView;
             mRefreshLayout = contentLayout.mRefreshLayout;
             mSnackbar = contentLayout.mSnackbar;
             mRecyclerView = contentLayout.mRecyclerView;
             mImageView = contentLayout.mImageView;
             mTextView = contentLayout.mTextView;
             mLayoutManager = generateLayoutManager();
+
+            mViewTransition = new ViewTransition(mRefreshLayout, mProgressBar, mTipView);
 
             mRecyclerView.setLayoutManager(mLayoutManager);
             mRecyclerView.setAdapter(this);
@@ -211,24 +215,21 @@ public class ContentLayout extends FrameLayout {
 
         protected abstract RecyclerView.LayoutManager generateLayoutManager();
 
+        public void showContent() {
+            mViewTransition.showView(0);
+        }
+
         public void showProgressBar() {
-            ViewUtils.setVisibility(mProgressBar, View.VISIBLE);
-            ViewUtils.setVisibility(mItView, View.GONE);
-            ViewUtils.setVisibility(mRefreshLayout, View.GONE);
+            showProgressBar(true);
+        }
+
+        public void showProgressBar(boolean animation) {
+            mViewTransition.showView(1, animation);
         }
 
         public void showText(CharSequence text) {
-            ViewUtils.setVisibility(mProgressBar, View.GONE);
-            ViewUtils.setVisibility(mItView, View.VISIBLE);
-            ViewUtils.setVisibility(mRefreshLayout, View.GONE);
-
+            mViewTransition.showView(2);
             mTextView.setText(text);
-        }
-
-        public void showContent() {
-            ViewUtils.setVisibility(mProgressBar, View.GONE);
-            ViewUtils.setVisibility(mItView, View.GONE);
-            ViewUtils.setVisibility(mRefreshLayout, View.VISIBLE);
         }
 
         /**
@@ -375,12 +376,16 @@ public class ContentLayout extends FrameLayout {
             getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
         }
 
+        public void firstRefresh() {
+            showProgressBar(false);
+            doRefresh();
+        }
+
         /**
          * Show progress bar first, than do refresh
          */
         public void refresh() {
             showProgressBar();
-            mRefreshLayout.setHeaderRefreshing(true);
             doRefresh();
         }
 
@@ -412,6 +417,9 @@ public class ContentLayout extends FrameLayout {
             }
         }
 
+        /**
+         * Reload data to layout. Maybe do it when change item view style
+         */
         public void reload() {
             notifyDataSetChanged();
             mCurrentPage = mFirstPage;

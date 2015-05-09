@@ -32,11 +32,11 @@
         android:layout_gravity="center"
         android:orientation="vertical">
 
-        <View
+        <com.hippo.widget.SimpleImageView
             android:layout_width="180dp"
             android:layout_height="180dp"
-            android:background="@drawable/ic_sad"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_sad"/>
 
         <TextView
             style="@style/TextAppearance.AppCompat.Medium"

@@ -169,7 +169,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
         // When scene start
         if (savedInstanceState == null) {
-            mGalleryListHelper.refresh();
+            mGalleryListHelper.firstRefresh();
         }
     }
 
