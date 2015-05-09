@@ -116,8 +116,17 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
 
     private Animator.AnimatorListener mAnimatorListener = new SimpleAnimatorListener() {
         @Override
-        public void onAnimationEnd(Animator animation) {
+        public void onAnimationCancel(Animator animation) {
+            super.onAnimationCancel(animation);
             mAnimator = null;
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation, boolean canceled) {
+            super.onAnimationEnd(animation, canceled);
+            if (!canceled) {
+                mAnimator = null;
+            }
         }
     };
 
