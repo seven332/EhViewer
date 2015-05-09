@@ -81,8 +81,12 @@ public class ViewTransition {
                         ViewUtils.setVisibility(v, View.GONE);
                     }
                 }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    startAnimationsL(views[oldShownView], views[shownView]);
+                View viewToHide = views[oldShownView];
+                View viewToShow = views[shownView];
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP  &&
+                        viewToHide.isAttachedToWindow() &&
+                        viewToShow.isAttachedToWindow()) {
+                    startAnimationsL(viewToHide, viewToShow);
                 } else {
                     startAnimations(views[oldShownView], views[shownView]);
                 }
