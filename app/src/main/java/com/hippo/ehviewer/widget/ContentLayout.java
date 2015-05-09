@@ -17,7 +17,6 @@ package com.hippo.ehviewer.widget;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +27,8 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
 import com.hippo.util.IntIdGenerator;
-import com.hippo.util.Log;
+import com.hippo.util.LayoutManagerUtils;
+import com.hippo.util.UiUtils;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.Snackbar;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
@@ -47,10 +47,8 @@ public class ContentLayout extends FrameLayout {
     private TextView mTextView;
     private Snackbar mSnackbar;
 
-    private StaggeredGridLayoutManager mLayoutManager;
-
-    private ContentHelper mHelper;
-
+    private int mRecyclerViewOriginTop;
+    private int mRecyclerViewOriginBottom;
     private int mSnackbarOriginBottom;
 
     public ContentLayout(Context context) {
@@ -79,12 +77,16 @@ public class ContentLayout extends FrameLayout {
         mImageView = mItView.getChildAt(0);
         mTextView = (TextView) mItView.getChildAt(1);
 
+        //
+        mRecyclerViewOriginTop = mRecyclerView.getPaddingTop();
+        mRecyclerViewOriginBottom = mRecyclerView.getPaddingBottom();
+
         // Snackbar
         mSnackbarOriginBottom = mSnackbar.getPaddingBottom();
         mSnackbar.setAction(context.getString(R.string.retry), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // TODO
             }
         });
     }
@@ -94,39 +96,29 @@ public class ContentLayout extends FrameLayout {
     }
 
     public void setHelper(ContentHelper helper) {
-        mHelper = helper;
-        mLayoutManager = helper.generateLayoutManager();
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(helper);
-        helper.init(mRefreshLayout, mRecyclerView, mLayoutManager);
-        mRefreshLayout.setOnHeaderRefreshListener(helper);
-        mRefreshLayout.setOnFooterRefreshListener(helper);
-        mRecyclerView.addOnScrollListener(helper.getOnScrollListener());
+        helper.init(this);
+    }
+
+    public void setFitPaddingTop(int fitPaddingTop) {
+        // RecyclerView
+        mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(),
+                mRecyclerViewOriginTop + fitPaddingTop,
+                mRecyclerView.getPaddingRight(),
+                mRecyclerView.getPaddingBottom());
+        // RefreshLayout
+        mRefreshLayout.setProgressViewOffset(false, fitPaddingTop,
+                fitPaddingTop + UiUtils.dp2pix(getContext(), 32)); // TODO
     }
 
     public void setFitPaddingBottom(int fitPaddingBottom) {
+        // RecyclerView
+        mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(),
+                mRecyclerView.getPaddingTop(), mRecyclerView.getPaddingRight(),
+                mRecyclerViewOriginBottom + fitPaddingBottom);
         // Snackbar
-        mSnackbar.setPadding(mSnackbar.getPaddingLeft(), mSnackbar.getPaddingTop(), mSnackbar.getPaddingRight(), mSnackbarOriginBottom + fitPaddingBottom);
-    }
-
-    public void showProgressBar() {
-        ViewUtils.setVisibility(mProgressBar, View.VISIBLE);
-        ViewUtils.setVisibility(mItView, View.GONE);
-        ViewUtils.setVisibility(mRefreshLayout, View.GONE);
-    }
-
-    public void showText(CharSequence text) {
-        ViewUtils.setVisibility(mProgressBar, View.GONE);
-        ViewUtils.setVisibility(mItView, View.VISIBLE);
-        ViewUtils.setVisibility(mRefreshLayout, View.GONE);
-
-        mTextView.setText(text);
-    }
-
-    public void showContent() {
-        ViewUtils.setVisibility(mProgressBar, View.GONE);
-        ViewUtils.setVisibility(mItView, View.GONE);
-        ViewUtils.setVisibility(mRefreshLayout, View.VISIBLE);
+        mSnackbar.setPadding(mSnackbar.getPaddingLeft(),
+                mSnackbar.getPaddingTop(), mSnackbar.getPaddingRight(),
+                mSnackbarOriginBottom + fitPaddingBottom);
     }
 
     public abstract static class ContentHelper<E, VH extends RecyclerView.ViewHolder>
@@ -134,16 +126,21 @@ public class ContentLayout extends FrameLayout {
             implements RefreshLayout.OnHeaderRefreshListener,
             RefreshLayout.OnFooterRefreshListener {
 
-        private static final int TYPE_REFRESH = 0;
-        private static final int TYPE_PRE_PAGE = 1;
-        private static final int TYPE_PRE_PAGE_KEEP_POS = 2;
-        private static final int TYPE_NEXT_PAGE = 3;
-        private static final int TYPE_NEXT_PAGE_KEEP_POS = 4;
-        private static final int TYPE_SOMEWHERE = 5;
+        public static final int TYPE_REFRESH = 0;
+        public static final int TYPE_PRE_PAGE = 1;
+        public static final int TYPE_PRE_PAGE_KEEP_POS = 2;
+        public static final int TYPE_NEXT_PAGE = 3;
+        public static final int TYPE_NEXT_PAGE_KEEP_POS = 4;
+        public static final int TYPE_SOMEWHERE = 5;
 
+        private ProgressBar mProgressBar;
+        private ViewGroup mItView;
         private RefreshLayout mRefreshLayout;
-        private RecyclerView mRecyclerView;
-        private StaggeredGridLayoutManager mLayoutManager;
+        private EasyRecyclerView mRecyclerView;
+        private View mImageView;
+        private TextView mTextView;
+        private Snackbar mSnackbar;
+        private RecyclerView.LayoutManager mLayoutManager;
 
         private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
             @Override
@@ -191,18 +188,48 @@ public class ContentLayout extends FrameLayout {
             mIdGenerator = IntIdGenerator.create();
         }
 
-        private void init(RefreshLayout refreshLayout, RecyclerView recyclerView,
-                StaggeredGridLayoutManager layoutManager) {
-            mRefreshLayout = refreshLayout;
-            mRecyclerView = recyclerView;
-            mLayoutManager = layoutManager;
+        private void init(ContentLayout contentLayout) {
+            mProgressBar = contentLayout.mProgressBar;
+            mItView = contentLayout.mItView;
+            mRefreshLayout = contentLayout.mRefreshLayout;
+            mSnackbar = contentLayout.mSnackbar;
+            mRecyclerView = contentLayout.mRecyclerView;
+            mImageView = contentLayout.mImageView;
+            mTextView = contentLayout.mTextView;
+            mLayoutManager = generateLayoutManager();
+
+            mRecyclerView.setLayoutManager(mLayoutManager);
+            mRecyclerView.setAdapter(this);
+            mRecyclerView.addOnScrollListener(mOnScrollListener);
+            mRefreshLayout.setOnHeaderRefreshListener(this);
+            mRefreshLayout.setOnFooterRefreshListener(this);
         }
 
         private RecyclerView.OnScrollListener getOnScrollListener() {
             return mOnScrollListener;
         }
 
-        protected abstract StaggeredGridLayoutManager generateLayoutManager();
+        protected abstract RecyclerView.LayoutManager generateLayoutManager();
+
+        public void showProgressBar() {
+            ViewUtils.setVisibility(mProgressBar, View.VISIBLE);
+            ViewUtils.setVisibility(mItView, View.GONE);
+            ViewUtils.setVisibility(mRefreshLayout, View.GONE);
+        }
+
+        public void showText(CharSequence text) {
+            ViewUtils.setVisibility(mProgressBar, View.GONE);
+            ViewUtils.setVisibility(mItView, View.VISIBLE);
+            ViewUtils.setVisibility(mRefreshLayout, View.GONE);
+
+            mTextView.setText(text);
+        }
+
+        public void showContent() {
+            ViewUtils.setVisibility(mProgressBar, View.GONE);
+            ViewUtils.setVisibility(mItView, View.GONE);
+            ViewUtils.setVisibility(mRefreshLayout, View.VISIBLE);
+        }
 
         /**
          * @throws IndexOutOfBoundsException
@@ -218,13 +245,22 @@ public class ContentLayout extends FrameLayout {
          * @param taskId task id
          * @param page the page to get
          */
-        protected abstract void getPageData(int taskId, int page);
+        protected abstract void getPageData(int taskId, int type, int page);
 
         public void setPageSize(int pageSize) {
             mPageSize = pageSize;
         }
 
+        public int getPageSize() {
+            return mPageSize;
+        }
+
+        public void resetPageSize() {
+            mPageSize = Integer.MAX_VALUE;
+        }
+
         public void onGetPageData(int taskId, List<E> data) {
+            showContent();
             int pageVolume = data.size();
             mPageVolume = pageVolume;
             if (mCurrentTaskId == taskId) {
@@ -241,7 +277,7 @@ public class ContentLayout extends FrameLayout {
                         notifyDataSetChanged();
 
                         mRecyclerView.stopScroll();
-                        mLayoutManager.scrollToPositionWithOffset(0, 0);
+                        LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
                         break;
                     case TYPE_PRE_PAGE:
                     case TYPE_PRE_PAGE_KEEP_POS:
@@ -259,7 +295,7 @@ public class ContentLayout extends FrameLayout {
                             mLastIndex = pageVolume;
 
                             mRecyclerView.stopScroll();
-                            mLayoutManager.scrollToPositionWithOffset(0, 0);
+                            LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
                         }
                         break;
                     case TYPE_NEXT_PAGE:
@@ -275,7 +311,7 @@ public class ContentLayout extends FrameLayout {
                             mLastIndex = mData.size();
 
                             mRecyclerView.stopScroll();
-                            mLayoutManager.scrollToPositionWithOffset(mFirstIndex, 0);
+                            LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, mFirstIndex, 0);
                         }
                         break;
                     case TYPE_SOMEWHERE:
@@ -290,13 +326,21 @@ public class ContentLayout extends FrameLayout {
                         mLastIndex = pageVolume;
 
                         mRecyclerView.stopScroll();
-                        mLayoutManager.scrollToPositionWithOffset(0, 0);
+                        LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
                         break;
                 }
             }
 
             mRefreshLayout.setHeaderRefreshing(false);
             mRefreshLayout.setFooterRefreshing(false);
+        }
+
+        public void onGetPageData(int taskId, Exception e) {
+            if (mCurrentTaskId == taskId) {
+                mRefreshLayout.setHeaderRefreshing(false);
+                mRefreshLayout.setFooterRefreshing(false);
+                showText(e.getClass().getName());
+            }
         }
 
         @Override
@@ -307,7 +351,7 @@ public class ContentLayout extends FrameLayout {
                 mCurrentTaskId = mIdGenerator.nextId();
                 mCurrentTaskType = TYPE_NEXT_PAGE_KEEP_POS;
                 mCurrentTaskPage = mLastPage;
-                getPageData(mCurrentTaskId, mCurrentTaskPage);
+                getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
                 return true;
             }
         }
@@ -318,21 +362,24 @@ public class ContentLayout extends FrameLayout {
                 mCurrentTaskId = mIdGenerator.nextId();
                 mCurrentTaskType = TYPE_PRE_PAGE_KEEP_POS;
                 mCurrentTaskPage = mFirstPage - 1;
-                getPageData(mCurrentTaskId, mCurrentTaskPage);
+                getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
             } else {
                 doRefresh();
             }
         }
 
         private void doRefresh() {
-            Log.d("doRefresh");
             mCurrentTaskId = mIdGenerator.nextId();
             mCurrentTaskType = TYPE_REFRESH;
             mCurrentTaskPage = 0;
-            getPageData(mCurrentTaskId, mCurrentTaskPage);
+            getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
         }
 
+        /**
+         * Show progress bar first, than do refresh
+         */
         public void refresh() {
+            showProgressBar();
             mRefreshLayout.setHeaderRefreshing(true);
             doRefresh();
         }
@@ -346,22 +393,22 @@ public class ContentLayout extends FrameLayout {
                 mLastIndex = mFirstIndex + mPageVolume;
                 int position = mFirstIndex;
                 mRecyclerView.stopScroll();
-                mLayoutManager.scrollToPositionWithOffset(position, 0);
+                LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, position, 0);
             } else if (page == mFirstPage - 1) {
                 mCurrentTaskId = mIdGenerator.nextId();
                 mCurrentTaskType = TYPE_PRE_PAGE;
                 mCurrentTaskPage = page;
-                getPageData(mCurrentTaskId, mCurrentTaskPage);
+                getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
             } else if (page == mLastPage) {
                 mCurrentTaskId = mIdGenerator.nextId();
                 mCurrentTaskType = TYPE_NEXT_PAGE;
                 mCurrentTaskPage = page;
-                getPageData(mCurrentTaskId, mCurrentTaskPage);
+                getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
             } else {
                 mCurrentTaskId = mIdGenerator.nextId();
                 mCurrentTaskType = TYPE_SOMEWHERE;
                 mCurrentTaskPage = page;
-                getPageData(mCurrentTaskId, mCurrentTaskPage);
+                getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
             }
         }
 
@@ -371,7 +418,7 @@ public class ContentLayout extends FrameLayout {
             mFirstIndex = 0;
             mLastIndex = mPageVolume;
             mRecyclerView.stopScroll();
-            mLayoutManager.scrollToPositionWithOffset(0, 0);
+            LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
         }
 
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {

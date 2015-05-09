@@ -43,12 +43,10 @@ public class ListUrlBuilder {
     private int mPageIndex = 0;
 
     private int mCategory = EhUtils.NONE;
-    private String mSearchKey = null;
+    private String mKeyword = null;
 
     private int mAdvanceSearch = -1;
     private int mMinRating = -1;
-
-    private String mSearchTag = null;
 
     public int getMode() {
         return mMode;
@@ -74,12 +72,12 @@ public class ListUrlBuilder {
         mCategory = category;
     }
 
-    public String getSearchKey() {
-        return mSearchKey;
+    public String getKeyword() {
+        return mKeyword;
     }
 
-    public void setSearchKey(String searchKey) {
-        mSearchKey = searchKey;
+    public void setKeyword(String keyword) {
+        mKeyword = keyword;
     }
 
     public int getAdvanceSearch() {
@@ -98,14 +96,6 @@ public class ListUrlBuilder {
         mMinRating = minRating;
     }
 
-    public String getSearchTag() {
-        return mSearchTag;
-    }
-
-    public void setSearchTag(String searchTag) {
-        mSearchTag = searchTag;
-    }
-
     /**
      * Make them the same
      * @param glub The template
@@ -114,10 +104,9 @@ public class ListUrlBuilder {
         mMode = glub.mMode;
         mPageIndex = glub.mPageIndex;
         mCategory = glub.mCategory;
-        mSearchKey = glub.mSearchKey;
+        mKeyword = glub.mKeyword;
         mAdvanceSearch = glub.mAdvanceSearch;
         mMinRating = glub.mMinRating;
-        mSearchTag = glub.mSearchTag;
     }
 
     public String build(int source) throws UnsupportedSearch {
@@ -141,9 +130,9 @@ public class ListUrlBuilder {
                     filter = true;
                 }
                 // Search key
-                if (mSearchKey != null) {
+                if (mKeyword != null) {
                     try {
-                        ub.addQuery("f_search", URLEncoder.encode(mSearchKey, "UTF-8"));
+                        ub.addQuery("f_search", URLEncoder.encode(mKeyword, "UTF-8"));
                         filter = true;
                     } catch (UnsupportedEncodingException e) {
                         // Empty
@@ -184,7 +173,7 @@ public class ListUrlBuilder {
                 StringBuilder sb = new StringBuilder(EhClient.getUrlHeader(source));
                 sb.append("tag/");
                 try {
-                    sb.append(URLEncoder.encode(mSearchTag, "UTF-8"));
+                    sb.append(URLEncoder.encode(mKeyword, "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
                     // Empty
                 }

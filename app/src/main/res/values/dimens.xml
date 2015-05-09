@@ -15,6 +15,10 @@
   -->
 <resources>
 
+    <!-- RatingView -->
+    <dimen name="rating_size">16dp</dimen>
+    <dimen name="rating_interval">1dp</dimen>
+
     <!-- StatsActivity -->
     <dimen name="stats_text_view_padding_top">24dp</dimen>
     <dimen name="stats_text_view_padding_right">16dp</dimen>
@@ -25,6 +29,9 @@
     <dimen name="snackbar_padding_top">14dp</dimen>
     <dimen name="snackbar_padding_bottom">14dp</dimen>
     <dimen name="snackbar_interval">24dp</dimen>
+
+    <dimen name="list_thumb_width">80dp</dimen>
+    <dimen name="list_thumb_height">120dp</dimen>
 
     <!-- FloatingActionBarLayout -->
     <dimen name="floating_action_bar_layout_interval">16dp</dimen>
@@ -48,6 +55,10 @@
     <!-- Search Layout Space -->
     <dimen name="search_layout_space">8dp</dimen>
     <dimen name="search_layout_space_vertical">8dp</dimen>
+
+    <!-- Content Layout Space -->
+    <dimen name="content_layout_space">8dp</dimen>
+    <dimen name="content_layout_space_vertical">8dp</dimen>
 
     <!-- Corner fab -->
     <dimen name="corner_fab_padding_right">16dp</dimen>

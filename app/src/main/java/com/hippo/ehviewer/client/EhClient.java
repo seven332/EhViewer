@@ -108,7 +108,7 @@ public final class EhClient {
     }
 
     public abstract static class OnGetGalleryListListener implements EhClientListener {
-        public abstract void onSuccess(List<GalleryInfo> glArray, int pageNum);
+        public abstract void onSuccess(List<GalleryInfo> glList, int pageNum);
     }
 
     private void doBgJob(BgJobHelper bjh) {

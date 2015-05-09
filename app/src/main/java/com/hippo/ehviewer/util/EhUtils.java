@@ -15,6 +15,8 @@
 
 package com.hippo.ehviewer.util;
 
+import android.graphics.Color;
+
 public final class EhUtils {
 
     public static final String EH_DOWNLOAD_FILENAME = ".ehviewer";
@@ -31,6 +33,18 @@ public final class EhUtils {
     public static final int NON_H = 0x100;
     public static final int WESTERN = 0x200;
     public static final int UNKNOWN = 0x400;
+
+    public static final int BG_COLOR_DOUJINSHI = 0xfff44336;
+    public static final int BG_COLOR_MANGA = 0xffff9800;
+    public static final int BG_COLOR_ARTIST_CG = 0xfffbc02d;
+    public static final int BG_COLOR_GAME_CG = 0xff4caf50;
+    public static final int BG_COLOR_WESTERN = 0xff8bc34a;
+    public static final int BG_COLOR_NON_H = 0xff2196f3;
+    public static final int BG_COLOR_IMAGE_SET = 0xff3f51b5;
+    public static final int BG_COLOR_COSPLAY = 0xff9c27b0;
+    public static final int BG_COLOR_ASIAN_PORN = 0xff9575cd;
+    public static final int BG_COLOR_MISC = 0xfff06292;
+    public static final int BG_COLOR_UNKNOWN = Color.BLACK;
 
     private static final int[] CATEGORY_VALUES = {
             MISC,
@@ -77,5 +91,32 @@ public final class EhUtils {
                 break;
         }
         return CATEGORY_STRINGS[i][0];
+    }
+
+    public static int getCategoryColor(int category) {
+        switch (category) {
+            case DOUJINSHI:
+                return BG_COLOR_DOUJINSHI;
+            case MANGA:
+                return BG_COLOR_MANGA;
+            case ARTIST_CG:
+                return BG_COLOR_ARTIST_CG;
+            case GAME_CG:
+                return BG_COLOR_GAME_CG;
+            case WESTERN:
+                return BG_COLOR_WESTERN;
+            case NON_H:
+                return BG_COLOR_NON_H;
+            case IMAGE_SET:
+                return BG_COLOR_IMAGE_SET;
+            case COSPLAY:
+                return BG_COLOR_COSPLAY;
+            case ASIAN_PORN:
+                return BG_COLOR_ASIAN_PORN;
+            case MISC:
+                return BG_COLOR_MISC;
+            default:
+                return BG_COLOR_UNKNOWN;
+        }
     }
 }

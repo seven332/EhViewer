@@ -75,10 +75,6 @@ public class HttpHelper {
 
     private int mResponseCode = -1;
 
-    static {
-        System.setProperty("file.encoding", DEFAULT_CHARSET);
-    }
-
     public void reset() {
         mResponseCode = -1;
     }

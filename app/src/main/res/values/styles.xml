@@ -93,6 +93,28 @@
         <item name="android:indeterminateDrawable">@drawable/progress_large_material</item>
     </style>
 
+    <!-- Card -->
+    <style name="TextAppearance.CardTitle">
+        <item name="@android:textSize">@dimen/text_little_small</item>
+    </style>
+
+    <style name="CardTitle">
+        <item name="@android:textAppearance">@style/TextAppearance.CardTitle</item>
+        <item name="@android:ellipsize">end</item>
+        <item name="@android:maxLines">2</item>
+        <item name="@android:lineSpacingExtra">0sp</item>
+    </style>
+
+    <style name="TextAppearance.CardMessage">
+        <item name="@android:textColor">@color/secondary_text_light</item>
+    </style>
+
+    <style name="CardMessage">
+        <item name="@android:textAppearance">@style/TextAppearance.CardMessage</item>
+        <item name="@android:ellipsize">end</item>
+        <item name="@android:singleLine">true</item>
+    </style>
+
     <style name="Text.Dialog.Title" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/primary_text_light</item>
         <item name="android:textSize">@dimen/text_little_large</item>

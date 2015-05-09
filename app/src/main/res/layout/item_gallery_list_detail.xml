@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015 Hippo Seven
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:auto="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    auto:forceNoElevation="true">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/thumb"
+            android:layout_width="@dimen/list_thumb_width"
+            android:layout_height="@dimen/list_thumb_height"/>
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/CardTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_toRightOf="@id/thumb"
+            tools:ignore="RtlHardcoded"/>
+
+        <TextView
+            android:id="@+id/uploader"
+            style="@style/CardMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/title"
+            android:layout_below="@id/title"
+            android:layout_marginTop="2dp"
+            tools:ignore="RtlHardcoded"/>
+
+        <com.hippo.ehviewer.widget.RatingView
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/title"
+            android:layout_below="@id/uploader"
+            android:layout_marginTop="2dp"
+            tools:ignore="RtlHardcoded"/>
+
+        <TextView
+            android:id="@+id/category"
+            style="@style/CardMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/title"
+            android:layout_alignBottom="@id/thumb"
+            android:layout_marginBottom="8dp"
+            android:paddingBottom="2dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="2dp"
+            android:textColor="@android:color/white"
+            android:textAllCaps="true"
+            tools:ignore="RtlHardcoded"/>
+
+        <TextView
+            android:id="@+id/posted"
+            style="@style/CardMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/thumb"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="6dp"
+            android:layout_marginBottom="4dp"
+            tools:ignore="RelativeOverlap,RtlHardcoded"/>
+
+        <TextView
+            android:id="@+id/simple_language"
+            style="@style/CardMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/posted"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="6dp"
+            tools:ignore="RtlHardcoded"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

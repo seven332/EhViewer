@@ -17,6 +17,7 @@ package com.hippo.ehviewer;
 
 import android.content.Context;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.hippo.content.VectorContext;
 import com.hippo.scene.SceneApplication;
 import com.hippo.util.Log;
@@ -26,6 +27,8 @@ public class EhApplication extends SceneApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        Fresco.initialize(this);
     }
 
     @Override
@@ -34,7 +37,9 @@ public class EhApplication extends SceneApplication {
     }
 
     @Override
-    public void onTrimMemory (int level) {
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+
         if (level == TRIM_MEMORY_UI_HIDDEN) {
             Log.d("Application hiden");
         }

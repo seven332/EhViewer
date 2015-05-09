@@ -21,27 +21,33 @@ import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
+import com.hippo.ehviewer.client.ListParser;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.ui.ContentActivity;
+import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.OffsetLayout;
+import com.hippo.ehviewer.widget.RatingView;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchDatabase;
 import com.hippo.ehviewer.widget.SearchLayout;
@@ -56,6 +62,7 @@ import com.hippo.widget.FloatingActionButton;
 
 import java.util.List;
 
+// TODO Must refresh when change source
 // TODO disable click action when animating
 public class GalleryListScene extends Scene implements SearchBar.Helper,
         View.OnClickListener, FabLayout.OnCancelListener,
@@ -134,7 +141,9 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
                 ViewUtils.removeOnGlobalLayoutListener(mSearchBar.getViewTreeObserver(), this);
                 mSearchBarOriginalTop = mSearchBar.getTop();
                 mSearchBarOriginalBottom = mSearchBar.getBottom();
-                mSearchLayout.setFitPaddingTop(mSearchBar.getHeight() + mResources.getDimensionPixelOffset(R.dimen.search_bar_padding_vertical));
+                int fitPaddingTop = mSearchBar.getHeight() + mResources.getDimensionPixelOffset(R.dimen.search_bar_padding_vertical);
+                mContentLayout.setFitPaddingTop(fitPaddingTop);
+                mSearchLayout.setFitPaddingTop(fitPaddingTop);
             }
         });
         mSearchLayout.setHelper(this);
@@ -142,7 +151,6 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         // Content Layout
         mGalleryListHelper = new GalleryListHelper();
         mContentLayout.setHelper(mGalleryListHelper);
-        mContentLayout.showContent();
 
         // Fab Layout
         mFabLayout.setOnCancelListener(this);
@@ -159,8 +167,10 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         mSearchDrawable = mResources.getDrawable(R.drawable.ic_search_dark);
         mCornerFab.setDrawable(mAddDeleteDrawable);
 
-        // TEST
-        mGalleryListHelper.refresh();
+        // When scene start
+        if (savedInstanceState == null) {
+            mGalleryListHelper.refresh();
+        }
     }
 
     @Override
@@ -488,42 +498,103 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
     private class GalleryHolder extends RecyclerView.ViewHolder {
 
+        public SimpleDraweeView thumb;
+        public TextView title;
+        public TextView uploader;
+        public RatingView rating;
+        public TextView category;
+        public TextView posted;
+        public TextView simpleLanguage;
+
         public GalleryHolder(View itemView) {
             super(itemView);
+            thumb = (SimpleDraweeView) itemView.findViewById(R.id.thumb);
+            title = (TextView) itemView.findViewById(R.id.title);
+            uploader = (TextView) itemView.findViewById(R.id.uploader);
+            rating = (RatingView) itemView.findViewById(R.id.rating);
+            category = (TextView) itemView.findViewById(R.id.category);
+            posted = (TextView) itemView.findViewById(R.id.posted);
+            simpleLanguage = (TextView) itemView.findViewById(R.id.simple_language);
         }
     }
 
     private class GalleryListHelper extends ContentLayout.ContentHelper<GalleryInfo, GalleryHolder> {
 
-        @Override
-        protected StaggeredGridLayoutManager generateLayoutManager() {
-            return new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        private LayoutInflater mInflater;
+
+        public GalleryListHelper() {
+            super();
+            mInflater = mActivity.getLayoutInflater();
         }
 
         @Override
-        protected void getPageData(final int taskId, int page) {
-            EhClient.getInstance().getGalleryList(EhClient.SOURCE_LOFI, "http://lofi.e-hentai.org/", new EhClient.OnGetGalleryListListener() {
-                @Override
-                public void onSuccess(List<GalleryInfo> glArray, int pageNum) {
-                    setPageSize(pageNum);
-                    onGetPageData(taskId, glArray);
-                }
+        protected RecyclerView.LayoutManager generateLayoutManager() {
+            // TODO StaggeredGridLayoutManager item dislocation for setPaddingTop
+            return new LinearLayoutManager(mActivity);
+            //return new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        }
 
-                @Override
-                public void onFailure(Exception e) {
-                    Log.d("onFailure", e);
-                }
-            });
+        @Override
+        protected void getPageData(int taskId, int type, int page) {
+            GalleryListListener listener = new GalleryListListener(taskId, type, page, EhClient.SOURCE_LOFI);
+            EhClient.getInstance().getGalleryList(EhClient.SOURCE_LOFI, "http://lofi.e-hentai.org/", listener);
         }
 
         @Override
         public GalleryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new GalleryHolder(new TextView(mActivity));
+            View view = mInflater.inflate(R.layout.item_gallery_list_detail, parent, false);
+            return new GalleryHolder(view);
         }
 
         @Override
         public void onBindViewHolder(GalleryHolder holder, int position) {
-            ((TextView) holder.itemView).setText(getDataAt(position).title);
+            GalleryInfo gi = getDataAt(position);
+            holder.thumb.setImageURI(Uri.parse(gi.thumb));
+            holder.title.setText(gi.title);
+            holder.uploader.setText(gi.uploader);
+            holder.rating.setRating(gi.rating);
+            TextView category = holder.category;
+            String newCategoryText = EhUtils.getCategory(gi.category);
+            if (!newCategoryText.equals(category.getText())) {
+                category.setText(newCategoryText);
+                category.setBackgroundColor(EhUtils.getCategoryColor(gi.category));
+            }
+            holder.posted.setText(gi.posted);
+            holder.simpleLanguage.setText(gi.simpleLanguage);
+        }
+    }
+
+    private class GalleryListListener extends EhClient.OnGetGalleryListListener {
+
+        private int mTaskId;
+        private int mTaskType;
+        private int mTargetPage;
+        private int mSource;
+
+        public GalleryListListener(int taskId, int taskType, int targetPage, int source) {
+            mTaskId = taskId;
+            mTaskType = taskType;
+            mTargetPage = targetPage;
+            mSource = source;
+        }
+
+        @Override
+        public void onSuccess(List<GalleryInfo> glList, int pageNum) {
+            if (mSource == EhClient.SOURCE_LOFI) {
+                if (pageNum == ListParser.CURRENT_PAGE_IS_LAST) {
+                    mGalleryListHelper.setPageSize(mTargetPage);
+                } else if (mTaskType == ContentLayout.ContentHelper.TYPE_REFRESH) {
+                    mGalleryListHelper.setPageSize(Integer.MAX_VALUE);
+                }
+            } else {
+                mGalleryListHelper.setPageSize(pageNum);
+            }
+            mGalleryListHelper.onGetPageData(mTaskId, glList);
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            mGalleryListHelper.onGetPageData(mTaskId, e);
         }
     }
 }
