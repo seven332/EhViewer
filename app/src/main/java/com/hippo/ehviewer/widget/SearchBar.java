@@ -249,7 +249,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             switch (oldState) {
                 default:
                 case STATE_NORMAL:
-                    mViewTransition.showSecondView(animation);
+                    mViewTransition.showView(1);
                     mEditText.requestFocus();
                     mDrawerArrowDrawable.setArrow(animation ? ANIMATE_TIME : 0);
                     mAddDeleteDrawable.setDelete(animation ? ANIMATE_TIME : 0);
@@ -259,7 +259,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
                     break;
                 case STATE_SEARCH:
                     if (state == STATE_NORMAL) {
-                        mViewTransition.showFirstView(animation);
+                        mViewTransition.showView(0);
                         mDrawerArrowDrawable.setMenu(animation ? ANIMATE_TIME : 0);
                         mAddDeleteDrawable.setAdd(animation ? ANIMATE_TIME : 0);
                     } else if (state == STATE_SEARCH_LIST) {
@@ -269,7 +269,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
                 case STATE_SEARCH_LIST:
                     hideImeAndSuggestionsList(animation);
                     if (state == STATE_NORMAL) {
-                        mViewTransition.showFirstView(animation);
+                        mViewTransition.showView(0);
                         mDrawerArrowDrawable.setMenu(animation ? ANIMATE_TIME : 0);
                         mAddDeleteDrawable.setAdd(animation ? ANIMATE_TIME : 0);
                     }

@@ -180,11 +180,11 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         switch (mState) {
             case STATE_NORMAL:
             case STATE_SIMPLE_SEARCH:
-                mViewTransition.showFirstView(false);
+                mViewTransition.showView(0, false);
                 break;
             case STATE_SEARCH:
             case STATE_SEARCH_SHOW_LIST:
-                mViewTransition.showSecondView(false);
+                mViewTransition.showView(1, false);
                 break;
         }
 
@@ -259,7 +259,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
                 break;
             case STATE_SEARCH:
                 mState = STATE_NORMAL;
-                mViewTransition.showFirstView();
+                mViewTransition.showView(0);
                 mSearchBar.setState(SearchBar.STATE_NORMAL);
                 returnSearchBarPosition();
                 setFabState(FAB_STATE_NORMAL);
@@ -323,7 +323,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
     public void onClickAdvanceSearch() {
         if (mState == STATE_NORMAL) {
             mState = STATE_SEARCH;
-            mViewTransition.showSecondView();
+            mViewTransition.showView(1);
             mSearchLayout.scrollSearchContainerToTop();
             mSearchBar.setState(SearchBar.STATE_SEARCH);
             returnSearchBarPosition();
@@ -347,7 +347,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         mSearchDatabase.addQuery(query);
 
         mState = STATE_NORMAL;
-        mViewTransition.showFirstView();
+        mViewTransition.showView(0);
         mSearchBar.setState(SearchBar.STATE_NORMAL);
         returnSearchBarPosition();
         setFabState(FAB_STATE_NORMAL);
