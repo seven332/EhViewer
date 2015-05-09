@@ -35,7 +35,7 @@ import android.widget.TextView;
 
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.ehviewer.R;
-import com.hippo.util.InterpolatorUtils;
+import com.hippo.util.AnimationUtils;
 import com.hippo.util.MathUtils;
 
 public class CheckTextView extends TextView implements OnClickListener, Hotspotable {
@@ -141,11 +141,11 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
         if (mChecked) {
             startRadius = 0;
             endRadius = mMaxRadius;
-            interpolator = InterpolatorUtils.FAST_SLOW_INTERPOLATOR;
+            interpolator = AnimationUtils.FAST_SLOW_INTERPOLATOR;
         } else {
             startRadius = mMaxRadius;
             endRadius = 0;
-            interpolator = InterpolatorUtils.SLOW_FAST_INTERPOLATOR;
+            interpolator = AnimationUtils.SLOW_FAST_INTERPOLATOR;
         }
         mPropPaint = CanvasProperty.createPaint(mPaint);
         mPropRadius = CanvasProperty.createFloat(startRadius);
@@ -168,11 +168,11 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
         if (mChecked) {
             startRadius = 0;
             endRadius = mMaxRadius;
-            interpolator = InterpolatorUtils.FAST_SLOW_INTERPOLATOR;
+            interpolator = AnimationUtils.FAST_SLOW_INTERPOLATOR;
         } else {
             startRadius = mMaxRadius;
             endRadius = 0;
-            interpolator = InterpolatorUtils.SLOW_FAST_INTERPOLATOR;
+            interpolator = AnimationUtils.SLOW_FAST_INTERPOLATOR;
         }
         mRadius = startRadius;
 
@@ -199,8 +199,7 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
-        boolean useHardware = canvas.isHardwareAccelerated() &&
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+        boolean useHardware = AnimationUtils.isSupportRenderNodeAnimator(canvas);
 
         if (mPrepareAnimator) {
             mPrepareAnimator = false;

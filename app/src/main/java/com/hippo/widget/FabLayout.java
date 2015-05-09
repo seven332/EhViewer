@@ -30,7 +30,7 @@ import android.view.animation.Interpolator;
 
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.ehviewer.R;
-import com.hippo.util.InterpolatorUtils;
+import com.hippo.util.AnimationUtils;
 
 public class FabLayout extends ViewGroup implements View.OnClickListener {
 
@@ -272,14 +272,14 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
             endTranslationY = 0f;
             startAlpha = 0f;
             endAlpha = 1f;
-            interpolator = InterpolatorUtils.FAST_SLOW_INTERPOLATOR;
+            interpolator = AnimationUtils.FAST_SLOW_INTERPOLATOR;
         } else {
             startTranslationY = 0f;
             endTranslationY = mMainFabCenterY -
                     (child.getTop() + (child.getHeight() / 2));
             startAlpha = 1f;
             endAlpha = 0f;
-            interpolator = InterpolatorUtils.SLOW_FAST_INTERPOLATOR;
+            interpolator = AnimationUtils.SLOW_FAST_INTERPOLATOR;
         }
 
         PropertyValuesHolder translationYPvh = PropertyValuesHolder.ofFloat(

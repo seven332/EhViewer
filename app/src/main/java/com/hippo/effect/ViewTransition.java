@@ -17,11 +17,11 @@ package com.hippo.effect;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.os.Build;
 import android.view.RenderNodeAnimator;
 import android.view.View;
 
 import com.hippo.animation.SimpleAnimatorListener;
+import com.hippo.util.AnimationUtils;
 import com.hippo.util.ViewUtils;
 
 public class ViewTransition {
@@ -83,9 +83,7 @@ public class ViewTransition {
                 }
                 View viewToHide = views[oldShownView];
                 View viewToShow = views[shownView];
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP  &&
-                        viewToHide.isAttachedToWindow() &&
-                        viewToShow.isAttachedToWindow()) {
+                if (AnimationUtils.isSupportRenderNodeAnimator(viewToHide, viewToShow)) {
                     startAnimationsL(viewToHide, viewToShow);
                 } else {
                     startAnimations(views[oldShownView], views[shownView]);

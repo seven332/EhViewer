@@ -52,8 +52,8 @@ import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchDatabase;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.scene.Scene;
+import com.hippo.util.AnimationUtils;
 import com.hippo.util.AssertUtils;
-import com.hippo.util.InterpolatorUtils;
 import com.hippo.util.Log;
 import com.hippo.util.MathUtils;
 import com.hippo.util.ViewUtils;
@@ -226,7 +226,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
             PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", 1f, 0f);
             ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(mCornerFab, scaleXPvh, scaleYPvh);
             oa.setDuration(ANIMATE_TIME / 2);
-            oa.setInterpolator(InterpolatorUtils.SLOW_FAST_INTERPOLATOR);
+            oa.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
             oa.setRepeatCount(1);
             oa.setRepeatMode(ValueAnimator.REVERSE);
             final Drawable finalDrawable = drawable;
