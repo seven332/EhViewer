@@ -287,7 +287,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
             }
         } else if (v == mRefreshFab) {
             toggleFabLayout();
-            mGalleryListHelper.goToTopAndRefresh();
+            mGalleryListHelper.refreshWithSameSearch();
         } else if (v == mGoToFab) {
             toggleFabLayout();
             // TODO do go to

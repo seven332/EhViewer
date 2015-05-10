@@ -405,6 +405,22 @@ public class ContentLayout extends FrameLayout {
             doRefresh();
         }
 
+        public void refreshWithSameSearch() {
+            if (mViewTransition.getShownViewIndex() == 0) {
+                // Go to top
+                mRecyclerView.stopScroll();
+                mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
+                // Show header refresh
+                mRefreshLayout.setFooterRefreshing(false);
+                mRefreshLayout.setHeaderRefreshing(true);
+                // Do refresh
+                doRefresh();
+            } else {
+                showProgressBar();
+                doRefresh();
+            }
+        }
+
         /**
          * Only work when data is loaded
          */
