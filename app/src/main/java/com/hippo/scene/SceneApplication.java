@@ -23,6 +23,8 @@ public class SceneApplication extends Application {
 
     @Override
     public void onCreate() {
+        super.onCreate();
+
         mSceneManager = new SceneManager();
         StageActivity.setSceneManager(mSceneManager);
         Scene.setSceneManager(mSceneManager);

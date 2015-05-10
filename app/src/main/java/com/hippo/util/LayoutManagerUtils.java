@@ -32,4 +32,28 @@ public final class LayoutManagerUtils {
                     layoutManager.getClass().getName());
         }
     }
+
+    public static int getFirstVisibleItemPostion(RecyclerView.LayoutManager layoutManager) {
+        if (layoutManager instanceof LinearLayoutManager) {
+            return ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+        } else if (layoutManager instanceof StaggeredGridLayoutManager) {
+            int[] positions = ((StaggeredGridLayoutManager) layoutManager).findFirstVisibleItemPositions(null);
+            return MathUtils.min(positions);
+        } else {
+            throw new IllegalStateException("Can't do getFirstVisibleItemPostion for " +
+                    layoutManager.getClass().getName());
+        }
+    }
+
+    public static int getLastVisibleItemPostion(RecyclerView.LayoutManager layoutManager) {
+        if (layoutManager instanceof LinearLayoutManager) {
+            return ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
+        } else if (layoutManager instanceof StaggeredGridLayoutManager) {
+            int[] positions = ((StaggeredGridLayoutManager) layoutManager).findLastVisibleItemPositions(null);
+            return MathUtils.max(positions);
+        } else {
+            throw new IllegalStateException("Can't do getFirstVisibleItemPostion for " +
+                    layoutManager.getClass().getName());
+        }
+    }
 }

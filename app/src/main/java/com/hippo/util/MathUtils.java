@@ -103,15 +103,15 @@ public final class MathUtils {
         return a < b ? (a < c ? a : c) : (b < c ? b : c);
     }
 
-    public static float min(float... arg) {
-        int length = arg.length;
+    public static float min(float... args) {
+        int length = args.length;
         if (length <= 0) {
             throw new IllegalArgumentException("Empty argument");
         } else {
-            float n = arg[0];
+            float n = args[0];
             float m;
             for (int i = 1; i < length; i++) {
-                m = arg[i];
+                m = args[i];
                 if (m < n)
                     n = m;
             }
@@ -119,15 +119,15 @@ public final class MathUtils {
         }
     }
 
-    public static int min(int... arg) {
-        int length = arg.length;
+    public static int min(int... args) {
+        int length = args.length;
         if (length <= 0) {
             throw new IllegalArgumentException("Empty argument");
         } else {
-            int n = arg[0];
+            int n = args[0];
             int m;
             for (int i = 1; i < length; i++) {
-                m = arg[i];
+                m = args[i];
                 if (m < n)
                     n = m;
             }

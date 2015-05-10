@@ -144,13 +144,6 @@ public class ContentLayout extends FrameLayout {
 
         private ViewTransition mViewTransition;
 
-        private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
-                ContentHelper.this.onScrolled(recyclerView, dx, dy);
-            }
-        };
-
         /**
          * Store data
          */
@@ -185,6 +178,38 @@ public class ContentLayout extends FrameLayout {
         private int mCurrentTaskType;
         private int mCurrentTaskPage;
 
+        private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState){
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    if (mPageVolume <= 0) {
+                        return;
+                    }
+                    if (mLastIndex == 0) {
+                        mCurrentPage = 0;
+                        mFirstIndex = 0;
+                        mLastIndex = mPageVolume;
+                    }
+
+                    int firstVisiblePosition = LayoutManagerUtils.getFirstVisibleItemPostion(mLayoutManager);
+                    int lastVisiblePosition = LayoutManagerUtils.getLastVisibleItemPostion(mLayoutManager);
+
+                    int pageChanged = (firstVisiblePosition - mFirstIndex) / mPageVolume;
+                    if (pageChanged <= 0) {
+                        pageChanged = (lastVisiblePosition - mLastIndex + 1) / mPageVolume;
+                    }
+
+                    if (pageChanged != 0) {
+                        mCurrentPage = mCurrentPage + pageChanged;
+                        int offset = pageChanged * mPageVolume;
+                        mFirstIndex += offset;
+                        mLastIndex += offset;
+                    }
+                }
+            }
+        };
+
         public ContentHelper() {
             mData = new ArrayList<>();
             mIdGenerator = IntIdGenerator.create();
@@ -207,10 +232,6 @@ public class ContentLayout extends FrameLayout {
             mRecyclerView.addOnScrollListener(mOnScrollListener);
             mRefreshLayout.setOnHeaderRefreshListener(this);
             mRefreshLayout.setOnFooterRefreshListener(this);
-        }
-
-        private RecyclerView.OnScrollListener getOnScrollListener() {
-            return mOnScrollListener;
         }
 
         protected abstract RecyclerView.LayoutManager generateLayoutManager();
@@ -427,10 +448,6 @@ public class ContentLayout extends FrameLayout {
             mLastIndex = mPageVolume;
             mRecyclerView.stopScroll();
             LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
-        }
-
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-
         }
 
         @Override
