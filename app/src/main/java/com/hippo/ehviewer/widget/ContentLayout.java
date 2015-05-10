@@ -101,13 +101,9 @@ public class ContentLayout extends FrameLayout {
 
     public void setFitPaddingTop(int fitPaddingTop) {
         // RecyclerView
-        mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(),
-                mRecyclerViewOriginTop + fitPaddingTop,
-                mRecyclerView.getPaddingRight(),
-                mRecyclerView.getPaddingBottom());
+        mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerViewOriginTop + fitPaddingTop, mRecyclerView.getPaddingRight(), mRecyclerView.getPaddingBottom());
         // RefreshLayout
-        mRefreshLayout.setProgressViewOffset(false, fitPaddingTop,
-                fitPaddingTop + UiUtils.dp2pix(getContext(), 32)); // TODO
+        mRefreshLayout.setProgressViewOffset(false, fitPaddingTop, fitPaddingTop + UiUtils.dp2pix(getContext(), 32)); // TODO
     }
 
     public void setFitPaddingBottom(int fitPaddingBottom) {
@@ -116,9 +112,7 @@ public class ContentLayout extends FrameLayout {
                 mRecyclerView.getPaddingTop(), mRecyclerView.getPaddingRight(),
                 mRecyclerViewOriginBottom + fitPaddingBottom);
         // Snackbar
-        mSnackbar.setPadding(mSnackbar.getPaddingLeft(),
-                mSnackbar.getPaddingTop(), mSnackbar.getPaddingRight(),
-                mSnackbarOriginBottom + fitPaddingBottom);
+        mSnackbar.setPadding(mSnackbar.getPaddingLeft(), mSnackbar.getPaddingTop(), mSnackbar.getPaddingRight(), mSnackbarOriginBottom + fitPaddingBottom);
     }
 
     public abstract static class ContentHelper<E, VH extends RecyclerView.ViewHolder>
@@ -226,6 +220,7 @@ public class ContentLayout extends FrameLayout {
             mLayoutManager = generateLayoutManager();
 
             mViewTransition = new ViewTransition(mRefreshLayout, mProgressBar, mTipView);
+            mViewTransition.showView(2, false);
 
             mRecyclerView.setLayoutManager(mLayoutManager);
             mRecyclerView.setAdapter(this);
@@ -410,6 +405,25 @@ public class ContentLayout extends FrameLayout {
             doRefresh();
         }
 
+        /**
+         * Only work when data is loaded
+         */
+        public void goToTopAndRefresh() {
+            if (mViewTransition.getShownViewIndex() == 0 &&
+                    !mRefreshLayout.isRefreshing()) {
+                // Go to top
+                mRecyclerView.stopScroll();
+                mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
+                // Show header refresh
+                mRefreshLayout.setHeaderRefreshing(true);
+                // Do refresh
+                doRefresh();
+            }
+        }
+
+        /**
+         * Only work when data is loaded
+         */
         public void goTo(int page) {
             if (page < 0 || page >= mPageSize) {
                 throw new IndexOutOfBoundsException("Page size is " + mPageSize + ", page is " + page);

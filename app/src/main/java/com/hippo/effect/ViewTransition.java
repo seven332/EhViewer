@@ -49,6 +49,10 @@ public class ViewTransition {
         showView(0, false);
     }
 
+    public int getShownViewIndex() {
+        return mShownView;
+    }
+
     public void showView(int shownView) {
         showView(shownView, true);
     }
