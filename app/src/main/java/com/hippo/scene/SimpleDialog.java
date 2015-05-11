@@ -17,10 +17,12 @@ package com.hippo.scene;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Space;
 import android.widget.TextView;
 
@@ -29,10 +31,14 @@ import com.hippo.ehviewer.R;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.IndicatingScrollView;
 
+// TODO Update start point after screen direction change
 public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         SceneDialogView.OnClickOutOfDialogListener {
 
-    private static final int BACKGROUND_COLOR = 0x61000000;
+    private static final int BACKGROUND_COLOR = 0x8a000000;
+
+    public final static int POSITIVE = 0;
+    public final static int NEGATIVE = 1;
 
     private Builder mBuilder;
 
@@ -45,6 +51,7 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     private Space mSpaceTitleContent;
     private IndicatingScrollView mContent;
     private TextView mMessage;
+    private FrameLayout mCustom;
     private View mButtonsSingleLine;
     private TextView mNegativeButton;
     private View mSpacePositiveNegative;
@@ -76,6 +83,7 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         mSpaceTitleContent = (Space) mBody.findViewById(R.id.space_title_content);
         mContent = (IndicatingScrollView) findViewById(R.id.content);
         mMessage = (TextView) mBody.findViewById(R.id.message);
+        mCustom = (FrameLayout) mBody.findViewById(R.id.custom);
         mButtonsSingleLine = findViewById(R.id.buttons_single_line);
         mNegativeButton = (TextView) mButtonsSingleLine.findViewById(R.id.negative);
         mSpacePositiveNegative = mButtonsSingleLine.findViewById(R.id.space_positive_negative);
@@ -85,7 +93,7 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     }
 
     private void bindDialog() {
-        if (mBuilder.mTitle == null && mBuilder.mMessage == null) {
+        if (mBuilder.mTitle == null && mBuilder.mMessage == null && mBuilder.mCustomViewResId == 0) {
             ViewUtils.setVisibility(mBody, View.GONE);
         } else {
             if (mBuilder.mTitle != null) {
@@ -94,10 +102,20 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
                 ViewUtils.setVisibility(mTitle, View.GONE);
                 ViewUtils.setVisibility(mSpaceTitleContent, View.GONE);
             }
+
             if (mBuilder.mMessage != null) {
                 mMessage.setText(mBuilder.mMessage);
+                ViewUtils.setVisibility(mCustom, View.GONE);
+            } else if (mBuilder.mCustomViewResId != 0) {
+                getStageActivity().getLayoutInflater().inflate(mBuilder.mCustomViewResId, mCustom);
+                if (mBuilder.mOnCreateCustomViewListener != null) {
+                    mBuilder.mOnCreateCustomViewListener.onCreateCustomView(this,
+                            mCustom.getChildAt(0));
+                }
+                ViewUtils.setVisibility(mContent, View.GONE);
             } else {
                 ViewUtils.setVisibility(mContent, View.GONE);
+                ViewUtils.setVisibility(mCustom, View.GONE);
                 ViewUtils.setVisibility(mSpaceTitleContent, View.GONE);
             }
         }
@@ -179,12 +197,24 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         return mBuilder.mStartY;
     }
 
+    public void pressPositiveButton() {
+        if (mPositiveButton.isShown()) {
+            onClick(mPositiveButton);
+        }
+    }
+
     @Override
     public void onClick(View v) {
         if (v == mPositiveButton) {
-            finish();
+            if (mBuilder.mOnButtonClickListener == null ||
+                    mBuilder.mOnButtonClickListener.onClick(this, POSITIVE)) {
+                finish();
+            }
         } else if (v == mNegativeButton) {
-            finish();
+            if (mBuilder.mOnButtonClickListener == null ||
+                    mBuilder.mOnButtonClickListener.onClick(this, NEGATIVE)) {
+                finish();
+            }
         }
     }
 
@@ -201,8 +231,11 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
 
         private String mTitle;
         private String mMessage;
+        private int mCustomViewResId = 0;
+        private OnCreateCustomViewListener mOnCreateCustomViewListener;
         private String mPositiveButtonText;
         private String mNegativeButtonText;
+        private OnButtonClickListener mOnButtonClickListener;
 
         private boolean mCancelable = true;
 
@@ -231,6 +264,13 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
             return setMessage(mContext.getString(resId));
         }
 
+        public Builder setCustomView(@LayoutRes int resId,
+                @Nullable OnCreateCustomViewListener listener) {
+            mCustomViewResId = resId;
+            mOnCreateCustomViewListener = listener;
+            return this;
+        }
+
         public Builder setPositiveButton(String string) {
             mPositiveButtonText = string;
             return this;
@@ -247,6 +287,11 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
 
         public Builder setNegativeButton(int resId) {
             return setNegativeButton(mContext.getString(resId));
+        }
+
+        public Builder setOnButtonClickListener(OnButtonClickListener listener) {
+            mOnButtonClickListener = listener;
+            return this;
         }
 
         public Builder setCancelable(boolean cancelable) {
@@ -274,5 +319,13 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
             }
             new SimpleDialog(this).show(curtain);
         }
+    }
+
+    public interface OnCreateCustomViewListener {
+        void onCreateCustomView(SimpleDialog dialog, View view);
+    }
+
+    public interface OnButtonClickListener {
+        boolean onClick(SimpleDialog dialog, int which);
     }
 }
