@@ -141,8 +141,8 @@ public abstract class StatsActivity extends AppCompatActivity {
         final Runtime runtime = Runtime.getRuntime();
         final long heapMemory = runtime.totalMemory() - runtime.freeMemory();
         final StringBuilder sb = new StringBuilder(DEFAULT_MESSAGE_SIZE);
-        appendSize(sb, "Java heap size:          ", heapMemory, "\n");
-        appendSize(sb, "Native heap size:        ", Debug.getNativeHeapSize(), "\n");
+        appendSize(sb, "Java allocated:          ", heapMemory, "\n");
+        appendSize(sb, "Native allocated:        ", Debug.getNativeHeapAllocatedSize(), "\n");
         mStatsTextView.setText(sb.toString());
     }
 
