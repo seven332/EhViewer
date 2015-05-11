@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
 import com.hippo.util.AssertUtils;
@@ -218,7 +219,11 @@ public abstract class Scene {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
     }
 
+    @SuppressWarnings("ConstantConditions")
     protected void onDestroy() {
+        // Make sure soft key broad is hidden
+        InputMethodManager imm = (InputMethodManager) getStageActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mSceneView.getWindowToken(), 0);
     }
 
     protected void onOpen() {
