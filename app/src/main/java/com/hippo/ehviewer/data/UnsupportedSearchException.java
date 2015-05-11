@@ -15,9 +15,9 @@
 
 package com.hippo.ehviewer.data;
 
-public class UnsupportedSearch extends Exception {
+public class UnsupportedSearchException extends Exception {
 
-    public UnsupportedSearch(String detailMessage) {
+    public UnsupportedSearchException(String detailMessage) {
         super(detailMessage);
     }
 }

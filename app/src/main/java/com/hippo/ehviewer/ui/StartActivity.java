@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.hippo.app.StatsActivity;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.util.ViewUtils;
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGBuilder;
@@ -33,7 +34,7 @@ public class StartActivity extends StatsActivity {
 
     @Override
     protected boolean isShowStats() {
-        return true;
+        return Config.getShowApplicationStats();
     }
 
     @Override

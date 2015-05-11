@@ -16,6 +16,8 @@
 package com.hippo.ehviewer.widget;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -27,6 +29,7 @@ import android.widget.TextView;
 
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
+import com.hippo.util.AssertUtils;
 import com.hippo.util.IntIdGenerator;
 import com.hippo.util.LayoutManagerUtils;
 import com.hippo.util.UiUtils;
@@ -46,6 +49,8 @@ public class ContentLayout extends FrameLayout {
     private View mImageView;
     private TextView mTextView;
     private Snackbar mSnackbar;
+
+    private ContentHelper mContentHelper;
 
     private int mRecyclerViewOriginTop;
     private int mRecyclerViewOriginBottom;
@@ -83,12 +88,6 @@ public class ContentLayout extends FrameLayout {
 
         // Snackbar
         mSnackbarOriginBottom = mSnackbar.getPaddingBottom();
-        mSnackbar.setAction(context.getString(R.string.retry), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO
-            }
-        });
     }
 
     public EasyRecyclerView getRecyclerView() {
@@ -96,6 +95,7 @@ public class ContentLayout extends FrameLayout {
     }
 
     public void setHelper(ContentHelper helper) {
+        mContentHelper = helper;
         helper.init(this);
     }
 
@@ -115,10 +115,25 @@ public class ContentLayout extends FrameLayout {
         mSnackbar.setPadding(mSnackbar.getPaddingLeft(), mSnackbar.getPaddingTop(), mSnackbar.getPaddingRight(), mSnackbarOriginBottom + fitPaddingBottom);
     }
 
+    @Override
+    public Parcelable onSaveInstanceState() {
+        return mContentHelper.onSaveInstanceState(super.onSaveInstanceState());
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        super.onRestoreInstanceState(mContentHelper.onRestoreInstanceState(state));
+    }
+
     public abstract static class ContentHelper<E, VH extends RecyclerView.ViewHolder>
             extends EasyRecyclerView.Adapter<VH>
             implements RefreshLayout.OnHeaderRefreshListener,
-            RefreshLayout.OnFooterRefreshListener {
+            RefreshLayout.OnFooterRefreshListener, View.OnClickListener {
+
+        private static final String STATE_KEY_SUPER = "super";
+        private static final String STATE_KEY_SHOWN_VIEW = "shown_view";
+        private static final String STATE_KEY_RECYCLER_VIEW = "recycler_view";
+        private static final String STATE_KEY_TIP_MESSAGE = "tip_message";
 
         public static final int TYPE_REFRESH = 0;
         public static final int TYPE_PRE_PAGE = 1;
@@ -126,6 +141,8 @@ public class ContentLayout extends FrameLayout {
         public static final int TYPE_NEXT_PAGE = 3;
         public static final int TYPE_NEXT_PAGE_KEEP_POS = 4;
         public static final int TYPE_SOMEWHERE = 5;
+
+        private Context mContext;
 
         private ProgressBar mProgressBar;
         private ViewGroup mTipView;
@@ -168,6 +185,7 @@ public class ContentLayout extends FrameLayout {
         private int mCurrentPage;
         private int mPageVolume;
 
+        // TODO save mCurrentTaskId mCurrentTaskType mCurrentTaskPage
         private int mCurrentTaskId;
         private int mCurrentTaskType;
         private int mCurrentTaskPage;
@@ -204,9 +222,15 @@ public class ContentLayout extends FrameLayout {
             }
         };
 
-        public ContentHelper() {
+        public ContentHelper(Context context) {
+            mContext = context;
             mData = new ArrayList<>();
             mIdGenerator = IntIdGenerator.create();
+        }
+
+        protected ContentHelper(Context context, List<E> data) {
+            this(context);
+            mData.addAll(data);
         }
 
         private void init(ContentLayout contentLayout) {
@@ -227,9 +251,18 @@ public class ContentLayout extends FrameLayout {
             mRecyclerView.addOnScrollListener(mOnScrollListener);
             mRefreshLayout.setOnHeaderRefreshListener(this);
             mRefreshLayout.setOnFooterRefreshListener(this);
+
+            mTipView.setOnClickListener(this);
+            mSnackbar.setAction(mContext.getString(R.string.retry), this);
+        }
+
+        protected List<E> getData() {
+            return mData;
         }
 
         protected abstract RecyclerView.LayoutManager generateLayoutManager();
+
+        protected abstract void onScrollToPosition();
 
         public void showContent() {
             mViewTransition.showView(0);
@@ -272,6 +305,10 @@ public class ContentLayout extends FrameLayout {
             return mPageSize;
         }
 
+        public int getCurrentPage() {
+            return mCurrentPage;
+        }
+
         public void resetPageSize() {
             mPageSize = Integer.MAX_VALUE;
         }
@@ -295,6 +332,7 @@ public class ContentLayout extends FrameLayout {
 
                         mRecyclerView.stopScroll();
                         LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
+                        onScrollToPosition();
                         break;
                     case TYPE_PRE_PAGE:
                     case TYPE_PRE_PAGE_KEEP_POS:
@@ -313,6 +351,7 @@ public class ContentLayout extends FrameLayout {
 
                             mRecyclerView.stopScroll();
                             LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
+                            onScrollToPosition();
                         }
                         break;
                     case TYPE_NEXT_PAGE:
@@ -329,6 +368,7 @@ public class ContentLayout extends FrameLayout {
 
                             mRecyclerView.stopScroll();
                             LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, mFirstIndex, 0);
+                            onScrollToPosition();
                         }
                         break;
                     case TYPE_SOMEWHERE:
@@ -344,6 +384,7 @@ public class ContentLayout extends FrameLayout {
 
                         mRecyclerView.stopScroll();
                         LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
+                        onScrollToPosition();
                         break;
                 }
             }
@@ -385,6 +426,13 @@ public class ContentLayout extends FrameLayout {
             }
         }
 
+        @Override
+        public void onClick(View v) {
+            if (v == mTipView) {
+                refreshWithSameSearch();
+            }
+        }
+
         private void doRefresh() {
             mCurrentTaskId = mIdGenerator.nextId();
             mCurrentTaskType = TYPE_REFRESH;
@@ -421,20 +469,12 @@ public class ContentLayout extends FrameLayout {
             }
         }
 
-        /**
-         * Only work when data is loaded
-         */
-        public void goToTopAndRefresh() {
-            if (mViewTransition.getShownViewIndex() == 0 &&
-                    !mRefreshLayout.isRefreshing()) {
-                // Go to top
-                mRecyclerView.stopScroll();
-                mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
-                // Show header refresh
-                mRefreshLayout.setHeaderRefreshing(true);
-                // Do refresh
-                doRefresh();
-            }
+        public void cancelCurrentTask() {
+            mCurrentTaskId = mIdGenerator.nextId();
+        }
+
+        public boolean canGoTo() {
+            return mViewTransition.getShownViewIndex() == 0;
         }
 
         /**
@@ -444,23 +484,35 @@ public class ContentLayout extends FrameLayout {
             if (page < 0 || page >= mPageSize) {
                 throw new IndexOutOfBoundsException("Page size is " + mPageSize + ", page is " + page);
             } else if (page >= mFirstPage && page < mLastPage) {
+                cancelCurrentTask();
+
                 mCurrentPage = page;
                 mFirstIndex = mPageVolume * (page - mFirstPage);
                 mLastIndex = mFirstIndex + mPageVolume;
                 int position = mFirstIndex;
                 mRecyclerView.stopScroll();
                 LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, position, 0);
+                onScrollToPosition();
             } else if (page == mFirstPage - 1) {
+                mRefreshLayout.setFooterRefreshing(false);
+                mRefreshLayout.setHeaderRefreshing(true);
+
                 mCurrentTaskId = mIdGenerator.nextId();
                 mCurrentTaskType = TYPE_PRE_PAGE;
                 mCurrentTaskPage = page;
                 getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
             } else if (page == mLastPage) {
+                mRefreshLayout.setFooterRefreshing(false);
+                mRefreshLayout.setHeaderRefreshing(true);
+
                 mCurrentTaskId = mIdGenerator.nextId();
                 mCurrentTaskType = TYPE_NEXT_PAGE;
                 mCurrentTaskPage = page;
                 getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
             } else {
+                mRefreshLayout.setFooterRefreshing(false);
+                mRefreshLayout.setHeaderRefreshing(true);
+
                 mCurrentTaskId = mIdGenerator.nextId();
                 mCurrentTaskType = TYPE_SOMEWHERE;
                 mCurrentTaskPage = page;
@@ -478,11 +530,30 @@ public class ContentLayout extends FrameLayout {
             mLastIndex = mPageVolume;
             mRecyclerView.stopScroll();
             LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
+            onScrollToPosition();
         }
 
         @Override
         public int getItemCount() {
             return mData.size();
+        }
+
+        protected Parcelable onSaveInstanceState(Parcelable superParcelable) {
+            final Bundle state = new Bundle();
+            state.putParcelable(STATE_KEY_SUPER, superParcelable);
+            state.putInt(STATE_KEY_SHOWN_VIEW, mViewTransition.getShownViewIndex());
+            state.putParcelable(STATE_KEY_RECYCLER_VIEW, mRecyclerView.onSaveInstanceState());
+            state.putString(STATE_KEY_TIP_MESSAGE, mTextView.getText().toString());
+            return state;
+        }
+
+        protected Parcelable onRestoreInstanceState(Parcelable state) {
+            AssertUtils.assertInstanceof("state must be Bundle", state, Bundle.class);
+            final Bundle savedState = (Bundle) state;
+            mViewTransition.showView(savedState.getInt(STATE_KEY_SHOWN_VIEW), false);
+            mRecyclerView.onRestoreInstanceState(savedState.getParcelable(STATE_KEY_RECYCLER_VIEW));
+            mTextView.setText(savedState.getString(STATE_KEY_TIP_MESSAGE));
+            return savedState.getParcelable(STATE_KEY_SUPER);
         }
     }
 }

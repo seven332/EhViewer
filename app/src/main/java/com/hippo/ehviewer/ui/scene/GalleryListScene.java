@@ -19,6 +19,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -28,12 +29,17 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hippo.animation.SimpleAnimatorListener;
@@ -43,6 +49,8 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.ListParser;
 import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.data.ListUrlBuilder;
+import com.hippo.ehviewer.data.UnsupportedSearchException;
 import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.widget.ContentLayout;
@@ -52,7 +60,9 @@ import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchDatabase;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.scene.Scene;
+import com.hippo.scene.SimpleDialog;
 import com.hippo.util.AnimationUtils;
+import com.hippo.util.AppHandler;
 import com.hippo.util.AssertUtils;
 import com.hippo.util.Log;
 import com.hippo.util.MathUtils;
@@ -62,6 +72,7 @@ import com.hippo.widget.FloatingActionButton;
 
 import java.util.List;
 
+// TODO remeber the data in ContentHelper after screen dirction change
 // TODO Must refresh when change source
 // TODO disable click action when animating
 public class GalleryListScene extends Scene implements SearchBar.Helper,
@@ -106,6 +117,68 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
     private int mState = STATE_NORMAL;
     private int mFabState = FAB_STATE_NORMAL;
 
+    private ListUrlBuilder mListUrlBuilder = new ListUrlBuilder();
+
+    private SimpleDialog.OnCreateCustomViewListener mGoToCreateCustomViewListener =
+            new SimpleDialog.OnCreateCustomViewListener() {
+                @Override
+                public void onCreateCustomView(final SimpleDialog dialog, View view) {
+                    int currentPage = mGalleryListHelper.getCurrentPage();
+                    int pageSize = mGalleryListHelper.getPageSize();
+                    TextView pageInfo = (TextView) view.findViewById(R.id.go_to_page_info);
+                    pageInfo.setText(String.format(mResources.getString(R.string.go_to_page_info),
+                            currentPage + 1, pageSize == Integer.MAX_VALUE ?
+                                    mResources.getString(R.string.unknown).toLowerCase() : Integer.toString(pageSize)));
+
+                    EditText goToPage = (EditText) view.findViewById(R.id.go_to_page);
+                    goToPage.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                        @Override
+                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_NULL) {
+                                dialog.pressPositiveButton();
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
+                }
+            };
+
+    private SimpleDialog.OnButtonClickListener mGoToButtonClickListener =
+            new SimpleDialog.OnButtonClickListener() {
+                @Override
+                public boolean onClick(SimpleDialog dialog, int which) {
+                    if (which == SimpleDialog.POSITIVE) {
+                        int targetPage;
+                        EditText goToPage = (EditText) dialog.findViewById(R.id.go_to_page);
+                        try {
+                            String text = goToPage.getText().toString();
+                            if (TextUtils.isEmpty(text)) {
+                                Toast.makeText(mActivity, R.string.go_to_error_null,
+                                        Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
+                            targetPage = Integer.parseInt(text);
+                            int pageSize = mGalleryListHelper.getPageSize();
+                            if (targetPage <= 0 || (targetPage > pageSize)) {
+                                Toast.makeText(mActivity, R.string.go_to_error_invaild,
+                                        Toast.LENGTH_SHORT).show();
+                                return false;
+                            } else {
+                                mGalleryListHelper.goTo(targetPage - 1);
+                                return true;
+                            }
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(mActivity, R.string.go_to_error_not_number,
+                                    Toast.LENGTH_SHORT).show();
+                            return false;
+                        }
+                    } else {
+                        return true;
+                    }
+                }
+            };
+
     @SuppressWarnings("deprecation")
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -141,7 +214,8 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
                 ViewUtils.removeOnGlobalLayoutListener(mSearchBar.getViewTreeObserver(), this);
                 mSearchBarOriginalTop = mSearchBar.getTop();
                 mSearchBarOriginalBottom = mSearchBar.getBottom();
-                int fitPaddingTop = mSearchBar.getHeight() + mResources.getDimensionPixelOffset(R.dimen.search_bar_padding_vertical);
+                int fitPaddingTop = mSearchBar.getHeight() +
+                        mResources.getDimensionPixelOffset(R.dimen.search_bar_padding_vertical);
                 mContentLayout.setFitPaddingTop(fitPaddingTop);
                 mSearchLayout.setFitPaddingTop(fitPaddingTop);
             }
@@ -149,7 +223,12 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         mSearchLayout.setHelper(this);
 
         // Content Layout
-        mGalleryListHelper = new GalleryListHelper();
+        if (mGalleryListHelper != null) {
+            mGalleryListHelper = mGalleryListHelper.newInstance(mActivity);
+        } else {
+            mGalleryListHelper = new GalleryListHelper(mActivity);
+        }
+
         mContentLayout.setHelper(mGalleryListHelper);
 
         // Fab Layout
@@ -277,6 +356,16 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         mAddDeleteDrawable.setShape(mFabLayout.isExpanded(), ANIMATE_TIME);
     }
 
+    public void showGoToDialog() {
+        int[] center = new int[2];
+        ViewUtils.getCenterInAncestor(mGoToFab, center, R.id.stage);
+        new SimpleDialog.Builder(mActivity).setTitle(R.string._goto)
+                .setCustomView(R.layout.dialog_go_to, mGoToCreateCustomViewListener)
+                .setOnButtonClickListener(mGoToButtonClickListener)
+                .setPositiveButton(android.R.string.ok)
+                .setStartPoint(center[0], center[1]).show();
+    }
+
     @Override
     public void onClick(View v) {
         if (v == mCornerFab) {
@@ -290,7 +379,9 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
             mGalleryListHelper.refreshWithSameSearch();
         } else if (v == mGoToFab) {
             toggleFabLayout();
-            // TODO do go to
+            if (mGalleryListHelper.canGoTo()) {
+                showGoToDialog();
+            }
         }
     }
 
@@ -424,16 +515,19 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         }
 
         if (offset != 0) {
+            final boolean needRequestLayout = mSearchBar.getBottom() <= 0 && offset > 0;
             final ValueAnimator va = ValueAnimator.ofInt(0, offset);
             va.setDuration(ANIMATE_TIME);
             va.addListener(new SimpleAnimatorListener() {
                 @Override
-                public void onAnimationEnd(Animator animation) {
+                public void onAnimationEnd(Animator animation, boolean canceled) {
+                    super.onAnimationEnd(animation, canceled);
                     mSearchBarMoveAnimator = null;
                 }
             });
             va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 int lastValue;
+                boolean hasRequestLayout;
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     int value = (Integer) animation.getAnimatedValue();
@@ -441,6 +535,11 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
                     lastValue = value;
                     mSearchBar.offsetTopAndBottom(offsetStep);
                     ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offsetStep;
+
+                    if (!hasRequestLayout && needRequestLayout && mSearchBar.getBottom() > 0) {
+                        hasRequestLayout = true;
+                        mSearchBar.requestLayout();
+                    }
                 }
             });
             if (mSearchBarMoveAnimator != null) {
@@ -482,9 +581,9 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
                 ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offsetYStep;
                 int newBottom = mSearchBar.getBottom();
 
-                // TODO Sometimes if it is out of screen than go into again, it do not show,
+                // Sometimes if it is out of screen than go into again, it do not show,
                 // so I need to requestLayout
-                if (oldBottom == 0 && newBottom > 0) {
+                if (oldBottom <= 0 && newBottom > 0) {
                     mSearchBar.requestLayout();
                 }
             }
@@ -522,8 +621,28 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
         private LayoutInflater mInflater;
 
-        public GalleryListHelper() {
-            super();
+        private Runnable mSearchBarPositionTask = new Runnable() {
+            @Override
+            public void run() {
+                returnSearchBarPosition();
+            }
+        };
+
+        public GalleryListHelper(Context context) {
+            super(context);
+            init();
+        }
+
+        private GalleryListHelper(Context context, List<GalleryInfo> data) {
+            super(context, data);
+            init();
+        }
+
+        public GalleryListHelper newInstance(Context context) {
+            return new GalleryListHelper(context, getData());
+        }
+
+        private void init() {
             mInflater = mActivity.getLayoutInflater();
         }
 
@@ -535,9 +654,22 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         }
 
         @Override
+        protected void onScrollToPosition() {
+            AppHandler.getInstance().post(mSearchBarPositionTask);
+        }
+
+        @Override
         protected void getPageData(int taskId, int type, int page) {
-            GalleryListListener listener = new GalleryListListener(taskId, type, page, EhClient.SOURCE_LOFI);
-            EhClient.getInstance().getGalleryList(EhClient.SOURCE_LOFI, "http://lofi.e-hentai.org/", listener);
+            try {
+                mListUrlBuilder.setPageIndex(page);
+                String url =  mListUrlBuilder.build(EhClient.SOURCE_LOFI);
+                GalleryListListener listener = new GalleryListListener(taskId, type,
+                        page, EhClient.SOURCE_LOFI);
+                EhClient.getInstance().getGalleryList(EhClient.SOURCE_LOFI,
+                        url, listener);
+            } catch (UnsupportedSearchException e) {
+                onGetPageData(taskId, e);
+            }
         }
 
         @Override

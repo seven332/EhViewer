@@ -53,8 +53,17 @@
     <string name="star_4">4 星</string>
     <string name="star_5">5 星</string>
 
+    <!-- Go to -->
+    <string name="go_to_page_info">第 %1$d 页，共 %2$s 页</string>
+    <string name="go_to_string">跳至</string>
+    <string name="go_to_error_null">请输入目标页面</string>
+    <string name="go_to_error_not_number">请输入数字</string>
+    <string name="go_to_error_invaild">当前页面无效</string>
 
     <string name="keyword">关键字</string>
     <string name="search">搜索</string>
+    <string name="retry">重试</string>
+    <string name="_goto">跳页</string>
+    <string name="unknown">未知</string>
 
 </resources>

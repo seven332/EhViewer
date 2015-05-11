@@ -31,7 +31,6 @@
     <string name="cosplay" translatable="false">COSPLAY</string>
     <string name="asian_porn" translatable="false">ASIAN PORN</string>
     <string name="misc" translatable="false">MISC</string>
-    <string name="unknown" translatable="false">UNKNOWN</string>
 
     <!-- Search Bar -->
     <string name="search_bar_hint">Search %s</string>
@@ -74,9 +73,17 @@
     <string name="star_4">4 stars</string>
     <string name="star_5">5 stars</string>
 
+    <!-- Go to -->
+    <string name="go_to_page_info">Page %1$d, %2$s pages in total</string>
+    <string name="go_to_string">Go to</string>
+    <string name="go_to_error_null">Please enter target page</string>
+    <string name="go_to_error_not_number">Please enter a number</string>
+    <string name="go_to_error_invaild">The page is invaild</string>
 
     <string name="keyword">Keyword</string>
     <string name="search">Search</string>
     <string name="retry">Retry</string>
+    <string name="_goto">Go to</string>
+    <string name="unknown">Unknown</string>
 
 </resources>

@@ -19,6 +19,7 @@ import android.content.Context;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.hippo.content.VectorContext;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.scene.SceneApplication;
 import com.hippo.util.Log;
 
@@ -29,6 +30,7 @@ public class EhApplication extends SceneApplication {
         super.onCreate();
 
         Fresco.initialize(this);
+        Config.initialize(this);
     }
 
     @Override

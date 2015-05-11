@@ -28,7 +28,8 @@
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/thumb"
             android:layout_width="@dimen/list_thumb_width"
-            android:layout_height="@dimen/list_thumb_height"/>
+            android:layout_height="@dimen/list_thumb_height"
+            auto:actualImageScaleType="fitCenter"/>
 
         <TextView
             android:id="@+id/title"

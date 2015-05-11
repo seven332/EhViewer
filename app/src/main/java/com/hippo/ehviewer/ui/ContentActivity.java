@@ -26,6 +26,7 @@ import android.view.Gravity;
 import com.hippo.content.VectorContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.widget.StatusBarLayout;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.StageLayout;
@@ -41,7 +42,7 @@ public class ContentActivity extends StageActivity
 
     @Override
     protected boolean isShowStats() {
-        return true;
+        return Config.getShowApplicationStats();
     }
 
     @Override

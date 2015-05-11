@@ -48,6 +48,18 @@ public class ListUrlBuilder {
     private int mAdvanceSearch = -1;
     private int mMinRating = -1;
 
+    /**
+     * Make this ListUrlBuilder point to homepage
+     */
+    public void reset() {
+        mMode = MODE_NORMAL;
+        mPageIndex = 0;
+        mCategory = EhUtils.NONE;
+        mKeyword = null;
+        mAdvanceSearch = -1;
+        mMinRating = -1;
+    }
+
     public int getMode() {
         return mMode;
     }
@@ -109,7 +121,7 @@ public class ListUrlBuilder {
         mMinRating = glub.mMinRating;
     }
 
-    public String build(int source) throws UnsupportedSearch {
+    public String build(int source) throws UnsupportedSearchException {
         switch (mMode) {
             default:
             case MODE_NORMAL:
@@ -168,7 +180,7 @@ public class ListUrlBuilder {
             }
             case MODE_TAG: {
                 if (source == EhClient.SOURCE_LOFI) {
-                    throw new UnsupportedSearch("Lofi do not support tag search");
+                    throw new UnsupportedSearchException("Lofi do not support tag search");
                 }
                 StringBuilder sb = new StringBuilder(EhClient.getUrlHeader(source));
                 sb.append("tag/");

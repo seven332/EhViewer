@@ -266,12 +266,11 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
         } else if (v == mAction2) {
             toggleSearchMode();
         } else if (v == mSearchTagHelp) {
-            int[] location = new int [2];
-            ViewUtils.getLocationInAncestor(mSearchTagHelp, location, R.id.stage);
+            int[] center = new int [2];
+            ViewUtils.getCenterInAncestor(mSearchTagHelp, center, R.id.stage);
             new SimpleDialog.Builder(getContext()).setTitle(R.string.search_specify_tag)
                     .setMessage(R.string.search_tag_help)
-                    .setStartPoint(location[0] + mSearchTagHelp.getWidth() / 2,
-                            location[1] + mSearchTagHelp.getHeight() / 2).show();
+                    .setStartPoint(center[0], center[1]).show();
         }
     }
 
