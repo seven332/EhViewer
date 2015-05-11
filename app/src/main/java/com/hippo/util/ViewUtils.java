@@ -49,6 +49,12 @@ public final class ViewUtils {
         getLocationInAncestor(view, location, android.R.id.content);
     }
 
+    public static void getCenterInAncestor(View view, int[] location, int ancestorId) {
+        getLocationInAncestor(view, location, ancestorId);
+        location[0] += view.getWidth() / 2;
+        location[1] += view.getHeight() / 2;
+    }
+
     /**
      * Get view location in ths ancestor
      *
@@ -85,6 +91,12 @@ public final class ViewUtils {
 
         location[0] = (int) (position[0] + 0.5f);
         location[1] = (int) (position[1] + 0.5f);
+    }
+
+    public static void getCenterInAncestor(View view, int[] location, View ancestor) {
+        getLocationInAncestor(view, location, ancestor);
+        location[0] += view.getWidth() / 2;
+        location[1] += view.getHeight() / 2;
     }
 
     /**
