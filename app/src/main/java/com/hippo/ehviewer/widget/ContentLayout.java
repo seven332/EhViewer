@@ -350,7 +350,9 @@ public class ContentLayout extends FrameLayout {
                         if (mCurrentTaskType == TYPE_PRE_PAGE_KEEP_POS) {
                             mFirstIndex += pageVolume;
                             mLastIndex += pageVolume;
-                            // TODO
+
+                            mRecyclerView.stopScroll();
+                            LayoutManagerUtils.smoothScrollToPosition(mLayoutManager, mContext, mFirstIndex - 1, 100);
                         } else {
                             mCurrentPage = mFirstPage;
                             mFirstIndex = 0;
@@ -464,7 +466,8 @@ public class ContentLayout extends FrameLayout {
             if (mViewTransition.getShownViewIndex() == 0) {
                 // Go to top
                 mRecyclerView.stopScroll();
-                mLayoutManager.smoothScrollToPosition(mRecyclerView, null, 0);
+                LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
+                onScrollToPosition();
                 // Show header refresh
                 mRefreshLayout.setFooterRefreshing(false);
                 mRefreshLayout.setHeaderRefreshing(true);
