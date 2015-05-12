@@ -23,18 +23,18 @@ import com.hippo.util.ViewUtils;
 
 public abstract class Curtain {
 
-    private int mPreviousSceneCode;
+    private int mPreviousSceneId;
 
     void setPreviousScene(@Nullable Scene pScene) {
         if (pScene == null) {
-            mPreviousSceneCode = -1;
+            mPreviousSceneId = -1;
         } else {
-            mPreviousSceneCode = pScene.hashCode();
+            mPreviousSceneId = pScene.getId();
         }
     }
 
     boolean isPreviousScene(@Nullable Scene scene) {
-        return scene != null && scene.hashCode() == mPreviousSceneCode;
+        return scene != null && scene.getId() == mPreviousSceneId;
     }
 
     /**

@@ -185,7 +185,6 @@ public class ContentLayout extends FrameLayout {
         private int mCurrentPage;
         private int mPageVolume;
 
-        // TODO save mCurrentTaskId mCurrentTaskType mCurrentTaskPage
         private int mCurrentTaskId;
         private int mCurrentTaskType;
         private int mCurrentTaskPage;
@@ -228,9 +227,21 @@ public class ContentLayout extends FrameLayout {
             mIdGenerator = IntIdGenerator.create();
         }
 
-        protected ContentHelper(Context context, List<E> data) {
+        @SuppressWarnings("unchecked")
+        protected ContentHelper(Context context, ContentHelper oldContentHelper) {
             this(context);
-            mData.addAll(data);
+            mData.addAll(oldContentHelper.mData);
+
+            mFirstPage = oldContentHelper.mFirstPage;
+            mLastPage = oldContentHelper.mLastPage;
+            mFirstIndex = oldContentHelper.mFirstIndex;
+            mLastIndex = oldContentHelper.mLastIndex;
+            mPageSize = oldContentHelper.mPageSize;
+            mCurrentPage = oldContentHelper.mCurrentPage;
+            mPageVolume = oldContentHelper.mPageVolume;
+            mCurrentTaskId = oldContentHelper.mCurrentTaskId;
+            mCurrentTaskType = oldContentHelper.mCurrentTaskType;
+            mCurrentTaskPage = oldContentHelper.mCurrentTaskPage;
         }
 
         private void init(ContentLayout contentLayout) {
@@ -254,10 +265,6 @@ public class ContentLayout extends FrameLayout {
 
             mTipView.setOnClickListener(this);
             mSnackbar.setAction(mContext.getString(R.string.retry), this);
-        }
-
-        protected List<E> getData() {
-            return mData;
         }
 
         protected abstract RecyclerView.LayoutManager generateLayoutManager();

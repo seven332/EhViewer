@@ -179,9 +179,18 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
                 }
             };
 
+    @Override
+    protected void onReplace(@NonNull Scene oldScene) {
+        super.onReplace(oldScene);
+
+        GalleryListScene oldGalleryListScene = (GalleryListScene) oldScene;
+        mGalleryListHelper = oldGalleryListScene.mGalleryListHelper
+                .newInstance(getStageActivity());
+    }
+
     @SuppressWarnings("deprecation")
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.scene_gallery_list);
 
@@ -223,9 +232,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         mSearchLayout.setHelper(this);
 
         // Content Layout
-        if (mGalleryListHelper != null) {
-            mGalleryListHelper = mGalleryListHelper.newInstance(mActivity);
-        } else {
+        if (mGalleryListHelper == null) {
             mGalleryListHelper = new GalleryListHelper(mActivity);
         }
 
@@ -633,13 +640,13 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
             init();
         }
 
-        private GalleryListHelper(Context context, List<GalleryInfo> data) {
-            super(context, data);
+        private GalleryListHelper(Context context, GalleryListHelper oldContentHelper) {
+            super(context, oldContentHelper);
             init();
         }
 
         public GalleryListHelper newInstance(Context context) {
-            return new GalleryListHelper(context, getData());
+            return new GalleryListHelper(context, this);
         }
 
         private void init() {

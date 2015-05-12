@@ -60,8 +60,18 @@ public abstract class Scene {
 
     protected static SceneManager sSceneManager;
 
+    private int mId;
+
     static void setSceneManager(SceneManager sceneManager) {
         sSceneManager = sceneManager;
+    }
+
+    public Scene() {
+        mId = sSceneManager.nextId();
+    }
+
+    int getId() {
+        return mId;
     }
 
     void setCurtain(@Nullable Curtain curtain) {
@@ -168,6 +178,10 @@ public abstract class Scene {
         onResume();
     }
 
+    void replace(@NonNull Scene oldScene) {
+        onReplace(oldScene);
+    }
+
     void setFitPaddingBottom(int b) {
         onGetFitPaddingBottom(b);
     }
@@ -205,8 +219,7 @@ public abstract class Scene {
         StageActivity sa = getStageActivity();
         mSceneView = createSceneView(sa);
         initBackground(mSceneView);
-        mSceneView.addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
+        mSceneView.addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
     private void initBackground(@NonNull View bg) {
@@ -236,6 +249,12 @@ public abstract class Scene {
     }
 
     protected void onResume() {
+    }
+
+    protected void onReplace(@NonNull Scene oldScene) {
+        mId = oldScene.mId;
+        mAnnouncer = oldScene.mAnnouncer;
+        mCurtain = oldScene.mCurtain;
     }
 
     /**
@@ -346,7 +365,7 @@ public abstract class Scene {
 
     // It is constant
     private String getStateKey() {
-        return "scene:" + Integer.toHexString(hashCode());
+        return "scene:" + mId;
     }
 
     private String getIsGoneKey() {

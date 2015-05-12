@@ -42,8 +42,6 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
 
     private Builder mBuilder;
 
-    private StageActivity mActivity;
-
     private SceneDialogView mSceneDialogView;
     private SimpleDialogFrame mFrame;
     private View mBody;
@@ -59,7 +57,7 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
 
     private int mFitPaddingBottom;
 
-    private SimpleDialog(@NonNull Builder builder) {
+    private void setBuilder(@NonNull Builder builder) {
         mBuilder = builder;
     }
 
@@ -70,12 +68,10 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         // TODO
         setBackgroundColor(BACKGROUND_COLOR);
 
-        mActivity = getStageActivity();
-
         setContentView(R.layout.simple_dialog_frame);
         mFrame = (SimpleDialogFrame) findViewById(R.id.simple_dialog_frame);
 
-        mActivity.getLayoutInflater().inflate(R.layout.simple_dialog, mFrame);
+        getStageActivity().getLayoutInflater().inflate(R.layout.simple_dialog, mFrame);
 
         mSceneDialogView = (SceneDialogView) getSceneView();
         mBody = findViewById(R.id.body);
@@ -90,6 +86,16 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         mPositiveButton = (TextView) mButtonsSingleLine.findViewById(R.id.positive);
 
         bindDialog();
+    }
+
+    @Override
+    protected void onReplace(@NonNull Scene oldScene) {
+        super.onReplace(oldScene);
+
+        SimpleDialog oldDialog = (SimpleDialog) oldScene;
+        mBuilder = oldDialog.mBuilder;
+        // Avoid memory leak
+        mBuilder.mContext = getStageActivity();
     }
 
     private void bindDialog() {
@@ -305,8 +311,10 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
             return this;
         }
 
-        public @NonNull SceneDialog build() {
-            return new SimpleDialog(this);
+        public @NonNull SimpleDialog build() {
+            SimpleDialog dialog = new SimpleDialog();
+            dialog.setBuilder(this);
+            return dialog;
         }
 
         public void show() {
@@ -317,7 +325,7 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
             if (curtain == null) {
                 curtain = new SimpleDialogCurtain(mStartX, mStartY);
             }
-            new SimpleDialog(this).show(curtain);
+            build().show(curtain);
         }
     }
 

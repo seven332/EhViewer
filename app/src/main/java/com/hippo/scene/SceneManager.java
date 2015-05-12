@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.hippo.util.IntIdGenerator;
 import com.hippo.util.Log;
 
 import java.util.Stack;
@@ -32,8 +33,14 @@ class SceneManager {
 
     private Scene mLegacyScene;
 
+    private IntIdGenerator mIdGenerator = IntIdGenerator.create();
+
     // Should only be called by SceneApplication
     SceneManager() {
+    }
+
+    int nextId() {
+        return mIdGenerator.nextId();
     }
 
     void setStageActivity(StageActivity stageActivity) {
@@ -48,17 +55,9 @@ class SceneManager {
         return mStageActivity != null;
     }
 
-    // TODO check previousState state
-    void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer,
-            @Nullable Curtain curtain) {
-        if (!isStageAlive()) {
-            Log.w(TAG, "Stage is not alive, but attemp to create " + sceneClass.getSimpleName());
-            return;
-        }
-
-        Scene scene;
+    Scene createSceneByClass(@NonNull Class sceneClass) {
         try {
-            scene = (Scene) sceneClass.newInstance();
+            return (Scene) sceneClass.newInstance();
         } catch (InstantiationException e) {
             throw new IllegalStateException("Can't instance " + sceneClass.getName());
         } catch (IllegalAccessException e) {
@@ -67,6 +66,17 @@ class SceneManager {
         } catch (ClassCastException e) {
             throw new IllegalStateException(sceneClass.getName() + " can not cast to scene");
         }
+    }
+
+    // TODO check previousState state
+    void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer,
+            @Nullable Curtain curtain) {
+        if (!isStageAlive()) {
+            Log.w(TAG, "Stage is not alive, but attemp to create " + sceneClass.getSimpleName());
+            return;
+        }
+
+        Scene scene = createSceneByClass(sceneClass);
         scene.setAnnouncer(announcer);
         scene.setCurtain(curtain);
 
@@ -219,10 +229,19 @@ class SceneManager {
     }
 
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        for (Scene scene : mSceneStack) {
-            // Recreate
-            scene.create(savedInstanceState);
-            scene.restoreInstanceState(savedInstanceState);
+        Stack<Scene> tempStack = new Stack<>();
+        tempStack.addAll(mSceneStack);
+        mSceneStack.clear();
+
+        for (Scene oldScene : tempStack) {
+            Scene newScene = createSceneByClass(oldScene.getClass());
+            newScene.replace(oldScene);
+            oldScene.destroy();
+            oldScene.setState(Scene.SCENE_STATE_DESTROY);
+            newScene.create(savedInstanceState);
+            newScene.setState(Scene.SCENE_STATE_RUN);
+            newScene.restoreInstanceState(savedInstanceState);
+            mSceneStack.push(newScene);
         }
     }
 }
