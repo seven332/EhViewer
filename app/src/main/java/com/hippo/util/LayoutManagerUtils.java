@@ -78,6 +78,28 @@ public final class LayoutManagerUtils {
         layoutManager.startSmoothScroll(smoothScroller);
     }
 
+    public static void scrollToPositionProperly(final RecyclerView.LayoutManager layoutManager,
+            final Context context, final int position, final OnScrollToPositionListener listener) {
+        AppHandler.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+                int first = getFirstVisibleItemPostion(layoutManager);
+                int last = getLastVisibleItemPostion(layoutManager);
+                int offset = Math.abs(position - first);
+                int max = last - first;
+                if (offset < max && max > 0) {
+                    smoothScrollToPosition(layoutManager, context, position,
+                            MathUtils.lerp(100, 25, (offset / max)));
+                } else {
+                    scrollToPositionWithOffset(layoutManager, position, 0);
+                    if (listener != null) {
+                        listener.onScrollToPosition();
+                    }
+                }
+            }
+        });
+    }
+
     public static int getFirstVisibleItemPostion(RecyclerView.LayoutManager layoutManager) {
         if (layoutManager instanceof LinearLayoutManager) {
             return ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
@@ -100,5 +122,9 @@ public final class LayoutManagerUtils {
             throw new IllegalStateException("Can't do getFirstVisibleItemPostion for " +
                     layoutManager.getClass().getName());
         }
+    }
+
+    public interface OnScrollToPositionListener {
+        void onScrollToPosition();
     }
 }

@@ -221,6 +221,14 @@ public class ContentLayout extends FrameLayout {
             }
         };
 
+        private LayoutManagerUtils.OnScrollToPositionListener mOnScrollToPositionListener =
+                new LayoutManagerUtils.OnScrollToPositionListener() {
+                    @Override
+                    public void onScrollToPosition() {
+                        ContentHelper.this.onScrollToPosition();
+                    }
+                };
+
         public ContentHelper(Context context) {
             mContext = context;
             mData = new ArrayList<>();
@@ -352,7 +360,7 @@ public class ContentLayout extends FrameLayout {
                             mLastIndex += pageVolume;
 
                             mRecyclerView.stopScroll();
-                            LayoutManagerUtils.smoothScrollToPosition(mLayoutManager, mContext, mFirstIndex - 1, 100);
+                            LayoutManagerUtils.scrollToPositionProperly(mLayoutManager, mContext, mFirstIndex - 1, mOnScrollToPositionListener);
                         } else {
                             mCurrentPage = mFirstPage;
                             mFirstIndex = 0;
@@ -466,8 +474,8 @@ public class ContentLayout extends FrameLayout {
             if (mViewTransition.getShownViewIndex() == 0) {
                 // Go to top
                 mRecyclerView.stopScroll();
-                LayoutManagerUtils.scrollToPositionWithOffset(mLayoutManager, 0, 0);
-                onScrollToPosition();
+                LayoutManagerUtils.scrollToPositionProperly(mLayoutManager,
+                        mContext, 0, mOnScrollToPositionListener);
                 // Show header refresh
                 mRefreshLayout.setFooterRefreshing(false);
                 mRefreshLayout.setHeaderRefreshing(true);
