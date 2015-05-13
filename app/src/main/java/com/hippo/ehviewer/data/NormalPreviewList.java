@@ -16,8 +16,6 @@
 
 package com.hippo.ehviewer.data;
 
-import java.util.ArrayList;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -30,6 +28,8 @@ import com.hippo.ehviewer.ImageLoader;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.widget.SimpleGridLayout;
+
+import java.util.ArrayList;
 
 public class NormalPreviewList extends PreviewList{
 
@@ -166,10 +166,20 @@ public class NormalPreviewList extends PreviewList{
                 int i = row.startIndex;
                 for(Item item : row.itemArray) {
 
-                    if (item.xOffset + item.width > maxWidth)
+                    if (item.xOffset + item.width > maxWidth) {
                         item.width = maxWidth - item.xOffset;
-                    if (item.yOffset + item.height > maxHeight)
+                        if (item.width <= 0) {
+                            // Bad area
+                            continue;
+                        }
+                    }
+                    if (item.yOffset + item.height > maxHeight) {
                         item.height = maxHeight - item.yOffset;
+                        if (item.height <= 0) {
+                            // Bad area
+                            continue;
+                        }
+                    }
                     Bitmap bitmap = Bitmap.createBitmap(bmp, item.xOffset, item.yOffset, item.width, item.height);
 
                     ((ImageView)mViewGroup.getChildAt(i).findViewById(R.id.image)).setImageBitmap(bitmap);
