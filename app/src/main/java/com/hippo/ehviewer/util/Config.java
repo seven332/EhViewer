@@ -20,6 +20,9 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.hippo.ehviewer.BuildConfig;
+import com.hippo.ehviewer.Constants;
+import com.hippo.ehviewer.client.EhClient;
+import com.hippo.util.Messenger;
 
 public final class Config {
 
@@ -70,6 +73,28 @@ public final class Config {
 
     public static void putString(String key, String value) {
         sConfigPre.edit().putString(key, value).apply();
+    }
+
+    /******  ******/
+
+    private static final String KEY_EH_SOURCE = "eh_source";
+    private static final int DEFAULT_EH_SOURCE = BuildConfig.DEBUG ?
+            EhClient.SOURCE_LOFI : EhClient.SOURCE_G;
+
+    public static int getEhSource() {
+        int value = getInt(KEY_EH_SOURCE, DEFAULT_EH_SOURCE);
+        if (value < EhClient.SOURCE_G || value > EhClient.SOURCE_LOFI) {
+            value = DEFAULT_EH_SOURCE;
+        }
+        return value;
+    }
+
+    public static void putEhSource(int value) {
+        if (value < EhClient.SOURCE_G || value > EhClient.SOURCE_LOFI) {
+            value = DEFAULT_EH_SOURCE;
+        }
+        putInt(KEY_EH_SOURCE, value);
+        Messenger.getInstance().notify(Constants.MESSENGER_ID_EH_SOURCE, value);
     }
 
     /****** Advance ******/

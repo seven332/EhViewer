@@ -36,6 +36,7 @@ import android.widget.TextView;
 
 import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.data.ListUrlBuilder;
 import com.hippo.scene.SimpleDialog;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
@@ -179,6 +180,33 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
 
     public void setHelper(SearhLayoutHelper helper) {
         mHelper = helper;
+    }
+
+    public boolean isSpecifyTag() {
+        return mCheckSpecifyTag.isChecked();
+    }
+
+    public boolean isSpecifyTAuthor() {
+        return mCheckSpecifyTag.isChecked();
+    }
+
+    // TODO image search
+    public void formatListUrlBuilder(ListUrlBuilder listUrlBuilder) {
+        listUrlBuilder.reset();
+        if (mCheckSpecifyTag.isChecked()) {
+            listUrlBuilder.setMode(ListUrlBuilder.MODE_TAG);
+        } else {
+            if (mCheckSpecifyAuthor.isChecked()) {
+                listUrlBuilder.setMode(ListUrlBuilder.MODE_UPLOADER);
+            } else {
+                listUrlBuilder.setMode(ListUrlBuilder.MODE_NORMAL);
+            }
+            listUrlBuilder.setCategory(mTableCategory.getCategory());
+            if (mEnableAdvance) {
+                listUrlBuilder.setAdvanceSearch(mTableAdvanceSearch.getAdvanceSearch());
+                listUrlBuilder.setMinRating(mTableAdvanceSearch.getMinRating());
+            }
+        }
     }
 
     public void scrollSearchContainerToTop() {

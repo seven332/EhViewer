@@ -52,6 +52,7 @@ import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.ListUrlBuilder;
 import com.hippo.ehviewer.data.UnsupportedSearchException;
 import com.hippo.ehviewer.ui.ContentActivity;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.OffsetLayout;
@@ -64,7 +65,6 @@ import com.hippo.scene.SimpleDialog;
 import com.hippo.util.AnimationUtils;
 import com.hippo.util.AppHandler;
 import com.hippo.util.AssertUtils;
-import com.hippo.util.Log;
 import com.hippo.util.MathUtils;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.FabLayout;
@@ -440,15 +440,33 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
     @Override
     public void onApplySearch(String query) {
-        // TODO Query may be "", should not do search if it is
-        Log.d("onApplySearch " + query);
+        // TODO check is source and search vaild
+        if (TextUtils.isEmpty(query) && (mViewTransition.getShownViewIndex() == 0
+                || mSearchLayout.isSpecifyTag())) {
+            // Invaild search
+            return;
+        }
+
         mSearchDatabase.addQuery(query);
+
+        if (mViewTransition.getShownViewIndex() == 0) {
+            mListUrlBuilder.reset();
+            mListUrlBuilder.setKeyword(query);
+        } else {
+            mSearchLayout.formatListUrlBuilder(mListUrlBuilder);
+            if (mSearchLayout.isSpecifyTAuthor()) {
+                query = "uploader:" + query;
+            }
+            mListUrlBuilder.setKeyword(query);
+        }
 
         mState = STATE_NORMAL;
         mViewTransition.showView(0);
         mSearchBar.setState(SearchBar.STATE_NORMAL);
         returnSearchBarPosition();
         setFabState(FAB_STATE_NORMAL);
+
+        mGalleryListHelper.refresh();
     }
 
     private RecyclerView getVaildRecyclerView() {
@@ -668,12 +686,12 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         @Override
         protected void getPageData(int taskId, int type, int page) {
             try {
+                int source = Config.getEhSource();
                 mListUrlBuilder.setPageIndex(page);
-                String url =  mListUrlBuilder.build(EhClient.SOURCE_LOFI);
+                String url =  mListUrlBuilder.build(source);
                 GalleryListListener listener = new GalleryListListener(taskId, type,
-                        page, EhClient.SOURCE_LOFI);
-                EhClient.getInstance().getGalleryList(EhClient.SOURCE_LOFI,
-                        url, listener);
+                        page, source);
+                EhClient.getInstance().getGalleryList(source, url, listener);
             } catch (UnsupportedSearchException e) {
                 onGetPageData(taskId, e);
             }

@@ -40,6 +40,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -51,6 +52,7 @@ import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.util.MathUtils;
 import com.hippo.util.Messenger;
 import com.hippo.util.UiUtils;
@@ -152,25 +154,33 @@ public class SearchBar extends CardView implements View.OnClickListener,
         mBaseHeight = getMeasuredHeight();
 
         mSuggestionList = new ArrayList<>();
-        // TODO
+        // TODO Use custom view
         mSuggestionAdapter = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_list_item_1, mSuggestionList);
         mList.setAdapter(mSuggestionAdapter);
+        mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String suggestion = mSuggestionList.get(position);
+                mEditText.setText(suggestion);
+                mEditText.setSelection(suggestion.length());
+            }
+        });
 
         // TODO get source from config
-        setSource(EhClient.SOURCE_EX);
+        setSource(Config.getEhSource());
     }
 
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-        Messenger.getInstance().register(Constants.MESSENGER_ID_SOURCE, this);
+        Messenger.getInstance().register(Constants.MESSENGER_ID_EH_SOURCE, this);
     }
 
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        Messenger.getInstance().unregister(Constants.MESSENGER_ID_SOURCE, this);
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_EH_SOURCE, this);
     }
 
     private void updateSuggestions() {
@@ -414,7 +424,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
 
     @Override
     public void onReceive(int id, Object obj) {
-        if (id == Constants.MESSENGER_ID_SOURCE) {
+        if (id == Constants.MESSENGER_ID_EH_SOURCE) {
             if (obj instanceof Integer) {
                 int source = (Integer) obj;
                 setSource(source);
