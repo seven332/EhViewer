@@ -24,7 +24,7 @@
 
     <!-- StatsActivity -->
     <dimen name="stats_text_view_padding_top">24dp</dimen>
-    <dimen name="stats_text_view_padding_right">16dp</dimen>
+    <dimen name="stats_text_view_padding_right">24dp</dimen>
 
     <!-- Snackbar -->
     <dimen name="snackbar_padding_left">24dp</dimen>
@@ -59,30 +59,14 @@
     <dimen name="search_layout_space">8dp</dimen>
     <dimen name="search_layout_space_vertical">8dp</dimen>
 
-    <!-- Content Layout Space -->
-    <dimen name="content_layout_space">8dp</dimen>
-    <dimen name="content_layout_space_vertical">8dp</dimen>
-
     <!-- Corner fab -->
     <dimen name="corner_fab_padding_right">16dp</dimen>
     <dimen name="corner_fab_padding_bottom">16dp</dimen>
-
-    <!-- Search Content -->
-    <dimen name="content_padding_start">0dp</dimen>
-    <dimen name="content_padding_end">0dp</dimen>
-    <dimen name="content_padding_top">0dp</dimen>
-    <dimen name="content_padding_bottom">72dp</dimen>
-    <dimen name="content_fab_margin_start">0dp</dimen>
-    <dimen name="content_fab_margin_end">@dimen/keyline_margin</dimen>
-    <dimen name="content_fab_margin_top">0dp</dimen>
-    <dimen name="content_fab_margin_bottom">@dimen/keyline_margin</dimen>
 
     <!-- Search category -->
     <dimen name="search_category_padding_start">16dp</dimen>
     <dimen name="search_category_padding_end">16dp</dimen>
     <dimen name="search_category_padding_bottom">8dp</dimen>
-    <dimen name="search_category_interval">8dp</dimen>
-    <dimen name="search_category_min_height">0dp</dimen>
     <dimen name="search_category_title_height">48dp</dimen>
 
     <!-- Search item -->
@@ -97,12 +81,6 @@
 
     <!-- Keyline -->
     <dimen name="keyline_margin">16dp</dimen>
-
-    <!-- AppBar -->
-    <dimen name="appbar_size">56dp</dimen>
-    <dimen name="appbar_height">@dimen/appbar_size</dimen>
-    <dimen name="appbar_shadow_height">8dp</dimen>
-    <dimen name="appbar_fab_margin_top">28dp</dimen>
 
     <!-- CategoryTable -->
     <dimen name="category_table_item_height">40dp</dimen>

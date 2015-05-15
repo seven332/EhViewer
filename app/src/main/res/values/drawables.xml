@@ -13,13 +13,9 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
 <resources>
 
     <drawable name="transparent">@android:color/transparent</drawable>
     <drawable name="theme_primary">@color/theme_primary</drawable>
-    <drawable name="theme_accent">@color/theme_accent</drawable>
-    <drawable name="ripple_material_light">@color/ripple_material_light</drawable>
-    <drawable name="ripple_material_dark">@color/ripple_material_dark</drawable>
 
 </resources>

@@ -18,22 +18,10 @@
     <!-- Snackbar -->
     <dimen name="snackbar_interval">48dp</dimen>
 
-    <!-- Content -->
-    <dimen name="content_padding_start">52dp</dimen>
-    <dimen name="content_padding_end">52dp</dimen>
-    <dimen name="content_padding_top">@dimen/appbar_size</dimen>
-    <dimen name="content_padding_bottom">0dp</dimen>
-    <dimen name="content_fab_margin_start">0dp</dimen>
-    <dimen name="content_fab_margin_end">@dimen/keyline_margin</dimen>
-    <dimen name="content_fab_margin_top">196dp</dimen>
-    <dimen name="content_fab_margin_bottom">0dp</dimen>
-
     <!-- Search category -->
     <dimen name="search_category_padding_start">52dp</dimen>
     <dimen name="search_category_padding_end">52dp</dimen>
     <dimen name="search_category_padding_bottom">32dp</dimen>
-    <dimen name="search_category_interval">16dp</dimen>
-    <dimen name="search_category_min_height">252dp</dimen>
     <dimen name="search_category_title_height">64dp</dimen>
 
     <!-- Search item -->
@@ -45,9 +33,6 @@
 
     <!-- Keyline -->
     <dimen name="keyline_margin">24dp</dimen>
-
-    <!-- AppBar -->
-    <dimen name="appbar_height">224dp</dimen>
 
     <!-- CategoryTable -->
     <dimen name="category_table_item_height">48dp</dimen>

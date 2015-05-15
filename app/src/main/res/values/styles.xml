@@ -45,14 +45,6 @@
         <item name="android:minHeight">@dimen/fab_size_fne_small</item>
     </style>
 
-    <style name="FloatingActionButton.Content">
-        <item name="android:layout_gravity">right|bottom</item>
-        <item name="android:layout_marginLeft">@dimen/content_fab_margin_start</item>
-        <item name="android:layout_marginRight">@dimen/content_fab_margin_end</item>
-        <item name="android:layout_marginTop">@dimen/content_fab_margin_top</item>
-        <item name="android:layout_marginBottom">@dimen/content_fab_margin_bottom</item>
-    </style>
-
     <!-- FloatLabelEditText -->
     <style name="TextAppearance.FloatLabelEditText.Lable" parent="TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/float_label_edit_text_light</item>

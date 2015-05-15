@@ -51,7 +51,6 @@
                 android:layout_height="56dp"
                 android:layout_gravity="right|center_vertical"
                 android:padding="14dp"
-                android:src="@drawable/ic_android_debug_bridge"
                 tools:ignore="RtlHardcoded"/>
 
             <com.hippo.ehviewer.widget.SearchEditText

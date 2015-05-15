@@ -73,7 +73,7 @@ public abstract class StatsActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.TOP | Gravity.RIGHT;
         lp.topMargin = resources.getDimensionPixelOffset(R.dimen.stats_text_view_padding_top);
-        lp.rightMargin = resources.getDimensionPixelOffset(R.dimen.stats_text_view_padding_top);
+        lp.rightMargin = resources.getDimensionPixelOffset(R.dimen.stats_text_view_padding_right);
         return lp;
     }
 

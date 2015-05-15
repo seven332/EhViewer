@@ -38,6 +38,7 @@ import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.ListUrlBuilder;
 import com.hippo.scene.SimpleDialog;
+import com.hippo.util.UiUtils;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MonoRecyclerView;
@@ -126,8 +127,7 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
         // Search Container
         mSearchPaddingTopOrigin = getPaddingTop();
         // Original padding bottom and the padding bottom to make it above fab
-        mSearchPaddingBottomOrigin = getPaddingBottom() +
-                mResources.getDimensionPixelSize(R.dimen.content_padding_bottom);
+        mSearchPaddingBottomOrigin = getPaddingBottom() + UiUtils.dp2pix(context, 72); // TODO
         setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), mSearchPaddingBottomOrigin);
 
         // Create normal view
