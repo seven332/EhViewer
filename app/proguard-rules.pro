@@ -51,3 +51,14 @@
 
 #For VectorResources
 -keep class android.content.res.VectorResources {*;}
+
+# For fresco
+-keep,allowobfuscation @interface com.facebook.common.internal.DoNotStrip
+-keep @com.facebook.common.internal.DoNotStrip class *
+-keepclassmembers class * {
+    @com.facebook.common.internal.DoNotStrip *;
+}
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+-keep class com.facebook.imagepipeline.gif.** { *; }
+-keep class com.facebook.imagepipeline.webp.** { *; }
