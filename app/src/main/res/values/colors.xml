@@ -54,12 +54,14 @@
 
     <color name="material_teal_500">#ff009688</color>
     <color name="material_teal_700">#ff00796b</color>
-
     <color name="material_deep_orange_500">#ffff5722</color>
-
     <color name="material_orange_500">#ffff9800</color>
-
     <color name="material_amber_500">#ffffc107</color>
+    <color name="material_purple_a700">#ffaa00ff</color>
+    <color name="material_cyan_600">#ff00acc1</color>
+    <color name="material_light_green_600">#ff7cb342</color>
+    <color name="material_yellow_800">#fff9a825</color>
+    <color name="material_deep_Orange_400">#ffff7043</color>
 
     <!-- Text -->
     <color name="primary_text_light">#de000000</color>
@@ -87,5 +89,13 @@
     <!-- Snackbar -->
     <color name="snackbar_background">#ff333333</color>
     <color name="snackbar_action">#ffeeff41</color>
+
+    <color name="loading_indicator_red">#ffe53935</color>
+    <color name="loading_indicator_purple">@color/material_purple_a700</color>
+    <color name="loading_indicator_blue">#ff1d87e4</color>
+    <color name="loading_indicator_cyan">@color/material_cyan_600</color>
+    <color name="loading_indicator_green">@color/material_light_green_600</color>
+    <color name="loading_indicator_yellow">@color/material_yellow_800</color>
+    <color name="loading_indicator_orange">@color/material_deep_Orange_400</color>
 
 </resources>

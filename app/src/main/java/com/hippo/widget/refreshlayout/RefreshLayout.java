@@ -21,6 +21,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.support.v4.view.MotionEventCompat;
+import android.support.v4.view.ScrollingView;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -556,8 +557,7 @@ public class RefreshLayout extends ViewGroup {
     public void setFooterColorSchemeResources(int colorRes1, int colorRes2, int colorRes3,
                                         int colorRes4) {
         final Resources res = getResources();
-        setFooterColorSchemeColors(res.getColor(colorRes1), res.getColor(colorRes2),
-                res.getColor(colorRes3), res.getColor(colorRes4));
+        setFooterColorSchemeColors(res.getColor(colorRes1), res.getColor(colorRes2), res.getColor(colorRes3), res.getColor(colorRes4));
     }
 
     /**
@@ -570,16 +570,23 @@ public class RefreshLayout extends ViewGroup {
         mProgressBar.setColorScheme(color1, color2, color3, color4);
     }
 
+    public void requsetFooterRefresh() {
+        if (isEnabled() && !mHeaderRefreshing && !mFooterRefreshing && mFooterEnable &&
+                (mFooterListener == null || mFooterListener.onFooterRefresh())) {
+            setFooterRefreshing(true);
+        }
+    }
+
     public void setHeaderEnable(boolean headerEnable) {
         mHeaderEnable = headerEnable;
-        if (headerEnable == false && mHeaderRefreshing == true) {
+        if (!headerEnable && mHeaderRefreshing) {
             setHeaderRefreshing(false);
         }
     }
 
     public void setFooterEnable(boolean footerEnable) {
         mFooterEnable = footerEnable;
-        if (footerEnable == false && mFooterRefreshing == true) {
+        if (!footerEnable && mFooterRefreshing) {
             setFooterRefreshing(false);
         }
     }
@@ -674,8 +681,7 @@ public class RefreshLayout extends ViewGroup {
                 getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
                 MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(
                 getMeasuredHeight() - getPaddingTop() - getPaddingBottom(), MeasureSpec.EXACTLY));
-        mCircleView.measure(MeasureSpec.makeMeasureSpec(mCircleWidth, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(mCircleHeight, MeasureSpec.EXACTLY));
+        mCircleView.measure(MeasureSpec.makeMeasureSpec(mCircleWidth, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(mCircleHeight, MeasureSpec.EXACTLY));
         if (!mUsingCustomStart && !mOriginalOffsetCalculated) {
             mOriginalOffsetCalculated = true;
             mCurrentTargetOffsetTop = mOriginalOffsetTop = -mCircleView.getMeasuredHeight();
@@ -716,12 +722,14 @@ public class RefreshLayout extends ViewGroup {
         if (mTarget instanceof AbsListView) {
             final AbsListView absListView = (AbsListView) mTarget;
             return absListView.getLastVisiblePosition() > absListView.getCount() - 2;
+        } else if (mTarget instanceof ScrollingView) {
+            final ScrollingView scrollingView = (ScrollingView) mTarget;
+            final int offset = scrollingView.computeVerticalScrollOffset();
+            final int range = scrollingView.computeVerticalScrollRange() -
+                    scrollingView.computeVerticalScrollExtent();
+            return offset >= range;
         } else {
-            if (android.os.Build.VERSION.SDK_INT >= 14) {
-                return !ViewCompat.canScrollVertically(mTarget, getHeight() / 4);
-            } else {
-                return true;
-            }
+            return !ViewCompat.canScrollVertically(mTarget, 1);
         }
     }
 
@@ -733,14 +741,6 @@ public class RefreshLayout extends ViewGroup {
 
         if (!isEnabled() || mHeaderRefreshing || mFooterRefreshing) {
             return false;
-        }
-
-        if (mFooterEnable && isAlmostBottom()) {
-            // Check footer
-            if (mFooterListener == null || mFooterListener.onFooterRefresh()) {
-                setFooterRefreshing(true);
-                return false;
-            }
         }
 
         if (!mHeaderEnable || canChildScrollUp() || mFooterRefreshing) {
@@ -813,14 +813,6 @@ public class RefreshLayout extends ViewGroup {
 
         if (!isEnabled() || mHeaderRefreshing || mFooterRefreshing) {
             return false;
-        }
-
-        if (mFooterEnable && isAlmostBottom()) {
-            // Check footer
-            if (mFooterListener == null || mFooterListener.onFooterRefresh()) {
-                setFooterRefreshing(true);
-                return false;
-            }
         }
 
         if (!mHeaderEnable || canChildScrollUp() || mFooterRefreshing) {

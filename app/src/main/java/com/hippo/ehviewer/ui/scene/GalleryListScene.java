@@ -684,6 +684,16 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         }
 
         @Override
+        protected void onShowProgress() {
+            showSearchBar(true);
+        }
+
+        @Override
+        protected void onShowText() {
+            showSearchBar(true);
+        }
+
+        @Override
         protected void getPageData(int taskId, int type, int page) {
             try {
                 int source = Config.getEhSource();

@@ -82,6 +82,19 @@ public class ContentLayout extends FrameLayout {
         mImageView = mTipView.getChildAt(0);
         mTextView = (TextView) mTipView.getChildAt(1);
 
+        mRefreshLayout.setHeaderColorSchemeResources(
+                R.color.loading_indicator_red,
+                R.color.loading_indicator_purple,
+                R.color.loading_indicator_blue,
+                R.color.loading_indicator_cyan,
+                R.color.loading_indicator_green,
+                R.color.loading_indicator_yellow);
+        mRefreshLayout.setFooterColorSchemeResources(
+                R.color.loading_indicator_red,
+                R.color.loading_indicator_blue,
+                R.color.loading_indicator_green,
+                R.color.loading_indicator_orange);
+
         //
         mRecyclerViewOriginTop = mRecyclerView.getPaddingTop();
         mRecyclerViewOriginBottom = mRecyclerView.getPaddingBottom();
@@ -194,6 +207,12 @@ public class ContentLayout extends FrameLayout {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState){
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    // For footer refresh
+                    if (mRefreshLayout.isAlmostBottom()) {
+                        mRefreshLayout.requsetFooterRefresh();
+                    }
+
+                    // For current index
                     if (mPageVolume <= 0) {
                         return;
                     }
@@ -279,21 +298,29 @@ public class ContentLayout extends FrameLayout {
 
         protected abstract void onScrollToPosition();
 
+        protected abstract void onShowProgress();
+
+        protected abstract void onShowText();
+
         public void showContent() {
             mViewTransition.showView(0);
         }
 
         public void showProgressBar() {
-            showProgressBar(true);
+            mViewTransition.showView(1, false);
         }
 
         public void showProgressBar(boolean animation) {
-            mViewTransition.showView(1, animation);
+            if (mViewTransition.showView(1, animation)) {
+                onShowProgress();
+            }
         }
 
         public void showText(CharSequence text) {
-            mViewTransition.showView(2);
             mTextView.setText(text);
+            if (mViewTransition.showView(2)) {
+                onShowText();
+            }
         }
 
         /**

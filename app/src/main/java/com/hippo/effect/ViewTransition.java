@@ -53,11 +53,11 @@ public class ViewTransition {
         return mShownView;
     }
 
-    public void showView(int shownView) {
-        showView(shownView, true);
+    public boolean showView(int shownView) {
+        return showView(shownView, true);
     }
 
-    public void showView(int shownView, boolean animation) {
+    public boolean showView(int shownView, boolean animation) {
         View[] views = mViews;
         int length = views.length;
         if (shownView >= length || shownView < 0) {
@@ -104,6 +104,10 @@ public class ViewTransition {
                     }
                 }
             }
+
+            return true;
+        } else {
+            return false;
         }
     }
 
