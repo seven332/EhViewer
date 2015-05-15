@@ -94,5 +94,11 @@
     <string name="retry">Retry</string>
     <string name="_goto">Go to</string>
     <string name="unknown">Unknown</string>
+    <string name="homepage">Homepage</string>
+    <string name="whatshot">What\'s hot</string>
+    <string name="history">History</string>
+    <string name="favorite">Favorite</string>
+    <string name="download">Download</string>
+    <string name="settings">Settings</string>
 
 </resources>

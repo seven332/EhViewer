@@ -55,7 +55,6 @@ public class ContentLayout extends FrameLayout {
 
     private int mRecyclerViewOriginTop;
     private int mRecyclerViewOriginBottom;
-    private int mSnackbarOriginBottom;
 
     public ContentLayout(Context context) {
         super(context);

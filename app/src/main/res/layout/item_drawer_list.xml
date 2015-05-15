@@ -13,10 +13,17 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<selector
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:gravity="center_vertical"
+    android:drawablePadding="32dp"
+    android:minHeight="48dp"
+    android:textSize="@dimen/text_little_small"
+    android:textColor="@color/text_drawer_list"
+    android:background="@drawable/bg_item_drawer_list">
 
-    <item android:state_activated="true" android:color="@color/theme_accent"/>
-    <item android:color="@color/secondary_text_dark"/>
-
-</selector>
+</TextView>

@@ -18,7 +18,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <com.hippo.ehviewer.widget.StatusBarLayout
         xmlns:auto="http://schemas.android.com/apk/res-auto"
@@ -36,19 +37,14 @@
     </com.hippo.ehviewer.widget.StatusBarLayout>
 
     <!-- Left Drawer -->
-    <com.hippo.widget.DrawerFrameLayout
+    <com.hippo.ehviewer.widget.DrawerLeftPanel
+        android:id="@+id/drawer_left_panel"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="left"
         android:maxWidth="320dp"
-        android:background="?attr/colorAccent"
         android:fitsSystemWindows="true"
         android:clickable="true"
-        tools:ignore="RtlHardcoded">
-
-        <include
-            layout="@layout/draw_left"/>
-
-    </com.hippo.widget.DrawerFrameLayout>
+        tools:ignore="RtlHardcoded"/>
 
 </android.support.v4.widget.DrawerLayout>

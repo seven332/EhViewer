@@ -15,6 +15,9 @@
   -->
 <resources>
 
+    <!-- DrawerList -->
+    <dimen name="drawer_list_drawable_size">24dp</dimen>
+
     <!-- RatingView -->
     <dimen name="rating_size">16dp</dimen>
     <dimen name="rating_interval">1dp</dimen>

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ Copyright (C) 2015 Hippo Seven
   ~
@@ -16,7 +17,7 @@
 <selector
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:state_activated="true" android:color="@color/theme_accent"/>
-    <item android:color="@color/secondary_text_dark"/>
+    <item android:state_activated="true" android:color="@color/primary_text_dark"/>
+    <item android:color="@color/primary_text_light"/>
 
 </selector>
