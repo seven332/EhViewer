@@ -60,6 +60,15 @@
     <string name="go_to_error_not_number">请输入数字</string>
     <string name="go_to_error_invaild">当前页面无效</string>
 
+    <!-- Error message -->
+    <string name="em_timeout">超时</string>
+    <string name="em_unknown_host">找不到主机</string>
+    <string name="em_response_code">返回码错误：%d</string>
+    <string name="em_redirection">太多重定向</string>
+    <string name="em_socket">网络错误</string>
+    <string name="em_unknown">奇怪的问题</string>
+    <string name="erm_unknown_host">联网了么？</string>
+
     <string name="keyword">关键字</string>
     <string name="search">搜索</string>
     <string name="retry">重试</string>

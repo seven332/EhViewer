@@ -65,6 +65,14 @@ public class ResponseCodeException extends Exception {
         mMessage = message;
     }
 
+    public int getResponseCode() {
+        return mResponseCode;
+    }
+
+    public boolean isIdentifiedResponseCode() {
+        return !DEFAULT_ERROR_MESSAGE.equals(mMessage);
+    }
+
     @Override
     public String getMessage() {
         return mMessage;

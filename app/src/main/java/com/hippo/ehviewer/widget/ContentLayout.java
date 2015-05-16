@@ -26,14 +26,16 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
 import com.hippo.util.AssertUtils;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.util.IntIdGenerator;
 import com.hippo.util.LayoutManagerUtils;
+import com.hippo.util.Log;
 import com.hippo.util.UiUtils;
-import com.hippo.widget.Snackbar;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.refreshlayout.RefreshLayout;
 
@@ -48,7 +50,6 @@ public class ContentLayout extends FrameLayout {
     private EasyRecyclerView mRecyclerView;
     private View mImageView;
     private TextView mTextView;
-    private Snackbar mSnackbar;
 
     private ContentHelper mContentHelper;
 
@@ -77,7 +78,6 @@ public class ContentLayout extends FrameLayout {
         mProgressBar = (ProgressBar) getChildAt(0);
         mTipView = (ViewGroup) getChildAt(1);
         mRefreshLayout = (RefreshLayout) getChildAt(2);
-        mSnackbar = (Snackbar) getChildAt(3);
         mRecyclerView = (EasyRecyclerView) mRefreshLayout.getChildAt(1);
         mImageView = mTipView.getChildAt(0);
         mTextView = (TextView) mTipView.getChildAt(1);
@@ -98,9 +98,6 @@ public class ContentLayout extends FrameLayout {
         //
         mRecyclerViewOriginTop = mRecyclerView.getPaddingTop();
         mRecyclerViewOriginBottom = mRecyclerView.getPaddingBottom();
-
-        // Snackbar
-        mSnackbarOriginBottom = mSnackbar.getPaddingBottom();
     }
 
     public EasyRecyclerView getRecyclerView() {
@@ -124,8 +121,6 @@ public class ContentLayout extends FrameLayout {
         mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(),
                 mRecyclerView.getPaddingTop(), mRecyclerView.getPaddingRight(),
                 mRecyclerViewOriginBottom + fitPaddingBottom);
-        // Snackbar
-        mSnackbar.setPadding(mSnackbar.getPaddingLeft(), mSnackbar.getPaddingTop(), mSnackbar.getPaddingRight(), mSnackbarOriginBottom + fitPaddingBottom);
     }
 
     @Override
@@ -163,7 +158,6 @@ public class ContentLayout extends FrameLayout {
         private EasyRecyclerView mRecyclerView;
         private View mImageView;
         private TextView mTextView;
-        private Snackbar mSnackbar;
         private RecyclerView.LayoutManager mLayoutManager;
 
         private ViewTransition mViewTransition;
@@ -275,7 +269,6 @@ public class ContentLayout extends FrameLayout {
             mProgressBar = contentLayout.mProgressBar;
             mTipView = contentLayout.mTipView;
             mRefreshLayout = contentLayout.mRefreshLayout;
-            mSnackbar = contentLayout.mSnackbar;
             mRecyclerView = contentLayout.mRecyclerView;
             mImageView = contentLayout.mImageView;
             mTextView = contentLayout.mTextView;
@@ -291,7 +284,6 @@ public class ContentLayout extends FrameLayout {
             mRefreshLayout.setOnFooterRefreshListener(this);
 
             mTipView.setOnClickListener(this);
-            mSnackbar.setAction(mContext.getString(R.string.retry), this);
         }
 
         protected abstract RecyclerView.LayoutManager generateLayoutManager();
@@ -441,7 +433,17 @@ public class ContentLayout extends FrameLayout {
             if (mCurrentTaskId == taskId) {
                 mRefreshLayout.setHeaderRefreshing(false);
                 mRefreshLayout.setFooterRefreshing(false);
-                showText(e.getClass().getName());
+                Log.d("Get page data failed " + e.getClass().getName() + " " + e.getMessage());
+                String readableError = ExceptionUtils.getReadableString(mContext, e);
+                String reason = ExceptionUtils.getReasonString(mContext, e);
+                if (reason != null) {
+                    readableError += '\n' + reason;
+                }
+                if (mViewTransition.getShownViewIndex() == 0) {
+                    Toast.makeText(mContext, readableError, Toast.LENGTH_SHORT).show();
+                } else {
+                    showText(readableError);
+                }
             }
         }
 

@@ -80,6 +80,15 @@
     <string name="go_to_error_not_number">Please enter a number</string>
     <string name="go_to_error_invaild">The page is invaild</string>
 
+    <!-- Error message -->
+    <string name="em_timeout">Timeout</string>
+    <string name="em_unknown_host">Unknown host</string>
+    <string name="em_response_code">Unexpected response code: %d</string>
+    <string name="em_redirection">Too many redirections</string>
+    <string name="em_socket">Network error</string>
+    <string name="em_unknown">Weird</string>
+    <string name="erm_unknown_host">Network available ?</string>
+
     <string name="keyword">Keyword</string>
     <string name="search">Search</string>
     <string name="retry">Retry</string>

@@ -43,6 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
             android:paddingTop="@dimen/keyline_margin"
             android:paddingBottom="@dimen/keyline_margin"/>
 
@@ -62,13 +63,5 @@
             tools:ignore="RtlHardcoded"/>
 
     </com.hippo.widget.refreshlayout.RefreshLayout>
-
-    <com.hippo.widget.Snackbar
-        android:id="@+id/snackbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:visibility="gone"
-        auto:message="@string/refresh_snackbar_message"/>
 
 </merge>
