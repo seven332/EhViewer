@@ -646,6 +646,8 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
         private LayoutInflater mInflater;
 
+        private GalleryListListener mLastGalleryListListener;
+
         private Runnable mSearchBarPositionTask = new Runnable() {
             @Override
             public void run() {
@@ -660,6 +662,11 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
         private GalleryListHelper(Context context, GalleryListHelper oldContentHelper) {
             super(context, oldContentHelper);
+            // Update gallery listener
+            mLastGalleryListListener = oldContentHelper.mLastGalleryListListener;
+            if (mLastGalleryListListener != null) {
+                mLastGalleryListListener.setGalleryListHelper(this);
+            }
             init();
         }
 
@@ -669,6 +676,12 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
         private void init() {
             mInflater = mActivity.getLayoutInflater();
+        }
+
+        private void clearLastGalleryListListener(GalleryListListener listener) {
+            if (mLastGalleryListListener == listener) {
+                mLastGalleryListListener = null;
+            }
         }
 
         @Override
@@ -701,6 +714,8 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
                 String url =  mListUrlBuilder.build(source);
                 GalleryListListener listener = new GalleryListListener(taskId, type,
                         page, source);
+                listener.setGalleryListHelper(this);
+                mLastGalleryListListener = listener;
                 EhClient.getInstance().getGalleryList(source, url, listener);
             } catch (UnsupportedSearchException e) {
                 onGetPageData(taskId, e);
@@ -731,12 +746,14 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         }
     }
 
-    private class GalleryListListener extends EhClient.OnGetGalleryListListener {
+    private static class GalleryListListener extends EhClient.OnGetGalleryListListener {
 
         private int mTaskId;
         private int mTaskType;
         private int mTargetPage;
         private int mSource;
+
+        private GalleryListHelper mHelper;
 
         public GalleryListListener(int taskId, int taskType, int targetPage, int source) {
             mTaskId = taskId;
@@ -745,23 +762,35 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
             mSource = source;
         }
 
+        public void setGalleryListHelper(GalleryListHelper helper) {
+            mHelper = helper;
+        }
+
         @Override
         public void onSuccess(List<GalleryInfo> glList, int pageNum) {
-            if (mSource == EhClient.SOURCE_LOFI) {
-                if (pageNum == ListParser.CURRENT_PAGE_IS_LAST) {
-                    mGalleryListHelper.setPageSize(mTargetPage);
-                } else if (mTaskType == ContentLayout.ContentHelper.TYPE_REFRESH) {
-                    mGalleryListHelper.setPageSize(Integer.MAX_VALUE);
+            if (mHelper != null) {
+                if (mSource == EhClient.SOURCE_LOFI) {
+                    if (pageNum == ListParser.CURRENT_PAGE_IS_LAST) {
+                        mHelper.setPageSize(mTargetPage);
+                    } else if (mTaskType == ContentLayout.ContentHelper.TYPE_REFRESH) {
+                        mHelper.setPageSize(Integer.MAX_VALUE);
+                    }
+                } else {
+                    mHelper.setPageSize(pageNum);
                 }
-            } else {
-                mGalleryListHelper.setPageSize(pageNum);
+                mHelper.onGetPageData(mTaskId, glList);
+
+                mHelper.clearLastGalleryListListener(this);
             }
-            mGalleryListHelper.onGetPageData(mTaskId, glList);
         }
 
         @Override
         public void onFailure(Exception e) {
-            mGalleryListHelper.onGetPageData(mTaskId, e);
+            if (mHelper != null) {
+                mHelper.onGetPageData(mTaskId, e);
+
+                mHelper.clearLastGalleryListListener(this);
+            }
         }
     }
 }
