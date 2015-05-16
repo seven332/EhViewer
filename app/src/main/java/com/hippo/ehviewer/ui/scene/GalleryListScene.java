@@ -47,7 +47,7 @@ import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
-import com.hippo.ehviewer.client.ListParser;
+import com.hippo.ehviewer.client.GalleryListParser;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.ListUrlBuilder;
 import com.hippo.ehviewer.data.UnsupportedSearchException;
@@ -60,6 +60,7 @@ import com.hippo.ehviewer.widget.RatingView;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchDatabase;
 import com.hippo.ehviewer.widget.SearchLayout;
+import com.hippo.scene.Announcer;
 import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
 import com.hippo.util.AnimationUtils;
@@ -78,6 +79,11 @@ import java.util.List;
 public class GalleryListScene extends Scene implements SearchBar.Helper,
         View.OnClickListener, FabLayout.OnCancelListener,
         SearchLayout.SearhLayoutHelper {
+
+    public static final String KEY_MODE = "mode";
+
+    public static final int MODE_HOMEPAGE = 0;
+    public static final int MODE_POPULAR = 1;
 
     private static final long ANIMATE_TIME = 300l;
 
@@ -180,12 +186,50 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
             };
 
     @Override
+    public int getLaunchMode() {
+        return LAUNCH_MODE_SINGLE_TOP;
+    }
+
+    @Override
     protected void onReplace(@NonNull Scene oldScene) {
         super.onReplace(oldScene);
 
         GalleryListScene oldGalleryListScene = (GalleryListScene) oldScene;
         mGalleryListHelper = oldGalleryListScene.mGalleryListHelper
                 .newInstance(getStageActivity());
+    }
+
+    private void handleAnnouncer(Announcer announcer) {
+        int mode = MODE_HOMEPAGE;
+        if (announcer != null) {
+            mode = announcer.getIntExtra(KEY_MODE, MODE_HOMEPAGE);
+        }
+
+        switch (mode) {
+            default:
+            case MODE_HOMEPAGE:
+                mActivity.setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_HOMEPAGE);
+                mListUrlBuilder.setMode(ListUrlBuilder.MODE_NORMAL);
+                break;
+            case MODE_POPULAR:
+                mActivity.setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_WHATS_HOT);
+                mListUrlBuilder.setMode(ListUrlBuilder.MODE_POPULAR);
+                break;
+        }
+
+        if (announcer == null) {
+            mGalleryListHelper.firstRefresh();
+        } else {
+            showSearchBar(true);
+            mGalleryListHelper.refresh();
+        }
+    }
+
+    @Override
+    protected void onNewAnnouncer(Announcer announcer) {
+        super.onNewAnnouncer(announcer);
+
+        handleAnnouncer(announcer);
     }
 
     @SuppressWarnings("deprecation")
@@ -223,8 +267,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
                 ViewUtils.removeOnGlobalLayoutListener(mSearchBar.getViewTreeObserver(), this);
                 mSearchBarOriginalTop = mSearchBar.getTop();
                 mSearchBarOriginalBottom = mSearchBar.getBottom();
-                int fitPaddingTop = mSearchBar.getHeight() +
-                        mResources.getDimensionPixelOffset(R.dimen.search_bar_padding_vertical);
+                int fitPaddingTop = mSearchBar.getHeight() + mResources.getDimensionPixelOffset(R.dimen.search_bar_padding_vertical);
                 mContentLayout.setFitPaddingTop(fitPaddingTop);
                 mSearchLayout.setFitPaddingTop(fitPaddingTop);
             }
@@ -255,7 +298,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
         // When scene start
         if (savedInstanceState == null) {
-            mGalleryListHelper.firstRefresh();
+            handleAnnouncer(getAnnouncer());
         }
     }
 
@@ -447,6 +490,8 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
             return;
         }
 
+        mActivity.setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_NONE);
+
         mSearchDatabase.addQuery(query);
 
         if (mViewTransition.getShownViewIndex() == 0) {
@@ -463,7 +508,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         mState = STATE_NORMAL;
         mViewTransition.showView(0);
         mSearchBar.setState(SearchBar.STATE_NORMAL);
-        returnSearchBarPosition();
+        showSearchBar(true);
         setFabState(FAB_STATE_NORMAL);
 
         mGalleryListHelper.refresh();
@@ -486,17 +531,19 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         int offset = mSearchBarOriginalTop - mSearchBar.getTop();
         if (offset != 0) {
             if (animation) {
+                final boolean needRequestLayout = mSearchBar.getBottom() <= 0 && offset > 0;
                 final ValueAnimator va = ValueAnimator.ofInt(0, offset);
                 va.setDuration(ANIMATE_TIME);
                 va.addListener(new SimpleAnimatorListener() {
                     @Override
-                    public void onAnimationEnd(Animator animation) {
+                    public void onAnimationEnd(Animator animation, boolean canceled) {
+                        super.onAnimationEnd(animation, canceled);
                         mSearchBarMoveAnimator = null;
                     }
                 });
                 va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     int lastValue;
-
+                    boolean hasRequestLayout;
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
                         int value = (Integer) animation.getAnimatedValue();
@@ -504,8 +551,16 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
                         lastValue = value;
                         mSearchBar.offsetTopAndBottom(offsetStep);
                         ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offsetStep;
+
+                        if (!hasRequestLayout && needRequestLayout && mSearchBar.getBottom() > 0) {
+                            hasRequestLayout = true;
+                            mSearchBar.requestLayout();
+                        }
                     }
                 });
+                if (mSearchBarMoveAnimator != null) {
+                    mSearchBarMoveAnimator.cancel();
+                }
                 mSearchBarMoveAnimator = va;
                 va.start();
             } else {
@@ -646,7 +701,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
         private LayoutInflater mInflater;
 
-        private GalleryListListener mLastGalleryListListener;
+        private GalleryListHelperSettable mListener;
 
         private Runnable mSearchBarPositionTask = new Runnable() {
             @Override
@@ -663,9 +718,9 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         private GalleryListHelper(Context context, GalleryListHelper oldContentHelper) {
             super(context, oldContentHelper);
             // Update gallery listener
-            mLastGalleryListListener = oldContentHelper.mLastGalleryListListener;
-            if (mLastGalleryListListener != null) {
-                mLastGalleryListListener.setGalleryListHelper(this);
+            mListener = oldContentHelper.mListener;
+            if (mListener != null) {
+                mListener.setGalleryListHelper(this);
             }
             init();
         }
@@ -678,9 +733,9 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
             mInflater = mActivity.getLayoutInflater();
         }
 
-        private void clearLastGalleryListListener(GalleryListListener listener) {
-            if (mLastGalleryListListener == listener) {
-                mLastGalleryListListener = null;
+        private void clearLastGalleryListHelperSettable(GalleryListHelperSettable listener) {
+            if (mListener == listener) {
+                mListener = null;
             }
         }
 
@@ -708,17 +763,25 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
 
         @Override
         protected void getPageData(int taskId, int type, int page) {
-            try {
-                int source = Config.getEhSource();
-                mListUrlBuilder.setPageIndex(page);
-                String url =  mListUrlBuilder.build(source);
-                GalleryListListener listener = new GalleryListListener(taskId, type,
-                        page, source);
+            int mode = mListUrlBuilder.getMode();
+            if (mode == ListUrlBuilder.MODE_POPULAR) {
+                PopularListener listener = new PopularListener(taskId);
                 listener.setGalleryListHelper(this);
-                mLastGalleryListListener = listener;
-                EhClient.getInstance().getGalleryList(source, url, listener);
-            } catch (UnsupportedSearchException e) {
-                onGetPageData(taskId, e);
+                mListener = listener;
+                EhClient.getInstance().getPopular(listener);
+            } else {
+                try {
+                    int source = Config.getEhSource();
+                    mListUrlBuilder.setPageIndex(page);
+                    String url =  mListUrlBuilder.build(source);
+                    GalleryListListener listener = new GalleryListListener(taskId,
+                            type, page, source);
+                    listener.setGalleryListHelper(this);
+                    mListener = listener;
+                    EhClient.getInstance().getGalleryList(source, url, listener);
+                } catch (UnsupportedSearchException e) {
+                    onGetPageData(taskId, e);
+                }
             }
         }
 
@@ -746,7 +809,8 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         }
     }
 
-    private static class GalleryListListener extends EhClient.OnGetGalleryListListener {
+    private static class GalleryListListener extends EhClient.OnGetGalleryListListener
+            implements GalleryListHelperSettable {
 
         private int mTaskId;
         private int mTaskType;
@@ -762,6 +826,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
             mSource = source;
         }
 
+        @Override
         public void setGalleryListHelper(GalleryListHelper helper) {
             mHelper = helper;
         }
@@ -770,7 +835,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
         public void onSuccess(List<GalleryInfo> glList, int pageNum) {
             if (mHelper != null) {
                 if (mSource == EhClient.SOURCE_LOFI) {
-                    if (pageNum == ListParser.CURRENT_PAGE_IS_LAST) {
+                    if (pageNum == GalleryListParser.CURRENT_PAGE_IS_LAST) {
                         mHelper.setPageSize(mTargetPage);
                     } else if (mTaskType == ContentLayout.ContentHelper.TYPE_REFRESH) {
                         mHelper.setPageSize(Integer.MAX_VALUE);
@@ -780,7 +845,7 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
                 }
                 mHelper.onGetPageData(mTaskId, glList);
 
-                mHelper.clearLastGalleryListListener(this);
+                mHelper.clearLastGalleryListHelperSettable(this);
             }
         }
 
@@ -789,8 +854,47 @@ public class GalleryListScene extends Scene implements SearchBar.Helper,
             if (mHelper != null) {
                 mHelper.onGetPageData(mTaskId, e);
 
-                mHelper.clearLastGalleryListListener(this);
+                mHelper.clearLastGalleryListHelperSettable(this);
             }
         }
+    }
+
+    private static class PopularListener extends EhClient.OnGetPopularListener
+            implements GalleryListHelperSettable {
+
+        private int mTaskId;
+        private GalleryListHelper mHelper;
+
+        public PopularListener(int taskId) {
+            mTaskId = taskId;
+        }
+
+        @Override
+        public void setGalleryListHelper(GalleryListHelper helper) {
+            mHelper = helper;
+        }
+
+        @Override
+        public void onSuccess(List<GalleryInfo> glList, long timeStamp) {
+            if (mHelper != null) {
+                mHelper.setPageSize(1);
+                mHelper.onGetPageData(mTaskId, glList);
+
+                mHelper.clearLastGalleryListHelperSettable(this);
+            }
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            if (mHelper != null) {
+                mHelper.onGetPageData(mTaskId, e);
+
+                mHelper.clearLastGalleryListHelperSettable(this);
+            }
+        }
+    }
+
+    private interface GalleryListHelperSettable {
+        void setGalleryListHelper(GalleryListHelper helper);
     }
 }

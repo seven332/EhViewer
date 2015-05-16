@@ -17,7 +17,13 @@ package com.hippo.ehviewer.util;
 
 import android.graphics.Color;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public final class EhUtils {
+
+    public static final DateFormat POST_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 
     public static final String EH_DOWNLOAD_FILENAME = ".ehviewer";
 
@@ -118,5 +124,9 @@ public final class EhUtils {
             default:
                 return BG_COLOR_UNKNOWN;
         }
+    }
+
+    public static String formatPostDate(long date) {
+        return POST_DATE_FORMAT.format(date);
     }
 }

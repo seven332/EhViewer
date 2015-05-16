@@ -23,6 +23,8 @@ import com.hippo.ehviewer.network.EhHttpHelper;
 import com.hippo.network.ResponseCodeException;
 import com.hippo.util.PriorityThreadFactory;
 
+import org.json.JSONObject;
+
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -30,6 +32,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("unchecked")
 public final class EhClient {
 
     @SuppressWarnings("unused")
@@ -107,10 +110,6 @@ public final class EhClient {
         void onFailure(Exception e);
     }
 
-    public abstract static class OnGetGalleryListListener implements EhClientListener {
-        public abstract void onSuccess(List<GalleryInfo> glList, int pageNum);
-    }
-
     private void doBgJob(BgJobHelper bjh) {
         new AsyncTask<BgJobHelper, Void, BgJobHelper>() {
             @Override
@@ -165,7 +164,6 @@ public final class EhClient {
         public abstract void doBgJob() throws Exception;
 
         public abstract void doSuccessCallback();
-
     }
 
     private void checkRequest(EhHttpHelper ehh) throws ResponseCodeException {
@@ -176,14 +174,19 @@ public final class EhClient {
     }
 
     private Object[] doGetGalleryList(int source, String url) throws Exception {
-        EhHttpHelper ehh = new EhHttpHelper();
+        EhHttpHelper ehh = EhHttpHelper.obtain();
         String body = ehh.get(url);
 
         checkRequest(ehh);
+        EhHttpHelper.recycle(ehh);
 
-        ListParser parser = new ListParser();
+        GalleryListParser parser = new GalleryListParser();
         parser.parse(body, source);
         return new Object[]{parser.giList, parser.pageNum};
+    }
+
+    public abstract static class OnGetGalleryListListener implements EhClientListener {
+        public abstract void onSuccess(List<GalleryInfo> glList, int pageNum);
     }
 
     private final class GetGalleryListHelper extends SimpleBgJobHelper {
@@ -227,4 +230,57 @@ public final class EhClient {
         doBgJob(new GetGalleryListHelper(source, url, listener));
     }
 
+    private Object[] doGetPopular() throws Exception {
+        final JSONObject json = new JSONObject();
+        json.put("method", "popular");
+
+        EhHttpHelper ehh = EhHttpHelper.obtain();
+        String body = ehh.postJson(API_EHVIEWER, json);
+
+        checkRequest(ehh);
+        EhHttpHelper.recycle(ehh);
+
+        PopularParser parser = new PopularParser();
+        parser.parse(body);
+        return new Object[]{parser.galleryInfoList, parser.timeStamp};
+    }
+
+    public abstract static class OnGetPopularListener implements EhClientListener {
+        public abstract void onSuccess(List<GalleryInfo> giList, long timeStamp);
+    }
+
+
+    private final class GetPopularHelper extends SimpleBgJobHelper {
+
+        private OnGetPopularListener mListener;
+
+        private List<GalleryInfo> mGiList;
+        private long mTimeStamp;
+
+        public GetPopularHelper(OnGetPopularListener listener) {
+            super(listener);
+            mListener = listener;
+        }
+
+        @Override
+        public void doBgJob() throws Exception {
+            Object[] objs = doGetPopular();
+            mGiList = (List<GalleryInfo>) objs[0];
+            mTimeStamp = (Long) objs[1];
+        }
+
+        @Override
+        public void doSuccessCallback() {
+            mListener.onSuccess(mGiList, mTimeStamp);
+        }
+    }
+
+    /**
+     * Get popular gallery list
+     *
+     * @param listener the listener for callback
+     */
+    public void getPopular(OnGetPopularListener listener) {
+        doBgJob(new GetPopularHelper(listener));
+    }
 }

@@ -40,6 +40,9 @@ import com.hippo.util.ViewUtils;
  */
 public abstract class Scene {
 
+    public static final int LAUNCH_MODE_STANDARD = 0;
+    public static final int LAUNCH_MODE_SINGLE_TOP = 1;
+
     static final int SCENE_STATE_CREATE = 0;
     static final int SCENE_STATE_RUN = 1;
     static final int SCENE_STATE_DESTROY = 2;
@@ -86,7 +89,7 @@ public abstract class Scene {
         return mCurtain;
     }
 
-    @Nullable Announcer getAnnouncer() {
+    public @Nullable Announcer getAnnouncer() {
         return mAnnouncer;
     }
 
@@ -95,6 +98,10 @@ public abstract class Scene {
         StageActivity stageActivity = sSceneManager.getStageActivity();
         AssertUtils.assertNotNull("StageActivity is null", stageActivity);
         return stageActivity;
+    }
+
+    public int getLaunchMode() {
+        return LAUNCH_MODE_STANDARD;
     }
 
     /**
@@ -255,6 +262,9 @@ public abstract class Scene {
         mId = oldScene.mId;
         mAnnouncer = oldScene.mAnnouncer;
         mCurtain = oldScene.mCurtain;
+    }
+
+    protected void onNewAnnouncer(Announcer announcer) {
     }
 
     /**

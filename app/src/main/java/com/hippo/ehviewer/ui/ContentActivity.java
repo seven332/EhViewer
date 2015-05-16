@@ -23,6 +23,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
+import android.view.View;
+import android.widget.AdapterView;
 
 import com.hippo.content.VectorContext;
 import com.hippo.ehviewer.R;
@@ -30,12 +32,21 @@ import com.hippo.ehviewer.ui.scene.GalleryListScene;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.widget.DrawerLeftPanel;
 import com.hippo.ehviewer.widget.StatusBarLayout;
+import com.hippo.scene.Announcer;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.StageLayout;
 import com.hippo.widget.DrawerListView;
 
 public class ContentActivity extends StageActivity
         implements StatusBarLayout.OnGetFitPaddingBottomListener {
+
+    public static final int DRAWER_LIST_NONE = -1;
+    public static final int DRAWER_LIST_HOMEPAGE = 0;
+    public static final int DRAWER_LIST_WHATS_HOT = 1;
+    public static final int DRAWER_LIST_HISTORY = 2;
+    public static final int DRAWER_LIST_FAVORITE = 3;
+    public static final int DRAWER_LIST_DOWNLOAD = 4;
+    public static final int DRAWER_LIST_SETTINGS = 5;
 
     private Resources mResources;
 
@@ -45,11 +56,43 @@ public class ContentActivity extends StageActivity
     private DrawerLeftPanel mDrawerLeftPanel;
     private DrawerListView mDrawerListView;
 
+    private AdapterView.OnItemClickListener mDrawerListListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if (mDrawerListView.getActivatedPosition() != position) {
+                Announcer announcer;
+                switch (position) {
+                    case DRAWER_LIST_HOMEPAGE:
+                        announcer = new Announcer();
+                        announcer.putExtra(GalleryListScene.KEY_MODE, GalleryListScene.MODE_HOMEPAGE);
+                        startScene(GalleryListScene.class, announcer);
+                        break;
+                    case DRAWER_LIST_WHATS_HOT:
+                        announcer = new Announcer();
+                        announcer.putExtra(GalleryListScene.KEY_MODE, GalleryListScene.MODE_POPULAR);
+                        startScene(GalleryListScene.class, announcer);
+                        break;
+                    case DRAWER_LIST_HISTORY:
+                        break;
+                    case DRAWER_LIST_FAVORITE:
+                        break;
+                    case DRAWER_LIST_DOWNLOAD:
+                        break;
+                    case DRAWER_LIST_SETTINGS:
+                        break;
+                }
+
+                mDrawerLayout.closeDrawers();
+            }
+        }
+    };
+
     @Override
     protected boolean isShowStats() {
         return Config.getShowApplicationStats();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,11 +126,11 @@ public class ContentActivity extends StageActivity
                 mResources.getString(R.string.settings)
         };
         mDrawerListView.setData(drawerListDrawables, drawerListStrings);
+        mDrawerListView.setOnItemClickListener(mDrawerListListener);
 
         // First time
         if (savedInstanceState == null) {
             startScene(GalleryListScene.class, null);
-            mDrawerListView.setActivatedPosition(0);
         }
     }
 
@@ -99,6 +142,20 @@ public class ContentActivity extends StageActivity
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(VectorContext.wrapContext(newBase));
+    }
+
+    @SuppressLint("RtlHardcoded")
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT) || mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+            mDrawerLayout.closeDrawers();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    public void setDrawerListActivatedPosition(int position) {
+        mDrawerListView.setActivatedPosition(position);
     }
 
     @SuppressLint("RtlHardcoded")

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ListParser {
+public class GalleryListParser {
     private static final String PARSE_MESSAGE = "Gallery list parser error";
 
     private static final int DEFAULT_LIST_SIZE = 25;

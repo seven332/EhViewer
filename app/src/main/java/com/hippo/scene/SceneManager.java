@@ -76,6 +76,13 @@ class SceneManager {
             return;
         }
 
+        Scene topScene = getTopState();
+        if (sceneClass.isInstance(topScene) &&
+                topScene.getLaunchMode() == Scene.LAUNCH_MODE_SINGLE_TOP) {
+            topScene.onNewAnnouncer(announcer);
+            return;
+        }
+
         Scene scene = createSceneByClass(sceneClass);
         scene.setAnnouncer(announcer);
         scene.setCurtain(curtain);

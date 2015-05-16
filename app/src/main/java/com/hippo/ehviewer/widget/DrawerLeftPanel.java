@@ -18,6 +18,7 @@ package com.hippo.ehviewer.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -30,7 +31,10 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hippo.effect.ripple.RippleSalon;
+import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
+import com.hippo.util.FrescoUtils;
+import com.hippo.util.Messenger;
 import com.hippo.widget.DrawerListView;
 
 public class DrawerLeftPanel extends LinearLayout {
@@ -39,6 +43,8 @@ public class DrawerLeftPanel extends LinearLayout {
     private static final String STATE_KEY_DRAWER_LIST_VIEW = "drawer_list_view";
 
     private static final int[] MAX_ATTRS = {android.R.attr.maxWidth};
+
+    private static Uri DEFAULT_AVATAR_URI = FrescoUtils.getResourcesDrawableUri(R.drawable.default_avatar);
 
     private int mMaxWidth = -1;
 
@@ -56,6 +62,32 @@ public class DrawerLeftPanel extends LinearLayout {
     private int mSuperUserPanelHeight;
     private int mUserPanelOriginalPaddingTop;
     private int mDrawerListViewOriginalPaddingBottom;
+
+    private boolean mSignIn;
+
+    private Messenger.Receiver mMessengerReceiver = new Messenger.Receiver() {
+        @Override
+        public void onReceive(int id, Object obj) {
+            if (id == Constants.MESSENGER_ID_SIGN_IN_OR_OUT) {
+                if (obj == null) {
+                    // Sign out
+                    mSignIn = false;
+                    mAvatar.setImageURI(DEFAULT_AVATAR_URI);
+                    mUsename.setText("");
+                    mAction.setText(mContext.getString(R.string.signin));
+                } else if (obj instanceof String) {
+                    // Sign in
+                    mSignIn = true;
+                    mUsename.setText((String) obj);
+                    mAction.setText(mContext.getString(R.string.signout));
+                }
+            } else if (id == Constants.MESSENGER_ID_USER_AVATAR) {
+                if (mSignIn && obj instanceof Uri) {
+                    mAvatar.setImageURI((Uri) obj);
+                }
+            }
+        }
+    };
 
     public DrawerLeftPanel(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -86,9 +118,9 @@ public class DrawerLeftPanel extends LinearLayout {
 
         RippleSalon.addRipple(mAction, false);
 
-        mAvatar.getHierarchy().setPlaceholderImage(R.drawable.theme_primary);
-        mUsename.setText("速度速度加快");
-        mAction.setText("退出");
+        mAvatar.setImageURI(DEFAULT_AVATAR_URI);
+        mUsename.setText("");
+        mAction.setText(mContext.getString(R.string.signin));
 
         mSuperUserPanelHeight = mSuperUserPanel.getLayoutParams().height;
         mUserPanelOriginalPaddingTop = mUserPanel.getPaddingTop();
@@ -98,6 +130,24 @@ public class DrawerLeftPanel extends LinearLayout {
     public DrawerListView getDrawerListView() {
         return mDrawerListView;
     }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        Messenger.getInstance().register(Constants.MESSENGER_ID_SIGN_IN_OR_OUT, mMessengerReceiver);
+        Messenger.getInstance().register(Constants.MESSENGER_ID_USER_AVATAR, mMessengerReceiver);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_SIGN_IN_OR_OUT, mMessengerReceiver);
+        Messenger.getInstance().register(Constants.MESSENGER_ID_USER_AVATAR, mMessengerReceiver);
+    }
+
+
 
     @Override
     public Parcelable onSaveInstanceState() {

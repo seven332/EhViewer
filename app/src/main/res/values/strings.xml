@@ -100,5 +100,7 @@
     <string name="favorite">Favorite</string>
     <string name="download">Download</string>
     <string name="settings">Settings</string>
+    <string name="signin">Sign in</string>
+    <string name="signout">Sign out</string>
 
 </resources>
