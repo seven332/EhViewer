@@ -131,4 +131,8 @@
         <item name="android:clickable">true</item>
     </style>
 
+    <style name="Text.Button.SingleLine.Accent">
+        <item name="android:textColor">@color/text_button_text_accent</item>
+    </style>
+
 </resources>

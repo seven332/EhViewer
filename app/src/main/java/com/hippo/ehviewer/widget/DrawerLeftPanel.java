@@ -23,6 +23,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,6 +43,7 @@ public class DrawerLeftPanel extends LinearLayout {
     private int mMaxWidth = -1;
 
     private ViewGroup mSuperUserPanel;
+    private View mKKStatusBarBg;
     private ViewGroup mUserPanel;
     private SimpleDraweeView mAvatar;
     private TextView mUsename;
@@ -75,7 +77,8 @@ public class DrawerLeftPanel extends LinearLayout {
         LayoutInflater.from(context).inflate(R.layout.widget_drawer_left_panel, this);
 
         mSuperUserPanel = (ViewGroup) getChildAt(0);
-        mUserPanel = (ViewGroup) mSuperUserPanel.getChildAt(1);
+        mKKStatusBarBg = mSuperUserPanel.getChildAt(1);
+        mUserPanel = (ViewGroup) mSuperUserPanel.getChildAt(2);
         mAvatar = (SimpleDraweeView) mUserPanel.getChildAt(0);
         mUsename = (TextView) mUserPanel.getChildAt(1);
         mAction = (TextView) mUserPanel.getChildAt(2);
@@ -85,7 +88,7 @@ public class DrawerLeftPanel extends LinearLayout {
 
         mAvatar.getHierarchy().setPlaceholderImage(R.drawable.theme_primary);
         mUsename.setText("速度速度加快");
-        mAction.setText("登出");
+        mAction.setText("退出");
 
         mSuperUserPanelHeight = mSuperUserPanel.getLayoutParams().height;
         mUserPanelOriginalPaddingTop = mUserPanel.getPaddingTop();
@@ -135,7 +138,13 @@ public class DrawerLeftPanel extends LinearLayout {
         if (mFitPaddingTop != fitPaddingTop) {
             mFitPaddingTop = fitPaddingTop;
 
-            ViewGroup.LayoutParams lp = mSuperUserPanel.getLayoutParams();
+            ViewGroup.LayoutParams lp;
+
+            lp = mKKStatusBarBg.getLayoutParams();
+            lp.height = fitPaddingTop;
+            mKKStatusBarBg.setLayoutParams(lp);
+
+            lp = mSuperUserPanel.getLayoutParams();
             lp.height = mSuperUserPanelHeight + fitPaddingTop;
             mSuperUserPanel.setLayoutParams(lp);
 
@@ -146,6 +155,8 @@ public class DrawerLeftPanel extends LinearLayout {
         }
 
         if (mFitPaddingBottom != fitPaddingBottom) {
+            mFitPaddingBottom = fitPaddingBottom;
+
             mDrawerListView.setPadding(mDrawerListView.getPaddingLeft(),
                     mDrawerListView.getPaddingTop(),
                     mDrawerListView.getPaddingRight(),

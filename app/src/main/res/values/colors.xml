@@ -80,6 +80,8 @@
 
     <color name="search_category_background_color">@android:color/white</color>
 
+    <color name="drawer_status_bar_bg">#4d000000</color>
+
     <!-- Scroll View -->
     <color name="scroll_view_indicator">#20000000</color>
 

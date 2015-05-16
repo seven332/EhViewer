@@ -30,11 +30,15 @@
             android:scaleType="centerCrop"
             android:contentDescription="@null"/>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/drawer_status_bar_bg"/>
+
         <RelativeLayout
             android:id="@+id/user_panel"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:ignore="Deprecated">
+            android:layout_height="match_parent">
 
             <com.facebook.drawee.view.SimpleDraweeView
                 xmlns:auto="http://schemas.android.com/apk/res-auto"
@@ -57,7 +61,7 @@
 
             <TextView
                 android:id="@+id/action"
-                style="@style/Text.Button.SingleLine"
+                style="@style/Text.Button.SingleLine.Accent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
