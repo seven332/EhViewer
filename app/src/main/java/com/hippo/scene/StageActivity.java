@@ -82,8 +82,17 @@ public abstract class StageActivity extends StatsActivity {
         }
     }
 
+    public void startScene(@NonNull Class sceneClass) {
+        sSceneManager.startScene(sceneClass, null, null);
+    }
+
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer) {
         sSceneManager.startScene(sceneClass, announcer, null);
+    }
+
+    public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer,
+            @Nullable Curtain curtain) {
+        sSceneManager.startScene(sceneClass, announcer, curtain);
     }
 
     /**

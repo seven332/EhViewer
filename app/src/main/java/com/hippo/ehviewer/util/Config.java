@@ -80,6 +80,10 @@ public final class Config {
     private static final String KEY_EH_SOURCE = "eh_source";
     private static final int DEFAULT_EH_SOURCE = BuildConfig.DEBUG ?
             EhClient.SOURCE_LOFI : EhClient.SOURCE_G;
+    private static final String KEY_IPD_MEMBER_ID = "ipb_member_id";
+    private static final String DEFAULT_IPD_MEMBER_ID = null;
+    private static final String KEY_IPD_PASS_HASH = "ipb_pass_hash";
+    private static final String DEFAULT_IPD_PASS_HASH = null;
 
     public static int getEhSource() {
         int value = getInt(KEY_EH_SOURCE, DEFAULT_EH_SOURCE);
@@ -96,6 +100,24 @@ public final class Config {
         putInt(KEY_EH_SOURCE, value);
         Messenger.getInstance().notify(Constants.MESSENGER_ID_EH_SOURCE, value);
     }
+
+    public static String getIpdNumberId() {
+        return getString(KEY_IPD_MEMBER_ID, DEFAULT_IPD_MEMBER_ID);
+    }
+
+    public static void putIpdMemberId(String value) {
+        putString(KEY_IPD_MEMBER_ID, value);
+    }
+
+    public static String getIpdPassHash() {
+        return getString(KEY_IPD_PASS_HASH, DEFAULT_IPD_PASS_HASH);
+    }
+
+    public static void putIpdPassHash(String value) {
+        putString(KEY_IPD_PASS_HASH, value);
+    }
+
+
 
     /****** Advance ******/
 

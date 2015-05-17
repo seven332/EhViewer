@@ -17,6 +17,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:state_activated="true" android:color="@color/theme_accent"/>
-    <item android:color="@color/secondary_text_dark"/>
+    <item android:color="@color/secondary_text_light"/>
 
 </selector>

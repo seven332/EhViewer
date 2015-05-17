@@ -22,13 +22,15 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -52,10 +54,11 @@ public class FloatLabelEditText extends FrameLayout {
     };
 
     private TextView mLabel;
-    private PrefixEditText mEditText;
+    private EditText mEditText;
 
     private Trigger mTrigger = Trigger.TEXT;
 
+    // Text for hint text view
     private CharSequence mHint;
 
     public FloatLabelEditText(Context context, AttributeSet attrs) {
@@ -70,39 +73,43 @@ public class FloatLabelEditText extends FrameLayout {
 
     private void init(Context context, AttributeSet attrs) {
         mLabel = new TextView(context);
+        mLabel.setVisibility(View.INVISIBLE);
         addView(mLabel, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-
-        PrefixEditText attrCollector = new PrefixEditText(context, attrs);
-        mEditText = (PrefixEditText) LayoutInflater.from(getContext()).inflate(
-                R.layout.widget_float_label_edit_text, this, false);
-        final LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        lp.gravity = Gravity.BOTTOM;
-        lp.topMargin = (int) mLabel.getTextSize();
-        addView(mEditText, lp);
-
-        // Collect attr
-        mHint = attrCollector.getHint();
-        mEditText.setInputType(attrCollector.getInputType());
 
         final TypedArray a = context
                 .obtainStyledAttributes(attrs, R.styleable.FloatLabelEditText);
         mLabel.setTextAppearance(context,
                 a.getResourceId(R.styleable.FloatLabelEditText_labelAppearance,
                         android.R.style.TextAppearance_Small));
-        CharSequence labelHint = a.getText(R.styleable.FloatLabelEditText_labelHint);
-        if (labelHint == null) {
-            labelHint = mHint;
-        }
-        mLabel.setText(labelHint);
+        mHint = a.getText(R.styleable.FloatLabelEditText_labelHint);
+        mLabel.setText(mHint);
         final int index = a.getInt(R.styleable.FloatLabelEditText_trigger, -1);
         if (index >= 0) {
             setTrigger(sTriggerArray[index]);
         }
         a.recycle();
+    }
 
-        mLabel.setVisibility(View.INVISIBLE);
+    @Override
+    public final void addView(@NonNull View child, int index, ViewGroup.LayoutParams params) {
+        if (child instanceof EditText) {
+            setEditText((EditText) child);
 
-        mEditText.setHint(mHint);
+            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) params;
+            lp.gravity = Gravity.BOTTOM;
+            lp.topMargin = (int) mLabel.getTextSize();
+        }
+
+        // Carry on adding the View...
+        super.addView(child, index, params);
+    }
+
+    private void setEditText(EditText editText) {
+        // If we already have an EditText, throw an exception
+        if (mEditText != null) {
+            throw new IllegalArgumentException("We already have an EditText, can only have one");
+        }
+        mEditText = editText;
 
         // Add a TextWatcher so that we know when the text input has changed
         mEditText.addTextChangedListener(mTextWatcher);
@@ -111,12 +118,22 @@ public class FloatLabelEditText extends FrameLayout {
         // Allows the use of a ColorStateList for the text color on the label
         mEditText.setOnFocusChangeListener(mOnFocusChangeListener);
 
+        // If we do not have a valid hint, try and retrieve it from the EditText
+        if (TextUtils.isEmpty(mHint)) {
+            setHint(mEditText.getHint());
+        }
+
         // Align with label and edittext
         mLabel.setPadding(mEditText.getPaddingLeft(), 0, 0, 0);
     }
 
     public void setTrigger(Trigger trigger) {
         mTrigger = trigger;
+    }
+
+    public void setHint(CharSequence hint) {
+        mHint = hint;
+        mLabel.setText(hint);
     }
 
     /**
@@ -177,14 +194,6 @@ public class FloatLabelEditText extends FrameLayout {
 
     public Editable getText() {
         return mEditText.getText();
-    }
-
-    public void setPrefix(int resId) {
-        mEditText.setPrefix(resId);
-    }
-
-    public void setPrefix(String prefix) {
-        mEditText.setPrefix(prefix);
     }
 
     private TextWatcher mTextWatcher = new TextWatcher() {

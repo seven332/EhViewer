@@ -29,16 +29,19 @@ import android.widget.AdapterView;
 import com.hippo.content.VectorContext;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
+import com.hippo.ehviewer.ui.scene.SignInScene;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.widget.DrawerLeftPanel;
 import com.hippo.ehviewer.widget.StatusBarLayout;
 import com.hippo.scene.Announcer;
+import com.hippo.scene.SimpleCurtain;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.StageLayout;
 import com.hippo.widget.DrawerListView;
 
-public class ContentActivity extends StageActivity
-        implements StatusBarLayout.OnGetFitPaddingBottomListener {
+public final class ContentActivity extends StageActivity
+        implements StatusBarLayout.OnGetFitPaddingBottomListener,
+        DrawerLeftPanel.Helper {
 
     public static final int DRAWER_LIST_NONE = -1;
     public static final int DRAWER_LIST_HOMEPAGE = 0;
@@ -92,6 +95,7 @@ public class ContentActivity extends StageActivity
         return Config.getShowApplicationStats();
     }
 
+    @SuppressLint("RtlHardcoded")
     @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +111,10 @@ public class ContentActivity extends StageActivity
         mDrawerListView = mDrawerLeftPanel.getDrawerListView();
 
         mStatusBarLayout.setOnGetFitPaddingBottomListener(this);
+
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_left, Gravity.LEFT);
+
+        mDrawerLeftPanel.setHelper(this);
 
         // Drawer
         Drawable[] drawerListDrawables = new Drawable[] {
@@ -170,5 +178,16 @@ public class ContentActivity extends StageActivity
     @Override
     public void onGetFitPaddingBottom(int b) {
         setFitPaddingBottom(b);
+    }
+
+    @Override
+    public void onClickSignIn() {
+        mDrawerLayout.closeDrawers();
+        startScene(SignInScene.class, null, new SimpleCurtain(SimpleCurtain.DIRECTION_BOTTOM));
+    }
+
+    @Override
+    public void onClickSignOut() {
+
     }
 }

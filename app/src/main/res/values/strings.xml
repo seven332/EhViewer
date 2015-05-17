@@ -89,6 +89,10 @@
     <string name="em_unknown">Weird</string>
     <string name="erm_unknown_host">Network available ?</string>
 
+    <!-- Sign in -->
+    <string name="line_dean">\"What ?\"</string>
+    <string name="line_sam">\"I lose my panda …\"</string>
+
     <string name="keyword">Keyword</string>
     <string name="search">Search</string>
     <string name="retry">Retry</string>
@@ -100,7 +104,10 @@
     <string name="favorite">Favorite</string>
     <string name="download">Download</string>
     <string name="settings">Settings</string>
+    <string name="signup">Sign up</string>
     <string name="signin">Sign in</string>
     <string name="signout">Sign out</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 
 </resources>

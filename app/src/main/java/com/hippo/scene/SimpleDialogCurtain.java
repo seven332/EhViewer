@@ -20,14 +20,12 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.support.annotation.NonNull;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
-import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.animation.Interpolator;
 
 import com.hippo.animation.ArgbEvaluator;
 import com.hippo.animation.SimpleAnimatorListener;
+import com.hippo.util.AnimationUtils;
 import com.hippo.util.AssertUtils;
 import com.hippo.util.ViewUtils;
 
@@ -37,9 +35,6 @@ import java.util.Set;
 public class SimpleDialogCurtain extends Curtain {
 
     private static long ANIMATE_TIME = 300L;
-
-    private final static Interpolator FAST_OUT_LINEAR_IN_INTERPOLATOR = new FastOutLinearInInterpolator();
-    private final static Interpolator LINEAR_OUT_SLOW_IN_INTERPOLATOR = new LinearOutSlowInInterpolator();
 
     private int mStartX;
     private int mStartY;
@@ -69,7 +64,7 @@ public class SimpleDialogCurtain extends Curtain {
         ObjectAnimator colorAnim = ObjectAnimator.ofInt(enter, "backgroundColor", bgColor);
         colorAnim.setEvaluator(ArgbEvaluator.getInstance());
         colorAnim.setDuration(ANIMATE_TIME);
-        colorAnim.setInterpolator(LINEAR_OUT_SLOW_IN_INTERPOLATOR);
+        colorAnim.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
         animatorCollection.add(colorAnim);
 
         final View mFrame = enterDialog.getFrame();
@@ -111,7 +106,7 @@ public class SimpleDialogCurtain extends Curtain {
                 PropertyValuesHolder bottomPvh = PropertyValuesHolder.ofInt("drawBottom", startBottom, endBottom);
                 ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(mFrame, leftPvh, topPvh, rightPvh, bottomPvh);
                 anim.setDuration(ANIMATE_TIME);
-                anim.setInterpolator(LINEAR_OUT_SLOW_IN_INTERPOLATOR);
+                anim.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
 
                 animatorCollection.add(anim);
 
@@ -147,7 +142,7 @@ public class SimpleDialogCurtain extends Curtain {
         colorAnim.setEvaluator(ArgbEvaluator.getInstance());
         colorAnim.setDuration(ANIMATE_TIME);
         animatorCollection.add(colorAnim);
-        colorAnim.setInterpolator(FAST_OUT_LINEAR_IN_INTERPOLATOR);
+        colorAnim.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
 
         final View mFrame = exitDialog.getFrame();
         AssertUtils.assertNotNull("Frame view must not be null.", mFrame);
@@ -180,7 +175,7 @@ public class SimpleDialogCurtain extends Curtain {
         PropertyValuesHolder bottomPvh = PropertyValuesHolder.ofInt("drawBottom", startBottom, endBottom);
         ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(mFrame, leftPvh, topPvh, rightPvh, bottomPvh);
         anim.setDuration(ANIMATE_TIME);
-        anim.setInterpolator(FAST_OUT_LINEAR_IN_INTERPOLATOR);
+        anim.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
 
         animatorCollection.add(anim);
 

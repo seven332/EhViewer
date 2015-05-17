@@ -69,10 +69,25 @@
     <string name="em_unknown">奇怪的问题</string>
     <string name="erm_unknown_host">联网了么？</string>
 
+    <!-- Sign in -->
+    <string name="line_dean">“啥？”</string>
+    <string name="line_sam">“我把熊猫给丢了……”</string>
+
     <string name="keyword">关键字</string>
     <string name="search">搜索</string>
     <string name="retry">重试</string>
     <string name="_goto">跳页</string>
     <string name="unknown">未知</string>
+    <string name="homepage">首页</string>
+    <string name="whatshot">热门</string>
+    <string name="history">历史</string>
+    <string name="favorite">收藏</string>
+    <string name="download">下载</string>
+    <string name="settings">设置</string>
+    <string name="signup">注册</string>
+    <string name="signin">登录</string>
+    <string name="signout">退出</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
 
 </resources>

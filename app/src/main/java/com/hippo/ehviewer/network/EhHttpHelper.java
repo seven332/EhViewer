@@ -27,6 +27,11 @@ public class EhHttpHelper extends HttpHelper {
 
     private static final Pool<EhHttpHelper> sPool = new Pool<>(10);
 
+    private static String[] EHENTAI_DOMAIN = {
+            "exhentai.org",
+            "e-hentai.org"
+    };
+
     public static @NonNull EhHttpHelper obtain() {
         EhHttpHelper ehh = sPool.obtain();
         if (ehh == null) {

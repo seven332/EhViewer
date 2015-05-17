@@ -65,6 +65,8 @@ public class DrawerLeftPanel extends LinearLayout {
 
     private boolean mSignIn;
 
+    private Helper mHelper;
+
     private Messenger.Receiver mMessengerReceiver = new Messenger.Receiver() {
         @Override
         public void onReceive(int id, Object obj) {
@@ -117,18 +119,35 @@ public class DrawerLeftPanel extends LinearLayout {
         mDrawerListView = (DrawerListView) getChildAt(1);
 
         RippleSalon.addRipple(mAction, false);
-
-        mAvatar.setImageURI(DEFAULT_AVATAR_URI);
-        mUsename.setText("");
-        mAction.setText(mContext.getString(R.string.signin));
+        mAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mHelper != null) {
+                    if (mSignIn) {
+                        mHelper.onClickSignOut();
+                    } else {
+                        mHelper.onClickSignIn();
+                    }
+                }
+            }
+        });
 
         mSuperUserPanelHeight = mSuperUserPanel.getLayoutParams().height;
         mUserPanelOriginalPaddingTop = mUserPanel.getPaddingTop();
         mDrawerListViewOriginalPaddingBottom = mDrawerListView.getPaddingBottom();
+
+        // TODO
+        mAvatar.setImageURI(DEFAULT_AVATAR_URI);
+        mUsename.setText("");
+        mAction.setText(mContext.getString(R.string.signin));
     }
 
     public DrawerListView getDrawerListView() {
         return mDrawerListView;
+    }
+
+    public void setHelper(Helper helper) {
+        mHelper = helper;
     }
 
     @Override
@@ -216,5 +235,10 @@ public class DrawerLeftPanel extends LinearLayout {
         insets.set(insets.left, 0, insets.right, 0);
 
         return super.fitSystemWindows(insets);
+    }
+
+    public interface Helper {
+        void onClickSignIn();
+        void onClickSignOut();
     }
 }
