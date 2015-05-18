@@ -80,7 +80,7 @@ public final class LayoutManagerUtils {
 
     public static void scrollToPositionProperly(final RecyclerView.LayoutManager layoutManager,
             final Context context, final int position, final OnScrollToPositionListener listener) {
-        AppHandler.getInstance().post(new Runnable() {
+        AppHandler.getInstance().postDelayed(new Runnable() {
             @Override
             public void run() {
                 int first = getFirstVisibleItemPostion(layoutManager);
@@ -97,7 +97,7 @@ public final class LayoutManagerUtils {
                     }
                 }
             }
-        });
+        }, 200);
     }
 
     public static int getFirstVisibleItemPostion(RecyclerView.LayoutManager layoutManager) {
