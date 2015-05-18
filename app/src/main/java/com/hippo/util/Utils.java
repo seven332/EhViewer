@@ -15,6 +15,7 @@
 
 package com.hippo.util;
 
+import android.annotation.NonNull;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -803,5 +804,14 @@ public final class Utils {
         } catch (Throwable e) {
             return EMPTY_STRING;
         }
+    }
+
+    public static boolean contain(@NonNull Object[] array, Object obj) {
+        for (Object o : array) {
+            if (o.equals(obj)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

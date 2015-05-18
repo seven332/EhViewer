@@ -79,11 +79,17 @@ public final class Config {
 
     private static final String KEY_EH_SOURCE = "eh_source";
     private static final int DEFAULT_EH_SOURCE = BuildConfig.DEBUG ?
-            EhClient.SOURCE_LOFI : EhClient.SOURCE_G;
+            EhClient.SOURCE_EX : EhClient.SOURCE_G;
+    private static final String KEY_SIGN_IN = "sign_in";
+    private static final boolean DEFAULT_SIGN_IN = false;
+    private static final String KEY_DISPLAY_NAME = "display_name";
+    private static final String DEFAULT_DISPLAY_NAME = null;
     private static final String KEY_IPD_MEMBER_ID = "ipb_member_id";
     private static final String DEFAULT_IPD_MEMBER_ID = null;
     private static final String KEY_IPD_PASS_HASH = "ipb_pass_hash";
     private static final String DEFAULT_IPD_PASS_HASH = null;
+    private static final String KEY_IGNEOUS = "igneous";
+    private static final String DEFAULT_IGNEOUS = null;
 
     public static int getEhSource() {
         int value = getInt(KEY_EH_SOURCE, DEFAULT_EH_SOURCE);
@@ -99,6 +105,22 @@ public final class Config {
         }
         putInt(KEY_EH_SOURCE, value);
         Messenger.getInstance().notify(Constants.MESSENGER_ID_EH_SOURCE, value);
+    }
+
+    public static boolean getSignIn() {
+        return getBoolean(KEY_SIGN_IN, DEFAULT_SIGN_IN);
+    }
+
+    public static void putSignIn(boolean value) {
+        putBoolean(KEY_SIGN_IN, value);
+    }
+
+    public static String getDisplayName() {
+        return getString(KEY_DISPLAY_NAME, DEFAULT_DISPLAY_NAME);
+    }
+
+    public static void putDisplayName(String value) {
+        putString(KEY_DISPLAY_NAME, value);
     }
 
     public static String getIpdNumberId() {
@@ -117,6 +139,20 @@ public final class Config {
         putString(KEY_IPD_PASS_HASH, value);
     }
 
+    public static String getIgneous() {
+        String igneous = getString(KEY_IGNEOUS, DEFAULT_IGNEOUS);
+        if ("mystery".equals(igneous)) {
+            return null;
+        } else {
+            return igneous;
+        }
+    }
+
+    public static void putIgneous(String value) {
+        if (!"mystery".equals(value)) {
+            putString(KEY_IGNEOUS, value);
+        }
+    }
 
 
     /****** Advance ******/

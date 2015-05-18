@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import com.hippo.content.VectorContext;
+import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
 import com.hippo.ehviewer.ui.scene.SignInScene;
@@ -37,6 +38,7 @@ import com.hippo.scene.Announcer;
 import com.hippo.scene.SimpleCurtain;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.StageLayout;
+import com.hippo.util.Messenger;
 import com.hippo.widget.DrawerListView;
 
 public final class ContentActivity extends StageActivity
@@ -188,6 +190,7 @@ public final class ContentActivity extends StageActivity
 
     @Override
     public void onClickSignOut() {
-
+        Config.putSignIn(false);
+        Messenger.getInstance().notify(Constants.MESSENGER_ID_SIGN_IN_OR_OUT, null);
     }
 }

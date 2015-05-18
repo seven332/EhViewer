@@ -19,9 +19,14 @@ import android.os.AsyncTask;
 import android.os.Process;
 
 import com.hippo.ehviewer.data.GalleryInfo;
-import com.hippo.ehviewer.network.EhHttpHelper;
+import com.hippo.ehviewer.network.EhOkHttpClient;
 import com.hippo.network.ResponseCodeException;
 import com.hippo.util.PriorityThreadFactory;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
@@ -35,8 +40,9 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("unchecked")
 public final class EhClient {
 
-    @SuppressWarnings("unused")
     private static final String TAG = EhClient.class.getSimpleName();
+
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static final int SOURCE_G = 0x0;
     public static final int SOURCE_EX = 0x1;
@@ -47,7 +53,7 @@ public final class EhClient {
     public static final long APIUID = 1363542;
     public static final String APIKEY = "f4b5407ab1727b9d08d7";
 
-    private static final String LOGIN_URL =
+    private static final String SIGN_IN_URL =
             "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
     private static final String FORUMS_URL = "http://forums.e-hentai.org/index.php";
 
@@ -61,7 +67,13 @@ public final class EhClient {
 
     public static final String API_EHVIEWER = "http://www.ehviewer.com/API";
 
+    private static final String SAD_PANDA_DISPOSITION = "inline; filename=\"sadpanda.jpg\"";
+    private static final String SAD_PANDA_TYPE = "image/gif";
+    private static final String SAD_PANDA_LENGTH = "9615";
+
     private final ThreadPoolExecutor mRequestThreadPool;
+
+    private final EhOkHttpClient mHttpClient;
 
     private static final EhClient sInstance;
 
@@ -80,6 +92,8 @@ public final class EhClient {
                 Process.THREAD_PRIORITY_BACKGROUND);
         mRequestThreadPool = new ThreadPoolExecutor(poolSize, poolSize,
                 1L, TimeUnit.SECONDS, requestWorkQueue, threadFactory);
+
+        mHttpClient = EhOkHttpClient.getInstance();
     }
 
     public static String getReadableHost(int source) {
@@ -106,7 +120,7 @@ public final class EhClient {
         }
     }
 
-    public interface EhClientListener {
+    public interface SimpleListener {
         void onFailure(Exception e);
     }
 
@@ -134,10 +148,10 @@ public final class EhClient {
 
     private abstract class SimpleBgJobHelper implements BgJobHelper {
 
-        private EhClientListener mListener;
+        private SimpleListener mListener;
         private Exception mException;
 
-        public SimpleBgJobHelper(EhClientListener listener) {
+        public SimpleBgJobHelper(SimpleListener listener) {
             mListener = listener;
         }
 
@@ -166,26 +180,37 @@ public final class EhClient {
         public abstract void doSuccessCallback();
     }
 
-    private void checkRequest(EhHttpHelper ehh) throws ResponseCodeException {
-        final int responseCode = ehh.getResponseCode();
+    private void checkResponse(Response response) throws Exception {
+        final int responseCode = response.code();
         if (responseCode >= 400) {
             throw new ResponseCodeException(responseCode);
         }
+
+        String disposition = response.header("Content-Disposition", null);
+        String type = response.header("Content-Type", null);
+        String length = response.header("Content-Length", null);
+
+        if (SAD_PANDA_DISPOSITION.equals(disposition) && SAD_PANDA_TYPE.equals(type) &&
+                SAD_PANDA_LENGTH.equals(length)) {
+            throw new EhException("Sad Panda");
+        }
     }
 
-    private Object[] doGetGalleryList(int source, String url) throws Exception {
-        EhHttpHelper ehh = EhHttpHelper.obtain();
-        String body = ehh.get(url);
 
-        checkRequest(ehh);
-        EhHttpHelper.recycle(ehh);
+    private Object[] doGetGalleryList(int source, String url) throws Exception {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        Response response = mHttpClient.newCall(request).execute();
+
+        checkResponse(response);
 
         GalleryListParser parser = new GalleryListParser();
-        parser.parse(body, source);
+        parser.parse(response.body().string(), source);
         return new Object[]{parser.giList, parser.pageNum};
     }
 
-    public abstract static class OnGetGalleryListListener implements EhClientListener {
+    public abstract static class OnGetGalleryListListener implements SimpleListener {
         public abstract void onSuccess(List<GalleryInfo> glList, int pageNum);
     }
 
@@ -230,25 +255,28 @@ public final class EhClient {
         doBgJob(new GetGalleryListHelper(source, url, listener));
     }
 
+
     private Object[] doGetPopular() throws Exception {
         final JSONObject json = new JSONObject();
         json.put("method", "popular");
+        RequestBody body = RequestBody.create(JSON, json.toString());
 
-        EhHttpHelper ehh = EhHttpHelper.obtain();
-        String body = ehh.postJson(API_EHVIEWER, json);
+        Request request = new Request.Builder()
+                .url(API_EHVIEWER)
+                .post(body)
+                .build();
+        Response response = mHttpClient.newCall(request).execute();
 
-        checkRequest(ehh);
-        EhHttpHelper.recycle(ehh);
+        checkResponse(response);
 
         PopularParser parser = new PopularParser();
-        parser.parse(body);
+        parser.parse(response.body().string());
         return new Object[]{parser.galleryInfoList, parser.timeStamp};
     }
 
-    public abstract static class OnGetPopularListener implements EhClientListener {
+    public abstract static class OnGetPopularListener implements SimpleListener {
         public abstract void onSuccess(List<GalleryInfo> giList, long timeStamp);
     }
-
 
     private final class GetPopularHelper extends SimpleBgJobHelper {
 
@@ -282,5 +310,65 @@ public final class EhClient {
      */
     public void getPopular(OnGetPopularListener listener) {
         doBgJob(new GetPopularHelper(listener));
+    }
+
+
+    private String doSignIn(String username, String password) throws Exception {
+        RequestBody formBody = new FormEncodingBuilder()
+                .add("UserName", username)
+                .add("PassWord", password)
+                .add("submit", "Log me in")
+                .add("CookieDate", "1")
+                .add("temporary_https", "off")
+                .build();
+
+        Request request = new Request.Builder()
+                .url(SIGN_IN_URL)
+                .post(formBody)
+                .build();
+        Response response = mHttpClient.newCall(request).execute();
+
+        checkResponse(response);
+
+        SignInParser parser = new SignInParser();
+        parser.parse(response.body().string());
+        return parser.displayname;
+    }
+
+    public abstract static class OnSignInListener implements SimpleListener {
+        public abstract void onSuccess(String displayname);
+    }
+
+    private final class SignInHelper extends SimpleBgJobHelper {
+
+        private String mUsername;
+        private String mPassword;
+        private OnSignInListener mListener;
+
+        private String mDisplayname;
+
+        public SignInHelper(String username, String password, OnSignInListener listener) {
+            super(listener);
+            mUsername = username;
+            mPassword = password;
+            mListener = listener;
+        }
+
+        @Override
+        public void doBgJob() throws Exception {
+            mDisplayname = doSignIn(mUsername, mPassword);
+        }
+
+        @Override
+        public void doSuccessCallback() {
+            mListener.onSuccess(mDisplayname);
+        }
+    }
+
+    /**
+     * Sign in
+     */
+    public void signIn(String username, String password, OnSignInListener listener) {
+        doBgJob(new SignInHelper(username, password, listener));
     }
 }

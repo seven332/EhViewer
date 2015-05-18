@@ -18,7 +18,10 @@ package com.hippo.ehviewer;
 import android.content.Context;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.backends.okhttp.OkHttpImagePipelineConfigFactory;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.hippo.content.VectorContext;
+import com.hippo.ehviewer.network.EhOkHttpClient;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.scene.SceneApplication;
 import com.hippo.util.Log;
@@ -29,7 +32,10 @@ public class EhApplication extends SceneApplication {
     public void onCreate() {
         super.onCreate();
 
-        Fresco.initialize(this);
+        ImagePipelineConfig config = OkHttpImagePipelineConfigFactory
+                .newBuilder(this, EhOkHttpClient.getInstance())
+                .build();
+        Fresco.initialize(this, config);
         Config.initialize(this);
     }
 

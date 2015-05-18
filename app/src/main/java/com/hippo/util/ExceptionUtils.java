@@ -21,11 +21,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.hippo.ehviewer.R;
-import com.hippo.network.RedirectionException;
+import com.hippo.ehviewer.client.EhException;
 import com.hippo.network.ResponseCodeException;
 
 import org.apache.http.conn.ConnectTimeoutException;
 
+import java.net.ProtocolException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -46,10 +47,12 @@ public final class ExceptionUtils {
                 error += '\n' + responseCodeException.getMessage();
             }
             return error;
-        } else if (e instanceof RedirectionException) {
+        } else if (e instanceof ProtocolException && e.getMessage().startsWith("Too many follow-up requests:")) {
             return context.getString(R.string.em_redirection);
         } else if (e instanceof SocketException) {
             return context.getString(R.string.em_socket);
+        } else if (e instanceof EhException) {
+            return e.getMessage();
         } else {
             Log.d("Can't recognize this Exception", e);
             return context.getString(R.string.em_unknown);

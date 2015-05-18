@@ -33,6 +33,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.util.FrescoUtils;
 import com.hippo.util.Messenger;
 import com.hippo.widget.DrawerListView;
@@ -136,10 +137,17 @@ public class DrawerLeftPanel extends LinearLayout {
         mUserPanelOriginalPaddingTop = mUserPanel.getPaddingTop();
         mDrawerListViewOriginalPaddingBottom = mDrawerListView.getPaddingBottom();
 
-        // TODO
-        mAvatar.setImageURI(DEFAULT_AVATAR_URI);
-        mUsename.setText("");
-        mAction.setText(mContext.getString(R.string.signin));
+        mSignIn = Config.getSignIn();
+        if (mSignIn) {
+            // TODO
+            mAvatar.setImageURI(DEFAULT_AVATAR_URI);
+            mUsename.setText(Config.getDisplayName());
+            mAction.setText(mContext.getString(R.string.signout));
+        } else {
+            mAvatar.setImageURI(DEFAULT_AVATAR_URI);
+            mUsename.setText("");
+            mAction.setText(mContext.getString(R.string.signin));
+        }
     }
 
     public DrawerListView getDrawerListView() {
