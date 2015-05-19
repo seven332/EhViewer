@@ -42,7 +42,7 @@ public final class EhClient {
 
     private static final String TAG = EhClient.class.getSimpleName();
 
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public static final MediaType JSON = MediaType.parse("application/json");
 
     public static final int SOURCE_G = 0x0;
     public static final int SOURCE_EX = 0x1;
