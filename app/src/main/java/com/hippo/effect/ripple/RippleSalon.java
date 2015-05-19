@@ -15,6 +15,7 @@
 
 package com.hippo.effect.ripple;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -49,6 +50,24 @@ public final class RippleSalon {
             android.graphics.drawable.RippleDrawable rippleDrawable =
                     new android.graphics.drawable.RippleDrawable(color, content, new ColorDrawable(Color.BLACK));
             v.setBackground(rippleDrawable);
+        }
+    }
+
+    public static Drawable generateRippleDrawable(Context context, boolean dark) {
+        ColorStateList color = ColorStateList.valueOf(
+                context.getResources().getColor(dark ? R.color.ripple_material_dark : R.color.ripple_material_light));
+        return generateRippleDrawable(color);
+    }
+
+    public static Drawable generateRippleDrawable(ColorStateList color) {
+        return generateRippleDrawable(color, null);
+    }
+
+    public static Drawable generateRippleDrawable(ColorStateList color, Drawable content) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return new RippleDrawable(color, content);
+        } else {
+            return new android.graphics.drawable.RippleDrawable(color, content, new ColorDrawable(Color.BLACK));
         }
     }
 }
