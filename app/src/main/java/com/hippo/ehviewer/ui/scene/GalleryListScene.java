@@ -41,6 +41,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.drawable.AddDeleteDrawable;
@@ -794,7 +796,12 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         @Override
         public void onBindViewHolder(GalleryHolder holder, int position) {
             GalleryInfo gi = getDataAt(position);
-            holder.thumb.setImageURI(Uri.parse(gi.thumb));
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setUri(Uri.parse(gi.thumb))
+                    .setTapToRetryEnabled(true)
+                    .setOldController(holder.thumb.getController())
+                    .build();
+            holder.thumb.setController(controller);
             holder.title.setText(gi.title);
             holder.uploader.setText(gi.uploader);
             holder.rating.setRating(gi.rating);

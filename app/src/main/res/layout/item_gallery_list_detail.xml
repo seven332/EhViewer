@@ -30,9 +30,9 @@
             android:layout_width="@dimen/list_thumb_width"
             android:layout_height="@dimen/list_thumb_height"
             auto:actualImageScaleType="fitCenter"
-            auto:failureImage="@drawable/ic_home"
+            auto:failureImage="@drawable/ic_image_broken"
             auto:failureImageScaleType="fitCenter"
-            auto:retryImage="@drawable/ic_settings"
+            auto:retryImage="@drawable/ic_cursor_pointer"
             auto:retryImageScaleType="fitCenter"/>
 
         <TextView
