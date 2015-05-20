@@ -29,7 +29,11 @@
             android:id="@+id/thumb"
             android:layout_width="@dimen/list_thumb_width"
             android:layout_height="@dimen/list_thumb_height"
-            auto:actualImageScaleType="fitCenter"/>
+            auto:actualImageScaleType="fitCenter"
+            auto:failureImage="@drawable/ic_home"
+            auto:failureImageScaleType="fitCenter"
+            auto:retryImage="@drawable/ic_settings"
+            auto:retryImageScaleType="fitCenter"/>
 
         <TextView
             android:id="@+id/title"

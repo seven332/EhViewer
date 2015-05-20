@@ -15,6 +15,12 @@
   -->
 <resources>
 
+    <!-- Settings Header -->
+    <dimen name="settings_header_minimum_height">72dp</dimen>
+    <dimen name="settings_header_image_size">24dp</dimen>
+    <dimen name="settings_header_image_margin_start">16dp</dimen>
+    <dimen name="settings_header_image_margin_end">32dp</dimen>
+
     <!-- DrawerList -->
     <dimen name="drawer_list_drawable_size">24dp</dimen>
 
