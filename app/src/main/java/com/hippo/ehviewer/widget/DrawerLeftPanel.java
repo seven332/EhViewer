@@ -17,11 +17,9 @@ package com.hippo.ehviewer.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,8 +35,9 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.util.FrescoUtils;
 import com.hippo.util.Messenger;
 import com.hippo.widget.DrawerListView;
+import com.hippo.widget.FitPaddingImpl;
 
-public class DrawerLeftPanel extends LinearLayout {
+public class DrawerLeftPanel extends LinearLayout implements FitPaddingImpl{
 
     private static final String STATE_KEY_SUPER = "super";
     private static final String STATE_KEY_DRAWER_LIST_VIEW = "drawer_list_view";
@@ -206,43 +205,35 @@ public class DrawerLeftPanel extends LinearLayout {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    protected boolean fitSystemWindows(@NonNull Rect insets) {
-        int fitPaddingTop = insets.top;
-        int fitPaddingBottom = insets.bottom;
-
-        if (mFitPaddingTop != fitPaddingTop) {
-            mFitPaddingTop = fitPaddingTop;
+    public void onFitPadding(int left, int top, int right, int bottom) {
+        if (mFitPaddingTop != top) {
+            mFitPaddingTop = top;
 
             ViewGroup.LayoutParams lp;
 
             lp = mKKStatusBarBg.getLayoutParams();
-            lp.height = fitPaddingTop;
+            lp.height = top;
             mKKStatusBarBg.setLayoutParams(lp);
 
             lp = mSuperUserPanel.getLayoutParams();
-            lp.height = mSuperUserPanelHeight + fitPaddingTop;
+            lp.height = mSuperUserPanelHeight + top;
             mSuperUserPanel.setLayoutParams(lp);
 
             mUserPanel.setPadding(mUserPanel.getPaddingLeft(),
-                    mUserPanelOriginalPaddingTop + fitPaddingTop,
+                    mUserPanelOriginalPaddingTop + top,
                     mUserPanel.getPaddingRight(),
                     mUserPanel.getPaddingBottom());
         }
 
-        if (mFitPaddingBottom != fitPaddingBottom) {
-            mFitPaddingBottom = fitPaddingBottom;
+        if (mFitPaddingBottom != bottom) {
+            mFitPaddingBottom = bottom;
 
             mDrawerListView.setPadding(mDrawerListView.getPaddingLeft(),
                     mDrawerListView.getPaddingTop(),
                     mDrawerListView.getPaddingRight(),
-                    mDrawerListViewOriginalPaddingBottom + fitPaddingBottom);
+                    mDrawerListViewOriginalPaddingBottom + bottom);
         }
-
-        insets.set(insets.left, 0, insets.right, 0);
-
-        return super.fitSystemWindows(insets);
     }
 
     public interface Helper {

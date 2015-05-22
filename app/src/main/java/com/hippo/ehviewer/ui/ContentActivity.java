@@ -21,12 +21,10 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.hippo.vectorold.content.VectorContext;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
@@ -34,16 +32,18 @@ import com.hippo.ehviewer.ui.scene.SettingsHeaderScene;
 import com.hippo.ehviewer.ui.scene.SignInScene;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.widget.DrawerLeftPanel;
-import com.hippo.ehviewer.widget.StatusBarLayout;
+import com.hippo.ehviewer.widget.FitStageLayout;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SimpleCurtain;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.StageLayout;
 import com.hippo.util.Messenger;
+import com.hippo.vectorold.content.VectorContext;
+import com.hippo.widget.DrawerLayout;
 import com.hippo.widget.DrawerListView;
 
 public final class ContentActivity extends StageActivity
-        implements StatusBarLayout.OnGetFitPaddingBottomListener,
+        implements FitStageLayout.OnFitPaddingBottomListener,
         DrawerLeftPanel.Helper {
 
     public static final int DRAWER_LIST_NONE = -1;
@@ -57,8 +57,7 @@ public final class ContentActivity extends StageActivity
     private Resources mResources;
 
     private DrawerLayout mDrawerLayout;
-    private StatusBarLayout mStatusBarLayout;
-    private StageLayout mContentLayout;
+    private FitStageLayout mFitStageLayout;
     private DrawerLeftPanel mDrawerLeftPanel;
     private DrawerListView mDrawerListView;
 
@@ -110,12 +109,11 @@ public final class ContentActivity extends StageActivity
         mResources = getResources();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mStatusBarLayout = (StatusBarLayout) mDrawerLayout.getChildAt(0);
-        mContentLayout = (StageLayout) mStatusBarLayout.findViewById(R.id.stage);
+        mFitStageLayout = (FitStageLayout) mDrawerLayout.getChildAt(0);
         mDrawerLeftPanel = (DrawerLeftPanel) mDrawerLayout.getChildAt(1);
         mDrawerListView = mDrawerLeftPanel.getDrawerListView();
 
-        mStatusBarLayout.setOnGetFitPaddingBottomListener(this);
+        mFitStageLayout.setOnFitPaddingBottomListener(this);
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_left, Gravity.LEFT);
 
@@ -149,7 +147,7 @@ public final class ContentActivity extends StageActivity
 
     @Override
     public @NonNull StageLayout getStageLayout() {
-        return mContentLayout;
+        return mFitStageLayout;
     }
 
     @Override
@@ -181,8 +179,8 @@ public final class ContentActivity extends StageActivity
     }
 
     @Override
-    public void onGetFitPaddingBottom(int b) {
-        setFitPaddingBottom(b);
+    public void onFitPaddingBottom(int bottom) {
+        setFitPaddingBottom(bottom);
     }
 
     @Override
