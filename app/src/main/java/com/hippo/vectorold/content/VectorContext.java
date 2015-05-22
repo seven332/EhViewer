@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.hippo.content;
+package com.hippo.vectorold.content;
 
 import android.content.Context;
 import android.content.ContextWrapper;

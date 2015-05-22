@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hippo.animation;
+package com.hippo.vectorold.animation;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
+import android.graphics.Path;
+import android.graphics.PathMeasure;
 import android.util.AttributeSet;
 import android.view.InflateException;
 import android.view.animation.Interpolator;
 
 import com.hippo.ehviewer.R;
-import com.hippo.graphics.JPath;
-import com.hippo.util.JPathParser;
+import com.hippo.vectorold.util.PathParser;
 
 /**
  * An interpolator that can traverse a Path that extends from <code>Point</code>
@@ -58,7 +59,7 @@ public class PathInterpolator implements Interpolator {
      *
      * @param path The <code>Path</code> to use to make the line representing the interpolator.
      */
-    public PathInterpolator(JPath path) {
+    public PathInterpolator(Path path) {
         initPath(path);
     }
 
@@ -90,7 +91,6 @@ public class PathInterpolator implements Interpolator {
         this(context.getResources(), context.getTheme(), attrs);
     }
 
-    /** @hide */
     public PathInterpolator(Resources res, Theme theme, AttributeSet attrs) {
         TypedArray a;
         if (theme != null) {
@@ -99,7 +99,6 @@ public class PathInterpolator implements Interpolator {
             a = res.obtainAttributes(attrs, R.styleable.PathInterpolator);
         }
         parseInterpolatorFromTypeArray(a);
-        //setChangingConfiguration(a.getChangingConfigurations());
         a.recycle();
     }
 
@@ -108,7 +107,7 @@ public class PathInterpolator implements Interpolator {
         // will be all coming from pathData.
         if (a.hasValue(R.styleable.PathInterpolator_pathData)) {
             String pathData = a.getString(R.styleable.PathInterpolator_pathData);
-            JPath path = JPathParser.createPathFromPathData(pathData);
+            Path path = PathParser.createPathFromPathData(pathData);
             if (path == null) {
                 throw new InflateException("The path is null, which is created"
                         + " from " + pathData);
@@ -142,49 +141,35 @@ public class PathInterpolator implements Interpolator {
     }
 
     private void initQuad(float controlX, float controlY) {
-        JPath path = new JPath();
+        Path path = new Path();
         path.moveTo(0, 0);
         path.quadTo(controlX, controlY, 1f, 1f);
         initPath(path);
     }
 
     private void initCubic(float x1, float y1, float x2, float y2) {
-        JPath path = new JPath();
+        Path path = new Path();
         path.moveTo(0, 0);
         path.cubicTo(x1, y1, x2, y2, 1f, 1f);
         initPath(path);
     }
 
-    private void initPath(JPath path) {
-        float[] pointComponents = path.approximate(PRECISION);
+    private void initPath(Path path) {
+        final PathMeasure pathMeasure = new PathMeasure(path, false /* forceClosed */);
 
-        int numPoints = pointComponents.length / 3;
-        if (pointComponents[1] != 0 || pointComponents[2] != 0
-                || pointComponents[pointComponents.length - 2] != 1
-                || pointComponents[pointComponents.length - 1] != 1) {
-            throw new IllegalArgumentException("The Path must start at (0,0) and end at (1,1)");
-        }
+        final float pathLength = pathMeasure.getLength();
+        final int numPoints = (int) (pathLength / PRECISION) + 1;
 
         mX = new float[numPoints];
         mY = new float[numPoints];
-        float prevX = 0;
-        float prevFraction = 0;
-        int componentIndex = 0;
-        for (int i = 0; i < numPoints; i++) {
-            float fraction = pointComponents[componentIndex++];
-            float x = pointComponents[componentIndex++];
-            float y = pointComponents[componentIndex++];
-            if (fraction == prevFraction && x != prevX) {
-                throw new IllegalArgumentException(
-                        "The Path cannot have discontinuity in the X axis.");
-            }
-            if (x < prevX) {
-                throw new IllegalArgumentException("The Path cannot loop back on itself.");
-            }
-            mX[i] = x;
-            mY[i] = y;
-            prevX = x;
-            prevFraction = fraction;
+
+        final float[] position = new float[2];
+        for (int i = 0; i < numPoints; ++i) {
+            final float distance = (i * pathLength) / (numPoints - 1);
+            pathMeasure.getPosTan(distance, position, null /* tangent */);
+
+            mX[i] = position[0];
+            mY[i] = position[1];
         }
     }
 

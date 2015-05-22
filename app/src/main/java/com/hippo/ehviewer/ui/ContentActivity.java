@@ -26,7 +26,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.hippo.content.VectorContext;
+import com.hippo.vectorold.content.VectorContext;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;

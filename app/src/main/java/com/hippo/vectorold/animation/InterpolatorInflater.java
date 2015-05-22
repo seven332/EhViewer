@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.hippo.animation;
+package com.hippo.vectorold.animation;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -108,10 +108,10 @@ public class InterpolatorInflater {
             } else if (name.equals("bounceInterpolator")) {
                 interpolator = new BounceInterpolator();
             } else if (name.equals("pathInterpolator")) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    interpolator = new android.view.animation.PathInterpolator(context, attrs);
-                } else {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                     interpolator = new PathInterpolator(context, attrs);
+                } else {
+                    interpolator = new android.view.animation.PathInterpolator(context, attrs);
                 }
             } else {
                 throw new RuntimeException("Unknown interpolator name: " + parser.getName());

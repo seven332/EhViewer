@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hippo.animation;
+package com.hippo.vectorold.animation;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -33,7 +33,7 @@ import android.util.Xml;
 import android.view.InflateException;
 
 import com.hippo.ehviewer.R;
-import com.hippo.util.PathParser;
+import com.hippo.vectorold.util.PathParser;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -72,12 +72,12 @@ public class AnimatorInflater {
     private static final ArgbEvaluator ARGB_EVALUATOR = new ArgbEvaluator();
 
     /**
-     * Loads an {@link Animator} object from a resource
+     * Loads an {@link android.animation.Animator} object from a resource
      *
      * @param context Application context used to access resources
      * @param id The resource id of the animation to load
      * @return The animator object reference by the specified id
-     * @throws NotFoundException when the animation cannot be loaded
+     * @throws android.content.res.Resources.NotFoundException when the animation cannot be loaded
      */
     public static Animator loadAnimator(Context context, int id)
             throws NotFoundException {
@@ -208,7 +208,7 @@ public class AnimatorInflater {
         /**
          * Create a PathDataEvaluator that reuses <code>nodeArray</code> for every evaluate() call.
          * Caution must be taken to ensure that the value returned from
-         * {@link ValueAnimator#getAnimatedValue()} is not cached, modified, or
+         * {@link android.animation.ValueAnimator#getAnimatedValue()} is not cached, modified, or
          * used across threads. The value will be modified on each <code>evaluate()</code> call.
          *
          * @param nodeArray The array to modify and return from <code>evaluate</code>.
@@ -313,7 +313,7 @@ public class AnimatorInflater {
      * @return the PathDataEvaluator.
      */
     private static TypeEvaluator setupAnimatorForPath(ValueAnimator anim,
-             TypedArray arrayAnimator) {
+            TypedArray arrayAnimator) {
         TypeEvaluator evaluator = null;
         String fromString = arrayAnimator.getString(R.styleable.Animator_valueFrom);
         String toString = arrayAnimator.getString(R.styleable.Animator_valueTo);
@@ -371,9 +371,9 @@ public class AnimatorInflater {
                 throw new InflateException(arrayObjectAnimator.getPositionDescription()
                         + " propertyXName or propertyYName is needed for PathData");
             } else {
-                Path path = PathParser.createPathFromPathData(pathData);
+                JPath path = JPathParser.createPathFromPathData(pathData);
                 float error = 0.5f * pixelSize; // max half a pixel error
-                PathKeyframes keyframeSet = KeyframeSet.ofPath(path, error);
+                PathKeyframes keyframeSet = new PathKeyframes(path, error);
                 Keyframes xKeyframes;
                 Keyframes yKeyframes;
                 if (getFloats) {

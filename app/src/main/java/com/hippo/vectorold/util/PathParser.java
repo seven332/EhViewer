@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.hippo.util;
+package com.hippo.vectorold.util;
 
 import android.graphics.Path;
 import android.util.Log;

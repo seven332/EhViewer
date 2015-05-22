@@ -23,8 +23,8 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.util.Xml;
 
-import com.hippo.drawable.AnimatedVectorDrawable;
-import com.hippo.drawable.VectorDrawable;
+import com.hippo.vectorold.drawable.AnimatedVectorDrawable;
+import com.hippo.vectorold.drawable.VectorDrawable;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;

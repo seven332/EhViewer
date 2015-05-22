@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.hippo.drawable;
+package com.hippo.vectorold.drawable;
 
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -38,8 +38,8 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.hippo.ehviewer.R;
-import com.hippo.util.DrawableUtils;
-import com.hippo.util.PathParser;
+import com.hippo.vectorold.util.DrawableUtils;
+import com.hippo.vectorold.util.PathParser;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;

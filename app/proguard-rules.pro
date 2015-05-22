@@ -28,7 +28,7 @@
     void set*(***);
     *** get*();
 }
--keepclassmembers public class * extends com.hippo.drawable.VectorDrawable.VGroup {
+-keepclassmembers public class * extends com.hippo.vectorold.drawable.VectorDrawable.VGroup {
     void set*(***);
     *** get*();
 }

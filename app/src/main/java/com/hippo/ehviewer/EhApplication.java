@@ -20,7 +20,7 @@ import android.content.Context;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.hippo.content.VectorContext;
+import com.hippo.vectorold.content.VectorContext;
 import com.hippo.ehviewer.network.EhOkHttpClient;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.scene.SceneApplication;
