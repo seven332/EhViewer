@@ -31,9 +31,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.SparseBooleanArray;
 import android.util.StateSet;
-import android.util.TypedValue;
 import android.view.HapticFeedbackConstants;
-import android.view.InputDevice;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -656,44 +654,6 @@ public class EasyRecyclerView extends RecyclerView {
         } else if (useActivated) {
             view.setActivated(checked);
         }
-    }
-
-    @Override
-    public boolean onGenericMotionEvent(MotionEvent event) {
-        if ((event.getSource() & InputDevice.SOURCE_CLASS_POINTER) != 0) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_SCROLL: {
-                    if (getScrollState() != SCROLL_STATE_DRAGGING) {
-                        final float vscroll = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
-                        if (vscroll != 0) {
-                            final int delta = (int) (vscroll * getVerticalScrollFactor());
-                            scrollBy(0, -delta);
-                        }
-                    }
-                }
-            }
-        }
-        return super.onGenericMotionEvent(event);
-    }
-
-    /**
-     * Gets a scale factor that determines the distance the view should scroll
-     * vertically in response to {@link android.view.MotionEvent#ACTION_SCROLL}.
-     * @return The vertical scroll scale factor.
-     */
-    @Override
-    protected float getVerticalScrollFactor() {
-        if (mVerticalScrollFactor == 0) {
-            TypedValue outValue = new TypedValue();
-            if (!getContext().getTheme().resolveAttribute(
-                    0x0101004d, outValue, true)) {//com.android.internal.R.attr.listPreferredItemHeight
-                throw new IllegalStateException(
-                        "Expected theme to define listPreferredItemHeight.");
-            }
-            mVerticalScrollFactor = outValue.getDimension(
-                    getContext().getResources().getDisplayMetrics());
-        }
-        return mVerticalScrollFactor;
     }
 
     @Override
