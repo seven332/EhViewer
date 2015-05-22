@@ -25,7 +25,7 @@ public class SceneApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        mSceneManager = new SceneManager();
+        mSceneManager = SceneManager.getInstance();
         StageActivity.setSceneManager(mSceneManager);
         Scene.setSceneManager(mSceneManager);
     }

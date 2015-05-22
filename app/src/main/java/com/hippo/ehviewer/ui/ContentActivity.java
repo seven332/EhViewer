@@ -34,6 +34,7 @@ import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.widget.DrawerLeftPanel;
 import com.hippo.ehviewer.widget.FitStageLayout;
 import com.hippo.scene.Announcer;
+import com.hippo.scene.SceneManager;
 import com.hippo.scene.SimpleCurtain;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.StageLayout;
@@ -94,6 +95,38 @@ public final class ContentActivity extends StageActivity
         }
     };
 
+    private SceneManager.SceneStateListener mSceneStateListener = new SceneManager.SceneStateListener() {
+        @Override
+        public void onCreate(Class clazz) {
+            if (clazz.equals(GalleryListScene.class)) {
+                unlockDrawer();
+            } else {
+                lockDrawer();
+            }
+        }
+
+        @Override
+        public void onDestroy(Class clazz) {
+        }
+
+        @Override
+        public void onPause(Class clazz) {
+        }
+
+        @Override
+        public void onResume(Class clazz) {
+            if (clazz.equals(GalleryListScene.class)) {
+                unlockDrawer();
+            } else {
+                lockDrawer();
+            }
+        }
+
+        @Override
+        public void onReplace(Class clazz) {
+        }
+    };
+
     @Override
     protected boolean isShowStats() {
         return Config.getShowApplicationStats();
@@ -105,6 +138,8 @@ public final class ContentActivity extends StageActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
+
+        SceneManager.getInstance().addSceneStateListener(mSceneStateListener);
 
         mResources = getResources();
 
@@ -146,6 +181,12 @@ public final class ContentActivity extends StageActivity
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SceneManager.getInstance().removeSceneStateListener(mSceneStateListener);
+    }
+
+    @Override
     public @NonNull StageLayout getStageLayout() {
         return mFitStageLayout;
     }
@@ -176,6 +217,14 @@ public final class ContentActivity extends StageActivity
         } else {
             mDrawerLayout.openDrawer(Gravity.LEFT);
         }
+    }
+
+    public void lockDrawer() {
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    public void unlockDrawer() {
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 
     @Override

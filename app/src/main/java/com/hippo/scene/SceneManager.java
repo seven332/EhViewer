@@ -22,9 +22,11 @@ import android.support.annotation.Nullable;
 import com.hippo.util.IntIdGenerator;
 import com.hippo.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
-class SceneManager {
+public class SceneManager {
 
     private static final String TAG = SceneManager.class.getSimpleName();
 
@@ -35,8 +37,19 @@ class SceneManager {
 
     private IntIdGenerator mIdGenerator = IntIdGenerator.create();
 
+    private List<SceneStateListener> mSceneStateListenerList = new ArrayList<>();
+
+    private static SceneManager sSceneManger;
+
+    public static SceneManager getInstance() {
+        if (sSceneManger == null) {
+            sSceneManger = new SceneManager();
+        }
+        return sSceneManger;
+    }
+
     // Should only be called by SceneApplication
-    SceneManager() {
+    private SceneManager() {
     }
 
     int nextId() {
@@ -53,6 +66,44 @@ class SceneManager {
 
     private boolean isStageAlive() {
         return mStageActivity != null;
+    }
+
+    public void addSceneStateListener(SceneStateListener listener) {
+        mSceneStateListenerList.add(listener);
+    }
+
+    public void removeSceneStateListener(SceneStateListener listener) {
+        mSceneStateListenerList.remove(listener);
+    }
+
+    private void notifyCreate(Class clazz) {
+        for (SceneStateListener l : mSceneStateListenerList) {
+            l.onCreate(clazz);
+        }
+    }
+
+    private void notifyDestroy(Class clazz) {
+        for (SceneStateListener l : mSceneStateListenerList) {
+            l.onDestroy(clazz);
+        }
+    }
+
+    private void notifyPause(Class clazz) {
+        for (SceneStateListener l : mSceneStateListenerList) {
+            l.onPause(clazz);
+        }
+    }
+
+    private void notifyResume(Class clazz) {
+        for (SceneStateListener l : mSceneStateListenerList) {
+            l.onResume(clazz);
+        }
+    }
+
+    private void notifyReplace(Class clazz) {
+        for (SceneStateListener l : mSceneStateListenerList) {
+            l.onReplace(clazz);
+        }
     }
 
     Scene createSceneByClass(@NonNull Class sceneClass) {
@@ -111,11 +162,13 @@ class SceneManager {
 
         if (previousState != null) {
             previousState.pause();
-            scene.setState(Scene.SCENE_STATE_PAUSE);
+            previousState.setState(Scene.SCENE_STATE_PAUSE);
+            notifyPause(previousState.getClass());
         }
 
-        scene.setState(Scene.SCENE_STATE_CREATE);
         scene.create(null);
+        scene.setState(Scene.SCENE_STATE_CREATE);
+        notifyCreate(scene.getClass());
 
         // Update fit padding
         int fitPaddingBottom = getStageActivity().getFitPaddingBottom();
@@ -156,8 +209,11 @@ class SceneManager {
             if (index == 0) {
                 // It is the last scene, just finish the activity
                 mSceneStack.remove(index);
+
                 scene.destroy();
                 scene.setState(Scene.SCENE_STATE_DESTROY);
+                notifyDestroy(scene.getClass());
+
                 getStageActivity().finish();
             } else {
                 // TODO check scene state
@@ -169,10 +225,13 @@ class SceneManager {
 
                 if (previousState != null) {
                     previousState.resume();
-                    scene.setState(Scene.SCENE_STATE_RUN);
+                    previousState.setState(Scene.SCENE_STATE_RUN);
+                    notifyResume(previousState.getClass());
                 }
 
                 scene.destroy();
+                scene.setState(Scene.SCENE_STATE_DESTROY);
+                notifyDestroy(scene.getClass());
 
                 Curtain curtain = scene.getCurtain();
                 if (curtain != null && previousState != null && curtain.isPreviousScene(previousState)) {
@@ -181,7 +240,6 @@ class SceneManager {
                     curtain.close(previousState, scene);
                     // detachFromeStage by curtain
                 } else {
-                    scene.setState(Scene.SCENE_STATE_DESTROY);
                     scene.detachFromeStage();
                 }
             }
@@ -243,12 +301,28 @@ class SceneManager {
         for (Scene oldScene : tempStack) {
             Scene newScene = createSceneByClass(oldScene.getClass());
             newScene.replace(oldScene);
+            notifyReplace(newScene.getClass());
+
             oldScene.destroy();
             oldScene.setState(Scene.SCENE_STATE_DESTROY);
+            notifyDestroy(oldScene.getClass());
+
             newScene.create(savedInstanceState);
-            newScene.setState(Scene.SCENE_STATE_RUN);
+            newScene.setState(Scene.SCENE_STATE_CREATE);
+            notifyCreate(newScene.getClass());
+
             newScene.restoreInstanceState(savedInstanceState);
+
+            newScene.setState(Scene.SCENE_STATE_RUN);
             mSceneStack.push(newScene);
         }
+    }
+
+    public interface SceneStateListener {
+        void onCreate(Class clazz);
+        void onDestroy(Class clazz);
+        void onPause(Class clazz);
+        void onResume(Class clazz);
+        void onReplace(Class clazz);
     }
 }
