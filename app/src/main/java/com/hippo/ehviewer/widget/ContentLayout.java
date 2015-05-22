@@ -198,37 +198,35 @@ public class ContentLayout extends FrameLayout {
         private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
 
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState){
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    // For footer refresh
-                    if (mRefreshLayout.isAlmostBottom()) {
-                        mRefreshLayout.requsetFooterRefresh();
-                    }
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                // For footer refresh
+                if (mRefreshLayout.isAlmostBottom()) {
+                    mRefreshLayout.requsetFooterRefresh();
+                }
 
-                    // For current index
-                    if (mPageVolume <= 0) {
-                        return;
-                    }
-                    if (mLastIndex == 0) {
-                        mCurrentPage = 0;
-                        mFirstIndex = 0;
-                        mLastIndex = mPageVolume;
-                    }
+                // For current index
+                if (mPageVolume <= 0) {
+                    return;
+                }
+                if (mLastIndex == 0) {
+                    mCurrentPage = 0;
+                    mFirstIndex = 0;
+                    mLastIndex = mPageVolume;
+                }
 
-                    int firstVisiblePosition = LayoutManagerUtils.getFirstVisibleItemPostion(mLayoutManager);
-                    int lastVisiblePosition = LayoutManagerUtils.getLastVisibleItemPostion(mLayoutManager);
+                int firstVisiblePosition = LayoutManagerUtils.getFirstVisibleItemPostion(mLayoutManager);
+                int lastVisiblePosition = LayoutManagerUtils.getLastVisibleItemPostion(mLayoutManager);
 
-                    int pageChanged = (firstVisiblePosition - mFirstIndex) / mPageVolume;
-                    if (pageChanged <= 0) {
-                        pageChanged = (lastVisiblePosition - mLastIndex + 1) / mPageVolume;
-                    }
+                int pageChanged = (firstVisiblePosition - mFirstIndex) / mPageVolume;
+                if (pageChanged <= 0) {
+                    pageChanged = (lastVisiblePosition - mLastIndex + 1) / mPageVolume;
+                }
 
-                    if (pageChanged != 0) {
-                        mCurrentPage = mCurrentPage + pageChanged;
-                        int offset = pageChanged * mPageVolume;
-                        mFirstIndex += offset;
-                        mLastIndex += offset;
-                    }
+                if (pageChanged != 0) {
+                    mCurrentPage = mCurrentPage + pageChanged;
+                    int offset = pageChanged * mPageVolume;
+                    mFirstIndex += offset;
+                    mLastIndex += offset;
                 }
             }
         };
