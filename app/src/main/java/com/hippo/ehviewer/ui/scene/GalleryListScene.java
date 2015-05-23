@@ -225,6 +225,8 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
             showSearchBar(true);
             mGalleryListHelper.refresh();
         }
+
+        setState(STATE_NORMAL);
     }
 
     @Override
@@ -371,35 +373,118 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         }
     }
 
+    private void setState(int state) {
+        if (mState != state) {
+            int oldState = mState;
+            mState = state;
+
+            switch (oldState) {
+                case STATE_NORMAL:
+                    switch (state) {
+                        case STATE_SIMPLE_SEARCH:
+                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
+                            returnSearchBarPosition();
+                            setFabState(FAB_STATE_SEARCH);
+                            break;
+                        case STATE_SEARCH:
+                            mViewTransition.showView(1);
+                            mSearchLayout.scrollSearchContainerToTop();
+                            mSearchBar.setState(SearchBar.STATE_SEARCH);
+                            returnSearchBarPosition();
+                            setFabState(FAB_STATE_SEARCH);
+                            break;
+                        case STATE_SEARCH_SHOW_LIST:
+                            mViewTransition.showView(1);
+                            mSearchLayout.scrollSearchContainerToTop();
+                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
+                            returnSearchBarPosition();
+                            setFabState(FAB_STATE_SEARCH);
+                            break;
+                    }
+                    break;
+                case STATE_SIMPLE_SEARCH:
+                    switch (state) {
+                        case STATE_NORMAL:
+                            mSearchBar.setState(SearchBar.STATE_NORMAL);
+                            returnSearchBarPosition();
+                            setFabState(FAB_STATE_NORMAL);
+                            break;
+                        case STATE_SEARCH:
+                            mViewTransition.showView(1);
+                            mSearchLayout.scrollSearchContainerToTop();
+                            mSearchBar.setState(SearchBar.STATE_SEARCH);
+                            returnSearchBarPosition();
+                            break;
+                        case STATE_SEARCH_SHOW_LIST:
+                            mViewTransition.showView(1);
+                            mSearchLayout.scrollSearchContainerToTop();
+                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
+                            returnSearchBarPosition();
+                            break;
+                    }
+                    break;
+                case STATE_SEARCH:
+                    switch (state) {
+                        case STATE_NORMAL:
+                            mViewTransition.showView(0);
+                            mSearchBar.setState(SearchBar.STATE_NORMAL);
+                            returnSearchBarPosition();
+                            setFabState(FAB_STATE_NORMAL);
+                            break;
+                        case STATE_SIMPLE_SEARCH:
+                            mViewTransition.showView(0);
+                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
+                            returnSearchBarPosition();
+                            break;
+                        case STATE_SEARCH_SHOW_LIST:
+                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
+                            returnSearchBarPosition();
+                            break;
+                    }
+                    break;
+                case STATE_SEARCH_SHOW_LIST:
+                    switch (state) {
+                        case STATE_NORMAL:
+                            mViewTransition.showView(0);
+                            mSearchBar.setState(SearchBar.STATE_NORMAL);
+                            returnSearchBarPosition();
+                            setFabState(FAB_STATE_NORMAL);
+                            break;
+                        case STATE_SIMPLE_SEARCH:
+                            mViewTransition.showView(0);
+                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
+                            returnSearchBarPosition();
+                            break;
+                        case STATE_SEARCH:
+                            mSearchBar.setState(SearchBar.STATE_SEARCH);
+                            returnSearchBarPosition();
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+
     @Override
     public void onBackPressed() {
-        switch (mState) {
-            case STATE_NORMAL:
-                if (mFabLayout.isExpanded()) {
-                    mFabLayout.setExpanded(false);
-                    mAddDeleteDrawable.setShape(false, ANIMATE_TIME);
-                } else {
+        if (mFabLayout.isExpanded()) {
+            mFabLayout.setExpanded(false);
+            mAddDeleteDrawable.setShape(false, ANIMATE_TIME);
+        } else {
+            switch (mState) {
+                case STATE_NORMAL:
                     super.onBackPressed();
-                }
-                break;
-            case STATE_SIMPLE_SEARCH:
-                mState = STATE_NORMAL;
-                mSearchBar.setState(SearchBar.STATE_NORMAL);
-                returnSearchBarPosition();
-                setFabState(FAB_STATE_NORMAL);
-                break;
-            case STATE_SEARCH:
-                mState = STATE_NORMAL;
-                mViewTransition.showView(0);
-                mSearchBar.setState(SearchBar.STATE_NORMAL);
-                returnSearchBarPosition();
-                setFabState(FAB_STATE_NORMAL);
-                break;
-            case STATE_SEARCH_SHOW_LIST:
-                mState = STATE_SEARCH;
-                mSearchBar.setState(SearchBar.STATE_SEARCH);
-                returnSearchBarPosition();
-                break;
+                    break;
+                case STATE_SIMPLE_SEARCH:
+                    setState(STATE_NORMAL);
+                    break;
+                case STATE_SEARCH:
+                    setState(STATE_NORMAL);
+                    break;
+                case STATE_SEARCH_SHOW_LIST:
+                    setState(STATE_SEARCH);
+                    break;
+            }
         }
     }
 
@@ -445,10 +530,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
     @Override
     public void onClickTitle() {
         if (mState == STATE_NORMAL) {
-            mState = STATE_SIMPLE_SEARCH;
-            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
-            returnSearchBarPosition();
-            setFabState(FAB_STATE_SEARCH);
+            setState(STATE_SIMPLE_SEARCH);
         }
     }
 
@@ -465,21 +547,14 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
     @Override
     public void onClickAdvanceSearch() {
         if (mState == STATE_NORMAL) {
-            mState = STATE_SEARCH;
-            mViewTransition.showView(1);
-            mSearchLayout.scrollSearchContainerToTop();
-            mSearchBar.setState(SearchBar.STATE_SEARCH);
-            returnSearchBarPosition();
-            setFabState(FAB_STATE_SEARCH);
+            setState(STATE_SEARCH);
         }
     }
 
     @Override
     public void onSearchEditTextClick() {
         if (mState == STATE_SEARCH) {
-            mState = STATE_SEARCH_SHOW_LIST;
-            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
-            returnSearchBarPosition();
+            setState(STATE_SEARCH_SHOW_LIST);
         }
     }
 
@@ -507,11 +582,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
             mListUrlBuilder.setKeyword(query);
         }
 
-        mState = STATE_NORMAL;
-        mViewTransition.showView(0);
-        mSearchBar.setState(SearchBar.STATE_NORMAL);
-        showSearchBar(true);
-        setFabState(FAB_STATE_NORMAL);
+        setState(STATE_NORMAL);
 
         mGalleryListHelper.refresh();
     }
