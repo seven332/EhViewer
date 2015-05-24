@@ -26,12 +26,12 @@ import android.widget.TextView;
 
 import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
-import com.hippo.scene.Scene;
+import com.hippo.scene.AppbarScene;
 import com.hippo.scene.StageActivity;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 
-public final class SettingsHeaderScene extends Scene implements EasyRecyclerView.OnItemClickListener {
+public final class SettingsHeaderScene extends AppbarScene implements EasyRecyclerView.OnItemClickListener {
 
     private static final int[] HEADER_ICON_ARRAY = {
             R.drawable.ic_cellphone_android_theme_primary,
@@ -52,6 +52,8 @@ public final class SettingsHeaderScene extends Scene implements EasyRecyclerView
         super.onCreate(savedInstanceState);
 
         mActivity = getStageActivity();
+        setTitle(R.string.signout);
+        setIcon(R.drawable.ic_arrow_left_dark);
 
         mRecyclerView = new EasyRecyclerView(mActivity);
         setContentView(mRecyclerView);
@@ -68,6 +70,11 @@ public final class SettingsHeaderScene extends Scene implements EasyRecyclerView
         mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(),
                 mRecyclerView.getPaddingTop(),
                 mRecyclerView.getPaddingRight(), b);
+    }
+
+    @Override
+    public void onIconClick() {
+        finish();
     }
 
     @Override

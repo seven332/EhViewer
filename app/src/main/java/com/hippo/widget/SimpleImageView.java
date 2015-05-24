@@ -15,6 +15,7 @@
 
 package com.hippo.widget;
 
+import android.annotation.DrawableRes;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -45,6 +46,10 @@ public class SimpleImageView extends View implements Drawable.Callback {
         final TypedArray a = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS);
         setDrawable(a.getDrawable(0));
         a.recycle();
+    }
+
+    public void setDrawable(@DrawableRes int resId) {
+        setDrawable(getContext().getResources().getDrawable(resId));
     }
 
     public void setDrawable(Drawable drawable) {

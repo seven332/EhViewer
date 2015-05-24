@@ -15,6 +15,9 @@
   -->
 <resources>
 
+    <!-- Appbar -->
+    <dimen name="appbar_height">56dp</dimen>
+
     <!-- Settings Header -->
     <dimen name="settings_header_minimum_height">72dp</dimen>
     <dimen name="settings_header_image_size">24dp</dimen>

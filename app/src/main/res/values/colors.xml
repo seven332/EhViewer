@@ -92,6 +92,8 @@
     <color name="snackbar_background">#ff333333</color>
     <color name="snackbar_action">#ffeeff41</color>
 
+    <color name="shadow_light">#38000000</color>
+
     <color name="loading_indicator_red">#ffe53935</color>
     <color name="loading_indicator_purple">@color/material_purple_a700</color>
     <color name="loading_indicator_blue">#ff1d87e4</color>
