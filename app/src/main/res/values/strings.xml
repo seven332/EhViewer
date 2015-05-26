@@ -93,7 +93,7 @@
     <!-- GalleryDetialActivity -->
     <string name="we_feel">We feel %s</string>
     <string name="more_of_uploader">More of uploader</string>
-    <string name="no_more_comment">No more comments</string>
+    <string name="no_more_comment">No more comment</string>
     <string name="no_comment">No comment</string>
     <string name="start_saving_torrent">Start saving torrent</string>
     <string name="save_torrent_successful">Save torrent to %s</string>
