@@ -70,16 +70,12 @@ public abstract class StageActivity extends StatsActivity {
 
     void attachSceneToStage(Scene scene) {
         View sceneView = scene.getSceneView();
-        if (sceneView != null) {
-            getStageLayout().addView(sceneView);
-        }
+        getStageLayout().addView(sceneView);
     }
 
     void detachSceneFromStage(Scene scene) {
         View sceneView = scene.getSceneView();
-        if (sceneView != null) {
-            getStageLayout().removeView(sceneView);
-        }
+        getStageLayout().removeView(sceneView);
     }
 
     public void startScene(@NonNull Class sceneClass) {

@@ -29,7 +29,6 @@ import android.widget.AbsoluteLayout;
 
 import com.hippo.animation.ArgbEvaluator;
 import com.hippo.animation.SimpleAnimatorListener;
-import com.hippo.util.AssertUtils;
 import com.hippo.util.Log;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.GlobalLayoutSet;
@@ -122,8 +121,6 @@ public class TransitionCurtain extends Curtain {
             Set<TransitionItem> transitionItemSet = mTransitionItemSet;
 
             ViewGroup enterSceneView = mEnterScene.getSceneView();
-            AssertUtils.assertNotNull("Enter scene view must not be null.", enterSceneView);
-
             GlobalLayoutSet globalLayoutSet = new GlobalLayoutSet();
 
             for (TransitionItem item : transitionItemSet) {
@@ -214,7 +211,6 @@ public class TransitionCurtain extends Curtain {
                         ViewUtils.setVisibility(item.exitView, View.VISIBLE);
 
                         ViewGroup enterSceneView = mEnterScene.getSceneView();
-                        AssertUtils.assertNotNull("Enter scene view must not be null.", enterSceneView);
                         enterSceneView.removeView(item.bmpView);
 
                         item.bmp.recycle();
@@ -294,8 +290,6 @@ public class TransitionCurtain extends Curtain {
             Set<TransitionItem> transitionItemSet = mTransitionItemSet;
 
             ViewGroup exitSceneView = mExitScene.getSceneView();
-            AssertUtils.assertNotNull("Exit scene view must not be null.", exitSceneView);
-
             GlobalLayoutSet globalLayoutSet = new GlobalLayoutSet();
 
             for (TransitionItem item : transitionItemSet) {
@@ -385,7 +379,6 @@ public class TransitionCurtain extends Curtain {
                         ViewUtils.setVisibility(item.exitView, View.VISIBLE);
 
                         ViewGroup exitSceneView = mExitScene.getSceneView();
-                        AssertUtils.assertNotNull("Exit scene view must not be null.", exitSceneView);
                         exitSceneView.removeView(item.bmpView);
 
                         item.bmp.recycle();

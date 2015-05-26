@@ -105,11 +105,10 @@ public abstract class Scene {
     }
 
     /**
-     * You will get null before onCreate and after onDestroy mostly
-     *
-     * @return Null or nonull
+     * Must call it after onCreate and before onDestroy
      */
-    public @Nullable SceneView getSceneView() {
+    public @NonNull SceneView getSceneView() {
+        AssertUtils.assertNotNull("Must call it after onCreate and before onDestroy", mSceneView);
         return mSceneView;
     }
 
@@ -203,7 +202,7 @@ public abstract class Scene {
     public void setBackgroundColor(int bgColor) {
         if (mBackgroundColor != bgColor) {
             mBackgroundColor = bgColor;
-            View sceneView = getSceneView();
+            View sceneView = mSceneView;
             if (sceneView != null) {
                 sceneView.setBackgroundColor(bgColor);
             }
@@ -284,7 +283,7 @@ public abstract class Scene {
      * @return The view if found or null otherwise.
      */
     public View findViewById(int resId) {
-        View sceneView = getSceneView();
+        View sceneView = mSceneView;
         if (sceneView != null) {
             return sceneView.findViewById(resId);
         } else {
