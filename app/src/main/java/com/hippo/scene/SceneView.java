@@ -16,11 +16,16 @@
 package com.hippo.scene;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.widget.AbsoluteLayout;
 
 @SuppressWarnings("deprecation")
 public class SceneView extends AbsoluteLayout {
+
+    private boolean mEnableTouch = true;
+
     public SceneView(Context context) {
         super(context);
         init();
@@ -40,8 +45,17 @@ public class SceneView extends AbsoluteLayout {
         setClickable(true);
     }
 
+    public void setEnableTouch(boolean enableTouch) {
+        mEnableTouch = enableTouch;
+    }
+
     @Override
     protected void dispatchSetPressed(boolean pressed) {
         // Don't dispatch it to children
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(@NonNull MotionEvent ev) {
+        return mEnableTouch && super.dispatchTouchEvent(ev);
     }
 }

@@ -253,9 +253,11 @@ public abstract class Scene {
     }
 
     protected void onPause() {
+        getSceneView().setEnableTouch(false);
     }
 
     protected void onResume() {
+        getSceneView().setEnableTouch(true);
     }
 
     protected void onReplace(@NonNull Scene oldScene) {
