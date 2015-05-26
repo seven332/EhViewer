@@ -211,7 +211,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
             default:
             case MODE_HOMEPAGE:
                 mActivity.setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_HOMEPAGE);
-                mListUrlBuilder.setMode(ListUrlBuilder.MODE_NORMAL);
+                mListUrlBuilder.reset();
                 break;
             case MODE_POPULAR:
                 mActivity.setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_WHATS_HOT);
