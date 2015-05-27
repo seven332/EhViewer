@@ -24,13 +24,11 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,6 +81,9 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         SearchLayout.SearhLayoutHelper {
 
     public static final String KEY_MODE = "mode";
+
+    private static final String KEY_STATE = "state";
+    private static final String KEY_FAB_STATE = "fab_state";
 
     public static final int MODE_HOMEPAGE = 0;
     public static final int MODE_POPULAR = 1;
@@ -307,29 +308,17 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
     }
 
     @Override
-    protected void onRestoreInstanceState(@NonNull SparseArray<Parcelable> savedStates) {
-        super.onRestoreInstanceState(savedStates);
+    protected void saveInstanceState(Bundle outState) {
+        super.saveInstanceState(outState);
 
-        switch (mState) {
-            case STATE_NORMAL:
-            case STATE_SIMPLE_SEARCH:
-                mViewTransition.showView(0, false);
-                break;
-            case STATE_SEARCH:
-            case STATE_SEARCH_SHOW_LIST:
-                mViewTransition.showView(1, false);
-                break;
-        }
+        outState.putInt(KEY_STATE, mState);
+    }
 
-        // Restore Fab drawable
-        if (mFabState == FAB_STATE_NORMAL) {
-            mAddDeleteDrawable.setShape(mFabLayout.isExpanded(), 0);
-            mCornerFab.setDrawable(mAddDeleteDrawable);
-        } else if (mFabState == FAB_STATE_SEARCH) {
-            mCornerFab.setDrawable(mSearchDrawable);
-        }
+    @Override
+    protected void restoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.restoreInstanceState(savedInstanceState);
 
-        // Do not keep search bar position, keep it shown
+        setState(savedInstanceState.getInt(KEY_STATE), false);
     }
 
     @Override
@@ -339,12 +328,14 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         // Search Layout
         mSearchLayout.setFitPaddingBottom(b);
         // Corner Fab
-        mFabLayout.setPadding(mFabLayout.getPaddingLeft(),
-                mFabLayout.getPaddingTop(), mFabLayout.getPaddingRight(),
-                mCornerFabOriginalBottom + b);
+        mFabLayout.setPadding(mFabLayout.getPaddingLeft(), mFabLayout.getPaddingTop(), mFabLayout.getPaddingRight(), mCornerFabOriginalBottom + b);
     }
 
     private void setFabState(int fabState) {
+        setFabState(fabState, true);
+    }
+
+    private void setFabState(int fabState, boolean animation) {
         if (mFabState != fabState) {
             mFabState = fabState;
             Drawable drawable;
@@ -355,25 +346,33 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
             } else {
                 return;
             }
-            PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", 1f, 0f);
-            PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", 1f, 0f);
-            ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(mCornerFab, scaleXPvh, scaleYPvh);
-            oa.setDuration(ANIMATE_TIME / 2);
-            oa.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
-            oa.setRepeatCount(1);
-            oa.setRepeatMode(ValueAnimator.REVERSE);
-            final Drawable finalDrawable = drawable;
-            oa.addListener(new SimpleAnimatorListener() {
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-                    mCornerFab.setDrawable(finalDrawable);
-                }
-            });
-            oa.start();
+            if (animation) {
+                PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", 1f, 0f);
+                PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", 1f, 0f);
+                ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(mCornerFab, scaleXPvh, scaleYPvh);
+                oa.setDuration(ANIMATE_TIME / 2);
+                oa.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
+                oa.setRepeatCount(1);
+                oa.setRepeatMode(ValueAnimator.REVERSE);
+                final Drawable finalDrawable = drawable;
+                oa.addListener(new SimpleAnimatorListener() {
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+                        mCornerFab.setDrawable(finalDrawable);
+                    }
+                });
+                oa.start();
+            } else {
+                mCornerFab.setDrawable(drawable);
+            }
         }
     }
 
     private void setState(int state) {
+        setState(state, true);
+    }
+
+    private void setState(int state, boolean animation) {
         if (mState != state) {
             int oldState = mState;
             mState = state;
@@ -382,43 +381,43 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
                 case STATE_NORMAL:
                     switch (state) {
                         case STATE_SIMPLE_SEARCH:
-                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
+                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
                             returnSearchBarPosition();
-                            setFabState(FAB_STATE_SEARCH);
+                            setFabState(FAB_STATE_SEARCH, animation);
                             break;
                         case STATE_SEARCH:
-                            mViewTransition.showView(1);
+                            mViewTransition.showView(1, animation);
                             mSearchLayout.scrollSearchContainerToTop();
-                            mSearchBar.setState(SearchBar.STATE_SEARCH);
+                            mSearchBar.setState(SearchBar.STATE_SEARCH, animation);
                             returnSearchBarPosition();
-                            setFabState(FAB_STATE_SEARCH);
+                            setFabState(FAB_STATE_SEARCH, animation);
                             break;
                         case STATE_SEARCH_SHOW_LIST:
-                            mViewTransition.showView(1);
+                            mViewTransition.showView(1, animation);
                             mSearchLayout.scrollSearchContainerToTop();
-                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
+                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
                             returnSearchBarPosition();
-                            setFabState(FAB_STATE_SEARCH);
+                            setFabState(FAB_STATE_SEARCH, animation);
                             break;
                     }
                     break;
                 case STATE_SIMPLE_SEARCH:
                     switch (state) {
                         case STATE_NORMAL:
-                            mSearchBar.setState(SearchBar.STATE_NORMAL);
+                            mSearchBar.setState(SearchBar.STATE_NORMAL, animation);
                             returnSearchBarPosition();
-                            setFabState(FAB_STATE_NORMAL);
+                            setFabState(FAB_STATE_NORMAL, animation);
                             break;
                         case STATE_SEARCH:
-                            mViewTransition.showView(1);
+                            mViewTransition.showView(1, animation);
                             mSearchLayout.scrollSearchContainerToTop();
-                            mSearchBar.setState(SearchBar.STATE_SEARCH);
+                            mSearchBar.setState(SearchBar.STATE_SEARCH, animation);
                             returnSearchBarPosition();
                             break;
                         case STATE_SEARCH_SHOW_LIST:
-                            mViewTransition.showView(1);
+                            mViewTransition.showView(1, animation);
                             mSearchLayout.scrollSearchContainerToTop();
-                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
+                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
                             returnSearchBarPosition();
                             break;
                     }
@@ -426,18 +425,18 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
                 case STATE_SEARCH:
                     switch (state) {
                         case STATE_NORMAL:
-                            mViewTransition.showView(0);
-                            mSearchBar.setState(SearchBar.STATE_NORMAL);
+                            mViewTransition.showView(0, animation);
+                            mSearchBar.setState(SearchBar.STATE_NORMAL, animation);
                             returnSearchBarPosition();
-                            setFabState(FAB_STATE_NORMAL);
+                            setFabState(FAB_STATE_NORMAL, animation);
                             break;
                         case STATE_SIMPLE_SEARCH:
-                            mViewTransition.showView(0);
-                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
+                            mViewTransition.showView(0, animation);
+                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
                             returnSearchBarPosition();
                             break;
                         case STATE_SEARCH_SHOW_LIST:
-                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
+                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
                             returnSearchBarPosition();
                             break;
                     }
@@ -445,18 +444,18 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
                 case STATE_SEARCH_SHOW_LIST:
                     switch (state) {
                         case STATE_NORMAL:
-                            mViewTransition.showView(0);
-                            mSearchBar.setState(SearchBar.STATE_NORMAL);
+                            mViewTransition.showView(0, animation);
+                            mSearchBar.setState(SearchBar.STATE_NORMAL, animation);
                             returnSearchBarPosition();
-                            setFabState(FAB_STATE_NORMAL);
+                            setFabState(FAB_STATE_NORMAL, animation);
                             break;
                         case STATE_SIMPLE_SEARCH:
-                            mViewTransition.showView(0);
-                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST);
+                            mViewTransition.showView(0, animation);
+                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
                             returnSearchBarPosition();
                             break;
                         case STATE_SEARCH:
-                            mSearchBar.setState(SearchBar.STATE_SEARCH);
+                            mSearchBar.setState(SearchBar.STATE_SEARCH, animation);
                             returnSearchBarPosition();
                             break;
                     }
