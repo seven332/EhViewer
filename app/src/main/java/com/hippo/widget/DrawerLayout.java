@@ -697,7 +697,9 @@ public class DrawerLayout extends ViewGroup {
             }
         }
 
-        insets.set(insets.left, 0 , insets.right, 0);
+        insets.top = 0;
+        insets.bottom = 0;
+
         return super.fitSystemWindows(insets);
     }
 
@@ -762,9 +764,11 @@ public class DrawerLayout extends ViewGroup {
             if (isContentView(child)) {
                 // Content views get measured at exactly the layout's size.
                 final int contentWidthSpec = MeasureSpec.makeMeasureSpec(
-                        widthSize - lp.leftMargin - lp.rightMargin, MeasureSpec.EXACTLY);
+                        widthSize - getPaddingLeft() - getPaddingRight() -
+                                lp.leftMargin - lp.rightMargin, MeasureSpec.EXACTLY);
                 final int contentHeightSpec = MeasureSpec.makeMeasureSpec(
-                        heightSize - lp.topMargin - lp.bottomMargin, MeasureSpec.EXACTLY);
+                        heightSize - getPaddingTop() - getPaddingBottom() -
+                                lp.topMargin - lp.bottomMargin, MeasureSpec.EXACTLY);
                 child.measure(contentWidthSpec, contentHeightSpec);
             } else if (isDrawerView(child)) {
                 final int childGravity =
@@ -805,9 +809,10 @@ public class DrawerLayout extends ViewGroup {
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
             if (isContentView(child)) {
-                child.layout(lp.leftMargin, lp.topMargin,
-                        lp.leftMargin + child.getMeasuredWidth(),
-                        lp.topMargin + child.getMeasuredHeight());
+                child.layout(getPaddingLeft() + lp.leftMargin,
+                        getPaddingTop() + lp.topMargin,
+                        getPaddingLeft() + lp.leftMargin + child.getMeasuredWidth(),
+                        getPaddingTop() + lp.topMargin + child.getMeasuredHeight());
             } else { // Drawer, if it wasn't onMeasure would have thrown an exception.
                 final int childWidth = child.getMeasuredWidth();
                 final int childHeight = child.getMeasuredHeight();
@@ -815,10 +820,10 @@ public class DrawerLayout extends ViewGroup {
 
                 final float newOffset;
                 if (checkDrawerViewAbsoluteGravity(child, Gravity.LEFT)) {
-                    childLeft = -childWidth + (int) (childWidth * lp.onScreen);
+                    childLeft = -childWidth + getPaddingLeft() + (int) (childWidth * lp.onScreen);
                     newOffset = (float) (childWidth + childLeft) / childWidth;
                 } else { // Right; onMeasure checked for us.
-                    childLeft = width - (int) (childWidth * lp.onScreen);
+                    childLeft = width - getPaddingRight() - (int) (childWidth * lp.onScreen);
                     newOffset = (float) (width - childLeft) / childWidth;
                 }
 
