@@ -46,6 +46,9 @@ public class SimpleImageView extends View implements Drawable.Callback {
         final TypedArray a = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS);
         setDrawable(a.getDrawable(0));
         a.recycle();
+
+        // Mostly drawable is VectorDrawable, it has cache already
+        setWillNotCacheDrawing(true);
     }
 
     public void setDrawable(@DrawableRes int resId) {
