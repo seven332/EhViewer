@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.ui.scene;
+package com.hippo.scene.preference;
 
+import android.annotation.NonNull;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,41 +28,50 @@ import android.widget.TextView;
 import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
 import com.hippo.scene.AppbarScene;
+import com.hippo.scene.SimpleCurtain;
 import com.hippo.scene.StageActivity;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 
-public final class SettingsHeaderScene extends AppbarScene implements EasyRecyclerView.OnItemClickListener {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-    private static final int[] HEADER_ICON_ARRAY = {
-            R.drawable.ic_cellphone_android_theme_primary,
-            R.drawable.ic_eh_theme_primary
-    };
-
-    private static final int[] HEADER_TITLE_ARRAY = {
-            R.string._goto,
-            R.string.username
-    };
+public class PreferenceHeaderScene extends AppbarScene {
 
     private StageActivity mActivity;
 
     private EasyRecyclerView mRecyclerView;
+
+    private HeaderAdapter mHeaderAdapter;
+
+    private List<PreferenceHeader> mHeaderList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mActivity = getStageActivity();
-        setTitle(R.string.signout);
-        setIcon(R.drawable.ic_arrow_left_dark);
 
-        mRecyclerView = new EasyRecyclerView(mActivity);
+        mRecyclerView = new EasyRecyclerView(getStageActivity());
         setContentView(mRecyclerView);
 
-        mRecyclerView.setAdapter(new HeaderAdapter());
+        mHeaderAdapter = new HeaderAdapter();
+        mRecyclerView.setAdapter(mHeaderAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setClipToPadding(false);
-        mRecyclerView.setOnItemClickListener(this);
+        mRecyclerView.setOnItemClickListener(new EasyRecyclerView.OnItemClickListener() {
+            @Override
+            public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
+                Class clazz = mHeaderList.get(position).getPreferenceClazz();
+                if (clazz == null) {
+                    return false;
+                } else {
+                    startScene(clazz, null, new SimpleCurtain(SimpleCurtain.DIRECTION_BOTTOM));
+                    return true;
+                }
+            }
+        });
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(mActivity, false));
     }
 
@@ -72,14 +82,10 @@ public final class SettingsHeaderScene extends AppbarScene implements EasyRecycl
                 mRecyclerView.getPaddingRight(), b);
     }
 
-    @Override
-    public void onIconClick() {
-        finish();
-    }
-
-    @Override
-    public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-        return false;
+    public void setPreferenceHeaders(@NonNull PreferenceHeader[] preferenceHeaders) {
+        mHeaderList.clear();
+        Collections.addAll(mHeaderList, preferenceHeaders);
+        mHeaderAdapter.notifyDataSetChanged();
     }
 
     private static class HeaderHolder extends RecyclerView.ViewHolder {
@@ -101,21 +107,20 @@ public final class SettingsHeaderScene extends AppbarScene implements EasyRecycl
 
         @Override
         public HeaderHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(mActivity).inflate(R.layout.settings_header, parent, false);
+            View view = LayoutInflater.from(mActivity).inflate(R.layout.preference_header, parent, false);
             return new HeaderHolder(view);
         }
 
         @Override
         public void onBindViewHolder(HeaderHolder holder, int position) {
-            holder.icon.setImageResource(HEADER_ICON_ARRAY[position]);
-            holder.title.setText(HEADER_TITLE_ARRAY[position]);
-            ViewUtils.setVisibility(holder.tileDivider,
-                    position == getItemCount() - 1 ? View.INVISIBLE : View.VISIBLE);
+            holder.icon.setImageDrawable(mHeaderList.get(position).getIcon());
+            holder.title.setText(mHeaderList.get(position).getTitle());
+            ViewUtils.setVisibility(holder.tileDivider, position == getItemCount() - 1 ? View.INVISIBLE : View.VISIBLE);
         }
 
         @Override
         public int getItemCount() {
-            return HEADER_ICON_ARRAY.length;
+            return mHeaderList.size();
         }
     }
 }

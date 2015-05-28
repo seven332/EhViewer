@@ -22,18 +22,21 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Space;
 import android.widget.TextView;
 
 import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
 import com.hippo.util.ViewUtils;
-import com.hippo.widget.IndicatingScrollView;
 
-// TODO Update start point after screen direction change
 public class SimpleDialog extends SceneDialog implements View.OnClickListener,
-        SceneDialogView.OnClickOutOfDialogListener {
+        SceneDialogView.OnClickOutOfDialogListener, AdapterView.OnItemClickListener {
 
     private static final int BACKGROUND_COLOR = 0x8a000000;
 
@@ -47,9 +50,10 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     private View mBody;
     private TextView mTitle;
     private Space mSpaceTitleContent;
-    private IndicatingScrollView mContent;
+    private ScrollView mContent;
     private TextView mMessage;
     private FrameLayout mCustom;
+    private ListView mListView;
     private View mButtonsSingleLine;
     private TextView mNegativeButton;
     private View mSpacePositiveNegative;
@@ -77,9 +81,10 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         mBody = findViewById(R.id.body);
         mTitle = (TextView) mBody.findViewById(R.id.title);
         mSpaceTitleContent = (Space) mBody.findViewById(R.id.space_title_content);
-        mContent = (IndicatingScrollView) findViewById(R.id.content);
+        mContent = (ScrollView) findViewById(R.id.content);
         mMessage = (TextView) mBody.findViewById(R.id.message);
         mCustom = (FrameLayout) mBody.findViewById(R.id.custom);
+        mListView = (ListView) mBody.findViewById(R.id.list);
         mButtonsSingleLine = findViewById(R.id.buttons_single_line);
         mNegativeButton = (TextView) mButtonsSingleLine.findViewById(R.id.negative);
         mSpacePositiveNegative = mButtonsSingleLine.findViewById(R.id.space_positive_negative);
@@ -99,6 +104,9 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     }
 
     private void bindDialog() {
+        ListView listView = mListView;
+
+
         if (mBuilder.mTitle == null && mBuilder.mMessage == null && mBuilder.mCustomViewResId == 0) {
             ViewUtils.setVisibility(mBody, View.GONE);
         } else {
@@ -111,6 +119,19 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
 
             if (mBuilder.mMessage != null) {
                 mMessage.setText(mBuilder.mMessage);
+                ViewUtils.setVisibility(mListView, View.GONE);
+                ViewUtils.setVisibility(mCustom, View.GONE);
+            } else if (mBuilder.mAdapter != null) {
+                listView.setAdapter(mBuilder.mAdapter);
+                listView.setOnItemClickListener(this);
+                if (mBuilder.mIsSingleChoice) {
+                    listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+                    if (mBuilder.mCheckedItem > -1) {
+                        listView.setItemChecked(mBuilder.mCheckedItem, true);
+                        listView.setSelection(mBuilder.mCheckedItem);
+                    }
+                }
+                ViewUtils.setVisibility(mContent, View.GONE);
                 ViewUtils.setVisibility(mCustom, View.GONE);
             } else if (mBuilder.mCustomViewResId != 0) {
                 getStageActivity().getLayoutInflater().inflate(mBuilder.mCustomViewResId, mCustom);
@@ -119,8 +140,10 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
                             mCustom.getChildAt(0));
                 }
                 ViewUtils.setVisibility(mContent, View.GONE);
+                ViewUtils.setVisibility(mListView, View.GONE);
             } else {
                 ViewUtils.setVisibility(mContent, View.GONE);
+                ViewUtils.setVisibility(mListView, View.GONE);
                 ViewUtils.setVisibility(mCustom, View.GONE);
                 ViewUtils.setVisibility(mSpaceTitleContent, View.GONE);
             }
@@ -225,8 +248,22 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     }
 
     @Override
-    public void onClickOutOfDialog() {
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (parent == mListView) {
+            OnClickListener listener = mBuilder.mOnListItemClickListener;
+            if (listener == null || listener.onClick(this, position)) {
+                finish();
+            }
+        }
+    }
+
+    @Override
+    public void onClickOutOfDialog(int x, int y) {
         if (mBuilder.mCancelable) {
+            Curtain curtain = getCurtain();
+            if (curtain instanceof SimpleDialogCurtain) {
+                ((SimpleDialogCurtain) curtain).setStartPosition(x, y);
+            }
             finish();
         }
     }
@@ -237,11 +274,18 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
 
         private String mTitle;
         private String mMessage;
+
+        private ListAdapter mAdapter;
+        private OnClickListener mOnListItemClickListener;
+        protected int mCheckedItem;
+        protected boolean mIsSingleChoice;
+
         private int mCustomViewResId = 0;
         private OnCreateCustomViewListener mOnCreateCustomViewListener;
+
         private String mPositiveButtonText;
         private String mNegativeButtonText;
-        private OnButtonClickListener mOnButtonClickListener;
+        private OnClickListener mOnButtonClickListener;
 
         private boolean mCancelable = true;
 
@@ -270,6 +314,61 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
             return setMessage(mContext.getString(resId));
         }
 
+        public Builder setItems(int itemsId, final OnClickListener listener) {
+            mAdapter = new ArrayAdapter<>(mContext, R.layout.select_dialog_item,
+                    android.R.id.text1, mContext.getResources().getTextArray(itemsId));
+            mOnListItemClickListener = listener;
+            mIsSingleChoice = false;
+            return this;
+        }
+
+        public Builder setItems(CharSequence[] items,
+                final OnClickListener listener) {
+            mAdapter = new ArrayAdapter<>(mContext, R.layout.select_dialog_item,
+                    android.R.id.text1, items);
+            mOnListItemClickListener = listener;
+            mIsSingleChoice = false;
+            return this;
+        }
+
+        public Builder setAdapter(final ListAdapter adapter,
+                final OnClickListener listener) {
+            mAdapter = adapter;
+            mOnListItemClickListener = listener;
+            mIsSingleChoice = false;
+            return this;
+        }
+
+        public Builder setSingleChoiceItems(int itemsId, int checkedItem,
+                final OnClickListener listener) {
+            mAdapter = new ArrayAdapter<>(mContext,
+                    R.layout.select_dialog_singlechoice, android.R.id.text1,
+                    mContext.getResources().getTextArray(itemsId));
+            mOnListItemClickListener = listener;
+            mCheckedItem = checkedItem;
+            mIsSingleChoice = true;
+            return this;
+        }
+
+        public Builder setSingleChoiceItems(CharSequence[] items,
+                int checkedItem, final OnClickListener listener) {
+            mAdapter = new ArrayAdapter<CharSequence>(mContext,
+                    R.layout.select_dialog_singlechoice, android.R.id.text1, items);
+            mOnListItemClickListener = listener;
+            mCheckedItem = checkedItem;
+            mIsSingleChoice = true;
+            return this;
+        }
+
+        public Builder setSingleChoiceItems(ListAdapter adapter,
+                int checkedItem, final OnClickListener listener) {
+            mAdapter = adapter;
+            mOnListItemClickListener = listener;
+            mCheckedItem = checkedItem;
+            mIsSingleChoice = true;
+            return this;
+        }
+
         public Builder setCustomView(@LayoutRes int resId,
                 @Nullable OnCreateCustomViewListener listener) {
             mCustomViewResId = resId;
@@ -295,7 +394,7 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
             return setNegativeButton(mContext.getString(resId));
         }
 
-        public Builder setOnButtonClickListener(OnButtonClickListener listener) {
+        public Builder setOnButtonClickListener(OnClickListener listener) {
             mOnButtonClickListener = listener;
             return this;
         }
@@ -333,7 +432,12 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         void onCreateCustomView(SimpleDialog dialog, View view);
     }
 
-    public interface OnButtonClickListener {
+    public interface OnClickListener {
         boolean onClick(SimpleDialog dialog, int which);
+    }
+
+    // TODO
+    public interface OnCloseListener {
+        void onClose();
     }
 }

@@ -58,4 +58,9 @@ public class SceneView extends AbsoluteLayout {
     public boolean dispatchTouchEvent(@NonNull MotionEvent ev) {
         return mEnableTouch && super.dispatchTouchEvent(ev);
     }
+
+    @Override
+    public boolean dispatchGenericMotionEvent(@NonNull MotionEvent event) {
+        return mEnableTouch && super.dispatchGenericMotionEvent(event);
+    }
 }

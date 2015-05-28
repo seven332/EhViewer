@@ -263,6 +263,9 @@ public abstract class Scene {
         mId = oldScene.mId;
         mAnnouncer = oldScene.mAnnouncer;
         mCurtain = oldScene.mCurtain;
+        if (mCurtain != null) {
+            mCurtain.onReplace();
+        }
     }
 
     protected void onNewAnnouncer(Announcer announcer) {
@@ -383,7 +386,7 @@ public abstract class Scene {
         return getStateKey() + ":gone";
     }
 
-    void saveInstanceState(Bundle outState) {
+    protected void saveInstanceState(Bundle outState) {
         SparseArray<Parcelable> states = new SparseArray<>();
         onSaveInstanceState(states);
         outState.putSparseParcelableArray(getStateKey(), states);
@@ -393,7 +396,7 @@ public abstract class Scene {
         }
     }
 
-    void restoreInstanceState(@NonNull Bundle savedInstanceState) {
+    protected void restoreInstanceState(@NonNull Bundle savedInstanceState) {
         if (mSceneView != null) {
             SparseArray<Parcelable> savedStates
                     = savedInstanceState.getSparseParcelableArray(getStateKey());

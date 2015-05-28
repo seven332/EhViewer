@@ -85,6 +85,10 @@
     <!-- Scroll View -->
     <color name="scroll_view_indicator">#20000000</color>
 
+    <!-- divider -->
+    <color name="divider_light">#20000000</color>
+    <color name="divider_dark">#20ffffff</color>
+
     <!-- CheckTextView -->
     <color name="check_text_view_mask">#8a000000</color>
 

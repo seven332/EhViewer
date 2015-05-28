@@ -153,8 +153,8 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
                 }
             };
 
-    private SimpleDialog.OnButtonClickListener mGoToButtonClickListener =
-            new SimpleDialog.OnButtonClickListener() {
+    private SimpleDialog.OnClickListener mGoToButtonClickListener =
+            new SimpleDialog.OnClickListener() {
                 @Override
                 public boolean onClick(SimpleDialog dialog, int which) {
                     if (which == SimpleDialog.POSITIVE) {

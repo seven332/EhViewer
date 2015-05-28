@@ -13,9 +13,13 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<resources>
-
-    <!-- Settings Header -->
-    <dimen name="preference_header_image_margin_start">12dp</dimen>
-
-</resources>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/title"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="@dimen/text_small"
+    android:textColor="@color/theme_accent"
+    android:paddingLeft="@dimen/keyline_margin"
+    android:paddingRight="@dimen/keyline_margin"
+    android:paddingTop="16dip" />

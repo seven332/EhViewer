@@ -50,6 +50,17 @@ public class SimpleDialogCurtain extends Curtain {
         mStartY = startY;
     }
 
+    public void setStartPosition(int startX, int startY) {
+        mStartX = startX;
+        mStartY = startY;
+    }
+
+    @Override
+    protected void onReplace() {
+        mStartX = 0;
+        mStartY = 0;
+    }
+
     @Override
     public void open(@NonNull final Scene enter, @NonNull final Scene exit) {
         AssertUtils.assertInstanceof("SimpleDialogCurtain should only use for SimpleDialog.", enter, SimpleDialog.class);

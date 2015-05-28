@@ -59,6 +59,17 @@
 
         </com.hippo.widget.IndicatingScrollView>
 
+        <com.hippo.widget.IndicatingListView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0dp"
+            android:paddingLeft="@dimen/simple_dialog_body_padding_left"
+            android:paddingRight="@dimen/simple_dialog_body_padding_right"
+            android:scrollbars="none"
+            tools:ignore="RtlHardcoded"/>
+
         <FrameLayout
             android:id="@+id/custom"
             android:layout_width="match_parent"

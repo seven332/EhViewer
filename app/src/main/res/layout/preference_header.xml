@@ -19,16 +19,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:minHeight="@dimen/settings_header_minimum_height">
+    android:minHeight="@dimen/preference_header_minimum_height"
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="@dimen/settings_header_image_size"
-        android:layout_height="@dimen/settings_header_image_size"
+        android:layout_width="@dimen/preference_header_image_size"
+        android:layout_height="@dimen/preference_header_image_size"
         android:scaleType="centerInside"
-        android:layout_marginLeft="@dimen/settings_header_image_margin_start"
-        android:layout_marginRight="@dimen/settings_header_image_margin_end"
-        tools:ignore="RtlHardcoded"/>
+        android:layout_marginLeft="@dimen/preference_header_image_margin_start"
+        android:layout_marginRight="@dimen/preference_header_image_margin_end"
+        tools:ignore="RtlHardcoded"
+        android:contentDescription="@null"/>
 
     <LinearLayout
         android:layout_width="match_parent"

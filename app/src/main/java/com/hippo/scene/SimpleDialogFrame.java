@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
+import android.view.RenderNodeAnimator;
 import android.widget.AbsoluteLayout;
 
 import com.hippo.ehviewer.R;
@@ -110,6 +111,7 @@ public class SimpleDialogFrame extends CardView {
         mDrawLeft = drawLeft;
         setLeft(drawLeft);
         setScrollX(drawLeft - mOriginLeft);
+        RenderNodeAnimator animato;
     }
 
     @SuppressWarnings("unused")

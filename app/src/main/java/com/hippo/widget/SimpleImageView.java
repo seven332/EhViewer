@@ -51,6 +51,7 @@ public class SimpleImageView extends View implements Drawable.Callback {
         setWillNotCacheDrawing(true);
     }
 
+    @SuppressWarnings("deprecation")
     public void setDrawable(@DrawableRes int resId) {
         setDrawable(getContext().getResources().getDrawable(resId));
     }

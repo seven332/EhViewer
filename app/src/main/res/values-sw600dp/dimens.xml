@@ -16,9 +16,8 @@
 <resources>
 
     <!-- Settings Header -->
-    <dimen name="settings_header_minimum_height">72dp</dimen>
-    <dimen name="settings_header_image_margin_start">8dp</dimen>
-    <dimen name="settings_header_image_margin_end">32dp</dimen>
+    <dimen name="preference_header_image_margin_start">8dp</dimen>
+    <dimen name="preference_header_image_margin_end">32dp</dimen>
 
     <!-- Snackbar -->
     <dimen name="snackbar_interval">48dp</dimen>

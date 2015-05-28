@@ -239,19 +239,13 @@ public final class Utils {
         return Utils.parseIntSafely(DATE_FORMATE_FOR_UPDATE.format(new Date()), 0);
     }
 
-
-    private static String[] SIZE_UNIT = {"%.2f B", "%.2f KB", "%.2f MB", "%.2f GB"};
-
-    public static String sizeToString(long size) {
-        int length = SIZE_UNIT.length;
-
-        float sizeFloat = size;
-        for (int i = 0; i < length - 1; i++) {
-            if (sizeFloat < 1024)
-                return String.format(SIZE_UNIT[i], sizeFloat);
-            sizeFloat /= 1024;
-        }
-        return String.format(SIZE_UNIT[length - 1], sizeFloat);
+    // http://stackoverflow.com/questions/3758606/
+    public static String humanReadableByteCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        char pre = "KMGTPE".charAt(exp-1);
+        return String.format("%.1f %cB", bytes / Math.pow(unit, exp), pre);
     }
 
     /**

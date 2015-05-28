@@ -74,11 +74,11 @@ public class SceneDialogView extends SceneView implements View.OnClickListener, 
     public void onClick(View v) {
         if (v == this && !ViewUtils.isViewUnder(getChildAt(0), (int) mHostpotX,
                 (int) mHostpotY) && mOnClickOutOfDialogListener != null) {
-            mOnClickOutOfDialogListener.onClickOutOfDialog();
+            mOnClickOutOfDialogListener.onClickOutOfDialog((int) mHostpotX, (int) mHostpotY);
         }
     }
 
     public interface OnClickOutOfDialogListener {
-        void onClickOutOfDialog();
+        void onClickOutOfDialog(int x, int y);
     }
 }

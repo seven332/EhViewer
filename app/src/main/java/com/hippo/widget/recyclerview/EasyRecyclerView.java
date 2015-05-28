@@ -166,6 +166,7 @@ public class EasyRecyclerView extends RecyclerView {
      */
     int mSelectionBottomPadding = 0;
 
+    private OnDrawSelectorListener mOnDrawSelectorListener;
 
     public EasyRecyclerView(Context context) {
         super(context);
@@ -278,14 +279,20 @@ public class EasyRecyclerView extends RecyclerView {
             mGroupFlags &= ~CLIP_TO_PADDING_MASK;
         }
 
+        // TODO disable selector drawable state change when need not to draw selector
+        boolean drawSelector = mOnDrawSelectorListener == null ||
+                mSelectorPosition < 0 ||
+                mSelectorPosition >= mAdapter.getItemCount() ||
+                mOnDrawSelectorListener.beforeDrawSelector(mSelectorPosition);
         final boolean drawSelectorOnTop = mDrawSelectorOnTop;
-        if (!drawSelectorOnTop) {
+
+        if (drawSelector && !drawSelectorOnTop) {
             drawSelector(canvas);
         }
 
         super.dispatchDraw(canvas);
 
-        if (drawSelectorOnTop) {
+        if (drawSelector && drawSelectorOnTop) {
             drawSelector(canvas);
         }
 
@@ -312,6 +319,10 @@ public class EasyRecyclerView extends RecyclerView {
             selector.setBounds(mSelectorRect);
             selector.draw(canvas);
         }
+    }
+
+    public void setOnDrawSelectorListener(OnDrawSelectorListener listener) {
+        mOnDrawSelectorListener = listener;
     }
 
     /**
@@ -349,6 +360,14 @@ public class EasyRecyclerView extends RecyclerView {
      */
     public Drawable getSelector() {
         return mSelector;
+    }
+
+    private void cancelDrawingSelector() {
+        Rect rect = mSelectorRect;
+        rect.left = 0;
+        rect.top = 0;
+        rect.right = 0;
+        rect.bottom = 0;
     }
 
     void updateSelectorState() {
@@ -656,6 +675,14 @@ public class EasyRecyclerView extends RecyclerView {
         }
     }
 
+    public float getTouchStartX() {
+        return mStartX;
+    }
+
+    public float getTouchStartY() {
+        return mStartY;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (!isEnabled()) {
@@ -733,6 +760,7 @@ public class EasyRecyclerView extends RecyclerView {
                 setPressed(false);
             }
             updateSelectorState();
+            cancelDrawingSelector();
         }
     }
 
@@ -1213,6 +1241,19 @@ public class EasyRecyclerView extends RecyclerView {
          * @return true if the callback consumed the long click, false otherwise
          */
         boolean onItemLongClick(EasyRecyclerView parent, View view, int position, long id);
+    }
+
+    /**
+     * Interface definition for a callback to be invoked when draw selector.
+     */
+    public interface OnDrawSelectorListener {
+        /**
+         * Callback method to be invoked before selector draw.
+         *
+         * @param position The EasyRecyclerView where the click happened
+         * @return true if need draw selector, false otherwise
+         */
+        boolean beforeDrawSelector(int position);
     }
 
     /**

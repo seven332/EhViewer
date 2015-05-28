@@ -28,7 +28,7 @@ import android.widget.AdapterView;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
-import com.hippo.ehviewer.ui.scene.SettingsHeaderScene;
+import com.hippo.ehviewer.ui.scene.MainSettingsScene;
 import com.hippo.ehviewer.ui.scene.SignInScene;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.widget.DrawerLeftPanel;
@@ -86,7 +86,7 @@ public final class ContentActivity extends StageActivity
                         break;
                     case DRAWER_LIST_SETTINGS:
                         mDrawerLayout.closeDrawers();
-                        startScene(SettingsHeaderScene.class, null, new SimpleCurtain(SimpleCurtain.DIRECTION_BOTTOM));
+                        startScene(MainSettingsScene.class, null, new SimpleCurtain(SimpleCurtain.DIRECTION_BOTTOM));
                         break;
                 }
 
