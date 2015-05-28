@@ -78,55 +78,64 @@ public class SimpleDialogCurtain extends Curtain {
         colorAnim.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
         animatorCollection.add(colorAnim);
 
-        final View mFrame = enterDialog.getFrame();
-        AssertUtils.assertNotNull("Frame view must not be null.", mFrame);
+        final View cushion = enterDialog.getCushion();
+        final View frame = enterDialog.getFrame();
+        AssertUtils.assertNotNull("Cushion view must not be null.", cushion);
+        AssertUtils.assertNotNull("Frame view must not be null.", frame);
 
-        ViewUtils.setVisibility(mFrame, View.INVISIBLE);
+        ViewUtils.setVisibility(cushion, View.INVISIBLE);
+        ViewUtils.setVisibility(frame, View.INVISIBLE);
 
-        mFrame.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        frame.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                ViewUtils.removeOnGlobalLayoutListener(mFrame.getViewTreeObserver(), this);
+                ViewUtils.removeOnGlobalLayoutListener(frame.getViewTreeObserver(), this);
 
-                int endLeft = mFrame.getLeft();
-                int endTop = mFrame.getTop();
-                int endRight = mFrame.getRight();
-                int endBottom = mFrame.getBottom();
-                int startLeft;
-                int startTop;
-                int startRight;
-                int startBottom;
+                float floatStartX;
+                float floatStartY;
+                int intStartX;
+                int intStartY;
                 if (mStartX == 0 && mStartY == 0) {
                     int[] center = new int[2];
                     enterDialog.getCenterLocation(center);
-                    startLeft = center[0];
-                    startTop = center[1];
-                    startRight = center[0];
-                    startBottom = center[1];
+                    floatStartX = center[0];
+                    floatStartY = center[1];
+                    intStartX = center[0];
+                    intStartY = center[1];
                 } else {
-                    startLeft = mStartX;
-                    startTop = mStartY;
-                    startRight = mStartX;
-                    startBottom = mStartY;
+                    floatStartX = mStartX;
+                    floatStartY = mStartY;
+                    intStartX = mStartX;
+                    intStartY = mStartY;
                 }
-                // TODO should start from frame edge when it is out of frame
 
-                PropertyValuesHolder leftPvh = PropertyValuesHolder.ofInt("drawLeft", startLeft, endLeft);
-                PropertyValuesHolder topPvh = PropertyValuesHolder.ofInt("drawTop", startTop, endTop);
-                PropertyValuesHolder rightPvh = PropertyValuesHolder.ofInt("drawRight", startRight, endRight);
-                PropertyValuesHolder bottomPvh = PropertyValuesHolder.ofInt("drawBottom", startBottom, endBottom);
-                ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(mFrame, leftPvh, topPvh, rightPvh, bottomPvh);
-                anim.setDuration(ANIMATE_TIME);
-                anim.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+                cushion.setPivotX(0f);
+                cushion.setPivotY(0f);
+                PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", 0f, 1f);
+                PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", 0f, 1f);
+                PropertyValuesHolder xPvh = PropertyValuesHolder.ofFloat("x", floatStartX, frame.getLeft());
+                PropertyValuesHolder yPvh = PropertyValuesHolder.ofFloat("y", floatStartY, frame.getTop());
+                ObjectAnimator animCushion = ObjectAnimator.ofPropertyValuesHolder(cushion, scaleXPvh, scaleYPvh, xPvh, yPvh);
+                animCushion.setDuration(ANIMATE_TIME);
+                animCushion.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+                animatorCollection.add(animCushion);
 
-                animatorCollection.add(anim);
+                PropertyValuesHolder leftPvh = PropertyValuesHolder.ofInt("drawLeft", intStartX, frame.getLeft());
+                PropertyValuesHolder topPvh = PropertyValuesHolder.ofInt("drawTop", intStartY, frame.getTop());
+                PropertyValuesHolder rightPvh = PropertyValuesHolder.ofInt("drawRight", intStartX, frame.getRight());
+                PropertyValuesHolder bottomPvh = PropertyValuesHolder.ofInt("drawBottom", intStartY, frame.getBottom());
+                ObjectAnimator animFrame = ObjectAnimator.ofPropertyValuesHolder(frame, leftPvh, topPvh, rightPvh, bottomPvh);
+                animFrame.setDuration(ANIMATE_TIME);
+                animFrame.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+                animatorCollection.add(animFrame);
 
                 mAnimatorSet = new AnimatorSet();
                 mAnimatorSet.playTogether(animatorCollection);
                 mAnimatorSet.addListener(new SimpleAnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        ViewUtils.setVisibility(mFrame, View.VISIBLE);
+                        ViewUtils.setVisibility(cushion, View.VISIBLE);
+                        ViewUtils.setVisibility(frame, View.VISIBLE);
                     }
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -155,40 +164,48 @@ public class SimpleDialogCurtain extends Curtain {
         animatorCollection.add(colorAnim);
         colorAnim.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
 
-        final View mFrame = exitDialog.getFrame();
-        AssertUtils.assertNotNull("Frame view must not be null.", mFrame);
+        final View cushion = exitDialog.getCushion();
+        final View frame = exitDialog.getFrame();
+        AssertUtils.assertNotNull("Cushion view must not be null.", cushion);
+        AssertUtils.assertNotNull("Frame view must not be null.", frame);
 
-        int startLeft = mFrame.getLeft();
-        int startTop = mFrame.getTop();
-        int startRight = mFrame.getRight();
-        int startBottom = mFrame.getBottom();
-        int endLeft;
-        int endTop;
-        int endRight;
-        int endBottom;
+        float floatEndX;
+        float floatEndY;
+        int intEndX;
+        int intEndY;
         if (mStartX == 0 && mStartY == 0) {
             int[] center = new int[2];
             exitDialog.getCenterLocation(center);
-            endLeft = center[0];
-            endTop = center[1];
-            endRight = center[0];
-            endBottom = center[1];
+            floatEndX = center[0];
+            floatEndY = center[1];
+            intEndX = center[0];
+            intEndY = center[1];
         } else {
-            endLeft = mStartX;
-            endTop = mStartY;
-            endRight = mStartX;
-            endBottom = mStartY;
+            floatEndX = mStartX;
+            floatEndY = mStartY;
+            intEndX = mStartX;
+            intEndY = mStartY;
         }
 
-        PropertyValuesHolder leftPvh = PropertyValuesHolder.ofInt("drawLeft", startLeft, endLeft);
-        PropertyValuesHolder topPvh = PropertyValuesHolder.ofInt("drawTop", startTop, endTop);
-        PropertyValuesHolder rightPvh = PropertyValuesHolder.ofInt("drawRight", startRight, endRight);
-        PropertyValuesHolder bottomPvh = PropertyValuesHolder.ofInt("drawBottom", startBottom, endBottom);
-        ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(mFrame, leftPvh, topPvh, rightPvh, bottomPvh);
-        anim.setDuration(ANIMATE_TIME);
-        anim.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
+        cushion.setPivotX(0f);
+        cushion.setPivotY(0f);
+        PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", 0f);
+        PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", 0f);
+        PropertyValuesHolder xPvh = PropertyValuesHolder.ofFloat("x", floatEndX);
+        PropertyValuesHolder yPvh = PropertyValuesHolder.ofFloat("y", floatEndY);
+        ObjectAnimator animCushion = ObjectAnimator.ofPropertyValuesHolder(cushion, scaleXPvh, scaleYPvh, xPvh, yPvh);
+        animCushion.setDuration(ANIMATE_TIME);
+        animCushion.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+        animatorCollection.add(animCushion);
 
-        animatorCollection.add(anim);
+        PropertyValuesHolder leftPvh = PropertyValuesHolder.ofInt("drawLeft", intEndX);
+        PropertyValuesHolder topPvh = PropertyValuesHolder.ofInt("drawTop", intEndY);
+        PropertyValuesHolder rightPvh = PropertyValuesHolder.ofInt("drawRight", intEndX);
+        PropertyValuesHolder bottomPvh = PropertyValuesHolder.ofInt("drawBottom", intEndY);
+        ObjectAnimator animFrame = ObjectAnimator.ofPropertyValuesHolder(frame, leftPvh, topPvh, rightPvh, bottomPvh);
+        animFrame.setDuration(ANIMATE_TIME);
+        animFrame.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+        animatorCollection.add(animFrame);
 
         mAnimatorSet = new AnimatorSet();
         mAnimatorSet.playTogether(animatorCollection);

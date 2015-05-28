@@ -21,7 +21,9 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v7.widget.CardView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -46,6 +48,8 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     private Builder mBuilder;
 
     private SceneDialogView mSceneDialogView;
+    private SimpleDialogLayout mLayout;
+    private CardView mCushion;
     private SimpleDialogFrame mFrame;
     private View mBody;
     private TextView mTitle;
@@ -73,7 +77,10 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         setBackgroundColor(BACKGROUND_COLOR);
 
         setContentView(R.layout.simple_dialog_frame);
-        mFrame = (SimpleDialogFrame) findViewById(R.id.simple_dialog_frame);
+
+        mLayout = (SimpleDialogLayout) findViewById(R.id.simple_dialog_layout);
+        mCushion = (CardView) mLayout.findViewById(R.id.simple_dialog_cushion);
+        mFrame = (SimpleDialogFrame) mLayout.findViewById(R.id.simple_dialog_frame);
 
         getStageActivity().getLayoutInflater().inflate(R.layout.simple_dialog, mFrame);
 
@@ -181,10 +188,14 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     @Override
     protected void onGetFitPaddingBottom(int b) {
         mFitPaddingBottom = b;
-        mFrame.setFitPaddingBottom(b);
+        mLayout.setFitPaddingBottom(b);
     }
 
-    public SimpleDialogFrame getFrame() {
+    public CardView getCushion() {
+        return mCushion;
+    }
+
+    public ViewGroup getFrame() {
         return mFrame;
     }
 

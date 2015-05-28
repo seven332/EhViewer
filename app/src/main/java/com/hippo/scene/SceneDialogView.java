@@ -19,6 +19,7 @@ import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.HotspotTouchHelper;
@@ -72,7 +73,7 @@ public class SceneDialogView extends SceneView implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        if (v == this && !ViewUtils.isViewUnder(getChildAt(0), (int) mHostpotX,
+        if (v == this && !ViewUtils.isViewUnder(((ViewGroup) getChildAt(0)).getChildAt(0), (int) mHostpotX,
                 (int) mHostpotY) && mOnClickOutOfDialogListener != null) {
             mOnClickOutOfDialogListener.onClickOutOfDialog((int) mHostpotX, (int) mHostpotY);
         }

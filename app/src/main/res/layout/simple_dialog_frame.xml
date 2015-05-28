@@ -13,10 +13,23 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<com.hippo.scene.SimpleDialogFrame
+<com.hippo.scene.SimpleDialogLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:auto="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/simple_dialog_frame"
+    android:id="@+id/simple_dialog_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    auto:forceNoElevation="true"/>
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/simple_dialog_cushion"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        auto:forceNoElevation="true"/>
+
+    <com.hippo.scene.SimpleDialogFrame
+        android:id="@+id/simple_dialog_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</com.hippo.scene.SimpleDialogLayout>
+
