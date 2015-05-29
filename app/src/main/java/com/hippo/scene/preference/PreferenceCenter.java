@@ -38,7 +38,7 @@ public final class PreferenceCenter {
         register(TYPE_PEFERENCE_CATEGORY, PreferenceCategory.class);
         register(TYPE_PEFERENCE, Preference.class);
         register(TYPE_SWITCH_PEFERENCE, SwitchPreference.class);
-        register(TYPE_DIALOG_PEFERENCE, DialogPreference.class);
+        register(TYPE_DIALOG_PEFERENCE, ListPreference.class);
     }
 
     @SuppressWarnings("unchecked")

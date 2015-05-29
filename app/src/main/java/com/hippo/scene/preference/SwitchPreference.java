@@ -15,6 +15,7 @@
 
 package com.hippo.scene.preference;
 
+import android.annotation.NonNull;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
@@ -26,14 +27,53 @@ import com.hippo.ehviewer.util.Config;
 
 public class SwitchPreference extends Preference {
 
+    private String mSummaryOn;
+    private String mSummaryOff;
+
     private boolean mDefaultValue;
 
     public SwitchPreference(String key, String title, String summary) {
         super(key, title, summary);
     }
 
+    public void setSummaryOn(String summaryOn) {
+        mSummaryOn = summaryOn;
+    }
+
+    public void setSummaryOff(String summaryOff) {
+        mSummaryOff = summaryOff;
+    }
+
     public void setDefaultValue(boolean defaultValue) {
         mDefaultValue = defaultValue;
+    }
+
+    @Override
+    public String getDisplaySummary() {
+        String displaySummary = getValue() ? mSummaryOn : mSummaryOff;
+        if (displaySummary == null) {
+            displaySummary = getSummary();
+        }
+        return displaySummary;
+    }
+
+    private boolean getValue() {
+        return Config.getBoolean(getKey(), mDefaultValue);
+    }
+
+    private SwitchCompat getSwitch(RecyclerView.ViewHolder viewHolder) {
+        return (SwitchCompat) ((PreferenceHolder) viewHolder).widgetFrame.getChildAt(0);
+    }
+
+    @Override
+    protected void storeValue(Object newValue) {
+        Config.putBoolean(getKey(), (Boolean) newValue);
+    }
+
+    @Override
+    protected void onUpdateViewByNewValue(@NonNull RecyclerView.ViewHolder viewHolder, Object newValue) {
+        getSwitch(viewHolder).setChecked((Boolean) newValue);
+        updateSummary(viewHolder);
     }
 
     @Override
@@ -49,18 +89,13 @@ public class SwitchPreference extends Preference {
 
     @Override
     protected void onUpdateView(RecyclerView.ViewHolder viewHolder) {
-        PreferenceHolder pvh = (PreferenceHolder) viewHolder;
-        ((SwitchCompat) pvh.widgetFrame.getChildAt(0))
-                .setChecked(Config.getBoolean(getKey(), mDefaultValue));
+        getSwitch(viewHolder).setChecked(getValue());
     }
 
     @Override
     public boolean onClick(RecyclerView.ViewHolder viewHolder, int x, int y) {
         if (!super.onClick(viewHolder, x, y)) {
-            PreferenceHolder pvh = (PreferenceHolder) viewHolder;
-            SwitchCompat switchCompat = (SwitchCompat) pvh.widgetFrame.getChildAt(0);
-            switchCompat.toggle();
-            Config.putBoolean(getKey(), switchCompat.isChecked());
+            setValue(!getValue());
         }
         return true;
     }

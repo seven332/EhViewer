@@ -34,18 +34,29 @@ public final class MainSettingsScene extends PreferenceHeaderScene {
         Resources resources = getStageActivity().getResources();
 
         PreferenceHeader[] phs = new PreferenceHeader[] {
-                new PreferenceHeader(
-                        resources.getDrawable(R.drawable.ic_cellphone_android_theme_primary),
-                        resources.getString(R.string.display),
-                        DisplaySettingsScene.class
-                ),
-                new PreferenceHeader(
-                        resources.getDrawable(R.drawable.ic_eh_theme_primary),
-                        resources.getString(R.string.eh),
-                        null
-                )
+                newPreferenceHeader(
+                        R.drawable.ic_cellphone_android_theme_primary,
+                        R.string.settings_display,
+                        DisplaySettingsScene.class),
+                newPreferenceHeader(
+                        R.drawable.ic_eh_theme_primary,
+                        R.string.settings_eh,
+                        EHSettingsScene.class),
+                newPreferenceHeader(
+                        R.drawable.ic_lambda_theme_primary,
+                        R.string.settings_advance,
+                        AdvanceSettingsScene.class)
         };
         setPreferenceHeaders(phs);
+    }
+
+    private PreferenceHeader newPreferenceHeader(int drawableId, int titleId, Class clazz) {
+        Resources resources = getStageActivity().getResources();
+        return new PreferenceHeader(
+                resources.getDrawable(drawableId),
+                resources.getString(titleId),
+                clazz
+        );
     }
 
     @Override

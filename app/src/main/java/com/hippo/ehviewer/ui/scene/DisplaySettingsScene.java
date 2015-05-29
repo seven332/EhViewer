@@ -19,12 +19,10 @@ import android.content.res.Resources;
 import android.os.Bundle;
 
 import com.hippo.ehviewer.R;
-import com.hippo.scene.preference.DialogPreference;
 import com.hippo.scene.preference.Preference;
 import com.hippo.scene.preference.PreferenceCategory;
 import com.hippo.scene.preference.PreferenceScene;
 import com.hippo.scene.preference.PreferenceSet;
-import com.hippo.scene.preference.SwitchPreference;
 
 public class DisplaySettingsScene extends PreferenceScene {
 
@@ -42,18 +40,9 @@ public class DisplaySettingsScene extends PreferenceScene {
         Resources resources = getStageActivity().getResources();
 
         PreferenceSet preferenceSet = new PreferenceSet();
-        preferenceSet.setPreferenceCategory(new PreferenceCategory("Display"));
+        preferenceSet.setPreferenceCategory(new PreferenceCategory(resources.getString(R.string.settings_display)));
 
         Preference[] preferences = new Preference[] {
-                new SwitchPreference("custom_theme_color", "屏幕方向", "速度速度速度速度加快"),
-                new Preference("fdfdfdf", "哈哈哈", "恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地"),
-                new Preference("fdfdfdf", "哈哈哈", "恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地"),
-                new Preference("fdfdfdf", "哈哈哈", "恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地"),
-                new Preference("fdfdfdf", "哈哈哈", "恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地"),
-                new Preference("fdfdfdf", "哈哈哈", "恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地"),
-                new Preference("fdfdfdf", "哈哈哈", "恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地"),
-                new DialogPreference("sssss", "ssssssssss", "sssssssssss"),
-                new Preference("fdfdfdf", "哈哈哈", "恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地恩雅咋地")
         };
 
         preferenceSet.setPreferenceList(preferences);

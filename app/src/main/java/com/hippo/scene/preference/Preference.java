@@ -15,9 +15,11 @@
 
 package com.hippo.scene.preference;
 
+import android.annotation.NonNull;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -27,21 +29,30 @@ public class Preference extends PreferenceBase {
 
     private int mPosition;
 
-    private String mKey;
+    private @NonNull String mKey;
     private String mTitle;
     private String mSummary;
 
     private OnClickListener mOnClickListener;
+    private OnValueChangeListener mOnValueChangeListener;
     private ViewHolderGetter mViewHolderGetter;
 
-    public Preference(String key, String title, String summary) {
+    public Preference(@NonNull String key, String title, String summary) {
         mKey = key;
         mTitle = title;
         mSummary = summary;
     }
 
-    public String getKey() {
+    public @NonNull String getKey() {
         return mKey;
+    }
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public String getSummary() {
+        return mSummary;
     }
 
     public int getPosition() {
@@ -50,6 +61,38 @@ public class Preference extends PreferenceBase {
 
     public void setPosition(int position) {
         mPosition = position;
+    }
+
+    /**
+     * @return the text display below title
+     */
+    public String getDisplaySummary() {
+        return mSummary;
+    }
+
+    /**
+     * Call it when you want to save new value
+     */
+    public void setValue(Object newValue) {
+        if (mOnValueChangeListener == null || mOnValueChangeListener.OnValueChange(this, newValue)) {
+            storeValue(newValue);
+            RecyclerView.ViewHolder viewHolder = getViewHolder();
+            if (viewHolder != null) {
+                onUpdateViewByNewValue(viewHolder, newValue);
+            }
+        }
+    }
+
+    /**
+     * Save value to file
+     */
+    protected void storeValue(Object newValue) {
+    }
+
+    /**
+     * Update view because value change
+     */
+    protected void onUpdateViewByNewValue(@NonNull RecyclerView.ViewHolder viewHolder, Object newValue) {
     }
 
     @Override
@@ -65,7 +108,9 @@ public class Preference extends PreferenceBase {
     void bindViewHolder(Context context, RecyclerView.ViewHolder viewHolder) {
         PreferenceHolder pvh = (PreferenceHolder) viewHolder;
         pvh.title.setText(mTitle);
-        pvh.summary.setText(mSummary);
+
+        updateSummary(viewHolder);
+
         if (!stableWidgetFrame() || !pvh.hasSetWidgetFrame) {
             pvh.widgetFrame.removeAllViews();
             onBind(context, pvh.widgetFrame);
@@ -81,6 +126,22 @@ public class Preference extends PreferenceBase {
     protected void onUpdateView(RecyclerView.ViewHolder viewHolder) {
     }
 
+    protected void updateSummary(RecyclerView.ViewHolder viewHolder) {
+        if (viewHolder == null) {
+            viewHolder = getViewHolder();
+        }
+        if (viewHolder != null) {
+            PreferenceHolder pvh = (PreferenceHolder) viewHolder;
+            String displaySummary = getDisplaySummary();
+            if (displaySummary == null) {
+                pvh.summary.setVisibility(View.GONE);
+            } else {
+                pvh.summary.setVisibility(View.VISIBLE);
+                pvh.summary.setText(displaySummary);
+            }
+        }
+    }
+
     @Override
     public boolean onClick(RecyclerView.ViewHolder viewHolder, int x, int y) {
         return mOnClickListener != null && mOnClickListener.onClick();
@@ -90,23 +151,7 @@ public class Preference extends PreferenceBase {
         return false;
     }
 
-    public String getSummary() {
-        return mSummary;
-    }
-
-    public void setSummary(String summary) {
-        mSummary = summary;
-    }
-
-    public String getTitle() {
-        return mTitle;
-    }
-
-    public void setTitle(String title) {
-        mTitle = title;
-    }
-
-    public RecyclerView.ViewHolder getViewHolder() {
+    private RecyclerView.ViewHolder getViewHolder() {
         if (mViewHolderGetter != null) {
             return mViewHolderGetter.getViewHolder(mPosition);
         } else {
@@ -118,7 +163,11 @@ public class Preference extends PreferenceBase {
         mOnClickListener = listener;
     }
 
-    public void setViewHolderGetter(ViewHolderGetter viewHolderGetter) {
+    public void setOnValueChangeListener(OnValueChangeListener listener) {
+        mOnValueChangeListener = listener;
+    }
+
+    void setViewHolderGetter(ViewHolderGetter viewHolderGetter) {
         mViewHolderGetter = viewHolderGetter;
     }
 
@@ -126,7 +175,11 @@ public class Preference extends PreferenceBase {
         boolean onClick();
     }
 
-    public interface ViewHolderGetter {
+    public interface OnValueChangeListener {
+        boolean OnValueChange(Preference preference, Object newValue);
+    }
+
+    interface ViewHolderGetter {
         RecyclerView.ViewHolder getViewHolder(int position);
     }
 }

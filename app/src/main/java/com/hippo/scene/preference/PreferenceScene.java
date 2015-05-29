@@ -89,6 +89,7 @@ public class PreferenceScene extends AppbarScene {
                 }
                 Preference p = ps.getPreferenceData(i);
                 p.setPosition(position);
+                p.setViewHolderGetter(mPreferenceViewHolderGetter);
                 preferenceBaseList.add(p);
                 position++;
             }

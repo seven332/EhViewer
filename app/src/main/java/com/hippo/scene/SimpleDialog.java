@@ -254,9 +254,9 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         }
     }
 
-    public int getSelectItemPosition() {
+    public int getCheckedItemPosition() {
         // TODO check mListView isShown
-        return mListView.getSelectedItemPosition();
+        return mListView.getCheckedItemPosition();
     }
 
     @Override

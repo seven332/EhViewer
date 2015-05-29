@@ -89,6 +89,19 @@
     <string name="em_unknown">Weird</string>
     <string name="erm_unknown_host">Network available ?</string>
 
+    <!-- Settings -->
+    <string name="settings_display">Display</string>
+
+    <string name="settings_eh" translatable="false">EH</string>
+    <string name="settings_eh_source_title">EH source</string>
+    <string name="settings_eh_source_g" translatable="false">g.e-hentai.org</string>
+    <string name="settings_eh_source_ex" translatable="false">exhentai.org</string>
+    <string name="settings_eh_source_lofi" translatable="false">lofi.e-hentai.org</string>
+
+    <string name="settings_advance">Advance</string>
+    <string name="settings_show_application_stats_title">Show application stats</string>
+    <string name="settings_show_application_stats_summary">Show application stats at the top-right corner of the screen</string>
+
     <!-- Sign in -->
     <string name="line_dean">\"What ?\"</string>
     <string name="line_sam">\"I lose my panda …\"</string>
@@ -111,8 +124,5 @@
     <string name="signout">Sign out</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-
-    <string name="display">Display</string>
-    <string name="eh" translatable="false">EH</string>
 
 </resources>

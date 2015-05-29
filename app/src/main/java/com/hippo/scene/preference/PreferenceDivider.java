@@ -36,7 +36,7 @@ public class PreferenceDivider extends PreferenceBase {
     }
 
     @Override
-    void bindViewHolde(Context context, RecyclerView.ViewHolder viewHolder) {
+    void bindViewHolder(Context context, RecyclerView.ViewHolder viewHolder) {
         // Empty
     }
 }

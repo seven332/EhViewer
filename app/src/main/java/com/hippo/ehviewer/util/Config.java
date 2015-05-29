@@ -20,9 +20,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.hippo.ehviewer.BuildConfig;
-import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.client.EhClient;
-import com.hippo.util.Messenger;
 
 public final class Config {
 
@@ -104,7 +102,6 @@ public final class Config {
             value = DEFAULT_EH_SOURCE;
         }
         putInt(KEY_EH_SOURCE, value);
-        Messenger.getInstance().notify(Constants.MESSENGER_ID_EH_SOURCE, value);
     }
 
     public static boolean getSignIn() {

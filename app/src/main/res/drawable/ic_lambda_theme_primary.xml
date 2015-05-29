@@ -13,10 +13,27 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<android.support.v7.widget.SwitchCompat
+<vector
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:paddingLeft="16dp"
-    tools:ignore="RtlHardcoded,RtlSymmetry"/>
+    xmlns:auto="http://schemas.android.com/apk/res-auto"
+    tools:targetApi="21"
+
+    auto:width="24dp"
+    auto:height="24dp"
+    auto:viewportWidth="24"
+    auto:viewportHeight="24"
+
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <path
+        auto:pathData="@string/pd_lambda"
+        auto:fillColor="@color/theme_primary"
+
+        android:pathData="@string/pd_lambda"
+        android:fillColor="@color/theme_primary"/>
+
+</vector>
