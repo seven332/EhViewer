@@ -24,8 +24,8 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:22.1.1'
-    compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.github.japgolly.android:svg-android:2.0.6'
     compile 'com.facebook.fresco:fresco:0.5.0'
     compile 'com.facebook.fresco:imagepipeline-okhttp:0.5.0'
