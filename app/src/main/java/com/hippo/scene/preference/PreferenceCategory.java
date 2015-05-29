@@ -41,7 +41,7 @@ public class PreferenceCategory extends PreferenceBase {
     }
 
     @Override
-    void bindViewHolde(Context context, RecyclerView.ViewHolder viewHolder) {
+    void bindViewHolder(Context context, RecyclerView.ViewHolder viewHolder) {
         PreferenceCategoryHolder pvh = (PreferenceCategoryHolder) viewHolder;
         pvh.title.setText(mTitle);
     }

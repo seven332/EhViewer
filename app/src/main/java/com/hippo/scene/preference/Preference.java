@@ -25,11 +25,14 @@ import com.hippo.ehviewer.R;
 
 public class Preference extends PreferenceBase {
 
+    private int mPosition;
+
     private String mKey;
     private String mTitle;
     private String mSummary;
 
     private OnClickListener mOnClickListener;
+    private ViewHolderGetter mViewHolderGetter;
 
     public Preference(String key, String title, String summary) {
         mKey = key;
@@ -39,6 +42,14 @@ public class Preference extends PreferenceBase {
 
     public String getKey() {
         return mKey;
+    }
+
+    public int getPosition() {
+        return mPosition;
+    }
+
+    public void setPosition(int position) {
+        mPosition = position;
     }
 
     @Override
@@ -51,7 +62,7 @@ public class Preference extends PreferenceBase {
     }
 
     @Override
-    void bindViewHolde(Context context, RecyclerView.ViewHolder viewHolder) {
+    void bindViewHolder(Context context, RecyclerView.ViewHolder viewHolder) {
         PreferenceHolder pvh = (PreferenceHolder) viewHolder;
         pvh.title.setText(mTitle);
         pvh.summary.setText(mSummary);
@@ -95,11 +106,27 @@ public class Preference extends PreferenceBase {
         mTitle = title;
     }
 
+    public RecyclerView.ViewHolder getViewHolder() {
+        if (mViewHolderGetter != null) {
+            return mViewHolderGetter.getViewHolder(mPosition);
+        } else {
+            return null;
+        }
+    }
+
     public void setOnClickListener(OnClickListener listener) {
         mOnClickListener = listener;
     }
 
+    public void setViewHolderGetter(ViewHolderGetter viewHolderGetter) {
+        mViewHolderGetter = viewHolderGetter;
+    }
+
     public interface OnClickListener {
         boolean onClick();
+    }
+
+    public interface ViewHolderGetter {
+        RecyclerView.ViewHolder getViewHolder(int position);
     }
 }

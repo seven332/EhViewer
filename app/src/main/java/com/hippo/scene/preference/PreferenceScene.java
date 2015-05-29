@@ -38,6 +38,7 @@ public class PreferenceScene extends AppbarScene {
     private EasyRecyclerView mRecyclerView;
 
     private PreferenceAdapter mAdapter;
+    private PreferenceViewHolderGetter mPreferenceViewHolderGetter = new PreferenceViewHolderGetter();
 
     private List<PreferenceSet> mPreferenceSetList = new ArrayList<>();
     private List<PreferenceBase> mPreferenceBaseList = new ArrayList<>();
@@ -71,19 +72,25 @@ public class PreferenceScene extends AppbarScene {
         preferenceSetList.clear();
         Collections.addAll(preferenceSetList, preferenceSets);
         // Update mPreferenceBasesList
+        int position = 0;
         List<PreferenceBase> preferenceBaseList = mPreferenceBaseList;
         preferenceBaseList.clear();
         for (PreferenceSet ps : preferenceSets) {
             PreferenceCategory pc = ps.getPreferenceCategory();
             if (pc != null) {
                 preferenceBaseList.add(pc);
+                position++;
             }
             int pdCount = ps.getPreferenceCount();
             for (int i = 0; i < pdCount; i++) {
                 if (i != 0) {
                     preferenceBaseList.add(PREFERENCE_DIVIDER);
+                    position++;
                 }
-                preferenceBaseList.add(ps.getPreferenceData(i));
+                Preference p = ps.getPreferenceData(i);
+                p.setPosition(position);
+                preferenceBaseList.add(p);
+                position++;
             }
         }
         mAdapter.notifyDataSetChanged();
@@ -98,7 +105,7 @@ public class PreferenceScene extends AppbarScene {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            mPreferenceBaseList.get(position).bindViewHolde(getStageActivity(), holder);
+            mPreferenceBaseList.get(position).bindViewHolder(getStageActivity(), holder);
         }
 
         @Override
@@ -131,6 +138,14 @@ public class PreferenceScene extends AppbarScene {
             PreferenceBase pb = mPreferenceBaseList.get(position);
             return !(pb instanceof PreferenceCategory) &&
                     !(pb instanceof PreferenceDivider);
+        }
+    }
+
+    private class PreferenceViewHolderGetter implements Preference.ViewHolderGetter {
+
+        @Override
+        public RecyclerView.ViewHolder getViewHolder(int position) {
+            return mRecyclerView.findViewHolderForAdapterPosition(position);
         }
     }
 }

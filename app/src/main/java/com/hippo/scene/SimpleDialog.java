@@ -63,6 +63,8 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     private View mSpacePositiveNegative;
     private TextView mPositiveButton;
 
+    private boolean mCancel = true;
+
     private int mFitPaddingBottom;
 
     private void setBuilder(@NonNull Builder builder) {
@@ -110,9 +112,18 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         mBuilder.mContext = getStageActivity();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        OnCloseListener listener = mBuilder.mOnCloseListener;
+        if (listener != null) {
+            listener.onClose(this, mCancel);
+        }
+    }
+
     private void bindDialog() {
         ListView listView = mListView;
-
 
         if (mBuilder.mTitle == null && mBuilder.mMessage == null && mBuilder.mCustomViewResId == 0) {
             ViewUtils.setVisibility(mBody, View.GONE);
@@ -243,11 +254,17 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         }
     }
 
+    public int getSelectItemPosition() {
+        // TODO check mListView isShown
+        return mListView.getSelectedItemPosition();
+    }
+
     @Override
     public void onClick(View v) {
         if (v == mPositiveButton) {
             if (mBuilder.mOnButtonClickListener == null ||
                     mBuilder.mOnButtonClickListener.onClick(this, POSITIVE)) {
+                mCancel = false;
                 finish();
             }
         } else if (v == mNegativeButton) {
@@ -263,6 +280,7 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         if (parent == mListView) {
             OnClickListener listener = mBuilder.mOnListItemClickListener;
             if (listener == null || listener.onClick(this, position)) {
+                mCancel = false;
                 finish();
             }
         }
@@ -299,6 +317,7 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         private OnClickListener mOnButtonClickListener;
 
         private boolean mCancelable = true;
+        private OnCloseListener mOnCloseListener;
 
         private int mStartX;
         private int mStartY;
@@ -415,6 +434,11 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
             return this;
         }
 
+        public Builder setOnCloseListener(OnCloseListener listener) {
+            mOnCloseListener = listener;
+            return this;
+        }
+
         public Builder setStartPoint(int startX, int startY) {
             mStartX = startX;
             mStartY = startY;
@@ -447,8 +471,7 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         boolean onClick(SimpleDialog dialog, int which);
     }
 
-    // TODO
     public interface OnCloseListener {
-        void onClose();
+        void onClose(SimpleDialog dialog, boolean cancel);
     }
 }

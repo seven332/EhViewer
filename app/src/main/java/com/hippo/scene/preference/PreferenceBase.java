@@ -22,7 +22,7 @@ abstract class PreferenceBase {
 
     abstract int getItemViewType();
 
-    abstract void bindViewHolde(Context context, RecyclerView.ViewHolder viewHolder);
+    abstract void bindViewHolder(Context context, RecyclerView.ViewHolder viewHolder);
 
     /**
      * @param viewHolder the view holder of the view
