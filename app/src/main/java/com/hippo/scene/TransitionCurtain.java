@@ -22,13 +22,13 @@ import android.animation.PropertyValuesHolder;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsoluteLayout;
 
 import com.hippo.animation.ArgbEvaluator;
 import com.hippo.animation.SimpleAnimatorListener;
+import com.hippo.util.AnimationUtils;
 import com.hippo.util.Log;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.GlobalLayoutSet;
@@ -68,6 +68,16 @@ public class TransitionCurtain extends Curtain {
         colorAnim.setDuration(ANIMATE_TIME);
         animatorCollection.add(colorAnim);
 
+        View sceneContentView = enter.getSceneView().getChildAt(0);
+        if (sceneContentView != null) {
+            sceneContentView.setAlpha(0f);
+            ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(sceneContentView, "alpha", 0f, 1f);
+            alphaAnim.setDuration(ANIMATE_TIME);
+            animatorCollection.add(alphaAnim);
+        } else {
+            Log.w(TAG, "Can't get enter scene content view");
+        }
+
         GlobalLayoutSet globalLayoutSet = new GlobalLayoutSet();
         Set<TransitionItem> transitionItemSet = new HashSet<>();
 
@@ -76,11 +86,11 @@ public class TransitionCurtain extends Curtain {
             final View enterView = pair.getToView(enter);
             final View exitView = pair.getFromView(exit);
             if (enterView == null) {
-                Log.e(TAG, "Can't get enterView when close.");
+                Log.w(TAG, "Can't get enterView when open.");
                 continue;
             }
             if (exitView == null) {
-                Log.e(TAG, "Can't get exitView when close.");
+                Log.w(TAG, "Can't get exitView when open.");
                 continue;
             }
 
@@ -94,11 +104,15 @@ public class TransitionCurtain extends Curtain {
             transitionItemSet.add(item);
 
             globalLayoutSet.addListenerToObserver(enterView.getViewTreeObserver());
-            // TODO show other part progressively
         }
 
-        globalLayoutSet.setOnAllLayoutListener(new OpenFirstAllLayoutListener(
-                enter, exit, transitionItemSet, animatorCollection));
+        if (globalLayoutSet.getSize() == 0) {
+            // Not transition view, do animation now
+            new OpenSecondAllLayoutListener(enter, exit, transitionItemSet, animatorCollection).onAllLayout();
+        } else {
+            globalLayoutSet.setOnAllLayoutListener(new OpenFirstAllLayoutListener(
+                    enter, exit, transitionItemSet, animatorCollection));
+        }
     }
 
     private class OpenFirstAllLayoutListener implements GlobalLayoutSet.OnAllLayoutListener{
@@ -116,6 +130,7 @@ public class TransitionCurtain extends Curtain {
             mAnimatorCollection = animatorCollection;
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public void onAllLayout() {
             Set<TransitionItem> transitionItemSet = mTransitionItemSet;
@@ -194,6 +209,7 @@ public class TransitionCurtain extends Curtain {
                 PropertyValuesHolder xPvh = PropertyValuesHolder.ofFloat("x", item.endloaction[0]);
                 PropertyValuesHolder yPvh = PropertyValuesHolder.ofFloat("y", item.endloaction[1]);
                 ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(bmpView, scaleXPvh, scaleYPvh, xPvh, yPvh);
+                anim.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
                 anim.setDuration(ANIMATE_TIME);
 
                 animatorCollection.add(anim);
@@ -230,12 +246,21 @@ public class TransitionCurtain extends Curtain {
         final Set<Animator> animatorCollection = new HashSet<>();
 
         // Handle background
-        int bgColor = enter.getBackgroundColor();
+        int bgColor = exit.getBackgroundColor();
         int endBgColor = bgColor & 0xffffff;
         ObjectAnimator colorAnim = ObjectAnimator.ofInt(exit, "backgroundColor", endBgColor);
         colorAnim.setEvaluator(ArgbEvaluator.getInstance());
         colorAnim.setDuration(ANIMATE_TIME);
         animatorCollection.add(colorAnim);
+
+        View sceneContentView = exit.getSceneView().getChildAt(0);
+        if (sceneContentView != null) {
+            ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(sceneContentView, "alpha", 0f);
+            alphaAnim.setDuration(ANIMATE_TIME);
+            animatorCollection.add(alphaAnim);
+        } else {
+            Log.w(TAG, "Can't get enter scene content view");
+        }
 
         GlobalLayoutSet globalLayoutSet = new GlobalLayoutSet();
         Set<TransitionItem> transitionItemSet = new HashSet<>();
@@ -263,11 +288,14 @@ public class TransitionCurtain extends Curtain {
             transitionItemSet.add(item);
 
             globalLayoutSet.addListenerToObserver(enterView.getViewTreeObserver());
-            // TODO show other part progressively
         }
 
-        globalLayoutSet.setOnAllLayoutListener(new CloseFirstAllLayoutListener(
-                enter, exit, transitionItemSet, animatorCollection));
+        if (globalLayoutSet.getSize() == 0) {
+            new CloseSecondAllLayoutListener(enter, exit, transitionItemSet, animatorCollection).onAllLayout();
+        } else {
+            globalLayoutSet.setOnAllLayoutListener(new CloseFirstAllLayoutListener(
+                    enter, exit, transitionItemSet, animatorCollection));
+        }
     }
 
     private class CloseFirstAllLayoutListener implements GlobalLayoutSet.OnAllLayoutListener{
@@ -285,6 +313,7 @@ public class TransitionCurtain extends Curtain {
             mAnimatorCollection = animatorCollection;
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public void onAllLayout() {
             Set<TransitionItem> transitionItemSet = mTransitionItemSet;
@@ -363,6 +392,7 @@ public class TransitionCurtain extends Curtain {
                 PropertyValuesHolder xPvh = PropertyValuesHolder.ofFloat("x", item.endloaction[0]);
                 PropertyValuesHolder yPvh = PropertyValuesHolder.ofFloat("y", item.endloaction[1]);
                 ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(bmpView, scaleXPvh, scaleYPvh, xPvh, yPvh);
+                anim.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
                 anim.setDuration(ANIMATE_TIME);
 
                 animatorCollection.add(anim);
@@ -414,45 +444,31 @@ public class TransitionCurtain extends Curtain {
         int endHeight;
     }
 
-    public static class ViewPair {
-
-        private int[] mIds;
-        private GetViewHelper mHelper;
-
-        public ViewPair(int from, int to) {
-            mIds = new int[]{from, to};
-        }
-
-        public ViewPair(@NonNull GetViewHelper helper) {
-            mHelper = helper;
-        }
-
-        private @Nullable View getFromView(@NonNull Scene scene) {
-            if (mIds != null) {
-                return scene.findViewById(mIds[0]);
-            }
-            if (mHelper != null) {
-                return mHelper.getFromView(scene.getSceneView());
-            }
-            return null;
-        }
-
-        private @Nullable View getToView(@NonNull Scene scene) {
-
-            if (mIds != null) {
-                return scene.findViewById(mIds[1]);
-            }
-            if (mHelper != null) {
-                return mHelper.getToView(scene.getSceneView());
-            }
-            return null;
-        }
+    /**
+     * the interface help {@link TransitionCurtain} to get the views to do transfer
+     */
+    public interface ViewPair {
+        View getFromView(@NonNull Scene fromScene);
+        View getToView(@NonNull Scene toScene);
     }
 
-    public abstract static class GetViewHelper {
+    public static class IdViewPair implements ViewPair {
+        private int mFromId;
+        private int mToId;
 
-        public abstract View getFromView(@Nullable View sceneView);
+        public IdViewPair(int fromId, int toId) {
+            mFromId = fromId;
+            mToId = toId;
+        }
 
-        public abstract View getToView(@Nullable View sceneView);
+        @Override
+        public View getFromView(@NonNull Scene fromScene) {
+            return fromScene.findViewById(mFromId);
+        }
+
+        @Override
+        public View getToView(@NonNull Scene toScene) {
+            return toScene.findViewById(mToId);
+        }
     }
 }
