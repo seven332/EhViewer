@@ -337,7 +337,7 @@ public class TransitionCurtain extends Curtain {
                 item.startHeight = startHeight;
                 item.endloaction = endloaction;
 
-                Bitmap bmp = ViewUtils.getBitmapFromView(exitView);
+                Bitmap bmp = ViewUtils.getBitmapFromView(enterView);
                 View bmpView = new View(exitView.getContext());
                 item.bmp = bmp;
                 item.bmpView = bmpView;
