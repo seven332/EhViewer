@@ -37,7 +37,7 @@ import com.hippo.util.Messenger;
 import com.hippo.widget.DrawerListView;
 import com.hippo.widget.FitPaddingImpl;
 
-public class DrawerLeftPanel extends LinearLayout implements FitPaddingImpl{
+public class DrawerLeftPanel extends LinearLayout implements FitPaddingImpl {
 
     private static final String STATE_KEY_SUPER = "super";
     private static final String STATE_KEY_DRAWER_LIST_VIEW = "drawer_list_view";
@@ -170,7 +170,7 @@ public class DrawerLeftPanel extends LinearLayout implements FitPaddingImpl{
         super.onDetachedFromWindow();
 
         Messenger.getInstance().unregister(Constants.MESSENGER_ID_SIGN_IN_OR_OUT, mMessengerReceiver);
-        Messenger.getInstance().register(Constants.MESSENGER_ID_USER_AVATAR, mMessengerReceiver);
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_USER_AVATAR, mMessengerReceiver);
     }
 
 
