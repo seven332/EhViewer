@@ -135,4 +135,20 @@
         <item name="android:textColor">@color/text_button_text_accent</item>
     </style>
 
+    <style name="Text.Gallery.Detail.Title" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/text_little_large</item>
+        <item name="android:maxLines">4</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:text">sans-serif-medium</item>
+    </style>
+
+    <style name="Text.Gallery.Detail.Subtitle" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/primary_text_dark</item>
+        <item name="android:textSize">@dimen/text_little_small</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:text">sans-serif-medium</item>
+    </style>
+
 </resources>

@@ -35,15 +35,15 @@ public final class MainSettingsScene extends PreferenceHeaderScene {
 
         PreferenceHeader[] phs = new PreferenceHeader[] {
                 newPreferenceHeader(
-                        R.drawable.ic_cellphone_android_theme_primary,
+                        R.drawable.ic_cellphone_android_theme_accent,
                         R.string.settings_display,
                         DisplaySettingsScene.class),
                 newPreferenceHeader(
-                        R.drawable.ic_eh_theme_primary,
+                        R.drawable.ic_eh_theme_accent,
                         R.string.settings_eh,
                         EHSettingsScene.class),
                 newPreferenceHeader(
-                        R.drawable.ic_lambda_theme_primary,
+                        R.drawable.ic_lambda_theme_accent,
                         R.string.settings_advance,
                         AdvanceSettingsScene.class)
         };

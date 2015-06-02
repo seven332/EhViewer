@@ -31,8 +31,8 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         auto:space="@dimen/search_layout_space"
-        auto:spaceLeft="@dimen/search_layout_space_vertical"
-        auto:spaceRight="@dimen/search_layout_space_vertical"/>
+        auto:spaceLeft="@dimen/search_layout_space_horizontal"
+        auto:spaceRight="@dimen/search_layout_space_horizontal"/>
 
     <com.hippo.ehviewer.widget.SearchBar
         xmlns:auto="http://schemas.android.com/apk/res-auto"

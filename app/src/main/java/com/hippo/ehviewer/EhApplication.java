@@ -20,11 +20,12 @@ import android.content.Context;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.hippo.vectorold.content.VectorContext;
+import com.hippo.ehviewer.fresco.EhCacheKeyFactory;
 import com.hippo.ehviewer.network.EhOkHttpClient;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.scene.SceneApplication;
 import com.hippo.util.Log;
+import com.hippo.vectorold.content.VectorContext;
 
 public class EhApplication extends SceneApplication {
 
@@ -34,6 +35,7 @@ public class EhApplication extends SceneApplication {
 
         ImagePipelineConfig config = OkHttpImagePipelineConfigFactory
                 .newBuilder(this, EhOkHttpClient.getInstance())
+                .setCacheKeyFactory(EhCacheKeyFactory.getInstance())
                 .build();
         Fresco.initialize(this, config);
         Config.initialize(this);

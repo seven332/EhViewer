@@ -16,14 +16,22 @@
 package com.hippo.scene;
 
 import android.app.Application;
+import android.content.Context;
+
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 
 public class SceneApplication extends Application {
 
     private SceneManager mSceneManager;
 
+    private RefWatcher mRefWatcher;
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        mRefWatcher = LeakCanary.install(this);
 
         mSceneManager = SceneManager.getInstance();
         StageActivity.setSceneManager(mSceneManager);
@@ -32,5 +40,10 @@ public class SceneApplication extends Application {
 
     public SceneManager getSceneManager() {
         return mSceneManager;
+    }
+
+    public static RefWatcher getRefWatcher(Context context) {
+        SceneApplication application = (SceneApplication) context.getApplicationContext();
+        return application.mRefWatcher;
     }
 }

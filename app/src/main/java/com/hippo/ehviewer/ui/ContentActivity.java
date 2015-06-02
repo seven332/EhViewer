@@ -121,10 +121,6 @@ public final class ContentActivity extends StageActivity
                 lockDrawer();
             }
         }
-
-        @Override
-        public void onReplace(Class clazz) {
-        }
     };
 
     @Override

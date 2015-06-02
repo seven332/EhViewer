@@ -50,11 +50,11 @@ public class PreferenceHeaderScene extends AppbarScene {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.scene_preference_header);
 
         mActivity = getStageActivity();
 
-        mRecyclerView = new EasyRecyclerView(getStageActivity());
-        setContentView(mRecyclerView);
+        mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
 
         mHeaderAdapter = new HeaderAdapter();
         mRecyclerView.setAdapter(mHeaderAdapter);

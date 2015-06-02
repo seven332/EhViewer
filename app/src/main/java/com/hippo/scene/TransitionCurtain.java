@@ -29,6 +29,7 @@ import android.widget.AbsoluteLayout;
 import com.hippo.animation.ArgbEvaluator;
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.util.AnimationUtils;
+import com.hippo.util.AssertUtils;
 import com.hippo.util.Log;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.GlobalLayoutSet;
@@ -42,12 +43,12 @@ public class TransitionCurtain extends Curtain {
 
     private static long ANIMATE_TIME = 300L;
 
-    private ViewPair[] mViewPairArray;
+    private ViewPairSet mViewPairSet;
 
     private AnimatorSet mAnimatorSet;
 
-    public TransitionCurtain(ViewPair[] viewPairArray) {
-        mViewPairArray = viewPairArray;
+    public TransitionCurtain(ViewPairSet viewPairSet) {
+        mViewPairSet = viewPairSet;
     }
 
     // TODO what if back key press before move animator start
@@ -82,9 +83,13 @@ public class TransitionCurtain extends Curtain {
         Set<TransitionItem> transitionItemSet = new HashSet<>();
 
         // Handle transit part
-        for (ViewPair pair : mViewPairArray) {
-            final View enterView = pair.getToView(enter);
-            final View exitView = pair.getFromView(exit);
+        View[] enterViews = mViewPairSet.getToViewSet(enter);
+        View[] exitViews = mViewPairSet.getFromViewSet(exit);
+        AssertUtils.assertEquals("From view size and to view size must be the same", enterViews.length, exitViews.length);
+        int length = enterViews.length;
+        for (int i = 0; i < length; i++) {
+            final View enterView = enterViews[i];
+            final View exitView = exitViews[i];
             if (enterView == null) {
                 Log.w(TAG, "Can't get enterView when open.");
                 continue;
@@ -266,9 +271,13 @@ public class TransitionCurtain extends Curtain {
         Set<TransitionItem> transitionItemSet = new HashSet<>();
 
         // Handle transit part
-        for (ViewPair pair : mViewPairArray) {
-            final View enterView = pair.getFromView(enter);
-            final View exitView = pair.getToView(exit);
+        View[] enterViews = mViewPairSet.getFromViewSet(enter);
+        View[] exitViews = mViewPairSet.getToViewSet(exit);
+        AssertUtils.assertEquals("From view size and to view size must be the same", enterViews.length, exitViews.length);
+        int length = enterViews.length;
+        for (int i = 0; i < length; i++) {
+            final View enterView = enterViews[i];
+            final View exitView = exitViews[i];
             if (enterView == null) {
                 Log.w(TAG, "Can't get enterView when close");
                 continue;
@@ -447,28 +456,8 @@ public class TransitionCurtain extends Curtain {
     /**
      * the interface help {@link TransitionCurtain} to get the views to do transfer
      */
-    public interface ViewPair {
-        View getFromView(@NonNull Scene fromScene);
-        View getToView(@NonNull Scene toScene);
-    }
-
-    public static class IdViewPair implements ViewPair {
-        private int mFromId;
-        private int mToId;
-
-        public IdViewPair(int fromId, int toId) {
-            mFromId = fromId;
-            mToId = toId;
-        }
-
-        @Override
-        public View getFromView(@NonNull Scene fromScene) {
-            return fromScene.findViewById(mFromId);
-        }
-
-        @Override
-        public View getToView(@NonNull Scene toScene) {
-            return toScene.findViewById(mToId);
-        }
+    public interface ViewPairSet {
+        View[] getFromViewSet(@NonNull Scene fromScene);
+        View[] getToViewSet(@NonNull Scene toScene);
     }
 }

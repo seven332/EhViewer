@@ -37,6 +37,8 @@ import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
 import com.hippo.util.ViewUtils;
 
+import java.util.Map;
+
 public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         SceneDialogView.OnClickOutOfDialogListener, AdapterView.OnItemClickListener {
 
@@ -103,18 +105,22 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     }
 
     @Override
-    protected void onReplace(@NonNull Scene oldScene) {
-        super.onReplace(oldScene);
+    protected void onSave(Map<String, Object> transferStop) {
+        super.onSave(transferStop);
 
-        SimpleDialog oldDialog = (SimpleDialog) oldScene;
-        mBuilder = oldDialog.mBuilder;
-        // Avoid memory leak
-        mBuilder.mContext = getStageActivity();
+        transferStop.put("builder", mBuilder);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onRestore(Map<String, Object> transferStop) {
+        super.onRestore(transferStop);
+
+        mBuilder = (Builder) transferStop.get("builder");
+    }
+
+    @Override
+    protected void onDestroy(boolean willSave) {
+        super.onDestroy(willSave);
 
         OnCloseListener listener = mBuilder.mOnCloseListener;
         if (listener != null) {
@@ -446,6 +452,9 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         }
 
         public @NonNull SimpleDialog build() {
+            // Avoid memory leak
+            mContext = null;
+
             SimpleDialog dialog = new SimpleDialog();
             dialog.setBuilder(this);
             return dialog;

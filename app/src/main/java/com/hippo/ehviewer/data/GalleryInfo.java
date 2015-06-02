@@ -156,10 +156,7 @@ public class GalleryInfo implements Parcelable {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof GalleryInfo && ((GalleryInfo) o).gid == gid)
-            return true;
-        else
-            return false;
+        return o instanceof GalleryInfo && ((GalleryInfo) o).gid == gid;
     }
 
     public final void generateSLang() {

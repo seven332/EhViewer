@@ -15,18 +15,19 @@
   -->
 <resources>
 
-    <!-- preference -->
+    <!-- Preference Header -->
     <dimen name="preference_header_minimum_height">72dp</dimen>
     <dimen name="preference_header_image_size">24dp</dimen>
     <dimen name="preference_header_image_margin_start">16dp</dimen>
     <dimen name="preference_header_image_margin_end">32dp</dimen>
+    <dimen name="preference_header_space_horizontal">0dp</dimen>
+
+    <!-- Preference -->
     <dimen name="preference_minimum_height">64dip</dimen>
+    <dimen name="preference_space_horizontal">0dp</dimen>
 
     <!-- Appbar -->
     <dimen name="appbar_height">56dp</dimen>
-
-    <!-- Settings Header -->
-
 
     <!-- DrawerList -->
     <dimen name="drawer_list_drawable_size">24dp</dimen>
@@ -70,7 +71,7 @@
 
     <!-- Search Layout Space -->
     <dimen name="search_layout_space">8dp</dimen>
-    <dimen name="search_layout_space_vertical">8dp</dimen>
+    <dimen name="search_layout_space_horizontal">8dp</dimen>
 
     <!-- Corner fab -->
     <dimen name="corner_fab_padding_right">16dp</dimen>

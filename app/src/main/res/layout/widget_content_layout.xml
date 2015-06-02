@@ -58,8 +58,8 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             auto:space="@dimen/search_layout_space"
-            auto:spaceLeft="@dimen/search_layout_space_vertical"
-            auto:spaceRight="@dimen/search_layout_space_vertical"
+            auto:spaceLeft="@dimen/search_layout_space_horizontal"
+            auto:spaceRight="@dimen/search_layout_space_horizontal"
             tools:ignore="RtlHardcoded"/>
 
     </com.hippo.widget.refreshlayout.RefreshLayout>

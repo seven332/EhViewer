@@ -187,7 +187,7 @@ public class ContentLayout extends FrameLayout {
         /**
          * The size of page
          */
-        private int mPageSize;
+        private int mPageCount;
         private int mCurrentPage;
         private int mPageVolume;
 
@@ -246,20 +246,35 @@ public class ContentLayout extends FrameLayout {
         }
 
         @SuppressWarnings("unchecked")
-        protected ContentHelper(Context context, ContentHelper oldContentHelper) {
+        protected ContentHelper(Context context, List<E> data, int[] save) {
             this(context);
-            mData.addAll(oldContentHelper.mData);
+            mData.addAll(data);
 
-            mFirstPage = oldContentHelper.mFirstPage;
-            mLastPage = oldContentHelper.mLastPage;
-            mFirstIndex = oldContentHelper.mFirstIndex;
-            mLastIndex = oldContentHelper.mLastIndex;
-            mPageSize = oldContentHelper.mPageSize;
-            mCurrentPage = oldContentHelper.mCurrentPage;
-            mPageVolume = oldContentHelper.mPageVolume;
-            mCurrentTaskId = oldContentHelper.mCurrentTaskId;
-            mCurrentTaskType = oldContentHelper.mCurrentTaskType;
-            mCurrentTaskPage = oldContentHelper.mCurrentTaskPage;
+            mFirstPage = save[0];
+            mLastPage = save[1];
+            mFirstIndex = save[2];
+            mLastIndex = save[3];
+            mPageCount = save[4];
+            mCurrentPage = save[5];
+            mPageVolume = save[6];
+            mCurrentTaskId = save[7];
+            mCurrentTaskType = save[8];
+            mCurrentTaskPage = save[9];
+        }
+
+        public int[] save() {
+            int[] save = new int[10];
+            save[0] = mFirstPage;
+            save[1] = mLastPage;
+            save[2] = mFirstIndex;
+            save[3] = mLastIndex;
+            save[4] = mPageCount;
+            save[5] = mCurrentPage;
+            save[6] = mPageVolume;
+            save[7] = mCurrentTaskId;
+            save[8] = mCurrentTaskType;
+            save[9] = mCurrentTaskPage;
+            return save;
         }
 
         private void init(ContentLayout contentLayout) {
@@ -312,6 +327,12 @@ public class ContentLayout extends FrameLayout {
             }
         }
 
+        public List<E> copyData() {
+            List<E> data = new ArrayList<>(mData.size());
+            data.addAll(mData);
+            return data;
+        }
+
         /**
          * @throws IndexOutOfBoundsException
          *                if {@code location < 0 || location >= size()}
@@ -328,12 +349,12 @@ public class ContentLayout extends FrameLayout {
          */
         protected abstract void getPageData(int taskId, int type, int page);
 
-        public void setPageSize(int pageSize) {
-            mPageSize = pageSize;
+        public void setPageCount(int pageSize) {
+            mPageCount = pageSize;
         }
 
-        public int getPageSize() {
-            return mPageSize;
+        public int getPageCount() {
+            return mPageCount;
         }
 
         public int getCurrentPage() {
@@ -341,7 +362,7 @@ public class ContentLayout extends FrameLayout {
         }
 
         public void resetPageSize() {
-            mPageSize = Integer.MAX_VALUE;
+            mPageCount = Integer.MAX_VALUE;
         }
 
         public void onGetPageData(int taskId, List<E> data) {
@@ -446,7 +467,7 @@ public class ContentLayout extends FrameLayout {
 
         @Override
         public boolean onFooterRefresh() {
-            if (mLastPage >= mPageSize) {
+            if (mLastPage >= mPageCount) {
                 return false;
             } else {
                 mCurrentTaskId = mIdGenerator.nextId();
@@ -525,8 +546,8 @@ public class ContentLayout extends FrameLayout {
          * Only work when data is loaded
          */
         public void goTo(int page) {
-            if (page < 0 || page >= mPageSize) {
-                throw new IndexOutOfBoundsException("Page size is " + mPageSize + ", page is " + page);
+            if (page < 0 || page >= mPageCount) {
+                throw new IndexOutOfBoundsException("Page count is " + mPageCount + ", page is " + page);
             } else if (page >= mFirstPage && page < mLastPage) {
                 cancelCurrentTask();
 

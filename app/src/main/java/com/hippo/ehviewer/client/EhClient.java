@@ -18,6 +18,7 @@ package com.hippo.ehviewer.client;
 import android.os.AsyncTask;
 import android.os.Process;
 
+import com.hippo.ehviewer.data.GalleryDetail;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.network.EhOkHttpClient;
 import com.hippo.network.ResponseCodeException;
@@ -118,6 +119,19 @@ public final class EhClient {
             case SOURCE_LOFI:
                 return HEADER_LOFI;
         }
+    }
+
+    /**
+     * Get gellary detail url in target source
+     */
+    public static String getDetailUrl(int source, int gid, String token, int pageIndex) {
+        StringBuilder sb = new StringBuilder(getUrlHeader(source));
+        sb.append("g/").append(gid).append('/').append(token).append('/');
+        if (pageIndex > 0) {
+            sb.append("?p=").append(pageIndex);
+        }
+
+        return sb.toString();
     }
 
     public interface SimpleListener {
@@ -370,5 +384,85 @@ public final class EhClient {
      */
     public void signIn(String username, String password, OnSignInListener listener) {
         doBgJob(new SignInHelper(username, password, listener));
+    }
+
+    private GalleryDetail doGetGalleryDetail(int source, String url) throws Exception {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        Response response = mHttpClient.newCall(request).execute();
+
+        checkResponse(response);
+
+        GalleryDetailParser parser = new GalleryDetailParser();
+        parser.parse(response.body().string(),
+                GalleryDetailParser.REQUEST_DETAIL | GalleryDetailParser.REQUEST_TAG |
+                        GalleryDetailParser.REQUEST_PREVIEW_INFO |
+                        GalleryDetailParser.REQUEST_COMMENT,
+                source);
+
+        GalleryDetail gd = new GalleryDetail();
+        gd.gid = parser.gid;
+        gd.token = parser.token;
+        gd.thumb = parser.thumb;
+        gd.title = parser.title;
+        gd.titleJpn = parser.titleJpn;
+        gd.category = parser.category;
+        gd.uploader = parser.uploader;
+        gd.torrentCount = parser.torrentCount;
+        gd.torrentUrl = parser.torrentUrl;
+        gd.posted = parser.posted;
+        gd.parent = parser.parent;
+        gd.visible = parser.visible;
+        gd.language = parser.language;
+        gd.size = parser.size;
+        gd.resize = parser.resize;
+        gd.pageCount = parser.pageCount;
+        gd.favoredTimes = parser.favoredTimes;
+        gd.isFavored = parser.isFavored;
+        gd.rating = parser.rating;
+        gd.ratedTimes = parser.ratedTimes;
+        gd.tags = parser.tags;
+        gd.comments = parser.comments;
+        gd.previewPageCount = parser.previewPageCount;
+
+        return gd;
+    }
+
+    public abstract static class OnGetGalleryDetailListener implements SimpleListener {
+        public abstract void onSuccess(GalleryDetail galleryDetail);
+    }
+
+    private final class GetGalleryDetailHelper extends SimpleBgJobHelper {
+
+        private int mSource;
+        private String mUrl;
+        private OnGetGalleryDetailListener mListener;
+
+        private GalleryDetail mGalleryDetail;
+
+        public GetGalleryDetailHelper(int source, String url, OnGetGalleryDetailListener listener) {
+            super(listener);
+            mSource = source;
+            mUrl = url;
+            mListener = listener;
+        }
+
+        @Override
+        public void doBgJob() throws Exception {
+            mGalleryDetail = doGetGalleryDetail(mSource, mUrl);
+        }
+
+        @Override
+        public void doSuccessCallback() {
+            mListener.onSuccess(mGalleryDetail);
+        }
+    }
+
+    /**
+     * Get gallery detail
+     */
+    public void getGalleryDetail(int source, String url, OnGetGalleryDetailListener listener) {
+        doBgJob(new GetGalleryDetailHelper(source, url, listener));
     }
 }

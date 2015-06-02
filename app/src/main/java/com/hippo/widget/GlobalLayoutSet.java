@@ -35,6 +35,10 @@ public class GlobalLayoutSet {
         mSize++;
     }
 
+    public int getSize() {
+        return mSize;
+    }
+
     private class LayoutListener implements ViewTreeObserver.OnGlobalLayoutListener {
         private ViewTreeObserver mObserver;
 

@@ -32,6 +32,8 @@ import android.widget.FrameLayout;
 import com.hippo.util.AssertUtils;
 import com.hippo.util.ViewUtils;
 
+import java.util.Map;
+
 /**
  * {@link com.hippo.scene.Scene} is a {@code Activity} of {@link android.app.Activity}.
  * <p>
@@ -164,8 +166,11 @@ public abstract class Scene {
         }
     }
 
-    void destroy() {
-        onDestroy();
+    // TODO Tell destory is it need close
+    void destroy(boolean willSave) {
+        onDestroy(willSave);
+
+        SceneApplication.getRefWatcher(getStageActivity()).watch(this);
     }
 
     void open() {
@@ -184,8 +189,12 @@ public abstract class Scene {
         onResume();
     }
 
-    void replace(@NonNull Scene oldScene) {
-        onReplace(oldScene);
+    void save(Map<String, Object> transferStop) {
+        onSave(transferStop);
+    }
+
+    void restore(Map<String, Object> transferStop) {
+        onRestore(transferStop);
     }
 
     void setFitPaddingBottom(int b) {
@@ -239,7 +248,7 @@ public abstract class Scene {
     }
 
     @SuppressWarnings("ConstantConditions")
-    protected void onDestroy() {
+    protected void onDestroy(boolean willSave) {
         // Make sure soft key broad is hidden
         InputMethodManager imm = (InputMethodManager) getStageActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mSceneView.getWindowToken(), 0);
@@ -259,10 +268,16 @@ public abstract class Scene {
         getSceneView().setEnableTouch(true);
     }
 
-    protected void onReplace(@NonNull Scene oldScene) {
-        mId = oldScene.mId;
-        mAnnouncer = oldScene.mAnnouncer;
-        mCurtain = oldScene.mCurtain;
+    protected void onSave(Map<String, Object> transferStop) {
+        transferStop.put("scene_id", mId);
+        transferStop.put("scene_announcer", mAnnouncer);
+        transferStop.put("scene_curtain", mCurtain);
+    }
+
+    protected void onRestore(Map<String, Object> transferStop) {
+        mId = (Integer) transferStop.get("scene_id");
+        mAnnouncer = (Announcer) transferStop.get("scene_announcer");
+        mCurtain = (Curtain) transferStop.get("scene_curtain");
         if (mCurtain != null) {
             mCurtain.onReplace();
         }

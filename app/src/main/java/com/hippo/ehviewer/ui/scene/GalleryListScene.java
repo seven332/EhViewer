@@ -30,7 +30,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -42,6 +41,7 @@ import android.widget.Toast;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.effect.ViewTransition;
@@ -51,6 +51,8 @@ import com.hippo.ehviewer.client.GalleryListParser;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.ListUrlBuilder;
 import com.hippo.ehviewer.data.UnsupportedSearchException;
+import com.hippo.ehviewer.fresco.EhCacheKeyFactory;
+import com.hippo.ehviewer.fresco.KeyImageRequest;
 import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
@@ -61,8 +63,10 @@ import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchDatabase;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.scene.Announcer;
+import com.hippo.scene.Curtain;
 import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
+import com.hippo.scene.TransitionCurtain;
 import com.hippo.util.AnimationUtils;
 import com.hippo.util.AppHandler;
 import com.hippo.util.AssertUtils;
@@ -70,20 +74,21 @@ import com.hippo.util.MathUtils;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.FloatingActionButton;
+import com.hippo.widget.recyclerview.EasyRecyclerView;
 
 import java.util.List;
+import java.util.Map;
 
 // TODO remeber the data in ContentHelper after screen dirction change
 // TODO Must refresh when change source
 // TODO disable click action when animating
 public final class GalleryListScene extends Scene implements SearchBar.Helper,
         View.OnClickListener, FabLayout.OnCancelListener,
-        SearchLayout.SearhLayoutHelper {
+        SearchLayout.SearhLayoutHelper, EasyRecyclerView.OnItemClickListener {
 
     public static final String KEY_MODE = "mode";
 
     private static final String KEY_STATE = "state";
-    private static final String KEY_FAB_STATE = "fab_state";
 
     public static final int MODE_HOMEPAGE = 0;
     public static final int MODE_POPULAR = 1;
@@ -104,7 +109,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
 
     private SearchBar mSearchBar;
     private ContentLayout mContentLayout;
-    private RecyclerView mContentRecyclerView;
+    private EasyRecyclerView mContentRecyclerView;
     private SearchLayout mSearchLayout;
     private FabLayout mFabLayout;
     private FloatingActionButton mCornerFab;
@@ -133,7 +138,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
                 @Override
                 public void onCreateCustomView(final SimpleDialog dialog, View view) {
                     int currentPage = mGalleryListHelper.getCurrentPage();
-                    int pageSize = mGalleryListHelper.getPageSize();
+                    int pageSize = mGalleryListHelper.getPageCount();
                     TextView pageInfo = (TextView) view.findViewById(R.id.go_to_page_info);
                     pageInfo.setText(String.format(mResources.getString(R.string.go_to_page_info),
                             currentPage + 1, pageSize == Integer.MAX_VALUE ?
@@ -168,7 +173,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
                                 return false;
                             }
                             targetPage = Integer.parseInt(text);
-                            int pageSize = mGalleryListHelper.getPageSize();
+                            int pageSize = mGalleryListHelper.getPageCount();
                             if (targetPage <= 0 || (targetPage > pageSize)) {
                                 Toast.makeText(mActivity, R.string.go_to_error_invaild,
                                         Toast.LENGTH_SHORT).show();
@@ -193,13 +198,25 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         return LAUNCH_MODE_SINGLE_TOP;
     }
 
-    @Override
-    protected void onReplace(@NonNull Scene oldScene) {
-        super.onReplace(oldScene);
 
-        GalleryListScene oldGalleryListScene = (GalleryListScene) oldScene;
-        mGalleryListHelper = oldGalleryListScene.mGalleryListHelper
-                .newInstance(getStageActivity());
+    @Override
+    protected void onSave(Map<String, Object> transferStop) {
+        super.onSave(transferStop);
+
+        transferStop.put("gallery_list_helper_data", mGalleryListHelper.copyData());
+        transferStop.put("gallery_list_helper_save", mGalleryListHelper.save());
+        transferStop.put("gallery_list_helper_listener", mGalleryListHelper.mListener);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void onRestore(Map<String, Object> transferStop) {
+        super.onRestore(transferStop);
+
+        mGalleryListHelper = new GalleryListHelper(getStageActivity(),
+                (List<GalleryInfo>) transferStop.get("gallery_list_helper_data"),
+                (int[]) transferStop.get("gallery_list_helper_save"),
+                (GalleryListHelperSettable) transferStop.get("gallery_list_helper_listener"));
     }
 
     private void handleAnnouncer(Announcer announcer) {
@@ -280,11 +297,14 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         mSearchLayout.setHelper(this);
 
         // Content Layout
+        // OnRestore may create new GalleryListHelper
         if (mGalleryListHelper == null) {
             mGalleryListHelper = new GalleryListHelper(mActivity);
         }
 
         mContentLayout.setHelper(mGalleryListHelper);
+
+        mContentRecyclerView.setOnItemClickListener(this);
 
         // Fab Layout
         mFabLayout.setOnCancelListener(this);
@@ -304,6 +324,16 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         // When scene start
         if (savedInstanceState == null) {
             handleAnnouncer(getAnnouncer());
+        }
+    }
+
+    @Override
+    protected void onDestroy(boolean willSave) {
+        super.onDestroy(willSave);
+
+        // Avoid memory leak
+        if (mGalleryListHelper.mListener != null) {
+            mGalleryListHelper.mListener.setGalleryListHelper(null);
         }
     }
 
@@ -712,6 +742,52 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         // TODO
     }
 
+    @Override
+    public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
+        GalleryInfo gi = mGalleryListHelper.getDataAt(position);
+        Announcer announcer = new Announcer();
+        announcer.putExtra(GalleryDetailScene.KEY_GALLERY_INFO, gi);
+
+        Curtain curtain = new TransitionCurtain(new TransitonHelper(position));
+
+        startScene(GalleryDetailScene.class, announcer, curtain);
+
+        return true;
+    }
+
+    private class TransitonHelper implements TransitionCurtain.ViewPairSet {
+
+        private int mPosition;
+
+        public TransitonHelper(int position) {
+            mPosition = position;
+        }
+
+        @Override
+        public View[] getFromViewSet(@NonNull Scene fromScene) {
+            View[] views = new View[3];
+            GalleryListScene scene = (GalleryListScene) fromScene;
+            RecyclerView.ViewHolder viewHolder = scene.mContentRecyclerView.findViewHolderForAdapterPosition(mPosition);
+            if (viewHolder != null) {
+                GalleryHolder gh = (GalleryHolder) viewHolder;
+                views[0] =  gh.thumb;
+                views[1] =  gh.title;
+                views[2] =  gh.uploader;
+            }
+            return views;
+        }
+
+        @Override
+        public View[] getToViewSet(@NonNull Scene toScene) {
+            View[] views = new View[3];
+            View sceneView = toScene.getSceneView();
+            views[0] = sceneView.findViewById(R.id.thumb);
+            views[1] = sceneView.findViewById(R.id.title);
+            views[2] = sceneView.findViewById(R.id.uploader);
+            return views;
+        }
+    }
+
     private class SearchBarMoveHelper extends RecyclerView.OnScrollListener {
 
         @Override
@@ -771,8 +847,6 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
 
     private class GalleryListHelper extends ContentLayout.ContentHelper<GalleryInfo, GalleryHolder> {
 
-        private LayoutInflater mInflater;
-
         private GalleryListHelperSettable mListener;
 
         private Runnable mSearchBarPositionTask = new Runnable() {
@@ -784,25 +858,16 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
 
         public GalleryListHelper(Context context) {
             super(context);
-            init();
         }
 
-        private GalleryListHelper(Context context, GalleryListHelper oldContentHelper) {
-            super(context, oldContentHelper);
+        public GalleryListHelper(Context context, List<GalleryInfo> data,
+                int[] save, GalleryListHelperSettable listener) {
+            super(context, data, save);
             // Update gallery listener
-            mListener = oldContentHelper.mListener;
+            mListener = listener;
             if (mListener != null) {
                 mListener.setGalleryListHelper(this);
             }
-            init();
-        }
-
-        public GalleryListHelper newInstance(Context context) {
-            return new GalleryListHelper(context, this);
-        }
-
-        private void init() {
-            mInflater = mActivity.getLayoutInflater();
         }
 
         private void clearLastGalleryListHelperSettable(GalleryListHelperSettable listener) {
@@ -859,19 +924,23 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
 
         @Override
         public GalleryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = mInflater.inflate(R.layout.item_gallery_list_detail, parent, false);
+            View view = mActivity.getLayoutInflater().inflate(R.layout.item_gallery_list_detail, parent, false);
             return new GalleryHolder(view);
         }
 
         @Override
         public void onBindViewHolder(GalleryHolder holder, int position) {
             GalleryInfo gi = getDataAt(position);
+
+            ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(Uri.parse(gi.thumb));
+            KeyImageRequest keyImageRequest = new KeyImageRequest(builder);
+            keyImageRequest.setKey(EhCacheKeyFactory.getThumbKey(gi.gid));
             DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setUri(Uri.parse(gi.thumb))
+                    .setImageRequest(keyImageRequest)
                     .setTapToRetryEnabled(true)
-                    .setOldController(holder.thumb.getController())
-                    .build();
+                    .setOldController(holder.thumb.getController()).build();
             holder.thumb.setController(controller);
+
             holder.title.setText(gi.title);
             holder.uploader.setText(gi.uploader);
             holder.rating.setRating(gi.rating);
@@ -913,12 +982,12 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
             if (mHelper != null) {
                 if (mSource == EhClient.SOURCE_LOFI) {
                     if (pageNum == GalleryListParser.CURRENT_PAGE_IS_LAST) {
-                        mHelper.setPageSize(mTargetPage);
+                        mHelper.setPageCount(mTargetPage);
                     } else if (mTaskType == ContentLayout.ContentHelper.TYPE_REFRESH) {
-                        mHelper.setPageSize(Integer.MAX_VALUE);
+                        mHelper.setPageCount(Integer.MAX_VALUE);
                     }
                 } else {
-                    mHelper.setPageSize(pageNum);
+                    mHelper.setPageCount(pageNum);
                 }
                 mHelper.onGetPageData(mTaskId, glList);
 
@@ -954,7 +1023,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         @Override
         public void onSuccess(List<GalleryInfo> glList, long timeStamp) {
             if (mHelper != null) {
-                mHelper.setPageSize(1);
+                mHelper.setPageCount(1);
                 mHelper.onGetPageData(mTaskId, glList);
 
                 mHelper.clearLastGalleryListHelperSettable(this);

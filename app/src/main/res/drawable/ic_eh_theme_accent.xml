@@ -30,10 +30,10 @@
     android:viewportHeight="24">
 
     <path
-        auto:pathData="@string/pd_cellphone_android"
-        auto:fillColor="@color/theme_primary"
+        auto:pathData="@string/pd_eh"
+        auto:fillColor="@color/theme_accent"
 
-        android:pathData="@string/pd_cellphone_android"
-        android:fillColor="@color/theme_primary"/>
+        android:pathData="@string/pd_eh"
+        android:fillColor="@color/theme_accent"/>
 
 </vector>

@@ -46,9 +46,9 @@ public class PreferenceScene extends AppbarScene {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.scene_preference);
 
-        mRecyclerView = new EasyRecyclerView(getStageActivity());
-        setContentView(mRecyclerView);
+        mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
 
         mAdapter = new PreferenceAdapter();
         mRecyclerView.setAdapter(mAdapter);

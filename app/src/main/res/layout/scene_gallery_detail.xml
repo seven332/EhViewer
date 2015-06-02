@@ -13,10 +13,76 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:auto="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- TODO  -->
+            <View
+                android:id="@+id/header_background"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:background="@color/theme_primary"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:layout_below="@id/header_background"
+                android:background="@color/theme_accent"/>
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/thumb"
+                android:layout_width="120dp"
+                android:layout_height="180dp"
+                android:layout_marginLeft="@dimen/keyline_margin"
+                android:layout_marginTop="@dimen/keyline_margin"
+                auto:actualImageScaleType="fitCenter"
+                auto:failureImage="@drawable/ic_image_broken"
+                auto:failureImageScaleType="fitCenter"
+                auto:retryImage="@drawable/ic_cursor_pointer"
+                auto:retryImageScaleType="fitCenter"
+                tools:ignore="RtlHardcoded"/>
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/Text.Gallery.Detail.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/thumb"
+                android:layout_alignTop="@id/thumb"
+                android:layout_marginLeft="@dimen/keyline_margin"
+                android:layout_marginRight="@dimen/keyline_margin"
+                tools:ignore="RtlHardcoded"/>
+
+            <TextView
+                android:id="@+id/uploader"
+                style="@style/Text.Gallery.Detail.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/title"
+                android:layout_below="@id/title"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="@dimen/keyline_margin"
+                tools:ignore="RtlHardcoded"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</ScrollView>
+
+
+

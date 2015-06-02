@@ -15,8 +15,72 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.annotation.Nullable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.fresco.EhCacheKeyFactory;
+import com.hippo.ehviewer.fresco.KeyImageRequest;
 import com.hippo.scene.Scene;
 
 public class GalleryDetailScene extends Scene {
 
+    public static final String KEY_GALLERY_INFO = "gallery_info";
+
+    private SimpleDraweeView mThumb;
+    private TextView mTitle;
+    private TextView mUploader;
+
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.scene_gallery_detail);
+
+        GalleryInfo gi = getAnnouncer().getParcelableExtra(KEY_GALLERY_INFO);
+
+        mThumb = (SimpleDraweeView) findViewById(R.id.thumb);
+        mThumb.bringToFront();
+        ViewGroup a;
+
+        ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(Uri.parse(gi.thumb));
+        KeyImageRequest keyImageRequest = new KeyImageRequest(builder);
+        keyImageRequest.setKey(EhCacheKeyFactory.getThumbKey(gi.gid));
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setImageRequest(keyImageRequest)
+                .setTapToRetryEnabled(true)
+                .setOldController(mThumb.getController()).build();
+        mThumb.setController(controller);
+
+        mTitle = (TextView) findViewById(R.id.title);
+        mTitle.setText(gi.title);
+
+        mUploader = (TextView) findViewById(R.id.uploader);
+        mUploader.setText(gi.uploader);
+
+
+
+        /*
+        int source = Config.getEhSource();
+        EhClient.getInstance().getGalleryDetail(source, EhClient.getDetailUrl(source, gi.gid, gi.token, 0), new EhClient.OnGetGalleryDetailListener() {
+            @Override
+            public void onSuccess(GalleryDetail galleryDetail) {
+                Log.d(galleryDetail.torrentUrl);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.d("", e);
+            }
+        });
+        */
+    }
 }
