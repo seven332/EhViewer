@@ -23,6 +23,8 @@ import android.os.Parcelable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.accessibility.AccessibilityEventCompat;
 import android.support.v4.view.accessibility.AccessibilityRecordCompat;
+import android.util.AttributeSet;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +38,8 @@ import static android.support.v7.widget.RecyclerView.NO_POSITION;
  * A {@link android.support.v7.widget.RecyclerView.LayoutManager} implementation which provides
  * similar functionality to {@link android.widget.ListView}.
  */
-public class LinearLayoutManager extends RecyclerView.LayoutManager {
+public class LinearLayoutManager extends RecyclerView.LayoutManager implements
+        ItemTouchHelper.ViewDropHandler {
 
     private static final String TAG = "LinearLayoutManager";
 
@@ -130,7 +133,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager {
     *  Re-used variable to keep anchor information on re-layout.
     *  Anchor position and coordinate defines the reference point for LLM while doing a layout.
     * */
-    final AnchorInfo mAnchorInfo;
+    final AnchorInfo mAnchorInfo = new AnchorInfo();
 
     /**
      * Creates a vertical LinearLayoutManager
@@ -148,9 +151,24 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager {
      * @param reverseLayout When set to true, layouts from end to start.
      */
     public LinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
-        mAnchorInfo = new AnchorInfo();
         setOrientation(orientation);
         setReverseLayout(reverseLayout);
+    }
+
+    /**
+     * Constructor used when layout manager is set in XML by RecyclerView attribute
+     * "layoutManager". Defaults to vertical orientation.
+     *
+     * @attr ref android.support.v7.recyclerview.R.styleable#RecyclerView_android_orientation
+     * @attr ref android.support.v7.recyclerview.R.styleable#RecyclerView_reverseLayout
+     * @attr ref android.support.v7.recyclerview.R.styleable#RecyclerView_stackFromEnd
+     */
+    public LinearLayoutManager(Context context, AttributeSet attrs, int defStyleAttr,
+                               int defStyleRes) {
+        Properties properties = getProperties(context, attrs, defStyleAttr, defStyleRes);
+        setOrientation(properties.orientation);
+        setReverseLayout(properties.reverseLayout);
+        setStackFromEnd(properties.stackFromEnd);
     }
 
     /**
@@ -371,9 +389,13 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager {
         final int firstChild = getPosition(getChildAt(0));
         final int viewPosition = position - firstChild;
         if (viewPosition >= 0 && viewPosition < childCount) {
-            return getChildAt(viewPosition);
+            final View child = getChildAt(viewPosition);
+            if (getPosition(child) == position) {
+                return child; // in pre-layout, this may not match
+            }
         }
-        return null;
+        // fallback to traversal. This might be necessary in pre-layout.
+        return super.findViewByPosition(position);
     }
 
     /**
@@ -796,6 +818,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager {
         }
         // override layout from end values for consistency
         anchorInfo.mLayoutFromEnd = mShouldReverseLayout;
+        // if this changes, we should update prepareForDrop as well
         if (mShouldReverseLayout) {
             anchorInfo.mCoordinate = mOrientationHelper.getEndAfterPadding() -
                     mPendingScrollPositionOffset;
@@ -941,7 +964,6 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager {
      * <code>item[10]</code>'s bottom is 20 pixels above the RecyclerView's bottom.
      * <p>
      * Note that scroll position change will not be reflected until the next layout call.
-     *
      * <p>
      * If you are just trying to make a position visible, use {@link #scrollToPosition(int)}.
      *
@@ -1177,9 +1199,8 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager {
      *
      * @param recycler Recycler instance of {@link android.support.v7.widget.RecyclerView}
      * @param dt       This can be used to add additional padding to the visible area. This is used
-     *                 to
-     *                 detect children that will go out of bounds after scrolling, without actually
-     *                 moving them.
+     *                 to detect children that will go out of bounds after scrolling, without
+     *                 actually moving them.
      */
     private void recycleViewsFromStart(RecyclerView.Recycler recycler, int dt) {
         if (dt < 0) {
@@ -1786,6 +1807,40 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager {
     @Override
     public boolean supportsPredictiveItemAnimations() {
         return mPendingSavedState == null && mLastStackFromEnd == mStackFromEnd;
+    }
+
+    /**
+     * @hide This method should be called by ItemTouchHelper only.
+     */
+    @Override
+    public void prepareForDrop(View view, View target, int x, int y) {
+        assertNotInLayoutOrScroll("Cannot drop a view during a scroll or layout calculation");
+        ensureLayoutState();
+        resolveShouldLayoutReverse();
+        final int myPos = getPosition(view);
+        final int targetPos = getPosition(target);
+        final int dropDirection = myPos < targetPos ? LayoutState.ITEM_DIRECTION_TAIL :
+                LayoutState.ITEM_DIRECTION_HEAD;
+        if (mShouldReverseLayout) {
+            if (dropDirection == LayoutState.ITEM_DIRECTION_TAIL) {
+                scrollToPositionWithOffset(targetPos,
+                        mOrientationHelper.getEndAfterPadding() -
+                                (mOrientationHelper.getDecoratedStart(target) +
+                                mOrientationHelper.getDecoratedMeasurement(view)));
+            } else {
+                scrollToPositionWithOffset(targetPos,
+                        mOrientationHelper.getEndAfterPadding() -
+                                mOrientationHelper.getDecoratedEnd(target));
+            }
+        } else {
+            if (dropDirection == LayoutState.ITEM_DIRECTION_HEAD) {
+                scrollToPositionWithOffset(targetPos, mOrientationHelper.getDecoratedStart(target));
+            } else {
+                scrollToPositionWithOffset(targetPos,
+                        mOrientationHelper.getDecoratedEnd(target) -
+                                mOrientationHelper.getDecoratedMeasurement(view));
+            }
+        }
     }
 
     /**

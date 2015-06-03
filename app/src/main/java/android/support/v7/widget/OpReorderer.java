@@ -16,10 +16,9 @@
 
 package android.support.v7.widget;
 
-import android.support.v7.widget.AdapterHelper.UpdateOp;
-
 import java.util.List;
 
+import android.support.v7.widget.AdapterHelper.UpdateOp;
 import static android.support.v7.widget.AdapterHelper.UpdateOp.ADD;
 import static android.support.v7.widget.AdapterHelper.UpdateOp.MOVE;
 import static android.support.v7.widget.AdapterHelper.UpdateOp.REMOVE;
