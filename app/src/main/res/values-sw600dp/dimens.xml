@@ -26,11 +26,16 @@
     <!-- Snackbar -->
     <dimen name="snackbar_interval">48dp</dimen>
 
+    <dimen name="list_thumb_width">100dp</dimen>
+    <dimen name="list_thumb_height">150dp</dimen>
+
     <!-- Search Bar -->
-    <dimen name="search_bar_padding_horizontal">32dp</dimen>
+    <dimen name="search_bar_padding_horizontal">24dp</dimen>
+    <dimen name="search_bar_padding_vertical">16dp</dimen>
 
     <!-- Search Layout Space -->
-    <dimen name="search_layout_space_horizontal">32dp</dimen>
+    <dimen name="search_layout_space">16dp</dimen>
+    <dimen name="search_layout_space_horizontal">24dp</dimen>
 
     <!-- Search category -->
     <dimen name="search_category_padding_start">52dp</dimen>

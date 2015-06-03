@@ -29,7 +29,7 @@ import com.hippo.scene.preference.PreferenceScene;
 import com.hippo.scene.preference.PreferenceSet;
 import com.hippo.util.Messenger;
 
-public final class EHSettingsScene extends PreferenceScene implements Preference.OnValueChangeListener {
+public final class EHSettingsScene extends PreferenceScene {
 
     private static final String KEY_EH_SOURCE = "eh_source";
     private static final int DEFAULT_EH_SOURCE = BuildConfig.DEBUG ?
@@ -53,12 +53,14 @@ public final class EHSettingsScene extends PreferenceScene implements Preference
     private PreferenceSet[] getPreferenceSet() {
         Resources resources = getStageActivity().getResources();
 
+        ValueChangeListener valueChangeListener = new ValueChangeListener();
+
         ListPreference sourcePreference = new ListPreference(KEY_EH_SOURCE,
                 resources.getString(R.string.settings_eh_source_title), null);
         sourcePreference.setKeys(resources.getStringArray(R.array.settings_eh_source_entries));
         sourcePreference.setValues(resources.getIntArray(R.array.settings_eh_source_entry_values));
         sourcePreference.setDefaultValue(DEFAULT_EH_SOURCE);
-        sourcePreference.setOnValueChangeListener(this);
+        sourcePreference.setOnValueChangeListener(valueChangeListener);
 
         PreferenceSet preferenceSet = new PreferenceSet();
         preferenceSet.setPreferenceCategory(new PreferenceCategory(resources.getString(R.string.settings_eh)));
@@ -72,15 +74,18 @@ public final class EHSettingsScene extends PreferenceScene implements Preference
         };
     }
 
-    @Override
-    public boolean OnValueChange(Preference preference, Object newValue) {
-        String key = preference.getKey();
-        switch (key) {
-            case KEY_EH_SOURCE:
-                Messenger.getInstance().notify(Constants.MESSENGER_ID_EH_SOURCE, newValue);
-                return true;
-            default:
-                return true;
+    private static class ValueChangeListener implements Preference.OnValueChangeListener {
+
+        @Override
+        public boolean OnValueChange(Preference preference, Object newValue) {
+            String key = preference.getKey();
+            switch (key) {
+                case KEY_EH_SOURCE:
+                    Messenger.getInstance().notify(Constants.MESSENGER_ID_EH_SOURCE, newValue);
+                    return true;
+                default:
+                    return true;
+            }
         }
     }
 }
