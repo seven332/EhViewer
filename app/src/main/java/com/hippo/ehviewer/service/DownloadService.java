@@ -34,6 +34,7 @@ import com.hippo.ehviewer.ehclient.ExDownloaderManager;
 import com.hippo.ehviewer.ui.DownloadActivity;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Utils;
+import com.hippo.vectorold.content.VectorContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -485,5 +486,10 @@ public class DownloadService extends Service
 
         tryToStartDownload();
         notifyUpdate();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(VectorContext.wrapContext(newBase));
     }
 }

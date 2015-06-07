@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.text.util.Linkify;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.app.MaterialAlertDialog;
@@ -37,7 +36,7 @@ import com.hippo.ehviewer.util.Crash;
 import com.hippo.ehviewer.util.Secret;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.LockPatternUtils;
-import com.larvalabs.svgandroid.SVGBuilder;
+import com.hippo.ehviewer.widget.SimpleImageView;
 
 public class StartActivity extends AbsActivity {
 
@@ -188,9 +187,8 @@ public class StartActivity extends AbsActivity {
 
         TextView text = (TextView) findViewById(R.id.text);
         text.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/GloriaHallelujah.ttf"));
-        ImageView image = (ImageView) findViewById(R.id.image);
-        image.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        image.setImageDrawable(new SVGBuilder().readFromResource(getResources(), R.raw.sad_pandroid).build().getDrawable());
+        SimpleImageView image = (SimpleImageView) findViewById(R.id.image);
+        image.setDrawable(R.drawable.sad_pandroid);
 
         // Update secret image here
         int state = Network.getNetworkState(this);

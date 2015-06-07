@@ -36,12 +36,11 @@
         android:text="@string/do_not_be_a_sad_pandroid"
         android:background="?attr/themeColor" />
 
-    <ImageView
+    <com.hippo.ehviewer.widget.SimpleImageView
         android:id="@+id/image"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="6"
-        android:scaleType="fitCenter"
         android:background="?attr/themeColor" />
 
 </com.hippo.ehviewer.widget.TransitionLayout>

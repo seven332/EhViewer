@@ -29,7 +29,7 @@
         android:layout_gravity="left|center_vertical"
         android:orientation="horizontal" >
 
-        <ImageView
+        <com.hippo.ehviewer.widget.SimpleImageView
             android:id="@+id/avatar"
             android:layout_width="64dp"
             android:layout_height="64dp" />

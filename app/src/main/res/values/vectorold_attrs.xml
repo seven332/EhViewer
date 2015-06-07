@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Makes the TextView be exactly this many pixels tall.
+           You could get the same effect by specifying this number in the
+           layout parameters. -->
+    <attr name="height" />
+
+    <!-- ========================== -->
+    <!--   VectorDrawable class   -->
+    <!-- ========================== -->
+    <eat-comment />
+
+    <!-- Drawable used to draw vector paths. -->
+    <declare-styleable name="VectorDrawable">
+        <!-- If set, specifies the color to apply to the drawable as a tint. By default,
+             no tint is applied. May be a color state list. -->
+        <attr name="tint" format="color"/>
+        <!-- When a tint color is set, specifies its Porter-Duff blending mode. The
+         default value is src_in, which treats the drawable as an alpha mask. -->
+        <attr name="tintMode">
+            <!-- The tint is drawn on top of the drawable.
+                 [Sa + (1 - Sa)*Da, Rc = Sc + (1 - Sa)*Dc] -->
+            <enum name="src_over" value="3"/>
+            <!-- The tint is masked by the alpha channel of the drawable. The drawable’s
+                 color channels are thrown out. [Sa * Da, Sc * Da] -->
+            <enum name="src_in" value="5"/>
+            <!-- The tint is drawn above the drawable, but with the drawable’s alpha
+                 channel masking the result. [Da, Sc * Da + (1 - Sa) * Dc] -->
+            <enum name="src_atop" value="9"/>
+            <!-- Multiplies the color and alpha channels of the drawable with those of
+                 the tint. [Sa * Da, Sc * Dc] -->
+            <enum name="multiply" value="14"/>
+            <!-- [Sa + Da - Sa * Da, Sc + Dc - Sc * Dc] -->
+            <enum name="screen" value="15"/>
+            <!-- Combines the tint and drawable color and alpha channels, clamping the
+                 result to valid color values. Saturate(S + D) -->
+            <enum name="add" value="16"/>
+        </attr>
+        <!-- Indicates if the drawable needs to be mirrored when its layout direction is
+             RTL (right-to-left). -->
+        <attr name="autoMirrored" format="boolean"/>
+        <!-- The intrinsic width of the Vector Drawable. -->
+        <attr name="width" format="dimension"/>
+        <!-- The intrinsic height of the Vector Drawable. -->
+        <attr name="height"/>
+        <!-- The width of the canvas the drawing is on. -->
+        <attr name="viewportWidth" format="float"/>
+        <!-- The height of the canvas the drawing is on. -->
+        <attr name="viewportHeight" format="float"/>
+        <!-- The name of this vector drawable -->
+        <attr name="name" format="string"/>
+        <!-- The opacity of the whole vector drawable, as a value between 0
+             (completely transparent) and 1 (completely opaque). -->
+        <attr name="alpha" format="float"/>
+    </declare-styleable>
+
+    <!-- Defines the group used in VectorDrawables. -->
+    <declare-styleable name="VectorDrawableGroup">
+        <!-- The name of this group -->
+        <attr name="name"/>
+        <!-- The amount to rotate the group -->
+        <attr name="rotation" format="float"/>
+        <!-- The X coordinate of the center of rotation of a group -->
+        <attr name="pivotX" format="float|fraction"/>
+        <!-- The Y coordinate of the center of rotation of a group -->
+        <attr name="pivotY" format="float|fraction"/>
+        <!-- The amount to translate the group on X coordinate -->
+        <attr name="translateX" format="float"/>
+        <!-- The amount to translate the group on Y coordinate -->
+        <attr name="translateY" format="float"/>
+        <!-- The amount to scale the group on X coordinate -->
+        <attr name="scaleX" format="float"/>
+        <!-- The amount to scale the group on Y coordinate -->
+        <attr name="scaleY" format="float"/>
+    </declare-styleable>
+
+    <!-- Defines the path used in VectorDrawables. -->
+    <declare-styleable name="VectorDrawablePath">
+        <!-- The name of this path -->
+        <attr name="name" />
+        <!-- The width a path stroke -->
+        <attr name="strokeWidth" format="float" />
+        <!-- The color to stroke the path if not defined implies no stroke-->
+        <attr name="strokeColor" format="color" />
+        <!-- The opacity of a path stroke, as a value between 0 (completely transparent)
+             and 1 (completely opaque) -->
+        <attr name="strokeAlpha" format="float" />
+        <!-- The color to fill the path if not defined implies no fill-->
+        <attr name="fillColor" format="color" />
+        <!-- The alpha of the path fill, as a value between 0 (completely transparent)
+             and 1 (completely opaque)-->
+        <attr name="fillAlpha" format="float" />
+        <!-- The specification of the operations that define the path  -->
+        <attr name="pathData" format="string" />
+        <!-- The fraction of the path to trim from the start from 0 to 1 -->
+        <attr name="trimPathStart" format="float" />
+        <!-- The fraction of the path to trim from the end from 0 to 1  -->
+        <attr name="trimPathEnd" format="float" />
+        <!-- Shift trim region (allows visible region to include the start and end) from 0 to 1  -->
+        <attr name="trimPathOffset" format="float" />
+        <!-- sets the linecap for a stroked path -->
+        <attr name="strokeLineCap" format="enum">
+            <enum name="butt" value="0"/>
+            <enum name="round" value="1"/>
+            <enum name="square" value="2"/>
+        </attr>
+        <!-- sets the lineJoin for a stroked path -->
+        <attr name="strokeLineJoin" format="enum">
+            <enum name="miter" value="0"/>
+            <enum name="round" value="1"/>
+            <enum name="bevel" value="2"/>
+        </attr>
+        <!-- sets the Miter limit for a stroked path -->
+        <attr name="strokeMiterLimit" format="float"/>
+    </declare-styleable>
+
+    <!-- Defines the clip path used in VectorDrawables. -->
+    <declare-styleable name="VectorDrawableClipPath">
+        <!-- The Name of this path -->
+        <attr name="name"/>
+        <!-- The specification of the operations that define the path  -->
+        <attr name="pathData"/>
+    </declare-styleable>
+
+    <!-- ========================== -->
+    <!--   AnimatedVectorDrawable class   -->
+    <!-- ========================== -->
+    <eat-comment />
+
+    <!-- Define the AnimatedVectorDrawable. -->
+    <declare-styleable name="AnimatedVectorDrawable">
+        <!-- The static vector drawable. -->
+        <attr name="drawable" format="reference"/>
+    </declare-styleable>
+
+    <!-- Defines the target used in the AnimatedVectorDrawable. -->
+    <declare-styleable name="AnimatedVectorDrawableTarget">
+        <!-- The name of the target path, group or vector drawable -->
+        <attr name="name"/>
+        <!-- The animation for the target path, group or vector drawable -->
+        <attr name="animation" format="reference"/>
+    </declare-styleable>
+
+    <!-- ========================== -->
+    <!-- ValueAnimator class attributes -->
+    <!-- ========================== -->
+    <eat-comment />
+
+    <declare-styleable name="Animator">
+        <!-- Defines the interpolator used to smooth the animation movement in time. -->
+        <attr name="interpolator" format="reference"/>
+        <!-- Amount of time (in milliseconds) for the animation to run. -->
+        <attr name="duration" format="integer"/>
+        <!-- Delay in milliseconds before the animation runs, once start time is reached. -->
+        <attr name="startOffset" format="integer"/>
+        <!-- Defines how many times the animation should repeat. The default value is 0. -->
+        <attr name="repeatCount" format="integer">
+            <enum name="infinite" value="-1"/>
+        </attr>
+        <!-- Defines the animation behavior when it reaches the end and the repeat count is
+             greater than 0 or infinite. The default value is restart. -->
+        <attr name="repeatMode">
+            <!-- The animation starts again from the beginning. -->
+            <enum name="restart" value="1" />
+            <!-- The animation plays backward. -->
+            <enum name="reverse" value="2" />
+        </attr>
+        <!-- Value the animation starts from. -->
+        <attr name="valueFrom" format="float|integer|color|dimension|string"/>
+        <!-- Value the animation animates to. -->
+        <attr name="valueTo" format="float|integer|color|dimension|string"/>
+        <!-- The type of valueFrom and valueTo. -->
+        <attr name="valueType">
+            <!-- valueFrom and valueTo are floats. This is the default value is valueType is
+                 unspecified. Note that if either valueFrom or valueTo represent colors
+                 (beginning with "#"), then this attribute is ignored and the color values are
+                 interpreted as integers. -->
+            <enum name="floatType" value="0" />
+            <!-- valueFrom and valueTo are integers. -->
+            <enum name="intType"   value="1" />
+            <!-- valueFrom and valueTo are paths defined as strings.
+                 This type is used for path morphing in AnimatedVectorDrawable. -->
+            <enum name="pathType"   value="2" />
+        </attr>
+    </declare-styleable>
+
+    <!-- ========================== -->
+    <!-- ObjectAnimator class attributes -->
+    <!-- ========================== -->
+    <eat-comment />
+
+    <declare-styleable name="PropertyAnimator">
+        <!-- Name of the property being animated. -->
+        <attr name="propertyName" format="string"/>
+        <!-- Name of the property being animated as the X coordinate of the pathData. -->
+        <attr name="propertyXName" format="string"/>
+        <!-- Name of the property being animated as the Y coordinate of the pathData. -->
+        <attr name="propertyYName" format="string"/>
+        <!-- The path used to animate the properties in the ObjectAnimator -->
+        <attr name="pathData"/>
+    </declare-styleable>
+
+
+    <!-- ========================== -->
+    <!-- AnimatorSet class attributes -->
+    <!-- ========================== -->
+    <eat-comment />
+
+    <declare-styleable name="AnimatorSet">
+        <!-- Name of the property being animated. -->
+        <attr name="ordering">
+            <!-- child animations should be played together. -->
+            <enum name="together" value="0" />
+            <!-- child animations should be played sequentially, in the same order as the xml. -->
+            <enum name="sequentially" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <!-- ========================== -->
+    <!-- PathInterpolator attributes -->
+    <!-- ========================== -->
+    <eat-comment />
+
+    <declare-styleable name="PathInterpolator">
+        <!-- The x coordinate of the first control point of the cubic Bezier -->
+        <attr name="controlX1" format="float" />
+        <!-- The y coordinate of the first control point of the cubic Bezier -->
+        <attr name="controlY1" format="float" />
+        <!-- The x coordinate of the second control point of the cubic Bezier -->
+        <attr name="controlX2" format="float" />
+        <!-- The y coordinate of the second control point of the cubic Bezier -->
+        <attr name="controlY2" format="float" />
+        <!-- The control points defined as a path.
+             When pathData is defined, then both of the control points of the
+             cubic Bezier will be ignored. -->
+        <attr name="pathData"/>
+    </declare-styleable>
+
+</resources>

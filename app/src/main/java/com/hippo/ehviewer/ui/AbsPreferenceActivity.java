@@ -16,11 +16,13 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.content.Context;
 import android.preference.PreferenceActivity;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
+import com.hippo.vectorold.content.VectorContext;
 
 public abstract class AbsPreferenceActivity extends PreferenceActivity {
 
@@ -47,5 +49,10 @@ public abstract class AbsPreferenceActivity extends PreferenceActivity {
 
       if (Config.getAllowAnalyics())
           EasyTracker.getInstance(this).activityStop(this);
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(VectorContext.wrapContext(newBase));
     }
 }

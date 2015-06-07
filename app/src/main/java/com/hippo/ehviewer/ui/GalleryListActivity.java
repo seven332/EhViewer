@@ -84,6 +84,7 @@ import com.hippo.ehviewer.widget.GalleryListView;
 import com.hippo.ehviewer.widget.GalleryListView.OnGetListListener;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.SearchView;
+import com.hippo.ehviewer.widget.SimpleImageView;
 import com.hippo.ehviewer.widget.SlidingDrawerLayout;
 import com.hippo.ehviewer.widget.SuggestionHelper;
 import com.hippo.ehviewer.widget.SuggestionTextView;
@@ -162,7 +163,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
     private View mUserPanel;
     private DrawerListView mMenuList;
-    private ImageView mAvatar;
+    private SimpleImageView mAvatar;
     private TextView mUsernameView;
     private Button mLoginButton;
     private Button mRegisterButton;
@@ -1027,7 +1028,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
         mUserPanel = mLeftMenu.findViewById(R.id.user_panel);
         mMenuList = (DrawerListView) mLeftMenu.findViewById(R.id.list_menu_item_list);
-        mAvatar = (ImageView) mUserPanel.findViewById(R.id.avatar);
+        mAvatar = (SimpleImageView) mUserPanel.findViewById(R.id.avatar);
         mUsernameView = (TextView) mUserPanel.findViewById(R.id.user);
         mLoginButton = (Button) mUserPanel.findViewById(R.id.login);
         mRegisterButton = (Button) mUserPanel.findViewById(R.id.register);
@@ -1515,7 +1516,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
 
         switch (state) {
         case LOGIN:
-            mAvatar.setImageDrawable(mClient.getAvatar());
+            mAvatar.setDrawable(mClient.getAvatar());
             mUsernameView.setVisibility(View.GONE);
             mLoginButton.setVisibility(View.VISIBLE);
             mRegisterButton.setVisibility(View.VISIBLE);
@@ -1523,7 +1524,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
             mWaitLogView.setVisibility(View.GONE);
             break;
         case LOGOUT:
-            mAvatar.setImageDrawable(mClient.getAvatar());
+            mAvatar.setDrawable(mClient.getAvatar());
             mUsernameView.setText(mClient.getDisplayname());
             mUsernameView.setVisibility(View.VISIBLE);
             mLoginButton.setVisibility(View.GONE);
@@ -1532,7 +1533,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
             mWaitLogView.setVisibility(View.GONE);
             break;
         case WAIT:
-            mAvatar.setImageDrawable(mClient.getAvatar());
+            mAvatar.setDrawable(mClient.getAvatar());
             mUsernameView.setVisibility(View.GONE);
             mLoginButton.setVisibility(View.GONE);
             mRegisterButton.setVisibility(View.GONE);
