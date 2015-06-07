@@ -267,11 +267,6 @@ public class GalleryActivity extends StatsActivity
     }
 
     @Override
-    protected boolean isShowStats() {
-        return true;
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gl_root_group);

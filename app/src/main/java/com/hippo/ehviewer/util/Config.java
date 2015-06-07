@@ -573,6 +573,9 @@ public final class Config {
     private static final String KEY_PATTERN_PROTECTION = "pattern_protection";
     private static final String DEFAULT_PATTERN_PROTECTION = "";
 
+    private static final String KEY_SHOW_APPLICATION_STATS = "show_application_stats";
+    private static final boolean DEFAULT_SHOW_APPLICATION_STATS = false;
+
     public static int getHttpRetry() {
         return getIntFromStr(KEY_HTTP_RETRY, DEFAULT_HTTP_RETRY);
     }
@@ -595,6 +598,14 @@ public final class Config {
 
     public static void setPatternProtection(String value) {
         setString(KEY_PATTERN_PROTECTION, value);
+    }
+
+    public static boolean getShowApplicationStats() {
+        return getBoolean(KEY_SHOW_APPLICATION_STATS, DEFAULT_SHOW_APPLICATION_STATS);
+    }
+
+    public static void setShowApplicationStats(boolean value) {
+        setBoolean(KEY_SHOW_APPLICATION_STATS, value);
     }
 
 

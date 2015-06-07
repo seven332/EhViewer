@@ -30,11 +30,6 @@ public class AbsTranslucentActivity extends StatsActivity {
     }
 
     @Override
-    protected boolean isShowStats() {
-        return true;
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
 

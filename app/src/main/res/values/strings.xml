@@ -306,6 +306,8 @@
     <string name="fixing_over">%d item(s) fixed</string>
     <string name="login_via_cookie_title">Login via cookie</string>
     <string name="pattern_protection_title">Pattern protection</string>
+    <string name="show_application_stats_title">Show application stats</string>
+    <string name="show_application_stats_summary">Show application stats at the top-right corner of the screen</string>
 
     <string name="about_settings_title">About</string>
     <string name="author_title">Author</string>

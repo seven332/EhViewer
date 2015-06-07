@@ -85,5 +85,11 @@
             android:key="pattern_protection"
             android:title="@string/pattern_protection_title"/>
 
+        <CheckBoxPreference
+            android:key="show_application_stats"
+            android:title="@string/show_application_stats_title"
+            android:summary="@string/show_application_stats_summary"
+            android:defaultValue="false" />
+
     </PreferenceCategory>
 </PreferenceScreen>

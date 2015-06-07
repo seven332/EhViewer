@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.AppHandler;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.Messenger;
 
@@ -76,7 +77,9 @@ public abstract class StatsActivity extends AbsActivity {
         return lp;
     }
 
-    protected abstract boolean isShowStats();
+    private boolean isShowStats() {
+        return Config.getShowApplicationStats();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

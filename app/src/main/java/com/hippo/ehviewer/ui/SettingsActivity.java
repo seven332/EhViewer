@@ -63,8 +63,10 @@ import com.hippo.ehviewer.network.HttpHelper;
 import com.hippo.ehviewer.preference.ListPreference;
 import com.hippo.ehviewer.util.BgThread;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Constants;
 import com.hippo.ehviewer.util.DialogUtils;
 import com.hippo.ehviewer.util.EhUtils;
+import com.hippo.ehviewer.util.Log;
 import com.hippo.ehviewer.util.Messenger;
 import com.hippo.ehviewer.util.Secret;
 import com.hippo.ehviewer.util.Ui;
@@ -684,15 +686,17 @@ public class SettingsActivity extends AbsPreferenceActivity {
     }
 
     public static class AdvancedFragment extends PreferenceFragment implements
-            Preference.OnPreferenceClickListener {
+            Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
         private static final String KEY_FIX_DIRNAME = "fix_dirname";
         private static final String KEY_LOGIN_VIA_COOKIE = "login_via_cookie";
         private static final String KEY_PATTERN_PROTECTION = "pattern_protection";
+        private static final String KEY_SHOW_APPLICATION_STATS = "show_application_stats";
 
         private Preference mFixDirname;
         private Preference mLoginViaCookie;
         private Preference mPatternProtection;
+        private Preference mShowApplicationStats;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -705,6 +709,8 @@ public class SettingsActivity extends AbsPreferenceActivity {
             mLoginViaCookie.setOnPreferenceClickListener(this);
             mPatternProtection = findPreference(KEY_PATTERN_PROTECTION);
             mPatternProtection.setOnPreferenceClickListener(this);
+            mShowApplicationStats = findPreference(KEY_SHOW_APPLICATION_STATS);
+            mShowApplicationStats.setOnPreferenceChangeListener(this);
         }
 
         @Override
@@ -827,6 +833,18 @@ public class SettingsActivity extends AbsPreferenceActivity {
             } else if (KEY_PATTERN_PROTECTION.equals(key)) {
                 Intent intent = new Intent(getActivity(), PatternProtectionActivity.class);
                 getActivity().startActivity(intent);
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final String key = preference.getKey();
+            if (KEY_SHOW_APPLICATION_STATS.equals(key)) {
+
+                Log.d("TAG","KEY_SHOW_APPLICATION_STATS");
+
+                Messenger.getInstance().notify(Constants.MESSENGER_ID_SHOW_APP_STATUS, newValue);
             }
             return true;
         }

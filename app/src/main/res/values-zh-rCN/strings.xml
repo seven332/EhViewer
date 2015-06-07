@@ -301,6 +301,8 @@
     <string name="fixing_over">共修正 %d 项</string>
     <string name="login_via_cookie_title">通过 cookie 登录</string>
     <string name="pattern_protection_title">图案保护</string>
+    <string name="show_application_stats_title">显示应用状态</string>
+    <string name="show_application_stats_summary">在某些 Activity 右上角显示内存使用情况</string>
 
     <string name="about_settings_title">关于</string>
     <string name="author_title">作者</string>
