@@ -20,7 +20,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Process;
 import android.support.annotation.NonNull;
@@ -47,8 +46,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -1128,19 +1125,6 @@ public class EhClient {
                     @Override
                     public void onSuccess(Object obj) {
                         String body = (String)obj;
-
-                        File dir = new File(Environment.getExternalStorageDirectory(), "EhViewer");
-                        File log = new File(dir, "ehviewer.log");
-
-                        try {
-                            FileOutputStream fos = new FileOutputStream(log);
-                            fos.write(("addToFavorite \n" + body).getBytes());
-                            fos.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-
                         AddToFavoriteParser parser = new AddToFavoriteParser();
                         if (parser.parser(body)) {
                             listener.onSuccess();
@@ -1152,17 +1136,6 @@ public class EhClient {
                     }
                     @Override
                     public void onFailure(String eMsg) {
-                        File dir = new File(Environment.getExternalStorageDirectory(), "EhViewer");
-                        File log = new File(dir, "ehviewer.log");
-
-                        try {
-                            FileOutputStream fos = new FileOutputStream(log);
-                            fos.write(("addToFavorite \n" + eMsg).getBytes());
-                            fos.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
                         listener.onFailure(eMsg);
                     }
                 });
