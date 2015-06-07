@@ -99,8 +99,8 @@ public class Crash {
         sb.append("======== CrashInfo ========\n").append(result).append("\n");
         try {
             long timestamp = System.currentTimeMillis();
-            String time = Utils.sDate.format(System.currentTimeMillis());
-            String fileName = "crash-" + time + "-" + timestamp + ".log";
+            //String time = Utils.sDate.format(System.currentTimeMillis());
+            String fileName = "crash-" + timestamp + ".log";
             String path = null;
             boolean position = false;
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
