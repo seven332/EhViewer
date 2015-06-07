@@ -269,15 +269,13 @@ public class EasyRecyclerView extends RecyclerView {
     @Override
     protected void dispatchDraw(@NonNull Canvas canvas) {
         int saveCount = 0;
-        final boolean clipToPadding = (mGroupFlags & CLIP_TO_PADDING_MASK) == CLIP_TO_PADDING_MASK;
-        if (clipToPadding) {
+        if (getClipToPadding()) {
             saveCount = canvas.save();
-            final int scrollX = mScrollX;
-            final int scrollY = mScrollY;
-            canvas.clipRect(scrollX + mPaddingLeft, scrollY + mPaddingTop,
-                    scrollX + mRight - mLeft - mPaddingRight,
-                    scrollY + mBottom - mTop - mPaddingBottom);
-            mGroupFlags &= ~CLIP_TO_PADDING_MASK;
+            final int scrollX = getScrollX();
+            final int scrollY = getScrollY();
+            canvas.clipRect(scrollX + getPaddingLeft(), scrollY + getPaddingTop(),
+                    scrollX + getRight() - getLeft() - getPaddingRight(),
+                    scrollY + getBottom() - getTop() - getPaddingBottom());
         }
 
         // TODO disable selector drawable state change when need not to draw selector
@@ -297,9 +295,8 @@ public class EasyRecyclerView extends RecyclerView {
             drawSelector(canvas);
         }
 
-        if (clipToPadding) {
+        if (getClipToPadding()) {
             canvas.restoreToCount(saveCount);
-            mGroupFlags |= CLIP_TO_PADDING_MASK;
         }
     }
 

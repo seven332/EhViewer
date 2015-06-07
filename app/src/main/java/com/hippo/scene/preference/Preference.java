@@ -16,8 +16,8 @@
 
 package com.hippo.scene.preference;
 
-import android.annotation.NonNull;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +30,8 @@ public class Preference extends PreferenceBase {
 
     private int mPosition;
 
-    private @NonNull String mKey;
+    private @NonNull
+    String mKey;
     private String mTitle;
     private String mSummary;
 

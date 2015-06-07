@@ -16,12 +16,12 @@
 
 package com.hippo.util;
 
-import android.annotation.NonNull;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 

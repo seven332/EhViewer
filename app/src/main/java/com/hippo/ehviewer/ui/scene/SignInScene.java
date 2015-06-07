@@ -16,8 +16,8 @@
 
 package com.hippo.ehviewer.ui.scene;
 
-import android.annotation.Nullable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;

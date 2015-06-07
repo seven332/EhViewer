@@ -16,9 +16,9 @@
 
 package com.hippo.ehviewer.ui.scene;
 
-import android.annotation.Nullable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 import android.widget.TextView;
 

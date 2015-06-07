@@ -16,14 +16,14 @@
 
 package com.hippo.util;
 
-import android.annotation.IdRes;
 import android.net.Uri;
+import android.support.annotation.DrawableRes;
 
 import com.facebook.common.util.UriUtil;
 
 public class FrescoUtils {
 
-    public static Uri getResourcesDrawableUri(@IdRes int resId) {
+    public static Uri getResourcesDrawableUri(@DrawableRes int resId) {
         return new Uri.Builder().scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
                 .path(String.valueOf(resId)).build();
     }

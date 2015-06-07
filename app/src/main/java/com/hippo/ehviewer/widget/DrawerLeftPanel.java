@@ -77,12 +77,12 @@ public class DrawerLeftPanel extends LinearLayout implements FitPaddingImpl {
                     mSignIn = false;
                     mAvatar.setImageURI(DEFAULT_AVATAR_URI);
                     mUsename.setText("");
-                    mAction.setText(mContext.getString(R.string.signin));
+                    mAction.setText(getContext().getString(R.string.signin));
                 } else if (obj instanceof String) {
                     // Sign in
                     mSignIn = true;
                     mUsename.setText((String) obj);
-                    mAction.setText(mContext.getString(R.string.signout));
+                    mAction.setText(getContext().getString(R.string.signout));
                 }
             } else if (id == Constants.MESSENGER_ID_USER_AVATAR) {
                 if (mSignIn && obj instanceof Uri) {
@@ -142,11 +142,11 @@ public class DrawerLeftPanel extends LinearLayout implements FitPaddingImpl {
             // TODO
             mAvatar.setImageURI(DEFAULT_AVATAR_URI);
             mUsename.setText(Config.getDisplayName());
-            mAction.setText(mContext.getString(R.string.signout));
+            mAction.setText(getContext().getString(R.string.signout));
         } else {
             mAvatar.setImageURI(DEFAULT_AVATAR_URI);
             mUsename.setText("");
-            mAction.setText(mContext.getString(R.string.signin));
+            mAction.setText(getContext().getString(R.string.signin));
         }
     }
 
