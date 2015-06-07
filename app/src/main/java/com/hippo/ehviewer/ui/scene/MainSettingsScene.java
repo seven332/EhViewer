@@ -44,7 +44,7 @@ public final class MainSettingsScene extends PreferenceHeaderScene {
                         R.string.settings_eh,
                         EHSettingsScene.class),
                 newPreferenceHeader(
-                        R.drawable.ic_lambda_theme_accent,
+                        R.drawable.ic_black_mesa_theme_accent,
                         R.string.settings_advance,
                         AdvanceSettingsScene.class)
         };

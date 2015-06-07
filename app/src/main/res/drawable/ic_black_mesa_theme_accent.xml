@@ -30,10 +30,10 @@
     android:viewportHeight="24">
 
     <path
-        auto:pathData="@string/pd_lambda"
+        auto:pathData="@string/pd_black_mesa"
         auto:fillColor="@color/theme_accent"
 
-        android:pathData="@string/pd_lambda"
+        android:pathData="@string/pd_black_mesa"
         android:fillColor="@color/theme_accent"/>
 
 </vector>
