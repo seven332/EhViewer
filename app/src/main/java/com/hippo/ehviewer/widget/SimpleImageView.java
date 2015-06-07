@@ -16,11 +16,11 @@
 
 package com.hippo.ehviewer.widget;
 
-import android.annotation.DrawableRes;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
