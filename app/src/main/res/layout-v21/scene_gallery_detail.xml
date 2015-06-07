@@ -38,31 +38,21 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/detail_header_background"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="250dp"
+            android:background="@color/theme_primary"
+            android:elevation="4dp">
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:background="@color/theme_primary">
-
-            </FrameLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="4dp"
-                android:background="@drawable/drop_shadow"/>
-
-        </LinearLayout>
+        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/detail_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:elevation="5dp">
 
             <!-- Header -->
             <RelativeLayout
