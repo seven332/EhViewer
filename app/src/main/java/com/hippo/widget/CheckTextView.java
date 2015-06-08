@@ -20,15 +20,12 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.CanvasProperty;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.view.HardwareCanvas;
-import android.view.RenderNodeAnimator;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Interpolator;
@@ -50,11 +47,6 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
 
     private boolean mChecked = false;
     private boolean mPrepareAnimator = false;
-
-    private CanvasProperty<Paint> mPropPaint;
-    private CanvasProperty<Float> mPropRadius;
-    private CanvasProperty<Float> mPropX;
-    private CanvasProperty<Float> mPropY;
 
     private Paint mPaint;
     private float mRadius = 0f;
@@ -100,6 +92,8 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
 
     @Override
     public void drawableHotspotChanged(float x, float y) {
+        super.drawableHotspotChanged(x, y);
+
         mX = x;
         mY = y;
         mMaxRadius = MathUtils.coverageRadius(getWidth(), getHeight(), x, y);
@@ -135,34 +129,7 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
         mPrepareAnimator = true;
     }
 
-    private void createHardwareAnimations(Canvas canvas) {
-        float startRadius;
-        float endRadius;
-        Interpolator interpolator;
-        if (mChecked) {
-            startRadius = 0;
-            endRadius = mMaxRadius;
-            interpolator = AnimationUtils.FAST_SLOW_INTERPOLATOR;
-        } else {
-            startRadius = mMaxRadius;
-            endRadius = 0;
-            interpolator = AnimationUtils.SLOW_FAST_INTERPOLATOR;
-        }
-        mPropPaint = CanvasProperty.createPaint(mPaint);
-        mPropRadius = CanvasProperty.createFloat(startRadius);
-        mPropX = CanvasProperty.createFloat(mX);
-        mPropY = CanvasProperty.createFloat(mY);
-
-        final RenderNodeAnimator radiusAnim = new RenderNodeAnimator(mPropRadius, endRadius);
-        radiusAnim.setDuration(ANIMATION_DURATION);
-        radiusAnim.setInterpolator(interpolator);
-        radiusAnim.addListener(mAnimatorListener);
-        radiusAnim.setTarget(canvas);
-        radiusAnim.start();
-        mAnimator = radiusAnim;
-    }
-
-    private void createSoftwareAnimations() {
+    private void createAnimations() {
         float startRadius;
         float endRadius;
         Interpolator interpolator;
@@ -200,37 +167,19 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
-        boolean useHardware = AnimationUtils.isSupportRenderNodeAnimator(canvas);
-
         if (mPrepareAnimator) {
             mPrepareAnimator = false;
             cancelAnimations();
-            if (useHardware) {
-                createHardwareAnimations(canvas);
-            } else {
-                createSoftwareAnimations();
-            }
+            createAnimations();
         }
 
         if (mAnimator != null) {
-            if (useHardware) {
-                drawHardware((HardwareCanvas) canvas);
-            } else {
-                drawSoftware(canvas);
-            }
+            canvas.drawCircle(mX, mY, mRadius, mPaint);
         } else {
             if (mChecked) {
                 canvas.drawColor(mMaskColor);
             }
         }
-    }
-
-    private void drawHardware(HardwareCanvas c) {
-        c.drawCircle(mPropX, mPropY, mPropRadius, mPropPaint);
-    }
-
-    private void drawSoftware(Canvas c) {
-        c.drawCircle(mX, mY, mRadius, mPaint);
     }
 
     public void setChecked(boolean checked) {

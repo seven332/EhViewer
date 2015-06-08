@@ -16,13 +16,9 @@
 
 package com.hippo.util;
 
-import android.annotation.TargetApi;
-import android.graphics.Canvas;
-import android.os.Build;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
-import android.view.View;
 import android.view.animation.Interpolator;
 
 public final class AnimationUtils {
@@ -30,22 +26,4 @@ public final class AnimationUtils {
     public static final Interpolator FAST_SLOW_INTERPOLATOR = new LinearOutSlowInInterpolator();
     public static final Interpolator SLOW_FAST_INTERPOLATOR = new FastOutLinearInInterpolator();
     public static final Interpolator SLOW_FAST_SLOW_INTERPOLATOR = new FastOutSlowInInterpolator();
-
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    public static boolean isSupportRenderNodeAnimator(View... views) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            return false;
-        }
-        for (View v : views) {
-            if (!v.isAttachedToWindow()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean isSupportRenderNodeAnimator(Canvas canvas) {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP &&
-                canvas.isHardwareAccelerated();
-    }
 }

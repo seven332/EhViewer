@@ -18,11 +18,9 @@ package com.hippo.effect;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.view.RenderNodeAnimator;
 import android.view.View;
 
 import com.hippo.animation.SimpleAnimatorListener;
-import com.hippo.util.AnimationUtils;
 import com.hippo.util.ViewUtils;
 
 public class ViewTransition {
@@ -86,13 +84,7 @@ public class ViewTransition {
                         ViewUtils.setVisibility(v, View.GONE);
                     }
                 }
-                View viewToHide = views[oldShownView];
-                View viewToShow = views[shownView];
-                if (AnimationUtils.isSupportRenderNodeAnimator(viewToHide, viewToShow)) {
-                    startAnimationsL(viewToHide, viewToShow);
-                } else {
-                    startAnimations(views[oldShownView], views[shownView]);
-                }
+                startAnimations(views[oldShownView], views[shownView]);
             } else {
                 for (int i = 0; i < length; i++) {
                     View v = views[i];
@@ -110,52 +102,6 @@ public class ViewTransition {
         } else {
             return false;
         }
-    }
-
-    private void startAnimationsL(final View hiddenView, View shownView) {
-        RenderNodeAnimator rna1 = new RenderNodeAnimator(RenderNodeAnimator.ALPHA, 0f);
-        rna1.setTarget(hiddenView);
-        rna1.setDuration(ANIMATE_TIME);
-        rna1.addListener(new SimpleAnimatorListener() {
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                super.onAnimationCancel(animation);
-                mAnimator1 = null;
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation, boolean canceled) {
-                super.onAnimationEnd(animation, canceled);
-                if (!canceled) {
-                    ViewUtils.setVisibility(hiddenView, View.GONE);
-                    mAnimator1 = null;
-                }
-            }
-        });
-        rna1.start();
-        mAnimator1 = rna1;
-
-        ViewUtils.setVisibility(shownView, View.VISIBLE);
-        RenderNodeAnimator rna2 = new RenderNodeAnimator(RenderNodeAnimator.ALPHA, 1f);
-        rna2.setTarget(shownView);
-        rna2.setDuration(ANIMATE_TIME);
-        rna2.addListener(new SimpleAnimatorListener() {
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                super.onAnimationCancel(animation);
-                mAnimator2 = null;
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation, boolean canceled) {
-                super.onAnimationEnd(animation, canceled);
-                if (!canceled) {
-                    mAnimator2 = null;
-                }
-            }
-        });
-        rna2.start();
-        mAnimator2 = rna2;
     }
 
     private void startAnimations(final View hiddenView, final View shownView) {
