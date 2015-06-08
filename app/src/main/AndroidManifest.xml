@@ -27,22 +27,17 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="com.hippo.ehviewer.ui.StartActivity"
-            android:configChanges="screenSize|uiMode"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar.Translucent">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-
-        <activity
             android:name="com.hippo.ehviewer.ui.ContentActivity"
             android:configChanges="screenSize|uiMode"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Content"
             android:windowSoftInputMode="stateAlwaysHidden">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
         </activity>
 
     </application>

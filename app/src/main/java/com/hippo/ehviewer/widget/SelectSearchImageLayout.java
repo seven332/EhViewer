@@ -34,8 +34,6 @@ import android.widget.TextView;
 import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
 import com.hippo.util.ViewUtils;
-import com.larvalabs.svgandroid.SVG;
-import com.larvalabs.svgandroid.SVGBuilder;
 
 public class SelectSearchImageLayout extends LinearLayout implements View.OnClickListener{
 
@@ -93,9 +91,9 @@ public class SelectSearchImageLayout extends LinearLayout implements View.OnClic
         RippleSalon.addRipple(mButtonSelect, false);
         mButtonSelect.setOnClickListener(this);
 
-        ViewUtils.removeHardwareAccelerationSupport(mImagePreview);
-        SVG svg = new SVGBuilder().readFromResource(getResources(), R.raw.file_image).build();
-        mImagePreview.setImageDrawable(svg.getDrawable());
+        //ViewUtils.removeHardwareAccelerationSupport(mImagePreview);
+        //SVG svg = new SVGBuilder().readFromResource(getResources(), R.raw.file_image).build();
+        //mImagePreview.setImageDrawable(svg.getDrawable());
     }
 
     public void setHelper(SelectSearchImageLayoutHelper helper) {
@@ -110,8 +108,8 @@ public class SelectSearchImageLayout extends LinearLayout implements View.OnClic
         if (mSelectedImage != null) {
             mImagePreview.setImageBitmap(mSelectedImage);
         } else {
-            SVG svg = new SVGBuilder().readFromResource(getResources(), R.raw.file_image_off).build();
-            mImagePreview.setImageDrawable(svg.getDrawable());
+            //SVG svg = new SVGBuilder().readFromResource(getResources(), R.raw.file_image_off).build();
+            //mImagePreview.setImageDrawable(svg.getDrawable());
         }
     }
 
@@ -130,6 +128,8 @@ public class SelectSearchImageLayout extends LinearLayout implements View.OnClic
 
     @Override
     protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
         if (mSelectedPath != null) {
             setImagePreview(mSelectedPath);
         }
@@ -137,6 +137,8 @@ public class SelectSearchImageLayout extends LinearLayout implements View.OnClic
 
     @Override
     protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
         if (mSelectedImage != null && !mSelectedImage.isRecycled()) {
             mSelectedImage.isRecycled();
         }
