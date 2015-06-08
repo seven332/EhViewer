@@ -1,3 +1,6 @@
 [submodule "unifile"]
 	path = unifile
 	url = https://github.com/seven332/UniFile
+[submodule "vectorold"]
+	path = vectorold
+	url = https://github.com/seven332/VectorOld

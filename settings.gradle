@@ -1,1 +1,1 @@
-include ':app', ':unifile'
+include ':app', ':unifile', ':vectorold'
