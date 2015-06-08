@@ -74,9 +74,9 @@
     <color name="background_light">#ffeeeeee</color>
     <color name="background_light_card">#ffe1e1e0</color>
 
-    <color name="theme_primary">@color/material_teal_500</color>
-    <color name="theme_primary_dark">@color/material_teal_700</color>
-    <color name="theme_accent">#ffe91e63</color>
+    <color name="theme_primary">#ff3367d6</color>
+    <color name="theme_primary_dark">#ff2451b2</color>
+    <color name="theme_accent">#ffd63367</color>
 
     <color name="search_category_background_color">@android:color/white</color>
 
