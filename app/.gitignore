@@ -1,2 +1,5 @@
 /build
 manifest-merger-release-report.txt
+
+# Intellij
+*.iml
