@@ -57,7 +57,7 @@ public class SimpleDialogCurtain extends Curtain {
     }
 
     @Override
-    protected void onReplace() {
+    protected void onRebirth() {
         mStartX = 0;
         mStartY = 0;
     }

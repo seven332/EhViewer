@@ -122,6 +122,10 @@ public final class ContentActivity extends StageActivity
                 lockDrawer();
             }
         }
+
+        @Override
+        public void onRebirth(Class clazz) {
+        }
     };
 
     @Override

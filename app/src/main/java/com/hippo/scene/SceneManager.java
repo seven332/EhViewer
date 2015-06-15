@@ -24,9 +24,7 @@ import com.hippo.util.IntIdGenerator;
 import com.hippo.util.Log;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 public class SceneManager {
@@ -41,8 +39,6 @@ public class SceneManager {
     private IntIdGenerator mIdGenerator = IntIdGenerator.create();
 
     private List<SceneStateListener> mSceneStateListenerList = new ArrayList<>();
-
-    private Map<String, Object> mTransferStop = new HashMap<>();
 
     private static SceneManager sSceneManger;
 
@@ -102,6 +98,12 @@ public class SceneManager {
     private void notifyResume(Class clazz) {
         for (SceneStateListener l : mSceneStateListenerList) {
             l.onResume(clazz);
+        }
+    }
+
+    private void notifyRebirth(Class clazz) {
+        for (SceneStateListener l : mSceneStateListenerList) {
+            l.onRebirth(clazz);
         }
     }
 
@@ -209,7 +211,7 @@ public class SceneManager {
                 // It is the last scene, just finish the activity
                 mSceneStack.remove(index);
 
-                scene.destroy(false);
+                scene.destroy();
                 scene.setState(Scene.SCENE_STATE_DESTROY);
                 notifyDestroy(scene.getClass());
 
@@ -228,7 +230,7 @@ public class SceneManager {
                     notifyResume(previousState.getClass());
                 }
 
-                scene.destroy(false);
+                scene.destroy();
                 scene.setState(Scene.SCENE_STATE_DESTROY);
                 notifyDestroy(scene.getClass());
 
@@ -293,32 +295,12 @@ public class SceneManager {
     }
 
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        Stack<Scene> tempStack = new Stack<>();
-        tempStack.addAll(mSceneStack);
-        mSceneStack.clear();
-
-        Map<String, Object> transferStop = mTransferStop;
-        for (Scene oldScene : tempStack) {
-            oldScene.destroy(true);
-            oldScene.setState(Scene.SCENE_STATE_DESTROY);
-            notifyDestroy(oldScene.getClass());
-
-            oldScene.save(transferStop);
-
-            Scene newScene = createSceneByClass(oldScene.getClass());
-
-            newScene.restore(transferStop);
-
-            newScene.create(savedInstanceState);
-            newScene.setState(Scene.SCENE_STATE_CREATE);
-            notifyCreate(newScene.getClass());
-
-            newScene.restoreInstanceState(savedInstanceState);
-
-            newScene.setState(Scene.SCENE_STATE_RUN);
-            mSceneStack.push(newScene);
-
-            transferStop.clear();
+        for (Scene scene : mSceneStack) {
+            // Recreate
+            scene.rebirth(savedInstanceState);
+            notifyRebirth(scene.getClass());
+            scene.create(savedInstanceState);
+            scene.restoreInstanceState(savedInstanceState);
         }
     }
 
@@ -327,5 +309,6 @@ public class SceneManager {
         void onDestroy(Class clazz);
         void onPause(Class clazz);
         void onResume(Class clazz);
+        void onRebirth(Class clazz);
     }
 }

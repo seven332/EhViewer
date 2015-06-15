@@ -38,7 +38,7 @@ public abstract class Curtain {
         return scene != null && scene.getId() == mPreviousSceneId;
     }
 
-    protected void onReplace() {
+    protected void onRebirth() {
     }
 
     /**

@@ -78,7 +78,6 @@ import com.hippo.widget.FloatingActionButton;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 
 import java.util.List;
-import java.util.Map;
 
 // TODO remeber the data in ContentHelper after screen dirction change
 // TODO Must refresh when change source
@@ -199,27 +198,6 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         return LAUNCH_MODE_SINGLE_TOP;
     }
 
-
-    @Override
-    protected void onSave(Map<String, Object> transferStop) {
-        super.onSave(transferStop);
-
-        transferStop.put("gallery_list_helper_data", mGalleryListHelper.copyData());
-        transferStop.put("gallery_list_helper_save", mGalleryListHelper.save());
-        transferStop.put("gallery_list_helper_listener", mGalleryListHelper.mListener);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    protected void onRestore(Map<String, Object> transferStop) {
-        super.onRestore(transferStop);
-
-        mGalleryListHelper = new GalleryListHelper(getStageActivity(),
-                (List<GalleryInfo>) transferStop.get("gallery_list_helper_data"),
-                (int[]) transferStop.get("gallery_list_helper_save"),
-                (GalleryListHelperSettable) transferStop.get("gallery_list_helper_listener"));
-    }
-
     private void handleAnnouncer(Announcer announcer) {
         int mode = MODE_HOMEPAGE;
         if (announcer != null) {
@@ -253,6 +231,13 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         super.onNewAnnouncer(announcer);
 
         handleAnnouncer(announcer);
+    }
+
+    @Override
+    protected void onRebirth(@Nullable Bundle savedInstanceState) {
+        super.onRebirth(savedInstanceState);
+
+        mGalleryListHelper = new GalleryListHelper(getStageActivity(), mGalleryListHelper);
     }
 
     @SuppressWarnings("deprecation")
@@ -298,7 +283,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         mSearchLayout.setHelper(this);
 
         // Content Layout
-        // OnRestore may create new GalleryListHelper
+        // onRebirth may create new GalleryListHelper
         if (mGalleryListHelper == null) {
             mGalleryListHelper = new GalleryListHelper(mActivity);
         }
@@ -329,8 +314,8 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
     }
 
     @Override
-    protected void onDestroy(boolean willSave) {
-        super.onDestroy(willSave);
+    protected void onDestroy() {
+        super.onDestroy();
 
         // Avoid memory leak
         if (mGalleryListHelper.mListener != null) {
@@ -360,10 +345,6 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         mSearchLayout.setFitPaddingBottom(b);
         // Corner Fab
         mFabLayout.setPadding(mFabLayout.getPaddingLeft(), mFabLayout.getPaddingTop(), mFabLayout.getPaddingRight(), mCornerFabOriginalBottom + b);
-    }
-
-    private void setFabState(int fabState) {
-        setFabState(fabState, true);
     }
 
     private void setFabState(int fabState, boolean animation) {
@@ -861,13 +842,13 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
             super(context);
         }
 
-        public GalleryListHelper(Context context, List<GalleryInfo> data,
-                int[] save, GalleryListHelperSettable listener) {
-            super(context, data, save);
+        public GalleryListHelper(Context context, GalleryListHelper older) {
+            super(context, older);
             // Update gallery listener
-            mListener = listener;
+            mListener = older.mListener;
             if (mListener != null) {
                 mListener.setGalleryListHelper(this);
+                older.mListener = null;
             }
         }
 

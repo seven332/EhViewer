@@ -28,7 +28,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Space;
@@ -37,8 +36,6 @@ import android.widget.TextView;
 import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
 import com.hippo.util.ViewUtils;
-
-import java.util.Map;
 
 public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         SceneDialogView.OnClickOutOfDialogListener, AdapterView.OnItemClickListener {
@@ -106,28 +103,8 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     }
 
     @Override
-    protected void onSave(Map<String, Object> transferStop) {
-        super.onSave(transferStop);
-
-        transferStop.put("builder", mBuilder);
-    }
-
-    @Override
-    protected void onRestore(Map<String, Object> transferStop) {
-        super.onRestore(transferStop);
-
-        mBuilder = (Builder) transferStop.get("builder");
-        // Create new Adapter to avoid memory leak
-        if (mBuilder.mAdapter != null) {
-            mBuilder.mAdapter =  new ArrayAdapter<>(getStageActivity(),
-                    mBuilder.mItemLayoutResId, android.R.id.text1,
-                    mBuilder.mItems);
-        }
-    }
-
-    @Override
-    protected void onDestroy(boolean willSave) {
-        super.onDestroy(willSave);
+    protected void onDestroy() {
+        super.onDestroy();
 
         OnCloseListener listener = mBuilder.mOnCloseListener;
         if (listener != null) {
@@ -152,8 +129,9 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
                 mMessage.setText(mBuilder.mMessage);
                 ViewUtils.setVisibility(mListView, View.GONE);
                 ViewUtils.setVisibility(mCustom, View.GONE);
-            } else if (mBuilder.mAdapter != null) {
-                listView.setAdapter(mBuilder.mAdapter);
+            } else if (mBuilder.mItemLayoutResId != 0) {
+                listView.setAdapter(new ArrayAdapter<>(getStageActivity(),
+                        mBuilder.mItemLayoutResId, android.R.id.text1, mBuilder.mItems));
                 listView.setOnItemClickListener(this);
                 if (mBuilder.mIsSingleChoice) {
                     listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -319,7 +297,6 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
 
         private CharSequence[] mItems;
         private int mItemLayoutResId;
-        private ListAdapter mAdapter;
         private OnClickListener mOnListItemClickListener;
         protected int mCheckedItem;
         protected boolean mIsSingleChoice;
@@ -362,8 +339,6 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         public Builder setItems(int itemsId, final OnClickListener listener) {
             mItems = mContext.getResources().getTextArray(itemsId);
             mItemLayoutResId = R.layout.select_dialog_item;
-            mAdapter = new ArrayAdapter<>(mContext, R.layout.select_dialog_item,
-                    android.R.id.text1, mItems);
             mOnListItemClickListener = listener;
             mIsSingleChoice = false;
             return this;
@@ -373,8 +348,6 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
                 final OnClickListener listener) {
             mItems = items;
             mItemLayoutResId = R.layout.select_dialog_item;
-            mAdapter = new ArrayAdapter<>(mContext, R.layout.select_dialog_item,
-                    android.R.id.text1, items);
             mOnListItemClickListener = listener;
             mIsSingleChoice = false;
             return this;
@@ -384,9 +357,6 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
                 final OnClickListener listener) {
             mItems = mContext.getResources().getTextArray(itemsId);
             mItemLayoutResId = R.layout.select_dialog_singlechoice;
-            mAdapter = new ArrayAdapter<>(mContext,
-                    R.layout.select_dialog_singlechoice, android.R.id.text1,
-                    mItems);
             mOnListItemClickListener = listener;
             mCheckedItem = checkedItem;
             mIsSingleChoice = true;
@@ -397,8 +367,6 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
                 int checkedItem, final OnClickListener listener) {
             mItems = items;
             mItemLayoutResId = R.layout.select_dialog_singlechoice;
-            mAdapter = new ArrayAdapter<>(mContext,
-                    R.layout.select_dialog_singlechoice, android.R.id.text1, items);
             mOnListItemClickListener = listener;
             mCheckedItem = checkedItem;
             mIsSingleChoice = true;

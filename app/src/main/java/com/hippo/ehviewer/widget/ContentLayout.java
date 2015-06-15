@@ -143,6 +143,17 @@ public class ContentLayout extends FrameLayout {
         private static final String STATE_KEY_RECYCLER_VIEW = "recycler_view";
         private static final String STATE_KEY_TIP_MESSAGE = "tip_message";
 
+        private static final String STATE_KEY_FIRST_PAGE = "first_page";
+        private static final String STATE_KEY_LAST_PAGE = "last_page";
+        private static final String STATE_KEY_FIRST_INDEX = "first_index";
+        private static final String STATE_KEY_LAST_INDEX = "last_index";
+        private static final String STATE_KEY_PAGE_COUNT = "page_count";
+        private static final String STATE_KEY_CURRENT_PAGE = "current_page";
+        private static final String STATE_KEY_PAGE_VOLUME = "page_volume";
+        private static final String STATE_KEY_CURRENT_TASK_ID = "current_task_id";
+        private static final String STATE_KEY_CURRENT_TASK_TYPR = "current_task_type";
+        private static final String STATE_KEY_CURRENT_TASK_PAGE = "current_task_page";
+
         public static final int TYPE_REFRESH = 0;
         public static final int TYPE_PRE_PAGE = 1;
         public static final int TYPE_PRE_PAGE_KEEP_POS = 2;
@@ -247,35 +258,20 @@ public class ContentLayout extends FrameLayout {
         }
 
         @SuppressWarnings("unchecked")
-        protected ContentHelper(Context context, List<E> data, int[] save) {
+        protected ContentHelper(Context context, ContentHelper older) {
             this(context);
-            mData.addAll(data);
+            mData.addAll(older.mData);
 
-            mFirstPage = save[0];
-            mLastPage = save[1];
-            mFirstIndex = save[2];
-            mLastIndex = save[3];
-            mPageCount = save[4];
-            mCurrentPage = save[5];
-            mPageVolume = save[6];
-            mCurrentTaskId = save[7];
-            mCurrentTaskType = save[8];
-            mCurrentTaskPage = save[9];
-        }
-
-        public int[] save() {
-            int[] save = new int[10];
-            save[0] = mFirstPage;
-            save[1] = mLastPage;
-            save[2] = mFirstIndex;
-            save[3] = mLastIndex;
-            save[4] = mPageCount;
-            save[5] = mCurrentPage;
-            save[6] = mPageVolume;
-            save[7] = mCurrentTaskId;
-            save[8] = mCurrentTaskType;
-            save[9] = mCurrentTaskPage;
-            return save;
+            mFirstPage = older.mFirstPage;
+            mLastPage = older.mLastPage;
+            mFirstIndex = older.mFirstIndex;
+            mLastIndex = older.mLastIndex;
+            mPageCount = older.mPageCount;
+            mCurrentPage = older.mCurrentPage;
+            mPageVolume = older.mPageVolume;
+            mCurrentTaskId = older.mCurrentTaskId;
+            mCurrentTaskType = older.mCurrentTaskType;
+            mCurrentTaskPage = older.mCurrentTaskPage;
         }
 
         private void init(ContentLayout contentLayout) {
@@ -326,12 +322,6 @@ public class ContentLayout extends FrameLayout {
             if (mViewTransition.showView(2)) {
                 onShowText();
             }
-        }
-
-        public List<E> copyData() {
-            List<E> data = new ArrayList<>(mData.size());
-            data.addAll(mData);
-            return data;
         }
 
         /**
