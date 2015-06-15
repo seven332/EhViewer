@@ -20,6 +20,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.scene.preference.PreferenceHeader;
 import com.hippo.scene.preference.PreferenceHeaderScene;
 
@@ -28,6 +29,8 @@ public final class MainSettingsScene extends PreferenceHeaderScene {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ((ContentActivity) getStageActivity()).setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_SETTINGS);
 
         setTitle(R.string.settings);
         setIcon(R.drawable.ic_arrow_left_dark);
@@ -49,6 +52,13 @@ public final class MainSettingsScene extends PreferenceHeaderScene {
                         AdvanceSettingsScene.class)
         };
         setPreferenceHeaders(phs);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        ((ContentActivity) getStageActivity()).setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_SETTINGS);
     }
 
     private PreferenceHeader newPreferenceHeader(int drawableId, int titleId, Class clazz) {

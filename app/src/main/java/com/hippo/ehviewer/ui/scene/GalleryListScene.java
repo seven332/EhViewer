@@ -133,6 +133,8 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
 
     private ListUrlBuilder mListUrlBuilder = new ListUrlBuilder();
 
+    private int mDrawerListActivatedPosition;
+
     private SimpleDialog.OnCreateCustomViewListener mGoToCreateCustomViewListener =
             new SimpleDialog.OnCreateCustomViewListener() {
                 @Override
@@ -207,10 +209,12 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         switch (mode) {
             default:
             case MODE_HOMEPAGE:
+                mDrawerListActivatedPosition = ContentActivity.DRAWER_LIST_HOMEPAGE;
                 mActivity.setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_HOMEPAGE);
                 mListUrlBuilder.reset();
                 break;
             case MODE_POPULAR:
+                mDrawerListActivatedPosition = ContentActivity.DRAWER_LIST_WHATS_HOT;
                 mActivity.setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_WHATS_HOT);
                 mListUrlBuilder.setMode(ListUrlBuilder.MODE_POPULAR);
                 break;
@@ -321,6 +325,13 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         if (mGalleryListHelper.mListener != null) {
             mGalleryListHelper.mListener.setGalleryListHelper(null);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        ((ContentActivity) getStageActivity()).setDrawerListActivatedPosition(mDrawerListActivatedPosition);
     }
 
     @Override
@@ -578,6 +589,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
             return;
         }
 
+        mDrawerListActivatedPosition = ContentActivity.DRAWER_LIST_NONE;
         mActivity.setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_NONE);
 
         mSearchDatabase.addQuery(query);
