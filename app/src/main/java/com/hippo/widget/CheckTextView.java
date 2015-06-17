@@ -33,6 +33,8 @@ import android.widget.TextView;
 
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.ehviewer.R;
+import com.hippo.hotspot.HotspotTouchHelper;
+import com.hippo.hotspot.Hotspotable;
 import com.hippo.util.AnimationUtils;
 import com.hippo.util.MathUtils;
 

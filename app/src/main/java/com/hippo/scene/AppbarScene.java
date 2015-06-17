@@ -26,8 +26,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
+import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.SimpleImageView;
 

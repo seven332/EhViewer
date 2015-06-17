@@ -22,9 +22,9 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hippo.hotspot.HotspotTouchHelper;
+import com.hippo.hotspot.Hotspotable;
 import com.hippo.util.ViewUtils;
-import com.hippo.widget.HotspotTouchHelper;
-import com.hippo.widget.Hotspotable;
 
 public class SceneDialogView extends SceneView implements View.OnClickListener, Hotspotable {
 

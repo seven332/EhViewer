@@ -19,7 +19,7 @@ package com.hippo.util;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 
-import com.hippo.widget.Hotspotable;
+import com.hippo.hotspot.Hotspotable;
 
 public class DrawableUtils {
 

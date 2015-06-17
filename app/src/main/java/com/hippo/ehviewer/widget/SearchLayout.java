@@ -35,9 +35,9 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.ListUrlBuilder;
+import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.SimpleDialog;
 import com.hippo.util.UiUtils;
 import com.hippo.util.ViewUtils;

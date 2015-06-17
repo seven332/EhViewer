@@ -34,4 +34,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':unifile')
     compile project(':vectorold')
+    compile project(':hotspot')
+    compile project(':rippleold')
 }

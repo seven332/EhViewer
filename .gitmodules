@@ -4,3 +4,9 @@
 [submodule "vectorold"]
 	path = vectorold
 	url = https://github.com/seven332/VectorOld
+[submodule "hotspot"]
+	path = hotspot
+	url = https://github.com/seven332/Hotspot
+[submodule "rippleold"]
+	path = rippleold
+	url = https://github.com/seven332/RippleOld

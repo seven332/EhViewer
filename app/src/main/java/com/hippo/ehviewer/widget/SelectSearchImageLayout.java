@@ -31,8 +31,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
+import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.ViewUtils;
 
 public class SelectSearchImageLayout extends LinearLayout implements View.OnClickListener{

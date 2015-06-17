@@ -26,8 +26,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
+import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.AppbarScene;
 import com.hippo.scene.SimpleCurtain;
 import com.hippo.scene.StageActivity;
@@ -73,7 +73,7 @@ public class PreferenceHeaderScene extends AppbarScene {
                 }
             }
         });
-        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(mActivity, false));
+        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
     }
 
     @Override

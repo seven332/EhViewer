@@ -33,8 +33,8 @@ import android.widget.ScrollView;
 import android.widget.Space;
 import android.widget.TextView;
 
-import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
+import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.ViewUtils;
 
 public class SimpleDialog extends SceneDialog implements View.OnClickListener,

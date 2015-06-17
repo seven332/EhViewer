@@ -29,10 +29,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.FrescoUtils;
 import com.hippo.util.Messenger;
 import com.hippo.widget.DrawerListView;

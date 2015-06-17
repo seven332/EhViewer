@@ -24,11 +24,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.util.Config;
+import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Scene;
 import com.hippo.util.Messenger;
 

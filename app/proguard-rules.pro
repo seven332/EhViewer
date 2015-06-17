@@ -20,14 +20,6 @@
 -keepattributes SourceFile,LineNumberTable
 
 # For ObjectAnimator
--keepclassmembers class com.hippo.effect.ripple.Ripple {
-    void set*(***);
-    *** get*();
-}
--keepclassmembers class com.hippo.effect.ripple.RippleBackground {
-    void set*(***);
-    *** get*();
-}
 -keepclassmembers public class * extends com.hippo.vectorold.drawable.VectorDrawable.VGroup {
     void set*(***);
     *** get*();

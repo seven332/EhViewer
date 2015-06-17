@@ -22,8 +22,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hippo.effect.ripple.RippleSalon;
 import com.hippo.ehviewer.R;
+import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.AppbarScene;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
@@ -55,7 +55,7 @@ public class PreferenceScene extends AppbarScene {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getStageActivity()));
         mRecyclerView.setOnItemClickListener(new PreferenceItemClickListener());
-        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(getStageActivity(), false));
+        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setOnDrawSelectorListener(new PreferencesDrawSelectorListener());
         mRecyclerView.setClipToPadding(false);
     }
