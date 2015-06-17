@@ -169,6 +169,8 @@ public class EasyRecyclerView extends RecyclerView {
 
     private OnDrawSelectorListener mOnDrawSelectorListener;
 
+    private boolean mClipToPadding = false;
+
     public EasyRecyclerView(Context context) {
         super(context);
     }
@@ -188,6 +190,13 @@ public class EasyRecyclerView extends RecyclerView {
      */
     public void setActionBarActivity(ActionBarActivity actionBarActivity) {
         mActionBarActivity = actionBarActivity;
+    }
+
+    @Override
+    public void setClipToPadding(boolean clipToPadding) {
+        super.setClipToPadding(clipToPadding);
+
+        mClipToPadding = clipToPadding;
     }
 
     /**
@@ -268,8 +277,9 @@ public class EasyRecyclerView extends RecyclerView {
 
     @Override
     protected void dispatchDraw(@NonNull Canvas canvas) {
+        boolean clipToPadding = mClipToPadding;
         int saveCount = 0;
-        if (getClipToPadding()) {
+        if (clipToPadding) {
             saveCount = canvas.save();
             final int scrollX = getScrollX();
             final int scrollY = getScrollY();
@@ -295,7 +305,7 @@ public class EasyRecyclerView extends RecyclerView {
             drawSelector(canvas);
         }
 
-        if (getClipToPadding()) {
+        if (clipToPadding) {
             canvas.restoreToCount(saveCount);
         }
     }
