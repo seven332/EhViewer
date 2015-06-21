@@ -36,4 +36,5 @@ dependencies {
     compile project(':vectorold')
     compile project(':hotspot')
     compile project(':rippleold')
+    compile project(':beerbelly')
 }
