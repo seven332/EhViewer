@@ -14,11 +14,19 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro',
+                    '../rippleold/proguard-rules.pro',
+                    '../vectorold/proguard-rules.pro',
+                    '../conaco/proguard-rules.pro'
         }
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro',
+                    '../rippleold/proguard-rules.pro',
+                    '../vectorold/proguard-rules.pro',
+                    '../conaco/proguard-rules.pro'
         }
     }
 }

@@ -20,10 +20,6 @@
 -keepattributes SourceFile,LineNumberTable
 
 # For ObjectAnimator
--keepclassmembers public class * extends com.hippo.vectorold.drawable.VectorDrawable.VGroup {
-    void set*(***);
-    *** get*();
-}
 -keepclassmembers public class * extends com.hippo.scene.Scene {
     void setBackgroundColor(int);
     int getBackgroundColor();
@@ -41,16 +37,7 @@
     float getProgress();
 }
 
-#For VectorResources
--keep class android.content.res.VectorResources {*;}
-
-# For fresco
--keep,allowobfuscation @interface com.facebook.common.internal.DoNotStrip
--keep @com.facebook.common.internal.DoNotStrip class *
--keepclassmembers class * {
-    @com.facebook.common.internal.DoNotStrip *;
+# Scene
+-keepclassmembers class * extends com.hippo.scene.preference.PreferenceBase {
+    public static android.support.v7.widget.RecyclerView$ViewHolder createViewHolder(android.content.Context, android.view.ViewGroup);
 }
--dontwarn okio.**
--dontwarn javax.annotation.**
--keep class com.facebook.imagepipeline.gif.** { *; }
--keep class com.facebook.imagepipeline.webp.** { *; }
