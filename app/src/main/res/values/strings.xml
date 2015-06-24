@@ -64,9 +64,6 @@
 
     <string name="search_tag_help">Searching via specify tag is precise. One tag each searching. Searching format is &lt;tag&gt; or &lt;namespace&gt;:&lt;tag&gt;. Other searching options will be ignored when specify tag is checked.</string>
 
-    <!-- Content Layout Snackbar-->
-    <string name="refresh_snackbar_message">Can\'t get next page</string>
-
     <!-- search_min_rating -->
     <string name="star_2">2 stars</string>
     <string name="star_3">3 stars</string>

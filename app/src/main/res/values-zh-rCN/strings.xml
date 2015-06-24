@@ -69,6 +69,15 @@
     <string name="em_unknown">奇怪的问题</string>
     <string name="erm_unknown_host">联网了么？</string>
 
+    <!-- Settings -->
+    <string name="settings_display">显示</string>
+
+    <string name="settings_eh_source_title">EH 源</string>
+
+    <string name="settings_advance">高级</string>
+    <string name="settings_show_application_stats_title">显示应用状态</string>
+    <string name="settings_show_application_stats_summary">在屏幕右上角显示设备状态</string>
+
     <!-- Sign in -->
     <string name="line_dean">“啥？”</string>
     <string name="line_sam">“我把熊猫给丢了……”</string>
