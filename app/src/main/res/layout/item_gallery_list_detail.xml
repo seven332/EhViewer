@@ -25,15 +25,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <com.facebook.drawee.view.SimpleDraweeView
+        <com.hippo.ehviewer.widget.LoadImageView
             android:id="@+id/thumb"
             android:layout_width="@dimen/list_thumb_width"
-            android:layout_height="@dimen/list_thumb_height"
-            auto:actualImageScaleType="fitCenter"
-            auto:failureImage="@drawable/ic_image_broken"
-            auto:failureImageScaleType="fitCenter"
-            auto:retryImage="@drawable/ic_cursor_pointer"
-            auto:retryImageScaleType="fitCenter"/>
+            android:layout_height="@dimen/list_thumb_height"/>
 
         <TextView
             android:id="@+id/title"

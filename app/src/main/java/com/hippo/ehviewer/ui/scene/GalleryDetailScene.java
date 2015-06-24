@@ -16,27 +16,23 @@
 
 package com.hippo.ehviewer.ui.scene;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.hippo.conaco.Conaco;
+import com.hippo.ehviewer.EhApplication;
+import com.hippo.ehviewer.EhImageKeyFactory;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.data.GalleryInfo;
-import com.hippo.ehviewer.fresco.EhCacheKeyFactory;
-import com.hippo.ehviewer.fresco.KeyImageRequest;
+import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.scene.Scene;
 
 public class GalleryDetailScene extends Scene {
 
     public static final String KEY_GALLERY_INFO = "gallery_info";
 
-    private SimpleDraweeView mThumb;
+    private LoadImageView mThumb;
     private TextView mTitle;
     private TextView mUploader;
 
@@ -48,18 +44,11 @@ public class GalleryDetailScene extends Scene {
 
         GalleryInfo gi = getAnnouncer().getParcelableExtra(KEY_GALLERY_INFO);
 
-        mThumb = (SimpleDraweeView) findViewById(R.id.thumb);
+        mThumb = (LoadImageView) findViewById(R.id.thumb);
         mThumb.bringToFront();
-        ViewGroup a;
 
-        ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(Uri.parse(gi.thumb));
-        KeyImageRequest keyImageRequest = new KeyImageRequest(builder);
-        keyImageRequest.setKey(EhCacheKeyFactory.getThumbKey(gi.gid));
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setImageRequest(keyImageRequest)
-                .setTapToRetryEnabled(true)
-                .setOldController(mThumb.getController()).build();
-        mThumb.setController(controller);
+        Conaco conaco = EhApplication.getConaco(getStageActivity());
+        conaco.load(mThumb, EhImageKeyFactory.getThumbKey(gi.gid), gi.thumb);
 
         mTitle = (TextView) findViewById(R.id.title);
         mTitle.setText(gi.title);

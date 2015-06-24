@@ -40,13 +40,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.facebook.drawee.view.SimpleDraweeView
-                xmlns:auto="http://schemas.android.com/apk/res-auto"
+            <com.hippo.ehviewer.widget.LoadImageView
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="32dp"
-                auto:roundAsCircle="true"
                 tools:ignore="RtlHardcoded"/>
 
             <TextView

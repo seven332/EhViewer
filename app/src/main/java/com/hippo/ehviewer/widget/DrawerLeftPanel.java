@@ -28,12 +28,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.util.FrescoUtils;
 import com.hippo.util.Messenger;
 import com.hippo.widget.DrawerListView;
 import com.hippo.widget.FitPaddingImpl;
@@ -45,14 +43,14 @@ public class DrawerLeftPanel extends LinearLayout implements FitPaddingImpl {
 
     private static final int[] MAX_ATTRS = {android.R.attr.maxWidth};
 
-    private static Uri DEFAULT_AVATAR_URI = FrescoUtils.getResourcesDrawableUri(R.drawable.default_avatar);
+    private static int DEFAULT_AVATAR_ID = R.drawable.default_avatar;
 
     private int mMaxWidth = -1;
 
     private ViewGroup mSuperUserPanel;
     private View mKKStatusBarBg;
     private ViewGroup mUserPanel;
-    private SimpleDraweeView mAvatar;
+    private LoadImageView mAvatar;
     private TextView mUsename;
     private TextView mAction;
     private DrawerListView mDrawerListView;
@@ -75,7 +73,7 @@ public class DrawerLeftPanel extends LinearLayout implements FitPaddingImpl {
                 if (obj == null) {
                     // Sign out
                     mSignIn = false;
-                    mAvatar.setImageURI(DEFAULT_AVATAR_URI);
+                    mAvatar.setImageResource(DEFAULT_AVATAR_ID);
                     mUsename.setText("");
                     mAction.setText(getContext().getString(R.string.signin));
                 } else if (obj instanceof String) {
@@ -114,7 +112,7 @@ public class DrawerLeftPanel extends LinearLayout implements FitPaddingImpl {
         mSuperUserPanel = (ViewGroup) getChildAt(0);
         mKKStatusBarBg = mSuperUserPanel.getChildAt(1);
         mUserPanel = (ViewGroup) mSuperUserPanel.getChildAt(2);
-        mAvatar = (SimpleDraweeView) mUserPanel.getChildAt(0);
+        mAvatar = (LoadImageView) mUserPanel.getChildAt(0);
         mUsename = (TextView) mUserPanel.getChildAt(1);
         mAction = (TextView) mUserPanel.getChildAt(2);
         mDrawerListView = (DrawerListView) getChildAt(1);
@@ -140,11 +138,11 @@ public class DrawerLeftPanel extends LinearLayout implements FitPaddingImpl {
         mSignIn = Config.getSignIn();
         if (mSignIn) {
             // TODO
-            mAvatar.setImageURI(DEFAULT_AVATAR_URI);
+            mAvatar.setImageResource(DEFAULT_AVATAR_ID);
             mUsename.setText(Config.getDisplayName());
             mAction.setText(getContext().getString(R.string.signout));
         } else {
-            mAvatar.setImageURI(DEFAULT_AVATAR_URI);
+            mAvatar.setImageResource(DEFAULT_AVATAR_ID);
             mUsename.setText("");
             mAction.setText(getContext().getString(R.string.signin));
         }

@@ -16,30 +16,43 @@
 
 package com.hippo.ehviewer;
 
+import android.app.ActivityManager;
 import android.content.Context;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.imagepipeline.backends.okhttp.OkHttpImagePipelineConfigFactory;
-import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.hippo.ehviewer.fresco.EhCacheKeyFactory;
+import com.hippo.conaco.Conaco;
 import com.hippo.ehviewer.network.EhOkHttpClient;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.scene.SceneApplication;
 import com.hippo.util.Log;
 import com.hippo.vectorold.content.VectorContext;
 
+import java.io.File;
+
 public class EhApplication extends SceneApplication {
+
+    private Conaco mConaco;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        ImagePipelineConfig config = OkHttpImagePipelineConfigFactory
-                .newBuilder(this, EhOkHttpClient.getInstance())
-                .setCacheKeyFactory(EhCacheKeyFactory.getInstance())
-                .build();
-        Fresco.initialize(this, config);
         Config.initialize(this);
+
+        Conaco.Builder conacoBuilder = new Conaco.Builder();
+        conacoBuilder.hasMemoryCache = true;
+        conacoBuilder.memoryCacheMaxSize = getMemoryCacheMaxSize();
+        conacoBuilder.hasDiskCache = true;
+        conacoBuilder.diskCacheDir = new File(getCacheDir(), "conaco");
+        conacoBuilder.diskCacheMaxSize = 50 * 1024 * 1024;
+        conacoBuilder.httpClient = EhOkHttpClient.getInstance();
+        mConaco = conacoBuilder.build();
+    }
+
+    private int getMemoryCacheMaxSize() {
+        final ActivityManager activityManager = (ActivityManager)
+                getSystemService(Context.ACTIVITY_SERVICE);
+        return Math.min(20 * 1024 * 1024,
+                Math.round(0.2f * activityManager.getMemoryClass() * 1024 * 1024));
     }
 
     @Override
@@ -54,5 +67,10 @@ public class EhApplication extends SceneApplication {
         if (level == TRIM_MEMORY_UI_HIDDEN) {
             Log.d("Application hiden");
         }
+    }
+
+    public static Conaco getConaco(Context context) {
+        EhApplication application = (EhApplication) context.getApplicationContext();
+        return application.mConaco;
     }
 }

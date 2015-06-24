@@ -23,7 +23,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,25 +38,23 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.hippo.animation.SimpleAnimatorListener;
+import com.hippo.conaco.Conaco;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.effect.ViewTransition;
+import com.hippo.ehviewer.EhApplication;
+import com.hippo.ehviewer.EhImageKeyFactory;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.GalleryListParser;
 import com.hippo.ehviewer.data.GalleryInfo;
 import com.hippo.ehviewer.data.ListUrlBuilder;
 import com.hippo.ehviewer.data.UnsupportedSearchException;
-import com.hippo.ehviewer.fresco.EhCacheKeyFactory;
-import com.hippo.ehviewer.fresco.KeyImageRequest;
 import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.widget.ContentLayout;
+import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OffsetLayout;
 import com.hippo.ehviewer.widget.RatingView;
 import com.hippo.ehviewer.widget.SearchBar;
@@ -819,7 +816,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
 
     private class GalleryHolder extends RecyclerView.ViewHolder {
 
-        public SimpleDraweeView thumb;
+        public LoadImageView thumb;
         public TextView title;
         public TextView uploader;
         public RatingView rating;
@@ -829,7 +826,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
 
         public GalleryHolder(View itemView) {
             super(itemView);
-            thumb = (SimpleDraweeView) itemView.findViewById(R.id.thumb);
+            thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
             title = (TextView) itemView.findViewById(R.id.title);
             uploader = (TextView) itemView.findViewById(R.id.uploader);
             rating = (RatingView) itemView.findViewById(R.id.rating);
@@ -925,14 +922,8 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         public void onBindViewHolder(GalleryHolder holder, int position) {
             GalleryInfo gi = getDataAt(position);
 
-            ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(Uri.parse(gi.thumb));
-            KeyImageRequest keyImageRequest = new KeyImageRequest(builder);
-            keyImageRequest.setKey(EhCacheKeyFactory.getThumbKey(gi.gid));
-            DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setImageRequest(keyImageRequest)
-                    .setTapToRetryEnabled(true)
-                    .setOldController(holder.thumb.getController()).build();
-            holder.thumb.setController(controller);
+            Conaco conaco = EhApplication.getConaco(getStageActivity());
+            conaco.load(holder.thumb, EhImageKeyFactory.getThumbKey(gi.gid), gi.thumb);
 
             holder.title.setText(gi.title);
             holder.uploader.setText(gi.uploader);
