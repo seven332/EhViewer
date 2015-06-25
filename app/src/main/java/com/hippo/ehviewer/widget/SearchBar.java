@@ -104,7 +104,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
 
     private boolean mInAnimation = false;
 
-    private int mSource;
+    private int mSource = -1;
 
     public SearchBar(Context context) {
         super(context);
