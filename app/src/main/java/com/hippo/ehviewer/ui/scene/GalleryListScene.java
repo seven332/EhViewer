@@ -79,6 +79,7 @@ import java.util.List;
 // TODO remeber the data in ContentHelper after screen dirction change
 // TODO Must refresh when change source
 // TODO disable click action when animating
+// TODO Dim when expand search list
 public final class GalleryListScene extends Scene implements SearchBar.Helper,
         View.OnClickListener, FabLayout.OnCancelListener,
         SearchLayout.SearhLayoutHelper, EasyRecyclerView.OnItemClickListener {

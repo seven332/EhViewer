@@ -13,7 +13,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<android.support.v7.widget.CardView
+<com.hippo.cardsalon.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:auto="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -100,4 +100,4 @@
 
     </RelativeLayout>
 
-</android.support.v7.widget.CardView>
+</com.hippo.cardsalon.CardView>

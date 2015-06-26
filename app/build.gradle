@@ -44,4 +44,5 @@ dependencies {
     compile project(':rippleold')
     compile project(':beerbelly')
     compile project(':conaco')
+    compile project(':cardsalon')
 }

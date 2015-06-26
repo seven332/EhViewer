@@ -21,14 +21,12 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -47,6 +45,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hippo.animation.SimpleAnimatorListener;
+import com.hippo.cardsalon.CardView;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.effect.ViewTransition;
@@ -56,7 +55,6 @@ import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.util.MathUtils;
 import com.hippo.util.Messenger;
-import com.hippo.util.UiUtils;
 import com.hippo.util.ViewUtils;
 import com.hippo.widget.SimpleImageView;
 
@@ -123,10 +121,6 @@ public class SearchBar extends CardView implements View.OnClickListener,
 
     private void init(Context context) {
         mSearchDatabase = SearchDatabase.getInstance(getContext());
-
-        setRadius(UiUtils.dp2pix(context, 2));
-        setCardElevation(UiUtils.dp2pix(context, 2));
-        setCardBackgroundColor(Color.WHITE);
 
         LayoutInflater.from(context).inflate(R.layout.widget_search_bar, this);
         mMenuButton = (SimpleImageView) findViewById(R.id.search_menu);

@@ -19,11 +19,11 @@ package com.hippo.scene;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hippo.cardsalon.CardView;
 import com.hippo.ehviewer.R;
 import com.hippo.util.ResourcesUtils;
 
