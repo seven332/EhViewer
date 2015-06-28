@@ -93,6 +93,8 @@
     <!-- Switch padding -->
     <dimen name="switch_padding">8dp</dimen>
 
+    <dimen name="detail_action_size">48dp</dimen>
+
     <!-- Keyline -->
     <dimen name="keyline_margin">16dp</dimen>
 

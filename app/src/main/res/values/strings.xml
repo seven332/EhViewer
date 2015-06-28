@@ -77,6 +77,24 @@
     <string name="go_to_error_not_number">Please enter a number</string>
     <string name="go_to_error_invaild">The page is invaild</string>
 
+    <!-- Detail -->
+    <string name="page_count">%d pages</string>
+    <string name="favorited_times">%d \u2665</string>
+    <string name="we_feel">We feel %s</string>
+
+    <!-- Rating -->
+    <string name="rating10">MASTERPIECE</string>
+    <string name="rating9">AMAZING</string>
+    <string name="rating8">GREAT</string>
+    <string name="rating7">GOOD</string>
+    <string name="rating6">OKAY</string>
+    <string name="rating5">MEDIOCRE</string>
+    <string name="rating4">BAD</string>
+    <string name="rating3">AWFUL</string>
+    <string name="rating2">PAINFUL</string>
+    <string name="rating1">UNBEARABLE</string>
+    <string name="rating0">DISASTER</string>
+
     <!-- Error message -->
     <string name="em_timeout">Timeout</string>
     <string name="em_unknown_host">Unknown host</string>
@@ -121,5 +139,9 @@
     <string name="signout">Sign out</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+
+    <string name="read">Read</string>
+    <string name="torrent">Torrent</string>
+    <string name="share">Share</string>
 
 </resources>

@@ -30,10 +30,10 @@
     android:viewportHeight="24">
 
     <path
-        auto:pathData="@string/pd_star"
-        auto:fillColor="@color/primary_drawable_light"
+        auto:pathData="@string/pd_star_half"
+        auto:fillColor="@color/theme_accent"
 
-        android:pathData="@string/pd_star"
-        android:fillColor="@color/primary_drawable_light"/>
+        android:pathData="@string/pd_star_half"
+        android:fillColor="@color/theme_accent"/>
 
 </vector>

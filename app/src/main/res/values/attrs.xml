@@ -54,4 +54,13 @@
         <attr name="message" format="string"/>
     </declare-styleable>
 
+    <declare-styleable name="RatingView">
+        <attr name="starSize" format="dimension"/>
+        <attr name="starInterval" format="dimension"/>
+        <attr name="starCount" format="integer"/>
+        <attr name="isIndicator" format="boolean"/>
+        <attr name="max" format="float"/>
+        <attr name="rating" format="float"/>
+    </declare-styleable>
+
 </resources>

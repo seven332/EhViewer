@@ -62,7 +62,7 @@
         <item name="android:minHeight">@dimen/category_table_item_height</item>
     </style>
 
-    <style name="CardButton">
+    <style name="ButtonInCard">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Button</item>
         <item name="android:textStyle">bold</item>
         <item name="android:gravity">center</item>
@@ -105,6 +105,23 @@
         <item name="@android:textAppearance">@style/TextAppearance.CardMessage</item>
         <item name="@android:ellipsize">end</item>
         <item name="@android:singleLine">true</item>
+    </style>
+
+    <style name="CardButton">
+        <item name="android:minWidth">88dp</item>
+        <item name="android:minHeight">40dp</item>
+    </style>
+
+    <style name="CardButton.Accent">
+    </style>
+
+    <style name="CardButton.Accent.Full">
+        <item name="android:textColor">@color/theme_accent</item>
+        <item name="cardBackgroundColor">@color/theme_primary</item>
+        <item name="cardCornerRadius">2dp</item>
+        <item name="cardBoundColor">@color/theme_accent</item>
+        <item name="cardBoundSize">2dp</item>
+        <item name="cardElevation">2dp</item>
     </style>
 
     <style name="Text.Dialog.Title" parent="TextAppearance.AppCompat">

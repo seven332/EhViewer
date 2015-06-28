@@ -56,7 +56,7 @@ import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OffsetLayout;
-import com.hippo.ehviewer.widget.RatingView;
+import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchDatabase;
 import com.hippo.ehviewer.widget.SearchLayout;
@@ -757,25 +757,27 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
 
         @Override
         public View[] getFromViewSet(@NonNull Scene fromScene) {
-            View[] views = new View[3];
+            View[] views = new View[4];
             GalleryListScene scene = (GalleryListScene) fromScene;
             RecyclerView.ViewHolder viewHolder = scene.mContentRecyclerView.findViewHolderForAdapterPosition(mPosition);
             if (viewHolder != null) {
                 GalleryHolder gh = (GalleryHolder) viewHolder;
-                views[0] =  gh.thumb;
-                views[1] =  gh.title;
-                views[2] =  gh.uploader;
+                views[0] = gh.thumb;
+                views[1] = gh.title;
+                views[2] = gh.uploader;
+                views[3] = gh.category;
             }
             return views;
         }
 
         @Override
         public View[] getToViewSet(@NonNull Scene toScene) {
-            View[] views = new View[3];
-            View sceneView = toScene.getSceneView();
-            views[0] = sceneView.findViewById(R.id.thumb);
-            views[1] = sceneView.findViewById(R.id.title);
-            views[2] = sceneView.findViewById(R.id.uploader);
+            View[] views = new View[4];
+            GalleryDetailScene scene = (GalleryDetailScene) toScene;
+            views[0] = scene.mThumb;
+            views[1] = scene.mTitle;
+            views[2] = scene.mUploader;
+            views[3] = scene.mCategory;
             return views;
         }
     }
@@ -820,7 +822,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         public LoadImageView thumb;
         public TextView title;
         public TextView uploader;
-        public RatingView rating;
+        public SimpleRatingView rating;
         public TextView category;
         public TextView posted;
         public TextView simpleLanguage;
@@ -830,7 +832,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
             title = (TextView) itemView.findViewById(R.id.title);
             uploader = (TextView) itemView.findViewById(R.id.uploader);
-            rating = (RatingView) itemView.findViewById(R.id.rating);
+            rating = (SimpleRatingView) itemView.findViewById(R.id.rating);
             category = (TextView) itemView.findViewById(R.id.category);
             posted = (TextView) itemView.findViewById(R.id.posted);
             simpleLanguage = (TextView) itemView.findViewById(R.id.simple_language);

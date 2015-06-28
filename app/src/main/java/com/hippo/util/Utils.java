@@ -274,21 +274,23 @@ public final class Utils {
     }
 
     private static final String[] ESCAPE_CHARATER_LIST = {
-        "&amp;",
-        "&lt;",
-        "&gt;",
-        "&quot;",
-        "&#039;",
-        "&times;"
+            "&amp;",
+            "&lt;",
+            "&gt;",
+            "&quot;",
+            "&#039;",
+            "&times;",
+            "&nbsp;"
     };
 
     private static final String[] UNESCAPE_CHARATER_LIST = {
-        "&",
-        "<",
-        ">",
-        "\"",
-        "'",
-        "×"
+            "&",
+            "<",
+            ">",
+            "\"",
+            "'",
+            "×",
+            " "
     };
 
     /**

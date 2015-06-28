@@ -52,6 +52,7 @@
     <color name="misc">#fff06292</color>
     <color name="unknown_bg">@android:color/black</color>
 
+    <color name="material_pink_500">#ffe91e63</color>
     <color name="material_teal_500">#ff009688</color>
     <color name="material_teal_700">#ff00796b</color>
     <color name="material_deep_orange_500">#ffff5722</color>
@@ -62,6 +63,8 @@
     <color name="material_light_green_600">#ff7cb342</color>
     <color name="material_yellow_800">#fff9a825</color>
     <color name="material_deep_Orange_400">#ffff7043</color>
+    <color name="material_indigo_500">#ff3f51b5</color>
+    <color name="material_indigo_700">#ff303f9f</color>
 
     <!-- Text -->
     <color name="primary_text_light">#de000000</color>
@@ -74,9 +77,9 @@
     <color name="background_light">#ffeeeeee</color>
     <color name="background_light_card">#ffe1e1e0</color>
 
-    <color name="theme_primary">#ff3367d6</color>
-    <color name="theme_primary_dark">#ff2451b2</color>
-    <color name="theme_accent">#ffd63367</color>
+    <color name="theme_primary">@color/material_indigo_500</color>
+    <color name="theme_primary_dark">@color/material_indigo_700</color>
+    <color name="theme_accent">@color/material_pink_500</color>
 
     <color name="search_category_background_color">@android:color/white</color>
 

@@ -72,6 +72,10 @@ public class GalleryDetailParser {
     public int previewPageCount;
 
     private String sortOut(String str) {
+        // Avoid null
+        if (str == null) {
+            str = "";
+        }
         return Utils.unescapeXml(str).trim();
     }
 
@@ -137,7 +141,7 @@ public class GalleryDetailParser {
                     + ".+?"
                     + "<td id=\"grt3\"><span id=\"rating_count\">([\\d|,]+)</span></td>" // 18 ratedTimes
                     + "</tr>"
-                    + "<tr><td[^<>]*>Average: ([^<>]+)</td>" // 19 rating "Average: x.xx" or "Not Yet Rated"
+                    + "<tr><td[^<>]*>([^<>]+)</td>" // 19 rating "Average: x.xx" or "Not Yet Rated"
                     + ".+?"
                     + "<a id=\"favoritelink\"[^<>]*>(.+?)</a>", Pattern.DOTALL); // 20 isFavored "Favorite Gallery" for favorite
             m = p.matcher(body);

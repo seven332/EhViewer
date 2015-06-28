@@ -27,14 +27,14 @@
 
     <TextView
         android:id="@+id/search_action_1"
-        style="@style/CardButton"
+        style="@style/ButtonInCard"
         android:layout_width="@dimen/search_action_button_width"
         android:layout_height="wrap_content"
         android:gravity="center"/>
 
     <TextView
         android:id="@+id/search_action_2"
-        style="@style/CardButton"
+        style="@style/ButtonInCard"
         android:layout_width="@dimen/search_action_button_width"
         android:layout_height="wrap_content"
         android:gravity="center"/>

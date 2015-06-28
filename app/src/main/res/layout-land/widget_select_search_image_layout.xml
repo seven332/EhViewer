@@ -25,7 +25,7 @@
 
         <TextView
             android:id="@+id/search_select_image_action"
-            style="@style/CardButton"
+            style="@style/ButtonInCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

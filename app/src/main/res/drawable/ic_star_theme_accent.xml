@@ -31,9 +31,9 @@
 
     <path
         auto:pathData="@string/pd_star"
-        auto:fillColor="@color/primary_drawable_light"
+        auto:fillColor="@color/theme_accent"
 
         android:pathData="@string/pd_star"
-        android:fillColor="@color/primary_drawable_light"/>
+        android:fillColor="@color/theme_accent"/>
 
 </vector>
