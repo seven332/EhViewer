@@ -1,10 +1,10 @@
 package com.hippo.drawable;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import com.hippo.conaco.BitmapHolder;
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.Unikery;
 import com.hippo.ehviewer.R;
@@ -20,8 +20,10 @@ public class UnikeryDrawable extends WrapDrawable implements Unikery {
     }
 
     @Override
-    public void setBitmap(Bitmap bitmap, Conaco.Source source) {
-        setDrawable(new BitmapDrawable(mView.getResources(), bitmap));
+    public void setBitmap(BitmapHolder bitmapHolder, Conaco.Source source) {
+        // TODO release sometime ?
+        bitmapHolder.obtain();
+        setDrawable(new BitmapDrawable(mView.getResources(), bitmapHolder.getBitmap()));
     }
 
     @Override
