@@ -22,9 +22,20 @@ import android.support.annotation.Nullable;
 
 import java.io.Serializable;
 
+// TODO Do not copy Intent, set clone stuff and non-clone stuff
 public class Announcer {
 
     private @Nullable Bundle mExtras;
+
+    private Object mObject;
+
+    public void setObject(Object object) {
+        mObject = object;
+    }
+
+    public Object getObject() {
+        return mObject;
+    }
 
     public boolean getBooleanExtra(String name, boolean defaultValue) {
         return mExtras == null ? defaultValue :

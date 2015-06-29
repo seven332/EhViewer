@@ -23,7 +23,9 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:scrollbarThumbVertical="@null">
 
         <FrameLayout
             android:id="@+id/detail_frame_layout"

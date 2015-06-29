@@ -147,4 +147,6 @@
     <string name="torrent">Torrent</string>
     <string name="share">Share</string>
 
+    <string name="comments">Comments</string>
+
 </resources>

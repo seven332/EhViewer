@@ -146,6 +146,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener {
         mTorrent.setOnClickListener(this);
         mShare.setOnClickListener(this);
         mRate.setOnClickListener(this);
+        mCommentMore.setOnClickListener(this);
 
         RippleSalon.addRipple(mRead, false);
         RippleSalon.addRipple(mDownload, false);
@@ -219,6 +220,10 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener {
         } else if (v == mShare) {
             StartActivityHelper.share(getStageActivity(),
                     EhClient.getDetailUrl(Config.getEhSource(), gd.gid, gd.token, 0));
+        } else if (v == mCommentMore) {
+            Announcer announcer = new Announcer();
+            announcer.setObject(mGalleryDetail.comments);
+            startScene(CommentScene.class, announcer);
         }
     }
 
@@ -323,12 +328,9 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener {
         TextView commentText = (TextView) view.findViewById(R.id.comment);
         commentText.setMaxLines(3);
         commentText.setAutoLinkMask(0);
-
-
         URLImageGetter p = new URLImageGetter(
                 commentText, EhApplication.getConaco(getStageActivity()));
         commentText.setText(Html.fromHtml(comment.comment, p, null));
-
         return view;
     }
 
