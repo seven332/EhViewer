@@ -22,14 +22,27 @@ import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.util.AssertUtils;
 import com.hippo.util.Utils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GalleryDetailParser {
+
+    private static final DateFormat WEB_COMMENT_DATA_FORMAT = new SimpleDateFormat("dd MMMMM yyyy, HH:mm z", Locale.US);
+    private static final DateFormat OUT_COMMENT_DATA_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+
+    static {
+        WEB_COMMENT_DATA_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+        OUT_COMMENT_DATA_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
 
     private static final String OFFENSIVE_STRING =
             "<p>(And if you choose to ignore this warning, you lose all rights to complain about it in the future.)</p>";
@@ -209,6 +222,7 @@ public class GalleryDetailParser {
                 TagGroup tagGroup = new TagGroup();
                 tagGroup.groupName = sortOut(m.group(1));
                 parseTagGroup(tagGroup, m.group(0));
+                tags.add(tagGroup);
             }
         }
 
@@ -232,7 +246,15 @@ public class GalleryDetailParser {
             m = p.matcher(body);
             comments = new LinkedList<>();
             while (m.find()) {
-                comments.add(new Comment(sortOut(m.group(1)), sortOut(m.group(2)), m.group(3)));
+                String webDateString = sortOut(m.group(1));
+                Date date;
+                try {
+                    date = WEB_COMMENT_DATA_FORMAT.parse(webDateString);
+                } catch (java.text.ParseException e) {
+                    date = new Date(0l);
+                }
+                String outDateString = OUT_COMMENT_DATA_FORMAT.format(date);
+                comments.add(new Comment(outDateString, date, sortOut(m.group(2)), m.group(3)));
             }
             Collections.sort(comments, COMMENT_SORTER);
         }
@@ -257,67 +279,10 @@ public class GalleryDetailParser {
     }
 
     static class CommentSort implements Comparator<Comment> {
-        private int compareNum(String n1, String n2, int median) {
-            int re = 0;
-            for (int i = 0; i < median; i++) {
-                re *= 10;
-                re += n1.charAt(i) - n2.charAt(i);
-            }
-            return re;
-        }
-
-        private int getMonth(String m) {
-            if (m.equals("January"))
-                return 1;
-            else if (m.equals("February"))
-                return 2;
-            else if (m.equals("March"))
-                return 3;
-            else if (m.equals("April"))
-                return 4;
-            else if (m.equals("May"))
-                return 5;
-            else if (m.equals("June"))
-                return 6;
-            else if (m.equals("July"))
-                return 7;
-            else if (m.equals("August"))
-                return 8;
-            else if (m.equals("September"))
-                return 9;
-            else if (m.equals("October"))
-                return 10;
-            else if (m.equals("November"))
-                return 11;
-            else if (m.equals("December"))
-                return 12;
-            else
-                return 0;
-        }
 
         @Override
         public int compare(Comment c1, Comment c2) {
-            int re = 0;
-            Pattern p = Pattern.compile("(\\d{2}) (\\w+) (\\d{4}), (\\d{2}):(\\d{2})");
-            Matcher m1 = p.matcher(c1.time);
-            Matcher m2 = p.matcher(c2.time);
-            if (!m1.find() || !m2.find())
-                return 0;
-            // year
-            re += compareNum(m1.group(3), m2.group(3), 4);
-            re <<= 4;
-            // Month
-            re += getMonth(m1.group(2)) - getMonth(m2.group(2));
-            re <<= 5;
-            // Day
-            re += compareNum(m1.group(1), m2.group(1), 2);
-            re <<= 5;
-            // Hour
-            re += compareNum(m1.group(4), m2.group(4), 2);
-            re <<= 6;
-            // Minute
-            re += compareNum(m1.group(5), m2.group(5), 2);
-            return re;
+            return c1.date.compareTo(c2.date);
         }
     }
 }

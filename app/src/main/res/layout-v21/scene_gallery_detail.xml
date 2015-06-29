@@ -26,6 +26,7 @@
         android:layout_height="match_parent">
 
         <FrameLayout
+            android:id="@+id/detail_frame_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -104,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="8dp"
-                    android:text="更多信息"
+                    android:text="@string/more_information"
                     android:textColor="@color/theme_accent"/>
 
                 <View
@@ -186,6 +187,50 @@
                     </LinearLayout>
 
                 </HorizontalScrollView>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="@dimen/keyline_margin"
+                    android:layout_marginRight="@dimen/keyline_margin"
+                    android:background="@color/divider_light"/>
+
+                <LinearLayout
+                    android:id="@+id/tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="32dp"
+                    android:paddingRight="32dp"
+                    android:paddingTop="16dp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="@dimen/keyline_margin"
+                    android:layout_marginRight="@dimen/keyline_margin"
+                    android:background="@color/divider_light"/>
+
+                <LinearLayout
+                    android:id="@+id/comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp">
+
+                    <TextView
+                        android:id="@+id/comment_more"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="16dp"
+                        android:textColor="@color/theme_accent"/>
+
+                </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"

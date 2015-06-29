@@ -80,10 +80,11 @@
     <!-- Detail -->
     <string name="page_count">%d pages</string>
     <string name="favorited_times">%d \u2665</string>
-    <string name="we_feel">We feel %s</string>
+    <string name="more_information">More information</string>
+    <string name="we_feel">It is %s</string>
 
     <!-- Rating -->
-    <string name="rating10">MASTERPIECE</string>
+    <string name="rating10">a MASTERPIECE</string>
     <string name="rating9">AMAZING</string>
     <string name="rating8">GREAT</string>
     <string name="rating7">GOOD</string>
@@ -103,6 +104,8 @@
     <string name="em_socket">Network error</string>
     <string name="em_unknown">Weird</string>
     <string name="erm_unknown_host">Network available ?</string>
+
+    <string name="em_cant_find_activity">Can\'t find target Activity</string>
 
     <!-- Settings -->
     <string name="settings_display">Display</string>
