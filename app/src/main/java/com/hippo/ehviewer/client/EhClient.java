@@ -19,8 +19,9 @@ package com.hippo.ehviewer.client;
 import android.os.AsyncTask;
 import android.os.Process;
 
-import com.hippo.ehviewer.data.GalleryDetail;
-import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.client.data.GalleryDetail;
+import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.network.EhOkHttpClient;
 import com.hippo.network.ResponseCodeException;
 import com.hippo.util.PriorityThreadFactory;
@@ -426,6 +427,10 @@ public final class EhClient {
         gd.tags = parser.tags;
         gd.comments = parser.comments;
         gd.previewPageCount = parser.previewPageCount;
+        gd.previewSetArray = new PreviewSet[gd.previewPageCount];
+        gd.previewSetArray[0] = parser.previewSet;
+        gd.previewSetArray[0].setStartIndex(0);
+        gd.previewSetArray[0].setGid(gd.gid);
 
         return gd;
     }

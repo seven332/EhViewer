@@ -275,6 +275,16 @@ public final class MathUtils {
     }
 
     /**
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    public static int ceilDivide(int a, int b) {
+        return (a + b - 1) / b;
+    }
+
+    /**
      * Return is a and b is in the same side to standard.
      * If one of a and b equals standard, return true.
      *

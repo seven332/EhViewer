@@ -60,6 +60,30 @@
     <string name="go_to_error_not_number">请输入数字</string>
     <string name="go_to_error_invaild">当前页面无效</string>
 
+    <!-- Detail -->
+    <string name="page_count">%d 页</string>
+    <string name="favorited_times">%d \u2665</string>
+    <string name="more_information">更多信息</string>
+    <string name="we_feel">大家感觉 %s</string>
+    <string name="no_comments">暂无评论</string>
+    <string name="no_more_comments">暂无更多评论</string>
+    <string name="more_comment">更多评论</string>
+
+    <!-- Rating -->
+    <string name="rating10">根本把持不住</string>
+    <string name="rating9">好极了</string>
+    <string name="rating8">很棒</string>
+    <string name="rating7">不错</string>
+    <string name="rating6">还行</string>
+    <string name="rating5">一般般</string>
+    <string name="rating4">不行</string>
+    <string name="rating3">糟糕</string>
+    <string name="rating2">瞎眼</string>
+    <string name="rating1">快要窒息了</string>
+    <string name="rating0">…</string>
+
+    <string name="em_cant_find_activity">无法找到指定 Activity</string>
+
     <!-- Error message -->
     <string name="em_timeout">超时</string>
     <string name="em_unknown_host">找不到主机</string>
@@ -100,5 +124,11 @@
     <string name="signout">退出</string>
     <string name="username">用户名</string>
     <string name="password">密码</string>
+
+    <string name="read">阅读</string>
+    <string name="torrent">种子</string>
+    <string name="share">分享</string>
+
+    <string name="comments">评论</string>
 
 </resources>

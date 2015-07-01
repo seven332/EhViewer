@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Hippo Seven
+ * Copyright (C) 2014 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.data;
+package com.hippo.ehviewer.client.data;
 
-public class UnsupportedSearchException extends Exception {
+import java.util.Date;
 
-    public UnsupportedSearchException(String detailMessage) {
-        super(detailMessage);
+public class Comment {
+    public String time;
+    public Date date;
+    public String user;
+    public String comment;
+
+    public Comment (String time, Date date, String user, String comment) {
+        this.time = time;
+        this.date = date;
+        this.user = user;
+        this.comment = comment;
     }
 }

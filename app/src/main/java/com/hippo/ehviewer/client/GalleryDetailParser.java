@@ -16,8 +16,11 @@
 
 package com.hippo.ehviewer.client;
 
-import com.hippo.ehviewer.data.Comment;
-import com.hippo.ehviewer.data.TagGroup;
+import com.hippo.ehviewer.client.data.Comment;
+import com.hippo.ehviewer.client.data.LargePreviewSet;
+import com.hippo.ehviewer.client.data.NormalPreviewSet;
+import com.hippo.ehviewer.client.data.PreviewSet;
+import com.hippo.ehviewer.client.data.TagGroup;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.util.AssertUtils;
 import com.hippo.util.Utils;
@@ -52,6 +55,7 @@ public class GalleryDetailParser {
     public static final int REQUEST_DETAIL = 0x1;
     public static final int REQUEST_TAG = 0x2;
     public static final int REQUEST_PREVIEW_INFO = 0x4;
+    public static final int REQUEST_PREVIEW = 0x8;
     public static final int REQUEST_COMMENT = 0x10;
 
     private static final CommentSort COMMENT_SORTER = new CommentSort();
@@ -84,6 +88,8 @@ public class GalleryDetailParser {
 
     public int previewPageCount;
 
+    public PreviewSet previewSet;
+
     private String sortOut(String str) {
         // Avoid null
         if (str == null) {
@@ -101,6 +107,36 @@ public class GalleryDetailParser {
         Matcher m = p.matcher(body);
         while (m.find()) {
             tagGroup.addTag(sortOut(m.group(1)));
+        }
+    }
+
+    private void parseNormalPreview(String body) {
+        Pattern  p = Pattern.compile("<div[^<>]*class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*>");
+        Matcher m = p.matcher(body);
+        NormalPreviewSet normalPreviewSet = new NormalPreviewSet();
+        while (m.find()) {
+            normalPreviewSet.addItem(m.group(3), Integer.parseInt(m.group(4)), 0,
+                    Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)),
+                    m.group(5));
+        }
+        previewSet = normalPreviewSet;
+    }
+
+    private void parseLargePreview(String body) {
+        Pattern p = Pattern.compile("<div class=\"gdtl\".+?<a href=\"(.+?)\"><img.+?src=\"(.+?)\"");
+        Matcher m = p.matcher(body);
+        LargePreviewSet largePreviewSet = new LargePreviewSet();
+        while (m.find()) {
+            largePreviewSet.addItem(m.group(2), m.group(1));
+        }
+        previewSet = largePreviewSet;
+    }
+
+    private void parsePreview(String body) {
+        if (body.contains("<div class=\"gdtm\"")) {
+            parseNormalPreview(body);
+        } else {
+            parseLargePreview(body);
         }
     }
 
@@ -240,6 +276,11 @@ public class GalleryDetailParser {
             }
         }
 
+        // Get preview
+        if ((request & REQUEST_PREVIEW_INFO) != 0) {
+            parsePreview(body);
+        }
+
         // Get comment
         if ((request & REQUEST_COMMENT) != 0) {
             p = Pattern.compile("<div class=\"c3\">Posted on ([^<>]+) by: &nbsp; <a[^<>]+>([^<>]+)</a>.+?<div class=\"c6\"[^>]*>(.+?)</div><div class=\"c[78]\"");
@@ -257,6 +298,10 @@ public class GalleryDetailParser {
                 comments.add(new Comment(outDateString, date, sortOut(m.group(2)), m.group(3)));
             }
             Collections.sort(comments, COMMENT_SORTER);
+        }
+
+        if ((request & REQUEST_COMMENT) != 0) {
+
         }
     }
 

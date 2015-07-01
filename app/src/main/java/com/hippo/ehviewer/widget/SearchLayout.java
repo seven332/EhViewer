@@ -36,7 +36,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.data.ListUrlBuilder;
+import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.SimpleDialog;
 import com.hippo.util.UiUtils;

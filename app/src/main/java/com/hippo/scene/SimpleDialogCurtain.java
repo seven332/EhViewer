@@ -157,7 +157,7 @@ public class SimpleDialogCurtain extends Curtain {
         final Set<Animator> animatorCollection = new HashSet<>();
 
         // Handle background
-        int bgColor = enter.getBackgroundColor();
+        int bgColor = exitDialog.getBackgroundColor();
         int endBgColor = bgColor & 0xffffff;
         ObjectAnimator colorAnim = ObjectAnimator.ofInt(exit, "backgroundColor", endBgColor);
         colorAnim.setEvaluator(ArgbEvaluator.getInstance());

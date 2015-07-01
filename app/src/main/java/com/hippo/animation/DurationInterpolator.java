@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2015 Hippo Seven
+ * Copyright 2015 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.data;
+package com.hippo.animation;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.animation.TimeInterpolator;
 
-public class TagGroup {
+public class DurationInterpolator implements TimeInterpolator {
 
-    public String groupName;
-    private List<String> mTagList = new ArrayList<>();
+    private float mDuration;
 
-    public void addTag(String tag) {
-        mTagList.add(tag);
+    public DurationInterpolator(float duration) {
+        mDuration = duration;
     }
 
-    public int getTagCount() {
-        return mTagList.size();
-    }
-
-    public String getTagAt(int position) {
-        return mTagList.get(position);
+    @Override
+    public float getInterpolation(float input) {
+        if (input > mDuration) {
+            return (input - mDuration) / (1 - mDuration);
+        } else {
+            return 0f;
+        }
     }
 }

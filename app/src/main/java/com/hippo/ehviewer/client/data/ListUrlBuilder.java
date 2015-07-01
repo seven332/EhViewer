@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.data;
+package com.hippo.ehviewer.client.data;
 
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.util.EhUtils;

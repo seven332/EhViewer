@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Hippo Seven
+ * Copyright (C) 2015 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.data;
+package com.hippo.ehviewer.client.data;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Comment {
-    public String time;
-    public Date date;
-    public String user;
-    public String comment;
+public class TagGroup {
 
-    public Comment (String time, Date date, String user, String comment) {
-        this.time = time;
-        this.date = date;
-        this.user = user;
-        this.comment = comment;
+    public String groupName;
+    private List<String> mTagList = new ArrayList<>();
+
+    public void addTag(String tag) {
+        mTagList.add(tag);
+    }
+
+    public int getTagCount() {
+        return mTagList.size();
+    }
+
+    public String getTagAt(int position) {
+        return mTagList.get(position);
     }
 }

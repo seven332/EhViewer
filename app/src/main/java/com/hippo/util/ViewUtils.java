@@ -28,6 +28,8 @@ import android.view.ViewTreeObserver;
 
 public final class ViewUtils {
 
+    public static final int MAX_SIZE = Integer.MAX_VALUE & ~(0x3 << 30);
+
     /**
      * Get view center location in window
      *

@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.data.Comment;
+import com.hippo.ehviewer.client.data.Comment;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.AppbarScene;

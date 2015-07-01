@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.data;
+package com.hippo.ehviewer.client.data;
 
 import java.util.List;
 
@@ -46,4 +46,5 @@ public class GalleryDetail extends GalleryInfo {
 
     public int previewPageCount;
 
+    public PreviewSet[] previewSetArray;
 }

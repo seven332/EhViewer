@@ -130,6 +130,9 @@
     <dimen name="add_size">20dp</dimen>
     <dimen name="add_thickness">2dp</dimen>
 
+    <dimen name="gallery_normal_preview_item_width">96dp</dimen>
+    <dimen name="gallery_large_preview_item_width">128dp</dimen>
+
     <!-- Text size -->
     <dimen name="text_super_large">24sp</dimen>
     <dimen name="text_large">22sp</dimen>

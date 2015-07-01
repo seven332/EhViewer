@@ -7,13 +7,13 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
 import com.hippo.conaco.BitmapHolder;
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.Unikery;
+import com.hippo.widget.FixedAspectImageView;
 
-public class LoadImageView extends ImageView implements Unikery {
+public class LoadImageView extends FixedAspectImageView implements Unikery {
 
     private int mTaskId = Unikery.INVAILD_ID;
 

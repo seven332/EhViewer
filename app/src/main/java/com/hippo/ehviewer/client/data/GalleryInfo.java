@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.data;
+package com.hippo.ehviewer.client.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -82,6 +82,10 @@
     <string name="favorited_times">%d \u2665</string>
     <string name="more_information">More information</string>
     <string name="we_feel">It is %s</string>
+    <string name="no_tags">No tags</string>
+    <string name="no_comments">No comments</string>
+    <string name="no_more_comments">No more comments</string>
+    <string name="more_comment">More comments</string>
 
     <!-- Rating -->
     <string name="rating10">a MASTERPIECE</string>

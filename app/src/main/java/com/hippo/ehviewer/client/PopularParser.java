@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer.client;
 
-import com.hippo.ehviewer.data.GalleryInfo;
+import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.util.Utils;
 

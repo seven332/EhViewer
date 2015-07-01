@@ -45,7 +45,9 @@ public class CardLinearLayout extends LinearLayout implements CardViewDelegate {
 
     @Override
     public void setPadding(int left, int top, int right, int bottom) {
-        mCardHelper.setPadding(left, top, right, bottom);
+        if (mCardHelper != null) {
+            mCardHelper.setPadding(left, top, right, bottom);
+        }
     }
 
     @Override
