@@ -16,7 +16,6 @@
 
 package com.hippo.scene.preference;
 
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -45,8 +44,8 @@ public class PreferenceScene extends AppbarScene {
     private List<PreferenceBase> mPreferenceBaseList = new ArrayList<>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(boolean rebirth) {
+        super.onCreate(rebirth);
         setContentView(R.layout.scene_preference);
 
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);

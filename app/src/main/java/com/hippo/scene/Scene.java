@@ -39,33 +39,37 @@ import com.hippo.util.ViewUtils;
  * When start a new {@code Scene}, previous {@code Scene} can stay at screen for
  * a while. Or retain for a while before destroy.
  */
-// TODO Improve state
 public abstract class Scene {
 
     public static final int LAUNCH_MODE_STANDARD = 0;
     public static final int LAUNCH_MODE_SINGLE_TOP = 1;
 
-    static final int SCENE_STATE_CREATE = 0;
-    static final int SCENE_STATE_RUN = 1;
-    static final int SCENE_STATE_DESTROY = 2;
-    static final int SCENE_STATE_OPEN = 3;
+    static final int SCENE_STATE_INIT = 0;
+    static final int SCENE_STATE_PREPARE = 1;
+    static final int SCENE_STATE_OPEN = 2;
+    static final int SCENE_STATE_RUN = 3;
     static final int SCENE_STATE_CLOSE = 4;
-    static final int SCENE_STATE_PAUSE = 5;
+    static final int SCENE_STATE_DESTROY = 5;
+    static final int SCENE_STATE_DIE = 6;
+    static final int SCENE_STATE_PAUSE = 7;
+    static final int SCENE_STATE_REBIRTH = 8;
 
     private @Nullable Curtain mCurtain;
 
     private @Nullable Announcer mAnnouncer;
 
     @SuppressWarnings("deprecation")
-    private @Nullable SceneView mSceneView;
+    private SceneView mSceneView;
 
     private int mBackgroundColor = 0xffeeeeee; // TODO Need a better to set background color
 
-    private int mState;
+    private int mState = SCENE_STATE_INIT;
 
     protected static SceneManager sSceneManager;
 
     private int mId;
+
+    private boolean mHide;
 
     static void setSceneManager(SceneManager sceneManager) {
         sSceneManager = sceneManager;
@@ -106,11 +110,15 @@ public abstract class Scene {
         return LAUNCH_MODE_STANDARD;
     }
 
+    private void checkSceneView() {
+        AssertUtils.assertNotNull("Must call it after onCreate and before onDestroy", mSceneView);
+    }
+
     /**
      * Must call it after onCreate and before onDestroy
      */
     public @NonNull SceneView getSceneView() {
-        AssertUtils.assertNotNull("Must call it after onCreate and before onDestroy", mSceneView);
+        checkSceneView();
         return mSceneView;
     }
 
@@ -143,10 +151,37 @@ public abstract class Scene {
         sSceneManager.finishScene(this);
     }
 
-    void create(@Nullable Bundle savedInstanceState) {
-        onCreate(savedInstanceState);
+    void setHide(boolean hide) {
+        checkSceneView();
+        mHide = hide;
+        if (hide) {
+            mSceneView.setVisibility(View.GONE);
+        } else {
+            mSceneView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    boolean getHide() {
+        return mHide;
+    }
+
+    void init() {
+        onInit();
+    }
+
+    void rebirth() {
+        if (mCurtain != null) {
+            mCurtain.onRebirth();
+        }
+
+        onRebirth();
+    }
+
+    void create(boolean rebirth) {
+        onCreate(rebirth);
 
         if (mSceneView == null) {
+            // Not call setContentView in onCreate, create scene view by ourself
             mSceneView = createSceneView(getStageActivity());
             initBackground(mSceneView);
         }
@@ -155,22 +190,54 @@ public abstract class Scene {
         attachToStage();
 
         // Hide it if it is hidden
-        if (savedInstanceState != null && savedInstanceState.getBoolean(getIsGoneKey(), false)) {
+        if (mHide) {
+            mSceneView.setVisibility(View.INVISIBLE);
             mSceneView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
                     ViewUtils.removeOnGlobalLayoutListener(mSceneView.getViewTreeObserver(), this);
-                    ViewUtils.setVisibility(mSceneView, View.GONE);
+                    mSceneView.setVisibility(View.GONE);
                 }
             });
         }
     }
 
-    // TODO Tell destory is it need close
-    void destroy() {
-        onDestroy();
+    void bind() {
+        onBind();
+    }
+
+    void restore() {
+        onRestore();
+    }
+
+    void destroy(boolean die) {
+        // Make sure soft key broad is hidden
+        InputMethodManager imm = (InputMethodManager) getStageActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getSceneView().getWindowToken(), 0);
+
+        onDestroy(die);
+    }
+
+    void die(boolean keepView) {
+        onDie();
+
+        if (!keepView) {
+            detachFromeStage();
+        }
 
         SceneApplication.getRefWatcher(getStageActivity()).watch(this);
+    }
+
+    void pause() {
+        getSceneView().setEnableTouch(false);
+
+        onPause();
+    }
+
+    void resume() {
+        getSceneView().setEnableTouch(true);
+
+        onResume();
     }
 
     void open() {
@@ -181,16 +248,48 @@ public abstract class Scene {
         onClose();
     }
 
-    void pause() {
-        onPause();
+    protected void onInit() {
+
     }
 
-    void resume() {
-        onResume();
+    protected void onRebirth() {
+
     }
 
-    void rebirth(@Nullable Bundle savedInstanceState) {
-        onRebirth(savedInstanceState);
+    protected void onCreate(boolean rebirth) {
+
+    }
+
+    protected void onBind() {
+
+    }
+
+    protected void onRestore() {
+
+    }
+
+    protected void onDestroy(boolean die) {
+
+    }
+
+    protected void onDie() {
+
+    }
+
+    protected void onPause() {
+
+    }
+
+    protected void onResume() {
+
+    }
+
+    protected void onOpen() {
+
+    }
+
+    protected void onClose() {
+
     }
 
     void setFitPaddingBottom(int b) {
@@ -198,10 +297,21 @@ public abstract class Scene {
     }
 
     /**
-     * return true if it is close or about to close
+     * @return true if the scene is dead or will be
      */
-    public boolean isFinishing() {
-        return mState == SCENE_STATE_CLOSE || mState == SCENE_STATE_DESTROY;
+    public boolean canNotBeSaved() {
+        return mState == SCENE_STATE_CLOSE || mState == SCENE_STATE_DESTROY || mState == SCENE_STATE_DIE;
+    }
+
+    /**
+     * @return true if the scene is dead
+     */
+    public boolean isDead() {
+        return mState == SCENE_STATE_DIE;
+    }
+
+    public boolean isRunning() {
+        return mState == SCENE_STATE_RUN;
     }
 
     public void setBackgroundColor(int bgColor) {
@@ -230,7 +340,8 @@ public abstract class Scene {
         StageActivity sa = getStageActivity();
         mSceneView = createSceneView(sa);
         initBackground(mSceneView);
-        mSceneView.addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mSceneView.addView(view, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
     private void initBackground(@NonNull View bg) {
@@ -238,38 +349,6 @@ public abstract class Scene {
         bg.setFocusable(true);
         bg.setFocusableInTouchMode(true);
         bg.requestFocus();
-    }
-
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    protected void onDestroy() {
-        // Make sure soft key broad is hidden
-        if (mSceneView != null) {
-            InputMethodManager imm = (InputMethodManager) getStageActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(mSceneView.getWindowToken(), 0);
-        }
-    }
-
-    protected void onOpen() {
-    }
-
-    protected void onClose() {
-    }
-
-    protected void onPause() {
-        getSceneView().setEnableTouch(false);
-    }
-
-    protected void onResume() {
-        getSceneView().setEnableTouch(true);
-    }
-
-    protected void onRebirth(@Nullable Bundle savedInstanceState) {
-        if (mCurtain != null) {
-            mCurtain.onRebirth();
-        }
     }
 
     protected void onNewAnnouncer(Announcer announcer) {
@@ -369,16 +448,11 @@ public abstract class Scene {
     }
 
     void openFinished() {
-        open();
-        setState(Scene.SCENE_STATE_RUN);
+        sSceneManager.openScene(this);
     }
 
     void closeFinished() {
-        sSceneManager.removeLegacyScene(this);
-
-        close();
-        setState(Scene.SCENE_STATE_DESTROY);
-        detachFromeStage();
+        sSceneManager.closeScene(this);
     }
 
     // It is constant
@@ -386,21 +460,13 @@ public abstract class Scene {
         return "scene:" + mId;
     }
 
-    private String getIsGoneKey() {
-        return getStateKey() + ":gone";
-    }
-
-    protected void saveInstanceState(Bundle outState) {
+    void saveInstanceState(Bundle outState) {
         SparseArray<Parcelable> states = new SparseArray<>();
         onSaveInstanceState(states);
         outState.putSparseParcelableArray(getStateKey(), states);
-
-        if (mSceneView != null) {
-            outState.putBoolean(getIsGoneKey(), mSceneView.getVisibility() == View.GONE);
-        }
     }
 
-    protected void restoreInstanceState(@NonNull Bundle savedInstanceState) {
+    void restoreInstanceState(@NonNull Bundle savedInstanceState) {
         if (mSceneView != null) {
             SparseArray<Parcelable> savedStates
                     = savedInstanceState.getSparseParcelableArray(getStateKey());

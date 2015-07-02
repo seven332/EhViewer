@@ -16,7 +16,6 @@
 
 package com.hippo.scene.preference;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -49,8 +48,8 @@ public class PreferenceHeaderScene extends AppbarScene {
     private List<PreferenceHeader> mHeaderList = new ArrayList<>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(boolean rebirth) {
+        super.onCreate(rebirth);
         setContentView(R.layout.scene_preference_header);
 
         mActivity = getStageActivity();

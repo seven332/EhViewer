@@ -16,8 +16,6 @@
 
 package com.hippo.ehviewer.ui.scene;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -61,8 +59,8 @@ public final class SignInScene extends Scene implements View.OnClickListener,
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(boolean rebirth) {
+        super.onCreate(rebirth);
         setContentView(R.layout.scene_sign_in);
 
         mMainView = findViewById(R.id.sigin_in_main);

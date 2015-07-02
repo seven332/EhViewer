@@ -2,8 +2,6 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -39,18 +37,9 @@ public class CommentScene extends AppbarScene {
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        onCreateView();
-        if (savedInstanceState == null) {
-            onBindView();
-        } else {
-            onRestoreView(savedInstanceState);
-        }
-    }
+    protected void onCreate(boolean rebirth) {
+        super.onCreate(rebirth);
 
-
-    private void onCreateView() {
         Context context = getStageActivity();
         Resources resources = context.getResources();
 
@@ -73,12 +62,18 @@ public class CommentScene extends AppbarScene {
         mRecyclerView.setClipToPadding(false);
     }
 
-    private void onBindView() {
+    @Override
+    protected void onBind() {
+        super.onBind();
+
         handleAnnouncer(getAnnouncer());
     }
 
-    private void onRestoreView(@Nullable Bundle savedInstanceState) {
-        // Empty
+    @Override
+    protected void onRestore() {
+        super.onRestore();
+
+        // mCommentList is already setted, nothing to do
     }
 
     @Override

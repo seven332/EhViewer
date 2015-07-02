@@ -18,9 +18,6 @@ package com.hippo.scene;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.View;
-
-import com.hippo.util.ViewUtils;
 
 public abstract class Curtain {
 
@@ -36,6 +33,13 @@ public abstract class Curtain {
 
     boolean isPreviousScene(@Nullable Scene scene) {
         return scene != null && scene.getId() == mPreviousSceneId;
+    }
+
+    /**
+     * @return true if can NOT still run when previous scene changed
+     */
+    protected boolean specifyPreviousScene() {
+        return true;
     }
 
     protected void onRebirth() {
@@ -62,7 +66,7 @@ public abstract class Curtain {
     public abstract boolean isInAnimation();
 
     protected void dispatchOpenFinished(@NonNull Scene enter, @NonNull Scene exit) {
-        exit.openFinished();
+        enter.openFinished();
     }
 
     protected void dispatchCloseFinished(@NonNull Scene enter, @NonNull Scene exit) {
@@ -70,10 +74,10 @@ public abstract class Curtain {
     }
 
     protected void hideSceneOnOpen(@NonNull Scene exit) {
-        ViewUtils.setVisibility(exit.getSceneView(), View.GONE);
+        exit.setHide(true);
     }
 
     protected void showSceneOnClose(@NonNull Scene enter) {
-        ViewUtils.setVisibility(enter.getSceneView(), View.VISIBLE);
+        enter.setHide(false);
     }
 }

@@ -20,8 +20,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.Html;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -174,8 +172,8 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(boolean rebirth) {
+        super.onCreate(rebirth);
         setContentView(R.layout.scene_gallery_detail);
 
         mDetailFrameLayout = (FrameLayout) findViewById(R.id.detail_frame_layout);

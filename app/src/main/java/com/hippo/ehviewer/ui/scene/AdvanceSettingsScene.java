@@ -17,7 +17,6 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.content.res.Resources;
-import android.os.Bundle;
 
 import com.hippo.ehviewer.BuildConfig;
 import com.hippo.ehviewer.Constants;
@@ -35,8 +34,8 @@ public class AdvanceSettingsScene extends PreferenceScene implements Preference.
     private static final boolean DEFAULT_SHOW_APPLICATION_STATS = BuildConfig.DEBUG;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(boolean rebirth) {
+        super.onCreate(rebirth);
 
         setTitle(R.string.settings);
         setIcon(R.drawable.ic_arrow_left_dark);

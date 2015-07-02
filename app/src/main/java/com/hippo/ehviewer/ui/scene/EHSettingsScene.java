@@ -17,7 +17,6 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.content.res.Resources;
-import android.os.Bundle;
 
 import com.hippo.ehviewer.BuildConfig;
 import com.hippo.ehviewer.Constants;
@@ -37,8 +36,8 @@ public final class EHSettingsScene extends PreferenceScene {
             EhClient.SOURCE_EX : EhClient.SOURCE_G;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(boolean rebirth) {
+        super.onCreate(rebirth);
 
         setTitle(R.string.settings);
         setIcon(R.drawable.ic_arrow_left_dark);

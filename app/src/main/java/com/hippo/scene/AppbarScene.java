@@ -17,9 +17,7 @@
 package com.hippo.scene;
 
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,8 +51,8 @@ public class AppbarScene extends Scene {
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(boolean rebirth) {
+        super.onCreate(rebirth);
         super.setContentView(R.layout.scene_appbar);
 
         mIcon = (SimpleImageView) super.findViewById(R.id.appbar_icon);

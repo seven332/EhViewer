@@ -17,14 +17,18 @@
 package com.hippo.scene;
 
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.hippo.util.AssertUtils;
 import com.hippo.util.IntIdGenerator;
 import com.hippo.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 public class SceneManager {
@@ -34,7 +38,9 @@ public class SceneManager {
     private Stack<Scene> mSceneStack = new Stack<>();
     private StageActivity mStageActivity;
 
-    private Scene mLegacyScene;
+    private boolean mLegacySceneSetLock;
+    private Set<Scene> mLegacySceneSet = new HashSet<>();
+    private Set<Scene> mPrepareToDieSceneSet = new HashSet<>();
 
     private IntIdGenerator mIdGenerator = IntIdGenerator.create();
 
@@ -107,6 +113,19 @@ public class SceneManager {
         }
     }
 
+    private void checkLoop() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            throw new IllegalStateException("It is not main loop!");
+        }
+    }
+
+    private void checkPrepareToDie(Scene scene) {
+        if (mPrepareToDieSceneSet.contains(scene)) {
+            mPrepareToDieSceneSet.remove(scene);
+            finishScene(scene);
+        }
+    }
+
     Scene createSceneByClass(@NonNull Class sceneClass) {
         try {
             return (Scene) sceneClass.newInstance();
@@ -123,12 +142,14 @@ public class SceneManager {
     // TODO check previousState state
     void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer,
             @Nullable Curtain curtain) {
+        checkLoop();
+
         if (!isStageAlive()) {
-            Log.w(TAG, "Stage is not alive, but attemp to create " + sceneClass.getSimpleName());
-            return;
+            throw new IllegalStateException("Stage is not alive, but attemp to create " + sceneClass.getSimpleName());
         }
 
-        Scene topScene = getTopState();
+        // check LAUNCH_MODE_SINGLE_TOP
+        Scene topScene = getTopScene();
         if (sceneClass.isInstance(topScene) &&
                 topScene.getLaunchMode() == Scene.LAUNCH_MODE_SINGLE_TOP) {
             topScene.onNewAnnouncer(announcer);
@@ -143,6 +164,8 @@ public class SceneManager {
     }
 
     void showDialog(@NonNull SceneDialog dialog, @Nullable Curtain curtain) {
+        checkLoop();
+
         if (!isStageAlive()) {
             Log.w(TAG, "Stage is not alive, but attemp to show dialog " + dialog.toString());
             return;
@@ -154,7 +177,7 @@ public class SceneManager {
     }
 
     private void startScene(Scene scene, Curtain curtain) {
-        Scene previousState = getTopState();
+        Scene previousState = getTopScene();
         mSceneStack.push(scene);
 
         if (curtain != null) {
@@ -164,12 +187,12 @@ public class SceneManager {
         if (previousState != null) {
             previousState.pause();
             previousState.setState(Scene.SCENE_STATE_PAUSE);
-            notifyPause(previousState.getClass());
         }
 
-        scene.create(null);
-        scene.setState(Scene.SCENE_STATE_CREATE);
-        notifyCreate(scene.getClass());
+        scene.init();
+        scene.setState(Scene.SCENE_STATE_PREPARE);
+        scene.create(false);
+        scene.bind();
 
         // Update fit padding
         int fitPaddingBottom = getStageActivity().getFitPaddingBottom();
@@ -183,65 +206,80 @@ public class SceneManager {
             // Set state run by curtain
         } else {
             scene.setState(Scene.SCENE_STATE_RUN);
+            checkPrepareToDie(scene);
         }
     }
 
     /**
-     * End legacy scene close animation at once
+     * End all legacy scene animation at once
      *
      * @return True if legacy scene exist and its curtain animation is running
      */
     boolean endLegacyScene() {
-        if (mLegacyScene != null) {
-            boolean result = mLegacyScene.endCurtainAnimation();
-            mLegacyScene = null;
-            return result;
+        if (!mLegacySceneSet.isEmpty()) {
+            mLegacySceneSetLock = true;
+            for (Scene scene : mLegacySceneSet) {
+                scene.endCurtainAnimation();
+            }
+            mLegacySceneSetLock = false;
+            mLegacySceneSet.clear();
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     void finishScene(@NonNull Scene scene) {
+        checkLoop();
+
         int index = getSceneIndex(scene);
         if (index >= 0 && index < mSceneStack.size()) {
+            if (scene.canNotBeSaved()) {
+                // the scene is hopeless
+                scene.endCurtainAnimation();
+                return;
+            }
 
-            endLegacyScene();
+            if (!scene.isRunning()) {
+                // the scene prepare to die
+                mPrepareToDieSceneSet.add(scene);
+                scene.endCurtainAnimation();
+                return;
+            }
 
-            // Scene state might be SCENE_STATE_RUN, SCENE_STATE_OPEN, SCENE_STATE_PAUSE
-            if (index == 0) {
+            // TODO If the cene is under a dialog, the previous may not show
+            if (index != mSceneStack.size() - 1 || index == 0) {
                 // It is the last scene, just finish the activity
                 mSceneStack.remove(index);
-
-                scene.destroy();
+                scene.destroy(true);
                 scene.setState(Scene.SCENE_STATE_DESTROY);
-                notifyDestroy(scene.getClass());
+                scene.die(index == 0);
+                scene.setState(Scene.SCENE_STATE_DIE);
 
-                getStageActivity().finish();
-            } else {
-                // TODO check scene state
-
-                mSceneStack.remove(index);
-                Scene previousState = getTopState();
-
-                // If Scene is CLOSE
-
-                if (previousState != null) {
-                    previousState.resume();
-                    previousState.setState(Scene.SCENE_STATE_RUN);
-                    notifyResume(previousState.getClass());
+                if (index == 0) {
+                    getStageActivity().finish();
                 }
+            } else {
+                mSceneStack.remove(index);
+                Scene previousScene = mSceneStack.get(index - 1);
 
-                scene.destroy();
-                scene.setState(Scene.SCENE_STATE_DESTROY);
-                notifyDestroy(scene.getClass());
+                previousScene.resume();
+                previousScene.setState(Scene.SCENE_STATE_RUN);
+
+                scene.destroy(true);
 
                 Curtain curtain = scene.getCurtain();
-                if (curtain != null && previousState != null && curtain.isPreviousScene(previousState)) {
+                if (curtain != null &&
+                        (!curtain.specifyPreviousScene() || curtain.isPreviousScene(previousScene))) {
                     scene.setState(Scene.SCENE_STATE_CLOSE);
-                    mLegacyScene = scene;
-                    curtain.close(previousState, scene);
-                    // detachFromeStage by curtain
+                    curtain.close(previousScene, scene);
+                    // add the scene to legacy set
+                    mLegacySceneSet.add(scene);
+                    // curtain will kill the scene
                 } else {
-                    scene.detachFromeStage();
+                    scene.setState(Scene.SCENE_STATE_DESTROY);
+                    scene.die(false);
+                    scene.setState(Scene.SCENE_STATE_DIE);
                 }
             }
         } else {
@@ -249,9 +287,28 @@ public class SceneManager {
         }
     }
 
-    void removeLegacyScene(Scene scene) {
-        if (mLegacyScene == scene) {
-            mLegacyScene = null;
+    private void checkSceneState(Scene scene, int expected) {
+        AssertUtils.assertEquals("The scene state is " + scene.getState() + ", but it should be " + expected,
+                expected, scene.getState());
+    }
+
+    void openScene(Scene scene) {
+        checkSceneState(scene, Scene.SCENE_STATE_OPEN);
+        scene.open();
+        scene.setState(Scene.SCENE_STATE_RUN);
+        checkPrepareToDie(scene);
+    }
+
+    void closeScene(Scene scene) {
+        checkSceneState(scene, Scene.SCENE_STATE_CLOSE);
+        scene.close();
+        scene.setState(Scene.SCENE_STATE_DESTROY);
+        scene.die(false);
+        scene.setState(Scene.SCENE_STATE_DIE);
+
+        // remove the scene from legacy set
+        if (!mLegacySceneSetLock) {
+            mLegacySceneSet.remove(scene);
         }
     }
 
@@ -266,7 +323,7 @@ public class SceneManager {
     }
 
     boolean onBackPressed() {
-        Scene scene = getTopState();
+        Scene scene = getTopScene();
         if (scene != null) {
             scene.onBackPressedInternal();
             return true;
@@ -276,7 +333,7 @@ public class SceneManager {
         }
     }
 
-    private Scene getTopState() {
+    private Scene getTopScene() {
         if (!mSceneStack.isEmpty()) {
             return mSceneStack.peek();
         } else {
@@ -296,10 +353,13 @@ public class SceneManager {
 
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         for (Scene scene : mSceneStack) {
-            // Recreate
-            scene.rebirth(savedInstanceState);
-            notifyRebirth(scene.getClass());
-            scene.create(savedInstanceState);
+            scene.destroy(false);
+            scene.setState(Scene.SCENE_STATE_REBIRTH);
+            scene.rebirth();
+            scene.setState(Scene.SCENE_STATE_PREPARE);
+            scene.create(true);
+            scene.restore();
+            scene.setState(Scene.SCENE_STATE_RUN);
             scene.restoreInstanceState(savedInstanceState);
         }
     }

@@ -23,9 +23,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
@@ -56,10 +54,10 @@ import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OffsetLayout;
-import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchDatabase;
 import com.hippo.ehviewer.widget.SearchLayout;
+import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.Curtain;
 import com.hippo.scene.Scene;
@@ -236,16 +234,16 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
     }
 
     @Override
-    protected void onRebirth(@Nullable Bundle savedInstanceState) {
-        super.onRebirth(savedInstanceState);
+    protected void onRebirth() {
+        super.onRebirth();
 
         mGalleryListHelper = new GalleryListHelper(getStageActivity(), mGalleryListHelper);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(boolean rebirth) {
+        super.onCreate(rebirth);
         setContentView(R.layout.scene_gallery_list);
 
         mActivity = (ContentActivity) getStageActivity();
@@ -310,14 +308,14 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         mCornerFab.setDrawable(mAddDeleteDrawable);
 
         // When scene start
-        if (savedInstanceState == null) {
+        if (!rebirth) {
             handleAnnouncer(getAnnouncer());
         }
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onDie() {
+        super.onDie();
 
         // Avoid memory leak
         if (mGalleryListHelper.mListener != null) {
@@ -330,20 +328,6 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         super.onResume();
 
         ((ContentActivity) getStageActivity()).setDrawerListActivatedPosition(mDrawerListActivatedPosition);
-    }
-
-    @Override
-    protected void saveInstanceState(Bundle outState) {
-        super.saveInstanceState(outState);
-
-        outState.putInt(KEY_STATE, mState);
-    }
-
-    @Override
-    protected void restoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.restoreInstanceState(savedInstanceState);
-
-        setState(savedInstanceState.getInt(KEY_STATE), false);
     }
 
     @Override

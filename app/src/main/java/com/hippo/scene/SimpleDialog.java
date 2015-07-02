@@ -17,7 +17,6 @@
 package com.hippo.scene;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -72,8 +71,8 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(boolean rebirth) {
+        super.onCreate(rebirth);
 
         // TODO
         setBackgroundColor(BACKGROUND_COLOR);
@@ -103,8 +102,8 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onDie() {
+        super.onDie();
 
         OnCloseListener listener = mBuilder.mOnCloseListener;
         if (listener != null) {
