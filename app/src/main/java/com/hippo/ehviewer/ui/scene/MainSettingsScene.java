@@ -20,6 +20,9 @@ import android.content.res.Resources;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.ContentActivity;
+import com.hippo.ehviewer.ui.scene.preference.AdvanceSettingsScene;
+import com.hippo.ehviewer.ui.scene.preference.DisplaySettingsScene;
+import com.hippo.ehviewer.ui.scene.preference.EHSettingsScene;
 import com.hippo.scene.preference.PreferenceHeader;
 import com.hippo.scene.preference.PreferenceHeaderScene;
 

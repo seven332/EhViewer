@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.ui.scene;
+package com.hippo.ehviewer.ui.scene.preference;
 
 import android.content.res.Resources;
 
