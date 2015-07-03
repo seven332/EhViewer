@@ -60,6 +60,7 @@ public class CommentScene extends AppbarScene {
         mRecyclerView.addItemDecoration(decoration);
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setClipToPadding(false);
+        mRecyclerView.setHasFixedSize(true);
     }
 
     @Override

@@ -23,6 +23,10 @@
     <!-- Preference -->
     <dimen name="preference_space_horizontal">64dp</dimen>
 
+    <!-- Appbar Scene -->
+    <dimen name="appbar_height">64dp</dimen>
+    <dimen name="appbar_icon_margin">20dp</dimen>
+
     <!-- Snackbar -->
     <dimen name="snackbar_interval">48dp</dimen>
 

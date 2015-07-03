@@ -29,7 +29,7 @@
             android:id="@+id/appbar_icon"
             android:layout_width="@dimen/appbar_height"
             android:layout_height="@dimen/appbar_height"
-            android:padding="16dp"
+            android:padding="@dimen/appbar_icon_margin"
             android:visibility="gone"/>
 
         <TextView

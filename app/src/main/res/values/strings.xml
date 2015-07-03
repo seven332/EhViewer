@@ -87,6 +87,27 @@
     <string name="no_more_comments">No more comments</string>
     <string name="more_comment">More comments</string>
 
+    <!-- Info Scene -->
+    <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="header_key">Key</string>
+    <string name="header_value">Value</string>
+    <string name="key_gid" translatable="false">Gid</string>
+    <string name="key_token" translatable="false">Token</string>
+    <string name="key_title">Title</string>
+    <string name="key_title_jpn">Jpn Title</string>
+    <string name="key_thumb">Thumb</string>
+    <string name="key_category">Category</string>
+    <string name="key_uploader">Uploader</string>
+    <string name="key_posted">Posted</string>
+    <string name="key_language">Language</string>
+    <string name="key_pages">Pages</string>
+    <string name="key_size">Size</string>
+    <string name="key_resize">Resize</string>
+    <string name="key_favorited">Favorited</string>
+    <string name="key_rated">Rated</string>
+    <string name="key_rating">Rating</string>
+    <string name="key_torrents">Torrents</string>
+
     <!-- Rating -->
     <string name="rating10">a MASTERPIECE</string>
     <string name="rating9">AMAZING</string>
@@ -152,5 +173,6 @@
     <string name="share">Share</string>
 
     <string name="comments">Comments</string>
+    <string name="info">Info</string>
 
 </resources>

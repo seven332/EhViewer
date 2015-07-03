@@ -40,7 +40,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-@SuppressWarnings("unchecked")
+// TODO Make request cancle
 public final class EhClient {
 
     private static final String TAG = EhClient.class.getSimpleName();

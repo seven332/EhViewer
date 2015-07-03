@@ -15,6 +15,18 @@
   -->
 <resources>
 
+    <!-- Keyline -->
+    <dimen name="keyline_margin">16dp</dimen>
+
+    <!-- Text size -->
+    <dimen name="text_super_large">24sp</dimen>
+    <dimen name="text_large">22sp</dimen>
+    <dimen name="text_little_large">20sp</dimen>
+    <dimen name="text_medium">18sp</dimen>
+    <dimen name="text_little_small">16sp</dimen>
+    <dimen name="text_small">14sp</dimen>
+    <dimen name="text_super_small">12sp</dimen>
+
     <!-- Preference Header -->
     <dimen name="preference_header_minimum_height">72dp</dimen>
     <dimen name="preference_header_image_size">24dp</dimen>
@@ -26,8 +38,9 @@
     <dimen name="preference_minimum_height">64dip</dimen>
     <dimen name="preference_space_horizontal">0dp</dimen>
 
-    <!-- Appbar -->
+    <!-- Appbar Scene -->
     <dimen name="appbar_height">56dp</dimen>
+    <dimen name="appbar_icon_margin">16dp</dimen>
 
     <!-- DrawerList -->
     <dimen name="drawer_list_drawable_size">24dp</dimen>
@@ -95,9 +108,6 @@
 
     <dimen name="detail_action_size">48dp</dimen>
 
-    <!-- Keyline -->
-    <dimen name="keyline_margin">16dp</dimen>
-
     <!-- CategoryTable -->
     <dimen name="category_table_item_height">40dp</dimen>
     <dimen name="category_table_item_margin_half">@dimen/search_item_interval_half</dimen>
@@ -130,16 +140,15 @@
     <dimen name="add_size">20dp</dimen>
     <dimen name="add_thickness">2dp</dimen>
 
+    <!-- Gallery Detail Scene-->
+    <dimen name="gallery_detail_thumb_width">128dp</dimen>
+    <dimen name="gallery_detail_thumb_height">192dp</dimen>
+    <dimen name="gallery_detail_thumb_margin_bottom">40dp</dimen>
+    <dimen name="gallery_detail_action_card_margin_top">224dp</dimen>
+    <dimen name="gallery_detail_content_margin_top">248dp</dimen>
+    <dimen name="gallery_detail_info_margin_top">48dp</dimen>
+
     <dimen name="gallery_normal_preview_item_width">96dp</dimen>
     <dimen name="gallery_large_preview_item_width">128dp</dimen>
-
-    <!-- Text size -->
-    <dimen name="text_super_large">24sp</dimen>
-    <dimen name="text_large">22sp</dimen>
-    <dimen name="text_little_large">20sp</dimen>
-    <dimen name="text_medium">18sp</dimen>
-    <dimen name="text_little_small">16sp</dimen>
-    <dimen name="text_small">14sp</dimen>
-    <dimen name="text_super_small">12sp</dimen>
 
 </resources>

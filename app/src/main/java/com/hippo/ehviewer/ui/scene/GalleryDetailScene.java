@@ -53,6 +53,7 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.RippleCurtain;
 import com.hippo.scene.Scene;
+import com.hippo.scene.SimpleCurtain;
 import com.hippo.scene.SimpleDialog;
 import com.hippo.util.Log;
 import com.hippo.util.URLImageGetter;
@@ -83,6 +84,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
     private View mDownload;
 
     private ViewGroup mContent;
+    private ViewGroup mInfo;
     private TextView mLanguage;
     private TextView mPages;
     private TextView mSize;
@@ -154,6 +156,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         mShare.setCompoundDrawables(null, shareDrawable, null, null);
         mRate.setCompoundDrawables(null, rateDrawable, null, null);
 
+
         mRead.setOnClickListener(this);
         mDownload.setOnClickListener(this);
         mFavorite.setOnClickListener(this);
@@ -161,6 +164,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         mShare.setOnClickListener(this);
         mRate.setOnClickListener(this);
 
+        AccurateClick.setOnAccurateClickListener(mInfo, this);
         AccurateClick.setOnAccurateClickListener(mComment, this);
 
         RippleSalon.addRipple(mRead, false);
@@ -189,12 +193,13 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         mDownload = mActionCard.findViewById(R.id.download);
 
         mContent = (ViewGroup) findViewById(R.id.content);
-        mLanguage = (TextView) mContent.findViewById(R.id.language);
-        mPages = (TextView) mContent.findViewById(R.id.pages);
-        mSize = (TextView) mContent.findViewById(R.id.size);
-        mPosted = (TextView) mContent.findViewById(R.id.posted);
-        mResize = (TextView) mContent.findViewById(R.id.resize);
-        mFavoredTimes = (TextView) mContent.findViewById(R.id.favoredTimes);
+        mInfo = (ViewGroup) mContent.findViewById(R.id.info);
+        mLanguage = (TextView) mInfo.findViewById(R.id.language);
+        mPages = (TextView) mInfo.findViewById(R.id.pages);
+        mSize = (TextView) mInfo.findViewById(R.id.size);
+        mPosted = (TextView) mInfo.findViewById(R.id.posted);
+        mResize = (TextView) mInfo.findViewById(R.id.resize);
+        mFavoredTimes = (TextView) mInfo.findViewById(R.id.favoredTimes);
         mRatingText = (TextSwitcher) mContent.findViewById(R.id.rating_text);
         mRating = (RatingView) mContent.findViewById(R.id.rating);
         mFavorite = (TextView) mContent.findViewById(R.id.favorite);
@@ -226,7 +231,12 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
             return;
         }
 
-        if (v == mRead) {
+        if (v == mInfo) {
+            Announcer announcer = new Announcer();
+            announcer.setObject(mGalleryDetail);
+            startScene(InfoScene.class, announcer,
+                    new SimpleCurtain(SimpleCurtain.DIRECTION_RIGHT));
+        } else if (v == mRead) {
 
         } else if (v == mDownload) {
 
@@ -247,7 +257,14 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
             return;
         }
 
-        if (v == mComment) {
+        if (v == mInfo) {
+            int[] position = new int[2];
+            ViewUtils.getLocationInAncestor(mInfo, position, getSceneView());
+            Announcer announcer = new Announcer();
+            announcer.setObject(mGalleryDetail);
+            startScene(InfoScene.class, announcer,
+                    new RippleCurtain((int) x + position[0], (int) y + position[1]));
+        } else if (v == mComment) {
             int[] position = new int[2];
             ViewUtils.getLocationInAncestor(mComment, position, getSceneView());
             Announcer announcer = new Announcer();

@@ -18,8 +18,10 @@ package com.hippo.ehviewer.client.data;
 
 import java.util.List;
 
+// TODO not extends GalleryInfo
 public class GalleryDetail extends GalleryInfo {
 
+    public int gid;
     public String thumb;
     public String title;
     public String titleJpn;

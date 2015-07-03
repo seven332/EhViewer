@@ -263,16 +263,6 @@ public class EasyRecyclerView extends RecyclerView {
                 DrawableUtils.setHotspot(selector, x, y);
             }
         }
-
-        /* TODO handle enable
-        final boolean isChildViewEnabled = mIsChildViewEnabled;
-        if (sel.isEnabled() != isChildViewEnabled) {
-            mIsChildViewEnabled = !isChildViewEnabled;
-            if (getSelectedItemPosition() != INVALID_POSITION) {
-                refreshDrawableState();
-            }
-        }
-        */
     }
 
     @Override
@@ -735,7 +725,7 @@ public class EasyRecyclerView extends RecyclerView {
         mMotionView = findChildViewUnder(x, y);
         mMotionPosition = getChildAdapterPosition(mMotionView);
 
-        if (mMotionView != null && mMotionPosition >= 0) {
+        if (mMotionView != null && mMotionPosition >= 0 && mMotionView.isEnabled()) {
             mHasPerformedLongPress = false;
 
             mPrePressed = true;
