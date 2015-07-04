@@ -19,10 +19,10 @@ package com.hippo.ehviewer.widget;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,7 +40,6 @@ import com.hippo.widget.SimpleGridLayout;
 public final class PreviewLayout extends LinearLayout implements View.OnClickListener,
         AccurateClick.OnAccurateClickListener {
 
-    private GestureDetector mGestureDetector;
     private PreviewSet[] mPreviewSets;
     private int mGid;
     private Conaco mConaco;
@@ -63,6 +62,11 @@ public final class PreviewLayout extends LinearLayout implements View.OnClickLis
     private int mPreviewSetSize = -1;
 
     private PreviewHelper mPreviewHelper;
+
+    private float mTouchX;
+    private float mTouchY;
+    private boolean mGetScrollX = false;
+    private int mTouchSlop = -1;
 
     public PreviewLayout(Context context) {
         super(context);
@@ -110,10 +114,6 @@ public final class PreviewLayout extends LinearLayout implements View.OnClickLis
         AccurateClick.setOnAccurateClickListener(mTopSelection, this);
         AccurateClick.setOnAccurateClickListener(mBottomSelection, this);
 
-        GestureListener gestureListener = new GestureListener();
-        mGestureDetector = new GestureDetector(context, gestureListener);
-        mGestureDetector.setIsLongpressEnabled(false);
-
         mViewTransition = new ViewTransition(mSimpleGridLayout, mProgressBar);
     }
 
@@ -155,16 +155,62 @@ public final class PreviewLayout extends LinearLayout implements View.OnClickLis
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return handleTouchEvent(ev);
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mTouchX = ev.getX();
+                mTouchY = ev.getY();
+                mGetScrollX = false;
+                return false;
+            case MotionEvent.ACTION_MOVE:
+                float x = ev.getX();
+                float y = ev.getY();
+
+                if (mTouchSlop == -1) {
+                    mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+                }
+
+                if (Math.hypot(mTouchX - x, mTouchY - y) > mTouchSlop && Math.abs(mTouchX - x) > Math.abs(mTouchY - y)) {
+                    return true;
+                } else {
+                    return false;
+                }
+        }
+
+        return false;
     }
 
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
-        return handleTouchEvent(event);
-    }
+        int action = event.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                mTouchX = event.getX();
+                mTouchY = event.getY();
+                mGetScrollX = false;
+                break;
+            case MotionEvent.ACTION_MOVE:
+            case MotionEvent.ACTION_UP:
+                float x = event.getX();
+                float y = event.getY();
 
-    private boolean handleTouchEvent(MotionEvent event) {
-        return mGestureDetector.onTouchEvent(event);
+                if (mTouchSlop == -1) {
+                    mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+                }
+
+                int slop = action == MotionEvent.ACTION_MOVE ? mTouchSlop * 2 : mTouchSlop;
+                if (!mGetScrollX && Math.hypot(mTouchX - x, mTouchY - y) > slop && Math.abs(mTouchX - x) > Math.abs(mTouchY - y)) {
+                    mGetScrollX = true;
+                    if (mTouchX - x > 0) {
+                        tryNextPreview();
+                    } else {
+                        tryPreviousPreview();
+                    }
+                }
+
+                break;
+        }
+
+        return true;
     }
 
     public void setPreviewHelper(PreviewHelper previewHelper) {
@@ -260,35 +306,6 @@ public final class PreviewLayout extends LinearLayout implements View.OnClickLis
             int[] position = new int[2];
             ViewUtils.getLocationInAncestor(v, position, this);
             mPreviewHelper.onRequstPreviewIndex(this, x + position[0], y + position[1]);
-        }
-    }
-
-    class GestureListener extends GestureDetector.SimpleOnGestureListener {
-
-        private boolean mHasScrollX = false;
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            mHasScrollX = false;
-            return false;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2,
-                float distanceX, float distanceY) {
-            if (Math.abs(distanceX) > Math.abs(distanceY)) {
-               if (!mHasScrollX) {
-                   mHasScrollX = true;
-                   if (distanceX > 0) {
-                       tryNextPreview();
-                   } else {
-                       tryPreviousPreview();
-                   }
-               }
-                return true;
-            } else {
-                return false;
-            }
         }
     }
 
