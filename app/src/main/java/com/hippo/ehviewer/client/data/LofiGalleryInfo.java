@@ -16,65 +16,7 @@
 
 package com.hippo.ehviewer.client.data;
 
-import android.os.Parcel;
-
 public class LofiGalleryInfo extends GalleryInfo {
 
     public String[] lofiTags;
-
-    public static final Creator<LofiGalleryInfo> CREATOR =
-            new Creator<LofiGalleryInfo>() {
-                @Override
-                public LofiGalleryInfo createFromParcel(Parcel source) {
-                    int length;
-
-                    LofiGalleryInfo p = new LofiGalleryInfo();
-                    p.gid = source.readInt();
-                    p.token = source.readString();
-                    p.title = source.readString();
-                    p.posted = source.readString();
-                    p.category = source.readInt();
-                    p.thumb = source.readString();
-                    p.uploader = source.readString();
-                    p.rating = source.readFloat();
-                    p.simpleLanguage = source.readString();
-
-                    length = source.readInt();
-                    p.lofiTags = new String[length];
-                    for (int i = 0; i < length; i++)
-                        p.lofiTags[i] = source.readString();
-
-                    return p;
-                }
-
-                @Override
-                public LofiGalleryInfo[] newArray(int size) {
-                    return new LofiGalleryInfo[size];
-                }
-    };
-
-    public LofiGalleryInfo() {}
-
-    public LofiGalleryInfo(GalleryInfo galleryInfo) {
-        gid = galleryInfo.gid;
-        token = galleryInfo.token;
-        title = galleryInfo.title;
-        posted = galleryInfo.posted;
-        category = galleryInfo.category;
-        thumb = galleryInfo.thumb;
-        uploader = galleryInfo.uploader;
-        rating = galleryInfo.rating;
-        simpleLanguage = galleryInfo.simpleLanguage;
-        lofiTags = new String[0];
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-
-        int length = lofiTags == null ? 0 : lofiTags.length;
-        dest.writeInt(length);
-        for (int i = 0; i < length; i++)
-            dest.writeString(lofiTags[i]);
-    }
 }

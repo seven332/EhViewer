@@ -53,7 +53,6 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.RippleCurtain;
 import com.hippo.scene.Scene;
-import com.hippo.scene.SimpleCurtain;
 import com.hippo.scene.SimpleDialog;
 import com.hippo.util.Log;
 import com.hippo.util.URLImageGetter;
@@ -69,7 +68,14 @@ import static com.hippo.ehviewer.R.id.no_tags;
 public class GalleryDetailScene extends Scene implements View.OnClickListener,
         AccurateClick.OnAccurateClickListener {
 
-    public static final String KEY_GALLERY_INFO = "gallery_info";
+    public static final String ACTION_GALLERY_INFO = "action_gallery_info";
+    public static final String ACTION_GID_TOKEN = "action_gid_token";
+    public static final String ACTION_URL = "action_url";
+
+    public static final String KEY_GALLERY_INFO = "key_gallery_info";
+    public static final String KEY_GID = "key_gid";
+    public static final String KEY_TOKEN = "key_token";
+    public static final String KEY_URL = "key_url";
 
     private FrameLayout mDetailFrameLayout;
 
@@ -116,63 +122,82 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
     }
 
     private void handleAnnouncer(Announcer announcer) {
-        GalleryInfo gi;
-
         if (announcer == null) {
             Log.e("No announcer in GalleryDetailScene, finish itself");
             finish();
             return;
-        } else if (null != (gi = announcer.getParcelableExtra(KEY_GALLERY_INFO))){
-            Conaco conaco = EhApplication.getConaco(getStageActivity());
-            conaco.load(mThumb, EhImageKeyFactory.getThumbKey(gi.gid), gi.thumb);
-            mTitle.setText(gi.title);
-            mUploader.setText(gi.uploader);
-            mCategory.setText(EhUtils.getCategory(gi.category));
-            mCategory.setTextColor(EhUtils.getCategoryColor(gi.category));
-
-            requestGalleryDetail(gi);
         }
 
-        Context context = getStageActivity();
-        Resources resources = context.getResources();
+        String action = announcer.getAction();
+        if (ACTION_GALLERY_INFO.equals(action)) {
+            Object obj = announcer.getExtra(KEY_GALLERY_INFO);
+            if (obj instanceof GalleryInfo) {
+                GalleryInfo gi = (GalleryInfo) obj;
 
-        mViewTransition.showView(1, false);
+                Conaco conaco = EhApplication.getConaco(getStageActivity());
+                mThumb.load(conaco, EhImageKeyFactory.getThumbKey(gi.gid), gi.thumb);
+                mTitle.setText(gi.title);
+                mUploader.setText(gi.uploader);
+                mCategory.setText(EhUtils.getCategory(gi.category));
+                mCategory.setTextColor(EhUtils.getCategoryColor(gi.category));
 
-        mRatingText.setFactory(new RatingTextViewFactory());
-
-        Drawable favoriteDrawable = resources.getDrawable(R.drawable.ic_heart_theme_primary);
-        Drawable torrentDrawable = resources.getDrawable(R.drawable.ic_water_pump_theme_primary);
-        Drawable shareDrawable = resources.getDrawable(R.drawable.ic_share_theme_primary);
-        Drawable rateDrawable = resources.getDrawable(R.drawable.ic_thumbs_up_down_theme_primary);
-
-        int drawableSize = resources.getDimensionPixelOffset(R.dimen.detail_action_size);
-        favoriteDrawable.setBounds(0, 0, drawableSize, drawableSize);
-        torrentDrawable.setBounds(0, 0, drawableSize, drawableSize);
-        shareDrawable.setBounds(0, 0, drawableSize, drawableSize);
-        rateDrawable.setBounds(0, 0, drawableSize, drawableSize);
-
-        mFavorite.setCompoundDrawables(null, favoriteDrawable, null, null);
-        mTorrent.setCompoundDrawables(null, torrentDrawable, null, null);
-        mShare.setCompoundDrawables(null, shareDrawable, null, null);
-        mRate.setCompoundDrawables(null, rateDrawable, null, null);
+                requestGalleryDetail(gi);
 
 
-        mRead.setOnClickListener(this);
-        mDownload.setOnClickListener(this);
-        mFavorite.setOnClickListener(this);
-        mTorrent.setOnClickListener(this);
-        mShare.setOnClickListener(this);
-        mRate.setOnClickListener(this);
+                Context context = getStageActivity();
+                Resources resources = context.getResources();
 
-        AccurateClick.setOnAccurateClickListener(mInfo, this);
-        AccurateClick.setOnAccurateClickListener(mComment, this);
+                mViewTransition.showView(1, false);
 
-        RippleSalon.addRipple(mRead, false);
-        RippleSalon.addRipple(mDownload, false);
-        RippleSalon.addRipple(mFavorite, false);
-        RippleSalon.addRipple(mTorrent, false);
-        RippleSalon.addRipple(mShare, false);
-        RippleSalon.addRipple(mRate, false);
+                mRatingText.setFactory(new RatingTextViewFactory());
+
+                Drawable favoriteDrawable = resources.getDrawable(R.drawable.ic_heart_theme_primary);
+                Drawable torrentDrawable = resources.getDrawable(R.drawable.ic_water_pump_theme_primary);
+                Drawable shareDrawable = resources.getDrawable(R.drawable.ic_share_theme_primary);
+                Drawable rateDrawable = resources.getDrawable(R.drawable.ic_thumbs_up_down_theme_primary);
+
+                int drawableSize = resources.getDimensionPixelOffset(R.dimen.detail_action_size);
+                favoriteDrawable.setBounds(0, 0, drawableSize, drawableSize);
+                torrentDrawable.setBounds(0, 0, drawableSize, drawableSize);
+                shareDrawable.setBounds(0, 0, drawableSize, drawableSize);
+                rateDrawable.setBounds(0, 0, drawableSize, drawableSize);
+
+                mFavorite.setCompoundDrawables(null, favoriteDrawable, null, null);
+                mTorrent.setCompoundDrawables(null, torrentDrawable, null, null);
+                mShare.setCompoundDrawables(null, shareDrawable, null, null);
+                mRate.setCompoundDrawables(null, rateDrawable, null, null);
+
+
+                mRead.setOnClickListener(this);
+                mDownload.setOnClickListener(this);
+                mFavorite.setOnClickListener(this);
+                mTorrent.setOnClickListener(this);
+                mShare.setOnClickListener(this);
+                mRate.setOnClickListener(this);
+
+                AccurateClick.setOnAccurateClickListener(mInfo, this);
+                AccurateClick.setOnAccurateClickListener(mComment, this);
+
+                RippleSalon.addRipple(mRead, false);
+                RippleSalon.addRipple(mDownload, false);
+                RippleSalon.addRipple(mFavorite, false);
+                RippleSalon.addRipple(mTorrent, false);
+                RippleSalon.addRipple(mShare, false);
+                RippleSalon.addRipple(mRate, false);
+
+            } else {
+                Log.e("Can't get GalleryDetail");
+                finish();
+            }
+
+        } else if (ACTION_GID_TOKEN.equals(action)) {
+
+        } else if (ACTION_URL.equals(action)) {
+
+        } else {
+            Log.e("Unkonwn action " + action);
+            finish();
+        }
     }
 
     @Override
@@ -231,12 +256,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
             return;
         }
 
-        if (v == mInfo) {
-            Announcer announcer = new Announcer();
-            announcer.setObject(mGalleryDetail);
-            startScene(InfoScene.class, announcer,
-                    new SimpleCurtain(SimpleCurtain.DIRECTION_RIGHT));
-        } else if (v == mRead) {
+        if (v == mRead) {
 
         } else if (v == mDownload) {
 
@@ -261,14 +281,14 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
             int[] position = new int[2];
             ViewUtils.getLocationInAncestor(mInfo, position, getSceneView());
             Announcer announcer = new Announcer();
-            announcer.setObject(mGalleryDetail);
+            announcer.putExtra(InfoScene.KEY_INFO, mGalleryDetail);
             startScene(InfoScene.class, announcer,
                     new RippleCurtain((int) x + position[0], (int) y + position[1]));
         } else if (v == mComment) {
             int[] position = new int[2];
             ViewUtils.getLocationInAncestor(mComment, position, getSceneView());
             Announcer announcer = new Announcer();
-            announcer.setObject(mGalleryDetail.comments);
+            announcer.putExtra(CommentScene.KEY_COMMENTS, mGalleryDetail.comments);
             startScene(CommentScene.class, announcer,
                     new RippleCurtain((int) x + position[0], (int) y + position[1]));
         }

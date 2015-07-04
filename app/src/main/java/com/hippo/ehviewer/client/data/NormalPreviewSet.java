@@ -23,6 +23,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,6 +32,7 @@ import com.hippo.conaco.BitmapHolder;
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.Unikery;
 import com.hippo.ehviewer.EhImageKeyFactory;
+import com.hippo.ehviewer.R;
 import com.hippo.util.Log;
 import com.hippo.widget.SimpleGridLayout;
 
@@ -81,7 +83,7 @@ public class NormalPreviewSet extends PreviewSet {
                 i++;
             }
 
-            LoadImageTask loadImageTask = new LoadImageTask(row, imageViews);
+            LoadImageTask loadImageTask = new LoadImageTask(conaco, row, imageViews);
             mLoadImageTasks.add(loadImageTask);
 
             String key;
@@ -96,19 +98,32 @@ public class NormalPreviewSet extends PreviewSet {
 
     @Override
     public void cancelLoadTask(SimpleGridLayout simpleGridLayout, Conaco conaco) {
+        // Cancel load task
         for (LoadImageTask loadImageTask : mLoadImageTasks) {
             conaco.cancel(loadImageTask);
         }
         mLoadImageTasks.clear();
+
+        //Cancel long click
+        int count = simpleGridLayout.getChildCount();
+        for (int i = 0; i < count; i++) {
+            ViewGroup viewGroup = (ViewGroup) simpleGridLayout.getChildAt(i);
+            View view = viewGroup.getChildAt(0);
+            view.setOnLongClickListener(null);
+            view.setLongClickable(false);
+        }
     }
 
     class LoadImageTask implements Unikery {
 
-        private int mTaskId;
+        private int mTaskId = Unikery.INVAILD_ID;
+
+        private Conaco mConaco;
         private Row mRow;
         private ImageView[] mImageViews;
 
-        public LoadImageTask(Row row, ImageView[] imageViews) {
+        public LoadImageTask(Conaco conaco, Row row, ImageView[] imageViews) {
+            mConaco = conaco;
             mRow = row;
             mImageViews = imageViews;
         }
@@ -175,13 +190,54 @@ public class NormalPreviewSet extends PreviewSet {
 
         @Override
         public void onFailure() {
-            // TODO
             mLoadImageTasks.remove(this);
+
+            // Add long click to retry
+            RetryTask retryTask = new RetryTask(mConaco, mRow, mImageViews);
+            for (ImageView imageView : mImageViews) {
+                imageView.setImageResource(R.drawable.retry_load_image);
+                imageView.setOnLongClickListener(retryTask);
+            }
         }
 
         @Override
         public void onCancel() {
             // Empty
+        }
+    }
+
+    class RetryTask implements View.OnLongClickListener {
+
+        private Conaco mConaco;
+        private Row mRow;
+        private ImageView[] mImageViews;
+
+        public RetryTask(Conaco conaco, Row row, ImageView[] imageViews) {
+            mConaco = conaco;
+            mRow = row;
+            mImageViews = imageViews;
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            for (ImageView imageView : mImageViews) {
+                imageView.setImageDrawable(null);
+                imageView.setOnLongClickListener(null);
+                imageView.setLongClickable(false);
+            }
+
+            LoadImageTask loadImageTask = new LoadImageTask(mConaco, mRow, mImageViews);
+            mLoadImageTasks.add(loadImageTask);
+
+            String key;
+            if (mRow.imageIndex != -1) {
+                key = EhImageKeyFactory.getNormalPreviewKey(getGid(), mRow.imageIndex);
+            } else {
+                key = mRow.imageUrl;
+            }
+            mConaco.load(loadImageTask, key, mRow.imageUrl);
+
+            return true;
         }
     }
 

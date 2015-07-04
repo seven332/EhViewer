@@ -658,10 +658,8 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
                 show = true;
             } else if (recyclerView.computeVerticalScrollOffset() < mSearchBarOriginalBottom){
                 show = true;
-            } else if (mSearchBar.getBottom() > (mSearchBarOriginalBottom - mSearchBarOriginalTop) / 2) {
-                show = true;
             } else {
-                show = false;
+                show = mSearchBar.getBottom() > (mSearchBarOriginalBottom - mSearchBarOriginalTop) / 2;
             }
         }
 
@@ -722,6 +720,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
         GalleryInfo gi = mGalleryListHelper.getDataAt(position);
         Announcer announcer = new Announcer();
+        announcer.setAction(GalleryDetailScene.ACTION_GALLERY_INFO);
         announcer.putExtra(GalleryDetailScene.KEY_GALLERY_INFO, gi);
 
         Curtain curtain = new TransitionCurtain(new TransitonHelper(position));
@@ -910,7 +909,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
             GalleryInfo gi = getDataAt(position);
 
             Conaco conaco = EhApplication.getConaco(getStageActivity());
-            conaco.load(holder.thumb, EhImageKeyFactory.getThumbKey(gi.gid), gi.thumb);
+            holder.thumb.load(conaco, EhImageKeyFactory.getThumbKey(gi.gid), gi.thumb);
 
             holder.title.setText(gi.title);
             holder.uploader.setText(gi.uploader);

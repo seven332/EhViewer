@@ -87,6 +87,9 @@ public class SimpleDialogCurtain extends Curtain {
         ViewUtils.setVisibility(cushion, View.INVISIBLE);
         ViewUtils.setVisibility(frame, View.INVISIBLE);
 
+        // TODO addOnGlobalLayoutListener is not reliable
+        // TODO use isLayoutRequested
+        // TODO if isLayoutRequested return false, try to use StageView Size
         frame.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {

@@ -24,15 +24,24 @@ import java.util.List;
 
 public class CommentScene extends AppbarScene {
 
+    public static final String KEY_COMMENTS = "key_comments";
+
     private EasyRecyclerView mRecyclerView;
-    private CommentAdapter mAdapter;
 
     private List<Comment> mCommentList;
 
+    @SuppressWarnings("unchecked")
     private void handleAnnouncer(Announcer announcer) {
-        if (announcer != null) {
-            mCommentList = (List<Comment>) announcer.getObject();
-            mAdapter.notifyDataSetChanged();
+        if (announcer == null) {
+            finish();
+            return;
+        }
+
+        Object obj = announcer.getExtra(KEY_COMMENTS);
+        if (obj instanceof List) {
+            mCommentList = (List<Comment>) obj;
+        } else {
+            finish();
         }
     }
 
@@ -49,8 +58,8 @@ public class CommentScene extends AppbarScene {
 
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
 
-        mAdapter = new CommentAdapter();
-        mRecyclerView.setAdapter(mAdapter);
+        CommentAdapter adapter = new CommentAdapter();
+        mRecyclerView.setAdapter(adapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
                 LinearDividerItemDecoration.VERTICAL, resources.getColor(R.color.divider_light),
@@ -68,13 +77,6 @@ public class CommentScene extends AppbarScene {
         super.onBind();
 
         handleAnnouncer(getAnnouncer());
-    }
-
-    @Override
-    protected void onRestore() {
-        super.onRestore();
-
-        // mCommentList is already setted, nothing to do
     }
 
     @Override

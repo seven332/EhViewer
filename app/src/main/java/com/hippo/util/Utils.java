@@ -153,8 +153,8 @@ public final class Utils {
      * If you want to copy on new thread, use it to know
      * success or not.
      */
-    public static interface OnCopyFileOverListener {
-        public void onCopyFileOver(boolean success, File src, File dst);
+    public interface OnCopyFileOverListener {
+        void onCopyFileOver(boolean success, File src, File dst);
     }
 
     /**
@@ -214,8 +214,8 @@ public final class Utils {
      * If you want to copy on new thread, use it to know
      * success or not.
      */
-    public static interface OnDeleteFileOverListener {
-        public void onDeleteFileOver(boolean success, File file);
+    public interface OnDeleteFileOverListener {
+        void onDeleteFileOver(boolean success, File file);
     }
 
     /**
@@ -632,10 +632,7 @@ public final class Utils {
         if (area.length != 4)
             throw new IllegalArgumentException(
                     "area's length should be 4, but it's length is " + area.length);
-        if (x >= area[0] && x < area[2] && y >= area[1] && y < area[3])
-            return true;
-        else
-            return false;
+        return x >= area[0] && x < area[2] && y >= area[1] && y < area[3];
     }
 
     /**

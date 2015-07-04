@@ -110,9 +110,11 @@ public final class PreviewLayout extends LinearLayout implements View.OnClickLis
     }
 
     private boolean isLargePreview() {
-        for (PreviewSet previewSet : mPreviewSets) {
-            if (previewSet != null) {
-                return previewSet instanceof LargePreviewSet;
+        if (mPreviewSets != null) {
+            for (PreviewSet previewSet : mPreviewSets) {
+                if (previewSet != null) {
+                    return previewSet instanceof LargePreviewSet;
+                }
             }
         }
         return false;

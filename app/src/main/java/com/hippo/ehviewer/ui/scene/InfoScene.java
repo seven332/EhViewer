@@ -43,6 +43,8 @@ import java.util.List;
 
 public class InfoScene extends AppbarScene implements EasyRecyclerView.OnItemLongClickListener {
 
+    public static final String KEY_INFO = "key_info";
+
     private Resources mResources;
 
     private EasyRecyclerView mRecyclerView;
@@ -103,10 +105,17 @@ public class InfoScene extends AppbarScene implements EasyRecyclerView.OnItemLon
     }
 
     private void handleAnnouncer(Announcer announcer) {
-        if (announcer != null) {
-            GalleryDetail gd = (GalleryDetail) announcer.getObject();
+        if (announcer == null) {
+            finish();
+            return;
+        }
+
+        Object obj = announcer.getExtra(KEY_INFO);
+        if (obj instanceof GalleryDetail) {
+            GalleryDetail gd = (GalleryDetail) obj;
             addData(R.string.header_key, mResources.getString(R.string.header_value));
             addData(R.string.key_gid, Integer.toString(gd.gid));
+            addData(R.string.key_token, gd.token);
             addData(R.string.key_title, gd.title);
             addData(R.string.key_title_jpn, gd.titleJpn);
             addData(R.string.key_thumb, gd.thumb);

@@ -11,7 +11,7 @@ import com.hippo.ehviewer.R;
 
 public class UnikeryDrawable extends WrapDrawable implements Unikery {
 
-    private int mTaskId;
+    private int mTaskId = Unikery.INVAILD_ID;
 
     private View mView;
 

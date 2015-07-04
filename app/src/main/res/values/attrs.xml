@@ -76,4 +76,12 @@
         <attr name="itemMargin" format="dimension"/>
     </declare-styleable>
 
+    <declare-styleable name="LoadImageView">
+        <attr name="retryType">
+            <enum name="none" value="0" />
+            <enum name="click" value="1" />
+            <enum name="longClick" value="2" />
+        </attr>
+    </declare-styleable>
+
 </resources>

@@ -28,7 +28,8 @@
         <com.hippo.ehviewer.widget.LoadImageView
             android:id="@+id/thumb"
             android:layout_width="@dimen/list_thumb_width"
-            android:layout_height="@dimen/list_thumb_height"/>
+            android:layout_height="@dimen/list_thumb_height"
+            auto:retryType="click"/>
 
         <TextView
             android:id="@+id/title"

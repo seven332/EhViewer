@@ -50,8 +50,11 @@ public class LargePreviewSet extends PreviewSet {
             final Item item = mItemList.get(i);
             final int index = i + getStartIndex();
             final ViewGroup viewGroup = (ViewGroup) simpleGridLayout.getChildAt(i);
-            conaco.load((LoadImageView) viewGroup.getChildAt(0),
-                    EhImageKeyFactory.getLargePreviewKey(getGid(), index), item.imageUrl);
+
+            LoadImageView imageView = ((LoadImageView) viewGroup.getChildAt(0));
+            imageView.setRetryType(LoadImageView.RetryType.LONG_CLICK);
+            imageView.load(conaco, EhImageKeyFactory.getLargePreviewKey(getGid(), index), item.imageUrl);
+
             ((TextView) viewGroup.getChildAt(1)).setText(Integer.toString(index + 1));
         }
     }
@@ -61,7 +64,7 @@ public class LargePreviewSet extends PreviewSet {
         int count = simpleGridLayout.getChildCount();
         for (int i = 0; i < count; i++) {
             final ViewGroup viewGroup = (ViewGroup) simpleGridLayout.getChildAt(i);
-            conaco.cancel((LoadImageView) viewGroup.getChildAt(0));
+            ((LoadImageView) viewGroup.getChildAt(0)).cancel();
         }
     }
 

@@ -16,12 +16,9 @@
 
 package com.hippo.ehviewer.client.data;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.util.regex.Pattern;
 
-public class GalleryInfo implements Parcelable {
+public class GalleryInfo {
 
     /**
      * ISO 639-1
@@ -98,61 +95,8 @@ public class GalleryInfo implements Parcelable {
      */
     public String simpleLanguage;
 
-    public static final Creator<GalleryInfo> CREATOR =
-            new Creator<GalleryInfo>() {
-                @Override
-                public GalleryInfo createFromParcel(Parcel source) {
-                    GalleryInfo p = new GalleryInfo();
-                    p.gid = source.readInt();
-                    p.token = source.readString();
-                    p.title = source.readString();
-                    p.posted = source.readString();
-                    p.category = source.readInt();
-                    p.thumb = source.readString();
-                    p.uploader = source.readString();
-                    p.rating = source.readFloat();
-                    p.simpleLanguage = source.readString();
-                    return p;
-                }
-
-                @Override
-                public GalleryInfo[] newArray(int size) {
-                    return new GalleryInfo[size];
-                }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(gid);
-        dest.writeString(token);
-        dest.writeString(title);
-        dest.writeString(posted);
-        dest.writeInt(category);
-        dest.writeString(thumb);
-        dest.writeString(uploader);
-        dest.writeFloat(rating);
-        dest.writeString(simpleLanguage);
-    }
-
     public GalleryInfo() {
         // Empty
-    }
-
-    public GalleryInfo(GalleryInfo gi) {
-        gid = gi.gid;
-        token = gi.token;
-        title = gi.title;
-        posted = gi.posted;
-        category = gi.category;
-        thumb = gi.thumb;
-        uploader = gi.uploader;
-        rating = gi.rating;
-        simpleLanguage = gi.simpleLanguage;
     }
 
     @Override
