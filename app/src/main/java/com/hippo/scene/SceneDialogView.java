@@ -52,7 +52,7 @@ public class SceneDialogView extends SceneView implements View.OnClickListener, 
         setSoundEffectsEnabled(false);
         setOnClickListener(this);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            setOnTouchListener(new HotspotTouchHelper(this));
+            HotspotTouchHelper.setHotspotTouchHelper(this, new HotspotTouchHelper(this));
         }
     }
 
@@ -68,6 +68,8 @@ public class SceneDialogView extends SceneView implements View.OnClickListener, 
 
     @Override
     public void drawableHotspotChanged(float x, float y) {
+        super.drawableHotspotChanged(x, y);
+
         mHostpotX = x;
         mHostpotY = y;
     }

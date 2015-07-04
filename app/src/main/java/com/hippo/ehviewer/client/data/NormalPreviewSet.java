@@ -78,7 +78,9 @@ public class NormalPreviewSet extends PreviewSet {
             ImageView[] imageViews = new ImageView[rowSize];
             for (int j = 0; j < rowSize; j++) {
                 ViewGroup viewGroup = (ViewGroup) simpleGridLayout.getChildAt(i);
-                imageViews[j] = (ImageView) viewGroup.getChildAt(0);
+                ImageView imageView = (ImageView) viewGroup.getChildAt(0);
+                imageView.setImageDrawable(null);
+                imageViews[j] = imageView;
                 ((TextView) viewGroup.getChildAt(1)).setText(Integer.toString(i + getStartIndex() + 1));
                 i++;
             }

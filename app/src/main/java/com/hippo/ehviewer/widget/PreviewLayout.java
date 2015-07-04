@@ -28,22 +28,28 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hippo.conaco.Conaco;
+import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.util.ViewUtils;
+import com.hippo.widget.AccurateClick;
 import com.hippo.widget.SimpleGridLayout;
 
-public final class PreviewLayout extends LinearLayout implements View.OnClickListener {
+public final class PreviewLayout extends LinearLayout implements View.OnClickListener,
+        AccurateClick.OnAccurateClickListener {
 
     private GestureDetector mGestureDetector;
     private PreviewSet[] mPreviewSets;
+    private int mGid;
     private Conaco mConaco;
     private LayoutInflater mInflater;
     private int mPreviewSetCount;
-    private int mCurrentPreviewIndex = -1;
+    private int mCurrentPreviewPage = -1;
 
     private SimpleGridLayout mSimpleGridLayout;
+    private View mProgressBar;
     private View mTopPrevious;
     private TextView mTopSelection;
     private View mTopNext;
@@ -51,7 +57,12 @@ public final class PreviewLayout extends LinearLayout implements View.OnClickLis
     private TextView mBottomSelection;
     private View mBottomNext;
 
+    private ViewTransition mViewTransition;
+
     private int mWidth;
+    private int mPreviewSetSize = -1;
+
+    private PreviewHelper mPreviewHelper;
 
     public PreviewLayout(Context context) {
         super(context);
@@ -78,7 +89,8 @@ public final class PreviewLayout extends LinearLayout implements View.OnClickLis
         mTopSelection = (TextView) viewGroup.getChildAt(2);
         mTopNext = viewGroup.getChildAt(4);
         mSimpleGridLayout = (SimpleGridLayout) getChildAt(1);
-        viewGroup = (ViewGroup) getChildAt(2);
+        mProgressBar = getChildAt(2);
+        viewGroup = (ViewGroup) getChildAt(3);
         mBottomPrevious = viewGroup.getChildAt(0);
         mBottomSelection = (TextView) viewGroup.getChildAt(2);
         mBottomNext = viewGroup.getChildAt(4);
@@ -91,20 +103,24 @@ public final class PreviewLayout extends LinearLayout implements View.OnClickLis
         RippleSalon.addRipple(mBottomNext, false);
 
         mTopPrevious.setOnClickListener(this);
-        mTopSelection.setOnClickListener(this);
         mTopNext.setOnClickListener(this);
         mBottomPrevious.setOnClickListener(this);
-        mBottomSelection.setOnClickListener(this);
         mBottomNext.setOnClickListener(this);
+
+        AccurateClick.setOnAccurateClickListener(mTopSelection, this);
+        AccurateClick.setOnAccurateClickListener(mBottomSelection, this);
 
         GestureListener gestureListener = new GestureListener();
         mGestureDetector = new GestureDetector(context, gestureListener);
         mGestureDetector.setIsLongpressEnabled(false);
+
+        mViewTransition = new ViewTransition(mSimpleGridLayout, mProgressBar);
     }
 
-    public void setData(PreviewSet[] previewSets, LayoutInflater inflater, Conaco conaco) {
+    public void setData(PreviewSet[] previewSets, int gid, LayoutInflater inflater, Conaco conaco) {
         mPreviewSets = previewSets;
         mPreviewSetCount = previewSets.length;
+        mGid = gid;
         mInflater = inflater;
         mConaco = conaco;
     }
@@ -151,44 +167,100 @@ public final class PreviewLayout extends LinearLayout implements View.OnClickLis
         return mGestureDetector.onTouchEvent(event);
     }
 
+    public void setPreviewHelper(PreviewHelper previewHelper) {
+        mPreviewHelper = previewHelper;
+    }
+
     public int getPreviewPageCount() {
         return mPreviewSetCount;
     }
 
-    public void selectPreviewAt(int index) {
-        if (index < 0 || index >= mPreviewSetCount) {
-            throw new IndexOutOfBoundsException("Invalid index " + index + ", size is " + mPreviewSetCount);
+    public int getPreviewSetStartIndex(int page) {
+        if (mPreviewSetSize == -1) {
+            for (PreviewSet previewSet : mPreviewSets) {
+                if (previewSet != null) {
+                    mPreviewSetSize = previewSet.size();
+                    break;
+                }
+            }
         }
 
-        mCurrentPreviewIndex = index;
+        if (mPreviewSetSize == -1) {
+            return 0;
+        } else {
+            return mPreviewSetSize * page;
+        }
+    }
 
-        PreviewSet previewSet = mPreviewSets[index];
+    public void onGetPreview(PreviewSet previewSet, int page) {
+        previewSet.setStartIndex(getPreviewSetStartIndex(page));
+        previewSet.setGid(mGid);
+        mPreviewSets[page] = previewSet;
+
+        if (mCurrentPreviewPage == page) {
+            mViewTransition.showView(0);
+
+            previewSet.bindView(mSimpleGridLayout, mInflater, mConaco);
+        }
+    }
+
+    public void selectPreviewAt(int page) {
+        if (page < 0 || page >= mPreviewSetCount) {
+            throw new IndexOutOfBoundsException("Invalid page " + page + ", size is " + mPreviewSetCount);
+        }
+
+        int oldPage = mCurrentPreviewPage;
+        mCurrentPreviewPage = page;
+
+        if (oldPage != -1) {
+            PreviewSet oldPreviewSet = mPreviewSets[oldPage];
+            if (oldPreviewSet != null) {
+                oldPreviewSet.cancelLoadTask(mSimpleGridLayout, mConaco);
+            }
+        }
+
+        PreviewSet previewSet = mPreviewSets[page];
         if (previewSet != null) {
+            mViewTransition.showView(0);
             previewSet.bindView(mSimpleGridLayout, mInflater, mConaco);
         } else {
-            // TODO
+            mViewTransition.showView(1);
+            mPreviewHelper.onRequstPreview(this, page);
         }
 
-        String showText = (index + 1) + "/" + mPreviewSetCount;
+        String showText = (page + 1) + "/" + mPreviewSetCount;
         mTopSelection.setText(showText);
         mBottomSelection.setText(showText);
     }
 
     public void tryNextPreview() {
-        if (mCurrentPreviewIndex < mPreviewSetCount - 1) {
-            selectPreviewAt(mCurrentPreviewIndex + 1);
+        if (mCurrentPreviewPage < mPreviewSetCount - 1) {
+            selectPreviewAt(mCurrentPreviewPage + 1);
         }
     }
 
     public void tryPreviousPreview() {
-        if (mCurrentPreviewIndex > 0) {
-            selectPreviewAt(mCurrentPreviewIndex - 1);
+        if (mCurrentPreviewPage > 0) {
+            selectPreviewAt(mCurrentPreviewPage - 1);
         }
     }
 
     @Override
     public void onClick(View v) {
+        if (v == mTopPrevious || v == mBottomPrevious) {
+            tryPreviousPreview();
+        } else if (v == mTopNext || v == mBottomNext) {
+            tryNextPreview();
+        }
+    }
 
+    @Override
+    public void onAccurateClick(View v, float x, float y) {
+        if (v == mTopSelection || v == mBottomSelection) {
+            int[] position = new int[2];
+            ViewUtils.getLocationInAncestor(v, position, this);
+            mPreviewHelper.onRequstPreviewIndex(this, x + position[0], y + position[1]);
+        }
     }
 
     class GestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -218,5 +290,12 @@ public final class PreviewLayout extends LinearLayout implements View.OnClickLis
                 return false;
             }
         }
+    }
+
+    public interface PreviewHelper {
+
+        void onRequstPreview(PreviewLayout previewLayout, int index);
+
+        void onRequstPreviewIndex(PreviewLayout previewLayout, float x, float y);
     }
 }

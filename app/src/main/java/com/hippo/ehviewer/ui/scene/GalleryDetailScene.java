@@ -42,6 +42,7 @@ import com.hippo.ehviewer.client.OffensiveException;
 import com.hippo.ehviewer.client.data.Comment;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.data.TagGroup;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
@@ -184,6 +185,8 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
                 RippleSalon.addRipple(mTorrent, false);
                 RippleSalon.addRipple(mShare, false);
                 RippleSalon.addRipple(mRate, false);
+
+                mPreviewLayout.setPreviewHelper(new SimplePreviewHelper());
 
             } else {
                 Log.e("Can't get GalleryDetail");
@@ -454,6 +457,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
             }
 
             mPreviewLayout.setData(galleryDetail.previewSetArray,
+                    galleryDetail.gid,
                     getStageActivity().getLayoutInflater(),
                     EhApplication.getConaco(getStageActivity()));
             mPreviewLayout.selectPreviewAt(0);
@@ -477,6 +481,55 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
                             }
                         }).show();
             }
+        }
+    }
+
+    class SimplePreviewHelper implements PreviewLayout.PreviewHelper {
+
+        @Override
+        public void onRequstPreview(PreviewLayout previewLayout, final int index) {
+            int source = Config.getEhSource();
+            EhClient.getInstance().getPreviewSet(source,
+                    EhClient.getDetailUrl(source, mGalleryDetail.gid, mGalleryDetail.token, index),
+                    new EhClient.OnGetPreviewSetListener() {
+
+                        @Override
+                        public void onSuccess(PreviewSet previewSet) {
+                            mPreviewLayout.onGetPreview(previewSet, index);
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            // TODO
+                            e.printStackTrace();
+                        }
+                    });
+        }
+
+        @Override
+        public void onRequstPreviewIndex(PreviewLayout previewLayout, float x, float y) {
+            if (previewLayout.getPreviewPageCount() <= 1) {
+                return;
+            }
+
+            int count = previewLayout.getPreviewPageCount();
+            String[] array = new String[count];
+            for (int i = 0; i < count; i++) {
+                array[i] = Integer.toString(i + 1);
+            }
+
+            int[] position = new int[2];
+            ViewUtils.getLocationInAncestor(mPreviewLayout, position, getSceneView());
+
+            new SimpleDialog.Builder(getStageActivity()).setTitle("Select page")
+                    .setStartPoint((int) (x + position[0]), (int) (y + position[1]))
+                    .setItems(array, new SimpleDialog.OnClickListener() {
+                        @Override
+                        public boolean onClick(SimpleDialog dialog, int which) {
+                            mPreviewLayout.selectPreviewAt(which);
+                            return true;
+                        }
+                    }).show();
         }
     }
 }

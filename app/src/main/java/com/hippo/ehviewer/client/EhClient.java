@@ -397,9 +397,10 @@ public final class EhClient {
         checkResponse(response);
 
         GalleryDetailParser parser = new GalleryDetailParser();
-        parser.parse(response.body().string(),
-                GalleryDetailParser.REQUEST_DETAIL | GalleryDetailParser.REQUEST_TAG |
+        parser.parse(response.body().string(), GalleryDetailParser.REQUEST_DETAIL |
+                        GalleryDetailParser.REQUEST_TAG |
                         GalleryDetailParser.REQUEST_PREVIEW_INFO |
+                        GalleryDetailParser.REQUEST_PREVIEW |
                         GalleryDetailParser.REQUEST_COMMENT,
                 source);
 
@@ -470,5 +471,58 @@ public final class EhClient {
      */
     public void getGalleryDetail(int source, String url, OnGetGalleryDetailListener listener) {
         doBgJob(new GetGalleryDetailHelper(source, url, listener));
+    }
+
+
+    public abstract static class OnGetPreviewSetListener implements SimpleListener {
+        public abstract void onSuccess(PreviewSet previewSet);
+    }
+
+    private PreviewSet doGetPreviewSet(int source, String url) throws Exception {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        Response response = mHttpClient.newCall(request).execute();
+
+        checkResponse(response);
+
+        GalleryDetailParser parser = new GalleryDetailParser();
+        parser.parse(response.body().string(), GalleryDetailParser.REQUEST_PREVIEW,
+                source);
+
+        return parser.previewSet;
+    }
+
+    private final class GetPreviewSetHelper extends SimpleBgJobHelper {
+
+        private int mSource;
+        private String mUrl;
+        private OnGetPreviewSetListener mListener;
+
+        private PreviewSet mPreviewSet;
+
+        public GetPreviewSetHelper(int source, String url, OnGetPreviewSetListener listener) {
+            super(listener);
+            mSource = source;
+            mUrl = url;
+            mListener = listener;
+        }
+
+        @Override
+        public void doBgJob() throws Exception {
+            mPreviewSet = doGetPreviewSet(mSource, mUrl);
+        }
+
+        @Override
+        public void doSuccessCallback() {
+            mListener.onSuccess(mPreviewSet);
+        }
+    }
+
+    /**
+     * Get gallery preview set
+     */
+    public void getPreviewSet(int source, String url, OnGetPreviewSetListener listener) {
+        doBgJob(new GetPreviewSetHelper(source, url, listener));
     }
 }

@@ -81,7 +81,7 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
 
         setOnClickListener(this);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            setOnTouchListener(new HotspotTouchHelper(this));
+            HotspotTouchHelper.setHotspotTouchHelper(this, new HotspotTouchHelper(this));
         }
     }
 

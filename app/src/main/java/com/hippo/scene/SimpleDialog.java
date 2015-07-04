@@ -114,7 +114,8 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     private void bindDialog() {
         ListView listView = mListView;
 
-        if (mBuilder.mTitle == null && mBuilder.mMessage == null && mBuilder.mCustomViewResId == 0) {
+        if (mBuilder.mTitle == null && mBuilder.mMessage == null
+                && mBuilder.mItemLayoutResId == 0 && mBuilder.mCustomViewResId == 0) {
             ViewUtils.setVisibility(mBody, View.GONE);
         } else {
             if (mBuilder.mTitle != null) {

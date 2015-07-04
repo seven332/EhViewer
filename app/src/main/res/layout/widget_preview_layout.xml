@@ -30,6 +30,14 @@
         android:paddingRight="32dp"
         auto:itemMargin="8dp"/>
 
+    <ProgressBar
+        style="@style/ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"/>
+
     <include
         layout="@layout/preview_controller"/>
 

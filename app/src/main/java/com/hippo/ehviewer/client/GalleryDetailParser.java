@@ -277,7 +277,7 @@ public class GalleryDetailParser {
         }
 
         // Get preview
-        if ((request & REQUEST_PREVIEW_INFO) != 0) {
+        if ((request & REQUEST_PREVIEW) != 0) {
             parsePreview(body);
         }
 

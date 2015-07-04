@@ -57,10 +57,7 @@ public abstract class PreviewSet {
                 inflater.inflate(R.layout.item_preview, simpleGridLayout, true);
             }
         } else if (diff < 0) {
-            diff = -diff;
-            for (int i = 0; i < diff; i++) {
-                simpleGridLayout.removeViews(size, diff);
-            }
+            simpleGridLayout.removeViews(size, -diff);
         }
     }
 

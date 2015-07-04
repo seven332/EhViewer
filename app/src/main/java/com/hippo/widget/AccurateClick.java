@@ -29,7 +29,15 @@ public final class AccurateClick {
         AccurateClickHelper accurateClickHelper = new AccurateClickHelper();
         view.setTag(R.id.view_tag_accurate_click_helper, accurateClickHelper);
         view.setTag(R.id.view_tag_on_accurate_click_listener, listener);
-        view.setOnTouchListener(new HotspotTouchHelper(accurateClickHelper));
+
+        // compatible with VectorOld
+        HotspotTouchHelper helper = HotspotTouchHelper.getHotspotTouchHelper(view);
+        if (helper != null) {
+            helper.addOwner(accurateClickHelper);
+        } else {
+            HotspotTouchHelper.setHotspotTouchHelper(view, new HotspotTouchHelper(accurateClickHelper));
+        }
+
         view.setOnClickListener(new DelegateClickListener());
     }
 
