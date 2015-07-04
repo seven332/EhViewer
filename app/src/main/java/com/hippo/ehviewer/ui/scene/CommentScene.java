@@ -1,7 +1,9 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.Comment;
+import com.hippo.ehviewer.widget.LinkifyTextView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.AppbarScene;
@@ -22,7 +25,7 @@ import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
 
 import java.util.List;
 
-public class CommentScene extends AppbarScene {
+public class CommentScene extends AppbarScene implements EasyRecyclerView.OnItemClickListener {
 
     public static final String KEY_COMMENTS = "key_comments";
 
@@ -70,6 +73,7 @@ public class CommentScene extends AppbarScene {
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setOnItemClickListener(this);
     }
 
     @Override
@@ -91,18 +95,31 @@ public class CommentScene extends AppbarScene {
         }
     }
 
+    @Override
+    public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
+        LinkifyTextView comment = ((LinkifyTextView) view.findViewById(R.id.comment));
+        String url = comment.getTouchedUrl();
+        if (url != null) {
+            comment.clearTouchedUrl();
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            getStageActivity().startActivity(intent);
+        }
+        return true;
+    }
+
     private static class CommentHolder extends RecyclerView.ViewHolder {
 
         private TextView user;
         private TextView time;
-        private TextView comment;
+        private LinkifyTextView comment;
 
         public CommentHolder(View itemView) {
             super(itemView);
 
             user = (TextView) itemView.findViewById(R.id.user);
             time = (TextView) itemView.findViewById(R.id.time);
-            comment = (TextView) itemView.findViewById(R.id.comment);
+            comment = (LinkifyTextView) itemView.findViewById(R.id.comment);
         }
     }
 
@@ -122,7 +139,7 @@ public class CommentScene extends AppbarScene {
             holder.time.setText(comment.time);
             URLImageGetter p = new URLImageGetter(
                     holder.comment, EhApplication.getConaco(getStageActivity()));
-            holder.comment.setText(Html.fromHtml(comment.comment, p, null));
+            holder.comment.setLinkifyText(Html.fromHtml(comment.comment, p, null));
         }
 
         @Override
