@@ -14,67 +14,90 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<ScrollView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:auto="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:scrollbarThumbVertical="@android:color/transparent">
 
-        <LinearLayout
-            android:id="@+id/detail_content"
+        <FrameLayout
+            android:id="@+id/detail_frame_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="250dp">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="sssss"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/detail_header_background"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <FrameLayout
+            <LinearLayout
+                android:id="@+id/content"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:background="@color/theme_primary">
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/gallery_detail_content_margin_top"
+                android:orientation="vertical">
 
-            </FrameLayout>
+                <include
+                    layout="@layout/gallery_detail_info"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="4dp"
-                android:background="@drawable/drop_shadow"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="@dimen/keyline_margin"
+                    android:layout_marginRight="@dimen/keyline_margin"
+                    android:background="@color/divider_light"/>
 
-        </LinearLayout>
+                <include
+                    layout="@layout/gallery_detail_action"/>
 
-        <LinearLayout
-            android:id="@+id/detail_header"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="@dimen/keyline_margin"
+                    android:layout_marginRight="@dimen/keyline_margin"
+                    android:background="@color/divider_light"/>
+
+                <include
+                    layout="@layout/gallery_detail_tag"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="@dimen/keyline_margin"
+                    android:layout_marginRight="@dimen/keyline_margin"
+                    android:background="@color/divider_light"/>
+
+                <include
+                    layout="@layout/gallery_detail_comment"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="@dimen/keyline_margin"
+                    android:layout_marginRight="@dimen/keyline_margin"
+                    android:background="@color/divider_light"/>
+
+                <include
+                    layout="@layout/gallery_detail_preview"/>
+
+            </LinearLayout>
 
             <!-- Header -->
             <RelativeLayout
+                android:id="@+id/header"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@color/theme_primary">
 
                 <com.hippo.ehviewer.widget.LoadImageView
                     android:id="@+id/thumb"
-                    android:layout_width="120dp"
-                    android:layout_height="180dp"
+                    android:layout_width="@dimen/gallery_detail_thumb_width"
+                    android:layout_height="@dimen/gallery_detail_thumb_height"
                     android:layout_marginLeft="@dimen/keyline_margin"
                     android:layout_marginTop="@dimen/keyline_margin"
+                    android:layout_marginBottom="@dimen/gallery_detail_thumb_margin_bottom"
                     tools:ignore="RtlHardcoded"/>
 
                 <TextView
@@ -99,13 +122,73 @@
                     android:layout_marginRight="@dimen/keyline_margin"
                     tools:ignore="RtlHardcoded"/>
 
+                <TextView
+                    android:id="@+id/category"
+                    style="@style/CardMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/title"
+                    android:layout_below="@id/uploader"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginRight="@dimen/keyline_margin"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingTop="2dp"
+                    android:background="@android:color/white"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    tools:ignore="RtlHardcoded"/>
+
             </RelativeLayout>
 
-        </LinearLayout>
+            <!-- ActionCard -->
+            <com.hippo.widget.CardLinearLayout
+                android:id="@+id/action_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/keyline_margin"
+                android:layout_marginRight="@dimen/keyline_margin"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/gallery_detail_action_card_margin_top"
+                android:layout_marginBottom="8dp"
+                auto:cardElevation="4dp">
 
-    </FrameLayout>
+                <TextView
+                    android:id="@+id/download"
+                    style="@style/ButtonInCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/download"/>
 
-</ScrollView>
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/divider_light"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"/>
 
+                <TextView
+                    android:id="@+id/read"
+                    style="@style/ButtonInCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/theme_accent"
+                    android:text="@string/read"/>
 
+            </com.hippo.widget.CardLinearLayout>
 
+        </FrameLayout>
+
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="@style/ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
+</FrameLayout>
