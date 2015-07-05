@@ -18,6 +18,8 @@ package com.hippo.ehviewer;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.os.Build;
+import android.webkit.CookieSyncManager;
 
 import com.hippo.conaco.Conaco;
 import com.hippo.ehviewer.network.EhOkHttpClient;
@@ -37,6 +39,10 @@ public class EhApplication extends SceneApplication {
         super.onCreate();
 
         Config.initialize(this);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            CookieSyncManager.createInstance(this);
+        }
 
         Conaco.Builder conacoBuilder = new Conaco.Builder();
         conacoBuilder.hasMemoryCache = true;
