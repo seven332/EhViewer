@@ -18,13 +18,18 @@ package com.hippo.scene;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.SparseArray;
 
+import com.hippo.util.IntIdGenerator;
+import com.hippo.util.Log;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
 public class SceneApplication extends Application {
+    private static final String TAG = SceneApplication.class.getSimpleName();
 
-    private SceneManager mSceneManager;
+    private SparseArray<SceneManager> mSceneManagers;
+    private IntIdGenerator mIdGenerator;
 
     private RefWatcher mRefWatcher;
 
@@ -32,15 +37,45 @@ public class SceneApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        mRefWatcher = LeakCanary.install(this);
+        mSceneManagers = new SparseArray<>();
+        mIdGenerator = IntIdGenerator.create();
 
-        mSceneManager = SceneManager.getInstance();
-        StageActivity.setSceneManager(mSceneManager);
-        Scene.setSceneManager(mSceneManager);
+        mRefWatcher = LeakCanary.install(this);
     }
 
-    public SceneManager getSceneManager() {
-        return mSceneManager;
+    private SceneManager createSceneManager() {
+        int id = mIdGenerator.nextId();
+        SceneManager sceneManager = new SceneManager(id);
+        mSceneManagers.put(id, sceneManager);
+        return sceneManager;
+    }
+
+    private SceneManager getSceneManager(int id) {
+        SceneManager sceneManager = mSceneManagers.get(id);
+        if (sceneManager == null) {
+            Log.e(TAG, "Can't get SceneManager by id " + id);
+            sceneManager = new SceneManager(id);
+        }
+        return sceneManager;
+    }
+
+    private void removeSceneManager(SceneManager sceneManager) {
+        mSceneManagers.remove(sceneManager.getId());
+    }
+
+    static SceneManager createSceneManager(Context context) {
+        SceneApplication application = (SceneApplication) context.getApplicationContext();
+        return application.createSceneManager();
+    }
+
+    static SceneManager getSceneManager(Context context, int id) {
+        SceneApplication application = (SceneApplication) context.getApplicationContext();
+        return application.getSceneManager(id);
+    }
+
+    static void removeSceneManager(Context context, SceneManager sceneManager) {
+        SceneApplication application = (SceneApplication) context.getApplicationContext();
+        application.removeSceneManager(sceneManager);
     }
 
     public static RefWatcher getRefWatcher(Context context) {

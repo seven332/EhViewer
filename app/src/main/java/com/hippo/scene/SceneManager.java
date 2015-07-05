@@ -35,6 +35,8 @@ public class SceneManager {
 
     private static final String TAG = SceneManager.class.getSimpleName();
 
+    private int mId;
+
     private Stack<Scene> mSceneStack = new Stack<>();
     private StageActivity mStageActivity;
 
@@ -46,17 +48,12 @@ public class SceneManager {
 
     private List<SceneStateListener> mSceneStateListenerList = new ArrayList<>();
 
-    private static SceneManager sSceneManger;
-
-    public static SceneManager getInstance() {
-        if (sSceneManger == null) {
-            sSceneManger = new SceneManager();
-        }
-        return sSceneManger;
+    SceneManager(int id) {
+        mId = id;
     }
 
-    // Should only be called by SceneApplication
-    private SceneManager() {
+    int getId() {
+        return mId;
     }
 
     int nextId() {
@@ -157,6 +154,7 @@ public class SceneManager {
         }
 
         Scene scene = createSceneByClass(sceneClass);
+        scene.setSceneManager(this);
         scene.setAnnouncer(announcer);
         scene.setCurtain(curtain);
 
@@ -343,6 +341,10 @@ public class SceneManager {
 
     Stack<Scene> getSceneStack() {
         return mSceneStack;
+    }
+
+    int getSceneSize() {
+        return mSceneStack.size();
     }
 
     protected void onSaveInstanceState(Bundle outState) {

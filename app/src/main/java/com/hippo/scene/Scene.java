@@ -54,6 +54,8 @@ public abstract class Scene {
     static final int SCENE_STATE_PAUSE = 7;
     static final int SCENE_STATE_REBIRTH = 8;
 
+    SceneManager mSceneManager;
+
     private @Nullable Curtain mCurtain;
 
     private @Nullable Announcer mAnnouncer;
@@ -65,18 +67,13 @@ public abstract class Scene {
 
     private int mState = SCENE_STATE_INIT;
 
-    protected static SceneManager sSceneManager;
-
     private int mId;
 
     private boolean mHide;
 
-    static void setSceneManager(SceneManager sceneManager) {
-        sSceneManager = sceneManager;
-    }
-
-    public Scene() {
-        mId = sSceneManager.nextId();
+    public void setSceneManager(SceneManager sceneManager) {
+        mSceneManager = sceneManager;
+        mId = sceneManager.nextId();
     }
 
     int getId() {
@@ -101,7 +98,7 @@ public abstract class Scene {
 
     // If there is no StageActivity for SceneManager, yout will get AssertError
     public @NonNull StageActivity getStageActivity() {
-        StageActivity stageActivity = sSceneManager.getStageActivity();
+        StageActivity stageActivity = mSceneManager.getStageActivity();
         AssertUtils.assertNotNull("StageActivity is null", stageActivity);
         return stageActivity;
     }
@@ -123,16 +120,16 @@ public abstract class Scene {
     }
 
     public void startScene(@NonNull Class sceneClass) {
-        sSceneManager.startScene(sceneClass, null, null);
+        mSceneManager.startScene(sceneClass, null, null);
     }
 
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer) {
-        sSceneManager.startScene(sceneClass, announcer, null);
+        mSceneManager.startScene(sceneClass, announcer, null);
     }
 
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer,
             @Nullable Curtain curtain) {
-        sSceneManager.startScene(sceneClass, announcer, curtain);
+        mSceneManager.startScene(sceneClass, announcer, curtain);
     }
 
     int getState() {
@@ -148,7 +145,7 @@ public abstract class Scene {
     }
 
     public final void finish() {
-        sSceneManager.finishScene(this);
+        mSceneManager.finishScene(this);
     }
 
     void setHide(boolean hide) {
@@ -422,7 +419,7 @@ public abstract class Scene {
     }
 
     void onBackPressedInternal() {
-        if (!endCurtainAnimation() && !sSceneManager.endLegacyScene()) {
+        if (!endCurtainAnimation() && !mSceneManager.endLegacyScene()) {
             onBackPressed();
         }
     }
@@ -448,11 +445,11 @@ public abstract class Scene {
     }
 
     void openFinished() {
-        sSceneManager.openScene(this);
+        mSceneManager.openScene(this);
     }
 
     void closeFinished() {
-        sSceneManager.closeScene(this);
+        mSceneManager.closeScene(this);
     }
 
     // It is constant

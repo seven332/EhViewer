@@ -140,7 +140,7 @@ public final class ContentActivity extends StageActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
 
-        SceneManager.getInstance().addSceneStateListener(mSceneStateListener);
+        addSceneStateListener(mSceneStateListener);
 
         mResources = getResources();
 
@@ -183,8 +183,9 @@ public final class ContentActivity extends StageActivity
 
     @Override
     protected void onDestroy() {
+        removeSceneStateListener(mSceneStateListener);
+
         super.onDestroy();
-        SceneManager.getInstance().removeSceneStateListener(mSceneStateListener);
     }
 
     @Override

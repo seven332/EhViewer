@@ -25,20 +25,21 @@ import android.view.View;
 
 import com.hippo.app.StatsActivity;
 import com.hippo.util.IntIdGenerator;
+import com.hippo.util.Log;
 
 public abstract class StageActivity extends StatsActivity {
+
+    private static final String TAG = StageActivity.class.getSimpleName();
+
+    private static final String KEY_SCENEN_MANAGER_ID = "scene_manager_id";
 
     private IntIdGenerator mActivityResultIdGenerator = IntIdGenerator.create();
     private SparseArray<Scene.ActivityResultListener> mActivityResultListenerMap =
             new SparseArray<>();
 
-    private static SceneManager sSceneManager;
+    private SceneManager mSceneManager;
 
     private int mFitPaddingBottom;
-
-    static void setSceneManager(SceneManager sceneManager) {
-        sSceneManager = sceneManager;
-    }
 
     public abstract @NonNull StageLayout getStageLayout();
 
@@ -46,14 +47,33 @@ public abstract class StageActivity extends StatsActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ((SceneApplication) getApplication()).getSceneManager().setStageActivity(this);
+        if (savedInstanceState == null) {
+            // The first
+            mSceneManager = SceneApplication.createSceneManager(this);
+        } else {
+            int id = savedInstanceState.getInt(KEY_SCENEN_MANAGER_ID, -1);
+            if (id == -1) {
+                Log.e(TAG, "Can't get KEY_SCENEN_MANAGER_ID");
+                mSceneManager = SceneApplication.createSceneManager(this);
+            } else {
+                mSceneManager = SceneApplication.getSceneManager(this, id);
+            }
+        }
+
+        mSceneManager.setStageActivity(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        ((SceneApplication) getApplication()).getSceneManager().setStageActivity(null);
+        if (mSceneManager.getSceneSize() == 0) {
+            // Remove this SceneManager
+            SceneApplication.removeSceneManager(this, mSceneManager);
+        }
+
+        mSceneManager.setStageActivity(null);
+        mSceneManager = null;
     }
 
     public int getFitPaddingBottom() {
@@ -63,7 +83,7 @@ public abstract class StageActivity extends StatsActivity {
     public void setFitPaddingBottom(int b) {
         if (mFitPaddingBottom != b) {
             mFitPaddingBottom = b;
-            for (Scene scene : sSceneManager.getSceneStack()) {
+            for (Scene scene : mSceneManager.getSceneStack()) {
                 scene.setFitPaddingBottom(b);
             }
         }
@@ -80,16 +100,16 @@ public abstract class StageActivity extends StatsActivity {
     }
 
     public void startScene(@NonNull Class sceneClass) {
-        sSceneManager.startScene(sceneClass, null, null);
+        mSceneManager.startScene(sceneClass, null, null);
     }
 
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer) {
-        sSceneManager.startScene(sceneClass, announcer, null);
+        mSceneManager.startScene(sceneClass, announcer, null);
     }
 
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer,
             @Nullable Curtain curtain) {
-        sSceneManager.startScene(sceneClass, announcer, curtain);
+        mSceneManager.startScene(sceneClass, announcer, curtain);
     }
 
     /**
@@ -106,6 +126,27 @@ public abstract class StageActivity extends StatsActivity {
         return id;
     }
 
+    public void addSceneStateListener(SceneManager.SceneStateListener listener) {
+        mSceneManager.addSceneStateListener(listener);
+    }
+
+    public void removeSceneStateListener(SceneManager.SceneStateListener listener) {
+        mSceneManager.removeSceneStateListener(listener);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Only work when there is no scene in the stage
+     * </p>
+     */
+    @Override
+    public void finish() {
+        if (mSceneManager.getSceneSize() == 0) {
+            super.finish();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -119,7 +160,7 @@ public abstract class StageActivity extends StatsActivity {
 
     @Override
     public void onBackPressed() {
-        if (!sSceneManager.onBackPressed()) {
+        if (!mSceneManager.onBackPressed()) {
             super.onBackPressed();
         }
     }
@@ -128,13 +169,15 @@ public abstract class StageActivity extends StatsActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        sSceneManager.onSaveInstanceState(outState);
+        mSceneManager.onSaveInstanceState(outState);
+
+        outState.putInt(KEY_SCENEN_MANAGER_ID, mSceneManager.getId());
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        sSceneManager.onRestoreInstanceState(savedInstanceState);
+        mSceneManager.onRestoreInstanceState(savedInstanceState);
     }
 }
