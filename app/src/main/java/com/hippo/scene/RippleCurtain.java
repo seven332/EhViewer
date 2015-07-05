@@ -127,8 +127,7 @@ public class RippleCurtain extends Curtain {
         mAnimatorSet.playTogether(animatorCollection);
         mAnimatorSet.addListener(new SimpleAnimatorListener() {
             @Override
-            public void onAnimationEnd(Animator animation, boolean canceled) {
-                super.onAnimationEnd(animation, canceled);
+            public void onAnimationEnd(Animator animation) {
                 dispatchCloseFinished(enter, exit);
                 mAnimatorSet = null;
 

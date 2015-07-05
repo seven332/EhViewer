@@ -20,24 +20,16 @@ import android.animation.Animator;
 
 public abstract class SimpleAnimatorListener implements Animator.AnimatorListener {
 
-    private boolean mCanceled;
-
     @Override
     public void onAnimationStart(Animator animation) {
-        mCanceled = false;
     }
 
     @Override
     public void onAnimationEnd(Animator animation) {
-        onAnimationEnd(animation, mCanceled);
-    }
-
-    public void onAnimationEnd(Animator animation, boolean canceled) {
     }
 
     @Override
     public void onAnimationCancel(Animator animation) {
-        mCanceled = true;
     }
 
     @Override

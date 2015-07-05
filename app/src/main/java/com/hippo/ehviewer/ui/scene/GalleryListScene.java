@@ -614,8 +614,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
                 va.setDuration(ANIMATE_TIME);
                 va.addListener(new SimpleAnimatorListener() {
                     @Override
-                    public void onAnimationEnd(Animator animation, boolean canceled) {
-                        super.onAnimationEnd(animation, canceled);
+                    public void onAnimationEnd(Animator animation) {
                         mSearchBarMoveAnimator = null;
                     }
                 });
@@ -676,8 +675,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
             va.setDuration(ANIMATE_TIME);
             va.addListener(new SimpleAnimatorListener() {
                 @Override
-                public void onAnimationEnd(Animator animation, boolean canceled) {
-                    super.onAnimationEnd(animation, canceled);
+                public void onAnimationEnd(Animator animation) {
                     mSearchBarMoveAnimator = null;
                 }
             });

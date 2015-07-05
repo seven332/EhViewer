@@ -66,6 +66,7 @@ import java.util.List;
 
 import static com.hippo.ehviewer.R.id.no_tags;
 
+// TODO Use RecyclerView instead of ScrollView. It will improve swipe horizontally and animation
 public class GalleryDetailScene extends Scene implements View.OnClickListener,
         AccurateClick.OnAccurateClickListener {
 
@@ -419,6 +420,8 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
             return tv;
         }
     }
+
+    public static boolean AAA = false;
 
     private class EhDetailListener extends EhClient.OnGetGalleryDetailListener {
 

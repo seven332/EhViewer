@@ -89,8 +89,7 @@ public class SimpleCurtain extends Curtain {
                     }
 
                     @Override
-                    public void onAnimationEnd(Animator animation, boolean canceled) {
-                        super.onAnimationEnd(animation, canceled);
+                    public void onAnimationEnd(Animator animation) {
                         dispatchOpenFinished(enter, exit);
                         hideSceneOnOpen(exit);
                         mAnimator = null;
@@ -137,8 +136,7 @@ public class SimpleCurtain extends Curtain {
         animator.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
         animator.addListener(new SimpleAnimatorListener() {
             @Override
-            public void onAnimationEnd(Animator animation, boolean canceled) {
-                super.onAnimationEnd(animation, canceled);
+            public void onAnimationEnd(Animator animation) {
                 dispatchCloseFinished(enter, exit);
                 mAnimator = null;
             }

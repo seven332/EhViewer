@@ -109,18 +109,9 @@ public class ViewTransition {
         oa1.setDuration(ANIMATE_TIME);
         oa1.addListener(new SimpleAnimatorListener() {
             @Override
-            public void onAnimationCancel(Animator animation) {
-                super.onAnimationCancel(animation);
+            public void onAnimationEnd(Animator animation) {
+                ViewUtils.setVisibility(hiddenView, View.GONE);
                 mAnimator1 = null;
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation, boolean canceled) {
-                super.onAnimationEnd(animation, canceled);
-                if (!canceled) {
-                    ViewUtils.setVisibility(hiddenView, View.GONE);
-                    mAnimator1 = null;
-                }
             }
         });
         oa1.start();
@@ -131,17 +122,8 @@ public class ViewTransition {
         oa2.setDuration(ANIMATE_TIME);
         oa2.addListener(new SimpleAnimatorListener() {
             @Override
-            public void onAnimationCancel(Animator animation) {
-                super.onAnimationCancel(animation);
+            public void onAnimationEnd(Animator animation) {
                 mAnimator2 = null;
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation, boolean canceled) {
-                super.onAnimationEnd(animation, canceled);
-                if (!canceled) {
-                    mAnimator2 = null;
-                }
             }
         });
         oa2.start();
