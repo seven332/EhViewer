@@ -119,6 +119,10 @@ public abstract class Scene {
         return mSceneView;
     }
 
+    public int getSceneCount() {
+        return mSceneManager.getSceneCount();
+    }
+
     public void startScene(@NonNull Class sceneClass) {
         mSceneManager.startScene(sceneClass, null, null);
     }
@@ -140,7 +144,7 @@ public abstract class Scene {
         mState = state;
     }
 
-    protected SceneView createSceneView(Context context) {
+    SceneView createSceneView(Context context) {
         return new SceneView(context);
     }
 

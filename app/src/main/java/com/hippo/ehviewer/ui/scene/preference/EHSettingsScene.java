@@ -55,7 +55,7 @@ public final class EHSettingsScene extends PreferenceScene {
 
         ValueChangeListener valueChangeListener = new ValueChangeListener();
 
-        ListPreference sourcePreference = new ListPreference(KEY_EH_SOURCE,
+        ListPreference sourcePreference = new ListPreference(this, KEY_EH_SOURCE,
                 resources.getString(R.string.settings_eh_source_title), null);
         sourcePreference.setKeys(resources.getStringArray(R.array.settings_eh_source_entries));
         sourcePreference.setValues(resources.getIntArray(R.array.settings_eh_source_entry_values));

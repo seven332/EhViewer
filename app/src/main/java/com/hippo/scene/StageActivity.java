@@ -67,7 +67,7 @@ public abstract class StageActivity extends StatsActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        if (mSceneManager.getSceneSize() == 0) {
+        if (mSceneManager.getSceneCount() == 0) {
             // Remove this SceneManager
             SceneApplication.removeSceneManager(this, mSceneManager);
         }
@@ -142,7 +142,7 @@ public abstract class StageActivity extends StatsActivity {
      */
     @Override
     public void finish() {
-        if (mSceneManager.getSceneSize() == 0) {
+        if (mSceneManager.getSceneCount() == 0) {
             super.finish();
         }
     }

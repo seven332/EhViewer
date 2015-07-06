@@ -38,6 +38,7 @@ import android.widget.TextView;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
 import com.hippo.util.UiUtils;
 import com.hippo.util.ViewUtils;
@@ -297,9 +298,10 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
         } else if (v == mSearchTagHelp) {
             int[] center = new int [2];
             ViewUtils.getCenterInAncestor(mSearchTagHelp, center, R.id.stage);
+
             new SimpleDialog.Builder(getContext()).setTitle(R.string.search_specify_tag)
                     .setMessage(R.string.search_tag_help)
-                    .setStartPoint(center[0], center[1]).show();
+                    .setStartPoint(center[0], center[1]).show(mHelper.getScene());
         }
     }
 
@@ -386,5 +388,7 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
         void onChangeSearchMode();
 
         void onRequestSelectImage();
+
+        Scene getScene();
     }
 }

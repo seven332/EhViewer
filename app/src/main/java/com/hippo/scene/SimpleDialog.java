@@ -419,24 +419,15 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
             return this;
         }
 
-        public @NonNull SimpleDialog build() {
+        public @NonNull SimpleDialog show(Scene scene) {
             // Avoid memory leak
             mContext = null;
 
-            SimpleDialog dialog = new SimpleDialog();
+            SimpleDialog dialog = (SimpleDialog) SceneDialog.createSceneDialog(scene, SimpleDialog.class);
             dialog.setBuilder(this);
+            dialog.show(new SimpleDialogCurtain(mStartX, mStartY));
+
             return dialog;
-        }
-
-        public void show() {
-            show(null);
-        }
-
-        public void show(Curtain curtain) {
-            if (curtain == null) {
-                curtain = new SimpleDialogCurtain(mStartX, mStartY);
-            }
-            build().show(curtain);
         }
     }
 

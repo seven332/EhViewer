@@ -20,18 +20,23 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
 import com.hippo.ehviewer.util.Config;
+import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
 
 // TODO show current value as summary
 public class ListPreference extends Preference {
+
+    private Scene mScene;
 
     private String[] mKeys;
     private int[] mValues;
 
     private int mDefaultValue;
 
-    public ListPreference(String key, String title, String summary) {
+    public ListPreference(Scene scene, String key, String title, String summary) {
         super(key, title, summary);
+
+        mScene = scene;
     }
 
     public void setKeys(String[] keys) {
@@ -83,7 +88,7 @@ public class ListPreference extends Preference {
     @Override
     public boolean onClick(RecyclerView.ViewHolder viewHolder, int x, int y) {
         if (!super.onClick(viewHolder, x, y)) {
-            new SimpleDialog.Builder(viewHolder.itemView.getContext())
+            new SimpleDialog.Builder(mScene.getStageActivity())
                     .setTitle(getTitle())
                     .setSingleChoiceItems(mKeys, getValuePosition(), null)
                     .setStartPoint(x, y)
@@ -97,7 +102,7 @@ public class ListPreference extends Preference {
                                 }
                             }
                         }
-                    }).show();
+                    }).show(mScene);
         }
         return true;
     }

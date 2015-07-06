@@ -31,7 +31,8 @@
             android:configChanges="screenSize|uiMode"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Content"
-            android:windowSoftInputMode="stateAlwaysHidden">
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:launchMode="singleTask">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

@@ -99,6 +99,11 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
     private final static int FAB_STATE_NORMAL = 0;
     private final static int FAB_STATE_SEARCH = 1;
 
+    private static final int BACK_PRESSED_INTERVAL = 2000;
+
+    // Double click back exit
+    private long mPressBackTime = 0;
+
     private ContentActivity mActivity;
     private Resources mResources;
     private SearchDatabase mSearchDatabase;
@@ -477,7 +482,14 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         } else {
             switch (mState) {
                 case STATE_NORMAL:
-                    super.onBackPressed();
+                    long time = System.currentTimeMillis();
+                    if (getSceneCount() == 1 && time - mPressBackTime > BACK_PRESSED_INTERVAL) {
+                        // It is the last scene
+                        mPressBackTime = time;
+                        Toast.makeText(getStageActivity(), "Press twice to exit", Toast.LENGTH_SHORT).show();
+                    } else {
+                        super.onBackPressed();
+                    }
                     break;
                 case STATE_SIMPLE_SEARCH:
                     setState(STATE_NORMAL);
@@ -500,11 +512,11 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
     public void showGoToDialog() {
         int[] center = new int[2];
         ViewUtils.getCenterInAncestor(mGoToFab, center, R.id.stage);
-        new SimpleDialog.Builder(mActivity).setTitle(R.string._goto)
+        new SimpleDialog.Builder(getStageActivity()).setTitle(R.string._goto)
                 .setCustomView(R.layout.dialog_go_to, mGoToCreateCustomViewListener)
                 .setOnButtonClickListener(mGoToButtonClickListener)
                 .setPositiveButton(android.R.string.ok)
-                .setStartPoint(center[0], center[1]).show();
+                .setStartPoint(center[0], center[1]).show(this);
     }
 
     @Override
@@ -712,6 +724,11 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
     @Override
     public void onRequestSelectImage() {
         // TODO
+    }
+
+    @Override
+    public Scene getScene() {
+        return this;
     }
 
     @Override

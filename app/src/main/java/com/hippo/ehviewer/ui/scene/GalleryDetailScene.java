@@ -482,7 +482,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
                             public void onClose(SimpleDialog dialog, boolean cancel) {
                                 finish();
                             }
-                        }).show();
+                        }).show(GalleryDetailScene.this);
             }
         }
     }
@@ -532,7 +532,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
                             mPreviewLayout.selectPreviewAt(which);
                             return true;
                         }
-                    }).show();
+                    }).show(GalleryDetailScene.this);
         }
     }
 }

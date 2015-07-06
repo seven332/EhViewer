@@ -27,4 +27,8 @@ public abstract class SceneDialog extends Scene {
     public void show(@Nullable Curtain curtain) {
         mSceneManager.showDialog(this, curtain);
     }
+
+    protected static Scene createSceneDialog(Scene scene, Class clazz) {
+        return scene.mSceneManager.createSceneByClass(clazz);
+    }
 }

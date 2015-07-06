@@ -125,7 +125,9 @@ public class SceneManager {
 
     Scene createSceneByClass(@NonNull Class sceneClass) {
         try {
-            return (Scene) sceneClass.newInstance();
+            Scene scene = (Scene) sceneClass.newInstance();
+            scene.setSceneManager(this);
+            return scene;
         } catch (InstantiationException e) {
             throw new IllegalStateException("Can't instance " + sceneClass.getName());
         } catch (IllegalAccessException e) {
@@ -154,7 +156,6 @@ public class SceneManager {
         }
 
         Scene scene = createSceneByClass(sceneClass);
-        scene.setSceneManager(this);
         scene.setAnnouncer(announcer);
         scene.setCurtain(curtain);
 
@@ -343,7 +344,7 @@ public class SceneManager {
         return mSceneStack;
     }
 
-    int getSceneSize() {
+    int getSceneCount() {
         return mSceneStack.size();
     }
 
