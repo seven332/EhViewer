@@ -256,7 +256,7 @@ public class NormalPreviewSet extends PreviewSet {
             int index2 = imageUrl.lastIndexOf('.');
 
             try {
-                imageIndex = Integer.parseInt(imageUrl.substring(index1 + 1, index2)) - 1;
+                imageIndex = Integer.parseInt(imageUrl.substring(index1 + 1, index2));
             } catch (Exception e) {
                 Log.w("Can't get normal preview index", e);
                 imageIndex = -1;
