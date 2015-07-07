@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -17,6 +16,7 @@ import com.hippo.util.ViewUtils;
 import java.util.HashSet;
 import java.util.Set;
 
+// Do not ues it when Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2
 public class RippleCurtain extends Curtain {
 
     private static final String TAG = RippleCurtain.class.getSimpleName();
@@ -46,11 +46,6 @@ public class RippleCurtain extends Curtain {
         final SceneView enterView = enter.getSceneView();
         enterView.setStartPoint(mStartX, mStartY);
         ViewUtils.setVisibility(enterView, View.INVISIBLE);
-
-        // Canvas.clipPath() not work for pre-JELLY_BEAN_MR2 when hardware accelerated
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            ViewUtils.removeHardwareAccelerationSupport(enterView);
-        }
 
         enterView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -92,11 +87,6 @@ public class RippleCurtain extends Curtain {
                         dispatchOpenFinished(enter, exit);
                         hideSceneOnOpen(exit);
                         mAnimatorSet = null;
-
-                        // Canvas.clipPath() not work for pre-JELLY_BEAN_MR2 when hardware accelerated
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                            ViewUtils.addHardwareAccelerationSupport(enterView);
-                        }
                     }
                 });
                 mAnimatorSet.start();
@@ -113,11 +103,6 @@ public class RippleCurtain extends Curtain {
         final SceneView exitView = exit.getSceneView();
         exitView.setStartPoint(mStartX, mStartY);
 
-        // Canvas.clipPath() not work for pre-JELLY_BEAN_MR2 when hardware accelerated
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            ViewUtils.removeHardwareAccelerationSupport(exitView);
-        }
-
         PropertyValuesHolder circlePercentPvh = PropertyValuesHolder.ofFloat("circlePercent", 1f, 0f);
         ObjectAnimator animFrame = ObjectAnimator.ofPropertyValuesHolder(exitView, circlePercentPvh);
         animFrame.setDuration(ANIMATE_TIME);
@@ -130,11 +115,6 @@ public class RippleCurtain extends Curtain {
             public void onAnimationEnd(Animator animation) {
                 dispatchCloseFinished(enter, exit);
                 mAnimatorSet = null;
-
-                // Canvas.clipPath() not work for pre-JELLY_BEAN_MR2 when hardware accelerated
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    ViewUtils.addHardwareAccelerationSupport(exitView);
-                }
             }
         });
         mAnimatorSet.start();

@@ -162,7 +162,6 @@ public class SearchBar extends CardView implements View.OnClickListener,
             }
         });
 
-        // TODO get source from config
         setSource(Config.getEhSource());
     }
 

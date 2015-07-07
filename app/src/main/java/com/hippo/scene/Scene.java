@@ -60,7 +60,6 @@ public abstract class Scene {
 
     private @Nullable Announcer mAnnouncer;
 
-    @SuppressWarnings("deprecation")
     private SceneView mSceneView;
 
     private int mBackgroundColor = 0xffeeeeee; // TODO Need a better to set background color
@@ -184,8 +183,13 @@ public abstract class Scene {
         if (mSceneView == null) {
             // Not call setContentView in onCreate, create scene view by ourself
             mSceneView = createSceneView(getStageActivity());
-            initBackground(mSceneView);
         }
+
+        mSceneView.setBackgroundColor(mBackgroundColor);
+
+        mSceneView.setFocusable(true);
+        mSceneView.setFocusableInTouchMode(true);
+        mSceneView.requestFocus();
 
         // Make sure scene view is attach from stage
         attachToStage();
@@ -212,15 +216,15 @@ public abstract class Scene {
     }
 
     void destroy(boolean die) {
-        // Make sure soft key broad is hidden
-        InputMethodManager imm = (InputMethodManager) getStageActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getSceneView().getWindowToken(), 0);
-
         onDestroy(die);
     }
 
     void die(boolean keepView) {
         onDie();
+
+        // Make sure soft key broad is hidden
+        InputMethodManager imm = (InputMethodManager) getStageActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getSceneView().getWindowToken(), 0);
 
         if (!keepView) {
             detachFromeStage();
@@ -237,6 +241,8 @@ public abstract class Scene {
 
     void resume() {
         getSceneView().setEnableTouch(true);
+
+        mSceneView.requestFocus();
 
         onResume();
     }
@@ -332,7 +338,6 @@ public abstract class Scene {
     protected void setContentView(int resId) {
         StageActivity sa = getStageActivity();
         mSceneView = createSceneView(sa);
-        initBackground(mSceneView);
         mSceneView.setBackgroundColor(mBackgroundColor);
         sa.getLayoutInflater().inflate(resId, mSceneView);
     }
@@ -340,16 +345,8 @@ public abstract class Scene {
     protected void setContentView(View view) {
         StageActivity sa = getStageActivity();
         mSceneView = createSceneView(sa);
-        initBackground(mSceneView);
         mSceneView.addView(view, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-    }
-
-    private void initBackground(@NonNull View bg) {
-        bg.setBackgroundColor(mBackgroundColor);
-        bg.setFocusable(true);
-        bg.setFocusableInTouchMode(true);
-        bg.requestFocus();
     }
 
     protected void onNewAnnouncer(Announcer announcer) {

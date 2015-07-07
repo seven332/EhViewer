@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.content.res.Resources;
+import android.support.v4.content.ContextCompat;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.ContentActivity;
@@ -67,7 +68,7 @@ public final class MainSettingsScene extends PreferenceHeaderScene {
     private PreferenceHeader newPreferenceHeader(int drawableId, int titleId, Class clazz) {
         Resources resources = getStageActivity().getResources();
         return new PreferenceHeader(
-                resources.getDrawable(drawableId),
+                ContextCompat.getDrawable(getStageActivity(), drawableId),
                 resources.getString(titleId),
                 clazz
         );

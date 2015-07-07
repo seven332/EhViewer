@@ -44,15 +44,10 @@ public class CardButton extends Button implements CardViewDelegate {
     }
 
     @Override
-    public void setPadding(int left, int top, int right, int bottom) {
+    public void setCardPadding(int left, int top, int right, int bottom) {
         if (mCardHelper != null) {
             mCardHelper.setPadding(left, top, right, bottom);
         }
-    }
-
-    @Override
-    public void setRawPadding(int left, int top, int right, int bottom) {
-        super.setPadding(left, top, right, bottom);
     }
 
     @SuppressWarnings("deprecation")

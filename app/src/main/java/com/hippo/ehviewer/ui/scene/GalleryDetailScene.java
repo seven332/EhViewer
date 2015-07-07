@@ -421,8 +421,6 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         }
     }
 
-    public static boolean AAA = false;
-
     private class EhDetailListener extends EhClient.OnGetGalleryDetailListener {
 
         @Override

@@ -42,7 +42,6 @@
         android:layout_marginLeft="@dimen/search_bar_padding_horizontal"
         android:layout_marginRight="@dimen/search_bar_padding_horizontal"
         android:layout_marginTop="@dimen/search_bar_padding_vertical"
-        auto:cardElevation="4dp"
         auto:forceNoElevation="true"/>
 
     <com.hippo.widget.FabLayout

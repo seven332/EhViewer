@@ -17,7 +17,6 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:auto="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -85,62 +84,8 @@
             </LinearLayout>
 
             <!-- Header -->
-            <RelativeLayout
-                android:id="@+id/header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/theme_primary">
-
-                <com.hippo.ehviewer.widget.LoadImageView
-                    android:id="@+id/thumb"
-                    android:layout_width="@dimen/gallery_detail_thumb_width"
-                    android:layout_height="@dimen/gallery_detail_thumb_height"
-                    android:layout_marginLeft="@dimen/keyline_margin"
-                    android:layout_marginTop="@dimen/keyline_margin"
-                    android:layout_marginBottom="@dimen/gallery_detail_thumb_margin_bottom"
-                    tools:ignore="RtlHardcoded"/>
-
-                <TextView
-                    android:id="@+id/title"
-                    style="@style/Text.Gallery.Detail.Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/thumb"
-                    android:layout_alignTop="@id/thumb"
-                    android:layout_marginLeft="@dimen/keyline_margin"
-                    android:layout_marginRight="@dimen/keyline_margin"
-                    tools:ignore="RtlHardcoded"/>
-
-                <TextView
-                    android:id="@+id/uploader"
-                    style="@style/Text.Gallery.Detail.Subtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/title"
-                    android:layout_below="@id/title"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginRight="@dimen/keyline_margin"
-                    tools:ignore="RtlHardcoded"/>
-
-                <TextView
-                    android:id="@+id/category"
-                    style="@style/CardMessage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/title"
-                    android:layout_below="@id/uploader"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginRight="@dimen/keyline_margin"
-                    android:paddingBottom="2dp"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:paddingTop="2dp"
-                    android:background="@android:color/white"
-                    android:textAllCaps="true"
-                    android:textStyle="bold"
-                    tools:ignore="RtlHardcoded"/>
-
-            </RelativeLayout>
+            <include
+                layout="@layout/gallery_detail_header"/>
 
             <!-- ActionCard -->
             <com.hippo.widget.CardLinearLayout

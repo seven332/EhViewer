@@ -21,6 +21,7 @@ import android.content.Context;
 import android.os.Build;
 import android.webkit.CookieSyncManager;
 
+import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.ehviewer.network.EhOkHttpClient;
 import com.hippo.ehviewer.util.Config;
@@ -29,10 +30,12 @@ import com.hippo.util.Log;
 import com.hippo.vectorold.content.VectorContext;
 
 import java.io.File;
+import java.io.IOException;
 
 public class EhApplication extends SceneApplication {
 
     private Conaco mConaco;
+    private SimpleDiskCache mReadcache;
 
     @Override
     public void onCreate() {
@@ -52,6 +55,12 @@ public class EhApplication extends SceneApplication {
         conacoBuilder.diskCacheMaxSize = 50 * 1024 * 1024;
         conacoBuilder.httpClient = EhOkHttpClient.getInstance();
         mConaco = conacoBuilder.build();
+
+        try {
+            mReadcache = new SimpleDiskCache(new File(getCacheDir(), "readCache"), 200 * 1024 * 1024);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private int getMemoryCacheMaxSize() {
@@ -78,5 +87,10 @@ public class EhApplication extends SceneApplication {
     public static Conaco getConaco(Context context) {
         EhApplication application = (EhApplication) context.getApplicationContext();
         return application.mConaco;
+    }
+
+    public static SimpleDiskCache getReadCache(Context context) {
+        EhApplication application = (EhApplication) context.getApplicationContext();
+        return application.mReadcache;
     }
 }
