@@ -23,9 +23,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.Constants;
+import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
-import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.client.EhRequest;
+import com.hippo.ehviewer.util.Settings;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Scene;
 import com.hippo.util.Messenger;
@@ -39,17 +41,22 @@ public final class SignInScene extends Scene implements View.OnClickListener,
     private TextView mSignUp;
     private TextView mSignIn;
 
-    private EhClient.OnSignInListener mSignInListener = new EhClient.OnSignInListener() {
+    private EhClient.EhListener<String> mSignInListener = new EhClient.EhListener<String>() {
         @Override
         public void onSuccess(String displayname) {
-            Config.putSignIn(true);
-            Config.putDisplayName(displayname);
+            Settings.putSignIn(true);
+            Settings.putDisplayName(displayname);
             Messenger.getInstance().notify(Constants.MESSENGER_ID_SIGN_IN_OR_OUT, displayname);
         }
 
         @Override
         public void onFailure(Exception e) {
             e.printStackTrace();
+        }
+
+        @Override
+        public void onCanceled() {
+
         }
     };
 
@@ -88,7 +95,13 @@ public final class SignInScene extends Scene implements View.OnClickListener,
         if (v == mSignIn) {
             String username = mUsername.getText().toString();
             String password = mPassword.getText().toString();
-            EhClient.getInstance().signIn(username, password, mSignInListener);
+            EhClient client = EhApplication.getEhClient(getStageActivity());
+
+            EhRequest request = new EhRequest();
+            request.setMethod(EhClient.METHOD_SIGN_IN);
+            request.setEhListener(mSignInListener);
+            request.setArgs(username, password);
+            client.execute(request);
         }
     }
 

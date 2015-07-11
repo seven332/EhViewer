@@ -30,7 +30,7 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Settings;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.Messenger;
 import com.hippo.widget.DrawerListView;
@@ -135,11 +135,11 @@ public class DrawerLeftPanel extends LinearLayout implements FitPaddingImpl {
         mUserPanelOriginalPaddingTop = mUserPanel.getPaddingTop();
         mDrawerListViewOriginalPaddingBottom = mDrawerListView.getPaddingBottom();
 
-        mSignIn = Config.getSignIn();
+        mSignIn = Settings.getSignIn();
         if (mSignIn) {
             // TODO
             mAvatar.setImageResource(DEFAULT_AVATAR_ID);
-            mUsename.setText(Config.getDisplayName());
+            mUsename.setText(Settings.getDisplayName());
             mAction.setText(getContext().getString(R.string.signout));
         } else {
             mAvatar.setImageResource(DEFAULT_AVATAR_ID);

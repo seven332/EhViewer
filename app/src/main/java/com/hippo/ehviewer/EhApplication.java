@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2015 Hippo Seven
+ * Copyright 2015 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,13 +18,13 @@ package com.hippo.ehviewer;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.os.Build;
-import android.webkit.CookieSyncManager;
 
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
-import com.hippo.ehviewer.network.EhOkHttpClient;
-import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.client.EhClient;
+import com.hippo.ehviewer.network.EhHttpClient;
+import com.hippo.ehviewer.util.Settings;
+import com.hippo.httpclient.HttpClient;
 import com.hippo.scene.SceneApplication;
 import com.hippo.util.Log;
 import com.hippo.vectorold.content.VectorContext;
@@ -34,6 +34,8 @@ import java.io.IOException;
 
 public class EhApplication extends SceneApplication {
 
+    private HttpClient mHttpClient;
+    private EhClient mEhClient;
     private Conaco mConaco;
     private SimpleDiskCache mReadcache;
 
@@ -41,11 +43,10 @@ public class EhApplication extends SceneApplication {
     public void onCreate() {
         super.onCreate();
 
-        Config.initialize(this);
+        Settings.initialize(this);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            CookieSyncManager.createInstance(this);
-        }
+        mHttpClient = new EhHttpClient(this);
+        mEhClient = new EhClient(mHttpClient);
 
         Conaco.Builder conacoBuilder = new Conaco.Builder();
         conacoBuilder.hasMemoryCache = true;
@@ -53,7 +54,7 @@ public class EhApplication extends SceneApplication {
         conacoBuilder.hasDiskCache = true;
         conacoBuilder.diskCacheDir = new File(getCacheDir(), "conaco");
         conacoBuilder.diskCacheMaxSize = 50 * 1024 * 1024;
-        conacoBuilder.httpClient = EhOkHttpClient.getInstance();
+        conacoBuilder.httpClient = mHttpClient;
         mConaco = conacoBuilder.build();
 
         try {
@@ -82,6 +83,16 @@ public class EhApplication extends SceneApplication {
         if (level == TRIM_MEMORY_UI_HIDDEN) {
             Log.d("Application hiden");
         }
+    }
+
+    public static HttpClient getHttpClient(Context context) {
+        EhApplication application = (EhApplication) context.getApplicationContext();
+        return application.mHttpClient;
+    }
+
+    public static EhClient getEhClient(Context context) {
+        EhApplication application = (EhApplication) context.getApplicationContext();
+        return application.mEhClient;
     }
 
     public static Conaco getConaco(Context context) {

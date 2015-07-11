@@ -31,7 +31,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
 import com.hippo.ehviewer.ui.scene.MainSettingsScene;
 import com.hippo.ehviewer.ui.scene.SignInScene;
-import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Settings;
 import com.hippo.ehviewer.widget.DrawerLeftPanel;
 import com.hippo.ehviewer.widget.FitStageLayout;
 import com.hippo.scene.Announcer;
@@ -130,7 +130,7 @@ public final class ContentActivity extends StageActivity
 
     @Override
     protected boolean isShowStats() {
-        return Config.getShowApplicationStats();
+        return Settings.getShowApplicationStats();
     }
 
     @SuppressLint("RtlHardcoded")
@@ -242,7 +242,7 @@ public final class ContentActivity extends StageActivity
 
     @Override
     public void onClickSignOut() {
-        Config.putSignIn(false);
+        Settings.putSignIn(false);
         Messenger.getInstance().notify(Constants.MESSENGER_ID_SIGN_IN_OR_OUT, null);
     }
 }

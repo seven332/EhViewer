@@ -51,8 +51,8 @@ import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.client.EhClient;
-import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.client.EhUrl;
+import com.hippo.ehviewer.util.Settings;
 import com.hippo.util.MathUtils;
 import com.hippo.util.Messenger;
 import com.hippo.util.ViewUtils;
@@ -162,7 +162,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             }
         });
 
-        setSource(Config.getEhSource());
+        setSource(Settings.getEhSource());
     }
 
     @Override
@@ -192,7 +192,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             Drawable searchImage = resources.getDrawable(R.drawable.ic_search);
             SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
             ssb.append(String.format(resources.getString(R.string.search_bar_hint),
-                    EhClient.getReadableHost(source)));
+                    EhUrl.getReadableHost(source)));
             int textSize = (int) (mEditText.getTextSize() * 1.25);
             searchImage.setBounds(0, 0, textSize, textSize);
             ssb.setSpan(new ImageSpan(searchImage), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

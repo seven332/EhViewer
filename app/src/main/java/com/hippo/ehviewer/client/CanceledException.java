@@ -16,7 +16,9 @@
 
 package com.hippo.ehviewer.client;
 
-public interface Cancellable {
+public class CanceledException extends EhException {
 
-    void cancel();
+    public CanceledException() {
+        super("CANCELED");
+    }
 }

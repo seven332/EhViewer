@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 import android.widget.TableLayout;
 
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.util.EhUtils;
+import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.util.Utils;
 import com.hippo.widget.CheckTextView;
 
@@ -86,16 +86,16 @@ public class CategoryTable extends TableLayout {
      * @param category target category
      */
     public void setCategory(int category) {
-        mDoujinshi.setChecked(!Utils.int2boolean(category & EhUtils.DOUJINSHI), false);
-        mManga.setChecked(!Utils.int2boolean(category & EhUtils.MANGA), false);
-        mArtistCG.setChecked(!Utils.int2boolean(category & EhUtils.ARTIST_CG), false);
-        mGameCG.setChecked(!Utils.int2boolean(category & EhUtils.GAME_CG), false);
-        mWestern.setChecked(!Utils.int2boolean(category & EhUtils.WESTERN), false);
-        mNonH.setChecked(!Utils.int2boolean(category & EhUtils.NON_H), false);
-        mImageSets.setChecked(!Utils.int2boolean(category & EhUtils.IMAGE_SET), false);
-        mCosplay.setChecked(!Utils.int2boolean(category & EhUtils.COSPLAY), false);
-        mAsianPorn.setChecked(!Utils.int2boolean(category & EhUtils.ASIAN_PORN), false);
-        mMisc.setChecked(!Utils.int2boolean(category & EhUtils.MISC), false);
+        mDoujinshi.setChecked(!Utils.int2boolean(category & EhConfig.DOUJINSHI), false);
+        mManga.setChecked(!Utils.int2boolean(category & EhConfig.MANGA), false);
+        mArtistCG.setChecked(!Utils.int2boolean(category & EhConfig.ARTIST_CG), false);
+        mGameCG.setChecked(!Utils.int2boolean(category & EhConfig.GAME_CG), false);
+        mWestern.setChecked(!Utils.int2boolean(category & EhConfig.WESTERN), false);
+        mNonH.setChecked(!Utils.int2boolean(category & EhConfig.NON_H), false);
+        mImageSets.setChecked(!Utils.int2boolean(category & EhConfig.IMAGE_SET), false);
+        mCosplay.setChecked(!Utils.int2boolean(category & EhConfig.COSPLAY), false);
+        mAsianPorn.setChecked(!Utils.int2boolean(category & EhConfig.ASIAN_PORN), false);
+        mMisc.setChecked(!Utils.int2boolean(category & EhConfig.MISC), false);
     }
 
     /**
@@ -104,16 +104,16 @@ public class CategoryTable extends TableLayout {
      */
     public int getCategory() {
         int category = 0;
-        if (!mDoujinshi.isChecked()) category |= EhUtils.DOUJINSHI;
-        if (!mManga.isChecked()) category |= EhUtils.MANGA;
-        if (!mArtistCG.isChecked()) category |= EhUtils.ARTIST_CG;
-        if (!mGameCG.isChecked()) category |= EhUtils.GAME_CG;
-        if (!mWestern.isChecked()) category |= EhUtils.WESTERN;
-        if (!mNonH.isChecked()) category |= EhUtils.NON_H;
-        if (!mImageSets.isChecked()) category |= EhUtils.IMAGE_SET;
-        if (!mCosplay.isChecked()) category |= EhUtils.COSPLAY;
-        if (!mAsianPorn.isChecked()) category |= EhUtils.ASIAN_PORN;
-        if (!mMisc.isChecked()) category |= EhUtils.MISC;
+        if (!mDoujinshi.isChecked()) category |= EhConfig.DOUJINSHI;
+        if (!mManga.isChecked()) category |= EhConfig.MANGA;
+        if (!mArtistCG.isChecked()) category |= EhConfig.ARTIST_CG;
+        if (!mGameCG.isChecked()) category |= EhConfig.GAME_CG;
+        if (!mWestern.isChecked()) category |= EhConfig.WESTERN;
+        if (!mNonH.isChecked()) category |= EhConfig.NON_H;
+        if (!mImageSets.isChecked()) category |= EhConfig.IMAGE_SET;
+        if (!mCosplay.isChecked()) category |= EhConfig.COSPLAY;
+        if (!mAsianPorn.isChecked()) category |= EhConfig.ASIAN_PORN;
+        if (!mMisc.isChecked()) category |= EhConfig.MISC;
         return category;
     }
 

@@ -24,7 +24,7 @@ import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Settings;
 
 public class SwitchPreference extends Preference {
 
@@ -59,7 +59,7 @@ public class SwitchPreference extends Preference {
     }
 
     private boolean getValue() {
-        return Config.getBoolean(getKey(), mDefaultValue);
+        return Settings.getBoolean(getKey(), mDefaultValue);
     }
 
     private SwitchCompat getSwitch(RecyclerView.ViewHolder viewHolder) {
@@ -68,7 +68,7 @@ public class SwitchPreference extends Preference {
 
     @Override
     protected void storeValue(Object newValue) {
-        Config.putBoolean(getKey(), (Boolean) newValue);
+        Settings.putBoolean(getKey(), (Boolean) newValue);
     }
 
     @Override

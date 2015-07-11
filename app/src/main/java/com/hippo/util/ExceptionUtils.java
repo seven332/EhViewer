@@ -23,7 +23,7 @@ import android.support.annotation.Nullable;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhException;
-import com.hippo.network.ResponseCodeException;
+import com.hippo.httpclient.ResponseCodeException;
 
 import org.apache.http.conn.ConnectTimeoutException;
 

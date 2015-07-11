@@ -28,22 +28,27 @@ import java.util.List;
 
 public class PopularParser {
 
-    public List<GalleryInfo> galleryInfoList;
-    public long timeStamp;
+    public static class Result {
 
-    public void parse(String body) throws Exception {
-        galleryInfoList = new ArrayList<>();
+        public long timeStamp;
+        public List<GalleryInfo> galleryInfos;
+    }
+
+    public static Result parse(String body) throws Exception {
+        Result result = new Result();
         JSONObject js = new JSONObject(body);
-        js = js.getJSONObject("popular");
 
+        js = js.getJSONObject("popular");
         if (!js.has("galleries")) {
             if (js.has("error")) {
                 throw new EhException(js.getString("error"));
             } else {
-                throw new EhException("Parser error"); // TODO
+                throw new ParseException("Can't parse popular", body);
             }
         }
 
+        List<GalleryInfo> list = new ArrayList<>();
+        result.galleryInfos = list;
         JSONArray ja = js.getJSONArray("galleries");
         for (int i = 0; i < ja.length(); i++) {
             JSONObject j = ja.getJSONObject(i);
@@ -57,13 +62,15 @@ public class PopularParser {
             gi.uploader = j.getString("uploader");
             gi.rating = Float.parseFloat(j.getString("rating"));
             gi.generateSLang();
-            galleryInfoList.add(gi);
+            list.add(gi);
         }
 
         if (js.has("time")) {
-            timeStamp = js.getLong("time");
+            result.timeStamp = js.getLong("time");
         } else {
-            timeStamp = -1;
+            result.timeStamp = -1;
         }
+
+        return result;
     }
 }

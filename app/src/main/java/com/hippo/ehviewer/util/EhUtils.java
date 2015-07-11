@@ -18,6 +18,8 @@ package com.hippo.ehviewer.util;
 
 import android.graphics.Color;
 
+import com.hippo.ehviewer.client.EhConfig;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -29,16 +31,6 @@ public final class EhUtils {
     public static final String EH_DOWNLOAD_FILENAME = ".ehviewer";
 
     public static final int NONE = -1; // Use it for homepage
-    public static final int MISC = 0x1;
-    public static final int DOUJINSHI = 0x2;
-    public static final int MANGA = 0x4;
-    public static final int ARTIST_CG = 0x8;
-    public static final int GAME_CG = 0x10;
-    public static final int IMAGE_SET = 0x20;
-    public static final int COSPLAY = 0x40;
-    public static final int ASIAN_PORN = 0x80;
-    public static final int NON_H = 0x100;
-    public static final int WESTERN = 0x200;
     public static final int UNKNOWN = 0x400;
 
     public static final int BG_COLOR_DOUJINSHI = 0xfff44336;
@@ -54,16 +46,16 @@ public final class EhUtils {
     public static final int BG_COLOR_UNKNOWN = Color.BLACK;
 
     private static final int[] CATEGORY_VALUES = {
-            MISC,
-            DOUJINSHI,
-            MANGA,
-            ARTIST_CG,
-            GAME_CG,
-            IMAGE_SET,
-            COSPLAY,
-            ASIAN_PORN,
-            NON_H,
-            WESTERN,
+            EhConfig.MISC,
+            EhConfig.DOUJINSHI,
+            EhConfig.MANGA,
+            EhConfig.ARTIST_CG,
+            EhConfig.GAME_CG,
+            EhConfig.IMAGE_SET,
+            EhConfig.COSPLAY,
+            EhConfig.ASIAN_PORN,
+            EhConfig.NON_H,
+            EhConfig.WESTERN,
             UNKNOWN };
 
     private static final String[][] CATEGORY_STRINGS = {
@@ -102,25 +94,25 @@ public final class EhUtils {
 
     public static int getCategoryColor(int category) {
         switch (category) {
-            case DOUJINSHI:
+            case EhConfig.DOUJINSHI:
                 return BG_COLOR_DOUJINSHI;
-            case MANGA:
+            case EhConfig.MANGA:
                 return BG_COLOR_MANGA;
-            case ARTIST_CG:
+            case EhConfig.ARTIST_CG:
                 return BG_COLOR_ARTIST_CG;
-            case GAME_CG:
+            case EhConfig.GAME_CG:
                 return BG_COLOR_GAME_CG;
-            case WESTERN:
+            case EhConfig.WESTERN:
                 return BG_COLOR_WESTERN;
-            case NON_H:
+            case EhConfig.NON_H:
                 return BG_COLOR_NON_H;
-            case IMAGE_SET:
+            case EhConfig.IMAGE_SET:
                 return BG_COLOR_IMAGE_SET;
-            case COSPLAY:
+            case EhConfig.COSPLAY:
                 return BG_COLOR_COSPLAY;
-            case ASIAN_PORN:
+            case EhConfig.ASIAN_PORN:
                 return BG_COLOR_ASIAN_PORN;
-            case MISC:
+            case EhConfig.MISC:
                 return BG_COLOR_MISC;
             default:
                 return BG_COLOR_UNKNOWN;

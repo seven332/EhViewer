@@ -20,17 +20,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SignInParser {
-    public String displayname;
 
-    public boolean parse(String body) throws Exception {
+    public static String parse(String body) throws Exception {
         Pattern p;
         Matcher m;
 
         p = Pattern.compile("<p>You are now logged in as: (.+?)<br />");
         m = p.matcher(body);
         if (m.find()) {
-            displayname = m.group(1);
-            return true;
+            return m.group(1);
         } else {
             p = Pattern.compile("(?:<h4>The error returned was:</h4>\\s*<p>(.+?)</p>)"
                     + "|(?:<span class=\"postcolor\">(.+?)</span>)");

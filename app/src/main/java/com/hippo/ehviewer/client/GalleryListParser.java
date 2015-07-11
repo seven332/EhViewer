@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.client;
 
+import android.support.annotation.NonNull;
+
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.LofiGalleryInfo;
 import com.hippo.ehviewer.util.EhUtils;
@@ -29,99 +31,120 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GalleryListParser {
-    private static final String PARSE_MESSAGE = "Gallery list parser error";
 
-    private static final int DEFAULT_LIST_SIZE = 25;
+    public static class Result {
 
-    public static final int CURRENT_PAGE_IS_LAST = -1;
+        public static final int NOT_FOUND = 0;
 
-    /**
-     * If NOT FOUND, pageNum is 0.<br>
-     * For lofi, we can not get pages number,
-     * so pageNum is {@link java.lang.Integer#MAX_VALUE} when it is not the last page,
-     * pageNum is {@link #CURRENT_PAGE_IS_LAST} when it is the last page
-     */
-    public int pageNum;
+        public static final int CURRENT_PAGE_IS_LAST = -1;
 
-    public List<GalleryInfo> giList;
+        public static final int KEEP_LOADING = Integer.MAX_VALUE;
 
-    private void parse(String body) throws EhException {
-        Pattern p;
-        Matcher m;
+        /**
+         * If NOT FOUND, pageNum is 0.<br>
+         * For lofi, we can not get pages number,
+         * so pageNum is {@link java.lang.Integer#MAX_VALUE} when it is not the last page,
+         * pageNum is {@link #CURRENT_PAGE_IS_LAST} when it is the last page
+         */
+        public int pages;
+        public List<GalleryInfo> galleryInfos;
+    }
 
-        // Get page number
-        p = Pattern.compile("<a[^<>]+>([\\d]+)</a></td><td[^<>]+>(?:<a[^<>]+>)?&");
-        m = p.matcher(body);
-        if (m.find()) {
-            pageNum = Integer.parseInt(m.group(1));
-        } else if (body.contains("No hits found</p>")) {
-            pageNum = 0;
-        } else {
-            // Can not get page number
-            throw new EhException(PARSE_MESSAGE);
-        }
-
-        // Get gallery
-        giList = new ArrayList<>(DEFAULT_LIST_SIZE);
-
-        p = Pattern.compile("<td class=\"itdc\">(?:<a.+?>)?<img.+?alt=\"(.+?)\".+?/>(?:</a>)?</td>" // category
-                + "<td.+?>(.+?)</td>" // posted
-                + "<td.+?><div.+?><div.+?height:(\\d+)px; width:(\\d+)px\">"
-                + "(?:<img.+?src=\"(.+?)\".+?alt=\"(.+?)\" style.+?/>"
-                + "|init~([^<>\"~]+~[^<>\"~]+)~([^<>]+))" // thumb and title
-                + "</div>"
-                + ".+?"
-                + "<div class=\"it5\"><a href=\"([^<>\"]+)\"[^<>]+>(.+?)</a></div>" // url and title
-                + ".+?"
-                + "<div class=\"ir it4r\" style=\"([^<>\"]+)\">" // rating
-                + ".+?"
-                + "<td class=\"itu\"><div><a.+?>(.+?)</a>"); // uploader
-        m = p.matcher(body);
-        while (m.find()) {
-            GalleryInfo gi = new GalleryInfo();
-
-            gi.category = EhUtils.getCategory(m.group(1));
-            gi.posted = m.group(2);
-            gi.thumbHeight = Integer.parseInt(m.group(3));
-            gi.thumbWidth = Integer.parseInt(m.group(4));
-
-            if (m.group(5) == null) {
-                gi.thumb = Utils.unescapeXml("http://"
-                        + m.group(7).replace('~', '/'));
-                gi.title = Utils.unescapeXml(m.group(8));
-            } else {
-                gi.thumb = Utils.unescapeXml(m.group(5));
-                gi.title = Utils.unescapeXml(m.group(6));
+    public static Result parse(@NonNull String body, int source) throws Exception {
+        switch (source) {
+            default:
+            case EhUrl.SOURCE_G:
+            case EhUrl.SOURCE_EX: {
+                return parse(body);
             }
-
-            Pattern pattern = Pattern
-                    .compile("/(\\d+)/(\\w+)");
-            Matcher matcher = pattern.matcher(m.group(9));
-            if (matcher.find()) {
-                gi.gid = Integer.parseInt(matcher.group(1));
-                gi.token = matcher.group(2);
-            } else {
-                continue;
+            case EhUrl.SOURCE_LOFI: {
+                return parseLofi(body);
             }
-
-            gi.rating = Utils.parseFloatSafely(getRate(m.group(11)), Float.NaN);
-            gi.uploader = m.group(12);
-            gi.generateSLang();
-
-            giList.add(gi);
-        }
-
-        if (giList.size() == 0) {
-            throw new EhException(PARSE_MESSAGE);
         }
     }
 
-    private void parseLofi(String body) throws Exception {
+    private static Result parse(String body) throws EhException {
+        Result result = new Result();
         Pattern p;
         Matcher m;
 
-        // Get gallery
-        giList = new ArrayList<>(DEFAULT_LIST_SIZE);
+        // pages
+        p = Pattern.compile("<a[^<>]+>([\\d]+)</a></td><td[^<>]+>(?:<a[^<>]+>)?&");
+        m = p.matcher(body);
+        if (m.find()) {
+            result.pages = ParserUtils.parseInt(m.group(1));
+        } else if (body.contains("No hits found</p>")) {
+            result.pages = Result.NOT_FOUND;
+        } else {
+            // Can not get page number
+            throw new ParseException("Can't parse gallery list", body);
+        }
+
+        if (result.pages > 0) {
+            List<GalleryInfo> list = new ArrayList<>(25);
+            result.galleryInfos = list;
+
+            p = Pattern.compile("<td class=\"itdc\">(?:<a.+?>)?<img.+?alt=\"(.+?)\".+?/>(?:</a>)?</td>" // category
+                    + "<td.+?>(.+?)</td>" // posted
+                    + "<td.+?><div.+?><div.+?height:(\\d+)px; width:(\\d+)px\">"
+                    + "(?:<img.+?src=\"(.+?)\".+?alt=\"(.+?)\" style.+?/>"
+                    + "|init~([^<>\"~]+~[^<>\"~]+)~([^<>]+))" // thumb and title
+                    + "</div>"
+                    + ".+?"
+                    + "<div class=\"it5\"><a href=\"([^<>\"]+)\"[^<>]+>(.+?)</a></div>" // url and title
+                    + ".+?"
+                    + "<div class=\"ir it4r\" style=\"([^<>\"]+)\">" // rating
+                    + ".+?"
+                    + "<td class=\"itu\"><div><a.+?>(.+?)</a>"); // uploader
+            m = p.matcher(body);
+            while (m.find()) {
+                GalleryInfo gi = new GalleryInfo();
+
+                gi.category = EhUtils.getCategory(ParserUtils.trim(m.group(1)));
+                gi.posted = ParserUtils.trim(m.group(2));
+                gi.thumbHeight = ParserUtils.parseInt(m.group(3));
+                gi.thumbWidth = ParserUtils.parseInt(m.group(4));
+
+                if (m.group(5) == null) {
+                    gi.thumb = ParserUtils.trim("http://" + m.group(7).replace('~', '/'));
+                    gi.title = ParserUtils.trim(m.group(8));
+                } else {
+                    gi.thumb = ParserUtils.trim(m.group(5));
+                    gi.title = ParserUtils.trim(m.group(6));
+                }
+
+                Pattern pattern = Pattern
+                        .compile("/(\\d+)/(\\w+)");
+                Matcher matcher = pattern.matcher(m.group(9));
+                if (matcher.find()) {
+                    gi.gid = ParserUtils.parseInt(matcher.group(1));
+                    gi.token = ParserUtils.trim(matcher.group(2));
+                } else {
+                    continue;
+                }
+
+                gi.rating = Utils.parseFloatSafely(getRate(m.group(11)), Float.NaN);
+                gi.uploader = ParserUtils.trim(m.group(12));
+                gi.generateSLang();
+
+                list.add(gi);
+            }
+
+            if (list.size() == 0) {
+                throw new ParseException("Can't parse gallery list", body);
+            }
+        }
+
+        return result;
+    }
+
+    private static Result parseLofi(String body) throws Exception {
+        Result result = new Result();
+        Pattern p;
+        Matcher m;
+
+        List<GalleryInfo> list = new ArrayList<>(25);
+        result.galleryInfos = list;
         p = Pattern.compile("<td class=\"ii\"><a href=\"(.+?)\">" // detail url
                 + "<img src=\"(.+?)\".+?/>" // thumb url
                 + ".+?<a class=\"b\" href=\".+?\">(.+?)</a>" // title
@@ -139,8 +162,8 @@ public class GalleryListParser {
             lgi.gid = dup.gid;
             lgi.token = dup.token;
 
-            lgi.thumb = Utils.unescapeXml(m.group(2));
-            lgi.title = Utils.unescapeXml(m.group(3));
+            lgi.thumb = ParserUtils.trim(m.group(2));
+            lgi.title = ParserUtils.trim(m.group(3));
 
             getPostedAndUploader(m.group(4), pau);
             lgi.posted = pau[0];
@@ -159,44 +182,29 @@ public class GalleryListParser {
                 lgi.rating = getStartNum(rating);
             lgi.generateSLang();
 
-            giList.add(lgi);
+            list.add(lgi);
         }
 
-        if (giList.size() == 0) {
+        if (list.size() == 0) {
             if (body.contains("No hits found</div>")) {
-                pageNum = 0;
+                result.pages = Result.NOT_FOUND;
             } else if (body.contains("No more hits found</div>")) {
                 throw new EhException("Index is out of range");
             } else {
-                throw new EhException(PARSE_MESSAGE);
+                throw new ParseException("Can't parse gallery list", body);
             }
         } else {
             if (!body.contains("Next Page &gt;</a>")) {
-                pageNum = CURRENT_PAGE_IS_LAST;
+                result.pages = Result.CURRENT_PAGE_IS_LAST;
             } else {
-                pageNum = Integer.MAX_VALUE;
+                result.pages = Result.KEEP_LOADING;
             }
         }
+
+        return result;
     }
 
-    public void parse(String body, int source) throws Exception {
-        AssertUtils.assertNotNull("Body is null when parse gallery list", body);
-
-        switch (source) {
-            default:
-            case EhClient.SOURCE_G:
-            case EhClient.SOURCE_EX: {
-                parse(body);
-                break;
-            }
-            case EhClient.SOURCE_LOFI: {
-                parseLofi(body);
-                break;
-            }
-        }
-    }
-
-    private String getRate(String rawRate) {
+    private static String getRate(String rawRate) {
         Pattern p = Pattern.compile("\\d+px");
         Matcher m = p.matcher(rawRate);
         int num1;
@@ -204,11 +212,11 @@ public class GalleryListParser {
         int rate = 5;
         String re;
         if (m.find())
-            num1 = Integer.parseInt(m.group().replace("px", ""));
+            num1 = ParserUtils.parseInt(m.group().replace("px", ""));
         else
             return null;
         if (m.find())
-            num2 = Integer.parseInt(m.group().replace("px", ""));
+            num2 = ParserUtils.parseInt(m.group().replace("px", ""));
         else
             return null;
         rate = rate - num1 / 16;
@@ -223,14 +231,14 @@ public class GalleryListParser {
 
     private static final String PAU_SPACER = " by ";
 
-    private void getPostedAndUploader(String raw, String[] pau) throws AssertException {
+    private static void getPostedAndUploader(String raw, String[] pau) throws AssertException {
         int index = raw.indexOf(PAU_SPACER);
         AssertUtils.assertNotEqualsEx("Can not parse posted and uploader", index, -1);
         pau[0] = raw.substring(0, index);
         pau[1] = raw.substring(index + PAU_SPACER.length());
     }
 
-    private int getStartNum(String str) {
+    private static int getStartNum(String str) {
         int startNum = 0;
         for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) == '*')

@@ -17,12 +17,12 @@
 package com.hippo.ehviewer.client;
 
 import com.hippo.ehviewer.client.data.Comment;
+import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.NormalPreviewSet;
 import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.data.TagGroup;
 import com.hippo.ehviewer.util.EhUtils;
-import com.hippo.util.AssertUtils;
 import com.hippo.util.Utils;
 
 import java.text.DateFormat;
@@ -31,7 +31,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -60,90 +59,22 @@ public class GalleryDetailParser {
 
     private static final CommentSort COMMENT_SORTER = new CommentSort();
 
-    public int gid;
-    public String token;
-    public String thumb;
-    public String title;
-    public String titleJpn;
-    public int category;
-    public String uploader;
-
-    public int torrentCount;
-    public String torrentUrl;
-
-    public String posted;
-    public String parent;
-    public String visible;
-    public String language;
-    public String size;
-    public String resize;
-    public int pageCount;
-    public int favoredTimes;
-    public boolean isFavored;
-    public float rating;
-    public int ratedTimes;
-
-    public List<TagGroup> tags;
-    public List<Comment> comments;
-
-    public int previewPageCount;
-
-    public PreviewSet previewSet;
-
-    private String sortOut(String str) {
-        // Avoid null
-        if (str == null) {
-            str = "";
-        }
-        return Utils.unescapeXml(str).trim();
-    }
-
-    private int sortOutInteger(String str, int defaultValue) {
-        return Utils.parseIntSafely(sortOut(str).replace(",", ""), defaultValue);
-    }
-
-    private void parseTagGroup(TagGroup tagGroup, String body) {
-        Pattern p = Pattern.compile("<div[^<>]+><a[^<>]+>([\\w\\s]+)</a></div>");
-        Matcher m = p.matcher(body);
-        while (m.find()) {
-            tagGroup.addTag(sortOut(m.group(1)));
+    public static GalleryDetail parse(String body, int source, int request) throws Exception {
+        switch (source) {
+            default:
+            case EhUrl.SOURCE_G:
+            case EhUrl.SOURCE_EX: {
+                return parse(body, request);
+            }
+            case EhUrl.SOURCE_LOFI: {
+                //parseLofi(body, request);
+                //break;
+                throw new EhException("Not support lofi now");
+            }
         }
     }
 
-    private void parseNormalPreview(String body) {
-        Pattern  p = Pattern.compile("<div[^<>]*class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*>");
-        Matcher m = p.matcher(body);
-        NormalPreviewSet normalPreviewSet = new NormalPreviewSet();
-        while (m.find()) {
-            normalPreviewSet.addItem(m.group(3), Integer.parseInt(m.group(4)), 0,
-                    Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)),
-                    m.group(5));
-        }
-        previewSet = normalPreviewSet;
-    }
-
-    private void parseLargePreview(String body) {
-        Pattern p = Pattern.compile("<div class=\"gdtl\".+?<a href=\"(.+?)\"><img.+?src=\"(.+?)\"");
-        Matcher m = p.matcher(body);
-        LargePreviewSet largePreviewSet = new LargePreviewSet();
-        while (m.find()) {
-            largePreviewSet.addItem(m.group(2), m.group(1));
-        }
-        previewSet = largePreviewSet;
-    }
-
-    private void parsePreview(String body) {
-        if (body.contains("<div class=\"gdtm\"")) {
-            parseNormalPreview(body);
-        } else {
-            parseLargePreview(body);
-        }
-    }
-
-    private void parse(String body, int request) throws EhException {
-        Pattern p;
-        Matcher m;
-
+    private static GalleryDetail parse(String body, int request) throws EhException {
         if (!body.startsWith("<")) {
             throw new EhException(body);
         }
@@ -156,12 +87,17 @@ public class GalleryDetailParser {
             throw new PiningException();
         }
 
+        Pattern p;
+        Matcher m;
+
         // TODO I can't remember what's this for
         p = Pattern.compile("<div class=\"d\">\n<p>([^<]+)</p>");
         m = p.matcher(body);
         if (m.find()) {
             throw new EhException(m.group(1));
         }
+
+        GalleryDetail galleryDetail = new GalleryDetail();
 
         if ((request & REQUEST_DETAIL) != 0) {
             p = Pattern.compile("var gid = (\\d+)" // 1 gid
@@ -195,70 +131,70 @@ public class GalleryDetailParser {
                     + "<a id=\"favoritelink\"[^<>]*>(.+?)</a>", Pattern.DOTALL); // 20 isFavored "Favorite Gallery" for favorite
             m = p.matcher(body);
             if (m.find()) {
-                gid = sortOutInteger(m.group(1), 0);
-                token = sortOut(m.group(2));
-                thumb = sortOut(m.group(3));
-                title = sortOut(m.group(4));
-                titleJpn = sortOut(m.group(5));
-                torrentUrl = sortOut(m.group(6));
-                torrentCount = sortOutInteger(m.group(7), 0);
-                category = EhUtils.getCategory(sortOut(m.group(8)));
-                uploader = sortOut(m.group(9));
-                posted = sortOut(m.group(10));
-                parent = sortOut(m.group(11));
-                visible = sortOut(m.group(12));
-                language = sortOut(m.group(13));
-                size = sortOut(m.group(14));
-                resize = sortOut(m.group(15));
-                pageCount = sortOutInteger(m.group(16), 0);
+                galleryDetail.gid = ParserUtils.parseInt(m.group(1));
+                galleryDetail.token = ParserUtils.trim(m.group(2));
+                galleryDetail.thumb = ParserUtils.trim(m.group(3));
+                galleryDetail.title = ParserUtils.trim(m.group(4));
+                galleryDetail.titleJpn = ParserUtils.trim(m.group(5));
+                galleryDetail.torrentUrl = ParserUtils.trim(m.group(6));
+                galleryDetail.torrentCount = ParserUtils.parseInt(m.group(7));
+                galleryDetail.category = EhUtils.getCategory(ParserUtils.trim(m.group(8)));
+                galleryDetail.uploader = ParserUtils.trim(m.group(9));
+                galleryDetail.posted = ParserUtils.trim(m.group(10));
+                galleryDetail.parent = ParserUtils.trim(m.group(11));
+                galleryDetail.visible = ParserUtils.trim(m.group(12));
+                galleryDetail.language = ParserUtils.trim(m.group(13));
+                galleryDetail.size = ParserUtils.trim(m.group(14));
+                galleryDetail.resize = ParserUtils.trim(m.group(15));
+                galleryDetail.pageCount = ParserUtils.parseInt(m.group(16));
 
-                String favTimeStr = sortOut(m.group(17));
+                String favTimeStr = ParserUtils.trim(m.group(17));
                 switch (favTimeStr) {
                     case "Never":
-                        favoredTimes = 0;
+                        galleryDetail.favoredTimes = 0;
                         break;
                     case "Once":
-                        favoredTimes = 1;
+                        galleryDetail.favoredTimes = 1;
                         break;
                     default:
                         int index = favTimeStr.indexOf(' ');
                         if (index == -1) {
-                            favoredTimes = 0;
+                            galleryDetail.favoredTimes = 0;
                         } else {
-                            favoredTimes = Utils.parseIntSafely(favTimeStr.substring(0, index), 0);
+                            galleryDetail.favoredTimes = ParserUtils.parseInt(favTimeStr.substring(0, index));
                         }
                         break;
                 }
 
-                ratedTimes = sortOutInteger(m.group(18), 0);
+                galleryDetail.ratedTimes = ParserUtils.parseInt(m.group(18));
 
-                String ratingStr = sortOut(m.group(19));
+                String ratingStr = ParserUtils.trim(m.group(19));
                 if ("Not Yet Rated".equals(ratingStr)) {
-                    rating = Float.NaN;
+                    galleryDetail.rating = Float.NaN;
                 } else {
                     int index = ratingStr.indexOf(' ');
                     if (index == -1 || index >= ratingStr.length()) {
-                        rating = 0f;
+                        galleryDetail.rating = 0f;
                     } else {
-                        rating = Utils.parseFloatSafely(ratingStr.substring(index + 1), 0f);
+                        galleryDetail.rating = Utils.parseFloatSafely(ratingStr.substring(index + 1), 0f);
                     }
                 }
 
-                isFavored = "Favorite Gallery".equals(sortOut(m.group(20)));
+                galleryDetail.isFavored = "Favorite Gallery".equals(ParserUtils.trim(m.group(20)));
             } else {
-                throw new ParseException("Parse gallery body error", body);
+                throw new ParseException("Parse gallery detail error", body);
             }
         }
 
         if ((request & REQUEST_TAG) != 0) {
-            tags = new LinkedList<>();
+            galleryDetail.tags = new LinkedList<>();
             p = Pattern.compile("<tr><td[^<>]+>([\\w\\s]+):</td><td>(?:<div[^<>]+><a[^<>]+>[\\w\\s]+</a></div>)+</td></tr>");
             m = p.matcher(body);
             while (m.find()) {
                 TagGroup tagGroup = new TagGroup();
-                tagGroup.groupName = sortOut(m.group(1));
+                tagGroup.groupName = ParserUtils.trim(m.group(1));
                 parseTagGroup(tagGroup, m.group(0));
-                tags.add(tagGroup);
+                galleryDetail.tags.add(tagGroup);
             }
         }
 
@@ -267,27 +203,30 @@ public class GalleryDetailParser {
             p = Pattern.compile("<td[^>]+><a[^>]+>([\\d,]+)</a></td><td[^>]+>(?:<a[^>]+>)?&gt;(?:</a>)?</td>");
             m = p.matcher(body);
             if (m.find()) {
-                previewPageCount = sortOutInteger(m.group(1), 0);
+                galleryDetail.previewPageCount = ParserUtils.parseInt(m.group(1));
             } else {
-                previewPageCount = 0;
+                galleryDetail.previewPageCount = 0;
             }
-            if (previewPageCount <= 0) {
+            if (galleryDetail.previewPageCount <= 0) {
                 throw new ParseException("Parse preview page count error", body);
             }
         }
 
         // Get preview
         if ((request & REQUEST_PREVIEW) != 0) {
-            parsePreview(body);
+            PreviewSet previewSet = parsePreview(body);
+            previewSet.setGid(galleryDetail.gid); // TODO What if not set REQUEST_DETAIL
+            galleryDetail.previewSetArray = new PreviewSet[galleryDetail.previewPageCount];
+            galleryDetail.previewSetArray[0] = previewSet;
         }
 
         // Get comment
         if ((request & REQUEST_COMMENT) != 0) {
             p = Pattern.compile("<div class=\"c3\">Posted on ([^<>]+) by: &nbsp; <a[^<>]+>([^<>]+)</a>.+?<div class=\"c6\"[^>]*>(.+?)</div><div class=\"c[78]\"");
             m = p.matcher(body);
-            comments = new LinkedList<>();
+            galleryDetail.comments = new LinkedList<>();
             while (m.find()) {
-                String webDateString = sortOut(m.group(1));
+                String webDateString = ParserUtils.trim(m.group(1));
                 Date date;
                 try {
                     date = WEB_COMMENT_DATA_FORMAT.parse(webDateString);
@@ -295,32 +234,65 @@ public class GalleryDetailParser {
                     date = new Date(0l);
                 }
                 String outDateString = OUT_COMMENT_DATA_FORMAT.format(date);
-                comments.add(new Comment(outDateString, date, sortOut(m.group(2)), m.group(3)));
+                galleryDetail.comments.add(new Comment(outDateString, date, ParserUtils.trim(m.group(2)), m.group(3)));
             }
-            Collections.sort(comments, COMMENT_SORTER);
+            Collections.sort(galleryDetail.comments, COMMENT_SORTER);
         }
 
-        if ((request & REQUEST_COMMENT) != 0) {
+        return galleryDetail;
+    }
 
+    private static void parseTagGroup(TagGroup tagGroup, String body) {
+        Pattern p = Pattern.compile("<div[^<>]+><a[^<>]+>([\\w\\s]+)</a></div>");
+        Matcher m = p.matcher(body);
+        while (m.find()) {
+            tagGroup.addTag(ParserUtils.trim(m.group(1)));
         }
     }
 
-    public void parse(String body, int request, int source) throws Exception {
-        AssertUtils.assertNotNull("Body is null when parse gallery list", body);
-
+    public static PreviewSet parsePreview(String body, int source) throws EhException {
         switch (source) {
             default:
-            case EhClient.SOURCE_G:
-            case EhClient.SOURCE_EX: {
-                parse(body, request);
-                break;
+            case EhUrl.SOURCE_G:
+            case EhUrl.SOURCE_EX: {
+                return parsePreview(body);
             }
-            case EhClient.SOURCE_LOFI: {
-                //parseLofi(body, request);
+            case EhUrl.SOURCE_LOFI: {
+                //parsePreviewLofi(body);
                 //break;
                 throw new EhException("Not support lofi now");
             }
         }
+    }
+
+    public static PreviewSet parsePreview(String body) {
+        if (body.contains("<div class=\"gdtm\"")) {
+            return parseNormalPreview(body);
+        } else {
+            return parseLargePreview(body);
+        }
+    }
+
+    private static NormalPreviewSet parseNormalPreview(String body) {
+        Pattern  p = Pattern.compile("<div[^<>]*class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*>");
+        Matcher m = p.matcher(body);
+        NormalPreviewSet normalPreviewSet = new NormalPreviewSet();
+        while (m.find()) {
+            normalPreviewSet.addItem(m.group(3), Integer.parseInt(m.group(4)), 0,
+                    Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)),
+                    m.group(5));
+        }
+        return normalPreviewSet;
+    }
+
+    private static LargePreviewSet parseLargePreview(String body) {
+        Pattern p = Pattern.compile("<div class=\"gdtl\".+?<a href=\"(.+?)\"><img.+?src=\"(.+?)\"");
+        Matcher m = p.matcher(body);
+        LargePreviewSet largePreviewSet = new LargePreviewSet();
+        while (m.find()) {
+            largePreviewSet.addItem(m.group(2), m.group(1));
+        }
+        return largePreviewSet;
     }
 
     static class CommentSort implements Comparator<Comment> {

@@ -16,7 +16,8 @@
 
 package com.hippo.ehviewer.client.data;
 
-import com.hippo.ehviewer.client.EhClient;
+import com.hippo.ehviewer.client.EhConfig;
+import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.widget.AdvanceSearchTable;
 import com.hippo.network.UrlBuilder;
@@ -128,18 +129,18 @@ public class ListUrlBuilder {
             case MODE_NORMAL:
             case MODE_UPLOADER: {
                 boolean filter = false;
-                UrlBuilder ub = new UrlBuilder(EhClient.getUrlHeader(source));
+                UrlBuilder ub = new UrlBuilder(EhUrl.getUrlHeader(source));
                 if (mCategory != EhUtils.NONE) {
-                    ub.addQuery("f_doujinshi", ((mCategory & EhUtils.DOUJINSHI) == 0) ? "0" : "1");
-                    ub.addQuery("f_manga", ((mCategory & EhUtils.MANGA) == 0) ? "0" : "1");
-                    ub.addQuery("f_artistcg", ((mCategory & EhUtils.ARTIST_CG) == 0) ? "0" : "1");
-                    ub.addQuery("f_gamecg", ((mCategory & EhUtils.GAME_CG) == 0) ? "0" : "1");
-                    ub.addQuery("f_western", ((mCategory & EhUtils.WESTERN) == 0) ? "0" : "1");
-                    ub.addQuery("f_non-h", ((mCategory & EhUtils.NON_H) == 0) ? "0" : "1");
-                    ub.addQuery("f_imageset", ((mCategory & EhUtils.IMAGE_SET) == 0) ? "0" : "1");
-                    ub.addQuery("f_cosplay", ((mCategory & EhUtils.COSPLAY) == 0) ? "0" : "1");
-                    ub.addQuery("f_asianporn", ((mCategory & EhUtils.ASIAN_PORN) == 0) ? "0" : "1");
-                    ub.addQuery("f_misc", ((mCategory & EhUtils.MISC) == 0) ? "0" : "1");
+                    ub.addQuery("f_doujinshi", ((mCategory & EhConfig.DOUJINSHI) == 0) ? "0" : "1");
+                    ub.addQuery("f_manga", ((mCategory & EhConfig.MANGA) == 0) ? "0" : "1");
+                    ub.addQuery("f_artistcg", ((mCategory & EhConfig.ARTIST_CG) == 0) ? "0" : "1");
+                    ub.addQuery("f_gamecg", ((mCategory & EhConfig.GAME_CG) == 0) ? "0" : "1");
+                    ub.addQuery("f_western", ((mCategory & EhConfig.WESTERN) == 0) ? "0" : "1");
+                    ub.addQuery("f_non-h", ((mCategory & EhConfig.NON_H) == 0) ? "0" : "1");
+                    ub.addQuery("f_imageset", ((mCategory & EhConfig.IMAGE_SET) == 0) ? "0" : "1");
+                    ub.addQuery("f_cosplay", ((mCategory & EhConfig.COSPLAY) == 0) ? "0" : "1");
+                    ub.addQuery("f_asianporn", ((mCategory & EhConfig.ASIAN_PORN) == 0) ? "0" : "1");
+                    ub.addQuery("f_misc", ((mCategory & EhConfig.MISC) == 0) ? "0" : "1");
                     filter = true;
                 }
                 // Search key
@@ -180,10 +181,10 @@ public class ListUrlBuilder {
                 return ub.build();
             }
             case MODE_TAG: {
-                if (source == EhClient.SOURCE_LOFI) {
+                if (source == EhUrl.SOURCE_LOFI) {
                     throw new UnsupportedSearchException("Lofi do not support tag search");
                 }
-                StringBuilder sb = new StringBuilder(EhClient.getUrlHeader(source));
+                StringBuilder sb = new StringBuilder(EhUrl.getUrlHeader(source));
                 sb.append("tag/");
                 try {
                     sb.append(URLEncoder.encode(mKeyword, "UTF-8"));

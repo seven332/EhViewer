@@ -18,10 +18,9 @@ package com.hippo.ehviewer.ui.scene.preference;
 
 import android.content.res.Resources;
 
-import com.hippo.ehviewer.BuildConfig;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.client.EhClient;
+import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.scene.preference.ListPreference;
 import com.hippo.scene.preference.Preference;
 import com.hippo.scene.preference.PreferenceCategory;
@@ -32,8 +31,7 @@ import com.hippo.util.Messenger;
 public final class EHSettingsScene extends PreferenceScene {
 
     private static final String KEY_EH_SOURCE = "eh_source";
-    private static final int DEFAULT_EH_SOURCE = BuildConfig.DEBUG ?
-            EhClient.SOURCE_EX : EhClient.SOURCE_G;
+    private static final int DEFAULT_EH_SOURCE = EhUrl.SOURCE_G;
 
     @Override
     protected void onCreate(boolean rebirth) {

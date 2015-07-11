@@ -19,7 +19,7 @@ package com.hippo.scene.preference;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
-import com.hippo.ehviewer.util.Config;
+import com.hippo.ehviewer.util.Settings;
 import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
 
@@ -62,7 +62,7 @@ public class ListPreference extends Preference {
     }
 
     private int getValuePosition() {
-        return getValuePosition(Config.getInt(getKey(), mDefaultValue));
+        return getValuePosition(Settings.getInt(getKey(), mDefaultValue));
     }
 
     private int getValuePosition(int value) {
@@ -77,7 +77,7 @@ public class ListPreference extends Preference {
 
     @Override
     protected void storeValue(Object newValue) {
-        Config.putInt(getKey(), (Integer) newValue);
+        Settings.putInt(getKey(), (Integer) newValue);
     }
 
     @Override

@@ -44,13 +44,16 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhImageKeyFactory;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
+import com.hippo.ehviewer.client.EhRequest;
+import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.GalleryListParser;
+import com.hippo.ehviewer.client.PopularParser;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.data.UnsupportedSearchException;
 import com.hippo.ehviewer.ui.ContentActivity;
-import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
+import com.hippo.ehviewer.util.Settings;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.OffsetLayout;
@@ -71,8 +74,6 @@ import com.hippo.util.ViewUtils;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.FloatingActionButton;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
-
-import java.util.List;
 
 // TODO remeber the data in ContentHelper after screen dirction change
 // TODO Must refresh when change source
@@ -891,22 +892,33 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
 
         @Override
         protected void getPageData(int taskId, int type, int page) {
+            EhClient client = EhApplication.getEhClient(getStageActivity());
+
             int mode = mListUrlBuilder.getMode();
             if (mode == ListUrlBuilder.MODE_POPULAR) {
                 PopularListener listener = new PopularListener(taskId);
                 listener.setGalleryListHelper(this);
                 mListener = listener;
-                EhClient.getInstance().getPopular(listener);
+                EhRequest request = new EhRequest();
+                request.setMethod(EhClient.METHOD_GET_POPULAR);
+                request.setEhListener(listener);
+                client.execute(request);
             } else {
                 try {
-                    int source = Config.getEhSource();
+                    int source = Settings.getEhSource();
                     mListUrlBuilder.setPageIndex(page);
                     String url =  mListUrlBuilder.build(source);
                     GalleryListListener listener = new GalleryListListener(taskId,
                             type, page, source);
                     listener.setGalleryListHelper(this);
                     mListener = listener;
-                    EhClient.getInstance().getGalleryList(source, url, listener);
+
+                    EhRequest request = new EhRequest();
+                    request.setMethod(EhClient.METHOD_GET_GALLERY_LIST);
+                    request.setEhListener(listener);
+                    request.setArgs(url, source);
+
+                    client.execute(request);
                 } catch (UnsupportedSearchException e) {
                     onGetPageData(taskId, e);
                 }
@@ -940,7 +952,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         }
     }
 
-    private static class GalleryListListener extends EhClient.OnGetGalleryListListener
+    private static class GalleryListListener extends EhClient.EhListener<GalleryListParser.Result>
             implements GalleryListHelperSettable {
 
         private int mTaskId;
@@ -963,18 +975,18 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         }
 
         @Override
-        public void onSuccess(List<GalleryInfo> glList, int pageNum) {
+        public void onSuccess(GalleryListParser.Result result) {
             if (mHelper != null) {
-                if (mSource == EhClient.SOURCE_LOFI) {
-                    if (pageNum == GalleryListParser.CURRENT_PAGE_IS_LAST) {
+                if (mSource == EhUrl.SOURCE_LOFI) {
+                    if (result.pages == GalleryListParser.Result.CURRENT_PAGE_IS_LAST) {
                         mHelper.setPageCount(mTargetPage);
                     } else if (mTaskType == ContentLayout.ContentHelper.TYPE_REFRESH) {
                         mHelper.setPageCount(Integer.MAX_VALUE);
                     }
                 } else {
-                    mHelper.setPageCount(pageNum);
+                    mHelper.setPageCount(result.pages);
                 }
-                mHelper.onGetPageData(mTaskId, glList);
+                mHelper.onGetPageData(mTaskId, result.galleryInfos);
 
                 mHelper.clearLastGalleryListHelperSettable(this);
             }
@@ -988,9 +1000,14 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
                 mHelper.clearLastGalleryListHelperSettable(this);
             }
         }
+
+        @Override
+        public void onCanceled() {
+
+        }
     }
 
-    private static class PopularListener extends EhClient.OnGetPopularListener
+    private static class PopularListener extends EhClient.EhListener<PopularParser.Result>
             implements GalleryListHelperSettable {
 
         private int mTaskId;
@@ -1006,10 +1023,10 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         }
 
         @Override
-        public void onSuccess(List<GalleryInfo> glList, long timeStamp) {
+        public void onSuccess(PopularParser.Result result) {
             if (mHelper != null) {
                 mHelper.setPageCount(1);
-                mHelper.onGetPageData(mTaskId, glList);
+                mHelper.onGetPageData(mTaskId, result.galleryInfos);
 
                 mHelper.clearLastGalleryListHelperSettable(this);
             }
@@ -1022,6 +1039,11 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
 
                 mHelper.clearLastGalleryListHelperSettable(this);
             }
+        }
+
+        @Override
+        public void onCanceled() {
+
         }
     }
 

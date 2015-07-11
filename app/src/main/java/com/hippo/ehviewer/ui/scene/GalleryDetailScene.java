@@ -38,14 +38,16 @@ import com.hippo.ehviewer.EhImageKeyFactory;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhException;
+import com.hippo.ehviewer.client.EhRequest;
+import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.OffensiveException;
 import com.hippo.ehviewer.client.data.Comment;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.data.TagGroup;
-import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.EhUtils;
+import com.hippo.ehviewer.util.Settings;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.PreviewLayout;
 import com.hippo.ehviewer.widget.RatingView;
@@ -118,9 +120,16 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
     private GalleryDetail mGalleryDetail;
 
     private void requestGalleryDetail(GalleryInfo gi) {
-        EhClient.getInstance().getGalleryDetail(Config.getEhSource(),
-                EhClient.getDetailUrl(Config.getEhSource(), gi.gid, gi.token, 0),
-                new EhDetailListener());
+        EhClient client = EhApplication.getEhClient(getStageActivity());
+        int source = Settings.getEhSource();
+        String url = EhUrl.getDetailUrl(source, gi.gid, gi.token, 0);
+
+        EhRequest request = new EhRequest();
+        request.setMethod(EhClient.METHOD_GET_GALLERY_DETAIL);
+        request.setEhListener(new EhDetailListener());
+        request.setArgs(url, source);
+        // TODO request.setEhConfig();
+        client.execute(request);
     }
 
     private void handleAnnouncer(Announcer announcer) {
@@ -270,7 +279,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
 
         } else if (v == mShare) {
             StartActivityHelper.share(getStageActivity(),
-                    EhClient.getDetailUrl(Config.getEhSource(), gd.gid, gd.token, 0));
+                    EhUrl.getDetailUrl(Settings.getEhSource(), gd.gid, gd.token, 0));
         }
     }
 
@@ -421,7 +430,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         }
     }
 
-    private class EhDetailListener extends EhClient.OnGetGalleryDetailListener {
+    private class EhDetailListener extends EhClient.EhListener<GalleryDetail> {
 
         @Override
         public void onSuccess(GalleryDetail galleryDetail) {
@@ -483,28 +492,44 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
                         }).show(GalleryDetailScene.this);
             }
         }
+
+        @Override
+        public void onCanceled() {
+
+        }
     }
 
     class SimplePreviewHelper implements PreviewLayout.PreviewHelper {
 
         @Override
         public void onRequstPreview(PreviewLayout previewLayout, final int index) {
-            int source = Config.getEhSource();
-            EhClient.getInstance().getPreviewSet(source,
-                    EhClient.getDetailUrl(source, mGalleryDetail.gid, mGalleryDetail.token, index),
-                    new EhClient.OnGetPreviewSetListener() {
+            EhClient client = EhApplication.getEhClient(getStageActivity());
+            int source = Settings.getEhSource();
+            String url = EhUrl.getDetailUrl(source, mGalleryDetail.gid, mGalleryDetail.token, index);
 
-                        @Override
-                        public void onSuccess(PreviewSet previewSet) {
-                            mPreviewLayout.onGetPreview(previewSet, index);
-                        }
+            EhRequest request = new EhRequest();
+            request.setMethod(EhClient.METHOD_GET_PREVIEW_SET);
+            // TODO request.setEhConfig();
+            request.setArgs(url, source);
+            request.setEhListener(new EhClient.EhListener<PreviewSet>() {
 
-                        @Override
-                        public void onFailure(Exception e) {
-                            // TODO
-                            e.printStackTrace();
-                        }
-                    });
+                @Override
+                public void onSuccess(PreviewSet result) {
+                    mPreviewLayout.onGetPreview(result, index);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onCanceled() {
+
+                }
+            });
+
+            client.execute(request);
         }
 
         @Override

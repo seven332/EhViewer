@@ -19,510 +19,240 @@ package com.hippo.ehviewer.client;
 import android.os.AsyncTask;
 import android.os.Process;
 
-import com.hippo.ehviewer.client.data.GalleryDetail;
-import com.hippo.ehviewer.client.data.GalleryInfo;
-import com.hippo.ehviewer.client.data.PreviewSet;
-import com.hippo.ehviewer.network.EhOkHttpClient;
-import com.hippo.network.ResponseCodeException;
+import com.hippo.ehviewer.network.EhHttpRequest;
+import com.hippo.httpclient.HttpClient;
 import com.hippo.util.PriorityThreadFactory;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 
-import org.json.JSONObject;
-
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-// TODO Make request cancle
 public final class EhClient {
 
-    private static final String TAG = EhClient.class.getSimpleName();
+    public static final String TAG = EhClient.class.getSimpleName();
 
-    public static final MediaType JSON = MediaType.parse("application/json");
+    /**
+     * Sign in
+     *
+     * <table>
+     *     <tr>
+     *         <th>param</th>
+     *         <th>info</th>
+     *     </tr>
+     *     <tr>
+     *         <td>username</td>
+     *         <td>the username</td>
+     *     </tr>
+     *     <tr>
+     *         <td>password</td>
+     *         <td>the password</td>
+     *     </tr>
+     *     <tr>
+     *         <td>listener</td>
+     *         <td>the listener for callback</td>
+     *     </tr>
+     * </table>
+     */
+    public static final int METHOD_SIGN_IN = 0;
 
-    public static final int SOURCE_G = 0x0;
-    public static final int SOURCE_EX = 0x1;
-    public static final int SOURCE_LOFI = 0x2;
+    /**
+     * Get gallery list
+     *
+     * <table>
+     *     <tr>
+     *         <th>param</th>
+     *         <th>info</th>
+     *     </tr>
+     *     <tr>
+     *         <td>url</td>
+     *         <td>the url to get gallery list</td>
+     *     </tr>
+     *     <tr>
+     *         <td>source</td>
+     *         <td>the source, one of {@link EhUrl#SOURCE_G},
+     *         {@link EhUrl#SOURCE_EX} and {@link EhUrl#SOURCE_LOFI}</td>
+     *     </tr>
+     *     <tr>
+     *         <td>listener</td>
+     *         <td>the listener for callback</td>
+     *     </tr>
+     * </table>
+     */
+    public static final int METHOD_GET_GALLERY_LIST = 1;
 
-    public static final String API_G = "http://g.e-hentai.org/api.php";
-    public static final String API_EX = "http://exhentai.org/api.php";
-    public static final long APIUID = 1363542;
-    public static final String APIKEY = "f4b5407ab1727b9d08d7";
+    /**
+     * Get popular
+     *
+     * <table>
+     *     <tr>
+     *         <th>param</th>
+     *         <th>info</th>
+     *     </tr>
+     *     <tr>
+     *         <td>listener</td>
+     *         <td>the listener for callback</td>
+     *     </tr>
+     * </table>
+     */
+    public static final int METHOD_GET_POPULAR = 2;
 
-    private static final String SIGN_IN_URL =
-            "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
-    private static final String FORUMS_URL = "http://forums.e-hentai.org/index.php";
+    /**
+     * Get gallery detail
+     *
+     * <table>
+     *     <tr>
+     *         <th>param</th>
+     *         <th>info</th>
+     *     </tr>
+     *     <tr>
+     *         <td>url</td>
+     *         <td>the url to get gallery detail</td>
+     *     </tr>
+     *     <tr>
+     *         <td>source</td>
+     *         <td>the source, one of {@link EhUrl#SOURCE_G},
+     *         {@link EhUrl#SOURCE_EX} and {@link EhUrl#SOURCE_LOFI}</td>
+     *     </tr>
+     *     <tr>
+     *         <td>listener</td>
+     *         <td>the listener for callback</td>
+     *     </tr>
+     * </table>
+     */
+    public static final int METHOD_GET_GALLERY_DETAIL = 3;
 
-    public static final String HOST_G = "G.E-Hentai";
-    public static final String HOST_EX = "ExHentai";
-    public static final String HOST_LOFI = "Lofi.E-Hentai";
-
-    public static final String HEADER_G = "http://g.e-hentai.org/";
-    public static final String HEADER_EX = "http://exhentai.org/";
-    public static final String HEADER_LOFI = "http://lofi.e-hentai.org/";
-
-    public static final String API_EHVIEWER = "http://www.ehviewer.com/API";
-
-    private static final String SAD_PANDA_DISPOSITION = "inline; filename=\"sadpanda.jpg\"";
-    private static final String SAD_PANDA_TYPE = "image/gif";
-    private static final String SAD_PANDA_LENGTH = "9615";
+    /**
+     * Get gallery preview set
+     *
+     * <table>
+     *     <tr>
+     *         <th>param</th>
+     *         <th>info</th>
+     *     </tr>
+     *     <tr>
+     *         <td>url</td>
+     *         <td>the url to get gallery preview set</td>
+     *     </tr>
+     *     <tr>
+     *         <td>source</td>
+     *         <td>the source, one of {@link EhUrl#SOURCE_G},
+     *         {@link EhUrl#SOURCE_EX} and {@link EhUrl#SOURCE_LOFI}</td>
+     *     </tr>
+     *     <tr>
+     *         <td>listener</td>
+     *         <td>the listener for callback</td>
+     *     </tr>
+     * </table>
+     */
+    public static final int METHOD_GET_PREVIEW_SET = 4;
 
     private final ThreadPoolExecutor mRequestThreadPool;
 
-    private final EhOkHttpClient mHttpClient;
+    private final HttpClient mHttpClient;
 
-    private static final EhClient sInstance;
-
-    static {
-        sInstance = new EhClient();
-    }
-
-    public static EhClient getInstance() {
-        return sInstance;
-    }
-
-    private EhClient() {
+    public EhClient(HttpClient httpClient) {
         int poolSize = 3;
         BlockingQueue<Runnable> requestWorkQueue = new LinkedBlockingQueue<>();
         ThreadFactory threadFactory = new PriorityThreadFactory(TAG,
                 Process.THREAD_PRIORITY_BACKGROUND);
         mRequestThreadPool = new ThreadPoolExecutor(poolSize, poolSize,
                 1L, TimeUnit.SECONDS, requestWorkQueue, threadFactory);
-
-        mHttpClient = EhOkHttpClient.getInstance();
+        mHttpClient = httpClient;
     }
 
-    public static String getReadableHost(int source) {
-        switch (source) {
-            default:
-            case SOURCE_G:
-                return HOST_G;
-            case SOURCE_EX:
-                return HOST_EX;
-            case SOURCE_LOFI:
-                return HOST_LOFI;
+    public void execute(EhRequest request) {
+        if (!request.isCanceled()) {
+            Task task = new Task(request.method, request.ehListener, request.ehConfig);
+            task.executeOnExecutor(mRequestThreadPool, request.args);
+            request.task = task;
+        } else {
+            request.ehListener.onCanceled();
         }
     }
 
-    public static String getUrlHeader(int source) {
-        switch (source) {
-            default:
-            case SOURCE_G:
-                return HEADER_G;
-            case SOURCE_EX:
-                return HEADER_EX;
-            case SOURCE_LOFI:
-                return HEADER_LOFI;
-        }
+    public static abstract class EhListener<E> {
+
+        public abstract void onSuccess(E result);
+
+        public abstract void onFailure(Exception e);
+
+        public abstract void onCanceled();
     }
 
-    /**
-     * Get gellary detail url in target source
-     */
-    public static String getDetailUrl(int source, int gid, String token, int pageIndex) {
-        StringBuilder sb = new StringBuilder(getUrlHeader(source));
-        sb.append("g/").append(gid).append('/').append(token).append('/');
-        if (pageIndex > 0) {
-            sb.append("?p=").append(pageIndex);
-        }
+    class Task extends AsyncTask<Object, Void, Object> {
 
-        return sb.toString();
-    }
+        private int mMethod;
+        private EhListener mListener;
+        private EhHttpRequest mEhHttpRequest;
 
-    public interface SimpleListener {
-        void onFailure(Exception e);
-    }
+        private boolean mStop;
 
-    private void doBgJob(BgJobHelper bjh) {
-        new AsyncTask<BgJobHelper, Void, BgJobHelper>() {
-            @Override
-            protected BgJobHelper doInBackground(BgJobHelper... params) {
-                BgJobHelper bjh = params[0];
-                bjh.doInBackground();
-                return bjh;
-            }
-
-            @Override
-            protected void onPostExecute(BgJobHelper bjh) {
-                bjh.onPostExecute();
-            }
-        }.executeOnExecutor(mRequestThreadPool, bjh);
-    }
-
-    private interface BgJobHelper {
-        void doInBackground();
-
-        void onPostExecute();
-    }
-
-    private abstract class SimpleBgJobHelper implements BgJobHelper {
-
-        private SimpleListener mListener;
-        private Exception mException;
-
-        public SimpleBgJobHelper(SimpleListener listener) {
+        public Task(int method, EhListener listener, EhConfig ehConfig) {
+            mMethod = method;
             mListener = listener;
+            mEhHttpRequest = new EhHttpRequest();
+            mEhHttpRequest.setEhConfig(ehConfig);
         }
 
-        @Override
-        public void doInBackground() {
-            try {
-                doBgJob();
-            } catch (Exception e) {
-                mException = e;
-            }
-        }
+        public void stop() {
+            if (!mStop) {
+                mStop = true;
 
-        @Override
-        public void onPostExecute() {
-            if (mListener != null) {
-                if (mException == null) {
-                    doSuccessCallback();
-                } else {
-                    mListener.onFailure(mException);
+                Status status = getStatus();
+                if (status == Status.PENDING) {
+                    cancel(false);
+
+                    // If it is pending, onPostExecute will not be called,
+                    // need to call mListener.onCanceled here
+                    mListener.onCanceled();
+
+                    // Clear
+                    mEhHttpRequest = null;
+                    mListener = null;
+                } else if (status == Status.FINISHED) {
+                    mEhHttpRequest.cancel();
                 }
             }
         }
 
-        public abstract void doBgJob() throws Exception;
-
-        public abstract void doSuccessCallback();
-    }
-
-    private void checkResponse(Response response) throws Exception {
-        final int responseCode = response.code();
-        if (responseCode >= 400) {
-            throw new ResponseCodeException(responseCode);
-        }
-
-        String disposition = response.header("Content-Disposition", null);
-        String type = response.header("Content-Type", null);
-        String length = response.header("Content-Length", null);
-
-        if (SAD_PANDA_DISPOSITION.equals(disposition) && SAD_PANDA_TYPE.equals(type) &&
-                SAD_PANDA_LENGTH.equals(length)) {
-            throw new EhException("Sad Panda");
-        }
-    }
-
-
-    private Object[] doGetGalleryList(int source, String url) throws Exception {
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-        Response response = mHttpClient.newCall(request).execute();
-
-        checkResponse(response);
-
-        GalleryListParser parser = new GalleryListParser();
-        parser.parse(response.body().string(), source);
-        return new Object[]{parser.giList, parser.pageNum};
-    }
-
-    public abstract static class OnGetGalleryListListener implements SimpleListener {
-        public abstract void onSuccess(List<GalleryInfo> glList, int pageNum);
-    }
-
-    private final class GetGalleryListHelper extends SimpleBgJobHelper {
-
-        private int mSource;
-        private String mUrl;
-        private OnGetGalleryListListener mListener;
-
-        private List<GalleryInfo> mGlList;
-        private int mPageNum;
-
-        public GetGalleryListHelper(int source, String url, OnGetGalleryListListener listener) {
-            super(listener);
-            mSource = source;
-            mUrl = url;
-            mListener = listener;
-        }
-
         @Override
-        public void doBgJob() throws Exception {
-            Object[] objs = doGetGalleryList(mSource, mUrl);
-            mGlList = (List<GalleryInfo>) objs[0];
-            mPageNum = (int) objs[1];
+        protected Object doInBackground(Object... params) {
+            try {
+                switch (mMethod) {
+                    case METHOD_SIGN_IN:
+                        return EhEngine.signIn(mHttpClient, mEhHttpRequest, (String) params[0], (String) params[1]);
+                    case METHOD_GET_GALLERY_LIST:
+                        return EhEngine.getGalleryList(mHttpClient, mEhHttpRequest, (String) params[0], (Integer) params[1]);
+                    case METHOD_GET_POPULAR:
+                        return EhEngine.getPopular(mHttpClient, mEhHttpRequest);
+                    case METHOD_GET_GALLERY_DETAIL:
+                        return EhEngine.getGalleryDetail(mHttpClient, mEhHttpRequest, (String) params[0], (Integer) params[1]);
+                    case METHOD_GET_PREVIEW_SET:
+                        return EhEngine.getPreviewSet(mHttpClient, mEhHttpRequest, (String) params[0], (Integer) params[1]);
+                    default:
+                        return new IllegalStateException("Can't detect method");
+                }
+            } catch (Exception e) {
+                return e;
+            }
         }
 
+        @SuppressWarnings("unchecked")
         @Override
-        public void doSuccessCallback() {
-            mListener.onSuccess(mGlList, mPageNum);
+        protected void onPostExecute(Object result) {
+            if (result instanceof CanceledException) {
+                mListener.onCanceled();
+            } else if (result instanceof Exception) {
+                mListener.onFailure((Exception) result);
+            } else {
+                mListener.onSuccess(result);
+            }
+
+            // Clear
+            mEhHttpRequest = null;
+            mListener = null;
         }
-    }
-
-    /**
-     * Get gallery list
-     *
-     * @param source the source, one of {@link #SOURCE_G}, {@link #SOURCE_EX} and
-     *               {@link #SOURCE_LOFI}
-     * @param url the url to get gallery list
-     * @param listener the listener for callback
-     */
-    public void getGalleryList(int source, String url, OnGetGalleryListListener listener) {
-        doBgJob(new GetGalleryListHelper(source, url, listener));
-    }
-
-
-    private Object[] doGetPopular() throws Exception {
-        final JSONObject json = new JSONObject();
-        json.put("method", "popular");
-        RequestBody body = RequestBody.create(JSON, json.toString());
-
-        Request request = new Request.Builder()
-                .url(API_EHVIEWER)
-                .post(body)
-                .build();
-        Response response = mHttpClient.newCall(request).execute();
-
-        checkResponse(response);
-
-        PopularParser parser = new PopularParser();
-        parser.parse(response.body().string());
-        return new Object[]{parser.galleryInfoList, parser.timeStamp};
-    }
-
-    public abstract static class OnGetPopularListener implements SimpleListener {
-        public abstract void onSuccess(List<GalleryInfo> giList, long timeStamp);
-    }
-
-    private final class GetPopularHelper extends SimpleBgJobHelper {
-
-        private OnGetPopularListener mListener;
-
-        private List<GalleryInfo> mGiList;
-        private long mTimeStamp;
-
-        public GetPopularHelper(OnGetPopularListener listener) {
-            super(listener);
-            mListener = listener;
-        }
-
-        @Override
-        public void doBgJob() throws Exception {
-            Object[] objs = doGetPopular();
-            mGiList = (List<GalleryInfo>) objs[0];
-            mTimeStamp = (Long) objs[1];
-        }
-
-        @Override
-        public void doSuccessCallback() {
-            mListener.onSuccess(mGiList, mTimeStamp);
-        }
-    }
-
-    /**
-     * Get popular gallery list
-     *
-     * @param listener the listener for callback
-     */
-    public void getPopular(OnGetPopularListener listener) {
-        doBgJob(new GetPopularHelper(listener));
-    }
-
-
-    private String doSignIn(String username, String password) throws Exception {
-        RequestBody formBody = new FormEncodingBuilder()
-                .add("UserName", username)
-                .add("PassWord", password)
-                .add("submit", "Log me in")
-                .add("CookieDate", "1")
-                .add("temporary_https", "off")
-                .build();
-
-        Request request = new Request.Builder()
-                .url(SIGN_IN_URL)
-                .post(formBody)
-                .build();
-        Response response = mHttpClient.newCall(request).execute();
-
-        checkResponse(response);
-
-        SignInParser parser = new SignInParser();
-        parser.parse(response.body().string());
-        return parser.displayname;
-    }
-
-    public abstract static class OnSignInListener implements SimpleListener {
-        public abstract void onSuccess(String displayname);
-    }
-
-    private final class SignInHelper extends SimpleBgJobHelper {
-
-        private String mUsername;
-        private String mPassword;
-        private OnSignInListener mListener;
-
-        private String mDisplayname;
-
-        public SignInHelper(String username, String password, OnSignInListener listener) {
-            super(listener);
-            mUsername = username;
-            mPassword = password;
-            mListener = listener;
-        }
-
-        @Override
-        public void doBgJob() throws Exception {
-            mDisplayname = doSignIn(mUsername, mPassword);
-        }
-
-        @Override
-        public void doSuccessCallback() {
-            mListener.onSuccess(mDisplayname);
-        }
-    }
-
-    /**
-     * Sign in
-     */
-    public void signIn(String username, String password, OnSignInListener listener) {
-        doBgJob(new SignInHelper(username, password, listener));
-    }
-
-    private GalleryDetail doGetGalleryDetail(int source, String url) throws Exception {
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-        Response response = mHttpClient.newCall(request).execute();
-
-        checkResponse(response);
-
-        GalleryDetailParser parser = new GalleryDetailParser();
-        parser.parse(response.body().string(), GalleryDetailParser.REQUEST_DETAIL |
-                        GalleryDetailParser.REQUEST_TAG |
-                        GalleryDetailParser.REQUEST_PREVIEW_INFO |
-                        GalleryDetailParser.REQUEST_PREVIEW |
-                        GalleryDetailParser.REQUEST_COMMENT,
-                source);
-
-        GalleryDetail gd = new GalleryDetail();
-        gd.gid = parser.gid;
-        gd.token = parser.token;
-        gd.thumb = parser.thumb;
-        gd.title = parser.title;
-        gd.titleJpn = parser.titleJpn;
-        gd.category = parser.category;
-        gd.uploader = parser.uploader;
-        gd.torrentCount = parser.torrentCount;
-        gd.torrentUrl = parser.torrentUrl;
-        gd.posted = parser.posted;
-        gd.parent = parser.parent;
-        gd.visible = parser.visible;
-        gd.language = parser.language;
-        gd.size = parser.size;
-        gd.resize = parser.resize;
-        gd.pageCount = parser.pageCount;
-        gd.favoredTimes = parser.favoredTimes;
-        gd.isFavored = parser.isFavored;
-        gd.rating = parser.rating;
-        gd.ratedTimes = parser.ratedTimes;
-        gd.tags = parser.tags;
-        gd.comments = parser.comments;
-        gd.previewPageCount = parser.previewPageCount;
-        gd.previewSetArray = new PreviewSet[gd.previewPageCount];
-        gd.previewSetArray[0] = parser.previewSet;
-        gd.previewSetArray[0].setStartIndex(0);
-        gd.previewSetArray[0].setGid(gd.gid);
-
-        return gd;
-    }
-
-    public abstract static class OnGetGalleryDetailListener implements SimpleListener {
-        public abstract void onSuccess(GalleryDetail galleryDetail);
-    }
-
-    private final class GetGalleryDetailHelper extends SimpleBgJobHelper {
-
-        private int mSource;
-        private String mUrl;
-        private OnGetGalleryDetailListener mListener;
-
-        private GalleryDetail mGalleryDetail;
-
-        public GetGalleryDetailHelper(int source, String url, OnGetGalleryDetailListener listener) {
-            super(listener);
-            mSource = source;
-            mUrl = url;
-            mListener = listener;
-        }
-
-        @Override
-        public void doBgJob() throws Exception {
-            mGalleryDetail = doGetGalleryDetail(mSource, mUrl);
-        }
-
-        @Override
-        public void doSuccessCallback() {
-            mListener.onSuccess(mGalleryDetail);
-        }
-    }
-
-    /**
-     * Get gallery detail
-     */
-    public void getGalleryDetail(int source, String url, OnGetGalleryDetailListener listener) {
-        doBgJob(new GetGalleryDetailHelper(source, url, listener));
-    }
-
-
-    public abstract static class OnGetPreviewSetListener implements SimpleListener {
-        public abstract void onSuccess(PreviewSet previewSet);
-    }
-
-    private PreviewSet doGetPreviewSet(int source, String url) throws Exception {
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-        Response response = mHttpClient.newCall(request).execute();
-
-        checkResponse(response);
-
-        GalleryDetailParser parser = new GalleryDetailParser();
-        parser.parse(response.body().string(), GalleryDetailParser.REQUEST_PREVIEW,
-                source);
-
-        return parser.previewSet;
-    }
-
-    private final class GetPreviewSetHelper extends SimpleBgJobHelper {
-
-        private int mSource;
-        private String mUrl;
-        private OnGetPreviewSetListener mListener;
-
-        private PreviewSet mPreviewSet;
-
-        public GetPreviewSetHelper(int source, String url, OnGetPreviewSetListener listener) {
-            super(listener);
-            mSource = source;
-            mUrl = url;
-            mListener = listener;
-        }
-
-        @Override
-        public void doBgJob() throws Exception {
-            mPreviewSet = doGetPreviewSet(mSource, mUrl);
-        }
-
-        @Override
-        public void doSuccessCallback() {
-            mListener.onSuccess(mPreviewSet);
-        }
-    }
-
-    /**
-     * Get gallery preview set
-     */
-    public void getPreviewSet(int source, String url, OnGetPreviewSetListener listener) {
-        doBgJob(new GetPreviewSetHelper(source, url, listener));
     }
 }
