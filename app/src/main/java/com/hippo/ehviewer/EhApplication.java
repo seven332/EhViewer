@@ -24,7 +24,6 @@ import com.hippo.conaco.Conaco;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.network.EhHttpClient;
 import com.hippo.ehviewer.util.Settings;
-import com.hippo.httpclient.HttpClient;
 import com.hippo.scene.SceneApplication;
 import com.hippo.util.Log;
 import com.hippo.vectorold.content.VectorContext;
@@ -34,7 +33,7 @@ import java.io.IOException;
 
 public class EhApplication extends SceneApplication {
 
-    private HttpClient mHttpClient;
+    private EhHttpClient mEhHttpClient;
     private EhClient mEhClient;
     private Conaco mConaco;
     private SimpleDiskCache mReadcache;
@@ -45,8 +44,8 @@ public class EhApplication extends SceneApplication {
 
         Settings.initialize(this);
 
-        mHttpClient = new EhHttpClient(this);
-        mEhClient = new EhClient(mHttpClient);
+        mEhHttpClient = new EhHttpClient(this);
+        mEhClient = new EhClient(mEhHttpClient);
 
         Conaco.Builder conacoBuilder = new Conaco.Builder();
         conacoBuilder.hasMemoryCache = true;
@@ -54,7 +53,7 @@ public class EhApplication extends SceneApplication {
         conacoBuilder.hasDiskCache = true;
         conacoBuilder.diskCacheDir = new File(getCacheDir(), "conaco");
         conacoBuilder.diskCacheMaxSize = 50 * 1024 * 1024;
-        conacoBuilder.httpClient = mHttpClient;
+        conacoBuilder.httpClient = mEhHttpClient;
         mConaco = conacoBuilder.build();
 
         try {
@@ -85,9 +84,9 @@ public class EhApplication extends SceneApplication {
         }
     }
 
-    public static HttpClient getHttpClient(Context context) {
+    public static EhHttpClient getEhHttpClient(Context context) {
         EhApplication application = (EhApplication) context.getApplicationContext();
-        return application.mHttpClient;
+        return application.mEhHttpClient;
     }
 
     public static EhClient getEhClient(Context context) {

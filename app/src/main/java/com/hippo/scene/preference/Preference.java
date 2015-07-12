@@ -146,7 +146,7 @@ public class Preference extends PreferenceBase {
 
     @Override
     public boolean onClick(RecyclerView.ViewHolder viewHolder, int x, int y) {
-        return mOnClickListener != null && mOnClickListener.onClick();
+        return mOnClickListener != null && mOnClickListener.onClick(this);
     }
 
     protected boolean stableWidgetFrame() {
@@ -174,7 +174,7 @@ public class Preference extends PreferenceBase {
     }
 
     public interface OnClickListener {
-        boolean onClick();
+        boolean onClick(Preference preferenc);
     }
 
     public interface OnValueChangeListener {

@@ -55,7 +55,12 @@ public class EhHttpClient extends HttpClient {
         }
 
         mCookieManager = CookieManager.getInstance();
-        mEhConfig = Settings.getEhConfig();
+        mEhConfig = Settings.generateEhConfig();
+    }
+
+    public void setExcludedLanguages(String excludedLanguages) {
+        mEhConfig.excludedLanguages = excludedLanguages;
+        mEhConfig.setDirty();
     }
 
     private String getDomain(URL uri) {

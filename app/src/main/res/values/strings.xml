@@ -145,6 +145,34 @@
     <string name="settings_show_application_stats_title">Show application stats</string>
     <string name="settings_show_application_stats_summary">Show application stats at the top-right corner of the screen</string>
 
+    <!-- ExcludedLanguagesScene -->
+    <string name="excluded_languages">Excluded languages</string>
+    <string name="select_all">All</string>
+    <string name="deselect_all">None</string>
+    <string name="invert_selection">Invert</string>
+    <string name="language">Language</string>
+    <string name="original">Original</string>
+    <string name="translated">Translated</string>
+    <string name="rewrite">Rewrite</string>
+
+    <string name="language_japanese">Japanese</string>
+    <string name="language_english">English</string>
+    <string name="language_chinese">Chinese</string>
+    <string name="language_dutch">Dutch</string>
+    <string name="language_french">French</string>
+    <string name="language_german">German</string>
+    <string name="language_hungarian">Hungarian</string>
+    <string name="language_italian">Italian</string>
+    <string name="language_korean">Korean</string>
+    <string name="language_polish">Polish</string>
+    <string name="language_portuguese">Portuguese</string>
+    <string name="language_russian">Russian</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_thai">Thai</string>
+    <string name="language_vietnamese">Vietnamese</string>
+    <string name="language_na">N/A</string>
+    <string name="language_other">Other</string>
+
     <!-- Sign in -->
     <string name="line_dean">\"What ?\"</string>
     <string name="line_sam">\"I lose my panda …\"</string>

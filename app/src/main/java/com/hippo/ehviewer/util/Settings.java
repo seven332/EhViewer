@@ -149,10 +149,22 @@ public final class Settings {
     }
 
     /****** EhConfig ******/
-    private static EhConfig sEhConfig = new EhConfig();
+    private static final String KEY_EXCLUDED_LANGUAGES = "excluded_languages";
+    private static final String DEFAULT_EXCLUDED_LANGUAGES = "";
 
-    public static EhConfig getEhConfig() {
-        return sEhConfig;
+
+    public static EhConfig generateEhConfig() {
+        EhConfig config = new EhConfig();
+        config.excludedLanguages = getExcludedLanguages();
+        return config;
+    }
+
+    public static void putExcludedLanguages(String value) {
+        putString(KEY_EXCLUDED_LANGUAGES, value);
+    }
+
+    public static String getExcludedLanguages() {
+        return getString(KEY_EXCLUDED_LANGUAGES, DEFAULT_EXCLUDED_LANGUAGES);
     }
 
     /****** Advance ******/
