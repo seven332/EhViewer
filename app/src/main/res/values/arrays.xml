@@ -34,4 +34,14 @@
         <item>2</item>
     </array>
 
+    <string-array name="settings_preview_size_entries">
+        <item>@string/settings_preview_size_normal</item>
+        <item>@string/settings_preview_size_large</item>
+    </string-array>
+
+    <array name="settings_preview_size_values">
+        <item>0</item>
+        <item>1</item>
+    </array>
+
 </resources>

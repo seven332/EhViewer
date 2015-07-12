@@ -63,6 +63,11 @@ public class EhHttpClient extends HttpClient {
         mEhConfig.setDirty();
     }
 
+    public void setPreviewSize(String previewSize) {
+        mEhConfig.previewSize = previewSize;
+        mEhConfig.setDirty();
+    }
+
     private String getDomain(URL uri) {
         String host = uri.getHost();
         int length = host.length();

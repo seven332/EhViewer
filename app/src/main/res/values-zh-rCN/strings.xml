@@ -97,10 +97,43 @@
     <string name="settings_display">显示</string>
 
     <string name="settings_eh_source_title">EH 源</string>
+    <string name="settings_excluded_languages_title">排除语言</string>
+    <string name="settings_excluded_languages_summary">在列表与搜索中隐藏指定语言画廊</string>
+    <string name="settings_preview_size_title">预览图大小</string>
+    <string name="settings_preview_size_normal">一般</string>
+    <string name="settings_preview_size_large">较大</string>
 
     <string name="settings_advance">高级</string>
     <string name="settings_show_application_stats_title">显示应用状态</string>
     <string name="settings_show_application_stats_summary">在屏幕右上角显示设备状态</string>
+
+    <!-- ExcludedLanguagesScene -->
+    <string name="excluded_languages">排除语言</string>
+    <string name="select_all">全选</string>
+    <string name="deselect_all">全取消</string>
+    <string name="invert_selection">反选</string>
+    <string name="language">语言</string>
+    <string name="original">原作</string>
+    <string name="translated">翻译</string>
+    <string name="rewrite">改写</string>
+
+    <string name="language_japanese">日语</string>
+    <string name="language_english">英语</string>
+    <string name="language_chinese">汉语</string>
+    <string name="language_dutch">荷兰语</string>
+    <string name="language_french">法语</string>
+    <string name="language_german">德语</string>
+    <string name="language_hungarian">匈牙利语</string>
+    <string name="language_italian">意大利语</string>
+    <string name="language_korean">韩语</string>
+    <string name="language_polish">波兰语</string>
+    <string name="language_portuguese">葡萄牙语</string>
+    <string name="language_russian">俄语</string>
+    <string name="language_spanish">西班牙语</string>
+    <string name="language_thai">泰语</string>
+    <string name="language_vietnamese">越南语</string>
+    <string name="language_na">N/A</string>
+    <string name="language_other">其他</string>
 
     <!-- Sign in -->
     <string name="line_dean">“啥？”</string>

@@ -19,8 +19,10 @@ package com.hippo.ehviewer.ui.scene.preference;
 import android.content.res.Resources;
 
 import com.hippo.ehviewer.Constants;
+import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.client.EhUrl;
+import com.hippo.ehviewer.client.EhConfig;
+import com.hippo.ehviewer.util.Settings;
 import com.hippo.scene.SimpleCurtain;
 import com.hippo.scene.preference.ListPreference;
 import com.hippo.scene.preference.Preference;
@@ -29,22 +31,8 @@ import com.hippo.scene.preference.PreferenceScene;
 import com.hippo.scene.preference.PreferenceSet;
 import com.hippo.util.Messenger;
 
-public final class EHSettingsScene extends PreferenceScene implements Preference.OnClickListener {
-
-    private static final String KEY_EH_SOURCE = "eh_source";
-    private static final int DEFAULT_EH_SOURCE = EhUrl.SOURCE_G;
-
-    private static final String KEY_EH_API = "eh_api";
-    private static final int DEFAULT_EH_API = EhUrl.SOURCE_G;
-
-    private static final String KEY_DEFAULT_CATEGORIES = "default_categories";
-    private static final int DEFAULT_DEFAULT_CATEGORIES = 0;
-
-    private static final String KEY_EXCLUDED_NAMESPACES = "excluded_namespaces";
-    private static final int DEFAULT_EXCLUDED_NAMESPACES = 0;
-
-    private static final String KEY_EXCLUDED_LANGUAGES = "excluded_languages";
-    private static final String DEFAULT_EXCLUDED_LANGUAGES = "";
+public final class EHSettingsScene extends PreferenceScene implements Preference.OnClickListener,
+        Preference.OnValueChangeListener {
 
     @Override
     protected void onCreate(boolean rebirth) {
@@ -64,27 +52,36 @@ public final class EHSettingsScene extends PreferenceScene implements Preference
     private PreferenceSet[] getPreferenceSet() {
         Resources resources = getStageActivity().getResources();
 
-        ValueChangeListener valueChangeListener = new ValueChangeListener();
-
-        ListPreference sourcePreference = new ListPreference(this, KEY_EH_SOURCE,
+        // Source
+        ListPreference sourcePreference = new ListPreference(this, Settings.KEY_EH_SOURCE,
                 resources.getString(R.string.settings_eh_source_title), null);
         sourcePreference.setKeys(resources.getStringArray(R.array.settings_eh_source_entries));
         sourcePreference.setValues(resources.getIntArray(R.array.settings_eh_source_entry_values));
-        sourcePreference.setDefaultValue(DEFAULT_EH_SOURCE);
-        sourcePreference.setOnValueChangeListener(valueChangeListener);
+        sourcePreference.setDefaultValue(Settings.DEFAULT_EH_SOURCE);
+        sourcePreference.setOnValueChangeListener(this);
 
-
+        // Excluded language
         Preference languagePreference = new Preference(
-                KEY_EXCLUDED_LANGUAGES,
-                resources.getString(R.string.excluded_languages), null);
+                Settings.KEY_EXCLUDED_LANGUAGES,
+                resources.getString(R.string.settings_excluded_languages_title),
+                resources.getString(R.string.settings_excluded_languages_summary));
         languagePreference.setOnClickListener(this);
+
+        // Preview size
+        ListPreference previewSizePreference = new ListPreference(this, Settings.KEY_PREVIEW_SIZE,
+                resources.getString(R.string.settings_preview_size_title), null);
+        previewSizePreference.setKeys(resources.getStringArray(R.array.settings_preview_size_entries));
+        previewSizePreference.setValues(resources.getIntArray(R.array.settings_preview_size_values));
+        previewSizePreference.setDefaultValue(Settings.DEFAULT_PREVIEW_SIZE);
+        previewSizePreference.setOnValueChangeListener(this);
 
         PreferenceSet preferenceSet = new PreferenceSet();
         preferenceSet.setPreferenceCategory(new PreferenceCategory(resources.getString(R.string.settings_eh)));
 
         preferenceSet.setPreferenceList(new Preference[] {
                 sourcePreference,
-                languagePreference
+                languagePreference,
+                previewSizePreference
         });
 
         return new PreferenceSet[] {
@@ -95,7 +92,7 @@ public final class EHSettingsScene extends PreferenceScene implements Preference
     @Override
     public boolean onClick(Preference preference) {
         String key = preference.getKey();
-        if (KEY_EXCLUDED_LANGUAGES.equals(key)) {
+        if (Settings.KEY_EXCLUDED_LANGUAGES.equals(key)) {
             startScene(ExcludedLanguagesScene.class, null, new SimpleCurtain(SimpleCurtain.DIRECTION_BOTTOM));
             return true;
         } else {
@@ -103,18 +100,20 @@ public final class EHSettingsScene extends PreferenceScene implements Preference
         }
     }
 
-    private static class ValueChangeListener implements Preference.OnValueChangeListener {
-
-        @Override
-        public boolean OnValueChange(Preference preference, Object newValue) {
-            String key = preference.getKey();
-            switch (key) {
-                case KEY_EH_SOURCE:
-                    Messenger.getInstance().notify(Constants.MESSENGER_ID_EH_SOURCE, newValue);
-                    return true;
-                default:
-                    return true;
-            }
+    @Override
+    public boolean OnValueChange(Preference preference, Object newValue) {
+        String key = preference.getKey();
+        switch (key) {
+            case Settings.KEY_EH_SOURCE:
+                Messenger.getInstance().notify(Constants.MESSENGER_ID_EH_SOURCE, newValue);
+                return true;
+            case Settings.KEY_PREVIEW_SIZE:
+                int value = (Integer) newValue;
+                EhApplication.getEhHttpClient(getStageActivity()).setPreviewSize(
+                        value == 0? EhConfig.PREVIEW_SIZE_NORMAL : EhConfig.PREVIEW_SIZE_LARGE);
+                return true;
+            default:
+                return true;
         }
     }
 }

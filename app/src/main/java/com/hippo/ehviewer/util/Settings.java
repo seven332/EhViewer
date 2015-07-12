@@ -73,8 +73,10 @@ public final class Settings {
     }
 
     /****** EH ******/
-    private static final String KEY_EH_SOURCE = "eh_source";
-    private static final int DEFAULT_EH_SOURCE = EhUrl.SOURCE_G;
+    public static final String KEY_EH_SOURCE = "eh_source";
+    public static final int DEFAULT_EH_SOURCE = EhUrl.SOURCE_G;
+    public static final String KEY_EH_API = "eh_api";
+    public static final int DEFAULT_EH_API = EhUrl.SOURCE_G;
     private static final String KEY_SIGN_IN = "sign_in";
     private static final boolean DEFAULT_SIGN_IN = false;
     private static final String KEY_DISPLAY_NAME = "display_name";
@@ -149,12 +151,15 @@ public final class Settings {
     }
 
     /****** EhConfig ******/
-    private static final String KEY_EXCLUDED_LANGUAGES = "excluded_languages";
-    private static final String DEFAULT_EXCLUDED_LANGUAGES = "";
-
+    public static final String KEY_EXCLUDED_LANGUAGES = "excluded_languages";
+    public static final String DEFAULT_EXCLUDED_LANGUAGES = "";
+    public static final String KEY_PREVIEW_SIZE = "preview_size";
+    public static final int DEFAULT_PREVIEW_SIZE = 0;
 
     public static EhConfig generateEhConfig() {
         EhConfig config = new EhConfig();
+        config.previewSize = getPreviewSize() == 0 ?
+                EhConfig.PREVIEW_SIZE_NORMAL : EhConfig.PREVIEW_SIZE_LARGE;
         config.excludedLanguages = getExcludedLanguages();
         return config;
     }
@@ -165,6 +170,14 @@ public final class Settings {
 
     public static String getExcludedLanguages() {
         return getString(KEY_EXCLUDED_LANGUAGES, DEFAULT_EXCLUDED_LANGUAGES);
+    }
+
+    public static void putPreviewSize(int value) {
+        putInt(KEY_PREVIEW_SIZE, value);
+    }
+
+    public static int getPreviewSize() {
+        return getInt(KEY_PREVIEW_SIZE, DEFAULT_PREVIEW_SIZE);
     }
 
     /****** Advance ******/
