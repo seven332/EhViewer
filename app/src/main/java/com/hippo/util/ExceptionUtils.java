@@ -24,6 +24,7 @@ import android.support.annotation.Nullable;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhException;
 import com.hippo.httpclient.ResponseCodeException;
+import com.hippo.yorozuya.Say;
 
 import org.apache.http.conn.ConnectTimeoutException;
 
@@ -33,6 +34,8 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 public final class ExceptionUtils {
+
+    private static final String TAG = ExceptionUtils.class.getSimpleName();
 
     public static @NonNull String getReadableString(Context context, Exception e) {
         if (e instanceof ConnectTimeoutException ||
@@ -55,7 +58,7 @@ public final class ExceptionUtils {
         } else if (e instanceof EhException) {
             return e.getMessage();
         } else {
-            Log.d("Can't recognize this Exception", e);
+            Say.d(TAG, "Can't recognize this Exception", e);
             return context.getString(R.string.em_unknown);
         }
     }

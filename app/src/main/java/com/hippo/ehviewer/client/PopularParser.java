@@ -18,7 +18,7 @@ package com.hippo.ehviewer.client;
 
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.util.EhUtils;
-import com.hippo.util.Utils;
+import com.hippo.yorozuya.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -55,7 +55,7 @@ public class PopularParser {
             GalleryInfo gi = new GalleryInfo();
             gi.gid = j.getInt("gid");
             gi.token = j.getString("token");
-            gi.title = Utils.unescapeXml(j.getString("title"));
+            gi.title = StringUtils.unescapeXml(j.getString("title"));
             gi.posted = EhUtils.formatPostDate(Long.parseLong(j.getString("posted")) * 1000);
             gi.thumb = j.getString("thumb");
             gi.category = EhUtils.getCategory(j.getString("category"));

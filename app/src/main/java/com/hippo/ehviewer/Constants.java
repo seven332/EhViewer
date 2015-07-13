@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer;
 
-import com.hippo.util.Messenger;
+import com.hippo.yorozuya.Messenger;
 
 public final class Constants {
 

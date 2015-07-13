@@ -27,7 +27,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
-import com.hippo.util.ViewUtils;
 
 public class Snackbar extends LinearLayout {
 
@@ -78,13 +77,13 @@ public class Snackbar extends LinearLayout {
         if (TextUtils.isEmpty(actionText)) {
             mActionTxt.setOnClickListener(null);
             mActionTxt.setClickable(false);
-            ViewUtils.setVisibility(mSpace, View.GONE);
-            ViewUtils.setVisibility(mActionTxt, View.GONE);
+            mSpace.setVisibility(View.GONE);
+            mActionTxt.setVisibility(View.GONE);
         } else {
             mActionTxt.setText(actionText);
             mActionTxt.setOnClickListener(action);
-            ViewUtils.setVisibility(mSpace, View.VISIBLE);
-            ViewUtils.setVisibility(mActionTxt, View.VISIBLE);
+            mSpace.setVisibility(View.VISIBLE);
+            mActionTxt.setVisibility(View.VISIBLE);
         }
     }
 }

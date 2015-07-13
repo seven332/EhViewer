@@ -1,1 +1,1 @@
-include ':app', ':unifile', ':vectorold', ':hotspot', ':rippleold', ':beerbelly', ':cardsalon', ':httpclient', 'conaco'
+include ':app', ':unifile', ':vectorold', ':hotspot', ':rippleold', ':beerbelly', ':cardsalon', ':httpclient', ':yorozuya', 'conaco'

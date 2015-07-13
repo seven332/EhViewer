@@ -34,7 +34,6 @@ import android.widget.TextView;
 import com.hippo.cardsalon.CardView;
 import com.hippo.ehviewer.R;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.util.ViewUtils;
 
 public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         SceneDialogView.OnClickOutOfDialogListener, AdapterView.OnItemClickListener {
@@ -116,19 +115,19 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
 
         if (mBuilder.mTitle == null && mBuilder.mMessage == null
                 && mBuilder.mItemLayoutResId == 0 && mBuilder.mCustomViewResId == 0) {
-            ViewUtils.setVisibility(mBody, View.GONE);
+            mBody.setVisibility(View.GONE);
         } else {
             if (mBuilder.mTitle != null) {
                 mTitle.setText(mBuilder.mTitle);
             } else {
-                ViewUtils.setVisibility(mTitle, View.GONE);
-                ViewUtils.setVisibility(mSpaceTitleContent, View.GONE);
+                mTitle.setVisibility(View.GONE);
+                mSpaceTitleContent.setVisibility(View.GONE);
             }
 
             if (mBuilder.mMessage != null) {
                 mMessage.setText(mBuilder.mMessage);
-                ViewUtils.setVisibility(mListView, View.GONE);
-                ViewUtils.setVisibility(mCustom, View.GONE);
+                mListView.setVisibility(View.GONE);
+                mCustom.setVisibility(View.GONE);
             } else if (mBuilder.mItemLayoutResId != 0) {
                 listView.setAdapter(new ArrayAdapter<>(getStageActivity(),
                         mBuilder.mItemLayoutResId, android.R.id.text1, mBuilder.mItems));
@@ -140,42 +139,42 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
                         listView.setSelection(mBuilder.mCheckedItem);
                     }
                 }
-                ViewUtils.setVisibility(mContent, View.GONE);
-                ViewUtils.setVisibility(mCustom, View.GONE);
+                mContent.setVisibility(View.GONE);
+                mCustom.setVisibility(View.GONE);
             } else if (mBuilder.mCustomViewResId != 0) {
                 getStageActivity().getLayoutInflater().inflate(mBuilder.mCustomViewResId, mCustom);
                 if (mBuilder.mOnCreateCustomViewListener != null) {
                     mBuilder.mOnCreateCustomViewListener.onCreateCustomView(this,
                             mCustom.getChildAt(0));
                 }
-                ViewUtils.setVisibility(mContent, View.GONE);
-                ViewUtils.setVisibility(mListView, View.GONE);
+                mContent.setVisibility(View.GONE);
+                mListView.setVisibility(View.GONE);
             } else {
-                ViewUtils.setVisibility(mContent, View.GONE);
-                ViewUtils.setVisibility(mListView, View.GONE);
-                ViewUtils.setVisibility(mCustom, View.GONE);
-                ViewUtils.setVisibility(mSpaceTitleContent, View.GONE);
+                mContent.setVisibility(View.GONE);
+                mListView.setVisibility(View.GONE);
+                mCustom.setVisibility(View.GONE);
+                mSpaceTitleContent.setVisibility(View.GONE);
             }
         }
 
         if (mBuilder.mPositiveButtonText == null && mBuilder.mNegativeButtonText == null) {
-            ViewUtils.setVisibility(mButtonsSingleLine, View.GONE);
+            mButtonsSingleLine.setVisibility(View.GONE);
         } else {
             if (mBuilder.mPositiveButtonText != null) {
                 mPositiveButton.setText(mBuilder.mPositiveButtonText);
                 mPositiveButton.setOnClickListener(this);
                 RippleSalon.addRipple(mPositiveButton, false);
             } else {
-                ViewUtils.setVisibility(mPositiveButton, View.GONE);
-                ViewUtils.setVisibility(mSpacePositiveNegative, View.GONE);
+                mPositiveButton.setVisibility(View.GONE);
+                mSpacePositiveNegative.setVisibility(View.GONE);
             }
             if (mBuilder.mNegativeButtonText != null) {
                 mNegativeButton.setText(mBuilder.mNegativeButtonText);
                 mNegativeButton.setOnClickListener(this);
                 RippleSalon.addRipple(mNegativeButton, false);
             } else {
-                ViewUtils.setVisibility(mNegativeButton, View.GONE);
-                ViewUtils.setVisibility(mSpacePositiveNegative, View.GONE);
+                mNegativeButton.setVisibility(View.GONE);
+                mSpacePositiveNegative.setVisibility(View.GONE);
             }
         }
 

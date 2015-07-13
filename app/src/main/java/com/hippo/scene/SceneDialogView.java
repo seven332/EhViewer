@@ -24,7 +24,7 @@ import android.view.ViewGroup;
 
 import com.hippo.hotspot.HotspotTouchHelper;
 import com.hippo.hotspot.Hotspotable;
-import com.hippo.util.ViewUtils;
+import com.hippo.yorozuya.ViewUtils;
 
 public class SceneDialogView extends SceneView implements View.OnClickListener, Hotspotable {
 
@@ -76,8 +76,7 @@ public class SceneDialogView extends SceneView implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        if (v == this && !ViewUtils.isViewUnder(((ViewGroup) getChildAt(0)).getChildAt(0), (int) mHostpotX,
-                (int) mHostpotY) && mOnClickOutOfDialogListener != null) {
+        if (v == this && !ViewUtils.isViewUnder(((ViewGroup) getChildAt(0)).getChildAt(0), (int) mHostpotX, (int) mHostpotY) && mOnClickOutOfDialogListener != null) {
             mOnClickOutOfDialogListener.onClickOutOfDialog((int) mHostpotX, (int) mHostpotY);
         }
     }

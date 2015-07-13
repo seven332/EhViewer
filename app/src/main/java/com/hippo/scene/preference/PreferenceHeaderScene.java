@@ -30,7 +30,6 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.AppbarScene;
 import com.hippo.scene.SimpleCurtain;
 import com.hippo.scene.StageActivity;
-import com.hippo.util.ViewUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 
 import java.util.ArrayList;
@@ -115,7 +114,7 @@ public class PreferenceHeaderScene extends AppbarScene {
         public void onBindViewHolder(HeaderHolder holder, int position) {
             holder.icon.setImageDrawable(mHeaderList.get(position).getIcon());
             holder.title.setText(mHeaderList.get(position).getTitle());
-            ViewUtils.setVisibility(holder.tileDivider, position == getItemCount() - 1 ? View.INVISIBLE : View.VISIBLE);
+            holder.tileDivider.setVisibility(position == getItemCount() - 1 ? View.INVISIBLE : View.VISIBLE);
         }
 
         @Override

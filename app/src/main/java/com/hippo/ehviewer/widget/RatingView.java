@@ -10,7 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.hippo.ehviewer.R;
-import com.hippo.util.ViewUtils;
+import com.hippo.yorozuya.ViewUtils;
 
 public class RatingView extends View {
 

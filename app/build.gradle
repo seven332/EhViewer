@@ -45,4 +45,5 @@ dependencies {
     compile project(':conaco')
     compile project(':cardsalon')
     compile project(':httpclient')
+    compile project(':yorozuya')
 }

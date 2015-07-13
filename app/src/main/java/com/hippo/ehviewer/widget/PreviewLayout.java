@@ -33,9 +33,9 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.util.ViewUtils;
 import com.hippo.widget.AccurateClick;
 import com.hippo.widget.SimpleGridLayout;
+import com.hippo.yorozuya.ViewUtils;
 
 public final class PreviewLayout extends LinearLayout implements View.OnClickListener,
         AccurateClick.OnAccurateClickListener {

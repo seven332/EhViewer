@@ -27,7 +27,7 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 
 import com.hippo.ehviewer.R;
-import com.hippo.util.Utils;
+import com.hippo.yorozuya.NumberUtils;
 
 public class AdvanceSearchTable extends TableLayout {
 
@@ -113,14 +113,14 @@ public class AdvanceSearchTable extends TableLayout {
     }
 
     public void setAdvanceSearch(int advanceSearch) {
-        mSname.setChecked(Utils.int2boolean(advanceSearch & SNAME));
-        mStags.setChecked(Utils.int2boolean(advanceSearch & STAGS));
-        mSdesc.setChecked(Utils.int2boolean(advanceSearch & SDESC));
-        mStorr.setChecked(Utils.int2boolean(advanceSearch & STORR));
-        mSto.setChecked(Utils.int2boolean(advanceSearch & STO));
-        mSdt1.setChecked(Utils.int2boolean(advanceSearch & SDT1));
-        mSdt2.setChecked(Utils.int2boolean(advanceSearch & SDT2));
-        mSh.setChecked(Utils.int2boolean(advanceSearch & SH));
+        mSname.setChecked(NumberUtils.int2boolean(advanceSearch & SNAME));
+        mStags.setChecked(NumberUtils.int2boolean(advanceSearch & STAGS));
+        mSdesc.setChecked(NumberUtils.int2boolean(advanceSearch & SDESC));
+        mStorr.setChecked(NumberUtils.int2boolean(advanceSearch & STORR));
+        mSto.setChecked(NumberUtils.int2boolean(advanceSearch & STO));
+        mSdt1.setChecked(NumberUtils.int2boolean(advanceSearch & SDT1));
+        mSdt2.setChecked(NumberUtils.int2boolean(advanceSearch & SDT2));
+        mSh.setChecked(NumberUtils.int2boolean(advanceSearch & SH));
     }
 
     public void setMinRating(int minRating) {

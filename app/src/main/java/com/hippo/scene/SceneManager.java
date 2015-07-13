@@ -21,9 +21,9 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.hippo.util.AssertUtils;
-import com.hippo.util.IntIdGenerator;
-import com.hippo.util.Log;
+import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.IdGenerator;
+import com.hippo.yorozuya.Say;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,7 +44,7 @@ public class SceneManager {
     private Set<Scene> mLegacySceneSet = new HashSet<>();
     private Set<Scene> mPrepareToDieSceneSet = new HashSet<>();
 
-    private IntIdGenerator mIdGenerator = IntIdGenerator.create();
+    private IdGenerator mIdGenerator = new IdGenerator();
 
     private List<SceneStateListener> mSceneStateListenerList = new ArrayList<>();
 
@@ -166,7 +166,7 @@ public class SceneManager {
         checkLoop();
 
         if (!isStageAlive()) {
-            Log.w(TAG, "Stage is not alive, but attemp to show dialog " + dialog.toString());
+            Say.w(TAG, "Stage is not alive, but attemp to show dialog " + dialog.toString());
             return;
         }
 
@@ -282,7 +282,7 @@ public class SceneManager {
                 }
             }
         } else {
-            Log.e(TAG, "The scene is not in stage, " + scene);
+            Say.e(TAG, "The scene is not in stage, " + scene);
         }
     }
 
@@ -327,7 +327,7 @@ public class SceneManager {
             scene.onBackPressedInternal();
             return true;
         } else {
-            Log.w(TAG, "There is no scene in the stage");
+            Say.w(TAG, "There is no scene in the stage");
             return false;
         }
     }

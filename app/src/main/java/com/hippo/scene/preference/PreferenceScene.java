@@ -24,8 +24,8 @@ import android.view.ViewGroup;
 import com.hippo.ehviewer.R;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.AppbarScene;
-import com.hippo.util.ViewUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;

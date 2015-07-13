@@ -29,7 +29,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 
 import com.hippo.ehviewer.R;
-import com.hippo.util.MathUtils;
+import com.hippo.yorozuya.MathUtils;
 
 /**
  * A drawable that can draw a "Drawer hamburger" menu or an Arrow and animate between them.

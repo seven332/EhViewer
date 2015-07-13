@@ -24,8 +24,8 @@ import android.util.SparseArray;
 import android.view.View;
 
 import com.hippo.app.StatsActivity;
-import com.hippo.util.IntIdGenerator;
-import com.hippo.util.Log;
+import com.hippo.yorozuya.IdGenerator;
+import com.hippo.yorozuya.Say;
 
 public abstract class StageActivity extends StatsActivity {
 
@@ -33,7 +33,7 @@ public abstract class StageActivity extends StatsActivity {
 
     private static final String KEY_SCENEN_MANAGER_ID = "scene_manager_id";
 
-    private IntIdGenerator mActivityResultIdGenerator = IntIdGenerator.create();
+    private IdGenerator mActivityResultIdGenerator = new IdGenerator();
     private SparseArray<Scene.ActivityResultListener> mActivityResultListenerMap =
             new SparseArray<>();
 
@@ -53,7 +53,7 @@ public abstract class StageActivity extends StatsActivity {
         } else {
             int id = savedInstanceState.getInt(KEY_SCENEN_MANAGER_ID, -1);
             if (id == -1) {
-                Log.e(TAG, "Can't get KEY_SCENEN_MANAGER_ID");
+                Say.e(TAG, "Can't get KEY_SCENEN_MANAGER_ID");
                 mSceneManager = SceneApplication.createSceneManager(this);
             } else {
                 mSceneManager = SceneApplication.getSceneManager(this, id);

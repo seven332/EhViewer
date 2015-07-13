@@ -27,8 +27,8 @@ import android.view.ViewTreeObserver;
 import com.hippo.animation.ArgbEvaluator;
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.util.AnimationUtils;
-import com.hippo.util.AssertUtils;
-import com.hippo.util.ViewUtils;
+import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.ViewUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -84,8 +84,8 @@ public class SimpleDialogCurtain extends Curtain {
         AssertUtils.assertNotNull("Cushion view must not be null.", cushion);
         AssertUtils.assertNotNull("Frame view must not be null.", frame);
 
-        ViewUtils.setVisibility(cushion, View.INVISIBLE);
-        ViewUtils.setVisibility(frame, View.INVISIBLE);
+        cushion.setVisibility(View.INVISIBLE);
+        frame.setVisibility(View.INVISIBLE);
 
         // TODO addOnGlobalLayoutListener is not reliable
         // TODO use isLayoutRequested
@@ -138,8 +138,8 @@ public class SimpleDialogCurtain extends Curtain {
                 mAnimatorSet.addListener(new SimpleAnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        ViewUtils.setVisibility(cushion, View.VISIBLE);
-                        ViewUtils.setVisibility(frame, View.VISIBLE);
+                        cushion.setVisibility(View.VISIBLE);
+                        frame.setVisibility(View.VISIBLE);
                     }
                     @Override
                     public void onAnimationEnd(Animator animation) {

@@ -31,19 +31,21 @@ import android.widget.Toast;
 
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
-import com.hippo.util.AssertUtils;
 import com.hippo.util.ExceptionUtils;
-import com.hippo.util.IntIdGenerator;
 import com.hippo.util.LayoutManagerUtils;
-import com.hippo.util.Log;
-import com.hippo.util.UiUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.refreshlayout.RefreshLayout;
+import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.IdGenerator;
+import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.Say;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContentLayout extends FrameLayout {
+
+    private static final String TAG = ContentLayout.class.getSimpleName();
 
     private ProgressBar mProgressBar;
     private ViewGroup mTipView;
@@ -113,7 +115,7 @@ public class ContentLayout extends FrameLayout {
         // RecyclerView
         mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerViewOriginTop + fitPaddingTop, mRecyclerView.getPaddingRight(), mRecyclerView.getPaddingBottom());
         // RefreshLayout
-        mRefreshLayout.setProgressViewOffset(false, fitPaddingTop, fitPaddingTop + UiUtils.dp2pix(getContext(), 32)); // TODO
+        mRefreshLayout.setProgressViewOffset(false, fitPaddingTop, fitPaddingTop + LayoutUtils.dp2pix(getContext(), 32)); // TODO
     }
 
     public void setFitPaddingBottom(int fitPaddingBottom) {
@@ -178,7 +180,7 @@ public class ContentLayout extends FrameLayout {
          */
         private List<E> mData;
 
-        private IntIdGenerator mIdGenerator;
+        private IdGenerator mIdGenerator;
 
         /**
          * First shown page index
@@ -254,7 +256,7 @@ public class ContentLayout extends FrameLayout {
         public ContentHelper(Context context) {
             mContext = context;
             mData = new ArrayList<>();
-            mIdGenerator = IntIdGenerator.create();
+            mIdGenerator = new IdGenerator();
         }
 
         @SuppressWarnings("unchecked")
@@ -442,7 +444,7 @@ public class ContentLayout extends FrameLayout {
             if (mCurrentTaskId == taskId) {
                 mRefreshLayout.setHeaderRefreshing(false);
                 mRefreshLayout.setFooterRefreshing(false);
-                Log.d("Get page data failed " + e.getClass().getName() + " " + e.getMessage());
+                Say.d(TAG, "Get page data failed " + e.getClass().getName() + " " + e.getMessage());
                 String readableError = ExceptionUtils.getReadableString(mContext, e);
                 String reason = ExceptionUtils.getReasonString(mContext, e);
                 if (reason != null) {

@@ -25,13 +25,15 @@ import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.network.EhHttpClient;
 import com.hippo.ehviewer.util.Settings;
 import com.hippo.scene.SceneApplication;
-import com.hippo.util.Log;
 import com.hippo.vectorold.content.VectorContext;
+import com.hippo.yorozuya.Say;
 
 import java.io.File;
 import java.io.IOException;
 
 public class EhApplication extends SceneApplication {
+
+    private static final String TAG = EhApplication.class.getSimpleName();
 
     private EhHttpClient mEhHttpClient;
     private EhClient mEhClient;
@@ -80,7 +82,7 @@ public class EhApplication extends SceneApplication {
         super.onTrimMemory(level);
 
         if (level == TRIM_MEMORY_UI_HIDDEN) {
-            Log.d("Application hiden");
+            Say.d(TAG, "Application hiden");
         }
     }
 

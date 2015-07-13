@@ -10,8 +10,8 @@ import android.view.ViewTreeObserver;
 
 import com.hippo.animation.DurationInterpolator;
 import com.hippo.animation.SimpleAnimatorListener;
-import com.hippo.util.Log;
-import com.hippo.util.ViewUtils;
+import com.hippo.yorozuya.Say;
+import com.hippo.yorozuya.ViewUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -45,7 +45,7 @@ public class RippleCurtain extends Curtain {
 
         final SceneView enterView = enter.getSceneView();
         enterView.setStartPoint(mStartX, mStartY);
-        ViewUtils.setVisibility(enterView, View.INVISIBLE);
+        enterView.setVisibility(View.INVISIBLE);
 
         enterView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -67,7 +67,7 @@ public class RippleCurtain extends Curtain {
                     });
                     animatorCollection.add(alphaAnim);
                 } else {
-                    Log.w(TAG, "Can't get enter scene content view");
+                    Say.w(TAG, "Can't get enter scene content view");
                 }
 
                 PropertyValuesHolder circlePercentPvh = PropertyValuesHolder.ofFloat("circlePercent", 0f, 1f);
@@ -80,7 +80,7 @@ public class RippleCurtain extends Curtain {
                 mAnimatorSet.addListener(new SimpleAnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        ViewUtils.setVisibility(enterView, View.VISIBLE);
+                        enterView.setVisibility(View.VISIBLE);
                     }
                     @Override
                     public void onAnimationEnd(Animator animation) {

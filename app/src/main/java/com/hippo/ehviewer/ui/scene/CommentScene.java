@@ -19,9 +19,9 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.AppbarScene;
 import com.hippo.util.URLImageGetter;
-import com.hippo.util.UiUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
+import com.hippo.yorozuya.LayoutUtils;
 
 import java.util.List;
 
@@ -66,7 +66,7 @@ public class CommentScene extends AppbarScene implements EasyRecyclerView.OnItem
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
                 LinearDividerItemDecoration.VERTICAL, resources.getColor(R.color.divider_light),
-                UiUtils.dp2pix(getStageActivity(), 1));
+                LayoutUtils.dp2pix(getStageActivity(), 1));
         decoration.setShowLastDivider(true);
         decoration.setPadding(resources.getDimensionPixelOffset(R.dimen.keyline_margin));
         mRecyclerView.addItemDecoration(decoration);

@@ -39,7 +39,7 @@ import com.hippo.scene.SceneManager;
 import com.hippo.scene.SimpleCurtain;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.StageLayout;
-import com.hippo.util.Messenger;
+import com.hippo.yorozuya.Messenger;
 import com.hippo.vectorold.content.VectorContext;
 import com.hippo.widget.DrawerLayout;
 import com.hippo.widget.DrawerListView;

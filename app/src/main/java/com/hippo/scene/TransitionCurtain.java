@@ -30,10 +30,10 @@ import android.widget.AbsoluteLayout;
 import com.hippo.animation.ArgbEvaluator;
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.util.AnimationUtils;
-import com.hippo.util.AssertUtils;
-import com.hippo.util.Log;
-import com.hippo.util.ViewUtils;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.widget.GlobalLayoutSet;
+import com.hippo.yorozuya.Say;
+import com.hippo.yorozuya.ViewUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -77,7 +77,7 @@ public class TransitionCurtain extends Curtain {
             alphaAnim.setDuration(ANIMATE_TIME);
             animatorCollection.add(alphaAnim);
         } else {
-            Log.w(TAG, "Can't get enter scene content view");
+            Say.w(TAG, "Can't get enter scene content view");
         }
 
         GlobalLayoutSet globalLayoutSet = new GlobalLayoutSet();
@@ -92,16 +92,16 @@ public class TransitionCurtain extends Curtain {
             final View enterView = enterViews[i];
             final View exitView = exitViews[i];
             if (enterView == null) {
-                Log.w(TAG, "Can't get enterView when open.");
+                Say.w(TAG, "Can't get enterView when open.");
                 continue;
             }
             if (exitView == null) {
-                Log.w(TAG, "Can't get exitView when open.");
+                Say.w(TAG, "Can't get exitView when open.");
                 continue;
             }
 
             // First make enter view invisible
-            ViewUtils.setVisibility(enterView, View.INVISIBLE);
+            enterView.setVisibility(View.INVISIBLE);
 
             // Add item
             TransitionItem item = new TransitionItem();
@@ -170,7 +170,7 @@ public class TransitionCurtain extends Curtain {
                         startWidth, startHeight, startloaction[0], startloaction[1]);
                 enterSceneView.addView(bmpView, lp);
 
-                ViewUtils.setVisibility(bmpView, View.INVISIBLE);
+                bmpView.setVisibility(View.INVISIBLE);
 
                 globalLayoutSet.addListenerToObserver(bmpView.getViewTreeObserver());
             }
@@ -204,8 +204,8 @@ public class TransitionCurtain extends Curtain {
                 View exitView = item.exitView;
                 View bmpView = item.bmpView;
 
-                ViewUtils.setVisibility(exitView, View.INVISIBLE);
-                ViewUtils.setVisibility(bmpView, View.VISIBLE);
+                exitView.setVisibility(View.INVISIBLE);
+                bmpView.setVisibility(View.VISIBLE);
 
                 bmpView.setPivotX(0);
                 bmpView.setPivotY(0);
@@ -229,8 +229,8 @@ public class TransitionCurtain extends Curtain {
                     dispatchOpenFinished(mEnterScene, mExitScene);
                     hideSceneOnOpen(mExitScene);
                     for (TransitionItem item : mTransitionItemSet) {
-                        ViewUtils.setVisibility(item.enterView, View.VISIBLE);
-                        ViewUtils.setVisibility(item.exitView, View.VISIBLE);
+                        item.enterView.setVisibility(View.VISIBLE);
+                        item.exitView.setVisibility(View.VISIBLE);
 
                         ViewGroup enterSceneView = mEnterScene.getSceneView();
                         enterSceneView.removeView(item.bmpView);
@@ -265,7 +265,7 @@ public class TransitionCurtain extends Curtain {
             alphaAnim.setDuration(ANIMATE_TIME);
             animatorCollection.add(alphaAnim);
         } else {
-            Log.w(TAG, "Can't get enter scene content view");
+            Say.w(TAG, "Can't get enter scene content view");
         }
 
         GlobalLayoutSet globalLayoutSet = new GlobalLayoutSet();
@@ -280,16 +280,16 @@ public class TransitionCurtain extends Curtain {
             final View enterView = enterViews[i];
             final View exitView = exitViews[i];
             if (enterView == null) {
-                Log.w(TAG, "Can't get enterView when close");
+                Say.w(TAG, "Can't get enterView when close");
                 continue;
             }
             if (exitView == null) {
-                Log.w(TAG, "Can't get exitView when close");
+                Say.w(TAG, "Can't get exitView when close");
                 continue;
             }
 
             // First make enter view invisible
-            ViewUtils.setVisibility(enterView, View.INVISIBLE);
+            enterView.setVisibility(View.INVISIBLE);
 
             // Add item
             TransitionItem item = new TransitionItem();
@@ -357,7 +357,7 @@ public class TransitionCurtain extends Curtain {
                         startWidth, startHeight, startloaction[0], startloaction[1]);
                 exitSceneView.addView(bmpView, lp);
 
-                ViewUtils.setVisibility(bmpView, View.INVISIBLE);
+                bmpView.setVisibility(View.INVISIBLE);
 
                 globalLayoutSet.addListenerToObserver(bmpView.getViewTreeObserver());
             }
@@ -391,8 +391,8 @@ public class TransitionCurtain extends Curtain {
                 View exitView = item.exitView;
                 View bmpView = item.bmpView;
 
-                ViewUtils.setVisibility(exitView, View.INVISIBLE);
-                ViewUtils.setVisibility(bmpView, View.VISIBLE);
+                exitView.setVisibility(View.INVISIBLE);
+                bmpView.setVisibility(View.VISIBLE);
 
                 bmpView.setPivotX(0);
                 bmpView.setPivotY(0);
@@ -415,8 +415,8 @@ public class TransitionCurtain extends Curtain {
                 public void onAnimationEnd(Animator animation) {
                     dispatchCloseFinished(mEnterScene, mExitScene);
                     for (TransitionItem item : mTransitionItemSet) {
-                        ViewUtils.setVisibility(item.enterView, View.VISIBLE);
-                        ViewUtils.setVisibility(item.exitView, View.VISIBLE);
+                        item.enterView.setVisibility(View.VISIBLE);
+                        item.exitView.setVisibility(View.VISIBLE);
 
                         ViewGroup exitSceneView = mExitScene.getSceneView();
                         exitSceneView.removeView(item.bmpView);

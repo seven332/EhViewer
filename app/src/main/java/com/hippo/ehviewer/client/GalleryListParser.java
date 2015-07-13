@@ -21,9 +21,9 @@ import android.support.annotation.NonNull;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.LofiGalleryInfo;
 import com.hippo.ehviewer.util.EhUtils;
-import com.hippo.util.AssertException;
-import com.hippo.util.AssertUtils;
-import com.hippo.util.Utils;
+import com.hippo.yorozuya.AssertException;
+import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.NumberUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +123,7 @@ public class GalleryListParser {
                     continue;
                 }
 
-                gi.rating = Utils.parseFloatSafely(getRate(m.group(11)), Float.NaN);
+                gi.rating = NumberUtils.parseFloatSafely(getRate(m.group(11)), Float.NaN);
                 gi.uploader = ParserUtils.trim(m.group(12));
                 gi.generateSLang();
 

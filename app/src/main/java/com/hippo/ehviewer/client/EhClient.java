@@ -21,7 +21,7 @@ import android.os.Process;
 
 import com.hippo.ehviewer.network.EhHttpRequest;
 import com.hippo.httpclient.HttpClient;
-import com.hippo.util.PriorityThreadFactory;
+import com.hippo.yorozuya.PriorityThreadFactory;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

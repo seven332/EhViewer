@@ -26,8 +26,8 @@ import android.widget.TableLayout;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhConfig;
-import com.hippo.util.Utils;
 import com.hippo.widget.CheckTextView;
+import com.hippo.yorozuya.NumberUtils;
 
 public class CategoryTable extends TableLayout {
 
@@ -86,16 +86,16 @@ public class CategoryTable extends TableLayout {
      * @param category target category
      */
     public void setCategory(int category) {
-        mDoujinshi.setChecked(!Utils.int2boolean(category & EhConfig.DOUJINSHI), false);
-        mManga.setChecked(!Utils.int2boolean(category & EhConfig.MANGA), false);
-        mArtistCG.setChecked(!Utils.int2boolean(category & EhConfig.ARTIST_CG), false);
-        mGameCG.setChecked(!Utils.int2boolean(category & EhConfig.GAME_CG), false);
-        mWestern.setChecked(!Utils.int2boolean(category & EhConfig.WESTERN), false);
-        mNonH.setChecked(!Utils.int2boolean(category & EhConfig.NON_H), false);
-        mImageSets.setChecked(!Utils.int2boolean(category & EhConfig.IMAGE_SET), false);
-        mCosplay.setChecked(!Utils.int2boolean(category & EhConfig.COSPLAY), false);
-        mAsianPorn.setChecked(!Utils.int2boolean(category & EhConfig.ASIAN_PORN), false);
-        mMisc.setChecked(!Utils.int2boolean(category & EhConfig.MISC), false);
+        mDoujinshi.setChecked(!NumberUtils.int2boolean(category & EhConfig.DOUJINSHI), false);
+        mManga.setChecked(!NumberUtils.int2boolean(category & EhConfig.MANGA), false);
+        mArtistCG.setChecked(!NumberUtils.int2boolean(category & EhConfig.ARTIST_CG), false);
+        mGameCG.setChecked(!NumberUtils.int2boolean(category & EhConfig.GAME_CG), false);
+        mWestern.setChecked(!NumberUtils.int2boolean(category & EhConfig.WESTERN), false);
+        mNonH.setChecked(!NumberUtils.int2boolean(category & EhConfig.NON_H), false);
+        mImageSets.setChecked(!NumberUtils.int2boolean(category & EhConfig.IMAGE_SET), false);
+        mCosplay.setChecked(!NumberUtils.int2boolean(category & EhConfig.COSPLAY), false);
+        mAsianPorn.setChecked(!NumberUtils.int2boolean(category & EhConfig.ASIAN_PORN), false);
+        mMisc.setChecked(!NumberUtils.int2boolean(category & EhConfig.MISC), false);
     }
 
     /**

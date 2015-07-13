@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer.client;
 
-import com.hippo.util.Utils;
+import com.hippo.yorozuya.StringUtils;
 
 public class ParserUtils {
 
@@ -25,7 +25,7 @@ public class ParserUtils {
         if (str == null) {
             str = "";
         }
-        return Utils.unescapeXml(str).trim();
+        return StringUtils.unescapeXml(str).trim();
     }
 
     public static int parseInt(String str) {

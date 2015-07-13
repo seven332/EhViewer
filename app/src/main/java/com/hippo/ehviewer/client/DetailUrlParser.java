@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer.client;
 
-import com.hippo.util.AssertUtils;
+import com.hippo.yorozuya.AssertUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

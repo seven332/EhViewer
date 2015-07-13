@@ -67,13 +67,13 @@ import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
 import com.hippo.scene.TransitionCurtain;
 import com.hippo.util.AnimationUtils;
-import com.hippo.util.AppHandler;
-import com.hippo.util.AssertUtils;
-import com.hippo.util.MathUtils;
-import com.hippo.util.ViewUtils;
+import com.hippo.yorozuya.SimpleHandler;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.FloatingActionButton;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.ViewUtils;
 
 // TODO remeber the data in ContentHelper after screen dirction change
 // TODO Must refresh when change source
@@ -796,8 +796,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
                     isVaildView(recyclerView)) {
 
                 int oldBottom = mSearchBar.getBottom();
-                int offsetYStep = MathUtils.clamp(-dy,
-                        -mSearchBar.getBottom(), mSearchBarOriginalTop - mSearchBar.getTop());
+                int offsetYStep = MathUtils.clamp(-dy, -mSearchBar.getBottom(), mSearchBarOriginalTop - mSearchBar.getTop());
                 mSearchBar.offsetTopAndBottom(offsetYStep);
                 ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offsetYStep;
                 int newBottom = mSearchBar.getBottom();
@@ -877,7 +876,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
 
         @Override
         protected void onScrollToPosition() {
-            AppHandler.getInstance().post(mSearchBarPositionTask);
+            SimpleHandler.getInstance().post(mSearchBarPositionTask);
         }
 
         @Override

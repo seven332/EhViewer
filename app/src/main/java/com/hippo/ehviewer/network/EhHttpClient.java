@@ -25,8 +25,8 @@ import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.util.Settings;
 import com.hippo.httpclient.Cookie;
 import com.hippo.httpclient.HttpClient;
-import com.hippo.util.MathUtils;
-import com.hippo.util.Utils;
+import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.Utilities;
 
 import java.net.URL;
 
@@ -88,40 +88,28 @@ public class EhHttpClient extends HttpClient {
 
     @Override
     protected void fillCookie(URL url, Cookie cookie) {
-        boolean isSignIn = Settings.getSignIn();
-        String host = url.getHost();
-
         cookie.putRaw(mCookieManager.getCookie(url.toString()));
 
-        if (Utils.contain(EHENTAI_DOMAIN, getDomain(url)))
-
-
-        if (!isSignIn && HOST_EX.equals(host)) {
-            cookie.put("yay", "louder");
-        } else {
-            cookie.putRaw(mCookieManager.getCookie(url.toString()));
-
-            if (Utils.contain(EHENTAI_DOMAIN, getDomain(url))) {
-                if (Settings.getSignIn()) {
-                    // Put login info
-                    String ipdMemberId = Settings.getIpdNumberId();
-                    String ipdPassHash = Settings.getIpdPassHash();
-                    String igneous = Settings.getIgneous();
-                    if (ipdMemberId != null) {
-                        cookie.put(KEY_IPD_MEMBER_ID, ipdMemberId);
-                    }
-                    if (ipdPassHash != null) {
-                        cookie.put(KEY_IPD_PASS_HASH, ipdPassHash);
-                    }
-                    if (igneous != null) {
-                        cookie.put(KEY_IGNEOUS, igneous);
-                    }
-                } else if (HOST_EX.equals(url.getHost())) {
-                    cookie.put("yay", "louder");
+        if (Utilities.contain(EHENTAI_DOMAIN, getDomain(url))) {
+            if (Settings.getSignIn()) {
+                // Put login info
+                String ipdMemberId = Settings.getIpdNumberId();
+                String ipdPassHash = Settings.getIpdPassHash();
+                String igneous = Settings.getIgneous();
+                if (ipdMemberId != null) {
+                    cookie.put(KEY_IPD_MEMBER_ID, ipdMemberId);
                 }
-
-                mEhConfig.fillCookie(cookie);
+                if (ipdPassHash != null) {
+                    cookie.put(KEY_IPD_PASS_HASH, ipdPassHash);
+                }
+                if (igneous != null) {
+                    cookie.put(KEY_IGNEOUS, igneous);
+                }
+            } else if (HOST_EX.equals(url.getHost())) {
+                cookie.put("yay", "louder");
             }
+
+            mEhConfig.fillCookie(cookie);
         }
     }
 
@@ -130,26 +118,28 @@ public class EhHttpClient extends HttpClient {
         Cookie cookie = new Cookie();
         cookie.putRaw(cookieStr);
 
-        String ipdMemberId = cookie.get(KEY_IPD_MEMBER_ID);
-        String ipdPassHash = cookie.get(KEY_IPD_PASS_HASH);
-        String igneous = cookie.get(KEY_IGNEOUS);
-        if (ipdMemberId != null) {
-            Settings.putIpdMemberId(ipdMemberId);
-        }
-        if (ipdPassHash != null) {
-            Settings.putIpdPassHash(ipdPassHash);
-        }
-        if (igneous != null) {
-            Settings.putIgneous(igneous);
-        }
+        if (Utilities.contain(EHENTAI_DOMAIN, getDomain(url))) {
+            String ipdMemberId = cookie.get(KEY_IPD_MEMBER_ID);
+            String ipdPassHash = cookie.get(KEY_IPD_PASS_HASH);
+            String igneous = cookie.get(KEY_IGNEOUS);
+            if (ipdMemberId != null) {
+                Settings.putIpdMemberId(ipdMemberId);
+            }
+            if (ipdPassHash != null) {
+                Settings.putIpdPassHash(ipdPassHash);
+            }
+            if (igneous != null) {
+                Settings.putIgneous(igneous);
+            }
 
-        cookie.remove(KEY_IPD_MEMBER_ID);
-        cookie.remove(KEY_IPD_MEMBER_ID);
-        cookie.remove(KEY_IGNEOUS);
-        cookie.remove(KEY_YAY);
-        cookie.remove(EhConfig.KEY_UCONFIG);
-        cookie.remove(EhConfig.KEY_LOFI_RESOLUTION);
-        cookie.remove(EhConfig.KEY_CONTENT_WARNING);
+            cookie.remove(KEY_IPD_MEMBER_ID);
+            cookie.remove(KEY_IPD_MEMBER_ID);
+            cookie.remove(KEY_IGNEOUS);
+            cookie.remove(KEY_YAY);
+            cookie.remove(EhConfig.KEY_UCONFIG);
+            cookie.remove(EhConfig.KEY_LOFI_RESOLUTION);
+            cookie.remove(EhConfig.KEY_CONTENT_WARNING);
+        }
 
         mCookieManager.setCookie(url.toString(), cookie.toString());
     }

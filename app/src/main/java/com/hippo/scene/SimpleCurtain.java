@@ -25,7 +25,7 @@ import android.view.ViewTreeObserver;
 
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.util.AnimationUtils;
-import com.hippo.util.ViewUtils;
+import com.hippo.yorozuya.ViewUtils;
 
 public class SimpleCurtain extends Curtain {
 
@@ -47,7 +47,7 @@ public class SimpleCurtain extends Curtain {
     @Override
     public void open(@NonNull final Scene enter, @NonNull final Scene exit) {
         final View enterSceneView = enter.getSceneView();
-        ViewUtils.setVisibility(enterSceneView, View.INVISIBLE);
+        enterSceneView.setVisibility(View.INVISIBLE);
 
         enterSceneView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -85,7 +85,7 @@ public class SimpleCurtain extends Curtain {
                 animator.addListener(new SimpleAnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        ViewUtils.setVisibility(enterSceneView, View.VISIBLE);
+                        enterSceneView.setVisibility(View.VISIBLE);
                     }
 
                     @Override

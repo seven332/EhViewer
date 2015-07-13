@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 
 import com.hippo.cardsalon.CardView;
 import com.hippo.ehviewer.R;
-import com.hippo.util.ResourcesUtils;
+import com.hippo.yorozuya.ResourcesUtils;
 
 public class SimpleDialogLayout extends ViewGroup {
 

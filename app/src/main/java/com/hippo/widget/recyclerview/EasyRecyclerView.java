@@ -43,8 +43,8 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.Checkable;
 
 import com.hippo.util.DrawableUtils;
-import com.hippo.util.MathUtils;
-import com.hippo.util.ViewUtils;
+import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.ViewUtils;
 
 /**
  * Add setOnItemClickListener, setOnItemLongClickListener and setChoiceMode for

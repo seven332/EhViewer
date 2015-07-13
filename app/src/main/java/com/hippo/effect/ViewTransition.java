@@ -21,7 +21,6 @@ import android.animation.ObjectAnimator;
 import android.view.View;
 
 import com.hippo.animation.SimpleAnimatorListener;
-import com.hippo.util.ViewUtils;
 
 public class ViewTransition {
 
@@ -81,7 +80,7 @@ public class ViewTransition {
                     if (i != oldShownView && i != shownView) {
                         View v = views[i];
                         v.setAlpha(0f);
-                        ViewUtils.setVisibility(v, View.GONE);
+                        v.setVisibility(View.GONE);
                     }
                 }
                 startAnimations(views[oldShownView], views[shownView]);
@@ -90,10 +89,10 @@ public class ViewTransition {
                     View v = views[i];
                     if (i == shownView) {
                         v.setAlpha(1f);
-                        ViewUtils.setVisibility(v, View.VISIBLE);
+                        v.setVisibility(View.VISIBLE);
                     } else {
                         v.setAlpha(0f);
-                        ViewUtils.setVisibility(v, View.GONE);
+                        v.setVisibility(View.GONE);
                     }
                 }
             }
@@ -110,14 +109,14 @@ public class ViewTransition {
         oa1.addListener(new SimpleAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                ViewUtils.setVisibility(hiddenView, View.GONE);
+                hiddenView.setVisibility(View.GONE);
                 mAnimator1 = null;
             }
         });
         oa1.start();
         mAnimator1 = oa1;
 
-        ViewUtils.setVisibility(shownView, View.VISIBLE);
+        shownView.setVisibility(View.VISIBLE);
         ObjectAnimator oa2 = ObjectAnimator.ofFloat(shownView, "alpha", 1f);
         oa2.setDuration(ANIMATE_TIME);
         oa2.addListener(new SimpleAnimatorListener() {

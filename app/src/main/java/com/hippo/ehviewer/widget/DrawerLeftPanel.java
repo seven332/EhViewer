@@ -32,7 +32,7 @@ import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Settings;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.util.Messenger;
+import com.hippo.yorozuya.Messenger;
 import com.hippo.widget.DrawerListView;
 import com.hippo.widget.FitPaddingImpl;
 

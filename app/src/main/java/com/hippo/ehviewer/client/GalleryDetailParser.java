@@ -23,7 +23,7 @@ import com.hippo.ehviewer.client.data.NormalPreviewSet;
 import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.data.TagGroup;
 import com.hippo.ehviewer.util.EhUtils;
-import com.hippo.util.Utils;
+import com.hippo.yorozuya.NumberUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -176,7 +176,7 @@ public class GalleryDetailParser {
                     if (index == -1 || index >= ratingStr.length()) {
                         galleryDetail.rating = 0f;
                     } else {
-                        galleryDetail.rating = Utils.parseFloatSafely(ratingStr.substring(index + 1), 0f);
+                        galleryDetail.rating = NumberUtils.parseFloatSafely(ratingStr.substring(index + 1), 0f);
                     }
                 }
 

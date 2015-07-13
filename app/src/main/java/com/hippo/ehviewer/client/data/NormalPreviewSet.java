@@ -33,8 +33,8 @@ import com.hippo.conaco.Conaco;
 import com.hippo.conaco.Unikery;
 import com.hippo.ehviewer.EhImageKeyFactory;
 import com.hippo.ehviewer.R;
-import com.hippo.util.Log;
 import com.hippo.widget.SimpleGridLayout;
+import com.hippo.yorozuya.Say;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Set;
 
 public class NormalPreviewSet extends PreviewSet {
+
+    private static final String TAG = NormalPreviewSet.class.getSimpleName();
 
     private List<Row> mRowArray = new ArrayList<>();
 
@@ -258,7 +260,7 @@ public class NormalPreviewSet extends PreviewSet {
             try {
                 imageIndex = Integer.parseInt(imageUrl.substring(index1 + 1, index2));
             } catch (Exception e) {
-                Log.w("Can't get normal preview index", e);
+                Say.w(TAG, "Can't get normal preview index", e);
                 imageIndex = -1;
             }
         }

@@ -23,7 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 
-import com.hippo.util.Log;
+import com.hippo.yorozuya.Say;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -126,7 +126,7 @@ public class SearchDatabase {
             }
             mDatabase.delete(TABLE_SUGGESTIONS, selection, null);
         } catch (RuntimeException e) {
-            Log.e(TAG, "truncateHistory", e);
+            Say.e(TAG, "truncateHistory", e);
         }
     }
 

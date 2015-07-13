@@ -26,7 +26,7 @@ import com.hippo.scene.preference.PreferenceCategory;
 import com.hippo.scene.preference.PreferenceScene;
 import com.hippo.scene.preference.PreferenceSet;
 import com.hippo.scene.preference.SwitchPreference;
-import com.hippo.util.Messenger;
+import com.hippo.yorozuya.Messenger;
 
 public class AdvanceSettingsScene extends PreferenceScene implements Preference.OnValueChangeListener {
 

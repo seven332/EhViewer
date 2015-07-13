@@ -31,8 +31,9 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.hippo.ehviewer.R;
-import com.hippo.util.UiUtils;
-import com.hippo.util.ViewUtils;
+import com.hippo.yorozuya.ColorUtils;
+import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.ViewUtils;
 
 public class FloatingActionButton extends View {
 
@@ -168,14 +169,14 @@ public class FloatingActionButton extends View {
         private GasketDrawerOld(View view, int color) {
             Context context = view.getContext();
 
-            mShadowRadious = UiUtils.dp2pix(context, 3);
-            mShadowOffsetY = UiUtils.dp2pix(context, 1);
+            mShadowRadious = LayoutUtils.dp2pix(context, 3);
+            mShadowOffsetY = LayoutUtils.dp2pix(context, 1);
             mGasketPadding = mShadowRadious + mShadowOffsetY;
 
             mView = view;
             mBounds = new RectF();
             mColor = color;
-            mDarkerColor = UiUtils.getDarkerColor(color);
+            mDarkerColor = ColorUtils.getDarkerColor(color);
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
             mPaint.setColor(mColor);
             mPaint.setStyle(Paint.Style.FILL);
@@ -233,7 +234,7 @@ public class FloatingActionButton extends View {
         @Override
         public void setColor(int color) {
             mColor = color;
-            mDarkerColor = UiUtils.getDarkerColor(color);
+            mDarkerColor = ColorUtils.getDarkerColor(color);
             updateColor();
         }
     }
@@ -256,12 +257,12 @@ public class FloatingActionButton extends View {
 
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         public GasketDrawerLollipop(View view, int color) {
-            mElevation = UiUtils.dp2pix(view.getContext(), 4);
+            mElevation = LayoutUtils.dp2pix(view.getContext(), 4);
 
             mView = view;
             mColor = color;
 
-            int darkColor = UiUtils.getDarkerColor(color);
+            int darkColor = ColorUtils.getDarkerColor(color);
             mGradientDrawable = new GradientDrawable();
             mGradientDrawable.setShape(GradientDrawable.OVAL);
             mGradientDrawable.setColor(new ColorStateList(STATES,
@@ -286,7 +287,7 @@ public class FloatingActionButton extends View {
         public void setColor(int color) {
             if (mColor != color) {
                 mColor = color;
-                int darkColor = UiUtils.getDarkerColor(color);
+                int darkColor = ColorUtils.getDarkerColor(color);
                 mGradientDrawable.setColor(new ColorStateList(STATES,
                         new int[] {darkColor, darkColor, darkColor, color}));
             }

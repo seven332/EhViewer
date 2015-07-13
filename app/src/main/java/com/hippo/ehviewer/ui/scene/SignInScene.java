@@ -30,7 +30,7 @@ import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.util.Settings;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Scene;
-import com.hippo.util.Messenger;
+import com.hippo.yorozuya.Messenger;
 
 public final class SignInScene extends Scene implements View.OnClickListener,
         TextView.OnEditorActionListener {

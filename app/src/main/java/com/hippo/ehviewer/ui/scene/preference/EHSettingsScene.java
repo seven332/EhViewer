@@ -29,7 +29,7 @@ import com.hippo.scene.preference.Preference;
 import com.hippo.scene.preference.PreferenceCategory;
 import com.hippo.scene.preference.PreferenceScene;
 import com.hippo.scene.preference.PreferenceSet;
-import com.hippo.util.Messenger;
+import com.hippo.yorozuya.Messenger;
 
 public final class EHSettingsScene extends PreferenceScene implements Preference.OnClickListener,
         Preference.OnValueChangeListener {

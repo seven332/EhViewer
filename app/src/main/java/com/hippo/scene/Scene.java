@@ -30,8 +30,8 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
-import com.hippo.util.AssertUtils;
-import com.hippo.util.ViewUtils;
+import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.ViewUtils;
 
 /**
  * {@link com.hippo.scene.Scene} is a {@code Activity} of {@link android.app.Activity}.

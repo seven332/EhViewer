@@ -40,10 +40,10 @@ import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
-import com.hippo.util.UiUtils;
-import com.hippo.util.ViewUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MonoRecyclerView;
+import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.ViewUtils;
 
 // TODO requst returnSearchBarPosition when content of recycler changed
 public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnCheckedChangeListener,
@@ -129,7 +129,7 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
         // Search Container
         mSearchPaddingTopOrigin = getPaddingTop();
         // Original padding bottom and the padding bottom to make it above fab
-        mSearchPaddingBottomOrigin = getPaddingBottom() + UiUtils.dp2pix(context, 72); // TODO
+        mSearchPaddingBottomOrigin = getPaddingBottom() + LayoutUtils.dp2pix(context, 72); // TODO
         setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), mSearchPaddingBottomOrigin);
 
         // Create normal view

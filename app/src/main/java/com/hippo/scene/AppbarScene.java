@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.util.ViewUtils;
 import com.hippo.widget.SimpleImageView;
 
 public class AppbarScene extends Scene {
@@ -73,12 +72,12 @@ public class AppbarScene extends Scene {
 
     public void setIcon(@DrawableRes int resId) {
         mIcon.setDrawable(resId);
-        ViewUtils.setVisibility(mIcon, resId == -1 ? View.GONE : View.VISIBLE);
+        mIcon.setVisibility(resId == -1 ? View.GONE : View.VISIBLE);
     }
 
     public void setIcon(Drawable icon) {
         mIcon.setDrawable(icon);
-        ViewUtils.setVisibility(mIcon, icon == null ? View.GONE : View.VISIBLE);
+        mIcon.setVisibility(icon == null ? View.GONE : View.VISIBLE);
     }
 
     public void setTitle(@StringRes int resId) {

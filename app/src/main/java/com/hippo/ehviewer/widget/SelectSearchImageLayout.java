@@ -33,7 +33,6 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.util.ViewUtils;
 
 public class SelectSearchImageLayout extends LinearLayout implements View.OnClickListener{
 
@@ -119,8 +118,8 @@ public class SelectSearchImageLayout extends LinearLayout implements View.OnClic
         mTextPath.setText(selectPath);
         setImagePreview(selectPath);
 
-        ViewUtils.setVisibility(mTextPath, View.VISIBLE);
-        ViewUtils.setVisibility(mImagePreview, View.VISIBLE);
+        mTextPath.setVisibility(View.VISIBLE);
+        mImagePreview.setVisibility(View.VISIBLE);
 
         super.onDetachedFromWindow();
         super.onAttachedToWindow();

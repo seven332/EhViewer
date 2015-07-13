@@ -34,9 +34,9 @@ import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.AppbarScene;
-import com.hippo.util.UiUtils;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
+import com.hippo.yorozuya.LayoutUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +70,7 @@ public class InfoScene extends AppbarScene implements EasyRecyclerView.OnItemLon
         recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
                 LinearDividerItemDecoration.VERTICAL, mResources.getColor(R.color.divider_light),
-                UiUtils.dp2pix(getStageActivity(), 1));
+                LayoutUtils.dp2pix(getStageActivity(), 1));
         decoration.setPadding(mResources.getDimensionPixelOffset(R.dimen.keyline_margin));
         recyclerView.addItemDecoration(decoration);
         recyclerView.setSelector(RippleSalon.generateRippleDrawable(false));

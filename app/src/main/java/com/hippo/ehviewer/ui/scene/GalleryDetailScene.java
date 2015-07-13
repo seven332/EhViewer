@@ -57,12 +57,12 @@ import com.hippo.scene.Announcer;
 import com.hippo.scene.RippleCurtain;
 import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
-import com.hippo.util.Log;
 import com.hippo.util.URLImageGetter;
-import com.hippo.util.UiUtils;
-import com.hippo.util.ViewUtils;
 import com.hippo.widget.AccurateClick;
 import com.hippo.widget.AutoWrapLayout;
+import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.Say;
+import com.hippo.yorozuya.ViewUtils;
 
 import java.util.List;
 
@@ -71,6 +71,8 @@ import static com.hippo.ehviewer.R.id.no_tags;
 // TODO Use RecyclerView instead of ScrollView. It will improve swipe horizontally and animation
 public class GalleryDetailScene extends Scene implements View.OnClickListener,
         AccurateClick.OnAccurateClickListener {
+
+    private static final String TAG = GalleryDetailScene.class.getSimpleName();
 
     public static final String ACTION_GALLERY_INFO = "action_gallery_info";
     public static final String ACTION_GID_TOKEN = "action_gid_token";
@@ -134,7 +136,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
 
     private void handleAnnouncer(Announcer announcer) {
         if (announcer == null) {
-            Log.e("No announcer in GalleryDetailScene, finish itself");
+            Say.e(TAG, "No announcer in GalleryDetailScene, finish itself");
             finish();
             return;
         }
@@ -199,7 +201,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
                 mPreviewLayout.setPreviewHelper(new SimplePreviewHelper());
 
             } else {
-                Log.e("Can't get GalleryDetail");
+                Say.e(TAG, "Can't get GalleryDetail");
                 finish();
             }
 
@@ -208,7 +210,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         } else if (ACTION_URL.equals(action)) {
 
         } else {
-            Log.e("Unkonwn action " + action);
+            Say.e(TAG, "Unkonwn action " + action);
             finish();
         }
     }
@@ -357,8 +359,8 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
 
             Context context = getStageActivity();
             LayoutInflater inflater = getStageActivity().getLayoutInflater();
-            int x = UiUtils.dp2pix(context, 2);
-            int y = UiUtils.dp2pix(context, 4);
+            int x = LayoutUtils.dp2pix(context, 2);
+            int y = LayoutUtils.dp2pix(context, 4);
 
             for (TagGroup tagGroup : tags) {
                 LinearLayout tagGroupLayout = new LinearLayout(context);

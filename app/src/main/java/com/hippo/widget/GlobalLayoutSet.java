@@ -18,7 +18,7 @@ package com.hippo.widget;
 
 import android.view.ViewTreeObserver;
 
-import com.hippo.util.ViewUtils;
+import com.hippo.yorozuya.ViewUtils;
 
 public class GlobalLayoutSet {
 

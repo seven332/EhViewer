@@ -23,6 +23,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
 import com.hippo.widget.recyclerview.SimpleSmoothScroller;
+import com.hippo.yorozuya.SimpleHandler;
+import com.hippo.yorozuya.MathUtils;
 
 public final class LayoutManagerUtils {
 
@@ -81,7 +83,7 @@ public final class LayoutManagerUtils {
 
     public static void scrollToPositionProperly(final RecyclerView.LayoutManager layoutManager,
             final Context context, final int position, final OnScrollToPositionListener listener) {
-        AppHandler.getInstance().postDelayed(new Runnable() {
+        SimpleHandler.getInstance().postDelayed(new Runnable() {
             @Override
             public void run() {
                 int first = getFirstVisibleItemPostion(layoutManager);

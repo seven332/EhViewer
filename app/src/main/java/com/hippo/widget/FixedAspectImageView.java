@@ -20,11 +20,11 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.hippo.ehviewer.R;
-import com.hippo.util.MathUtils;
-import com.hippo.util.ViewUtils;
+import com.hippo.yorozuya.MathUtils;
 
 /**
  * aspect is width / height
@@ -290,8 +290,8 @@ public class FixedAspectImageView extends ImageView {
             w = Math.max(w, getSuggestedMinimumWidth());
             h = Math.max(h, getSuggestedMinimumHeight());
 
-            widthSize = ViewUtils.resolveSizeAndState(w, widthMeasureSpec, 0);
-            heightSize = ViewUtils.resolveSizeAndState(h, heightMeasureSpec, 0);
+            widthSize = View.resolveSizeAndState(w, widthMeasureSpec, 0);
+            heightSize = View.resolveSizeAndState(h, heightMeasureSpec, 0);
         }
 
         setMeasuredDimension(widthSize, heightSize);

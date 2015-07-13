@@ -53,10 +53,10 @@ import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.util.Settings;
-import com.hippo.util.MathUtils;
-import com.hippo.util.Messenger;
-import com.hippo.util.ViewUtils;
+import com.hippo.yorozuya.Messenger;
 import com.hippo.widget.SimpleImageView;
+import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -144,8 +144,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
         mEditText.addTextChangedListener(this);
 
         // Get base height
-        ViewUtils.measureView(this, ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+        ViewUtils.measureView(this, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         mBaseHeight = getMeasuredHeight();
 
         mSuggestionList = new ArrayList<>();
@@ -299,7 +298,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             oa.addListener(new SimpleAnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    ViewUtils.setVisibility(mList, View.VISIBLE);
+                    mList.setVisibility(View.VISIBLE);
                     mInAnimation = true;
                 }
 
@@ -313,7 +312,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             }
             oa.start();
         } else {
-            ViewUtils.setVisibility(mList, View.VISIBLE);
+            mList.setVisibility(View.VISIBLE);
             setProgress(1f);
         }
     }
@@ -338,7 +337,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    ViewUtils.setVisibility(mList, View.GONE);
+                    mList.setVisibility(View.GONE);
                     mInAnimation = false;
                 }
             });
@@ -348,7 +347,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             oa.start();
         } else {
             setProgress(0f);
-            ViewUtils.setVisibility(mList, View.GONE);
+            mList.setVisibility(View.GONE);
         }
     }
 

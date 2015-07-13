@@ -29,8 +29,8 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
-import com.hippo.util.AppHandler;
-import com.hippo.util.Messenger;
+import com.hippo.yorozuya.SimpleHandler;
+import com.hippo.yorozuya.Messenger;
 
 import java.util.Locale;
 
@@ -85,7 +85,7 @@ public abstract class StatsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mStatsTextView = new TextView(this);
-        mHandler = AppHandler.getInstance();
+        mHandler = SimpleHandler.getInstance();
         mStatsClockTickRunnable = new Runnable() {
             @Override
             public void run() {

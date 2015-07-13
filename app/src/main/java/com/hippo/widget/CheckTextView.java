@@ -36,7 +36,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.hotspot.HotspotTouchHelper;
 import com.hippo.hotspot.Hotspotable;
 import com.hippo.util.AnimationUtils;
-import com.hippo.util.MathUtils;
+import com.hippo.yorozuya.MathUtils;
 
 public class CheckTextView extends TextView implements OnClickListener, Hotspotable {
 

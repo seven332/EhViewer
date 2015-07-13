@@ -20,8 +20,8 @@ import android.app.Application;
 import android.content.Context;
 import android.util.SparseArray;
 
-import com.hippo.util.IntIdGenerator;
-import com.hippo.util.Log;
+import com.hippo.yorozuya.IdGenerator;
+import com.hippo.yorozuya.Say;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -29,7 +29,7 @@ public class SceneApplication extends Application {
     private static final String TAG = SceneApplication.class.getSimpleName();
 
     private SparseArray<SceneManager> mSceneManagers;
-    private IntIdGenerator mIdGenerator;
+    private IdGenerator mIdGenerator;
 
     private RefWatcher mRefWatcher;
 
@@ -38,7 +38,7 @@ public class SceneApplication extends Application {
         super.onCreate();
 
         mSceneManagers = new SparseArray<>();
-        mIdGenerator = IntIdGenerator.create();
+        mIdGenerator = new IdGenerator();
 
         mRefWatcher = LeakCanary.install(this);
     }
@@ -53,7 +53,7 @@ public class SceneApplication extends Application {
     private SceneManager getSceneManager(int id) {
         SceneManager sceneManager = mSceneManagers.get(id);
         if (sceneManager == null) {
-            Log.e(TAG, "Can't get SceneManager by id " + id);
+            Say.e(TAG, "Can't get SceneManager by id " + id);
             sceneManager = new SceneManager(id);
         }
         return sceneManager;
