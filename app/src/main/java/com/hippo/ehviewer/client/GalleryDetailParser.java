@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.client;
 
 import com.hippo.ehviewer.client.data.Comment;
+import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.NormalPreviewSet;
@@ -38,12 +39,11 @@ import java.util.regex.Pattern;
 
 public class GalleryDetailParser {
 
-    private static final DateFormat WEB_COMMENT_DATA_FORMAT = new SimpleDateFormat("dd MMMMM yyyy, HH:mm z", Locale.US);
-    private static final DateFormat OUT_COMMENT_DATA_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+    private static final DateFormat WEB_COMMENT_DATE_FORMAT = new SimpleDateFormat("dd MMMMM yyyy, HH:mm z", Locale.US);
+    private static final DateFormat OUT_COMMENT_DATE_FORMAT = GalleryBase.DEFAULT_DATE_FORMAT;
 
     static {
-        WEB_COMMENT_DATA_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-        OUT_COMMENT_DATA_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+        WEB_COMMENT_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     private static final String OFFENSIVE_STRING =
@@ -229,11 +229,11 @@ public class GalleryDetailParser {
                 String webDateString = ParserUtils.trim(m.group(1));
                 Date date;
                 try {
-                    date = WEB_COMMENT_DATA_FORMAT.parse(webDateString);
+                    date = WEB_COMMENT_DATE_FORMAT.parse(webDateString);
                 } catch (java.text.ParseException e) {
                     date = new Date(0l);
                 }
-                String outDateString = OUT_COMMENT_DATA_FORMAT.format(date);
+                String outDateString = OUT_COMMENT_DATE_FORMAT.format(date);
                 galleryDetail.comments.add(new Comment(outDateString, date, ParserUtils.trim(m.group(2)), m.group(3)));
             }
             Collections.sort(galleryDetail.comments, COMMENT_SORTER);

@@ -18,7 +18,7 @@ package com.hippo.ehviewer.client.data;
 
 import java.util.regex.Pattern;
 
-public class GalleryInfo {
+public class GalleryInfo extends GalleryBase {
 
     /**
      * ISO 639-1
@@ -74,14 +74,8 @@ public class GalleryInfo {
         "[(\\[]dutch[)\\]]",
     };
 
-    public int gid;
-    public String token;
-    public String title;
-    public String posted;
-    public int category;
-    public String thumb;
-    public String uploader;
-    public float rating;
+    public String titleJpn;
+
     /**
      * Will not be recond
      */

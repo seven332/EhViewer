@@ -72,11 +72,7 @@ public final class Settings {
         sSettingsPre.edit().putString(key, value).apply();
     }
 
-    /****** EH ******/
-    public static final String KEY_EH_SOURCE = "eh_source";
-    public static final int DEFAULT_EH_SOURCE = EhUrl.SOURCE_G;
-    public static final String KEY_EH_API = "eh_api";
-    public static final int DEFAULT_EH_API = EhUrl.SOURCE_G;
+    /****** Other ******/
     private static final String KEY_SIGN_IN = "sign_in";
     private static final boolean DEFAULT_SIGN_IN = false;
     private static final String KEY_DISPLAY_NAME = "display_name";
@@ -87,21 +83,6 @@ public final class Settings {
     private static final String DEFAULT_IPD_PASS_HASH = null;
     private static final String KEY_IGNEOUS = "igneous";
     private static final String DEFAULT_IGNEOUS = null;
-
-    public static int getEhSource() {
-        int value = getInt(KEY_EH_SOURCE, DEFAULT_EH_SOURCE);
-        if (value < EhUrl.SOURCE_G || value > EhUrl.SOURCE_LOFI) {
-            value = DEFAULT_EH_SOURCE;
-        }
-        return value;
-    }
-
-    public static void putEhSource(int value) {
-        if (value < EhUrl.SOURCE_G || value > EhUrl.SOURCE_LOFI) {
-            value = DEFAULT_EH_SOURCE;
-        }
-        putInt(KEY_EH_SOURCE, value);
-    }
 
     public static boolean getSignIn() {
         return getBoolean(KEY_SIGN_IN, DEFAULT_SIGN_IN);
@@ -150,11 +131,38 @@ public final class Settings {
         }
     }
 
-    /****** EhConfig ******/
+    /****** EH ******/
+    public static final String KEY_EH_SOURCE = "eh_source";
+    public static final int DEFAULT_EH_SOURCE = EhUrl.SOURCE_G;
+    public static final String KEY_JPN_TITLE = "jpn_title";
+    public static final boolean DEFAULT_JPN_TITLE = false;
     public static final String KEY_EXCLUDED_LANGUAGES = "excluded_languages";
     public static final String DEFAULT_EXCLUDED_LANGUAGES = "";
     public static final String KEY_PREVIEW_SIZE = "preview_size";
     public static final int DEFAULT_PREVIEW_SIZE = 0;
+
+    public static void putEhSource(int value) {
+        if (value < EhUrl.SOURCE_G || value > EhUrl.SOURCE_LOFI) {
+            value = DEFAULT_EH_SOURCE;
+        }
+        putInt(KEY_EH_SOURCE, value);
+    }
+
+    public static int getEhSource() {
+        int value = getInt(KEY_EH_SOURCE, DEFAULT_EH_SOURCE);
+        if (value < EhUrl.SOURCE_G || value > EhUrl.SOURCE_LOFI) {
+            value = DEFAULT_EH_SOURCE;
+        }
+        return value;
+    }
+
+    public static void putJpnTitle(boolean value) {
+        putBoolean(KEY_JPN_TITLE, value);
+    }
+
+    public static boolean getJpnTitle() {
+        return getBoolean(KEY_JPN_TITLE, DEFAULT_JPN_TITLE);
+    }
 
     public static EhConfig generateEhConfig() {
         EhConfig config = new EhConfig();

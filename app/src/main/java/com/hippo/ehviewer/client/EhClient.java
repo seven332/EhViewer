@@ -19,10 +19,13 @@ package com.hippo.ehviewer.client;
 import android.os.AsyncTask;
 import android.os.Process;
 
+import com.hippo.ehviewer.client.data.GalleryApiDetail;
+import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.network.EhHttpRequest;
 import com.hippo.httpclient.HttpClient;
 import com.hippo.yorozuya.PriorityThreadFactory;
 
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -83,6 +86,31 @@ public final class EhClient {
     public static final int METHOD_GET_GALLERY_LIST = 1;
 
     /**
+     * Get gallery list with japanese title
+     *
+     * <table>
+     *     <tr>
+     *         <th>param</th>
+     *         <th>info</th>
+     *     </tr>
+     *     <tr>
+     *         <td>url</td>
+     *         <td>the url to get gallery list</td>
+     *     </tr>
+     *     <tr>
+     *         <td>source</td>
+     *         <td>the source, one of {@link EhUrl#SOURCE_G},
+     *         {@link EhUrl#SOURCE_EX} and {@link EhUrl#SOURCE_LOFI}</td>
+     *     </tr>
+     *     <tr>
+     *         <td>listener</td>
+     *         <td>the listener for callback</td>
+     *     </tr>
+     * </table>
+     */
+    public static final int METHOD_GET_GALLERY_LIST_JPN = 2;
+
+    /**
      * Get popular
      *
      * <table>
@@ -96,7 +124,7 @@ public final class EhClient {
      *     </tr>
      * </table>
      */
-    public static final int METHOD_GET_POPULAR = 2;
+    public static final int METHOD_GET_POPULAR = 3;
 
     /**
      * Get gallery detail
@@ -121,7 +149,7 @@ public final class EhClient {
      *     </tr>
      * </table>
      */
-    public static final int METHOD_GET_GALLERY_DETAIL = 3;
+    public static final int METHOD_GET_GALLERY_DETAIL = 4;
 
     /**
      * Get gallery preview set
@@ -146,7 +174,7 @@ public final class EhClient {
      *     </tr>
      * </table>
      */
-    public static final int METHOD_GET_PREVIEW_SET = 4;
+    public static final int METHOD_GET_PREVIEW_SET = 5;
 
     private final ThreadPoolExecutor mRequestThreadPool;
 
@@ -225,6 +253,33 @@ public final class EhClient {
                         return EhEngine.signIn(mHttpClient, mEhHttpRequest, (String) params[0], (String) params[1]);
                     case METHOD_GET_GALLERY_LIST:
                         return EhEngine.getGalleryList(mHttpClient, mEhHttpRequest, (String) params[0], (Integer) params[1]);
+                    case METHOD_GET_GALLERY_LIST_JPN:
+                        GalleryListParser.Result result = EhEngine.getGalleryList(
+                                mHttpClient, mEhHttpRequest, (String) params[0], (Integer) params[1]);
+
+                        mEhHttpRequest.clear();
+                        List<GalleryInfo> galleryInfos = result.galleryInfos;
+                        int length = galleryInfos.size();
+                        int[] gids = new int[length];
+                        String[] tokens = new String[length];
+                        for (int i = 0; i < length; i++) {
+                            GalleryInfo gi = galleryInfos.get(i);
+                            gids[i] = gi.gid;
+                            tokens[i] = gi.token;
+                        }
+
+                        List<GalleryApiDetail> galleryApiDetails = EhEngine.getGalleryApiDetail(
+                                mHttpClient, mEhHttpRequest, gids, tokens, (Integer) params[1]);
+
+                        for (int i = 0; i < length; i++) {
+                            GalleryInfo gi = galleryInfos.get(i);
+                            GalleryApiDetail gad = galleryApiDetails.get(i);
+                            if (gi.gid == gad.gid) {
+                                gi.titleJpn = gad.titleJpn;
+                            }
+                        }
+
+                        return result;
                     case METHOD_GET_POPULAR:
                         return EhEngine.getPopular(mHttpClient, mEhHttpRequest);
                     case METHOD_GET_GALLERY_DETAIL:

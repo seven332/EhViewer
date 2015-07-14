@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.client;
 
+import com.hippo.ehviewer.client.data.GalleryApiDetail;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.httpclient.FormPoster;
@@ -23,13 +24,32 @@ import com.hippo.httpclient.HttpClient;
 import com.hippo.httpclient.HttpRequest;
 import com.hippo.httpclient.HttpResponse;
 import com.hippo.httpclient.JsonPoster;
+import com.hippo.yorozuya.Say;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.List;
 
 class EhEngine {
 
     private static final String SIGN_IN_URL = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
     public static final String API_EHVIEWER = "http://www.ehviewer.com/API";
+
+    public static final String API_G = "http://g.e-hentai.org/api.php";
+    public static final String API_EX = "http://exhentai.org/api.php";
+    public static final long APIUID = 1363542;
+    public static final String APIKEY = "f4b5407ab1727b9d08d7";
+
+    private static String getApiUrl(int source) {
+        switch (source) {
+            default:
+            case EhUrl.SOURCE_G:
+                return API_G;
+            case EhUrl.SOURCE_EX:
+                return API_EX;
+        }
+    }
 
     public static String signIn(HttpClient httpClient, HttpRequest httpRequest,
             String username, String password) throws Exception {
@@ -126,6 +146,53 @@ class EhEngine {
             HttpResponse response = httpClient.execute(httpRequest);
             String body = response.getString();
             return GalleryDetailParser.parsePreview(body, source);
+        } catch (Exception e) {
+            if (httpRequest.isCanceled()) {
+                throw new CanceledException();
+            } else {
+                throw e;
+            }
+        } finally {
+            httpRequest.disconnect();
+        }
+    }
+
+    public static List<GalleryApiDetail> getGalleryApiDetail(HttpClient httpClient,
+            HttpRequest httpRequest, int[] gids, String[] tokens, int source) throws Exception {
+        if (gids.length != tokens.length || gids.length > 25 || gids.length <= 0) {
+            throw new EhException("input parameter error");
+        }
+
+        try {
+            JSONObject json = new JSONObject();
+            json.put("method", "gdata");
+            JSONArray ja = new JSONArray();
+            int length = gids.length;
+            for (int i = 0; i < length; i++) {
+                JSONArray g = new JSONArray();
+                g.put(gids[i]);
+                g.put(tokens[i]);
+                ja.put(g);
+            }
+            json.put("gidlist", ja);
+            httpRequest.setUrl(getApiUrl(source));
+            httpRequest.setHttpImpl(new JsonPoster(json));
+
+            Say.f("EhEngine", json.toString());
+
+            HttpResponse response = httpClient.execute(httpRequest);
+            String body = response.getString();
+
+            Say.f("EhEngine", body);
+
+
+            List<GalleryApiDetail> list = GalleryApiParser.parse(body);
+
+            if (list.size() != gids.length) {
+                throw new EhException("length not match, request length " + gids.length + ", result length " + list.size());
+            }
+
+            return list;
         } catch (Exception e) {
             if (httpRequest.isCanceled()) {
                 throw new CanceledException();

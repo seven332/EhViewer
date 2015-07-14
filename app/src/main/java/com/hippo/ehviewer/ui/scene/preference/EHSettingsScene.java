@@ -29,6 +29,7 @@ import com.hippo.scene.preference.Preference;
 import com.hippo.scene.preference.PreferenceCategory;
 import com.hippo.scene.preference.PreferenceScene;
 import com.hippo.scene.preference.PreferenceSet;
+import com.hippo.scene.preference.SwitchPreference;
 import com.hippo.yorozuya.Messenger;
 
 public final class EHSettingsScene extends PreferenceScene implements Preference.OnClickListener,
@@ -60,6 +61,14 @@ public final class EHSettingsScene extends PreferenceScene implements Preference
         sourcePreference.setDefaultValue(Settings.DEFAULT_EH_SOURCE);
         sourcePreference.setOnValueChangeListener(this);
 
+        // Jpn title
+        SwitchPreference jpnTitlePreference = new SwitchPreference(Settings.KEY_JPN_TITLE,
+                resources.getString(R.string.settings_jpn_title_title), null);
+        jpnTitlePreference.setSummaryOn(resources.getString(R.string.settings_jpn_title_summary_on));
+        jpnTitlePreference.setSummaryOff(resources.getString(R.string.settings_jpn_title_summary_off));
+        jpnTitlePreference.setDefaultValue(Settings.DEFAULT_JPN_TITLE);
+        jpnTitlePreference.setOnValueChangeListener(this);
+
         // Excluded language
         Preference languagePreference = new Preference(
                 Settings.KEY_EXCLUDED_LANGUAGES,
@@ -80,6 +89,7 @@ public final class EHSettingsScene extends PreferenceScene implements Preference
 
         preferenceSet.setPreferenceList(new Preference[] {
                 sourcePreference,
+                jpnTitlePreference,
                 languagePreference,
                 previewSizePreference
         });
@@ -111,6 +121,9 @@ public final class EHSettingsScene extends PreferenceScene implements Preference
                 int value = (Integer) newValue;
                 EhApplication.getEhHttpClient(getStageActivity()).setPreviewSize(
                         value == 0? EhConfig.PREVIEW_SIZE_NORMAL : EhConfig.PREVIEW_SIZE_LARGE);
+                return true;
+            case Settings.KEY_JPN_TITLE:
+                Messenger.getInstance().notify(Constants.MESSENGER_ID_JPN_TITLE, newValue);
                 return true;
             default:
                 return true;

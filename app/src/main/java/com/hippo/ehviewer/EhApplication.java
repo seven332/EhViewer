@@ -46,6 +46,11 @@ public class EhApplication extends SceneApplication {
 
         Settings.initialize(this);
 
+        File sayFile = AppConfig.getFileInAppDir("EhViewer.log");
+        if (sayFile != null) {
+            Say.initSayFile(sayFile);
+        }
+
         mEhHttpClient = new EhHttpClient(this);
         mEhClient = new EhClient(mEhHttpClient);
 

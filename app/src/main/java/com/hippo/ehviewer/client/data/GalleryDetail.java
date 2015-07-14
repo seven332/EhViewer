@@ -18,20 +18,13 @@ package com.hippo.ehviewer.client.data;
 
 import java.util.List;
 
-public class GalleryDetail {
+public class GalleryDetail extends GalleryBase {
 
-    public int gid;
-    public String token;
-    public String thumb;
-    public String title;
     public String titleJpn;
-    public int category;
-    public String uploader;
 
     public int torrentCount;
     public String torrentUrl;
 
-    public String posted;
     public String parent;
     public String visible;
     public String language;
@@ -40,7 +33,6 @@ public class GalleryDetail {
     public int pageCount;
     public int favoredTimes;
     public boolean isFavored;
-    public float rating;
     public int ratedTimes;
 
     public List<TagGroup> tags;

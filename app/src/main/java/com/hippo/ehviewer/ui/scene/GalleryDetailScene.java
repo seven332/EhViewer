@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -149,7 +150,13 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
 
                 Conaco conaco = EhApplication.getConaco(getStageActivity());
                 mThumb.load(conaco, EhImageKeyFactory.getThumbKey(gi.gid), gi.thumb);
-                mTitle.setText(gi.title);
+                String title;
+                if (Settings.getJpnTitle()) {
+                    title = TextUtils.isEmpty(gi.titleJpn) ? gi.title : gi.titleJpn;
+                } else {
+                    title = gi.title;
+                }
+                mTitle.setText(title);
                 mUploader.setText(gi.uploader);
                 mCategory.setText(EhUtils.getCategory(gi.category));
                 mCategory.setTextColor(EhUtils.getCategoryColor(gi.category));

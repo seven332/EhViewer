@@ -168,15 +168,17 @@ public class GalleryListParser {
 
             lgi.category = EhUtils.getCategory(m.group(5));
             String tags = m.group(6);
-            if (tags.equals("-"))
-                lgi.lofiTags = new String[0];
-            else
-                lgi.lofiTags = tags.split(", ");
+            if (tags.equals("-")) {
+                lgi.tags = new String[0];
+            } else {
+                lgi.tags = tags.split(", ");
+            }
             String rating = m.group(7);
-            if (rating.equals("-"))
+            if (rating.equals("-")) {
                 lgi.rating = Float.NaN;
-            else
+            } else {
                 lgi.rating = getStartNum(rating);
+            }
             lgi.generateSLang();
 
             list.add(lgi);
@@ -208,14 +210,16 @@ public class GalleryListParser {
         int num2;
         int rate = 5;
         String re;
-        if (m.find())
+        if (m.find()) {
             num1 = ParserUtils.parseInt(m.group().replace("px", ""));
-        else
+        } else {
             return null;
-        if (m.find())
+        }
+        if (m.find()) {
             num2 = ParserUtils.parseInt(m.group().replace("px", ""));
-        else
+        } else {
             return null;
+        }
         rate = rate - num1 / 16;
         if (num2 == 21) {
             rate--;

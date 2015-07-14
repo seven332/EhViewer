@@ -24,6 +24,7 @@ public final class Constants {
     public static final int MESSENGER_ID_SHOW_APP_STATUS;
     public static final int MESSENGER_ID_SIGN_IN_OR_OUT;
     public static final int MESSENGER_ID_USER_AVATAR;
+    public static final int MESSENGER_ID_JPN_TITLE;
 
     static {
         Messenger messenger = Messenger.getInstance();
@@ -31,5 +32,6 @@ public final class Constants {
         MESSENGER_ID_SHOW_APP_STATUS = messenger.newId();
         MESSENGER_ID_SIGN_IN_OR_OUT = messenger.newId();
         MESSENGER_ID_USER_AVATAR = messenger.newId();
+        MESSENGER_ID_JPN_TITLE = messenger.newId();
     }
 }

@@ -140,6 +140,9 @@
     <string name="settings_eh_source_g" translatable="false">g.e-hentai.org</string>
     <string name="settings_eh_source_ex" translatable="false">exhentai.org</string>
     <string name="settings_eh_source_lofi" translatable="false">lofi.e-hentai.org</string>
+    <string name="settings_jpn_title_title">Japanese title</string>
+    <string name="settings_jpn_title_summary_on">Try to show japanese title. It may takes more time</string>
+    <string name="settings_jpn_title_summary_off">Show default title</string>
     <string name="settings_excluded_languages_title">Excluded languages</string>
     <string name="settings_excluded_languages_summary">Hide galleries in certain languages from the gallery list and searches</string>
     <string name="settings_preview_size_title">Preview size</string>

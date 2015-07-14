@@ -40,6 +40,7 @@ import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.conaco.Conaco;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.effect.ViewTransition;
+import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhImageKeyFactory;
 import com.hippo.ehviewer.R;
@@ -67,12 +68,13 @@ import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
 import com.hippo.scene.TransitionCurtain;
 import com.hippo.util.AnimationUtils;
-import com.hippo.yorozuya.SimpleHandler;
-import com.hippo.yorozuya.AssertUtils;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.FloatingActionButton;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.Messenger;
+import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
 
 // TODO remeber the data in ContentHelper after screen dirction change
@@ -81,7 +83,8 @@ import com.hippo.yorozuya.ViewUtils;
 // TODO Dim when expand search list
 public final class GalleryListScene extends Scene implements SearchBar.Helper,
         View.OnClickListener, FabLayout.OnCancelListener,
-        SearchLayout.SearhLayoutHelper, EasyRecyclerView.OnItemClickListener {
+        SearchLayout.SearhLayoutHelper, EasyRecyclerView.OnItemClickListener,
+        Messenger.Receiver {
 
     public static final String KEY_MODE = "mode";
 
@@ -136,6 +139,8 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
     private ListUrlBuilder mListUrlBuilder = new ListUrlBuilder();
 
     private int mDrawerListActivatedPosition;
+
+    private boolean mJpnTitle;
 
     private SimpleDialog.OnCreateCustomViewListener mGoToCreateCustomViewListener =
             new SimpleDialog.OnCreateCustomViewListener() {
@@ -320,8 +325,16 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
     }
 
     @Override
+    protected void onInit() {
+        mJpnTitle = Settings.getJpnTitle();
+        Messenger.getInstance().register(Constants.MESSENGER_ID_JPN_TITLE, this);
+    }
+
+    @Override
     protected void onDie() {
         super.onDie();
+
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_JPN_TITLE, this);
 
         // Avoid memory leak
         if (mGalleryListHelper.mListener != null) {
@@ -746,6 +759,13 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         return true;
     }
 
+    @Override
+    public void onReceive(int id, Object obj) {
+        if (Constants.MESSENGER_ID_JPN_TITLE == id) {
+            mJpnTitle = (Boolean) obj;
+        }
+    }
+
     private class TransitonHelper implements TransitionCurtain.ViewPairSet {
 
         private int mPosition;
@@ -913,7 +933,8 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
                     mListener = listener;
 
                     EhRequest request = new EhRequest();
-                    request.setMethod(EhClient.METHOD_GET_GALLERY_LIST);
+                    request.setMethod(mJpnTitle ?
+                            EhClient.METHOD_GET_GALLERY_LIST_JPN : EhClient.METHOD_GET_GALLERY_LIST);
                     request.setEhListener(listener);
                     request.setArgs(url, source);
 
@@ -936,8 +957,13 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
 
             Conaco conaco = EhApplication.getConaco(getStageActivity());
             holder.thumb.load(conaco, EhImageKeyFactory.getThumbKey(gi.gid), gi.thumb);
-
-            holder.title.setText(gi.title);
+            String title;
+            if (mJpnTitle) {
+                title = TextUtils.isEmpty(gi.titleJpn) ? gi.title : gi.titleJpn;
+            } else {
+                title = gi.title;
+            }
+            holder.title.setText(title);
             holder.uploader.setText(gi.uploader);
             holder.rating.setRating(gi.rating);
             TextView category = holder.category;
