@@ -34,14 +34,11 @@ public class GalleryListParser {
 
     public static class Result {
 
-        public static final int NOT_FOUND = 0;
-
         public static final int CURRENT_PAGE_IS_LAST = -1;
 
         public static final int KEEP_LOADING = Integer.MAX_VALUE;
 
         /**
-         * If NOT FOUND, pageNum is 0.<br>
          * For lofi, we can not get pages number,
          * so pageNum is {@link java.lang.Integer#MAX_VALUE} when it is not the last page,
          * pageNum is {@link #CURRENT_PAGE_IS_LAST} when it is the last page
@@ -74,7 +71,7 @@ public class GalleryListParser {
         if (m.find()) {
             result.pages = ParserUtils.parseInt(m.group(1));
         } else if (body.contains("No hits found</p>")) {
-            result.pages = Result.NOT_FOUND;
+            throw new NotFoundException();
         } else {
             // Can not get page number
             throw new ParseException("Can't parse gallery list", body);
@@ -187,7 +184,7 @@ public class GalleryListParser {
 
         if (list.size() == 0) {
             if (body.contains("No hits found</div>")) {
-                result.pages = Result.NOT_FOUND;
+                throw new NotFoundException();
             } else if (body.contains("No more hits found</div>")) {
                 throw new EhException("Index is out of range");
             } else {
