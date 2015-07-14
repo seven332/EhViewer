@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 
 public class LinkifyTextView extends TextView {
 
-    private static final Pattern URL_PATTERN = Pattern.compile("(http|https)://[a-z0-9A-Z%-]+(\\.[a-z0-9A-Z%-]+)+(:\\d{1,5})?(/[a-zA-Z0-9-_~:#@!&',;=%/\\*\\.\\?\\+\\$\\[\\]\\(\\)]*)?");
+    private static final Pattern URL_PATTERN = Pattern.compile("(http|https)://[a-z0-9A-Z%-]+(\\.[a-z0-9A-Z%-]+)+(:\\d{1,5})?(/[a-zA-Z0-9-_~:#@!&',;=%/\\*\\.\\?\\+\\$\\[\\]\\(\\)]+)?/?");
 
     private String mUrl;
 
@@ -65,7 +65,7 @@ public class LinkifyTextView extends TextView {
             URLSpan[] links = spannable.getSpans(start, end, URLSpan.class);
             if (links.length > 0) {
                 // There has been URLSpan already, leave it alone
-                break;
+                continue;
             }
 
             URLSpan urlSpan = new URLSpan(m.group(0));
