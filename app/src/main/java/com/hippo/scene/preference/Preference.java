@@ -26,12 +26,12 @@ import android.widget.FrameLayout;
 
 import com.hippo.ehviewer.R;
 
+// TODO Need a better way to update it
 public class Preference extends PreferenceBase {
 
     private int mPosition;
 
-    private @NonNull
-    String mKey;
+    private @NonNull String mKey;
     private String mTitle;
     private String mSummary;
 
@@ -55,6 +55,11 @@ public class Preference extends PreferenceBase {
 
     public String getSummary() {
         return mSummary;
+    }
+
+    public void setSummary(String summary) {
+        mSummary = summary;
+        updateSummary(null);
     }
 
     public int getPosition() {

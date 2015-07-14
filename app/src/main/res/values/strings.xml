@@ -149,6 +149,8 @@
     <string name="settings_advance">Advance</string>
     <string name="settings_show_application_stats_title">Show application stats</string>
     <string name="settings_show_application_stats_summary">Show application stats at the top-right corner of the screen</string>
+    <string name="settings_clear_image_memory_cache_title">Clear image memory cache</string>
+    <string name="settings_clear_image_memory_cache_summary">Size: %s</string>
 
     <!-- ExcludedLanguagesScene -->
     <string name="excluded_languages">Excluded languages</string>
