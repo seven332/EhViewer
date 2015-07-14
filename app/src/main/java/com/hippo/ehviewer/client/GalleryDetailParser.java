@@ -57,6 +57,9 @@ public class GalleryDetailParser {
     public static final int REQUEST_PREVIEW = 0x8;
     public static final int REQUEST_COMMENT = 0x10;
 
+    // TODO Can't Sort comment it like this,
+    // If the comment is modified, this time is modifing time.
+    // Leave it to cookie
     private static final CommentSort COMMENT_SORTER = new CommentSort();
 
     public static GalleryDetail parse(String body, int source, int request) throws Exception {
@@ -113,18 +116,18 @@ public class GalleryDetailParser {
                     + ".+?"
                     + "<a[^<>]*onclick=\"return popUp\\('([^']+)'[^)]+\\)\">Torrent Download \\( (\\d+) \\)</a>" // 6 torrentUrl, 7 torrentCount
                     + ".+?"
-                    + "<div id=\"gdc\"><a[^<>]+><[^<>]*alt=\"([\\w|\\-]+)\"[^<>]*></a></div>" // 8 category
+                    + "<div id=\"gdc\"><a[^<>]+><[^<>]*alt=\"([\\w\\-]+)\"[^<>]*></a></div>" // 8 category
                     + "<div id=\"gdn\"><a[^<>]+>([^<>]+)</a>" // 9 uploader
                     + ".+?"
-                    + "<tr><td[^<>]*>Posted:</td><td[^<>]*>([\\w|\\-|\\s|:]+)</td></tr>" // 10 posted
+                    + "<tr><td[^<>]*>Posted:</td><td[^<>]*>([\\w\\-\\s:]+)</td></tr>" // 10 posted
                     + "<tr><td[^<>]*>Parent:</td><td[^<>]*>(?:<a[^<>]*>)?([^<>]+)(?:</a>)?</td></tr>" // 11 parent
                     + "<tr><td[^<>]*>Visible:</td><td[^<>]*>([^<>]+)</td></tr>" // 12 visible
                     + "<tr><td[^<>]*>Language:</td><td[^<>]*>([^<>]+)(?:<span[^<>]*>[^<>]*</span>)?</td></tr>" // 13 language
                     + "<tr><td[^<>]*>File Size:</td><td[^<>]*>([^<>]+)(?:<span[^<>]*>([^<>]+)</span>)?</td></tr>" // 14 File size, 15 resize
-                    + "<tr><td[^<>]*>Length:</td><td[^<>]*>([\\d|,]+) pages</td></tr>" // 16 pageCount
-                    + "<tr><td[^<>]*>Favorited:</td><[^<>]*>([^<>]+)</td></tr>" // 17 Favorite times "([\d|,]+) times" or "Once" or "Never"
+                    + "<tr><td[^<>]*>Length:</td><td[^<>]*>([\\d,]+) pages</td></tr>" // 16 pageCount
+                    + "<tr><td[^<>]*>Favorited:</td><[^<>]*>([^<>]+)</td></tr>" // 17 Favorite times "([\d,]+) times" or "Once" or "Never"
                     + ".+?"
-                    + "<td id=\"grt3\"><span id=\"rating_count\">([\\d|,]+)</span></td>" // 18 ratedTimes
+                    + "<td id=\"grt3\"><span id=\"rating_count\">([\\d,]+)</span></td>" // 18 ratedTimes
                     + "</tr>"
                     + "<tr><td[^<>]*>([^<>]+)</td>" // 19 rating "Average: x.xx" or "Not Yet Rated"
                     + ".+?"

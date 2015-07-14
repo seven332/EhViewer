@@ -18,7 +18,5 @@ package com.hippo.ehviewer.client.data;
 
 public class LofiGalleryInfo extends GalleryInfo {
 
-    public String titleJpn;
-
     public String[] tags;
 }

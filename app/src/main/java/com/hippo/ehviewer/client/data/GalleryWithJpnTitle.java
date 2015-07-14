@@ -16,25 +16,7 @@
 
 package com.hippo.ehviewer.client.data;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.util.TimeZone;
+public abstract class GalleryWithJpnTitle extends GalleryBase {
 
-public abstract class GalleryBase {
-
-    public static final DateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
-
-    static {
-        DEFAULT_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
-
-    public int gid;
-    public String token;
-    public String title;
-    public String thumb;
-    public int category;
-    public String posted;
-    public String uploader;
-    public float rating;
+    public String titleJpn;
 }

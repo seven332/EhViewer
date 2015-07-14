@@ -20,9 +20,10 @@ import android.os.AsyncTask;
 import android.os.Process;
 
 import com.hippo.ehviewer.client.data.GalleryApiDetail;
-import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.client.data.GalleryWithJpnTitle;
 import com.hippo.ehviewer.network.EhHttpRequest;
 import com.hippo.httpclient.HttpClient;
+import com.hippo.httpclient.HttpRequest;
 import com.hippo.yorozuya.PriorityThreadFactory;
 
 import java.util.List;
@@ -127,6 +128,22 @@ public final class EhClient {
     public static final int METHOD_GET_POPULAR = 3;
 
     /**
+     * Get popular
+     *
+     * <table>
+     *     <tr>
+     *         <th>param</th>
+     *         <th>info</th>
+     *     </tr>
+     *     <tr>
+     *         <td>listener</td>
+     *         <td>the listener for callback</td>
+     *     </tr>
+     * </table>
+     */
+    public static final int METHOD_GET_POPULAR_JPN = 4;
+
+    /**
      * Get gallery detail
      *
      * <table>
@@ -149,7 +166,7 @@ public final class EhClient {
      *     </tr>
      * </table>
      */
-    public static final int METHOD_GET_GALLERY_DETAIL = 4;
+    public static final int METHOD_GET_GALLERY_DETAIL = 5;
 
     /**
      * Get gallery preview set
@@ -174,7 +191,7 @@ public final class EhClient {
      *     </tr>
      * </table>
      */
-    public static final int METHOD_GET_PREVIEW_SET = 5;
+    public static final int METHOD_GET_PREVIEW_SET = 6;
 
     private final ThreadPoolExecutor mRequestThreadPool;
 
@@ -245,6 +262,29 @@ public final class EhClient {
             }
         }
 
+        private void fillJpnTitle(HttpRequest httpRequest, List<GalleryWithJpnTitle> list, int source) throws Exception {
+            int length = list.size();
+            int[] gids = new int[length];
+            String[] tokens = new String[length];
+            for (int i = 0; i < length; i++) {
+                GalleryWithJpnTitle gi = list.get(i);
+                gids[i] = gi.gid;
+                tokens[i] = gi.token;
+            }
+
+            List<GalleryApiDetail> galleryApiDetails = EhEngine.getGalleryApiDetail(
+                    mHttpClient, httpRequest, gids, tokens, source);
+
+            for (int i = 0; i < length; i++) {
+                GalleryWithJpnTitle gi = list.get(i);
+                GalleryApiDetail gad = galleryApiDetails.get(i);
+                if (gi.gid == gad.gid) {
+                    gi.titleJpn = gad.titleJpn;
+                }
+            }
+        }
+
+        @SuppressWarnings("unchecked")
         @Override
         protected Object doInBackground(Object... params) {
             try {
@@ -253,35 +293,24 @@ public final class EhClient {
                         return EhEngine.signIn(mHttpClient, mEhHttpRequest, (String) params[0], (String) params[1]);
                     case METHOD_GET_GALLERY_LIST:
                         return EhEngine.getGalleryList(mHttpClient, mEhHttpRequest, (String) params[0], (Integer) params[1]);
-                    case METHOD_GET_GALLERY_LIST_JPN:
-                        GalleryListParser.Result result = EhEngine.getGalleryList(
-                                mHttpClient, mEhHttpRequest, (String) params[0], (Integer) params[1]);
+                    case METHOD_GET_GALLERY_LIST_JPN: {
+                        GalleryListParser.Result result = EhEngine.getGalleryList(mHttpClient, mEhHttpRequest, (String) params[0], (Integer) params[1]);
 
                         mEhHttpRequest.clear();
-                        List<GalleryInfo> galleryInfos = result.galleryInfos;
-                        int length = galleryInfos.size();
-                        int[] gids = new int[length];
-                        String[] tokens = new String[length];
-                        for (int i = 0; i < length; i++) {
-                            GalleryInfo gi = galleryInfos.get(i);
-                            gids[i] = gi.gid;
-                            tokens[i] = gi.token;
-                        }
-
-                        List<GalleryApiDetail> galleryApiDetails = EhEngine.getGalleryApiDetail(
-                                mHttpClient, mEhHttpRequest, gids, tokens, (Integer) params[1]);
-
-                        for (int i = 0; i < length; i++) {
-                            GalleryInfo gi = galleryInfos.get(i);
-                            GalleryApiDetail gad = galleryApiDetails.get(i);
-                            if (gi.gid == gad.gid) {
-                                gi.titleJpn = gad.titleJpn;
-                            }
-                        }
+                        fillJpnTitle(mEhHttpRequest, (List) result.galleryInfos, (Integer) params[1]);
 
                         return result;
+                    }
                     case METHOD_GET_POPULAR:
                         return EhEngine.getPopular(mHttpClient, mEhHttpRequest);
+                    case METHOD_GET_POPULAR_JPN: {
+                        PopularParser.Result result = EhEngine.getPopular(mHttpClient, mEhHttpRequest);
+
+                        mEhHttpRequest.clear();
+                        fillJpnTitle(mEhHttpRequest, (List) result.galleryInfos, (Integer) params[0]);
+
+                        return result;
+                    }
                     case METHOD_GET_GALLERY_DETAIL:
                         return EhEngine.getGalleryDetail(mHttpClient, mEhHttpRequest, (String) params[0], (Integer) params[1]);
                     case METHOD_GET_PREVIEW_SET:

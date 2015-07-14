@@ -913,18 +913,20 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         protected void getPageData(int taskId, int type, int page) {
             EhClient client = EhApplication.getEhClient(getStageActivity());
 
+            int source = Settings.getEhSource();
             int mode = mListUrlBuilder.getMode();
             if (mode == ListUrlBuilder.MODE_POPULAR) {
                 PopularListener listener = new PopularListener(taskId);
                 listener.setGalleryListHelper(this);
                 mListener = listener;
                 EhRequest request = new EhRequest();
-                request.setMethod(EhClient.METHOD_GET_POPULAR);
+                request.setMethod(mJpnTitle ?
+                        EhClient.METHOD_GET_POPULAR_JPN : EhClient.METHOD_GET_POPULAR);
                 request.setEhListener(listener);
+                request.setArgs(source);
                 client.execute(request);
             } else {
                 try {
-                    int source = Settings.getEhSource();
                     mListUrlBuilder.setPageIndex(page);
                     String url =  mListUrlBuilder.build(source);
                     GalleryListListener listener = new GalleryListListener(taskId,

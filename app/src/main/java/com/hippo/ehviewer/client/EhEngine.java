@@ -24,7 +24,6 @@ import com.hippo.httpclient.HttpClient;
 import com.hippo.httpclient.HttpRequest;
 import com.hippo.httpclient.HttpResponse;
 import com.hippo.httpclient.JsonPoster;
-import com.hippo.yorozuya.Say;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -177,15 +176,8 @@ class EhEngine {
             json.put("gidlist", ja);
             httpRequest.setUrl(getApiUrl(source));
             httpRequest.setHttpImpl(new JsonPoster(json));
-
-            Say.f("EhEngine", json.toString());
-
             HttpResponse response = httpClient.execute(httpRequest);
             String body = response.getString();
-
-            Say.f("EhEngine", body);
-
-
             List<GalleryApiDetail> list = GalleryApiParser.parse(body);
 
             if (list.size() != gids.length) {
