@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.client.data;
+package com.hippo.ehviewer.gallery;
 
-public class GalleryApiDetail extends GalleryBase {
+import com.hippo.ehviewer.client.EhException;
 
-    public String archiverKey;
-    public int pageCount;
-    public String size;
-    public boolean expunged;
-    public int torrentcount;
-    public String[] tags;
+public class Image509Expection extends EhException {
+
+    public Image509Expection() {
+        super("509 image");
+    }
 }

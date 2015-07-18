@@ -30,6 +30,9 @@ public class EhUrl {
     public static final String HEADER_EX = "http://exhentai.org/";
     public static final String HEADER_LOFI = "http://lofi.e-hentai.org/";
 
+    public static final String API_G = "http://g.e-hentai.org/api.php";
+    public static final String API_EX = "http://exhentai.org/api.php";
+
     public static String getReadableHost(int source) {
         switch (source) {
             default:
@@ -39,6 +42,16 @@ public class EhUrl {
                 return HOST_EX;
             case SOURCE_LOFI:
                 return HOST_LOFI;
+        }
+    }
+
+    public static String getApiUrl(int source) {
+        switch (source) {
+            default:
+            case EhUrl.SOURCE_G:
+                return API_G;
+            case EhUrl.SOURCE_EX:
+                return API_EX;
         }
     }
 
@@ -67,4 +80,7 @@ public class EhUrl {
         return sb.toString();
     }
 
+    public static String getPageUrl(int source, int gid, String token, int pageIndex) {
+        return getUrlHeader(source) + "s/" + token + '/' + gid + '-' + (pageIndex + 1);
+    }
 }

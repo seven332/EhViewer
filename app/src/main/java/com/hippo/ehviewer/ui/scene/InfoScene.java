@@ -110,9 +110,8 @@ public class InfoScene extends AppbarScene implements EasyRecyclerView.OnItemLon
             return;
         }
 
-        Object obj = announcer.getExtra(KEY_INFO);
-        if (obj instanceof GalleryDetail) {
-            GalleryDetail gd = (GalleryDetail) obj;
+        GalleryDetail gd = announcer.getExtra(KEY_INFO, GalleryDetail.class);
+        if (gd != null) {
             addData(R.string.header_key, mResources.getString(R.string.header_value));
             addData(R.string.key_gid, Integer.toString(gd.gid));
             addData(R.string.key_token, gd.token);

@@ -58,6 +58,10 @@ public class EhHttpClient extends HttpClient {
         mEhConfig = Settings.generateEhConfig();
     }
 
+    public EhConfig getEhConfigClone() {
+        return mEhConfig.clone();
+    }
+
     public void setExcludedLanguages(String excludedLanguages) {
         mEhConfig.excludedLanguages = excludedLanguages;
         mEhConfig.setDirty();

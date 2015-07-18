@@ -16,17 +16,13 @@
 
 package com.hippo.ehviewer.client.data;
 
-import java.util.Date;
-
 public class Comment {
     public String time;
-    public Date date;
     public String user;
     public String comment;
 
-    public Comment (String time, Date date, String user, String comment) {
+    public Comment (String time, String user, String comment) {
         this.time = time;
-        this.date = date;
         this.user = user;
         this.comment = comment;
     }

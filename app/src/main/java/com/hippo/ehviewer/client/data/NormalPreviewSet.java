@@ -31,7 +31,7 @@ import android.widget.TextView;
 import com.hippo.conaco.BitmapHolder;
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.Unikery;
-import com.hippo.ehviewer.EhImageKeyFactory;
+import com.hippo.ehviewer.EhCacheKeyFactory;
 import com.hippo.ehviewer.R;
 import com.hippo.widget.SimpleGridLayout;
 import com.hippo.yorozuya.Say;
@@ -92,7 +92,7 @@ public class NormalPreviewSet extends PreviewSet {
 
             String key;
             if (row.imageIndex != -1) {
-                key = EhImageKeyFactory.getNormalPreviewKey(getGid(), row.imageIndex);
+                key = EhCacheKeyFactory.getNormalPreviewKey(getGid(), row.imageIndex);
             } else {
                 key = row.imageUrl;
             }
@@ -235,7 +235,7 @@ public class NormalPreviewSet extends PreviewSet {
 
             String key;
             if (mRow.imageIndex != -1) {
-                key = EhImageKeyFactory.getNormalPreviewKey(getGid(), mRow.imageIndex);
+                key = EhCacheKeyFactory.getNormalPreviewKey(getGid(), mRow.imageIndex);
             } else {
                 key = mRow.imageUrl;
             }

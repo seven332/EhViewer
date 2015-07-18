@@ -22,10 +22,14 @@ import android.content.Context;
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.ehviewer.client.EhClient;
+import com.hippo.ehviewer.gallery.GallerySpider;
+import com.hippo.ehviewer.gallery.ImageHandler;
 import com.hippo.ehviewer.network.EhHttpClient;
+import com.hippo.ehviewer.util.DBUtils;
 import com.hippo.ehviewer.util.Settings;
 import com.hippo.scene.SceneApplication;
 import com.hippo.vectorold.content.VectorContext;
+import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.Say;
 
 import java.io.File;
@@ -38,13 +42,13 @@ public class EhApplication extends SceneApplication {
     private EhHttpClient mEhHttpClient;
     private EhClient mEhClient;
     private Conaco mConaco;
-    private SimpleDiskCache mReadcache;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         Settings.initialize(this);
+        DBUtils.initialize(this);
 
         File sayFile = AppConfig.getFileInAppDir("EhViewer.log");
         if (sayFile != null) {
@@ -63,11 +67,20 @@ public class EhApplication extends SceneApplication {
         conacoBuilder.httpClient = mEhHttpClient;
         mConaco = conacoBuilder.build();
 
+        SimpleDiskCache readcache = null;
         try {
-            mReadcache = new SimpleDiskCache(new File(getCacheDir(), "readCache"), 200 * 1024 * 1024);
+            readcache = new SimpleDiskCache(new File(getCacheDir(), "read"), 200 * 1024 * 1024);
         } catch (IOException e) {
+            // TODO need a better idea
             e.printStackTrace();
         }
+        ImageHandler.init(readcache);
+
+        File spiderInfoDir = getDir("spiderInfo", Context.MODE_PRIVATE);
+        if (!FileUtils.ensureDirectory(spiderInfoDir)) {
+            // TODO Can't create spider info dir
+        }
+        GallerySpider.init(mEhHttpClient, spiderInfoDir);
     }
 
     private int getMemoryCacheMaxSize() {
@@ -104,10 +117,5 @@ public class EhApplication extends SceneApplication {
     public static Conaco getConaco(Context context) {
         EhApplication application = (EhApplication) context.getApplicationContext();
         return application.mConaco;
-    }
-
-    public static SimpleDiskCache getReadCache(Context context) {
-        EhApplication application = (EhApplication) context.getApplicationContext();
-        return application.mReadcache;
     }
 }

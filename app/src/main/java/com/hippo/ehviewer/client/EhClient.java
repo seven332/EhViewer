@@ -20,7 +20,7 @@ import android.os.AsyncTask;
 import android.os.Process;
 
 import com.hippo.ehviewer.client.data.GalleryApiDetail;
-import com.hippo.ehviewer.client.data.GalleryWithJpnTitle;
+import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.ehviewer.network.EhHttpRequest;
 import com.hippo.httpclient.HttpClient;
 import com.hippo.httpclient.HttpRequest;
@@ -262,12 +262,12 @@ public final class EhClient {
             }
         }
 
-        private void fillJpnTitle(HttpRequest httpRequest, List<GalleryWithJpnTitle> list, int source) throws Exception {
+        private void fillJpnTitle(HttpRequest httpRequest, List<GalleryBase> list, int source) throws Exception {
             int length = list.size();
             int[] gids = new int[length];
             String[] tokens = new String[length];
             for (int i = 0; i < length; i++) {
-                GalleryWithJpnTitle gi = list.get(i);
+                GalleryBase gi = list.get(i);
                 gids[i] = gi.gid;
                 tokens[i] = gi.token;
             }
@@ -276,7 +276,7 @@ public final class EhClient {
                     mHttpClient, httpRequest, gids, tokens, source);
 
             for (int i = 0; i < length; i++) {
-                GalleryWithJpnTitle gi = list.get(i);
+                GalleryBase gi = list.get(i);
                 GalleryApiDetail gad = galleryApiDetails.get(i);
                 if (gi.gid == gad.gid) {
                     gi.titleJpn = gad.titleJpn;

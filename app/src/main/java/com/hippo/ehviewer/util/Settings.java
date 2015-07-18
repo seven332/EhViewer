@@ -20,9 +20,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.BuildConfig;
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhUrl;
+import com.hippo.unifile.UniFile;
 
 public final class Settings {
 
@@ -186,6 +188,11 @@ public final class Settings {
 
     public static int getPreviewSize() {
         return getInt(KEY_PREVIEW_SIZE, DEFAULT_PREVIEW_SIZE);
+    }
+
+
+    public static UniFile getDownloadPath() {
+        return UniFile.fromFile(AppConfig.getDownloadDir());
     }
 
     /****** Advance ******/

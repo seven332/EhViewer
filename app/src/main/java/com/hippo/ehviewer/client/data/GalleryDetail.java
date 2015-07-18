@@ -20,8 +20,6 @@ import java.util.List;
 
 public class GalleryDetail extends GalleryBase {
 
-    public String titleJpn;
-
     public int torrentCount;
     public String torrentUrl;
 

@@ -118,8 +118,14 @@ public class Announcer {
         }
     }
 
-    public Object getExtra(String key) {
-        return mMap.get(key);
+    @SuppressWarnings("unchecked")
+    public <E> E getExtra(String key, Class<E> clazz) {
+        Object obj = mMap.get(key);
+        if (clazz.isInstance(obj)) {
+            return (E) obj;
+        } else {
+            return null;
+        }
     }
 
     public void removeExtra(String key) {

@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.client.data;
+package com.hippo.ehviewer.gallery;
 
-public abstract class GalleryWithJpnTitle extends GalleryBase {
+public interface GalleryLoaderImpl {
 
-    public String titleJpn;
+    void request(int index);
+
+    int size();
 }

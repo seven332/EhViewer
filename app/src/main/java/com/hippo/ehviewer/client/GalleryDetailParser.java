@@ -28,8 +28,6 @@ import com.hippo.yorozuya.NumberUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -53,14 +51,9 @@ public class GalleryDetailParser {
 
     public static final int REQUEST_DETAIL = 0x1;
     public static final int REQUEST_TAG = 0x2;
-    public static final int REQUEST_PREVIEW_INFO = 0x4;
+    public static final int REQUEST_PREVIEW_PAGES = 0x4;
     public static final int REQUEST_PREVIEW = 0x8;
     public static final int REQUEST_COMMENT = 0x10;
-
-    // TODO Can't Sort comment it like this,
-    // If the comment is modified, this time is modifing time.
-    // Leave it to cookie
-    private static final CommentSort COMMENT_SORTER = new CommentSort();
 
     public static GalleryDetail parse(String body, int source, int request) throws Exception {
         switch (source) {
@@ -93,7 +86,7 @@ public class GalleryDetailParser {
         Pattern p;
         Matcher m;
 
-        // TODO I can't remember what's this for
+        // Error info
         p = Pattern.compile("<div class=\"d\">\n<p>([^<]+)</p>");
         m = p.matcher(body);
         if (m.find()) {
@@ -202,17 +195,8 @@ public class GalleryDetailParser {
         }
 
         // Get preview info
-        if ((request & REQUEST_PREVIEW_INFO) != 0) {
-            p = Pattern.compile("<td[^>]+><a[^>]+>([\\d,]+)</a></td><td[^>]+>(?:<a[^>]+>)?&gt;(?:</a>)?</td>");
-            m = p.matcher(body);
-            if (m.find()) {
-                galleryDetail.previewPageCount = ParserUtils.parseInt(m.group(1));
-            } else {
-                galleryDetail.previewPageCount = 0;
-            }
-            if (galleryDetail.previewPageCount <= 0) {
-                throw new ParseException("Parse preview page count error", body);
-            }
+        if ((request & REQUEST_PREVIEW_PAGES) != 0) {
+            galleryDetail.previewPageCount = parsePreviewPages(body);
         }
 
         // Get preview
@@ -237,9 +221,8 @@ public class GalleryDetailParser {
                     date = new Date(0l);
                 }
                 String outDateString = OUT_COMMENT_DATE_FORMAT.format(date);
-                galleryDetail.comments.add(new Comment(outDateString, date, ParserUtils.trim(m.group(2)), m.group(3)));
+                galleryDetail.comments.add(new Comment(outDateString, ParserUtils.trim(m.group(2)), m.group(3)));
             }
-            Collections.sort(galleryDetail.comments, COMMENT_SORTER);
         }
 
         return galleryDetail;
@@ -250,6 +233,31 @@ public class GalleryDetailParser {
         Matcher m = p.matcher(body);
         while (m.find()) {
             tagGroup.addTag(ParserUtils.trim(m.group(1)));
+        }
+    }
+
+    public static int parsePreviewPages(String body) throws ParseException {
+        Pattern p = Pattern.compile("<td[^>]+><a[^>]+>([\\d,]+)</a></td><td[^>]+>(?:<a[^>]+>)?&gt;(?:</a>)?</td>");
+        Matcher m = p.matcher(body);
+        int previewPages = -1;
+        if (m.find()) {
+            previewPages = ParserUtils.parseInt(m.group(1));
+        }
+
+        if (previewPages <= 0) {
+            throw new ParseException("Parse preview page count error", body);
+        }
+
+        return previewPages;
+    }
+
+    public static int parsePages(String body) throws ParseException {
+        Pattern p = Pattern.compile("<tr><td[^<>]*>Length:</td><td[^<>]*>([\\d,]+) pages</td></tr>");
+        Matcher m = p.matcher(body);
+        if (m.find()) {
+            return ParserUtils.parseInt(m.group(1));
+        } else {
+            throw new ParseException("Parse pages error", body);
         }
     }
 
@@ -296,13 +304,5 @@ public class GalleryDetailParser {
             largePreviewSet.addItem(m.group(2), m.group(1));
         }
         return largePreviewSet;
-    }
-
-    static class CommentSort implements Comparator<Comment> {
-
-        @Override
-        public int compare(Comment c1, Comment c2) {
-            return c1.date.compareTo(c2.date);
-        }
     }
 }

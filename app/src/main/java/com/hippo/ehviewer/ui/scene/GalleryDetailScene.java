@@ -35,7 +35,7 @@ import android.widget.ViewSwitcher;
 import com.hippo.conaco.Conaco;
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.EhApplication;
-import com.hippo.ehviewer.EhImageKeyFactory;
+import com.hippo.ehviewer.EhCacheKeyFactory;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhException;
@@ -144,12 +144,11 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
 
         String action = announcer.getAction();
         if (ACTION_GALLERY_INFO.equals(action)) {
-            Object obj = announcer.getExtra(KEY_GALLERY_INFO);
-            if (obj instanceof GalleryInfo) {
-                GalleryInfo gi = (GalleryInfo) obj;
+            GalleryInfo gi = announcer.getExtra(KEY_GALLERY_INFO, GalleryInfo.class);
+            if (gi != null) {
 
                 Conaco conaco = EhApplication.getConaco(getStageActivity());
-                mThumb.load(conaco, EhImageKeyFactory.getThumbKey(gi.gid), gi.thumb);
+                mThumb.load(conaco, EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb);
                 String title;
                 if (Settings.getJpnTitle()) {
                     title = TextUtils.isEmpty(gi.titleJpn) ? gi.title : gi.titleJpn;
@@ -279,7 +278,9 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         }
 
         if (v == mRead) {
-
+            Announcer announcer = new Announcer();
+            announcer.putExtra(GalleryScene.KEY_GALLERY_BASE, mGalleryDetail);
+            startScene(GalleryScene.class, announcer);
         } else if (v == mDownload) {
 
         } else if (v == mFavorite) {

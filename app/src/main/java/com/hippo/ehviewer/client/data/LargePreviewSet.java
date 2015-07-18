@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hippo.conaco.Conaco;
-import com.hippo.ehviewer.EhImageKeyFactory;
+import com.hippo.ehviewer.EhCacheKeyFactory;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.widget.SimpleGridLayout;
 
@@ -53,7 +53,7 @@ public class LargePreviewSet extends PreviewSet {
 
             LoadImageView imageView = ((LoadImageView) viewGroup.getChildAt(0));
             imageView.setRetryType(LoadImageView.RetryType.LONG_CLICK);
-            imageView.load(conaco, EhImageKeyFactory.getLargePreviewKey(getGid(), index), item.imageUrl);
+            imageView.load(conaco, EhCacheKeyFactory.getLargePreviewKey(getGid(), index), item.imageUrl);
 
             ((TextView) viewGroup.getChildAt(1)).setText(Integer.toString(index + 1));
         }

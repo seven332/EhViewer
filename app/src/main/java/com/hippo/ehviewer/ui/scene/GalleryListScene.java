@@ -42,7 +42,7 @@ import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.EhApplication;
-import com.hippo.ehviewer.EhImageKeyFactory;
+import com.hippo.ehviewer.EhCacheKeyFactory;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
@@ -958,7 +958,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
             GalleryInfo gi = getDataAt(position);
 
             Conaco conaco = EhApplication.getConaco(getStageActivity());
-            holder.thumb.load(conaco, EhImageKeyFactory.getThumbKey(gi.gid), gi.thumb);
+            holder.thumb.load(conaco, EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb);
             String title;
             if (mJpnTitle) {
                 title = TextUtils.isEmpty(gi.titleJpn) ? gi.title : gi.titleJpn;

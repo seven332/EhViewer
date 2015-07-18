@@ -40,9 +40,9 @@ public class CommentScene extends AppbarScene implements EasyRecyclerView.OnItem
             return;
         }
 
-        Object obj = announcer.getExtra(KEY_COMMENTS);
-        if (obj instanceof List) {
-            mCommentList = (List<Comment>) obj;
+        List<Comment> list = announcer.getExtra(KEY_COMMENTS, List.class);
+        if (list != null) {
+            mCommentList = list;
         } else {
             finish();
         }

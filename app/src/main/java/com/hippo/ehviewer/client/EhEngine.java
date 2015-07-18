@@ -35,20 +35,8 @@ class EhEngine {
     private static final String SIGN_IN_URL = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
     public static final String API_EHVIEWER = "http://www.ehviewer.com/API";
 
-    public static final String API_G = "http://g.e-hentai.org/api.php";
-    public static final String API_EX = "http://exhentai.org/api.php";
     public static final long APIUID = 1363542;
     public static final String APIKEY = "f4b5407ab1727b9d08d7";
-
-    private static String getApiUrl(int source) {
-        switch (source) {
-            default:
-            case EhUrl.SOURCE_G:
-                return API_G;
-            case EhUrl.SOURCE_EX:
-                return API_EX;
-        }
-    }
 
     public static String signIn(HttpClient httpClient, HttpRequest httpRequest,
             String username, String password) throws Exception {
@@ -124,7 +112,7 @@ class EhEngine {
             return GalleryDetailParser.parse(body, source,
                     GalleryDetailParser.REQUEST_DETAIL |
                             GalleryDetailParser.REQUEST_TAG |
-                            GalleryDetailParser.REQUEST_PREVIEW_INFO |
+                            GalleryDetailParser.REQUEST_PREVIEW_PAGES |
                             GalleryDetailParser.REQUEST_PREVIEW |
                             GalleryDetailParser.REQUEST_COMMENT);
         } catch (Exception e) {
@@ -174,7 +162,7 @@ class EhEngine {
                 ja.put(g);
             }
             json.put("gidlist", ja);
-            httpRequest.setUrl(getApiUrl(source));
+            httpRequest.setUrl(EhUrl.getApiUrl(source));
             httpRequest.setHttpImpl(new JsonPoster(json));
             HttpResponse response = httpClient.execute(httpRequest);
             String body = response.getString();

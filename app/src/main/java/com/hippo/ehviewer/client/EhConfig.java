@@ -611,6 +611,15 @@ public class EhConfig implements Cloneable {
 
     private boolean mDirty = true;
 
+    @Override
+    public EhConfig clone() {
+        try {
+            return (EhConfig) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     public void setDirty() {
         mDirty = true;
     }

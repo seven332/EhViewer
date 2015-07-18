@@ -14,29 +14,11 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.client;
+package com.hippo.ehviewer.gallery;
 
-public class GalleryDownloader {
+import android.graphics.Bitmap;
 
-    public enum MODE {
-        READ,
-        DOWNLOAD
-    }
+public interface GalleryRequesterImpl {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public interface GallerySavers {
-
-    }
+    void onGetImage(Bitmap bitmap);
 }
