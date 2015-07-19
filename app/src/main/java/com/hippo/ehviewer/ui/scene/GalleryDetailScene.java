@@ -18,6 +18,7 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
@@ -47,6 +48,7 @@ import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.data.TagGroup;
+import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Settings;
 import com.hippo.ehviewer.widget.LoadImageView;
@@ -278,9 +280,8 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         }
 
         if (v == mRead) {
-            Announcer announcer = new Announcer();
-            announcer.putExtra(GalleryScene.KEY_GALLERY_BASE, mGalleryDetail);
-            startScene(GalleryScene.class, announcer);
+            Intent intent = new Intent(getStageActivity(), GalleryActivity.class);
+            getStageActivity().startActivity(intent);
         } else if (v == mDownload) {
 
         } else if (v == mFavorite) {

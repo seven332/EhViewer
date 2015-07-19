@@ -3570,7 +3570,7 @@ public class RecyclerView extends ViewGroup implements ScrollingView, NestedScro
         }
     }
 
-    Rect getItemDecorInsetsForChild(View child) {
+    public Rect getItemDecorInsetsForChild(View child) {
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         if (!lp.mInsetsDirty) {
             return lp.mDecorInsets;
@@ -8332,7 +8332,7 @@ public class RecyclerView extends ViewGroup implements ScrollingView, NestedScro
     public static class LayoutParams extends android.view.ViewGroup.MarginLayoutParams {
         ViewHolder mViewHolder;
         final Rect mDecorInsets = new Rect();
-        boolean mInsetsDirty = true;
+        public boolean mInsetsDirty = true;
         // Flag is set to true if the view is bound while it is detached from RV.
         // In this case, we need to manually call invalidate after view is added to guarantee that
         // invalidation is populated through the View hierarchy

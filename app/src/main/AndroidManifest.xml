@@ -41,6 +41,14 @@
 
         </activity>
 
+        <activity
+            android:name="com.hippo.ehviewer.ui.GalleryActivity"
+            android:configChanges="screenSize|uiMode"
+            android:theme="@style/AppTheme.NoActionBar.Translucent"
+            android:windowSoftInputMode="stateAlwaysHidden">
+
+        </activity>
+
     </application>
 
 </manifest>
