@@ -84,4 +84,10 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="ProgressView">
+        <attr name="color"/>
+        <attr name="indeterminate" format="boolean"/>
+        <attr name="progress" format="float"/>
+    </declare-styleable>
+
 </resources>
