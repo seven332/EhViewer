@@ -26,7 +26,7 @@ import java.io.File;
  */
 public final class AppConfig {
 
-    private static final String APP_DIRNAME = "EhViewer";
+    private static final String APP_DIRNAME = "EhViewer-Test";
     private static final String CRASH_DIRNAME = "crash";
     private static final String DOWNLOAD_DIRNAME = "download";
     private static final String TORRENT_DIRNAME = "torrent";

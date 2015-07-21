@@ -20,6 +20,7 @@ import com.hippo.ehviewer.client.data.GalleryApiDetail;
 import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,10 +43,10 @@ public class GalleryApiParser {
             gad.gid = g.getInt("gid");
             gad.token = g.getString("token");
             gad.archiverKey = g.getString("archiver_key");
-            gad.title = g.getString("title");
-            gad.titleJpn = g.getString("title_jpn");
+            gad.title = StringUtils.unescapeXml(g.getString("title"));
+            gad.titleJpn = StringUtils.unescapeXml(g.getString("title_jpn"));
             gad.category = EhUtils.getCategory(g.getString("category"));
-            gad.thumb = g.getString("thumb");
+            gad.thumb = StringUtils.unescapeXml(g.getString("thumb"));
             gad.uploader = g.getString("uploader");
             gad.posted = GalleryBase.DEFAULT_DATE_FORMAT.format(new Date(Long.parseLong(g.getString("posted")) * 1000));
             gad.pageCount = Integer.parseInt(g.getString("filecount"));

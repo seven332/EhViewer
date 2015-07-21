@@ -23,10 +23,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 
-import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Say;
@@ -39,9 +36,8 @@ public class GalleryView extends RecyclerView {
 
     private Mode mMode;
     private int mHalfInterval;
-    private int mSize = 20;
+    private boolean mNeedAdjustPosition;
 
-    private GalleryAdapter mAdapter;
     private GalleryLayoutManager mLayoutManager;
 
     public enum Mode {
@@ -70,8 +66,6 @@ public class GalleryView extends RecyclerView {
 
         mLayoutManager = new GalleryLayoutManager(context);
         setLayoutManager(mLayoutManager);
-        mAdapter = new GalleryAdapter();
-        setAdapter(mAdapter);
         addItemDecoration(new IntervalDecoration());
         addOnScrollListener(new ScrollListener());
         setHasFixedSize(true);
@@ -95,6 +89,9 @@ public class GalleryView extends RecyclerView {
         for (int i = 0; i < length; i++) {
             ((RecyclerView.LayoutParams) getChildAt(i).getLayoutParams()).mInsetsDirty = true;
         }
+        if (mode == Mode.LEFT_TO_RIGHT || mode == Mode.RIGHT_TO_LEFT) {
+            mNeedAdjustPosition = true;
+        }
     }
 
     @Override
@@ -104,6 +101,16 @@ public class GalleryView extends RecyclerView {
         } else {
             return false;
         }
+    }
+
+    public void scrollByEfficiently(int x, int y) {
+        if (x != 0 || y != 0) {
+            scrollBy(x, y);
+        }
+    }
+
+    private int size() {
+        return getAdapter().getItemCount();
     }
 
     // Only work for Mode.LEFT_TO_RIGHT and Mode.RIGHT_TO_LEFT
@@ -141,7 +148,7 @@ public class GalleryView extends RecyclerView {
         if (mMode == Mode.TOP_TO_BOTTOM) {
             smoothScrollToPosition(page);
         } else {
-            page = MathUtils.clamp(page, 0, mSize - 1);
+            page = MathUtils.clamp(page, 0, size() - 1);
             try {
                 int offsetX = getOffsetToPage(page);
                 smoothScrollBy(offsetX, 0);
@@ -156,10 +163,10 @@ public class GalleryView extends RecyclerView {
         if (mMode == Mode.TOP_TO_BOTTOM) {
             scrollToPosition(page);
         } else {
-            page = MathUtils.clamp(page, 0, mSize - 1);
+            page = MathUtils.clamp(page, 0, size() - 1);
             try {
                 int offsetX = getOffsetToPage(page);
-                scrollBy(offsetX, 0);
+                scrollByEfficiently(offsetX, 0);
             } catch (Exception e) {
                 Say.d(TAG, e.getMessage());
                 scrollToPosition(page);
@@ -177,36 +184,6 @@ public class GalleryView extends RecyclerView {
             } else {
                 return getChildLayoutPosition(v);
             }
-        }
-    }
-
-    class GalleryHolder extends RecyclerView.ViewHolder {
-
-        private ImageView imageView;
-
-        public GalleryHolder(View itemView) {
-            super(itemView);
-
-            imageView = (ImageView) itemView;
-        }
-    }
-
-    class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
-
-        @Override
-        public GalleryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new GalleryHolder(new ImageView(getContext()));
-        }
-
-        @Override
-        public void onBindViewHolder(GalleryHolder holder, int position) {
-            holder.imageView.setImageDrawable(getResources().getDrawable(position == 0 ?
-                    R.drawable.ic_heart : R.drawable.ic_sad));
-        }
-
-        @Override
-        public int getItemCount() {
-            return mSize;
         }
     }
 
@@ -240,8 +217,12 @@ public class GalleryView extends RecyclerView {
             super.onLayoutChildren(recycler, state);
 
             // Ensure page is in center
-            if (mMode == Mode.LEFT_TO_RIGHT || mMode == Mode.RIGHT_TO_LEFT) {
-                scrollToPage(getCurrentPage());
+            if (mNeedAdjustPosition) {
+                mNeedAdjustPosition = false;
+                int currentPage = getCurrentPage();
+                if (currentPage != RecyclerView.NO_POSITION) {
+                    scrollToPage(currentPage);
+                }
             }
         }
     }
@@ -274,10 +255,10 @@ public class GalleryView extends RecyclerView {
                         int width = getWidth();
                         if (left > interval &&
                                 ((mMode == Mode.LEFT_TO_RIGHT && mCurrentPage > 0) ||
-                                        (mMode == Mode.RIGHT_TO_LEFT && mCurrentPage < mSize - 1))) { // Scroll left
+                                        (mMode == Mode.RIGHT_TO_LEFT && mCurrentPage < size() - 1))) { // Scroll left
                             scrollX = -width - interval + left;
                         } else if (left < -interval &&
-                                ((mMode == Mode.LEFT_TO_RIGHT && mCurrentPage < mSize - 1) ||
+                                ((mMode == Mode.LEFT_TO_RIGHT && mCurrentPage < size() - 1) ||
                                         (mMode == Mode.RIGHT_TO_LEFT && mCurrentPage > 0))) { // Scroll right
                             scrollX = width + interval + left;
                         } else {
@@ -302,7 +283,7 @@ public class GalleryView extends RecyclerView {
                 } else {
                     outRect.left = mHalfInterval;
                 }
-                if (index == mSize - 1) {
+                if (index == size() - 1) {
                     outRect.right = 0;
                 } else {
                     outRect.right = mHalfInterval;
@@ -315,7 +296,7 @@ public class GalleryView extends RecyclerView {
                 } else {
                     outRect.right = mHalfInterval;
                 }
-                if (index == mSize - 1) {
+                if (index == size() - 1) {
                     outRect.left = 0;
                 } else {
                     outRect.left = mHalfInterval;
@@ -328,7 +309,7 @@ public class GalleryView extends RecyclerView {
                 } else {
                     outRect.top = mHalfInterval;
                 }
-                if (index == mSize - 1) {
+                if (index == size() - 1) {
                     outRect.bottom = 0;
                 } else {
                     outRect.bottom = mHalfInterval;

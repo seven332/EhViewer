@@ -16,13 +16,16 @@
 
 package com.hippo.ehviewer.client.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
-public class GalleryBase {
+public class GalleryBase implements Parcelable {
 
     public static final DateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
 
@@ -108,4 +111,52 @@ public class GalleryBase {
         }
         simpleLanguage = null;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.gid);
+        dest.writeString(this.token);
+        dest.writeString(this.title);
+        dest.writeString(this.titleJpn);
+        dest.writeString(this.thumb);
+        dest.writeInt(this.category);
+        dest.writeString(this.posted);
+        dest.writeString(this.uploader);
+        dest.writeFloat(this.rating);
+        dest.writeString(this.simpleLanguage);
+    }
+
+    public GalleryBase() {
+    }
+
+    protected GalleryBase(Parcel in) {
+        this.gid = in.readInt();
+        this.token = in.readString();
+        this.title = in.readString();
+        this.titleJpn = in.readString();
+        this.thumb = in.readString();
+        this.category = in.readInt();
+        this.posted = in.readString();
+        this.uploader = in.readString();
+        this.rating = in.readFloat();
+        this.simpleLanguage = in.readString();
+    }
+
+    public static final Parcelable.Creator<GalleryBase> CREATOR = new Parcelable.Creator<GalleryBase>() {
+
+        @Override
+        public GalleryBase createFromParcel(Parcel source) {
+            return new GalleryBase(source);
+        }
+
+        @Override
+        public GalleryBase[] newArray(int size) {
+            return new GalleryBase[size];
+        }
+    };
 }

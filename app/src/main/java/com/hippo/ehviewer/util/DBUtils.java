@@ -22,9 +22,10 @@ import android.database.sqlite.SQLiteDatabase;
 import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.ehviewer.dao.DaoMaster;
 import com.hippo.ehviewer.dao.DaoSession;
+import com.hippo.ehviewer.dao.DirnameObj;
+import com.hippo.ehviewer.dao.DirnameObjDao;
 import com.hippo.ehviewer.dao.GalleryBaseObj;
 import com.hippo.ehviewer.dao.GalleryBaseObjDao;
-import com.hippo.ehviewer.dao.SpiderObj;
 
 public class DBUtils {
 
@@ -36,14 +37,6 @@ public class DBUtils {
         SQLiteDatabase db = helper.getWritableDatabase();
         DaoMaster daoMaster = new DaoMaster(db);
         sDaoSession = daoMaster.newSession();
-    }
-
-    public static SpiderObj getSpiderObj(int gid) {
-        return sDaoSession.getSpiderObjDao().load((long) gid);
-    }
-
-    public static void insertSpiderObj(SpiderObj spiderObj) {
-        sDaoSession.getSpiderObjDao().insert(spiderObj);
     }
 
     public static void addGalleryBase(GalleryBase galleryBase) {
@@ -80,6 +73,38 @@ public class DBUtils {
             // Still has reference, sub refernce
             galleryBaseObj.setReference(galleryBaseObj.getReference() - 1);
             galleryBaseObjDao.update(galleryBaseObj);
+        }
+    }
+
+    public static String getDirname(int gid) {
+        DirnameObjDao dirnameObjDao = sDaoSession.getDirnameObjDao();
+        DirnameObj dirnameObj = dirnameObjDao.load((long) gid);
+        if (dirnameObj != null) {
+            // Touch the date
+            dirnameObj.setTime(System.currentTimeMillis());
+            dirnameObjDao.update(dirnameObj);
+            return dirnameObj.getDirname();
+        } else {
+            return null;
+        }
+    }
+
+    public static void addDirname(GalleryBase galleryBase, String dirname) {
+        addGalleryBase(galleryBase);
+
+        DirnameObj dirnameObj = new DirnameObj();
+        dirnameObj.setGid((long) galleryBase.gid);
+        dirnameObj.setDirname(dirname);
+        dirnameObj.setTime(System.currentTimeMillis());
+        sDaoSession.getDirnameObjDao().insert(dirnameObj);
+    }
+
+    public static void touchDirname(int gid) {
+        DirnameObjDao dirnameObjDao = sDaoSession.getDirnameObjDao();
+        DirnameObj dirnameObj = dirnameObjDao.load((long) gid);
+        if (dirnameObj != null) {
+            dirnameObj.setTime(System.currentTimeMillis());
+            dirnameObjDao.update(dirnameObj);
         }
     }
 }

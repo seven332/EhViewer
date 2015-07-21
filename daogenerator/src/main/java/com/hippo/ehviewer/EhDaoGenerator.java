@@ -36,7 +36,8 @@ public class EhDaoGenerator {
         Schema schema = new Schema(1, PACKAGE);
         addGalleryBase(schema);
         addDownloadInfo(schema);
-        addSpider(schema);
+        addDirname(schema);
+        addReadInfo(schema);
         new DaoGenerator().generateAll(schema, OUT_DIR);
     }
 
@@ -62,13 +63,15 @@ public class EhDaoGenerator {
         downloadInfo.addIntProperty("state");
     }
 
-    public static void addSpider(Schema schema) {
-        Entity spider = schema.addEntity("SpiderObj");
-        spider.setTableName("SPIDER");
+    public static void addDirname(Schema schema) {
+        Entity spider = schema.addEntity("DirnameObj");
+        spider.setTableName("DIRNAME");
         spider.addLongProperty("gid").primaryKey();
-        spider.addIntProperty("lastIndex");
         spider.addStringProperty("dirname");
-        spider.addBooleanProperty("download");
         spider.addLongProperty("time");
+    }
+
+    public static void addReadInfo(Schema schema) {
+
     }
 }

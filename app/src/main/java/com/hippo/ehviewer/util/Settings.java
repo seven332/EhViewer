@@ -25,6 +25,9 @@ import com.hippo.ehviewer.BuildConfig;
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.unifile.UniFile;
+import com.hippo.yorozuya.FileUtils;
+
+import java.io.File;
 
 public final class Settings {
 
@@ -192,7 +195,9 @@ public final class Settings {
 
 
     public static UniFile getDownloadPath() {
-        return UniFile.fromFile(AppConfig.getDownloadDir());
+        File file = AppConfig.getDownloadDir();
+        FileUtils.ensureDirectory(file);
+        return UniFile.fromFile(file);
     }
 
     /****** Advance ******/

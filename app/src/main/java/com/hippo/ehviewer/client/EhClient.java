@@ -257,7 +257,7 @@ public final class EhClient {
                     mEhHttpRequest = null;
                     mListener = null;
                 } else if (status == Status.FINISHED) {
-                    mEhHttpRequest.cancel();
+                    mEhHttpRequest.disconnect();
                 }
             }
         }

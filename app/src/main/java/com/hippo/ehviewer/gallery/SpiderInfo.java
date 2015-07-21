@@ -85,7 +85,7 @@ public class SpiderInfo {
                 .append(Integer.toString(previewCountPerPage)).append('\n');
 
         if (tokens != null) {
-            int length = Math.min(tokens.maxValidIndex(), pages);
+            int length = Math.min(tokens.maxValidIndex() + 1, pages);
             for (int i = 0; i < length; i++) {
                 String token = tokens.get(i);
                 if (token != null) {
