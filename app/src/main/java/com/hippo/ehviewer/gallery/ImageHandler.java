@@ -136,8 +136,6 @@ public class ImageHandler {
         mBitmapPool.addReusableBitmap(bitmap);
     }
 
-
-
     private boolean containFromRead(int index) {
         String key = EhCacheKeyFactory.getImageKey(mGalleryBase.gid, index);
         return sDiskCache.contain(key);

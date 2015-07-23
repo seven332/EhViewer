@@ -67,6 +67,10 @@ public interface GalleryProvider {
 
     void retry();
 
+    int size();
+
+    void setPause(boolean pause);
+
     void addGalleryProviderListener(GalleryProviderListener listener);
 
     void removeGalleryProviderListener(GalleryProviderListener listener);

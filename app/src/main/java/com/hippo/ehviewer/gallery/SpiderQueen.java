@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.gallery;
 
 import android.graphics.Bitmap;
+import android.os.Looper;
 import android.os.Process;
 
 import com.hippo.ehviewer.client.EhConfig;
@@ -199,6 +200,20 @@ public class SpiderQueen implements Runnable {
         mRetry = true;
         synchronized (mQueenLock) {
             mQueenLock.notify();
+        }
+    }
+
+    public int pages() {
+        if (mSpiderInfo != null) {
+            return mSpiderInfo.pages;
+        } else {
+            return -1;
+        }
+    }
+
+    public void setPause(boolean pause) {
+        if (mRender != null) {
+            mRender.setPause(pause);
         }
     }
 
@@ -523,15 +538,17 @@ public class SpiderQueen implements Runnable {
             return;
         }
 
+
+        // TODO make sure onGetPages first then other listener
+        // 7. tell listener pages
+        mSpiderListener.onGetPages(spiderInfo.pages);
+
         // 6. Make workers and render to work
         ensureWorker();
         mRender = new Render();
         Thread thread = new Thread(mRender, "Render");
         thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
-
-        // 7. tell listener pages
-        mSpiderListener.onGetPages(spiderInfo.pages);
 
         // 8. Get tokens
         handleToken(spiderInfo, ehConfig);
@@ -551,14 +568,6 @@ public class SpiderQueen implements Runnable {
         mWorkerArrayLock.unlock();
 
         mRender.stop();
-    }
-
-    public int pages() {
-        if (mSpiderInfo != null) {
-            return mSpiderInfo.pages;
-        } else {
-            return -1;
-        }
     }
 
     private void ensureWorker() {
@@ -779,15 +788,46 @@ public class SpiderQueen implements Runnable {
 
         private BlockingQueue<Integer> mQueue = new LinkedBlockingQueue<>();
 
+        public boolean mPauseAccess = false;
+        private final Object mPauseLock = new Object();
+
         public void stop() {
             mStop = true;
+            setPause(false);
             synchronized (mRenderLock) {
                 mRenderLock.notify();
             }
         }
 
+        public void setPause(final boolean pause) {
+            synchronized (mPauseLock) {
+                if (mPauseAccess != pause) {
+                    mPauseAccess = pause;
+                    if (!pause) {
+                        mPauseLock.notify();
+                    }
+                }
+            }
+        }
+
+        private void waitUntilUnpaused() {
+            synchronized (mPauseLock) {
+                if (Looper.myLooper() != Looper.getMainLooper()) {
+                    while (mPauseAccess) {
+                        try {
+                            mPauseLock.wait();
+                        } catch (InterruptedException e) {
+                            // ignored, we'll start waiting again
+                        }
+                    }
+                }
+            }
+        }
+
         public void request(int index) {
-            mQueue.offer(index);
+            if (!mQueue.contains(index)) {
+                mQueue.offer(index);
+            }
             synchronized (mRenderLock) {
                 mRenderLock.notify();
             }
@@ -798,6 +838,8 @@ public class SpiderQueen implements Runnable {
             Say.d(TAG, "Render starts");
 
             while (!mStop) {
+
+                waitUntilUnpaused();
 
                 Integer index = mQueue.poll();
                 if (index == null) {

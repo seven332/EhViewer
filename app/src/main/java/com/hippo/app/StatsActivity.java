@@ -29,8 +29,9 @@ import android.widget.TextView;
 
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
-import com.hippo.yorozuya.SimpleHandler;
+import com.hippo.ehviewer.util.Settings;
 import com.hippo.yorozuya.Messenger;
+import com.hippo.yorozuya.SimpleHandler;
 
 import java.util.Locale;
 
@@ -78,8 +79,6 @@ public abstract class StatsActivity extends AppCompatActivity {
         return lp;
     }
 
-    protected abstract boolean isShowStats();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,7 +95,7 @@ public abstract class StatsActivity extends AppCompatActivity {
         Messenger.getInstance().register(
                 Constants.MESSENGER_ID_SHOW_APP_STATUS, mReceiver);
 
-        if (isShowStats()) {
+        if (Settings.getShowApplicationStats()) {
             mShowStats = true;
             ((ViewGroup) getWindow().getDecorView()).addView(mStatsTextView,
                     generateLayoutParams());

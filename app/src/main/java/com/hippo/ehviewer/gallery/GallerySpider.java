@@ -194,6 +194,22 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
         }
     }
 
+    @Override
+    public int size() {
+        if (mSpiderQueen != null) {
+            return mSpiderQueen.pages();
+        } else {
+            return -1;
+        }
+    }
+
+    @Override
+    public void setPause(boolean pause) {
+        if (mSpiderQueen != null) {
+            mSpiderQueen.setPause(pause);
+        }
+    }
+
     public void releaseBitmap(Bitmap bitmap) {
         if (mSpiderQueen != null) {
             mSpiderQueen.releaseBitmap(bitmap);

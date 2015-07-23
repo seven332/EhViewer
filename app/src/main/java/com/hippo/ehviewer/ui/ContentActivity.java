@@ -128,11 +128,6 @@ public final class ContentActivity extends StageActivity
         }
     };
 
-    @Override
-    protected boolean isShowStats() {
-        return Settings.getShowApplicationStats();
-    }
-
     @SuppressLint("RtlHardcoded")
     @SuppressWarnings("deprecation")
     @Override
