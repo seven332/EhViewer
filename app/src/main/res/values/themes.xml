@@ -41,6 +41,10 @@
         <!-- Only avalible on API 19 and above -->
     </style>
 
+    <style name="AppTheme.Dark.NoActionBar.Translucent">
+        <!-- Only avalible on API 19 and above -->
+    </style>
+
     <style name="AppTheme.Content" parent="AppTheme.NoActionBar">
         <item name="android:windowBackground">@null</item>
     </style>
