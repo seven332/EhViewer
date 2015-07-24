@@ -192,6 +192,12 @@ public class GLES11Canvas implements GLCanvas {
     }
 
     @Override
+    public void drawArc(float x, float y, float width, float height,
+            float startAngle, float sweepAngle, GLPaint paint) {
+        // TODO
+    }
+
+    @Override
     public void drawLine(float x1, float y1, float x2, float y2, GLPaint paint) {
         GL11 gl = mGL;
 

@@ -24,6 +24,7 @@ import android.opengl.Matrix;
 import android.util.Log;
 
 import com.hippo.ehviewer.gallery.util.IntArray;
+import com.hippo.yorozuya.MathUtils;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -44,22 +45,46 @@ public class GLES20Canvas implements GLCanvas {
     private static final int COUNT_FILL_VERTEX = 4;
     private static final int COUNT_LINE_VERTEX = 2;
     private static final int COUNT_RECT_VERTEX = 4;
+    private static final int COUNT_CIRCLE_VERTEX = 120; // multiple of 4
     private static final int OFFSET_FILL_RECT = 0;
     private static final int OFFSET_DRAW_LINE = OFFSET_FILL_RECT + COUNT_FILL_VERTEX;
     private static final int OFFSET_DRAW_RECT = OFFSET_DRAW_LINE + COUNT_LINE_VERTEX;
+    private static final int OFFSET_DRAW_CIRCLE = OFFSET_DRAW_RECT + COUNT_RECT_VERTEX;
+    private static final int OFFSET_LAST = OFFSET_DRAW_CIRCLE + COUNT_CIRCLE_VERTEX + 1;
 
-    private static final float[] BOX_COORDINATES = {
-            0, 0, // Fill rectangle
-            1, 0,
-            0, 1,
-            1, 1,
-            0, 0, // Draw line
-            1, 1,
-            0, 0, // Draw rectangle outline
-            0, 1,
-            1, 1,
-            1, 0,
-    };
+    private static final float[] BOX_COORDINATES = new float[OFFSET_LAST * 2];
+
+    static {
+        float[] temp = {
+                0, 0, // Fill rectangle
+                1, 0,
+                0, 1,
+                1, 1,
+                0, 0, // Draw line
+                1, 1,
+                0, 0, // Draw rectangle outline
+                0, 1,
+                1, 1,
+                1, 0
+        };
+        System.arraycopy(temp, 0, BOX_COORDINATES, 0, temp.length);
+
+        // Draw circle
+        int arrayOffset = OFFSET_DRAW_CIRCLE * 2;
+        for (int i = 0, n = COUNT_CIRCLE_VERTEX / 4; i <= n; i++) {
+            float value = (float) Math.sin(MathUtils.radians(90f / n * i)) / 2;
+            float positive = value + 0.5f;
+            float negative = -value + 0.5f;
+            BOX_COORDINATES[arrayOffset + n * 0 + i * 2 + 1] = positive;
+            BOX_COORDINATES[arrayOffset + n * 2 - i * 2 + 0] = positive;
+            BOX_COORDINATES[arrayOffset + n * 2 + i * 2 + 0] = negative;
+            BOX_COORDINATES[arrayOffset + n * 4 - i * 2 + 1] = positive;
+            BOX_COORDINATES[arrayOffset + n * 4 + i * 2 + 1] = negative;
+            BOX_COORDINATES[arrayOffset + n * 6 - i * 2 + 0] = negative;
+            BOX_COORDINATES[arrayOffset + n * 6 + i * 2 + 0] = positive;
+            BOX_COORDINATES[arrayOffset + n * 8 - i * 2 + 1] = negative;
+        }
+    }
 
     private static final float[] BOUNDS_COORDINATES = {
         0, 0, 0, 1,
@@ -485,6 +510,34 @@ public class GLES20Canvas implements GLCanvas {
     @Override
     public void drawRect(float x, float y, float width, float height, GLPaint paint) {
         draw(GLES20.GL_LINE_LOOP, OFFSET_DRAW_RECT, COUNT_RECT_VERTEX, x, y, width, height, paint);
+        mCountDrawLine++;
+    }
+
+    @Override
+    public void drawArc(float x, float y, float width, float height, float startAngle,
+            float sweepAngle, GLPaint paint) {
+        if (Math.abs(Math.round(COUNT_CIRCLE_VERTEX * sweepAngle / 360)) >= COUNT_CIRCLE_VERTEX) {
+            // It is a circle
+            draw(GLES20.GL_LINE_LOOP, OFFSET_DRAW_CIRCLE, COUNT_CIRCLE_VERTEX, x, y, width, height, paint);
+        } else {
+            if (sweepAngle < 0) {
+                startAngle += sweepAngle;
+                sweepAngle = - sweepAngle;
+            }
+            startAngle = MathUtils.positiveModulo(startAngle, 360);
+
+            float stopAngle = startAngle + sweepAngle;
+            if (stopAngle > 360) {
+                int start = OFFSET_DRAW_CIRCLE + Math.round(COUNT_CIRCLE_VERTEX * startAngle / 360);
+                draw(GLES20.GL_LINE_STRIP, start, OFFSET_LAST - start, x, y, width, height, paint);
+                int stop = Math.round(COUNT_CIRCLE_VERTEX * (stopAngle - 360) / 360) + 1;
+                draw(GLES20.GL_LINE_STRIP, OFFSET_DRAW_CIRCLE, stop, x, y, width, height, paint);
+            } else {
+                int start = OFFSET_DRAW_CIRCLE + Math.round(COUNT_CIRCLE_VERTEX * startAngle / 360);
+                int count = Math.round(COUNT_CIRCLE_VERTEX * sweepAngle / 360) + 1;
+                draw(GLES20.GL_LINE_STRIP, start, count, x, y, width, height, paint);
+            }
+        }
         mCountDrawLine++;
     }
 

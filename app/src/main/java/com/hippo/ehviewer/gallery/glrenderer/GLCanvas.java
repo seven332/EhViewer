@@ -86,6 +86,10 @@ public interface GLCanvas {
     // (Both end points are included).
     void drawRect(float x1, float y1, float x2, float y2, GLPaint paint);
 
+    // Draw a arc inside a rect
+    void drawArc(float x, float y, float width, float height, float startAngle,
+            float sweepAngle, GLPaint paint);
+
     // Fills the specified rectangle with the specified color.
     void fillRect(float x, float y, float width, float height, int color);
 
