@@ -139,7 +139,6 @@ public class TiledTexture implements Texture {
                 int r = localBitmapRef.getWidth() + x;
                 int b = localBitmapRef.getHeight() + y;
                 sCanvas.drawBitmap(localBitmapRef, x, y, sBitmapPaint);
-                localBitmapRef = null;
 
                 // draw borders if need
                 if (x > 0) sCanvas.drawLine(x - 1, 0, x - 1, TILE_SIZE, sPaint);
@@ -154,6 +153,11 @@ public class TiledTexture implements Texture {
         @Override
         protected void onFreeBitmap(Bitmap bitmap) {
             // do nothing
+        }
+
+        @Override
+        public boolean isOpaque() {
+            return false;
         }
     }
 
@@ -284,6 +288,30 @@ public class TiledTexture implements Texture {
                 src.set(0, 0, t.contentWidth, t.contentHeight);
                 src.offset(t.offsetX, t.offsetY);
                 mapRect(dest, src, 0, 0, x, y, scaleX, scaleY);
+                src.offset(BORDER_SIZE - t.offsetX, BORDER_SIZE - t.offsetY);
+                canvas.drawMixed(t, color, ratio, mSrcRect, mDestRect);
+            }
+        }
+    }
+
+    public void drawMixed(GLCanvas canvas, int color, float ratio,
+            RectF source, RectF target) {
+        RectF src = mSrcRect;
+        RectF dest = mDestRect;
+        float x0 = source.left;
+        float y0 = source.top;
+        float x = target.left;
+        float y = target.top;
+        float scaleX = target.width() / source.width();
+        float scaleY = target.height() / source.height();
+
+        synchronized (mTiles) {
+            for (int i = 0, n = mTiles.length; i < n; ++i) {
+                Tile t = mTiles[i];
+                src.set(0, 0, t.contentWidth, t.contentHeight);
+                src.offset(t.offsetX, t.offsetY);
+                if (!src.intersect(source)) continue;
+                mapRect(dest, src, x0, y0, x, y, scaleX, scaleY);
                 src.offset(BORDER_SIZE - t.offsetX, BORDER_SIZE - t.offsetY);
                 canvas.drawMixed(t, color, ratio, mSrcRect, mDestRect);
             }
