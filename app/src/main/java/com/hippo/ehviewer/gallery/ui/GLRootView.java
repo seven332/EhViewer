@@ -162,7 +162,10 @@ public class GLRootView extends GLSurfaceView
     public void addOnGLIdleListener(OnGLIdleListener listener) {
         synchronized (mIdleListeners) {
             mIdleListeners.addLast(listener);
-            mIdleRunner.enable();
+            if (mCanvas != null) {
+                // Wait for onSurfaceCreated
+                mIdleRunner.enable();
+            }
         }
     }
 
