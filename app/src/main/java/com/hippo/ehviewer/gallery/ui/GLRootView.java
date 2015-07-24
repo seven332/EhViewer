@@ -110,6 +110,7 @@ public class GLRootView extends GLSurfaceView
     private long mLastDrawFinishTime;
     private boolean mInDownState = false;
     //private boolean mFirstDraw = true;
+    private boolean mGLES20Supported;
 
     public static boolean checkGLES20Support(Context context) {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -124,8 +125,9 @@ public class GLRootView extends GLSurfaceView
     public GLRootView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mFlags |= FLAG_INITIALIZED;
+        mGLES20Supported = checkGLES20Support(context);
         setBackgroundDrawable(null);
-        setEGLContextClientVersion(checkGLES20Support(context) ? 2 : 1);
+        setEGLContextClientVersion(mGLES20Supported ? 2 : 1);
 
         // We can't detect 888_PIXEL_FORMAT by Build.VERSION.SDK_INT,
         // for example CyanogenMod use ro.opengles.surface.rgb565,
@@ -300,7 +302,7 @@ public class GLRootView extends GLSurfaceView
         mRenderLock.lock();
         try {
             mGL = gl;
-            mCanvas = ApiHelper.HAS_GLES20_REQUIRED ? new GLES20Canvas() : new GLES11Canvas(gl);
+            mCanvas = mGLES20Supported ? new GLES20Canvas() : new GLES11Canvas(gl);
             BasicTexture.invalidateAllTextures();
         } finally {
             mRenderLock.unlock();
