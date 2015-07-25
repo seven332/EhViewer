@@ -3,7 +3,6 @@ package com.hippo.ehviewer.gallery.glrenderer;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 
 import java.util.Arrays;
@@ -73,9 +72,9 @@ public class TextTexture extends SpriteTexture {
         paint.setColor(color);
         paint.setTypeface(typeface);
 
-        Rect rect = new Rect();
-        paint.getTextBounds(characters, 0, Math.min(5, characters.length), rect);
-        int height = rect.height();
+        Paint.FontMetricsInt fmi = paint.getFontMetricsInt();
+        int fixed = fmi.bottom;
+        int height = fmi.bottom - fmi.top;
 
         int length = characters.length;
         float[] widths = new float[length];
@@ -98,9 +97,7 @@ public class TextTexture extends SpriteTexture {
         Bitmap bitmap = Bitmap.createBitmap((int) Math.ceil(hCount * maxWidth),
                 (int) Math.ceil(vCount * height), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
-        // TODO draw text do not precisely start from X, how to get the fix
-        int fix = size / 96 + 1;
-        canvas.translate(0, height - fix);
+        canvas.translate(0, height - fixed);
 
         // Draw
         int[] rects = new int[length * 4];
