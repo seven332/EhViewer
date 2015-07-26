@@ -41,6 +41,10 @@ public class TextTexture extends SpriteTexture {
         return width;
     }
 
+    public float getTextHeight(String text) {
+        return mHeight;
+    }
+
     public void drawText(GLCanvas canvas, String text, int x, int y) {
         char[] characters = mCharacters;
         float[] widths = mWidths;
