@@ -279,6 +279,8 @@ public class GLRootView extends GLSurfaceView
         }
         Log.i(TAG, "layout content pane " + w + "x" + h + " (compensation " + mCompensation + ")");
         if (mContentView != null && w != 0 && h != 0) {
+            mContentView.measure(GLView.MeasureSpec.makeMeasureSpec(w, GLView.MeasureSpec.EXACTLY),
+                    GLView.MeasureSpec.makeMeasureSpec(h, GLView.MeasureSpec.EXACTLY));
             mContentView.layout(0, 0, w, h);
         }
         // Uncomment this to dump the view hierarchy.
@@ -631,6 +633,11 @@ public class GLRootView extends GLSurfaceView
     protected void onDetachedFromWindow() {
         unfreeze();
         super.onDetachedFromWindow();
+
+        // TODO Is it right ?
+        if (mContentView != null) {
+            mContentView.detachFromRoot();
+        }
     }
 
     @Override
