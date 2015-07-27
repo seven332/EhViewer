@@ -35,11 +35,11 @@ import com.hippo.ehviewer.gallery.glrenderer.BasicTexture;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLES11Canvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLES20Canvas;
+import com.hippo.ehviewer.gallery.glrenderer.TextTexture;
 import com.hippo.ehviewer.gallery.glrenderer.UploadedTexture;
 import com.hippo.ehviewer.gallery.util.ApiHelper;
 import com.hippo.ehviewer.gallery.util.GalleryUtils;
 import com.hippo.ehviewer.gallery.util.MotionEventHelper;
-import com.hippo.ehviewer.gallery.util.Profile;
 import com.hippo.yorozuya.AssertUtils;
 
 import java.util.ArrayDeque;
@@ -71,9 +71,6 @@ public class GLRootView extends GLSurfaceView
     private int mInvalidateColor = 0;
 
     private static final boolean DEBUG_DRAWING_STAT = false;
-
-    private static final boolean DEBUG_PROFILE = false;
-    private static final boolean DEBUG_PROFILE_SLOW_ONLY = false;
 
     private static final int FLAG_INITIALIZED = 1;
     private static final int FLAG_NEED_LAYOUT = 2;
@@ -141,9 +138,6 @@ public class GLRootView extends GLSurfaceView
         //} else {
         //    getHolder().setFormat(PixelFormat.RGB_565);
         //}
-
-        // Uncomment this to enable gl error check.
-        // setDebugFlags(DEBUG_CHECK_GL_ERROR);
 
         // Uncomment this to enable gl error check.
         // setDebugFlags(DEBUG_CHECK_GL_ERROR);
@@ -313,7 +307,7 @@ public class GLRootView extends GLSurfaceView
             mRenderLock.unlock();
         }
 
-        if (DEBUG_FPS || DEBUG_PROFILE) {
+        if (DEBUG_FPS) {
             setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         } else {
             setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -330,10 +324,6 @@ public class GLRootView extends GLSurfaceView
         Log.i(TAG, "onSurfaceChanged: " + width + "x" + height + ", gl10: " + gl1.toString());
         Process.setThreadPriority(Process.THREAD_PRIORITY_DISPLAY);
         GalleryUtils.setRenderThread();
-        if (DEBUG_PROFILE) {
-            Log.d(TAG, "Start profiling");
-            Profile.enable(20);  // take a sample every 20ms
-        }
         GL11 gl = (GL11) gl1;
         AssertUtils.assertTrue(mGL == gl);
 
@@ -356,11 +346,9 @@ public class GLRootView extends GLSurfaceView
     @Override
     public void onDrawFrame(GL10 gl) {
         AnimationTime.update();
-        long t0;
-        if (DEBUG_PROFILE_SLOW_ONLY) {
-            Profile.hold();
-            t0 = System.nanoTime();
-        }
+
+        long t0 = System.nanoTime();
+
         mRenderLock.lock();
 
         while (mFreeze) {
@@ -388,25 +376,16 @@ public class GLRootView extends GLSurfaceView
         //        });
         //}
 
-        if (DEBUG_PROFILE_SLOW_ONLY) {
-            long t = System.nanoTime();
-            long durationInMs = (t - mLastDrawFinishTime) / 1000000;
-            long durationDrawInMs = (t - t0) / 1000000;
-            mLastDrawFinishTime = t;
+        long t = System.nanoTime();
+        long duration = (t - t0) / 1000000;
 
-            if (durationInMs > 34) {  // 34ms -> we skipped at least 2 frames
-                Log.v(TAG, "----- SLOW (" + durationDrawInMs + "/" +
-                        durationInMs + ") -----");
-                Profile.commit();
-            } else {
-                Profile.drop();
-            }
+        if (duration > 34) {
+            Log.v(TAG, "--- " + duration + " ---");
         }
     }
 
     private void onDrawFrameLocked(GL10 gl) {
         if (DEBUG_FPS) outputFps();
-
         // release the unbound textures and deleted buffers.
         mCanvas.deleteRecycledResources();
 
@@ -549,12 +528,6 @@ public class GLRootView extends GLSurfaceView
     public void onPause() {
         unfreeze();
         super.onPause();
-        if (DEBUG_PROFILE) {
-            Log.d(TAG, "Stop profiling");
-            Profile.disableAll();
-            Profile.dumpToFile("/sdcard/gallery.prof");
-            Profile.reset();
-        }
     }
 
     @Override

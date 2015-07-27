@@ -33,8 +33,8 @@ public class TextView extends GLView {
             textHight = (int) mTextTexture.getTextHeight(mText);
         }
 
-        setMeasuredSize(getDefaultSize(Math.max(getMinimumWidth(), textWidth), widthSpec),
-                getDefaultSize(Math.max(getMinimumHeight(), textHight), heightSpec));
+        setMeasuredSize(getDefaultSize(Math.max(getSuggestedMinimumWidth(), textWidth), widthSpec),
+                getDefaultSize(Math.max(getSuggestedMinimumHeight(), textHight), heightSpec));
     }
 
     @Override

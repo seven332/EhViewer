@@ -19,8 +19,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.hippo.ehviewer.gallery.widget.GalleryView
-        android:id="@+id/gallery_view"
+    <com.hippo.ehviewer.gallery.ui.GLRootView
+        android:id="@+id/gl_root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

@@ -493,8 +493,16 @@ public class GLView {
     }
 
     protected void onMeasure(int widthSpec, int heightSpec) {
-        setMeasuredSize(getDefaultSize(getMinimumWidth(), widthSpec),
-                getDefaultSize(getMinimumHeight(), heightSpec));
+        setMeasuredSize(getDefaultSize(getSuggestedMinimumWidth(), widthSpec),
+                getDefaultSize(getSuggestedMinimumHeight(), heightSpec));
+    }
+
+    protected int getSuggestedMinimumHeight() {
+        return getMinimumHeight();
+    }
+
+    protected int getSuggestedMinimumWidth() {
+        return getMinimumWidth();
     }
 
     /**

@@ -14,8 +14,8 @@ public class FrameView extends GLView {
         }
 
         // Consider min
-        maxWidth = Math.max(maxWidth, getMinimumWidth());
-        maxHeight = Math.max(maxHeight, getMinimumHeight());
+        maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
+        maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
 
         // The final
         maxWidth = getDefaultSize(maxWidth, widthSpec);

@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
+import android.graphics.RectF;
 import android.util.Log;
 
 import com.hippo.yorozuya.MathUtils;
@@ -141,6 +142,10 @@ public abstract class BasicTexture implements Texture {
     @Override
     public void draw(GLCanvas canvas, int x, int y, int w, int h) {
         canvas.drawTexture(this, x, y, w, h);
+    }
+
+    public void draw(GLCanvas canvas, RectF source, RectF target) {
+        canvas.drawTexture(this, source, target);
     }
 
     // onBind is called before GLCanvas binds this texture.

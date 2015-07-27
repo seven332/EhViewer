@@ -24,7 +24,7 @@ import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.util.Log;
 
-import com.hippo.ehviewer.gallery.util.IntArray;
+import com.hippo.yorozuya.IntArray;
 import com.hippo.yorozuya.ColorUtils;
 
 import junit.framework.Assert;

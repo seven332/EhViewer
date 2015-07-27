@@ -49,4 +49,8 @@
         <item name="android:windowBackground">@null</item>
     </style>
 
+    <style name="AppTheme.Gallery" parent="AppTheme.Dark.NoActionBar.Translucent">
+        <item name="android:windowBackground">@color/gallery_background</item>
+    </style>
+
 </resources>

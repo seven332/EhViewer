@@ -147,8 +147,9 @@
     <dimen name="gallery_detail_action_card_margin_top">224dp</dimen>
     <dimen name="gallery_detail_content_margin_top">248dp</dimen>
     <dimen name="gallery_detail_info_margin_top">48dp</dimen>
-
     <dimen name="gallery_normal_preview_item_width">96dp</dimen>
     <dimen name="gallery_large_preview_item_width">128dp</dimen>
+
+    <dimen name="gallery_index_text">56sp</dimen>
 
 </resources>

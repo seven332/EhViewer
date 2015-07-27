@@ -22,11 +22,10 @@ public class FloatAnimation extends Animation {
     private final float mTo;
     private float mCurrent;
 
-    public FloatAnimation(float from, float to, int duration) {
+    public FloatAnimation(float from, float to) {
         mFrom = from;
         mTo = to;
         mCurrent = from;
-        setDuration(duration);
     }
 
     @Override

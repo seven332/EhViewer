@@ -17,7 +17,6 @@
 package com.hippo.ehviewer.gallery;
 
 import android.graphics.Bitmap;
-import android.os.Looper;
 import android.os.Process;
 
 import com.hippo.ehviewer.client.EhConfig;
@@ -101,6 +100,9 @@ public class SpiderQueen implements Runnable {
     private final ReentrantLock mWorkerArrayLock = new ReentrantLock();
     // Lock for mRequestTokens and mSpiderInfo.tokens
     private final Object mTokenLock = new Object();
+    // The lock to make sure onGetSize call first
+    public boolean mGetSizeFinished;
+    private final Object mGetSizeLock = new Object();
 
     public SpiderQueen(EhHttpClient httpClient, File spiderInfoDir,
             GalleryBase galleryBase, ImageHandler.Mode mode, UniFile downloadDir,
@@ -476,6 +478,29 @@ public class SpiderQueen implements Runnable {
         }
     }
 
+    public void setGetSizeFinished(final boolean getSizeFinished) {
+        synchronized (mGetSizeLock) {
+            if (mGetSizeFinished != getSizeFinished) {
+                mGetSizeFinished = getSizeFinished;
+                if (getSizeFinished) {
+                    mGetSizeLock.notifyAll();
+                }
+            }
+        }
+    }
+
+    private void waitUntilFinishGettingSize() {
+        synchronized (mGetSizeLock) {
+            while (!mGetSizeFinished) {
+                try {
+                    mGetSizeLock.wait();
+                } catch (InterruptedException e) {
+                    // ignored, we'll start waiting again
+                }
+            }
+        }
+    }
+
     public void doIt() throws Exception {
         Say.d(TAG, "Spider Queen do it");
 
@@ -538,17 +563,18 @@ public class SpiderQueen implements Runnable {
             return;
         }
 
-
-        // TODO make sure onGetPages first then other listener
-        // 7. tell listener pages
-        mSpiderListener.onGetPages(spiderInfo.pages);
-
         // 6. Make workers and render to work
+        setGetSizeFinished(false);
         ensureWorker();
         mRender = new Render();
         Thread thread = new Thread(mRender, "Render");
         thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
+
+        // 7. tell listener pages
+        mSpiderListener.onGetPages(spiderInfo.pages);
+        setGetSizeFinished(true);
+
 
         // 8. Get tokens
         handleToken(spiderInfo, ehConfig);
@@ -688,6 +714,9 @@ public class SpiderQueen implements Runnable {
             GalleryBase gb = mGalleryBase;
             ImageHandler handler = mImageHandler;
 
+            // Wait for post send onGetSize over
+            waitUntilFinishGettingSize();
+
             while (!mStop) {
                 // Get index
                 final int index = getRequestIndex();
@@ -812,13 +841,11 @@ public class SpiderQueen implements Runnable {
 
         private void waitUntilUnpaused() {
             synchronized (mPauseLock) {
-                if (Looper.myLooper() != Looper.getMainLooper()) {
-                    while (mPauseAccess) {
-                        try {
-                            mPauseLock.wait();
-                        } catch (InterruptedException e) {
-                            // ignored, we'll start waiting again
-                        }
+                while (mPauseAccess) {
+                    try {
+                        mPauseLock.wait();
+                    } catch (InterruptedException e) {
+                        // ignored, we'll start waiting again
                     }
                 }
             }
@@ -836,6 +863,9 @@ public class SpiderQueen implements Runnable {
         @Override
         public void run() {
             Say.d(TAG, "Render starts");
+
+            // Wait for post send onGetSize over
+            waitUntilFinishGettingSize();
 
             while (!mStop) {
 

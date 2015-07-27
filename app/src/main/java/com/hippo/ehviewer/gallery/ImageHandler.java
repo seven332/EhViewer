@@ -66,7 +66,7 @@ public class ImageHandler {
         sDiskCache = diskCache;
     }
 
-    public ImageHandler(GalleryBase galleryBase, int pages, Mode mode, UniFile downloadDir) {
+    ImageHandler(GalleryBase galleryBase, int pages, Mode mode, UniFile downloadDir) {
         mGalleryBase = galleryBase;
         mMode = mode;
         mFilenames = new AtomicReferenceArray<>(pages);

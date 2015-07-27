@@ -49,20 +49,49 @@ abstract public class Animation {
     private static final long ANIMATION_START = -1;
     private static final long NO_ANIMATION = -2;
 
+    /**
+     * When the animation reaches the end and <code>repeatCount</code> is INFINITE
+     * or a positive value, the animation restarts from the beginning.
+     */
+    public static final int RESTART = 1;
+    /**
+     * When the animation reaches the end and <code>repeatCount</code> is INFINITE
+     * or a positive value, the animation reverses direction on every iteration.
+     */
+    public static final int REVERSE = 2;
+    /**
+     * This value used used with the {@link #setRepeatCount(int)} property to repeat
+     * the animation indefinitely.
+     */
+    public static final int INFINITE = -1;
+
     private long mStartTime = NO_ANIMATION;
-    private int mDuration;
+    private long mDuration;
     private Interpolator mInterpolator;
+    private int mRepeatCount;
+    private int mRepeatMode;
+
+    private int mRunnedCount;
 
     public void setInterpolator(Interpolator interpolator) {
         mInterpolator = interpolator;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(long duration) {
         mDuration = duration;
+    }
+
+    public void setRepeatCount(int repeatCount) {
+        mRepeatCount = repeatCount;
+    }
+
+    public void setRepeatMode(int repeatMode) {
+        mRepeatMode = repeatMode;
     }
 
     public void start() {
         mStartTime = ANIMATION_START;
+        mRunnedCount = 0;
     }
 
     public void setStartTime(long time) {
@@ -77,14 +106,29 @@ abstract public class Animation {
         mStartTime = NO_ANIMATION;
     }
 
+    // TODO mRepeatMode
     public boolean calculate(long currentTimeMillis) {
-        if (mStartTime == NO_ANIMATION) return false;
-        if (mStartTime == ANIMATION_START) mStartTime = currentTimeMillis;
-        int elapse = (int) (currentTimeMillis - mStartTime);
+        if (mStartTime == NO_ANIMATION) {
+            return false;
+        }
+        if (mStartTime == ANIMATION_START) {
+            mStartTime = currentTimeMillis;
+        }
+
+        long elapse = currentTimeMillis - mStartTime;
         float x = MathUtils.clamp((float) elapse / mDuration, 0f, 1f);
         Interpolator i = mInterpolator;
         onCalculate(i != null ? i.getInterpolation(x) : x);
-        if (elapse >= mDuration) mStartTime = NO_ANIMATION;
+
+        if (elapse >= mDuration) {
+            mRunnedCount++;
+            if (mRunnedCount >= mRepeatCount && mRepeatCount != INFINITE) {
+                mStartTime = NO_ANIMATION;
+            } else {
+                mStartTime += elapse;
+            }
+        }
+
         return mStartTime != NO_ANIMATION;
     }
 

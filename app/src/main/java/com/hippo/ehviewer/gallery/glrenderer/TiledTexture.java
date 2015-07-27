@@ -25,6 +25,7 @@ import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 
 import com.hippo.ehviewer.gallery.ui.GLRoot;
 
@@ -36,6 +37,9 @@ import java.util.ArrayList;
 // upload the whole bitmap but we reduce the time of uploading each tile
 // so it make the animation more smooth and prevents jank.
 public class TiledTexture implements Texture {
+
+    private static final String TAG = TiledTexture.class.getSimpleName();
+
     private static final int CONTENT_SIZE = 254;
     private static final int BORDER_SIZE = 1;
     private static final int TILE_SIZE = CONTENT_SIZE + 2 * BORDER_SIZE;
@@ -52,6 +56,9 @@ public class TiledTexture implements Texture {
     private static Canvas sCanvas;
     private static Paint sBitmapPaint;
     private static Paint sPaint;
+    private static OnFreeBitmapListener sOnFreeBitmapListener;
+
+    private Bitmap mBitmap;
 
     private int mUploadIndex = 0;
 
@@ -61,6 +68,15 @@ public class TiledTexture implements Texture {
     private final int mHeight;
     private final RectF mSrcRect = new RectF();
     private final RectF mDestRect = new RectF();
+
+    public interface OnFreeBitmapListener {
+
+        void onFreeBitmapListener(Bitmap bitmap);
+    }
+
+    public static void setOnFreeBitmapListener(OnFreeBitmapListener listener) {
+        sOnFreeBitmapListener = listener;
+    }
 
     public static class Uploader implements GLRoot.OnGLIdleListener {
         private final ArrayDeque<TiledTexture> mTextures =
@@ -95,6 +111,7 @@ public class TiledTexture implements Texture {
                 while (now < dueTime && !deque.isEmpty()) {
                     TiledTexture t = deque.peekFirst();
                     if (t.uploadNextTile(canvas)) {
+                        t.freeBitmap();
                         deque.removeFirst();
                         mGlRoot.requestRender();
                     }
@@ -202,7 +219,8 @@ public class TiledTexture implements Texture {
         return mUploadIndex == mTiles.length;
     }
 
-    public TiledTexture(Bitmap bitmap) {
+    public TiledTexture(@NonNull Bitmap bitmap) {
+        mBitmap = bitmap;
         mWidth = bitmap.getWidth();
         mHeight = bitmap.getHeight();
         ArrayList<Tile> list = new ArrayList<Tile>();
@@ -232,6 +250,20 @@ public class TiledTexture implements Texture {
             for (int i = 0, n = mTiles.length; i < n; ++i) {
                 freeTile(mTiles[i]);
             }
+        }
+        freeBitmap();
+    }
+
+    private void freeBitmap() {
+        if (mBitmap != null) {
+            onFreeBitmap(mBitmap);
+            mBitmap = null;
+        }
+    }
+
+    private void onFreeBitmap(Bitmap bitmap) {
+        if (sOnFreeBitmapListener != null) {
+            sOnFreeBitmapListener.onFreeBitmapListener(bitmap);
         }
     }
 

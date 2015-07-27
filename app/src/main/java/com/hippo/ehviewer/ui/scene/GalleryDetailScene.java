@@ -281,7 +281,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
 
         if (v == mRead) {
             Intent intent = new Intent(getStageActivity(), GalleryActivity.class);
-            //intent.putExtra(GalleryActivity.KEY_GALLERY_BASE, mGalleryDetail);
+            intent.putExtra(GalleryActivity.KEY_GALLERY_BASE, mGalleryDetail);
             getStageActivity().startActivity(intent);
         } else if (v == mDownload) {
 
