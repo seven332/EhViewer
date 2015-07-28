@@ -22,6 +22,7 @@ import android.os.Process;
 import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.ehviewer.network.EhHttpClient;
 import com.hippo.ehviewer.util.DBUtils;
+import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Settings;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.FileUtils;
@@ -91,7 +92,7 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
     }
 
     private static String downloadDirname(GalleryBase galleryBase) {
-        return FileUtils.ensureFilename(galleryBase.gid + '-' + galleryBase.title); // TODO use jpn title ?
+        return FileUtils.ensureFilename(galleryBase.gid + "-" + EhUtils.getSuitableTitle(galleryBase));
     }
 
     private GallerySpider(GalleryBase galleryBase, ImageHandler.Mode mode) throws IOException {

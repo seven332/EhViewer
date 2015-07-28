@@ -17,8 +17,10 @@
 package com.hippo.ehviewer.util;
 
 import android.graphics.Color;
+import android.text.TextUtils;
 
 import com.hippo.ehviewer.client.EhConfig;
+import com.hippo.ehviewer.client.data.GalleryBase;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -121,5 +123,13 @@ public final class EhUtils {
 
     public static String formatPostDate(long date) {
         return POST_DATE_FORMAT.format(date);
+    }
+
+    public static String getSuitableTitle(GalleryBase galleryBase) {
+        if (Settings.getJpnTitle()) {
+            return TextUtils.isEmpty(galleryBase.titleJpn) ? galleryBase.title : galleryBase.titleJpn;
+        } else {
+            return galleryBase.title;
+        }
     }
 }
