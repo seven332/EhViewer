@@ -117,7 +117,7 @@
 
     <string name="settings_eh_source_title">EH 源</string>
     <string name="settings_jpn_title_title">日文标题</string>
-    <string name="settings_jpn_title_summary_on">尝试显示日文标题。这可能会花费更多时间</string>
+    <string name="settings_jpn_title_summary_on">尝试显示日文标题</string>
     <string name="settings_jpn_title_summary_off">显示默认标题</string>
     <string name="settings_excluded_languages_title">排除语言</string>
     <string name="settings_excluded_languages_summary">在列表与搜索中隐藏指定语言画廊</string>

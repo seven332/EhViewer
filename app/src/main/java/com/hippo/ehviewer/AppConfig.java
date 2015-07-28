@@ -29,6 +29,7 @@ public final class AppConfig {
     private static final String APP_DIRNAME = "EhViewer-Test";
     private static final String CRASH_DIRNAME = "crash";
     private static final String DOWNLOAD_DIRNAME = "download";
+    private static final String ARCHIVE_DIRNAME = "archive";
     private static final String TORRENT_DIRNAME = "torrent";
 
     public static @Nullable
@@ -56,6 +57,10 @@ public final class AppConfig {
 
     public static @Nullable File getDownloadDir() {
         return getFileInAppDir(DOWNLOAD_DIRNAME);
+    }
+
+    public static @Nullable File getArchiveDir() {
+        return getFileInAppDir(ARCHIVE_DIRNAME);
     }
 
     public static @Nullable File getTorrentDir() {

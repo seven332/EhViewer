@@ -141,13 +141,17 @@
     <string name="settings_eh_source_ex" translatable="false">exhentai.org</string>
     <string name="settings_eh_source_lofi" translatable="false">lofi.e-hentai.org</string>
     <string name="settings_jpn_title_title">Japanese title</string>
-    <string name="settings_jpn_title_summary_on">Try to show japanese title. It may takes more time</string>
+    <string name="settings_jpn_title_summary_on">Try to show japanese title</string>
     <string name="settings_jpn_title_summary_off">Show default title</string>
     <string name="settings_excluded_languages_title">Excluded languages</string>
     <string name="settings_excluded_languages_summary">Hide galleries in certain languages from the gallery list and searches</string>
     <string name="settings_preview_size_title">Preview size</string>
     <string name="settings_preview_size_normal">Normal</string>
     <string name="settings_preview_size_large">Large</string>
+
+    <string name="settings_download">Download</string>
+    <string name="settings_image_download_location">Image download location</string>
+    <string name="settings_archive_download_location">Archive download location</string>
 
     <string name="settings_advance">Advance</string>
     <string name="settings_show_application_stats_title">Show application stats</string>
@@ -164,6 +168,13 @@
     <string name="original">Original</string>
     <string name="translated">Translated</string>
     <string name="rewrite">Rewrite</string>
+
+    <!-- DirPickScene -->
+    <string name="dir_pick">Pick folder</string>
+    <string name="em_cant_get_folder">Can\'t get folder</string>
+    <string name="em_cant_write_folder">Can\'t write to this folder</string>
+    <string name="em_cant_parse_document_uri">Can\'t parse document uri</string>
+    <string name="document_help">Lollipop provides an API to write to secondary external storage devices, namely SD card. If you want to set download location to SD card, click the \"DOCUMENT\" button.</string>
 
     <string name="language_japanese">Japanese</string>
     <string name="language_english">English</string>
@@ -212,5 +223,7 @@
 
     <string name="comments">Comments</string>
     <string name="info">Info</string>
+
+    <string name="document">Document</string>
 
 </resources>

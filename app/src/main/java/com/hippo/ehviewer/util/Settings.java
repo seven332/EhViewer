@@ -18,6 +18,7 @@ package com.hippo.ehviewer.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 
 import com.hippo.ehviewer.AppConfig;
@@ -25,16 +26,15 @@ import com.hippo.ehviewer.BuildConfig;
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.unifile.UniFile;
-import com.hippo.yorozuya.FileUtils;
-
-import java.io.File;
 
 public final class Settings {
 
+    private static Context sContext;
     private static SharedPreferences sSettingsPre;
 
     public static void initialize(Context context) {
-        sSettingsPre = PreferenceManager.getDefaultSharedPreferences(context);
+        sContext = context.getApplicationContext();
+        sSettingsPre = PreferenceManager.getDefaultSharedPreferences(sContext);
     }
 
     public static boolean getBoolean(String key, boolean defValue) {
@@ -193,11 +193,65 @@ public final class Settings {
         return getInt(KEY_PREVIEW_SIZE, DEFAULT_PREVIEW_SIZE);
     }
 
+    public static final String KEY_IMAGE_LOCATION_SCHEME = "image_scheme";
+    public static final String KEY_IMAGE_LOCATION_AUTHORITY = "image_authority";
+    public static final String KEY_IMAGE_LOCATION_PATH = "image_path";
+    public static final String KEY_IMAGE_LOCATION_QUERY = "image_query";
+    public static final String KEY_IMAGE_LOCATION_FRAGMENT = "image_fragment";
+    public static final String KEY_ARCHIVE_LOCATION_SCHEME = "archive_scheme";
+    public static final String KEY_ARCHIVE_LOCATION_AUTHORITY = "archive_authority";
+    public static final String KEY_ARCHIVE_LOCATION_PATH = "archive_path";
+    public static final String KEY_ARCHIVE_LOCATION_QUERY = "archive_query";
+    public static final String KEY_ARCHIVE_LOCATION_FRAGMENT = "archive_fragment";
 
-    public static UniFile getDownloadPath() {
-        File file = AppConfig.getDownloadDir();
-        FileUtils.ensureDirectory(file);
-        return UniFile.fromFile(file);
+    public static UniFile getImageDownloadLocation() {
+        UniFile dir = null;
+        try {
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme(getString(KEY_IMAGE_LOCATION_SCHEME, null));
+            builder.encodedAuthority(getString(KEY_IMAGE_LOCATION_AUTHORITY, null));
+            builder.encodedPath(getString(KEY_IMAGE_LOCATION_PATH, null));
+            builder.encodedQuery(getString(KEY_IMAGE_LOCATION_QUERY, null));
+            builder.encodedFragment(getString(KEY_IMAGE_LOCATION_FRAGMENT, null));
+            dir = UniFile.fromUri(sContext, builder.build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dir != null ? dir : UniFile.fromFile(AppConfig.getDownloadDir());
+    }
+
+    public static void putImageDownloadLocation(UniFile location) {
+        Uri uri = location.getUri();
+        putString(KEY_IMAGE_LOCATION_SCHEME, uri.getScheme());
+        putString(KEY_IMAGE_LOCATION_AUTHORITY, uri.getEncodedAuthority());
+        putString(KEY_IMAGE_LOCATION_PATH, uri.getEncodedPath());
+        putString(KEY_IMAGE_LOCATION_QUERY, uri.getEncodedQuery());
+        putString(KEY_IMAGE_LOCATION_FRAGMENT, uri.getEncodedFragment());
+    }
+
+    public static UniFile getArchiveDownloadLocation() {
+        UniFile dir = null;
+        try {
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme(getString(KEY_ARCHIVE_LOCATION_SCHEME, null));
+            builder.encodedAuthority(getString(KEY_ARCHIVE_LOCATION_AUTHORITY, null));
+            builder.encodedPath(getString(KEY_ARCHIVE_LOCATION_PATH, null));
+            builder.encodedQuery(getString(KEY_ARCHIVE_LOCATION_QUERY, null));
+            builder.encodedFragment(getString(KEY_ARCHIVE_LOCATION_FRAGMENT, null));
+            dir = UniFile.fromUri(sContext, builder.build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dir != null ? dir : UniFile.fromFile(AppConfig.getDownloadDir());
+    }
+
+    public static void putArchiveDownloadLocation(UniFile location) {
+        Uri uri = location.getUri();
+        putString(KEY_ARCHIVE_LOCATION_SCHEME, uri.getScheme());
+        putString(KEY_ARCHIVE_LOCATION_AUTHORITY, uri.getEncodedAuthority());
+        putString(KEY_ARCHIVE_LOCATION_PATH, uri.getEncodedPath());
+        putString(KEY_ARCHIVE_LOCATION_QUERY, uri.getEncodedQuery());
+        putString(KEY_ARCHIVE_LOCATION_FRAGMENT, uri.getEncodedFragment());
     }
 
     /****** Advance ******/
