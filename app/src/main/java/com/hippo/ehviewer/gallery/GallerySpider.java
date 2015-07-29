@@ -105,7 +105,10 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
             DBUtils.addDirname(galleryBase, dirname);
         }
 
-        mDownloadDir = Settings.getDownloadPath().createDirectory(dirname);
+        UniFile dir = Settings.getImageDownloadLocation();
+        if (dir != null) {
+            mDownloadDir = dir.createDirectory(dirname);
+        }
 
         if (mDownloadDir == null) {
             throw new IOException("Can't get download dir");

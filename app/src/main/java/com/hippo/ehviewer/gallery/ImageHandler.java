@@ -233,14 +233,6 @@ public class ImageHandler {
 
         if (mMode == Mode.READ) {
             osPipe = getReadOutputStreamPipe(index);
-        } else if (mMode == Mode.DOWNLOAD) {
-            // Let download listener to fix filename
-            String filename = getImageFilename(index, "jpg");
-            osPipe = getDownloadOutputStreamPipe(filename);
-        }
-
-        if (osPipe == null) {
-            throw new IOException("Can't create OutputStreamPipe");
         }
 
         if (helper.mCancel) {
@@ -252,7 +244,15 @@ public class ImageHandler {
         helper.mRequest = request;
         request.setHttpClient(httpClient);
         request.setUrl(url);
-        request.setOSPipe(osPipe);
+
+        if (mMode == Mode.READ) {
+            request.setOSPipe(osPipe);
+        } else if (mMode == Mode.DOWNLOAD) {
+            // Let download listener to fix filename
+            request.setFilename(getImageFilename(index, "jpg"));
+            request.setDir(mDownloadDir);
+        }
+
         request.setListener(downloadListener);
         DownloadClient.execute(request);
 
@@ -287,7 +287,7 @@ public class ImageHandler {
         }
 
         @Override
-        public String onFixname(String newFilename, String newExtension, String oldFilename) {
+        public String onFixname(String newFileFirstname, String newExtension, String oldFilename) {
             String filename;
             if (TextUtils.isEmpty(newExtension)) {
                 filename = oldFilename;

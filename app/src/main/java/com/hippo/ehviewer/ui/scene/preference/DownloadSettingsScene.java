@@ -64,7 +64,7 @@ public class DownloadSettingsScene extends PreferenceScene implements Preference
         imagePreference.setOnClickListener(this);
 
         String archiveSummary;
-        UniFile archiveDir = Settings.getImageDownloadLocation();
+        UniFile archiveDir = Settings.getArchiveDownloadLocation();
         if (archiveDir == null) {
             archiveSummary = resources.getString(R.string.unknown);
         } else {

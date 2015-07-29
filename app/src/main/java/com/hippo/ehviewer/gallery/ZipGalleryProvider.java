@@ -6,6 +6,7 @@ import android.os.Process;
 
 import com.hippo.conaco.BitmapPool;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.PriorityThread;
 import com.hippo.yorozuya.Say;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.StringUtils;
@@ -45,8 +46,7 @@ public class ZipGalleryProvider implements GalleryProvider, Runnable {
     public ZipGalleryProvider(File file) throws IOException {
         mZipFile = new ZipFile(file);
 
-        Thread thread = new Thread(this);
-        thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
+        Thread thread = new PriorityThread(this, "ZipGalleryProvider", Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
     }
 

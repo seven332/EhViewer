@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -151,13 +150,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
 
                 Conaco conaco = EhApplication.getConaco(getStageActivity());
                 mThumb.load(conaco, EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb);
-                String title;
-                if (Settings.getJpnTitle()) {
-                    title = TextUtils.isEmpty(gi.titleJpn) ? gi.title : gi.titleJpn;
-                } else {
-                    title = gi.title;
-                }
-                mTitle.setText(title);
+                mTitle.setText(EhUtils.getSuitableTitle(gi));
                 mUploader.setText(gi.uploader);
                 mCategory.setText(EhUtils.getCategory(gi.category));
                 mCategory.setTextColor(EhUtils.getCategoryColor(gi.category));
@@ -281,7 +274,11 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
 
         if (v == mRead) {
             Intent intent = new Intent(getStageActivity(), GalleryActivity.class);
+            intent.setAction(GalleryActivity.ACTION_GALLERY_FROM_GALLERY_BASE);
             intent.putExtra(GalleryActivity.KEY_GALLERY_BASE, mGalleryDetail);
+            //intent.setAction(GalleryActivity.ACTION_GALLERY_FROM_ARCHIVE);
+            //intent.putExtra(GalleryActivity.KEY_ARCHIVE_URI,
+            //        Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "a.zip")));
             getStageActivity().startActivity(intent);
         } else if (v == mDownload) {
 

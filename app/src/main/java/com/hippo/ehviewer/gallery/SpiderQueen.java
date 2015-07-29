@@ -31,6 +31,7 @@ import com.hippo.httpclient.HttpResponse;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.AutoExpandArray;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.PriorityThread;
 import com.hippo.yorozuya.PriorityThreadFactory;
 import com.hippo.yorozuya.Say;
 
@@ -567,8 +568,7 @@ public class SpiderQueen implements Runnable {
         setGetSizeFinished(false);
         ensureWorker();
         mRender = new Render();
-        Thread thread = new Thread(mRender, "Render");
-        thread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
+        Thread thread = new PriorityThread(mRender, "Render", Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
 
         // 7. tell listener pages

@@ -23,6 +23,7 @@ import com.hippo.httpclient.HttpRequest;
 import com.hippo.httpclient.HttpResponse;
 import com.hippo.io.UniFileOutputStreamPipe;
 import com.hippo.unifile.UniFile;
+import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.Utilities;
 import com.hippo.yorozuya.io.OutputStreamPipe;
 
@@ -72,6 +73,7 @@ public class DownloadClient {
             return;
         }
 
+        UniFile uniFile = null;
         OutputStreamPipe osPipe = null;
         try {
             // Listener
@@ -96,8 +98,8 @@ public class DownloadClient {
                 }
                 request.mFilename = filename;
 
-                // TODO use download file name then rename
-                UniFile uniFile = request.mDir.createDirectory(filename);
+                // Use Temp filename
+                uniFile = request.mDir.createFile(FileUtils.ensureFilename(filename + ".download"));
                 if (uniFile == null) {
                     // Listener
                     if (listener != null) {
@@ -118,7 +120,14 @@ public class DownloadClient {
 
             long receivedSize = transferData(httpResponse.getInputStream(), osPipe.open(), listener);
 
-            // TODO check contentLength == receivedSize
+            if (contentLength > 0 && contentLength != receivedSize) {
+                throw new IOException("contentLength is " + contentLength + ", but receivedSize is " + receivedSize);
+            }
+
+            // Rename
+            if (uniFile != null && request.mFilename != null) {
+                uniFile.renameTo(request.mFilename);
+            }
 
             // Listener
             if (listener != null) {
@@ -126,11 +135,8 @@ public class DownloadClient {
             }
         } catch (Exception e) {
             // remove download failed file
-            if (request.mFilename != null && request.mDir != null) {
-                UniFile file = request.mDir.findFile(request.mFilename);
-                if (file != null) {
-                    file.delete();
-                }
+            if (uniFile != null) {
+                uniFile.delete();
             }
 
             if (listener != null) {
@@ -177,7 +183,7 @@ public class DownloadClient {
 
         void onStartDownloading();
 
-        String onFixname(String filename, String extension, String oldFilename);
+        String onFixname(String fileFirstname, String extension, String oldFilename);
 
         void onConnect(long totalSize);
 

@@ -26,7 +26,7 @@ public class ScaledImageView extends GLView {
     private GalleryView.Scale mScaleMode;
     private GalleryView.StartPosition mStartPosition;
     private float mLastScale;
-    private float mScale;
+    private float mScale = 1f;
 
     public void setTiledTexture(TiledTexture tiledTexture) {
         mTiledTexture = tiledTexture;
@@ -275,6 +275,34 @@ public class ScaledImageView extends GLView {
 
         mSeenDirty = true;
         invalidate();
+    }
+
+    public float getScale() {
+        return mScale;
+    }
+
+    public float getFitScale() {
+        int screenWidth = getWidth();
+        int screenHeight = getHeight();
+
+        if (mTiledTexture == null || screenWidth == 0 || screenHeight == 0) {
+            return 1f;
+        }
+
+        int imageWidth = mTiledTexture.getWidth();
+        int imageHeight = mTiledTexture.getHeight();
+
+        float scaleX = (float) screenWidth / imageWidth;
+        float scaleY = (float) screenHeight / imageHeight;
+        if (scaleX < scaleY) {
+            return scaleX;
+        } else {
+            return scaleY;
+        }
+    }
+
+    public boolean isLoaded() {
+        return mTiledTexture != null;
     }
 
     public void setSeen(Rect seen) {

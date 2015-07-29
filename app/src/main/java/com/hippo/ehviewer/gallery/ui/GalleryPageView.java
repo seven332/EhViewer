@@ -49,7 +49,6 @@ public class GalleryPageView extends FrameView {
         addComponent(mLinearView, lp);
     }
 
-    @SuppressWarnings("ResourceType")
     private void updateSeen() {
         Rect bounds = bounds();
         Rect parentBounds = mParent.bounds();
@@ -63,21 +62,13 @@ public class GalleryPageView extends FrameView {
     }
 
     @Override
-    protected void onLayout(boolean changeSize, int left, int top, int right, int bottom) {
-        super.onLayout(changeSize, left, top, right, bottom);
+    public void layout(int left, int top, int right, int bottom) {
+        super.layout(left, top, right, bottom);
         updateSeen();
     }
 
-    @Override
-    public void offsetLeftAndRight(int offset) {
-        super.offsetLeftAndRight(offset);
-        updateSeen();
-    }
-
-    @Override
-    public void offsetTopAndBottom(int offset) {
-        super.offsetTopAndBottom(offset);
-        updateSeen();
+    public boolean isLoaded() {
+        return mImageView.isLoaded();
     }
 
     public void setScaleOffset(GalleryView.Scale scale,
@@ -91,5 +82,13 @@ public class GalleryPageView extends FrameView {
 
     public void scale(float focusX, float focusY, float scale) {
         mImageView.scale(focusX, focusY, scale);
+    }
+
+    public float getFitScale() {
+        return mImageView.getFitScale();
+    }
+
+    public float getScale() {
+        return  mImageView.getScale();
     }
 }

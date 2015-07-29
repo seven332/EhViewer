@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
@@ -30,6 +31,7 @@ import com.hippo.ehviewer.gallery.GalleryProvider;
 import com.hippo.ehviewer.gallery.GalleryProviderListener;
 import com.hippo.ehviewer.gallery.GallerySpider;
 import com.hippo.ehviewer.gallery.ImageHandler;
+import com.hippo.ehviewer.gallery.ZipGalleryProvider;
 import com.hippo.ehviewer.gallery.glrenderer.TextTexture;
 import com.hippo.ehviewer.gallery.glrenderer.TiledTexture;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
@@ -39,11 +41,16 @@ import com.hippo.ehviewer.gallery.ui.GalleryView;
 import com.hippo.util.SystemUiHelper;
 import com.hippo.yorozuya.LayoutUtils;
 
+import java.io.File;
 import java.io.IOException;
 
 public class GalleryActivity extends StatsActivity implements TiledTexture.OnFreeBitmapListener, GalleryProviderListener {
 
+    public static final String ACTION_GALLERY_FROM_GALLERY_BASE = "com.hippo.ehviewer.gallery.action.GALLERY_FROM_GALLERY_BASE";
+    public static final String ACTION_GALLERY_FROM_ARCHIVE = "com.hippo.ehviewer.gallery.action.GALLERY_FROM_ARCHIVE";
+
     public static final String KEY_GALLERY_BASE = "gallery_base";
+    public static final String KEY_ARCHIVE_URI = "archive_uri";
 
     private SystemUiHelper mSystemUiHelper;
 
@@ -57,9 +64,7 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
 
     private TextTexture mTextTexture;
 
-    private GallerySpider mGallerySpider;
-
-    private GalleryBase mGalleryBase;
+    private GalleryProvider mGalleryProvider;
 
     private boolean mDieYoung;
 
@@ -67,34 +72,46 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
 
     private int mSize;
 
-    private boolean handleIntent(Intent intent) {
+    private boolean getGalleryProvider(Intent intent) {
         if (intent != null) {
-            mGalleryBase = intent.getParcelableExtra(KEY_GALLERY_BASE);
-            return mGalleryBase != null;
-        } else {
-            return false;
+            String action = intent.getAction();
+            if (ACTION_GALLERY_FROM_GALLERY_BASE.equals(action)) {
+                GalleryBase galleryBase = intent.getParcelableExtra(KEY_GALLERY_BASE);
+                if (galleryBase != null) {
+                    try {
+                        // TODO get mode
+                        mGalleryProvider = GallerySpider.obtain(galleryBase, ImageHandler.Mode.DOWNLOAD);
+                        return true;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else if (ACTION_GALLERY_FROM_ARCHIVE.equals(action)) {
+                Uri uri = intent.getParcelableExtra(KEY_ARCHIVE_URI);
+                if (uri != null) {
+                    try {
+                        // TODO support other archive
+                        mGalleryProvider = new ZipGalleryProvider(new File(uri.getPath()));
+                        return true;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
+        return false;
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!handleIntent(getIntent())) {
+        if (!getGalleryProvider(getIntent())) {
             mDieYoung = true;
             finish();
             return;
         }
-
-        try {
-            mGallerySpider = GallerySpider.obtain(mGalleryBase, ImageHandler.Mode.DOWNLOAD);
-        } catch (IOException e) {
-            e.printStackTrace();
-            mDieYoung = true;
-            finish();
-            return;
-        }
-        mGallerySpider.addGalleryProviderListener(this);
 
         mSystemUiHelper = new SystemUiHelper(this, SystemUiHelper.LEVEL_IMMERSIVE,
                 SystemUiHelper.FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES | SystemUiHelper.FLAG_IMMERSIVE_STICKY);
@@ -122,12 +139,13 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         mGalleryView.setProgressSize(LayoutUtils.dp2pix(this, 56));
         mGalleryView.setInterval(LayoutUtils.dp2pix(this, 48));
 
-        mSize = mGallerySpider.size();
+        mSize = mGalleryProvider.size();
         if (mSize <= 0) {
             setMode(GalleryView.Mode.NONE);
         } else {
             setMode(GalleryView.Mode.LEFT_TO_RIGHT);
         }
+        mGalleryProvider.addGalleryProviderListener(this);
 
         glRootView.setContentPane(mGalleryView);
     }
@@ -146,9 +164,15 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
             mTextTexture.recycle();
             TiledTexture.setOnFreeBitmapListener(null);
             TiledTexture.freeResources();
-            mGallerySpider.removeGalleryProviderListener(this);
-            GallerySpider.release(mGallerySpider);
-            mGallerySpider = null;
+            mGalleryProvider.removeGalleryProviderListener(this);
+
+            if (mGalleryProvider instanceof GallerySpider) {
+                GallerySpider.release((GallerySpider) mGalleryProvider);
+            } else if (mGalleryProvider instanceof ZipGalleryProvider) {
+                ((ZipGalleryProvider) mGalleryProvider).stop();
+            }
+
+            mGalleryProvider = null;
         }
         // TODO free all TileTexture in GalleryView
     }
@@ -162,8 +186,8 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
 
     @Override
     public void onFreeBitmapListener(Bitmap bitmap) {
-        if (mGallerySpider != null) {
-            mGallerySpider.releaseBitmap(bitmap);
+        if (mGalleryProvider != null) {
+            mGalleryProvider.releaseBitmap(bitmap);
         }
     }
 
@@ -195,8 +219,8 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
                 bindBitmap(page, bitmap);
             }
         } else {
-            if (mGallerySpider != null) {
-                mGallerySpider.releaseBitmap(bitmap);
+            if (mGalleryProvider != null) {
+                mGalleryProvider.releaseBitmap(bitmap);
             }
         }
     }
@@ -281,7 +305,7 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
     }
 
     private void bind(GalleryPageView view, int index) {
-        Object result = mGallerySpider.request(index);
+        Object result = mGalleryProvider.request(index);
         if (result instanceof Float) {
             bindPercent(view, (Float) result);
         } else if (result == GalleryProvider.RESULT_WAIT) {

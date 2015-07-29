@@ -31,7 +31,9 @@ public class GestureRecognizer {
 
     public interface Listener {
         boolean onSingleTapUp(float x, float y);
+        boolean onSingleTapConfirmed(float x, float y);
         boolean onDoubleTap(float x, float y);
+        boolean onDoubleTapConfirmed(float x, float y);
         boolean onScroll(float dx, float dy, float totalX, float totalY);
         boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY);
         boolean onScaleBegin(float focusX, float focusY);
@@ -50,8 +52,10 @@ public class GestureRecognizer {
 
     public GestureRecognizer(Context context, Listener listener) {
         mListener = listener;
-        mGestureDetector = new GestureDetectorCompat(context, new MyGestureListener(),
+        MyGestureListener gestureListener = new MyGestureListener();
+        mGestureDetector = new GestureDetectorCompat(context, gestureListener,
                 null /* ignoreMultitouch */);
+        mGestureDetector.setOnDoubleTapListener(gestureListener);
         mScaleDetector = new ScaleGestureDetector(
                 context, new MyScaleListener());
         mDownUpDetector = new DownUpDetector(new MyDownUpListener());
@@ -80,6 +84,20 @@ public class GestureRecognizer {
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             return mListener.onSingleTapUp(e.getX(), e.getY());
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            return mListener.onSingleTapConfirmed(e.getX(), e.getY());
+        }
+
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            if (e.getAction() == MotionEvent.ACTION_UP) {
+                return mListener.onDoubleTapConfirmed(e.getX(), e.getY());
+            } else {
+                return true;
+            }
         }
 
         @Override

@@ -4,12 +4,14 @@ import android.content.Context;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.animation.Interpolator;
+import android.view.animation.OvershootInterpolator;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.anim.Animation;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 import com.hippo.ehviewer.gallery.util.GalleryUtils;
 import com.hippo.yorozuya.IntArray;
+import com.hippo.yorozuya.MathUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,17 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private static final int UNKNOWN_SEEN = 0;
     private static final int SEEN = 1;
     private static final int UNSEEN = 2;
+
+    private static final Interpolator SMOOTH_SCROLLER_INTERPOLATOR = new Interpolator() {
+
+        @Override
+        public float getInterpolation(float t) {
+            t -= 1.0f;
+            return t * t * t * t * t + 1.0f;
+        }
+    };
+
+    private static final Interpolator SMOOTH_SCALER_INTERPOLATOR = new OvershootInterpolator();
 
     private boolean mEnableRequestLayout = true;
 
@@ -54,23 +67,15 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private Mode mMode = Mode.NONE;
     private Mode mLastLayoutMode = Mode.NONE;
 
-    private Scale mScaleMode = Scale.FIT_HEIGHT; // TODO
+    private Scale mScaleMode = Scale.FIT; // TODO
     private StartPosition mStartPosition = StartPosition.TOP_RIGHT; // TODO
-    private float mLastScale = 2f;
+    private float mLastScale = 1f;
 
     private int mProgressSpec = MeasureSpec.makeMeasureSpec(48, MeasureSpec.EXACTLY);
     public int mInterval = 24;
 
     private SmoothScroller mSmoothScroller;
-
-    private static final Interpolator sInterpolator = new Interpolator() {
-
-        @Override
-        public float getInterpolation(float t) {
-            t -= 1.0f;
-            return t * t * t * t * t + 1.0f;
-        }
-    };
+    private SmoothScaler mSmoothScaler;
 
     public enum Mode {
         NONE, // Just a progress view
@@ -80,16 +85,11 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     public enum Scale {
-        ORIGIN (0),
-        FIT_WIDTH (1),
-        FIT_HEIGHT (2),
-        FIT (3),
-        FIXED (4);
-
-        Scale(int ni) {
-            nativeInt = ni;
-        }
-        final int nativeInt;
+        ORIGIN,
+        FIT_WIDTH,
+        FIT_HEIGHT,
+        FIT,
+        FIXED
     }
 
     public enum StartPosition {
@@ -104,7 +104,9 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mEdgeView = new EdgeView(context);
         mGestureRecognizer = new GestureRecognizer(context, this);
         mSmoothScroller = new SmoothScroller();
-        mSmoothScroller.setInterpolator(sInterpolator);
+        mSmoothScroller.setInterpolator(SMOOTH_SCROLLER_INTERPOLATOR);
+        mSmoothScaler = new SmoothScaler();
+        mSmoothScaler.setInterpolator(SMOOTH_SCALER_INTERPOLATOR);
 
         setBackgroundColor(GalleryUtils.intColorToFloatARGBArray(context.getResources().getColor(R.color.gallery_background)));
     }
@@ -149,6 +151,9 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     public void scrollToPage(int page) {
+        mSmoothScroller.forceStop();
+        mSmoothScaler.forceStop();
+
         if (page < 0 || page >= mAdapter.getPages()) {
             return;
         }
@@ -159,14 +164,16 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     public void smoothScrollToPage(int page) {
+        mSmoothScroller.forceStop();
+        mSmoothScaler.forceStop();
 
+        // TODO
     }
 
     private void scrollX(int offset) {
         if (offset == 0 || (mMode != Mode.LEFT_TO_RIGHT && mMode != Mode.RIGHT_TO_LEFT)) {
             return;
         }
-        offChildsetLeftAndRight(offset); // TODO Really need it ?
 
         mLayoutOffset += offset;
         boolean reverse = mMode == Mode.RIGHT_TO_LEFT;
@@ -209,16 +216,66 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @Override
     public boolean onSingleTapUp(float x, float y) {
-        return false;
+        return true;
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(float x, float y) {
+
+        if (mMode == Mode.LEFT_TO_RIGHT || mMode == Mode.RIGHT_TO_LEFT) {
+
+            if (x < getWidth() / 2) {
+                if (mFirstShownIndex > 0) {
+                    scrollToPage(mFirstShownIndex - 1);
+                } else {
+                    mEdgeView.onPull(getWidth() * 2, EdgeView.LEFT);
+                }
+            } else {
+                if (mFirstShownIndex < mAdapter.getPages() - 1) {
+                    scrollToPage(mFirstShownIndex + 1);
+                } else {
+                    mEdgeView.onPull(getWidth() * 2, EdgeView.RIGHT);
+                }
+            }
+        }
+
+        return true;
     }
 
     @Override
     public boolean onDoubleTap(float x, float y) {
-        return false;
+        return true;
+    }
+
+    @Override
+    public boolean onDoubleTapConfirmed(float x, float y) {
+        if (mScale) {
+            return false;
+        }
+
+        if ((mMode == Mode.LEFT_TO_RIGHT || mMode == Mode.RIGHT_TO_LEFT) &&
+                mLayoutOffset == 0) {
+            GalleryPageView page = mPageMap.get(mFirstShownIndex);
+            if (page != null && page.isLoaded()) {
+                float scale = page.getScale();
+                float fitScale = page.getFitScale();
+                float centerScale = (1f + fitScale) / 2;
+                float targetScale;
+                if ((fitScale > 1f && scale > centerScale) ||
+                        (fitScale < 1f && scale < centerScale)) {
+                    targetScale = 1f;
+                } else {
+                    targetScale = fitScale;
+                }
+                mSmoothScaler.startSmoothScaler(page, x, y, scale, targetScale, 500); // TODO
+            }
+        }
+
+        return true;
     }
 
     // Try to scroll to make mLayoutOffset == 0
-    private int onScrollX1(int dx, int totalX) {
+    private int onScrollX1(int dx) {
         int remain;
         int actualDx;
         if (mLayoutOffset > 0 && dx > 0) {
@@ -246,12 +303,12 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             actualDx = dx;
         }
 
-        onScrollX2(actualDx, totalX);
+        onScrollX2(actualDx);
 
         return remain;
     }
 
-    private int onScrollX2(int dx, int totalX) {
+    private int onScrollX2(int dx) {
         int remain = 0;
         if (mMode == Mode.LEFT_TO_RIGHT) {
             if (mFirstShownIndex == 0 && mLayoutOffset - dx > 0) { // Start
@@ -286,11 +343,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
         int dxI = (int) dx;
         int dyI = (int) dy;
-        int totalXI = (int) totalX;
         if (mMode == Mode.LEFT_TO_RIGHT || mMode == Mode.RIGHT_TO_LEFT) {
             int remain = dxI;
             if (remain != 0 && mLayoutOffset != 0) {
-                remain = onScrollX1(dxI, totalXI);
+                remain = onScrollX1(dxI);
             }
             if (remain != 0 && mLayoutOffset == 0) {
                 GalleryPageView page = mPageMap.get(mFirstShownIndex);
@@ -300,7 +356,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                 }
             }
             if (remain != 0) {
-                remain = onScrollX2(dxI, totalXI);
+                remain = onScrollX2(dxI);
             }
 
             if (remain == 0) {
@@ -333,6 +389,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        // TODO
+
+
+
         return false;
     }
 
@@ -362,8 +422,9 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mScale = true;
 
         GalleryPageView page = mPageMap.get(mFirstShownIndex);
-        if (page != null) {
+        if (page != null && page.isLoaded()) {
             page.scale(focusX, focusY, scale);
+            mLastScale = page.getScale();
         }
 
         return true;
@@ -379,6 +440,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mScale = false;
         mScroll = false;
         mSmoothScroller.forceStop();
+        mSmoothScaler.forceStop();
     }
 
     @Override
@@ -435,6 +497,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     @Override
     protected void onLayout(boolean changeSize, int left, int top, int right, int bottom) {
         mSmoothScroller.forceStop();
+        mSmoothScaler.forceStop();
         mEdgeView.layout(left, top, right, bottom);
 
         /* TODO set all seen UNKNOWN_SEEN to setScaleAndOffset
@@ -499,7 +562,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         }
         mInvalidAttachedComponent.clear();
 
-        // Fill
+        // Fill TODO better to avoid make load image when stop
         int width = getWidth();
         int height = getHeight();
         int widthSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
@@ -680,11 +743,16 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         }
 
         mEnableRequestLayout = true;
+
+        invalidate();
     }
 
     @Override
     protected void render(GLCanvas canvas) {
-        if (mSmoothScroller.calculate(AnimationTime.get())) {
+        long time = AnimationTime.get();
+        boolean invalidate = mSmoothScroller.calculate(time);
+        invalidate |= mSmoothScaler.calculate(time);
+        if (invalidate) {
             invalidate();
         }
 
@@ -730,6 +798,39 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         public abstract void bindPage(GalleryPageView view, int index);
 
         public abstract void unbindPage(GalleryPageView view, int index);
+    }
+
+    public class SmoothScaler extends Animation {
+
+        private GalleryPageView mPage;
+        private float mFocusX;
+        private float mFocusY;
+        private float mStartScale;
+        private float mEndScale;
+        private float mLastScale;
+
+        public void startSmoothScaler(GalleryPageView page, float focusX, float focusY,
+                float startScale, float endScale, int duration) {
+            mPage = page;
+            mFocusX = focusX;
+            mFocusY = focusY;
+            mStartScale = startScale;
+            mEndScale = endScale;
+            mLastScale = startScale;
+            setDuration(duration);
+            start();
+            invalidate();
+        }
+
+        @Override
+        protected void onCalculate(float progress) {
+            float scale = MathUtils.lerp(mStartScale, mEndScale, progress);
+            mPage.scale(mFocusX, mFocusY, scale / mLastScale);
+            mLastScale = scale;
+            if (progress == 1.0f) {
+                mPage = null;
+            }
+        }
     }
 
     public class SmoothScroller extends Animation {

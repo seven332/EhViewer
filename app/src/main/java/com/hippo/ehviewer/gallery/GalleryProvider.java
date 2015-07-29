@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.gallery;
 
+import android.graphics.Bitmap;
+
 public interface GalleryProvider {
 
     /**
@@ -70,6 +72,8 @@ public interface GalleryProvider {
     int size();
 
     void setPause(boolean pause);
+
+    void releaseBitmap(Bitmap bitmap);
 
     void addGalleryProviderListener(GalleryProviderListener listener);
 
