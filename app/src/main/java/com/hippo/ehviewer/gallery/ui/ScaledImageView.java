@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
+import com.hippo.ehviewer.gallery.glrenderer.GifTexture;
 import com.hippo.ehviewer.gallery.glrenderer.TiledTexture;
 import com.hippo.yorozuya.MathUtils;
 
@@ -12,6 +13,12 @@ public class ScaledImageView extends GLView {
     // TODO adjust scale max and min accroding to image size and screen size
     private static final float SCALE_MIN = 1 / 10.0f;
     private static final float SCALE_MAX = 10.0f;
+
+    public static final int ANIMATE_STATE_DEFALUE = 0;
+    public static final int ANIMATE_STATE_RUN = 1;
+    public static final int ANIMATE_STATE_STOP = 2;
+
+    private int mAnimateState = ANIMATE_STATE_DEFALUE;
 
     private TiledTexture mTiledTexture;
 
@@ -28,9 +35,33 @@ public class ScaledImageView extends GLView {
     private float mLastScale;
     private float mScale = 1f;
 
+    public void setAnimateState(int animateState) {
+        if (mAnimateState != animateState) {
+            mAnimateState = animateState;
+            if (mTiledTexture instanceof GifTexture) {
+                GifTexture gifTexture = (GifTexture) mTiledTexture;
+                if (animateState == ANIMATE_STATE_RUN) {
+                    gifTexture.start();
+                } else if (animateState == ANIMATE_STATE_STOP) {
+                    gifTexture.stop();
+                }
+            }
+        }
+    }
+
     public void setTiledTexture(TiledTexture tiledTexture) {
         mTiledTexture = tiledTexture;
         setScaleOffset(mScaleMode, mStartPosition, mLastScale);
+
+        if (mTiledTexture instanceof GifTexture) {
+            GifTexture gifTexture = (GifTexture) mTiledTexture;
+            if (mAnimateState == ANIMATE_STATE_RUN) {
+                gifTexture.start();
+            } else if (mAnimateState == ANIMATE_STATE_STOP) {
+                gifTexture.stop();
+            }
+        }
+
         invalidate();
     }
 

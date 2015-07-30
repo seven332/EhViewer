@@ -67,6 +67,11 @@ public class GalleryPageView extends FrameView {
         updateSeen();
     }
 
+    public void setAnimateState(int position) {
+        mImageView.setAnimateState(position);
+        mImageView.setAnimateState(position);
+    }
+
     public boolean isLoaded() {
         return mImageView.isLoaded();
     }

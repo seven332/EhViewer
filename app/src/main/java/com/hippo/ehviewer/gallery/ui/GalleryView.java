@@ -59,6 +59,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     private boolean mScale = false;
     private boolean mScroll = false;
+    private boolean mTouched = false;
 
     private int mDeltaX;
     private int[] mScrollRemain = new int[2];
@@ -441,6 +442,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @Override
     public void onDown(float x, float y) {
+        mTouched = true;
         mScale = false;
         mScroll = false;
         mSmoothScroller.forceStop();
@@ -449,15 +451,29 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @Override
     public void onUp() {
+        mTouched = false;
         mDeltaX = 0;
         mEdgeView.onRelease();
 
-        if ((mMode == Mode.LEFT_TO_RIGHT || mMode == Mode.RIGHT_TO_LEFT) && mLayoutOffset != 0) {
-            // Scroll
-            final float pageDelta = 7 * (float) Math.abs(mLayoutOffset) / (getWidth() + mInterval);
-            int duration = (int) ((pageDelta + 1) * 100);
-            duration = Math.min(duration, MAX_SETTLE_DURATION);
-            mSmoothScroller.startSmoothScroll(-mLayoutOffset, 0, duration);
+        if ((mMode == Mode.LEFT_TO_RIGHT || mMode == Mode.RIGHT_TO_LEFT)) {
+            if (mLayoutOffset != 0) {
+                // Scroll
+                final float pageDelta = 7 * (float) Math.abs(mLayoutOffset) / (getWidth() + mInterval);
+                int duration = (int) ((pageDelta + 1) * 100);
+                duration = Math.min(duration, MAX_SETTLE_DURATION);
+                mSmoothScroller.startSmoothScroll(-mLayoutOffset, 0, duration);
+            } else {
+                // Update AnimateState
+                GalleryPageView page = mPageMap.get(mFirstShownIndex);
+                if (page != null) {
+                    page.setAnimateState(ScaledImageView.ANIMATE_STATE_RUN);
+                }
+            }
+
+
+
+
+
         } else if (mMode == Mode.TOP_TO_BOTTOM) {
             // TODO
         }
@@ -643,8 +659,9 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mAttachedPage.clear();
         mUsedPage.clear();
 
-        // Update seen
+
         for (int i = 0; i < getComponentCount(); i++) {
+            // Update seen
             GalleryPageView page = (GalleryPageView) getComponent(i);
             LayoutParams lp = ((LayoutParams) page.getLayoutParams());
             int oldSeen = lp.seen;
@@ -652,6 +669,15 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             lp.seen = seen;
             if (oldSeen == UNKNOWN_SEEN || (oldSeen == SEEN && seen == UNSEEN)) {
                 page.setScaleOffset(mScaleMode, mStartPosition, mLastScale);
+            }
+
+            // Update AnimateState
+            if (seen == UNSEEN) {
+                page.setAnimateState(ScaledImageView.ANIMATE_STATE_STOP);
+            } else if (!mTouched && mLayoutOffset == 0 && mFirstShownIndex == lp.index) {
+                page.setAnimateState(ScaledImageView.ANIMATE_STATE_RUN);
+            } else {
+                page.setAnimateState(ScaledImageView.ANIMATE_STATE_DEFALUE);
             }
         }
     }

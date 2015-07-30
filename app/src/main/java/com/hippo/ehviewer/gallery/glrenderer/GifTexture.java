@@ -21,7 +21,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.hippo.ehviewer.gallery.gifdecoder.GifDecoder;
-import com.hippo.ehviewer.gallery.ui.GLRoot;
 
 public class GifTexture extends TiledTexture {
 
@@ -30,7 +29,6 @@ public class GifTexture extends TiledTexture {
     private static TiledTexture.Uploader sUploader;
     private static InfiniteThreadExecutor sThreadExecutor;
 
-    private GLRoot mGLRoot;
     private GifDecoder mGifDecoder;
     private boolean mRunning = false;
 
@@ -64,7 +62,7 @@ public class GifTexture extends TiledTexture {
         public void run() {
             GifDecoder gifDecoder = mGifDecoder;
 
-            while (mRunning) {
+            while (mRunning && sUploader != null) {
                 gifDecoder.advance();
                 Bitmap bitmap = gifDecoder.getNextFrame();
                 if (bitmap == null) {
@@ -74,6 +72,9 @@ public class GifTexture extends TiledTexture {
                 }
 
                 setBitmap(bitmap);
+                if (sUploader == null) {
+                    break;
+                }
                 sUploader.addTexture(GifTexture.this);
 
                 long delay = gifDecoder.getNextDelay();
@@ -92,6 +93,7 @@ public class GifTexture extends TiledTexture {
                     mSleeping = false;
                 }
             }
+            mGifDecodeTask = null;
 
             if (mClear) {
                 gifDecoder.clear();
@@ -99,41 +101,41 @@ public class GifTexture extends TiledTexture {
         }
     }
 
-    public GifTexture(@NonNull GifDecoder gifDecoder, @NonNull Bitmap bitmap, @NonNull GLRoot glRoot) {
+    public GifTexture(@NonNull GifDecoder gifDecoder, @NonNull Bitmap bitmap) {
         super(bitmap);
 
         mGifDecoder = gifDecoder;
-        mGLRoot = glRoot;
-        start();
     }
 
     public void start() {
-        mRunning = true;
-        if (mGifDecodeTask == null) {
-            mGifDecodeTask = new GifDecodeTask();
-            sThreadExecutor.execute(mGifDecodeTask);
+        if (!mRunning) {
+            mRunning = true;
+            if (mGifDecodeTask == null) {
+                mGifDecodeTask = new GifDecodeTask();
+                sThreadExecutor.execute(mGifDecodeTask);
+            }
         }
     }
 
     public void stop() {
-        mRunning = false;
-        mGifDecodeTask = null;
+        if (mRunning) {
+            mRunning = false;
+            mGifDecodeTask = null;
 
-        mGifDecoder.resetFrameIndex();
-        Bitmap bitmap = mGifDecoder.getNextFrame();
-        if (bitmap != null) {
-            setBitmap(bitmap);
-            sUploader.addTexture(GifTexture.this);
+            mGifDecoder.resetFrameIndex();
+            mGifDecoder.advance();
+            Bitmap bitmap = mGifDecoder.getNextFrame();
+            if (bitmap != null) {
+                setBitmap(bitmap);
+                sUploader.addTexture(GifTexture.this);
+            }
         }
     }
 
     @Override
     public void recycle() {
-
-        Log.d(TAG, "recycle");
-
         mRunning = false;
-        if (mGifDecodeTask.isSleeping()) {
+        if (mGifDecodeTask == null || mGifDecodeTask.isSleeping()) {
             mGifDecoder.clear();
         } else {
             mGifDecodeTask.clearByMyself();

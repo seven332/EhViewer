@@ -24,7 +24,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Process;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.util.Pair;
 
 import com.hippo.app.StatsActivity;
@@ -283,8 +282,6 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         if (tiledTexture != null) {
             view.mImageView.setTiledTexture(null);
             tiledTexture.recycle();
-        } else {
-            Log.d("TAG", "tiledTexture == null");
         }
     }
 
@@ -302,7 +299,7 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
             mUploader.addTexture(tiledTexture);
         } else if (obj instanceof Pair) {
             Pair pair = (Pair) obj;
-            tiledTexture = new GifTexture((GifDecoder) pair.first, (Bitmap) pair.second, mGLRootView);
+            tiledTexture = new GifTexture((GifDecoder) pair.first, (Bitmap) pair.second);
             mUploader.addTexture(tiledTexture);
         } else {
             bindBadImage(view);

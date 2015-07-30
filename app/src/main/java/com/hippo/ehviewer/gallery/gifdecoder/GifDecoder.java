@@ -266,15 +266,11 @@ public class GifDecoder {
      */
     public synchronized Bitmap getNextFrame() {
         if (header.frameCount <= 0 || framePointer < 0) {
-            if (Log.isLoggable(TAG, Log.DEBUG)) {
-                Log.d(TAG, "unable to decode frame, frameCount=" + header.frameCount + " framePointer=" + framePointer);
-            }
+            Log.d(TAG, "unable to decode frame, frameCount=" + header.frameCount + " framePointer=" + framePointer);
             status = STATUS_FORMAT_ERROR;
         }
         if (status == STATUS_FORMAT_ERROR || status == STATUS_READ_ERROR) {
-            if (Log.isLoggable(TAG, Log.DEBUG)) {
-                Log.d(TAG, "Unable to decode frame, status=" + status);
-            }
+            Log.d(TAG, "Unable to decode frame, status=" + status);
             return null;
         }
         status = STATUS_OK;
@@ -305,9 +301,7 @@ public class GifDecoder {
             act[currentFrame.transIndex] = 0;
         }
         if (act == null) {
-            if (Log.isLoggable(TAG, Log.DEBUG)) {
-                Log.d(TAG, "No Valid Color Table");
-            }
+            Log.d(TAG, "No Valid Color Table");
             // No color table defined.
             status = STATUS_FORMAT_ERROR;
             return null;
@@ -681,6 +675,7 @@ public class GifDecoder {
             readChunkIfNeeded();
             return workBuffer[workBufferPosition++] & 0xFF;
         } catch (Exception e) {
+            e.printStackTrace();
             status = STATUS_FORMAT_ERROR;
             return 0;
         }
@@ -712,6 +707,7 @@ public class GifDecoder {
                     System.arraycopy(workBuffer, 0, block, remaining, secondHalfRemaining);
                     workBufferPosition += secondHalfRemaining;
                 } else {
+                    Log.d(TAG, "Can't read block");
                     status = STATUS_FORMAT_ERROR;
                 }
             } catch (Exception e) {
