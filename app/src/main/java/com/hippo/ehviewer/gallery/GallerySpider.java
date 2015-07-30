@@ -48,7 +48,8 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
 
     private ImageHandler.Mode mMode;
     private GalleryBase mGalleryBase;
-    private UniFile mDownloadDir;
+    private UniFile mDownloadDirParent;
+    private String mDownloadDirname;
     private ThreadFactory mThreadFactory = new PriorityThreadFactory("SpiderQueen",
             Process.THREAD_PRIORITY_BACKGROUND);
     private SpiderQueen mSpiderQueen;
@@ -99,18 +100,14 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
         mGalleryBase = galleryBase;
         mMode = mode;
 
-        String dirname = DBUtils.getDirname(galleryBase.gid);
-        if (dirname == null) {
-            dirname = downloadDirname(galleryBase);
-            DBUtils.addDirname(galleryBase, dirname);
+        mDownloadDirname = DBUtils.getDirname(galleryBase.gid);
+        if (mDownloadDirname == null) {
+            mDownloadDirname = downloadDirname(galleryBase);
+            DBUtils.addDirname(galleryBase, mDownloadDirname);
         }
 
-        UniFile dir = Settings.getImageDownloadLocation();
-        if (dir != null) {
-            mDownloadDir = dir.createDirectory(dirname);
-        }
-
-        if (mDownloadDir == null) {
+        mDownloadDirParent = Settings.getImageDownloadLocation();
+        if (mDownloadDirParent == null) {
             throw new IOException("Can't get download dir");
         }
     }
@@ -130,7 +127,7 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
 
         if (mSpiderQueen == null) {
             mSpiderQueen = new SpiderQueen(sHttpClient, sSpiderInfoDir,
-                    mGalleryBase, mMode, mDownloadDir, this);
+                    mGalleryBase, mMode, mDownloadDirParent, mDownloadDirname, this);
             mThreadFactory.newThread(mSpiderQueen).start();
         }
     }
@@ -214,6 +211,7 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
         }
     }
 
+    @Override
     public void releaseBitmap(Bitmap bitmap) {
         if (mSpiderQueen != null) {
             mSpiderQueen.releaseBitmap(bitmap);
@@ -330,12 +328,12 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
     }
 
     @Override
-    public void onGetBitmap(final int index, final Bitmap bitmap) {
+    public void onGetImage(final int index, final Object obj) {
         SimpleHandler.getInstance().post(new Runnable() {
             @Override
             public void run() {
                 for (GalleryProviderListener l : mGalleryProviderListeners) {
-                    l.onGetBitmap(index, bitmap);
+                    l.onGetImage(index, obj);
                 }
             }
         });

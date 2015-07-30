@@ -15,6 +15,7 @@ import com.hippo.yorozuya.MathUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
@@ -76,6 +77,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     private SmoothScroller mSmoothScroller;
     private SmoothScaler mSmoothScaler;
+    private Recycler mRecycler;
+
 
     public enum Mode {
         NONE, // Just a progress view
@@ -107,6 +110,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mSmoothScroller.setInterpolator(SMOOTH_SCROLLER_INTERPOLATOR);
         mSmoothScaler = new SmoothScaler();
         mSmoothScaler.setInterpolator(SMOOTH_SCALER_INTERPOLATOR);
+        mRecycler = new Recycler();
 
         setBackgroundColor(GalleryUtils.intColorToFloatARGBArray(context.getResources().getColor(R.color.gallery_background)));
     }
@@ -510,6 +514,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         */
 
 
+        mLayoutOffset = 0;
         fill();
     }
 
@@ -519,10 +524,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     private void unbindGalleryPage(GalleryPageView view) {
         LayoutParams lp = (LayoutParams) view.getLayoutParams();
-        int index = lp.index;
-        lp.index = NO_POSITION;
-        if (index != NO_POSITION) {
-            mAdapter.unbindPage(view, index);
+        if (lp.index != NO_POSITION) {
+            mAdapter.unbindPage(view, lp.index);
         }
     }
 
@@ -530,10 +533,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mPageMap.put(index, page);
     }
 
-    private void detachPage(int index) {
-        mPageMap.remove(index);
-    }
-
+    // Set lp.index NO_POSITION
     private void detachPage(GalleryPageView page) {
         LayoutParams lp = (LayoutParams) page.getLayoutParams();
         int index = lp.index;
@@ -609,11 +609,11 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             if (i < count) {
                 page = mAttachedPage.valueAt(i);
                 // Unbind
-                detachPage(page);
                 unbindGalleryPage(page);
+                detachPage(page);
                 mUsedPage.add(page);
             } else {
-                page = mAdapter.createPage();
+                page = mRecycler.obtain();
                 addComponent(page);
             }
             // Bind
@@ -635,9 +635,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             if (mUsedPage.contains(page)) {
                 continue;
             }
-            detachPage(page);
             unbindGalleryPage(page);
+            detachPage(page);
             removeComponent(page);
+            mRecycler.release(page);
         }
         mAttachedPage.clear();
         mUsedPage.clear();
@@ -682,10 +683,12 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                 GLView component = getComponent(i);
                 removeComponentAt(i);
 
-                // Remove from map, unbind gallery page
+                // Remove from map, unbind gallery page, add to recycler
                 if (component instanceof GalleryPageView) {
-                    detachPage((GalleryPageView) component);
-                    unbindGalleryPage((GalleryPageView) component);
+                    GalleryPageView page = (GalleryPageView) component;
+                    unbindGalleryPage(page);
+                    detachPage(page);
+                    mRecycler.release(page);
                 }
             }
 
@@ -800,7 +803,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         public abstract void unbindPage(GalleryPageView view, int index);
     }
 
-    public class SmoothScaler extends Animation {
+    class SmoothScaler extends Animation {
 
         private GalleryPageView mPage;
         private float mFocusX;
@@ -833,7 +836,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         }
     }
 
-    public class SmoothScroller extends Animation {
+    class SmoothScroller extends Animation {
 
         private int mDx;
         private int mDy;
@@ -856,6 +859,33 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             int y = (int) (mDy * progress);
             scrollX(x - mLastX);
             mLastX = x;
+        }
+    }
+
+    class Recycler {
+
+        private int mSize = 0;
+
+        private Stack<GalleryPageView> mStack = new Stack<>();
+
+        private GalleryPageView obtain() {
+            if (mSize != 0) {
+                mSize--;
+                return mStack.pop();
+            } else {
+                return mAdapter.createPage();
+            }
+        }
+
+        public void release(GalleryPageView page) {
+            if (page == null) {
+                return;
+            }
+
+            if (mSize < 3) { // 3 is max size
+                mSize++;
+                mStack.push(page);
+            }
         }
     }
 }

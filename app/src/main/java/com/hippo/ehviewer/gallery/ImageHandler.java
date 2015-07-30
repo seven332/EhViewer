@@ -18,32 +18,44 @@ package com.hippo.ehviewer.gallery;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.nfc.FormatException;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.webkit.MimeTypeMap;
 
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.BitmapPool;
+import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.data.GalleryBase;
+import com.hippo.ehviewer.gallery.gifdecoder.ByteArrayPool;
+import com.hippo.ehviewer.gallery.gifdecoder.GifBitmapProvider;
+import com.hippo.ehviewer.gallery.gifdecoder.GifDecoder;
+import com.hippo.ehviewer.gallery.gifdecoder.GifHeader;
+import com.hippo.ehviewer.gallery.gifdecoder.GifHeaderParser;
 import com.hippo.httpclient.HttpClient;
-import com.hippo.httpclient.HttpResponse;
 import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.io.UniFileOutputStreamPipe;
 import com.hippo.network.DownloadClient;
 import com.hippo.network.DownloadRequest;
 import com.hippo.unifile.UniFile;
+import com.hippo.unifile.UniRandomReadFile;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
 import com.hippo.yorozuya.io.OutputStreamPipe;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 public class ImageHandler {
+
+    private static final String TAG = ImageHandler.class.getSimpleName();
 
     public static final String[] POSSIBLE_IMAGE_EXTENSIONS = new String[] {
             "jpg", "jpeg", "png", "gif"
@@ -52,10 +64,13 @@ public class ImageHandler {
     private static SimpleDiskCache sDiskCache;
 
     private GalleryBase mGalleryBase;
-    private UniFile mDownloadDir;
-    private transient Mode mMode;
+    private UniFile mDownloadDirParent;
+    private String mDownloadDirname;
+    private @Nullable UniFile mDownloadDir;
+    private volatile Mode mMode;
     private AtomicReferenceArray<String> mFilenames;
     private BitmapPool mBitmapPool = new BitmapPool();
+    private GifBitmapProvider mGifBitmapProvider = new GifBitmapProvider(new BitmapPool(), new ByteArrayPool());
 
     public enum Mode {
         READ,
@@ -66,15 +81,23 @@ public class ImageHandler {
         sDiskCache = diskCache;
     }
 
-    ImageHandler(GalleryBase galleryBase, int pages, Mode mode, UniFile downloadDir) {
+    ImageHandler(GalleryBase galleryBase, int pages, Mode mode, UniFile downloadDirParent, String downloadDirname) {
         mGalleryBase = galleryBase;
         mMode = mode;
         mFilenames = new AtomicReferenceArray<>(pages);
-        mDownloadDir = downloadDir;
+        mDownloadDirParent = downloadDirParent;
+        mDownloadDirname = downloadDirname;
+
+        if (mode == Mode.DOWNLOAD) {
+            mDownloadDir = mDownloadDirParent.createDirectory(mDownloadDirname);
+        }
     }
 
     public void setMode(Mode mode) {
-        mMode = mode;
+        if (mMode != mode) {
+            mMode = mode;
+            mDownloadDir = mDownloadDirParent.createDirectory(mDownloadDirname);
+        }
         // Let DownloadManager to set spiderObj's download to true
     }
 
@@ -83,6 +106,10 @@ public class ImageHandler {
     }
 
     private String guessImageFilename(int index) {
+        if (mDownloadDir == null) {
+            return null;
+        }
+
         for (String extension : POSSIBLE_IMAGE_EXTENSIONS) {
             String filename = getImageFilename(index, extension);
             if (mDownloadDir.findFile(filename) != null) {
@@ -110,6 +137,10 @@ public class ImageHandler {
     }
 
     private InputStreamPipe getDownloadInputStreamPipe(String filename) {
+        if (mDownloadDir == null) {
+            return null;
+        }
+
         UniFile uniFile = mDownloadDir.findFile(filename);
         if (uniFile != null) {
             return new UniFileInputStreamPipe(uniFile);
@@ -124,6 +155,10 @@ public class ImageHandler {
     }
 
     private OutputStreamPipe getDownloadOutputStreamPipe(String filename) {
+        if (mDownloadDir == null) {
+            return null;
+        }
+
         UniFile uniFile = mDownloadDir.createFile(filename);
         if (uniFile != null) {
             return new UniFileOutputStreamPipe(uniFile);
@@ -149,7 +184,7 @@ public class ImageHandler {
         String filename = mFilenames.get(index);
         if (filename != null) {
             // Check it in dir
-            if (mDownloadDir.findFile(filename) != null) {
+            if (mDownloadDir != null && mDownloadDir.findFile(filename) != null) {
                 return true;
             }
         } else {
@@ -164,6 +199,11 @@ public class ImageHandler {
         // Try to find image in cache
         InputStreamPipe isPipe = getReadInputStreamPipe(index);
         if (isPipe == null) {
+            return false;
+        }
+
+        if (mDownloadDir == null) {
+            // Can't get download dir
             return false;
         }
 
@@ -216,23 +256,13 @@ public class ImageHandler {
         }
     }
 
-    private String getExtension(HttpResponse response, String defaultExtension) {
-        String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(
-                response.getHeaderField("Content-Type"));
-        if (extension == null) {
-            extension = MimeTypeMap.getFileExtensionFromUrl(response.getUrl().toString());
-            if (extension == null) {
-                extension = defaultExtension;
-            }
-        }
-        return extension;
-    }
-
     public void save(HttpClient httpClient, String url, int index, SaveHelper helper) throws Exception {
         OutputStreamPipe osPipe = null;
 
         if (mMode == Mode.READ) {
             osPipe = getReadOutputStreamPipe(index);
+        } else if (mMode == Mode.DOWNLOAD && mDownloadDir == null) {
+            return;
         }
 
         if (helper.mCancel) {
@@ -314,7 +344,10 @@ public class ImageHandler {
         }
     }
 
-    public Bitmap getBitmap(int index) {
+    /**
+     * @return
+     */
+    public Object getImage(int index) {
         InputStreamPipe isPipe = null;
         if (mMode == Mode.READ) {
             isPipe = getReadInputStreamPipe(index);
@@ -329,6 +362,7 @@ public class ImageHandler {
             return null;
         }
 
+        Bitmap bitmap = null;
         try {
             isPipe.obtain();
 
@@ -349,10 +383,53 @@ public class ImageHandler {
             options.inMutable = true;
             options.inSampleSize = 1;
             options.inBitmap = mBitmapPool.getInBitmap(options);
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 
             is = isPipe.open();
-            return BitmapFactory.decodeStream(is, null, options);
+            bitmap = BitmapFactory.decodeStream(is, null, options);
+
+            if (bitmap != null && "image/gif".equals(options.outMimeType)) {
+                // It is gif
+                UniRandomReadFile randomReadFile;
+                if (mMode == Mode.READ) {
+                    // Copy the file to
+                    File tempFile = AppConfig.createTempFile();
+                    if (tempFile == null) {
+                        throw new IOException("Can't get temp dir or can't create temp dir");
+                    }
+                    isPipe.close();
+                    is = isPipe.open();
+                    IOUtils.copy(is, new FileOutputStream(tempFile));
+                    randomReadFile = new TempRandomReadFile(tempFile, UniRandomReadFile.fromFile(tempFile));
+                } else if (mMode == Mode.DOWNLOAD) {
+                    if (mDownloadDir == null) {
+                        throw new IOException("Can't find download dir");
+                    }
+                    UniFile uniFile = mDownloadDir.findFile(getImageFilename(index));
+                    if (uniFile == null) {
+                        throw new IOException("Can't find image file");
+                    }
+
+                    isPipe.close();
+                    isPipe.release();
+                    randomReadFile = uniFile.createRandomReadFile();
+                } else {
+                    throw new IllegalStateException("Unknown state");
+                }
+
+                GifHeader gifHeader = new GifHeaderParser().setData(randomReadFile).parseHeader();
+                if (gifHeader.getStatus() == GifDecoder.STATUS_OK) {
+                    return new Pair<>(new GifDecoder(mGifBitmapProvider, gifHeader, randomReadFile), bitmap);
+                } else {
+                    throw new FormatException("Can't decode gif");
+                }
+            } else {
+                // It is not gif, just reture
+                return bitmap;
+            }
         } catch (Exception e) {
+            e.printStackTrace();
+            releaseBitmap(bitmap);
             return null;
         } finally {
             isPipe.close();
@@ -375,6 +452,43 @@ public class ImageHandler {
             if (mRequest != null) {
                 mRequest.cancel();
             }
+        }
+    }
+
+    public static class TempRandomReadFile extends UniRandomReadFile {
+
+        private File mFile;
+        private UniRandomReadFile mRandomReadFile;
+
+        public TempRandomReadFile(File file, UniRandomReadFile randomReadFile) {
+            mFile = file;
+            mRandomReadFile = randomReadFile;
+        }
+
+        @Override
+        public int read(byte[] buffer, int byteOffset, int byteCount) throws IOException {
+            return mRandomReadFile.read(buffer, byteOffset, byteCount);
+        }
+
+        @Override
+        public void seek(long offset) throws IOException {
+            mRandomReadFile.seek(offset);
+        }
+
+        @Override
+        public long position() throws IOException {
+            return mRandomReadFile.position();
+        }
+
+        @Override
+        public long length() throws IOException {
+            return mRandomReadFile.length();
+        }
+
+        @Override
+        public void close() throws IOException {
+            mRandomReadFile.close();
+            FileUtils.delete(mFile);
         }
     }
 }

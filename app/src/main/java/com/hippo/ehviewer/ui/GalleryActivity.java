@@ -22,7 +22,10 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Process;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.util.Pair;
 
 import com.hippo.app.StatsActivity;
 import com.hippo.ehviewer.R;
@@ -32,6 +35,9 @@ import com.hippo.ehviewer.gallery.GalleryProviderListener;
 import com.hippo.ehviewer.gallery.GallerySpider;
 import com.hippo.ehviewer.gallery.ImageHandler;
 import com.hippo.ehviewer.gallery.ZipGalleryProvider;
+import com.hippo.ehviewer.gallery.gifdecoder.GifDecoder;
+import com.hippo.ehviewer.gallery.glrenderer.GifTexture;
+import com.hippo.ehviewer.gallery.glrenderer.InfiniteThreadExecutor;
 import com.hippo.ehviewer.gallery.glrenderer.TextTexture;
 import com.hippo.ehviewer.gallery.glrenderer.TiledTexture;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
@@ -40,9 +46,11 @@ import com.hippo.ehviewer.gallery.ui.GalleryPageView;
 import com.hippo.ehviewer.gallery.ui.GalleryView;
 import com.hippo.util.SystemUiHelper;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.PriorityThreadFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class GalleryActivity extends StatsActivity implements TiledTexture.OnFreeBitmapListener, GalleryProviderListener {
 
@@ -57,7 +65,9 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
     private Resources mResources;
 
     private TiledTexture.Uploader mUploader;
+    private InfiniteThreadExecutor mThreadExecutor;
 
+    private GLRootView mGLRootView;
     private GalleryView mGalleryView;
 
     private GalleryAdapter mAdapter;
@@ -118,13 +128,15 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         mSystemUiHelper.hide();
 
         setContentView(R.layout.activity_gallery);
-        GLRootView glRootView = (GLRootView) findViewById(R.id.gl_root_view);
-
+        mGLRootView = (GLRootView) findViewById(R.id.gl_root_view);
         mResources = getResources();
         // Prepare
         TiledTexture.prepareResources();
         TiledTexture.setOnFreeBitmapListener(this);
-        mUploader = new TiledTexture.Uploader(glRootView);
+        mUploader = new TiledTexture.Uploader(mGLRootView);
+        mThreadExecutor = new InfiniteThreadExecutor(3000, new LinkedBlockingQueue<Runnable>(),
+                new PriorityThreadFactory("GifDecode", Process.THREAD_PRIORITY_BACKGROUND));
+        GifTexture.initialize(mUploader, mThreadExecutor);
         Typeface tf = Typeface.createFromAsset(mResources.getAssets(), "fonts/number.ttf");
         mTextTexture = TextTexture.create(tf,
                 mResources.getDimensionPixelSize(R.dimen.gallery_index_text),
@@ -147,7 +159,7 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         }
         mGalleryProvider.addGalleryProviderListener(this);
 
-        glRootView.setContentPane(mGalleryView);
+        mGLRootView.setContentPane(mGalleryView);
     }
 
     private void setMode(GalleryView.Mode mode) {
@@ -162,6 +174,7 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         if (!mDieYoung) {
             GalleryPageView.setTextTexture(null);
             mTextTexture.recycle();
+            GifTexture.uninitialize();
             TiledTexture.setOnFreeBitmapListener(null);
             TiledTexture.freeResources();
             mGalleryProvider.removeGalleryProviderListener(this);
@@ -173,8 +186,15 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
             }
 
             mGalleryProvider = null;
+
+            // Free all TileTexture in GalleryView
+            for (int i = 0, n = mGalleryView.getComponentCount(); i < n; i++) {
+                GLView view = mGalleryView.getComponent(i);
+                if (view instanceof  GalleryPageView) {
+                    clearTiledTextureInPage((GalleryPageView) view);
+                }
+            }
         }
-        // TODO free all TileTexture in GalleryView
     }
 
     @Override
@@ -209,19 +229,27 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         }
     }
 
+    public void releaseImage(Object obj) {
+        if (mGalleryProvider != null && obj != null) {
+            if (obj instanceof Bitmap) {
+                mGalleryProvider.releaseBitmap((Bitmap) obj);
+            } else if (obj instanceof Pair) {
+                mGalleryProvider.releaseBitmap((Bitmap) ((Pair) obj).second);
+            }
+        }
+    }
+
     @Override
-    public void onGetBitmap(int index, @Nullable Bitmap bitmap) {
+    public void onGetImage(int index, @Nullable Object obj) {
         GalleryPageView page = mGalleryView.getPage(index);
         if (page != null) {
-            if (bitmap == null) {
-                bindBadBitmap(page);
+            if (obj == null) {
+                bindBadImage(page);
             } else {
-                bindBitmap(page, bitmap);
+                bindImage(page, obj);
             }
         } else {
-            if (mGalleryProvider != null) {
-                mGalleryProvider.releaseBitmap(bitmap);
-            }
+            releaseImage(obj);
         }
     }
 
@@ -255,19 +283,31 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         if (tiledTexture != null) {
             view.mImageView.setTiledTexture(null);
             tiledTexture.recycle();
+        } else {
+            Log.d("TAG", "tiledTexture == null");
         }
     }
 
-    private void bindBadBitmap(GalleryPageView view) {
+    private void bindBadImage(GalleryPageView view) {
         clearTiledTextureInPage(view);
         view.mProgressView.setVisibility(GLView.INVISIBLE);
         view.mIndexView.setVisibility(GLView.VISIBLE);
         view.mIndexView.setText(".3");
     }
 
-    private void bindBitmap(GalleryPageView view, Bitmap bitmap) {
-        TiledTexture tiledTexture = new TiledTexture(bitmap);
-        mUploader.addTexture(tiledTexture);
+    private void bindImage(GalleryPageView view, Object obj) {
+        TiledTexture tiledTexture;
+        if (obj instanceof Bitmap) {
+            tiledTexture = new TiledTexture((Bitmap) obj);
+            mUploader.addTexture(tiledTexture);
+        } else if (obj instanceof Pair) {
+            Pair pair = (Pair) obj;
+            tiledTexture = new GifTexture((GifDecoder) pair.first, (Bitmap) pair.second, mGLRootView);
+            mUploader.addTexture(tiledTexture);
+        } else {
+            bindBadImage(view);
+            return;
+        }
 
         clearTiledTextureInPage(view);
         view.mProgressView.setVisibility(GLView.INVISIBLE);

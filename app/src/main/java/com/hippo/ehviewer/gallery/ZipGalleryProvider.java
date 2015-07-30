@@ -30,13 +30,13 @@ public class ZipGalleryProvider implements GalleryProvider, Runnable {
 
     private static final String[] IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif"};
 
-    private transient boolean mRestart = false;
-    private transient boolean mStop = false;
+    private volatile boolean mRestart = false;
+    private volatile boolean mStop = false;
 
     private List<GalleryProviderListener> mGalleryProviderListeners = new ArrayList<>();
 
     private ZipFile mZipFile;
-    private transient int mSize = -1;
+    private volatile int mSize = -1;
     private List<String> mFilenames = new ArrayList<>();
     private BlockingQueue<Integer> mRequestQueue = new LinkedBlockingQueue<>();
     private BitmapPool mBitmapPool = new BitmapPool();
@@ -143,7 +143,7 @@ public class ZipGalleryProvider implements GalleryProvider, Runnable {
             @Override
             public void run() {
                 for (GalleryProviderListener l : mGalleryProviderListeners) {
-                    l.onGetBitmap(index, bitmap);
+                    l.onGetImage(index, bitmap);
                 }
             }
         });

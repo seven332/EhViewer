@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.gallery;
 
-import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 
 public interface GalleryProviderListener {
@@ -27,7 +26,7 @@ public interface GalleryProviderListener {
 
     void onGetSize(int size);
 
-    void onGetBitmap(int index, @Nullable Bitmap bitmap);
+    void onGetImage(int index, @Nullable Object obj);
 
     void onPagePercent(int index, float percent);
 

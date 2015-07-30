@@ -26,6 +26,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.hippo.ehviewer.gallery.ui.GLRoot;
 
@@ -238,6 +239,32 @@ public class TiledTexture implements Texture {
             }
         }
         mTiles = list.toArray(new Tile[list.size()]);
+    }
+
+    // Only for GifTexture
+    protected void setBitmap(@NonNull Bitmap bitmap) {
+        if (bitmap.getWidth() == mWidth && bitmap.getHeight() == mHeight) {
+            synchronized (mTiles) {
+                freeBitmap();
+                mUploadIndex = 0;
+                mBitmap = bitmap;
+                for (int x = 0, w = mWidth, i = 0; x < w; x += CONTENT_SIZE) {
+                    for (int y = 0, h = mHeight; y < h; y += CONTENT_SIZE, i++) {
+                        Tile tile = mTiles[i];
+                        tile.offsetX = x;
+                        tile.offsetY = y;
+                        tile.bitmap = bitmap;
+                        tile.setSize(Math.min(CONTENT_SIZE, mWidth - x),
+                                Math.min(CONTENT_SIZE, mHeight - y));
+                        tile.invalidateContent();
+                    }
+                }
+            }
+        } else {
+            Log.d(TAG, "Only same size bitmap can be set, " +
+                    "original is [" + mWidth + ", " + mHeight + "], " +
+                    "bitmap is [" + bitmap.getWidth() + ", " + bitmap.getHeight() + "]");
+        }
     }
 
     public boolean isReady() {

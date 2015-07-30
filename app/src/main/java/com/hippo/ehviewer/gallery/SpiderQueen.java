@@ -18,6 +18,7 @@ package com.hippo.ehviewer.gallery;
 
 import android.graphics.Bitmap;
 import android.os.Process;
+import android.util.Log;
 
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhUrl;
@@ -69,7 +70,8 @@ public class SpiderQueen implements Runnable {
     public EhHttpClient mHttpClient;
     public File mSpiderInfoDir;
     public GalleryBase mGalleryBase;
-    private UniFile mDownloadDir;
+    private UniFile mDownloadDirparent;
+    private String mDownloadDirname;
     public ImageHandler mImageHandler;
     public int mSource;
     private ImageHandler.Mode mMode;
@@ -77,14 +79,14 @@ public class SpiderQueen implements Runnable {
 
     public SpiderInfo mSpiderInfo;
     public boolean mHasCheckIndexAgain = true;
-    public transient int mNextIndex;
+    public volatile int mNextIndex;
     public AtomicIntegerArray mPageStates;
 
-    private transient HttpRequest mCurrentHttpRequest;
+    private volatile HttpRequest mCurrentHttpRequest;
 
-    private transient boolean mRestart = false;
-    private transient boolean mRetry = false;
-    private transient boolean mStop = false;
+    private volatile boolean mRestart = false;
+    private volatile boolean mRetry = false;
+    private volatile boolean mStop = false;
 
     private ThreadFactory mThreadFactory = new PriorityThreadFactory("SpiderWorker",
             Process.THREAD_PRIORITY_BACKGROUND);
@@ -106,13 +108,14 @@ public class SpiderQueen implements Runnable {
     private final Object mGetSizeLock = new Object();
 
     public SpiderQueen(EhHttpClient httpClient, File spiderInfoDir,
-            GalleryBase galleryBase, ImageHandler.Mode mode, UniFile downloadDir,
-            SpiderListener listener) {
+            GalleryBase galleryBase, ImageHandler.Mode mode, UniFile downloadDirParent,
+            String downloadDirname, SpiderListener listener) {
         mHttpClient = httpClient;
         mSpiderInfoDir = spiderInfoDir;
         mGalleryBase = galleryBase;
         mMode = mode;
-        mDownloadDir = downloadDir;
+        mDownloadDirparent = downloadDirParent;
+        mDownloadDirname = downloadDirname;
         mSpiderListener = listener;
 
         mSource = Settings.getEhSource();
@@ -278,8 +281,14 @@ public class SpiderQueen implements Runnable {
 
     private SpiderInfo readSpiderInfoFromDownloadDir() {
         if (mMode == ImageHandler.Mode.DOWNLOAD) {
+            UniFile dir = mDownloadDirparent.findFile(mDownloadDirname);
+            if (dir == null || !dir.isDirectory()) {
+                // Can't get download dir
+                return null;
+            }
+
             SpiderInfo spiderInfo;
-            UniFile file = mDownloadDir.findFile(SPIDER_FILENAME);
+            UniFile file = dir.findFile(SPIDER_FILENAME);
             if (file == null) {
                 return null;
             }
@@ -316,16 +325,28 @@ public class SpiderQueen implements Runnable {
     }
 
     private void writeSpiderInfoToDownloadDir(SpiderInfo spiderInfo) {
+
+        Log.d("TAG", "writeSpiderInfoToDownloadDir");
+
         if (mMode == ImageHandler.Mode.DOWNLOAD) {
+            UniFile dir = mDownloadDirparent.findFile(mDownloadDirname);
+            if (dir == null || !dir.isDirectory()) {
+                // Can't get download dir
+                return;
+            }
+
             OutputStream os = null;
             try {
-                UniFile file = mDownloadDir.findFile(SPIDER_FILENAME);
+
+                Log.d("TAG", "do writeSpiderInfoToDownloadDir");
+
+                UniFile file = dir.findFile(SPIDER_FILENAME);
                 if (file != null) {
                     os = file.openOutputStream();
                     spiderInfo.write(os);
                 }
             } catch (Exception e) {
-                // Ingore
+                e.printStackTrace();
             } finally {
                 IOUtils.closeQuietly(os);
             }
@@ -558,7 +579,7 @@ public class SpiderQueen implements Runnable {
             mPageStates.lazySet(i, PAGE_STATE_NONE);
         }
         mSpiderWorkers = new SpiderWorker[3];
-        mImageHandler = new ImageHandler(gb, spiderInfo.pages, mMode, mDownloadDir);
+        mImageHandler = new ImageHandler(gb, spiderInfo.pages, mMode, mDownloadDirparent, mDownloadDirname);
         // Check stop
         if (mStop) {
             return;
@@ -662,8 +683,8 @@ public class SpiderQueen implements Runnable {
 
         public int mIndex;
 
-        private transient HttpRequest mCurrentHttpRequest;
-        private transient ImageHandler.SaveHelper mCurrentSaveHelper;
+        private volatile HttpRequest mCurrentHttpRequest;
+        private volatile ImageHandler.SaveHelper mCurrentSaveHelper;
 
         public boolean mStop = false;
 
@@ -883,7 +904,7 @@ public class SpiderQueen implements Runnable {
                     continue;
                 }
 
-                mSpiderListener.onGetBitmap(index, mImageHandler == null ? null : mImageHandler.getBitmap(index));
+                mSpiderListener.onGetImage(index, mImageHandler == null ? null : mImageHandler.getImage(index));
             }
 
             Say.d(TAG, "Render dies");
@@ -912,6 +933,6 @@ public class SpiderQueen implements Runnable {
 
         void onSpiderFailed(int index, Exception e);
 
-        void onGetBitmap(int index, Bitmap bitmap);
+        void onGetImage(int index, Object obj);
     }
 }

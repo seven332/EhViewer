@@ -31,9 +31,9 @@ public final class AppConfig {
     private static final String DOWNLOAD_DIRNAME = "download";
     private static final String ARCHIVE_DIRNAME = "archive";
     private static final String TORRENT_DIRNAME = "torrent";
+    private static final String TEMP_DIRNAME = "temp";
 
-    public static @Nullable
-    File getAppDir() {
+    public static @Nullable File getExternalAppDir() {
         if (Environment.getExternalStorageState()
                 .equals(Environment.MEDIA_MOUNTED)) {
             return new File(Environment.getExternalStorageDirectory(), APP_DIRNAME);
@@ -43,7 +43,7 @@ public final class AppConfig {
     }
 
     public static @Nullable File getFileInAppDir(String filename) {
-        File appFolder = getAppDir();
+        File appFolder = getExternalAppDir();
         if (appFolder != null) {
             return new File(appFolder, filename);
         } else {
@@ -65,6 +65,19 @@ public final class AppConfig {
 
     public static @Nullable File getTorrentDir() {
         return getFileInAppDir(TORRENT_DIRNAME);
+    }
+
+    public static @Nullable File getTempDir() {
+        return getFileInAppDir(TEMP_DIRNAME);
+    }
+
+    public static @Nullable File createTempFile() {
+        File dir = getTempDir();
+        if (dir != null && (dir.isDirectory() || dir.mkdirs())) {
+            return new File(dir, Long.toString(System.currentTimeMillis()));
+        } else {
+            return null;
+        }
     }
 }
 
