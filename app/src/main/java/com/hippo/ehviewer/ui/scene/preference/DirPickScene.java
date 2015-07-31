@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Settings;
 import com.hippo.rippleold.RippleSalon;
@@ -34,6 +35,7 @@ import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
 import com.hippo.unifile.UniFile;
 import com.hippo.widget.DirExplorer;
+import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.io.File;
@@ -125,8 +127,10 @@ public class DirPickScene extends AppbarScene implements View.OnClickListener,
     private void save(UniFile uniFile) {
         if (ACTION_IMAGE_DOWNLOAD_LOCATION.equals(mAction)) {
             Settings.putImageDownloadLocation(uniFile);
+            Messenger.getInstance().notify(Constants.MESSENGER_ID_IMAGE_DOWNLOAD_LOCATION, uniFile);
         } else if (ACTION_ARCHIVE_DOWNLOAD_LOCATION.equals(mAction)) {
             Settings.putArchiveDownloadLocation(uniFile);
+            Messenger.getInstance().notify(Constants.MESSENGER_ID_ARCHIVE_DOWNLOAD_LOCATION, uniFile);
         }
     }
 
