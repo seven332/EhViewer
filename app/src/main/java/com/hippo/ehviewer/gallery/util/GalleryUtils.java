@@ -17,7 +17,8 @@
 package com.hippo.ehviewer.gallery.util;
 
 import android.graphics.Color;
-import android.util.Log;
+
+import com.hippo.yorozuya.AssertUtils;
 
 public class GalleryUtils {
 
@@ -42,12 +43,11 @@ public class GalleryUtils {
         sCurrentThread = Thread.currentThread();
     }
 
-    public static void assertNotInRenderThread() {
-        if (!sWarned) {
-            if (Thread.currentThread() == sCurrentThread) {
-                sWarned = true;
-                Log.w(TAG, new Throwable("Should not do this in render thread"));
-            }
-        }
+    public static boolean isRenderThread() {
+        return sCurrentThread == Thread.currentThread();
+    }
+
+    public static void assertInRenderThread() {
+        AssertUtils.assertEquals("Should not do this in render thread", sCurrentThread, Thread.currentThread());
     }
 }

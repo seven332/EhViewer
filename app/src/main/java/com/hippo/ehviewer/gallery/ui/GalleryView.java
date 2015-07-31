@@ -80,6 +80,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private SmoothScaler mSmoothScaler;
     private Recycler mRecycler;
 
+    private boolean mRequestFill = false;
 
     public enum Mode {
         NONE, // Just a progress view
@@ -155,6 +156,15 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         super.requestLayout();
     }
 
+    private void requestFill() {
+        if (GalleryUtils.isRenderThread()) {
+            fill();
+        } else {
+            mRequestFill = true;
+            invalidate();
+        }
+    }
+
     public void scrollToPage(int page) {
         mSmoothScroller.forceStop();
         mSmoothScaler.forceStop();
@@ -165,7 +175,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
         mFirstShownIndex = page;
         mLayoutOffset = 0;
-        fill();
+        requestFill();
     }
 
     public void smoothScrollToPage(int page) {
@@ -209,7 +219,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             }
         }
 
-        fill();
+        requestFill();
     }
 
     @Override
@@ -227,7 +237,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     @Override
     public boolean onSingleTapConfirmed(float x, float y) {
 
-        if (mMode == Mode.LEFT_TO_RIGHT || mMode == Mode.RIGHT_TO_LEFT) {
+        if ((mMode == Mode.LEFT_TO_RIGHT || mMode == Mode.RIGHT_TO_LEFT) && mLayoutOffset == 0) {
 
             if (x < getWidth() / 2) {
                 if (mFirstShownIndex > 0) {
@@ -495,18 +505,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     }
 
-    private void offChildsetLeftAndRight(int offset) {
-        for (int i = 0, n = getComponentCount(); i < n; i++) {
-            getComponent(i).offsetLeftAndRight(offset);
-        }
-    }
-
-    private void offChildsetTopAndBottom(int offset) {
-        for (int i = 0, n = getComponentCount(); i < n; i++) {
-            getComponent(i).offsetTopAndBottom(offset);
-        }
-    }
-
     @Override
     public void requestLayout() {
         if (mEnableRequestLayout) {
@@ -520,7 +518,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mSmoothScaler.forceStop();
         mEdgeView.layout(left, top, right, bottom);
 
-        /* TODO set all seen UNKNOWN_SEEN to setScaleAndOffset
+        /* TODO set all seen UNKNOWN_SEEN in order to setScaleAndOffset
         if (mLastLayoutMode != mMode) {
             mLastLayoutMode = mMode;
             for () {
@@ -531,6 +529,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
 
         mLayoutOffset = 0;
+        mHaveChangePage = false;
         fill();
     }
 
@@ -578,7 +577,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         }
         mInvalidAttachedComponent.clear();
 
-        // Fill TODO better to avoid make load image when stop
+        // Fill
         int width = getWidth();
         int height = getHeight();
         int widthSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
@@ -659,7 +658,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mAttachedPage.clear();
         mUsedPage.clear();
 
-
         for (int i = 0; i < getComponentCount(); i++) {
             // Update seen
             GalleryPageView page = (GalleryPageView) getComponent(i);
@@ -687,6 +685,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     private void fill() {
+        mRequestFill = false;
+        // Must be in render thread
+        GalleryUtils.assertInRenderThread();
+
         // Disable request layout
         mEnableRequestLayout = false;
 
@@ -731,6 +733,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             // Bind progress view, just setIndeterminate(true);
             progressView.setIndeterminate(true);
         } else if (mMode == Mode.LEFT_TO_RIGHT || mMode == Mode.RIGHT_TO_LEFT) {
+            // TODO better to avoid make load image when stop
             int width = getWidth();
             int start;
             int end;
@@ -772,8 +775,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         }
 
         mEnableRequestLayout = true;
-
-        invalidate();
     }
 
     @Override
@@ -783,6 +784,11 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         invalidate |= mSmoothScaler.calculate(time);
         if (invalidate) {
             invalidate();
+        }
+
+        // mSmoothScroller may do fill too, so check fill request after scroll animator
+        if (mRequestFill) {
+            fill();
         }
 
         super.render(canvas);
