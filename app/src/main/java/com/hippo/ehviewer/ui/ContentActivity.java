@@ -35,6 +35,7 @@ import com.hippo.ehviewer.util.Settings;
 import com.hippo.ehviewer.widget.DrawerLeftPanel;
 import com.hippo.ehviewer.widget.FitStageLayout;
 import com.hippo.scene.Announcer;
+import com.hippo.scene.OffsetCurtain;
 import com.hippo.scene.SceneManager;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.StageLayout;
@@ -71,12 +72,12 @@ public final class ContentActivity extends StageActivity
                     case DRAWER_LIST_HOMEPAGE:
                         announcer = new Announcer();
                         announcer.putExtra(GalleryListScene.KEY_MODE, GalleryListScene.MODE_HOMEPAGE);
-                        startScene(GalleryListScene.class, announcer);
+                        startScene(GalleryListScene.class, announcer, new OffsetCurtain(OffsetCurtain.DIRECTION_BOTTOM));
                         break;
                     case DRAWER_LIST_WHATS_HOT:
                         announcer = new Announcer();
                         announcer.putExtra(GalleryListScene.KEY_MODE, GalleryListScene.MODE_POPULAR);
-                        startScene(GalleryListScene.class, announcer);
+                        startScene(GalleryListScene.class, announcer, new OffsetCurtain(OffsetCurtain.DIRECTION_BOTTOM));
                         break;
                     case DRAWER_LIST_HISTORY:
                         break;
@@ -86,7 +87,7 @@ public final class ContentActivity extends StageActivity
                         break;
                     case DRAWER_LIST_SETTINGS:
                         mDrawerLayout.closeDrawers();
-                        startScene(MainSettingsScene.class);
+                        startScene(MainSettingsScene.class, null, new OffsetCurtain(OffsetCurtain.DIRECTION_BOTTOM));
                         break;
                 }
 

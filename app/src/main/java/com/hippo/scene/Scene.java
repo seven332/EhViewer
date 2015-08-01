@@ -121,11 +121,11 @@ public abstract class Scene {
     }
 
     public void startScene(@NonNull Class sceneClass) {
-        startScene(sceneClass, null, null);
+        startScene(sceneClass, null);
     }
 
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer) {
-        startScene(sceneClass, announcer, null);
+        startScene(sceneClass, announcer, getDefaultCurtain());
     }
 
     public Curtain getDefaultCurtain() {
@@ -134,7 +134,7 @@ public abstract class Scene {
 
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer,
             @Nullable Curtain curtain) {
-        mSceneManager.startScene(sceneClass, announcer, curtain == null ? getDefaultCurtain() : curtain);
+        mSceneManager.startScene(sceneClass, announcer, curtain);
     }
 
     int getState() {
