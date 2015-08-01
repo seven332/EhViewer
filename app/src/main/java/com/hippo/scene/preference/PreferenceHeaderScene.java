@@ -28,7 +28,6 @@ import android.widget.TextView;
 import com.hippo.ehviewer.R;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.AppbarScene;
-import com.hippo.scene.SimpleCurtain;
 import com.hippo.scene.StageActivity;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 
@@ -66,7 +65,7 @@ public class PreferenceHeaderScene extends AppbarScene {
                 if (clazz == null) {
                     return false;
                 } else {
-                    startScene(clazz, null, new SimpleCurtain(SimpleCurtain.DIRECTION_BOTTOM));
+                    startScene(clazz);
                     return true;
                 }
             }

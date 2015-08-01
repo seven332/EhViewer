@@ -34,8 +34,8 @@ public class DownloadSettingsScene extends PreferenceScene implements Preference
     private static final String KEY_IMAGE_DOWNLOAD_LOACTION = "image_download_location";
     private static final String KEY_ARCHIVE_DOWNLOAD_LOACTION = "archive_download_location";
 
-    private static Preference mImagePreference;
-    private static Preference mArchivePreference;
+    private Preference mImagePreference;
+    private Preference mArchivePreference;
 
     @Override
     protected void onCreate(boolean rebirth) {

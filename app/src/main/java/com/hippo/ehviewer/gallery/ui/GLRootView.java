@@ -130,7 +130,9 @@ public class GLRootView extends GLSurfaceView
         // for example CyanogenMod use ro.opengles.surface.rgb565,
         // so just use default EGLConfigChooser.
         // And we do not need depth buffer
-        setEGLConfigChooser(false);
+        // TODO setEGLConfigChooser(8, 8, 8, 8, 0, 0) or setEGLConfigChooser(false)
+        setEGLConfigChooser(8, 8, 8, 8, 0, 0);
+        //setEGLConfigChooser(false);
         setRenderer(this);
         // setFormat is done by SurfaceView in SDK 2.3 and newer.
         //if (ApiHelper.USE_888_PIXEL_FORMAT) {

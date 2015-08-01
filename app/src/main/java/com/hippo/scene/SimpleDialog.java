@@ -110,6 +110,11 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         }
     }
 
+    @Override
+    protected boolean coverCompletely() {
+        return false;
+    }
+
     private void bindDialog() {
         ListView listView = mListView;
 
@@ -190,6 +195,10 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     protected void onGetFitPaddingBottom(int b) {
         mFitPaddingBottom = b;
         mLayout.setFitPaddingBottom(b);
+    }
+
+    public ViewGroup getLayout() {
+        return mLayout;
     }
 
     public CardView getCushion() {

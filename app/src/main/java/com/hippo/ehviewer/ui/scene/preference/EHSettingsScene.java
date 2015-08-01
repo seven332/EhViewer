@@ -23,7 +23,6 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.util.Settings;
-import com.hippo.scene.SimpleCurtain;
 import com.hippo.scene.preference.ListPreference;
 import com.hippo.scene.preference.Preference;
 import com.hippo.scene.preference.PreferenceCategory;
@@ -103,7 +102,7 @@ public final class EHSettingsScene extends PreferenceScene implements Preference
     public boolean onClick(Preference preference) {
         String key = preference.getKey();
         if (Settings.KEY_EXCLUDED_LANGUAGES.equals(key)) {
-            startScene(ExcludedLanguagesScene.class, null, new SimpleCurtain(SimpleCurtain.DIRECTION_BOTTOM));
+            startScene(ExcludedLanguagesScene.class);
             return true;
         } else {
             return false;

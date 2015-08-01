@@ -26,12 +26,10 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
 import com.hippo.yorozuya.AssertUtils;
-import com.hippo.yorozuya.ViewUtils;
 
 /**
  * {@link com.hippo.scene.Scene} is a {@code Activity} of {@link android.app.Activity}.
@@ -68,7 +66,7 @@ public abstract class Scene {
 
     private int mId;
 
-    private boolean mHide;
+    private boolean mHide = false;
 
     public void setSceneManager(SceneManager sceneManager) {
         mSceneManager = sceneManager;
@@ -123,16 +121,20 @@ public abstract class Scene {
     }
 
     public void startScene(@NonNull Class sceneClass) {
-        mSceneManager.startScene(sceneClass, null, null);
+        startScene(sceneClass, null, null);
     }
 
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer) {
-        mSceneManager.startScene(sceneClass, announcer, null);
+        startScene(sceneClass, announcer, null);
+    }
+
+    public Curtain getDefaultCurtain() {
+        return new OffsetCurtain(OffsetCurtain.DIRECTION_BOTTOM);
     }
 
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer,
             @Nullable Curtain curtain) {
-        mSceneManager.startScene(sceneClass, announcer, curtain);
+        mSceneManager.startScene(sceneClass, announcer, curtain == null ? getDefaultCurtain() : curtain);
     }
 
     int getState() {
@@ -148,20 +150,33 @@ public abstract class Scene {
     }
 
     public final void finish() {
-        mSceneManager.finishScene(this);
+        mSceneManager.finishScene(this, false);
+    }
+
+    /**
+     * Tell {@link SceneManager} how to {@link View#setVisibility(int)} when it is not the first scene.
+     * If it covers previous scene completely, {@link SceneManager} will setVisibility(View.INVISIBLE),
+     * otherwise setVisibility(View.VISIBLE)
+     *
+     * @return {@code true} if it covers previous scene completely
+     */
+    protected boolean coverCompletely() {
+        return true;
     }
 
     void setHide(boolean hide) {
         checkSceneView();
-        mHide = hide;
-        if (hide) {
-            mSceneView.setVisibility(View.GONE);
-        } else {
-            mSceneView.setVisibility(View.VISIBLE);
+        if (mHide != hide) {
+            mHide = hide;
+            if (hide) {
+                mSceneView.setVisibility(View.INVISIBLE);
+            } else {
+                mSceneView.setVisibility(View.VISIBLE);
+            }
         }
     }
 
-    boolean getHide() {
+    boolean isHide() {
         return mHide;
     }
 
@@ -197,13 +212,8 @@ public abstract class Scene {
         // Hide it if it is hidden
         if (mHide) {
             mSceneView.setVisibility(View.INVISIBLE);
-            mSceneView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    ViewUtils.removeOnGlobalLayoutListener(mSceneView.getViewTreeObserver(), this);
-                    mSceneView.setVisibility(View.GONE);
-                }
-            });
+        } else {
+            mSceneView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -395,6 +405,10 @@ public abstract class Scene {
                 throw new IllegalStateException("Scene view should only be the child of stage layout");
             }
         }
+    }
+
+    public StageLayout getStageLayout() {
+        return getStageActivity().getStageLayout();
     }
 
     // Add scene view to stage layout

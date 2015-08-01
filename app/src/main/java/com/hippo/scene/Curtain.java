@@ -23,7 +23,7 @@ public abstract class Curtain {
 
     private int mPreviousSceneId;
 
-    void setPreviousScene(@Nullable Scene pScene) {
+    protected void setPreviousScene(@Nullable Scene pScene) {
         if (pScene == null) {
             mPreviousSceneId = -1;
         } else {
@@ -31,17 +31,20 @@ public abstract class Curtain {
         }
     }
 
-    boolean isPreviousScene(@Nullable Scene scene) {
+    protected boolean isPreviousScene(@Nullable Scene scene) {
         return scene != null && scene.getId() == mPreviousSceneId;
     }
 
     /**
      * @return true if can NOT still run when previous scene changed
      */
-    protected boolean specifyPreviousScene() {
+    protected boolean needSpecifyPreviousScene() {
         return true;
     }
 
+    /**
+     * Scene rebirth
+     */
     protected void onRebirth() {
     }
 
@@ -71,13 +74,5 @@ public abstract class Curtain {
 
     protected void dispatchCloseFinished(@NonNull Scene enter, @NonNull Scene exit) {
         exit.closeFinished();
-    }
-
-    protected void hideSceneOnOpen(@NonNull Scene exit) {
-        exit.setHide(true);
-    }
-
-    protected void showSceneOnClose(@NonNull Scene enter) {
-        enter.setHide(false);
     }
 }

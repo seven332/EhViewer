@@ -116,10 +116,14 @@ public class SceneManager {
         }
     }
 
-    private void checkPrepareToDie(Scene scene) {
+    /// Ture is finishScene is called
+    private boolean checkPrepareToDie(Scene scene) {
         if (mPrepareToDieSceneSet.contains(scene)) {
             mPrepareToDieSceneSet.remove(scene);
-            finishScene(scene);
+            finishScene(scene, true);
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -175,6 +179,20 @@ public class SceneManager {
         startScene(dialog, curtain);
     }
 
+    private void updateSceneVisibility() {
+        int pointer = mSceneStack.size() - 1;
+        for (; pointer >= 0; pointer--) {
+            Scene scene = mSceneStack.get(pointer);
+            scene.setHide(false);
+            if (scene.coverCompletely()) {
+                break;
+            }
+        }
+        for (pointer--; pointer >= 0; pointer--) {
+            mSceneStack.get(pointer).setHide(true);
+        }
+    }
+
     private void startScene(Scene scene, Curtain curtain) {
         Scene previousState = getTopScene();
         mSceneStack.push(scene);
@@ -199,13 +217,18 @@ public class SceneManager {
             scene.setFitPaddingBottom(fitPaddingBottom);
         }
 
-        if (curtain != null && previousState != null) {
-            scene.setState(Scene.SCENE_STATE_OPEN);
-            curtain.open(scene, previousState);
-            // Set state run by curtain
-        } else {
-            scene.setState(Scene.SCENE_STATE_RUN);
-            checkPrepareToDie(scene);
+        scene.setState(Scene.SCENE_STATE_RUN);
+        if (!checkPrepareToDie(scene)) {
+            // No finish called. Go on
+            if (curtain != null && previousState != null) {
+                scene.setState(Scene.SCENE_STATE_OPEN);
+                curtain.open(scene, previousState);
+            } else {
+                // No curtain, set visiblity for previousState here
+                if (previousState != null) {
+                    updateSceneVisibility();
+                }
+            }
         }
     }
 
@@ -228,7 +251,7 @@ public class SceneManager {
         }
     }
 
-    void finishScene(@NonNull Scene scene) {
+    void finishScene(@NonNull Scene scene, boolean noAnimation) {
         checkLoop();
 
         int index = getSceneIndex(scene);
@@ -248,7 +271,7 @@ public class SceneManager {
 
             // TODO If the cene is under a dialog, the previous may not show
             if (index != mSceneStack.size() - 1 || index == 0) {
-                // It is the last scene, just finish the activity
+                // It is not the first or it is the last scene
                 mSceneStack.remove(index);
                 scene.destroy(true);
                 scene.setState(Scene.SCENE_STATE_DESTROY);
@@ -256,7 +279,11 @@ public class SceneManager {
                 scene.setState(Scene.SCENE_STATE_DIE);
 
                 if (index == 0) {
+                    // It is the last scene, just finish the activity
                     getStageActivity().finish();
+                } else {
+                    // Update the scene under target scene visibility
+                    updateSceneVisibility();
                 }
             } else {
                 mSceneStack.remove(index);
@@ -267,9 +294,12 @@ public class SceneManager {
 
                 scene.destroy(true);
 
+                // Update scene visibility
+                updateSceneVisibility();
+
                 Curtain curtain = scene.getCurtain();
-                if (curtain != null &&
-                        (!curtain.specifyPreviousScene() || curtain.isPreviousScene(previousScene))) {
+                if (!noAnimation && curtain != null &&
+                        (!curtain.needSpecifyPreviousScene() || curtain.isPreviousScene(previousScene))) {
                     scene.setState(Scene.SCENE_STATE_CLOSE);
                     curtain.close(previousScene, scene);
                     // add the scene to legacy set
@@ -279,6 +309,8 @@ public class SceneManager {
                     scene.setState(Scene.SCENE_STATE_DESTROY);
                     scene.die(false);
                     scene.setState(Scene.SCENE_STATE_DIE);
+
+                    previousScene.setHide(false);
                 }
             }
         } else {
@@ -296,6 +328,7 @@ public class SceneManager {
         scene.open();
         scene.setState(Scene.SCENE_STATE_RUN);
         checkPrepareToDie(scene);
+        updateSceneVisibility();
     }
 
     void closeScene(Scene scene) {

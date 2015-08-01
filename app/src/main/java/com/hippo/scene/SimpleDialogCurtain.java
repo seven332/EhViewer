@@ -22,20 +22,22 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.view.ViewTreeObserver;
 
 import com.hippo.animation.ArgbEvaluator;
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.util.AnimationUtils;
 import com.hippo.yorozuya.AssertUtils;
-import com.hippo.yorozuya.ViewUtils;
+import com.hippo.yorozuya.Say;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class SimpleDialogCurtain extends Curtain {
 
+    private static final String TAG = SimpleDialogCurtain.class.getSimpleName();
+
     private static long ANIMATE_TIME = 300L;
+    private static float SCALE_PERCENT = 0.75f;
 
     private int mStartX;
     private int mStartY;
@@ -57,14 +59,22 @@ public class SimpleDialogCurtain extends Curtain {
     }
 
     @Override
-    protected void onRebirth() {
-        mStartX = 0;
-        mStartY = 0;
+    protected boolean needSpecifyPreviousScene() {
+        return false;
     }
 
     @Override
     public void open(@NonNull final Scene enter, @NonNull final Scene exit) {
         AssertUtils.assertInstanceof("SimpleDialogCurtain should only use for SimpleDialog.", enter, SimpleDialog.class);
+
+        // Check stage layout isLayoutRequested
+        final StageLayout stageLayout = enter.getStageLayout();
+        if (!stageLayout.isLayoutRequested()) {
+            Say.w(TAG, "WTF? stageLayout.isLayoutRequested() == false");
+            dispatchOpenFinished(enter, exit);
+            return;
+        }
+
         final SimpleDialog enterDialog = (SimpleDialog) enter;
 
         final Set<Animator> animatorCollection = new HashSet<>();
@@ -87,13 +97,10 @@ public class SimpleDialogCurtain extends Curtain {
         cushion.setVisibility(View.INVISIBLE);
         frame.setVisibility(View.INVISIBLE);
 
-        // TODO addOnGlobalLayoutListener is not reliable
-        // TODO use isLayoutRequested
-        // TODO if isLayoutRequested return false, try to use StageView Size
-        frame.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        stageLayout.addOnLayoutListener(new StageLayout.OnLayoutListener() {
             @Override
-            public void onGlobalLayout() {
-                ViewUtils.removeOnGlobalLayoutListener(frame.getViewTreeObserver(), this);
+            public void onLayout(View view) {
+                stageLayout.removeOnLayoutListener(this);
 
                 float floatStartX;
                 float floatStartY;
@@ -141,6 +148,7 @@ public class SimpleDialogCurtain extends Curtain {
                         cushion.setVisibility(View.VISIBLE);
                         frame.setVisibility(View.VISIBLE);
                     }
+
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         dispatchOpenFinished(enter, exit);
@@ -168,44 +176,48 @@ public class SimpleDialogCurtain extends Curtain {
         animatorCollection.add(colorAnim);
         colorAnim.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
 
+        final View layout = exitDialog.getLayout();
         final View cushion = exitDialog.getCushion();
         final View frame = exitDialog.getFrame();
         AssertUtils.assertNotNull("Cushion view must not be null.", cushion);
         AssertUtils.assertNotNull("Frame view must not be null.", frame);
 
-        float floatEndX;
-        float floatEndY;
-        int intEndX;
-        int intEndY;
-        if (mStartX == 0 && mStartY == 0) {
-            int[] center = new int[2];
-            exitDialog.getCenterLocation(center);
-            floatEndX = center[0];
-            floatEndY = center[1];
-            intEndX = center[0];
-            intEndY = center[1];
+        // Check stage layout isLayoutRequested
+        final StageLayout stageLayout = enter.getStageLayout();
+        if (stageLayout.isLayoutRequested()) {
+            stageLayout.addOnLayoutListener(new StageLayout.OnLayoutListener() {
+                @Override
+                public void onLayout(View view) {
+                    onClose(enter, exitDialog, layout, cushion, frame, animatorCollection);
+                }
+            });
         } else {
-            floatEndX = mStartX;
-            floatEndY = mStartY;
-            intEndX = mStartX;
-            intEndY = mStartY;
+            onClose(enter, exitDialog, layout, cushion, frame, animatorCollection);
         }
+    }
 
-        cushion.setPivotX(0f);
-        cushion.setPivotY(0f);
-        PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", 0f);
-        PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", 0f);
-        PropertyValuesHolder xPvh = PropertyValuesHolder.ofFloat("x", floatEndX);
-        PropertyValuesHolder yPvh = PropertyValuesHolder.ofFloat("y", floatEndY);
-        ObjectAnimator animCushion = ObjectAnimator.ofPropertyValuesHolder(cushion, scaleXPvh, scaleYPvh, xPvh, yPvh);
+    private void onClose(final Scene enter, final SimpleDialog exitDialog, View layout, View cushion, View frame, Set<Animator> animatorCollection) {
+
+        layout.setAlpha(1f);
+        ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(layout, "alpha", 1f, 0f);
+        alphaAnim.setDuration(ANIMATE_TIME);
+        animatorCollection.add(alphaAnim);
+
+        cushion.setPivotX(cushion.getWidth() / 2);
+        cushion.setPivotY(cushion.getHeight() / 2);
+        PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", 1f, SCALE_PERCENT);
+        PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", 1f, SCALE_PERCENT);
+        ObjectAnimator animCushion = ObjectAnimator.ofPropertyValuesHolder(cushion, scaleXPvh, scaleYPvh);
         animCushion.setDuration(ANIMATE_TIME);
         animCushion.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
         animatorCollection.add(animCushion);
 
-        PropertyValuesHolder leftPvh = PropertyValuesHolder.ofInt("drawLeft", intEndX);
-        PropertyValuesHolder topPvh = PropertyValuesHolder.ofInt("drawTop", intEndY);
-        PropertyValuesHolder rightPvh = PropertyValuesHolder.ofInt("drawRight", intEndX);
-        PropertyValuesHolder bottomPvh = PropertyValuesHolder.ofInt("drawBottom", intEndY);
+        int dx = (int) (frame.getWidth() * (1 - SCALE_PERCENT) / 2);
+        int dy = (int) (frame.getHeight() * (1 - SCALE_PERCENT) / 2);
+        PropertyValuesHolder leftPvh = PropertyValuesHolder.ofInt("drawLeft", frame.getLeft() + dx);
+        PropertyValuesHolder topPvh = PropertyValuesHolder.ofInt("drawTop", frame.getTop() + dy);
+        PropertyValuesHolder rightPvh = PropertyValuesHolder.ofInt("drawRight", frame.getRight() - dx);
+        PropertyValuesHolder bottomPvh = PropertyValuesHolder.ofInt("drawBottom", frame.getBottom() - dy);
         ObjectAnimator animFrame = ObjectAnimator.ofPropertyValuesHolder(frame, leftPvh, topPvh, rightPvh, bottomPvh);
         animFrame.setDuration(ANIMATE_TIME);
         animFrame.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
@@ -216,7 +228,7 @@ public class SimpleDialogCurtain extends Curtain {
         mAnimatorSet.addListener(new SimpleAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                dispatchCloseFinished(enter, exit);
+                dispatchCloseFinished(enter, exitDialog);
                 mAnimatorSet = null;
             }
         });

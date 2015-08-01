@@ -242,7 +242,7 @@ public final class Settings {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return dir != null ? dir : UniFile.fromFile(AppConfig.getDownloadDir());
+        return dir != null ? dir : UniFile.fromFile(AppConfig.getArchiveDir());
     }
 
     public static void putArchiveDownloadLocation(UniFile location) {

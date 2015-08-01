@@ -6,12 +6,10 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.view.ViewTreeObserver;
 
 import com.hippo.animation.DurationInterpolator;
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.yorozuya.Say;
-import com.hippo.yorozuya.ViewUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +32,11 @@ public class RippleCurtain extends Curtain {
     }
 
     @Override
+    protected boolean needSpecifyPreviousScene() {
+        return false;
+    }
+
+    @Override
     protected void onRebirth() {
         mStartX = 0;
         mStartY = 0;
@@ -41,16 +44,24 @@ public class RippleCurtain extends Curtain {
 
     @Override
     public void open(@NonNull final Scene enter, @NonNull final Scene exit) {
+        // Check stage layout isLayoutRequested
+        final StageLayout stageLayout = enter.getStageLayout();
+        if (!stageLayout.isLayoutRequested()) {
+            Say.w(TAG, "WTF? stageLayout.isLayoutRequested() == false");
+            dispatchOpenFinished(enter, exit);
+            return;
+        }
+
         final Set<Animator> animatorCollection = new HashSet<>();
 
         final SceneView enterView = enter.getSceneView();
         enterView.setStartPoint(mStartX, mStartY);
         enterView.setVisibility(View.INVISIBLE);
 
-        enterView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        stageLayout.addOnLayoutListener(new StageLayout.OnLayoutListener() {
             @Override
-            public void onGlobalLayout() {
-                ViewUtils.removeOnGlobalLayoutListener(enterView.getViewTreeObserver(), this);
+            public void onLayout(View view) {
+                stageLayout.removeOnLayoutListener(this);
 
                 final View sceneContentView = enter.getSceneView().getChildAt(0);
                 if (sceneContentView != null) {
@@ -85,7 +96,6 @@ public class RippleCurtain extends Curtain {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         dispatchOpenFinished(enter, exit);
-                        hideSceneOnOpen(exit);
                         mAnimatorSet = null;
                     }
                 });
@@ -96,8 +106,22 @@ public class RippleCurtain extends Curtain {
 
     @Override
     public void close(@NonNull final Scene enter, @NonNull final Scene exit) {
-        showSceneOnClose(enter);
+        // Check stage layout isLayoutRequested
+        final StageLayout stageLayout = enter.getStageLayout();
+        if (stageLayout.isLayoutRequested()) {
+            stageLayout.addOnLayoutListener(new StageLayout.OnLayoutListener() {
+                @Override
+                public void onLayout(View view) {
+                    stageLayout.removeOnLayoutListener(this);
+                    onClose(enter, exit);
+                }
+            });
+        } else {
+            onClose(enter, exit);
+        }
+    }
 
+    private void onClose(final Scene enter, final Scene exit) {
         final Set<Animator> animatorCollection = new HashSet<>();
 
         final SceneView exitView = exit.getSceneView();

@@ -36,7 +36,6 @@ import com.hippo.ehviewer.widget.DrawerLeftPanel;
 import com.hippo.ehviewer.widget.FitStageLayout;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneManager;
-import com.hippo.scene.SimpleCurtain;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.StageLayout;
 import com.hippo.vectorold.content.VectorContext;
@@ -87,7 +86,7 @@ public final class ContentActivity extends StageActivity
                         break;
                     case DRAWER_LIST_SETTINGS:
                         mDrawerLayout.closeDrawers();
-                        startScene(MainSettingsScene.class, null, new SimpleCurtain(SimpleCurtain.DIRECTION_BOTTOM));
+                        startScene(MainSettingsScene.class);
                         break;
                 }
 
@@ -174,41 +173,6 @@ public final class ContentActivity extends StageActivity
         if (savedInstanceState == null) {
             startScene(GalleryListScene.class, null);
         }
-
-        /*
-
-        try {
-
-            BitmapPool bitmapPool = new BitmapPool();
-            ByteArrayPool byteArrayPool = new ByteArrayPool();
-            GifBitmapProvider gifBitmapProvider = new GifBitmapProvider(bitmapPool, byteArrayPool);
-
-
-            File file = new File(Environment.getExternalStorageDirectory(), "00000001.gif");
-            UniRandomReadFile randomReadFile = UniRandomReadFile.fromFile(file);
-            GifHeader gifHeader = new GifHeaderParser().setData(randomReadFile).parseHeader();
-            if (gifHeader.getStatus() == GifDecoder.STATUS_OK) {
-                GifDecoder gifDecoder = new GifDecoder(gifBitmapProvider, gifHeader, randomReadFile);
-
-
-                for (int i = 0, n = gifDecoder.getFrameCount(); i < n * 2; i++) {
-                    gifDecoder.advance();
-                    gifDecoder.getNextFrame().compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(new File(Environment.getExternalStorageDirectory(), String.format("%08d", i) + ".png")));
-                }
-
-
-
-            }
-
-
-
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        */
-
-
     }
 
     @Override
@@ -267,7 +231,7 @@ public final class ContentActivity extends StageActivity
     @Override
     public void onClickSignIn() {
         mDrawerLayout.closeDrawers();
-        startScene(SignInScene.class, null, new SimpleCurtain(SimpleCurtain.DIRECTION_BOTTOM));
+        startScene(SignInScene.class);
     }
 
     @Override

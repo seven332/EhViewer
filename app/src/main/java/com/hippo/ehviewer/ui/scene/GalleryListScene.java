@@ -66,7 +66,7 @@ import com.hippo.scene.Announcer;
 import com.hippo.scene.Curtain;
 import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
-import com.hippo.scene.TransitionCurtain;
+import com.hippo.scene.ElementsSharedCurtain;
 import com.hippo.util.AnimationUtils;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.FloatingActionButton;
@@ -752,7 +752,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         announcer.setAction(GalleryDetailScene.ACTION_GALLERY_INFO);
         announcer.putExtra(GalleryDetailScene.KEY_GALLERY_INFO, gi);
 
-        Curtain curtain = new TransitionCurtain(new TransitonHelper(position));
+        Curtain curtain = new ElementsSharedCurtain(new TransitonHelper(position));
 
         startScene(GalleryDetailScene.class, announcer, curtain);
 
@@ -766,7 +766,7 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         }
     }
 
-    private class TransitonHelper implements TransitionCurtain.ViewPairSet {
+    private class TransitonHelper implements ElementsSharedCurtain.ViewPairSet {
 
         private int mPosition;
 

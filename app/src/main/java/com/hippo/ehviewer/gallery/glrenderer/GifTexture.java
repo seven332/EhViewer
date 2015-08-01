@@ -22,8 +22,7 @@ import android.util.Log;
 
 import com.hippo.ehviewer.gallery.gifdecoder.GifDecoder;
 
-import java.util.concurrent.locks.ReentrantLock;
-
+// TODO read file to memory or do jni
 public class GifTexture extends TiledTexture {
 
     private static final String TAG = GifTexture.class.getSimpleName();
@@ -33,7 +32,7 @@ public class GifTexture extends TiledTexture {
 
     private GifDecoder mGifDecoder;
     private boolean mRunning = false;
-    private final ReentrantLock mLock = new ReentrantLock();
+    private volatile boolean mDecoding = false;
 
     private GifDecodeTask mGifDecodeTask;
 
@@ -61,7 +60,7 @@ public class GifTexture extends TiledTexture {
             GifDecoder gifDecoder = mGifDecoder;
 
             while (mRunning && sUploader != null) {
-                mLock.lock();
+                mDecoding = true;
 
                 gifDecoder.advance();
                 Bitmap bitmap = gifDecoder.getNextFrame();
@@ -83,9 +82,14 @@ public class GifTexture extends TiledTexture {
                 if (mLastTime != 0) {
                     delay -= time - mLastTime;
                 }
+
+
+                //Say.d(TAG, "time - mLastTime = " + (time - mLastTime));
+                //Say.d(TAG, "gifDecoder.getNextDelay() = " + (gifDecoder.getNextDelay()));
+
                 mLastTime = time;
 
-                mLock.unlock();
+                mDecoding = false;
 
                 if (delay > 5) {
                     try {
@@ -124,7 +128,7 @@ public class GifTexture extends TiledTexture {
             mRunning = false;
             mGifDecodeTask = null;
 
-            if (!mLock.isLocked()) {
+            if (!mDecoding) {
                 mGifDecoder.resetFrameIndex();
                 mGifDecoder.advance();
                 Bitmap bitmap = mGifDecoder.getNextFrame();
@@ -142,7 +146,7 @@ public class GifTexture extends TiledTexture {
     public void recycle() {
         mRunning = false;
 
-        if (mLock.isLocked()) {
+        if (mDecoding) {
             mGifDecodeTask.clearByMyself();
         } else {
             mGifDecoder.clear();

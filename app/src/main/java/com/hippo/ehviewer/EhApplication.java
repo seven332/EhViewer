@@ -81,6 +81,12 @@ public class EhApplication extends SceneApplication {
             // TODO Can't create spider info dir
         }
         GallerySpider.init(mEhHttpClient, spiderInfoDir);
+
+        Settings.getImageDownloadLocation().ensureDir();
+        Settings.getArchiveDownloadLocation().ensureDir();
+
+
+        Settings.getImageDownloadLocation().listFiles();
     }
 
     private int getMemoryCacheMaxSize() {

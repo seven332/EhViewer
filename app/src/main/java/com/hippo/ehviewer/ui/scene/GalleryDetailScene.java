@@ -56,9 +56,11 @@ import com.hippo.ehviewer.widget.RatingView;
 import com.hippo.miscellaneous.StartActivityHelper;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
+import com.hippo.scene.OffsetCurtain;
 import com.hippo.scene.RippleCurtain;
 import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
+import com.hippo.scene.UnionCurtain;
 import com.hippo.util.URLImageGetter;
 import com.hippo.widget.AccurateClick;
 import com.hippo.widget.AutoWrapLayout;
@@ -136,6 +138,48 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         client.execute(request);
     }
 
+    @Override
+    protected void onCreate(boolean rebirth) {
+        super.onCreate(rebirth);
+        setContentView(R.layout.scene_gallery_detail);
+
+        mDetailFrameLayout = (FrameLayout) findViewById(R.id.detail_frame_layout);
+
+        mHeader = (ViewGroup) findViewById(R.id.header);
+        mThumb = (LoadImageView) mHeader.findViewById(R.id.thumb);
+        mTitle = (TextView) mHeader.findViewById(R.id.title);
+        mUploader = (TextView) mHeader.findViewById(R.id.uploader);
+        mCategory = (TextView) mHeader.findViewById(R.id.category);
+
+        mActionCard = (ViewGroup) findViewById(R.id.action_card);
+        mRead = mActionCard.findViewById(R.id.read);
+        mDownload = mActionCard.findViewById(R.id.download);
+
+        mContent = (ViewGroup) findViewById(R.id.content);
+        mInfo = (ViewGroup) mContent.findViewById(R.id.info);
+        mLanguage = (TextView) mInfo.findViewById(R.id.language);
+        mPages = (TextView) mInfo.findViewById(R.id.pages);
+        mSize = (TextView) mInfo.findViewById(R.id.size);
+        mPosted = (TextView) mInfo.findViewById(R.id.posted);
+        mResize = (TextView) mInfo.findViewById(R.id.resize);
+        mFavoredTimes = (TextView) mInfo.findViewById(R.id.favoredTimes);
+        mRatingText = (TextSwitcher) mContent.findViewById(R.id.rating_text);
+        mRating = (RatingView) mContent.findViewById(R.id.rating);
+        mFavorite = (TextView) mContent.findViewById(R.id.favorite);
+        mTorrent = (TextView) mContent.findViewById(R.id.torrent);
+        mShare = (TextView) mContent.findViewById(R.id.share);
+        mRate = (TextView) mContent.findViewById(R.id.rate);
+        mTag = (LinearLayout) mContent.findViewById(R.id.tag);
+        mNoTags = (TextView) mTag.findViewById(no_tags);
+        mComment = (LinearLayout) mContent.findViewById(R.id.comment);
+        mCommentMore = (TextView) mContent.findViewById(R.id.comment_more);
+        mPreviewLayout = (PreviewLayout) mContent.findViewById(R.id.preview);
+
+        mProgressBar = findViewById(R.id.progress_bar);
+
+        mViewTransition = new ViewTransition(mContent, mProgressBar);
+    }
+
     private void handleAnnouncer(Announcer announcer) {
         if (announcer == null) {
             Say.e(TAG, "No announcer in GalleryDetailScene, finish itself");
@@ -211,53 +255,21 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         } else if (ACTION_URL.equals(action)) {
 
         } else {
-            Say.e(TAG, "Unkonwn action " + action);
+            Say.e(TAG, "GalleryDetailScene: Unkonwn action " + action);
             finish();
         }
     }
 
     @Override
-    protected void onCreate(boolean rebirth) {
-        super.onCreate(rebirth);
-        setContentView(R.layout.scene_gallery_detail);
-
-        mDetailFrameLayout = (FrameLayout) findViewById(R.id.detail_frame_layout);
-
-        mHeader = (ViewGroup) findViewById(R.id.header);
-        mThumb = (LoadImageView) mHeader.findViewById(R.id.thumb);
-        mTitle = (TextView) mHeader.findViewById(R.id.title);
-        mUploader = (TextView) mHeader.findViewById(R.id.uploader);
-        mCategory = (TextView) mHeader.findViewById(R.id.category);
-
-        mActionCard = (ViewGroup) findViewById(R.id.action_card);
-        mRead = mActionCard.findViewById(R.id.read);
-        mDownload = mActionCard.findViewById(R.id.download);
-
-        mContent = (ViewGroup) findViewById(R.id.content);
-        mInfo = (ViewGroup) mContent.findViewById(R.id.info);
-        mLanguage = (TextView) mInfo.findViewById(R.id.language);
-        mPages = (TextView) mInfo.findViewById(R.id.pages);
-        mSize = (TextView) mInfo.findViewById(R.id.size);
-        mPosted = (TextView) mInfo.findViewById(R.id.posted);
-        mResize = (TextView) mInfo.findViewById(R.id.resize);
-        mFavoredTimes = (TextView) mInfo.findViewById(R.id.favoredTimes);
-        mRatingText = (TextSwitcher) mContent.findViewById(R.id.rating_text);
-        mRating = (RatingView) mContent.findViewById(R.id.rating);
-        mFavorite = (TextView) mContent.findViewById(R.id.favorite);
-        mTorrent = (TextView) mContent.findViewById(R.id.torrent);
-        mShare = (TextView) mContent.findViewById(R.id.share);
-        mRate = (TextView) mContent.findViewById(R.id.rate);
-        mTag = (LinearLayout) mContent.findViewById(R.id.tag);
-        mNoTags = (TextView) mTag.findViewById(no_tags);
-        mComment = (LinearLayout) mContent.findViewById(R.id.comment);
-        mCommentMore = (TextView) mContent.findViewById(R.id.comment_more);
-        mPreviewLayout = (PreviewLayout) mContent.findViewById(R.id.preview);
-
-        mProgressBar = findViewById(R.id.progress_bar);
-
-        mViewTransition = new ViewTransition(mContent, mProgressBar);
+    protected void onBind() {
+        super.onBind();
 
         handleAnnouncer(getAnnouncer());
+    }
+
+    @Override
+    protected void onRestore() {
+        super.onRestore();
     }
 
     @Override
@@ -305,14 +317,16 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
             Announcer announcer = new Announcer();
             announcer.putExtra(InfoScene.KEY_INFO, mGalleryDetail);
             startScene(InfoScene.class, announcer,
-                    new RippleCurtain((int) x + position[0], (int) y + position[1]));
+                    new UnionCurtain(new RippleCurtain((int) x + position[0], (int) y + position[1]),
+                            new OffsetCurtain(OffsetCurtain.DIRECTION_BOTTOM)));
         } else if (v == mComment) {
             int[] position = new int[2];
             ViewUtils.getLocationInAncestor(mComment, position, getSceneView());
             Announcer announcer = new Announcer();
             announcer.putExtra(CommentScene.KEY_COMMENTS, mGalleryDetail.comments);
             startScene(CommentScene.class, announcer,
-                    new RippleCurtain((int) x + position[0], (int) y + position[1]));
+                    new UnionCurtain(new RippleCurtain((int) x + position[0], (int) y + position[1]),
+                            new OffsetCurtain(OffsetCurtain.DIRECTION_BOTTOM)));
         }
     }
 

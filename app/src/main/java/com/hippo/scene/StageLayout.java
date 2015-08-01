@@ -21,9 +21,16 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.SparseArray;
+import android.view.View;
 import android.widget.FrameLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class StageLayout extends FrameLayout {
+
+    private List<OnLayoutListener> mOnLayoutListeners = new ArrayList<>(3);
+    private List<OnLayoutListener> mOnLayoutListenersCopy = new ArrayList<>(3);
 
     public StageLayout(Context context) {
         super(context);
@@ -45,5 +52,32 @@ public class StageLayout extends FrameLayout {
     @Override
     protected void dispatchRestoreInstanceState(@NonNull SparseArray<Parcelable> container) {
         // Do nothing
+    }
+
+    public void addOnLayoutListener(OnLayoutListener layoutListener) {
+        mOnLayoutListeners.add(layoutListener);
+    }
+
+    public void removeOnLayoutListener(OnLayoutListener layoutListener) {
+        mOnLayoutListeners.remove(layoutListener);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t,
+                            int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+
+        mOnLayoutListenersCopy.clear();
+        for (int i = 0, n = mOnLayoutListeners.size(); i < n; i++) {
+            mOnLayoutListenersCopy.add(mOnLayoutListeners.get(i));
+        }
+        for (OnLayoutListener listener : mOnLayoutListenersCopy) {
+            listener.onLayout(this);
+        }
+    }
+
+
+    public interface OnLayoutListener {
+        void onLayout(View view);
     }
 }
