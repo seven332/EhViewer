@@ -192,8 +192,12 @@ public class GLES11Canvas implements GLCanvas {
     }
 
     @Override
-    public void drawArc(float x, float y, float width, float height,
-            float startAngle, float sweepAngle, GLPaint paint) {
+    public void drawOval(float cx, float cy, float radiusX, float radiusY, GLPaint paint) {
+        // TODO
+    }
+
+    @Override
+    public void drawArc(float cx, float cy, float radiusX, float radiusY, float sweepAngle, GLPaint paint) {
         // TODO
     }
 
@@ -229,6 +233,16 @@ public class GLES11Canvas implements GLCanvas {
 
         restoreTransform();
         mCountFillRect++;
+    }
+
+    @Override
+    public void fillOval(float x, float y, float width, float height, int color) {
+        // TODO
+    }
+
+    @Override
+    public void fillSector(float cx, float cy, float radiusX, float radiusY, float sweepAngle, int color) {
+        // TODO
     }
 
     @Override

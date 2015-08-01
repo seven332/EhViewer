@@ -86,12 +86,23 @@ public interface GLCanvas {
     // (Both end points are included).
     void drawRect(float x1, float y1, float x2, float y2, GLPaint paint);
 
+    // Draws a oval using the specified paint for (cx, cy, radiusX, radiusY)
+    // (Both end points are included).
+    void drawOval(float cx, float cy, float radiusX, float radiusY,
+            GLPaint paint);
+
     // Draw a arc inside a rect
-    void drawArc(float x, float y, float width, float height, float startAngle,
+    void drawArc(float cx, float cy, float radiusX, float radiusY,
             float sweepAngle, GLPaint paint);
 
     // Fills the specified rectangle with the specified color.
     void fillRect(float x, float y, float width, float height, int color);
+
+    // Fills the specified oval with the specified color.
+    void fillOval(float cx, float cy, float radiusX, float radiusY, int color);
+
+    // Fills the specified sector with the specified color.
+    void fillSector(float cx, float cy, float radiusX, float radiusY, float sweepAngle, int color);
 
     // Draws a texture to the specified rectangle.
     void drawTexture(BasicTexture texture, int x, int y, int width, int height);

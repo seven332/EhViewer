@@ -23,10 +23,10 @@ public class ProgressView extends GLView {
 
     private GLPaint mGLPaint;
 
-    private float mItemX;
-    private float mItemY;
-    private float mItemWidth;
-    private float mItemHeight;
+    private float mCx;
+    private float mCy;
+    private float mRadiusX;
+    private float mRadiusY;
 
     private float mStartTrim = 0.0f;
     private float mEndTrim = 0.0f;
@@ -40,6 +40,7 @@ public class ProgressView extends GLView {
     public ProgressView() {
         mGLPaint = new GLPaint();
         mGLPaint.setColor(Color.WHITE);
+        mGLPaint.setBackgroundColor(GalleryView.BACKGROUND_COLOR);
         mAnimations = new ArrayList<>();
 
         setupAnimations();
@@ -114,10 +115,10 @@ public class ProgressView extends GLView {
         int width = right - left;
         int height = bottom - top;
         mGLPaint.setLineWidth(Math.min(width, height) / 12.0f);
-        mItemX = width / 48.0f * 5.0f;
-        mItemY = height / 48.0f * 5.0f;
-        mItemWidth = width / 48.0f * 38.0f;
-        mItemHeight = height / 48.0f * 38.0f;
+        mCx = width / 2;
+        mCy = height / 2;
+        mRadiusX = width / 48.0f * 19.0f;
+        mRadiusY = height / 48.0f * 19.0f;
     }
 
     public void setColor(int color) {
@@ -143,10 +144,10 @@ public class ProgressView extends GLView {
 
     public void setProgress(float progress) {
         if (!mIndeterminate) {
-            mStartTrim = -0.25f;
-            mEndTrim = progress - 0.25f;
+            mStartTrim = 0;
+            mEndTrim = progress;
             mTrimRotation = 0.0f;
-            mCanvasRotation = 0.0f;
+            mCanvasRotation = -90f;
             invalidate();
         }
     }
@@ -155,32 +156,35 @@ public class ProgressView extends GLView {
     protected void onRender(GLCanvas canvas) {
         update();
 
-        canvas.save();
-
         int width = getWidth();
         int height = getHeight();
         int cx = width / 2;
         int cy = height / 2;
 
+        float startAngle = (mStartTrim + mTrimRotation) * 360.0f;
+        float endAngle = (mEndTrim + mTrimRotation) * 360.0f;
+        float sweepAngle = endAngle - startAngle;
+        if (mIndeterminate) {
+            float diameter = Math.min(mRadiusX, mRadiusY) * 2;
+            float minAngle = Math.max((float) (360.0D / (diameter * 3.141592653589793D)), 3f);
+            if ((sweepAngle < minAngle) && (sweepAngle > -minAngle)) {
+                float symbol = Math.signum(sweepAngle);
+                sweepAngle = (Math.abs(symbol) == 1f ? symbol : 1f) * minAngle;
+            }
+        }
+
+        canvas.save();
+
+        float rotation = MathUtils.positiveModulo(mCanvasRotation + startAngle, 360);
         canvas.translate(cx, cy);
-        canvas.rotate(mCanvasRotation, 0, 0, 1);
-        if (mCanvasRotation % 180 != 0) {
+        canvas.rotate(rotation, 0, 0, 1);
+        if (rotation % 180 != 0) {
             canvas.translate(-cy, -cx);
         } else {
             canvas.translate(-cx, -cy);
         }
 
-        float startAngle = (mStartTrim + mTrimRotation) * 360.0f;
-        float endAngle = (mEndTrim + mTrimRotation) * 360.0f;
-        float sweepAngle = endAngle - startAngle;
-        if (mIndeterminate) {
-            float diameter = Math.min(mItemWidth, mItemHeight);
-            float minAngle = (float) (360.0D / (diameter * 3.141592653589793D / 4));
-            if ((sweepAngle < minAngle) && (sweepAngle > -minAngle)) {
-                sweepAngle = Math.signum(sweepAngle) * minAngle;
-            }
-        }
-        canvas.drawArc(mItemX, mItemY, mItemWidth, mItemHeight, startAngle, sweepAngle, mGLPaint);
+        canvas.drawArc(mCx, mCy, mRadiusX, mRadiusY, sweepAngle, mGLPaint);
 
         canvas.restore();
     }

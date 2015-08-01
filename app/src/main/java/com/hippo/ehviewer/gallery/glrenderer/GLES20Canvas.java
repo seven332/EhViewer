@@ -49,7 +49,8 @@ public class GLES20Canvas implements GLCanvas {
     private static final int OFFSET_FILL_RECT = 0;
     private static final int OFFSET_DRAW_LINE = OFFSET_FILL_RECT + COUNT_FILL_VERTEX;
     private static final int OFFSET_DRAW_RECT = OFFSET_DRAW_LINE + COUNT_LINE_VERTEX;
-    private static final int OFFSET_DRAW_CIRCLE = OFFSET_DRAW_RECT + COUNT_RECT_VERTEX;
+    private static final int OFFSET_FILL_CIRCLE = OFFSET_DRAW_RECT + COUNT_RECT_VERTEX;
+    private static final int OFFSET_DRAW_CIRCLE = OFFSET_FILL_CIRCLE + 1;
     private static final int OFFSET_LAST = OFFSET_DRAW_CIRCLE + COUNT_CIRCLE_VERTEX + 1;
 
     private static final float[] BOX_COORDINATES = new float[OFFSET_LAST * 2];
@@ -65,7 +66,8 @@ public class GLES20Canvas implements GLCanvas {
                 0, 0, // Draw rectangle outline
                 0, 1,
                 1, 1,
-                1, 0
+                1, 0,
+                0.5f, 0.5f // Fill circle
         };
         System.arraycopy(temp, 0, BOX_COORDINATES, 0, temp.length);
 
@@ -514,31 +516,18 @@ public class GLES20Canvas implements GLCanvas {
     }
 
     @Override
-    public void drawArc(float x, float y, float width, float height, float startAngle,
-            float sweepAngle, GLPaint paint) {
-        if (Math.abs(Math.round(COUNT_CIRCLE_VERTEX * sweepAngle / 360)) >= COUNT_CIRCLE_VERTEX) {
-            // It is a circle
-            draw(GLES20.GL_LINE_LOOP, OFFSET_DRAW_CIRCLE, COUNT_CIRCLE_VERTEX, x, y, width, height, paint);
-        } else {
-            if (sweepAngle < 0) {
-                startAngle += sweepAngle;
-                sweepAngle = - sweepAngle;
-            }
-            startAngle = MathUtils.positiveModulo(startAngle, 360);
+    public void drawOval(float cx, float cy, float radiusX, float radiusY, GLPaint paint) {
+        float halfLineWidth = paint.getLineWidth() / 2;
+        fillOval(cx, cy, radiusX + halfLineWidth, radiusY + halfLineWidth, paint.getColor());
+        fillOval(cx, cy, radiusX - halfLineWidth, radiusY - halfLineWidth, paint.getBackgroundColor());
+    }
 
-            float stopAngle = startAngle + sweepAngle;
-            if (stopAngle > 360) {
-                int start = OFFSET_DRAW_CIRCLE + Math.round(COUNT_CIRCLE_VERTEX * startAngle / 360);
-                draw(GLES20.GL_LINE_STRIP, start, OFFSET_LAST - start, x, y, width, height, paint);
-                int stop = Math.round(COUNT_CIRCLE_VERTEX * (stopAngle - 360) / 360) + 1;
-                draw(GLES20.GL_LINE_STRIP, OFFSET_DRAW_CIRCLE, stop, x, y, width, height, paint);
-            } else {
-                int start = OFFSET_DRAW_CIRCLE + Math.round(COUNT_CIRCLE_VERTEX * startAngle / 360);
-                int count = Math.round(COUNT_CIRCLE_VERTEX * sweepAngle / 360) + 1;
-                draw(GLES20.GL_LINE_STRIP, start, count, x, y, width, height, paint);
-            }
-        }
-        mCountDrawLine++;
+    @Override
+    public void drawArc(float cx, float cy, float radiusX, float radiusY,
+            float sweepAngle, GLPaint paint) {
+        float halfLineWidth = paint.getLineWidth() / 2;
+        fillSector(cx, cy, radiusX + halfLineWidth, radiusY + halfLineWidth, sweepAngle, paint.getColor());
+        fillSector(cx, cy, radiusX - halfLineWidth, radiusY - halfLineWidth, sweepAngle, paint.getBackgroundColor());
     }
 
     private void draw(int type, int offset, int count, float x, float y, float width, float height,
@@ -629,6 +618,27 @@ public class GLES20Canvas implements GLCanvas {
         draw(GLES20.GL_TRIANGLE_STRIP, OFFSET_FILL_RECT, COUNT_FILL_VERTEX, x, y, width, height,
                 color, 0f);
         mCountFillRect++;
+    }
+
+    @Override
+    public void fillOval(float cx, float cy, float radiusX, float radiusY, int color) {
+        draw(GLES20.GL_TRIANGLE_FAN, OFFSET_FILL_CIRCLE, OFFSET_LAST - OFFSET_FILL_CIRCLE,
+                cx - radiusX, cy - radiusY, radiusX * 2, radiusY * 2, color, 0f);
+        mCountFillRect++;
+    }
+
+    @Override
+    public void fillSector(float cx, float cy, float radiusX, float radiusY, float sweepAngle, int color) {
+        float conjugateAngle = Math.abs(360 - MathUtils.positiveModulo(sweepAngle, 360));
+        int conjugateCount = Math.round(COUNT_CIRCLE_VERTEX * conjugateAngle / 360);
+        if (conjugateCount == 0) {
+            // It is a circle
+            fillOval(cx, cy, radiusX, radiusY, color);
+        } else if (conjugateCount < COUNT_CIRCLE_VERTEX) {
+            draw(GLES20.GL_TRIANGLE_FAN, OFFSET_FILL_CIRCLE, OFFSET_LAST - OFFSET_FILL_CIRCLE - conjugateCount,
+                    cx - radiusX, cy - radiusY, radiusX * 2, radiusY * 2, color, 0f);
+            mCountFillRect++;
+        }
     }
 
     @Override

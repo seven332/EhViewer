@@ -25,6 +25,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     private static final int MAX_SETTLE_DURATION = 600; // ms
 
+    public static final int BACKGROUND_COLOR = 0xff212121;
+
     private static final int UNKNOWN_SEEN = 0;
     private static final int SEEN = 1;
     private static final int UNSEEN = 2;
