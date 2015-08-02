@@ -109,15 +109,15 @@ public class EdgeView extends GLView {
     // offset is in pixels. direction is one of {TOP, LEFT, BOTTOM, RIGHT}.
     public void onPull(float offset, int direction) {
         int fullLength = ((direction & 1) == 0) ? getWidth() : getHeight();
-        mEffect[direction].onPull((float)offset / fullLength);
+        mEffect[direction].onPull(offset / fullLength);
         if (!mEffect[direction].isFinished()) {
             invalidate();
         }
     }
 
     public void onPull(float offset, float position, int direction) {
-        int fullLength = ((direction & 1) == 0) ? getWidth() : getHeight();
-        int fullPosition = ((direction & 1) == 0) ? getHeight() : getWidth();
+        int fullLength = ((direction & 1) == 0) ? getHeight() : getWidth();
+        int fullPosition = ((direction & 1) == 0) ? getWidth() : getHeight();
         mEffect[direction].onPull(offset / fullLength, position / fullPosition);
         if (!mEffect[direction].isFinished()) {
             invalidate();
