@@ -129,9 +129,9 @@
 
     </ScrollView>
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="@style/ProgressBar"
+    <com.hippo.widget.ProgressView
+        android:id="@+id/progress_view"
+        style="@style/ProgressView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>

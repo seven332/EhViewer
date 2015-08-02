@@ -30,8 +30,8 @@
         android:paddingRight="32dp"
         auto:itemMargin="8dp"/>
 
-    <ProgressBar
-        style="@style/ProgressBar"
+    <com.hippo.widget.ProgressView
+        style="@style/ProgressView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

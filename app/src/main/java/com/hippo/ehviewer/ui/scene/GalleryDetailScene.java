@@ -119,7 +119,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
     private TextView mCommentMore;
     private PreviewLayout mPreviewLayout;
 
-    private View mProgressBar;
+    private View mProgressView;
 
     private ViewTransition mViewTransition;
 
@@ -175,9 +175,9 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         mCommentMore = (TextView) mContent.findViewById(R.id.comment_more);
         mPreviewLayout = (PreviewLayout) mContent.findViewById(R.id.preview);
 
-        mProgressBar = findViewById(R.id.progress_bar);
+        mProgressView = findViewById(R.id.progress_view);
 
-        mViewTransition = new ViewTransition(mContent, mProgressBar);
+        mViewTransition = new ViewTransition(mContent, mProgressView);
     }
 
     private void handleAnnouncer(Announcer announcer) {

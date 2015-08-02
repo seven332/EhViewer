@@ -77,18 +77,6 @@
     </style>
 
     <!-- Progress Bar -->
-    <style name="ProgressBar" parent="android:Widget.ProgressBar">
-        <item name="android:indeterminateDrawable">@drawable/progress_medium_material</item>
-    </style>
-
-    <style name="ProgressBar.Small" parent="android:Widget.ProgressBar.Small">
-        <item name="android:indeterminateDrawable">@drawable/progress_small_material</item>
-    </style>
-
-    <style name="ProgressBar.Large" parent="android:Widget.ProgressBar.Large">
-        <item name="android:indeterminateDrawable">@drawable/progress_large_material</item>
-    </style>
-
     <style name="ProgressView">
         <item name="color">?attr/colorAccent</item>
         <item name="indeterminate">true</item>

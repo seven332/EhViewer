@@ -48,7 +48,7 @@ public final class PreviewLayout extends LinearLayout implements View.OnClickLis
     private int mCurrentPreviewPage = -1;
 
     private SimpleGridLayout mSimpleGridLayout;
-    private View mProgressBar;
+    private View mProgressView;
     private View mTopPrevious;
     private TextView mTopSelection;
     private View mTopNext;
@@ -93,7 +93,7 @@ public final class PreviewLayout extends LinearLayout implements View.OnClickLis
         mTopSelection = (TextView) viewGroup.getChildAt(2);
         mTopNext = viewGroup.getChildAt(4);
         mSimpleGridLayout = (SimpleGridLayout) getChildAt(1);
-        mProgressBar = getChildAt(2);
+        mProgressView = getChildAt(2);
         viewGroup = (ViewGroup) getChildAt(3);
         mBottomPrevious = viewGroup.getChildAt(0);
         mBottomSelection = (TextView) viewGroup.getChildAt(2);
@@ -114,7 +114,7 @@ public final class PreviewLayout extends LinearLayout implements View.OnClickLis
         AccurateClick.setOnAccurateClickListener(mTopSelection, this);
         AccurateClick.setOnAccurateClickListener(mBottomSelection, this);
 
-        mViewTransition = new ViewTransition(mSimpleGridLayout, mProgressBar);
+        mViewTransition = new ViewTransition(mSimpleGridLayout, mProgressView);
     }
 
     public void setData(PreviewSet[] previewSets, int gid, LayoutInflater inflater, Conaco conaco) {

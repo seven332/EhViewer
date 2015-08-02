@@ -25,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +32,7 @@ import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.LayoutManagerUtils;
+import com.hippo.widget.ProgressView;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.AssertUtils;
@@ -47,7 +47,7 @@ public class ContentLayout extends FrameLayout {
 
     private static final String TAG = ContentLayout.class.getSimpleName();
 
-    private ProgressBar mProgressBar;
+    private ProgressView mProgressView;
     private ViewGroup mTipView;
     private RefreshLayout mRefreshLayout;
     private EasyRecyclerView mRecyclerView;
@@ -77,7 +77,7 @@ public class ContentLayout extends FrameLayout {
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.widget_content_layout, this);
 
-        mProgressBar = (ProgressBar) getChildAt(0);
+        mProgressView = (ProgressView) getChildAt(0);
         mTipView = (ViewGroup) getChildAt(1);
         mRefreshLayout = (RefreshLayout) getChildAt(2);
         mRecyclerView = (EasyRecyclerView) mRefreshLayout.getChildAt(1);
@@ -165,7 +165,7 @@ public class ContentLayout extends FrameLayout {
 
         private Context mContext;
 
-        private ProgressBar mProgressBar;
+        private ProgressView mProgressView;
         private ViewGroup mTipView;
         private RefreshLayout mRefreshLayout;
         private EasyRecyclerView mRecyclerView;
@@ -277,7 +277,7 @@ public class ContentLayout extends FrameLayout {
         }
 
         private void init(ContentLayout contentLayout) {
-            mProgressBar = contentLayout.mProgressBar;
+            mProgressView = contentLayout.mProgressView;
             mTipView = contentLayout.mTipView;
             mRefreshLayout = contentLayout.mRefreshLayout;
             mRecyclerView = contentLayout.mRecyclerView;
@@ -285,7 +285,7 @@ public class ContentLayout extends FrameLayout {
             mTextView = contentLayout.mTextView;
             mLayoutManager = generateLayoutManager();
 
-            mViewTransition = new ViewTransition(mRefreshLayout, mProgressBar, mTipView);
+            mViewTransition = new ViewTransition(mRefreshLayout, mProgressView, mTipView);
             mViewTransition.showView(2, false);
 
             mRecyclerView.setLayoutManager(mLayoutManager);

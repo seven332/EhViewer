@@ -35,7 +35,6 @@ import com.hippo.ehviewer.gallery.glrenderer.BasicTexture;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLES11Canvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLES20Canvas;
-import com.hippo.ehviewer.gallery.glrenderer.TextTexture;
 import com.hippo.ehviewer.gallery.glrenderer.UploadedTexture;
 import com.hippo.ehviewer.gallery.util.ApiHelper;
 import com.hippo.ehviewer.gallery.util.GalleryUtils;
@@ -201,7 +200,7 @@ public class GLRootView extends GLSurfaceView
         }
         if (mRenderRequested) return;
         mRenderRequested = true;
-        if (ApiHelper.HAS_POST_ON_ANIMATION) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             postOnAnimation(mRequestRenderOnAnimationFrame);
         } else {
             super.requestRender();
