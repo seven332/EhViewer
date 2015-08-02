@@ -26,9 +26,9 @@ import android.view.animation.LinearInterpolator;
 
 /**
  * {@link RecyclerView.SmoothScroller} implementation which uses
- * {@link android.view.animation.LinearInterpolator} until the target position becames a child of
+ * {@link LinearInterpolator} until the target position becames a child of
  * the RecyclerView and then uses
- * {@link android.view.animation.DecelerateInterpolator} to slowly approach to target position.
+ * {@link DecelerateInterpolator} to slowly approach to target position.
  */
 abstract public class LinearSmoothScroller extends RecyclerView.SmoothScroller {
 
@@ -44,8 +44,8 @@ abstract public class LinearSmoothScroller extends RecyclerView.SmoothScroller {
      * Align child view's left or top with parent view's left or top
      *
      * @see #calculateDtToFit(int, int, int, int, int)
-     * @see #calculateDxToMakeVisible(android.view.View, int)
-     * @see #calculateDyToMakeVisible(android.view.View, int)
+     * @see #calculateDxToMakeVisible(View, int)
+     * @see #calculateDyToMakeVisible(View, int)
      */
     public static final int SNAP_TO_START = -1;
 
@@ -53,8 +53,8 @@ abstract public class LinearSmoothScroller extends RecyclerView.SmoothScroller {
      * Align child view's right or bottom with parent view's right or bottom
      *
      * @see #calculateDtToFit(int, int, int, int, int)
-     * @see #calculateDxToMakeVisible(android.view.View, int)
-     * @see #calculateDyToMakeVisible(android.view.View, int)
+     * @see #calculateDxToMakeVisible(View, int)
+     * @see #calculateDyToMakeVisible(View, int)
      */
     public static final int SNAP_TO_END = 1;
 
@@ -65,8 +65,8 @@ abstract public class LinearSmoothScroller extends RecyclerView.SmoothScroller {
      * {@code SNAP_TO_ANY} is the same as using {@code SNAP_TO_START}</p>
      *
      * @see #calculateDtToFit(int, int, int, int, int)
-     * @see #calculateDxToMakeVisible(android.view.View, int)
-     * @see #calculateDyToMakeVisible(android.view.View, int)
+     * @see #calculateDxToMakeVisible(View, int)
+     * @see #calculateDyToMakeVisible(View, int)
      */
     public static final int SNAP_TO_ANY = 0;
 
@@ -178,7 +178,7 @@ abstract public class LinearSmoothScroller extends RecyclerView.SmoothScroller {
      *
      * @param dx Distance in pixels that we want to scroll
      * @return Time in milliseconds
-     * @see #calculateSpeedPerPixel(android.util.DisplayMetrics)
+     * @see #calculateSpeedPerPixel(DisplayMetrics)
      */
     protected int calculateTimeForScrolling(int dx) {
         // In a case where dx is very small, rounding may return 0 although dx > 0.
@@ -229,8 +229,8 @@ abstract public class LinearSmoothScroller extends RecyclerView.SmoothScroller {
                     + "LayoutManager#computeScrollVectorForPosition.\n"
                     + "Falling back to instant scroll");
             final int target = getTargetPosition();
+            action.jumpTo(target);
             stop();
-            instantScrollToPosition(target);
             return;
         }
         normalize(scrollVector);
@@ -257,8 +257,8 @@ abstract public class LinearSmoothScroller extends RecyclerView.SmoothScroller {
     }
 
     /**
-     * Helper method for {@link #calculateDxToMakeVisible(android.view.View, int)} and
-     * {@link #calculateDyToMakeVisible(android.view.View, int)}
+     * Helper method for {@link #calculateDxToMakeVisible(View, int)} and
+     * {@link #calculateDyToMakeVisible(View, int)}
      */
     public int calculateDtToFit(int viewStart, int viewEnd, int boxStart, int boxEnd, int
             snapPreference) {
