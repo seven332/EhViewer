@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2011 The Android Open Source Project
+ * Copyright 2015 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,11 +17,12 @@
 package com.hippo.ehviewer.gallery.ui;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.opengl.Matrix;
 
+import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 
-// EdgeView draws EdgeEffect (blue glow) at four sides of the view.
 public class EdgeView extends GLView {
     @SuppressWarnings("unused")
     private static final String TAG = "EdgeView";
@@ -44,8 +45,14 @@ public class EdgeView extends GLView {
     private float[] mMatrix = new float[4 * 16];
 
     public EdgeView(Context context) {
+        final TypedArray a = context.obtainStyledAttributes(
+                R.styleable.Theme);
+        final int themeColor = a.getColor(
+                R.styleable.Theme_colorPrimary, 0xff666666);
+        a.recycle();
+        int color = (themeColor & 0xffffff) | 0x33000000;
         for (int i = 0; i < 4; i++) {
-            mEffect[i] = new EdgeEffect(context);
+            mEffect[i] = new EdgeEffect(color);
         }
     }
 
@@ -100,9 +107,18 @@ public class EdgeView extends GLView {
 
     // Called when the content is pulled away from the edge.
     // offset is in pixels. direction is one of {TOP, LEFT, BOTTOM, RIGHT}.
-    public void onPull(int offset, int direction) {
+    public void onPull(float offset, int direction) {
         int fullLength = ((direction & 1) == 0) ? getWidth() : getHeight();
         mEffect[direction].onPull((float)offset / fullLength);
+        if (!mEffect[direction].isFinished()) {
+            invalidate();
+        }
+    }
+
+    public void onPull(float offset, float position, int direction) {
+        int fullLength = ((direction & 1) == 0) ? getWidth() : getHeight();
+        int fullPosition = ((direction & 1) == 0) ? getHeight() : getWidth();
+        mEffect[direction].onPull(offset / fullLength, position / fullPosition);
         if (!mEffect[direction].isFinished()) {
             invalidate();
         }

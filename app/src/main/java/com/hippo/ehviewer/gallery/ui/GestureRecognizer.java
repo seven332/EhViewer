@@ -34,7 +34,7 @@ public class GestureRecognizer {
         boolean onSingleTapConfirmed(float x, float y);
         boolean onDoubleTap(float x, float y);
         boolean onDoubleTapConfirmed(float x, float y);
-        boolean onScroll(float dx, float dy, float totalX, float totalY);
+        boolean onScroll(float dx, float dy, float totalX, float totalY, float x, float y);
         boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY);
         boolean onScaleBegin(float focusX, float focusY);
         boolean onScale(float focusX, float focusY, float scale);
@@ -109,7 +109,7 @@ public class GestureRecognizer {
         public boolean onScroll(
                 MotionEvent e1, MotionEvent e2, float dx, float dy) {
             return mListener.onScroll(
-                    dx, dy, e2.getX() - e1.getX(), e2.getY() - e1.getY());
+                    dx, dy, e2.getX() - e1.getX(), e2.getY() - e1.getY(), e2.getX(), e2.getY());
         }
 
         @Override

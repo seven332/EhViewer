@@ -245,13 +245,13 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                 if (mFirstShownIndex > 0) {
                     scrollToPage(mFirstShownIndex - 1);
                 } else {
-                    mEdgeView.onPull(getWidth() * 2, EdgeView.LEFT);
+                    mEdgeView.onPull(getWidth() * 2, (int) y, EdgeView.LEFT);
                 }
             } else {
                 if (mFirstShownIndex < mAdapter.getPages() - 1) {
                     scrollToPage(mFirstShownIndex + 1);
                 } else {
-                    mEdgeView.onPull(getWidth() * 2, EdgeView.RIGHT);
+                    mEdgeView.onPull(getWidth() * 2, (int) y, EdgeView.RIGHT);
                 }
             }
         }
@@ -352,7 +352,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     @Override
-    public boolean onScroll(float dx, float dy, float totalX, float totalY) {
+    public boolean onScroll(float dx, float dy, float totalX, float totalY, float x, float y) {
         if (mScale) {
             return false;
         }
@@ -387,14 +387,14 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                     mEdgeView.onRelease();
                 }
                 mDeltaX += remain;
-                mEdgeView.onPull(-mDeltaX, EdgeView.LEFT);
+                mEdgeView.onPull(-mDeltaX, y, EdgeView.LEFT);
             } else {
                 if (mDeltaX < 0) {
                     mDeltaX = 0;
                     mEdgeView.onRelease();
                 }
                 mDeltaX += remain;
-                mEdgeView.onPull(mDeltaX, EdgeView.RIGHT);
+                mEdgeView.onPull(mDeltaX, y, EdgeView.RIGHT);
             }
 
         } else if (mMode == Mode.TOP_TO_BOTTOM) {
