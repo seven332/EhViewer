@@ -188,6 +188,8 @@ public class SimpleDialogCurtain extends Curtain {
             stageLayout.addOnLayoutListener(new StageLayout.OnLayoutListener() {
                 @Override
                 public void onLayout(View view) {
+                    stageLayout.removeOnLayoutListener(this);
+
                     onClose(enter, exitDialog, layout, cushion, frame, animatorCollection);
                 }
             });
