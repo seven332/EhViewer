@@ -20,14 +20,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="@dimen/gallery_detail_info_margin_top"
-    android:paddingBottom="16dp">
+    android:paddingTop="@dimen/keyline_margin_vertical"
+    android:paddingBottom="@dimen/keyline_margin_vertical"
+    android:paddingLeft="@dimen/keyline_margin_horizontal"
+    android:paddingRight="@dimen/keyline_margin_horizontal">
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="32dp"
-        android:paddingRight="32dp">
+        android:paddingLeft="@dimen/keyline_margin_horizontal"
+        android:paddingRight="@dimen/keyline_margin_horizontal">
 
         <TableRow>
 

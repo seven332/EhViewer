@@ -172,6 +172,7 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
 
         if (!mDieYoung) {
             GalleryPageView.setTextTexture(null);
+            mUploader.clear();
             mTextTexture.recycle();
             GifTexture.uninitialize();
             TiledTexture.setOnFreeBitmapListener(null);

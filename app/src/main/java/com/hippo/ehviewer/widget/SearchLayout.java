@@ -47,27 +47,31 @@ import com.hippo.yorozuya.ViewUtils;
 
 // TODO requst returnSearchBarPosition when content of recycler changed
 public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnCheckedChangeListener,
-        View.OnClickListener, SelectSearchImageLayout.SelectSearchImageLayoutHelper {
+        View.OnClickListener, SelectSearchImageLayout.SelectSearchImageLayoutHelper,
+        SpecifyGalleryLayout.SpecifyGalleryHelper {
 
     private static final String STATE_KEY_SUPER = "super";
     private static final String STATE_KEY_SEARCH_MODE = "search_mode";
     private static final String STATE_KEY_ENABLE_ADVANCE = "enable_advance";
 
-    private static final int SEARCH_MODE_NORMAL = 0;
-    private static final int SEARCH_MODE_IMAGE = 1;
+    public static final int SEARCH_MODE_NORMAL = 0;
+    public static final int SEARCH_MODE_IMAGE = 1;
+    public static final int SEARCH_MODE_SPECIFY = 2;
 
     private static final int ITEM_TYPE_NORMAL = 0;
     private static final int ITEM_TYPE_NORMAL_ADVANCE = 1;
     private static final int ITEM_TYPE_IMAGE = 2;
-    private static final int ITEM_TYPE_ACTION = 3;
+    private static final int ITEM_TYPE_SPECIFY = 3;
+    private static final int ITEM_TYPE_ACTION = 4;
 
     private static final int[] SEARCH_ITEM_COUNT_ARRAY = {
-            3, 2
+            3, 2, 2
     };
 
     private static final int[][] SEARCH_ITEM_TYPE = {
-            {ITEM_TYPE_NORMAL, ITEM_TYPE_NORMAL_ADVANCE, ITEM_TYPE_ACTION}, // SEARCH_TYPE_NORMAL
-            {ITEM_TYPE_IMAGE, ITEM_TYPE_ACTION} // SEARCH_TYPE_IMAGE
+            {ITEM_TYPE_NORMAL, ITEM_TYPE_NORMAL_ADVANCE, ITEM_TYPE_ACTION}, // SEARCH_MODE_NORMAL
+            {ITEM_TYPE_IMAGE, ITEM_TYPE_ACTION}, // SEARCH_MODE_IMAGE
+            {ITEM_TYPE_SPECIFY, ITEM_TYPE_ACTION} // SEARCH_MODE_SPECIFY
     };
 
     private Context mContext;
@@ -88,6 +92,8 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
     private AdvanceSearchTable mTableAdvanceSearch;
 
     private SelectSearchImageLayout mImageSearchView;
+
+    private SpecifyGalleryLayout mSpecifyLayout;
 
     private View mActionView;
     private TextView mAction1;
@@ -156,6 +162,12 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
         // Init image search view
         mImageSearchView.setHelper(SearchLayout.this);
 
+        // Create specify gallery
+        mSpecifyLayout = (SpecifyGalleryLayout) mInflater.inflate(R.layout.search_specify, null);
+
+        // Init specify gallery
+        mSpecifyLayout.setSpecifyGalleryHelper(this);
+
         // Create action view
         mActionView = mInflater.inflate(R.layout.search_action, null);
         mAction1 = (TextView) mActionView.findViewById(R.id.search_action_1);
@@ -168,6 +180,10 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
         RippleSalon.addRipple(mAction2, false);
         mAction1.setOnClickListener(SearchLayout.this);
         mAction2.setOnClickListener(SearchLayout.this);
+    }
+
+    public int getSearchMode() {
+        return mSearchMode;
     }
 
     public void setFitPaddingTop(int fitPaddingTop) {
@@ -275,7 +291,7 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
         int oldItemCount = mAdapter.getItemCount();
 
         mSearchMode++;
-        if (mSearchMode > SEARCH_MODE_IMAGE) {
+        if (mSearchMode > SEARCH_MODE_SPECIFY) {
             mSearchMode = SEARCH_MODE_NORMAL;
         }
 
@@ -313,6 +329,13 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
     public void onRequstSelectImage() {
         if (mHelper != null) {
             mHelper.onRequestSelectImage();
+        }
+    }
+
+    @Override
+    public void onSpecifyGallery(int gid, String token) {
+        if (mHelper != null) {
+            mHelper.onSpecifyGallery(gid, token);
         }
     }
 
@@ -372,6 +395,10 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
                         ViewUtils.removeFromParent(mImageSearchView);
                         content.addView(mImageSearchView);
                         break;
+                    case ITEM_TYPE_SPECIFY:
+                        title.setText(R.string.search_specify_gallery);
+                        ViewUtils.removeFromParent(mSpecifyLayout);
+                        content.addView(mSpecifyLayout);
                 }
             }
 
@@ -388,6 +415,8 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
         void onChangeSearchMode();
 
         void onRequestSelectImage();
+
+        void onSpecifyGallery(int gid, String token);
 
         Scene getScene();
     }

@@ -40,6 +40,7 @@
     <string name="search_advance">Advance Options</string>
     <string name="search_tag">Tag Search</string>
     <string name="search_image">Image Search</string>
+    <string name="search_specify_gallery">Specify gallery</string>
     <string name="search_specify_author">Specify uploader</string>
     <string name="search_specify_tag">Specify tag</string>
     <string name="search_hint_no_keyword">No keyword is OK</string>
@@ -128,6 +129,7 @@
     <string name="em_redirection">Too many redirections</string>
     <string name="em_socket">Network error</string>
     <string name="em_unknown">Weird</string>
+    <string name="em_invalid_input">Invalid input</string>
     <string name="erm_unknown_host">Network available ?</string>
 
     <string name="em_cant_find_activity">Can\'t find target Activity</string>
@@ -203,6 +205,7 @@
     <string name="retry">Retry</string>
     <string name="_goto">Go to</string>
     <string name="unknown">Unknown</string>
+    <string name="apply">Apply</string>
 
     <string name="homepage">Homepage</string>
     <string name="whatshot">What\'s hot</string>
@@ -220,6 +223,7 @@
     <string name="read">Read</string>
     <string name="torrent">Torrent</string>
     <string name="share">Share</string>
+    <string name="rate">Rate</string>
 
     <string name="comments">Comments</string>
     <string name="info">Info</string>

@@ -232,7 +232,7 @@ public final class ContentActivity extends StageActivity
     @Override
     public void onClickSignIn() {
         mDrawerLayout.closeDrawers();
-        startScene(SignInScene.class);
+        startScene(SignInScene.class, null, new OffsetCurtain(OffsetCurtain.DIRECTION_BOTTOM));
     }
 
     @Override

@@ -30,10 +30,10 @@
     android:viewportHeight="24">
 
     <path
-        auto:pathData="@string/pd_heart"
+        auto:pathData="@string/pd_heart_outline"
         auto:fillColor="@color/theme_primary"
 
-        android:pathData="@string/pd_heart"
+        android:pathData="@string/pd_heart_outline"
         android:fillColor="@color/theme_primary"/>
 
 </vector>

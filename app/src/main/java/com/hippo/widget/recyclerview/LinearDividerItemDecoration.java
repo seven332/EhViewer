@@ -44,6 +44,8 @@ public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration {
     private int mPaddingStart = 0;
     private int mPaddingEnd = 0;
 
+    private ShowDividerHelper mShowDividerHelper;
+
     public LinearDividerItemDecoration(int orientation, int color, int thickness) {
         mRect = new Rect();
         mPaint = new Paint();
@@ -51,6 +53,10 @@ public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration {
         setOrientation(orientation);
         setColor(color);
         setThickness(thickness);
+    }
+
+    public void setShowDividerHelper(ShowDividerHelper showDividerHelper) {
+        mShowDividerHelper = showDividerHelper;
     }
 
     public void setOrientation(int orientation) {
@@ -92,20 +98,43 @@ public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration {
     @Override
     public void getItemOffsets(Rect outRect, View view,
             RecyclerView parent, RecyclerView.State state) {
-        final int position = parent.getChildPosition(view);
+        final int position = parent.getChildLayoutPosition(view);
         final int itemCount = parent.getAdapter().getItemCount();
-        if (mOrientation == VERTICAL) {
-            if (position == 0 && mShowFirstDivider)
-                outRect.top = mThickness;
-            outRect.bottom = mThickness;
-            if (position == itemCount - 1 && !mShowLastDivider)
-                outRect.bottom = 0;
+
+        if (mShowDividerHelper != null) {
+            if (mOrientation == VERTICAL) {
+                if (position == 0 && mShowDividerHelper.showDivider(0)) {
+                    outRect.top = mThickness;
+                }
+                if (mShowDividerHelper.showDivider(position + 1)) {
+                    outRect.bottom = mThickness;
+                }
+            } else {
+                if (position == 0 && mShowDividerHelper.showDivider(0)) {
+                    outRect.left = mThickness;
+                }
+                if (mShowDividerHelper.showDivider(position + 1)) {
+                    outRect.right = mThickness;
+                }
+            }
         } else {
-            if (position == 0 && mShowFirstDivider)
-                outRect.left = mThickness;
-            outRect.right = mThickness;
-            if (position == itemCount - 1 && !mShowLastDivider)
-                outRect.left = 0;
+            if (mOrientation == VERTICAL) {
+                if (position == 0 && mShowFirstDivider) {
+                    outRect.top = mThickness;
+                }
+                outRect.bottom = mThickness;
+                if (position == itemCount - 1 && !mShowLastDivider) {
+                    outRect.bottom = 0;
+                }
+            } else {
+                if (position == 0 && mShowFirstDivider) {
+                    outRect.left = mThickness;
+                }
+                outRect.right = mThickness;
+                if (position == itemCount - 1 && !mShowLastDivider) {
+                    outRect.right = 0;
+                }
+            }
         }
     }
 
@@ -133,20 +162,33 @@ public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration {
             for (int i = 0; i < childCount; i++) {
                 final View child = parent.getChildAt(i);
                 final RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams) child.getLayoutParams();
+                final int position = parent.getChildLayoutPosition(child);
 
-                if (i != childCount - 1 || mShowLastDivider
-                        || parent.getChildPosition(child) != itemCount - 1) {
+                boolean show;
+                if (mShowDividerHelper != null) {
+                    show = mShowDividerHelper.showDivider(position + 1);
+                } else {
+                    show = position != itemCount - 1 || mShowLastDivider;
+                }
+                if (show) {
                     final int top = child.getBottom() + lp.bottomMargin;
                     final int bottom = top + mThickness;
                     mRect.set(left, top, right, bottom);
                     c.drawRect(mRect, mPaint);
                 }
 
-                if (i == 0 && mShowFirstDivider && parent.getChildPosition(child) == 0) {
-                    final int bottom = child.getTop() + lp.topMargin;
-                    final int top = bottom - mThickness;
-                    mRect.set(left, top, right, bottom);
-                    c.drawRect(mRect, mPaint);
+                if (position == 0) {
+                    if (mShowDividerHelper != null) {
+                        show = mShowDividerHelper.showDivider(0);
+                    } else {
+                        show = mShowFirstDivider;
+                    }
+                    if (show) {
+                        final int bottom = child.getTop() + lp.topMargin;
+                        final int top = bottom - mThickness;
+                        mRect.set(left, top, right, bottom);
+                        c.drawRect(mRect, mPaint);
+                    }
                 }
             }
         } else {
@@ -157,23 +199,39 @@ public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration {
             for (int i = 0; i < childCount; i++) {
                 final View child = parent.getChildAt(i);
                 final RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams) child.getLayoutParams();
+                final int position = parent.getChildLayoutPosition(child);
 
-                if (i != childCount - 1 || mShowLastDivider
-                        || parent.getChildPosition(child) != itemCount - 1) {
+                boolean show;
+                if (mShowDividerHelper != null) {
+                    show = mShowDividerHelper.showDivider(position + 1);
+                } else {
+                    show = position != itemCount - 1 || mShowLastDivider;
+                }
+                if (show) {
                     final int left = child.getRight() + lp.rightMargin;
                     final int right = left + mThickness;
                     mRect.set(left, top, right, bottom);
                     c.drawRect(mRect, mPaint);
                 }
 
-                if (i == 0 && mShowFirstDivider && parent.getChildPosition(child) == 0) {
-                    final int right = child.getLeft() + lp.leftMargin;
-                    final int left = right - mThickness;
-                    mRect.set(left, top, right, bottom);
-                    c.drawRect(mRect, mPaint);
+                if (position == 0) {
+                    if (mShowDividerHelper != null) {
+                        show = mShowDividerHelper.showDivider(0);
+                    } else {
+                        show = mShowFirstDivider;
+                    }
+                    if (show) {
+                        final int right = child.getLeft() + lp.leftMargin;
+                        final int left = right - mThickness;
+                        mRect.set(left, top, right, bottom);
+                        c.drawRect(mRect, mPaint);
+                    }
                 }
             }
         }
     }
 
+    public interface ShowDividerHelper {
+        boolean showDivider(int index);
+    }
 }

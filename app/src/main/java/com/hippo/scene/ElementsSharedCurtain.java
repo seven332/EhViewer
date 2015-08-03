@@ -35,6 +35,7 @@ import com.hippo.yorozuya.Say;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 public class ElementsSharedCurtain extends Curtain {
@@ -148,7 +149,9 @@ public class ElementsSharedCurtain extends Curtain {
 
             int[] startloaction = new int[2];
             int[] endloaction = new int[2];
-            for (TransitionItem item : mTransitionItems) {
+            Iterator<TransitionItem> iterator = mTransitionItems.iterator();
+            while (iterator.hasNext()) {
+                TransitionItem item = iterator.next();
                 final View enterView = item.enterView;
                 final View exitView = item.exitView;
 
@@ -156,6 +159,11 @@ public class ElementsSharedCurtain extends Curtain {
                 ViewUtils.getLocationInAncestor(enterView, endloaction, mEnterView);
                 int startWidth = exitView.getWidth();
                 int startHeight = exitView.getHeight();
+
+                if (startWidth <= 0 || startHeight <= 0) {
+                    iterator.remove();
+                    continue;
+                }
 
                 // Create bitmap view
                 Bitmap bmp = ViewUtils.getBitmapFromView(enterView);

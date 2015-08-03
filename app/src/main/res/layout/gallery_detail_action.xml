@@ -22,15 +22,11 @@
     android:paddingTop="16dp"
     android:paddingBottom="16dp">
 
-    <TextSwitcher
+    <TextView
         android:id="@+id/rating_text"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-
-        android:gravity="center"
-        android:inAnimation="@anim/fade_in"
-        android:outAnimation="@anim/fade_out"/>
+        android:layout_gravity="center_horizontal"/>
 
     <com.hippo.ehviewer.widget.RatingView
         xmlns:auto="http://schemas.android.com/apk/res-auto"
@@ -43,8 +39,7 @@
         auto:starInterval="8dp"
         auto:starCount="5"
         auto:isIndicator="true"
-        auto:max="5"
-        auto:rating="3.7"/>
+        auto:max="5"/>
 
     <HorizontalScrollView
         android:layout_width="wrap_content"
@@ -62,7 +57,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="@string/favorite"/>
+                android:text="@string/favorite"
+                android:drawablePadding="8dp"/>
 
             <TextView
                 android:id="@+id/torrent"
@@ -70,7 +66,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:gravity="center_horizontal"
-                android:text="@string/torrent"/>
+                android:drawablePadding="8dp"
+                android:drawableTop="@drawable/ic_water_pump_theme_primary"/>
 
             <TextView
                 android:id="@+id/share"
@@ -78,7 +75,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:gravity="center_horizontal"
-                android:text="@string/share"/>
+                android:text="@string/share"
+                android:drawablePadding="8dp"
+                android:drawableTop="@drawable/ic_share_theme_primary"/>
 
             <TextView
                 android:id="@+id/rate"
@@ -86,7 +85,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:gravity="center_horizontal"
-                android:text="Rate"/>
+                android:text="@string/rate"
+                android:drawablePadding="8dp"
+                android:drawableTop="@drawable/ic_thumbs_up_down_theme_primary"/>
 
         </LinearLayout>
 

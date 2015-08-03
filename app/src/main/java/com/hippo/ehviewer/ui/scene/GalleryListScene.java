@@ -588,13 +588,23 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
         }
     }
 
+
+
     @Override
     public void onApplySearch(String query) {
         // TODO check is source and search vaild
-        if (TextUtils.isEmpty(query) && (mViewTransition.getShownViewIndex() == 0
-                || mSearchLayout.isSpecifyTag())) {
-            // Invaild search
+        if (mViewTransition.getShownViewIndex() == 0 && TextUtils.isEmpty(query)) {
             return;
+        }
+
+        if (mViewTransition.getShownViewIndex() == 1) {
+            int searchMode = mSearchLayout.getSearchMode();
+            if (searchMode == SearchLayout.SEARCH_MODE_NORMAL &&
+                    mSearchLayout.isSpecifyTag() && TextUtils.isEmpty(query)) {
+                return;
+            } else if (searchMode == SearchLayout.SEARCH_MODE_SPECIFY) {
+                return;
+            }
         }
 
         mDrawerListActivatedPosition = ContentActivity.DRAWER_LIST_NONE;
@@ -738,6 +748,15 @@ public final class GalleryListScene extends Scene implements SearchBar.Helper,
     @Override
     public void onRequestSelectImage() {
         // TODO
+    }
+
+    @Override
+    public void onSpecifyGallery(int gid, String token) {
+        Announcer announcer = new Announcer();
+        announcer.setAction(GalleryDetailScene.ACTION_GID_TOKEN);
+        announcer.putExtra(GalleryDetailScene.KEY_GID, gid);
+        announcer.putExtra(GalleryDetailScene.KEY_TOKEN, token);
+        startScene(GalleryDetailScene.class, announcer);
     }
 
     @Override

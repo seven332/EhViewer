@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2015 Hippo Seven
+  ~ Copyright 2015 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
   ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~     http://www.apache.org/licenses/LICENSE-2.0
   ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,124 +16,41 @@
   -->
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:auto="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:overScrollMode="never"
-        android:scrollbarThumbVertical="@android:color/transparent">
-
-        <FrameLayout
-            android:id="@+id/detail_frame_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:id="@+id/content"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="@dimen/gallery_detail_content_margin_top"
-                android:orientation="vertical">
-
-                <include
-                    layout="@layout/gallery_detail_info"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="@dimen/keyline_margin"
-                    android:layout_marginRight="@dimen/keyline_margin"
-                    android:background="@color/divider_light"/>
-
-                <include
-                    layout="@layout/gallery_detail_action"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="@dimen/keyline_margin"
-                    android:layout_marginRight="@dimen/keyline_margin"
-                    android:background="@color/divider_light"/>
-
-                <include
-                    layout="@layout/gallery_detail_tag"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="@dimen/keyline_margin"
-                    android:layout_marginRight="@dimen/keyline_margin"
-                    android:background="@color/divider_light"/>
-
-                <include
-                    layout="@layout/gallery_detail_comment"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="@dimen/keyline_margin"
-                    android:layout_marginRight="@dimen/keyline_margin"
-                    android:background="@color/divider_light"/>
-
-                <include
-                    layout="@layout/gallery_detail_preview"/>
-
-            </LinearLayout>
-
-            <!-- Header -->
-            <include
-                layout="@layout/gallery_detail_header"/>
-
-            <!-- ActionCard -->
-            <com.hippo.widget.CardLinearLayout
-                android:id="@+id/action_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/keyline_margin"
-                android:layout_marginRight="@dimen/keyline_margin"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/gallery_detail_action_card_margin_top"
-                android:layout_marginBottom="8dp"
-                auto:cardElevation="4dp">
-
-                <TextView
-                    android:id="@+id/download"
-                    style="@style/ButtonInCard"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/download"/>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/divider_light"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"/>
-
-                <TextView
-                    android:id="@+id/read"
-                    style="@style/ButtonInCard"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="@color/theme_accent"
-                    android:text="@string/read"/>
-
-            </com.hippo.widget.CardLinearLayout>
-
-        </FrameLayout>
-
-    </ScrollView>
+        android:layout_height="match_parent"/>
 
     <com.hippo.widget.ProgressView
-        android:id="@+id/progress_view"
         style="@style/ProgressView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <com.hippo.widget.SimpleImageView
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_sad"/>
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:paddingTop="@dimen/keyline_margin"
+            android:paddingBottom="@dimen/keyline_margin"/>
+
+    </LinearLayout>
 
 </FrameLayout>

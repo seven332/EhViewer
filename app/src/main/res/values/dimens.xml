@@ -17,6 +17,8 @@
 
     <!-- Keyline -->
     <dimen name="keyline_margin">16dp</dimen>
+    <dimen name="keyline_margin_horizontal">16dp</dimen>
+    <dimen name="keyline_margin_vertical">16dp</dimen>
 
     <!-- Text size -->
     <dimen name="text_super_large">24sp</dimen>
@@ -141,8 +143,14 @@
     <dimen name="add_thickness">2dp</dimen>
 
     <!-- Gallery Detail Scene-->
+    <dimen name="gallery_detail_header_height">224dp</dimen> <!-- keyline_margin_vertical + gallery_detail_thumb_height + keyline_margin_vertical -->
     <dimen name="gallery_detail_thumb_width">128dp</dimen>
     <dimen name="gallery_detail_thumb_height">192dp</dimen>
+
+
+
+
+
     <dimen name="gallery_detail_thumb_margin_bottom">40dp</dimen>
     <dimen name="gallery_detail_action_card_margin_top">224dp</dimen>
     <dimen name="gallery_detail_content_margin_top">248dp</dimen>

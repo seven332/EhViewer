@@ -215,6 +215,12 @@ public abstract class Scene {
         } else {
             mSceneView.setVisibility(View.VISIBLE);
         }
+
+        if (!rebirth) {
+            // Make sure soft key broad is hidden
+            InputMethodManager imm = (InputMethodManager) getStageActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getSceneView().getWindowToken(), 0);
+        }
     }
 
     void bind() {
