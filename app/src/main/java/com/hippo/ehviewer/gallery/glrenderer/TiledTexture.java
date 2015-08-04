@@ -72,7 +72,7 @@ public class TiledTexture implements Texture {
 
     public interface OnFreeBitmapListener {
 
-        void onFreeBitmapListener(Bitmap bitmap);
+        void onFreeBitmap(TiledTexture tiledTexture, Bitmap bitmap);
     }
 
     public static void setOnFreeBitmapListener(OnFreeBitmapListener listener) {
@@ -290,7 +290,7 @@ public class TiledTexture implements Texture {
 
     private void onFreeBitmap(Bitmap bitmap) {
         if (sOnFreeBitmapListener != null) {
-            sOnFreeBitmapListener.onFreeBitmapListener(bitmap);
+            sOnFreeBitmapListener.onFreeBitmap(this, bitmap);
         }
     }
 

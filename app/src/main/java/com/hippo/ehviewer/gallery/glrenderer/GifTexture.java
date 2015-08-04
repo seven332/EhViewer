@@ -18,9 +18,9 @@ package com.hippo.ehviewer.gallery.glrenderer;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
-import com.hippo.ehviewer.gallery.gifdecoder.GifDecoder;
+import com.hippo.ehviewer.gallery.GifDecoder;
+import com.hippo.ehviewer.gallery.GifDecoderBuilder;
 
 // TODO read file to memory or do jni
 public class GifTexture extends TiledTexture {
@@ -29,10 +29,13 @@ public class GifTexture extends TiledTexture {
 
     private static TiledTexture.Uploader sUploader;
     private static InfiniteThreadExecutor sThreadExecutor;
+    private static PVLock mPVLock = new PVLock(3);
 
-    private GifDecoder mGifDecoder;
+    private volatile GifDecoderBuilder mGifDecoderBuilder;
+    private volatile GifDecoder mGifDecoder;
     private boolean mRunning = false;
     private volatile boolean mDecoding = false;
+    private volatile boolean mRecycle =false;
 
     private GifDecodeTask mGifDecodeTask;
 
@@ -49,49 +52,79 @@ public class GifTexture extends TiledTexture {
     class GifDecodeTask implements Runnable {
 
         private long mLastTime = 0;
-        private volatile boolean mClear = false;
+        private volatile boolean mRest = false;
 
-        public void clearByMyself() {
-            mClear = true;
+        public void setRest() {
+            mRest = true;
         }
 
         @Override
         public void run() {
+            mLastTime = System.currentTimeMillis();
+
             GifDecoder gifDecoder = mGifDecoder;
+
+            if (gifDecoder == null) {
+                if (mGifDecoderBuilder == null) {
+                    // It is recycled
+                    mRunning = false;
+                    mGifDecodeTask = null;
+                    return;
+                } else {
+                    mDecoding = true;
+
+                    mPVLock.p();
+                    if (!mRecycle) {
+                        gifDecoder = mGifDecoderBuilder.build();
+                    }
+                    mPVLock.v();
+
+                    mGifDecoderBuilder.close();
+                    mGifDecoderBuilder = null;
+
+                    // First image is loaded, so go to next
+                    if (gifDecoder != null) {
+                        gifDecoder.advance();
+                    }
+                }
+            }
+
+            if (mRecycle || gifDecoder == null) {
+                // Can't get GifDecoder
+                mDecoding = false;
+                mRunning = false;
+                mGifDecodeTask = null;
+                if (gifDecoder != null) {
+                    gifDecoder.recycle();
+                }
+                return;
+            } else {
+                mGifDecoder = gifDecoder;
+            }
 
             while (mRunning && sUploader != null) {
                 mDecoding = true;
 
                 gifDecoder.advance();
                 Bitmap bitmap = gifDecoder.getNextFrame();
-                if (bitmap == null) {
-                    Log.d(TAG, "Can't get bitmap, GifDecoder state = " + gifDecoder.getStatus());
-                    mRunning = false;
-                    break;
-                }
 
-                setBitmap(bitmap);
-                if (sUploader == null) {
-                    mRunning = false;
-                    break;
+                if (bitmap != null) {
+                    setBitmap(bitmap);
+                    if (sUploader == null) {
+                        break;
+                    }
+                    sUploader.addTexture(GifTexture.this);
                 }
-                sUploader.addTexture(GifTexture.this);
 
                 long delay = gifDecoder.getNextDelay();
                 long time = System.currentTimeMillis();
-                if (mLastTime != 0) {
-                    delay -= time - mLastTime;
-                }
-
-
-                //Say.d(TAG, "time - mLastTime = " + (time - mLastTime));
-                //Say.d(TAG, "gifDecoder.getNextDelay() = " + (gifDecoder.getNextDelay()));
+                delay -= time - mLastTime;
 
                 mLastTime = time;
 
                 mDecoding = false;
 
-                if (delay > 5) {
+                if (delay > 0) {
                     try {
                         Thread.sleep(delay);
                     } catch (InterruptedException e) {
@@ -99,18 +132,30 @@ public class GifTexture extends TiledTexture {
                     }
                 }
             }
+
+            mRunning = false;
+            mDecoding = false;
             mGifDecodeTask = null;
 
-            if (mClear) {
-                gifDecoder.clear();
+            if (mRest) {
+                mRest = false;
+                gifDecoder.resetFrameIndex();
+            }
+
+            if (mRecycle) {
+                gifDecoder.recycle();
             }
         }
     }
 
-    public GifTexture(@NonNull GifDecoder gifDecoder, @NonNull Bitmap bitmap) {
+    public GifTexture(@NonNull GifDecoderBuilder gifDecoderBuilder, @NonNull Bitmap bitmap) {
         super(bitmap);
 
-        mGifDecoder = gifDecoder;
+        mGifDecoderBuilder = gifDecoderBuilder;
+
+        //start to buid GifDecode
+        mGifDecodeTask = new GifDecodeTask();
+        sThreadExecutor.execute(mGifDecodeTask);
     }
 
     public void start() {
@@ -126,9 +171,8 @@ public class GifTexture extends TiledTexture {
     public void stop() {
         if (mRunning) {
             mRunning = false;
-            mGifDecodeTask = null;
 
-            if (!mDecoding) {
+            if (!mDecoding && mGifDecoder != null) {
                 mGifDecoder.resetFrameIndex();
                 mGifDecoder.advance();
                 Bitmap bitmap = mGifDecoder.getNextFrame();
@@ -138,23 +182,65 @@ public class GifTexture extends TiledTexture {
                         sUploader.addTexture(GifTexture.this);
                     }
                 }
+            } else {
+                if (mGifDecodeTask != null) {
+                    mGifDecodeTask.setRest();
+                }
             }
+
+            mGifDecodeTask = null;
         }
     }
 
     @Override
     public void recycle() {
+        mRecycle = true;
         mRunning = false;
 
-        if (mDecoding) {
-            mGifDecodeTask.clearByMyself();
-        } else {
-            mGifDecoder.clear();
+        if (!mDecoding && mGifDecoder != null) {
+            mGifDecoder.recycle();
         }
 
         mGifDecoder = null;
         mGifDecodeTask = null;
 
         super.recycle();
+    }
+
+    static class PVLock {
+
+        private int mCounter;
+
+        public PVLock(int count) {
+            mCounter = count;
+        }
+
+        /**
+         * Obtain
+         */
+        public synchronized void p() {
+            while (true) {
+                if (mCounter > 0) {
+                    mCounter--;
+                    break;
+                } else {
+                    try {
+                        this.wait();
+                    } catch (InterruptedException e) {
+                        // Ignore
+                    }
+                }
+            }
+        }
+
+        /**
+         * Release
+         */
+        public synchronized void v() {
+            mCounter++;
+            if (mCounter > 0) {
+                this.notify();
+            }
+        }
     }
 }

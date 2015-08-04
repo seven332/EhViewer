@@ -18,7 +18,6 @@ package com.hippo.ehviewer.gallery;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.nfc.FormatException;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -29,24 +28,20 @@ import com.hippo.conaco.BitmapPool;
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.data.GalleryBase;
-import com.hippo.ehviewer.gallery.gifdecoder.ByteArrayPool;
-import com.hippo.ehviewer.gallery.gifdecoder.GifBitmapProvider;
-import com.hippo.ehviewer.gallery.gifdecoder.GifDecoder;
-import com.hippo.ehviewer.gallery.gifdecoder.GifHeader;
-import com.hippo.ehviewer.gallery.gifdecoder.GifHeaderParser;
 import com.hippo.httpclient.HttpClient;
 import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.io.UniFileOutputStreamPipe;
 import com.hippo.network.DownloadClient;
 import com.hippo.network.DownloadRequest;
 import com.hippo.unifile.UniFile;
-import com.hippo.unifile.UniRandomReadFile;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
 import com.hippo.yorozuya.io.OutputStreamPipe;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,7 +65,6 @@ public class ImageHandler {
     private volatile Mode mMode;
     private AtomicReferenceArray<String> mFilenames;
     private BitmapPool mBitmapPool = new BitmapPool();
-    private GifBitmapProvider mGifBitmapProvider = new GifBitmapProvider(new BitmapPool(), new ByteArrayPool());
 
     public enum Mode {
         READ,
@@ -379,52 +373,55 @@ public class ImageHandler {
                 return null;
             }
 
-            options.inJustDecodeBounds = false;
-            options.inMutable = true;
-            options.inSampleSize = 1;
-            options.inBitmap = mBitmapPool.getInBitmap(options);
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            if ("image/gif".equals(options.outMimeType)) {
+                options.inJustDecodeBounds = false;
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 
-            is = isPipe.open();
-            bitmap = BitmapFactory.decodeStream(is, null, options);
+                is = isPipe.open();
+                bitmap = BitmapFactory.decodeStream(is, null, options);
+                isPipe.close();
 
-            if (bitmap != null && "image/gif".equals(options.outMimeType)) {
-                // It is gif
-                UniRandomReadFile randomReadFile;
-                if (mMode == Mode.READ) {
-                    // Copy the file to
-                    File tempFile = AppConfig.createTempFile();
-                    if (tempFile == null) {
-                        throw new IOException("Can't get temp dir or can't create temp dir");
-                    }
-                    isPipe.close();
-                    is = isPipe.open();
-                    IOUtils.copy(is, new FileOutputStream(tempFile));
-                    randomReadFile = new TempRandomReadFile(tempFile, UniRandomReadFile.fromFile(tempFile));
-                } else if (mMode == Mode.DOWNLOAD) {
-                    if (mDownloadDir == null) {
-                        throw new IOException("Can't find download dir");
-                    }
-                    UniFile uniFile = mDownloadDir.findFile(getImageFilename(index));
-                    if (uniFile == null) {
-                        throw new IOException("Can't find image file");
+                if (bitmap != null) {
+                    if (mMode == Mode.READ) {
+                        // Copy the file to
+                        File tempFile = AppConfig.createTempFile();
+                        if (tempFile == null) {
+                            throw new IOException("Can't get temp dir or can't create temp dir");
+                        }
+                        is = isPipe.open();
+                        IOUtils.copy(is, new FileOutputStream(tempFile));
+                        isPipe.close();
+                        is = new TempFileInputStream(tempFile);
+                    } else if (mMode == Mode.DOWNLOAD) {
+                        if (mDownloadDir == null) {
+                            throw new IOException("Can't find download dir");
+                        }
+                        UniFile uniFile = mDownloadDir.findFile(getImageFilename(index));
+                        if (uniFile == null) {
+                            throw new IOException("Can't find image file");
+                        }
+                        is = uniFile.openInputStream();
+                    } else {
+                        throw new IllegalStateException("Unknown state");
                     }
 
-                    isPipe.close();
-                    isPipe.release();
-                    randomReadFile = uniFile.createRandomReadFile();
-                } else {
-                    throw new IllegalStateException("Unknown state");
+                    GifDecoderBuilder gifDecoderBuilder = new GifDecoderBuilder(is);
+
+                    return new Pair<>(gifDecoderBuilder, bitmap);
                 }
-
-                GifHeader gifHeader = new GifHeaderParser().setData(randomReadFile).parseHeader();
-                if (gifHeader.getStatus() == GifDecoder.STATUS_OK) {
-                    return new Pair<>(new GifDecoder(mGifBitmapProvider, gifHeader, randomReadFile), bitmap);
-                } else {
-                    throw new FormatException("Can't decode gif");
-                }
+                return null;
             } else {
-                // It is not gif, just reture
+                // It is not gif
+                options.inJustDecodeBounds = false;
+                options.inMutable = true;
+                options.inSampleSize = 1;
+                options.inBitmap = mBitmapPool.getInBitmap(options);
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+                is = isPipe.open();
+                bitmap = BitmapFactory.decodeStream(is, null, options);
+                isPipe.close();
+
                 return bitmap;
             }
         } catch (Exception e) {
@@ -455,40 +452,19 @@ public class ImageHandler {
         }
     }
 
-    public static class TempRandomReadFile extends UniRandomReadFile {
+    public static class TempFileInputStream extends FileInputStream {
 
         private File mFile;
-        private UniRandomReadFile mRandomReadFile;
 
-        public TempRandomReadFile(File file, UniRandomReadFile randomReadFile) {
+        public TempFileInputStream(File file) throws FileNotFoundException {
+            super(file);
             mFile = file;
-            mRandomReadFile = randomReadFile;
-        }
-
-        @Override
-        public int read(byte[] buffer, int byteOffset, int byteCount) throws IOException {
-            return mRandomReadFile.read(buffer, byteOffset, byteCount);
-        }
-
-        @Override
-        public void seek(long offset) throws IOException {
-            mRandomReadFile.seek(offset);
-        }
-
-        @Override
-        public long position() throws IOException {
-            return mRandomReadFile.position();
-        }
-
-        @Override
-        public long length() throws IOException {
-            return mRandomReadFile.length();
         }
 
         @Override
         public void close() throws IOException {
-            mRandomReadFile.close();
-            FileUtils.delete(mFile);
+            super.close();
+            mFile.delete();
         }
     }
 }

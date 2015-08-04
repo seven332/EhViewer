@@ -1,40 +1,46 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.model.application'
 
-android {
-    compileSdkVersion 22
-    buildToolsVersion "23.0.0 rc3"
+model {
+    android {
+        compileSdkVersion = 22
+        buildToolsVersion = "23.0.0 rc3"
 
-    defaultConfig {
-        applicationId "com.hippo.ehviewer.test"
-        minSdkVersion 14
-        targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
-    }
-
-    sourceSets {
-        main {
-            java.srcDirs = ['src/main/java', 'src/main/java-gen']
+        defaultConfig.with {
+            applicationId = "com.hippo.ehviewer.test"
+            minSdkVersion.apiLevel = 14
+            targetSdkVersion.apiLevel = 22
+            versionCode = 1
+            versionName = "1.0"
         }
     }
 
-    buildTypes {
-        debug {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'proguard-rules.pro',
-                    '../rippleold/proguard-rules.pro',
-                    '../vectorold/proguard-rules.pro',
-                    '../conaco/proguard-rules.pro'
-        }
+    android.buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'proguard-rules.pro',
-                    '../rippleold/proguard-rules.pro',
-                    '../vectorold/proguard-rules.pro',
-                    '../conaco/proguard-rules.pro'
+            minifyEnabled = true
+            shrinkResources = true
+            proguardFiles += [file('proguard-rules.pro'),
+                              file('../rippleold/proguard-rules.pro'),
+                              file('../vectorold/proguard-rules.pro'),
+                              file('../conaco/proguard-rules.pro')]
         }
+    }
+
+    android.sources {
+        main {
+            java {
+                source.srcDirs = ['src/main/java', 'src/main/java-gen']
+            }
+        }
+    }
+
+    android.ndk {
+        moduleName = "gifdecoder"
+        ldLibs += ["jnigraphics"]
+    }
+
+    android.productFlavors {
+        // To include all cpu architectures, leaves abiFilters empty
+        create("all")
     }
 }
 
@@ -42,8 +48,7 @@ dependencies {
     compile 'com.android.support:support-v4:22.2.1'
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'de.greenrobot:greendao:1.3.7'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3.1'
+    compile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':unifile')
     compile project(':vectorold')

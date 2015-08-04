@@ -27,14 +27,16 @@ import android.support.annotation.Nullable;
 import android.util.Pair;
 
 import com.hippo.app.StatsActivity;
+import com.hippo.conaco.BitmapPool;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.ehviewer.gallery.GalleryProvider;
 import com.hippo.ehviewer.gallery.GalleryProviderListener;
 import com.hippo.ehviewer.gallery.GallerySpider;
+import com.hippo.ehviewer.gallery.GifDecoder;
+import com.hippo.ehviewer.gallery.GifDecoderBuilder;
 import com.hippo.ehviewer.gallery.ImageHandler;
 import com.hippo.ehviewer.gallery.ZipGalleryProvider;
-import com.hippo.ehviewer.gallery.gifdecoder.GifDecoder;
 import com.hippo.ehviewer.gallery.glrenderer.GifTexture;
 import com.hippo.ehviewer.gallery.glrenderer.InfiniteThreadExecutor;
 import com.hippo.ehviewer.gallery.glrenderer.TextTexture;
@@ -80,6 +82,8 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
     private GalleryView.Mode mMode;
 
     private int mSize;
+
+    private BitmapPool mGifBitmapPool;
 
     private boolean getGalleryProvider(Intent intent) {
         if (intent != null) {
@@ -136,6 +140,8 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         mThreadExecutor = new InfiniteThreadExecutor(3000, new LinkedBlockingQueue<Runnable>(),
                 new PriorityThreadFactory("GifDecode", Process.THREAD_PRIORITY_BACKGROUND));
         GifTexture.initialize(mUploader, mThreadExecutor);
+        mGifBitmapPool = new BitmapPool();
+        GifDecoder.setBitmapPool(mGifBitmapPool);
         Typeface tf = Typeface.createFromAsset(mResources.getAssets(), "fonts/number.ttf");
         mTextTexture = TextTexture.create(tf,
                 mResources.getDimensionPixelSize(R.dimen.gallery_index_text),
@@ -174,6 +180,7 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
             GalleryPageView.setTextTexture(null);
             mUploader.clear();
             mTextTexture.recycle();
+            GifDecoder.setBitmapPool(null);
             GifTexture.uninitialize();
             TiledTexture.setOnFreeBitmapListener(null);
             TiledTexture.freeResources();
@@ -205,9 +212,15 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
     }
 
     @Override
-    public void onFreeBitmapListener(Bitmap bitmap) {
-        if (mGalleryProvider != null) {
-            mGalleryProvider.releaseBitmap(bitmap);
+    public void onFreeBitmap(TiledTexture tiledTexture, Bitmap bitmap) {
+        if (tiledTexture instanceof GifTexture) {
+            if (mGifBitmapPool != null ) {
+                mGifBitmapPool.addReusableBitmap(bitmap);
+            }
+        } else {
+            if (mGalleryProvider != null) {
+                mGalleryProvider.releaseBitmap(bitmap);
+            }
         }
     }
 
@@ -230,11 +243,17 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
     }
 
     public void releaseImage(Object obj) {
-        if (mGalleryProvider != null && obj != null) {
+        if (obj != null) {
             if (obj instanceof Bitmap) {
-                mGalleryProvider.releaseBitmap((Bitmap) obj);
+                if (mGalleryProvider != null) {
+                    mGalleryProvider.releaseBitmap((Bitmap) obj);
+                }
             } else if (obj instanceof Pair) {
-                mGalleryProvider.releaseBitmap((Bitmap) ((Pair) obj).second);
+                Pair pair = (Pair) obj;
+                ((GifDecoderBuilder) pair.first).close();
+                if (mGifBitmapPool != null) {
+                    mGifBitmapPool.addReusableBitmap((Bitmap) pair.second);
+                }
             }
         }
     }
@@ -300,7 +319,7 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
             mUploader.addTexture(tiledTexture);
         } else if (obj instanceof Pair) {
             Pair pair = (Pair) obj;
-            tiledTexture = new GifTexture((GifDecoder) pair.first, (Bitmap) pair.second);
+            tiledTexture = new GifTexture((GifDecoderBuilder) pair.first, (Bitmap) pair.second);
             mUploader.addTexture(tiledTexture);
         } else {
             bindBadImage(view);
@@ -318,6 +337,12 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         view.mProgressView.setVisibility(GLView.VISIBLE);
         view.mProgressView.setIndeterminate(false);
         view.mProgressView.setProgress(precent);
+        view.mIndexView.setVisibility(GLView.VISIBLE);
+    }
+
+    private void bindWait(GalleryPageView view) {
+        clearTiledTextureInPage(view);
+        view.mProgressView.setVisibility(GLView.INVISIBLE);
         view.mIndexView.setVisibility(GLView.VISIBLE);
     }
 
@@ -347,7 +372,7 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         if (result instanceof Float) {
             bindPercent(view, (Float) result);
         } else if (result == GalleryProvider.RESULT_WAIT) {
-            // Just wait
+            bindWait(view);
         } else if (result == GalleryProvider.RESULT_NONE) {
             bindNone(view);
         } else if (result == GalleryProvider.RESULT_FAILED) {
