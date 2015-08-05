@@ -16,6 +16,7 @@
 
 package com.hippo.network;
 
+import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
 import com.hippo.httpclient.HttpClient;
@@ -24,6 +25,7 @@ import com.hippo.httpclient.HttpResponse;
 import com.hippo.io.UniFileOutputStreamPipe;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.Utilities;
 import com.hippo.yorozuya.io.OutputStreamPipe;
 
@@ -53,6 +55,27 @@ public class DownloadClient {
         }
 
         return receivedSize;
+    }
+
+    private static String getFilenameFromContentDisposition(String contentDisposition) {
+        if (contentDisposition == null) {
+            return null;
+        }
+
+        String[] pieces = StringUtils.split(contentDisposition, ';');
+        for (String piece : pieces) {
+            int index = piece.indexOf('=');
+            if (index < 0) {
+                continue;
+            }
+            String key = piece.substring(0, index).trim();
+            String value = piece.substring(index + 1).trim();
+            if ("filename".equals(key) && !TextUtils.isEmpty(value)) {
+                return value;
+            }
+        }
+
+        return null;
     }
 
     public static void execute(DownloadRequest request) {
@@ -85,11 +108,21 @@ public class DownloadClient {
 
             osPipe = request.mOSPipe;
             if (osPipe == null) {
-                String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(httpResponse.getContentType());
-                if (extension == null) {
-                    extension = MimeTypeMap.getFileExtensionFromUrl(request.mUrl);
+                String extension;
+                String name;
+
+                String dispositionFilename = getFilenameFromContentDisposition(httpResponse.getHeaderField("Content-Disposition"));
+                if (dispositionFilename != null) {
+                    name = FileUtils.getNameFromFilename(dispositionFilename);
+                    extension = FileUtils.getExtensionFromFilename(dispositionFilename);
+                } else {
+                    name = Utilities.getNameFromUrl(request.mUrl);
+                    extension = Utilities.getExtensionFromMimeType(httpResponse.getContentType());
+                    if (extension == null) {
+                        extension = MimeTypeMap.getFileExtensionFromUrl(request.mUrl);
+                    }
                 }
-                String name = Utilities.getNameFromUrl(request.mUrl);
+
                 String filename;
                 if (listener != null) {
                     filename = listener.onFixname(name, extension, request.mFilename);
