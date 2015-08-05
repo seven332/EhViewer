@@ -17,9 +17,7 @@
 package com.hippo.ehviewer.gallery.ui;
 
 import android.annotation.TargetApi;
-import android.app.ActivityManager;
 import android.content.Context;
-import android.content.pm.ConfigurationInfo;
 import android.graphics.Matrix;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
@@ -33,7 +31,6 @@ import android.view.SurfaceHolder;
 import com.hippo.ehviewer.gallery.anim.CanvasAnimation;
 import com.hippo.ehviewer.gallery.glrenderer.BasicTexture;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
-import com.hippo.ehviewer.gallery.glrenderer.GLES11Canvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLES20Canvas;
 import com.hippo.ehviewer.gallery.glrenderer.UploadedTexture;
 import com.hippo.ehviewer.gallery.util.ApiHelper;
@@ -46,7 +43,9 @@ import java.util.ArrayList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
@@ -106,13 +105,6 @@ public class GLRootView extends GLSurfaceView
     private long mLastDrawFinishTime;
     private boolean mInDownState = false;
     //private boolean mFirstDraw = true;
-    private boolean mGLES20Supported;
-
-    public static boolean checkGLES20Support(Context context) {
-        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        ConfigurationInfo info = am.getDeviceConfigurationInfo();
-        return info.reqGlEsVersion >= 0x20000;
-    }
 
     public GLRootView(Context context) {
         this(context, null);
@@ -121,17 +113,11 @@ public class GLRootView extends GLSurfaceView
     public GLRootView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mFlags |= FLAG_INITIALIZED;
-        mGLES20Supported = checkGLES20Support(context);
         setBackgroundDrawable(null);
-        setEGLContextClientVersion(mGLES20Supported ? 2 : 1);
+        setEGLContextClientVersion(2);
 
-        // We can't detect 888_PIXEL_FORMAT by Build.VERSION.SDK_INT,
-        // for example CyanogenMod use ro.opengles.surface.rgb565,
-        // so just use default EGLConfigChooser.
-        // And we do not need depth buffer
-        // TODO setEGLConfigChooser(8, 8, 8, 8, 0, 0) or setEGLConfigChooser(false)
-        setEGLConfigChooser(8, 8, 8, 8, 0, 0);
-        //setEGLConfigChooser(false);
+        // do not need depth buffer
+        setEGLConfigChooser(new ComponentSizeChooser(8, 8, 8, 8, 0, 0));
         setRenderer(this);
         // setFormat is done by SurfaceView in SDK 2.3 and newer.
         //if (ApiHelper.USE_888_PIXEL_FORMAT) {
@@ -302,7 +288,7 @@ public class GLRootView extends GLSurfaceView
         mRenderLock.lock();
         try {
             mGL = gl;
-            mCanvas = mGLES20Supported ? new GLES20Canvas() : new GLES11Canvas(gl);
+            mCanvas = new GLES20Canvas();
             BasicTexture.invalidateAllTextures();
         } finally {
             mRenderLock.unlock();
@@ -621,5 +607,147 @@ public class GLRootView extends GLSurfaceView
         } finally {
             super.finalize();
         }
+    }
+
+    private static abstract class BaseConfigChooser implements EGLConfigChooser {
+
+        public BaseConfigChooser(int[] configSpec) {
+            mConfigSpec = filterConfigSpec(configSpec);
+        }
+
+        @Override
+        public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
+            int[] num_config = new int[1];
+            if (!egl.eglChooseConfig(display, mConfigSpec, null, 0,
+                    num_config)) {
+                throw new IllegalArgumentException("eglChooseConfig failed");
+            }
+
+            int numConfigs = num_config[0];
+
+            if (numConfigs <= 0) {
+                throw new IllegalArgumentException(
+                        "No configs match configSpec");
+            }
+
+            EGLConfig[] configs = new EGLConfig[numConfigs];
+            if (!egl.eglChooseConfig(display, mConfigSpec, configs, numConfigs,
+                    num_config)) {
+                throw new IllegalArgumentException("eglChooseConfig#2 failed");
+            }
+            EGLConfig config = chooseConfig(egl, display, configs);
+            if (config == null) {
+                throw new IllegalArgumentException("No config chosen");
+            }
+            return config;
+        }
+
+        abstract EGLConfig chooseConfig(EGL10 egl, EGLDisplay display,
+                EGLConfig[] configs);
+
+        protected int[] mConfigSpec;
+
+        private int[] filterConfigSpec(int[] configSpec) {
+            /* We know none of the subclasses define EGL_RENDERABLE_TYPE.
+             * And we know the configSpec is well formed.
+             */
+            int len = configSpec.length;
+            int[] newConfigSpec = new int[len + 2];
+            System.arraycopy(configSpec, 0, newConfigSpec, 0, len-1);
+            newConfigSpec[len-1] = EGL10.EGL_RENDERABLE_TYPE;
+            newConfigSpec[len] = 4; // EGL14.EGL_OPENGL_ES2_BIT;  /* EGL_OPENGL_ES2_BIT */
+            newConfigSpec[len+1] = EGL10.EGL_NONE;
+            return newConfigSpec;
+        }
+    }
+
+    /**
+     * No guarantee to choose a configuration with exactly the specified r,g,b,a,depth,stencil sizes.
+     * But we try our best.
+     */
+    private static class ComponentSizeChooser extends BaseConfigChooser {
+        public ComponentSizeChooser(int redSize, int greenSize, int blueSize,
+                int alphaSize, int depthSize, int stencilSize) {
+            super(new int[] {
+                    EGL10.EGL_RED_SIZE, redSize,
+                    EGL10.EGL_GREEN_SIZE, greenSize,
+                    EGL10.EGL_BLUE_SIZE, blueSize,
+                    EGL10.EGL_ALPHA_SIZE, alphaSize,
+                    EGL10.EGL_DEPTH_SIZE, depthSize,
+                    EGL10.EGL_STENCIL_SIZE, stencilSize,
+                    EGL10.EGL_NONE});
+            mValue = new int[1];
+            mRedSize = redSize;
+            mGreenSize = greenSize;
+            mBlueSize = blueSize;
+            mAlphaSize = alphaSize;
+            mDepthSize = depthSize;
+            mStencilSize = stencilSize;
+        }
+
+        @Override
+        public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display,
+                EGLConfig[] configs) {
+            // Use score to avoid "No config chosen"
+            int configIndex = 0;
+            int minScore = Integer.MAX_VALUE;
+
+            for (int i = 0, n = configs.length; i < n; i++) {
+                EGLConfig config = configs[i];
+                int d = findConfigAttrib(egl, display, config,
+                        EGL10.EGL_DEPTH_SIZE, 0);
+                int s = findConfigAttrib(egl, display, config,
+                        EGL10.EGL_STENCIL_SIZE, 0);
+                int r = findConfigAttrib(egl, display, config,
+                        EGL10.EGL_RED_SIZE, 0);
+                int g = findConfigAttrib(egl, display, config,
+                        EGL10.EGL_GREEN_SIZE, 0);
+                int b = findConfigAttrib(egl, display, config,
+                        EGL10.EGL_BLUE_SIZE, 0);
+                int a = findConfigAttrib(egl, display, config,
+                        EGL10.EGL_ALPHA_SIZE, 0);
+
+                int score = 0;
+                if (d < mDepthSize) {
+                    score += 100;
+                } else if (d > mDepthSize) {
+                    score += (d - mDepthSize);
+                }
+                if (s < mStencilSize) {
+                    score += 100;
+                } else if (s > mStencilSize) {
+                    score += (s - mStencilSize);
+                }
+                score += Math.abs(r - mRedSize);
+                score += Math.abs(g - mGreenSize);
+                score += Math.abs(b - mBlueSize);
+                score += Math.abs(a - mAlphaSize);
+
+                if (score < minScore) {
+                    minScore = score;
+                    configIndex = i;
+                }
+            }
+
+            return configs[configIndex];
+        }
+
+        private int findConfigAttrib(EGL10 egl, EGLDisplay display,
+                EGLConfig config, int attribute, int defaultValue) {
+
+            if (egl.eglGetConfigAttrib(display, config, attribute, mValue)) {
+                return mValue[0];
+            }
+            return defaultValue;
+        }
+
+        private int[] mValue;
+        // Subclasses can adjust these values:
+        protected int mRedSize;
+        protected int mGreenSize;
+        protected int mBlueSize;
+        protected int mAlphaSize;
+        protected int mDepthSize;
+        protected int mStencilSize;
     }
 }
