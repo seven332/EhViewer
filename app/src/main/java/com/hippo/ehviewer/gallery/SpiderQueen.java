@@ -705,26 +705,79 @@ public class SpiderQueen implements Runnable {
             }
         }
 
-        private String getImageUrl(int gid, String token, int index) throws Exception {
+        private GalleryPageParser.Result getImageUrl(int gid, String token, int index, String skipHathKey) throws Exception {
+            String url = EhUrl.getPageUrl(mSource, gid, token, index);
+            if (skipHathKey != null) {
+                url = url + "?nl=" + skipHathKey;
+            }
             HttpRequest request = new HttpRequest();
-            request.setUrl(EhUrl.getPageUrl(mSource, gid, token, index));
+            request.setUrl(url);
             try {
                 mCurrentHttpRequest = request;
                 HttpResponse response = mHttpClient.execute(request);
                 String body = response.getString();
-                String imageUrl = GalleryPageParser.parse(body);
+                GalleryPageParser.Result result = GalleryPageParser.parse(body);
                 for (String suffix : URL_509_SUFFIX_ARRAY) {
-                    if (imageUrl.endsWith(suffix)) {
+                    if (result.imageUrl.endsWith(suffix)) {
                         // Get 509 gif here
                         throw new Image509Expection();
                     }
                 }
-                return imageUrl;
+                return result;
             } finally {
                 mCurrentHttpRequest = null;
                 request.disconnect();
             }
         }
+
+        private void downloadPage(int gid, final int index, String token) {
+            String skipHathKey = null;
+            String imageUrl;
+            Exception exception = null;
+
+            for (int i = 0; i < 2; i++) {
+                // Get image url
+                GalleryPageParser.Result result;
+                try {
+                    result = getImageUrl(gid, token, index, skipHathKey);
+                } catch (Exception e) {
+                    exception = e;
+                    break;
+                }
+                imageUrl = result.imageUrl;
+                skipHathKey = result.skipHathKey;
+
+                Log.d("TAG", "index = " + index + ", imageUrl = " + imageUrl + ", skipHathKey = " + skipHathKey);
+
+                // Download image
+                try {
+                    mCurrentSaveHelper = new ImageHandler.SaveHelper() {
+                        @Override
+                        public void onStartSaving(long totalSize) {
+                            mSpiderListener.onSpiderStart(index, totalSize);
+                        }
+
+                        @Override
+                        public void onSave(long receivedSize) {
+                            mSpiderListener.onSpiderPage(index, receivedSize);
+                        }
+                    };
+                    mImageHandler.save(mHttpClient, imageUrl, index, mCurrentSaveHelper);
+                    mPageStates.set(index, PAGE_STATE_SUCCEED);
+                    mSpiderListener.onSpiderSucceed(index);
+                    return;
+                } catch (Exception e) {
+                    exception = e;
+                } finally {
+                    mCurrentSaveHelper = null;
+                }
+            }
+
+            mPageStates.lazySet(index, PAGE_STATE_FAILED);
+            mSpiderListener.onSpiderFailed(index, exception);
+        }
+
+
 
         @Override
         public void run() {
@@ -778,44 +831,11 @@ public class SpiderQueen implements Runnable {
                 }
                 // For stop
                 if (mStop) {
+                    mPageStates.lazySet(index, PAGE_STATE_NONE);
                     break;
                 }
 
-                // Get image url
-                String imageUrl;
-                try {
-                    imageUrl = getImageUrl(gb.gid, token, index);
-                } catch (Exception e) {
-                    mPageStates.lazySet(index, PAGE_STATE_FAILED);
-                    // Listener
-                    mSpiderListener.onSpiderFailed(index, e);
-                    continue;
-                }
-
-                // Download image
-                try {
-                    mCurrentSaveHelper = new ImageHandler.SaveHelper() {
-                        @Override
-                        public void onStartSaving(long totalSize) {
-                            mSpiderListener.onSpiderStart(index, totalSize);
-                        }
-
-                        @Override
-                        public void onSave(long receivedSize) {
-                            mSpiderListener.onSpiderPage(index, receivedSize);
-                        }
-                    };
-                    handler.save(mHttpClient, imageUrl, index, mCurrentSaveHelper);
-                    mPageStates.set(index, PAGE_STATE_SUCCEED);
-                    // Listener
-                    mSpiderListener.onSpiderSucceed(index);
-                } catch (Exception e) {
-                    mPageStates.set(index, PAGE_STATE_FAILED);
-                    // Listener
-                    mSpiderListener.onSpiderFailed(index, e);
-                } finally {
-                    mCurrentSaveHelper = null;
-                }
+                downloadPage(gb.gid, index, token);
             }
 
             // TODO this lock is not right, we need to lock when before check it is over

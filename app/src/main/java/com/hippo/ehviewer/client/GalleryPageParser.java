@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.client;
 
-import com.hippo.yorozuya.Say;
 import com.hippo.yorozuya.StringUtils;
 
 import java.util.regex.Matcher;
@@ -24,14 +23,29 @@ import java.util.regex.Pattern;
 
 public class GalleryPageParser {
 
-    public static String parse(String body) throws ParseException {
-        Pattern p = Pattern.compile("<div id=\"i3\"><a[^>]+><img id=\"img\" src=\"([^\"]+)\"");
-        Matcher m = p.matcher(body);
+    private static Pattern IMAGE_URL_PATTERN = Pattern.compile("<div id=\"i3\"><a[^>]+><img id=\"img\" src=\"([^\"]+)\"");
+    private static Pattern SKIP_HATH_KEY_PATTERN = Pattern.compile("onclick=\"return nl\\('([^\\)]+)'\\)");
+
+    public static Result parse(String body) throws ParseException {
+        Matcher m;
+        Result result = new Result();
+        m = IMAGE_URL_PATTERN.matcher(body);
         if (m.find()) {
-            return StringUtils.unescapeXml(m.group(1));
-        } else {
-            Say.f("s", body);
-            throw new ParseException("Parse gallery page error", body);
+            result.imageUrl = StringUtils.unescapeXml(m.group(1));
         }
+        m = SKIP_HATH_KEY_PATTERN.matcher(body);
+        if (m.find()) {
+            result.skipHathKey = m.group(1);
+        }
+        if (result.imageUrl != null && result.skipHathKey != null) {
+            return result;
+        } else {
+            throw new ParseException("Parse image url and skip hath key error", body);
+        }
+    }
+
+    public static class Result {
+        public String imageUrl;
+        public String skipHathKey;
     }
 }
