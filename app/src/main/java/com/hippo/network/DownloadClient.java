@@ -22,6 +22,7 @@ import android.webkit.MimeTypeMap;
 import com.hippo.httpclient.HttpClient;
 import com.hippo.httpclient.HttpRequest;
 import com.hippo.httpclient.HttpResponse;
+import com.hippo.httpclient.ResponseCodeException;
 import com.hippo.io.UniFileOutputStreamPipe;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.FileUtils;
@@ -105,6 +106,12 @@ public class DownloadClient {
             }
 
             HttpResponse httpResponse = httpClient.execute(httpRequest);
+
+            // Check response code
+            int responseCode = httpResponse.getResponseCode();
+            if (responseCode >= 400) {
+                throw new ResponseCodeException(responseCode);
+            }
 
             osPipe = request.mOSPipe;
             if (osPipe == null) {
