@@ -23,17 +23,19 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
 import com.hippo.ehviewer.R;
+import com.hippo.vectorold.animation.PathInterpolator;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
@@ -41,11 +43,23 @@ import java.util.ArrayList;
 // Base on android.graphics.drawable.MaterialProgressDrawable in L preview
 public class ProgressView extends View {
 
+    private static final Interpolator TRIM_START_INTERPOLATOR;
+    private static final Interpolator TRIM_END_INTERPOLATOR;
     private static final Interpolator LINEAR_INTERPOLATOR = new LinearInterpolator();
-    private static final Interpolator END_CURVE_INTERPOLATOR = new EndCurveInterpolator();
-    private static final Interpolator START_CURVE_INTERPOLATOR = new StartCurveInterpolator();
 
-    private static final long ANIMATION_DURATION = 1333;
+    static {
+        Path trimStartPath = new Path();
+        trimStartPath.moveTo(0.0f, 0.0f);
+        trimStartPath.lineTo(0.5f, 0.0f);
+        trimStartPath.cubicTo(0.7f, 0.0f, 0.6f, 1f, 1f, 1f);
+        TRIM_START_INTERPOLATOR = PathInterpolator.build(trimStartPath);
+
+        Path trimEndPath = new Path();
+        trimEndPath.moveTo(0.0f, 0.0f);
+        trimEndPath.cubicTo(0.2f, 0.0f, 0.1f, 1f, 0.5f, 1f);
+        trimEndPath.lineTo(1f, 1f);
+        TRIM_END_INTERPOLATOR = PathInterpolator.build(trimEndPath);
+    }
 
     private final ArrayList<Animator> mAnimators = new ArrayList<>();
     private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -53,10 +67,10 @@ public class ProgressView extends View {
 
     private boolean mIndeterminate;
 
-    private float mStartTrim = 0.0f;
-    private float mEndTrim = 0.0f;
+    private float mTrimStart = 0.0f;
+    private float mTrimEnd = 0.0f;
+    private float mTrimOffset = 0.0f;
     private float mTrimRotation = 0.0f;
-    private float mCanvasRotation = 0.0f;
 
     // It is a trick to avoid first sight stuck. Get it from ProgressBar
     private boolean mShouldStartAnimationDrawable = false;
@@ -86,34 +100,30 @@ public class ProgressView extends View {
     }
 
     private void setupAnimators() {
-        ObjectAnimator endTrim = ObjectAnimator.ofFloat(this, "endTrim", 0.0f, 0.75f);
-        endTrim.setDuration(ANIMATION_DURATION);
-        endTrim.setInterpolator(START_CURVE_INTERPOLATOR);
-        endTrim.setRepeatCount(-1);
-        endTrim.setRepeatMode(1);
+        ObjectAnimator trimStart = ObjectAnimator.ofFloat(this, "trimStart", 0.0f, 0.75f);
+        trimStart.setDuration(1333L);
+        trimStart.setInterpolator(TRIM_START_INTERPOLATOR);
+        trimStart.setRepeatCount(Animation.INFINITE);
 
-        ObjectAnimator startTrim = ObjectAnimator.ofFloat(this, "startTrim", 0.0f, 0.75f);
-        startTrim.setDuration(ANIMATION_DURATION);
-        startTrim.setInterpolator(END_CURVE_INTERPOLATOR);
-        startTrim.setRepeatCount(-1);
-        startTrim.setRepeatMode(1);
+        ObjectAnimator trimEnd = ObjectAnimator.ofFloat(this, "trimEnd", 0.0f, 0.75f);
+        trimEnd.setDuration(1333L);
+        trimEnd.setInterpolator(TRIM_END_INTERPOLATOR);
+        trimEnd.setRepeatCount(Animation.INFINITE);
 
-        ObjectAnimator trimRotation = ObjectAnimator.ofFloat(this, "trimRotation", 0.0f, 0.25f);
-        trimRotation.setDuration(ANIMATION_DURATION);
+        ObjectAnimator trimOffset = ObjectAnimator.ofFloat(this, "trimOffset", 0.0f, 0.25f);
+        trimOffset.setDuration(1333L);
+        trimOffset.setInterpolator(LINEAR_INTERPOLATOR);
+        trimOffset.setRepeatCount(Animation.INFINITE);
+
+        ObjectAnimator trimRotation = ObjectAnimator.ofFloat(this, "trimRotation", 0.0f, 720.0f);
+        trimRotation.setDuration(6665L);
         trimRotation.setInterpolator(LINEAR_INTERPOLATOR);
-        trimRotation.setRepeatCount(-1);
-        trimRotation.setRepeatMode(1);
+        trimRotation.setRepeatCount(Animation.INFINITE);
 
-        ObjectAnimator canvasRotation = ObjectAnimator.ofFloat(this, "canvasRotation", 0.0f, 720.0f);
-        canvasRotation.setDuration(6665L);
-        canvasRotation.setInterpolator(LINEAR_INTERPOLATOR);
-        canvasRotation.setRepeatCount(-1);
-        canvasRotation.setRepeatMode(1);
-
-        mAnimators.add(endTrim);
-        mAnimators.add(startTrim);
+        mAnimators.add(trimStart);
+        mAnimators.add(trimEnd);
+        mAnimators.add(trimOffset);
         mAnimators.add(trimRotation);
-        mAnimators.add(canvasRotation);
     }
 
     private void startAnimation() {
@@ -171,24 +181,35 @@ public class ProgressView extends View {
     }
 
     @SuppressWarnings("unused")
-    public float getStartTrim() {
-        return mStartTrim;
+    public float getTrimStart() {
+        return mTrimStart;
     }
 
     @SuppressWarnings("unused")
-    public void setStartTrim(float startTrim) {
-        mStartTrim = startTrim;
+    public void setTrimStart(float trimStart) {
+        mTrimStart = trimStart;
         invalidate();
     }
 
     @SuppressWarnings("unused")
-    public float getEndTrim() {
-        return mEndTrim;
+    public float getTrimEnd() {
+        return mTrimEnd;
     }
 
     @SuppressWarnings("unused")
-    public void setEndTrim(float endTrim) {
-        mEndTrim = endTrim;
+    public void setTrimEnd(float trimEnd) {
+        mTrimEnd = trimEnd;
+        invalidate();
+    }
+
+    @SuppressWarnings("unused")
+    public float getTrimOffset() {
+        return mTrimOffset;
+    }
+
+    @SuppressWarnings("unused")
+    public void setTrimOffset(float trimOffset) {
+        mTrimOffset = trimOffset;
         invalidate();
     }
 
@@ -200,17 +221,6 @@ public class ProgressView extends View {
     @SuppressWarnings("unused")
     public void setTrimRotation(float trimRotation) {
         mTrimRotation = trimRotation;
-        invalidate();
-    }
-
-    @SuppressWarnings("unused")
-    public float getCanvasRotation() {
-        return mCanvasRotation;
-    }
-
-    @SuppressWarnings("unused")
-    public void setCanvasRotation(float canvasRotation) {
-        mCanvasRotation = canvasRotation;
         invalidate();
     }
 
@@ -285,17 +295,18 @@ public class ProgressView extends View {
 
     public void setProgress(float progress) {
         if (!mIndeterminate) {
-            mStartTrim = -0.25f;
-            mEndTrim = progress - 0.25f;
-            mTrimRotation = 0.0f;
-            mCanvasRotation = 0.0f;
+            mTrimStart = 0f;
+            mTrimEnd = progress;
+            mTrimOffset = -0.25f;
+            mTrimRotation = 0f;
             invalidate();
         }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(ViewUtils.getSuitableSize(getSuggestedMinimumWidth(), widthMeasureSpec), ViewUtils.getSuitableSize(getSuggestedMinimumHeight(), heightMeasureSpec));
+        setMeasuredDimension(ViewUtils.getSuitableSize(getSuggestedMinimumWidth(), widthMeasureSpec),
+                ViewUtils.getSuitableSize(getSuggestedMinimumHeight(), heightMeasureSpec));
     }
 
     @Override
@@ -308,18 +319,10 @@ public class ProgressView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         int saved = canvas.save();
-        canvas.rotate(mCanvasRotation, mRectF.centerX(), mRectF.centerY());
+        canvas.rotate(mTrimRotation, mRectF.centerX(), mRectF.centerY());
 
-        float startAngle = (mStartTrim + mTrimRotation) * 360.0f;
-        float endAngle = (mEndTrim + mTrimRotation) * 360.0f;
-        float sweepAngle = endAngle - startAngle;
-        if (mIndeterminate) {
-            float diameter = Math.min(mRectF.width(), mRectF.height());
-            float minAngle = (float) (360.0D / (diameter * 3.141592653589793D));
-            if ((sweepAngle < minAngle) && (sweepAngle > -minAngle)) {
-                sweepAngle = Math.signum(sweepAngle) * minAngle;
-            }
-        }
+        float startAngle = (mTrimStart + mTrimOffset) * 360.0f - 90;
+        float sweepAngle = (mTrimEnd - mTrimStart) * 360.0f;
         canvas.drawArc(mRectF, startAngle, sweepAngle, false, mPaint);
 
         canvas.restoreToCount(saved);
@@ -327,22 +330,6 @@ public class ProgressView extends View {
         if (mShouldStartAnimationDrawable) {
             mShouldStartAnimationDrawable = false;
             startAnimationActually();
-        }
-    }
-
-    private static class EndCurveInterpolator extends AccelerateDecelerateInterpolator {
-
-        @Override
-        public float getInterpolation(float input) {
-            return super.getInterpolation(Math.max(0.0f, (input - 0.5f) * 2.0f));
-        }
-    }
-
-    private static class StartCurveInterpolator extends AccelerateDecelerateInterpolator {
-
-        @Override
-        public float getInterpolation(float input) {
-            return super.getInterpolation(Math.min(1.0f, input * 2.0f));
         }
     }
 }
