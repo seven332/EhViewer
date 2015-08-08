@@ -110,5 +110,6 @@
     <color name="loading_indicator_orange">@color/material_deep_Orange_400</color>
 
     <color name="gallery_background">#ff212121</color>
+    <color name="gallery_panel_background">#ff333333</color>
 
 </resources>

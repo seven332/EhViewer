@@ -16,21 +16,22 @@
 
 package com.hippo.ehviewer.gallery.anim;
 
+import com.hippo.yorozuya.MathUtils;
+
 public class FloatAnimation extends Animation {
 
-    private final float mFrom;
-    private final float mTo;
+    private float mFrom;
+    private float mTo;
     private float mCurrent;
 
-    public FloatAnimation(float from, float to) {
+    public void setRange(float from, float to) {
         mFrom = from;
         mTo = to;
-        mCurrent = from;
     }
 
     @Override
     protected void onCalculate(float progress) {
-        mCurrent = mFrom + (mTo - mFrom) * progress;
+        mCurrent = MathUtils.lerp(mFrom, mTo, progress);
     }
 
     public float get() {

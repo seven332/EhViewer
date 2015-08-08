@@ -23,7 +23,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import com.hippo.ehviewer.gallery.anim.CanvasAnimation;
-import com.hippo.ehviewer.gallery.anim.StateTransitionAnimation;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLPaint;
 import com.hippo.yorozuya.AssertUtils;
@@ -45,10 +44,12 @@ import java.util.ArrayList;
 // from main thread (like a Handler) in your GLView, you need to call
 // lockRendering() if the rendering thread should not run at the same time.
 //
+// TODO Add store state
+// TODO Add click listener
 public class GLView {
     private static final String TAG = "GLView";
 
-    private static final boolean DEBUG_DRAW_BOUNDS = false;
+    private static final boolean DEBUG_DRAW_BOUNDS = true;
 
     public static final int VISIBLE = 0;
     public static final int INVISIBLE = 1;
@@ -107,8 +108,7 @@ public class GLView {
 
     private LayoutParams mLayoutParams;
 
-    private float [] mBackgroundColor;
-    private StateTransitionAnimation mTransition;
+    private int mBackgroundColor = Color.TRANSPARENT;
 
     public void startAnimation(CanvasAnimation animation) {
         GLRoot root = getGLRoot();
@@ -195,7 +195,9 @@ public class GLView {
         }
 
         // Ensure params is valid
-        if (!checkLayoutParams(params)) {
+        if (params == null) {
+            params = generateDefaultLayoutParams();
+        } else if (!checkLayoutParams(params)) {
             params = generateLayoutParams(params);
         }
 
@@ -319,17 +321,16 @@ public class GLView {
     }
 
     protected void render(GLCanvas canvas) {
-        boolean transitionActive = false;
-        if (mTransition != null && mTransition.calculate(AnimationTime.get())) {
-            invalidate();
-            transitionActive = mTransition.isActive();
+        // render background color
+        if (Color.alpha(mBackgroundColor) != 0) {
+            canvas.fillRect(0, 0, getWidth(), getHeight(), mBackgroundColor);
         }
-        renderBackground(canvas);
+
+        // render content
         onRender(canvas);
+
+        // render child
         canvas.save();
-        if (transitionActive) {
-            mTransition.applyContentTransform(this, canvas);
-        }
         for (int i = 0, n = getComponentCount(); i < n; ++i) {
             GLView component = getComponent(i);
             if (Rect.intersects(mRenderCheckBounds, component.mBounds)) {
@@ -338,38 +339,17 @@ public class GLView {
         }
         canvas.restore();
 
+        // render bounds
         if (DEBUG_DRAW_BOUNDS) {
             canvas.drawRect(0, 0, getWidth(), getHeight(), mDrawBoundsPaint);
-        }
-
-        if (transitionActive) {
-            mTransition.applyOverlay(this, canvas);
         }
     }
 
     protected void onRender(GLCanvas canvas) {
     }
 
-    public void setIntroAnimation(StateTransitionAnimation intro) {
-        mTransition = intro;
-        if (mTransition != null) mTransition.start();
-    }
-
-    public float [] getBackgroundColor() {
-        return mBackgroundColor;
-    }
-
-    public void setBackgroundColor(float [] color) {
+    public void setBackgroundColor(int color) {
         mBackgroundColor = color;
-    }
-
-    protected void renderBackground(GLCanvas view) {
-        if (mBackgroundColor != null) {
-            view.clearBuffer(mBackgroundColor);
-        }
-        if (mTransition != null && mTransition.isActive()) {
-            mTransition.applyBackground(this, view);
-        }
     }
 
     protected void renderChild(GLCanvas canvas, GLView component) {
@@ -449,6 +429,26 @@ public class GLView {
         return onTouch(event);
     }
 
+    public void setPaddings(int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
+        mPaddings.set(paddingLeft, paddingTop, paddingRight, paddingBottom);
+    }
+
+    public void setPaddingLeft(int paddingLeft) {
+        mPaddings.left = paddingLeft;
+    }
+
+    public void setPaddingTop(int paddingTop) {
+        mPaddings.top = paddingTop;
+    }
+
+    public void setPaddingRight(int paddingRight) {
+        mPaddings.right = paddingRight;
+    }
+
+    public void setPaddingBottom(int paddingBottom) {
+        mPaddings.bottom = paddingBottom;
+    }
+
     public Rect getPaddings() {
         return mPaddings;
     }
@@ -498,11 +498,11 @@ public class GLView {
     }
 
     protected int getSuggestedMinimumHeight() {
-        return getMinimumHeight();
+        return getMinimumHeight() + mPaddings.top + mPaddings.bottom;
     }
 
     protected int getSuggestedMinimumWidth() {
-        return getMinimumWidth();
+        return getMinimumWidth() + mPaddings.left + mPaddings.right;
     }
 
     /**
@@ -575,6 +575,28 @@ public class GLView {
     }
 
     /**
+     * Utility to return a default begin. Uses the supplied number as left or top.
+     *
+     * @param size the parent size
+     * @param specSize the child size
+     * @param paddingBeign the padding begin
+     * @param paddingFinish the padding finish
+     * @param position the {@link Gravity#POSITION_BEGIN} or {@link Gravity#POSITION_CENTER} or
+     *                 {@link Gravity#POSITION_FINISH}
+     * @return the begin size
+     */
+    public static int getDefaultBegin(int size, int specSize, int paddingBeign, int paddingFinish,
+            @Gravity.PositionMode int position) {
+        if (position == Gravity.POSITION_FINISH) {
+            return size - paddingFinish - specSize;
+        } else if (position == Gravity.POSITION_CENTER) {
+            return ((size - paddingBeign - paddingFinish) / 2) - (specSize / 2) + paddingBeign;
+        } else {
+            return paddingBeign;
+        }
+    }
+
+    /**
      * Utility to return a default size. Uses the supplied size if the
      * MeasureSpec imposed no constraints. Will get larger if allowed
      * by the MeasureSpec.
@@ -597,6 +619,32 @@ public class GLView {
                 break;
             case MeasureSpec.AT_MOST:
                 return size == 0 ? specSize : Math.min(size, specSize);
+        }
+        return result;
+    }
+
+    /**
+     * Utility to return a max size. Uses the supplied size if the
+     * MeasureSpec imposed no constraints. Will get larger if allowed
+     * by the MeasureSpec.
+     *
+     * @param size Default size for this view
+     * @param measureSpec Constraints imposed by the parent
+     * @return The size this view should be.
+     */
+    public static int getMaxSize(int size, int measureSpec) {
+        int result = size;
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+
+        switch (specMode) {
+            case MeasureSpec.UNSPECIFIED:
+                result = size;
+                break;
+            case MeasureSpec.EXACTLY:
+            case MeasureSpec.AT_MOST:
+                result = specSize;
+                break;
         }
         return result;
     }
@@ -969,6 +1017,10 @@ public class GLView {
 
         public GravityLayoutParams(GLView.LayoutParams source) {
             super(source);
+
+            if (source instanceof GravityLayoutParams) {
+                gravity = ((GravityLayoutParams) source).gravity;
+            }
         }
 
         public GravityLayoutParams(int width, int height) {

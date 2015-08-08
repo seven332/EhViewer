@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.gallery;
 
+import android.util.Log;
+
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.yorozuya.AssertUtils;
@@ -30,6 +32,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 public class SpiderInfo {
+
+    private static final String TAG = SpiderInfo.class.getSimpleName();
 
     private static final int VERSION = 1;
 
@@ -137,7 +141,8 @@ public class SpiderInfo {
             for (;;) {
                 String line = IOUtils.readAsciiLine(is);
                 int pos = line.indexOf(":");
-                if (pos == -1) {
+                if (pos < 0) {
+                    Log.e(TAG, "Can't parse line " + line);
                     continue;
                 }
                 try {
@@ -146,6 +151,7 @@ public class SpiderInfo {
                     tokens.set(index, token);
                 } catch (NumberFormatException e) {
                     // Empty
+                    Log.e(TAG, "Can't parse line " + line);
                 }
             }
         } catch (EOFException e) {

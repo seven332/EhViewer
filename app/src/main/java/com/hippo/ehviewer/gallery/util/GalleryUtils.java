@@ -33,6 +33,10 @@ public class GalleryUtils {
         };
     }
 
+    public static int floatARGBArrayTointColor(float[] from) {
+        return Color.argb((int) (from[0] * 255), (int) (from[1] * 255), (int) (from[2] * 255), (int) (from[3] * 255));
+    }
+
     // Below are used the detect using database in the render thread. It only
     // works most of the time, but that's ok because it's for debugging only.
 

@@ -23,6 +23,19 @@ public class TextTexture extends SpriteTexture {
         mMaxWidth = maxWidth;
     }
 
+    public int[] getTextIndexes(String text) {
+        char[] characters = mCharacters;
+
+        int length = text.length();
+        int[] indexes = new int[length];
+        for (int i = 0; i < length; i++) {
+            char ch = text.charAt(i);
+            indexes[i] = Arrays.binarySearch(characters, ch);
+        }
+
+        return indexes;
+    }
+
     public float getTextWidth(String text) {
         char[] characters = mCharacters;
         float[] widths = mWidths;
@@ -41,7 +54,27 @@ public class TextTexture extends SpriteTexture {
         return width;
     }
 
-    public float getTextHeight(String text) {
+    public float getTextWidth(int[] indexes) {
+        float[] widths = mWidths;
+        float width = 0.0f;
+        int length = indexes.length;
+        for (int i = 0; i < length; i++) {
+            int index = indexes[i];
+            if (index >= 0) {
+                width += widths[index];
+            } else {
+                width += mMaxWidth;
+            }
+        }
+
+        return width;
+    }
+
+    public float getMaxWidth() {
+        return mMaxWidth;
+    }
+
+    public float getTextHeight() {
         return mHeight;
     }
 
@@ -52,6 +85,20 @@ public class TextTexture extends SpriteTexture {
         for (int i = 0, n = text.length(); i < n; i++) {
             char ch = text.charAt(i);
             int index = Arrays.binarySearch(characters, ch);
+            if (index >= 0) {
+                drawSprite(canvas, index, x, y);
+                x += widths[index];
+            } else {
+                x += mMaxWidth;
+            }
+        }
+    }
+
+    public void drawText(GLCanvas canvas, int[] indexes, int x, int y) {
+        float[] widths = mWidths;
+
+        for (int i = 0, n = indexes.length; i < n; i++) {
+            int index = indexes[i];
             if (index >= 0) {
                 drawSprite(canvas, index, x, y);
                 x += widths[index];

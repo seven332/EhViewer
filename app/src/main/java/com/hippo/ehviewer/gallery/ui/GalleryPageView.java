@@ -6,10 +6,10 @@ import android.graphics.Rect;
 import com.hippo.ehviewer.gallery.glrenderer.TextTexture;
 import com.hippo.yorozuya.LayoutUtils;
 
-public class GalleryPageView extends FrameView {
+public class GalleryPageView extends FrameLayout {
 
     public ScaledImageView mImageView;
-    public LinearView mLinearView;
+    public LinearLayout mLinearLayout;
     public TextView mIndexView;
     public ProgressView mProgressView;
 
@@ -23,8 +23,8 @@ public class GalleryPageView extends FrameView {
 
     public GalleryPageView(Context context) {
         mImageView = new ScaledImageView();
-        mLinearView = new LinearView();
-        mLinearView.setInterval(LayoutUtils.dp2pix(context, 24)); // 12dp
+        mLinearLayout = new LinearLayout();
+        mLinearLayout.setInterval(LayoutUtils.dp2pix(context, 24)); // 12dp
         mIndexView = new TextView(sTextTexture);
         mProgressView = new ProgressView();
         mProgressView.setMinimumWidth(LayoutUtils.dp2pix(context, 56)); // 56dp
@@ -33,11 +33,11 @@ public class GalleryPageView extends FrameView {
         GravityLayoutParams lp = new GravityLayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER_HORIZONTAL;
-        mLinearView.addComponent(mIndexView, lp);
+        mLinearLayout.addComponent(mIndexView, lp);
         lp = new GravityLayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER_HORIZONTAL;
-        mLinearView.addComponent(mProgressView, lp);
+        mLinearLayout.addComponent(mProgressView, lp);
 
         lp = new GravityLayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT);
@@ -46,7 +46,7 @@ public class GalleryPageView extends FrameView {
         lp = new GravityLayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER;
-        addComponent(mLinearView, lp);
+        addComponent(mLinearLayout, lp);
     }
 
     private void updateSeen() {

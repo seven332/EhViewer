@@ -655,6 +655,7 @@ public class SpiderQueen implements Runnable {
         }
     }
 
+    // TODO request index may
     private int getRequestIndex() {
         synchronized (mNextIndexLock) {
             int length = mSpiderInfo.pages;
@@ -746,8 +747,6 @@ public class SpiderQueen implements Runnable {
                 }
                 imageUrl = result.imageUrl;
                 skipHathKey = result.skipHathKey;
-
-                Log.d("TAG", "index = " + index + ", imageUrl = " + imageUrl + ", skipHathKey = " + skipHathKey);
 
                 // Download image
                 try {

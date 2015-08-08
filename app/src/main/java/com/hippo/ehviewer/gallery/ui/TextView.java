@@ -1,13 +1,19 @@
 package com.hippo.ehviewer.gallery.ui;
 
+import android.graphics.Rect;
+
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 import com.hippo.ehviewer.gallery.glrenderer.TextTexture;
+import com.hippo.yorozuya.ArrayUtils;
 
 public class TextView extends GLView {
 
     TextTexture mTextTexture;
 
     private String mText = "";
+    private int[] mIndexes = ArrayUtils.EMPTY_INT_ARRAY;
+
+    private int mGravity = Gravity.NO_GRAVITY;
 
     public TextView(TextTexture textTexture) {
         mTextTexture = textTexture;
@@ -19,7 +25,15 @@ public class TextView extends GLView {
         }
         if (!text.equals(mText)) {
             mText = text;
+            mIndexes = mTextTexture.getTextIndexes(text);
             requestLayout();
+        }
+    }
+
+    public void setGravity(int gravity) {
+        if (mGravity != gravity) {
+            mGravity = gravity;
+            invalidate();
         }
     }
 
@@ -29,8 +43,8 @@ public class TextView extends GLView {
         int textHight = 0;
 
         if (mTextTexture != null) {
-            textWidth = (int) mTextTexture.getTextWidth(mText);
-            textHight = (int) mTextTexture.getTextHeight(mText);
+            textWidth = (int) mTextTexture.getTextWidth(mIndexes);
+            textHight = (int) mTextTexture.getTextHeight();
         }
 
         setMeasuredSize(getDefaultSize(Math.max(getSuggestedMinimumWidth(), textWidth), widthSpec),
@@ -39,6 +53,11 @@ public class TextView extends GLView {
 
     @Override
     protected void onRender(GLCanvas canvas) {
-        mTextTexture.drawText(canvas, mText, 0, 0);
+        Rect paddings = getPaddings();
+        int x = getDefaultBegin(getWidth(), (int) mTextTexture.getTextWidth(mIndexes),
+                paddings.left, paddings.right, Gravity.getPosition(mGravity, Gravity.HORIZONTAL));
+        int y = getDefaultBegin(getHeight(), (int) mTextTexture.getTextHeight(),
+                paddings.top, paddings.bottom, Gravity.getPosition(mGravity, Gravity.VERTICAL));
+        mTextTexture.drawText(canvas, mIndexes, x, y);
     }
 }

@@ -22,10 +22,10 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
 import com.hippo.ehviewer.gallery.anim.Animation;
+import com.hippo.ehviewer.gallery.anim.FloatAnimation;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 import com.hippo.ehviewer.gallery.glrenderer.GLPaint;
 import com.hippo.vectorold.animation.PathInterpolator;
-import com.hippo.yorozuya.MathUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,42 +76,50 @@ public class ProgressView extends GLView {
     }
 
     public void setupAnimations() {
-        Animation trimStart = new Animation() {
+        FloatAnimation trimStart = new FloatAnimation() {
             @Override
             protected void onCalculate(float progress) {
-                mTrimStart = MathUtils.lerp(0.0f, 0.75f, progress);
+                super.onCalculate(progress);
+                mTrimStart = get();
             }
         };
+        trimStart.setRange(0.0f, 0.75f);
         trimStart.setDuration(1333L);
         trimStart.setInterpolator(TRIM_START_INTERPOLATOR);
         trimStart.setRepeatCount(Animation.INFINITE);
 
-        Animation trimEnd = new Animation() {
+        FloatAnimation trimEnd = new FloatAnimation() {
             @Override
             protected void onCalculate(float progress) {
-                mTrimEnd = MathUtils.lerp(0.0f, 0.75f, progress);
+                super.onCalculate(progress);
+                mTrimEnd = get();
             }
         };
+        trimEnd.setRange(0.0f, 0.75f);
         trimEnd.setDuration(1333L);
         trimEnd.setInterpolator(TRIM_END_INTERPOLATOR);
         trimEnd.setRepeatCount(Animation.INFINITE);
 
-        Animation trimOffset = new Animation() {
+        FloatAnimation trimOffset = new FloatAnimation() {
             @Override
             protected void onCalculate(float progress) {
-                mTrimOffset = MathUtils.lerp(0.0f, 0.25f, progress);
+                super.onCalculate(progress);
+                mTrimOffset = get();
             }
         };
+        trimOffset.setRange(0.0f, 0.25f);
         trimOffset.setDuration(1333L);
         trimOffset.setInterpolator(LINEAR_INTERPOLATOR);
         trimOffset.setRepeatCount(Animation.INFINITE);
 
-        Animation trimRotation = new Animation() {
+        FloatAnimation trimRotation = new FloatAnimation() {
             @Override
             protected void onCalculate(float progress) {
-                mTrimRotation = MathUtils.lerp(0.0f, 720.0f, progress);
+                super.onCalculate(progress);
+                mTrimRotation = get();
             }
         };
+        trimRotation.setRange(0.0f, 720.0f);
         trimRotation.setDuration(6665L);
         trimRotation.setInterpolator(LINEAR_INTERPOLATOR);
         trimRotation.setRepeatCount(Animation.INFINITE);
@@ -125,7 +133,7 @@ public class ProgressView extends GLView {
     private void startAnimations() {
         List<Animation> animations = mAnimations;
         for (int i = 0, n = animations.size(); i < n; i++) {
-            animations.get(i).start();
+            animations.get(i).forceReset();
         }
     }
 
@@ -191,7 +199,7 @@ public class ProgressView extends GLView {
         int cy = height / 2;
 
         float startAngle = (mTrimStart + mTrimOffset) * 360.0f - 90;
-        float sweepAngle = (mTrimEnd - mTrimStart) * 360.0f;
+        float sweepAngle = Math.max(6.0f, (mTrimEnd - mTrimStart) * 360.0f);
         float rotation = mTrimRotation + startAngle;
 
         canvas.save();

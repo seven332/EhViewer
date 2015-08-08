@@ -19,10 +19,12 @@ package com.hippo.ehviewer.gallery.ui;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Process;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -36,6 +38,7 @@ import com.hippo.ehviewer.gallery.glrenderer.UploadedTexture;
 import com.hippo.ehviewer.gallery.util.ApiHelper;
 import com.hippo.ehviewer.gallery.util.GalleryUtils;
 import com.hippo.ehviewer.gallery.util.MotionEventHelper;
+import com.hippo.widget.FitPaddingImpl;
 import com.hippo.yorozuya.AssertUtils;
 
 import java.util.ArrayDeque;
@@ -607,6 +610,33 @@ public class GLRootView extends GLSurfaceView
         } finally {
             super.finalize();
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    protected boolean fitSystemWindows(@NonNull Rect insets) {
+        int fitPaddingLeft = insets.left;
+        int fitPaddingTop = insets.top;
+        int fitPaddingRight = insets.right;
+        int fitPaddingBottom = insets.bottom;
+
+        GLView contentView = mContentView;
+        if (contentView != null) {
+            for (int i = 0, n = contentView.getComponentCount(); i < n; i++) {
+                GLView component = contentView.getComponent(i);
+                if (component instanceof FitPaddingImpl) {
+                    ((FitPaddingImpl) component).onFitPadding(fitPaddingLeft ,fitPaddingTop,
+                            fitPaddingRight, fitPaddingBottom);
+                }
+            }
+        }
+
+        insets.left = 0;
+        insets.top = 0;
+        insets.right = 0;
+        insets.bottom = 0;
+
+        return super.fitSystemWindows(insets);
     }
 
     private static abstract class BaseConfigChooser implements EGLConfigChooser {

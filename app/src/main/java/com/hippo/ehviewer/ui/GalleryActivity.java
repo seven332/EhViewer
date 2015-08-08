@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.os.Process;
 import android.support.annotation.Nullable;
 import android.util.Pair;
+import android.util.SparseArray;
 
 import com.hippo.app.StatsActivity;
 import com.hippo.conaco.BitmapPool;
@@ -43,23 +44,30 @@ import com.hippo.ehviewer.gallery.glrenderer.TextTexture;
 import com.hippo.ehviewer.gallery.glrenderer.TiledTexture;
 import com.hippo.ehviewer.gallery.ui.GLRootView;
 import com.hippo.ehviewer.gallery.ui.GLView;
+import com.hippo.ehviewer.gallery.ui.GalleryLayout;
 import com.hippo.ehviewer.gallery.ui.GalleryPageView;
+import com.hippo.ehviewer.gallery.ui.GalleryPanel;
 import com.hippo.ehviewer.gallery.ui.GalleryView;
 import com.hippo.util.SystemUiHelper;
-import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.PriorityThreadFactory;
+import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class GalleryActivity extends StatsActivity implements TiledTexture.OnFreeBitmapListener, GalleryProviderListener {
+public class GalleryActivity extends StatsActivity implements TiledTexture.OnFreeBitmapListener,
+        GalleryProviderListener, GalleryLayout.ActionListener {
 
     public static final String ACTION_GALLERY_FROM_GALLERY_BASE = "com.hippo.ehviewer.gallery.action.GALLERY_FROM_GALLERY_BASE";
     public static final String ACTION_GALLERY_FROM_ARCHIVE = "com.hippo.ehviewer.gallery.action.GALLERY_FROM_ARCHIVE";
 
     public static final String KEY_GALLERY_BASE = "gallery_base";
     public static final String KEY_ARCHIVE_URI = "archive_uri";
+
+    public static final String KEY_HASH_CODE = "hash_code";
+    public static final SparseArray<GalleryProvider> sGalleryProviderMap = new SparseArray<>();
+    public static final SparseArray<CloseGalleryProviderTask> sCloseGalleryProviderTaskMap = new SparseArray<>();
 
     private SystemUiHelper mSystemUiHelper;
 
@@ -70,10 +78,12 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
 
     private GLRootView mGLRootView;
     private GalleryView mGalleryView;
+    private GalleryPanel mGalleryPanel;
 
     private GalleryAdapter mAdapter;
 
-    private TextTexture mTextTexture;
+    private TextTexture mGalleryIndexTextTexture;
+    private TextTexture mGalleryProgressTextTexture;
 
     private GalleryProvider mGalleryProvider;
 
@@ -120,7 +130,20 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!getGalleryProvider(getIntent())) {
+        if (savedInstanceState != null) {
+            int hashCode = savedInstanceState.getInt(KEY_HASH_CODE, 0);
+            if (hashCode != 0) {
+                mGalleryProvider = sGalleryProviderMap.get(hashCode);
+                sGalleryProviderMap.remove(hashCode);
+                Runnable runnable = sCloseGalleryProviderTaskMap.get(hashCode);
+                sCloseGalleryProviderTaskMap.remove(hashCode);
+                if (runnable != null) {
+                    SimpleHandler.getInstance().removeCallbacks(runnable);
+                }
+            }
+        }
+
+        if (mGalleryProvider == null && !getGalleryProvider(getIntent())) {
             mDieYoung = true;
             finish();
             return;
@@ -130,9 +153,26 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
                 SystemUiHelper.FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES | SystemUiHelper.FLAG_IMMERSIVE_STICKY);
         mSystemUiHelper.hide();
 
+        mResources = getResources();
+
+        // Gallery index typeface
+        Typeface galleryIndexTf = Typeface.createFromAsset(mResources.getAssets(), "fonts/gallery_index.ttf");
+        mGalleryIndexTextTexture = TextTexture.create(galleryIndexTf,
+                mResources.getDimensionPixelSize(R.dimen.gallery_index_text),
+                mResources.getColor(R.color.secondary_text_dark),
+                new char[]{'.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
+        GalleryPageView.setTextTexture(mGalleryIndexTextTexture);
+        // Gallery progress typeface
+        Typeface galleryProgressTf = Typeface.createFromAsset(mResources.getAssets(), "fonts/gallery_progress.ttf");
+        mGalleryProgressTextTexture = TextTexture.create(galleryProgressTf,
+                mResources.getDimensionPixelSize(R.dimen.text_little_small),
+                mResources.getColor(R.color.primary_text_dark),
+                new char[]{'/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
+        GalleryPanel.setTextTexture(mGalleryProgressTextTexture);
+
         setContentView(R.layout.activity_gallery);
         mGLRootView = (GLRootView) findViewById(R.id.gl_root_view);
-        mResources = getResources();
+
         // Prepare
         TiledTexture.prepareResources();
         TiledTexture.setOnFreeBitmapListener(this);
@@ -142,19 +182,15 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         GifTexture.initialize(mUploader, mThreadExecutor);
         mGifBitmapPool = new BitmapPool();
         GifDecoder.setBitmapPool(mGifBitmapPool);
-        Typeface tf = Typeface.createFromAsset(mResources.getAssets(), "fonts/number.ttf");
-        mTextTexture = TextTexture.create(tf,
-                mResources.getDimensionPixelSize(R.dimen.gallery_index_text),
-                mResources.getColor(R.color.secondary_text_dark),
-                new char[]{'.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
-        mUploader.addTexture(mTextTexture);
-        GalleryPageView.setTextTexture(mTextTexture);
 
-        mGalleryView = new GalleryView(this);
+        mUploader.addTexture(mGalleryIndexTextTexture);
+        mUploader.addTexture(mGalleryProgressTextTexture);
+
+        GalleryLayout galleryLayout = new GalleryLayout(this, this);
+        mGalleryView = galleryLayout.getGalleryView();
+        mGalleryPanel = galleryLayout.getGalleryPanel();
         mAdapter = new GalleryAdapter();
         mGalleryView.setAdapter(mAdapter);
-        mGalleryView.setProgressSize(LayoutUtils.dp2pix(this, 56));
-        mGalleryView.setInterval(LayoutUtils.dp2pix(this, 48));
 
         mSize = mGalleryProvider.size();
         if (mSize <= 0) {
@@ -164,12 +200,31 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         }
         mGalleryProvider.addGalleryProviderListener(this);
 
-        mGLRootView.setContentPane(mGalleryView);
+        mGLRootView.setContentPane(galleryLayout);
     }
 
     private void setMode(GalleryView.Mode mode) {
         mMode = mode;
         mGalleryView.setMode(mode);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+    }
+
+    private static void closeGalleryProvider(GalleryProvider galleryProvider) {
+        if (galleryProvider instanceof GallerySpider) {
+            GallerySpider.release((GallerySpider) galleryProvider);
+        } else if (galleryProvider instanceof ZipGalleryProvider) {
+            ((ZipGalleryProvider) galleryProvider).stop();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_HASH_CODE, hashCode());
     }
 
     @Override
@@ -179,18 +234,21 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         if (!mDieYoung) {
             GalleryPageView.setTextTexture(null);
             mUploader.clear();
-            mTextTexture.recycle();
+            mGalleryIndexTextTexture.recycle();
+            mGalleryProgressTextTexture.recycle();
+
             GifDecoder.setBitmapPool(null);
             GifTexture.uninitialize();
             TiledTexture.setOnFreeBitmapListener(null);
             TiledTexture.freeResources();
             mGalleryProvider.removeGalleryProviderListener(this);
 
-            if (mGalleryProvider instanceof GallerySpider) {
-                GallerySpider.release((GallerySpider) mGalleryProvider);
-            } else if (mGalleryProvider instanceof ZipGalleryProvider) {
-                ((ZipGalleryProvider) mGalleryProvider).stop();
-            }
+            // Post close task
+            int hashCode = hashCode();
+            CloseGalleryProviderTask task = new CloseGalleryProviderTask(mGalleryProvider, hashCode);
+            sGalleryProviderMap.put(hashCode, mGalleryProvider);
+            sCloseGalleryProviderTaskMap.put(hashCode, task);
+            SimpleHandler.getInstance().postDelayed(task, 3000);
 
             mGalleryProvider = null;
 
@@ -382,6 +440,16 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         }
     }
 
+    @Override
+    public void onShowGalleryPanel() {
+        mSystemUiHelper.show();
+    }
+
+    @Override
+    public void onHideGalleryPanel() {
+        mSystemUiHelper.hide();
+    }
+
     class GalleryAdapter extends GalleryView.Adapter {
 
         @Override
@@ -405,6 +473,25 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         public void unbindPage(GalleryPageView view, int index) {
             view.mProgressView.setIndeterminate(false);
             clearTiledTextureInPage(view);
+        }
+    }
+
+    static class CloseGalleryProviderTask implements Runnable {
+
+        private GalleryProvider mGalleryProvider;
+        private int mHashCode;
+
+        public CloseGalleryProviderTask(GalleryProvider galleryProvider, int hashCode) {
+            mGalleryProvider = galleryProvider;
+            mHashCode = hashCode;
+        }
+
+        @Override
+        public void run() {
+            closeGalleryProvider(mGalleryProvider);
+            mGalleryProvider = null;
+            sGalleryProviderMap.remove(mHashCode);
+            sCloseGalleryProviderTaskMap.remove(mHashCode);
         }
     }
 }

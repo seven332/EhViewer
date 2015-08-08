@@ -90,8 +90,10 @@ abstract public class Animation {
     }
 
     public void start() {
-        mStartTime = ANIMATION_START;
-        mRunnedCount = 0;
+        if (mStartTime == NO_ANIMATION) {
+            mStartTime = ANIMATION_START;
+            mRunnedCount = 0;
+        }
     }
 
     public void setStartTime(long time) {
@@ -106,6 +108,11 @@ abstract public class Animation {
         mStartTime = NO_ANIMATION;
     }
 
+    public void forceReset() {
+        mStartTime = ANIMATION_START;
+        mRunnedCount = 0;
+    }
+
     // TODO mRepeatMode
     public boolean calculate(long currentTimeMillis) {
         if (mStartTime == NO_ANIMATION) {
@@ -116,7 +123,7 @@ abstract public class Animation {
         }
 
         long elapse = currentTimeMillis - mStartTime;
-        float x = MathUtils.clamp((float) elapse / mDuration, 0f, 1f);
+        float x = MathUtils.clamp(mDuration == 0.0f ? 1.0f : (float) elapse / mDuration, 0.0f, 1.0f); // Avoid NaN
         Interpolator i = mInterpolator;
         onCalculate(i != null ? i.getInterpolation(x) : x);
 

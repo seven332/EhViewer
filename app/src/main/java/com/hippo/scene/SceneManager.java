@@ -202,6 +202,7 @@ public class SceneManager {
         }
 
         if (previousState != null) {
+            previousState.endCurtainAnimation();
             previousState.pause();
             previousState.setState(Scene.SCENE_STATE_PAUSE);
         }
@@ -319,7 +320,7 @@ public class SceneManager {
     }
 
     private void checkSceneState(Scene scene, int expected) {
-        AssertUtils.assertEquals("The scene state is " + scene.getState() + ", but it should be " + expected,
+        AssertUtils.assertEquals(this + " state is " + scene.getState() + ", but it should be " + expected,
                 expected, scene.getState());
     }
 

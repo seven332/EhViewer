@@ -1,44 +1,47 @@
 package com.hippo.ehviewer.gallery.ui;
 
-public class LinearView extends GLView {
+public class FrameLayout extends GLView {
 
-    public int mInterval;
-
-    public void setInterval(int interval) {
-        mInterval = interval;
-        requestLayout();
-    }
-
-    // TODO
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
-        measureAllComponents(this, widthSpec, heightSpec);
-
         int maxWidth = 0;
         int maxHeight = 0;
-        int n = getComponentCount();
-        for (int i = 0; i < n; i++) {
+        for (int i = 0, n = getComponentCount(); i < n; i++) {
             GLView component = getComponent(i);
+            measureComponent(component, widthSpec, heightSpec);
             maxWidth = Math.max(maxWidth, component.getMeasuredWidth());
-            if (i != 0) {
-                maxHeight += mInterval;
-            }
-            maxHeight += component.getMeasuredHeight();
+            maxHeight = Math.max(maxHeight, component.getMeasuredHeight());
         }
 
-        setMeasuredSize(getDefaultSize(maxWidth, widthSpec), getDefaultSize(maxHeight, heightSpec));
+        // Consider min
+        maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
+        maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
+
+        // The final
+        maxWidth = getDefaultSize(maxWidth, widthSpec);
+        maxHeight = getDefaultSize(maxHeight, heightSpec);
+
+        setMeasuredSize(maxWidth, maxHeight);
+
+        if (MeasureSpec.getSize(widthSpec) != MeasureSpec.EXACTLY ||
+                MeasureSpec.getSize(heightSpec) != MeasureSpec.EXACTLY) {
+            // Measure again
+            measureAllComponents(this, MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.EXACTLY));
+        }
     }
 
     @Override
     protected void onLayout(boolean changeSize, int left, int top, int right, int bottom) {
         int width = getWidth();
-        int componentLeft;
-        int componentTop = 0;
+        int height = getHeight();
 
         for (int i = 0, n = getComponentCount(); i < n; i++) {
             GLView component = getComponent(i);
             int measureWidth = component.getMeasuredWidth();
             int measureHeight = component.getMeasuredHeight();
+            int componentLeft;
+            int componentTop;
 
             GravityLayoutParams lp = (GravityLayoutParams) component.getLayoutParams();
             int gravity = lp.gravity;
@@ -49,11 +52,16 @@ public class LinearView extends GLView {
             } else {
                 componentLeft = 0;
             }
+            if (Gravity.centerVertical(gravity)) {
+                componentTop = (height / 2) - (measureHeight / 2);
+            } else if (Gravity.bottom(gravity)) {
+                componentTop = height - measureHeight;
+            } else {
+                componentTop = 0;
+            }
 
             component.layout(componentLeft, componentTop,
                     componentLeft + measureWidth, componentTop + measureHeight);
-
-            componentTop += measureHeight + mInterval;
         }
     }
 

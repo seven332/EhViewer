@@ -1,12 +1,12 @@
 package com.hippo.ehviewer.gallery.ui;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
 
-import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.anim.Animation;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 import com.hippo.ehviewer.gallery.util.GalleryUtils;
@@ -40,6 +40,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         }
     };
 
+    private static final float[] LEFT_AREA = {0.0f, 0.0f, 1.0f / 3.0f, 1f};
+    private static final float[] RIGHT_AREA = {2.0f / 3.0f, 0.0f, 1.0f, 1f};
+    private static final float[] CENTER_AREA = {1.0f / 3.0f, 2.0f / 5.0f, 2.0f / 3.0f, 3.0f / 5.0f};
+
     private static final Interpolator SMOOTH_SCALER_INTERPOLATOR = new OvershootInterpolator();
 
     private boolean mEnableRequestLayout = true;
@@ -63,6 +67,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private boolean mScroll = false;
     private boolean mTouched = false;
 
+    private Rect mLeftArea = new Rect();
+    private Rect mRightArea = new Rect();
+    private Rect mCenterArea = new Rect();
+
     private int mDeltaX;
     private int[] mScrollRemain = new int[2];
 
@@ -83,6 +91,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private Recycler mRecycler;
 
     private boolean mRequestFill = false;
+
+    private ActionListener mListener;
 
     public enum Mode {
         NONE, // Just a progress view
@@ -107,7 +117,9 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         CENTER
     }
 
-    public GalleryView(Context context) {
+    public GalleryView(Context context, int firstShownIndex, ActionListener listener) {
+        mFirstShownIndex = firstShownIndex;
+        mListener = listener;
         mEdgeView = new EdgeView(context);
         mGestureRecognizer = new GestureRecognizer(context, this);
         mSmoothScroller = new SmoothScroller();
@@ -115,8 +127,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mSmoothScaler = new SmoothScaler();
         mSmoothScaler.setInterpolator(SMOOTH_SCALER_INTERPOLATOR);
         mRecycler = new Recycler();
-
-        setBackgroundColor(GalleryUtils.intColorToFloatARGBArray(context.getResources().getColor(R.color.gallery_background)));
     }
 
     @Override
@@ -135,8 +145,15 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     public void setMode(Mode mode) {
         if (mMode != mode) {
+            Mode oldMode = mMode;
             mMode = mode;
             superRequestLayout();
+
+            mListener.onSetMode(mode);
+            if (oldMode == Mode.NONE) {
+                mFirstShownIndex = MathUtils.clamp(mFirstShownIndex, 0, mAdapter.getPages() - 1);
+                mListener.onScrollToPage(mFirstShownIndex, true);
+            }
         }
     }
 
@@ -154,6 +171,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         superRequestLayout();
     }
 
+    public int getPages() {
+        return mAdapter.getPages();
+    }
+
     public void superRequestLayout() {
         super.requestLayout();
     }
@@ -168,6 +189,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     public void scrollToPage(int page) {
+        scrollToPageInternal(page, false);
+    }
+
+    private void scrollToPageInternal(int page, boolean internal) {
         mSmoothScroller.forceStop();
         mSmoothScaler.forceStop();
 
@@ -178,6 +203,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mFirstShownIndex = page;
         mLayoutOffset = 0;
         requestFill();
+
+        mListener.onScrollToPage(page, internal);
     }
 
     public void smoothScrollToPage(int page) {
@@ -196,6 +223,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         boolean reverse = mMode == Mode.RIGHT_TO_LEFT;
 
         // Fix TODO What if offset is very large
+        int oldFirstShownIndex = mFirstShownIndex;
         int width = getWidth();
         if (!mHaveChangePage) {
             if (mLayoutOffset > mInterval) {
@@ -221,6 +249,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             }
         }
 
+        if (mFirstShownIndex != oldFirstShownIndex) {
+            mListener.onScrollToPage(mFirstShownIndex, true);
+        }
+
         requestFill();
     }
 
@@ -238,21 +270,37 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @Override
     public boolean onSingleTapConfirmed(float x, float y) {
-
         if ((mMode == Mode.LEFT_TO_RIGHT || mMode == Mode.RIGHT_TO_LEFT) && mLayoutOffset == 0) {
-
-            if (x < getWidth() / 2) {
-                if (mFirstShownIndex > 0) {
-                    scrollToPage(mFirstShownIndex - 1);
+            if (mLeftArea.contains((int) x, (int) y)) {
+                if (mMode == Mode.LEFT_TO_RIGHT) {
+                    if (mFirstShownIndex > 0) {
+                        scrollToPageInternal(mFirstShownIndex - 1, true);
+                    } else {
+                        mEdgeView.onPull(getWidth() * 2, (int) y, EdgeView.LEFT);
+                    }
                 } else {
-                    mEdgeView.onPull(getWidth() * 2, (int) y, EdgeView.LEFT);
+                    if (mFirstShownIndex < mAdapter.getPages() - 1) {
+                        scrollToPageInternal(mFirstShownIndex + 1, true);
+                    } else {
+                        mEdgeView.onPull(getWidth() * 2, (int) y, EdgeView.LEFT);
+                    }
                 }
-            } else {
-                if (mFirstShownIndex < mAdapter.getPages() - 1) {
-                    scrollToPage(mFirstShownIndex + 1);
+            } else if (mRightArea.contains((int) x, (int) y)) {
+                if (mMode == Mode.LEFT_TO_RIGHT) {
+                    if (mFirstShownIndex < mAdapter.getPages() - 1) {
+                        scrollToPageInternal(mFirstShownIndex + 1, true);
+                    } else {
+                        mEdgeView.onPull(getWidth() * 2, (int) y, EdgeView.RIGHT);
+                    }
                 } else {
-                    mEdgeView.onPull(getWidth() * 2, (int) y, EdgeView.RIGHT);
+                    if (mFirstShownIndex > 0) {
+                        scrollToPageInternal(mFirstShownIndex - 1, true);
+                    } else {
+                        mEdgeView.onPull(getWidth() * 2, (int) y, EdgeView.RIGHT);
+                    }
                 }
+            } else if (mCenterArea.contains((int) x, (int) y)) {
+                mListener.onTapCenter();
             }
         }
 
@@ -533,6 +581,17 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mLayoutOffset = 0;
         mHaveChangePage = false;
         fill();
+
+        if (changeSize) {
+            int width = right - left;
+            int height = bottom - top;
+            mLeftArea.set((int) (LEFT_AREA[0] * width), (int) (LEFT_AREA[1] * height),
+                    (int) (LEFT_AREA[2] * width), (int) (LEFT_AREA[3] * height));
+            mRightArea.set((int) (RIGHT_AREA[0] * width), (int) (RIGHT_AREA[1] * height),
+                    (int) (RIGHT_AREA[2] * width), (int) (RIGHT_AREA[3] * height));
+            mCenterArea.set((int) (CENTER_AREA[0] * width), (int) (CENTER_AREA[1] * height),
+                    (int) (CENTER_AREA[2] * width), (int) (CENTER_AREA[3] * height));
+        }
     }
 
     public GalleryPageView getPage(int index) {
@@ -921,5 +980,14 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                 mStack.push(page);
             }
         }
+    }
+
+    public interface ActionListener {
+
+        void onTapCenter();
+
+        void onSetMode(Mode mode);
+
+        void onScrollToPage(int page, boolean internal);
     }
 }

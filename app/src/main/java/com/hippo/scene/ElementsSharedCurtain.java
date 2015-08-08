@@ -250,7 +250,7 @@ public class ElementsSharedCurtain extends Curtain {
         View sceneContentView = exit.getSceneView().getChildAt(0);
         if (sceneContentView == null) {
             Say.w(TAG, "Can't get exit scene content view");
-            dispatchOpenFinished(enter, exit);
+            dispatchCloseFinished(enter, exit);
             return;
         }
 
