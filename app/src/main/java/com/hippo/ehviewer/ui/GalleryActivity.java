@@ -65,6 +65,8 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
     public static final String KEY_GALLERY_BASE = "gallery_base";
     public static final String KEY_ARCHIVE_URI = "archive_uri";
 
+    public static final String KEY_SHOWING = "showing";
+
     public static final String KEY_HASH_CODE = "hash_code";
     public static final SparseArray<GalleryProvider> sGalleryProviderMap = new SparseArray<>();
     public static final SparseArray<CloseGalleryProviderTask> sCloseGalleryProviderTaskMap = new SparseArray<>();
@@ -151,7 +153,11 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
 
         mSystemUiHelper = new SystemUiHelper(this, SystemUiHelper.LEVEL_IMMERSIVE,
                 SystemUiHelper.FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES | SystemUiHelper.FLAG_IMMERSIVE_STICKY);
-        mSystemUiHelper.hide();
+        if (savedInstanceState == null || !savedInstanceState.getBoolean(KEY_SHOWING, false)) {
+            mSystemUiHelper.hide();
+        } else {
+            mSystemUiHelper.show();
+        }
 
         mResources = getResources();
 
@@ -208,11 +214,6 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         mGalleryView.setMode(mode);
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-    }
-
     private static void closeGalleryProvider(GalleryProvider galleryProvider) {
         if (galleryProvider instanceof GallerySpider) {
             GallerySpider.release((GallerySpider) galleryProvider);
@@ -225,6 +226,7 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_HASH_CODE, hashCode());
+        outState.putBoolean(KEY_SHOWING, mSystemUiHelper.isShowing());
     }
 
     @Override
@@ -266,7 +268,11 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
     protected void onResume() {
         super.onResume();
 
-        mSystemUiHelper.hide();
+        if (mSystemUiHelper.isShowing()) {
+            mSystemUiHelper.show();
+        } else {
+            mSystemUiHelper.hide();
+        }
     }
 
     @Override

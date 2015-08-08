@@ -18,8 +18,10 @@ package com.hippo.ehviewer.gallery.ui;
 
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 
 import com.hippo.ehviewer.gallery.anim.CanvasAnimation;
@@ -44,12 +46,11 @@ import java.util.ArrayList;
 // from main thread (like a Handler) in your GLView, you need to call
 // lockRendering() if the rendering thread should not run at the same time.
 //
-// TODO Add store state
 // TODO Add click listener
 public class GLView {
     private static final String TAG = "GLView";
 
-    private static final boolean DEBUG_DRAW_BOUNDS = true;
+    private static final boolean DEBUG_DRAW_BOUNDS = false;
 
     public static final int VISIBLE = 0;
     public static final int INVISIBLE = 1;
@@ -57,6 +58,11 @@ public class GLView {
     private static final int FLAG_INVISIBLE = 1;
     private static final int FLAG_SET_MEASURED_SIZE = 2;
     private static final int FLAG_LAYOUT_REQUESTED = 4;
+
+    /**
+     * Used to mark a GlView that has no ID.
+     */
+    public static final int NO_ID = -1;
 
     public interface OnClickListener {
         void onClick(GLView v);
@@ -93,6 +99,14 @@ public class GLView {
     protected int mScrollX = 0;
     protected int mScrollHeight = 0;
     protected int mScrollWidth = 0;
+
+    /**
+     * The GlView's identifier.
+     *
+     * @see #setId(int)
+     * @see #getId()
+     */
+    private int mID = NO_ID;
 
     /**
      * The minimum height of the view. We'll try our best to have the height
@@ -257,6 +271,27 @@ public class GLView {
         }
         component.onDetachFromRoot();
         component.mParent = null;
+    }
+
+    /**
+     * Sets the identifier for this GlView. The identifier does not have to be
+     * unique in this GlView's hierarchy. The identifier should be a positive
+     * number.
+     *
+     * @param id a number used to identify the view
+     */
+    public void setId(int id) {
+        mID = id;
+    }
+
+    /**
+     * Returns this GlView's identifier.
+     *
+     * @return a positive integer used to identify the view or {@link #NO_ID}
+     *         if the view has no ID
+     */
+    public int getId() {
+        return mID;
     }
 
     public Rect bounds() {
@@ -427,6 +462,60 @@ public class GLView {
             }
         }
         return onTouch(event);
+    }
+
+    /**
+     * Called by {@link GLRootView#dispatchSaveInstanceState(SparseArray)} to
+     * store this GlView hierarchy's frozen state into the given container.
+     *
+     * @param container The SparseArray in which to save the view's state.
+     */
+    public void saveHierarchyState(SparseArray<Parcelable> container) {
+        dispatchSaveInstanceState(container);
+    }
+
+    protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
+        if (mID != NO_ID) {
+            Parcelable state = onSaveInstanceState();
+            if (state != null) {
+                container.put(mID, state);
+            }
+        }
+        for (int i = 0, n = getComponentCount(); i < n; ++i) {
+            getComponent(i).dispatchSaveInstanceState(container);
+        }
+    }
+
+    protected Parcelable onSaveInstanceState() {
+        return null;
+    }
+
+    /**
+     * Called by {@link GLRootView#dispatchRestoreInstanceState(SparseArray)} to
+     * restore this view hierarchy's frozen state from the given container.
+     *
+     * @param container The SparseArray which holds previously frozen states.
+     */
+    public void restoreHierarchyState(SparseArray<Parcelable> container) {
+        dispatchRestoreInstanceState(container);
+    }
+
+    protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
+        if (mID != NO_ID) {
+            Parcelable state = container.get(mID);
+            if (state != null) {
+                onRestoreInstanceState(state);
+            }
+        }
+        for (int i = 0, n = getComponentCount(); i < n; ++i) {
+            getComponent(i).dispatchRestoreInstanceState(container);
+        }
+    }
+
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state != null) {
+            throw new IllegalArgumentException("Please override onRestoreInstanceState");
+        }
     }
 
     public void setPaddings(int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {

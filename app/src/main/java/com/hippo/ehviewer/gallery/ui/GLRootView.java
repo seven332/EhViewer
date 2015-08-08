@@ -22,11 +22,13 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
+import android.os.Parcelable;
 import android.os.Process;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
@@ -600,6 +602,28 @@ public class GLRootView extends GLSurfaceView
         // TODO Is it right ?
         if (mContentView != null) {
             mContentView.detachFromRoot();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void dispatchSaveInstanceState(@NonNull SparseArray<Parcelable> container) {
+        super.dispatchSaveInstanceState(container);
+        if (mContentView != null) {
+            mContentView.saveHierarchyState(container);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void dispatchRestoreInstanceState(@NonNull SparseArray<Parcelable> container) {
+        super.dispatchRestoreInstanceState(container);
+        if (mContentView != null) {
+            mContentView.restoreHierarchyState(container);
         }
     }
 

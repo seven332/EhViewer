@@ -17,6 +17,8 @@
 package com.hippo.ehviewer.gallery.ui;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.MotionEvent;
 
 import com.hippo.ehviewer.R;
@@ -29,6 +31,8 @@ import com.hippo.widget.FitPaddingImpl;
 import com.hippo.yorozuya.LayoutUtils;
 
 public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSetProgressListener {
+
+    private static final String KEY_SHOWN = "shown_key";
 
     private Context mContext;
 
@@ -134,15 +138,15 @@ public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSet
                 mBottomView.offsetTopAndBottom(getHeight() - (int) (mBottomView.getMeasuredHeight() * mShowPercent) - mBottomView.bounds().top);
             }
         };
-        mAnimation.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
     }
 
-    protected void setShown(boolean shown) {
+    public void setShown(boolean shown, boolean animation) {
         if (mShown != shown) {
             mShown = shown;
 
             mAnimation.setRange(mShowPercent, shown ? 1.0f : 0.0f);
-            mAnimation.setDuration(300); // TODO
+            mAnimation.setDuration(animation ? 300 : 0); // TODO
+            mAnimation.setInterpolator(shown ? AnimationUtils.FAST_SLOW_INTERPOLATOR : AnimationUtils.SLOW_FAST_INTERPOLATOR);
             mAnimation.forceReset();
             invalidate();
 
@@ -155,7 +159,7 @@ public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSet
     @Override
     protected boolean onTouch(MotionEvent event) {
         if (mShown && event.getAction() == MotionEvent.ACTION_UP) {
-            setShown(false);
+            setShown(false, true);
         }
         return mShown;
     }
@@ -218,6 +222,19 @@ public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSet
         }
 
         super.onRender(canvas);
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle saved = new Bundle();
+        saved.putBoolean(KEY_SHOWN, mShown);
+        return saved;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        Bundle saved = (Bundle) state;
+        setShown(saved.getBoolean(KEY_SHOWN), false);
     }
 
     public interface ActionListener {

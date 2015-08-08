@@ -33,10 +33,12 @@ public class GalleryLayout extends FrameLayout implements GalleryView.ActionList
         setBackgroundColor(context.getResources().getColor(R.color.gallery_background));
 
         mGalleryView = new GalleryView(context, 0, this);
+        mGalleryView.setId(R.id.gallery_view);
         mGalleryView.setProgressSize(LayoutUtils.dp2pix(context, 56));
         mGalleryView.setInterval(LayoutUtils.dp2pix(context, 48));
 
         mGalleryPanel = new GalleryPanel(context, this);
+        mGalleryPanel.setId(R.id.gallery_panel);
 
         addComponent(mGalleryView, new GravityLayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         addComponent(mGalleryPanel, new GravityLayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -52,7 +54,7 @@ public class GalleryLayout extends FrameLayout implements GalleryView.ActionList
 
     @Override
     public void onTapCenter() {
-        mGalleryPanel.setShown(true);
+        mGalleryPanel.setShown(true, true);
         mActionListener.onShowGalleryPanel();
     }
 

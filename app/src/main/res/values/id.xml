@@ -19,4 +19,7 @@
     <item type="id" name="view_tag_accurate_click_helper"/>
     <item type="id" name="view_tag_on_accurate_click_listener"/>
 
+    <item type="id" name="gallery_view"/>
+    <item type="id" name="gallery_panel"/>
+
 </resources>
