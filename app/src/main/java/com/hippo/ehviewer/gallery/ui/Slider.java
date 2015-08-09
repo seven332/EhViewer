@@ -33,6 +33,8 @@ public class Slider extends GLView {
     // 0.0f to 1.0f
     private float mDrawProgress = 0.0f;
 
+    private boolean mReverse = false;
+
     private int m2dp;
     private int m5dp;
     private int m6dp;
@@ -75,6 +77,17 @@ public class Slider extends GLView {
         }
     }
 
+    public int getProgress() {
+        return mProgress;
+    }
+
+    public void setReverse(boolean reverse) {
+        if (mReverse != reverse) {
+            mReverse = reverse;
+            invalidate();
+        }
+    }
+
     public void setOnSetProgressListener(OnSetProgressListener listener) {
         mListener = listener;
     }
@@ -99,7 +112,8 @@ public class Slider extends GLView {
             canvas.fillRect(padding.left + dp6, padding.top + m5dp,
                     width - dp6 - dp6 - padding.left - padding.right, m2dp, mColor);
             // Draw controllor
-            canvas.fillOval(padding.left + dp6 + (width - dp6 - dp6 - padding.left - padding.right) * mDrawProgress,
+            canvas.fillOval(padding.left + dp6 + (width - dp6 - dp6 - padding.left - padding.right) *
+                            (mReverse ? (1.0f - mDrawProgress) : mDrawProgress),
                     padding.top + dp6, dp6, dp6, mColor);
         }
     }
@@ -113,11 +127,15 @@ public class Slider extends GLView {
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                Rect padding = mPaddings;
+                int dp6 = m6dp;
                 float x = event.getX();
                 int progress = Math.round(MathUtils.lerp((float) mStart, (float) mEnd,
-                        MathUtils.clamp((x - m6dp) / (getWidth() - m6dp - m6dp), 0.0f, 1.0f)));
-                if (progress != mProgress) {
-                    mDrawProgress = MathUtils.delerp(mStart, mEnd, progress);
+                        MathUtils.clamp((mReverse ? (getWidth() - padding.right - dp6 - x) : (x - dp6 - padding.left)) /
+                                (getWidth() - dp6 - dp6 - padding.left - padding.right), 0.0f, 1.0f)));
+                float oldDrawProgress = mDrawProgress;
+                mDrawProgress = MathUtils.delerp(mStart, mEnd, progress);
+                if (mDrawProgress != oldDrawProgress) {
                     invalidate();
                 }
 
