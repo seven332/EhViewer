@@ -24,6 +24,7 @@ import com.hippo.conaco.Conaco;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.gallery.GallerySpider;
 import com.hippo.ehviewer.gallery.ImageHandler;
+import com.hippo.ehviewer.gallery.ui.TouchHelper;
 import com.hippo.ehviewer.network.EhHttpClient;
 import com.hippo.ehviewer.util.DBUtils;
 import com.hippo.ehviewer.util.Settings;
@@ -49,6 +50,7 @@ public class EhApplication extends SceneApplication {
 
         Settings.initialize(this);
         DBUtils.initialize(this);
+        TouchHelper.initialize(this);
 
         File sayFile = AppConfig.getFileInAppDir("EhViewer.log");
         if (sayFile != null) {

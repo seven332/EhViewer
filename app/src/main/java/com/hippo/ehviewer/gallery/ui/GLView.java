@@ -46,8 +46,7 @@ import java.util.ArrayList;
 // from main thread (like a Handler) in your GLView, you need to call
 // lockRendering() if the rendering thread should not run at the same time.
 //
-// TODO Add click listener
-public class GLView {
+public class GLView implements TouchOwner {
     private static final String TAG = "GLView";
 
     private static final boolean DEBUG_DRAW_BOUNDS = false;
@@ -65,7 +64,11 @@ public class GLView {
     public static final int NO_ID = -1;
 
     public interface OnClickListener {
-        void onClick(GLView v);
+        boolean onClick(GLView v);
+    }
+
+    public interface OnLongClickListener {
+        boolean onLongClick(GLView v);
     }
 
     protected final static GLPaint mDrawBoundsPaint;
@@ -124,16 +127,15 @@ public class GLView {
 
     private int mBackgroundColor = Color.TRANSPARENT;
 
-    public void startAnimation(CanvasAnimation animation) {
-        GLRoot root = getGLRoot();
-        if (root == null) throw new IllegalStateException();
-        mAnimation = animation;
-        if (mAnimation != null) {
-            mAnimation.start();
-            root.registerLaunchedAnimation(mAnimation);
-        }
-        invalidate();
-    }
+    private TouchHelper mTouchHelper;
+
+    private float mHotspotX;
+    private float mHotspotY;
+
+    private boolean mPressed;
+
+    private OnClickListener mOnClickListener;
+    private OnLongClickListener mOnLongClickListener;
 
     // Sets the visiblity of this GLView (either GLView.VISIBLE or
     // GLView.INVISIBLE).
@@ -298,10 +300,77 @@ public class GLView {
         return mBounds;
     }
 
+    @Override
+    public void setHotspot(float x, float y) {
+        mHotspotX = x;
+        mHotspotY = y;
+    }
+
+    public float getHotspotX() {
+        return mHotspotX;
+    }
+
+    public float getHotspotY() {
+        return mHotspotY;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // TODO
+    }
+
+    @Override
+    public boolean isPressed() {
+        return mPressed;
+    }
+
+    @Override
+    public void setPressed(boolean pressed) {
+        mPressed = pressed;
+    }
+
+    @Override
+    public boolean isClickable() {
+        return mOnClickListener != null;
+    }
+
+    @Override
+    public boolean isLongClickable() {
+        return mOnLongClickListener != null;
+    }
+
+    @Override
+    public boolean performClick() {
+        if (mOnClickListener != null) {
+            return mOnClickListener.onClick(this);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean performLongClick() {
+        if (mOnLongClickListener != null) {
+            return mOnLongClickListener.onLongClick(this);
+        } else {
+            return false;
+        }
+    }
+
+    public void setOnClickListener(OnClickListener listener) {
+        mOnClickListener = listener;
+    }
+
+    public void setOnLongClickListener(OnLongClickListener listener) {
+        mOnLongClickListener = listener;
+    }
+
+    @Override
     public int getWidth() {
         return mBounds.right - mBounds.left;
     }
 
+    @Override
     public int getHeight() {
         return mBounds.bottom - mBounds.top;
     }
@@ -412,7 +481,10 @@ public class GLView {
     }
 
     protected boolean onTouch(MotionEvent event) {
-        return false;
+        if (mTouchHelper == null) {
+            mTouchHelper = new TouchHelper(this);
+        }
+        return mTouchHelper.onTouch(event);
     }
 
     protected boolean dispatchTouchEvent(MotionEvent event,
