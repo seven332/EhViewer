@@ -55,12 +55,11 @@ public class GalleryLayout extends FrameLayout implements GalleryView.ActionList
     @Override
     public void onTapCenter() {
         mGalleryPanel.setShown(true, true);
-        mActionListener.onShowGalleryPanel();
     }
 
     @Override
     public void onSetMode(GalleryView.Mode mode) {
-        mGalleryPanel.setRange(1, mGalleryView.getPages());
+        mGalleryPanel.setGalleryViewMode(mode, mGalleryView.getPages());
     }
 
     @Override
@@ -75,6 +74,11 @@ public class GalleryLayout extends FrameLayout implements GalleryView.ActionList
         if (byUser) {
             mGalleryView.scrollToPage(newProgress - 1);
         }
+    }
+
+    @Override
+    public void onShow() {
+        mActionListener.onShowGalleryPanel();
     }
 
     @Override

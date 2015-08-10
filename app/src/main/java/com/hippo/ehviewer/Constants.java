@@ -20,6 +20,7 @@ import com.hippo.yorozuya.Messenger;
 
 public final class Constants {
 
+    public static final int MESSENGER_ID_READING_DIRECTION;
     public static final int MESSENGER_ID_EH_SOURCE;
     public static final int MESSENGER_ID_SHOW_APP_STATUS;
     public static final int MESSENGER_ID_SIGN_IN_OR_OUT;
@@ -30,6 +31,7 @@ public final class Constants {
 
     static {
         Messenger messenger = Messenger.getInstance();
+        MESSENGER_ID_READING_DIRECTION = messenger.newId();
         MESSENGER_ID_EH_SOURCE = messenger.newId();
         MESSENGER_ID_SHOW_APP_STATUS = messenger.newId();
         MESSENGER_ID_SIGN_IN_OR_OUT = messenger.newId();

@@ -137,6 +137,16 @@
     <!-- Settings -->
     <string name="settings_display">Display</string>
 
+    <string name="settings_reading">Reading</string>
+    <string name="settings_reading_direction_title">Reading direction</string>
+    <string name="settings_reading_direction_left_to_right">Left to right</string>
+    <string name="settings_reading_direction_right_to_left">Right to left</string>
+    <string name="settings_reading_direction_top_to_bottom">Top to bottom</string>
+    <string name="settings_reading_hide_nav_bar_title">Hide nav bar</string>
+    <string name="settings_reading_hide_nav_bar_summary">Only work for Android 4.4 and above</string>
+    <string name="settings_reading_hide_nav_bar_summary_on">Immersive full-screen mode</string>
+    <string name="settings_reading_hide_nav_bar_summary_off">Do not hide nav bar</string>
+
     <string name="settings_eh" translatable="false">EH</string>
     <string name="settings_eh_source_title">EH source</string>
     <string name="settings_eh_source_g" translatable="false">g.e-hentai.org</string>
@@ -155,7 +165,7 @@
     <string name="settings_image_download_location">Image download location</string>
     <string name="settings_archive_download_location">Archive download location</string>
 
-    <string name="settings_advance">Advance</string>
+    <string name="settings_advanced">Advanced</string>
     <string name="settings_show_application_stats_title">Show application stats</string>
     <string name="settings_show_application_stats_summary">Show application stats at the top-right corner of the screen</string>
     <string name="settings_clear_image_memory_cache_title">Clear image memory cache</string>

@@ -56,7 +56,7 @@ public final class EHSettingsScene extends PreferenceScene implements Preference
         ListPreference sourcePreference = new ListPreference(this, Settings.KEY_EH_SOURCE,
                 resources.getString(R.string.settings_eh_source_title), null);
         sourcePreference.setKeys(resources.getStringArray(R.array.settings_eh_source_entries));
-        sourcePreference.setValues(resources.getIntArray(R.array.settings_eh_source_entry_values));
+        sourcePreference.setValues(resources.getIntArray(R.array.settings_eh_source_values));
         sourcePreference.setDefaultValue(Settings.DEFAULT_EH_SOURCE);
         sourcePreference.setOnValueChangeListener(this);
 

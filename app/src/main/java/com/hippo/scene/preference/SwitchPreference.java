@@ -52,8 +52,9 @@ public class SwitchPreference extends Preference {
     @Override
     public String getDisplaySummary() {
         String displaySummary = getValue() ? mSummaryOn : mSummaryOff;
-        if (displaySummary == null) {
-            displaySummary = getSummary();
+        String summary = getSummary();
+        if (displaySummary == null || (!getEnable() && summary != null)) {
+            displaySummary = summary;
         }
         return displaySummary;
     }

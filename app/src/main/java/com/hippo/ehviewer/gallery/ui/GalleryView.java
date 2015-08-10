@@ -7,17 +7,19 @@ import android.view.MotionEvent;
 import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
 
+import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.gallery.anim.Animation;
 import com.hippo.ehviewer.gallery.glrenderer.GLCanvas;
 import com.hippo.ehviewer.gallery.util.GalleryUtils;
 import com.hippo.yorozuya.IntArray;
 import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.Messenger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public class GalleryView extends GLView implements GestureRecognizer.Listener {
+public class GalleryView extends GLView implements GestureRecognizer.Listener, Messenger.Receiver {
 
     private static final String TAG = GalleryView.class.getSimpleName();
 
@@ -95,10 +97,29 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private ActionListener mListener;
 
     public enum Mode {
-        NONE, // Just a progress view
-        LEFT_TO_RIGHT,
-        RIGHT_TO_LEFT,
-        TOP_TO_BOTTOM
+        NONE (-1), // Just a progress view
+        LEFT_TO_RIGHT (0),
+        RIGHT_TO_LEFT (1),
+        TOP_TO_BOTTOM (2);
+
+        Mode(int ni) {
+            nativeInt = ni;
+        }
+        final int nativeInt;
+    }
+
+    public static Mode intToMode(int value) {
+        switch (value) {
+            case -1:
+                return Mode.NONE;
+            case 0:
+                return Mode.LEFT_TO_RIGHT;
+            default:
+            case 1:
+                return Mode.RIGHT_TO_LEFT;
+            case 2:
+                return Mode.TOP_TO_BOTTOM;
+        }
     }
 
     public enum Scale {
@@ -127,6 +148,19 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mSmoothScaler = new SmoothScaler();
         mSmoothScaler.setInterpolator(SMOOTH_SCALER_INTERPOLATOR);
         mRecycler = new Recycler();
+
+        Messenger.getInstance().register(Constants.MESSENGER_ID_READING_DIRECTION, this);
+    }
+
+    public void onClose() {
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_READING_DIRECTION, this);
+    }
+
+    @Override
+    public void onReceive(int id, Object obj) {
+        if (Constants.MESSENGER_ID_READING_DIRECTION == id) {
+            setMode(intToMode((Integer) obj));
+        }
     }
 
     @Override

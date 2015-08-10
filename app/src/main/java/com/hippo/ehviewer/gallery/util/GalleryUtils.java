@@ -41,7 +41,6 @@ public class GalleryUtils {
     // works most of the time, but that's ok because it's for debugging only.
 
     private static volatile Thread sCurrentThread;
-    private static volatile boolean sWarned;
 
     public static void setRenderThread() {
         sCurrentThread = Thread.currentThread();

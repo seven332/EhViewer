@@ -67,10 +67,14 @@
     <color name="material_indigo_700">#ff303f9f</color>
 
     <!-- Text -->
-    <color name="primary_text_light">#de000000</color>
-    <color name="secondary_text_light">#8a000000</color>
-    <color name="primary_text_dark">#deffffff</color>
-    <color name="secondary_text_dark">#61ffffff</color>
+    <color name="primary_text_default_light">#de000000</color>
+    <color name="primary_text_disabled_dark">#4dffffff</color>
+    <color name="secondary_text_default_light">#8a000000</color>
+    <color name="secondary_text_disabled_dark">#36ffffff</color>
+    <color name="primary_text_default_dark">#deffffff</color>
+    <color name="primary_text_disabled_light">#39000000</color>
+    <color name="secondary_text_default_dark">#61ffffff</color>
+    <color name="secondary_text_disabled_light">#24000000</color>
 
     <!-- Background -->
     <color name="background_dark">#ff303030</color>

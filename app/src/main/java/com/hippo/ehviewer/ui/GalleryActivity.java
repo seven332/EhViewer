@@ -48,6 +48,7 @@ import com.hippo.ehviewer.gallery.ui.GalleryLayout;
 import com.hippo.ehviewer.gallery.ui.GalleryPageView;
 import com.hippo.ehviewer.gallery.ui.GalleryPanel;
 import com.hippo.ehviewer.gallery.ui.GalleryView;
+import com.hippo.ehviewer.util.Settings;
 import com.hippo.util.SystemUiHelper;
 import com.hippo.yorozuya.PriorityThreadFactory;
 import com.hippo.yorozuya.SimpleHandler;
@@ -72,6 +73,7 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
     public static final SparseArray<CloseGalleryProviderTask> sCloseGalleryProviderTaskMap = new SparseArray<>();
 
     private SystemUiHelper mSystemUiHelper;
+    private boolean mSystemUiShowing = false;
 
     private Resources mResources;
 
@@ -151,12 +153,15 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
             return;
         }
 
-        mSystemUiHelper = new SystemUiHelper(this, SystemUiHelper.LEVEL_IMMERSIVE,
+        mSystemUiHelper = new SystemUiHelper(this,
+                Settings.getReadingHideNavBar() ? SystemUiHelper.LEVEL_IMMERSIVE : SystemUiHelper.LEVEL_HIDE_STATUS_BAR,
                 SystemUiHelper.FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES | SystemUiHelper.FLAG_IMMERSIVE_STICKY);
         if (savedInstanceState == null || !savedInstanceState.getBoolean(KEY_SHOWING, false)) {
             mSystemUiHelper.hide();
+            mSystemUiShowing = false;
         } else {
             mSystemUiHelper.show();
+            mSystemUiShowing = true;
         }
 
         mResources = getResources();
@@ -202,7 +207,7 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
         if (mSize <= 0) {
             setMode(GalleryView.Mode.NONE);
         } else {
-            setMode(GalleryView.Mode.LEFT_TO_RIGHT);
+            setMode(GalleryView.intToMode(Settings.getReadingDirection()));
         }
         mGalleryProvider.addGalleryProviderListener(this);
 
@@ -226,7 +231,7 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_HASH_CODE, hashCode());
-        outState.putBoolean(KEY_SHOWING, mSystemUiHelper.isShowing());
+        outState.putBoolean(KEY_SHOWING, mSystemUiShowing);
     }
 
     @Override
@@ -261,17 +266,30 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
                     clearTiledTextureInPage((GalleryPageView) view);
                 }
             }
+
+            mGalleryView.onClose();
         }
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
 
-        if (mSystemUiHelper.isShowing()) {
-            mSystemUiHelper.show();
+        if (hasFocus) {
+            if (mSystemUiShowing) {
+                mSystemUiHelper.show();
+            } else {
+                mSystemUiHelper.hide();
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mGalleryPanel.isShown()) {
+            mGalleryPanel.setShown(false, true);
         } else {
-            mSystemUiHelper.hide();
+            super.onBackPressed();
         }
     }
 
@@ -302,7 +320,7 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
     public void onGetSize(int size) {
         if (mSize != size) {
             mSize = size;
-            setMode(GalleryView.Mode.LEFT_TO_RIGHT);
+            setMode(GalleryView.intToMode(Settings.getReadingDirection()));
         }
     }
 
@@ -449,11 +467,17 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
     @Override
     public void onShowGalleryPanel() {
         mSystemUiHelper.show();
+        mSystemUiShowing = true;
     }
 
     @Override
     public void onHideGalleryPanel() {
-        mSystemUiHelper.hide();
+        if (Settings.getReadingHideNavBar()) {
+            mSystemUiHelper.delayHide(3000);
+        } else {
+            mSystemUiHelper.hide();
+        }
+        mSystemUiShowing = false;
     }
 
     class GalleryAdapter extends GalleryView.Adapter {

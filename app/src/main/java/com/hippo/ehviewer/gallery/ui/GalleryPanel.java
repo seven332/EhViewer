@@ -19,6 +19,7 @@ package com.hippo.ehviewer.gallery.ui;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.hippo.ehviewer.R;
@@ -30,7 +31,8 @@ import com.hippo.util.AnimationUtils;
 import com.hippo.widget.FitPaddingImpl;
 import com.hippo.yorozuya.LayoutUtils;
 
-public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSetProgressListener {
+public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSetProgressListener,
+        GLView.OnClickListener {
 
     private static final String KEY_SHOWN = "shown_key";
 
@@ -42,13 +44,14 @@ public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSet
     private XmlResourceView mShare;
 
     private LinearLayout mBottomView;
-    private TextView mProgressTextView;
-    private TextView mPagesTextView;
+    private TextView mLeftTextView;
+    private TextView mRightTextView;
     private Slider mSlider;
 
     private float mShowPercent = 0.0f;
 
-    private int mEnd = 0;
+    private GalleryView.Mode mGalleryViewMode = GalleryView.Mode.NONE;
+    private int mPages = 0;
 
     private ActionListener mListener;
 
@@ -77,12 +80,15 @@ public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSet
         mScreenRotation = new XmlResourceView();
         XmlResourceTexture screenRotationTexture = new XmlResourceTexture(context, R.drawable.ic_screen_rotation_dark_x48);
         mScreenRotation.setTexture(screenRotationTexture);
+        mScreenRotation.setOnClickListener(this);
         mRefresh = new XmlResourceView();
         XmlResourceTexture refreshTexture = new XmlResourceTexture(context, R.drawable.ic_refresh_dark_x48);
         mRefresh.setTexture(refreshTexture);
+        mRefresh.setOnClickListener(this);
         mShare = new XmlResourceView();
         XmlResourceTexture shareTexture = new XmlResourceTexture(context, R.drawable.ic_share_dark_x48);
         mShare.setTexture(shareTexture);
+        mShare.setOnClickListener(this);
 
         int actionSize = LayoutUtils.dp2pix(context, 48);
         lp = new LinearLayout.LayoutParams(
@@ -100,10 +106,10 @@ public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSet
         mBottomView.setBackgroundColor(background);
         mBottomView.setPaddingLeft(LayoutUtils.dp2pix(context, 8));
         mBottomView.setPaddingRight(LayoutUtils.dp2pix(context, 8));
-        mProgressTextView = new TextView(sTextTexture);
-        mProgressTextView.setGravity(Gravity.CENTER);
-        mPagesTextView = new TextView(sTextTexture);
-        mPagesTextView.setGravity(Gravity.CENTER);
+        mLeftTextView = new TextView(sTextTexture);
+        mLeftTextView.setGravity(Gravity.CENTER);
+        mRightTextView = new TextView(sTextTexture);
+        mRightTextView.setGravity(Gravity.CENTER);
         mSlider = new Slider(context);
         mSlider.setPaddings(LayoutUtils.dp2pix(context, 8), LayoutUtils.dp2pix(context, 18),
                 LayoutUtils.dp2pix(context, 8), LayoutUtils.dp2pix(context, 18));
@@ -113,7 +119,7 @@ public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSet
         lp = new LinearLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER_VERTICAL;
-        mBottomView.addComponent(mProgressTextView, lp);
+        mBottomView.addComponent(mLeftTextView, lp);
         lp = new LinearLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER_VERTICAL;
@@ -122,7 +128,7 @@ public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSet
         lp = new LinearLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER_VERTICAL;
-        mBottomView.addComponent(mPagesTextView, lp);
+        mBottomView.addComponent(mRightTextView, lp);
 
         addComponent(mRightView, new LayoutParams(
                 LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -140,7 +146,15 @@ public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSet
         };
     }
 
+    public boolean isShown() {
+        return mShown;
+    }
+
     public void setShown(boolean shown, boolean animation) {
+        if (shown && mGalleryViewMode == GalleryView.Mode.NONE) {
+            return;
+        }
+
         if (mShown != shown) {
             mShown = shown;
 
@@ -150,7 +164,9 @@ public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSet
             mAnimation.forceReset();
             invalidate();
 
-            if (!shown) {
+            if (shown) {
+                mListener.onShow();
+            } else {
                 mListener.onHide();
             }
         }
@@ -174,32 +190,48 @@ public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSet
     @Override
     protected void onLayout(
             boolean changeSize, int left, int top, int right, int bottom) {
-        if (changeSize) {
-            int width = getWidth();
-            int height = getHeight();
 
-            int l = width - (int) (mRightView.getMeasuredWidth() * mShowPercent);
-            mRightView.layout(l, height / 2 - mRightView.getMeasuredHeight() / 2,
-                    l + mRightView.getMeasuredWidth(), height / 2 + mRightView.getMeasuredHeight() / 2);
+        int width = getWidth();
+        int height = getHeight();
 
-            int t = height - (int) (mBottomView.getMeasuredHeight() * mShowPercent);
-            mBottomView.layout(0, t, width, t + mBottomView.getMeasuredHeight());
-        }
+        int l = width - (int) (mRightView.getMeasuredWidth() * mShowPercent);
+        mRightView.layout(l, height / 2 - mRightView.getMeasuredHeight() / 2,
+                l + mRightView.getMeasuredWidth(), height / 2 + mRightView.getMeasuredHeight() / 2);
+
+        int t = height - (int) (mBottomView.getMeasuredHeight() * mShowPercent);
+        mBottomView.layout(0, t, width, t + mBottomView.getMeasuredHeight());
     }
 
-    public void setRange(int start, int end) {
-        mSlider.setRange(start, end);
-        mEnd = end;
+    public void setGalleryViewMode(GalleryView.Mode galleryViewMode, int pages) {
+        mGalleryViewMode = galleryViewMode;
+        mPages = pages;
 
-        String pages = Integer.toString(end);
-        mProgressTextView.setMinimumWidth((int) (sTextTexture.getMaxWidth() * pages.length()));
-        mPagesTextView.setMinimumWidth((int) (sTextTexture.getMaxWidth() * pages.length()));
-        mPagesTextView.setText(pages);
+        mSlider.setRange(1, pages);
+
+        String pagesStr = Integer.toString(pages);
+        int maxWidth = (int) (sTextTexture.getMaxWidth() * pagesStr.length());
+        mLeftTextView.setMinimumWidth(maxWidth);
+        mRightTextView.setMinimumWidth(maxWidth);
+
+        if (galleryViewMode == GalleryView.Mode.RIGHT_TO_LEFT) {
+            mSlider.setReverse(true);
+            mLeftTextView.setText(pagesStr);
+            mRightTextView.setText(Integer.toString(mSlider.getProgress()));
+        } else {
+            mSlider.setReverse(false);
+            mRightTextView.setText(pagesStr);
+            mLeftTextView.setText(Integer.toString(mSlider.getProgress()));
+        }
     }
 
     public void setProgress(int progress) {
         mSlider.setProgress(progress);
-        mProgressTextView.setText(Integer.toString(progress));
+
+        if (mGalleryViewMode == GalleryView.Mode.RIGHT_TO_LEFT) {
+            mRightTextView.setText(Integer.toString(mSlider.getProgress()));
+        } else {
+            mLeftTextView.setText(Integer.toString(mSlider.getProgress()));
+        }
     }
 
     @Override
@@ -212,7 +244,24 @@ public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSet
     @Override
     public void onSetProgress(int newProgress, int oldProgress, boolean byUser) {
         mListener.onSetProgress(newProgress, oldProgress, byUser);
-        mProgressTextView.setText(Integer.toString(newProgress));
+
+        if (mGalleryViewMode == GalleryView.Mode.RIGHT_TO_LEFT) {
+            mRightTextView.setText(Integer.toString(mSlider.getProgress()));
+        } else {
+            mLeftTextView.setText(Integer.toString(mSlider.getProgress()));
+        }
+    }
+
+    @Override
+    public boolean onClick(GLView v) {
+        if (v == mScreenRotation) {
+            Log.d("TAG", "mScreenRotation");
+        } else if (v == mRefresh) {
+            Log.d("TAG", "mRefresh");
+        } else if (v == mShare) {
+            Log.d("TAG", "mShare");
+        }
+        return true;
     }
 
     @Override
@@ -239,6 +288,8 @@ public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSet
 
     public interface ActionListener {
         void onSetProgress(int newProgress, int oldProgress, boolean byUser);
+
+        void onShow();
 
         void onHide();
     }

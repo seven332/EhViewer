@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.hippo.ehviewer.R;
+import com.hippo.yorozuya.ViewUtils;
 
 // TODO Need a better way to update it
 public class Preference extends PreferenceBase {
@@ -34,6 +35,8 @@ public class Preference extends PreferenceBase {
     private @NonNull String mKey;
     private String mTitle;
     private String mSummary;
+
+    private boolean mEnable = true;
 
     private OnClickListener mOnClickListener;
     private OnValueChangeListener mOnValueChangeListener;
@@ -68,6 +71,18 @@ public class Preference extends PreferenceBase {
 
     public void setPosition(int position) {
         mPosition = position;
+    }
+
+    public boolean getEnable() {
+        return mEnable;
+    }
+
+    public void setEnable(boolean enable) {
+        mEnable = enable;
+        RecyclerView.ViewHolder viewHolder = getViewHolder();
+        if (viewHolder != null) {
+            ViewUtils.setEnabledRecursively(viewHolder.itemView, mEnable);
+        }
     }
 
     /**
@@ -125,6 +140,8 @@ public class Preference extends PreferenceBase {
         }
 
         onUpdateView(viewHolder);
+
+        ViewUtils.setEnabledRecursively(pvh.itemView, mEnable);
     }
 
     protected void onBind(Context context, FrameLayout widgetFrame) {

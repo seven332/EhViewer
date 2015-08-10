@@ -714,7 +714,6 @@ public class GLView implements TouchOwner {
     public void setMinimumWidth(int minWidth) {
         mMinWidth = minWidth;
         requestLayout();
-
     }
 
     protected void setMeasuredSize(int width, int height) {

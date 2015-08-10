@@ -21,10 +21,11 @@ import android.support.v4.content.ContextCompat;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.ContentActivity;
-import com.hippo.ehviewer.ui.scene.preference.AdvanceSettingsScene;
+import com.hippo.ehviewer.ui.scene.preference.AdvancedSettingsScene;
 import com.hippo.ehviewer.ui.scene.preference.DisplaySettingsScene;
 import com.hippo.ehviewer.ui.scene.preference.DownloadSettingsScene;
 import com.hippo.ehviewer.ui.scene.preference.EHSettingsScene;
+import com.hippo.ehviewer.ui.scene.preference.ReadingSettingsScene;
 import com.hippo.scene.preference.PreferenceHeader;
 import com.hippo.scene.preference.PreferenceHeaderScene;
 
@@ -49,6 +50,10 @@ public final class MainSettingsScene extends PreferenceHeaderScene {
                         R.string.settings_display,
                         DisplaySettingsScene.class),
                 newPreferenceHeader(
+                        R.drawable.ic_book_open_theme_accent_x24,
+                        R.string.settings_reading,
+                        ReadingSettingsScene.class),
+                newPreferenceHeader(
                         R.drawable.ic_eh_theme_accent,
                         R.string.settings_eh,
                         EHSettingsScene.class),
@@ -58,8 +63,8 @@ public final class MainSettingsScene extends PreferenceHeaderScene {
                         DownloadSettingsScene.class),
                 newPreferenceHeader(
                         R.drawable.ic_black_mesa_theme_accent,
-                        R.string.settings_advance,
-                        AdvanceSettingsScene.class)
+                        R.string.settings_advanced,
+                        AdvancedSettingsScene.class)
         };
     }
 

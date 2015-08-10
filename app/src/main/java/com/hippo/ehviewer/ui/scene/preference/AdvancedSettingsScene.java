@@ -30,7 +30,7 @@ import com.hippo.scene.preference.SwitchPreference;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.Messenger;
 
-public class AdvanceSettingsScene extends PreferenceScene implements
+public class AdvancedSettingsScene extends PreferenceScene implements
         Preference.OnValueChangeListener, Preference.OnClickListener {
 
     private static final String KEY_SHOW_APPLICATION_STATS = "show_application_stats";

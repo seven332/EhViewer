@@ -136,6 +136,29 @@ public final class Settings {
         }
     }
 
+    /****** Reading ******/
+    public static final String KEY_READING_DIRECTION = "reading_direction";
+    public static final int DEFAULT_READING_DIRECTION = 1;
+    public static final String KEY_READING_HIDE_NAV_BAR = "reading_hide_nav_bar";
+    public static final boolean DEFAULT_READING_HIDE_NAV_BAR = true;
+
+    public static void putReadingDirection(int value) {
+        putInt(KEY_READING_DIRECTION, value);
+    }
+
+    public static int getReadingDirection() {
+        return getInt(KEY_READING_DIRECTION, DEFAULT_READING_DIRECTION);
+    }
+
+    public static void putReadingHideNavBar(boolean value) {
+        putBoolean(KEY_READING_HIDE_NAV_BAR, value);
+    }
+
+    public static boolean getReadingHideNavBar() {
+        return getBoolean(KEY_READING_HIDE_NAV_BAR, DEFAULT_READING_HIDE_NAV_BAR);
+    }
+
+
     /****** EH ******/
     public static final String KEY_EH_SOURCE = "eh_source";
     public static final int DEFAULT_EH_SOURCE = EhUrl.SOURCE_G;
