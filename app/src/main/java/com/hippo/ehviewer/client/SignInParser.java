@@ -21,19 +21,19 @@ import java.util.regex.Pattern;
 
 public class SignInParser {
 
+    static final Pattern NAME_PATTERN = Pattern.compile("<p>You are now logged in as: (.+?)<br />");
+    static final Pattern ERROR_PATTERN = Pattern.compile(
+            "(?:<h4>The error returned was:</h4>\\s*<p>(.+?)</p>)"
+            + "|(?:<span class=\"postcolor\">(.+?)</span>)");
+
     public static String parse(String body) throws Exception {
-        Pattern p;
         Matcher m;
 
-        p = Pattern.compile("<p>You are now logged in as: (.+?)<br />");
-        m = p.matcher(body);
+        m = NAME_PATTERN.matcher(body);
         if (m.find()) {
             return m.group(1);
         } else {
-            p = Pattern.compile("(?:<h4>The error returned was:</h4>\\s*<p>(.+?)</p>)"
-                    + "|(?:<span class=\"postcolor\">(.+?)</span>)");
-            m = p.matcher(body);
-
+            m = ERROR_PATTERN.matcher(body);
             if (m.find()) {
                 throw new EhException(m.group(1) == null ? m.group(2) : m.group(1));
             } else {

@@ -40,6 +40,45 @@ public class GalleryDetailParser {
     private static final DateFormat WEB_COMMENT_DATE_FORMAT = new SimpleDateFormat("dd MMMMM yyyy, HH:mm z", Locale.US);
     private static final DateFormat OUT_COMMENT_DATE_FORMAT = GalleryBase.DEFAULT_DATE_FORMAT;
 
+    private static final Pattern ERROR_PATTERN = Pattern.compile("<div class=\"d\">\n<p>([^<]+)</p>");
+    private static final Pattern DETAIL_PATTERN = Pattern.compile(
+            "var gid = (\\d+)" // 1 gid
+            + ".+?"
+            + "var token = \"([a-z0-9A]+)\"" // 2 token
+            + ".+?"
+            + "<div id=\"gd1\"><img src=\"([^\"]+)\"[^<>]+></div>" // 3 thumb
+            + "</div>"
+            + "<div id=\"gd2\">"
+            + "<h1 id=\"gn\">([^<>]+)</h1>" // 4 title
+            + "<h1 id=\"gj\">([^<>]*)</h1>" // 5 title_jpn might be empty string
+            + "</div>"
+            + ".+?"
+            + "<a[^<>]*onclick=\"return popUp\\('([^']+)'[^)]+\\)\">Torrent Download \\( (\\d+) \\)</a>" // 6 torrentUrl, 7 torrentCount
+            + ".+?"
+            + "<div id=\"gdc\"><a[^<>]+><[^<>]*alt=\"([\\w\\-]+)\"[^<>]*></a></div>" // 8 category
+            + "<div id=\"gdn\"><a[^<>]+>([^<>]+)</a>" // 9 uploader
+            + ".+?"
+            + "<tr><td[^<>]*>Posted:</td><td[^<>]*>([\\w\\-\\s:]+)</td></tr>" // 10 posted
+            + "<tr><td[^<>]*>Parent:</td><td[^<>]*>(?:<a[^<>]*>)?([^<>]+)(?:</a>)?</td></tr>" // 11 parent
+            + "<tr><td[^<>]*>Visible:</td><td[^<>]*>([^<>]+)</td></tr>" // 12 visible
+            + "<tr><td[^<>]*>Language:</td><td[^<>]*>([^<>]+)(?:<span[^<>]*>[^<>]*</span>)?</td></tr>" // 13 language
+            + "<tr><td[^<>]*>File Size:</td><td[^<>]*>([^<>]+)(?:<span[^<>]*>([^<>]+)</span>)?</td></tr>" // 14 File size, 15 resize
+            + "<tr><td[^<>]*>Length:</td><td[^<>]*>([\\d,]+) pages</td></tr>" // 16 pageCount
+            + "<tr><td[^<>]*>Favorited:</td><[^<>]*>([^<>]+)</td></tr>" // 17 Favorite times "([\d,]+) times" or "Once" or "Never"
+            + ".+?"
+            + "<td id=\"grt3\"><span id=\"rating_count\">([\\d,]+)</span></td>" // 18 ratedTimes
+            + "</tr>"
+            + "<tr><td[^<>]*>([^<>]+)</td>" // 19 rating "Average: x.xx" or "Not Yet Rated"
+            + ".+?"
+            + "<a id=\"favoritelink\"[^<>]*>(.+?)</a>", Pattern.DOTALL); // 20 isFavored "Favorite Gallery" for favorite
+    private static final Pattern TAG_PATTERN = Pattern.compile("<tr><td[^<>]+>([\\w\\s]+):</td><td>(?:<div[^<>]+><a[^<>]+>[\\w\\s]+</a></div>)+</td></tr>");
+    private static final Pattern COMMENT_PATTERN = Pattern.compile("<div class=\"c3\">Posted on ([^<>]+) by: &nbsp; <a[^<>]+>([^<>]+)</a>.+?<div class=\"c6\"[^>]*>(.+?)</div><div class=\"c[78]\"");
+    private static final Pattern TAG_GROUP_PATTERN = Pattern.compile("<div[^<>]+><a[^<>]+>([\\w\\s]+)</a></div>");
+    public static final Pattern PAGES_PATTERN = Pattern.compile("<tr><td[^<>]*>Length:</td><td[^<>]*>([\\d,]+) pages</td></tr>");
+    public static final Pattern PREVIEW_PAGES_PATTERN = Pattern.compile("<td[^>]+><a[^>]+>([\\d,]+)</a></td><td[^>]+>(?:<a[^>]+>)?&gt;(?:</a>)?</td>");
+    private static final Pattern NORMAL_PREVIEW_PATTERN = Pattern.compile("<div[^<>]*class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*>");
+    private static final Pattern LARGE_PREVIEW_PATTERN = Pattern.compile("<div class=\"gdtl\".+?<a href=\"(.+?)\"><img.+?src=\"(.+?)\"");
+
     static {
         WEB_COMMENT_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
@@ -87,8 +126,7 @@ public class GalleryDetailParser {
         Matcher m;
 
         // Error info
-        p = Pattern.compile("<div class=\"d\">\n<p>([^<]+)</p>");
-        m = p.matcher(body);
+        m = ERROR_PATTERN.matcher(body);
         if (m.find()) {
             throw new EhException(m.group(1));
         }
@@ -96,36 +134,7 @@ public class GalleryDetailParser {
         GalleryDetail galleryDetail = new GalleryDetail();
 
         if ((request & REQUEST_DETAIL) != 0) {
-            p = Pattern.compile("var gid = (\\d+)" // 1 gid
-                    + ".+?"
-                    + "var token = \"([a-z0-9A]+)\"" // 2 token
-                    + ".+?"
-                    + "<div id=\"gd1\"><img src=\"([^\"]+)\"[^<>]+></div>" // 3 thumb
-                    + "</div>"
-                    + "<div id=\"gd2\">"
-                    + "<h1 id=\"gn\">([^<>]+)</h1>" // 4 title
-                    + "<h1 id=\"gj\">([^<>]*)</h1>" // 5 title_jpn might be empty string
-                    + "</div>"
-                    + ".+?"
-                    + "<a[^<>]*onclick=\"return popUp\\('([^']+)'[^)]+\\)\">Torrent Download \\( (\\d+) \\)</a>" // 6 torrentUrl, 7 torrentCount
-                    + ".+?"
-                    + "<div id=\"gdc\"><a[^<>]+><[^<>]*alt=\"([\\w\\-]+)\"[^<>]*></a></div>" // 8 category
-                    + "<div id=\"gdn\"><a[^<>]+>([^<>]+)</a>" // 9 uploader
-                    + ".+?"
-                    + "<tr><td[^<>]*>Posted:</td><td[^<>]*>([\\w\\-\\s:]+)</td></tr>" // 10 posted
-                    + "<tr><td[^<>]*>Parent:</td><td[^<>]*>(?:<a[^<>]*>)?([^<>]+)(?:</a>)?</td></tr>" // 11 parent
-                    + "<tr><td[^<>]*>Visible:</td><td[^<>]*>([^<>]+)</td></tr>" // 12 visible
-                    + "<tr><td[^<>]*>Language:</td><td[^<>]*>([^<>]+)(?:<span[^<>]*>[^<>]*</span>)?</td></tr>" // 13 language
-                    + "<tr><td[^<>]*>File Size:</td><td[^<>]*>([^<>]+)(?:<span[^<>]*>([^<>]+)</span>)?</td></tr>" // 14 File size, 15 resize
-                    + "<tr><td[^<>]*>Length:</td><td[^<>]*>([\\d,]+) pages</td></tr>" // 16 pageCount
-                    + "<tr><td[^<>]*>Favorited:</td><[^<>]*>([^<>]+)</td></tr>" // 17 Favorite times "([\d,]+) times" or "Once" or "Never"
-                    + ".+?"
-                    + "<td id=\"grt3\"><span id=\"rating_count\">([\\d,]+)</span></td>" // 18 ratedTimes
-                    + "</tr>"
-                    + "<tr><td[^<>]*>([^<>]+)</td>" // 19 rating "Average: x.xx" or "Not Yet Rated"
-                    + ".+?"
-                    + "<a id=\"favoritelink\"[^<>]*>(.+?)</a>", Pattern.DOTALL); // 20 isFavored "Favorite Gallery" for favorite
-            m = p.matcher(body);
+            m = DETAIL_PATTERN.matcher(body);
             if (m.find()) {
                 galleryDetail.gid = ParserUtils.parseInt(m.group(1));
                 galleryDetail.token = ParserUtils.trim(m.group(2));
@@ -184,8 +193,7 @@ public class GalleryDetailParser {
 
         if ((request & REQUEST_TAG) != 0) {
             galleryDetail.tags = new LinkedList<>();
-            p = Pattern.compile("<tr><td[^<>]+>([\\w\\s]+):</td><td>(?:<div[^<>]+><a[^<>]+>[\\w\\s]+</a></div>)+</td></tr>");
-            m = p.matcher(body);
+            m = TAG_PATTERN.matcher(body);
             while (m.find()) {
                 TagGroup tagGroup = new TagGroup();
                 tagGroup.groupName = ParserUtils.trim(m.group(1));
@@ -209,8 +217,7 @@ public class GalleryDetailParser {
 
         // Get comment
         if ((request & REQUEST_COMMENT) != 0) {
-            p = Pattern.compile("<div class=\"c3\">Posted on ([^<>]+) by: &nbsp; <a[^<>]+>([^<>]+)</a>.+?<div class=\"c6\"[^>]*>(.+?)</div><div class=\"c[78]\"");
-            m = p.matcher(body);
+            m = COMMENT_PATTERN.matcher(body);
             galleryDetail.comments = new LinkedList<>();
             while (m.find()) {
                 String webDateString = ParserUtils.trim(m.group(1));
@@ -229,16 +236,14 @@ public class GalleryDetailParser {
     }
 
     private static void parseTagGroup(TagGroup tagGroup, String body) {
-        Pattern p = Pattern.compile("<div[^<>]+><a[^<>]+>([\\w\\s]+)</a></div>");
-        Matcher m = p.matcher(body);
+        Matcher m = TAG_GROUP_PATTERN.matcher(body);
         while (m.find()) {
             tagGroup.addTag(ParserUtils.trim(m.group(1)));
         }
     }
 
     public static int parsePreviewPages(String body) throws ParseException {
-        Pattern p = Pattern.compile("<td[^>]+><a[^>]+>([\\d,]+)</a></td><td[^>]+>(?:<a[^>]+>)?&gt;(?:</a>)?</td>");
-        Matcher m = p.matcher(body);
+        Matcher m = PREVIEW_PAGES_PATTERN.matcher(body);
         int previewPages = -1;
         if (m.find()) {
             previewPages = ParserUtils.parseInt(m.group(1));
@@ -252,8 +257,7 @@ public class GalleryDetailParser {
     }
 
     public static int parsePages(String body) throws ParseException {
-        Pattern p = Pattern.compile("<tr><td[^<>]*>Length:</td><td[^<>]*>([\\d,]+) pages</td></tr>");
-        Matcher m = p.matcher(body);
+        Matcher m = PAGES_PATTERN.matcher(body);
         if (m.find()) {
             return ParserUtils.parseInt(m.group(1));
         } else {
@@ -285,8 +289,7 @@ public class GalleryDetailParser {
     }
 
     private static NormalPreviewSet parseNormalPreview(String body) {
-        Pattern  p = Pattern.compile("<div[^<>]*class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*>");
-        Matcher m = p.matcher(body);
+        Matcher m = NORMAL_PREVIEW_PATTERN.matcher(body);
         NormalPreviewSet normalPreviewSet = new NormalPreviewSet();
         while (m.find()) {
             normalPreviewSet.addItem(m.group(3), Integer.parseInt(m.group(4)), 0,
@@ -297,8 +300,7 @@ public class GalleryDetailParser {
     }
 
     private static LargePreviewSet parseLargePreview(String body) {
-        Pattern p = Pattern.compile("<div class=\"gdtl\".+?<a href=\"(.+?)\"><img.+?src=\"(.+?)\"");
-        Matcher m = p.matcher(body);
+        Matcher m = LARGE_PREVIEW_PATTERN.matcher(body);
         LargePreviewSet largePreviewSet = new LargePreviewSet();
         while (m.find()) {
             largePreviewSet.addItem(m.group(2), m.group(1));

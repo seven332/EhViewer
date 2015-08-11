@@ -444,6 +444,10 @@ public class ImageHandler {
 
         public abstract void onSave(long receivedSize);
 
+        public boolean isCancelled() {
+            return mCancel;
+        }
+
         public void cancel() {
             mCancel = true;
             if (mRequest != null) {

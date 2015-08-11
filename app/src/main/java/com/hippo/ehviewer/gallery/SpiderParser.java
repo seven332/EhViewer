@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.gallery;
 
 import com.hippo.ehviewer.client.EhConfig;
+import com.hippo.ehviewer.client.GalleryDetailParser;
 import com.hippo.ehviewer.client.ParseException;
 import com.hippo.ehviewer.client.ParserUtils;
 
@@ -26,6 +27,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SpiderParser {
+
+    private static final Pattern NORMAL_PREVIEW_PATTERN = Pattern.compile("<div class=\"gdtm\"[^>]+><div[^>]+><a href=\"[^\"]+/(\\w+)/(\\d+)-(\\d+)\">");
+    private static final Pattern LARGE_PREVIEW_PATTERN = Pattern.compile("<div class=\"gdtl\"[^>]+><a href=\"[^\"]+/(\\w+)/(\\d+)-(\\d+)\">");
 
     public static class Result {
         public int pages;
@@ -44,16 +48,14 @@ public class SpiderParser {
         Matcher m;
 
         if (request == REQUEST_ALL) {
-            p = Pattern.compile("<tr><td[^<>]*>Length:</td><td[^<>]*>([\\d,]+) pages</td></tr>");
-            m = p.matcher(body);
+            m = GalleryDetailParser.PAGES_PATTERN.matcher(body);
             if (m.find()) {
                 result.pages = ParserUtils.parseInt(m.group(1));
             } else {
                 throw new ParseException("Parse pages error", body);
             }
 
-            p = Pattern.compile("<td[^>]+><a[^>]+>([\\d,]+)</a></td><td[^>]+>(?:<a[^>]+>)?&gt;(?:</a>)?</td>");
-            m = p.matcher(body);
+            m = GalleryDetailParser.PREVIEW_PAGES_PATTERN.matcher(body);
             if (m.find()) {
                 result.previewPages = ParserUtils.parseInt(m.group(1));
             } else {
@@ -64,11 +66,11 @@ public class SpiderParser {
         List<String> list;
         if (body.contains("<div class=\"gdtm\"")) {
             result.previewSize = EhConfig.PREVIEW_SIZE_NORMAL;
-            p = Pattern.compile("<div class=\"gdtm\"[^>]+><div[^>]+><a href=\"[^\"]+/(\\w+)/(\\d+)-(\\d+)\">");
+            p = NORMAL_PREVIEW_PATTERN;
             list = new ArrayList<>(40);
         } else {
             result.previewSize = EhConfig.PREVIEW_SIZE_LARGE;
-            p = Pattern.compile("<div class=\"gdtl\"[^>]+><a href=\"[^\"]+/(\\w+)/(\\d+)-(\\d+)\">");
+            p = LARGE_PREVIEW_PATTERN;
             list = new ArrayList<>(20);
         }
         result.tokens = list;

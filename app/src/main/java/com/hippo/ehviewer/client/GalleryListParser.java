@@ -32,6 +32,30 @@ import java.util.regex.Pattern;
 
 public class GalleryListParser {
 
+    static final Pattern PAGES_PATTERN = Pattern.compile("<a[^<>]+>([\\d]+)</a></td><td[^<>]+>(?:<a[^<>]+>)?&");
+    static final Pattern PATTERN = Pattern.compile(
+            "<td class=\"itdc\">(?:<a.+?>)?<img.+?alt=\"(.+?)\".+?/>(?:</a>)?</td>" // category
+            + "<td.+?>(.+?)</td>" // posted
+            + "<td.+?><div.+?><div.+?height:(\\d+)px; width:(\\d+)px\">"
+            + "(?:<img.+?src=\"(.+?)\".+?alt=\"(.+?)\" style.+?/>"
+            + "|init~([^<>\"~]+~[^<>\"~]+)~([^<>]+))" // thumb and title
+            + "</div>"
+            + ".+?"
+            + "<div class=\"it5\"><a href=\"([^<>\"]+)\"[^<>]+>(.+?)</a></div>" // url and title
+            + ".+?"
+            + "<div class=\"ir it4r\" style=\"([^<>\"]+)\">" // rating
+            + ".+?"
+            + "<td class=\"itu\"><div><a.+?>(.+?)</a>"); // uploader
+    static final Pattern LOFI_PATTERN = Pattern.compile(
+            "<td class=\"ii\"><a href=\"(.+?)\">" // detail url
+            + "<img src=\"(.+?)\".+?/>" // thumb url
+            + ".+?<a class=\"b\" href=\".+?\">(.+?)</a>" // title
+            + ".+?<td class=\"ik ip\">Posted:</td><td class=\"ip\">(.+?)</td>" // Posted and uploader
+            + "</tr><tr><td class=\"ik\">Category:</td><td>(.+?)</td>" // Category
+            + "</tr><tr><td class=\"ik\">Tags:</td><td>(.+?)</td>" // Tags
+            + "</tr><tr><td class=\"ik\">Rating:</td><td class=\"ir\">(.+?)</td>"); // rating
+    static final Pattern RATING_PATTERN = Pattern.compile("\\d+px");
+
     public static class Result {
 
         public static final int CURRENT_PAGE_IS_LAST = -1;
@@ -62,12 +86,10 @@ public class GalleryListParser {
 
     private static Result parse(String body) throws EhException {
         Result result = new Result();
-        Pattern p;
         Matcher m;
 
         // pages
-        p = Pattern.compile("<a[^<>]+>([\\d]+)</a></td><td[^<>]+>(?:<a[^<>]+>)?&");
-        m = p.matcher(body);
+        m = PAGES_PATTERN.matcher(body);
         if (m.find()) {
             result.pages = ParserUtils.parseInt(m.group(1));
         } else if (body.contains("No hits found</p>")) {
@@ -81,19 +103,7 @@ public class GalleryListParser {
             List<GalleryInfo> list = new ArrayList<>(25);
             result.galleryInfos = list;
 
-            p = Pattern.compile("<td class=\"itdc\">(?:<a.+?>)?<img.+?alt=\"(.+?)\".+?/>(?:</a>)?</td>" // category
-                    + "<td.+?>(.+?)</td>" // posted
-                    + "<td.+?><div.+?><div.+?height:(\\d+)px; width:(\\d+)px\">"
-                    + "(?:<img.+?src=\"(.+?)\".+?alt=\"(.+?)\" style.+?/>"
-                    + "|init~([^<>\"~]+~[^<>\"~]+)~([^<>]+))" // thumb and title
-                    + "</div>"
-                    + ".+?"
-                    + "<div class=\"it5\"><a href=\"([^<>\"]+)\"[^<>]+>(.+?)</a></div>" // url and title
-                    + ".+?"
-                    + "<div class=\"ir it4r\" style=\"([^<>\"]+)\">" // rating
-                    + ".+?"
-                    + "<td class=\"itu\"><div><a.+?>(.+?)</a>"); // uploader
-            m = p.matcher(body);
+            m = PATTERN.matcher(body);
             while (m.find()) {
                 GalleryInfo gi = new GalleryInfo();
 
@@ -110,9 +120,7 @@ public class GalleryListParser {
                     gi.title = ParserUtils.trim(m.group(6));
                 }
 
-                Pattern pattern = Pattern
-                        .compile("/(\\d+)/(\\w+)");
-                Matcher matcher = pattern.matcher(m.group(9));
+                Matcher matcher = GalleryDetailUrlParser.URL_PATTERN.matcher(m.group(9));
                 if (matcher.find()) {
                     gi.gid = ParserUtils.parseInt(matcher.group(1));
                     gi.token = ParserUtils.trim(matcher.group(2));
@@ -120,7 +128,7 @@ public class GalleryListParser {
                     continue;
                 }
 
-                gi.rating = NumberUtils.parseFloatSafely(getRate(m.group(11)), Float.NaN);
+                gi.rating = NumberUtils.parseFloatSafely(getRating(m.group(11)), Float.NaN);
                 gi.uploader = ParserUtils.trim(m.group(12));
                 gi.generateSLang();
 
@@ -137,27 +145,22 @@ public class GalleryListParser {
 
     private static Result parseLofi(String body) throws Exception {
         Result result = new Result();
-        Pattern p;
         Matcher m;
 
         List<GalleryInfo> list = new ArrayList<>(25);
         result.galleryInfos = list;
-        p = Pattern.compile("<td class=\"ii\"><a href=\"(.+?)\">" // detail url
-                + "<img src=\"(.+?)\".+?/>" // thumb url
-                + ".+?<a class=\"b\" href=\".+?\">(.+?)</a>" // title
-                + ".+?<td class=\"ik ip\">Posted:</td><td class=\"ip\">(.+?)</td>" // Posted and uploader
-                + "</tr><tr><td class=\"ik\">Category:</td><td>(.+?)</td>" // Category
-                + "</tr><tr><td class=\"ik\">Tags:</td><td>(.+?)</td>" // Tags
-                + "</tr><tr><td class=\"ik\">Rating:</td><td class=\"ir\">(.+?)</td>"); // rating
-        m = p.matcher(body);
-        DetailUrlParser dup = new DetailUrlParser();
+        m = LOFI_PATTERN.matcher(body);
         String[] pau = new String[2];
         while (m.find()) {
             LofiGalleryInfo lgi = new LofiGalleryInfo();
 
-            dup.parser(m.group(1));
-            lgi.gid = dup.gid;
-            lgi.token = dup.token;
+            GalleryDetailUrlParser.Result result1 = GalleryDetailUrlParser.parser(m.group(1));
+            if (result1 != null) {
+                lgi.gid = result1.gid;
+                lgi.token = result1.token;
+            } else {
+                continue;
+            }
 
             lgi.thumb = ParserUtils.trim(m.group(2));
             lgi.title = ParserUtils.trim(m.group(3));
@@ -203,9 +206,8 @@ public class GalleryListParser {
         return result;
     }
 
-    private static String getRate(String rawRate) {
-        Pattern p = Pattern.compile("\\d+px");
-        Matcher m = p.matcher(rawRate);
+    private static String getRating(String rawRate) {
+        Matcher m = RATING_PATTERN.matcher(rawRate);
         int num1;
         int num2;
         int rate = 5;

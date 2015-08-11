@@ -21,13 +21,14 @@ import java.util.regex.Pattern;
 
 public class GalleryDetailUrlParser {
 
+    public static final Pattern URL_PATTERN = Pattern.compile("/(\\d+)/(\\w+)");
+
     public static Result parser(String url) {
         if (url == null) {
             return null;
         }
 
-        Pattern p = Pattern.compile("/(\\d+)/(\\w+)");
-        Matcher m = p.matcher(url);
+        Matcher m = URL_PATTERN.matcher(url);
         if (m.find()) {
             Result result = new Result();
             result.gid = Integer.parseInt(m.group(1));

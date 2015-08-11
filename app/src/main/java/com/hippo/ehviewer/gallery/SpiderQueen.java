@@ -39,6 +39,7 @@ import com.hippo.yorozuya.Say;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
@@ -766,7 +767,13 @@ public class SpiderQueen implements Runnable {
                     mSpiderListener.onSpiderSucceed(index);
                     return;
                 } catch (Exception e) {
-                    exception = e;
+                    if (mCurrentSaveHelper != null && mCurrentSaveHelper.isCancelled()) {
+                        mPageStates.lazySet(index, PAGE_STATE_FAILED);
+                        mSpiderListener.onSpiderFailed(index, new IOException("Cancelled"));
+                        return;
+                    } else {
+                        exception = e;
+                    }
                 } finally {
                     mCurrentSaveHelper = null;
                 }

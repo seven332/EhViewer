@@ -46,7 +46,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener, M
     private static final float[] RIGHT_AREA = {2.0f / 3.0f, 0.0f, 1.0f, 1f};
     private static final float[] CENTER_AREA = {1.0f / 3.0f, 2.0f / 5.0f, 2.0f / 3.0f, 3.0f / 5.0f};
 
-    private static final Interpolator SMOOTH_SCALER_INTERPOLATOR = new OvershootInterpolator();
+    private static final Interpolator SMOOTH_SCALER_INTERPOLATOR = new OvershootInterpolator(0.7f);
 
     private boolean mEnableRequestLayout = true;
 
@@ -181,6 +181,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener, M
         if (mMode != mode) {
             Mode oldMode = mMode;
             mMode = mode;
+            resetPageMoving();
             superRequestLayout();
 
             mListener.onSetMode(mode);
@@ -189,6 +190,13 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener, M
                 mListener.onScrollToPage(mFirstShownIndex, true);
             }
         }
+    }
+
+    private void resetPageMoving() {
+        mSmoothScroller.forceStop();
+        mSmoothScaler.forceStop();
+        mLayoutOffset = 0;
+        mHaveChangePage = false;
     }
 
     public void setAdapter(Adapter adapter) {
@@ -222,17 +230,59 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener, M
         }
     }
 
+    public void scrollToPrevious() {
+        scrollToPage(mFirstShownIndex - 1);
+    }
+
+    public void scrollToNext() {
+        scrollToPage(mFirstShownIndex + 1);
+    }
+
+    public void scrollToLeft() {
+        if (mMode == Mode.RIGHT_TO_LEFT) {
+            scrollToNext();
+        } else {
+            scrollToPrevious();
+        }
+    }
+
+    public void scrollToRight() {
+        if (mMode == Mode.RIGHT_TO_LEFT) {
+            scrollToPrevious();
+        } else {
+            scrollToNext();
+        }
+    }
+
     public void scrollToPage(int page) {
         scrollToPageInternal(page, false);
     }
 
     private void scrollToPageInternal(int page, boolean internal) {
-        mSmoothScroller.forceStop();
-        mSmoothScaler.forceStop();
-
-        if (page < 0 || page >= mAdapter.getPages()) {
+        if (mMode == Mode.NONE) {
             return;
         }
+
+        if (page < 0) {
+            if (mMode == Mode.LEFT_TO_RIGHT) {
+                mEdgeView.onPull(getWidth() * 2, EdgeView.LEFT);
+            } else if (mMode == Mode.RIGHT_TO_LEFT) {
+                mEdgeView.onPull(getWidth() * 2, EdgeView.RIGHT);
+            }
+            return;
+        }
+
+        if (page >= mAdapter.getPages()) {
+            if (mMode == Mode.LEFT_TO_RIGHT) {
+                mEdgeView.onPull(getWidth() * 2, EdgeView.RIGHT);
+            } else if (mMode == Mode.RIGHT_TO_LEFT) {
+                mEdgeView.onPull(getWidth() * 2, EdgeView.LEFT);
+            }
+            return;
+        }
+
+        mSmoothScroller.forceStop();
+        mSmoothScaler.forceStop();
 
         mFirstShownIndex = page;
         mLayoutOffset = 0;
@@ -598,8 +648,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener, M
 
     @Override
     protected void onLayout(boolean changeSize, int left, int top, int right, int bottom) {
-        mSmoothScroller.forceStop();
-        mSmoothScaler.forceStop();
+
         mEdgeView.layout(left, top, right, bottom);
 
         /* TODO set all seen UNKNOWN_SEEN in order to setScaleAndOffset
@@ -611,9 +660,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener, M
         }
         */
 
-
-        mLayoutOffset = 0;
-        mHaveChangePage = false;
         fill();
 
         if (changeSize) {
