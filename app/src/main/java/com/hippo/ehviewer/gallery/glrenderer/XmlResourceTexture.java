@@ -48,16 +48,16 @@ public class XmlResourceTexture extends UploadedTexture {
 
         int width = mWidth;
         int height = mHeight;
-        if (mWidth <= 0) {
+        if (width <= 0) {
             width = drawable.getIntrinsicWidth();
         }
-        if (mHeight <= 0) {
+        if (height <= 0) {
             height = drawable.getIntrinsicHeight();
         }
-        if (mWidth <= 0) {
+        if (width <= 0) {
             width = 1;
         }
-        if (mHeight <= 0) {
+        if (height <= 0) {
             height = 1;
         }
 
