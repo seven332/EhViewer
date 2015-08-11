@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.gallery.anim;
 
+import android.os.SystemClock;
 import android.view.animation.Interpolator;
 
 import com.hippo.yorozuya.MathUtils;
@@ -72,6 +73,7 @@ abstract public class Animation {
     private int mRepeatMode;
 
     private int mRunnedCount;
+    private long mLastFrameTime;
 
     public void setInterpolator(Interpolator interpolator) {
         mInterpolator = interpolator;
@@ -89,11 +91,30 @@ abstract public class Animation {
         mRepeatMode = repeatMode;
     }
 
+    public boolean isRunning() {
+        return mStartTime > 0;
+    }
+
+    public long getLastFrameTime() {
+        return mLastFrameTime;
+    }
+
     public void start() {
         if (mStartTime == NO_ANIMATION) {
             mStartTime = ANIMATION_START;
             mRunnedCount = 0;
+            mLastFrameTime = 0;
         }
+    }
+
+    public void startAt(long time) {
+        start();
+        setStartTime(time);
+    }
+
+    public void startNow() {
+        start();
+        setStartTime(SystemClock.uptimeMillis());
     }
 
     public void setStartTime(long time) {
@@ -111,6 +132,7 @@ abstract public class Animation {
     public void forceReset() {
         mStartTime = ANIMATION_START;
         mRunnedCount = 0;
+        mLastFrameTime = 0;
     }
 
     // TODO mRepeatMode
@@ -121,6 +143,7 @@ abstract public class Animation {
         if (mStartTime == ANIMATION_START) {
             mStartTime = currentTimeMillis;
         }
+        mLastFrameTime = currentTimeMillis;
 
         long elapse = currentTimeMillis - mStartTime;
         float x = MathUtils.clamp(mDuration == 0.0f ? 1.0f : (float) elapse / mDuration, 0.0f, 1.0f); // Avoid NaN

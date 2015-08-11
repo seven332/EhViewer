@@ -165,7 +165,7 @@ public abstract class UploadedTexture extends BasicTexture {
 
     protected abstract void onFreeBitmap(Bitmap bitmap);
 
-    protected void invalidateContent() {
+    public void invalidateContent() {
         if (mBitmap != null) freeBitmap();
         mContentValid = false;
         mWidth = UNSPECIFIED;
