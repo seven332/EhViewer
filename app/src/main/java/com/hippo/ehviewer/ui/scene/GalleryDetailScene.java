@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.EhApplication;
@@ -39,11 +40,13 @@ import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.GalleryDetailUrlParser;
+import com.hippo.ehviewer.client.RateGalleryParser;
 import com.hippo.ehviewer.client.data.Comment;
 import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.data.TagGroup;
+import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Settings;
@@ -166,6 +169,8 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
 
         mEhConfig = EhApplication.getEhHttpClient(getStageActivity()).getEhConfigClone();
         mSource = Settings.getEhSource();
+
+        ((ContentActivity) getStageActivity()).setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_NONE);
     }
 
     @Override
@@ -254,6 +259,13 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         mPreview.setPreviewHelper(new SimplePreviewHelper());
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        ((ContentActivity) getStageActivity()).setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_NONE);
+    }
+
     private void requestGalleryDetail(int gid, String token) {
         EhClient client = EhApplication.getEhClient(getStageActivity());
         int source = Settings.getEhSource();
@@ -275,7 +287,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         mCategory.setTextColor(EhUtils.getCategoryColor(gb.category));
     }
 
-    private String getRatingText(float rating) {
+    private static String getRatingText(float rating, Resources resources) {
         String undefine = "(´_ゝ`)";
         if (Float.isNaN(rating)) {
             return undefine;
@@ -310,12 +322,12 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         if (resId == 0) {
             return undefine;
         } else {
-            return getStageActivity().getString(resId);
+            return resources.getString(resId);
         }
     }
 
     private String getAllRatingText(float rating, int ratedTimes) {
-        return String.format(getStageActivity().getString(R.string.we_feel), getRatingText(rating)) +
+        return String.format(getStageActivity().getString(R.string.we_feel), getRatingText(rating, getStageActivity().getResources())) +
                 " (" + rating + ", " + ratedTimes + ")";
     }
 
@@ -548,13 +560,19 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         } else if (mDownload == v) {
             // TODO
         } else if (mRead == v) {
-            Intent intent = new Intent(getStageActivity(), GalleryActivity.class);
-            intent.setAction(GalleryActivity.ACTION_GALLERY_FROM_GALLERY_BASE);
-            intent.putExtra(GalleryActivity.KEY_GALLERY_BASE, mGalleryDetail);
-            //intent.setAction(GalleryActivity.ACTION_GALLERY_FROM_ARCHIVE);
-            //intent.putExtra(GalleryActivity.KEY_ARCHIVE_URI,
-            //        Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "a.zip")));
-            getStageActivity().startActivity(intent);
+            GalleryBase galleryBase = mGalleryDetail;
+            if (galleryBase == null) {
+                galleryBase = mGalleryBase;
+            }
+            if (galleryBase != null) {
+                Intent intent = new Intent(getStageActivity(), GalleryActivity.class);
+                intent.setAction(GalleryActivity.ACTION_GALLERY_FROM_GALLERY_BASE);
+                intent.putExtra(GalleryActivity.KEY_GALLERY_BASE, galleryBase);
+                //intent.setAction(GalleryActivity.ACTION_GALLERY_FROM_ARCHIVE);
+                //intent.putExtra(GalleryActivity.KEY_ARCHIVE_URI,
+                //        Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "a.zip")));
+                getStageActivity().startActivity(intent);
+            }
         } else if (mFavorite == v) {
             // TODO
         } else if (mTorrent == v) {
@@ -565,7 +583,54 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
             StartActivityHelper.share(getStageActivity(),
                     EhUrl.getDetailUrl(Settings.getEhSource(), mGalleryDetail.gid, mGalleryDetail.token, 0));
         } else if (mRate == v) {
-            // TODO
+            int[] position = new int[2];
+            ViewUtils.getLocationInAncestor(mRate, position, getSceneView());
+            RateDialogHelper helper = new RateDialogHelper();
+            new SimpleDialog.Builder(getStageActivity())
+                    .setTitle(R.string.rate)
+                    .setCustomView(R.layout.dialog_rate, helper)
+                    .setPositiveButton(android.R.string.ok)
+                    .setOnButtonClickListener(helper)
+                    .setStartPoint(position[0], position[1]).show(this);
+        }
+    }
+
+    class RateDialogHelper implements SimpleDialog.OnCreateCustomViewListener,
+            SimpleDialog.OnClickListener {
+
+        private RatingView mRatingView;
+
+        @Override
+        public void onCreateCustomView(final SimpleDialog dialog, View view) {
+            final Resources resources = dialog.getStageActivity().getResources();
+            final TextView textView = (TextView) view.findViewById(R.id.text);
+            mRatingView = (RatingView) view.findViewById(R.id.rating_view);
+            mRatingView.setOnRatingChangeListener(new RatingView.OnRatingChangeListener() {
+                @Override
+                public void onRatingChange(float oldRating, float newRating, boolean byUser, boolean confirm) {
+                    textView.setText(getAllRatingText(resources, newRating));
+                }
+            });
+            mRatingView.setRating(mGalleryDetail.rating);
+        }
+
+        public String getAllRatingText(Resources resources, float rating) {
+            return String.format(resources.getString(R.string.we_feel), getRatingText(rating, resources));
+        }
+
+        @Override
+        public boolean onClick(SimpleDialog dialog, int which) {
+            if (which == SimpleDialog.POSITIVE) {
+                GalleryDetail galleryDetail = mGalleryDetail;
+                EhClient client = EhApplication.getEhClient(getStageActivity());
+                EhRequest request = new EhRequest();
+                request.setEhConfig(mEhConfig);
+                request.setMethod(EhClient.METHOD_RATE_GALLERY);
+                request.setArgs(galleryDetail.gid, galleryDetail.token, mRatingView.getRating(), mSource);
+                request.setEhListener(new RateGalleryListener());
+                client.execute(request);
+            }
+            return true;
         }
     }
 
@@ -646,6 +711,29 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         @Override
         public void onCanceled() {
             mEhRequest = null;
+        }
+    }
+
+    private class RateGalleryListener extends EhClient.EhListener<RateGalleryParser.Result> {
+
+        @Override
+        public void onSuccess(RateGalleryParser.Result result) {
+            mGalleryDetail.rating = result.rating;
+            mGalleryDetail.ratedTimes = result.ratedTimes;
+            // Update UI
+            mRating.setRating(result.rating);
+            mRatingText.setText(getAllRatingText(result.rating, result.ratedTimes));
+            // Toast
+            Toast.makeText(getStageActivity(), R.string.rate_successfully, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            Toast.makeText(getStageActivity(), R.string.rate_failed, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onCanceled() {
         }
     }
 

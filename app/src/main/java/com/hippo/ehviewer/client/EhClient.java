@@ -193,6 +193,39 @@ public final class EhClient {
      */
     public static final int METHOD_GET_PREVIEW_SET = 6;
 
+    /**
+     * Rate gallery
+     *
+     * <table>
+     *     <tr>
+     *         <th>param</th>
+     *         <th>info</th>
+     *     </tr>
+     *     <tr>
+     *         <td>gid</td>
+     *         <td>gid of the gallery</td>
+     *     </tr>
+     *     <tr>
+     *         <td>token</td>
+     *         <td>token of the gallery</td>
+     *     </tr>
+     *     <tr>
+     *         <td>rating</td>
+     *         <td>your rating of the gallery</td>
+     *     </tr>
+     *     <tr>
+     *         <td>source</td>
+     *         <td>the source, one of {@link EhUrl#SOURCE_G},
+     *         {@link EhUrl#SOURCE_EX} and {@link EhUrl#SOURCE_LOFI}</td>
+     *     </tr>
+     *     <tr>
+     *         <td>listener</td>
+     *         <td>the listener for callback</td>
+     *     </tr>
+     * </table>
+     */
+    public static final int METHOD_RATE_GALLERY = 7;
+
     private final ThreadPoolExecutor mRequestThreadPool;
 
     private final HttpClient mHttpClient;
@@ -315,6 +348,8 @@ public final class EhClient {
                         return EhEngine.getGalleryDetail(mHttpClient, mEhHttpRequest, (String) params[0], (Integer) params[1]);
                     case METHOD_GET_PREVIEW_SET:
                         return EhEngine.getPreviewSet(mHttpClient, mEhHttpRequest, (String) params[0], (Integer) params[1]);
+                    case METHOD_RATE_GALLERY:
+                        return EhEngine.rateGallery(mHttpClient, mEhHttpRequest, (Integer) params[0], (String) params[1], (Float) params[2], (Integer) params[3]);
                     default:
                         return new IllegalStateException("Can't detect method");
                 }

@@ -183,4 +183,33 @@ class EhEngine {
             httpRequest.disconnect();
         }
     }
+
+    public static RateGalleryParser.Result rateGallery(HttpClient httpClient,
+            HttpRequest httpRequest, int gid, String token, float rating, int source) throws Exception {
+        try {
+            final JSONObject json = new JSONObject();
+            json.put("method", "rategallery");
+            json.put("apiuid", APIUID);
+            json.put("apikey", APIKEY);
+            json.put("gid", gid);
+            json.put("token", token);
+            json.put("rating", rating);
+
+            JsonPoster jsonPoster = new JsonPoster(json);
+            httpRequest.setUrl(EhUrl.getApiUrl(source));
+            httpRequest.setHttpImpl(jsonPoster);
+            HttpResponse response = httpClient.execute(httpRequest);
+            String body = response.getString();
+
+            return RateGalleryParser.parse(body);
+        } catch (Exception e) {
+            if (httpRequest.getState() == HttpRequest.STATE_DISCONNECT) {
+                throw new CanceledException();
+            } else {
+                throw e;
+            }
+        } finally {
+            httpRequest.disconnect();
+        }
+    }
 }

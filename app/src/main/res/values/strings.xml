@@ -87,6 +87,8 @@
     <string name="no_comments">No comments</string>
     <string name="no_more_comments">No more comments</string>
     <string name="more_comment">More comments</string>
+    <string name="rate_successfully">Rate successfully</string>
+    <string name="rate_failed">Rate failed</string>
 
     <!-- Info Scene -->
     <string name="copied_to_clipboard">Copied to clipboard</string>
@@ -146,6 +148,7 @@
     <string name="settings_reading_hide_nav_bar_summary">Only work for Android 4.4 and above</string>
     <string name="settings_reading_hide_nav_bar_summary_on">Immersive full-screen mode</string>
     <string name="settings_reading_hide_nav_bar_summary_off">Do not hide nav bar</string>
+    <string name="settings_volume_page">Volume keys to turn pages</string>
 
     <string name="settings_eh" translatable="false">EH</string>
     <string name="settings_eh_source_title">EH source</string>

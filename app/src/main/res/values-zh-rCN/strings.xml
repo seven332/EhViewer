@@ -125,7 +125,7 @@
     <string name="settings_preview_size_normal">一般</string>
     <string name="settings_preview_size_large">较大</string>
 
-    <string name="settings_advance">高级</string>
+    <string name="settings_advanced">高级</string>
     <string name="settings_show_application_stats_title">显示应用状态</string>
     <string name="settings_show_application_stats_summary">在屏幕右上角显示设备状态</string>
     <string name="settings_clear_image_memory_cache_title">清理图片内存缓存</string>
