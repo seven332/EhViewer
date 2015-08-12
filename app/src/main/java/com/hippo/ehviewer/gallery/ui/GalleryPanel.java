@@ -175,7 +175,11 @@ public class GalleryPanel extends GLView implements FitPaddingImpl, Slider.OnSet
     @Override
     protected boolean onTouch(MotionEvent event) {
         if (mShown && event.getAction() == MotionEvent.ACTION_UP) {
-            setShown(false, true);
+            int x = (int) event.getX();
+            int y = (int) event.getY();
+            if (!mRightView.bounds().contains(x, y) && !mBottomView.bounds().contains(x, y)) {
+                setShown(false, true);
+            }
         }
         return mShown;
     }
