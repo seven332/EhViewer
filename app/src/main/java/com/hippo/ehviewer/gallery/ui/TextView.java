@@ -24,9 +24,16 @@ public class TextView extends GLView {
             text = "";
         }
         if (!text.equals(mText)) {
+            int oldMinimumWidth = getSuggestedMinimumWidth();
+
             mText = text;
             mIndexes = mTextTexture.getTextIndexes(text);
-            requestLayout();
+
+            if (getSuggestedMinimumWidth() != oldMinimumWidth) {
+                requestLayout();
+            } else {
+                invalidate();
+            }
         }
     }
 
@@ -38,17 +45,29 @@ public class TextView extends GLView {
     }
 
     @Override
-    protected void onMeasure(int widthSpec, int heightSpec) {
-        int textWidth = 0;
-        int textHight = 0;
-
-        if (mTextTexture != null) {
-            textWidth = (int) mTextTexture.getTextWidth(mIndexes);
-            textHight = (int) mTextTexture.getTextHeight();
+    protected int getSuggestedMinimumWidth() {
+        if (mTextTexture == null) {
+            return super.getSuggestedMinimumWidth();
+        } else {
+            return Math.max((int) mTextTexture.getTextWidth(mIndexes) + mPaddings.left + mPaddings.right,
+                    super.getSuggestedMinimumWidth());
         }
+    }
 
-        setMeasuredSize(getDefaultSize(Math.max(getSuggestedMinimumWidth(), textWidth), widthSpec),
-                getDefaultSize(Math.max(getSuggestedMinimumHeight(), textHight), heightSpec));
+    @Override
+    protected int getSuggestedMinimumHeight() {
+        if (mTextTexture == null) {
+            return super.getSuggestedMinimumHeight();
+        } else {
+            return Math.max((int) mTextTexture.getTextHeight() + mPaddings.top + mPaddings.bottom,
+                    super.getSuggestedMinimumHeight());
+        }
+    }
+
+    @Override
+    protected void onMeasure(int widthSpec, int heightSpec) {
+        setMeasuredSize(getDefaultSize(getSuggestedMinimumWidth(), widthSpec),
+                getDefaultSize(getSuggestedMinimumHeight(), heightSpec));
     }
 
     @Override

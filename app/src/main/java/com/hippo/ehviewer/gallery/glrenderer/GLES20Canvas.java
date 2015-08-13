@@ -527,7 +527,7 @@ public class GLES20Canvas implements GLCanvas {
             float sweepAngle, GLPaint paint) {
         float halfLineWidth = paint.getLineWidth() / 2;
         fillSector(cx, cy, radiusX + halfLineWidth, radiusY + halfLineWidth, sweepAngle, paint.getColor());
-        fillSector(cx, cy, radiusX - halfLineWidth, radiusY - halfLineWidth, sweepAngle, paint.getBackgroundColor());
+        fillOval(cx, cy, radiusX - halfLineWidth, radiusY - halfLineWidth, paint.getBackgroundColor());
     }
 
     private void draw(int type, int offset, int count, float x, float y, float width, float height,

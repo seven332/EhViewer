@@ -199,7 +199,7 @@ public class ProgressView extends GLView {
         int cy = height / 2;
 
         float startAngle = (mTrimStart + mTrimOffset) * 360.0f - 90;
-        float sweepAngle = Math.max(6.0f, (mTrimEnd - mTrimStart) * 360.0f);
+        float sweepAngle = Math.max(12.0f, (mTrimEnd - mTrimStart) * 360.0f);
         float rotation = mTrimRotation + startAngle;
 
         canvas.save();

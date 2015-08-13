@@ -43,7 +43,6 @@ public class Slider extends GLView {
     private int mDrawProgress;
     private float mDrawPercent;
     private int mTargetProgress;
-    private float mTargetPercent;
 
     private boolean mReverse = false;
 
@@ -165,7 +164,6 @@ public class Slider extends GLView {
             mProgress = progress;
             mPercent = MathUtils.delerp(mStart, mEnd, mProgress);
             mTargetProgress = progress;
-            mTargetPercent = mPercent;
             startProgressAnimation(mPercent);
 
             if (mListener != null) {
@@ -297,7 +295,6 @@ public class Slider extends GLView {
 
                 if (mTargetProgress != progress) {
                     mTargetProgress = progress;
-                    mTargetPercent = percent;
                     startProgressAnimation(percent);
                 }
 
