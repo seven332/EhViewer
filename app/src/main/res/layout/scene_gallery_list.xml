@@ -34,7 +34,7 @@
         auto:spaceLeft="@dimen/search_layout_space_horizontal"
         auto:spaceRight="@dimen/search_layout_space_horizontal"/>
 
-    <com.hippo.ehviewer.widget.SearchBar
+    <com.hippo.ehviewer.widget.ListSearchBar
         xmlns:auto="http://schemas.android.com/apk/res-auto"
         android:id="@+id/search_bar"
         android:layout_width="match_parent"

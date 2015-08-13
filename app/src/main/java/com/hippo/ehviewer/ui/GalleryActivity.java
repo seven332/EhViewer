@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -23,9 +24,11 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Process;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Pair;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 
 import com.hippo.app.StatsActivity;
 import com.hippo.conaco.BitmapPool;
@@ -50,6 +53,7 @@ import com.hippo.ehviewer.gallery.ui.GalleryPanel;
 import com.hippo.ehviewer.gallery.ui.GalleryView;
 import com.hippo.ehviewer.util.Settings;
 import com.hippo.util.SystemUiHelper;
+import com.hippo.vectorold.content.VectorContext;
 import com.hippo.yorozuya.PriorityThreadFactory;
 import com.hippo.yorozuya.SimpleHandler;
 
@@ -285,12 +289,54 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (Settings.getVolumePage()) {
+                    mGalleryView.scrollToPrevious();
+                    return true;
+                } else {
+                    break;
+                }
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (Settings.getVolumePage()) {
+                    mGalleryView.scrollToNext();
+                    return true;
+                } else {
+                    break;
+                }
+            case KeyEvent.KEYCODE_PAGE_UP:
+                mGalleryView.scrollToPrevious();
+                return true;
+            case KeyEvent.KEYCODE_PAGE_DOWN:
+                mGalleryView.scrollToNext();
+                return true;
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                mGalleryView.scrollToLeft();
+                return true;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                mGalleryView.scrollToRight();
+                return true;
+            case KeyEvent.KEYCODE_SPACE:
+            case KeyEvent.KEYCODE_MENU:
+                mGalleryPanel.setShown(!mGalleryPanel.isShown(), true);
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     public void onBackPressed() {
         if (mGalleryPanel.isShown()) {
             mGalleryPanel.setShown(false, true);
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(VectorContext.wrapContext(newBase));
     }
 
     @Override

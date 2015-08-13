@@ -141,7 +141,12 @@ public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration {
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent,
             RecyclerView.State state) {
-        int itemCount = parent.getAdapter().getItemCount();
+        RecyclerView.Adapter adapter = parent.getAdapter();
+        if (adapter == null) {
+            return;
+        }
+
+        int itemCount = adapter.getItemCount();
 
         if (mOrientation == VERTICAL) {
             final boolean isRtl =  ViewCompat.getLayoutDirection(parent) ==  ViewCompat.LAYOUT_DIRECTION_RTL;

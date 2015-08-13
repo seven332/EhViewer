@@ -35,6 +35,7 @@ public class EhDaoGenerator {
 
         Schema schema = new Schema(1, PACKAGE);
         addGalleryBase(schema);
+        addQuickSearch(schema);
         addDownloadInfo(schema);
         addDirname(schema);
         addReadInfo(schema);
@@ -56,11 +57,26 @@ public class EhDaoGenerator {
         galleryBase.addIntProperty("reference");
     }
 
+    public static void addQuickSearch(Schema schema) {
+        Entity quickSearch = schema.addEntity("QuickSearchObj");
+        quickSearch.setTableName("QUICK_SEARCH");
+        quickSearch.addIdProperty();
+        quickSearch.addStringProperty("name");
+        quickSearch.addIntProperty("mode");
+        quickSearch.addIntProperty("category");
+        quickSearch.addStringProperty("keyword");
+        quickSearch.addIntProperty("advancedSearch");
+        quickSearch.addIntProperty("minRating");
+        quickSearch.addLongProperty("time");
+    }
+
     public static void addDownloadInfo(Schema schema) {
         Entity downloadInfo = schema.addEntity("DownloadInfoObj");
         downloadInfo.setTableName("DOWNLOAD_INFO");
         downloadInfo.addLongProperty("gid").primaryKey();
         downloadInfo.addIntProperty("state");
+        downloadInfo.addIntProperty("legacy");
+        downloadInfo.addLongProperty("time");
     }
 
     public static void addDirname(Schema schema) {

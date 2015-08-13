@@ -63,10 +63,15 @@ public class ReadingSettingsScene extends PreferenceScene implements ListPrefere
             hideNavbarPreference.setEnable(false);
         }
 
+        SwitchPreference volumePagePreference = new SwitchPreference(Settings.KEY_VOLUME_PAGE,
+                resources.getString(R.string.settings_volume_page), null);
+        volumePagePreference.setDefaultValue(Settings.DEFAULT_VOLUME_PAGE);
+
         PreferenceSet preferenceSet = new PreferenceSet();
         preferenceSet.setPreferenceList(new Preference[] {
                 directionPreference,
-                hideNavbarPreference
+                hideNavbarPreference,
+                volumePagePreference
         });
 
         return new PreferenceSet[] {

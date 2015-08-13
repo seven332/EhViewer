@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/appbar_height"
         android:orientation="horizontal"
-        android:background="@drawable/theme_primary">
+        android:background="?attr/colorPrimary">
 
         <com.hippo.widget.SimpleImageView
             android:id="@+id/appbar_icon"

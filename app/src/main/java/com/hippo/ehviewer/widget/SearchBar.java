@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2015 Hippo Seven
+ * Copyright 2015 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,19 +19,14 @@ package com.hippo.ehviewer.widget;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Path;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
-import android.text.style.ImageSpan;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -49,11 +44,7 @@ import com.hippo.cardsalon.CardView;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.effect.ViewTransition;
-import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.client.EhUrl;
-import com.hippo.ehviewer.util.Settings;
-import com.hippo.yorozuya.Messenger;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.ViewUtils;
@@ -64,7 +55,7 @@ import java.util.List;
 
 public class SearchBar extends CardView implements View.OnClickListener,
         TextView.OnEditorActionListener, TextWatcher,
-        SearchEditText.SearchEditTextListener, Messenger.Receiver {
+        SearchEditText.SearchEditTextListener {
 
     private static final String STATE_KEY_SUPER = "super";
     private static final String STATE_KEY_STATE = "state";
@@ -101,8 +92,6 @@ public class SearchBar extends CardView implements View.OnClickListener,
     private Helper mHelper;
 
     private boolean mInAnimation = false;
-
-    private int mSource = -1;
 
     public SearchBar(Context context) {
         super(context);
@@ -160,20 +149,6 @@ public class SearchBar extends CardView implements View.OnClickListener,
                 mEditText.setSelection(suggestion.length());
             }
         });
-
-        setSource(Settings.getEhSource());
-    }
-
-    @Override
-    public void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        Messenger.getInstance().register(Constants.MESSENGER_ID_EH_SOURCE, this);
-    }
-
-    @Override
-    public void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        Messenger.getInstance().unregister(Constants.MESSENGER_ID_EH_SOURCE, this);
     }
 
     private void updateSuggestions() {
@@ -184,21 +159,12 @@ public class SearchBar extends CardView implements View.OnClickListener,
         mSuggestionAdapter.notifyDataSetChanged();
     }
 
-    @SuppressWarnings({"deprecation", "ConstantConditions"})
-    public void setSource(int source) {
-        if (mSource != source) {
-            Resources resources = getContext().getResources();
-            Drawable searchImage = resources.getDrawable(R.drawable.ic_search);
-            SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
-            ssb.append(String.format(resources.getString(R.string.search_bar_hint),
-                    EhUrl.getReadableHost(source)));
-            int textSize = (int) (mEditText.getTextSize() * 1.25);
-            searchImage.setBounds(0, 0, textSize, textSize);
-            ssb.setSpan(new ImageSpan(searchImage), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            mEditText.setHint(ssb);
+    public float getEditTextTextSize() {
+        return mEditText.getTextSize();
+    }
 
-            mSource = source;
-        }
+    public void setEditTextHint(CharSequence hint) {
+        mEditText.setHint(hint);
     }
 
     public void setHelper(Helper helper) {
@@ -413,16 +379,6 @@ public class SearchBar extends CardView implements View.OnClickListener,
     @Override
     public void onBackPressed() {
         mHelper.onBackPressed();
-    }
-
-    @Override
-    public void onReceive(int id, Object obj) {
-        if (id == Constants.MESSENGER_ID_EH_SOURCE) {
-            if (obj instanceof Integer) {
-                int source = (Integer) obj;
-                setSource(source);
-            }
-        }
     }
 
     @Override

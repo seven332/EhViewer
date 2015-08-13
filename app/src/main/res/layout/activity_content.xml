@@ -15,7 +15,6 @@
   -->
 <com.hippo.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -33,7 +32,16 @@
         android:layout_height="match_parent"
         android:layout_gravity="left"
         android:maxWidth="320dp"
+        android:clickable="true"/>
+
+    <!-- Right Drawer -->
+    <com.hippo.ehviewer.widget.DrawerRightPanel
+        android:id="@+id/drawer_right_panel"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:maxWidth="320dp"
         android:clickable="true"
-        tools:ignore="RtlHardcoded"/>
+        android:background="@color/background_right_drawer_light"/>
 
 </com.hippo.widget.DrawerLayout>

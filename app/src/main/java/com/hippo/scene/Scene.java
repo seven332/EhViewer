@@ -478,10 +478,18 @@ public abstract class Scene {
         return "scene:" + mId;
     }
 
+    private String getPersonalStateKey() {
+        return "scene:personal:" + mId;
+    }
+
     void saveInstanceState(Bundle outState) {
         SparseArray<Parcelable> states = new SparseArray<>();
         onSaveInstanceState(states);
         outState.putSparseParcelableArray(getStateKey(), states);
+        Parcelable personalState = onSavePersonalState();
+        if (personalState != null) {
+            outState.putParcelable(getPersonalStateKey(), personalState);
+        }
     }
 
     void restoreInstanceState(@NonNull Bundle savedInstanceState) {
@@ -492,6 +500,17 @@ public abstract class Scene {
                 onRestoreInstanceState(savedStates);
             }
         }
+        Parcelable personalState = savedInstanceState.getParcelable(getPersonalStateKey());
+        if (personalState != null) {
+            onRestorePersonalState(personalState);
+        }
+    }
+
+    protected Parcelable onSavePersonalState() {
+        return null;
+    }
+
+    protected void onRestorePersonalState(@NonNull Parcelable saved) {
     }
 
     protected void onSaveInstanceState(@NonNull SparseArray<Parcelable> outState) {

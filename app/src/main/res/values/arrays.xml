@@ -37,13 +37,11 @@
     <string-array name="settings_eh_source_entries">
         <item>@string/settings_eh_source_g</item>
         <item>@string/settings_eh_source_ex</item>
-        <item>@string/settings_eh_source_lofi</item>
     </string-array>
 
     <array name="settings_eh_source_values">
         <item>0</item>
         <item>1</item>
-        <item>2</item>
     </array>
 
     <string-array name="settings_preview_size_entries">

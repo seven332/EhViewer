@@ -687,6 +687,7 @@ public class DrawerLayout extends ViewGroup {
     @Override
     protected boolean fitSystemWindows(@NonNull Rect insets) {
         int fitPaddingTop = insets.top;
+        int fitPaddingRight = insets.right;
         int fitPaddingBottom = insets.bottom;
 
         int count = getChildCount();
@@ -699,6 +700,14 @@ public class DrawerLayout extends ViewGroup {
 
         insets.top = 0;
         insets.bottom = 0;
+        insets.right = 0;
+
+        // TODO padding right make it weird
+        ViewParent parent = getParent();
+        if (parent instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) parent;
+            viewGroup.setPadding(0, 0, fitPaddingRight, 0);
+        }
 
         return super.fitSystemWindows(insets);
     }

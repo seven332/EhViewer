@@ -141,6 +141,8 @@ public final class Settings {
     public static final int DEFAULT_READING_DIRECTION = 1;
     public static final String KEY_READING_HIDE_NAV_BAR = "reading_hide_nav_bar";
     public static final boolean DEFAULT_READING_HIDE_NAV_BAR = true;
+    public static final String KEY_VOLUME_PAGE = "volume_page";
+    public static final boolean DEFAULT_VOLUME_PAGE = true;
 
     public static void putReadingDirection(int value) {
         putInt(KEY_READING_DIRECTION, value);
@@ -156,6 +158,14 @@ public final class Settings {
 
     public static boolean getReadingHideNavBar() {
         return getBoolean(KEY_READING_HIDE_NAV_BAR, DEFAULT_READING_HIDE_NAV_BAR);
+    }
+
+    public static void putVolumePage(boolean value) {
+        putBoolean(KEY_VOLUME_PAGE, value);
+    }
+
+    public static boolean getVolumePage() {
+        return getBoolean(KEY_VOLUME_PAGE, DEFAULT_VOLUME_PAGE);
     }
 
 

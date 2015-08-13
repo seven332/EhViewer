@@ -80,33 +80,70 @@ public class SceneManager {
         mSceneStateListenerList.remove(listener);
     }
 
-    private void notifyCreate(Class clazz) {
+
+    private void notifyInit(Scene scene) {
         for (SceneStateListener l : mSceneStateListenerList) {
-            l.onCreate(clazz);
+            l.onInit(scene);
         }
     }
 
-    private void notifyDestroy(Class clazz) {
+    private void notifyRebirth(Scene scene) {
         for (SceneStateListener l : mSceneStateListenerList) {
-            l.onDestroy(clazz);
+            l.onRebirth(scene);
         }
     }
 
-    private void notifyPause(Class clazz) {
+    private void notifyCreate(Scene scene) {
         for (SceneStateListener l : mSceneStateListenerList) {
-            l.onPause(clazz);
+            l.onCreate(scene);
         }
     }
 
-    private void notifyResume(Class clazz) {
+    private void notifyBind(Scene scene) {
         for (SceneStateListener l : mSceneStateListenerList) {
-            l.onResume(clazz);
+            l.onBind(scene);
         }
     }
 
-    private void notifyRebirth(Class clazz) {
+    private void notifyRestore(Scene scene) {
         for (SceneStateListener l : mSceneStateListenerList) {
-            l.onRebirth(clazz);
+            l.onRestore(scene);
+        }
+    }
+
+    private void notifyDestroy(Scene scene) {
+        for (SceneStateListener l : mSceneStateListenerList) {
+            l.onDestroy(scene);
+        }
+    }
+
+    private void notifyDie(Scene scene) {
+        for (SceneStateListener l : mSceneStateListenerList) {
+            l.onDie(scene);
+        }
+    }
+
+    private void notifyPause(Scene scene) {
+        for (SceneStateListener l : mSceneStateListenerList) {
+            l.onPause(scene);
+        }
+    }
+
+    private void notifyResume(Scene scene) {
+        for (SceneStateListener l : mSceneStateListenerList) {
+            l.onResume(scene);
+        }
+    }
+
+    private void notifyOpen(Scene scene) {
+        for (SceneStateListener l : mSceneStateListenerList) {
+            l.onOpen(scene);
+        }
+    }
+
+    private void notifyClose(Scene scene) {
+        for (SceneStateListener l : mSceneStateListenerList) {
+            l.onClose(scene);
         }
     }
 
@@ -194,23 +231,27 @@ public class SceneManager {
     }
 
     private void startScene(Scene scene, Curtain curtain) {
-        Scene previousState = getTopScene();
+        Scene previousScene = getTopScene();
         mSceneStack.push(scene);
 
         if (curtain != null) {
-            curtain.setPreviousScene(previousState);
+            curtain.setPreviousScene(previousScene);
         }
 
-        if (previousState != null) {
-            previousState.endCurtainAnimation();
-            previousState.pause();
-            previousState.setState(Scene.SCENE_STATE_PAUSE);
+        if (previousScene != null) {
+            previousScene.endCurtainAnimation();
+            previousScene.pause();
+            notifyPause(previousScene);
+            previousScene.setState(Scene.SCENE_STATE_PAUSE);
         }
 
         scene.init();
+        notifyInit(scene);
         scene.setState(Scene.SCENE_STATE_PREPARE);
         scene.create(false);
+        notifyCreate(scene);
         scene.bind();
+        notifyBind(scene);
 
         // Update fit padding
         int fitPaddingBottom = getStageActivity().getFitPaddingBottom();
@@ -221,12 +262,12 @@ public class SceneManager {
         scene.setState(Scene.SCENE_STATE_RUN);
         if (!checkPrepareToDie(scene)) {
             // No finish called. Go on
-            if (curtain != null && previousState != null) {
+            if (curtain != null && previousScene != null) {
                 scene.setState(Scene.SCENE_STATE_OPEN);
-                curtain.open(scene, previousState);
+                curtain.open(scene, previousScene);
             } else {
                 // No curtain, set visiblity for previousState here
-                if (previousState != null) {
+                if (previousScene != null) {
                     updateSceneVisibility();
                 }
             }
@@ -275,8 +316,10 @@ public class SceneManager {
                 // It is not the first or it is the last scene
                 mSceneStack.remove(index);
                 scene.destroy(true);
+                notifyDestroy(scene);
                 scene.setState(Scene.SCENE_STATE_DESTROY);
                 scene.die(index == 0);
+                notifyDie(scene);
                 scene.setState(Scene.SCENE_STATE_DIE);
 
                 if (index == 0) {
@@ -291,9 +334,11 @@ public class SceneManager {
                 Scene previousScene = mSceneStack.get(index - 1);
 
                 previousScene.resume();
+                notifyResume(previousScene);
                 previousScene.setState(Scene.SCENE_STATE_RUN);
 
                 scene.destroy(true);
+                notifyDestroy(scene);
 
                 // Update scene visibility
                 updateSceneVisibility();
@@ -309,6 +354,7 @@ public class SceneManager {
                 } else {
                     scene.setState(Scene.SCENE_STATE_DESTROY);
                     scene.die(false);
+                    notifyDie(scene);
                     scene.setState(Scene.SCENE_STATE_DIE);
 
                     previousScene.setHide(false);
@@ -327,6 +373,7 @@ public class SceneManager {
     void openScene(Scene scene) {
         checkSceneState(scene, Scene.SCENE_STATE_OPEN);
         scene.open();
+        notifyOpen(scene);
         scene.setState(Scene.SCENE_STATE_RUN);
         checkPrepareToDie(scene);
         updateSceneVisibility();
@@ -335,8 +382,10 @@ public class SceneManager {
     void closeScene(Scene scene) {
         checkSceneState(scene, Scene.SCENE_STATE_CLOSE);
         scene.close();
+        notifyClose(scene);
         scene.setState(Scene.SCENE_STATE_DESTROY);
         scene.die(false);
+        notifyDie(scene);
         scene.setState(Scene.SCENE_STATE_DIE);
 
         // remove the scene from legacy set
@@ -391,21 +440,42 @@ public class SceneManager {
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         for (Scene scene : mSceneStack) {
             scene.destroy(false);
+            notifyDestroy(scene);
             scene.setState(Scene.SCENE_STATE_REBIRTH);
             scene.rebirth();
+            notifyRebirth(scene);
             scene.setState(Scene.SCENE_STATE_PREPARE);
             scene.create(true);
+            notifyCreate(scene);
             scene.restore();
+            notifyRestore(scene);
             scene.setState(Scene.SCENE_STATE_RUN);
             scene.restoreInstanceState(savedInstanceState);
         }
     }
 
     public interface SceneStateListener {
-        void onCreate(Class clazz);
-        void onDestroy(Class clazz);
-        void onPause(Class clazz);
-        void onResume(Class clazz);
-        void onRebirth(Class clazz);
+
+        void onInit(Scene scene);
+
+        void onRebirth(Scene scene);
+
+        void onCreate(Scene scene);
+
+        void onBind(Scene scene);
+
+        void onRestore(Scene scene);
+
+        void onDestroy(Scene scene);
+
+        void onDie(Scene scene);
+
+        void onPause(Scene scene);
+
+        void onResume(Scene scene);
+
+        void onOpen(Scene scene);
+
+        void onClose(Scene scene);
     }
 }

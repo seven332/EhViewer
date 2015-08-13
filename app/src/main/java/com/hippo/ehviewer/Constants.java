@@ -28,6 +28,7 @@ public final class Constants {
     public static final int MESSENGER_ID_JPN_TITLE;
     public static final int MESSENGER_ID_IMAGE_DOWNLOAD_LOCATION;
     public static final int MESSENGER_ID_ARCHIVE_DOWNLOAD_LOCATION;
+    public static final int MESSENGER_ID_UPDATE_QUICK_SEARCH;
 
     static {
         Messenger messenger = Messenger.getInstance();
@@ -39,5 +40,6 @@ public final class Constants {
         MESSENGER_ID_JPN_TITLE = messenger.newId();
         MESSENGER_ID_IMAGE_DOWNLOAD_LOCATION = messenger.newId();
         MESSENGER_ID_ARCHIVE_DOWNLOAD_LOCATION = messenger.newId();
+        MESSENGER_ID_UPDATE_QUICK_SEARCH = messenger.newId();
     }
 }

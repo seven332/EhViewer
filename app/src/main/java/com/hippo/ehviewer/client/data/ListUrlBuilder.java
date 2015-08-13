@@ -123,6 +123,15 @@ public class ListUrlBuilder {
         mMinRating = glub.mMinRating;
     }
 
+    public void set(QuickSearch quickSearch) {
+        mMode = quickSearch.mode;
+        mPageIndex = 0;
+        mCategory = quickSearch.category;
+        mKeyword = quickSearch.keyword;
+        mAdvanceSearch = quickSearch.advancedSearch;
+        mMinRating = quickSearch.minRating;
+    }
+
     public String build(int source) throws UnsupportedSearchException {
         switch (mMode) {
             default:

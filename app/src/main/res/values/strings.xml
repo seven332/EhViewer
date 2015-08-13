@@ -233,6 +233,8 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
 
+    <string name="displayname">Display name</string>
+
     <string name="read">Read</string>
     <string name="torrent">Torrent</string>
     <string name="share">Share</string>

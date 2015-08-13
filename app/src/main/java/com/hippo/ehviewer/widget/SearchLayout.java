@@ -308,6 +308,11 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
     @Override
     public void onClick(View v) {
         if (v == mAction1) {
+            if (mSearchMode == SEARCH_MODE_NORMAL) {
+                ListUrlBuilder builder = new ListUrlBuilder();
+                formatListUrlBuilder(builder);
+                mHelper.onAdd(builder);
+            }
             // TODO add quick search
         } else if (v == mAction2) {
             toggleSearchMode();
@@ -412,6 +417,8 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
     }
 
     public interface SearhLayoutHelper {
+        void onAdd(ListUrlBuilder builder);
+
         void onChangeSearchMode();
 
         void onRequestSelectImage();

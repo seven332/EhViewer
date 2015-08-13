@@ -169,14 +169,14 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
 
         mEhConfig = EhApplication.getEhHttpClient(getStageActivity()).getEhConfigClone();
         mSource = Settings.getEhSource();
-
-        ((ContentActivity) getStageActivity()).setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_NONE);
     }
 
     @Override
     protected void onCreate(boolean rebirth) {
         super.onCreate(rebirth);
         setContentView(R.layout.scene_gallery_detail);
+
+        ((ContentActivity) getStageActivity()).setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_NONE);
 
         ViewGroup main = (ViewGroup) findViewById(R.id.main);
         mRecyclerView = (RecyclerView) main.getChildAt(0);

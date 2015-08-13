@@ -28,14 +28,17 @@ import android.widget.AdapterView;
 
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.ui.scene.DrawerProvider;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
 import com.hippo.ehviewer.ui.scene.MainSettingsScene;
 import com.hippo.ehviewer.ui.scene.SignInScene;
 import com.hippo.ehviewer.util.Settings;
 import com.hippo.ehviewer.widget.DrawerLeftPanel;
+import com.hippo.ehviewer.widget.DrawerRightPanel;
 import com.hippo.ehviewer.widget.FitStageLayout;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.OffsetCurtain;
+import com.hippo.scene.Scene;
 import com.hippo.scene.SceneManager;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.StageLayout;
@@ -61,6 +64,7 @@ public final class ContentActivity extends StageActivity
     private DrawerLayout mDrawerLayout;
     private FitStageLayout mFitStageLayout;
     private DrawerLeftPanel mDrawerLeftPanel;
+    private DrawerRightPanel mDrawerRightPanel;
     private DrawerListView mDrawerListView;
 
     private AdapterView.OnItemClickListener mDrawerListListener = new AdapterView.OnItemClickListener() {
@@ -98,33 +102,65 @@ public final class ContentActivity extends StageActivity
 
     private SceneManager.SceneStateListener mSceneStateListener = new SceneManager.SceneStateListener() {
         @Override
-        public void onCreate(Class clazz) {
-            if (clazz.equals(GalleryListScene.class)) {
-                unlockDrawer();
+        public void onInit(Scene scene) {
+        }
+
+        @Override
+        public void onRebirth(Scene scene) {
+        }
+
+        @Override
+        public void onCreate(Scene scene) {
+            if (scene instanceof DrawerProvider) {
+                DrawerProvider drawerProvider = (DrawerProvider) scene;
+                mDrawerLayout.setDrawerLockMode(drawerProvider.showLeftDrawer() ?
+                        DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.LEFT);
+                drawerProvider.bindRightDrawer(ContentActivity.this);
             } else {
-                lockDrawer();
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.LEFT);
+                clearRightDrawerView();
             }
         }
 
         @Override
-        public void onDestroy(Class clazz) {
+        public void onBind(Scene scene) {
         }
 
         @Override
-        public void onPause(Class clazz) {
+        public void onRestore(Scene scene) {
         }
 
         @Override
-        public void onResume(Class clazz) {
-            if (clazz.equals(GalleryListScene.class)) {
-                unlockDrawer();
+        public void onDestroy(Scene scene) {
+        }
+
+        @Override
+        public void onDie(Scene scene) {
+        }
+
+        @Override
+        public void onPause(Scene scene) {
+        }
+
+        @Override
+        public void onResume(Scene scene) {
+            if (scene instanceof DrawerProvider) {
+                DrawerProvider drawerProvider = (DrawerProvider) scene;
+                mDrawerLayout.setDrawerLockMode(drawerProvider.showLeftDrawer() ?
+                        DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.LEFT);
+                drawerProvider.bindRightDrawer(ContentActivity.this);
             } else {
-                lockDrawer();
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.LEFT);
+                clearRightDrawerView();
             }
         }
 
         @Override
-        public void onRebirth(Class clazz) {
+        public void onOpen(Scene scene) {
+        }
+
+        @Override
+        public void onClose(Scene scene) {
         }
     };
 
@@ -142,11 +178,13 @@ public final class ContentActivity extends StageActivity
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mFitStageLayout = (FitStageLayout) mDrawerLayout.getChildAt(0);
         mDrawerLeftPanel = (DrawerLeftPanel) mDrawerLayout.getChildAt(1);
+        mDrawerRightPanel = (DrawerRightPanel) mDrawerLayout.getChildAt(2);
         mDrawerListView = mDrawerLeftPanel.getDrawerListView();
 
         mFitStageLayout.setOnFitPaddingBottomListener(this);
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_left, Gravity.LEFT);
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_right, Gravity.RIGHT);
 
         mDrawerLeftPanel.setHelper(this);
 
@@ -188,6 +226,16 @@ public final class ContentActivity extends StageActivity
         return mFitStageLayout;
     }
 
+    public void setRightDrawerView(View view) {
+        mDrawerRightPanel.setData(view);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
+    }
+
+    public void clearRightDrawerView() {
+        mDrawerRightPanel.clearData();
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
+    }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(VectorContext.wrapContext(newBase));
@@ -216,12 +264,8 @@ public final class ContentActivity extends StageActivity
         }
     }
 
-    public void lockDrawer() {
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-    }
-
-    public void unlockDrawer() {
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+    public void closeDrawers() {
+        mDrawerLayout.closeDrawers();
     }
 
     @Override
