@@ -74,7 +74,7 @@ public class RatingView extends View {
 
     private void updateShownCount() {
         float step = mMax / mStarCount / 2;
-        int shown = Math.round(mRating / step);
+        int shown = (int) Math.ceil(mRating / step);
         if (shown >= mStarCount * 2) {
             mShownStarCount = mStarCount;
             mShownStarHalfCount = 0;

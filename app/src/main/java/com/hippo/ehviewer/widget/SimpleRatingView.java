@@ -95,7 +95,7 @@ public class SimpleRatingView extends View {
     public void setRating(float rating) {
         if (mRating != rating) {
             mRating = rating;
-            int ratingInt = Math.round(rating * 2);
+            int ratingInt = (int) Math.ceil(rating * 2);
             if (mRatingInt != ratingInt) {
                 mRatingInt = ratingInt;
                 invalidate();
