@@ -14,14 +14,58 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <com.hippo.widget.recyclerview.EasyRecyclerView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="@dimen/appbar_height"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:background="?attr/colorPrimary">
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/drawer_right_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_medium"/>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <com.hippo.widget.SimpleImageView
+            android:id="@+id/settings"
+            android:layout_width="@dimen/appbar_height"
+            android:layout_height="@dimen/appbar_height"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/appbar_icon_margin"
+            android:src="@drawable/ic_settings_dark"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/drop_shadow"/>
+
+        <com.hippo.widget.recyclerview.EasyRecyclerView
+            android:id="@+id/drawer_right_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </FrameLayout>
+
+</LinearLayout>

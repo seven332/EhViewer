@@ -52,6 +52,8 @@
     <color name="misc">#fff06292</color>
     <color name="unknown_bg">@android:color/black</color>
 
+    <color name="material_red_500">#fff44336</color>
+    <color name="material_pink_300">#fff06292</color>
     <color name="material_pink_500">#ffe91e63</color>
     <color name="material_teal_500">#ff009688</color>
     <color name="material_teal_700">#ff00796b</color>

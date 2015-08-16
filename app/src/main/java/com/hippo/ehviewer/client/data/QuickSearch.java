@@ -39,4 +39,12 @@ public class QuickSearch {
         quickSearch.minRating = quickSearchObj.getMinRating();
         return quickSearch;
     }
+
+    public void set(ListUrlBuilder builder) {
+        mode = builder.getMode();
+        category = builder.getCategory();
+        keyword = builder.getKeyword();
+        advancedSearch = builder.getAdvanceSearch();
+        minRating = builder.getMinRating();
+    }
 }

@@ -36,7 +36,7 @@ import com.hippo.widget.ProgressView;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.AssertUtils;
-import com.hippo.yorozuya.IdGenerator;
+import com.hippo.yorozuya.IdIntGenerator;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Say;
 
@@ -180,7 +180,7 @@ public class ContentLayout extends FrameLayout {
          */
         private List<E> mData;
 
-        private IdGenerator mIdGenerator;
+        private IdIntGenerator mIdGenerator;
 
         /**
          * First shown page index
@@ -256,7 +256,7 @@ public class ContentLayout extends FrameLayout {
         public ContentHelper(Context context) {
             mContext = context;
             mData = new ArrayList<>();
-            mIdGenerator = new IdGenerator();
+            mIdGenerator = new IdIntGenerator();
         }
 
         @SuppressWarnings("unchecked")

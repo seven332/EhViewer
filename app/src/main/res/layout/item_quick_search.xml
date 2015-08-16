@@ -19,8 +19,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
     android:minHeight="48dp"
+    android:textColor="@color/secondary_text_light"
     android:textSize="@dimen/text_little_small"
     android:background="@android:color/white"/>

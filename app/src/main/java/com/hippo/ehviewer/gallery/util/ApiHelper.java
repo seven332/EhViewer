@@ -27,17 +27,17 @@ import android.view.WindowManager;
 import java.lang.reflect.Field;
 
 public class ApiHelper {
-    public static interface VERSION_CODES {
+    public interface VERSION_CODES {
         // These value are copied from Build.VERSION_CODES
-        public static final int GINGERBREAD_MR1 = 10;
-        public static final int HONEYCOMB = 11;
-        public static final int HONEYCOMB_MR1 = 12;
-        public static final int HONEYCOMB_MR2 = 13;
-        public static final int ICE_CREAM_SANDWICH = 14;
-        public static final int ICE_CREAM_SANDWICH_MR1 = 15;
-        public static final int JELLY_BEAN = 16;
-        public static final int JELLY_BEAN_MR1 = 17;
-        public static final int JELLY_BEAN_MR2 = 18;
+        int GINGERBREAD_MR1 = 10;
+        int HONEYCOMB = 11;
+        int HONEYCOMB_MR1 = 12;
+        int HONEYCOMB_MR2 = 13;
+        int ICE_CREAM_SANDWICH = 14;
+        int ICE_CREAM_SANDWICH_MR1 = 15;
+        int JELLY_BEAN = 16;
+        int JELLY_BEAN_MR1 = 17;
+        int JELLY_BEAN_MR2 = 18;
     }
 
     public static final boolean AT_LEAST_16 = Build.VERSION.SDK_INT >= 16;

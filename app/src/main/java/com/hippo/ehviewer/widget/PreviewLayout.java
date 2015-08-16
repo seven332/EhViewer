@@ -169,11 +169,7 @@ public final class PreviewLayout extends LinearLayout implements View.OnClickLis
                     mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
                 }
 
-                if (Math.hypot(mTouchX - x, mTouchY - y) > mTouchSlop && Math.abs(mTouchX - x) > Math.abs(mTouchY - y)) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return Math.hypot(mTouchX - x, mTouchY - y) > mTouchSlop && Math.abs(mTouchX - x) > Math.abs(mTouchY - y);
         }
 
         return false;

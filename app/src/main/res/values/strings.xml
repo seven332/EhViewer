@@ -71,6 +71,9 @@
     <string name="star_4">4 stars</string>
     <string name="star_5">5 stars</string>
 
+    <!-- Quick search -->
+    <string name="quick_search">Quick search</string>
+
     <!-- Go to -->
     <string name="go_to_page_info">Page %1$d, %2$s pages in total</string>
     <string name="go_to_string">Go to</string>
@@ -244,5 +247,6 @@
     <string name="info">Info</string>
 
     <string name="document">Document</string>
+    <string name="rename">Rename</string>
 
 </resources>

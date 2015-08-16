@@ -14,19 +14,16 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<FrameLayout
+<com.hippo.widget.recyclerview.EasyRecyclerView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recycler_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:minHeight="48dp"
-    android:background="@android:color/white">
-
-    <com.hippo.widget.SimpleImageView
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_gravity="right|center_vertical"
-        android:src="@drawable/ic_settings"/>
-
-</FrameLayout>
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/keyline_margin_horizontal"
+    android:paddingRight="@dimen/keyline_margin_horizontal"
+    android:paddingTop="@dimen/keyline_margin_vertical"
+    android:paddingBottom="@dimen/keyline_margin_vertical"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:scrollbarStyle="outsideOverlay"
+    android:scrollbars="vertical"/>

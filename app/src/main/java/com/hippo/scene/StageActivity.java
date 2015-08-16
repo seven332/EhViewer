@@ -24,7 +24,7 @@ import android.util.SparseArray;
 import android.view.View;
 
 import com.hippo.app.StatsActivity;
-import com.hippo.yorozuya.IdGenerator;
+import com.hippo.yorozuya.IdIntGenerator;
 import com.hippo.yorozuya.Say;
 
 public abstract class StageActivity extends StatsActivity {
@@ -33,7 +33,7 @@ public abstract class StageActivity extends StatsActivity {
 
     private static final String KEY_SCENEN_MANAGER_ID = "scene_manager_id";
 
-    private IdGenerator mActivityResultIdGenerator = new IdGenerator();
+    private IdIntGenerator mActivityResultIdGenerator = new IdIntGenerator();
     private SparseArray<Scene.ActivityResultListener> mActivityResultListenerMap =
             new SparseArray<>();
 

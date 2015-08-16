@@ -20,7 +20,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
-import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.data.QuickSearch;
@@ -32,7 +31,6 @@ import com.hippo.ehviewer.dao.GalleryBaseObj;
 import com.hippo.ehviewer.dao.GalleryBaseObjDao;
 import com.hippo.ehviewer.dao.QuickSearchObj;
 import com.hippo.ehviewer.dao.QuickSearchObjDao;
-import com.hippo.yorozuya.Messenger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,12 +133,34 @@ public class DBUtils {
         quickSearchObj.setMinRating(builder.getMinRating());
         quickSearchObj.setTime(System.currentTimeMillis());
         sDaoSession.getQuickSearchObjDao().insert(quickSearchObj);
-
-        Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_QUICK_SEARCH, null);
     }
 
-    public static void removeQuickSearch(QuickSearch quickSearch) {
-        sDaoSession.getQuickSearchObjDao().deleteByKey(quickSearch.id);
+    public static void moveQuickSearch(long fromId, long toId) {
+        QuickSearchObjDao dao = sDaoSession.getQuickSearchObjDao();
+        QuickSearchObj from = dao.load(fromId);
+        QuickSearchObj to = dao.load(toId);
+        long fromTime = from.getTime();
+        long toTime = to.getTime();
+        from.setTime(toTime);
+        to.setTime(fromTime);
+        dao.update(from);
+        dao.update(to);
+    }
+
+    public static void modifyQuickSearch(QuickSearch quickSearch) {
+        QuickSearchObjDao dao = sDaoSession.getQuickSearchObjDao();
+        QuickSearchObj obj = dao.load(quickSearch.id);
+        obj.setName(quickSearch.name);
+        obj.setMode(quickSearch.mode);
+        obj.setCategory(quickSearch.category);
+        obj.setKeyword(quickSearch.keyword);
+        obj.setAdvancedSearch(quickSearch.advancedSearch);
+        obj.setMinRating(quickSearch.minRating);
+        dao.update(obj);
+    }
+
+    public static void removeQuickSearch(long id) {
+        sDaoSession.getQuickSearchObjDao().deleteByKey(id);
     }
 
     public static List<QuickSearch> getAllQuickSearch() {

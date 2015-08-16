@@ -19,8 +19,8 @@
     xmlns:auto="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/keyline_margin"
-    android:paddingRight="@dimen/keyline_margin"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
     auto:labelAppearance="@style/TextAppearance.FloatLabelEditText.Lable">
 
     <EditText

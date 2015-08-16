@@ -22,7 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.hippo.yorozuya.AssertUtils;
-import com.hippo.yorozuya.IdGenerator;
+import com.hippo.yorozuya.IdIntGenerator;
 import com.hippo.yorozuya.Say;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class SceneManager {
     private Set<Scene> mLegacySceneSet = new HashSet<>();
     private Set<Scene> mPrepareToDieSceneSet = new HashSet<>();
 
-    private IdGenerator mIdGenerator = new IdGenerator();
+    private IdIntGenerator mIdGenerator = new IdIntGenerator();
 
     private List<SceneStateListener> mSceneStateListenerList = new ArrayList<>();
 

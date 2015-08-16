@@ -20,7 +20,7 @@ import android.app.Application;
 import android.content.Context;
 import android.util.SparseArray;
 
-import com.hippo.yorozuya.IdGenerator;
+import com.hippo.yorozuya.IdIntGenerator;
 import com.hippo.yorozuya.Say;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
@@ -29,7 +29,7 @@ public class SceneApplication extends Application {
     private static final String TAG = SceneApplication.class.getSimpleName();
 
     private SparseArray<SceneManager> mSceneManagers;
-    private IdGenerator mIdGenerator;
+    private IdIntGenerator mIdGenerator;
 
     private RefWatcher mRefWatcher;
 
@@ -38,7 +38,7 @@ public class SceneApplication extends Application {
         super.onCreate();
 
         mSceneManagers = new SparseArray<>();
-        mIdGenerator = new IdGenerator();
+        mIdGenerator = new IdIntGenerator();
 
         mRefWatcher = LeakCanary.install(this);
     }

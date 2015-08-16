@@ -171,6 +171,10 @@ public class SearchBar extends CardView implements View.OnClickListener,
         mHelper = helper;
     }
 
+    public void setText(String text) {
+        mEditText.setText(text);
+    }
+
     public String getText() {
         return mEditText.getText().toString();
     }
@@ -206,6 +210,10 @@ public class SearchBar extends CardView implements View.OnClickListener,
         return false;
     }
 
+    public int getState() {
+        return mState;
+    }
+
     public void setState(int state) {
         setState(state, true);
     }
@@ -218,7 +226,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             switch (oldState) {
                 default:
                 case STATE_NORMAL:
-                    mViewTransition.showView(1);
+                    mViewTransition.showView(1, animation);
                     mEditText.requestFocus();
                     mDrawerArrowDrawable.setArrow(animation ? ANIMATE_TIME : 0);
                     mAddDeleteDrawable.setDelete(animation ? ANIMATE_TIME : 0);
@@ -228,7 +236,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
                     break;
                 case STATE_SEARCH:
                     if (state == STATE_NORMAL) {
-                        mViewTransition.showView(0);
+                        mViewTransition.showView(0, animation);
                         mDrawerArrowDrawable.setMenu(animation ? ANIMATE_TIME : 0);
                         mAddDeleteDrawable.setAdd(animation ? ANIMATE_TIME : 0);
                     } else if (state == STATE_SEARCH_LIST) {
@@ -238,7 +246,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
                 case STATE_SEARCH_LIST:
                     hideImeAndSuggestionsList(animation);
                     if (state == STATE_NORMAL) {
-                        mViewTransition.showView(0);
+                        mViewTransition.showView(0, animation);
                         mDrawerArrowDrawable.setMenu(animation ? ANIMATE_TIME : 0);
                         mAddDeleteDrawable.setAdd(animation ? ANIMATE_TIME : 0);
                     }

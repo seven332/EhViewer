@@ -31,10 +31,8 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,9 +75,7 @@ import com.hippo.util.AnimationUtils;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.FloatingActionButton;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
-import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
 import com.hippo.yorozuya.AssertUtils;
-import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.SimpleHandler;
@@ -151,7 +147,8 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
     private boolean mJpnTitle;
 
 
-    private FrameLayout mRightDrawerView;
+    private ViewGroup mRightDrawerView;
+    private View mQuickSearchSettings;
     private EasyRecyclerView mQuickSearchView;
     private QuickSearchAdapter mQuickSearchAdapter;
     private List<QuickSearch> mQuickSearches;
@@ -294,6 +291,20 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         SearchBarMoveHelper sbmHelper = new SearchBarMoveHelper();
         mContentRecyclerView.addOnScrollListener(sbmHelper);
         mSearchLayout.addOnScrollListener(sbmHelper);
+        mSearchLayout.setAction1Text(mResources.getString(R.string.search_add));
+        mSearchLayout.setAction2Text(mResources.getString(R.string.search_mode));
+        mSearchLayout.setHelper(this);
+
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) mSearchBar.getLayoutParams();
+        ViewUtils.measureView(mSearchBar, 200, ViewGroup.LayoutParams.WRAP_CONTENT);
+        int fitPaddingTop = mSearchBar.getMeasuredHeight() + lp.topMargin;
+        mContentLayout.setFitPaddingTop(fitPaddingTop);
+        mSearchLayout.setFitPaddingTop(fitPaddingTop);
+        mSearchBarOriginalTop = lp.topMargin;
+        mSearchBarOriginalBottom = lp.topMargin + mSearchBar.getMeasuredHeight();
+
+
+        /*
         mSearchBar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -303,9 +314,15 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
                 int fitPaddingTop = mSearchBar.getHeight() + mResources.getDimensionPixelOffset(R.dimen.search_bar_padding_vertical);
                 mContentLayout.setFitPaddingTop(fitPaddingTop);
                 mSearchLayout.setFitPaddingTop(fitPaddingTop);
+
+                Log.d("TAG", "fitPaddingTop = " + fitPaddingTop);
+                Log.d("TAG", "mSearchBarOriginalTop = " + mSearchBarOriginalTop);
+                Log.d("TAG", "mSearchBarOriginalBottom = " + mSearchBarOriginalBottom);
             }
         });
-        mSearchLayout.setHelper(this);
+        */
+
+
 
         // Content Layout
         // onRebirth may create new GalleryListHelper
@@ -332,22 +349,22 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         mSearchDrawable = mResources.getDrawable(R.drawable.ic_search_dark);
         mCornerFab.setDrawable(mAddDeleteDrawable);
 
-        //
-        mRightDrawerView = (FrameLayout) getStageActivity().getLayoutInflater().inflate(R.layout.drawer_right_gallery_list, null);
-        mQuickSearchView = (EasyRecyclerView) mRightDrawerView.getChildAt(0);
+        mRightDrawerView = (ViewGroup) getStageActivity().getLayoutInflater().inflate(R.layout.drawer_right_gallery_list, null);
+        mQuickSearchSettings = mRightDrawerView.findViewById(R.id.settings);
+        RippleSalon.addRipple(mQuickSearchSettings, true);
+        mQuickSearchSettings.setOnClickListener(this);
+        TextView rightDrawerTitle = (TextView) mRightDrawerView.findViewById(R.id.drawer_right_title);
+        rightDrawerTitle.setText(R.string.quick_search);
+        mQuickSearchView = (EasyRecyclerView) mRightDrawerView.findViewById(R.id.drawer_right_recycler_view);
         mQuickSearches = DBUtils.getAllQuickSearch();
         mQuickSearchAdapter = new QuickSearchAdapter();
         mQuickSearchView.setAdapter(mQuickSearchAdapter);
         mQuickSearchView.setLayoutManager(new LinearLayoutManager(getStageActivity()));
         mQuickSearchView.setSelector(RippleSalon.generateRippleDrawable(false));
         mQuickSearchView.setDrawSelectorOnTop(true);
-        LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
-                LinearDividerItemDecoration.VERTICAL,
-                mResources.getColor(R.color.divider_light),
-                LayoutUtils.dp2pix(getStageActivity(), 1));
-        decoration.setShowLastDivider(true);
-        mQuickSearchView.addItemDecoration(decoration);
         mQuickSearchView.setOnItemClickListener(new QuickSearchClickListener());
+        mQuickSearchView.hasFixedSize();
+        mQuickSearchView.setClipToPadding(false);
 
         // When scene start
         if (!rebirth) {
@@ -401,6 +418,7 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         mSearchLayout.setFitPaddingBottom(b);
         // Corner Fab
         mFabLayout.setPadding(mFabLayout.getPaddingLeft(), mFabLayout.getPaddingTop(), mFabLayout.getPaddingRight(), mCornerFabOriginalBottom + b);
+        mQuickSearchView.setPadding(0, 0, 0, b);
     }
 
     @Override
@@ -603,6 +621,8 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
             if (mGalleryListHelper.canGoTo()) {
                 showGoToDialog();
             }
+        } else if (v == mQuickSearchSettings) {
+            startScene(QuickSearchScene.class);
         }
     }
 
@@ -677,6 +697,7 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
 
         setState(STATE_NORMAL);
 
+        showSearchBar(true);
         mGalleryListHelper.refresh();
     }
 
@@ -689,6 +710,10 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
     }
 
     private void showSearchBar(boolean animation) {
+        if (mSearchBar.isLayoutRequested()) {
+            return;
+        }
+
         // Cancel old animator
         if (mSearchBarMoveAnimator != null) {
             mSearchBarMoveAnimator.cancel();
@@ -736,6 +761,10 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
     }
 
     private void returnSearchBarPosition() {
+        if (mSearchBar.isLayoutRequested()) {
+            return;
+        }
+
         boolean show;
         if (mState == STATE_SIMPLE_SEARCH || mState == STATE_SEARCH_SHOW_LIST) {
             show = true;
@@ -824,9 +853,11 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
                 String displayname = mEditText.getText().toString();
                 if (!TextUtils.isEmpty(displayname)) {
                     DBUtils.addQuickSearch(displayname, mBuilder);
+                    // Notify
+                    Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_QUICK_SEARCH, null);
                     return true;
                 } else {
-                    Toast.makeText(getStageActivity(), "Empty displayname", Toast.LENGTH_SHORT).show(); // TODO
+                    Toast.makeText(getStageActivity(), "Empty displayname", Toast.LENGTH_SHORT).show(); // TODO hardcode
                     return false;
                 }
             } else {
@@ -836,14 +867,23 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
     }
 
     @Override
-    public void onAdd(ListUrlBuilder builder) {
-        // Set keyword from search bar
-        builder.setKeyword(mSearchBar.getText());
-        AddToQuickSearchHelper helper = new AddToQuickSearchHelper(builder);
-        new SimpleDialog.Builder(getStageActivity()).setTitle("Add to quick search")
-                .setCustomView(R.layout.dialog_add_to_quick_search, helper)
-                .setPositiveButton(android.R.string.ok)
-                .setOnButtonClickListener(helper).show(this);
+    public void onAction1() {
+        if (mSearchLayout.getSearchMode() == SearchLayout.SEARCH_MODE_NORMAL) {
+            ListUrlBuilder builder = new ListUrlBuilder();
+            mSearchLayout.formatListUrlBuilder(builder);
+            // Set keyword from search bar
+            builder.setKeyword(mSearchBar.getText());
+            AddToQuickSearchHelper helper = new AddToQuickSearchHelper(builder);
+            new SimpleDialog.Builder(getStageActivity()).setTitle("Add to quick search") // TODO hardcode
+                    .setCustomView(R.layout.dialog_add_to_quick_search, helper)
+                    .setPositiveButton(android.R.string.ok)
+                    .setOnButtonClickListener(helper).show(this);
+        }
+    }
+
+    @Override
+    public void onAction2() {
+        mSearchLayout.toggleSearchMode();
     }
 
     @Override
@@ -940,8 +980,7 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
 
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            if (mState != STATE_SIMPLE_SEARCH && mState != STATE_SEARCH_SHOW_LIST &&
-                    isVaildView(recyclerView)) {
+            if (isVaildView(recyclerView)) {
 
                 int oldBottom = mSearchBar.getBottom();
                 int offsetYStep = MathUtils.clamp(-dy, -mSearchBar.getBottom(), mSearchBarOriginalTop - mSearchBar.getTop());
@@ -1213,59 +1252,34 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         }
     }
 
-    private static final int TYPE_SETTINGS = 0;
-    private static final int TYPE_TEXT = 1;
-
     private class QuickSearchAdapter extends RecyclerView.Adapter<SimpleHolder> {
 
         @Override
-        public int getItemViewType(int position) {
-            return position == 0 ? TYPE_SETTINGS : TYPE_TEXT;
-        }
-
-        @Override
         public SimpleHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            switch (viewType) {
-                case TYPE_SETTINGS:
-                    return new SimpleHolder(getStageActivity().getLayoutInflater().inflate(
-                            R.layout.item_quick_search_setting, parent, false));
-                case TYPE_TEXT:
-                    return new SimpleHolder(getStageActivity().getLayoutInflater().inflate(
-                            R.layout.item_quick_search, parent, false));
-                default:
-                    throw new IllegalStateException("Unknown view type");
-            }
+            return new SimpleHolder(getStageActivity().getLayoutInflater().inflate(
+                    R.layout.item_quick_search, parent, false));
         }
 
         @Override
         public void onBindViewHolder(SimpleHolder holder, int position) {
-            if (getItemViewType(position) == TYPE_TEXT) {
-                ((TextView) holder.itemView).setText(mQuickSearches.get(position - 1).name);
-            }
+            ((TextView) holder.itemView).setText(mQuickSearches.get(position).name);
         }
 
         @Override
         public int getItemCount() {
-            return mQuickSearches.size() + 1;
+            return mQuickSearches.size();
         }
     }
 
     private class QuickSearchClickListener implements EasyRecyclerView.OnItemClickListener {
         @Override
         public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-            switch (parent.getAdapter().getItemViewType(position)) {
-                case TYPE_SETTINGS:
-                    // TODO
-                    return true;
-                case TYPE_TEXT:
-                    setState(STATE_NORMAL);
-                    mListUrlBuilder.set(mQuickSearches.get(position - 1));
-                    mGalleryListHelper.refresh();
-                    ((ContentActivity) getStageActivity()).closeDrawers();
-                    return true;
-                default:
-                    return false;
-            }
+            setState(STATE_NORMAL);
+            mListUrlBuilder.set(mQuickSearches.get(position));
+            showSearchBar(true);
+            mGalleryListHelper.refresh();
+            ((ContentActivity) getStageActivity()).closeDrawers();
+            return true;
         }
     }
 }

@@ -93,4 +93,9 @@ public class DrawerRightPanel extends ViewGroup implements FitPaddingImpl {
         lp.topMargin = top;
         setLayoutParams(lp);
     }
+
+    @Override
+    protected void dispatchSetPressed(boolean pressed) {
+        // disable dispatchSetPressed
+    }
 }

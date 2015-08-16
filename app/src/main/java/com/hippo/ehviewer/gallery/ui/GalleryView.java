@@ -557,10 +557,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener, M
         if (mLayoutOffset != 0) {
             return false;
         }
-        if (mScroll) {
-            return false;
-        }
-        return true;
+        return !mScroll;
     }
 
     @Override

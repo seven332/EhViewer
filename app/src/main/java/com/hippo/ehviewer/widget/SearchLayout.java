@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,13 +43,18 @@ import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.widget.recyclerview.MonoRecyclerView;
-import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ViewUtils;
 
-// TODO requst returnSearchBarPosition when content of recycler changed
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnCheckedChangeListener,
         View.OnClickListener, SelectSearchImageLayout.SelectSearchImageLayoutHelper,
         SpecifyGalleryLayout.SpecifyGalleryHelper {
+
+    @IntDef({SEARCH_MODE_NORMAL, SEARCH_MODE_IMAGE, SEARCH_MODE_SPECIFY})
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface SearchMode {}
 
     private static final String STATE_KEY_SUPER = "super";
     private static final String STATE_KEY_SEARCH_MODE = "search_mode";
@@ -134,8 +140,9 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
 
         // Search Container
         mSearchPaddingTopOrigin = getPaddingTop();
+        // TODO SearchLayout don't know fab, move 72dp to list scene
         // Original padding bottom and the padding bottom to make it above fab
-        mSearchPaddingBottomOrigin = getPaddingBottom() + LayoutUtils.dp2pix(context, 72); // TODO
+        mSearchPaddingBottomOrigin = getPaddingBottom(); // TODO
         setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), mSearchPaddingBottomOrigin);
 
         // Create normal view
@@ -174,12 +181,18 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
         mAction2 = (TextView) mActionView.findViewById(R.id.search_action_2);
 
         // Init action view
-        mAction1.setText(mContext.getString(R.string.search_add));
-        mAction2.setText(mContext.getString(R.string.search_mode));
         RippleSalon.addRipple(mAction1, false);
         RippleSalon.addRipple(mAction2, false);
         mAction1.setOnClickListener(SearchLayout.this);
         mAction2.setOnClickListener(SearchLayout.this);
+    }
+
+    public void setAction1Text(String action1) {
+        mAction1.setText(action1);
+    }
+
+    public void setAction2Text(String action2) {
+        mAction2.setText(action2);
     }
 
     public int getSearchMode() {
@@ -225,6 +238,29 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
                 listUrlBuilder.setMinRating(mTableAdvanceSearch.getMinRating());
             }
         }
+    }
+
+    public void bind(ListUrlBuilder builder) {
+        int mode = builder.getMode();
+        if (mode == ListUrlBuilder.MODE_TAG) {
+            mCheckSpecifyTag.setChecked(true);
+        } else if (mode == ListUrlBuilder.MODE_NORMAL || mode == ListUrlBuilder.MODE_UPLOADER) {
+            if (mode == ListUrlBuilder.MODE_UPLOADER) {
+                mCheckSpecifyAuthor.setChecked(true);
+            }
+            mTableCategory.setCategory(builder.getCategory());
+            int advanced = builder.getAdvanceSearch();
+            if (advanced != -1) {
+                mEnableAdvance = true;
+                mSwitchEnableAdvance.setChecked(true);
+                mTableAdvanceSearch.setAdvanceSearch(advanced);
+                mTableAdvanceSearch.setMinRating(builder.getMinRating());
+            } else {
+                mEnableAdvance = false;
+                mSwitchEnableAdvance.setChecked(false);
+            }
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     public void scrollSearchContainerToTop() {
@@ -287,7 +323,26 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
         }
     }
 
-    private void toggleSearchMode() {
+    public void setSearchMode(@SearchMode int searchMode, boolean animation) {
+        if (mSearchMode != searchMode) {
+            int oldItemCount = mAdapter.getItemCount();
+            mSearchMode = searchMode;
+            int newItemCount = mAdapter.getItemCount();
+
+            if (animation) {
+                mAdapter.notifyItemRangeRemoved(0, oldItemCount - 1);
+                mAdapter.notifyItemRangeInserted(0, newItemCount - 1);
+            } else {
+                mAdapter.notifyDataSetChanged();
+            }
+
+            if (mHelper != null) {
+                mHelper.onChangeSearchMode();
+            }
+        }
+    }
+
+    public void toggleSearchMode() {
         int oldItemCount = mAdapter.getItemCount();
 
         mSearchMode++;
@@ -308,14 +363,9 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
     @Override
     public void onClick(View v) {
         if (v == mAction1) {
-            if (mSearchMode == SEARCH_MODE_NORMAL) {
-                ListUrlBuilder builder = new ListUrlBuilder();
-                formatListUrlBuilder(builder);
-                mHelper.onAdd(builder);
-            }
-            // TODO add quick search
+            mHelper.onAction1();
         } else if (v == mAction2) {
-            toggleSearchMode();
+            mHelper.onAction2();
         } else if (v == mSearchTagHelp) {
             int[] center = new int [2];
             ViewUtils.getCenterInAncestor(mSearchTagHelp, center, R.id.stage);
@@ -417,7 +467,9 @@ public class SearchLayout extends MonoRecyclerView implements CompoundButton.OnC
     }
 
     public interface SearhLayoutHelper {
-        void onAdd(ListUrlBuilder builder);
+        void onAction1();
+
+        void onAction2();
 
         void onChangeSearchMode();
 

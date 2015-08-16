@@ -25,6 +25,7 @@
 
     <!-- Appbar Scene -->
     <dimen name="appbar_height">64dp</dimen>
+    <!-- icon 24dp -->
     <dimen name="appbar_icon_margin">20dp</dimen>
 
     <!-- Snackbar -->

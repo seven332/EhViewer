@@ -42,10 +42,14 @@
 
     <!-- Appbar Scene -->
     <dimen name="appbar_height">56dp</dimen>
+    <!-- icon 24dp -->
     <dimen name="appbar_icon_margin">16dp</dimen>
 
     <!-- DrawerList -->
     <dimen name="drawer_list_drawable_size">24dp</dimen>
+
+    <!-- item_drag_sort -->
+    <dimen name="item_drag_sort_height">56dp</dimen>
 
     <!-- RatingView -->
     <dimen name="rating_size">16dp</dimen>
