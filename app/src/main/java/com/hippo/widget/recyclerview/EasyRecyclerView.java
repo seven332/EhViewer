@@ -977,24 +977,52 @@ public class EasyRecyclerView extends RecyclerView {
         setViewChecked(view, isItemChecked(position));
     }
 
-    static class SavedState extends BaseSavedState {
+    /**
+     * This saved state class is a Parcelable and should not extend
+     * {@link android.view.View.BaseSavedState} nor {@link android.view.AbsSavedState}
+     * because its super class AbsSavedState's constructor
+     * {@link android.view.AbsSavedState#AbsSavedState(Parcel)} currently passes null
+     * as a class loader to read its superstate from Parcelable.
+     * This causes {@link android.os.BadParcelableException} when restoring saved states.
+     * <p/>
+     * The super class "RecyclerView" is a part of the support library,
+     * and restoring its saved state requires the class loader that loaded the RecyclerView.
+     * It seems that the class loader is not required when restoring from RecyclerView itself,
+     * but it is required when restoring from RecyclerView's subclasses.
+     */
+    static class SavedState implements Parcelable {
+
+        public static final SavedState EMPTY_STATE = new SavedState() {
+        };
+
         int choiceMode;
         int checkedItemCount;
         SparseBooleanArray checkState;
         LongSparseArray<Integer> checkIdState;
 
+        // This keeps the parent(RecyclerView)'s state
+        Parcelable mSuperState;
+
+        SavedState() {
+            mSuperState = null;
+        }
+
         /**
          * Constructor called from {@link #onSaveInstanceState()}
          */
         SavedState(Parcelable superState) {
-            super(superState);
+            mSuperState = superState != EMPTY_STATE ? superState : null;
         }
 
         /**
          * Constructor called from {@link #CREATOR}
          */
         private SavedState(Parcel in) {
-            super(in);
+            // Parcel 'in' has its parent(RecyclerView)'s saved state.
+            // To restore it, class loader that loaded RecyclerView is required.
+            Parcelable superState = in.readParcelable(RecyclerView.class.getClassLoader());
+            mSuperState = superState != null ? superState : EMPTY_STATE;
+
             choiceMode = in.readInt();
             checkedItemCount = in.readInt();
             checkState = in.readSparseBooleanArray();
@@ -1010,8 +1038,14 @@ public class EasyRecyclerView extends RecyclerView {
         }
 
         @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
         public void writeToParcel(@NonNull Parcel out, int flags) {
-            super.writeToParcel(out, flags);
+            out.writeParcelable(mSuperState, flags);
+
             out.writeInt(choiceMode);
             out.writeInt(checkedItemCount);
             out.writeSparseBooleanArray(checkState);
@@ -1021,6 +1055,10 @@ public class EasyRecyclerView extends RecyclerView {
                 out.writeLong(checkIdState.keyAt(i));
                 out.writeInt(checkIdState.valueAt(i));
             }
+        }
+
+        public Parcelable getSuperState() {
+            return mSuperState;
         }
 
         public static final Parcelable.Creator<SavedState> CREATOR
