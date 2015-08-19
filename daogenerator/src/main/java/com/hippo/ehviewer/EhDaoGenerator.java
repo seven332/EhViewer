@@ -37,6 +37,7 @@ public class EhDaoGenerator {
         addGalleryBase(schema);
         addQuickSearch(schema);
         addDownloadInfo(schema);
+        addDownloadTag(schema);
         addDirname(schema);
         addReadInfo(schema);
         new DaoGenerator().generateAll(schema, OUT_DIR);
@@ -71,12 +72,20 @@ public class EhDaoGenerator {
     }
 
     public static void addDownloadInfo(Schema schema) {
-        Entity downloadInfo = schema.addEntity("DownloadInfoObj");
-        downloadInfo.setTableName("DOWNLOAD_INFO");
-        downloadInfo.addLongProperty("gid").primaryKey();
-        downloadInfo.addIntProperty("state");
-        downloadInfo.addIntProperty("legacy");
-        downloadInfo.addLongProperty("time");
+        Entity entity = schema.addEntity("DownloadInfoObj");
+        entity.setTableName("DOWNLOAD_INFO");
+        entity.addLongProperty("gid").primaryKey();
+        entity.addStringProperty("tag");
+        entity.addIntProperty("state");
+        entity.addIntProperty("legacy");
+        entity.addLongProperty("time");
+    }
+
+    public static void addDownloadTag(Schema schema) {
+        Entity entity = schema.addEntity("DownloadTagObj");
+        entity.setTableName("DOWNLOAD_TAG");
+        entity.addIdProperty();
+        entity.addStringProperty("tag");
     }
 
     public static void addDirname(Schema schema) {

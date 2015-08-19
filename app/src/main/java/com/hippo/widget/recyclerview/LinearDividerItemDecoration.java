@@ -24,6 +24,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+// Add overlap
 /**
  * Only work for {@link android.support.v7.widget.LinearLayoutManager}.<br>
  * Show divider between item, just like
@@ -43,6 +44,8 @@ public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration {
     private int mThickness;
     private int mPaddingStart = 0;
     private int mPaddingEnd = 0;
+
+    private boolean mOverlap = false;
 
     private ShowDividerHelper mShowDividerHelper;
 
@@ -95,9 +98,23 @@ public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration {
         mPaddingEnd = paddingEnd;
     }
 
+    public void setOverlap(boolean overlap) {
+        mOverlap = overlap;
+    }
+
     @Override
     public void getItemOffsets(Rect outRect, View view,
             RecyclerView parent, RecyclerView.State state) {
+        if (parent.getAdapter() == null) {
+            outRect.set(0, 0, 0, 0);
+            return;
+        }
+
+        if (mOverlap) {
+            outRect.set(0, 0, 0, 0);
+            return;
+        }
+
         final int position = parent.getChildLayoutPosition(view);
         final int itemCount = parent.getAdapter().getItemCount();
 
@@ -147,6 +164,7 @@ public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration {
         }
 
         int itemCount = adapter.getItemCount();
+        boolean overlap = mOverlap;
 
         if (mOrientation == VERTICAL) {
             final boolean isRtl =  ViewCompat.getLayoutDirection(parent) ==  ViewCompat.LAYOUT_DIRECTION_RTL;
@@ -176,7 +194,10 @@ public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration {
                     show = position != itemCount - 1 || mShowLastDivider;
                 }
                 if (show) {
-                    final int top = child.getBottom() + lp.bottomMargin;
+                    int top = child.getBottom() + lp.bottomMargin;
+                    if (overlap) {
+                        top -= mThickness;
+                    }
                     final int bottom = top + mThickness;
                     mRect.set(left, top, right, bottom);
                     c.drawRect(mRect, mPaint);
@@ -189,7 +210,10 @@ public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration {
                         show = mShowFirstDivider;
                     }
                     if (show) {
-                        final int bottom = child.getTop() + lp.topMargin;
+                        int bottom = child.getTop() + lp.topMargin;
+                        if (overlap) {
+                            bottom += mThickness;
+                        }
                         final int top = bottom - mThickness;
                         mRect.set(left, top, right, bottom);
                         c.drawRect(mRect, mPaint);
@@ -213,7 +237,10 @@ public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration {
                     show = position != itemCount - 1 || mShowLastDivider;
                 }
                 if (show) {
-                    final int left = child.getRight() + lp.rightMargin;
+                    int left = child.getRight() + lp.rightMargin;
+                    if (overlap) {
+                        left -= mThickness;
+                    }
                     final int right = left + mThickness;
                     mRect.set(left, top, right, bottom);
                     c.drawRect(mRect, mPaint);
@@ -226,7 +253,10 @@ public class LinearDividerItemDecoration extends RecyclerView.ItemDecoration {
                         show = mShowFirstDivider;
                     }
                     if (show) {
-                        final int right = child.getLeft() + lp.leftMargin;
+                        int right = child.getLeft() + lp.leftMargin;
+                        if (overlap) {
+                            right += mThickness;
+                        }
                         final int left = right - mThickness;
                         mRect.set(left, top, right, bottom);
                         c.drawRect(mRect, mPaint);

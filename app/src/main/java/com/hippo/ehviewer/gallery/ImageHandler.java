@@ -250,6 +250,31 @@ public class ImageHandler {
         }
     }
 
+    public void removeFromRead(int index) {
+        sDiskCache.remove(EhCacheKeyFactory.getImageKey(mGalleryBase.gid, index));
+    }
+
+    public void removeFromDownload(int index) {
+        if (mDownloadDir == null) {
+            return;
+        }
+
+        for (String extension : POSSIBLE_IMAGE_EXTENSIONS) {
+            String filename = getImageFilename(index, extension);
+            UniFile file = mDownloadDir.findFile(filename);
+            if (file != null) {
+                file.delete();
+            }
+        }
+    }
+
+    public void remove(int index) {
+        removeFromRead(index);
+        if (mMode == Mode.DOWNLOAD) {
+            removeFromDownload(index);
+        }
+    }
+
     public void save(HttpClient httpClient, String url, int index, SaveHelper helper) throws Exception {
         OutputStreamPipe osPipe = null;
 
@@ -328,8 +353,8 @@ public class ImageHandler {
         }
 
         @Override
-        public void onDonwlad(long receivedSize) {
-            mHelper.onSave(receivedSize);
+        public void onDonwlad(long receivedSize, long singleReceivedSize) {
+            mHelper.onSave(receivedSize, singleReceivedSize);
         }
 
         @Override
@@ -442,7 +467,7 @@ public class ImageHandler {
 
         public abstract void onStartSaving(long totalSize);
 
-        public abstract void onSave(long receivedSize);
+        public abstract void onSave(long receivedSize, long singleReceivedSize);
 
         public boolean isCancelled() {
             return mCancel;

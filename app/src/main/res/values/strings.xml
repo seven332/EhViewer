@@ -216,6 +216,27 @@
     <string name="line_dean">\"What ?\"</string>
     <string name="line_sam">\"I lose my panda …\"</string>
 
+    <!-- Download Server -->
+    <string name="download_server">Download server</string>
+    <string name="stop">Stop</string>
+    <string name="stop_all">Stop all</string>
+    <string name="successfully_downloaded">Successfully downloaded</string>
+    <string name="incompletely_downloaded">Incompletely downloaded</string>
+    <string name="downloading_complete">Downloading complete</string>
+    <plurals name="item_successfully_downloaded">
+        <item quantity="one">One item successfully downloaded</item>
+        <item quantity="other">%d items successfully downloaded</item>
+    </plurals>
+    <plurals name="item_incompletely_downloaded">
+        <item quantity="one">One item incompletely downloaded</item>
+        <item quantity="other">%d items incompletely downloaded</item>
+    </plurals>
+    <string name="download_state_none">IDLE</string>
+    <string name="download_state_wait">Waiting</string>
+    <string name="download_state_finish">Done</string>
+    <string name="download_state_done">Done</string>
+    <string name="download_state_incomplete">Incomplete</string>
+
     <string name="keyword">Keyword</string>
     <string name="search">Search</string>
     <string name="retry">Retry</string>

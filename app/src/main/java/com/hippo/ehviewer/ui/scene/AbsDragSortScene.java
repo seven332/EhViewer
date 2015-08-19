@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
@@ -39,6 +38,8 @@ import com.hippo.ehviewer.R;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.AppbarScene;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
+import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.List;
@@ -99,7 +100,12 @@ public abstract class AbsDragSortScene extends AppbarScene {
         mRecyclerView.setOnItemClickListener((EasyRecyclerView.OnItemClickListener) mAdapter);
 
         // additional decorations
-        mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(resources.getDrawable(R.drawable.list_divider), true));
+        LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
+                LinearDividerItemDecoration.VERTICAL,
+                resources.getColor(R.color.divider_light),
+                LayoutUtils.dp2pix(getStageActivity(), 1));
+        decoration.setOverlap(true);
+        mRecyclerView.addItemDecoration(decoration);
 
         // additional selector
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));

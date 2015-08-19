@@ -46,6 +46,7 @@ import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.data.TagGroup;
+import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.util.EhUtils;
@@ -558,7 +559,10 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
                 requestGalleryDetail(mGid, mToken);
             }
         } else if (mDownload == v) {
-            // TODO
+            Intent intent = new Intent(getStageActivity(), DownloadService.class);
+            intent.setAction(DownloadService.ACTION_START);
+            intent.putExtra(DownloadService.KEY_GALLERY_BASE, mGalleryDetail);
+            getStageActivity().startService(intent);
         } else if (mRead == v) {
             GalleryBase galleryBase = mGalleryDetail;
             if (galleryBase == null) {

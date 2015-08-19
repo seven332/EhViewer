@@ -51,7 +51,7 @@ public class DownloadClient {
             out.write(data, 0, bytesRead);
             receivedSize += bytesRead;
             if (listener != null) {
-                listener.onDonwlad(receivedSize);
+                listener.onDonwlad(receivedSize, bytesRead);
             }
         }
 
@@ -207,7 +207,7 @@ public class DownloadClient {
         }
 
         @Override
-        public void onDonwlad(long receivedSize) {
+        public void onDonwlad(long receivedSize, long singleReceivedSize) {
         }
 
         @Override
@@ -227,7 +227,7 @@ public class DownloadClient {
 
         void onConnect(long totalSize);
 
-        void onDonwlad(long receivedSize);
+        void onDonwlad(long receivedSize, long singleReceivedSize);
 
         void onFailed(Exception e);
 

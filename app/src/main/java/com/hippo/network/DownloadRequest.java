@@ -61,7 +61,7 @@ public class DownloadRequest {
 
     public void cancel() {
         if (mHttpRequest != null) {
-            mHttpRequest.disconnect();
+            mHttpRequest.cancel();
         }
     }
 }

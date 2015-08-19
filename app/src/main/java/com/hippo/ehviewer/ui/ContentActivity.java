@@ -28,6 +28,7 @@ import android.widget.AdapterView;
 
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.ui.scene.DownloadScene;
 import com.hippo.ehviewer.ui.scene.DrawerProvider;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
 import com.hippo.ehviewer.ui.scene.MainSettingsScene;
@@ -42,6 +43,7 @@ import com.hippo.scene.Scene;
 import com.hippo.scene.SceneManager;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.StageLayout;
+import com.hippo.unifile.UniFile;
 import com.hippo.vectorold.content.VectorContext;
 import com.hippo.widget.DrawerLayout;
 import com.hippo.widget.DrawerListView;
@@ -88,9 +90,9 @@ public final class ContentActivity extends StageActivity
                     case DRAWER_LIST_FAVORITE:
                         break;
                     case DRAWER_LIST_DOWNLOAD:
+                        startScene(DownloadScene.class, null, new OffsetCurtain(OffsetCurtain.DIRECTION_BOTTOM));
                         break;
                     case DRAWER_LIST_SETTINGS:
-                        mDrawerLayout.closeDrawers();
                         startScene(MainSettingsScene.class, null, new OffsetCurtain(OffsetCurtain.DIRECTION_BOTTOM));
                         break;
                 }
@@ -170,6 +172,14 @@ public final class ContentActivity extends StageActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
+
+        // TODO check here ?
+        UniFile uniFile = Settings.getImageDownloadLocation();
+        if (uniFile != null) {
+            uniFile.createFile(".nomedia");
+        } else {
+            // TODO
+        }
 
         addSceneStateListener(mSceneStateListener);
 

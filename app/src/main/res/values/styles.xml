@@ -97,6 +97,7 @@
     <!-- Card -->
     <style name="TextAppearance.CardTitle">
         <item name="@android:textSize">@dimen/text_little_small</item>
+        <item name="@android:textColor">@color/primary_text_light</item>
     </style>
 
     <style name="CardTitle">
@@ -104,6 +105,10 @@
         <item name="@android:ellipsize">end</item>
         <item name="@android:maxLines">2</item>
         <item name="@android:lineSpacingExtra">0sp</item>
+    </style>
+
+    <style name="CardTitle.Download">
+        <item name="@android:maxLines">1</item>
     </style>
 
     <style name="TextAppearance.CardMessage">

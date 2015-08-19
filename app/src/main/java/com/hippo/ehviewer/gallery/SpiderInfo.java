@@ -20,12 +20,13 @@ import android.util.Log;
 
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.data.GalleryBase;
-import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.AutoExpandArray;
 import com.hippo.yorozuya.IOUtils;
 
-import java.io.BufferedInputStream;
-import java.io.EOFException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -72,119 +73,86 @@ public class SpiderInfo {
         }
 
         GalleryBase gb = galleryBase;
-        OutputStreamWriter osWrite = new OutputStreamWriter(os, "UTF-8");
-        osWrite.append(Integer.toString(VERSION)).append('\n')
-                .append(Integer.toString(gb.gid)).append('\n')
-                .append(gb.token).append('\n')
-                .append(stringToHexString(gb.title)).append('\n')
-                .append(stringToHexString(gb.titleJpn)).append('\n')
-                .append(gb.thumb).append('\n')
-                .append(Integer.toString(gb.category)).append('\n')
-                .append(gb.posted).append('\n')
-                .append(gb.uploader).append('\n')
-                .append(Float.toString(gb.rating)).append('\n')
-                .append(Integer.toString(pages)).append('\n')
-                .append(previewSize).append('\n')
-                .append(Integer.toString(previewPages)).append('\n')
-                .append(Integer.toString(previewCountPerPage)).append('\n');
+        JSONObject jo;
+        try {
+            jo = new JSONObject();
+            jo.put("version", VERSION);
+            jo.put("gid", gb.gid);
+            jo.put("token", gb.token);
+            jo.put("title", gb.title);
+            jo.put("titleJpn", gb.titleJpn);
+            jo.put("thumb", gb.thumb);
+            jo.put("category", gb.category);
+            jo.put("posted", gb.posted);
+            jo.put("uploader", gb.uploader);
+            jo.put("rating", gb.rating);
+            jo.put("pages", pages);
+            jo.put("previewSize", previewSize);
+            jo.put("previewPages", previewPages);
+            jo.put("previewCountPerPage", previewCountPerPage);
 
-        if (tokens != null) {
+            JSONArray tokenJa = new JSONArray();
             int length = Math.min(tokens.maxValidIndex() + 1, pages);
             for (int i = 0; i < length; i++) {
-                String token = tokens.get(i);
-                if (token != null) {
-                    osWrite.append(Integer.toString(i)).append(':')
-                            .append(token).append('\n');
-                }
+                tokenJa.put(tokens.get(i));
             }
+
+            jo.put("tokens", tokenJa);
+        } catch (JSONException e) {
+            Log.e(TAG, "Can't create SpiderInfo JSON to write", e);
+            jo = null;
         }
 
-        osWrite.flush();
-        osWrite.close();
+        if (jo != null) {
+            OutputStreamWriter osWrite = new OutputStreamWriter(os, "UTF-8");
+            osWrite.append(jo.toString());
+            osWrite.flush();
+            osWrite.close();
+        }
     }
 
 
     public static SpiderInfo read(InputStream is) throws Exception {
-        BufferedInputStream bis = new BufferedInputStream(is);
-        SpiderInfo spiderInfo = new SpiderInfo();
+        String str = IOUtils.readString(is, "UTF-8");
 
-        int version = Integer.parseInt(IOUtils.readAsciiLine(bis));
+        JSONObject jo = new JSONObject(str);
+
+        int version = jo.optInt("version", 0);
         if (VERSION != version){
             throw new IllegalStateException("Version should be " + VERSION +
                     ", but it is " + version);
         }
 
+        SpiderInfo spiderInfo = new SpiderInfo();
+
         GalleryBase gb = new GalleryBase();
-        gb.gid = Integer.parseInt(IOUtils.readAsciiLine(bis));
-        gb.token = IOUtils.readAsciiLine(bis);
-        gb.title = hexStringToString(IOUtils.readAsciiLine(bis));
-        gb.titleJpn = hexStringToString(IOUtils.readAsciiLine(bis));
-        gb.thumb = IOUtils.readAsciiLine(bis);
-        gb.category = Integer.parseInt(IOUtils.readAsciiLine(bis));
-        gb.posted = IOUtils.readAsciiLine(bis);
-        gb.uploader = IOUtils.readAsciiLine(bis);
-        gb.rating = Float.parseFloat(IOUtils.readAsciiLine(bis));
+        gb.gid = jo.getInt("gid");
+        gb.token = jo.getString("token");
+        gb.title = jo.getString("title");
+        gb.titleJpn = jo.optString("titleJpn", null);
+        gb.thumb = jo.getString("thumb");
+        gb.category = jo.getInt("category");
+        gb.posted = jo.getString("posted");
+        gb.uploader = jo.getString("uploader");
+        gb.rating = (float) jo.getDouble("rating");
         spiderInfo.galleryBase = gb;
 
-        spiderInfo.pages = Integer.parseInt(IOUtils.readAsciiLine(bis));
-        spiderInfo.previewSize = IOUtils.readAsciiLine(bis);
+        spiderInfo.pages = jo.getInt("pages");
+        spiderInfo.previewSize = jo.getString("previewSize");
         if (!spiderInfo.previewSize.equals(EhConfig.PREVIEW_SIZE_NORMAL) &&
                 !spiderInfo.previewSize.equals(EhConfig.PREVIEW_SIZE_LARGE)) {
             throw new IllegalStateException("Unknown preview size " + spiderInfo.previewSize);
         }
-        spiderInfo.previewPages = Integer.parseInt(IOUtils.readAsciiLine(bis));
-        spiderInfo.previewCountPerPage = Integer.parseInt(IOUtils.readAsciiLine(bis));
+        spiderInfo.previewPages = jo.getInt("previewPages");
+        spiderInfo.previewCountPerPage = jo.getInt("previewCountPerPage");
 
-        AutoExpandArray<String> tokens = new AutoExpandArray<>(spiderInfo.pages);
-        try {
-            //noinspection InfiniteLoopStatement
-            for (;;) {
-                String line = IOUtils.readAsciiLine(is);
-                int pos = line.indexOf(":");
-                if (pos < 0) {
-                    Log.e(TAG, "Can't parse line " + line);
-                    continue;
-                }
-                try {
-                    int index = Integer.parseInt(line.substring(0, pos));
-                    String token = line.substring(pos + 1);
-                    tokens.set(index, token);
-                } catch (NumberFormatException e) {
-                    // Empty
-                    Log.e(TAG, "Can't parse line " + line);
-                }
-            }
-        } catch (EOFException e) {
-            // Empty
-        }
+        JSONArray ja = jo.getJSONArray("tokens");
+        AutoExpandArray<String> tokens = new AutoExpandArray<>(ja.length());
         spiderInfo.tokens = tokens;
+        for (int i = 0, n = ja.length(); i < n; i++) {
+            tokens.set(i, ja.getString(i));
+        }
 
         return spiderInfo;
-    }
-
-    public static String stringToHexString(String str) {
-        StringBuilder sb = new StringBuilder(320);
-        int length = str.length();
-        for (int i = 0; i < length; i++) {
-            char ch = str.charAt(i);
-            String s = Integer.toString((int) ch, 16);
-            int length2 = 4 - s.length();
-            for (int j = 0; j < length2; j++) {
-                sb.append('0');
-            }
-            sb.append(s);
-        }
-        return sb.toString();
-    }
-
-    public static String hexStringToString(String str) {
-        AssertUtils.assertEquals("Hex String's length must be a multiple of 4.", str.length() % 4, 0);
-
-        StringBuilder sb = new StringBuilder(80);
-        int length = str.length();
-        for (int i = 0; i < length; i += 4) {
-            sb.append((char) Integer.parseInt(str.substring(i, i + 4), 16));
-        }
-        return sb.toString();
     }
 }

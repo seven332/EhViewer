@@ -75,7 +75,9 @@ import com.hippo.util.AnimationUtils;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.FloatingActionButton;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
 import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.SimpleHandler;
@@ -303,27 +305,6 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         mSearchBarOriginalTop = lp.topMargin;
         mSearchBarOriginalBottom = lp.topMargin + mSearchBar.getMeasuredHeight();
 
-
-        /*
-        mSearchBar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                ViewUtils.removeOnGlobalLayoutListener(mSearchBar.getViewTreeObserver(), this);
-                mSearchBarOriginalTop = mSearchBar.getTop();
-                mSearchBarOriginalBottom = mSearchBar.getBottom();
-                int fitPaddingTop = mSearchBar.getHeight() + mResources.getDimensionPixelOffset(R.dimen.search_bar_padding_vertical);
-                mContentLayout.setFitPaddingTop(fitPaddingTop);
-                mSearchLayout.setFitPaddingTop(fitPaddingTop);
-
-                Log.d("TAG", "fitPaddingTop = " + fitPaddingTop);
-                Log.d("TAG", "mSearchBarOriginalTop = " + mSearchBarOriginalTop);
-                Log.d("TAG", "mSearchBarOriginalBottom = " + mSearchBarOriginalBottom);
-            }
-        });
-        */
-
-
-
         // Content Layout
         // onRebirth may create new GalleryListHelper
         if (mGalleryListHelper == null) {
@@ -365,6 +346,12 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         mQuickSearchView.setOnItemClickListener(new QuickSearchClickListener());
         mQuickSearchView.hasFixedSize();
         mQuickSearchView.setClipToPadding(false);
+        LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
+                LinearDividerItemDecoration.VERTICAL,
+                mResources.getColor(R.color.divider_light),
+                LayoutUtils.dp2pix(getStageActivity(), 1));
+        decoration.setOverlap(true);
+        mQuickSearchView.addItemDecoration(decoration);
 
         // When scene start
         if (!rebirth) {
@@ -1279,6 +1266,9 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
             showSearchBar(true);
             mGalleryListHelper.refresh();
             ((ContentActivity) getStageActivity()).closeDrawers();
+
+            mDrawerListActivatedPosition = ContentActivity.DRAWER_LIST_NONE;
+            mActivity.setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_NONE);
             return true;
         }
     }

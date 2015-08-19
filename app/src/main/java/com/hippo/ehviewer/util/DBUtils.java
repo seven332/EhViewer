@@ -20,6 +20,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
+import com.hippo.ehviewer.client.data.DownloadInfo;
 import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.data.QuickSearch;
@@ -27,6 +28,10 @@ import com.hippo.ehviewer.dao.DaoMaster;
 import com.hippo.ehviewer.dao.DaoSession;
 import com.hippo.ehviewer.dao.DirnameObj;
 import com.hippo.ehviewer.dao.DirnameObjDao;
+import com.hippo.ehviewer.dao.DownloadInfoObj;
+import com.hippo.ehviewer.dao.DownloadInfoObjDao;
+import com.hippo.ehviewer.dao.DownloadTagObj;
+import com.hippo.ehviewer.dao.DownloadTagObjDao;
 import com.hippo.ehviewer.dao.GalleryBaseObj;
 import com.hippo.ehviewer.dao.GalleryBaseObjDao;
 import com.hippo.ehviewer.dao.QuickSearchObj;
@@ -81,6 +86,26 @@ public class DBUtils {
             // Still has reference, sub refernce
             galleryBaseObj.setReference(galleryBaseObj.getReference() - 1);
             galleryBaseObjDao.update(galleryBaseObj);
+        }
+    }
+
+    public static GalleryBase getGalleryBase(int gid) {
+        GalleryBaseObjDao dao = sDaoSession.getGalleryBaseObjDao();
+        GalleryBaseObj obj = dao.load((long) gid);
+        if (obj != null) {
+            GalleryBase galleryBase = new GalleryBase();
+            galleryBase.gid = (int) (long) obj.getGid();
+            galleryBase.token = obj.getToken();
+            galleryBase.title = obj.getTitle();
+            galleryBase.titleJpn = obj.getTitleJpn();
+            galleryBase.thumb = obj.getThumb();
+            galleryBase.category = obj.getCategory();
+            galleryBase.posted = obj.getPosted();
+            galleryBase.uploader = obj.getUploader();
+            galleryBase.rating = obj.getRating();
+            return galleryBase;
+        } else {
+            return null;
         }
     }
 
@@ -147,7 +172,7 @@ public class DBUtils {
         dao.update(to);
     }
 
-    public static void modifyQuickSearch(QuickSearch quickSearch) {
+    public static void updateQuickSearch(QuickSearch quickSearch) {
         QuickSearchObjDao dao = sDaoSession.getQuickSearchObjDao();
         QuickSearchObj obj = dao.load(quickSearch.id);
         obj.setName(quickSearch.name);
@@ -171,5 +196,52 @@ public class DBUtils {
             result.add(QuickSearch.fromQuickSearchObj(quickSearchObj));
         }
         return  result;
+    }
+
+
+
+    public static List<DownloadInfo> getAllDownloadInfo() {
+        DownloadInfoObjDao dao = sDaoSession.getDownloadInfoObjDao();
+        List<DownloadInfoObj> list = dao.queryBuilder().orderAsc(DownloadInfoObjDao.Properties.Time).list();
+        List<DownloadInfo> result = new ArrayList<>(list.size());
+        for (DownloadInfoObj obj : list) {
+            result.add(DownloadInfo.fromDownloadInfoObj(obj));
+        }
+        return  result;
+    }
+
+    public static void addDownloadInfo(DownloadInfo downloadInfo) {
+        DownloadInfoObj obj = new DownloadInfoObj();
+        obj.setGid((long) downloadInfo.galleryBase.gid);
+        obj.setTag(downloadInfo.tag);
+        obj.setState(downloadInfo.state);
+        obj.setLegacy(downloadInfo.legacy);
+        obj.setTime(System.currentTimeMillis());
+        sDaoSession.getDownloadInfoObjDao().insert(obj);
+        addGalleryBase(downloadInfo.galleryBase);
+    }
+
+    public static void updateDownloadInfo(DownloadInfo downloadInfo) {
+        DownloadInfoObjDao dao = sDaoSession.getDownloadInfoObjDao();
+        DownloadInfoObj obj = dao.load((long) downloadInfo.galleryBase.gid);
+        obj.setState(downloadInfo.state);
+        obj.setLegacy(downloadInfo.legacy);
+        dao.update(obj);
+    }
+
+    public static List<String> getAllDownloadTag() {
+        DownloadTagObjDao dao = sDaoSession.getDownloadTagObjDao();
+        List<DownloadTagObj> list = dao.queryBuilder().list();
+        List<String> result = new ArrayList<>(list.size());
+        for (DownloadTagObj obj : list) {
+            result.add(obj.getTag());
+        }
+        return result;
+    }
+
+    public static void addDownloadTag(String tag) {
+        DownloadTagObj obj = new DownloadTagObj();
+        obj.setTag(tag);
+        sDaoSession.getDownloadTagObjDao().insert(obj);
     }
 }

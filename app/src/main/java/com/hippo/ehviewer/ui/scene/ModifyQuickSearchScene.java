@@ -196,7 +196,7 @@ public class ModifyQuickSearchScene extends AppbarScene implements SearchLayout.
             // New name
             mQuickSearch.name = mNewName;
         }
-        DBUtils.modifyQuickSearch(mQuickSearch);
+        DBUtils.updateQuickSearch(mQuickSearch);
 
         Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_QUICK_SEARCH, null);
         if (newName) {

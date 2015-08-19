@@ -39,7 +39,6 @@ import com.hippo.yorozuya.Say;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
@@ -47,8 +46,6 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicIntegerArray;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class SpiderQueen implements Runnable {
 
@@ -79,9 +76,11 @@ public class SpiderQueen implements Runnable {
     private SpiderListener mSpiderListener;
 
     public SpiderInfo mSpiderInfo;
+
     public boolean mHasCheckIndexAgain = true;
     public volatile int mNextIndex;
-    public AtomicIntegerArray mPageStates;
+    public int[] mPageStates;
+    public LinkedList<Integer> mRequestIndex = new LinkedList<>();
 
     private volatile HttpRequest mCurrentHttpRequest;
 
@@ -100,8 +99,8 @@ public class SpiderQueen implements Runnable {
     // The lock to make worker sleep
     private final Object mWorkerLock = new Object();
     // The lock for next index
-    private final Object mNextIndexLock = new Object();
-    private final ReentrantLock mWorkerArrayLock = new ReentrantLock();
+    private final Object mIndexLock = new Object();
+    private final Object mWorkerArrayLock = new Object();
     // Lock for mRequestTokens and mSpiderInfo.tokens
     private final Object mTokenLock = new Object();
     // The lock to make sure onGetSize call first
@@ -142,7 +141,7 @@ public class SpiderQueen implements Runnable {
                 return GalleryProvider.RESULT_OUT_OF_RANGE;
             }
 
-            int state = mPageStates.get(index);
+            int state = getPageState(index);
             switch (state) {
                 case PAGE_STATE_NONE:
                     // TODO set next index
@@ -169,11 +168,8 @@ public class SpiderQueen implements Runnable {
             if (index < 0 || index >= mSpiderInfo.pages) {
                 return GalleryProvider.RESULT_OUT_OF_RANGE;
             }
-            // TODO
-            throw new IllegalStateException();
-
-
-
+            addRequestIndex(index);
+            return GalleryProvider.RESULT_WAIT;
         } else {
             return GalleryProvider.RESULT_OUT_OF_RANGE;
         }
@@ -188,7 +184,7 @@ public class SpiderQueen implements Runnable {
     public void stop() {
         mStop = true;
         if (mCurrentHttpRequest != null) {
-            mCurrentHttpRequest.disconnect();
+            mCurrentHttpRequest.cancel();
             mCurrentHttpRequest = null;
         }
         synchronized (mQueenLock) {
@@ -211,7 +207,7 @@ public class SpiderQueen implements Runnable {
     }
 
     public int pages() {
-        if (mSpiderInfo != null) {
+        if (mSpiderInfo != null && mGetSizeFinished) {
             return mSpiderInfo.pages;
         } else {
             return -1;
@@ -567,17 +563,19 @@ public class SpiderQueen implements Runnable {
             return;
         }
 
+        setGetSizeFinished(false);
+
         // 5. Perpare
         // Update EhConfig preview size
         ehConfig.previewSize = spiderInfo.previewSize;
         ehConfig.setDirty();
         mSpiderInfo = spiderInfo;
         mNextIndex = 0;
-        // Init AtomicIntegerArray stuff
+        // Init int array stuff
         int length = spiderInfo.pages;
-        mPageStates = new AtomicIntegerArray(length);
+        mPageStates = new int[length];
         for (int i = 0; i < length; i++) {
-            mPageStates.lazySet(i, PAGE_STATE_NONE);
+            mPageStates[i] = PAGE_STATE_NONE;
         }
         mSpiderWorkers = new SpiderWorker[3];
         mImageHandler = new ImageHandler(gb, spiderInfo.pages, mMode, mDownloadDirparent, mDownloadDirname);
@@ -587,7 +585,6 @@ public class SpiderQueen implements Runnable {
         }
 
         // 6. Make workers and render to work
-        setGetSizeFinished(false);
         ensureWorker();
         mRender = new Render();
         Thread thread = new PriorityThread(mRender, "Render", Process.THREAD_PRIORITY_BACKGROUND);
@@ -601,42 +598,30 @@ public class SpiderQueen implements Runnable {
         // 8. Get tokens
         handleToken(spiderInfo, ehConfig);
 
-        // 5. The queen dies, workers die, render dies
-        mWorkerArrayLock.lock();
-
-        for (SpiderWorker worker : mSpiderWorkers) {
-            if (worker != null) {
-                worker.stop();
+        // 9. The queen dies, workers die, render dies
+        synchronized (mWorkerArrayLock) {
+            for (SpiderWorker worker : mSpiderWorkers) {
+                if (worker != null) {
+                    worker.stop();
+                }
+            }
+            synchronized (mWorkerLock) {
+                mWorkerLock.notifyAll();
             }
         }
-        synchronized (mWorkerLock) {
-            mWorkerLock.notifyAll();
-        }
-
-        mWorkerArrayLock.unlock();
 
         mRender.stop();
     }
 
     private void ensureWorker() {
-        mWorkerArrayLock.lock();
-
-        int length = mSpiderWorkers.length;
-        for (int i = 0; i < length; i++) {
-            if (mSpiderWorkers[i] == null) {
-                SpiderWorker worker = new SpiderWorker(i);
-                mSpiderWorkers[i] = worker;
-                mThreadFactory.newThread(worker).start();
-            }
-        }
-
-        mWorkerArrayLock.unlock();
-    }
-
-    private void setNextIndex(int index) {
-        synchronized (mNextIndexLock) {
-            if (mSpiderInfo != null && index < mSpiderInfo.pages) {
-                mNextIndex = index;
+        synchronized (mWorkerArrayLock) {
+            int length = mSpiderWorkers.length;
+            for (int i = 0; i < length; i++) {
+                if (mSpiderWorkers[i] == null) {
+                    SpiderWorker worker = new SpiderWorker(i);
+                    mSpiderWorkers[i] = worker;
+                    mThreadFactory.newThread(worker).start();
+                }
             }
         }
     }
@@ -656,26 +641,76 @@ public class SpiderQueen implements Runnable {
         }
     }
 
-    // TODO request index may
+    private void setNextIndex(int index) {
+        synchronized (mIndexLock) {
+            if (mSpiderInfo != null && index < mSpiderInfo.pages) {
+                mNextIndex = index;
+            }
+        }
+    }
+
+    private int getPageState(int index) {
+        synchronized (mIndexLock) {
+            return mPageStates[index];
+        }
+    }
+
+    private void setPageState(int index, int state) {
+        synchronized (mIndexLock) {
+            mPageStates[index] = state;
+        }
+    }
+
+    // it to request queue
+    private void addRequestIndex(int index) {
+        synchronized (mTokenLock) {
+            if (mPageStates[index] != PAGE_STATE_SPIDER) {
+                mPageStates[index] = PAGE_STATE_NONE;
+                mRequestIndex.add(index);
+                mImageHandler.remove(index);
+            }
+        }
+    }
+
+    // Get first PAGE_STATE_NONE index and set state PAGE_STATE_SPIDER
     private int getRequestIndex() {
-        synchronized (mNextIndexLock) {
+        synchronized (mIndexLock) {
             int length = mSpiderInfo.pages;
 
             for (;;) {
-                if (mNextIndex >= length) {
-                    if (!mHasCheckIndexAgain) {
-                        mHasCheckIndexAgain = true;
-                        mNextIndex = 0;
-                    } else {
-                        return -1;
+                int index;
+                if (mRequestIndex.isEmpty()) {
+                    if (mNextIndex >= length) {
+                        if (!mHasCheckIndexAgain) {
+                            mHasCheckIndexAgain = true;
+                            mNextIndex = 0;
+                        } else {
+                            return -1;
+                        }
                     }
+                    index = mNextIndex++;
+                } else {
+                    index = mRequestIndex.remove(0);
                 }
 
-                int index = mNextIndex;
-                if (mPageStates.get(mNextIndex++) == PAGE_STATE_NONE) {
+                if (mPageStates[index] == PAGE_STATE_NONE) {
+                    mPageStates[index] = PAGE_STATE_SPIDER;
                     return index;
                 }
             }
+        }
+    }
+
+    private int getLegacy() {
+        synchronized (mIndexLock) {
+            int legacy = 0;
+            for (int i = 0, n = mPageStates.length; i < n; i++) {
+                int state = mPageStates[i];
+                if (state != PAGE_STATE_SUCCEED) {
+                    legacy++;
+                }
+            }
+            return legacy;
         }
     }
 
@@ -698,7 +733,7 @@ public class SpiderQueen implements Runnable {
         public void stop() {
             mStop = true;
             if (mCurrentHttpRequest != null) {
-                mCurrentHttpRequest.disconnect();
+                mCurrentHttpRequest.cancel();
                 mCurrentHttpRequest = null;
             }
             if (mCurrentSaveHelper != null) {
@@ -738,6 +773,13 @@ public class SpiderQueen implements Runnable {
             Exception exception = null;
 
             for (int i = 0; i < 2; i++) {
+                // Check stop
+                if (mStop) {
+                    setPageState(index, PAGE_STATE_NONE);
+                    mSpiderListener.onSpiderCancelled(index);
+                    return;
+                }
+
                 // Get image url
                 GalleryPageParser.Result result;
                 try {
@@ -749,6 +791,13 @@ public class SpiderQueen implements Runnable {
                 imageUrl = result.imageUrl;
                 skipHathKey = result.skipHathKey;
 
+                // Check stop
+                if (mStop) {
+                    setPageState(index, PAGE_STATE_NONE);
+                    mSpiderListener.onSpiderCancelled(index);
+                    return;
+                }
+
                 // Download image
                 try {
                     mCurrentSaveHelper = new ImageHandler.SaveHelper() {
@@ -758,18 +807,18 @@ public class SpiderQueen implements Runnable {
                         }
 
                         @Override
-                        public void onSave(long receivedSize) {
-                            mSpiderListener.onSpiderPage(index, receivedSize);
+                        public void onSave(long receivedSize, long singleReceivedSize) {
+                            mSpiderListener.onSpiderPage(index, receivedSize, singleReceivedSize);
                         }
                     };
                     mImageHandler.save(mHttpClient, imageUrl, index, mCurrentSaveHelper);
-                    mPageStates.set(index, PAGE_STATE_SUCCEED);
+                    setPageState(index, PAGE_STATE_SUCCEED);
                     mSpiderListener.onSpiderSucceed(index);
                     return;
                 } catch (Exception e) {
                     if (mCurrentSaveHelper != null && mCurrentSaveHelper.isCancelled()) {
-                        mPageStates.lazySet(index, PAGE_STATE_FAILED);
-                        mSpiderListener.onSpiderFailed(index, new IOException("Cancelled"));
+                        setPageState(index, PAGE_STATE_NONE);
+                        mSpiderListener.onSpiderCancelled(index);
                         return;
                     } else {
                         exception = e;
@@ -779,11 +828,9 @@ public class SpiderQueen implements Runnable {
                 }
             }
 
-            mPageStates.lazySet(index, PAGE_STATE_FAILED);
+            setPageState(index, PAGE_STATE_FAILED);
             mSpiderListener.onSpiderFailed(index, exception);
         }
-
-
 
         @Override
         public void run() {
@@ -803,14 +850,12 @@ public class SpiderQueen implements Runnable {
                 if (index == -1) {
                     // There is no more
                     break;
-                } else {
-                    mPageStates.lazySet(index, PAGE_STATE_SPIDER);
                 }
 
                 // Check contain
                 if (handler.contain(index)) {
                     // Find it, no need to download
-                    mPageStates.lazySet(index, PAGE_STATE_SUCCEED);
+                    setPageState(index, PAGE_STATE_SUCCEED);
                     // Listener
                     mSpiderListener.onSpiderSucceed(index);
                     continue;
@@ -835,19 +880,26 @@ public class SpiderQueen implements Runnable {
                         break;
                     }
                 }
-                // For stop
-                if (mStop) {
-                    mPageStates.lazySet(index, PAGE_STATE_NONE);
-                    break;
-                }
 
                 downloadPage(gb.gid, index, token);
             }
 
-            // TODO this lock is not right, we need to lock when before check it is over
-            mWorkerArrayLock.lock();
-            mSpiderWorkers[mIndex] = null;
-            mWorkerArrayLock.unlock();
+            synchronized (mWorkerArrayLock) {
+                mSpiderWorkers[mIndex] = null;
+
+                boolean allDie = true;
+                for (SpiderWorker worker : mSpiderWorkers) {
+                    if (worker != null) {
+                        allDie = false;
+                        break;
+                    }
+                }
+
+                if (allDie) {
+                    // Get legacy
+                    mSpiderListener.onDone(getLegacy());
+                }
+            }
 
             Say.d(TAG, Thread.currentThread().getName() + " dies");
         }
@@ -943,21 +995,19 @@ public class SpiderQueen implements Runnable {
 
         void onPartlyFailed(Exception e);
 
-        /**
-         * The whole gallery has been spidered
-         * TODO
-         */
-        void onDone();
+        void onDone(int legacy);
 
         void onGetPages(int pages);
 
         void onSpiderStart(int index, long totalSize);
 
-        void onSpiderPage(int index, long receivedSize);
+        void onSpiderPage(int index, long receivedSize, long singleReceivedSize);
 
         void onSpiderSucceed(int index);
 
         void onSpiderFailed(int index, Exception e);
+
+        void onSpiderCancelled(int index);
 
         void onGetImage(int index, Object obj);
     }

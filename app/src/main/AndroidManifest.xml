@@ -51,6 +51,11 @@
 
         </activity>
 
+        <service
+            android:name="com.hippo.ehviewer.service.DownloadService"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/download_server"/>
+
     </application>
 
 </manifest>

@@ -53,7 +53,7 @@ class EhEngine {
             String body = response.getString();
             return SignInParser.parse(body);
         } catch (Exception e) {
-            if (httpRequest.getState() == HttpRequest.STATE_DISCONNECT) {
+            if (httpRequest.isCancelled()) {
                 throw new CanceledException();
             } else {
                 throw e;
@@ -71,7 +71,7 @@ class EhEngine {
             String body = response.getString();
             return GalleryListParser.parse(body, source);
         } catch (Exception e) {
-            if (httpRequest.getState() == HttpRequest.STATE_DISCONNECT) {
+            if (httpRequest.isCancelled()) {
                 throw new CanceledException();
             } else {
                 throw e;
@@ -93,7 +93,7 @@ class EhEngine {
             String body = response.getString();
             return PopularParser.parse(body);
         } catch (Exception e) {
-            if (httpRequest.getState() == HttpRequest.STATE_DISCONNECT) {
+            if (httpRequest.isCancelled()) {
                 throw new CanceledException();
             } else {
                 throw e;
@@ -116,7 +116,7 @@ class EhEngine {
                             GalleryDetailParser.REQUEST_PREVIEW |
                             GalleryDetailParser.REQUEST_COMMENT);
         } catch (Exception e) {
-            if (httpRequest.getState() == HttpRequest.STATE_DISCONNECT) {
+            if (httpRequest.isCancelled()) {
                 throw new CanceledException();
             } else {
                 throw e;
@@ -134,7 +134,7 @@ class EhEngine {
             String body = response.getString();
             return GalleryDetailParser.parsePreview(body, source);
         } catch (Exception e) {
-            if (httpRequest.getState() == HttpRequest.STATE_DISCONNECT) {
+            if (httpRequest.isCancelled()) {
                 throw new CanceledException();
             } else {
                 throw e;
@@ -174,7 +174,7 @@ class EhEngine {
 
             return list;
         } catch (Exception e) {
-            if (httpRequest.getState() == HttpRequest.STATE_DISCONNECT) {
+            if (httpRequest.isCancelled()) {
                 throw new CanceledException();
             } else {
                 throw e;
@@ -203,7 +203,7 @@ class EhEngine {
 
             return RateGalleryParser.parse(body);
         } catch (Exception e) {
-            if (httpRequest.getState() == HttpRequest.STATE_DISCONNECT) {
+            if (httpRequest.isCancelled()) {
                 throw new CanceledException();
             } else {
                 throw e;

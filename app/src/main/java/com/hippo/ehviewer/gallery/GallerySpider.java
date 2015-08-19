@@ -58,7 +58,8 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
     private AtomicLongArray mReceivedSizes;
     private AtomicReferenceArray<Float> mPercents;
 
-    private List<GalleryProviderListener> mGalleryProviderListeners = new ArrayList<>();
+    private List<GalleryProviderListener> mGalleryProviderListeners = new ArrayList<>(2);
+    private List<SpiderQueen.SpiderListener> mSpiderListeners = new ArrayList<>(2);
 
     private int mReference = 0;
 
@@ -160,6 +161,14 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
         mGalleryProviderListeners.remove(listener);
     }
 
+    public void addSpiderSpiderListener(SpiderQueen.SpiderListener listener) {
+        mSpiderListeners.add(listener);
+    }
+
+    public void removeSpiderSpiderListener(SpiderQueen.SpiderListener listener) {
+        mSpiderListeners.remove(listener);
+    }
+
     @Override
     public Object request(int index) {
         if (mSpiderQueen != null) {
@@ -178,7 +187,11 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
 
     @Override
     public Object forceRequest(int index) {
-        return null;// TODO
+        if (mSpiderQueen != null) {
+            return mSpiderQueen.forceRequest(index);
+        } else {
+            return GalleryProvider.RESULT_OUT_OF_RANGE;
+        }
     }
 
     @Override
@@ -226,6 +239,10 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
                 for (GalleryProviderListener l : mGalleryProviderListeners) {
                     l.onTotallyFailed(e);
                 }
+
+                for (SpiderQueen.SpiderListener l : mSpiderListeners) {
+                    l.onTotallyFailed(e);
+                }
             }
         });
     }
@@ -238,13 +255,24 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
                 for (GalleryProviderListener l : mGalleryProviderListeners) {
                     l.onPartlyFailed(e);
                 }
+
+                for (SpiderQueen.SpiderListener l : mSpiderListeners) {
+                    l.onPartlyFailed(e);
+                }
             }
         });
     }
 
     @Override
-    public void onDone() {
-        // TODO
+    public void onDone(final int legacy) {
+        SimpleHandler.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+                for (SpiderQueen.SpiderListener l : mSpiderListeners) {
+                    l.onDone(legacy);
+                }
+            }
+        });
     }
 
     @Override
@@ -258,6 +286,10 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
             public void run() {
                 for (GalleryProviderListener l : mGalleryProviderListeners) {
                     l.onGetSize(pages);
+                }
+
+                for (SpiderQueen.SpiderListener l : mSpiderListeners) {
+                    l.onGetPages(pages);
                 }
             }
         });
@@ -277,17 +309,21 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
                 for (GalleryProviderListener l : mGalleryProviderListeners) {
                     l.onPagePercent(index, 0.0f);
                 }
+
+                for (SpiderQueen.SpiderListener l : mSpiderListeners) {
+                    l.onSpiderStart(index, totalSize);
+                }
             }
         });
     }
 
     @Override
-    public void onSpiderPage(final int index, long receivedSize) {
+    public void onSpiderPage(final int index, final long receivedSize, final long singleReceivedSize) {
         if (mReceivedSizes != null && index >= 0 && index < mReceivedSizes.length()) {
             mReceivedSizes.lazySet(index, receivedSize);
         }
 
-        long totalSize= mTotalSizes.get(index);
+        final long totalSize= mTotalSizes.get(index);
         final float percent = totalSize == 0 ? 0.0f :
                 (float) receivedSize / (float) totalSize;
 
@@ -298,6 +334,10 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
             public void run() {
                 for (GalleryProviderListener l : mGalleryProviderListeners) {
                     l.onPagePercent(index, percent);
+                }
+
+                for (SpiderQueen.SpiderListener l : mSpiderListeners) {
+                    l.onSpiderPage(index, receivedSize, singleReceivedSize);
                 }
             }
         });
@@ -311,6 +351,10 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
                 for (GalleryProviderListener l : mGalleryProviderListeners) {
                     l.onPageSucceed(index);
                 }
+
+                for (SpiderQueen.SpiderListener l : mSpiderListeners) {
+                    l.onSpiderSucceed(index);
+                }
             }
         });
     }
@@ -323,8 +367,19 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
                 for (GalleryProviderListener l : mGalleryProviderListeners) {
                     l.onPageFailed(index, e);
                 }
+
+                for (SpiderQueen.SpiderListener l : mSpiderListeners) {
+                    l.onSpiderFailed(index, e);
+                }
             }
         });
+    }
+
+    @Override
+    public void onSpiderCancelled(final int index) {
+        for (SpiderQueen.SpiderListener l : mSpiderListeners) {
+            l.onSpiderCancelled(index);
+        }
     }
 
     @Override
