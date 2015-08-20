@@ -170,12 +170,12 @@ public class SceneManager {
             scene.setSceneManager(this);
             return scene;
         } catch (InstantiationException e) {
-            throw new IllegalStateException("Can't instance " + sceneClass.getName());
+            throw new IllegalStateException("Can't instance " + sceneClass.getName(), e);
         } catch (IllegalAccessException e) {
             throw new IllegalStateException("The constructor of " +
-                    sceneClass.getName() + " is not visible");
+                    sceneClass.getName() + " is not visible", e);
         } catch (ClassCastException e) {
-            throw new IllegalStateException(sceneClass.getName() + " can not cast to scene");
+            throw new IllegalStateException(sceneClass.getName() + " can not cast to scene", e);
         }
     }
 

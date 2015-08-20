@@ -901,8 +901,8 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
         GalleryInfo gi = mGalleryListHelper.getDataAt(position);
         Announcer announcer = new Announcer();
-        announcer.setAction(GalleryDetailScene.ACTION_GALLERY_INFO);
-        announcer.putExtra(GalleryDetailScene.KEY_GALLERY_INFO, gi);
+        announcer.setAction(GalleryDetailScene.ACTION_GALLERY_BASE);
+        announcer.putExtra(GalleryDetailScene.KEY_GALLERY_BASE, gi);
 
         Curtain curtain = new ElementsSharedCurtain(new TransitonHelper(position));
 

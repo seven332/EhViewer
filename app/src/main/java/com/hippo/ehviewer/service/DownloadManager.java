@@ -153,6 +153,15 @@ public class DownloadManager {
         }
     }
 
+    public boolean isInDownloadList(int gid) {
+        for (DownloadInfo info : mDownloadInfos) {
+            if (info.galleryBase.gid == gid) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Make sure is downloading
     private void ensureDownload() {
         if (mCurrentTask != null) {

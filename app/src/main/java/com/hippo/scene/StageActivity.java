@@ -76,6 +76,10 @@ public abstract class StageActivity extends StatsActivity {
         mSceneManager = null;
     }
 
+    public int getSceneCount() {
+        return mSceneManager.getSceneCount();
+    }
+
     public int getFitPaddingBottom() {
         return mFitPaddingBottom;
     }
@@ -100,11 +104,11 @@ public abstract class StageActivity extends StatsActivity {
     }
 
     public void startScene(@NonNull Class sceneClass) {
-        mSceneManager.startScene(sceneClass, null, null);
+        startScene(sceneClass, null);
     }
 
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer) {
-        mSceneManager.startScene(sceneClass, announcer, null);
+        startScene(sceneClass, announcer, Scene.getDefaultCurtain());
     }
 
     public void startScene(@NonNull Class sceneClass, @Nullable Announcer announcer,

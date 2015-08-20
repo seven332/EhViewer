@@ -27,6 +27,8 @@ import android.support.v4.app.NotificationCompat;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.GalleryBase;
+import com.hippo.ehviewer.ui.ContentActivity;
+import com.hippo.ehviewer.ui.scene.DownloadScene;
 import com.hippo.yorozuya.FileUtils;
 
 public class DownloadService extends Service implements DownloadManager.DownloadUpdateListener {
@@ -36,6 +38,8 @@ public class DownloadService extends Service implements DownloadManager.Download
     public static final String KEY_GALLERY_BASE = "gallery_base";
     public static final String KEY_TAG = "tag";
     public static final String KEY_GID = "gid";
+
+    public static final String KEY_CLEAR = "clear";
 
     public static final String ACTION_START = "com.hippo.ehviewer.service.DownloadService.START";
     public static final String ACTION_START_ALL = "com.hippo.ehviewer.service.DownloadService.START_ALL";
@@ -56,6 +60,11 @@ public class DownloadService extends Service implements DownloadManager.Download
     private static int sFailedCount = 0;
 
     private DownloadManager mDownloadManager;
+
+    public static void clear() {
+        sSucceeCount = 0;
+        sFailedCount = 0;
+    }
 
     @Override
     public void onCreate() {
@@ -119,6 +128,14 @@ public class DownloadService extends Service implements DownloadManager.Download
             checkStop = true;
         } else if (ACTION_DELETE.equals(action)) {
             // TODO
+            int gid = intent.getIntExtra(KEY_GID, 0);
+            if (gid != 0) {
+                mDownloadManager.stopDownload(gid);
+            }
+            checkStop = true;
+
+
+
         } else if (ACTION_CLEAR.equals(action)) {
             sSucceeCount = 0;
             sFailedCount = 0;
@@ -153,6 +170,13 @@ public class DownloadService extends Service implements DownloadManager.Download
         stopAllIntent.setAction(ACTION_STOP_ALL);
         PendingIntent piStopAll = PendingIntent.getService(this, 0, stopAllIntent, 0);
         mDownloadingBuilder.addAction(R.drawable.ic_close_x24, getString(R.string.stop_all), piStopAll);
+
+        Intent intent = new Intent(DownloadService.this, ContentActivity.class);
+        intent.setAction(ContentActivity.ACTION_START_SCENE);
+        intent.putExtra(ContentActivity.KEY_SCENE, DownloadScene.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 0,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mDownloadingBuilder.setContentIntent(pendingIntent);
     }
 
     private void ensureDownloadedNotification() {
@@ -166,6 +190,14 @@ public class DownloadService extends Service implements DownloadManager.Download
         mDownloadedBuilder = new NotificationCompat.Builder(getApplicationContext());
         mDownloadedBuilder.setSmallIcon(android.R.drawable.stat_sys_download_done)
                 .setDeleteIntent(piClear).setOngoing(false).setAutoCancel(true);
+
+        Intent intent = new Intent(DownloadService.this, ContentActivity.class);
+        intent.setAction(ContentActivity.ACTION_START_SCENE);
+        intent.putExtra(ContentActivity.KEY_SCENE, DownloadScene.class);
+        intent.putExtra(DownloadService.KEY_CLEAR, true);
+        PendingIntent pendingIntent = PendingIntent.getActivity(DownloadService.this, 0,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mDownloadedBuilder.setContentIntent(pendingIntent);
     }
 
     private void setPendingIntent() {

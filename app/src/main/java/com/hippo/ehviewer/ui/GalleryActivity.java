@@ -51,6 +51,7 @@ import com.hippo.ehviewer.gallery.ui.GalleryLayout;
 import com.hippo.ehviewer.gallery.ui.GalleryPageView;
 import com.hippo.ehviewer.gallery.ui.GalleryPanel;
 import com.hippo.ehviewer.gallery.ui.GalleryView;
+import com.hippo.ehviewer.service.DownloadManager;
 import com.hippo.ehviewer.util.Settings;
 import com.hippo.util.SystemUiHelper;
 import com.hippo.vectorold.content.VectorContext;
@@ -110,8 +111,9 @@ public class GalleryActivity extends StatsActivity implements TiledTexture.OnFre
                 GalleryBase galleryBase = intent.getParcelableExtra(KEY_GALLERY_BASE);
                 if (galleryBase != null) {
                     try {
-                        // TODO get mode
-                        mGalleryProvider = GallerySpider.obtain(galleryBase, ImageHandler.Mode.DOWNLOAD);
+                        mGalleryProvider = GallerySpider.obtain(galleryBase,
+                                DownloadManager.getInstance().isInDownloadList(galleryBase.gid) ?
+                                        ImageHandler.Mode.DOWNLOAD : ImageHandler.Mode.READ);
                         return true;
                     } catch (IOException e) {
                         e.printStackTrace();

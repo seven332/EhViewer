@@ -78,6 +78,9 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
             mMap.put(key, gs);
             // The spider add to db in the construct of GallerySpider
         } else {
+            if (mode == ImageHandler.Mode.DOWNLOAD) {
+                gs.setMode(ImageHandler.Mode.DOWNLOAD);
+            }
             // Touch the date
             DBUtils.touchDirname(galleryBase.gid);
         }
@@ -101,6 +104,7 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
         mGalleryBase = galleryBase;
         mMode = mode;
 
+        // TODO let imagehandler handle download dir
         mDownloadDirname = DBUtils.getDirname(galleryBase.gid);
         if (mDownloadDirname == null) {
             mDownloadDirname = downloadDirname(galleryBase);

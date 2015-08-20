@@ -18,16 +18,19 @@ package com.hippo.ehviewer.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.ui.scene.DownloadScene;
 import com.hippo.ehviewer.ui.scene.DrawerProvider;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
@@ -38,7 +41,6 @@ import com.hippo.ehviewer.widget.DrawerLeftPanel;
 import com.hippo.ehviewer.widget.DrawerRightPanel;
 import com.hippo.ehviewer.widget.FitStageLayout;
 import com.hippo.scene.Announcer;
-import com.hippo.scene.OffsetCurtain;
 import com.hippo.scene.Scene;
 import com.hippo.scene.SceneManager;
 import com.hippo.scene.StageActivity;
@@ -49,9 +51,17 @@ import com.hippo.widget.DrawerLayout;
 import com.hippo.widget.DrawerListView;
 import com.hippo.yorozuya.Messenger;
 
+import java.io.Serializable;
+
 public final class ContentActivity extends StageActivity
         implements FitStageLayout.OnFitPaddingBottomListener,
         DrawerLeftPanel.Helper {
+
+    public static final String TAG = ContentActivity.class.getSimpleName();
+
+    public static final String ACTION_START_SCENE = "com.hippo.ehviewer.ui.ContentActivity.START_SCENE";
+
+    public static final String KEY_SCENE = "scene";
 
     public static final int DRAWER_LIST_NONE = -1;
     public static final int DRAWER_LIST_HOMEPAGE = 0;
@@ -78,22 +88,22 @@ public final class ContentActivity extends StageActivity
                     case DRAWER_LIST_HOMEPAGE:
                         announcer = new Announcer();
                         announcer.putExtra(GalleryListScene.KEY_MODE, GalleryListScene.MODE_HOMEPAGE);
-                        startScene(GalleryListScene.class, announcer, new OffsetCurtain(OffsetCurtain.DIRECTION_BOTTOM));
+                        startScene(GalleryListScene.class);
                         break;
                     case DRAWER_LIST_WHATS_HOT:
                         announcer = new Announcer();
                         announcer.putExtra(GalleryListScene.KEY_MODE, GalleryListScene.MODE_POPULAR);
-                        startScene(GalleryListScene.class, announcer, new OffsetCurtain(OffsetCurtain.DIRECTION_BOTTOM));
+                        startScene(GalleryListScene.class);
                         break;
                     case DRAWER_LIST_HISTORY:
                         break;
                     case DRAWER_LIST_FAVORITE:
                         break;
                     case DRAWER_LIST_DOWNLOAD:
-                        startScene(DownloadScene.class, null, new OffsetCurtain(OffsetCurtain.DIRECTION_BOTTOM));
+                        startScene(DownloadScene.class);
                         break;
                     case DRAWER_LIST_SETTINGS:
-                        startScene(MainSettingsScene.class, null, new OffsetCurtain(OffsetCurtain.DIRECTION_BOTTOM));
+                        startScene(MainSettingsScene.class);
                         break;
                 }
 
@@ -166,6 +176,45 @@ public final class ContentActivity extends StageActivity
         }
     };
 
+    private void handleIntent(@Nullable Intent intent, boolean fromOnCreate) {
+        String action;
+        if (intent == null) {
+            action = null;
+        } else {
+            action = intent.getAction();
+        }
+
+        if (ACTION_START_SCENE.equals(action)) {
+            Serializable serializable = intent.getSerializableExtra(KEY_SCENE);
+            if (serializable instanceof Class) {
+                Class sceneClazz = (Class) serializable;
+                try {
+                    startScene(sceneClazz);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            boolean clear = intent.getBooleanExtra(DownloadService.KEY_CLEAR, false);
+            if (clear) {
+                DownloadService.clear();
+            }
+        }
+
+        if (getSceneCount() == 0) {
+            if (fromOnCreate) {
+                startScene(GalleryListScene.class);
+            } else {
+                finish();
+            }
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent, false);
+    }
+
     @SuppressLint("RtlHardcoded")
     @SuppressWarnings("deprecation")
     @Override
@@ -218,10 +267,7 @@ public final class ContentActivity extends StageActivity
         mDrawerListView.setData(drawerListDrawables, drawerListStrings);
         mDrawerListView.setOnItemClickListener(mDrawerListListener);
 
-        // First time
-        if (savedInstanceState == null) {
-            startScene(GalleryListScene.class, null);
-        }
+        handleIntent(getIntent(), true);
     }
 
     @Override
@@ -286,7 +332,7 @@ public final class ContentActivity extends StageActivity
     @Override
     public void onClickSignIn() {
         mDrawerLayout.closeDrawers();
-        startScene(SignInScene.class, null, new OffsetCurtain(OffsetCurtain.DIRECTION_BOTTOM));
+        startScene(SignInScene.class);
     }
 
     @Override

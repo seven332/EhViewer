@@ -38,6 +38,7 @@ import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.scene.Announcer;
 import com.hippo.scene.Scene;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.FileUtils;
@@ -56,7 +57,14 @@ public class DownloadScene extends Scene implements DrawerProvider,
 
     private GidPositionMap mGidPositionMap;
 
+    private int mOriginalPaddingBottom;
+
     private int mLastUpdateSize = -1;
+
+    @Override
+    public int getLaunchMode() {
+        return LAUNCH_MODE_SINGLE_TOP;
+    }
 
     @Override
     protected void onInit() {
@@ -89,6 +97,8 @@ public class DownloadScene extends Scene implements DrawerProvider,
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getStageActivity()));
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setHasFixedSize(true);
+
+        mOriginalPaddingBottom = mRecyclerView.getPaddingBottom();
     }
 
 
@@ -97,6 +107,14 @@ public class DownloadScene extends Scene implements DrawerProvider,
         super.onResume();
 
         ((ContentActivity) getStageActivity()).setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_DOWNLOAD);
+    }
+
+    @Override
+    protected void onGetFitPaddingBottom(int b) {
+        super.onGetFitPaddingBottom(b);
+
+        mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerView.getPaddingTop(),
+                mRecyclerView.getPaddingRight(), b + mOriginalPaddingBottom);
     }
 
     @Override
@@ -112,7 +130,12 @@ public class DownloadScene extends Scene implements DrawerProvider,
 
     @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-        return false;
+        DownloadInfo info = mDownloadInfos.get(position);
+        Announcer announcer = new Announcer();
+        announcer.setAction(GalleryDetailScene.ACTION_GALLERY_BASE);
+        announcer.putExtra(GalleryDetailScene.KEY_GALLERY_BASE, info.galleryBase);
+        startScene(GalleryDetailScene.class, announcer);
+        return true;
     }
 
     private View.OnClickListener mStartListener = new View.OnClickListener() {

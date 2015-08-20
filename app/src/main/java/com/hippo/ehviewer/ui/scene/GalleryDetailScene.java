@@ -79,11 +79,11 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
 
     private static final String TAG = GalleryDetailScene.class.getSimpleName();
 
-    public static final String ACTION_GALLERY_INFO = "action_gallery_info";
+    public static final String ACTION_GALLERY_BASE = "key_gallery_base";
     public static final String ACTION_GID_TOKEN = "action_gid_token";
     public static final String ACTION_URL = "action_url";
 
-    public static final String KEY_GALLERY_INFO = "key_gallery_info";
+    public static final String KEY_GALLERY_BASE = "key_gallery_base";
     public static final String KEY_GID = "key_gid";
     public static final String KEY_TOKEN = "key_token";
     public static final String KEY_URL = "key_url";
@@ -484,8 +484,8 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         if (announcer != null) {
             String action = announcer.getAction();
             mActionStr = action;
-            if (ACTION_GALLERY_INFO.equals(action)) {
-                mGalleryBase = announcer.getExtra(KEY_GALLERY_INFO, GalleryBase.class);
+            if (ACTION_GALLERY_BASE.equals(action)) {
+                mGalleryBase = announcer.getExtra(KEY_GALLERY_BASE, GalleryBase.class);
                 if (mGalleryBase != null) {
                     bindGalleryInfo(mGalleryBase);
                     return;
@@ -553,7 +553,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
             mViewTransition.showView(1); // Show progress view
             mState = STATE_TOTALLY_LOADING;
             mAdapter.notifyDataSetChanged();
-            if (ACTION_GALLERY_INFO.equals(mActionStr)) {
+            if (ACTION_GALLERY_BASE.equals(mActionStr)) {
                 requestGalleryDetail(mGalleryBase.gid, mGalleryBase.token);
             } else {
                 requestGalleryDetail(mGid, mToken);
