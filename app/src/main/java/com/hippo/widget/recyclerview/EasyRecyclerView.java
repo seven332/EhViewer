@@ -26,12 +26,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.util.LongSparseArray;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.SparseBooleanArray;
 import android.util.StateSet;
+import android.view.ActionMode;
 import android.view.HapticFeedbackConstants;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -116,8 +115,6 @@ public class EasyRecyclerView extends RecyclerView {
 
     private float mVerticalScrollFactor = 0;
 
-    private ActionBarActivity mActionBarActivity;
-
     // For click and long click
     private boolean mPrePressed = false;
     private boolean mHasPerformedLongPress = false;
@@ -181,15 +178,6 @@ public class EasyRecyclerView extends RecyclerView {
 
     public EasyRecyclerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-    }
-
-    /**
-     * You must call it if you want action mode
-     *
-     * @param actionBarActivity Can't be null
-     */
-    public void setActionBarActivity(ActionBarActivity actionBarActivity) {
-        mActionBarActivity = actionBarActivity;
     }
 
     @Override
@@ -538,13 +526,7 @@ public class EasyRecyclerView extends RecyclerView {
                         "for CHOICE_MODE_MULTIPLE_MODAL but no choice mode callback was " +
                         "supplied. Call setMultiChoiceModeListener to set a callback.");
             }
-            if (mActionBarActivity == null) {
-                throw new IllegalStateException("EasyRecyclerView: attempted to start selection mode " +
-                        "for CHOICE_MODE_MULTIPLE_MODA but no ActionBarActivity was supplied. " +
-                        "ActionBarActivity is needed to set choice mode callback. " +
-                        "Call setActionBarActivity to set a ActionBarActivity.");
-            }
-            mChoiceActionMode = mActionBarActivity.startSupportActionMode(mMultiChoiceModeCallback);
+            mChoiceActionMode = startActionMode(mMultiChoiceModeCallback);
         }
 
         if (mChoiceMode == CHOICE_MODE_MULTIPLE || mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL) {
@@ -934,7 +916,7 @@ public class EasyRecyclerView extends RecyclerView {
         // CHOICE_MODE_MULTIPLE_MODAL takes over long press.
         if (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL) {
             if (mChoiceActionMode == null &&
-                    (mChoiceActionMode = mActionBarActivity.startSupportActionMode(mMultiChoiceModeCallback)) != null) {
+                    (mChoiceActionMode = startActionMode(mMultiChoiceModeCallback)) != null) {
                 setItemChecked(longPressPosition, true);
                 performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
             }
@@ -1102,7 +1084,7 @@ public class EasyRecyclerView extends RecyclerView {
         }
 
         if (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL && mCheckedItemCount > 0) {
-            mChoiceActionMode = mActionBarActivity.startSupportActionMode(mMultiChoiceModeCallback);
+            mChoiceActionMode = startActionMode(mMultiChoiceModeCallback);
         }
         updateOnScreenCheckedViews();
     }
@@ -1295,7 +1277,7 @@ public class EasyRecyclerView extends RecyclerView {
     /**
      * A MultiChoiceModeListener receives events for {@link android.widget.AbsListView#CHOICE_MODE_MULTIPLE_MODAL}.
      * It acts as the {@link android.support.v7.view.ActionMode.Callback} for the selection mode and also receives
-     * {@link #onItemCheckedStateChanged(android.support.v7.view.ActionMode, int, long, boolean)} events when the user
+     * {@link #onItemCheckedStateChanged(android.view.ActionMode, int, long, boolean)} events when the user
      * selects and deselects list items.
      */
     public interface MultiChoiceModeListener extends ActionMode.Callback {
