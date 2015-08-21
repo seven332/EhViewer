@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
@@ -57,6 +56,7 @@ import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.ehviewer.util.DBUtils;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Settings;
+import com.hippo.ehviewer.widget.AppbarRecyclerView;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.ListSearchBar;
 import com.hippo.ehviewer.widget.LoadImageView;
@@ -65,7 +65,6 @@ import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchDatabase;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.ehviewer.widget.SimpleRatingView;
-import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.Curtain;
 import com.hippo.scene.ElementsSharedCurtain;
@@ -75,9 +74,7 @@ import com.hippo.util.AnimationUtils;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.FloatingActionButton;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
-import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
 import com.hippo.yorozuya.AssertUtils;
-import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.SimpleHandler;
@@ -92,7 +89,7 @@ import java.util.List;
 public final class GalleryListScene extends Scene implements ListSearchBar.Helper,
         View.OnClickListener, FabLayout.OnCancelListener,
         SearchLayout.SearhLayoutHelper, EasyRecyclerView.OnItemClickListener,
-        Messenger.Receiver, DrawerProvider {
+        Messenger.Receiver, DrawerProvider, AppbarRecyclerView.Helper {
 
     public static final String KEY_MODE = "mode";
 
@@ -148,10 +145,7 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
 
     private boolean mJpnTitle;
 
-
-    private ViewGroup mRightDrawerView;
-    private View mQuickSearchSettings;
-    private EasyRecyclerView mQuickSearchView;
+    private AppbarRecyclerView mRightDrawerView;
     private QuickSearchAdapter mQuickSearchAdapter;
     private List<QuickSearch> mQuickSearches;
 
@@ -330,28 +324,13 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         mSearchDrawable = mResources.getDrawable(R.drawable.ic_search_dark);
         mCornerFab.setDrawable(mAddDeleteDrawable);
 
-        mRightDrawerView = (ViewGroup) getStageActivity().getLayoutInflater().inflate(R.layout.drawer_right_gallery_list, null);
-        mQuickSearchSettings = mRightDrawerView.findViewById(R.id.settings);
-        RippleSalon.addRipple(mQuickSearchSettings, true);
-        mQuickSearchSettings.setOnClickListener(this);
-        TextView rightDrawerTitle = (TextView) mRightDrawerView.findViewById(R.id.drawer_right_title);
-        rightDrawerTitle.setText(R.string.quick_search);
-        mQuickSearchView = (EasyRecyclerView) mRightDrawerView.findViewById(R.id.drawer_right_recycler_view);
+        mRightDrawerView = new AppbarRecyclerView(getStageActivity());
+        mRightDrawerView.setTitle(mResources.getString(R.string.quick_search));
         mQuickSearches = DBUtils.getAllQuickSearch();
         mQuickSearchAdapter = new QuickSearchAdapter();
-        mQuickSearchView.setAdapter(mQuickSearchAdapter);
-        mQuickSearchView.setLayoutManager(new LinearLayoutManager(getStageActivity()));
-        mQuickSearchView.setSelector(RippleSalon.generateRippleDrawable(false));
-        mQuickSearchView.setDrawSelectorOnTop(true);
-        mQuickSearchView.setOnItemClickListener(new QuickSearchClickListener());
-        mQuickSearchView.hasFixedSize();
-        mQuickSearchView.setClipToPadding(false);
-        LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
-                LinearDividerItemDecoration.VERTICAL,
-                mResources.getColor(R.color.divider_light),
-                LayoutUtils.dp2pix(getStageActivity(), 1));
-        decoration.setOverlap(true);
-        mQuickSearchView.addItemDecoration(decoration);
+        mRightDrawerView.setAdapter(mQuickSearchAdapter);
+        mRightDrawerView.setOnItemClickListener(new QuickSearchClickListener());
+        mRightDrawerView.setHelper(this);
 
         // When scene start
         if (!rebirth) {
@@ -405,7 +384,8 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         mSearchLayout.setFitPaddingBottom(b);
         // Corner Fab
         mFabLayout.setPadding(mFabLayout.getPaddingLeft(), mFabLayout.getPaddingTop(), mFabLayout.getPaddingRight(), mCornerFabOriginalBottom + b);
-        mQuickSearchView.setPadding(0, 0, 0, b);
+        //
+        mRightDrawerView.setFitPaddingBottom(b);
     }
 
     @Override
@@ -608,9 +588,27 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
             if (mGalleryListHelper.canGoTo()) {
                 showGoToDialog();
             }
-        } else if (v == mQuickSearchSettings) {
-            startScene(QuickSearchScene.class);
         }
+    }
+
+    @Override
+    public void onClickPlusListener() {
+        int mode = mListUrlBuilder.getMode();
+        if (mode == ListUrlBuilder.MODE_NORMAL || mode == ListUrlBuilder.MODE_UPLOADER ||
+                mode == ListUrlBuilder.MODE_TAG) {
+            AddToQuickSearchHelper helper = new AddToQuickSearchHelper(mListUrlBuilder.clone());
+            new SimpleDialog.Builder(getStageActivity()).setTitle("Add to quick search") // TODO hardcode
+                    .setCustomView(R.layout.dialog_add_to_quick_search, helper)
+                    .setPositiveButton(android.R.string.ok)
+                    .setOnButtonClickListener(helper).show(this);
+        } else {
+            Toast.makeText(getStageActivity(), "Can't add", Toast.LENGTH_SHORT).show(); // TODO hardcode
+        }
+    }
+
+    @Override
+    public void onClickSettingsListener() {
+        startScene(QuickSearchScene.class);
     }
 
     @Override

@@ -88,12 +88,12 @@ public final class ContentActivity extends StageActivity
                     case DRAWER_LIST_HOMEPAGE:
                         announcer = new Announcer();
                         announcer.putExtra(GalleryListScene.KEY_MODE, GalleryListScene.MODE_HOMEPAGE);
-                        startScene(GalleryListScene.class);
+                        startScene(GalleryListScene.class, announcer);
                         break;
                     case DRAWER_LIST_WHATS_HOT:
                         announcer = new Announcer();
                         announcer.putExtra(GalleryListScene.KEY_MODE, GalleryListScene.MODE_POPULAR);
-                        startScene(GalleryListScene.class);
+                        startScene(GalleryListScene.class, announcer);
                         break;
                     case DRAWER_LIST_HISTORY:
                         break;
@@ -322,6 +322,22 @@ public final class ContentActivity extends StageActivity
 
     public void closeDrawers() {
         mDrawerLayout.closeDrawers();
+    }
+
+    public void lockLeftDrawer() {
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.LEFT);
+    }
+
+    public void lockRightDrawer() {
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
+    }
+
+    public void unlockLeftDrawer() {
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+    }
+
+    public void unlockRightDrawer() {
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
     }
 
     @Override

@@ -51,6 +51,7 @@
     <string name="pd_play" translatable="false">M8,5.14V19.14L19,12.14L8,5.14Z</string>
     <string name="pd_pause" translatable="false">M14,19.14H18V5.14H14M6,19.14H10V5.14H6V19.14Z</string>
     <string name="pd_close" translatable="false">M19,7.1L16.9 5 12 9.9 7.1 5 5 7.1 9.9 12 5 16.9 7.1 19 12 14.1 16.9 19 19 16.9 14.1 12 z</string>
+    <string name="pd_plus" translatable="false">M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z</string>
 
     <string name="pd_slider_bubble" translatable="false">M13,0c7.2,0,13,5.9,13,13.2c0,3.7-2,7.6-7.3,12.9L13,32l-5.8-5.8C2,20.8,0,16.9,0,13.3C0,5.9,5.8,0,13,0z</string>
 

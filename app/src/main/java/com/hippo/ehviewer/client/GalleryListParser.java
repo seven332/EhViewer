@@ -88,6 +88,10 @@ public class GalleryListParser {
         Result result = new Result();
         Matcher m;
 
+        if (!body.startsWith("<")) {
+            throw new EhException(body);
+        }
+
         // pages
         m = PAGES_PATTERN.matcher(body);
         if (m.find()) {
@@ -146,6 +150,10 @@ public class GalleryListParser {
     private static Result parseLofi(String body) throws Exception {
         Result result = new Result();
         Matcher m;
+
+        if (!body.startsWith("<")) {
+            throw new EhException(body);
+        }
 
         List<GalleryInfo> list = new ArrayList<>(25);
         result.galleryInfos = list;

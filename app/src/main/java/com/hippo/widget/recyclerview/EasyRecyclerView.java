@@ -79,6 +79,11 @@ public class EasyRecyclerView extends RecyclerView {
     public static final int CHOICE_MODE_MULTIPLE_MODAL = 3;
 
     /**
+     * The list allows multiple choices in custom action
+     */
+    public static final int CHOICE_MODE_MULTIPLE_CUSTOM = 4;
+
+    /**
      * Controls if/how the user may choose/check items in the list
      */
     private int mChoiceMode = CHOICE_MODE_NONE;
@@ -93,6 +98,17 @@ public class EasyRecyclerView extends RecyclerView {
      * a few extra actions around what application code does.
      */
     MultiChoiceModeWrapper mMultiChoiceModeCallback;
+
+    /**
+     * Listener for custom multiple choices
+     */
+    private CustomChoiceListener mCustomChoiceListener;
+
+    private boolean mCustomChoice = false;
+
+    private SparseBooleanArray mTempCheckStates;
+
+    private FixCheckedHelper mFixCheckedHelper;
 
     /**
      * Running count of how many items are currently checked
@@ -491,6 +507,38 @@ public class EasyRecyclerView extends RecyclerView {
         return ids;
     }
 
+    public boolean inCustomChoice() {
+        return mCustomChoice;
+    }
+
+    public void intoCustomChoiceMode() {
+        if (mChoiceMode == CHOICE_MODE_MULTIPLE_CUSTOM && !mCustomChoice) {
+            mCustomChoice = true;
+
+            mCustomChoiceListener.onIntoCustomChoice(this);
+        }
+    }
+
+    public void outOfCustomChoiceMode() {
+        if (mChoiceMode == CHOICE_MODE_MULTIPLE_CUSTOM && mCustomChoice) {
+
+            // Copy mCheckStates
+            mTempCheckStates.clear();
+            for (int i = 0, n = mCheckStates.size(); i < n; i++) {
+                mTempCheckStates.put(mCheckStates.keyAt(i), mCheckStates.valueAt(i));
+            }
+            // Uncheck remain checked items
+            for (int i = 0, n = mTempCheckStates.size(); i < n; i++) {
+                if (mTempCheckStates.valueAt(i)) {
+                    setItemChecked(mTempCheckStates.keyAt(i), false);
+                }
+            }
+
+            mCustomChoice = false;
+            mCustomChoiceListener.onOutOfCustomChoice(this);
+        }
+    }
+
     /**
      * Clear any choices previously set
      */
@@ -503,6 +551,12 @@ public class EasyRecyclerView extends RecyclerView {
         }
         mCheckedItemCount = 0;
         updateOnScreenCheckedViews();
+    }
+
+    public void toggleItemChecked(int position) {
+        if (mCheckStates != null) {
+            setItemChecked(position, !mCheckStates.get(position));
+        }
     }
 
     /**
@@ -518,6 +572,11 @@ public class EasyRecyclerView extends RecyclerView {
             return;
         }
 
+        // Check is intoCheckMode
+        if (mChoiceMode == CHOICE_MODE_MULTIPLE_CUSTOM && !mCustomChoice) {
+            throw new IllegalStateException("Call intoCheckMode first");
+        }
+
         // Start selection mode if needed. We don't need to if we're unchecking something.
         if (value && mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL && mChoiceActionMode == null) {
             if (mMultiChoiceModeCallback == null ||
@@ -529,7 +588,7 @@ public class EasyRecyclerView extends RecyclerView {
             mChoiceActionMode = startActionMode(mMultiChoiceModeCallback);
         }
 
-        if (mChoiceMode == CHOICE_MODE_MULTIPLE || mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL) {
+        if (mChoiceMode == CHOICE_MODE_MULTIPLE || mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL || mChoiceMode == CHOICE_MODE_MULTIPLE_CUSTOM) {
             boolean oldValue = mCheckStates.get(position);
             mCheckStates.put(position, value);
             if (mCheckedIdStates != null && mAdapter.hasStableIds()) {
@@ -550,6 +609,10 @@ public class EasyRecyclerView extends RecyclerView {
                 final long id = mAdapter.getItemId(position);
                 mMultiChoiceModeCallback.onItemCheckedStateChanged(mChoiceActionMode,
                         position, id, value);
+            }
+            if (mChoiceMode == CHOICE_MODE_MULTIPLE_CUSTOM) {
+                final long id = mAdapter.getItemId(position);
+                mCustomChoiceListener.onItemCheckedStateChanged(this, position, id, value);
             }
         } else {
             boolean updateIds = mCheckedIdStates != null && mAdapter.hasStableIds();
@@ -608,10 +671,19 @@ public class EasyRecyclerView extends RecyclerView {
             if (mCheckedIdStates == null && mAdapter != null && mAdapter.hasStableIds()) {
                 mCheckedIdStates = new LongSparseArray<>(0);
             }
+            if (mFixCheckedHelper == null) {
+                mFixCheckedHelper = new FixCheckedHelper();
+                addOnChildAttachStateChangeListener(mFixCheckedHelper);
+            }
             // Modal multi-choice mode only has choices when the mode is active. Clear them.
             if (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL) {
                 clearChoices();
                 setLongClickable(true);
+            } else if (mChoiceMode == CHOICE_MODE_MULTIPLE_CUSTOM) {
+                if (mTempCheckStates == null) {
+                    mTempCheckStates = new SparseBooleanArray(0);
+                }
+                clearChoices();
             }
         }
     }
@@ -630,6 +702,14 @@ public class EasyRecyclerView extends RecyclerView {
             mMultiChoiceModeCallback = new MultiChoiceModeWrapper();
         }
         mMultiChoiceModeCallback.setWrapped(listener);
+    }
+
+    /**
+     *
+     * @param listener
+     */
+    public void setCustomCheckedListener(CustomChoiceListener listener) {
+        mCustomChoiceListener = listener;
     }
 
     /**
@@ -850,7 +930,7 @@ public class EasyRecyclerView extends RecyclerView {
         boolean handled = false;
         boolean dispatchItemClick = true;
 
-        if (mChoiceMode != CHOICE_MODE_NONE) {
+        if (mChoiceMode != CHOICE_MODE_NONE && mChoiceMode != CHOICE_MODE_MULTIPLE_CUSTOM) {
             handled = true;
             boolean checkedStateChanged = false;
 
@@ -950,13 +1030,6 @@ public class EasyRecyclerView extends RecyclerView {
             setLongClickable(true);
         }
         mOnItemLongClickListener = listener;
-    }
-
-    /**
-     * If choice mode is set, call it in {@link Adapter#onBindViewHolder}
-     */
-    public void checkItemCheckedState(View view, int position) {
-        setViewChecked(view, isItemChecked(position));
     }
 
     /**
@@ -1274,6 +1347,22 @@ public class EasyRecyclerView extends RecyclerView {
         boolean beforeDrawSelector(int position);
     }
 
+    public class FixCheckedHelper implements OnChildAttachStateChangeListener {
+
+        @Override
+        public void onChildViewAttachedToWindow(View view) {
+            int position = getChildAdapterPosition(view);
+            if (position >= 0) {
+                setViewChecked(view, mCheckStates.get(position));
+            }
+        }
+
+        @Override
+        public void onChildViewDetachedFromWindow(View view) {
+
+        }
+    }
+
     /**
      * A MultiChoiceModeListener receives events for {@link android.widget.AbsListView#CHOICE_MODE_MULTIPLE_MODAL}.
      * It acts as the {@link android.support.v7.view.ActionMode.Callback} for the selection mode and also receives
@@ -1348,5 +1437,17 @@ public class EasyRecyclerView extends RecyclerView {
                 mode.finish();
             }
         }
+    }
+
+    /**
+     * Custom checked
+     */
+    public interface CustomChoiceListener {
+
+        void onIntoCustomChoice(EasyRecyclerView view);
+
+        void onOutOfCustomChoice(EasyRecyclerView view);
+
+        void onItemCheckedStateChanged(EasyRecyclerView view, int position, long id, boolean checked);
     }
 }

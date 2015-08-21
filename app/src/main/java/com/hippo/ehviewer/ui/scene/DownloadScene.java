@@ -34,7 +34,9 @@ import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.ehviewer.service.DownloadManager;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.ui.ContentActivity;
+import com.hippo.ehviewer.util.DBUtils;
 import com.hippo.ehviewer.util.EhUtils;
+import com.hippo.ehviewer.widget.AppbarRecyclerView;
 import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
@@ -61,9 +63,25 @@ public class DownloadScene extends Scene implements DrawerProvider,
 
     private int mLastUpdateSize = -1;
 
+    private AppbarRecyclerView mRightDrawerView;
+    private DownloadTagAdapter mDownloadTagAdapter;
+    private List<String> mTags;
+
     @Override
     public int getLaunchMode() {
         return LAUNCH_MODE_SINGLE_TOP;
+    }
+
+    protected List<String> getTags() {
+        mTags = DBUtils.getAllDownloadTag();
+        mTags.add(0, "Default");
+        mTags.add(0, "All");
+
+        if (mDownloadTagAdapter != null) {
+            mDownloadTagAdapter.notifyDataSetChanged();
+        }
+
+        return mTags;
     }
 
     @Override
@@ -73,6 +91,8 @@ public class DownloadScene extends Scene implements DrawerProvider,
         mDownloadInfos = DownloadManager.getInstance().getDownloadList(null);
         mGidPositionMap = new GidPositionMap();
         Messenger.getInstance().register(Constants.MESSENGER_ID_UPDATE_DOWNLOAD, this);
+
+        mTags = getTags();
     }
 
     @Override
@@ -97,16 +117,31 @@ public class DownloadScene extends Scene implements DrawerProvider,
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getStageActivity()));
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setChoiceMode(EasyRecyclerView.CHOICE_MODE_MULTIPLE_CUSTOM);
+        mRecyclerView.setCustomCheckedListener(new DownloadChoiceListener());
 
         mOriginalPaddingBottom = mRecyclerView.getPaddingBottom();
-    }
 
+        mRightDrawerView = new AppbarRecyclerView(getStageActivity());
+        mRightDrawerView.setTitle("TAG");
+        mDownloadTagAdapter = new DownloadTagAdapter();
+        mRightDrawerView.setAdapter(mDownloadTagAdapter);
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
 
         ((ContentActivity) getStageActivity()).setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_DOWNLOAD);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mRecyclerView.inCustomChoice()) {
+            mRecyclerView.outOfCustomChoiceMode();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -124,19 +159,48 @@ public class DownloadScene extends Scene implements DrawerProvider,
 
     @Override
     public void bindRightDrawer(ContentActivity activity) {
-        // TODO
-        activity.clearRightDrawerView();
+        activity.setRightDrawerView(mRightDrawerView);
     }
 
     @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-        DownloadInfo info = mDownloadInfos.get(position);
-        Announcer announcer = new Announcer();
-        announcer.setAction(GalleryDetailScene.ACTION_GALLERY_BASE);
-        announcer.putExtra(GalleryDetailScene.KEY_GALLERY_BASE, info.galleryBase);
-        startScene(GalleryDetailScene.class, announcer);
+        if (parent.inCustomChoice()) {
+            parent.toggleItemChecked(position);
+        } else {
+            DownloadInfo info = mDownloadInfos.get(position);
+            Announcer announcer = new Announcer();
+            announcer.setAction(GalleryDetailScene.ACTION_GALLERY_BASE);
+            announcer.putExtra(GalleryDetailScene.KEY_GALLERY_BASE, info.galleryBase);
+            startScene(GalleryDetailScene.class, announcer);
+        }
         return true;
     }
+
+    private View.OnClickListener mThumbClickListener = new View.OnClickListener() {
+
+        private int getAdapterPosition(View thumbView) {
+            EasyRecyclerView recyclerView = mRecyclerView;
+            for (int i = 0, n = recyclerView.getChildCount(); i < n; i++) {
+                View child = recyclerView.getChildAt(i);
+                DownloadHolder holder = (DownloadHolder) recyclerView.getChildViewHolder(child);
+                if (thumbView == holder.thumb) {
+                    return holder.getAdapterPosition();
+                }
+            }
+            return -1;
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition(v);
+            if (position >= 0) {
+                if (!mRecyclerView.inCustomChoice()) {
+                    mRecyclerView.intoCustomChoiceMode();
+                }
+                mRecyclerView.toggleItemChecked(position);
+            }
+        }
+    };
 
     private View.OnClickListener mStartListener = new View.OnClickListener() {
 
@@ -154,6 +218,10 @@ public class DownloadScene extends Scene implements DrawerProvider,
 
         @Override
         public void onClick(View v) {
+            if (mRecyclerView.inCustomChoice()) {
+                return;
+            }
+
             int position = getAdapterPosition(v);
             if (position >= 0) {
                 // Add to cache
@@ -184,6 +252,10 @@ public class DownloadScene extends Scene implements DrawerProvider,
 
         @Override
         public void onClick(View v) {
+            if (mRecyclerView.inCustomChoice()) {
+                return;
+            }
+
             int position = getAdapterPosition(v);
             if (position >= 0) {
                 // Add to cache
@@ -214,6 +286,10 @@ public class DownloadScene extends Scene implements DrawerProvider,
 
         @Override
         public void onClick(View v) {
+            if (mRecyclerView.inCustomChoice()) {
+                return;
+            }
+
             int position = getAdapterPosition(v);
             if (position >= 0) {
                 // Add to cache
@@ -322,6 +398,7 @@ public class DownloadScene extends Scene implements DrawerProvider,
             RippleSalon.addRipple(stop, false);
             RippleSalon.addRipple(delete, false);
 
+            thumb.setOnClickListener(mThumbClickListener);
             start.setOnClickListener(mStartListener);
             stop.setOnClickListener(mStopListener);
             delete.setOnClickListener(mDeleteListener);
@@ -467,6 +544,50 @@ public class DownloadScene extends Scene implements DrawerProvider,
                 }
             }
             return -1;
+        }
+    }
+
+    public class DownloadChoiceListener implements EasyRecyclerView.CustomChoiceListener {
+
+        @Override
+        public void onIntoCustomChoice(EasyRecyclerView view) {
+        }
+
+        @Override
+        public void onOutOfCustomChoice(EasyRecyclerView view) {
+        }
+
+        @Override
+        public void onItemCheckedStateChanged(EasyRecyclerView view, int position, long id, boolean checked) {
+            if (view.getCheckedItemCount() == 0) {
+                view.outOfCustomChoiceMode();
+            }
+        }
+    }
+
+    private class SimpleHolder extends RecyclerView.ViewHolder {
+
+        public SimpleHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    public class DownloadTagAdapter extends RecyclerView.Adapter<SimpleHolder> {
+
+        @Override
+        public SimpleHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new SimpleHolder(getStageActivity().getLayoutInflater().inflate(
+                    R.layout.item_quick_search, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(SimpleHolder holder, int position) {
+            ((TextView) holder.itemView).setText(mTags.get(position));
+        }
+
+        @Override
+        public int getItemCount() {
+            return mTags == null ? 0 : mTags.size();
         }
     }
 }

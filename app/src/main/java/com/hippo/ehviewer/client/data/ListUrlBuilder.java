@@ -25,7 +25,7 @@ import com.hippo.network.UrlBuilder;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-public class ListUrlBuilder {
+public class ListUrlBuilder implements Cloneable {
 
     // Mode
     public static final int MODE_NORMAL = 0x0;
@@ -60,6 +60,15 @@ public class ListUrlBuilder {
         mKeyword = null;
         mAdvanceSearch = -1;
         mMinRating = -1;
+    }
+
+    @Override
+    public ListUrlBuilder clone() {
+        try {
+            return (ListUrlBuilder) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public int getMode() {
