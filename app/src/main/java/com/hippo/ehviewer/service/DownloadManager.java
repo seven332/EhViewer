@@ -472,6 +472,9 @@ public class DownloadManager {
 
     private void releaseCurrent() {
         if (mCurrentTask != null) {
+            mCurrentTask.speed = -1;
+            mCurrentTask.download = -1;
+            mCurrentTask.total = -1;
             mCurrentTask = null;
             mCurrentSpider.removeSpiderSpiderListener(mDownloadSpiderListener);
             GallerySpider.release(mCurrentSpider);
