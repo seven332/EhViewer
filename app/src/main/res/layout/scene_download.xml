@@ -29,4 +29,55 @@
         auto:spaceLeft="@dimen/search_layout_space_horizontal"
         auto:spaceRight="@dimen/search_layout_space_horizontal"/>
 
+    <com.hippo.widget.FabLayout
+        android:id="@+id/fab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom|right"
+        android:gravity="right|bottom"
+        android:paddingRight="@dimen/corner_fab_padding_right"
+        android:paddingBottom="@dimen/corner_fab_padding_bottom">
+
+        <com.hippo.widget.FloatingActionButton
+            style="@style/FloatingActionButton.ForceNoElevation.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            auto:color="?attr/colorPrimary"
+            auto:drawable="@drawable/ic_play_dark_x24"
+            auto:forceNoElevation="true"/>
+
+        <com.hippo.widget.FloatingActionButton
+            style="@style/FloatingActionButton.ForceNoElevation.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            auto:color="?attr/colorPrimary"
+            auto:drawable="@drawable/ic_pause_dark_x24"
+            auto:forceNoElevation="true"/>
+
+        <com.hippo.widget.FloatingActionButton
+            style="@style/FloatingActionButton.ForceNoElevation.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            auto:color="?attr/colorPrimary"
+            auto:drawable="@drawable/ic_close_dark_x24"
+            auto:forceNoElevation="true"/>
+
+        <com.hippo.widget.FloatingActionButton
+            style="@style/FloatingActionButton.ForceNoElevation.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            auto:color="?attr/colorPrimary"
+            auto:drawable="@drawable/ic_check_all_dark_x24"
+            auto:forceNoElevation="true"/>
+
+        <com.hippo.widget.FloatingActionButton
+            style="@style/FloatingActionButton.ForceNoElevation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            auto:color="?attr/colorAccent"
+            auto:forceNoElevation="true"
+            auto:drawable="@drawable/ic_close_dark_x24"/>
+
+    </com.hippo.widget.FabLayout>
+
 </FrameLayout>

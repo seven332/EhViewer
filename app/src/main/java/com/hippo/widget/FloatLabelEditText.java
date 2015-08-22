@@ -121,7 +121,7 @@ public class FloatLabelEditText extends FrameLayout {
 
         // If we do not have a valid hint, try and retrieve it from the EditText
         if (TextUtils.isEmpty(mHint)) {
-            setHint(mEditText.getHint());
+            setHintInternal(mEditText.getHint());
         }
 
         // Align with label and edittext
@@ -133,6 +133,11 @@ public class FloatLabelEditText extends FrameLayout {
     }
 
     public void setHint(CharSequence hint) {
+        mEditText.setHint(hint);
+        setHintInternal(hint);
+    }
+
+    private void setHintInternal(CharSequence hint) {
         mHint = hint;
         mLabel.setText(hint);
     }

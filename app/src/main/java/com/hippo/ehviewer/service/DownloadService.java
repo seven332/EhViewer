@@ -31,6 +31,7 @@ import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.ehviewer.ui.scene.DownloadScene;
 import com.hippo.yorozuya.FileUtils;
 
+// TODO Avoid frequent notification
 public class DownloadService extends Service implements DownloadManager.DownloadUpdateListener {
 
     private static final String TAG = DownloadService.class.getSimpleName();

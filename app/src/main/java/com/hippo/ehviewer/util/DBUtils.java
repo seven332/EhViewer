@@ -21,6 +21,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
 import com.hippo.ehviewer.client.data.DownloadInfo;
+import com.hippo.ehviewer.client.data.DownloadLabel;
 import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.data.QuickSearch;
@@ -30,8 +31,8 @@ import com.hippo.ehviewer.dao.DirnameObj;
 import com.hippo.ehviewer.dao.DirnameObjDao;
 import com.hippo.ehviewer.dao.DownloadInfoObj;
 import com.hippo.ehviewer.dao.DownloadInfoObjDao;
-import com.hippo.ehviewer.dao.DownloadTagObj;
-import com.hippo.ehviewer.dao.DownloadTagObjDao;
+import com.hippo.ehviewer.dao.DownloadLabelObj;
+import com.hippo.ehviewer.dao.DownloadLabelObjDao;
 import com.hippo.ehviewer.dao.GalleryBaseObj;
 import com.hippo.ehviewer.dao.GalleryBaseObjDao;
 import com.hippo.ehviewer.dao.QuickSearchObj;
@@ -198,8 +199,6 @@ public class DBUtils {
         return  result;
     }
 
-
-
     public static List<DownloadInfo> getAllDownloadInfo() {
         DownloadInfoObjDao dao = sDaoSession.getDownloadInfoObjDao();
         List<DownloadInfoObj> list = dao.queryBuilder().orderAsc(DownloadInfoObjDao.Properties.Time).list();
@@ -213,10 +212,10 @@ public class DBUtils {
     public static void addDownloadInfo(DownloadInfo downloadInfo) {
         DownloadInfoObj obj = new DownloadInfoObj();
         obj.setGid((long) downloadInfo.galleryBase.gid);
-        obj.setTag(downloadInfo.tag);
+        obj.setLabel(downloadInfo.label);
         obj.setState(downloadInfo.state);
         obj.setLegacy(downloadInfo.legacy);
-        obj.setTime(System.currentTimeMillis());
+        obj.setTime(downloadInfo.time);
         sDaoSession.getDownloadInfoObjDao().insert(obj);
         addGalleryBase(downloadInfo.galleryBase);
     }
@@ -226,22 +225,81 @@ public class DBUtils {
         DownloadInfoObj obj = dao.load((long) downloadInfo.galleryBase.gid);
         obj.setState(downloadInfo.state);
         obj.setLegacy(downloadInfo.legacy);
+        obj.setLabel(downloadInfo.label);
         dao.update(obj);
     }
 
-    public static List<String> getAllDownloadTag() {
-        DownloadTagObjDao dao = sDaoSession.getDownloadTagObjDao();
-        List<DownloadTagObj> list = dao.queryBuilder().list();
+    public static List<String> getAllDownloadLabel() {
+        DownloadLabelObjDao dao = sDaoSession.getDownloadLabelObjDao();
+        List<DownloadLabelObj> list = dao.queryBuilder().orderAsc(DownloadLabelObjDao.Properties.Time).list();
         List<String> result = new ArrayList<>(list.size());
-        for (DownloadTagObj obj : list) {
-            result.add(obj.getTag());
+        for (DownloadLabelObj obj : list) {
+            result.add(obj.getLabel());
         }
         return result;
     }
 
-    public static void addDownloadTag(String tag) {
-        DownloadTagObj obj = new DownloadTagObj();
-        obj.setTag(tag);
-        sDaoSession.getDownloadTagObjDao().insert(obj);
+    public static List<DownloadLabel> getAllDownloadLabelWithId() {
+        DownloadLabelObjDao dao = sDaoSession.getDownloadLabelObjDao();
+        List<DownloadLabelObj> list = dao.queryBuilder().orderAsc(DownloadLabelObjDao.Properties.Time).list();
+        List<DownloadLabel> result = new ArrayList<>(list.size());
+        for (DownloadLabelObj obj : list) {
+            DownloadLabel tag = new DownloadLabel();
+            tag.id = obj.getId();
+            tag.label = obj.getLabel();
+            tag.time = obj.getTime();
+            result.add(tag);
+        }
+        return result;
+    }
+
+    public static void addDownloadLabel(String label) {
+        if (TextUtils.isEmpty(label)) {
+            return;
+        }
+
+        DownloadLabelObj obj = new DownloadLabelObj();
+        obj.setLabel(label);
+        obj.setTime(System.currentTimeMillis());
+        sDaoSession.getDownloadLabelObjDao().insert(obj);
+    }
+
+    public static void moveDownloadLabel(long fromId, long toId) {
+        DownloadLabelObjDao dao = sDaoSession.getDownloadLabelObjDao();
+        DownloadLabelObj from = dao.load(fromId);
+        DownloadLabelObj to = dao.load(toId);
+        long fromTime = from.getTime();
+        long toTime = to.getTime();
+        from.setTime(toTime);
+        to.setTime(fromTime);
+        dao.update(from);
+        dao.update(to);
+    }
+
+    public static void updateDownloadLabel(DownloadLabel label) {
+        DownloadLabelObjDao dao = sDaoSession.getDownloadLabelObjDao();
+        DownloadLabelObj obj = dao.load(label.id);
+        obj.setId(label.id);
+        obj.setLabel(label.label);
+        obj.setTime(label.time);
+        dao.update(obj);
+    }
+
+    public static void removeDownloadLabel(long id) {
+        sDaoSession.getDownloadLabelObjDao().deleteByKey(id);
+    }
+
+    public static void removeDownloadLabel(String label) {
+        DownloadLabelObjDao dao = sDaoSession.getDownloadLabelObjDao();
+        List<DownloadLabelObj> list = dao.queryBuilder()
+                .where(DownloadLabelObjDao.Properties.Label.eq(label)).list();
+        for (DownloadLabelObj obj : list) {
+            dao.delete(obj);
+        }
+    }
+
+    public static boolean containDownloadLabel(String label) {
+        return sDaoSession.getDownloadLabelObjDao().queryBuilder()
+                .where(DownloadLabelObjDao.Properties.Label.eq(label)).count() != 0;
     }
 }

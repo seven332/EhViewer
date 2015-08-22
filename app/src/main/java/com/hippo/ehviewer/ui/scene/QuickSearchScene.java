@@ -53,6 +53,7 @@ public class QuickSearchScene extends AbsDragSortScene implements Messenger.Rece
         // notify update
         if (mChanged) {
             Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_QUICK_SEARCH, null);
+            mChanged = false;
         }
     }
 

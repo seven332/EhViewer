@@ -69,6 +69,10 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
         mBuilder = builder;
     }
 
+    protected Builder getBuilder() {
+        return mBuilder;
+    }
+
     @Override
     protected void onCreate(boolean rebirth) {
         super.onCreate(rebirth);
@@ -195,6 +199,10 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     protected void onGetFitPaddingBottom(int b) {
         mFitPaddingBottom = b;
         mLayout.setFitPaddingBottom(b);
+    }
+
+    protected FrameLayout getCustomView() {
+        return mCustom;
     }
 
     public ViewGroup getLayout() {
@@ -427,11 +435,15 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
             return this;
         }
 
+        public Class getDialogClass() {
+            return SimpleDialog.class;
+        }
+
         public @NonNull SimpleDialog show(Scene scene) {
             // Avoid memory leak
             mContext = null;
 
-            SimpleDialog dialog = (SimpleDialog) SceneDialog.createSceneDialog(scene, SimpleDialog.class);
+            SimpleDialog dialog = (SimpleDialog) SceneDialog.createSceneDialog(scene, getDialogClass());
             dialog.setBuilder(this);
             dialog.show(new SimpleDialogCurtain(mStartX, mStartY));
 

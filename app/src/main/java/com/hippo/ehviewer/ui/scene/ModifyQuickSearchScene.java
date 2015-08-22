@@ -180,7 +180,7 @@ public class ModifyQuickSearchScene extends AppbarScene implements SearchLayout.
     public void onAction1() {
         RenameHelper helper = new RenameHelper();
         new SimpleDialog.Builder(getStageActivity()).setTitle(R.string.rename)
-                .setCustomView(R.layout.dialog_add_to_quick_search, helper)
+                .setCustomView(R.layout.dialog_edit_text, helper)
                 .setPositiveButton(android.R.string.ok)
                 .setOnButtonClickListener(helper).show(this);
     }

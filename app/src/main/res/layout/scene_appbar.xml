@@ -20,6 +20,7 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/appbar_height"
         android:orientation="horizontal"
@@ -40,6 +41,11 @@
             android:textStyle="bold"
             android:textColor="@android:color/white"
             android:textSize="@dimen/text_medium"/>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
 
     </LinearLayout>
 

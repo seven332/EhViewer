@@ -106,6 +106,8 @@ public class EasyRecyclerView extends RecyclerView {
 
     private boolean mCustomChoice = false;
 
+    private boolean mOutOfCustomChoiceModing = false;
+
     private SparseBooleanArray mTempCheckStates;
 
     private FixCheckedHelper mFixCheckedHelper;
@@ -520,7 +522,8 @@ public class EasyRecyclerView extends RecyclerView {
     }
 
     public void outOfCustomChoiceMode() {
-        if (mChoiceMode == CHOICE_MODE_MULTIPLE_CUSTOM && mCustomChoice) {
+        if (mChoiceMode == CHOICE_MODE_MULTIPLE_CUSTOM && mCustomChoice && !mOutOfCustomChoiceModing) {
+            mOutOfCustomChoiceModing = true;
 
             // Copy mCheckStates
             mTempCheckStates.clear();
@@ -536,6 +539,8 @@ public class EasyRecyclerView extends RecyclerView {
 
             mCustomChoice = false;
             mCustomChoiceListener.onOutOfCustomChoice(this);
+
+            mOutOfCustomChoiceModing = false;
         }
     }
 

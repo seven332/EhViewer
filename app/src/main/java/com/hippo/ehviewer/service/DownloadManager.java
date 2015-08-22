@@ -19,21 +19,24 @@ package com.hippo.ehviewer.service;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.client.data.DownloadInfo;
+import com.hippo.ehviewer.client.data.DownloadLabel;
 import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.ehviewer.gallery.GallerySpider;
 import com.hippo.ehviewer.gallery.ImageHandler;
 import com.hippo.ehviewer.gallery.SpiderQueen;
 import com.hippo.ehviewer.util.DBUtils;
 import com.hippo.ehviewer.util.EhUtils;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -64,6 +67,17 @@ public class DownloadManager {
         return (gid & ~OPS_MASK) | (ops & OPS_MASK);
     }
 
+    public static Comparator<DownloadInfo> TIME_ASC_COMPARATOR = new Comparator<DownloadInfo>() {
+        @Override
+        public int compare(DownloadInfo lhs, DownloadInfo rhs) {
+            return lhs.time > rhs.time ? 1 : lhs.time < rhs.time ? -1 : 0;
+
+
+            //return (int) (lhs.time - rhs.time);
+        }
+    };
+
+
     private List<DownloadInfo> mDownloadInfos;
     private Map<String, List<DownloadInfo>> mDownloadInfoMap;
     private List<DownloadInfo> mDefaultDownloadInfos;
@@ -84,19 +98,75 @@ public class DownloadManager {
         sInstance = new DownloadManager();
     }
 
+    private Messenger.Receiver mReceiver = new Messenger.Receiver() {
+        @Override
+        public void onReceive(int id, Object obj) {
+            AssertUtils.assertInstanceof("Messenger obj must be DownloadLabelOps", obj, DownloadLabelModify.class);
+            DownloadLabelModify modify = (DownloadLabelModify) obj;
+
+            List<DownloadInfo> list;
+            switch (modify.ops) {
+                case DownloadLabelModify.OPS_ADD:
+                    // Add new label download info list
+                    mDownloadInfoMap.put(modify.value, new ArrayList<DownloadInfo>());
+                    // Save label to DB
+                    DBUtils.addDownloadLabel(modify.value);
+                    break;
+                case DownloadLabelModify.OPS_REMOVE:
+                    // Add target label download info to default list
+                    list = mDownloadInfoMap.remove(modify.label.label);
+                    if (list != null) {
+                        // Remove label in download info
+                        for (DownloadInfo info : list) {
+                            info.label = null;
+                            // Update in DB
+                            DBUtils.updateDownloadInfo(info);
+                        }
+                        mDefaultDownloadInfos.addAll(list);
+                        Collections.sort(mDefaultDownloadInfos, TIME_ASC_COMPARATOR);
+                    }
+                    // Remove label from DB
+                    DBUtils.removeDownloadLabel(modify.label.id);
+                    break;
+                case DownloadLabelModify.OPS_MOVE:
+                    // Only need to move in DB
+                    DBUtils.moveDownloadLabel(modify.label.id, modify.label2.id);
+                    break;
+                case DownloadLabelModify.OPS_CHANGE:
+                    list = mDownloadInfoMap.remove(modify.label.label);
+                    if (list != null) {
+                        for (DownloadInfo info : list) {
+                            info.label = modify.value;
+                            // Update in DB
+                            DBUtils.updateDownloadInfo(info);
+                        }
+                        // Use new key
+                        mDownloadInfoMap.put(modify.value, list);
+                    }
+                    // Update in DB
+                    DownloadLabel label = modify.label.clone();
+                    label.label = modify.value;
+                    DBUtils.updateDownloadLabel(label);
+                    break;
+                default:
+                    throw new IllegalStateException("Unknown download label ops");
+            }
+        }
+    };
+
     public static DownloadManager getInstance() {
         return sInstance;
     }
 
     public DownloadManager() {
-        List<String> tags = DBUtils.getAllDownloadTag();
+        List<String> labels = DBUtils.getAllDownloadLabel();
         List<DownloadInfo> downloadInfos = DBUtils.getAllDownloadInfo();
         mDownloadInfos = downloadInfos;
         mDownloadInfoMap = new HashMap<>();
 
-        // Create list for each tag
-        for (String tag : tags) {
-            mDownloadInfoMap.put(tag, new ArrayList<DownloadInfo>());
+        // Create list for each label
+        for (String label : labels) {
+            mDownloadInfoMap.put(label, new ArrayList<DownloadInfo>());
         }
         // Create default for non tag
         mDefaultDownloadInfos = new ArrayList<>();
@@ -109,10 +179,10 @@ public class DownloadManager {
             }
 
             List<DownloadInfo> list;
-            if (TextUtils.isEmpty(info.tag)) {
+            if (TextUtils.isEmpty(info.label)) {
                 list = mDefaultDownloadInfos;
             } else {
-                list = mDownloadInfoMap.get(info.tag);
+                list = mDownloadInfoMap.get(info.label);
             }
 
             if (list == null) {
@@ -126,28 +196,37 @@ public class DownloadManager {
         mSpeedReminder = new SpeedReminder();
         mDownloadSpiderListener = new DownloadSpiderListener();
         mUpdateInfo = new DownloadUpdateInfo();
+
+        Messenger.getInstance().register(Constants.MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_SCENE, mReceiver);
     }
 
     public void setDownloadUpdateListener(@Nullable DownloadUpdateListener listener) {
         mDownloadUpdateListener = listener;
     }
 
-    public List<DownloadInfo> getDownloadList(String tag) {
-        return getDownloadListInternal(tag, false);
+    public List<DownloadInfo> getAllDownloadList() {
+        return mDownloadInfos;
     }
 
-    private List<DownloadInfo> getDownloadListInternal(String tag, boolean create) {
-        if (TextUtils.isEmpty(tag)) {
+    public List<DownloadInfo> getDownloadList(String label) {
+        return getDownloadListInternal(label, false);
+    }
+
+    private List<DownloadInfo> getDownloadListInternal(String label, boolean create) {
+        if (TextUtils.isEmpty(label)) {
             return mDefaultDownloadInfos;
         } else {
-            List<DownloadInfo> list = mDownloadInfoMap.get(tag);
+            List<DownloadInfo> list = mDownloadInfoMap.get(label);
             if (list == null && create) {
                 list = new ArrayList<>();
-                mDownloadInfoMap.put(tag, list);
+                mDownloadInfoMap.put(label, list);
+                // Save label to DB
+                DBUtils.addDownloadLabel(label);
                 // notify
-                Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_DOWNLOAD_TAG, null);
-                // Save tag to DB
-                DBUtils.addDownloadTag(tag);
+                DownloadManager.DownloadLabelModify modify = new DownloadManager.DownloadLabelModify();
+                modify.ops = DownloadManager.DownloadLabelModify.OPS_ADD;
+                modify.value = label;
+                Messenger.getInstance().notify(Constants.MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_MANAGER, modify);
             }
             return list;
         }
@@ -168,8 +247,6 @@ public class DownloadManager {
             // Only one download
             return;
         }
-
-        Log.v(TAG, "ensureDownload");
 
         // get download from wait list
         if (!mWaitList.isEmpty()) {
@@ -241,19 +318,19 @@ public class DownloadManager {
     }
 
     /**
-     * @param tag null for default
+     * @param label null for default
      */
-    public void startDownload(GalleryBase galleryBase, @Nullable String tag) {
+    void startDownload(GalleryBase galleryBase, @Nullable String label) {
         try {
             if (mCurrentTask != null && mCurrentTask.galleryBase.gid == galleryBase.gid) {
-                Log.v(TAG, "It is current task");
+                // It is current task
                 return;
             }
 
             // Check in download list
             for (DownloadInfo info: mDownloadInfos) {
                 if (info.galleryBase.gid == galleryBase.gid) {
-                    Log.v(TAG, "It is in download list");
+                    // It is in download list
                     if (info.state == DownloadInfo.STATE_FINISH || info.state == DownloadInfo.STATE_NONE) {
                         info.state = DownloadInfo.STATE_WAIT;
                         // Add to wait list
@@ -270,15 +347,14 @@ public class DownloadManager {
                 }
             }
 
-            Log.v(TAG, "It is not in download list");
-
             // It is new download info
             DownloadInfo downloadInfo = new DownloadInfo();
             downloadInfo.galleryBase = galleryBase;
-            downloadInfo.tag = tag;
+            downloadInfo.label = label;
             downloadInfo.state = DownloadInfo.STATE_WAIT;
+            downloadInfo.time = System.currentTimeMillis();
 
-            List<DownloadInfo> list = getDownloadListInternal(tag, true);
+            List<DownloadInfo> list = getDownloadListInternal(label, true);
             list.add(downloadInfo);
             mDownloadInfos.add(downloadInfo);
 
@@ -294,7 +370,7 @@ public class DownloadManager {
         }
     }
 
-    public void startAllDownload() {
+    void startAllDownload() {
         for (DownloadInfo info : mDownloadInfos) {
             if (info.state == DownloadInfo.STATE_NONE ||
                     (info.state == DownloadInfo.STATE_FINISH && info.legacy != 0)) {
@@ -468,6 +544,9 @@ public class DownloadManager {
 
             // Release
             releaseCurrent();
+
+            // Continue
+            ensureDownload();
         }
 
         @Override
@@ -593,12 +672,28 @@ public class DownloadManager {
         void onCancel(DownloadUpdateInfo info);
     }
 
-    public class DownloadUpdateInfo {
+    public static class DownloadUpdateInfo {
         public int gid;
         public String title;
         public int pages;
         public int downloadedPages;
         public long speed;
         public int legacy;
+    }
+
+    public static class DownloadLabelModify {
+
+        public static final int OPS_ADD = 0;
+        public static final int OPS_REMOVE = 1;
+        public static final int OPS_MOVE = 2;
+        public static final int OPS_CHANGE = 3;
+
+        public int ops;
+        // for remove and change
+        public DownloadLabel label;
+        // for add and change
+        public String value;
+        // for move
+        public DownloadLabel label2;
     }
 }

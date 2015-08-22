@@ -16,14 +16,20 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.conaco.Conaco;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.EhApplication;
@@ -42,16 +48,33 @@ import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.Scene;
+import com.hippo.widget.FabLayout;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.Messenger;
 
 import java.util.List;
 
 public class DownloadScene extends Scene implements DrawerProvider,
-        EasyRecyclerView.OnItemClickListener, Messenger.Receiver {
+        EasyRecyclerView.OnItemClickListener, Messenger.Receiver, View.OnClickListener,
+        AppbarRecyclerView.Helper {
+
+    private static String LABEL_ALL = null;
+    private static String LABEL_DEFAULT = "";
+
+    private static int INDEX_ALL = 0;
+    private static int INDEX_DEFAULT = 1;
+
+    private static long ANIMATE_TIME = 300l;
 
     private EasyRecyclerView mRecyclerView;
+    private FabLayout mFabLayout;
+    private View mStart;
+    private View mStop;
+    private View mDelete;
+    private View mCheckAll;
+    private View mMainFab;
 
     private DownloadAdapter mAdapter;
 
@@ -59,40 +82,42 @@ public class DownloadScene extends Scene implements DrawerProvider,
 
     private GidPositionMap mGidPositionMap;
 
-    private int mOriginalPaddingBottom;
+    private int mOriginalRecyclerViewPaddingBottom;
+    private int mOriginalFabLayoutPaddingBottom;
 
     private int mLastUpdateSize = -1;
 
     private AppbarRecyclerView mRightDrawerView;
-    private DownloadTagAdapter mDownloadTagAdapter;
-    private List<String> mTags;
+    private DownloadLabelAdapter mDownloadLabelAdapter;
+
+    private List<String> mLabels;
+    private String mActivatedLabel;
+    private int mActivatedLabelPosition;
 
     @Override
     public int getLaunchMode() {
         return LAUNCH_MODE_SINGLE_TOP;
     }
 
-    protected List<String> getTags() {
-        mTags = DBUtils.getAllDownloadTag();
-        mTags.add(0, "Default");
-        mTags.add(0, "All");
-
-        if (mDownloadTagAdapter != null) {
-            mDownloadTagAdapter.notifyDataSetChanged();
-        }
-
-        return mTags;
+    private void initLabels() {
+        Resources resources = getContext().getResources();
+        mLabels = DBUtils.getAllDownloadLabel();
+        mLabels.add(0, resources.getString(R.string.download_tag_default));
+        mLabels.add(0, resources.getString(R.string.download_tag_all));
     }
 
     @Override
     protected void onInit() {
         super.onInit();
 
+
+        mActivatedLabel = LABEL_DEFAULT;
+        mActivatedLabelPosition = INDEX_DEFAULT;
         mDownloadInfos = DownloadManager.getInstance().getDownloadList(null);
         mGidPositionMap = new GidPositionMap();
         Messenger.getInstance().register(Constants.MESSENGER_ID_UPDATE_DOWNLOAD, this);
-
-        mTags = getTags();
+        Messenger.getInstance().register(Constants.MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_SCENE, this);
+        Messenger.getInstance().register(Constants.MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_MANAGER, this);
     }
 
     @Override
@@ -100,6 +125,8 @@ public class DownloadScene extends Scene implements DrawerProvider,
         super.onDie();
 
         Messenger.getInstance().unregister(Constants.MESSENGER_ID_UPDATE_DOWNLOAD, this);
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_SCENE, this);
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_MANAGER, this);
     }
 
     @Override
@@ -109,7 +136,15 @@ public class DownloadScene extends Scene implements DrawerProvider,
 
         ((ContentActivity) getStageActivity()).setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_DOWNLOAD);
 
+        initLabels();
+
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
+        mFabLayout = (FabLayout) findViewById(R.id.fab_layout);
+        mMainFab = mFabLayout.getPrimaryFab();
+        mStart = mFabLayout.getSecondaryFabAt(0);
+        mStop = mFabLayout.getSecondaryFabAt(1);
+        mDelete = mFabLayout.getSecondaryFabAt(2);
+        mCheckAll = mFabLayout.getSecondaryFabAt(3);
 
         mAdapter = new DownloadAdapter();
         mAdapter.setHasStableIds(true);
@@ -120,12 +155,26 @@ public class DownloadScene extends Scene implements DrawerProvider,
         mRecyclerView.setChoiceMode(EasyRecyclerView.CHOICE_MODE_MULTIPLE_CUSTOM);
         mRecyclerView.setCustomCheckedListener(new DownloadChoiceListener());
 
-        mOriginalPaddingBottom = mRecyclerView.getPaddingBottom();
+        mFabLayout.setAutoCancel(false);
+        mFabLayout.setExpanded(false, false);
+        mFabLayout.setVisibility(View.INVISIBLE);
+
+        mMainFab.setOnClickListener(this);
+        mStart.setOnClickListener(this);
+        mStop.setOnClickListener(this);
+        mDelete.setOnClickListener(this);
+        mCheckAll.setOnClickListener(this);
+
+        mOriginalRecyclerViewPaddingBottom = mRecyclerView.getPaddingBottom();
+        mOriginalFabLayoutPaddingBottom = mFabLayout.getPaddingBottom();
 
         mRightDrawerView = new AppbarRecyclerView(getStageActivity());
-        mRightDrawerView.setTitle("TAG");
-        mDownloadTagAdapter = new DownloadTagAdapter();
-        mRightDrawerView.setAdapter(mDownloadTagAdapter);
+        mRightDrawerView.setTitle("TAG"); // TODO hardcode
+        mDownloadLabelAdapter = new DownloadLabelAdapter();
+        mRightDrawerView.setAdapter(mDownloadLabelAdapter);
+        mRightDrawerView.setOnItemClickListener(new DownloadTagClickListener());
+        mRightDrawerView.setPlusVisibility(View.GONE);
+        mRightDrawerView.setHelper(this);
     }
 
     @Override
@@ -149,7 +198,9 @@ public class DownloadScene extends Scene implements DrawerProvider,
         super.onGetFitPaddingBottom(b);
 
         mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerView.getPaddingTop(),
-                mRecyclerView.getPaddingRight(), b + mOriginalPaddingBottom);
+                mRecyclerView.getPaddingRight(), b + mOriginalRecyclerViewPaddingBottom);
+        mFabLayout.setPadding(mFabLayout.getPaddingLeft(), mFabLayout.getPaddingTop(),
+                mFabLayout.getPaddingRight(), b + mOriginalFabLayoutPaddingBottom);
     }
 
     @Override
@@ -261,11 +312,7 @@ public class DownloadScene extends Scene implements DrawerProvider,
                 // Add to cache
                 DownloadInfo info = mDownloadInfos.get(position);
                 mGidPositionMap.add(info.galleryBase.gid, position);
-
-                Intent intent = new Intent(getStageActivity(), DownloadService.class);
-                intent.setAction(DownloadService.ACTION_STOP);
-                intent.putExtra(DownloadService.KEY_GID, info.galleryBase.gid);
-                getStageActivity().startService(intent);
+                DownloadManager.getInstance().stopDownload(info.galleryBase.gid);
             }
         }
     };
@@ -338,29 +385,136 @@ public class DownloadScene extends Scene implements DrawerProvider,
             int ops = DownloadManager.getOps(mix);
             int gid = DownloadManager.getGid(mix);
 
-            if (ops == DownloadManager.OPS_ALL_CHANGE) {
+            if (ops == DownloadManager.OPS_ALL_CHANGE ||
+                    ops == DownloadManager.OPS_REMOVE) {
+                // OPS_REMOVE can't find position by gid, just notifyDataSetChanged
+                mGidPositionMap.clear();
                 mAdapter.notifyDataSetChanged();
                 return;
+            } else if (ops == DownloadManager.OPS_ADD) {
+                // Add break list, need clean gid position map
+                mGidPositionMap.clear();
             }
 
             int position = getPositionForGid(gid);
-            if (position == -1 && mLastUpdateSize != mAdapter.getItemCount()) {
-                // Can't get position, notifyDataSetChanged for safe
-                mAdapter.notifyDataSetChanged();
+            if (position == -1) {
+                if (mLastUpdateSize != mAdapter.getItemCount()) {
+                    // Can't get position, notifyDataSetChanged for safe
+                    mAdapter.notifyDataSetChanged();
+                }
                 return;
             }
 
             if (ops == DownloadManager.OPS_ADD) {
                 mAdapter.notifyItemInserted(position);
-            } else if (ops == DownloadManager.OPS_REMOVE) {
-                mAdapter.notifyItemRemoved(position);
             } else if (ops == DownloadManager.OPS_UPDATE) {
                 RecyclerView.ViewHolder holder = mRecyclerView.findViewHolderForAdapterPosition(position);
                 if (holder != null) {
                     bindHolder((DownloadHolder) holder, mDownloadInfos.get(position));
                 }
             }
+        } else if (id == Constants.MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_SCENE ||
+                id == Constants.MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_MANAGER) {
+            AssertUtils.assertInstanceof("Messenger obj must be DownloadLabelOps", obj, DownloadManager.DownloadLabelModify.class);
+            DownloadManager.DownloadLabelModify modify = (DownloadManager.DownloadLabelModify) obj;
+
+            switch (modify.ops) {
+                case DownloadManager.DownloadLabelModify.OPS_ADD:
+                    mLabels.add(modify.value);
+                    mDownloadLabelAdapter.notifyDataSetChanged();
+                    break;
+                case DownloadManager.DownloadLabelModify.OPS_REMOVE:
+                    mLabels.remove(modify.label.label);
+                    mDownloadLabelAdapter.notifyDataSetChanged();
+
+                    // Update activated info or maybe download info list
+                    if (modify.label.label.equals(mActivatedLabel)) {
+                        // Select default
+                        mActivatedLabel = LABEL_DEFAULT;
+                        mActivatedLabelPosition = INDEX_DEFAULT;
+
+                        mDownloadInfos = DownloadManager.getInstance().getDownloadList(null);
+                        mGidPositionMap.clear();
+                        mAdapter.notifyDataSetChanged();
+                        mRecyclerView.scrollToPosition(0);
+                    }
+                    // TODO
+                    break;
+                case DownloadManager.DownloadLabelModify.OPS_MOVE:
+                    int fromPosition = mLabels.indexOf(modify.label.label);
+                    int toPosition = mLabels.indexOf(modify.label.label);
+                    if (fromPosition >= 0 && toPosition >= 0) {
+                        mLabels.add(toPosition, mLabels.remove(fromPosition));
+                        mDownloadLabelAdapter.notifyDataSetChanged();
+
+                        // Update activated info
+                        if (fromPosition == mActivatedLabelPosition) {
+                            mActivatedLabelPosition = toPosition;
+                        }
+                    }
+                    break;
+                case DownloadManager.DownloadLabelModify.OPS_CHANGE:
+                    int position = mLabels.indexOf(modify.label.label);
+                    if (position >= 0) {
+                        mLabels.set(position, modify.value);
+                        mDownloadLabelAdapter.notifyDataSetChanged();
+
+                        // Update activated info
+                        if (position == mActivatedLabelPosition) {
+                            mActivatedLabel = modify.value;
+                        }
+                    }
+                    break;
+                default:
+                    throw new IllegalStateException("Unknown download label ops");
+            }
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (mMainFab == v) {
+            mRecyclerView.outOfCustomChoiceMode();
+        } else if (mStart == v) {
+            SparseBooleanArray checkedState = mRecyclerView.getCheckedItemPositions();
+            for (int i = 0, n = checkedState.size(); i < n; i++) {
+                if (checkedState.valueAt(i)) {
+                    int position = checkedState.keyAt(i);
+                    DownloadInfo info = mDownloadInfos.get(position);
+                    Intent intent = new Intent(getStageActivity(), DownloadService.class);
+                    intent.setAction(DownloadService.ACTION_START);
+                    intent.putExtra(DownloadService.KEY_GALLERY_BASE, info.galleryBase);
+                    getStageActivity().startService(intent);
+                }
+            }
+        } else if (mStop == v) {
+            DownloadManager manager = DownloadManager.getInstance();
+            SparseBooleanArray checkedState = mRecyclerView.getCheckedItemPositions();
+            for (int i = 0, n = checkedState.size(); i < n; i++) {
+                if (checkedState.valueAt(i)) {
+                    int position = checkedState.keyAt(i);
+                    manager.stopDownload(mDownloadInfos.get(position).galleryBase.gid);
+                }
+            }
+        } else if (mDelete == v) {
+            // TODO
+        } else if (mCheckAll == v) {
+            SparseBooleanArray checkedState = mRecyclerView.getCheckedItemPositions();
+            for (int i = 0, n = mAdapter.getItemCount(); i < n; i++) {
+                if (!checkedState.get(i, false)) {
+                    mRecyclerView.setItemChecked(i, true);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onClickPlusListener() {
+    }
+
+    @Override
+    public void onClickSettingsListener() {
+        startScene(DownloadLabelScene.class);
     }
 
     private class DownloadHolder extends RecyclerView.ViewHolder {
@@ -547,14 +701,42 @@ public class DownloadScene extends Scene implements DrawerProvider,
         }
     }
 
+    public void openFabLayout() {
+        mFabLayout.setVisibility(View.VISIBLE);
+
+        mFabLayout.setExpanded(true);
+        PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", 0f, 1f);
+        PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", 0f, 1f);
+        ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(mMainFab, scaleXPvh, scaleYPvh);
+        oa.setDuration(ANIMATE_TIME);
+        oa.start();
+    }
+
+    public void closeFabLayout() {
+        mFabLayout.setExpanded(false);
+        PropertyValuesHolder scaleXPvh = PropertyValuesHolder.ofFloat("scaleX", 1f, 0f);
+        PropertyValuesHolder scaleYPvh = PropertyValuesHolder.ofFloat("scaleY", 1f, 0f);
+        ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(mMainFab, scaleXPvh, scaleYPvh);
+        oa.setDuration(ANIMATE_TIME);
+        oa.addListener(new SimpleAnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mFabLayout.setVisibility(View.INVISIBLE);
+            }
+        });
+        oa.start();
+    }
+
     public class DownloadChoiceListener implements EasyRecyclerView.CustomChoiceListener {
 
         @Override
         public void onIntoCustomChoice(EasyRecyclerView view) {
+            openFabLayout();
         }
 
         @Override
         public void onOutOfCustomChoice(EasyRecyclerView view) {
+            closeFabLayout();
         }
 
         @Override
@@ -565,6 +747,33 @@ public class DownloadScene extends Scene implements DrawerProvider,
         }
     }
 
+    public class DownloadTagClickListener implements EasyRecyclerView.OnItemClickListener {
+
+        @Override
+        public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
+            if (mActivatedLabelPosition != position) {
+                mActivatedLabelPosition = position;
+
+                if (position == 0) {
+                    mActivatedLabel = LABEL_ALL;
+                    mDownloadInfos = DownloadManager.getInstance().getAllDownloadList();
+                } else if (position == 1) {
+                    mActivatedLabel = LABEL_DEFAULT;
+                    mDownloadInfos = DownloadManager.getInstance().getDownloadList(null);
+                } else {
+                    mActivatedLabel = mLabels.get(position);
+                    mDownloadInfos = DownloadManager.getInstance().getDownloadList(mActivatedLabel);
+                }
+                mGidPositionMap.clear();
+                mAdapter.notifyDataSetChanged();
+
+                mRecyclerView.scrollToPosition(0);
+                ((ContentActivity) getStageActivity()).closeDrawers();
+            }
+            return true;
+        }
+    }
+
     private class SimpleHolder extends RecyclerView.ViewHolder {
 
         public SimpleHolder(View itemView) {
@@ -572,22 +781,22 @@ public class DownloadScene extends Scene implements DrawerProvider,
         }
     }
 
-    public class DownloadTagAdapter extends RecyclerView.Adapter<SimpleHolder> {
+    public class DownloadLabelAdapter extends RecyclerView.Adapter<SimpleHolder> {
 
         @Override
         public SimpleHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new SimpleHolder(getStageActivity().getLayoutInflater().inflate(
-                    R.layout.item_quick_search, parent, false));
+                    R.layout.item_appbar_recycler_view, parent, false));
         }
 
         @Override
         public void onBindViewHolder(SimpleHolder holder, int position) {
-            ((TextView) holder.itemView).setText(mTags.get(position));
+            ((TextView) holder.itemView).setText(mLabels.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return mTags == null ? 0 : mTags.size();
+            return mLabels == null ? 0 : mLabels.size();
         }
     }
 }

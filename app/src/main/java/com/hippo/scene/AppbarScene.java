@@ -28,11 +28,39 @@ import com.hippo.ehviewer.R;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.widget.SimpleImageView;
 
-public class AppbarScene extends Scene {
+import java.util.ArrayList;
+import java.util.List;
 
+public abstract class AppbarScene extends Scene {
+
+    private ViewGroup mAppbar;
     private SimpleImageView mIcon;
     private TextView mTitle;
     private FrameLayout mContent;
+
+    private OnClickActionListener mOnClickActionListener;
+    private List<SimpleImageView> mActions;
+
+    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (mIcon == v) {
+                onIconClick();
+            } else {
+                int index = -1;
+                for (int i = 0, n = mActions.size(); i < n; i++) {
+                    if (mActions.get(i) == v) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                if (index >= 0 && mOnClickActionListener != null) {
+                    mOnClickActionListener.onClickAction(index);
+                }
+            }
+        }
+    };
 
     @Override
     protected void setContentView(int resId) {
@@ -54,17 +82,29 @@ public class AppbarScene extends Scene {
         super.onCreate(rebirth);
         super.setContentView(R.layout.scene_appbar);
 
+        mAppbar = (ViewGroup) super.findViewById(R.id.appbar);
         mIcon = (SimpleImageView) super.findViewById(R.id.appbar_icon);
         mTitle = (TextView) super.findViewById(R.id.appbar_title);
         mContent = (FrameLayout) super.findViewById(R.id.appbar_content);
 
         RippleSalon.addRipple(mIcon, true);
-        mIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onIconClick();
-            }
-        });
+        mIcon.setOnClickListener(mOnClickListener);
+
+        mActions = new ArrayList<>();
+    }
+
+    public void setOnClickActionListener(OnClickActionListener listener) {
+        mOnClickActionListener = listener;
+    }
+
+    public void addAction(@DrawableRes int drawableRes) {
+        int index = mAppbar.getChildCount();
+        getStageActivity().getLayoutInflater().inflate(R.layout.item_appbar_action, mAppbar);
+        SimpleImageView action = (SimpleImageView) mAppbar.getChildAt(index);
+        action.setDrawable(drawableRes);
+        action.setOnClickListener(mOnClickListener);
+        RippleSalon.addRipple(action, true);
+        mActions.add(action);
     }
 
     public void onIconClick() {
@@ -86,5 +126,10 @@ public class AppbarScene extends Scene {
 
     public void setTitle(String title) {
         mTitle.setText(title);
+    }
+
+    public interface OnClickActionListener {
+
+        void onClickAction(int index);
     }
 }

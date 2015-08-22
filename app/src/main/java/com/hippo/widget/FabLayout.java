@@ -48,7 +48,7 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
     private boolean mAutoCancel = true;
     private float mMainFabCenterY = -1f;
 
-    private OnCancelListener mOnCancelListener;
+    private OnExpandListener mOnExpandListener;
 
     public FabLayout(Context context) {
         super(context);
@@ -196,8 +196,8 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
         }
     }
 
-    public void setOnCancelListener(OnCancelListener listener) {
-        mOnCancelListener = listener;
+    public void setOnExpandListener(OnExpandListener listener) {
+        mOnExpandListener = listener;
     }
 
     public void setAutoCancel(boolean autoCancel) {
@@ -258,6 +258,10 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
                     }
                 }
             }
+
+            if (mOnExpandListener != null) {
+                mOnExpandListener.onExpand(expanded);
+            }
         }
     }
 
@@ -314,9 +318,6 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         setExpanded(false);
-        if (mOnCancelListener != null) {
-            mOnCancelListener.onCancel(this);
-        }
     }
 
     @Override
@@ -343,7 +344,7 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
         }
     }
 
-    public interface OnCancelListener {
-        void onCancel(FabLayout fabLayout);
+    public interface OnExpandListener {
+        void onExpand(boolean expanded);
     }
 }

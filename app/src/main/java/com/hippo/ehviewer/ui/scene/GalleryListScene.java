@@ -72,6 +72,7 @@ import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
 import com.hippo.util.AnimationUtils;
 import com.hippo.widget.FabLayout;
+import com.hippo.widget.FloatLabelEditText;
 import com.hippo.widget.FloatingActionButton;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.AssertUtils;
@@ -87,9 +88,8 @@ import java.util.List;
 // TODO disable click action when animating
 // TODO Dim when expand search list
 public final class GalleryListScene extends Scene implements ListSearchBar.Helper,
-        View.OnClickListener, FabLayout.OnCancelListener,
-        SearchLayout.SearhLayoutHelper, EasyRecyclerView.OnItemClickListener,
-        Messenger.Receiver, DrawerProvider, AppbarRecyclerView.Helper {
+        View.OnClickListener, SearchLayout.SearhLayoutHelper, EasyRecyclerView.OnItemClickListener,
+        Messenger.Receiver, DrawerProvider, AppbarRecyclerView.Helper, FabLayout.OnExpandListener {
 
     public static final String KEY_MODE = "mode";
 
@@ -148,6 +148,9 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
     private AppbarRecyclerView mRightDrawerView;
     private QuickSearchAdapter mQuickSearchAdapter;
     private List<QuickSearch> mQuickSearches;
+
+    private boolean mLockLeft = false;
+    private boolean mLockRight = false;
 
     private SimpleDialog.OnCreateCustomViewListener mGoToCreateCustomViewListener =
             new SimpleDialog.OnCreateCustomViewListener() {
@@ -310,7 +313,7 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         mContentRecyclerView.setOnItemClickListener(this);
 
         // Fab Layout
-        mFabLayout.setOnCancelListener(this);
+        mFabLayout.setOnExpandListener(this);
 
         // Secondary Fab
         mRefreshFab.setOnClickListener(this);
@@ -390,12 +393,17 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
 
     @Override
     public boolean showLeftDrawer() {
-        return true;
+        return !mLockLeft;
     }
 
     @Override
     public void bindRightDrawer(ContentActivity activity) {
         activity.setRightDrawerView(mRightDrawerView);
+        if (mLockRight) {
+            activity.lockRightDrawer();
+        } else {
+            activity.unlockRightDrawer();
+        }
     }
 
     private void setFabState(int fabState, boolean animation) {
@@ -531,7 +539,6 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
     public void onBackPressed() {
         if (mFabLayout.isExpanded()) {
             mFabLayout.setExpanded(false);
-            mAddDeleteDrawable.setShape(false, ANIMATE_TIME);
         } else {
             switch (mState) {
                 case STATE_NORMAL:
@@ -557,11 +564,6 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         }
     }
 
-    private void toggleFabLayout() {
-        mFabLayout.toggle();
-        mAddDeleteDrawable.setShape(mFabLayout.isExpanded(), ANIMATE_TIME);
-    }
-
     public void showGoToDialog() {
         int[] center = new int[2];
         ViewUtils.getCenterInAncestor(mGoToFab, center, R.id.stage);
@@ -576,15 +578,15 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
     public void onClick(View v) {
         if (v == mCornerFab) {
             if (mFabState == FAB_STATE_NORMAL) {
-                toggleFabLayout();
+                mFabLayout.toggle();
             } else if (mFabState == FAB_STATE_SEARCH) {
                 onApplySearch(mSearchBar.getText());
             }
         } else if (v == mRefreshFab) {
-            toggleFabLayout();
+            mFabLayout.toggle();
             mGalleryListHelper.refreshWithSameSearch();
         } else if (v == mGoToFab) {
-            toggleFabLayout();
+            mFabLayout.toggle();
             if (mGalleryListHelper.canGoTo()) {
                 showGoToDialog();
             }
@@ -598,7 +600,7 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
                 mode == ListUrlBuilder.MODE_TAG) {
             AddToQuickSearchHelper helper = new AddToQuickSearchHelper(mListUrlBuilder.clone());
             new SimpleDialog.Builder(getStageActivity()).setTitle("Add to quick search") // TODO hardcode
-                    .setCustomView(R.layout.dialog_add_to_quick_search, helper)
+                    .setCustomView(R.layout.dialog_edit_text, helper)
                     .setPositiveButton(android.R.string.ok)
                     .setOnButtonClickListener(helper).show(this);
         } else {
@@ -612,8 +614,20 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
     }
 
     @Override
-    public void onCancel(FabLayout fabLayout) {
-        mAddDeleteDrawable.setAdd(ANIMATE_TIME);
+    public void onExpand(boolean expanded) {
+        ContentActivity contentActivity = (ContentActivity) getStageActivity();
+        if (expanded) {
+            contentActivity.lockLeftDrawer();
+            contentActivity.lockRightDrawer();
+            mLockLeft = true;
+            mLockRight = true;
+        } else {
+            contentActivity.unlockLeftDrawer();
+            contentActivity.unlockRightDrawer();
+            mLockLeft = false;
+            mLockRight = false;
+        }
+        mAddDeleteDrawable.setShape(mFabLayout.isExpanded(), ANIMATE_TIME);
     }
 
     @Override
@@ -818,6 +832,8 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
 
         @Override
         public void onCreateCustomView(final SimpleDialog dialog, View view) {
+            FloatLabelEditText floatLabelEditText = (FloatLabelEditText) view.findViewById(R.id.float_label_edit_text);
+            floatLabelEditText.setHint(getStageActivity().getString(R.string.displayname));
             mEditText = (EditText) view.findViewById(R.id.edit_text);
             mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
@@ -860,7 +876,7 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
             builder.setKeyword(mSearchBar.getText());
             AddToQuickSearchHelper helper = new AddToQuickSearchHelper(builder);
             new SimpleDialog.Builder(getStageActivity()).setTitle("Add to quick search") // TODO hardcode
-                    .setCustomView(R.layout.dialog_add_to_quick_search, helper)
+                    .setCustomView(R.layout.dialog_edit_text, helper)
                     .setPositiveButton(android.R.string.ok)
                     .setOnButtonClickListener(helper).show(this);
         }
@@ -1242,7 +1258,7 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         @Override
         public SimpleHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new SimpleHolder(getStageActivity().getLayoutInflater().inflate(
-                    R.layout.item_quick_search, parent, false));
+                    R.layout.item_appbar_recycler_view, parent, false));
         }
 
         @Override

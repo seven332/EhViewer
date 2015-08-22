@@ -14,22 +14,9 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<com.hippo.widget.FloatLabelEditText
+<com.hippo.widget.SimpleImageView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:auto="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
-    auto:labelAppearance="@style/TextAppearance.FloatLabelEditText.Lable">
-
-    <EditText
-        android:id="@+id/edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/displayname"
-        android:imeOptions="actionDone"
-        android:nextFocusForward="@+id/password"
-        android:inputType="text"/>
-
-</com.hippo.widget.FloatLabelEditText>
+    android:layout_width="@dimen/appbar_height"
+    android:layout_height="@dimen/appbar_height"
+    android:layout_gravity="center_vertical"
+    android:padding="@dimen/appbar_icon_margin"/>

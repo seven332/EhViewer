@@ -26,7 +26,7 @@ public class DownloadInfo {
     public static final int STATE_DOWNLOAD = 0x2;
     public static final int STATE_FINISH = 0x3;
 
-    public String tag;
+    public String label;
     public GalleryBase galleryBase;
     public int state = STATE_NONE;
     // byte/second, -1 for can't get speed now
@@ -38,14 +38,17 @@ public class DownloadInfo {
     // Integer.MAX_VALUE for unknown
     public int legacy = Integer.MAX_VALUE;
 
+    public long time;
+
     public static DownloadInfo fromDownloadInfoObj(DownloadInfoObj obj) {
         GalleryBase galleryBase = DBUtils.getGalleryBase((int) (long) obj.getGid());
         if (galleryBase != null) {
             DownloadInfo downloadInfo = new DownloadInfo();
             downloadInfo.galleryBase = galleryBase;
-            downloadInfo.tag = obj.getTag();
+            downloadInfo.label = obj.getLabel();
             downloadInfo.state = obj.getState();
             downloadInfo.legacy = obj.getLegacy();
+            downloadInfo.time = obj.getTime();
             return downloadInfo;
         } else {
             return null;

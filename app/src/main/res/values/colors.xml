@@ -65,8 +65,10 @@
     <color name="material_light_green_600">#ff7cb342</color>
     <color name="material_yellow_800">#fff9a825</color>
     <color name="material_deep_Orange_400">#ffff7043</color>
+    <color name="material_indigo_300">#ff7986cb</color>
     <color name="material_indigo_500">#ff3f51b5</color>
     <color name="material_indigo_700">#ff303f9f</color>
+    <color name="material_grey_500">#ff9e9e9e</color>
 
     <!-- Text -->
     <color name="primary_text_default_light">#de000000</color>

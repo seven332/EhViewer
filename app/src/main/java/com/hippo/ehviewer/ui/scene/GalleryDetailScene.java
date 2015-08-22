@@ -24,6 +24,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ import com.hippo.ehviewer.client.data.TagGroup;
 import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.ui.ContentActivity;
 import com.hippo.ehviewer.ui.GalleryActivity;
+import com.hippo.ehviewer.util.DBUtils;
 import com.hippo.ehviewer.util.EhUtils;
 import com.hippo.ehviewer.util.Settings;
 import com.hippo.ehviewer.widget.LoadImageView;
@@ -547,6 +549,40 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         }
     }
 
+    private class DownloadLabelHelper implements SimpleDialog.OnClickListener, SimpleDialog.OnCloseListener {
+
+        private String[] mLabels;
+
+        public DownloadLabelHelper() {
+            mLabels = getLabels();
+        }
+
+        private String[] getLabels() {
+            List<String> labels = DBUtils.getAllDownloadLabel();
+            labels.add(0, getContext().getResources().getString(R.string.download_tag_default));
+            return labels.toArray(new String[labels.size()]);
+        }
+
+        @Override
+        public boolean onClick(SimpleDialog dialog, int which) {
+            Intent intent = new Intent(getStageActivity(), DownloadService.class);
+            intent.setAction(DownloadService.ACTION_START);
+            intent.putExtra(DownloadService.KEY_GALLERY_BASE, mGalleryDetail);
+            if (which > 0) {
+                intent.putExtra(DownloadService.KEY_TAG, mLabels[which]);
+            }
+            getStageActivity().startService(intent);
+            dialog.finish();
+            return true;
+        }
+
+        @Override
+        public void onClose(SimpleDialog dialog, boolean cancel) {
+            boolean checked = ((ListViewCheckBoxDialog) dialog).isCheckBoxChecked();
+            Log.d("TAG", "checked = " + checked);
+        }
+    }
+
     @Override
     public void onClick(View v) {
         if (mFailedView == v) {
@@ -559,10 +595,13 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
                 requestGalleryDetail(mGid, mToken);
             }
         } else if (mDownload == v) {
-            Intent intent = new Intent(getStageActivity(), DownloadService.class);
-            intent.setAction(DownloadService.ACTION_START);
-            intent.putExtra(DownloadService.KEY_GALLERY_BASE, mGalleryDetail);
-            getStageActivity().startService(intent);
+            DownloadLabelHelper helper = new DownloadLabelHelper();
+            new ListViewCheckBoxDialog.Builder(getContext())
+                    .setListItems(helper.mLabels, helper)
+                    .setCheckBoxText("Remeber") // TODO hardcode
+                    .setTitle("Choose label") // TODO hardcode
+                    .setOnCloseListener(helper)
+                    .show(this);
         } else if (mRead == v) {
             GalleryBase galleryBase = mGalleryDetail;
             if (galleryBase == null) {
