@@ -32,7 +32,7 @@ public class DownloadInfo {
     // byte/second, -1 for can't get speed now
     public long speed;
     // -1 for unknown
-    public int download = -1;
+    public int download = 0;
     // -1 for unknown
     public int total = -1;
     // Integer.MAX_VALUE for unknown
