@@ -47,7 +47,7 @@ import com.hippo.ehviewer.widget.LoadImageView;
 import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
-import com.hippo.scene.Scene;
+import com.hippo.scene.AppbarScene;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.AssertUtils;
@@ -56,7 +56,7 @@ import com.hippo.yorozuya.Messenger;
 
 import java.util.List;
 
-public class DownloadScene extends Scene implements DrawerProvider,
+public class DownloadScene extends AppbarScene implements DrawerProvider,
         EasyRecyclerView.OnItemClickListener, Messenger.Receiver, View.OnClickListener,
         AppbarRecyclerView.Helper {
 
@@ -129,10 +129,23 @@ public class DownloadScene extends Scene implements DrawerProvider,
         Messenger.getInstance().unregister(Constants.MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_MANAGER, this);
     }
 
+    private void updateTitle() {
+        String label;
+        if (mActivatedLabel == LABEL_ALL) {
+            label = getContext().getResources().getString(R.string.download_tag_all);
+        } else if (mActivatedLabel == LABEL_DEFAULT) {
+            label = getContext().getResources().getString(R.string.download_tag_default);
+        } else {
+            label = mActivatedLabel;
+        }
+        setTitle("Download" + " - " + label); // TODO hardcode
+    }
+
     @Override
     protected void onCreate(boolean rebirth) {
         super.onCreate(rebirth);
         setContentView(R.layout.scene_download);
+        setIcon(getContext().getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         ((ContentActivity) getStageActivity()).setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_DOWNLOAD);
 
@@ -169,13 +182,15 @@ public class DownloadScene extends Scene implements DrawerProvider,
         mOriginalFabLayoutPaddingBottom = mFabLayout.getPaddingBottom();
 
         mRightDrawerView = new AppbarRecyclerView(getStageActivity());
-        mRightDrawerView.setTitle("TAG"); // TODO hardcode
+        mRightDrawerView.setTitle("Label"); // TODO hardcode
         mDownloadLabelAdapter = new DownloadLabelAdapter();
         mRightDrawerView.setAdapter(mDownloadLabelAdapter);
         mRightDrawerView.setOnItemClickListener(new DownloadTagClickListener());
         mRightDrawerView.setPlusVisibility(View.GONE);
         mRightDrawerView.setHelper(this);
         mRightDrawerView.showRecyclerView(false);
+
+        updateTitle();
     }
 
     @Override
@@ -433,6 +448,7 @@ public class DownloadScene extends Scene implements DrawerProvider,
                         // Select default
                         mActivatedLabel = LABEL_DEFAULT;
                         mActivatedLabelPosition = INDEX_DEFAULT;
+                        updateTitle();
 
                         mDownloadInfos = DownloadManager.getInstance().getDownloadList(null);
                         mGidPositionMap.clear();
@@ -463,6 +479,7 @@ public class DownloadScene extends Scene implements DrawerProvider,
                         // Update activated info
                         if (position == mActivatedLabelPosition) {
                             mActivatedLabel = modify.value;
+                            updateTitle();
                         }
                     }
                     break;
@@ -765,6 +782,7 @@ public class DownloadScene extends Scene implements DrawerProvider,
                     mActivatedLabel = mLabels.get(position);
                     mDownloadInfos = DownloadManager.getInstance().getDownloadList(mActivatedLabel);
                 }
+                updateTitle();
                 mGidPositionMap.clear();
                 mAdapter.notifyDataSetChanged();
 
