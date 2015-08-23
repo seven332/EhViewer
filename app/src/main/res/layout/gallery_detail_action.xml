@@ -67,7 +67,7 @@
                 android:layout_marginLeft="16dp"
                 android:gravity="center_horizontal"
                 android:drawablePadding="8dp"
-                android:drawableTop="@drawable/ic_water_pump_theme_primary"/>
+                android:drawableTop="@drawable/ic_water_pump_primary_x48"/>
 
             <TextView
                 android:id="@+id/share"
@@ -77,7 +77,7 @@
                 android:gravity="center_horizontal"
                 android:text="@string/share"
                 android:drawablePadding="8dp"
-                android:drawableTop="@drawable/ic_share_theme_primary"/>
+                android:drawableTop="@drawable/ic_share_primary_x48"/>
 
             <TextView
                 android:id="@+id/rate"
@@ -87,7 +87,7 @@
                 android:gravity="center_horizontal"
                 android:text="@string/rate"
                 android:drawablePadding="8dp"
-                android:drawableTop="@drawable/ic_thumbs_up_down_theme_primary"/>
+                android:drawableTop="@drawable/ic_thumbs_up_down_primary_x48"/>
 
         </LinearLayout>
 

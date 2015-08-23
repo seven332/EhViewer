@@ -61,7 +61,7 @@ public abstract class AbsDragSortScene extends AppbarScene {
         super.onCreate(rebirth);
         setContentView(R.layout.scene_abs_drag_sort_scene);
         setTitle(getTitle());
-        setIcon(R.drawable.ic_arrow_left_dark);
+        setIcon(R.drawable.ic_arrow_left_dark_x24);
 
         Resources resources = getStageActivity().getResources();
 

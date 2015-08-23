@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             auto:color="?attr/colorPrimary"
-            auto:drawable="@drawable/ic_arrow_up_dark"
+            auto:drawable="@drawable/ic_arrow_up_dark_x24"
             auto:forceNoElevation="true"/>
 
         <com.hippo.widget.FloatingActionButton
@@ -68,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             auto:color="?attr/colorPrimary"
-            auto:drawable="@drawable/ic_go_to_dark"
+            auto:drawable="@drawable/ic_go_to_dark_x24"
             auto:forceNoElevation="true"/>
 
         <com.hippo.widget.FloatingActionButton

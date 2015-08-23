@@ -69,7 +69,7 @@ public class ListSearchBar extends SearchBar implements Messenger.Receiver {
     public void setSource(int source) {
         if (mSource != source) {
             Resources resources = getContext().getResources();
-            Drawable searchImage = resources.getDrawable(R.drawable.ic_search);
+            Drawable searchImage = resources.getDrawable(R.drawable.ic_search_x24);
             SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
             ssb.append(String.format(resources.getString(R.string.search_bar_hint),
                     EhUrl.getReadableHost(source)));

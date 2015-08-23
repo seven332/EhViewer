@@ -38,7 +38,7 @@ public final class MainSettingsScene extends PreferenceHeaderScene {
         ((ContentActivity) getStageActivity()).setDrawerListActivatedPosition(ContentActivity.DRAWER_LIST_SETTINGS);
 
         setTitle(R.string.settings);
-        setIcon(R.drawable.ic_arrow_left_dark);
+        setIcon(R.drawable.ic_arrow_left_dark_x24);
 
         setPreferenceHeaders(getPreferenceHeaders());
     }
@@ -46,23 +46,23 @@ public final class MainSettingsScene extends PreferenceHeaderScene {
     private PreferenceHeader[] getPreferenceHeaders() {
         return new PreferenceHeader[] {
                 newPreferenceHeader(
-                        R.drawable.ic_cellphone_android_theme_accent,
+                        R.drawable.ic_cellphone_android_accent_x24,
                         R.string.settings_display,
                         DisplaySettingsScene.class),
                 newPreferenceHeader(
-                        R.drawable.ic_book_open_theme_accent_x24,
+                        R.drawable.ic_book_open_accent_x24,
                         R.string.settings_reading,
                         ReadingSettingsScene.class),
                 newPreferenceHeader(
-                        R.drawable.ic_eh_theme_accent,
+                        R.drawable.ic_eh_accent_x24,
                         R.string.settings_eh,
                         EHSettingsScene.class),
                 newPreferenceHeader(
-                        R.drawable.ic_download_theme_accent,
+                        R.drawable.ic_download_accent_x24,
                         R.string.settings_download,
                         DownloadSettingsScene.class),
                 newPreferenceHeader(
-                        R.drawable.ic_black_mesa_theme_accent,
+                        R.drawable.ic_black_mesa_accent_x24,
                         R.string.settings_advanced,
                         AdvancedSettingsScene.class)
         };

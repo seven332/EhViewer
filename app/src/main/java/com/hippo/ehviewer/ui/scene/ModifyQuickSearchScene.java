@@ -57,7 +57,7 @@ public class ModifyQuickSearchScene extends AppbarScene implements SearchLayout.
     protected void onCreate(boolean rebirth) {
         super.onCreate(rebirth);
         setContentView(R.layout.scene_modify_quick_search);
-        setIcon(R.drawable.ic_arrow_left_dark);
+        setIcon(R.drawable.ic_arrow_left_dark_x24);
 
         Resources resources = getStageActivity().getResources();
 

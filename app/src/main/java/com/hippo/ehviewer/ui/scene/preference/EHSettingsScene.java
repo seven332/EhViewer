@@ -39,7 +39,7 @@ public final class EHSettingsScene extends PreferenceScene implements Preference
         super.onCreate(rebirth);
 
         setTitle(R.string.settings_eh);
-        setIcon(R.drawable.ic_arrow_left_dark);
+        setIcon(R.drawable.ic_arrow_left_dark_x24);
 
         setPreferenceSet(getPreferenceSet());
     }

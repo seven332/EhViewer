@@ -57,7 +57,7 @@ public class CommentScene extends AppbarScene implements EasyRecyclerView.OnItem
 
         setContentView(R.layout.scene_comment);
         setTitle(R.string.comments);
-        setIcon(R.drawable.ic_arrow_left_dark);
+        setIcon(R.drawable.ic_arrow_left_dark_x24);
 
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
 

@@ -14,6 +14,6 @@
   ~ limitations under the License.
   -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_activated="true" android:drawable="@drawable/ic_heart_dark" />
-    <item android:drawable="@drawable/ic_heart" />
+    <item android:state_activated="true" android:drawable="@drawable/ic_heart_dark_x24" />
+    <item android:drawable="@drawable/ic_heart_x24" />
 </selector>

@@ -125,7 +125,7 @@ public class ExcludedLanguagesScene extends AppbarScene implements View.OnClickL
 
         setContentView(R.layout.scene_excluded_languages);
         setTitle(R.string.excluded_languages);
-        setIcon(R.drawable.ic_arrow_left_dark);
+        setIcon(R.drawable.ic_arrow_left_dark_x24);
 
 
         mCancel = findViewById(R.id.cancel);

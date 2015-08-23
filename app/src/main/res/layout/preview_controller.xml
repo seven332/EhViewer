@@ -26,7 +26,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_chevron_left"/>
+        android:src="@drawable/ic_chevron_left_primary_x48"/>
 
     <View
         android:layout_width="1dp"
@@ -55,6 +55,6 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_chevron_right"/>
+        android:src="@drawable/ic_chevron_right_primary_x48"/>
 
 </LinearLayout>

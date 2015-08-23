@@ -43,7 +43,7 @@ public class AdvancedSettingsScene extends PreferenceScene implements
         super.onCreate(rebirth);
 
         setTitle(R.string.settings);
-        setIcon(R.drawable.ic_arrow_left_dark);
+        setIcon(R.drawable.ic_arrow_left_dark_x24);
 
         setPreferenceSet(getPreferenceSet());
     }

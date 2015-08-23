@@ -436,9 +436,9 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
 
         Drawable favoriteDrawable;
         if (gd.isFavored) {
-            favoriteDrawable = resources.getDrawable(R.drawable.ic_heart_theme_primary);
+            favoriteDrawable = resources.getDrawable(R.drawable.ic_heart_primary_x48);
         } else {
-            favoriteDrawable = resources.getDrawable(R.drawable.ic_heart_outline_theme_primary);
+            favoriteDrawable = resources.getDrawable(R.drawable.ic_heart_outline_primary_x48);
         }
         if (favoriteDrawable == null) {
             throw new IllegalStateException("Can't get favorite drawable");

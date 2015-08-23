@@ -42,7 +42,7 @@ public class DownloadSettingsScene extends PreferenceScene implements Preference
         super.onCreate(rebirth);
 
         setTitle(R.string.settings_download);
-        setIcon(R.drawable.ic_arrow_left_dark);
+        setIcon(R.drawable.ic_arrow_left_dark_x24);
 
         setPreferenceSet(getPreferenceSet());
     }

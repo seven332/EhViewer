@@ -324,7 +324,7 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         mCornerFabOriginalBottom = mFabLayout.getPaddingBottom();
         mAddDeleteDrawable = new AddDeleteDrawable(getStageActivity());
         mAddDeleteDrawable.setColor(mResources.getColor(R.color.primary_drawable_dark));
-        mSearchDrawable = mResources.getDrawable(R.drawable.ic_search_dark);
+        mSearchDrawable = mResources.getDrawable(R.drawable.ic_search_dark_x24);
         mCornerFab.setDrawable(mAddDeleteDrawable);
 
         mRightDrawerView = new AppbarRecyclerView(getStageActivity());

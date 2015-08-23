@@ -59,7 +59,7 @@ public class InfoScene extends AppbarScene implements EasyRecyclerView.OnItemLon
 
         setContentView(R.layout.scene_info);
         setTitle(R.string.info);
-        setIcon(R.drawable.ic_arrow_left_dark);
+        setIcon(R.drawable.ic_arrow_left_dark_x24);
 
         Context context = getStageActivity();
         mResources = context.getResources();

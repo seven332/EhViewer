@@ -47,7 +47,7 @@
             android:layout_height="@dimen/appbar_height"
             android:layout_gravity="center_vertical"
             android:padding="@dimen/appbar_icon_margin"
-            android:src="@drawable/ic_settings_dark"/>
+            android:src="@drawable/ic_settings_dark_x24"/>
 
     </LinearLayout>
 

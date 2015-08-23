@@ -52,7 +52,7 @@
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="12dp"
                 android:padding="4dp"
-                android:src="@drawable/ic_help_circle"/>
+                android:src="@drawable/ic_help_circle_x24"/>
 
         </LinearLayout>
 

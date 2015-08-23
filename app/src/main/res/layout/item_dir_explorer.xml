@@ -20,5 +20,5 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:padding="8dp"
-    android:drawableLeft="@drawable/ic_folder"
+    android:drawableLeft="@drawable/ic_folder_x24"
     android:drawablePadding="8dp" />

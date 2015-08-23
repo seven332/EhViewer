@@ -47,9 +47,9 @@ public class RatingView extends View {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        mStarDrawable = context.getResources().getDrawable(R.drawable.ic_star_theme_accent);
-        mStarHalfDrawable = context.getResources().getDrawable(R.drawable.ic_star_half_theme_accent);
-        mStarOutlineDrawable = context.getResources().getDrawable(R.drawable.ic_star_outline_theme_accent);
+        mStarDrawable = context.getResources().getDrawable(R.drawable.ic_star_accent);
+        mStarHalfDrawable = context.getResources().getDrawable(R.drawable.ic_star_half_accent);
+        mStarOutlineDrawable = context.getResources().getDrawable(R.drawable.ic_star_outline_accent);
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RatingView);
         mStarSize = a.getDimension(R.styleable.RatingView_starSize, 10);

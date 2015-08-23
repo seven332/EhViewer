@@ -31,7 +31,7 @@ public class DisplaySettingsScene extends PreferenceScene {
         super.onCreate(rebirth);
 
         setTitle(R.string.settings);
-        setIcon(R.drawable.ic_arrow_left_dark);
+        setIcon(R.drawable.ic_arrow_left_dark_x24);
 
         setPreferenceSet(getPreferenceSet());
     }

@@ -19,13 +19,13 @@
     xmlns:auto="http://schemas.android.com/apk/res-auto"
     tools:targetApi="21"
 
-    auto:width="24dp"
-    auto:height="24dp"
+    auto:width="16dp"
+    auto:height="16dp"
     auto:viewportWidth="24"
     auto:viewportHeight="24"
 
-    android:width="24dp"
-    android:height="24dp"
+    android:width="16dp"
+    android:height="16dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
 

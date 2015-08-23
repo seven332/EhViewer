@@ -14,6 +14,6 @@
   ~ limitations under the License.
   -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_activated="true" android:drawable="@drawable/ic_download_dark" />
-    <item android:drawable="@drawable/ic_download" />
+    <item android:state_activated="true" android:drawable="@drawable/ic_download_dark_x24" />
+    <item android:drawable="@drawable/ic_download_x24" />
 </selector>

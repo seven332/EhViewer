@@ -77,7 +77,7 @@ public class DirPickScene extends AppbarScene implements View.OnClickListener,
 
         setContentView(R.layout.scene_dir_pick);
         setTitle(R.string.dir_pick);
-        setIcon(R.drawable.ic_arrow_left_dark);
+        setIcon(R.drawable.ic_arrow_left_dark_x24);
 
         Announcer announcer = getAnnouncer();
         if (announcer != null) {

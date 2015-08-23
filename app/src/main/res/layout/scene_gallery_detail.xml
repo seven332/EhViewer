@@ -37,10 +37,10 @@
         android:orientation="vertical">
 
         <com.hippo.widget.SimpleImageView
-            android:layout_width="180dp"
-            android:layout_height="180dp"
+            android:layout_width="168dp"
+            android:layout_height="168dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_sad"/>
+            android:src="@drawable/ic_sad_x168"/>
 
         <TextView
             style="@style/TextAppearance.AppCompat.Medium"
