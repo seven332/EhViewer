@@ -67,6 +67,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             auto:color="?attr/colorPrimary"
+            auto:drawable="@drawable/ic_folder_move_dark_x24"
+            auto:forceNoElevation="true"/>
+
+        <com.hippo.widget.FloatingActionButton
+            style="@style/FloatingActionButton.ForceNoElevation.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            auto:color="?attr/colorPrimary"
             auto:drawable="@drawable/ic_check_all_dark_x24"
             auto:forceNoElevation="true"/>
 

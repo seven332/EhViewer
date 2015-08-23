@@ -18,6 +18,7 @@ package com.hippo.scene;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -105,6 +106,10 @@ public abstract class Scene {
      */
     public Context getContext() {
         return getStageActivity();
+    }
+
+    public Resources getResources() {
+        return getStageActivity().getResources();
     }
 
     public int getLaunchMode() {

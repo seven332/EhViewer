@@ -23,11 +23,13 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.conaco.Conaco;
@@ -48,6 +50,7 @@ import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.AppbarScene;
+import com.hippo.scene.SimpleDialog;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
 import com.hippo.yorozuya.AssertUtils;
@@ -73,6 +76,7 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
     private View mStart;
     private View mStop;
     private View mDelete;
+    private View mMove;
     private View mCheckAll;
     private View mMainFab;
 
@@ -157,7 +161,8 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
         mStart = mFabLayout.getSecondaryFabAt(0);
         mStop = mFabLayout.getSecondaryFabAt(1);
         mDelete = mFabLayout.getSecondaryFabAt(2);
-        mCheckAll = mFabLayout.getSecondaryFabAt(3);
+        mMove = mFabLayout.getSecondaryFabAt(3);
+        mCheckAll = mFabLayout.getSecondaryFabAt(4);
 
         mAdapter = new DownloadAdapter();
         mAdapter.setHasStableIds(true);
@@ -176,6 +181,7 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
         mStart.setOnClickListener(this);
         mStop.setOnClickListener(this);
         mDelete.setOnClickListener(this);
+        mMove.setOnClickListener(this);
         mCheckAll.setOnClickListener(this);
 
         mOriginalRecyclerViewPaddingBottom = mRecyclerView.getPaddingBottom();
@@ -191,6 +197,11 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
         mRightDrawerView.showRecyclerView(false);
 
         updateTitle();
+    }
+
+    @Override
+    public void onIconClick() {
+        finish();
     }
 
     @Override
@@ -455,7 +466,6 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
                         mAdapter.notifyDataSetChanged();
                         mRecyclerView.scrollToPosition(0);
                     }
-                    // TODO
                     break;
                 case DownloadManager.DownloadLabelModify.OPS_MOVE:
                     int fromPosition = mLabels.indexOf(modify.label.label);
@@ -489,6 +499,15 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
         }
     }
 
+
+
+
+
+
+
+
+
+
     @Override
     public void onClick(View v) {
         if (mMainFab == v) {
@@ -516,6 +535,30 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
             }
         } else if (mDelete == v) {
             // TODO
+        } else if (mMove == v) {
+            // Get available target label
+            final List<String> labels = DBUtils.getAllDownloadLabel();
+            if (mActivatedLabelPosition > INDEX_DEFAULT) {
+                labels.remove(mActivatedLabelPosition - 2);
+            }
+            if (mActivatedLabelPosition != INDEX_DEFAULT) {
+                labels.add(getResources().getString(R.string.download_tag_default));
+            }
+
+            if (labels.isEmpty()) {
+                Toast.makeText(getContext(), "No available label", Toast.LENGTH_SHORT).show(); // TODO hardcode
+            } else {
+                new SimpleDialog.Builder(getContext()).setTitle("Move to") // TODO hardcode
+                        .setItems(labels.toArray(new String[labels.size()]), new SimpleDialog.OnClickListener() {
+                            @Override
+                            public boolean onClick(SimpleDialog dialog, int which) {
+                                String label = labels.get(which);
+                                Log.d("TAG", "label = " + label);
+                                // TODO
+                                return true;
+                            }
+                        }).show(this);
+            }
         } else if (mCheckAll == v) {
             SparseBooleanArray checkedState = mRecyclerView.getCheckedItemPositions();
             for (int i = 0, n = mAdapter.getItemCount(); i < n; i++) {
