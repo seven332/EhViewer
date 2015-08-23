@@ -19,6 +19,7 @@ package com.hippo.ehviewer.service;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.client.data.DownloadInfo;
@@ -38,11 +39,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+// TODO use SortedList
 public class DownloadManager {
 
     private static final String TAG = DownloadManager.class.getSimpleName();
@@ -71,12 +75,8 @@ public class DownloadManager {
         @Override
         public int compare(DownloadInfo lhs, DownloadInfo rhs) {
             return lhs.time > rhs.time ? 1 : lhs.time < rhs.time ? -1 : 0;
-
-
-            //return (int) (lhs.time - rhs.time);
         }
     };
-
 
     private List<DownloadInfo> mDownloadInfos;
     private Map<String, List<DownloadInfo>> mDownloadInfoMap;
@@ -460,6 +460,63 @@ public class DownloadManager {
 
         // Release
         releaseCurrent();
+    }
+
+    public static boolean isDefaultLabel(String label) {
+        return TextUtils.isEmpty(label);
+    }
+
+    public static boolean labelEquals(String label1, String label2) {
+        if (TextUtils.isEmpty(label1)) {
+            return TextUtils.isEmpty(label2);
+        } else {
+            return label1.equals(label2);
+        }
+    }
+
+    /**
+     * Change label
+     */
+    public void moveDownloadInfo(List<DownloadInfo> list, String label) {
+        // Get the download list to add to
+        List<DownloadInfo> targetList;
+        if (isDefaultLabel(label)) {
+            targetList = mDefaultDownloadInfos;
+        } else {
+            targetList = getDownloadListInternal(label, true);
+        }
+
+        String lastLabel = null;
+        List<DownloadInfo> lastList = null;
+        Set<List<DownloadInfo>> modifiedInfoList = new HashSet<>(1);
+
+        for (DownloadInfo info : list) {
+            List<DownloadInfo> infoList = null;
+            if (labelEquals(info.label, lastLabel)) {
+                infoList = lastList;
+            }
+            if (infoList == null) {
+                infoList = getDownloadListInternal(info.label, false);
+            }
+            if (infoList == null) {
+                Log.e("TAG", "Can't get download info list, label is " + info.label);
+                continue;
+            }
+
+            info.label = label;
+            DBUtils.updateDownloadInfo(info);
+            infoList.remove(info);
+            targetList.add(info);
+
+            lastLabel = info.label;
+            lastList = infoList;
+            modifiedInfoList.add(lastList);
+        }
+
+        // Sort modified info list
+        for (List<DownloadInfo> infoList : modifiedInfoList) {
+            Collections.sort(infoList, TIME_ASC_COMPARATOR);
+        }
     }
 
     public boolean hasWaitingDownloadInfo() {

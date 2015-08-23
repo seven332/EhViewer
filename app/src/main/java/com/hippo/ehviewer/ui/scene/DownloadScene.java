@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +56,7 @@ import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.Messenger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadScene extends AppbarScene implements DrawerProvider,
@@ -499,14 +499,47 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
         }
     }
 
+    private class MoveDownloadInfoListener implements SimpleDialog.OnClickListener {
 
+        private List<String> mLabels;
+        private boolean mHasDefaultLabel;
 
+        public MoveDownloadInfoListener(List<String> labels, boolean hasDefaultLabel) {
+            mLabels = labels;
+            mHasDefaultLabel = hasDefaultLabel;
+        }
 
+        @Override
+        public boolean onClick(SimpleDialog dialog, int which) {
+            // Target label
+            String label;
+            if (mHasDefaultLabel && which == 0) {
+                label = null;
+            } else {
+                label = mLabels.get(which);
+            }
+            // Target download infos
+            List<DownloadInfo> infos = new ArrayList<>();
+            SparseBooleanArray checkedState = mRecyclerView.getCheckedItemPositions();
+            for (int i = 0, n = checkedState.size(); i < n; i++) {
+                if (checkedState.valueAt(i)) {
+                    DownloadInfo info = mDownloadInfos.get(checkedState.keyAt(i));
+                    if (!DownloadManager.labelEquals(info.label, label)) {
+                        infos.add(info);
+                    }
+                }
+            }
 
+            // Must out of choice mode here
+            mRecyclerView.outOfCustomChoiceMode();
 
-
-
-
+            if (!infos.isEmpty()) {
+                DownloadManager.getInstance().moveDownloadInfo(infos, label);
+                mAdapter.notifyDataSetChanged();
+            }
+            return true;
+        }
+    }
 
     @Override
     public void onClick(View v) {
@@ -524,6 +557,8 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
                     getStageActivity().startService(intent);
                 }
             }
+            // Out of choice mode
+            mRecyclerView.outOfCustomChoiceMode();
         } else if (mStop == v) {
             DownloadManager manager = DownloadManager.getInstance();
             SparseBooleanArray checkedState = mRecyclerView.getCheckedItemPositions();
@@ -533,15 +568,19 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
                     manager.stopDownload(mDownloadInfos.get(position).galleryBase.gid);
                 }
             }
+            // Out of choice mode
+            mRecyclerView.outOfCustomChoiceMode();
         } else if (mDelete == v) {
             // TODO
         } else if (mMove == v) {
             // Get available target label
+            boolean hasDefaultLabel = false;
             final List<String> labels = DBUtils.getAllDownloadLabel();
             if (mActivatedLabelPosition > INDEX_DEFAULT) {
                 labels.remove(mActivatedLabelPosition - 2);
             }
             if (mActivatedLabelPosition != INDEX_DEFAULT) {
+                hasDefaultLabel = true;
                 labels.add(getResources().getString(R.string.download_tag_default));
             }
 
@@ -549,15 +588,8 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
                 Toast.makeText(getContext(), "No available label", Toast.LENGTH_SHORT).show(); // TODO hardcode
             } else {
                 new SimpleDialog.Builder(getContext()).setTitle("Move to") // TODO hardcode
-                        .setItems(labels.toArray(new String[labels.size()]), new SimpleDialog.OnClickListener() {
-                            @Override
-                            public boolean onClick(SimpleDialog dialog, int which) {
-                                String label = labels.get(which);
-                                Log.d("TAG", "label = " + label);
-                                // TODO
-                                return true;
-                            }
-                        }).show(this);
+                        .setItems(labels.toArray(new String[labels.size()]),
+                                new MoveDownloadInfoListener(labels, hasDefaultLabel)).show(this);
             }
         } else if (mCheckAll == v) {
             SparseBooleanArray checkedState = mRecyclerView.getCheckedItemPositions();
