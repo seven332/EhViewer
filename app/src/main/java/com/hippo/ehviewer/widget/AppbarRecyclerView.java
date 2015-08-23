@@ -22,9 +22,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.widget.recyclerview.EasyRecyclerView;
@@ -36,7 +38,11 @@ public class AppbarRecyclerView extends LinearLayout implements View.OnClickList
     public TextView mTitle;
     public View mPlus;
     public View mSettings;
+    public ViewGroup mTip;
+    public TextView mTipTextView;
     public EasyRecyclerView mRecyclerView;
+
+    public ViewTransition mViewTransition;
 
     public int mOriginalPaddingBottom;
 
@@ -64,6 +70,8 @@ public class AppbarRecyclerView extends LinearLayout implements View.OnClickList
         mTitle = (TextView) findViewById(R.id.title);
         mPlus = findViewById(R.id.plus);
         mSettings = findViewById(R.id.settings);
+        mTip = (ViewGroup) findViewById(R.id.tip);
+        mTipTextView = (TextView) mTip.findViewById(R.id.text_view);
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
 
         mRecyclerView.setHasFixedSize(true);
@@ -85,6 +93,8 @@ public class AppbarRecyclerView extends LinearLayout implements View.OnClickList
         RippleSalon.addRipple(mSettings, true);
 
         mOriginalPaddingBottom = mRecyclerView.getPaddingBottom();
+
+        mViewTransition = new ViewTransition(mTip, mRecyclerView);
     }
 
     public void setHelper(Helper helper) {
@@ -95,8 +105,20 @@ public class AppbarRecyclerView extends LinearLayout implements View.OnClickList
         mTitle.setText(title);
     }
 
+    public void setTipText(String tipText) {
+        mTipTextView.setText(tipText);
+    }
+
     public void setAdapter(RecyclerView.Adapter adapter) {
         mRecyclerView.setAdapter(adapter);
+    }
+
+    public void showTip(boolean animation) {
+        mViewTransition.showView(0, animation);
+    }
+
+    public void showRecyclerView(boolean animation) {
+        mViewTransition.showView(1, animation);
     }
 
     public void setOnItemClickListener(EasyRecyclerView.OnItemClickListener listener) {

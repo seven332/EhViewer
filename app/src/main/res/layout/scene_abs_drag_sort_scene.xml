@@ -14,16 +14,47 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<com.hippo.widget.recyclerview.EasyRecyclerView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/recycler_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="@dimen/keyline_margin_horizontal"
-    android:paddingRight="@dimen/keyline_margin_horizontal"
-    android:paddingTop="@dimen/keyline_margin_vertical"
-    android:paddingBottom="@dimen/keyline_margin_vertical"
-    android:clipChildren="false"
-    android:clipToPadding="false"
-    android:scrollbarStyle="outsideOverlay"
-    android:scrollbars="vertical"/>
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/tip"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <com.hippo.widget.SimpleImageView
+            android:layout_width="168dp"
+            android:layout_height="168dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_emoticon_neutral_x168"/>
+
+        <TextView
+            android:id="@+id/text_view"
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:paddingTop="@dimen/keyline_margin"
+            android:paddingBottom="@dimen/keyline_margin"/>
+
+    </LinearLayout>
+
+    <com.hippo.widget.recyclerview.EasyRecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/keyline_margin_horizontal"
+        android:paddingRight="@dimen/keyline_margin_horizontal"
+        android:paddingTop="@dimen/keyline_margin_vertical"
+        android:paddingBottom="@dimen/keyline_margin_vertical"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"/>
+
+</FrameLayout>

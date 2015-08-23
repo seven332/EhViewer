@@ -34,6 +34,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
+import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.R;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.AppbarScene;
@@ -46,6 +47,8 @@ import java.util.List;
 
 public abstract class AbsDragSortScene extends AppbarScene {
 
+    private ViewGroup mTip;
+    private TextView mTipTextView;
     private EasyRecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;
@@ -53,6 +56,8 @@ public abstract class AbsDragSortScene extends AppbarScene {
     private RecyclerViewDragDropManager mRecyclerViewDragDropManager;
     private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
+
+    private ViewTransition mViewTransition;
 
     private int mOriginalPaddingBottom;
 
@@ -65,6 +70,8 @@ public abstract class AbsDragSortScene extends AppbarScene {
 
         Resources resources = getStageActivity().getResources();
 
+        mTip = (ViewGroup) findViewById(R.id.tip);
+        mTipTextView = (TextView) mTip.findViewById(R.id.text_view);
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
         mOriginalPaddingBottom = mRecyclerView.getPaddingBottom();
 
@@ -118,11 +125,27 @@ public abstract class AbsDragSortScene extends AppbarScene {
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(mRecyclerView);
         mRecyclerViewSwipeManager.attachRecyclerView(mRecyclerView);
         mRecyclerViewDragDropManager.attachRecyclerView(mRecyclerView);
+
+        mViewTransition = new ViewTransition(mTip, mRecyclerView);
+        if (mWrappedAdapter.getItemCount() == 0) {
+            mViewTransition.showView(0, false);
+        } else {
+            mViewTransition.showView(1, false);
+        }
+    }
+
+    public void setTipText(String text) {
+        mTipTextView.setText(text);
     }
 
     public void notifyDataSetChanged() {
         if (mWrappedAdapter != null) {
             mWrappedAdapter.notifyDataSetChanged();
+            if (mWrappedAdapter.getItemCount() == 0) {
+                mViewTransition.showView(0, true);
+            } else {
+                mViewTransition.showView(1, true);
+            }
         }
     }
 
@@ -311,6 +334,12 @@ public abstract class AbsDragSortScene extends AppbarScene {
                 onRemove(position);
                 mList.remove(position);
                 notifyItemRemoved(position);
+                // Try to show tip
+                if (mWrappedAdapter.getItemCount() == 0) {
+                    mViewTransition.showView(0, true);
+                } else {
+                    mViewTransition.showView(1, true);
+                }
             }
         }
 

@@ -49,6 +49,8 @@ public class DownloadLabelScene extends AbsDragSortScene implements AppbarScene.
     protected void onCreate(boolean rebirth) {
         super.onCreate(rebirth);
 
+        setTipText("No download label"); // TODO hardcode
+
         addAction(R.drawable.ic_plus_dark_x24);
 
         setOnClickActionListener(this);

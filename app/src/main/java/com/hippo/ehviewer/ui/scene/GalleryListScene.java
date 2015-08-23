@@ -334,6 +334,12 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         mRightDrawerView.setAdapter(mQuickSearchAdapter);
         mRightDrawerView.setOnItemClickListener(new QuickSearchClickListener());
         mRightDrawerView.setHelper(this);
+        mRightDrawerView.setTipText("No quick search"); // TODO hardcode
+        if (mQuickSearchAdapter.getItemCount() == 0) {
+            mRightDrawerView.showTip(false);
+        } else {
+            mRightDrawerView.showRecyclerView(false);
+        }
 
         // When scene start
         if (!rebirth) {
@@ -932,6 +938,11 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         } else if (Constants.MESSENGER_ID_UPDATE_QUICK_SEARCH == id) {
             mQuickSearches = DBUtils.getAllQuickSearch();
             mQuickSearchAdapter.notifyDataSetChanged();
+            if (mQuickSearchAdapter.getItemCount() == 0) {
+                mRightDrawerView.showTip(false);
+            } else {
+                mRightDrawerView.showRecyclerView(false);
+            }
         }
     }
 

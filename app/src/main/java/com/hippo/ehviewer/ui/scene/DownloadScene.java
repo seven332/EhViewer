@@ -175,6 +175,7 @@ public class DownloadScene extends Scene implements DrawerProvider,
         mRightDrawerView.setOnItemClickListener(new DownloadTagClickListener());
         mRightDrawerView.setPlusVisibility(View.GONE);
         mRightDrawerView.setHelper(this);
+        mRightDrawerView.showRecyclerView(false);
     }
 
     @Override

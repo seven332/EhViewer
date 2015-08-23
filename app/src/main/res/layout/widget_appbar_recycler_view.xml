@@ -66,6 +66,31 @@
             android:layout_height="4dp"
             android:background="@drawable/drop_shadow"/>
 
+        <LinearLayout
+            android:id="@+id/tip"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <com.hippo.widget.SimpleImageView
+                android:layout_width="168dp"
+                android:layout_height="168dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_emoticon_neutral_x168"/>
+
+            <TextView
+                android:id="@+id/text_view"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:paddingTop="@dimen/keyline_margin"
+                android:paddingBottom="@dimen/keyline_margin"/>
+
+        </LinearLayout>
+
         <com.hippo.widget.recyclerview.EasyRecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"

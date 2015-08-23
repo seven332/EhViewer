@@ -47,6 +47,13 @@ public class QuickSearchScene extends AbsDragSortScene implements Messenger.Rece
     }
 
     @Override
+    protected void onCreate(boolean rebirth) {
+        super.onCreate(rebirth);
+
+        setTipText("No quick search"); // TODO hardcode
+    }
+
+    @Override
     protected void onDestroy(boolean die) {
         super.onDestroy(die);
 
