@@ -113,6 +113,10 @@ public class AppbarRecyclerView extends LinearLayout implements View.OnClickList
         mRecyclerView.setAdapter(adapter);
     }
 
+    public void addOnChildAttachStateChangeListener(RecyclerView.OnChildAttachStateChangeListener listener) {
+        mRecyclerView.addOnChildAttachStateChangeListener(listener);
+    }
+
     public void showTip(boolean animation) {
         mViewTransition.showView(0, animation);
     }
@@ -123,6 +127,14 @@ public class AppbarRecyclerView extends LinearLayout implements View.OnClickList
 
     public void setOnItemClickListener(EasyRecyclerView.OnItemClickListener listener) {
         mRecyclerView.setOnItemClickListener(listener);
+    }
+
+    public int getChildAdapterPosition(View view) {
+        return mRecyclerView.getChildAdapterPosition(view);
+    }
+
+    public EasyRecyclerView getRecyclerView() {
+        return mRecyclerView;
     }
 
     public void setFitPaddingBottom(int fitPaddingBottom) {

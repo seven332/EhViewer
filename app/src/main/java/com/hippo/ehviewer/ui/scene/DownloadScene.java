@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -200,6 +199,7 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
         mRightDrawerView.setPlusVisibility(View.GONE);
         mRightDrawerView.setHelper(this);
         mRightDrawerView.showRecyclerView(false);
+        mRightDrawerView.addOnChildAttachStateChangeListener(new DownloadLabelStateChangeListener());
 
         updateTitle();
 
@@ -372,22 +372,15 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
 
         @Override
         public void onClick(View v) {
-
-            Log.d("TAG", "mDeleteListener 1");
-
             if (mRecyclerView.inCustomChoice()) {
                 return;
             }
-
-            Log.d("TAG", "mDeleteListener 2");
 
             int position = getAdapterPosition(v);
             if (position >= 0) {
                 // Add to cache
                 DownloadInfo info = mDownloadInfos.get(position);
                 mGidPositionMap.add(info.galleryBase.gid, position);
-
-                Log.d("TAG", "mDeleteListener 3");
 
                 // Delete
                 DownloadManager.getInstance().deleteDownloadInfo(info);
@@ -413,6 +406,20 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
         }
 
         return position;
+    }
+
+    private void updateActivated() {
+        EasyRecyclerView recyclerView = mRightDrawerView.getRecyclerView();
+
+        for (int i = 0, n = recyclerView.getChildCount(); i < n; i++) {
+            View view = recyclerView.getChildAt(i);
+            int position = recyclerView.getChildAdapterPosition(view);
+            if (mActivatedLabelPosition >= 0 && mActivatedLabelPosition == position) {
+                view.setActivated(true);
+            } else {
+                view.setActivated(false);
+            }
+        }
     }
 
     @Override
@@ -487,6 +494,7 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
                         mActivatedLabel = LABEL_DEFAULT;
                         mActivatedLabelPosition = INDEX_DEFAULT;
                         updateTitle();
+                        updateActivated();
 
                         mDownloadInfos = DownloadManager.getInstance().getDownloadList(null);
                         mGidPositionMap.clear();
@@ -511,6 +519,7 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
                         // Update activated info
                         if (fromPosition == mActivatedLabelPosition) {
                             mActivatedLabelPosition = toPosition;
+                            updateActivated();
                         }
                     }
                     break;
@@ -914,6 +923,7 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
                     mDownloadInfos = DownloadManager.getInstance().getDownloadList(mActivatedLabel);
                 }
                 updateTitle();
+                updateActivated();
                 mGidPositionMap.clear();
                 mAdapter.notifyDataSetChanged();
 
@@ -954,6 +964,24 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
         @Override
         public int getItemCount() {
             return mLabels == null ? 0 : mLabels.size();
+        }
+    }
+
+    public class DownloadLabelStateChangeListener implements RecyclerView.OnChildAttachStateChangeListener {
+
+        @Override
+        public void onChildViewAttachedToWindow(View view) {
+            int position = mRightDrawerView.getChildAdapterPosition(view);
+            if (position == mActivatedLabelPosition) {
+                view.setActivated(true);
+            } else {
+                view.setActivated(false);
+            }
+        }
+
+        @Override
+        public void onChildViewDetachedFromWindow(View view) {
+
         }
     }
 }

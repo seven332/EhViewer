@@ -110,8 +110,6 @@ public class EasyRecyclerView extends RecyclerView {
 
     private SparseBooleanArray mTempCheckStates;
 
-    private FixCheckedHelper mFixCheckedHelper;
-
     /**
      * Running count of how many items are currently checked
      */
@@ -415,6 +413,18 @@ public class EasyRecyclerView extends RecyclerView {
         }
     }
 
+    @Override
+    public void onChildAttachedToWindow(View child) {
+        super.onChildAttachedToWindow(child);
+
+        if (mCheckStates != null) {
+            int position = getChildAdapterPosition(child);
+            if (position >= 0) {
+                setViewChecked(child, mCheckStates.get(position));
+            }
+        }
+    }
+
     /**
      * Returns the number of items currently selected. This will only be valid
      * if the choice mode is not {@link #CHOICE_MODE_NONE} (default).
@@ -675,10 +685,6 @@ public class EasyRecyclerView extends RecyclerView {
             }
             if (mCheckedIdStates == null && mAdapter != null && mAdapter.hasStableIds()) {
                 mCheckedIdStates = new LongSparseArray<>(0);
-            }
-            if (mFixCheckedHelper == null) {
-                mFixCheckedHelper = new FixCheckedHelper();
-                addOnChildAttachStateChangeListener(mFixCheckedHelper);
             }
             // Modal multi-choice mode only has choices when the mode is active. Clear them.
             if (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL) {
@@ -1350,22 +1356,6 @@ public class EasyRecyclerView extends RecyclerView {
          * @return true if need draw selector, false otherwise
          */
         boolean beforeDrawSelector(int position);
-    }
-
-    public class FixCheckedHelper implements OnChildAttachStateChangeListener {
-
-        @Override
-        public void onChildViewAttachedToWindow(View view) {
-            int position = getChildAdapterPosition(view);
-            if (position >= 0) {
-                setViewChecked(view, mCheckStates.get(position));
-            }
-        }
-
-        @Override
-        public void onChildViewDetachedFromWindow(View view) {
-
-        }
     }
 
     /**

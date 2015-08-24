@@ -14,14 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
-    android:minHeight="48dp"
-    android:textColor="@color/appbar_recycler_view_item_text"
-    android:textSize="@dimen/text_little_small"
-    android:background="@drawable/appbar_recycler_view_item_background"/>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_activated="true" android:color="@color/primary_text_default_dark"/>
+    <item android:color="@color/secondary_text_default_light"/>
+</selector>
