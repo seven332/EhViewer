@@ -18,7 +18,6 @@ package com.hippo.ehviewer.gallery;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.webkit.MimeTypeMap;
@@ -46,7 +45,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 
 public class ImageHandler {
 
@@ -58,12 +56,10 @@ public class ImageHandler {
 
     private static SimpleDiskCache sDiskCache;
 
+    private int mPages;
     private GalleryBase mGalleryBase;
-    private UniFile mDownloadDirParent;
-    private String mDownloadDirname;
-    private @Nullable UniFile mDownloadDir;
+    private GalleryDir mGalleryDir;
     private volatile Mode mMode;
-    private AtomicReferenceArray<String> mFilenames;
     private BitmapPool mBitmapPool = new BitmapPool();
 
     public enum Mode {
@@ -75,54 +71,25 @@ public class ImageHandler {
         sDiskCache = diskCache;
     }
 
-    ImageHandler(GalleryBase galleryBase, int pages, Mode mode, UniFile downloadDirParent, String downloadDirname) {
+    ImageHandler(GalleryBase galleryBase, int pages, Mode mode, GalleryDir galleryDir) {
         mGalleryBase = galleryBase;
         mMode = mode;
-        mFilenames = new AtomicReferenceArray<>(pages);
-        mDownloadDirParent = downloadDirParent;
-        mDownloadDirname = downloadDirname;
-
+        mGalleryDir = galleryDir;
+        mPages = pages;
         if (mode == Mode.DOWNLOAD) {
-            mDownloadDir = mDownloadDirParent.createDirectory(mDownloadDirname);
+            mGalleryDir.ensureUniFile();
+            mGalleryDir.ensureFilenames(pages);
         }
     }
 
     public void setMode(Mode mode) {
         if (mMode != mode) {
             mMode = mode;
-            mDownloadDir = mDownloadDirParent.createDirectory(mDownloadDirname);
-        }
-        // Let DownloadManager to set spiderObj's download to true
-    }
-
-    private static String getImageFilename(int index, String extension) {
-        return String.format("%08d.%s", index + 1, extension);
-    }
-
-    private String guessImageFilename(int index) {
-        if (mDownloadDir == null) {
-            return null;
-        }
-
-        for (String extension : POSSIBLE_IMAGE_EXTENSIONS) {
-            String filename = getImageFilename(index, extension);
-            if (mDownloadDir.findFile(filename) != null) {
-                return filename;
+            if (mode == Mode.DOWNLOAD) {
+                mGalleryDir.ensureUniFile();
+                mGalleryDir.ensureFilenames(mPages);
             }
         }
-        return null;
-    }
-
-    private @Nullable String getImageFilename(int index) {
-        String filename = mFilenames.get(index);
-        if (filename == null) {
-            filename = guessImageFilename(index);
-            if (filename != null) {
-                // Put filename into array
-                mFilenames.lazySet(index, filename);
-            }
-        }
-        return filename;
     }
 
     private InputStreamPipe getReadInputStreamPipe(int index) {
@@ -130,12 +97,8 @@ public class ImageHandler {
         return sDiskCache.getInputStreamPipe(key);
     }
 
-    private InputStreamPipe getDownloadInputStreamPipe(String filename) {
-        if (mDownloadDir == null) {
-            return null;
-        }
-
-        UniFile uniFile = mDownloadDir.findFile(filename);
+    private InputStreamPipe getDownloadInputStreamPipe(int index) {
+        UniFile uniFile = mGalleryDir.getImageFile(index);
         if (uniFile != null) {
             return new UniFileInputStreamPipe(uniFile);
         } else {
@@ -148,12 +111,8 @@ public class ImageHandler {
         return sDiskCache.getOutputStreamPipe(key);
     }
 
-    private OutputStreamPipe getDownloadOutputStreamPipe(String filename) {
-        if (mDownloadDir == null) {
-            return null;
-        }
-
-        UniFile uniFile = mDownloadDir.createFile(filename);
+    private OutputStreamPipe getDownloadOutputStreamPipe(int index) {
+        UniFile uniFile = mGalleryDir.getImageFile(index);
         if (uniFile != null) {
             return new UniFileOutputStreamPipe(uniFile);
         } else {
@@ -171,23 +130,14 @@ public class ImageHandler {
     }
 
     private boolean containFromDownload(int index) {
-        if (index >= mFilenames.length()) {
+        if (index >= mPages) {
             return false;
         }
 
-        String filename = mFilenames.get(index);
-        if (filename != null) {
-            // Check it in dir
-            if (mDownloadDir != null && mDownloadDir.findFile(filename) != null) {
-                return true;
-            }
-        } else {
-            filename = guessImageFilename(index);
-            if (filename != null) {
-                // Put filename into array
-                mFilenames.lazySet(index, filename);
-                return true;
-            }
+        // Check it in download dir
+        UniFile uniFile = mGalleryDir.findImageFile(index);
+        if (uniFile != null) {
+            return true;
         }
 
         // Try to find image in cache
@@ -196,10 +146,8 @@ public class ImageHandler {
             return false;
         }
 
-        if (mDownloadDir == null) {
-            // Can't get download dir
-            return false;
-        }
+        // Try to get filename
+        String filename = mGalleryDir.getImageFilename(index);
 
         // Copy image from cache to dir
         OutputStream os = null;
@@ -218,12 +166,12 @@ public class ImageHandler {
                     // Can't get extension;
                     return false;
                 }
-                filename = getImageFilename(index, extension);
+                filename = GalleryDir.generateImageFilename(index, extension);
                 // Put filename into array
-                mFilenames.lazySet(index, filename);
+                mGalleryDir.putImageFilename(filename, index);
             }
 
-            UniFile file = mDownloadDir.createFile(filename);
+            UniFile file = mGalleryDir.createUniFile(filename);
             if (file == null) {
                 return false;
             }
@@ -255,16 +203,10 @@ public class ImageHandler {
     }
 
     public void removeFromDownload(int index) {
-        if (mDownloadDir == null) {
-            return;
-        }
+        UniFile file = mGalleryDir.findImageFile(index);
 
-        for (String extension : POSSIBLE_IMAGE_EXTENSIONS) {
-            String filename = getImageFilename(index, extension);
-            UniFile file = mDownloadDir.findFile(filename);
-            if (file != null) {
-                file.delete();
-            }
+        if (file != null) {
+            file.delete();
         }
     }
 
@@ -280,8 +222,11 @@ public class ImageHandler {
 
         if (mMode == Mode.READ) {
             osPipe = getReadOutputStreamPipe(index);
-        } else if (mMode == Mode.DOWNLOAD && mDownloadDir == null) {
-            return;
+        } else if (mMode == Mode.DOWNLOAD) {
+            mGalleryDir.ensureUniFile();
+            if (mGalleryDir.getDir() == null) {
+                return;
+            }
         }
 
         if (helper.mCancel) {
@@ -298,8 +243,8 @@ public class ImageHandler {
             request.setOSPipe(osPipe);
         } else if (mMode == Mode.DOWNLOAD) {
             // Let download listener to fix filename
-            request.setFilename(getImageFilename(index, "jpg"));
-            request.setDir(mDownloadDir);
+            request.setFilename(GalleryDir.generateImageFilename(index, "jpg"));
+            request.setDir(mGalleryDir.getDir());
         }
 
         request.setListener(downloadListener);
@@ -307,18 +252,7 @@ public class ImageHandler {
 
         if (downloadListener.mException != null) {
             // Remove failed stuff
-            if (mMode == Mode.READ) {
-                sDiskCache.remove(EhCacheKeyFactory.getImageKey(mGalleryBase.gid, index));
-            } else if (mMode == Mode.DOWNLOAD) {
-                String filename = getImageFilename(index);
-                if (filename != null) {
-                    UniFile file = mDownloadDir.findFile(filename);
-                    if (file != null) {
-                        file.delete();
-                    }
-                }
-            }
-
+            remove(index);
             throw downloadListener.mException;
         }
     }
@@ -343,7 +277,7 @@ public class ImageHandler {
             } else {
                 filename = FileUtils.getNameFromFilename(oldFilename) + '.' + newExtension;
             }
-            mFilenames.lazySet(mIndex, filename);
+            mGalleryDir.putImageFilename(filename, mIndex);
             return filename;
         }
 
@@ -371,10 +305,7 @@ public class ImageHandler {
         if (mMode == Mode.READ) {
             isPipe = getReadInputStreamPipe(index);
         } else if (mMode == Mode.DOWNLOAD) {
-            String filename = getImageFilename(index);
-            if (filename != null) {
-                isPipe = getDownloadInputStreamPipe(filename);
-            }
+            isPipe = getDownloadInputStreamPipe(index);
         }
 
         if (isPipe == null) {
@@ -418,10 +349,7 @@ public class ImageHandler {
                         isPipe.close();
                         is = new TempFileInputStream(tempFile);
                     } else if (mMode == Mode.DOWNLOAD) {
-                        if (mDownloadDir == null) {
-                            throw new IOException("Can't find download dir");
-                        }
-                        UniFile uniFile = mDownloadDir.findFile(getImageFilename(index));
+                        UniFile uniFile = mGalleryDir.findImageFile(index);
                         if (uniFile == null) {
                             throw new IOException("Can't find image file");
                         }

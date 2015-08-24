@@ -22,10 +22,6 @@ import android.os.Process;
 import com.hippo.ehviewer.client.data.GalleryBase;
 import com.hippo.ehviewer.network.EhHttpClient;
 import com.hippo.ehviewer.util.DBUtils;
-import com.hippo.ehviewer.util.EhUtils;
-import com.hippo.ehviewer.util.Settings;
-import com.hippo.unifile.UniFile;
-import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.OSUtils;
 import com.hippo.yorozuya.PriorityThreadFactory;
 import com.hippo.yorozuya.SafeSparseArray;
@@ -48,8 +44,6 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
 
     private ImageHandler.Mode mMode;
     private GalleryBase mGalleryBase;
-    private UniFile mDownloadDirParent;
-    private String mDownloadDirname;
     private ThreadFactory mThreadFactory = new PriorityThreadFactory("SpiderQueen",
             Process.THREAD_PRIORITY_BACKGROUND);
     private SpiderQueen mSpiderQueen;
@@ -96,25 +90,9 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
         }
     }
 
-    private static String downloadDirname(GalleryBase galleryBase) {
-        return FileUtils.ensureFilename(galleryBase.gid + "-" + EhUtils.getSuitableTitle(galleryBase));
-    }
-
     private GallerySpider(GalleryBase galleryBase, ImageHandler.Mode mode) throws IOException {
         mGalleryBase = galleryBase;
         mMode = mode;
-
-        // TODO let imagehandler handle download dir
-        mDownloadDirname = DBUtils.getDirname(galleryBase.gid);
-        if (mDownloadDirname == null) {
-            mDownloadDirname = downloadDirname(galleryBase);
-            DBUtils.addDirname(galleryBase, mDownloadDirname);
-        }
-
-        mDownloadDirParent = Settings.getImageDownloadLocation();
-        if (mDownloadDirParent == null) {
-            throw new IOException("Can't get download dir");
-        }
     }
 
     public void setMode(ImageHandler.Mode mode) {
@@ -132,7 +110,7 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
 
         if (mSpiderQueen == null) {
             mSpiderQueen = new SpiderQueen(sHttpClient, sSpiderInfoDir,
-                    mGalleryBase, mMode, mDownloadDirParent, mDownloadDirname, this);
+                    mGalleryBase, mMode, new GalleryDir(mGalleryBase), this);
             mThreadFactory.newThread(mSpiderQueen).start();
         }
     }

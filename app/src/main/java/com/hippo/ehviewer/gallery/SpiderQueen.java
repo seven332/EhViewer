@@ -18,7 +18,6 @@ package com.hippo.ehviewer.gallery;
 
 import android.graphics.Bitmap;
 import android.os.Process;
-import android.util.Log;
 
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhUrl;
@@ -68,8 +67,7 @@ public class SpiderQueen implements Runnable {
     public EhHttpClient mHttpClient;
     public File mSpiderInfoDir;
     public GalleryBase mGalleryBase;
-    private UniFile mDownloadDirparent;
-    private String mDownloadDirname;
+    public GalleryDir mGalleryDir;
     public ImageHandler mImageHandler;
     public int mSource;
     private ImageHandler.Mode mMode;
@@ -108,14 +106,13 @@ public class SpiderQueen implements Runnable {
     private final Object mGetSizeLock = new Object();
 
     public SpiderQueen(EhHttpClient httpClient, File spiderInfoDir,
-            GalleryBase galleryBase, ImageHandler.Mode mode, UniFile downloadDirParent,
-            String downloadDirname, SpiderListener listener) {
+            GalleryBase galleryBase, ImageHandler.Mode mode, GalleryDir galleryDir,
+            SpiderListener listener) {
         mHttpClient = httpClient;
         mSpiderInfoDir = spiderInfoDir;
         mGalleryBase = galleryBase;
         mMode = mode;
-        mDownloadDirparent = downloadDirParent;
-        mDownloadDirname = downloadDirname;
+        mGalleryDir = galleryDir;
         mSpiderListener = listener;
 
         mSource = Settings.getEhSource();
@@ -278,14 +275,10 @@ public class SpiderQueen implements Runnable {
 
     private SpiderInfo readSpiderInfoFromDownloadDir() {
         if (mMode == ImageHandler.Mode.DOWNLOAD) {
-            UniFile dir = mDownloadDirparent.findFile(mDownloadDirname);
-            if (dir == null || !dir.isDirectory()) {
-                // Can't get download dir
-                return null;
-            }
+            mGalleryDir.ensureUniFile();
 
             SpiderInfo spiderInfo;
-            UniFile file = dir.findFile(SPIDER_FILENAME);
+            UniFile file = mGalleryDir.findUniFile(SPIDER_FILENAME);
             if (file == null) {
                 return null;
             }
@@ -322,22 +315,12 @@ public class SpiderQueen implements Runnable {
     }
 
     private void writeSpiderInfoToDownloadDir(SpiderInfo spiderInfo) {
-
-        Log.d("TAG", "writeSpiderInfoToDownloadDir");
-
         if (mMode == ImageHandler.Mode.DOWNLOAD) {
-            UniFile dir = mDownloadDirparent.findFile(mDownloadDirname);
-            if (dir == null || !dir.isDirectory()) {
-                // Can't get download dir
-                return;
-            }
+            mGalleryDir.ensureUniFile();
 
             OutputStream os = null;
             try {
-
-                Log.d("TAG", "do writeSpiderInfoToDownloadDir");
-
-                UniFile file = dir.findFile(SPIDER_FILENAME);
+                UniFile file = mGalleryDir.createUniFile(SPIDER_FILENAME);
                 if (file != null) {
                     os = file.openOutputStream();
                     spiderInfo.write(os);
@@ -578,7 +561,7 @@ public class SpiderQueen implements Runnable {
             mPageStates[i] = PAGE_STATE_NONE;
         }
         mSpiderWorkers = new SpiderWorker[3];
-        mImageHandler = new ImageHandler(gb, spiderInfo.pages, mMode, mDownloadDirparent, mDownloadDirname);
+        mImageHandler = new ImageHandler(gb, spiderInfo.pages, mMode, mGalleryDir);
         // Check stop
         if (mStop) {
             return;
