@@ -162,8 +162,9 @@ public abstract class AbsDragSortScene extends AppbarScene {
     }
 
     @Override
-    protected void onDestroy(boolean die) {
-        // TODO onClose
+    protected void onDetachFromeStage() {
+        super.onDetachFromeStage();
+
         if (mRecyclerViewDragDropManager != null) {
             mRecyclerViewDragDropManager.release();
             mRecyclerViewDragDropManager = null;
@@ -191,8 +192,6 @@ public abstract class AbsDragSortScene extends AppbarScene {
         }
         mAdapter = null;
         mLayoutManager = null;
-
-        super.onDestroy(die);
     }
 
     protected abstract String getTitle();

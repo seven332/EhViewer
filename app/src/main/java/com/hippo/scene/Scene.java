@@ -429,10 +429,17 @@ public abstract class Scene {
         return getStageActivity().getStageLayout();
     }
 
+    protected void onAttachToStage() {
+    }
+
+    protected void onDetachFromeStage() {
+    }
+
     // Add scene view to stage layout
     void attachToStage() {
         if (mSceneView != null && !isInStage()) {
             doAttachToStage();
+            onAttachToStage();
         }
     }
 
@@ -440,6 +447,7 @@ public abstract class Scene {
     void detachFromeStage() {
         if (mSceneView != null && isInStage()) {
             doDetachFromeStage();
+            onDetachFromeStage();
         }
     }
 

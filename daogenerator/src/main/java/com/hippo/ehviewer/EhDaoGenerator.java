@@ -39,7 +39,7 @@ public class EhDaoGenerator {
         addDownloadInfo(schema);
         addDownloadLabel(schema);
         addDirname(schema);
-        addReadInfo(schema);
+        addHisroty(schema);
         new DaoGenerator().generateAll(schema, OUT_DIR);
     }
 
@@ -90,14 +90,17 @@ public class EhDaoGenerator {
     }
 
     public static void addDirname(Schema schema) {
-        Entity spider = schema.addEntity("DirnameObj");
-        spider.setTableName("DIRNAME");
-        spider.addLongProperty("gid").primaryKey();
-        spider.addStringProperty("dirname");
-        spider.addLongProperty("time");
+        Entity entity = schema.addEntity("DirnameObj");
+        entity.setTableName("DIRNAME");
+        entity.addLongProperty("gid").primaryKey();
+        entity.addStringProperty("dirname");
+        entity.addLongProperty("time");
     }
 
-    public static void addReadInfo(Schema schema) {
-
+    public static void addHisroty(Schema schema) {
+        Entity entity = schema.addEntity("HistoryObj");
+        entity.setTableName("HISTORY");
+        entity.addLongProperty("gid").primaryKey();
+        entity.addLongProperty("time");
     }
 }

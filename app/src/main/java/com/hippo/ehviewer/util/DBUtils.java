@@ -35,6 +35,8 @@ import com.hippo.ehviewer.dao.DownloadLabelObj;
 import com.hippo.ehviewer.dao.DownloadLabelObjDao;
 import com.hippo.ehviewer.dao.GalleryBaseObj;
 import com.hippo.ehviewer.dao.GalleryBaseObjDao;
+import com.hippo.ehviewer.dao.HistoryObj;
+import com.hippo.ehviewer.dao.HistoryObjDao;
 import com.hippo.ehviewer.dao.QuickSearchObj;
 import com.hippo.ehviewer.dao.QuickSearchObjDao;
 
@@ -305,5 +307,52 @@ public class DBUtils {
     public static boolean containDownloadLabel(String label) {
         return sDaoSession.getDownloadLabelObjDao().queryBuilder()
                 .where(DownloadLabelObjDao.Properties.Label.eq(label)).count() != 0;
+    }
+
+    public static List<GalleryBase> getAllHistory() {
+        List<HistoryObj> list = sDaoSession.getHistoryObjDao().queryBuilder()
+                .orderDesc(HistoryObjDao.Properties.Time).list();
+        List<GalleryBase> result = new ArrayList<>(list.size());
+        for (HistoryObj obj : list) {
+            GalleryBase galleryBase = DBUtils.getGalleryBase((int) (long) obj.getGid());
+            if (galleryBase != null) {
+                result.add(galleryBase);
+            }
+        }
+        return result;
+    }
+
+    public static void upHistory(GalleryBase galleryBase) {
+        HistoryObjDao dao = sDaoSession.getHistoryObjDao();
+        HistoryObj obj = dao.load((long) galleryBase.gid);
+        if (obj == null) {
+            obj = new HistoryObj();
+            addGalleryBase(galleryBase);
+            obj.setGid((long) galleryBase.gid);
+            obj.setTime(System.currentTimeMillis());
+            dao.insert(obj);
+            truncateHistory(100);
+        } else {
+            obj.setTime(System.currentTimeMillis());
+            dao.update(obj);
+        }
+    }
+
+    public static void removeHistory(GalleryBase galleryBase) {
+        HistoryObjDao dao = sDaoSession.getHistoryObjDao();
+        dao.deleteByKey((long) galleryBase.gid);
+    }
+
+    public static void clearHistory() {
+        truncateHistory(0);
+    }
+
+    private static void truncateHistory(int maxEntries) {
+        HistoryObjDao dao = sDaoSession.getHistoryObjDao();
+        String selection = HistoryObjDao.Properties.Gid.columnName + " IN " +
+                "(SELECT " + HistoryObjDao.Properties.Gid.columnName + " FROM " + dao.getTablename() +
+                " ORDER BY " + HistoryObjDao.Properties.Time.columnName + " DESC" +
+                " LIMIT -1 OFFSET " + String.valueOf(maxEntries) + ")";
+        dao.getDatabase().delete(dao.getTablename(), selection, null);
     }
 }

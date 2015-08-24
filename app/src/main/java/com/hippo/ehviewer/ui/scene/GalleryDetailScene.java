@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.effect.ViewTransition;
+import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhCacheKeyFactory;
 import com.hippo.ehviewer.R;
@@ -71,6 +72,7 @@ import com.hippo.widget.AutoWrapLayout;
 import com.hippo.widget.NoopLayout;
 import com.hippo.widget.recyclerview.LinearDividerItemDecoration;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.Say;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -489,6 +491,10 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
             if (ACTION_GALLERY_BASE.equals(action)) {
                 mGalleryBase = announcer.getExtra(KEY_GALLERY_BASE, GalleryBase.class);
                 if (mGalleryBase != null) {
+                    // Add to history
+                    DBUtils.upHistory(mGalleryBase);
+                    Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_HISTORY, null);
+
                     bindGalleryInfo(mGalleryBase);
                     return;
                 }
@@ -720,6 +726,10 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
         @Override
         public void onSuccess(GalleryDetail result) {
             mEhRequest = null;
+
+            // Add to history
+            DBUtils.upHistory(result);
+            Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_HISTORY, null);
 
             int oldState = mState;
             mGalleryDetail = result;

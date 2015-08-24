@@ -33,6 +33,7 @@ public final class Constants {
     public static final int MESSENGER_ID_UPDATE_DOWNLOAD;
     public static final int MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_MANAGER;
     public static final int MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_SCENE;
+    public static final int MESSENGER_ID_UPDATE_HISTORY;
 
     static {
         Messenger messenger = Messenger.getInstance();
@@ -49,5 +50,6 @@ public final class Constants {
         MESSENGER_ID_UPDATE_DOWNLOAD = messenger.newId();
         MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_MANAGER = messenger.newId();
         MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_SCENE = messenger.newId();
+        MESSENGER_ID_UPDATE_HISTORY = messenger.newId();
     }
 }

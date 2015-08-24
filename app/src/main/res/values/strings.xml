@@ -253,6 +253,9 @@
     <string name="download_title">Download - %s</string>
     <string name="choose_label">Choose label</string>
 
+    <!-- History -->
+    <string name="history_list_empty">History list is empty</string>
+
     <string name="keyword">Keyword</string>
     <string name="search">Search</string>
     <string name="retry">Retry</string>
@@ -287,6 +290,6 @@
     <string name="rename">Rename</string>
 
     <string name="move_to">Move to …</string>
-    <string name="remeber">Remeber</string>
+    <string name="remember">Remember</string>
 
 </resources>

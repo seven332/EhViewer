@@ -34,6 +34,7 @@ import com.hippo.ehviewer.service.DownloadService;
 import com.hippo.ehviewer.ui.scene.DownloadScene;
 import com.hippo.ehviewer.ui.scene.DrawerProvider;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
+import com.hippo.ehviewer.ui.scene.HistoryScene;
 import com.hippo.ehviewer.ui.scene.MainSettingsScene;
 import com.hippo.ehviewer.ui.scene.SignInScene;
 import com.hippo.ehviewer.util.Settings;
@@ -96,6 +97,7 @@ public final class ContentActivity extends StageActivity
                         startScene(GalleryListScene.class, announcer);
                         break;
                     case DRAWER_LIST_HISTORY:
+                        startScene(HistoryScene.class);
                         break;
                     case DRAWER_LIST_FAVORITE:
                         break;
