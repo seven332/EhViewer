@@ -470,7 +470,7 @@ public class DownloadManager {
                 infoList.remove(info);
             }
             // remove download info from DB
-            DBUtils.removeDownloadLabel(info.galleryBase.gid);
+            DBUtils.removeDownloadInfo(info.galleryBase.gid);
             // Set mode read for available gallery spider
             GallerySpider.forceSetMode(info.galleryBase, ImageHandler.Mode.READ);
             // TODO do it in new thread
