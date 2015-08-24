@@ -73,6 +73,9 @@
 
     <!-- Quick search -->
     <string name="quick_search">Quick search</string>
+    <string name="add_to_quick_search">Add to quick search</string>
+    <string name="empty_displayname">Empty displayname</string>
+    <string name="quick_search_list_empty">Quick search list is empty</string>
 
     <!-- Go to -->
     <string name="go_to_page_info">Page %1$d, %2$s pages in total</string>
@@ -135,7 +138,7 @@
     <string name="em_socket">Network error</string>
     <string name="em_unknown">Weird</string>
     <string name="em_invalid_input">Invalid input</string>
-    <string name="erm_unknown_host">Network available ?</string>
+    <string name="erm_unknown_host">Offline ?</string>
 
     <string name="em_cant_find_activity">Can\'t find target Activity</string>
 
@@ -192,7 +195,7 @@
     <string name="em_cant_get_folder">Can\'t get folder</string>
     <string name="em_cant_write_folder">Can\'t write to this folder</string>
     <string name="em_cant_parse_document_uri">Can\'t parse document uri</string>
-    <string name="document_help">Lollipop provides an API to write to secondary external storage devices, namely SD card. If you want to set download location to SD card, click the \"DOCUMENT\" button.</string>
+    <string name="document_help">Lollipop provides an API to write to secondary external storage devices, namely SD card. Your operation is necessary. If you want to set download location to SD card, click the \"DOCUMENT\" button.</string>
 
     <string name="language_japanese">Japanese</string>
     <string name="language_english">English</string>
@@ -238,8 +241,17 @@
 
     <!-- Download -->
     <string name="download_list_empty">Download list is empty</string>
+    <string name="download_label">Download label</string>
     <string name="download_label_all">All</string>
     <string name="download_label_default">Default</string>
+    <string name="empty_label">Empty label</string>
+    <string name="label_exists">The label already exists</string>
+    <string name="download_label_list_empty">Download label list is empty</string>
+    <string name="add_download_label">Add download label</string>
+    <string name="no_label_available">No label available</string>
+    <string name="label">Label</string>
+    <string name="download_title">Download - %s</string>
+    <string name="choose_label">Choose label</string>
 
     <string name="keyword">Keyword</string>
     <string name="search">Search</string>
@@ -273,5 +285,8 @@
 
     <string name="document">Document</string>
     <string name="rename">Rename</string>
+
+    <string name="move_to">Move to …</string>
+    <string name="remeber">Remeber</string>
 
 </resources>

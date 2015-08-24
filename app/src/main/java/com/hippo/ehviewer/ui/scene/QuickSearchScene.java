@@ -50,7 +50,7 @@ public class QuickSearchScene extends AbsDragSortScene implements Messenger.Rece
     protected void onCreate(boolean rebirth) {
         super.onCreate(rebirth);
 
-        setTipText("No quick search"); // TODO hardcode
+        setTipText(getResources().getString(R.string.quick_search_list_empty));
     }
 
     @Override

@@ -41,15 +41,13 @@ public class DownloadLabelScene extends AbsDragSortScene implements AppbarScene.
 
     private List<DownloadLabel> mDownloadLabels;
 
-    private boolean mChanged = false;
-
     private static final int POSITION_ADD = 0;
 
     @Override
     protected void onCreate(boolean rebirth) {
         super.onCreate(rebirth);
 
-        setTipText("No download label"); // TODO hardcode
+        setTipText(getResources().getString(R.string.download_label_list_empty));
 
         addAction(R.drawable.ic_plus_dark_x24);
 
@@ -57,19 +55,8 @@ public class DownloadLabelScene extends AbsDragSortScene implements AppbarScene.
     }
 
     @Override
-    protected void onDestroy(boolean die) {
-        super.onDestroy(die);
-
-        // notify update
-        if (mChanged) {
-            //Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_DOWNLOAD_LABEL, null);
-            mChanged = false;
-        }
-    }
-
-    @Override
     protected String getTitle() {
-        return "Download label"; // TODO hardcode
+        return getResources().getString(R.string.download_label);
     }
 
     @Override
@@ -79,7 +66,7 @@ public class DownloadLabelScene extends AbsDragSortScene implements AppbarScene.
     }
 
 
-    private class AddDownloadTagHelper implements SimpleDialog.OnCreateCustomViewListener,
+    private class AddDownloadLabelHelper implements SimpleDialog.OnCreateCustomViewListener,
             SimpleDialog.OnClickListener {
 
         private EditText mEditText;
@@ -87,7 +74,7 @@ public class DownloadLabelScene extends AbsDragSortScene implements AppbarScene.
         @Override
         public void onCreateCustomView(final SimpleDialog dialog, View view) {
             FloatLabelEditText floatLabelEditText = (FloatLabelEditText) view.findViewById(R.id.float_label_edit_text);
-            floatLabelEditText.setHint("Download label"); // TODO hardcode
+            floatLabelEditText.setHint(getResources().getString(R.string.label));
             mEditText = (EditText) view.findViewById(R.id.edit_text);
             mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
@@ -116,10 +103,10 @@ public class DownloadLabelScene extends AbsDragSortScene implements AppbarScene.
             if (which == SimpleDialog.POSITIVE) {
                 String label = mEditText.getText().toString().trim();
                 if (TextUtils.isEmpty(label)) {
-                    Toast.makeText(getStageActivity(), "Empty label", Toast.LENGTH_SHORT).show(); // TODO hardcode
+                    Toast.makeText(getStageActivity(), R.string.empty_label, Toast.LENGTH_SHORT).show();
                     return false;
                 } else if (containLabel(label)) {
-                    Toast.makeText(getStageActivity(), "The label already exists", Toast.LENGTH_SHORT).show(); // TODO hardcode
+                    Toast.makeText(getStageActivity(), R.string.label_exists, Toast.LENGTH_SHORT).show();
                     return false;
                 } else {
                     // Tell DownloadManager
@@ -132,8 +119,6 @@ public class DownloadLabelScene extends AbsDragSortScene implements AppbarScene.
                     mDownloadLabels.clear();
                     mDownloadLabels.addAll(DBUtils.getAllDownloadLabelWithId());
                     notifyDataSetChanged();
-
-                    mChanged = true;
                     return true;
                 }
             } else {
@@ -146,8 +131,8 @@ public class DownloadLabelScene extends AbsDragSortScene implements AppbarScene.
     public void onClickAction(int index) {
         switch (index) {
             case POSITION_ADD:
-                AddDownloadTagHelper helper = new AddDownloadTagHelper();
-                new SimpleDialog.Builder(getContext()).setTitle("Add download tag")
+                AddDownloadLabelHelper helper = new AddDownloadLabelHelper();
+                new SimpleDialog.Builder(getContext()).setTitle(R.string.add_download_label)
                         .setCustomView(R.layout.dialog_edit_text, helper)
                         .setPositiveButton(android.R.string.ok)
                         .setOnButtonClickListener(helper).show(this);
@@ -178,8 +163,6 @@ public class DownloadLabelScene extends AbsDragSortScene implements AppbarScene.
             modify.label = getData(fromPosition);
             modify.label2 = getData(toPosition);
             Messenger.getInstance().notify(Constants.MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_SCENE, modify);
-
-            mChanged = true;
         }
 
         @Override
@@ -188,8 +171,6 @@ public class DownloadLabelScene extends AbsDragSortScene implements AppbarScene.
             modify.ops = DownloadManager.DownloadLabelModify.OPS_REMOVE;
             modify.label = getData(position);
             Messenger.getInstance().notify(Constants.MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_SCENE, modify);
-
-            mChanged = true;
         }
 
         @Override

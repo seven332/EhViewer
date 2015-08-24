@@ -598,8 +598,8 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
             DownloadLabelHelper helper = new DownloadLabelHelper();
             new ListViewCheckBoxDialog.Builder(getContext())
                     .setListItems(helper.mLabels, helper)
-                    .setCheckBoxText("Remeber") // TODO hardcode
-                    .setTitle("Choose label") // TODO hardcode
+                    .setCheckBoxText(getResources().getString(R.string.remeber))
+                    .setTitle(R.string.choose_label)
                     .setOnCloseListener(helper)
                     .show(this);
         } else if (mRead == v) {

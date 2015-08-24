@@ -23,6 +23,7 @@
     <string name="search_advance">高级选项</string>
     <string name="search_tag">标签搜索</string>
     <string name="search_image">图片搜索</string>
+    <string name="search_specify_gallery">指定画廊</string>
     <string name="search_specify_author">指定上传者</string>
     <string name="search_specify_tag">指定标签</string>
     <string name="search_hint_no_keyword">没关键字也行</string>
@@ -53,6 +54,12 @@
     <string name="star_4">4 星</string>
     <string name="star_5">5 星</string>
 
+    <!-- Quick search -->
+    <string name="quick_search">快速搜索</string>
+    <string name="add_to_quick_search">添加快速搜索</string>
+    <string name="empty_displayname">名称为空</string>
+    <string name="quick_search_list_empty">快速搜索列表为空</string>
+
     <!-- Go to -->
     <string name="go_to_page_info">第 %1$d 页，共 %2$s 页</string>
     <string name="go_to_string">跳至</string>
@@ -65,9 +72,12 @@
     <string name="favorited_times">%d \u2665</string>
     <string name="more_information">更多信息</string>
     <string name="we_feel">大家感觉 %s</string>
+    <string name="no_tags">暂无标签</string>
     <string name="no_comments">暂无评论</string>
     <string name="no_more_comments">暂无更多评论</string>
     <string name="more_comment">更多评论</string>
+    <string name="rate_successfully">评价成功</string>
+    <string name="rate_failed">评价失败</string>
 
     <!-- Info Scene -->
     <string name="copied_to_clipboard">已复制到剪切板</string>
@@ -110,10 +120,22 @@
     <string name="em_redirection">太多重定向</string>
     <string name="em_socket">网络错误</string>
     <string name="em_unknown">奇怪的问题</string>
-    <string name="erm_unknown_host">联网了么？</string>
+    <string name="em_invalid_input">非法输入</string>
+    <string name="erm_unknown_host">没联网？</string>
 
     <!-- Settings -->
     <string name="settings_display">显示</string>
+
+    <string name="settings_reading">阅读</string>
+    <string name="settings_reading_direction_title">阅读方向</string>
+    <string name="settings_reading_direction_left_to_right">从左至右</string>
+    <string name="settings_reading_direction_right_to_left">从右至左</string>
+    <string name="settings_reading_direction_top_to_bottom">从上至下</string>
+    <string name="settings_reading_hide_nav_bar_title">隐藏导航栏</string>
+    <string name="settings_reading_hide_nav_bar_summary">仅在 Android 4.4 及以上有效</string>
+    <string name="settings_reading_hide_nav_bar_summary_on">沉浸全屏模式</string>
+    <string name="settings_reading_hide_nav_bar_summary_off">不隐藏状态栏</string>
+    <string name="settings_volume_page">音量键翻页</string>
 
     <string name="settings_eh_source_title">EH 源</string>
     <string name="settings_jpn_title_title">日文标题</string>
@@ -124,6 +146,10 @@
     <string name="settings_preview_size_title">预览图大小</string>
     <string name="settings_preview_size_normal">一般</string>
     <string name="settings_preview_size_large">较大</string>
+
+    <string name="settings_download">Download</string>
+    <string name="settings_image_download_location">图片下载目录</string>
+    <string name="settings_archive_download_location">归档文件下载目录</string>
 
     <string name="settings_advanced">高级</string>
     <string name="settings_show_application_stats_title">显示应用状态</string>
@@ -140,6 +166,13 @@
     <string name="original">原作</string>
     <string name="translated">翻译</string>
     <string name="rewrite">改写</string>
+
+    <!-- DirPickScene -->
+    <string name="dir_pick">选择目录</string>
+    <string name="em_cant_get_folder">无法获取目录</string>
+    <string name="em_cant_write_folder">无法写入该目录</string>
+    <string name="em_cant_parse_document_uri">无法解析文档 uri</string>
+    <string name="document_help">Lollipop 提供了新的读写外置存储设备的 API，也就是 SD 卡。这需要用户的辅助操作。如果你想要把下载路径设置到 SD 卡，请点击“文档”按钮。</string>
 
     <string name="language_japanese">日语</string>
     <string name="language_english">英语</string>
@@ -163,12 +196,47 @@
     <string name="line_dean">“啥？”</string>
     <string name="line_sam">“我把熊猫给丢了……”</string>
 
+    <!-- Download Server -->
+    <string name="download_server">下载服务</string>
+    <string name="stop">停止</string>
+    <string name="stop_all">全部停止</string>
+    <string name="successfully_downloaded">下载成功</string>
+    <string name="incompletely_downloaded">未完全下载</string>
+    <string name="downloading_complete">下载完成</string>
+    <plurals name="item_successfully_downloaded">
+        <item quantity="one">一项下载成功</item>
+        <item quantity="other">%d 项下载成功</item>
+    </plurals>
+    <plurals name="item_incompletely_downloaded">
+        <item quantity="one">一项未完全下载</item>
+        <item quantity="other">%d 项未完全下载</item>
+    </plurals>
+    <string name="download_state_none">未启动</string>
+    <string name="download_state_wait">等待中</string>
+    <string name="download_state_done">已完成</string>
+    <string name="download_state_incomplete">未完成</string>
+
+    <!-- Download -->
+    <string name="download_list_empty">下载列表为空</string>
+    <string name="download_label">下载标签</string>
+    <string name="download_label_all">全部</string>
+    <string name="download_label_default">默认</string>
+    <string name="empty_label">标签为空</string>
+    <string name="label_exists">该标签已存在</string>
+    <string name="download_label_list_empty">下载标签列表为空</string>
+    <string name="add_download_label">添加下载标签</string>
+    <string name="no_label_available">没有可用下载标签</string>
+    <string name="label">标签</string>
+    <string name="download_title">下载 - %s</string>
+    <string name="choose_label">选择标签</string>
+
     <string name="keyword">关键字</string>
     <string name="search">搜索</string>
     <string name="retry">重试</string>
     <string name="_goto">跳页</string>
-
     <string name="unknown">未知</string>
+    <string name="apply">应用</string>
+
     <string name="homepage">首页</string>
     <string name="whatshot">热门</string>
     <string name="history">历史</string>
@@ -182,10 +250,20 @@
     <string name="username">用户名</string>
     <string name="password">密码</string>
 
+    <string name="displayname">名称</string>
+
     <string name="read">阅读</string>
     <string name="torrent">种子</string>
     <string name="share">分享</string>
+    <string name="rate">评价</string>
 
     <string name="comments">评论</string>
+    <string name="info">信息</string>
+
+    <string name="document">文档</string>
+    <string name="rename">重命名</string>
+
+    <string name="move_to">移动到 …</string>
+    <string name="remeber">记住</string>
 
 </resources>

@@ -166,7 +166,7 @@ public class ModifyQuickSearchScene extends AppbarScene implements SearchLayout.
                     setTitle(getName());
                     return true;
                 } else {
-                    Toast.makeText(getStageActivity(), "Empty displayname", Toast.LENGTH_SHORT).show(); // TODO hardcode
+                    Toast.makeText(getStageActivity(), R.string.empty_displayname, Toast.LENGTH_SHORT).show();
                     return false;
                 }
             } else {

@@ -145,7 +145,7 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
         } else {
             label = mActivatedLabel;
         }
-        setTitle("Download" + " - " + label); // TODO hardcode
+        setTitle(getResources().getString(R.string.download_title, label));
     }
 
     @Override
@@ -192,7 +192,7 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
         mOriginalFabLayoutPaddingBottom = mFabLayout.getPaddingBottom();
 
         mRightDrawerView = new AppbarRecyclerView(getStageActivity());
-        mRightDrawerView.setTitle("Label"); // TODO hardcode
+        mRightDrawerView.setTitle(getResources().getString(R.string.label));
         mDownloadLabelAdapter = new DownloadLabelAdapter();
         mRightDrawerView.setAdapter(mDownloadLabelAdapter);
         mRightDrawerView.setOnItemClickListener(new DownloadTagClickListener());
@@ -650,9 +650,9 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
             }
 
             if (labels.isEmpty()) {
-                Toast.makeText(getContext(), "No available label", Toast.LENGTH_SHORT).show(); // TODO hardcode
+                Toast.makeText(getContext(), R.string.no_label_available, Toast.LENGTH_SHORT).show();
             } else {
-                new SimpleDialog.Builder(getContext()).setTitle("Move to") // TODO hardcode
+                new SimpleDialog.Builder(getContext()).setTitle(R.string.move_to)
                         .setItems(labels.toArray(new String[labels.size()]),
                                 new MoveDownloadInfoListener(labels, hasDefaultLabel)).show(this);
             }

@@ -334,7 +334,7 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         mRightDrawerView.setAdapter(mQuickSearchAdapter);
         mRightDrawerView.setOnItemClickListener(new QuickSearchClickListener());
         mRightDrawerView.setHelper(this);
-        mRightDrawerView.setTipText("No quick search"); // TODO hardcode
+        mRightDrawerView.setTipText(getResources().getString(R.string.quick_search_list_empty));
         if (mQuickSearchAdapter.getItemCount() == 0) {
             mRightDrawerView.showTip(false);
         } else {
@@ -605,12 +605,10 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         if (mode == ListUrlBuilder.MODE_NORMAL || mode == ListUrlBuilder.MODE_UPLOADER ||
                 mode == ListUrlBuilder.MODE_TAG) {
             AddToQuickSearchHelper helper = new AddToQuickSearchHelper(mListUrlBuilder.clone());
-            new SimpleDialog.Builder(getStageActivity()).setTitle("Add to quick search") // TODO hardcode
+            new SimpleDialog.Builder(getStageActivity()).setTitle(R.string.add_to_quick_search)
                     .setCustomView(R.layout.dialog_edit_text, helper)
                     .setPositiveButton(android.R.string.ok)
                     .setOnButtonClickListener(helper).show(this);
-        } else {
-            Toast.makeText(getStageActivity(), "Can't add", Toast.LENGTH_SHORT).show(); // TODO hardcode
         }
     }
 
@@ -864,7 +862,7 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
                     Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_QUICK_SEARCH, null);
                     return true;
                 } else {
-                    Toast.makeText(getStageActivity(), "Empty displayname", Toast.LENGTH_SHORT).show(); // TODO hardcode
+                    Toast.makeText(getStageActivity(), R.string.empty_displayname, Toast.LENGTH_SHORT).show();
                     return false;
                 }
             } else {
@@ -881,7 +879,7 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
             // Set keyword from search bar
             builder.setKeyword(mSearchBar.getText());
             AddToQuickSearchHelper helper = new AddToQuickSearchHelper(builder);
-            new SimpleDialog.Builder(getStageActivity()).setTitle("Add to quick search") // TODO hardcode
+            new SimpleDialog.Builder(getStageActivity()).setTitle(R.string.add_to_quick_search)
                     .setCustomView(R.layout.dialog_edit_text, helper)
                     .setPositiveButton(android.R.string.ok)
                     .setOnButtonClickListener(helper).show(this);
