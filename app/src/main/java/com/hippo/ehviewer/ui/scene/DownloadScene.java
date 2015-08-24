@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.conaco.Conaco;
+import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhCacheKeyFactory;
@@ -71,6 +72,7 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
 
     private static long ANIMATE_TIME = 300l;
 
+    private View mTip;
     private EasyRecyclerView mRecyclerView;
     private FabLayout mFabLayout;
     private View mStart;
@@ -79,6 +81,8 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
     private View mMove;
     private View mCheckAll;
     private View mMainFab;
+
+    private ViewTransition mViewTransition;
 
     private DownloadAdapter mAdapter;
 
@@ -106,14 +110,13 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
     private void initLabels() {
         Resources resources = getContext().getResources();
         mLabels = DBUtils.getAllDownloadLabel();
-        mLabels.add(0, resources.getString(R.string.download_tag_default));
-        mLabels.add(0, resources.getString(R.string.download_tag_all));
+        mLabels.add(0, resources.getString(R.string.download_label_default));
+        mLabels.add(0, resources.getString(R.string.download_label_all));
     }
 
     @Override
     protected void onInit() {
         super.onInit();
-
 
         mActivatedLabel = LABEL_DEFAULT;
         mActivatedLabelPosition = INDEX_DEFAULT;
@@ -136,9 +139,9 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
     private void updateTitle() {
         String label;
         if (mActivatedLabel == LABEL_ALL) {
-            label = getContext().getResources().getString(R.string.download_tag_all);
+            label = getContext().getResources().getString(R.string.download_label_all);
         } else if (mActivatedLabel == LABEL_DEFAULT) {
-            label = getContext().getResources().getString(R.string.download_tag_default);
+            label = getContext().getResources().getString(R.string.download_label_default);
         } else {
             label = mActivatedLabel;
         }
@@ -155,6 +158,7 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
 
         initLabels();
 
+        mTip = findViewById(R.id.tip);
         mRecyclerView = (EasyRecyclerView) findViewById(R.id.recycler_view);
         mFabLayout = (FabLayout) findViewById(R.id.fab_layout);
         mMainFab = mFabLayout.getPrimaryFab();
@@ -197,6 +201,13 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
         mRightDrawerView.showRecyclerView(false);
 
         updateTitle();
+
+        mViewTransition = new ViewTransition(mTip, mRecyclerView);
+        if (mAdapter.getItemCount() == 0) {
+            mViewTransition.showView(0, false);
+        } else {
+            mViewTransition.showView(1, false);
+        }
     }
 
     @Override
@@ -408,38 +419,48 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
                 return;
             }
 
-            int mix = (int) obj;
-            int ops = DownloadManager.getOps(mix);
-            int gid = DownloadManager.getGid(mix);
+            try {
+                int mix = (int) obj;
+                int ops = DownloadManager.getOps(mix);
+                int gid = DownloadManager.getGid(mix);
 
-            if (ops == DownloadManager.OPS_ALL_CHANGE ||
-                    ops == DownloadManager.OPS_REMOVE) {
-                // OPS_REMOVE can't find position by gid, just notifyDataSetChanged
-                mGidPositionMap.clear();
-                mAdapter.notifyDataSetChanged();
-                return;
-            } else if (ops == DownloadManager.OPS_ADD) {
-                // Add break list, need clean gid position map
-                mGidPositionMap.clear();
-            }
-
-            int position = getPositionForGid(gid);
-            if (position == -1) {
-                if (mLastUpdateSize != mAdapter.getItemCount()) {
-                    // Can't get position, notifyDataSetChanged for safe
+                if (ops == DownloadManager.OPS_ALL_CHANGE ||
+                        ops == DownloadManager.OPS_REMOVE) {
+                    // OPS_REMOVE can't find position by gid, just notifyDataSetChanged
+                    mGidPositionMap.clear();
                     mAdapter.notifyDataSetChanged();
+                    return;
+                } else if (ops == DownloadManager.OPS_ADD) {
+                    // Add break list, need clean gid position map
+                    mGidPositionMap.clear();
                 }
-                return;
+
+                int position = getPositionForGid(gid);
+                if (position == -1) {
+                    if (mLastUpdateSize != mAdapter.getItemCount()) {
+                        // Can't get position, notifyDataSetChanged for safe
+                        mAdapter.notifyDataSetChanged();
+                    }
+                    return;
+                }
+
+                if (ops == DownloadManager.OPS_ADD) {
+                    mAdapter.notifyItemInserted(position);
+                } else if (ops == DownloadManager.OPS_UPDATE) {
+                    RecyclerView.ViewHolder holder = mRecyclerView.findViewHolderForAdapterPosition(position);
+                    if (holder != null) {
+                        bindHolder((DownloadHolder) holder, mDownloadInfos.get(position));
+                    }
+                }
+            } finally {
+                // Try to show tip
+                if (mAdapter.getItemCount() == 0) {
+                    mViewTransition.showView(0, true);
+                } else {
+                    mViewTransition.showView(1, true);
+                }
             }
 
-            if (ops == DownloadManager.OPS_ADD) {
-                mAdapter.notifyItemInserted(position);
-            } else if (ops == DownloadManager.OPS_UPDATE) {
-                RecyclerView.ViewHolder holder = mRecyclerView.findViewHolderForAdapterPosition(position);
-                if (holder != null) {
-                    bindHolder((DownloadHolder) holder, mDownloadInfos.get(position));
-                }
-            }
         } else if (id == Constants.MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_SCENE ||
                 id == Constants.MESSENGER_ID_MODIFY_DOWNLOAD_LABEL_FROM_MANAGER) {
             AssertUtils.assertInstanceof("Messenger obj must be DownloadLabelOps", obj, DownloadManager.DownloadLabelModify.class);
@@ -465,6 +486,13 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
                         mGidPositionMap.clear();
                         mAdapter.notifyDataSetChanged();
                         mRecyclerView.scrollToPosition(0);
+
+                        // Try to show tip
+                        if (mAdapter.getItemCount() == 0) {
+                            mViewTransition.showView(0, true);
+                        } else {
+                            mViewTransition.showView(1, true);
+                        }
                     }
                     break;
                 case DownloadManager.DownloadLabelModify.OPS_MOVE:
@@ -536,6 +564,13 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
             if (!infos.isEmpty()) {
                 DownloadManager.getInstance().moveDownloadInfo(infos, label);
                 mAdapter.notifyDataSetChanged();
+
+                // Try to show tip
+                if (mAdapter.getItemCount() == 0) {
+                    mViewTransition.showView(0, true);
+                } else {
+                    mViewTransition.showView(1, true);
+                }
             }
             return true;
         }
@@ -581,7 +616,7 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
             }
             if (mActivatedLabelPosition != INDEX_DEFAULT) {
                 hasDefaultLabel = true;
-                labels.add(getResources().getString(R.string.download_tag_default));
+                labels.add(getResources().getString(R.string.download_label_default));
             }
 
             if (labels.isEmpty()) {
@@ -860,6 +895,13 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
                 updateTitle();
                 mGidPositionMap.clear();
                 mAdapter.notifyDataSetChanged();
+
+                // Try to show tip
+                if (mAdapter.getItemCount() == 0) {
+                    mViewTransition.showView(0, true);
+                } else {
+                    mViewTransition.showView(1, true);
+                }
 
                 mRecyclerView.scrollToPosition(0);
                 ((ContentActivity) getStageActivity()).closeDrawers();

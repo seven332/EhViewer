@@ -237,8 +237,9 @@
     <string name="download_state_incomplete">Incomplete</string>
 
     <!-- Download -->
-    <string name="download_tag_all">All</string>
-    <string name="download_tag_default">Default</string>
+    <string name="download_list_empty">Download list is empty</string>
+    <string name="download_label_all">All</string>
+    <string name="download_label_default">Default</string>
 
     <string name="keyword">Keyword</string>
     <string name="search">Search</string>

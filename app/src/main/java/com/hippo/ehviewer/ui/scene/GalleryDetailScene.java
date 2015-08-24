@@ -559,7 +559,7 @@ public class GalleryDetailScene extends Scene implements View.OnClickListener,
 
         private String[] getLabels() {
             List<String> labels = DBUtils.getAllDownloadLabel();
-            labels.add(0, getContext().getResources().getString(R.string.download_tag_default));
+            labels.add(0, getContext().getResources().getString(R.string.download_label_default));
             return labels.toArray(new String[labels.size()]);
         }
 

@@ -41,3 +41,6 @@
 -keepclassmembers class * extends com.hippo.scene.preference.PreferenceBase {
     public static android.support.v7.widget.RecyclerView$ViewHolder createViewHolder(android.content.Context, android.view.ViewGroup);
 }
+
+# API 23 remove most stuff in org.apache.http
+-dontwarn org.apache.http.**
