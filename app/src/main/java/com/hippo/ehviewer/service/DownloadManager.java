@@ -25,11 +25,14 @@ import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.client.data.DownloadInfo;
 import com.hippo.ehviewer.client.data.DownloadLabel;
 import com.hippo.ehviewer.client.data.GalleryBase;
+import com.hippo.ehviewer.gallery.GalleryDir;
 import com.hippo.ehviewer.gallery.GallerySpider;
 import com.hippo.ehviewer.gallery.ImageHandler;
 import com.hippo.ehviewer.gallery.SpiderQueen;
 import com.hippo.ehviewer.util.DBUtils;
 import com.hippo.ehviewer.util.EhUtils;
+import com.hippo.ehviewer.util.Settings;
+import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.SimpleHandler;
@@ -370,67 +373,28 @@ public class DownloadManager {
         }
     }
 
-    void startAllDownload() {
-        for (DownloadInfo info : mDownloadInfos) {
-            if (info.state == DownloadInfo.STATE_NONE ||
-                    (info.state == DownloadInfo.STATE_FINISH && info.legacy != 0)) {
-                info.state = DownloadInfo.STATE_WAIT;
-                // Add to wait list
-                mWaitList.add(info);
-                // Notify
-                Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_DOWNLOAD,
-                        makeMix(info.galleryBase.gid, OPS_UPDATE));
-                // Update DownloadInfo to DB
-                DBUtils.updateDownloadInfo(info);
-            }
-        }
-        ensureDownload();
-    }
-
     public void stopDownload(int gid) {
-        // Check current task
-        if (mCurrentTask != null && mCurrentTask.galleryBase.gid == gid) {
-            // Stop current
-            stopCurrentDownloadInternal();
-
-            // Continue
+        if (stopDownloadInternal(gid)) {
+            Messenger.getInstance().notifyAtOnce(Constants.MESSENGER_ID_UPDATE_DOWNLOAD,
+                    makeMix(gid, OPS_UPDATE));
             ensureDownload();
-            return;
-        }
-
-        // Check in wait list
-        if (!mWaitList.isEmpty()) {
-            for (Iterator<DownloadInfo> iter = mWaitList.iterator(); iter.hasNext();) {
-                DownloadInfo info = iter.next();
-                if (info.galleryBase.gid == gid) {
-                    // Remove from wait list
-                    iter.remove();
-
-                    info.state = DownloadInfo.STATE_NONE;
-
-                    // Notify
-                    Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_DOWNLOAD,
-                            makeMix(gid, OPS_UPDATE));
-                    // Update in DB
-                    DBUtils.updateDownloadInfo(info);
-                    return;
-                }
-            }
         }
     }
 
     public void stopCurrentDownload() {
-        stopCurrentDownloadInternal();
-        ensureDownload();
+        // Get current task gid
+        int gid = mCurrentTask == null ? 0 : mCurrentTask.galleryBase.gid;
+        if (stopCurrentDownloadInternal()) {
+            Messenger.getInstance().notifyAtOnce(Constants.MESSENGER_ID_UPDATE_DOWNLOAD,
+                    makeMix(gid, OPS_UPDATE));
+            ensureDownload();
+        }
     }
 
     public void stopAllDownload() {
         // Stop all in wait list
         for (DownloadInfo info : mWaitList) {
             info.state = DownloadInfo.STATE_NONE;
-            // Notify
-            Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_DOWNLOAD,
-                    makeMix(info.galleryBase.gid, OPS_UPDATE));
             // Update in DB
             DBUtils.updateDownloadInfo(info);
         }
@@ -438,28 +402,90 @@ public class DownloadManager {
 
         // Stop current
         stopCurrentDownloadInternal();
+
+        // Notify
+        Messenger.getInstance().notifyAtOnce(Constants.MESSENGER_ID_UPDATE_DOWNLOAD,
+                makeMix(0, OPS_ALL_CHANGE));
     }
 
-    private void stopCurrentDownloadInternal() {
+    // Update in DB
+    // Update listener
+    // No Messenger
+    // No ensureDownload
+    private boolean stopDownloadInternal(int gid) {
+        // Check current task
+        if (mCurrentTask != null && mCurrentTask.galleryBase.gid == gid) {
+            // Stop current
+            return stopCurrentDownloadInternal();
+        }
+
+        // Check in wait list
+        for (Iterator<DownloadInfo> iter = mWaitList.iterator(); iter.hasNext();) {
+            DownloadInfo info = iter.next();
+            if (info.galleryBase.gid == gid) {
+                // Remove from wait list
+                iter.remove();
+
+                info.state = DownloadInfo.STATE_NONE;
+                // Update in DB
+                DBUtils.updateDownloadInfo(info);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Update in DB
+    // Update listener
+    // No Messenger
+    // No ensureDownload
+    private boolean stopCurrentDownloadInternal() {
         if (mCurrentTask == null) {
-            return;
+            return false;
         }
 
         mCurrentTask.state = DownloadInfo.STATE_NONE;
-
-        int gid = mCurrentTask.galleryBase.gid;
-        // Notify
-        Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_DOWNLOAD,
-                makeMix(gid, OPS_UPDATE));
+        // Update in DB
+        DBUtils.updateDownloadInfo(mCurrentTask);
         // Listener
         if (mDownloadUpdateListener != null) {
             mDownloadUpdateListener.onCancel(mUpdateInfo);
         }
-        // Update in DB
-        DBUtils.updateDownloadInfo(mCurrentTask);
 
         // Release
         releaseCurrent();
+
+        return true;
+    }
+
+    public void deleteDownloadInfo(DownloadInfo... infos) {
+        for (DownloadInfo info : infos) {
+            // Stop
+            stopDownloadInternal(info.galleryBase.gid);
+            // removed download info from list
+            mDownloadInfos.remove(info);
+            List<DownloadInfo> infoList = getDownloadListInternal(info.label, false);
+            if (infoList != null) {
+                infoList.remove(info);
+            }
+            // remove download info from DB
+            DBUtils.removeDownloadLabel(info.galleryBase.gid);
+            // Set mode read for available gallery spider
+            GallerySpider.forceSetMode(info.galleryBase, ImageHandler.Mode.READ);
+            // TODO do it in new thread
+            // Delete files
+            UniFile downloadLocation = Settings.getImageDownloadLocation();
+            if (downloadLocation != null) {
+                UniFile dir = downloadLocation.findFile(GalleryDir.getDirname(info.galleryBase));
+                if (dir != null) {
+                    dir.delete();
+                }
+            }
+        }
+
+        Messenger.getInstance().notify(Constants.MESSENGER_ID_UPDATE_DOWNLOAD,
+                makeMix(0, OPS_ALL_CHANGE));
     }
 
     public static boolean isDefaultLabel(String label) {

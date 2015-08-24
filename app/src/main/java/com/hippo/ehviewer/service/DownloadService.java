@@ -114,7 +114,7 @@ public class DownloadService extends Service implements DownloadManager.Download
                 mDownloadManager.startDownload(gb, tag);
             }
         } else if (ACTION_START_ALL.equals(action)) {
-            mDownloadManager.startAllDownload();
+            //mDownloadManager.startAllDownload();
         } else if (ACTION_STOP.equals(action)) {
             int gid = intent.getIntExtra(KEY_GID, 0);
             if (gid != 0) {

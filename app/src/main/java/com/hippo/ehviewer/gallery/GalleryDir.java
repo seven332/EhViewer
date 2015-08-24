@@ -43,7 +43,7 @@ public class GalleryDir {
         return String.format("%08d.%s", index + 1, extension);
     }
 
-    private static String getDirname(GalleryBase galleryBase) {
+    public static String getDirname(GalleryBase galleryBase) {
         String dirname = DBUtils.getDirname(galleryBase.gid);
         if (dirname == null) {
             dirname = FileUtils.ensureFilename(galleryBase.gid + "-" + EhUtils.getSuitableTitle(galleryBase));
@@ -58,7 +58,10 @@ public class GalleryDir {
 
     public void ensureUniFile() {
         if (mUniFile == null) {
-            mUniFile = Settings.getImageDownloadLocation().createDirectory(mDirname);
+            UniFile downloadDir = Settings.getImageDownloadLocation();
+            if (downloadDir != null) {
+                mUniFile = downloadDir.createDirectory(mDirname);
+            }
         }
     }
 

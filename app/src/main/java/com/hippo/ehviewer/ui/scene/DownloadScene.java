@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -371,9 +372,14 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
 
         @Override
         public void onClick(View v) {
+
+            Log.d("TAG", "mDeleteListener 1");
+
             if (mRecyclerView.inCustomChoice()) {
                 return;
             }
+
+            Log.d("TAG", "mDeleteListener 2");
 
             int position = getAdapterPosition(v);
             if (position >= 0) {
@@ -381,10 +387,10 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
                 DownloadInfo info = mDownloadInfos.get(position);
                 mGidPositionMap.add(info.galleryBase.gid, position);
 
-                Intent intent = new Intent(getStageActivity(), DownloadService.class);
-                intent.setAction(DownloadService.ACTION_DELETE);
-                intent.putExtra(DownloadService.KEY_GID, info.galleryBase.gid);
-                getStageActivity().startService(intent);
+                Log.d("TAG", "mDeleteListener 3");
+
+                // Delete
+                DownloadManager.getInstance().deleteDownloadInfo(info);
             }
         }
     };
@@ -581,6 +587,9 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
         if (mMainFab == v) {
             mRecyclerView.outOfCustomChoiceMode();
         } else if (mStart == v) {
+            // Out of choice mode
+            mRecyclerView.outOfCustomChoiceMode();
+
             SparseBooleanArray checkedState = mRecyclerView.getCheckedItemPositions();
             for (int i = 0, n = checkedState.size(); i < n; i++) {
                 if (checkedState.valueAt(i)) {
@@ -592,9 +601,10 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
                     getStageActivity().startService(intent);
                 }
             }
+        } else if (mStop == v) {
             // Out of choice mode
             mRecyclerView.outOfCustomChoiceMode();
-        } else if (mStop == v) {
+
             DownloadManager manager = DownloadManager.getInstance();
             SparseBooleanArray checkedState = mRecyclerView.getCheckedItemPositions();
             for (int i = 0, n = checkedState.size(); i < n; i++) {
@@ -603,10 +613,21 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
                     manager.stopDownload(mDownloadInfos.get(position).galleryBase.gid);
                 }
             }
+        } else if (mDelete == v) {
             // Out of choice mode
             mRecyclerView.outOfCustomChoiceMode();
-        } else if (mDelete == v) {
-            // TODO
+
+            List<DownloadInfo> infos = new ArrayList<>();
+            SparseBooleanArray checkedState = mRecyclerView.getCheckedItemPositions();
+            for (int i = 0, n = checkedState.size(); i < n; i++) {
+                if (checkedState.valueAt(i)) {
+                    int position = checkedState.keyAt(i);
+                    infos.add(mDownloadInfos.get(position));
+                }
+            }
+
+            // Delete
+            DownloadManager.getInstance().deleteDownloadInfo(infos.toArray(new DownloadInfo[infos.size()]));
         } else if (mMove == v) {
             // Get available target label
             boolean hasDefaultLabel = false;

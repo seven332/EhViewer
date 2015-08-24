@@ -229,6 +229,10 @@ public class DBUtils {
         dao.update(obj);
     }
 
+    public static void removeDownloadInfo(int gid) {
+        sDaoSession.getDownloadInfoObjDao().deleteByKey((long) gid);
+    }
+
     public static List<String> getAllDownloadLabel() {
         DownloadLabelObjDao dao = sDaoSession.getDownloadLabelObjDao();
         List<DownloadLabelObj> list = dao.queryBuilder().orderAsc(DownloadLabelObjDao.Properties.Time).list();

@@ -90,6 +90,13 @@ public class GallerySpider implements GalleryProvider, SpiderQueen.SpiderListene
         }
     }
 
+    public static void forceSetMode(GalleryBase galleryBase, ImageHandler.Mode mode) {
+        GallerySpider gs = mMap.get(galleryBase.gid);
+        if (gs != null) {
+            gs.setMode(mode);
+        }
+    }
+
     private GallerySpider(GalleryBase galleryBase, ImageHandler.Mode mode) throws IOException {
         mGalleryBase = galleryBase;
         mMode = mode;
