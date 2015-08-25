@@ -218,6 +218,8 @@
     <!-- Sign in -->
     <string name="line_dean">\"What ?\"</string>
     <string name="line_sam">\"I lose my panda …\"</string>
+    <string name="sign_in_webview">Sign in by WebView</string>
+    <string name="sign_in_successfully">Sign in successfully</string>
 
     <!-- Download Server -->
     <string name="download_server">Download server</string>
@@ -255,6 +257,9 @@
 
     <!-- History -->
     <string name="history_list_empty">History list is empty</string>
+
+    <!-- Progress dialog -->
+    <string name="please_wait">Please wait …</string>
 
     <string name="keyword">Keyword</string>
     <string name="search">Search</string>

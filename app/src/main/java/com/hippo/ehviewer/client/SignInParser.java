@@ -16,18 +16,22 @@
 
 package com.hippo.ehviewer.client;
 
+import com.hippo.yorozuya.Say;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SignInParser {
 
-    static final Pattern NAME_PATTERN = Pattern.compile("<p>You are now logged in as: (.+?)<br />");
+    static final Pattern NAME_PATTERN = Pattern.compile("<p>You are now logged in as: (.+?)<");
     static final Pattern ERROR_PATTERN = Pattern.compile(
             "(?:<h4>The error returned was:</h4>\\s*<p>(.+?)</p>)"
             + "|(?:<span class=\"postcolor\">(.+?)</span>)");
 
     public static String parse(String body) throws Exception {
         Matcher m;
+
+        Say.f("TAG", body);
 
         m = NAME_PATTERN.matcher(body);
         if (m.find()) {

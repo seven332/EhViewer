@@ -45,6 +45,15 @@
         </activity>
 
         <activity
+            android:name="com.hippo.ehviewer.ui.WebViewSignInActivity"
+            android:label="@string/sign_in_webview"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateAlwaysHidden">
+
+        </activity>
+
+        <activity
             android:name="com.hippo.ehviewer.ui.GalleryActivity"
             android:configChanges="screenSize|uiMode"
             android:theme="@style/AppTheme.Gallery"

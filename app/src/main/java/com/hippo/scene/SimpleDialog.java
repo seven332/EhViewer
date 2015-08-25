@@ -191,6 +191,13 @@ public class SimpleDialog extends SceneDialog implements View.OnClickListener,
     }
 
     @Override
+    public void onBackPressed() {
+        if (mBuilder.mCancelable) {
+            finish();
+        }
+    }
+
+    @Override
     protected SceneView createSceneView(Context context) {
         return new SceneDialogView(context);
     }

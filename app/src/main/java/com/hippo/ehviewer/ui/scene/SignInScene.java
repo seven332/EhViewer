@@ -16,30 +16,39 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
+import com.hippo.ehviewer.ui.WebViewSignInActivity;
 import com.hippo.ehviewer.util.Settings;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.scene.ProgressDialog;
 import com.hippo.scene.Scene;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.yorozuya.Messenger;
 
 public final class SignInScene extends Scene implements View.OnClickListener,
-        TextView.OnEditorActionListener {
+        TextView.OnEditorActionListener, Messenger.Receiver {
 
     private View mMainView;
     private EditText mUsername;
     private EditText mPassword;
+    private TextView mWebview;
     private TextView mSignUp;
     private TextView mSignIn;
+
+    private ProgressDialog mProgressDialog;
 
     private EhClient.EhListener<String> mSignInListener = new EhClient.EhListener<String>() {
         @Override
@@ -47,22 +56,52 @@ public final class SignInScene extends Scene implements View.OnClickListener,
             Settings.putSignIn(true);
             Settings.putDisplayName(displayname);
             Messenger.getInstance().notify(Constants.MESSENGER_ID_SIGN_IN_OR_OUT, displayname);
+
+            Toast.makeText(getContext(), R.string.sign_in_successfully, Toast.LENGTH_SHORT).show();
+
+            if (mProgressDialog != null) {
+                mProgressDialog.finish();
+                mProgressDialog = null;
+                finish();
+            }
         }
 
         @Override
         public void onFailure(Exception e) {
-            e.printStackTrace();
+            Toast.makeText(getContext(), ExceptionUtils.getReadableString(getContext(), e), Toast.LENGTH_SHORT).show();
+
+            if (mProgressDialog != null) {
+                mProgressDialog.finish();
+                mProgressDialog = null;
+            }
         }
 
         @Override
         public void onCanceled() {
-
+            if (mProgressDialog != null) {
+                mProgressDialog.finish();
+                mProgressDialog = null;
+            }
         }
     };
 
     @Override
     public int getLaunchMode() {
         return LAUNCH_MODE_SINGLE_TOP;
+    }
+
+    @Override
+    protected void onInit() {
+        super.onInit();
+
+        Messenger.getInstance().register(Constants.MESSENGER_ID_LOG_IN_VIEW_WEBVIEW, this);
+    }
+
+    @Override
+    protected void onDie() {
+        super.onDie();
+
+        Messenger.getInstance().unregister(Constants.MESSENGER_ID_LOG_IN_VIEW_WEBVIEW, this);
     }
 
     @Override
@@ -73,12 +112,15 @@ public final class SignInScene extends Scene implements View.OnClickListener,
         mMainView = findViewById(R.id.sigin_in_main);
         mUsername = (EditText) mMainView.findViewById(R.id.username);
         mPassword = (EditText) mMainView.findViewById(R.id.password);
+        mWebview = (TextView) mMainView.findViewById(R.id.webview);
         mSignUp = (TextView) mMainView.findViewById(R.id.sign_up);
         mSignIn = (TextView) mMainView.findViewById(R.id.sign_in);
 
         mPassword.setOnEditorActionListener(this);
+        RippleSalon.addRipple(mWebview, false);
         RippleSalon.addRipple(mSignUp, false);
         RippleSalon.addRipple(mSignIn, false);
+        mWebview.setOnClickListener(this);
         mSignUp.setOnClickListener(this);
         mSignIn.setOnClickListener(this);
     }
@@ -92,7 +134,14 @@ public final class SignInScene extends Scene implements View.OnClickListener,
 
     @Override
     public void onClick(View v) {
-        if (v == mSignIn) {
+        if (v == mWebview) {
+            Intent intent = new Intent(getStageActivity(), WebViewSignInActivity.class);
+            getStageActivity(). startActivity(intent);
+        } else if (v == mSignUp) {
+            Uri uri = Uri.parse("http://forums.e-hentai.org/index.php?act=Reg");
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            getStageActivity().startActivity(intent);
+        } else if (v == mSignIn) {
             String username = mUsername.getText().toString();
             String password = mPassword.getText().toString();
             EhClient client = EhApplication.getEhClient(getStageActivity());
@@ -102,6 +151,8 @@ public final class SignInScene extends Scene implements View.OnClickListener,
             request.setEhListener(mSignInListener);
             request.setArgs(username, password);
             client.execute(request);
+
+            mProgressDialog = (ProgressDialog) new ProgressDialog.Builder(getContext()).setTitle(R.string.signin).show(this);
         }
     }
 
@@ -114,5 +165,12 @@ public final class SignInScene extends Scene implements View.OnClickListener,
             }
         }
         return false;
+    }
+
+    @Override
+    public void onReceive(int id, Object obj) {
+        if (id == Constants.MESSENGER_ID_LOG_IN_VIEW_WEBVIEW) {
+            finish();
+        }
     }
 }
