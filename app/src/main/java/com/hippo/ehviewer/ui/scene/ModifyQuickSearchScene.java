@@ -37,11 +37,12 @@ import com.hippo.scene.Announcer;
 import com.hippo.scene.AppbarScene;
 import com.hippo.scene.Scene;
 import com.hippo.scene.SimpleDialog;
+import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.Messenger;
 import com.hippo.yorozuya.ViewUtils;
 
 public class ModifyQuickSearchScene extends AppbarScene implements SearchLayout.SearhLayoutHelper,
-            SearchBar.Helper {
+        SearchBar.Helper {
 
     public static final String KEY_QUICK_SEARCH = "quick_search";
 
@@ -71,6 +72,9 @@ public class ModifyQuickSearchScene extends AppbarScene implements SearchLayout.
         mSearchBar.setState(SearchBar.STATE_SEARCH, false);
         mSearchBar.setHelper(this);
         mSearchBar.setEditTextHint(resources.getString(R.string.keyword));
+        mSearchBar.setLeftIconVisibility(View.GONE);
+        mSearchBar.setRightDrawable(resources.getDrawable(R.drawable.ic_close_x24));
+        mSearchBar.setEditTextMargin(LayoutUtils.dp2pix(getContext(), 16), LayoutUtils.dp2pix(getContext(), 56));
 
         ViewUtils.measureView(mSearchBar, 200, ViewGroup.LayoutParams.WRAP_CONTENT);
         mSearchLayout.setFitPaddingTop(mSearchBar.getMeasuredHeight() +
@@ -234,18 +238,13 @@ public class ModifyQuickSearchScene extends AppbarScene implements SearchLayout.
     }
 
     @Override
-    public void onClickMenu() {
+    public void onClickLeftIcon() {
 
     }
 
     @Override
-    public void onClickArrow() {
-
-    }
-
-    @Override
-    public void onClickAdvanceSearch() {
-
+    public void onClickRightIcon() {
+        mSearchBar.setText("");
     }
 
     @Override

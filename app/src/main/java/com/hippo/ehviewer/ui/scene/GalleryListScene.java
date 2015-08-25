@@ -38,6 +38,7 @@ import android.widget.Toast;
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.conaco.Conaco;
 import com.hippo.drawable.AddDeleteDrawable;
+import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.EhApplication;
@@ -83,13 +84,13 @@ import com.hippo.yorozuya.ViewUtils;
 
 import java.util.List;
 
-// TODO remeber the data in ContentHelper after screen dirction change
 // TODO Must refresh when change source
 // TODO disable click action when animating
 // TODO Dim when expand search list
 public final class GalleryListScene extends Scene implements ListSearchBar.Helper,
         View.OnClickListener, SearchLayout.SearhLayoutHelper, EasyRecyclerView.OnItemClickListener,
-        Messenger.Receiver, DrawerProvider, AppbarRecyclerView.Helper, FabLayout.OnExpandListener {
+        Messenger.Receiver, DrawerProvider, AppbarRecyclerView.Helper, FabLayout.OnExpandListener,
+        SearchBar.OnStateChangeListener {
 
     public static final String KEY_MODE = "mode";
 
@@ -151,6 +152,9 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
 
     private boolean mLockLeft = false;
     private boolean mLockRight = false;
+
+    private DrawerArrowDrawable mLeftDrawable;
+    private AddDeleteDrawable mRightDrawable;
 
     private SimpleDialog.OnCreateCustomViewListener mGoToCreateCustomViewListener =
             new SimpleDialog.OnCreateCustomViewListener() {
@@ -293,6 +297,12 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
         mSearchLayout.setAction1Text(mResources.getString(R.string.search_add));
         mSearchLayout.setAction2Text(mResources.getString(R.string.search_mode));
         mSearchLayout.setHelper(this);
+
+        mLeftDrawable = new DrawerArrowDrawable(getContext());
+        mRightDrawable = new AddDeleteDrawable(getContext());
+        mSearchBar.setLeftDrawable(mLeftDrawable);
+        mSearchBar.setRightDrawable(mRightDrawable);
+        mSearchBar.setOnStateChangeListener(this);
 
         ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) mSearchBar.getLayoutParams();
         ViewUtils.measureView(mSearchBar, 200, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -642,19 +652,21 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
     }
 
     @Override
-    public void onClickMenu() {
-        mActivity.toggleDrawer();
+    public void onClickLeftIcon() {
+        if (mSearchBar.getState() == SearchBar.STATE_NORMAL) {
+            mActivity.toggleDrawer();
+        } else {
+            onBackPressed();
+        }
     }
 
     @Override
-    public void onClickArrow() {
-        onBackPressed();
-    }
-
-    @Override
-    public void onClickAdvanceSearch() {
-        if (mState == STATE_NORMAL) {
+    public void onClickRightIcon() {
+        if (mSearchBar.getState() == SearchBar.STATE_NORMAL) {
             setState(STATE_SEARCH);
+        } else {
+            // Clear
+            mSearchBar.setText("");
         }
     }
 
@@ -821,6 +833,29 @@ public final class GalleryListScene extends Scene implements ListSearchBar.Helpe
             }
             mSearchBarMoveAnimator = va;
             va.start();
+        }
+    }
+
+    @Override
+    public void onStateChange(int newState, int oldState, boolean animation) {
+        switch (oldState) {
+            default:
+            case SearchBar.STATE_NORMAL:
+                mLeftDrawable.setArrow(animation ? ANIMATE_TIME : 0);
+                mRightDrawable.setDelete(animation ? ANIMATE_TIME : 0);
+                break;
+            case SearchBar.STATE_SEARCH:
+                if (newState == SearchBar.STATE_NORMAL) {
+                    mLeftDrawable.setMenu(animation ? ANIMATE_TIME : 0);
+                    mRightDrawable.setAdd(animation ? ANIMATE_TIME : 0);
+                }
+                break;
+            case SearchBar.STATE_SEARCH_LIST:
+                if (newState == STATE_NORMAL) {
+                    mLeftDrawable.setMenu(animation ? ANIMATE_TIME : 0);
+                    mRightDrawable.setAdd(animation ? ANIMATE_TIME : 0);
+                }
+                break;
         }
     }
 
