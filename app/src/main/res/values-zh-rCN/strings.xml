@@ -147,7 +147,7 @@
     <string name="settings_preview_size_normal">一般</string>
     <string name="settings_preview_size_large">较大</string>
 
-    <string name="settings_download">Download</string>
+    <string name="settings_download">下载</string>
     <string name="settings_image_download_location">图片下载目录</string>
     <string name="settings_archive_download_location">归档文件下载目录</string>
 
@@ -204,11 +204,9 @@
     <string name="incompletely_downloaded">未完全下载</string>
     <string name="downloading_complete">下载完成</string>
     <plurals name="item_successfully_downloaded">
-        <item quantity="one">一项下载成功</item>
         <item quantity="other">%d 项下载成功</item>
     </plurals>
     <plurals name="item_incompletely_downloaded">
-        <item quantity="one">一项未完全下载</item>
         <item quantity="other">%d 项未完全下载</item>
     </plurals>
     <string name="download_state_none">未启动</string>
@@ -264,6 +262,6 @@
     <string name="rename">重命名</string>
 
     <string name="move_to">移动到 …</string>
-    <string name="remeber">记住</string>
+    <string name="remember">记住</string>
 
 </resources>
