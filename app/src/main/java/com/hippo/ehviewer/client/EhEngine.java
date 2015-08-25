@@ -193,7 +193,7 @@ class EhEngine {
             json.put("apikey", APIKEY);
             json.put("gid", gid);
             json.put("token", token);
-            json.put("rating", rating);
+            json.put("rating", (int) Math.ceil(rating * 2));
 
             JsonPoster jsonPoster = new JsonPoster(json);
             httpRequest.setUrl(EhUrl.getApiUrl(source));
