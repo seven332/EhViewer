@@ -226,6 +226,35 @@ public final class EhClient {
      */
     public static final int METHOD_RATE_GALLERY = 7;
 
+    /**
+     * Get favorite
+     *
+     * <table>
+     *     <tr>
+     *         <th>param</th>
+     *         <th>info</th>
+     *     </tr>
+     *     <tr>
+     *         <td>cat</td>
+     *         <td>favorite category, -1 for all</td>
+     *     </tr>
+     *     <tr>
+     *         <td>page</td>
+     *         <td>the page index</td>
+     *     </tr>
+     *     <tr>
+     *         <td>source</td>
+     *         <td>the source, one of {@link EhUrl#SOURCE_G},
+     *         {@link EhUrl#SOURCE_EX} and {@link EhUrl#SOURCE_LOFI}</td>
+     *     </tr>
+     *     <tr>
+     *         <td>listener</td>
+     *         <td>the listener for callback</td>
+     *     </tr>
+     * </table>
+     */
+    public static final int METHOD_GET_FAVORITE = 8;
+
     private final ThreadPoolExecutor mRequestThreadPool;
 
     private final HttpClient mHttpClient;
@@ -352,6 +381,8 @@ public final class EhClient {
                         return EhEngine.getPreviewSet(mHttpClient, mEhHttpRequest, (String) params[0], (Integer) params[1]);
                     case METHOD_RATE_GALLERY:
                         return EhEngine.rateGallery(mHttpClient, mEhHttpRequest, (Integer) params[0], (String) params[1], (Float) params[2], (Integer) params[3]);
+                    case METHOD_GET_FAVORITE:
+                        return EhEngine.getFavorite(mHttpClient, mEhHttpRequest, (Integer) params[0], (Integer) params[1], (Integer) params[2]);
                     default:
                         return new IllegalStateException("Can't detect method");
                 }

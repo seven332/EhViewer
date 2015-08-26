@@ -162,8 +162,8 @@ public abstract class AbsDragSortScene extends AppbarScene {
     }
 
     @Override
-    protected void onDetachFromeStage() {
-        super.onDetachFromeStage();
+    protected void onDetachedFromeWindow() {
+        super.onDetachedFromeWindow();
 
         if (mRecyclerViewDragDropManager != null) {
             mRecyclerViewDragDropManager.release();

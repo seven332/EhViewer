@@ -83,4 +83,15 @@ public class EhUrl {
     public static String getPageUrl(int source, int gid, String token, int pageIndex) {
         return getUrlHeader(source) + "s/" + token + '/' + gid + '-' + (pageIndex + 1);
     }
+
+    /**
+     * @param cat -1 for all
+     */
+    public static String getFavoriteUrl(int source, int cat, int pageIndex) {
+        if (cat == -1) {
+            return getUrlHeader(source) + "favorites.php?page=" + pageIndex;
+        } else {
+            return getUrlHeader(source) + "favorites.php?favcat=" + cat + "&page=" + pageIndex;
+        }
+    }
 }

@@ -47,6 +47,7 @@ import com.hippo.yorozuya.Messenger;
 
 import java.util.List;
 
+// TODO Avoid get history in UI thread
 public class HistoryScene extends AppbarScene implements EasyRecyclerView.OnItemClickListener,
         Messenger.Receiver {
 
@@ -133,8 +134,8 @@ public class HistoryScene extends AppbarScene implements EasyRecyclerView.OnItem
     }
 
     @Override
-    protected void onDetachFromeStage() {
-        super.onDetachFromeStage();
+    protected void onDetachedFromeWindow() {
+        super.onDetachedFromeWindow();
 
         if (mRecyclerViewSwipeManager != null) {
             mRecyclerViewSwipeManager.release();

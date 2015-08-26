@@ -35,6 +35,8 @@ public class SceneView extends AbsoluteLayout {
     private float mStartX = -1f;
     private float mStartY = -1f;
 
+    private Scene mScene;
+
     public SceneView(Context context) {
         super(context);
         init();
@@ -53,6 +55,29 @@ public class SceneView extends AbsoluteLayout {
     private void init() {
         setClickable(true);
         mPath = new Path();
+    }
+
+    public void setScene(Scene scene) {
+        mScene = scene;
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        if (mScene != null) {
+            mScene.onAttachedToWindow();
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        if (mScene != null) {
+            mScene.onDetachedFromeWindow();
+            mScene = null;
+        }
     }
 
     public void setEnableTouch(boolean enableTouch) {

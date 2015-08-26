@@ -106,6 +106,10 @@ public class ContentLayout extends FrameLayout {
         return mRecyclerView;
     }
 
+    public void setAdapter(RecyclerView.Adapter adapter) {
+        mRecyclerView.setAdapter(adapter);
+    }
+
     public void setHelper(ContentHelper helper) {
         mContentHelper = helper;
         helper.init(this);
@@ -135,8 +139,7 @@ public class ContentLayout extends FrameLayout {
         super.onRestoreInstanceState(mContentHelper.onRestoreInstanceState(state));
     }
 
-    public abstract static class ContentHelper<E, VH extends RecyclerView.ViewHolder>
-            extends EasyRecyclerView.Adapter<VH>
+    public abstract static class ContentHelper<E>
             implements RefreshLayout.OnHeaderRefreshListener,
             RefreshLayout.OnFooterRefreshListener, View.OnClickListener {
 
@@ -162,8 +165,6 @@ public class ContentLayout extends FrameLayout {
         public static final int TYPE_NEXT_PAGE = 3;
         public static final int TYPE_NEXT_PAGE_KEEP_POS = 4;
         public static final int TYPE_SOMEWHERE = 5;
-
-        private Context mContext;
 
         private ProgressView mProgressView;
         private ViewGroup mTipView;
@@ -253,27 +254,9 @@ public class ContentLayout extends FrameLayout {
                     }
                 };
 
-        public ContentHelper(Context context) {
-            mContext = context;
+        public ContentHelper() {
             mData = new ArrayList<>();
             mIdGenerator = new IdIntGenerator();
-        }
-
-        @SuppressWarnings("unchecked")
-        protected ContentHelper(Context context, ContentHelper older) {
-            this(context);
-            mData.addAll(older.mData);
-
-            mFirstPage = older.mFirstPage;
-            mLastPage = older.mLastPage;
-            mFirstIndex = older.mFirstIndex;
-            mLastIndex = older.mLastIndex;
-            mPageCount = older.mPageCount;
-            mCurrentPage = older.mCurrentPage;
-            mPageVolume = older.mPageVolume;
-            mCurrentTaskId = older.mCurrentTaskId;
-            mCurrentTaskType = older.mCurrentTaskType;
-            mCurrentTaskPage = older.mCurrentTaskPage;
         }
 
         private void init(ContentLayout contentLayout) {
@@ -289,13 +272,14 @@ public class ContentLayout extends FrameLayout {
             mViewTransition.showView(2, false);
 
             mRecyclerView.setLayoutManager(mLayoutManager);
-            mRecyclerView.setAdapter(this);
             mRecyclerView.addOnScrollListener(mOnScrollListener);
             mRefreshLayout.setOnHeaderRefreshListener(this);
             mRefreshLayout.setOnFooterRefreshListener(this);
 
             mTipView.setOnClickListener(this);
         }
+
+        protected abstract Context getContext();
 
         protected abstract RecyclerView.LayoutManager generateLayoutManager();
 
@@ -304,6 +288,12 @@ public class ContentLayout extends FrameLayout {
         protected abstract void onShowProgress();
 
         protected abstract void onShowText();
+
+        protected abstract void notifyDataSetChanged();
+
+        protected abstract void notifyItemRangeRemoved(int positionStart, int itemCount);
+
+        protected abstract void notifyItemRangeInserted(int positionStart, int itemCount);
 
         public void showContent() {
             mViewTransition.showView(0);
@@ -390,7 +380,7 @@ public class ContentLayout extends FrameLayout {
                             mLastIndex += pageVolume;
 
                             mRecyclerView.stopScroll();
-                            LayoutManagerUtils.scrollToPositionProperly(mLayoutManager, mContext, mFirstIndex - 1, mOnScrollToPositionListener);
+                            LayoutManagerUtils.scrollToPositionProperly(mLayoutManager, getContext(), mFirstIndex - 1, mOnScrollToPositionListener);
                         } else {
                             mCurrentPage = mFirstPage;
                             mFirstIndex = 0;
@@ -445,13 +435,13 @@ public class ContentLayout extends FrameLayout {
                 mRefreshLayout.setHeaderRefreshing(false);
                 mRefreshLayout.setFooterRefreshing(false);
                 Say.d(TAG, "Get page data failed " + e.getClass().getName() + " " + e.getMessage());
-                String readableError = ExceptionUtils.getReadableString(mContext, e);
-                String reason = ExceptionUtils.getReasonString(mContext, e);
+                String readableError = ExceptionUtils.getReadableString(getContext(), e);
+                String reason = ExceptionUtils.getReasonString(getContext(), e);
                 if (reason != null) {
                     readableError += '\n' + reason;
                 }
                 if (mViewTransition.getShownViewIndex() == 0) {
-                    Toast.makeText(mContext, readableError, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), readableError, Toast.LENGTH_SHORT).show();
                 } else {
                     showText(readableError);
                 }
@@ -515,7 +505,7 @@ public class ContentLayout extends FrameLayout {
                 // Go to top
                 mRecyclerView.stopScroll();
                 LayoutManagerUtils.scrollToPositionProperly(mLayoutManager,
-                        mContext, 0, mOnScrollToPositionListener);
+                        getContext(), 0, mOnScrollToPositionListener);
                 // Show header refresh
                 mRefreshLayout.setFooterRefreshing(false);
                 mRefreshLayout.setHeaderRefreshing(true);
@@ -591,8 +581,7 @@ public class ContentLayout extends FrameLayout {
             onScrollToPosition();
         }
 
-        @Override
-        public int getItemCount() {
+        public int size() {
             return mData.size();
         }
 

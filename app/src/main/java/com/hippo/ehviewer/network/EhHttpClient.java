@@ -94,6 +94,15 @@ public class EhHttpClient extends HttpClient {
     protected void fillCookie(URL url, Cookie cookie) {
         cookie.putRaw(mCookieManager.getCookie(url.toString()));
 
+        // Load these from config
+        cookie.remove(KEY_IPD_MEMBER_ID);
+        cookie.remove(KEY_IPD_MEMBER_ID);
+        cookie.remove(KEY_IGNEOUS);
+        cookie.remove(KEY_YAY);
+        cookie.remove(EhConfig.KEY_UCONFIG);
+        cookie.remove(EhConfig.KEY_LOFI_RESOLUTION);
+        cookie.remove(EhConfig.KEY_CONTENT_WARNING);
+
         if (Utilities.contain(EHENTAI_DOMAIN, getDomain(url))) {
             if (Settings.getSignIn()) {
                 // Put login info

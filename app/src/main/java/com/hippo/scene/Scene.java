@@ -211,6 +211,7 @@ public abstract class Scene {
             // Not call setContentView in onCreate, create scene view by ourself
             mSceneView = createSceneView(getStageActivity());
         }
+        mSceneView.setScene(this);
 
         mSceneView.setBackgroundColor(mBackgroundColor);
 
@@ -429,17 +430,23 @@ public abstract class Scene {
         return getStageActivity().getStageLayout();
     }
 
-    protected void onAttachToStage() {
+    protected void onAttachedToWindow() {
     }
 
-    protected void onDetachFromeStage() {
+    protected void onDetachedFromeWindow() {
+    }
+
+    protected void onAttachedToStage() {
+    }
+
+    protected void onDetachedFromeStage() {
     }
 
     // Add scene view to stage layout
     void attachToStage() {
         if (mSceneView != null && !isInStage()) {
             doAttachToStage();
-            onAttachToStage();
+            onAttachedToStage();
         }
     }
 
@@ -447,7 +454,7 @@ public abstract class Scene {
     void detachFromeStage() {
         if (mSceneView != null && isInStage()) {
             doDetachFromeStage();
-            onDetachFromeStage();
+            onDetachedFromeStage();
         }
     }
 

@@ -41,7 +41,6 @@
                 android:layout_marginLeft="56dp"
                 android:layout_marginRight="56dp"
                 android:gravity="center_vertical"
-                android:text="@string/app_name"
                 android:textSize="@dimen/text_large"
                 android:textColor="@color/secondary_text_light"/>
 

@@ -81,6 +81,14 @@ class EhEngine {
         }
     }
 
+    /**
+     * @param cat -1 for all
+     */
+    public static GalleryListParser.Result getFavorite(HttpClient httpClient,
+            HttpRequest httpRequest, int cat, int page, int source) throws Exception {
+        return getGalleryList(httpClient, httpRequest, EhUrl.getFavoriteUrl(source, cat, page), source);
+    }
+
     public static PopularParser.Result getPopular(HttpClient httpClient,
             HttpRequest httpRequest) throws Exception {
         try {
