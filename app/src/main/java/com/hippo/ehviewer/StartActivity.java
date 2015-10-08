@@ -37,6 +37,7 @@ import com.hippo.ehviewer.util.Secret;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.LockPatternUtils;
 import com.hippo.ehviewer.widget.SimpleImageView;
+import com.hippo.vector.VectorDrawable;
 
 public class StartActivity extends AbsActivity {
 
@@ -188,7 +189,7 @@ public class StartActivity extends AbsActivity {
         TextView text = (TextView) findViewById(R.id.text);
         text.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/GloriaHallelujah.ttf"));
         SimpleImageView image = (SimpleImageView) findViewById(R.id.image);
-        image.setDrawable(R.drawable.sad_pandroid);
+        image.setDrawable(VectorDrawable.create(this, R.drawable.sad_pandroid));
 
         // Update secret image here
         int state = Network.getNetworkState(this);

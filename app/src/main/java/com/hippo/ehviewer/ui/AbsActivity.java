@@ -17,13 +17,11 @@
 package com.hippo.ehviewer.ui;
 
 import android.app.Activity;
-import android.content.Context;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.hippo.ehviewer.cache.ImageCache;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.Ui;
-import com.hippo.vectorold.content.VectorContext;
 
 public abstract class AbsActivity extends Activity {
 
@@ -55,10 +53,5 @@ public abstract class AbsActivity extends Activity {
 
         if (Config.getAllowAnalyics())
             EasyTracker.getInstance(this).activityStop(this);
-    }
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(VectorContext.wrapContext(newBase));
     }
 }

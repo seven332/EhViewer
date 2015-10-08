@@ -27,6 +27,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.util.Config;
 import com.hippo.ehviewer.util.MathUtils;
 import com.hippo.ehviewer.util.Utils;
+import com.hippo.vector.VectorDrawable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -107,7 +108,7 @@ public class EhInfo {
         mContext = context;
         mInfoPref = mContext.getSharedPreferences(PREF_NAME, 0);
         if (DEFAULT_AVATAR == null)
-            DEFAULT_AVATAR = context.getResources().getDrawable(R.drawable.default_avatar);
+            DEFAULT_AVATAR = VectorDrawable.create(context, R.drawable.default_avatar);
 
         mIsLogin = mInfoPref.getBoolean(KEY_LOGIN, DEFAULT_LOGIN);
         mUsername = mInfoPref.getString(KEY_USERNAME, DEFAULT_NAME);

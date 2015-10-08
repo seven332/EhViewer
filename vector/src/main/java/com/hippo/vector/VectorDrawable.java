@@ -1,19 +1,22 @@
 /*
- * Copyright (C) 2014 The Android Open Source Project
+ * Copyright 2015 Hippo Seven
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package com.hippo.vectorold.drawable;
+package com.hippo.vector;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -29,6 +32,7 @@ import android.graphics.PixelFormat;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -36,10 +40,6 @@ import android.support.v4.util.ArrayMap;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Xml;
-
-import com.hippo.ehviewer.R;
-import com.hippo.vectorold.util.DrawableUtils;
-import com.hippo.vectorold.util.PathParser;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -183,6 +183,8 @@ import java.util.Stack;
 public class VectorDrawable extends Drawable {
     private static final String LOGTAG = VectorDrawable.class.getSimpleName();
 
+    private static final Mode DEFAULT_TINT_MODE = Mode.SRC_IN;
+
     private static final String SHAPE_CLIP_PATH = "clip-path";
     private static final String SHAPE_GROUP = "group";
     private static final String SHAPE_PATH = "path";
@@ -213,9 +215,9 @@ public class VectorDrawable extends Drawable {
         mVectorState = new VectorDrawableState();
     }
 
-    private VectorDrawable(@NonNull VectorDrawableState state, Resources res) {
+    private VectorDrawable(@NonNull VectorDrawableState state) {
         mVectorState = state;
-        mTintFilter = DrawableUtils.updateTintFilter(this, mTintFilter, state.mTint, state.mTintMode);
+        mTintFilter = Utils.updateTintFilter(this, mTintFilter, state.mTint, state.mTintMode);
     }
 
     @Override
@@ -227,7 +229,7 @@ public class VectorDrawable extends Drawable {
         return this;
     }
 
-    Object getTargetByName(String name) {
+    public Object getTargetByName(String name) {
         return mVectorState.mVPathRenderer.mVGTargetsMap.get(name);
     }
 
@@ -238,7 +240,7 @@ public class VectorDrawable extends Drawable {
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(@NonNull Canvas canvas) {
         final Rect bounds = getBounds();
         if (bounds.width() == 0 || bounds.height() == 0) {
             // too small to draw
@@ -246,13 +248,8 @@ public class VectorDrawable extends Drawable {
         }
 
         final int saveCount = canvas.save();
-        final boolean needMirroring = needMirroring();
 
         canvas.translate(bounds.left, bounds.top);
-        if (needMirroring) {
-            canvas.translate(bounds.width(), 0);
-            canvas.scale(-1.0f, 1.0f);
-        }
 
         // Color filters always override tint filters.
         final ColorFilter colorFilter = mColorFilter == null ? mTintFilter : mColorFilter;
@@ -304,17 +301,17 @@ public class VectorDrawable extends Drawable {
         final VectorDrawableState state = mVectorState;
         if (state.mTint != tint) {
             state.mTint = tint;
-            mTintFilter = DrawableUtils.updateTintFilter(this, mTintFilter, tint, state.mTintMode);
+            mTintFilter = Utils.updateTintFilter(this, mTintFilter, tint, state.mTintMode);
             invalidateSelf();
         }
     }
 
     @Override
-    public void setTintMode(Mode tintMode) {
+    public void setTintMode(@NonNull Mode tintMode) {
         final VectorDrawableState state = mVectorState;
         if (state.mTintMode != tintMode) {
             state.mTintMode = tintMode;
-            mTintFilter = DrawableUtils.updateTintFilter(this, mTintFilter, state.mTint, tintMode);
+            mTintFilter = Utils.updateTintFilter(this, mTintFilter, state.mTint, tintMode);
             invalidateSelf();
         }
     }
@@ -329,7 +326,7 @@ public class VectorDrawable extends Drawable {
     protected boolean onStateChange(int[] stateSet) {
         final VectorDrawableState state = mVectorState;
         if (state.mTint != null && state.mTintMode != null) {
-            mTintFilter = DrawableUtils.updateTintFilter(this, mTintFilter, state.mTint, state.mTintMode);
+            mTintFilter = Utils.updateTintFilter(this, mTintFilter, state.mTint, state.mTintMode);
             invalidateSelf();
             return true;
         }
@@ -372,10 +369,9 @@ public class VectorDrawable extends Drawable {
         return Math.min(scaleX, scaleY);
     }
 
-    /** @hide */
-    public static VectorDrawable create(Resources resources, int rid) {
+    public static VectorDrawable create(Context context, int rid) {
         try {
-            final XmlPullParser parser = resources.getXml(rid);
+            final XmlPullParser parser = context.getResources().getXml(rid);
             final AttributeSet attrs = Xml.asAttributeSet(parser);
             int type;
             while ((type=parser.next()) != XmlPullParser.START_TAG &&
@@ -386,16 +382,20 @@ public class VectorDrawable extends Drawable {
                 throw new XmlPullParserException("No start tag found");
             }
 
+            final String name = parser.getName();
+            if (!"vector".equals(name)) {
+                throw new IllegalStateException("It is not vector");
+            }
+
             final VectorDrawable drawable = new VectorDrawable();
-            drawable.inflate(resources, parser, attrs);
+            drawable.inflate(context, parser, attrs);
 
             return drawable;
         } catch (XmlPullParserException e) {
-            Log.e(LOGTAG, "parser error", e);
+            throw new IllegalStateException("parser error", e);
         } catch (IOException e) {
-            Log.e(LOGTAG, "parser error", e);
+            throw new IllegalStateException("parser error", e);
         }
-        return null;
     }
 
     private static int applyAlpha(int color, float alpha) {
@@ -405,21 +405,19 @@ public class VectorDrawable extends Drawable {
         return color;
     }
 
-    @Override
-    public void inflate(Resources res, XmlPullParser parser, AttributeSet attrs)
+    public void inflate(Context context, XmlPullParser parser, AttributeSet attrs)
             throws XmlPullParserException, IOException {
         final VectorDrawableState state = mVectorState;
-        final VPathRenderer pathRenderer = new VPathRenderer();
-        state.mVPathRenderer = pathRenderer;
+        state.mVPathRenderer = new VPathRenderer();
 
-        final TypedArray a = res.obtainAttributes(attrs, R.styleable.VectorDrawable);
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.VectorDrawable);
         updateStateFromTypedArray(a);
         a.recycle();
 
         state.mCacheDirty = true;
-        inflateInternal(res, parser, attrs);
+        inflateInternal(context, parser, attrs);
 
-        mTintFilter = DrawableUtils.updateTintFilter(this, mTintFilter, state.mTint, state.mTintMode);
+        mTintFilter = Utils.updateTintFilter(this, mTintFilter, state.mTint, state.mTintMode);
     }
 
     private void updateStateFromTypedArray(TypedArray a) throws XmlPullParserException {
@@ -431,7 +429,7 @@ public class VectorDrawable extends Drawable {
 
         final int tintMode = a.getInt(R.styleable.VectorDrawable_tintMode, -1);
         if (tintMode != -1) {
-            state.mTintMode = DrawableUtils.parseTintMode(tintMode, Mode.SRC_IN);
+            state.mTintMode = Utils.parseTintMode(tintMode, Mode.SRC_IN);
         }
 
         final ColorStateList tint = a.getColorStateList(R.styleable.VectorDrawable_tint);
@@ -439,8 +437,7 @@ public class VectorDrawable extends Drawable {
             state.mTint = tint;
         }
 
-        state.mAutoMirrored = a.getBoolean(
-                R.styleable.VectorDrawable_autoMirrored, state.mAutoMirrored);
+        setAllowCaching(a.getBoolean(R.styleable.VectorDrawable_allowCaching, true));
 
         pathRenderer.mViewportWidth = a.getFloat(
                 R.styleable.VectorDrawable_viewportWidth, pathRenderer.mViewportWidth);
@@ -479,7 +476,7 @@ public class VectorDrawable extends Drawable {
         }
     }
 
-    private void inflateInternal(Resources res, XmlPullParser parser, AttributeSet attrs)
+    private void inflateInternal(Context context, XmlPullParser parser, AttributeSet attrs)
             throws XmlPullParserException, IOException {
         final VectorDrawableState state = mVectorState;
         final VPathRenderer pathRenderer = state.mVPathRenderer;
@@ -498,7 +495,7 @@ public class VectorDrawable extends Drawable {
 
                 if (SHAPE_PATH.equals(tagName)) {
                     final VFullPath path = new VFullPath();
-                    path.inflate(res, attrs);
+                    path.inflate(context, attrs);
                     currentGroup.mChildren.add(path);
                     if (path.getPathName() != null) {
                         pathRenderer.mVGTargetsMap.put(path.getPathName(), path);
@@ -507,7 +504,7 @@ public class VectorDrawable extends Drawable {
                     state.mChangingConfigurations |= path.mChangingConfigurations;
                 } else if (SHAPE_CLIP_PATH.equals(tagName)) {
                     final VClipPath path = new VClipPath();
-                    path.inflate(res, attrs);
+                    path.inflate(context, attrs);
                     currentGroup.mChildren.add(path);
                     if (path.getPathName() != null) {
                         pathRenderer.mVGTargetsMap.put(path.getPathName(), path);
@@ -515,7 +512,7 @@ public class VectorDrawable extends Drawable {
                     state.mChangingConfigurations |= path.mChangingConfigurations;
                 } else if (SHAPE_GROUP.equals(tagName)) {
                     VGroup newChildGroup = new VGroup();
-                    newChildGroup.inflate(res, attrs);
+                    newChildGroup.inflate(context, attrs);
                     currentGroup.mChildren.add(newChildGroup);
                     groupStack.push(newChildGroup);
                     if (newChildGroup.getGroupName() != null) {
@@ -573,39 +570,20 @@ public class VectorDrawable extends Drawable {
         return super.getChangingConfigurations() | mVectorState.mChangingConfigurations;
     }
 
-    void setAllowCaching(boolean allowCaching) {
+    public void setAllowCaching(boolean allowCaching) {
         mAllowCaching = allowCaching;
-    }
-
-    private boolean needMirroring() {
-        return isAutoMirrored();
-    }
-
-    @Override
-    public void setAutoMirrored(boolean mirrored) {
-        if (mVectorState.mAutoMirrored != mirrored) {
-            mVectorState.mAutoMirrored = mirrored;
-            invalidateSelf();
-        }
-    }
-
-    @Override
-    public boolean isAutoMirrored() {
-        return mVectorState.mAutoMirrored;
     }
 
     private static class VectorDrawableState extends ConstantState {
         int mChangingConfigurations;
         VPathRenderer mVPathRenderer;
         ColorStateList mTint = null;
-        Mode mTintMode = DrawableUtils.DEFAULT_TINT_MODE;
-        boolean mAutoMirrored;
+        Mode mTintMode = DEFAULT_TINT_MODE;
 
         Bitmap mCachedBitmap;
         ColorStateList mCachedTint;
         Mode mCachedTintMode;
         int mCachedRootAlpha;
-        boolean mCachedAutoMirrored;
         boolean mCacheDirty;
 
         /** Temporary paint object used to draw cached bitmaps. */
@@ -624,7 +602,6 @@ public class VectorDrawable extends Drawable {
                 }
                 mTint = copy.mTint;
                 mTintMode = copy.mTintMode;
-                mAutoMirrored = copy.mAutoMirrored;
             }
         }
 
@@ -683,7 +660,6 @@ public class VectorDrawable extends Drawable {
             if (!mCacheDirty
                     && mCachedTint == mTint
                     && mCachedTintMode == mTintMode
-                    && mCachedAutoMirrored == mAutoMirrored
                     && mCachedRootAlpha == mVPathRenderer.getRootAlpha()) {
                 return true;
             }
@@ -696,7 +672,6 @@ public class VectorDrawable extends Drawable {
             mCachedTint = mTint;
             mCachedTintMode = mTintMode;
             mCachedRootAlpha = mVPathRenderer.getRootAlpha();
-            mCachedAutoMirrored = mAutoMirrored;
             mCacheDirty = false;
         }
 
@@ -704,14 +679,16 @@ public class VectorDrawable extends Drawable {
             mVPathRenderer = new VPathRenderer();
         }
 
+        @NonNull
         @Override
         public Drawable newDrawable() {
-            return new VectorDrawable(this, null);
+            return new VectorDrawable(this);
         }
 
+        @NonNull
         @Override
         public Drawable newDrawable(Resources res) {
-            return new VectorDrawable(this, res);
+            return new VectorDrawable(this);
         }
 
         @Override
@@ -737,7 +714,6 @@ public class VectorDrawable extends Drawable {
         // is no need for deep copying.
         private final Path mPath;
         private final Path mRenderPath;
-        private static final Matrix IDENTITY_MATRIX = new Matrix();
         private final Matrix mFinalPathMatrix = new Matrix();
 
         private Paint mStrokePaint;
@@ -755,7 +731,7 @@ public class VectorDrawable extends Drawable {
         int mRootAlpha = 0xFF;
         String mRootName = null;
 
-        final ArrayMap<String, Object> mVGTargetsMap = new ArrayMap<String, Object>();
+        final ArrayMap<String, Object> mVGTargetsMap = new ArrayMap<>();
 
         public VPathRenderer() {
             mRootGroup = new VGroup();
@@ -915,7 +891,7 @@ public class VectorDrawable extends Drawable {
 
         /////////////////////////////////////////////////////
         // Variables below need to be copied (deep copy if applicable) for mutation.
-        final ArrayList<Object> mChildren = new ArrayList<Object>();
+        final ArrayList<Object> mChildren = new ArrayList<>();
 
         private float mRotate = 0;
         private float mPivotX = 0;
@@ -954,7 +930,7 @@ public class VectorDrawable extends Drawable {
                     VGroup copyGroup = (VGroup) copyChild;
                     mChildren.add(new VGroup(copyGroup, targetsMap));
                 } else {
-                    VPath newPath = null;
+                    VPath newPath;
                     if (copyChild instanceof VFullPath) {
                         newPath = new VFullPath((VFullPath) copyChild);
                     } else if (copyChild instanceof VClipPath) {
@@ -981,8 +957,8 @@ public class VectorDrawable extends Drawable {
             return mLocalMatrix;
         }
 
-        public void inflate(Resources res, AttributeSet attrs) {
-            final TypedArray a = res.obtainAttributes(attrs,
+        public void inflate(Context context, AttributeSet attrs) {
+            final TypedArray a = context.obtainStyledAttributes(attrs,
                     R.styleable.VectorDrawableGroup);
             updateStateFromTypedArray(a);
             a.recycle();
@@ -1173,8 +1149,8 @@ public class VectorDrawable extends Drawable {
             super(copy);
         }
 
-        public void inflate(Resources r, AttributeSet attrs) {
-            final TypedArray a = r.obtainAttributes(attrs,
+        public void inflate(Context context, AttributeSet attrs) {
+            final TypedArray a = context.obtainStyledAttributes(attrs,
                     R.styleable.VectorDrawableClipPath);
             updateStateFromTypedArray(a);
             a.recycle();
@@ -1204,7 +1180,7 @@ public class VectorDrawable extends Drawable {
     /**
      * Normal path, which contains all the fill / paint information.
      */
-    private static class VFullPath extends VPath {
+    public static class VFullPath extends VPath {
         /////////////////////////////////////////////////////
         // Variables below need to be copied (deep copy if applicable) for mutation.
         int mStrokeColor = Color.TRANSPARENT;
@@ -1228,7 +1204,6 @@ public class VectorDrawable extends Drawable {
 
         public VFullPath(VFullPath copy) {
             super(copy);
-
             mStrokeColor = copy.mStrokeColor;
             mStrokeWidth = copy.mStrokeWidth;
             mStrokeAlpha = copy.mStrokeAlpha;
@@ -1270,8 +1245,8 @@ public class VectorDrawable extends Drawable {
             }
         }
 
-        public void inflate(Resources r, AttributeSet attrs) {
-            final TypedArray a = r.obtainAttributes(attrs,
+        public void inflate(Context context, AttributeSet attrs) {
+            final TypedArray a = context.obtainStyledAttributes(attrs,
                     R.styleable.VectorDrawablePath);
             updateStateFromTypedArray(a);
             a.recycle();
@@ -1317,83 +1292,264 @@ public class VectorDrawable extends Drawable {
 
         /* Setters and Getters, used by animator from AnimatedVectorDrawable. */
         @SuppressWarnings("unused")
-        int getStrokeColor() {
+        public int getStrokeColor() {
             return mStrokeColor;
         }
 
         @SuppressWarnings("unused")
-        void setStrokeColor(int strokeColor) {
+        public void setStrokeColor(int strokeColor) {
             mStrokeColor = strokeColor;
         }
 
         @SuppressWarnings("unused")
-        float getStrokeWidth() {
+        public float getStrokeWidth() {
             return mStrokeWidth;
         }
 
         @SuppressWarnings("unused")
-        void setStrokeWidth(float strokeWidth) {
+        public void setStrokeWidth(float strokeWidth) {
             mStrokeWidth = strokeWidth;
         }
 
         @SuppressWarnings("unused")
-        float getStrokeAlpha() {
+        public float getStrokeAlpha() {
             return mStrokeAlpha;
         }
 
         @SuppressWarnings("unused")
-        void setStrokeAlpha(float strokeAlpha) {
+        public void setStrokeAlpha(float strokeAlpha) {
             mStrokeAlpha = strokeAlpha;
         }
 
         @SuppressWarnings("unused")
-        int getFillColor() {
+        public int getFillColor() {
             return mFillColor;
         }
 
         @SuppressWarnings("unused")
-        void setFillColor(int fillColor) {
+        public void setFillColor(int fillColor) {
             mFillColor = fillColor;
         }
 
         @SuppressWarnings("unused")
-        float getFillAlpha() {
+        public float getFillAlpha() {
             return mFillAlpha;
         }
 
         @SuppressWarnings("unused")
-        void setFillAlpha(float fillAlpha) {
+        public void setFillAlpha(float fillAlpha) {
             mFillAlpha = fillAlpha;
         }
 
         @SuppressWarnings("unused")
-        float getTrimPathStart() {
+        public float getTrimPathStart() {
             return mTrimPathStart;
         }
 
         @SuppressWarnings("unused")
-        void setTrimPathStart(float trimPathStart) {
+        public void setTrimPathStart(float trimPathStart) {
             mTrimPathStart = trimPathStart;
         }
 
         @SuppressWarnings("unused")
-        float getTrimPathEnd() {
+        public float getTrimPathEnd() {
             return mTrimPathEnd;
         }
 
         @SuppressWarnings("unused")
-        void setTrimPathEnd(float trimPathEnd) {
+        public void setTrimPathEnd(float trimPathEnd) {
             mTrimPathEnd = trimPathEnd;
         }
 
         @SuppressWarnings("unused")
-        float getTrimPathOffset() {
+        public float getTrimPathOffset() {
             return mTrimPathOffset;
         }
 
         @SuppressWarnings("unused")
-        void setTrimPathOffset(float trimPathOffset) {
+        public void setTrimPathOffset(float trimPathOffset) {
             mTrimPathOffset = trimPathOffset;
         }
     }
+
+    public final static Matrix IDENTITY_MATRIX = new Matrix() {
+        void oops() {
+            throw new IllegalStateException("Matrix can not be modified");
+        }
+
+        @Override
+        public void set(Matrix src) {
+            oops();
+        }
+
+        @Override
+        public void reset() {
+            oops();
+        }
+
+        @Override
+        public void setTranslate(float dx, float dy) {
+            oops();
+        }
+
+        @Override
+        public void setScale(float sx, float sy, float px, float py) {
+            oops();
+        }
+
+        @Override
+        public void setScale(float sx, float sy) {
+            oops();
+        }
+
+        @Override
+        public void setRotate(float degrees, float px, float py) {
+            oops();
+        }
+
+        @Override
+        public void setRotate(float degrees) {
+            oops();
+        }
+
+        @Override
+        public void setSinCos(float sinValue, float cosValue, float px, float py) {
+            oops();
+        }
+
+        @Override
+        public void setSinCos(float sinValue, float cosValue) {
+            oops();
+        }
+
+        @Override
+        public void setSkew(float kx, float ky, float px, float py) {
+            oops();
+        }
+
+        @Override
+        public void setSkew(float kx, float ky) {
+            oops();
+        }
+
+        @Override
+        public boolean setConcat(@NonNull Matrix a, @NonNull Matrix b) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean preTranslate(float dx, float dy) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean preScale(float sx, float sy, float px, float py) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean preScale(float sx, float sy) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean preRotate(float degrees, float px, float py) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean preRotate(float degrees) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean preSkew(float kx, float ky, float px, float py) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean preSkew(float kx, float ky) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean preConcat(@NonNull Matrix other) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean postTranslate(float dx, float dy) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean postScale(float sx, float sy, float px, float py) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean postScale(float sx, float sy) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean postRotate(float degrees, float px, float py) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean postRotate(float degrees) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean postSkew(float kx, float ky, float px, float py) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean postSkew(float kx, float ky) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean postConcat(@NonNull Matrix other) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean setRectToRect(@NonNull RectF src, @NonNull RectF dst, @NonNull ScaleToFit stf) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public boolean setPolyToPoly(@NonNull float[] src, int srcIndex, @NonNull float[] dst, int dstIndex,
+                int pointCount) {
+            oops();
+            return false;
+        }
+
+        @Override
+        public void setValues(@NonNull float[] values) {
+            oops();
+        }
+    };
 }

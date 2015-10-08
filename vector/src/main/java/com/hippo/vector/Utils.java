@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2015 Hippo Seven
+ * Copyright 2015 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.vectorold.util;
+package com.hippo.vector;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -22,17 +22,14 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 
-public class DrawableUtils {
-
-    public static final PorterDuff.Mode DEFAULT_TINT_MODE = PorterDuff.Mode.SRC_IN;
+public class Utils {
 
     /**
      * Ensures the tint filter is consistent with the current tint color and
      * mode.
      */
-    public static PorterDuffColorFilter updateTintFilter(Drawable drawable,
-            PorterDuffColorFilter tintFilter, ColorStateList tint,
-            PorterDuff.Mode tintMode) {
+    public static PorterDuffColorFilter updateTintFilter(Drawable drawable, PorterDuffColorFilter tintFilter,
+            ColorStateList tint, PorterDuff.Mode tintMode) {
         if (tint == null || tintMode == null) {
             return null;
         }

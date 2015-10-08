@@ -39,7 +39,6 @@ import com.hippo.ehviewer.util.Utils;
 import com.hippo.ehviewer.util.ViewUtils;
 import com.hippo.ehviewer.widget.MaterialToast;
 import com.hippo.ehviewer.widget.SlidingDrawerLayout;
-import com.hippo.vectorold.content.VectorContext;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -176,10 +175,5 @@ public class AppContext extends Application implements UncaughtExceptionHandler 
 
     public Typeface getFaceTypeface() {
         return mFaceTypeface;
-    }
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(VectorContext.wrapContext(newBase));
     }
 }

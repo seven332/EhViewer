@@ -4,14 +4,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion '23.0.0 rc2'
+    buildToolsVersion '22.0.1'
 
     defaultConfig {
         applicationId "com.hippo.ehviewer"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 46
-        versionName "0.6.16.2"
+        versionCode 47
+        versionName "0.6.16.3"
     }
     buildTypes {
         debug {
@@ -22,6 +22,13 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
     }
 
     // Disable default NdkCompile task
@@ -59,6 +66,7 @@ clean {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'com.android.support:recyclerview-v7:22.2.0'
+    compile project(':vector')
+    compile 'com.android.support:support-v4:22.2.1'
+    compile 'com.android.support:recyclerview-v7:22.2.1'
 }
