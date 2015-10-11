@@ -28,8 +28,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hippo.conaco.BitmapHolder;
 import com.hippo.conaco.Conaco;
+import com.hippo.conaco.ConacoTask;
+import com.hippo.conaco.ObjectHolder;
 import com.hippo.conaco.Unikery;
 import com.hippo.ehviewer.EhCacheKeyFactory;
 import com.hippo.ehviewer.R;
@@ -96,7 +97,7 @@ public class NormalPreviewSet extends PreviewSet {
             } else {
                 key = row.imageUrl;
             }
-            conaco.load(loadImageTask, key, row.imageUrl);
+            conaco.load(new ConacoTask.Builder().setUnikery(loadImageTask).setKey(key).setUrl(row.imageUrl));
         }
     }
 
@@ -133,9 +134,9 @@ public class NormalPreviewSet extends PreviewSet {
         }
 
         @Override
-        public void setBitmap(BitmapHolder bitmapHolder, Conaco.Source source) {
-            bitmapHolder.obtain();
-            Bitmap bitmap = bitmapHolder.getBitmap();
+        public boolean onGetObject(ObjectHolder holder, Conaco.Source source) {
+            holder.obtain();
+            Bitmap bitmap = (Bitmap) holder.getObject();
             int maxWidth = bitmap.getWidth();
             int maxHeight = bitmap.getHeight();
 
@@ -172,14 +173,16 @@ public class NormalPreviewSet extends PreviewSet {
                 }
             }
 
-            bitmapHolder.release();
+            holder.release();
 
             mLoadImageTasks.remove(this);
+
+            return true;
         }
 
         @Override
-        public void setDrawable(Drawable drawable) {
-            // Empty
+        public void onSetObject(Object object) {
+
         }
 
         @Override
@@ -190,6 +193,18 @@ public class NormalPreviewSet extends PreviewSet {
         @Override
         public int getTaskId() {
             return mTaskId;
+        }
+
+        @Override
+        public void onMiss(Conaco.Source source) {
+        }
+
+        @Override
+        public void onRequest() {
+        }
+
+        @Override
+        public void onProgress(long singleReceivedSize, long receivedSize, long totalSize) {
         }
 
         @Override
@@ -239,7 +254,7 @@ public class NormalPreviewSet extends PreviewSet {
             } else {
                 key = mRow.imageUrl;
             }
-            mConaco.load(loadImageTask, key, mRow.imageUrl);
+            mConaco.load(new ConacoTask.Builder().setUnikery(loadImageTask).setKey(key).setUrl(mRow.imageUrl));
 
             return true;
         }

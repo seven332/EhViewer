@@ -33,6 +33,7 @@ import com.hippo.scene.SceneApplication;
 import com.hippo.vectorold.content.VectorContext;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.Say;
+import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class EhApplication extends SceneApplication {
         conacoBuilder.hasDiskCache = true;
         conacoBuilder.diskCacheDir = new File(getCacheDir(), "conaco");
         conacoBuilder.diskCacheMaxSize = 50 * 1024 * 1024;
-        conacoBuilder.httpClient = mEhHttpClient;
+        conacoBuilder.okHttpClient = new OkHttpClient();// TODO
         mConaco = conacoBuilder.build();
 
         SimpleDiskCache readcache = null;

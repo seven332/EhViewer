@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.hippo.animation.SimpleAnimatorListener;
 import com.hippo.conaco.Conaco;
+import com.hippo.conaco.ConacoTask;
 import com.hippo.effect.ViewTransition;
 import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.EhApplication;
@@ -719,8 +720,10 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
 
     private void bindState(DownloadHolder holder, DownloadInfo info, String state) {
         GalleryBase galleryBase = info.galleryBase;
-        EhApplication.getConaco(getStageActivity()).load(holder.thumb,
-                EhCacheKeyFactory.getThumbKey(galleryBase.gid), galleryBase.thumb);
+        EhApplication.getConaco(getStageActivity()).load(
+                new ConacoTask.Builder().setUnikery(holder.thumb)
+                        .setKey(EhCacheKeyFactory.getThumbKey(galleryBase.gid))
+                        .setUrl(galleryBase.thumb));
         holder.title.setText(EhUtils.getSuitableTitle(galleryBase));
         holder.uploader.setVisibility(View.VISIBLE);
         holder.rating.setVisibility(View.VISIBLE);
@@ -742,8 +745,10 @@ public class DownloadScene extends AppbarScene implements DrawerProvider,
 
     private void bindProgress(DownloadHolder holder, DownloadInfo info) {
         GalleryBase galleryBase = info.galleryBase;
-        EhApplication.getConaco(getStageActivity()).load(holder.thumb,
-                EhCacheKeyFactory.getThumbKey(info.galleryBase.gid), galleryBase.thumb);
+        EhApplication.getConaco(getStageActivity()).load(
+                new ConacoTask.Builder().setUnikery(holder.thumb)
+                        .setKey(EhCacheKeyFactory.getThumbKey(galleryBase.gid))
+                        .setUrl(galleryBase.thumb));
         holder.title.setText(EhUtils.getSuitableTitle(galleryBase));
         holder.uploader.setVisibility(View.INVISIBLE);
         holder.rating.setVisibility(View.INVISIBLE);

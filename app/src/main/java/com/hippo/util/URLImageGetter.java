@@ -5,6 +5,7 @@ import android.text.Html;
 import android.widget.TextView;
 
 import com.hippo.conaco.Conaco;
+import com.hippo.conaco.ConacoTask;
 import com.hippo.drawable.UnikeryDrawable;
 
 public class URLImageGetter implements Html.ImageGetter {
@@ -20,7 +21,7 @@ public class URLImageGetter implements Html.ImageGetter {
     @Override
     public Drawable getDrawable(String source) {
         UnikeryDrawable drawable = new UnikeryDrawable(mTextView);
-        mConaco.load(drawable, source, source);
+        mConaco.load(new ConacoTask.Builder().setUnikery(drawable).setKey(source).setUrl(source));
         return drawable;
     }
 }

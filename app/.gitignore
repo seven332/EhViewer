@@ -1,5 +1,7 @@
 /build
 /src/main/java-gen
+/src/main/libs
+/src/main/obj
 manifest-merger-release-report.txt
 
 # Intellij

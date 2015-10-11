@@ -127,9 +127,9 @@ public class EhHttpClient extends HttpClient {
     }
 
     @Override
-    protected void storeCookie(URL url, String cookieStr) {
+    protected void storeCookie(URL url, String key, String value) {
         Cookie cookie = new Cookie();
-        cookie.putRaw(cookieStr);
+        cookie.putRaw(value);
 
         if (Utilities.contain(EHENTAI_DOMAIN, getDomain(url))) {
             String ipdMemberId = cookie.get(KEY_IPD_MEMBER_ID);
