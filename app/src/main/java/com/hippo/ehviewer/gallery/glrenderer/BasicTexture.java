@@ -52,8 +52,8 @@ public abstract class BasicTexture implements Texture {
 
     protected GLCanvas mCanvasRef = null;
     private final static WeakHashMap<BasicTexture, Object> sAllTextures
-            = new WeakHashMap<BasicTexture, Object>();
-    private static ThreadLocal sInFinalizer = new ThreadLocal();
+            = new WeakHashMap<>();
+    private static ThreadLocal<Class> sInFinalizer = new ThreadLocal<>();
 
     protected BasicTexture(GLCanvas canvas, int id, int state) {
         setAssociatedCanvas(canvas);
@@ -144,6 +144,7 @@ public abstract class BasicTexture implements Texture {
         canvas.drawTexture(this, x, y, w, h);
     }
 
+    @Override
     public void draw(GLCanvas canvas, RectF source, RectF target) {
         canvas.drawTexture(this, source, target);
     }
@@ -185,10 +186,14 @@ public abstract class BasicTexture implements Texture {
     }
 
     @Override
-    protected void finalize() {
-        sInFinalizer.set(BasicTexture.class);
-        recycle();
-        sInFinalizer.set(null);
+    protected void finalize() throws Throwable {
+        try {
+            sInFinalizer.set(BasicTexture.class);
+            recycle();
+            sInFinalizer.set(null);
+        } finally {
+            super.finalize();
+        }
     }
 
     // This is for deciding if we can call Bitmap's recycle().

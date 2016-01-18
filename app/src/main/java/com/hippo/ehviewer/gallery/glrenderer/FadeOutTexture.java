@@ -17,6 +17,8 @@
 package com.hippo.ehviewer.gallery.glrenderer;
 
 
+import android.graphics.RectF;
+
 // FadeOutTexture is a texture which begins with a given texture, then gradually animates
 // into fading out totally.
 public class FadeOutTexture extends FadeTexture {
@@ -36,6 +38,16 @@ public class FadeOutTexture extends FadeTexture {
             canvas.save(GLCanvas.SAVE_FLAG_ALPHA);
             canvas.setAlpha(getRatio());
             mTexture.draw(canvas, x, y, w, h);
+            canvas.restore();
+        }
+    }
+
+    @Override
+    public void draw(GLCanvas canvas, RectF source, RectF target) {
+        if (isAnimating()) {
+            canvas.save(GLCanvas.SAVE_FLAG_ALPHA);
+            canvas.setAlpha(getRatio());
+            mTexture.draw(canvas, source, target);
             canvas.restore();
         }
     }

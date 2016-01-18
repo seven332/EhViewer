@@ -105,6 +105,9 @@ public class TiledTexture implements Texture {
 
         @Override
         public boolean onGLIdle(GLCanvas canvas, boolean renderRequested) {
+
+            Log.d("TAG", "onGLIdle = " + Thread.currentThread().getName());
+
             ArrayDeque<TiledTexture> deque = mTextures;
             synchronized (this) {
                 long now = SystemClock.uptimeMillis();
@@ -146,6 +149,9 @@ public class TiledTexture implements Texture {
 
         @Override
         protected Bitmap onGetBitmap() {
+
+            Log.d("TAG", "onGetBitmap = " + Thread.currentThread().getName());
+
             // make a local copy of the reference to the bitmap,
             // since it might be null'd in a different thread. b/8694871
             Bitmap localBitmapRef = bitmap;

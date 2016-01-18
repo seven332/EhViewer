@@ -17,6 +17,8 @@
 package com.hippo.ehviewer.gallery.glrenderer;
 
 
+import android.graphics.RectF;
+
 // FadeInTexture is a texture which begins with a color, then gradually animates
 // into a given texture.
 public class FadeInTexture extends FadeTexture implements Texture {
@@ -38,6 +40,15 @@ public class FadeInTexture extends FadeTexture implements Texture {
             mTexture.drawMixed(canvas, mColor, getRatio(), x, y, w, h);
         } else {
             mTexture.draw(canvas, x, y, w, h);
+        }
+    }
+
+    @Override
+    public void draw(GLCanvas canvas, RectF source, RectF target) {
+        if (isAnimating()) {
+            mTexture.drawMixed(canvas, mColor, getRatio(), source, target);
+        } else {
+            mTexture.draw(canvas, source, target);
         }
     }
 }

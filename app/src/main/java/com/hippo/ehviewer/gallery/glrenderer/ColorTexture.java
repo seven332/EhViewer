@@ -16,29 +16,40 @@
 
 package com.hippo.ehviewer.gallery.glrenderer;
 
+import android.graphics.RectF;
+
 import com.hippo.yorozuya.ColorUtils;
 
 // ColorTexture is a texture which fills the rectangle with the specified color.
 public class ColorTexture implements Texture {
 
     private final int mColor;
-    private int mWidth;
-    private int mHeight;
+    private int mWidth = 0;
+    private int mHeight = 0;
 
     public ColorTexture(int color) {
         mColor = color;
-        mWidth = 1;
-        mHeight = 1;
+    }
+
+    private boolean isValidSize() {
+        return mWidth > 0 && mHeight > 0;
     }
 
     @Override
     public void draw(GLCanvas canvas, int x, int y) {
-        draw(canvas, x, y, mWidth, mHeight);
+        if (isValidSize()) {
+            draw(canvas, x, y, mWidth, mHeight);
+        }
     }
 
     @Override
     public void draw(GLCanvas canvas, int x, int y, int w, int h) {
         canvas.fillRect(x, y, w, h, mColor);
+    }
+
+    @Override
+    public void draw(GLCanvas canvas, RectF source, RectF target) {
+        canvas.fillRect(target.left, target.top, target.width(), target.height(), mColor);
     }
 
     @Override
