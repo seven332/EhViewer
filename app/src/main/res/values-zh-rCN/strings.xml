@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2016 Hippo Seven
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+    <string name="app_name">EhViewer</string>
+
+    <string name="homepage">主页</string>
+    <string name="whats_hot">热门</string>
+    <string name="favourite">收藏</string>
+    <string name="history">历史</string>
+    <string name="download">下载</string>
+    <string name="settings">设置</string>
+
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+
+    <string name="sign_in">登陆</string>
+    <string name="register">注册</string>
+    <string name="sign_in_via_webview">通过网页登陆</string>
+    <string name="sign_in_via_cookies">通过 Cookie 登陆</string>
+
+    <string name="error_bad_status_code">错误的状态码：%d</string>
+    <string name="error_timeout">超时</string>
+    <string name="error_unknown_host">未知主机</string>
+    <string name="error_redirection">太多重定向</string>
+    <string name="error_socket">网络错误</string>
+    <string name="error_unknown">奇怪的错误</string>
+
+    <string name="error_username_cannot_empty">用户名不可为空</string>
+    <string name="error_password_cannot_empty">密码不可为空</string>
+
+    <string name="app_waring">本应用中内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。本应用作者不会对由本应用造成的后果负责。您是否愿意继续使用该应用？</string>
+
+</resources>

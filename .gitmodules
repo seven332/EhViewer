@@ -1,0 +1,27 @@
+[submodule "yorozuya"]
+	path = yorozuya
+	url = https://github.com/seven332/Yorozuya
+[submodule "hotspot"]
+	path = hotspot
+	url = https://github.com/seven332/Hotspot
+[submodule "vector"]
+	path = vector
+	url = https://github.com/seven332/Vector
+[submodule "anani"]
+	path = anani
+	url = https://github.com/seven332/Anani
+[submodule "easyrecyclerview"]
+	path = easyrecyclerview
+	url = https://github.com/seven332/EasyRecyclerView
+[submodule "beerbelly"]
+	path = beerbelly
+	url = https://github.com/seven332/BeerBelly
+[submodule "conaco"]
+	path = conaco
+	url = https://github.com/seven332/Conaco
+[submodule "rippleold"]
+	path = rippleold
+	url = https://github.com/seven332/RippleOld
+[submodule "unifile"]
+	path = unifile
+	url = https://github.com/seven332/UniFile

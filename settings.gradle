@@ -1,0 +1,1 @@
+include ':anani', ':app', 'beerbelly', 'conaco', ':daogenerator', ':easyrecyclerview', 'hotspot', ':okhttp3', 'rippleold', 'unifile', 'vector', 'yorozuya'
