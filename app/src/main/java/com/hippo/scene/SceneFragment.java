@@ -16,15 +16,39 @@
 
 package com.hippo.scene;
 
+import android.os.Bundle;
+import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 public class SceneFragment extends Fragment {
 
+    @IntDef({LAUNCH_MODE_STANDARD, LAUNCH_MODE_SINGLE_TOP})
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface LaunchMode {}
+
+    public static final int LAUNCH_MODE_STANDARD = 0;
+    public static final int LAUNCH_MODE_SINGLE_TOP = 1;
+
+    @LaunchMode
+    public int getLaunchMode() {
+        return LAUNCH_MODE_STANDARD;
+    }
+
+    public void onNewArguments(@NonNull Bundle args) {}
+
     public <T extends SceneFragment> void startScene(Class<T> clazz) {
+        startScene(clazz, null);
+    }
+
+    public <T extends SceneFragment> void startScene(Class<T> clazz, Bundle args) {
         FragmentActivity activity = getActivity();
         if (activity instanceof StageActivity) {
-            ((StageActivity) activity).startScene(clazz);
+            ((StageActivity) activity).startScene(clazz, args);
         }
     }
 
@@ -40,5 +64,12 @@ public class SceneFragment extends Fragment {
         if (activity != null) {
             activity.finish();
         }
+    }
+
+    /**
+     * @return true for handle this back pressed action
+     */
+    public boolean onBackPressed() {
+        return false;
     }
 }

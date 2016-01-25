@@ -28,4 +28,27 @@
         <attr name="maxHeight" format="dimension"/>
     </declare-styleable>
 
+    <declare-styleable name="FixedAspectImageView">
+        <attr name="aspect" format="float"/>
+    </declare-styleable>
+
+    <declare-styleable name="LoadImageView">
+        <attr name="retryType">
+            <enum name="none" value="0" />
+            <enum name="click" value="1" />
+            <enum name="longClick" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="SearchBarLayout">
+        <attr name="search_bar" format="reference"/>
+        <attr name="content1" format="reference"/>
+        <attr name="content2" format="reference"/>
+        <attr name="content3" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="CheckTextView">
+        <attr name="maskColor" format="color"/>
+    </declare-styleable>
+
 </resources>

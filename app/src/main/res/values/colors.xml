@@ -21,17 +21,68 @@
     <!-- secondary_drawable_light   26% -->
     <!-- primary_drawable_dark     100% -->
     <!-- secondary_drawable_dark    30% -->
+    <color name="primary_drawable_light">#8a000000</color>
+    <color name="secondary_drawable_light">#42000000</color>
+    <color name="primary_drawable_dark">#ffffffff</color>
+    <color name="secondary_drawable_dark">#4dffffff</color>
+
+    <!-- Text -->
+    <color name="primary_text_default_light">#de000000</color>
+    <color name="primary_text_disabled_dark">#4dffffff</color>
+    <color name="secondary_text_default_light">#8a000000</color>
+    <color name="secondary_text_disabled_dark">#36ffffff</color>
+    <color name="primary_text_default_dark">#deffffff</color>
+    <color name="primary_text_disabled_light">#39000000</color>
+    <color name="secondary_text_default_dark">#61ffffff</color>
+    <color name="secondary_text_disabled_light">#24000000</color>
 
     <color name="red_500">#fff44336</color>
     <color name="teal_500">#ff009688</color>
     <color name="teal_700">#ff00796b</color>
     <color name="purple_500">#ff9c27b0</color>
     <color name="purple_a200">#ffe040fb</color>
+    <color name="purple_a700">#ffaa00ff</color>
+    <color name="cyan_600">#ff00acc1</color>
+    <color name="light_green_600">#ff7cb342</color>
+    <color name="yellow_800">#fff9a825</color>
+    <color name="deep_orange_400">#ffff7043</color>
 
     <color name="colorPrimary">@color/teal_500</color>
     <color name="colorPrimaryDark">@color/teal_700</color>
     <color name="colorAccent">@color/purple_a200</color>
 
     <color name="translucent_bg">#80ffffff</color>
+
+    <color name="loading_indicator_red">#ffe53935</color>
+    <color name="loading_indicator_purple">@color/purple_a700</color>
+    <color name="loading_indicator_blue">#ff1d87e4</color>
+    <color name="loading_indicator_cyan">@color/cyan_600</color>
+    <color name="loading_indicator_green">@color/light_green_600</color>
+    <color name="loading_indicator_yellow">@color/yellow_800</color>
+    <color name="loading_indicator_orange">@color/deep_orange_400</color>
+
+    <color name="check_text_view_mask">#8a000000</color>
+
+    <!-- Red -->
+    <color name="doujinshi">#fff44336</color>
+    <!-- Orange -->
+    <color name="manga">#ffff9800</color>
+    <!-- Yellow 700 -->
+    <color name="artist_cg">#ffFbc02d</color>
+    <!-- Green -->
+    <color name="game_cg">#ff4caf50</color>
+    <!-- Light Green -->
+    <color name="western">#ff8bc34a</color>
+    <!-- Blue -->
+    <color name="non_h">#ff2196f3</color>
+    <!-- Indigo -->
+    <color name="image_set">#ff3f51b5</color>
+    <!-- Purple -->
+    <color name="cosplay">#ff9c27b0</color>
+    <!-- Deep Purple 300 -->
+    <color name="asian_porn">#ff9575cd</color>
+    <!-- Pink 300 -->
+    <color name="misc">#fff06292</color>
+    <color name="unknown_bg">@android:color/black</color>
 
 </resources>

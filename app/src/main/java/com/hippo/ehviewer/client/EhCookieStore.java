@@ -29,19 +29,15 @@ public class EhCookieStore extends CookieDBStore {
 
     private static final String KEY_IPD_MEMBER_ID = "ipb_member_id";
     private static final String KEY_IPD_PASS_HASH = "ipb_pass_hash";
-    private static final String KEY_YAY = "yay";
 
     public void cleanUpForSignIn() {
-        remove(EhUrl.HOST_E, KEY_IPD_MEMBER_ID);
-        remove(EhUrl.HOST_E, KEY_IPD_PASS_HASH);
-        remove(EhUrl.HOST_EX, KEY_IPD_MEMBER_ID);
-        remove(EhUrl.HOST_EX, KEY_IPD_PASS_HASH);
-        remove(EhUrl.HOST_EX, KEY_YAY);
+        remove(EhUrl.DOMAIN_E);
+        remove(EhUrl.DOMAIN_EX);
     }
 
     public boolean hasSignedIn() {
-        return contain(EhUrl.HOST_EX, KEY_IPD_MEMBER_ID) &&
-                contain(EhUrl.HOST_EX, KEY_IPD_PASS_HASH);
+        return contain(EhUrl.DOMAIN_EX, KEY_IPD_MEMBER_ID) &&
+                contain(EhUrl.DOMAIN_EX, KEY_IPD_PASS_HASH);
     }
 
     private Cookie newCookie(Cookie cookie, String newDomain) {
@@ -72,10 +68,10 @@ public class EhCookieStore extends CookieDBStore {
 
         for (Cookie cookie: cookies) {
             cs.add(cookie);
-            if (EhUrl.HOST_E.equals(cookie.domain()) &&
+            if (EhUrl.DOMAIN_E.equals(cookie.domain()) &&
                     (KEY_IPD_MEMBER_ID.equals(cookie.name()) ||
                             KEY_IPD_PASS_HASH.equals(cookie.name()))) {
-                cs.add(newCookie(cookie, CookieDB.cookiesDomain(EhUrl.HOST_EX)));
+                cs.add(newCookie(cookie, CookieDB.cookiesDomain(EhUrl.DOMAIN_EX)));
             }
         }
 

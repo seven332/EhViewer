@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015 Hippo Seven
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp">
+
+            <com.hippo.widget.SimpleImageView
+                android:id="@+id/search_menu"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="left|center_vertical"
+                android:padding="14dp"
+                tools:ignore="RtlHardcoded"/>
+
+            <TextView
+                android:id="@+id/search_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="56dp"
+                android:layout_marginRight="56dp"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/text_large"
+                android:textColor="@color/secondary_text_light"/>
+
+            <com.hippo.widget.SimpleImageView
+                android:id="@+id/search_action"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="right|center_vertical"
+                android:padding="14dp"
+                tools:ignore="RtlHardcoded"/>
+
+            <com.hippo.ehviewer.widget.SearchEditText
+                android:id="@+id/search_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="56dp"
+                android:layout_marginRight="56dp"
+                android:background="@null"
+                android:singleLine="true"
+                android:visibility="gone"
+                android:imeOptions="actionSearch"
+                android:inputType="text"/>
+
+        </FrameLayout>
+
+        <ListView
+            android:id="@+id/search_bar_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+</merge>

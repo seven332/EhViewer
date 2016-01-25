@@ -17,6 +17,10 @@
 
 <resources>
 
+    <!-- TextAppearance -->
+    <style name="TextAppearance" parent="TextAppearance.AppCompat">
+    </style>
+
     <!-- Progress View -->
     <style name="ProgressView">
         <item name="color">?attr/colorAccent</item>
@@ -33,6 +37,57 @@
     <style name="ProgressView.Large">
         <item name="android:minWidth">76dp</item>
         <item name="android:minHeight">76dp</item>
+    </style>
+
+    <!-- Card Button -->
+    <style name="CardButton">
+        <item name="android:minWidth">88dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="TextAppearance.CardTitle">
+        <item name="android:textSize">@dimen/text_little_small</item>
+        <item name="android:textColor">@color/primary_text_light</item>
+    </style>
+
+    <style name="CardTitle">
+        <item name="android:textAppearance">@style/TextAppearance.CardTitle</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:lineSpacingExtra">0sp</item>
+    </style>
+
+    <style name="TextAppearance.CardMessage">
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:textColor">@color/secondary_text_light</item>
+    </style>
+
+    <style name="CardMessage">
+        <item name="android:textAppearance">@style/TextAppearance.CardMessage</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <!-- CategoryText -->
+    <style name="CategoryText">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Subhead</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">@dimen/category_table_item_height</item>
+        <item name="maskColor">@color/check_text_view_mask</item>
+    </style>
+
+    <style name="TextAppearance.CategoryTitle" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CategoryTitle">
+        <item name="android:textAppearance">@style/TextAppearance.CategoryTitle</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
 
 </resources>

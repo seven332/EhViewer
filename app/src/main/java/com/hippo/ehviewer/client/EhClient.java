@@ -37,6 +37,7 @@ public class EhClient {
     public static final String TAG = EhClient.class.getSimpleName();
 
     public static final int METHOD_SIGN_IN = 0;
+    public static final int METHOD_GET_GALLERY_LIST = 1;
 
     private final ThreadPoolExecutor mRequestThreadPool;
     private final OkHttpClient mOkHttpClient;
@@ -113,12 +114,24 @@ public class EhClient {
             }
         }
 
+        private Object getGalleryList(Object... params) throws Exception {
+            Call call = EhEngine.prepareGetGalleryList(mOkHttpClient, (String) params[0]);
+            if (!mStop) {
+                mCall = call;
+                return EhEngine.doGetGalleryList(call);
+            } else {
+                throw new CancelledException();
+            }
+        }
+
         @Override
         protected Object doInBackground(Object... params) {
             try {
                 switch (mMethod) {
                     case METHOD_SIGN_IN:
                         return signIn(params);
+                    case METHOD_GET_GALLERY_LIST:
+                        return getGalleryList(params);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }

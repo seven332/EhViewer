@@ -26,13 +26,15 @@ import android.view.ViewGroup;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.rippleold.RippleSalon;
 import com.hippo.vector.VectorDrawable;
+import com.hippo.widget.CardButton;
 import com.hippo.widget.SimpleImageView;
 
 public final class WarningScene extends BaseScene implements View.OnClickListener {
 
-    private View mCancel;
-    private View mOk;
+    private CardButton mCancel;
+    private CardButton mOk;
 
     @Nullable
     @Override
@@ -41,14 +43,19 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
         View view = inflater.inflate(R.layout.scene_warning, container, false);
 
         SimpleImageView alert = (SimpleImageView) view.findViewById(R.id.icon_alert);
-        mCancel = view.findViewById(R.id.cancel);
-        mOk = view.findViewById(R.id.ok);
+        mCancel = (CardButton) view.findViewById(R.id.cancel);
+        mOk = (CardButton) view.findViewById(R.id.ok);
 
         Drawable drawable = VectorDrawable.create(getContext(), R.drawable.ic_alert);
         alert.setDrawable(drawable);
 
         mCancel.setOnClickListener(this);
         mOk.setOnClickListener(this);
+
+        mCancel.setRawBackgroundDrawable(
+                RippleSalon.generateRippleDrawable(true, mCancel.getBackground()));
+        mOk.setRawBackgroundDrawable(
+                RippleSalon.generateRippleDrawable(true, mOk.getBackground()));
 
         return view;
     }
@@ -62,7 +69,9 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
             Settings.putShowWarning(false);
 
             if (EhUtils.hasSignedIn(getContext())) {
-                startScene(GalleryListScene.class);
+                Bundle args = new Bundle();
+                args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+                startScene(GalleryListScene.class, args);
                 finish();
                 // Enable drawer
                 setDrawerLayoutEnable(true);

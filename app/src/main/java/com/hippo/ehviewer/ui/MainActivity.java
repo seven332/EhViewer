@@ -17,9 +17,11 @@
 package com.hippo.ehviewer.ui;
 
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.MenuItem;
 
 import com.hippo.ehviewer.R;
@@ -34,6 +36,7 @@ public final class MainActivity extends StageActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout mDrawerLayout;
+    private NavigationView mNavView;
 
     @Override
     public int getContainerViewId() {
@@ -46,9 +49,9 @@ public final class MainActivity extends StageActivity
         setContentView(R.layout.activity_main);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.draw_view);
+        mNavView = (NavigationView) findViewById(R.id.nav_view);
 
-        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
-        navView.setNavigationItemSelectedListener(this);
+        mNavView.setNavigationItemSelectedListener(this);
 
         if (savedInstanceState == null) {
             onInit();
@@ -63,6 +66,18 @@ public final class MainActivity extends StageActivity
         }
     }
 
+    public void toggleDrawer(int drawerGravity) {
+        if (mDrawerLayout.isDrawerOpen(drawerGravity)) {
+            mDrawerLayout.closeDrawer(drawerGravity);
+        } else {
+            mDrawerLayout.openDrawer(drawerGravity);
+        }
+    }
+
+    public void setNavCheckedItem(@IdRes int resId) {
+        mNavView.setCheckedItem(resId);
+    }
+
     private void onInit() {
         if (Settings.getShowWarning()) {
             setDrawerLayoutEnable(false);
@@ -72,7 +87,18 @@ public final class MainActivity extends StageActivity
             startScene(LoginScene.class);
         } else {
             setDrawerLayoutEnable(true);
-            startScene(GalleryListScene.class);
+            Bundle args = new Bundle();
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+            startScene(GalleryListScene.class, args);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT) || mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+            mDrawerLayout.closeDrawers();
+        } else {
+            super.onBackPressed();
         }
     }
 

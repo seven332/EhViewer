@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v4.app.FragmentActivity;
 
 import com.hippo.ehviewer.ui.MainActivity;
@@ -28,5 +30,30 @@ public class BaseScene extends SceneFragment {
         if (activity instanceof MainActivity) {
             ((MainActivity) activity).setDrawerLayoutEnable(enable);
         }
+    }
+
+    public void toggleDrawer(int drawerGravity) {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).toggleDrawer(drawerGravity);
+        }
+    }
+
+    public void setNavCheckedItem(@IdRes int resId) {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).setNavCheckedItem(resId);
+        }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            onRestoreInstanceState(savedInstanceState);
+        }
+    }
+
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
     }
 }

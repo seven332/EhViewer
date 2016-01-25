@@ -16,8 +16,8 @@
 
 package com.hippo.ehviewer.client.parser;
 
-import com.hippo.ehviewer.client.EhEngine;
 import com.hippo.ehviewer.client.EhException;
+import com.hippo.ehviewer.client.exception.ParseException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,7 +38,7 @@ public class SignInParser {
             if (m.find()) {
                 throw new EhException(m.group(1) == null ? m.group(2) : m.group(1));
             } else {
-                throw new EhException(EhEngine.UNKNOWN);
+                throw new ParseException("Can't parse sign in", body);
             }
         }
     }

@@ -15,15 +15,34 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
+<com.hippo.ehviewer.widget.SearchBarLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/search_bar_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    app:search_bar="@+id/search_bar"
+    app:content1="@+id/recycler_view"
+    app:content2="@+id/fast_scroller"
+    app:content3="@+id/search_layout">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <com.hippo.widget.ContentLayout
+        android:id="@+id/content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <com.hippo.ehviewer.widget.SearchLayout
+        android:id="@+id/search_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <com.hippo.ehviewer.widget.SearchBar
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="gallery list"/>
+        android:layout_marginLeft="@dimen/list_search_bar_margin"
+        android:layout_marginRight="@dimen/list_search_bar_margin"
+        android:layout_marginTop="8dp"
+        app:forceNoElevation="true"/>
 
-</LinearLayout>
+</com.hippo.ehviewer.widget.SearchBarLayout>

@@ -16,15 +16,19 @@
 
 package com.hippo.ehviewer;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.hippo.conaco.Conaco;
+import com.hippo.drawable.ImageWrapper;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.network.StatusCodeException;
 import com.hippo.okhttp.CookieDB;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -34,6 +38,8 @@ public class EhApplication extends Application {
     private EhCookieStore mEhCookieStore;
     private EhClient mEhClient;
     private OkHttpClient mOkHttpClient;
+    private ImageWrapperHelper mImageWrapperHelper;
+    private Conaco<ImageWrapper> mConaco;
 
     @Override
     public void onCreate() {
@@ -62,6 +68,7 @@ public class EhApplication extends Application {
         return application.mEhClient;
     }
 
+    @NonNull
     public static OkHttpClient getOkHttpClient(@NonNull Context context) {
         EhApplication application = ((EhApplication) context.getApplicationContext());
         if (application.mOkHttpClient == null) {
@@ -73,5 +80,38 @@ public class EhApplication extends Application {
                     .build();
         }
         return application.mOkHttpClient;
+    }
+
+    @NonNull
+    public static ImageWrapperHelper getImageWrapperHelper(@NonNull Context context) {
+        EhApplication application = ((EhApplication) context.getApplicationContext());
+        if (application.mImageWrapperHelper == null) {
+            application.mImageWrapperHelper = new ImageWrapperHelper();
+        }
+        return application.mImageWrapperHelper;
+    }
+
+    private static int getMemoryCacheMaxSize(Context context) {
+        final ActivityManager activityManager = (ActivityManager) context.
+                getSystemService(Context.ACTIVITY_SERVICE);
+        return Math.min(20 * 1024 * 1024,
+                Math.round(0.2f * activityManager.getMemoryClass() * 1024 * 1024));
+    }
+
+    @NonNull
+    public static Conaco<ImageWrapper> getConaco(@NonNull Context context) {
+        EhApplication application = ((EhApplication) context.getApplicationContext());
+        if (application.mConaco == null) {
+            Conaco.Builder<ImageWrapper> builder = new Conaco.Builder<>();
+            builder.hasMemoryCache = true;
+            builder.memoryCacheMaxSize = getMemoryCacheMaxSize(context);
+            builder.hasDiskCache = true;
+            builder.diskCacheDir = new File(context.getCacheDir(), "thumb");
+            builder.diskCacheMaxSize = 80 * 1024 * 1024; // 80MB
+            builder.okHttpClient = getOkHttpClient(context);
+            builder.objectHelper = getImageWrapperHelper(context);
+            application.mConaco = builder.build();
+        }
+        return application.mConaco;
     }
 }

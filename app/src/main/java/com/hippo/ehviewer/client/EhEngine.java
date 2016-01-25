@@ -16,13 +16,16 @@
 
 package com.hippo.ehviewer.client;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.hippo.ehviewer.client.parser.GalleryListParser;
 import com.hippo.ehviewer.client.parser.SignInParser;
 import com.hippo.network.StatusCodeException;
 
 import okhttp3.Call;
 import okhttp3.FormBody;
+import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -31,20 +34,24 @@ public class EhEngine {
 
     private static final String TAG = EhEngine.class.getSimpleName();
 
-    public static final String UNKNOWN = "Unknown";
+    private static final String SAD_PANDA_DISPOSITION = "inline; filename=\"sadpanda.jpg\"";
+    private static final String SAD_PANDA_TYPE = "image/gif";
+    private static final String SAD_PANDA_LENGTH = "9615";
 
-    private static void throwException(Call call, int code, String body, Exception e) throws Exception {
+    private static void throwException(Call call, int code, @Nullable Headers headers,
+            @Nullable String body, Exception e) throws Exception {
         if (call.isCanceled()) {
             throw new CancelledException();
         }
 
-        if (e instanceof EhException) {
-            if (!UNKNOWN.equals(e.getMessage())) {
-                throw e;
-            }
+        // Check sad panda
+        if (headers != null && SAD_PANDA_DISPOSITION.equals(headers.get("Content-Disposition")) &&
+                SAD_PANDA_TYPE.equals(headers.get("Content-Type")) &&
+                SAD_PANDA_LENGTH.equals(headers.get("Content-Length"))) {
+            throw new EhException("Sad Panda");
         }
 
-        if (!body.contains("<")) {
+        if (body != null && !body.contains("<")) {
             throw new EhException(body);
         }
 
@@ -71,15 +78,40 @@ public class EhEngine {
 
     public static String doSignIn(Call call) throws Exception {
         String body = null;
+        Headers headers = null;
         int code = -1;
         try {
             Response response = call.execute();
             code = response.code();
+            headers = response.headers();
             body = response.body().string();
             return SignInParser.parse(body);
         } catch (Exception e) {
-            throwException(call, code, body, e);
+            throwException(call, code, headers, body, e);
             throw e;
         }
     }
+
+    public static Call prepareGetGalleryList(OkHttpClient okHttpClient, String url) {
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url).build();
+        return okHttpClient.newCall(request);
+    }
+
+    public static GalleryListParser.Result doGetGalleryList(Call call) throws Exception {
+        String body = null;
+        Headers headers = null;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            return GalleryListParser.parse(body);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+    }
+
 }

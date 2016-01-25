@@ -75,6 +75,17 @@ public abstract class StageActivity extends AppCompatActivity {
             old = fragmentManager.findFragmentByTag(tag);
         }
 
+        // Launch mode single top
+        if (old instanceof SceneFragment && clazz.isInstance(old)) {
+            SceneFragment oldScene = (SceneFragment) old;
+            if (oldScene.getLaunchMode() == SceneFragment.LAUNCH_MODE_SINGLE_TOP) {
+                if (args != null) {
+                    oldScene.onNewArguments(args);
+                }
+                return;
+            }
+        }
+
         // New scene
         SceneFragment scene = newSceneInstance(clazz);
         scene.setArguments(args);
@@ -142,10 +153,25 @@ public abstract class StageActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         int size = mSceneTagList.size();
-        if (size > 0) {
-            finishScene(mSceneTagList.get(size - 1));
-        } else {
-            finish();
+        String tag = mSceneTagList.get(size - 1);
+        SceneFragment scene;
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        if (fragment == null) {
+            Log.e(TAG, "onBackPressed: Can't find scene by tag: " + tag);
+            return;
+        }
+        if (!(fragment instanceof SceneFragment)) {
+            Log.e(TAG, "onBackPressed: The fragment is not SceneFragment");
+            return;
+        }
+
+        scene = (SceneFragment) fragment;
+        if (!scene.onBackPressed()) {
+            if (size > 0) {
+                finishScene(tag);
+            } else {
+                finish();
+            }
         }
     }
 

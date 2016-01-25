@@ -19,6 +19,18 @@
 
     <string name="app_name">EhViewer</string>
 
+    <!-- Category -->
+    <string name="doujinshi" translatable="false">DOUJINSHI</string>
+    <string name="manga" translatable="false">MANGA</string>
+    <string name="artist_cg" translatable="false">ARTIST CG</string>
+    <string name="game_cg" translatable="false">GAME CG</string>
+    <string name="western" translatable="false">WESTERN</string>
+    <string name="non_h" translatable="false">NON-H</string>
+    <string name="image_set" translatable="false">IMAGE SET</string>
+    <string name="cosplay" translatable="false">COSPLAY</string>
+    <string name="asian_porn" translatable="false">ASIAN PORN</string>
+    <string name="misc" translatable="false">MISC</string>
+
     <string name="homepage">Homepage</string>
     <string name="whats_hot">What\'s hot</string>
     <string name="favourite">Favourite</string>
@@ -73,8 +85,34 @@
     <string name="app_waring">The content of this application is from the Internet. Some of it may do physical or mental harm to you. You have learnt the risks above and would like to undertake them. Do you want to use this application?</string>
 
     <string name="skip_signing_in">Skip signing in</string>
-    <string name="skip_signing_in_plain">Sign in failed. But perhaps it is a mistake due to website update. Do you want to skip signing in.</string>
+    <string name="skip_signing_in_plain">Sign in failed. But perhaps it is a mistake due to website update. Do you want to skip signing in?</string>
 
+    <!-- Gallery List -->
+    <string name="gallery_list_search_bar_hint">Search ExHentai.org</string>
+    <string name="gallery_list_empty_hit">The World is Big and Pandas sit alone</string>
 
+    <string name="search_normal">Normal Search</string>
+    <string name="search_advance">Advance Options</string>
+    <string name="search_image">Image Search</string>
+    <string name="search_normal_search">Normal search</string>
+    <string name="search_specify_uploader">Specify uploader</string>
+    <string name="search_specify_tag">Specify tag</string>
+    <string name="search_enable_advance">Enable advance options</string>
+
+    <string name="search_sname">Search Gallery</string>
+    <string name="search_stags">Search Gallery Tags</string>
+    <string name="search_sdesc">Search Gallery Description</string>
+    <string name="search_storr">Search Torrent Filenames</string>
+    <string name="search_sto">Only Show Galleries With Torrents</string>
+    <string name="search_sdt1">Search Low-Power Tags</string>
+    <string name="search_sdt2">Search Downvoted Tags</string>
+    <string name="search_sh">Show Expunged Galleries</string>
+    <string name="search_sr">Minimum Rating:</string>
+
+    <!-- search_min_rating -->
+    <string name="star_2">2 stars</string>
+    <string name="star_3">3 stars</string>
+    <string name="star_4">4 stars</string>
+    <string name="star_5">5 stars</string>
 
 </resources>

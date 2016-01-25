@@ -33,7 +33,8 @@
             android:name="com.hippo.ehviewer.ui.MainActivity"
             android:configChanges="screenSize|uiMode"
             android:screenOrientation="unspecified"
-            android:theme="@style/AppTheme.Main">
+            android:theme="@style/AppTheme.Main"
+            android:windowSoftInputMode="adjustPan">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

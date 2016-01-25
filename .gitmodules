@@ -25,3 +25,6 @@
 [submodule "unifile"]
 	path = unifile
 	url = https://github.com/seven332/UniFile
+[submodule "cardsalon"]
+	path = cardsalon
+	url = https://github.com/seven332/CardSalon

@@ -56,52 +56,35 @@
 
     </com.hippo.widget.MaxSizeContainer>
 
+
+
     <LinearLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <android.support.v7.widget.CardView
+        <com.hippo.widget.CardButton
             android:id="@+id/cancel"
-            style="@style/CardView"
+            style="@style/CardButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="@dimen/keyline_margin"
-            android:minHeight="@dimen/button_min_height"
-            app:cardBackgroundColor="@color/purple_500">
+            android:text="@android:string/cancel"
+            android:textColor="@android:color/white"
+            app:cardBackgroundColor="@color/purple_500"/>
 
-            <TextView
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@android:string/cancel"
-                android:textAllCaps="true"
-                android:textColor="@android:color/white"/>
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
+        <com.hippo.widget.CardButton
             android:id="@+id/ok"
-            style="@style/CardView"
+            style="@style/CardButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="@dimen/keyline_margin"
-            android:minHeight="@dimen/button_min_height"
-            app:cardBackgroundColor="?attr/colorPrimary">
+            android:text="@android:string/ok"
+            android:textColor="@android:color/white"
+            app:cardBackgroundColor="@color/teal_500"/>
 
-            <TextView
-                style="@style/TextAppearance.AppCompat.Medium.Inverse"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@android:string/ok"
-                android:textAllCaps="true"
-                android:textColor="@android:color/white"/>
-
-        </android.support.v7.widget.CardView>
     </LinearLayout>
 </LinearLayout>

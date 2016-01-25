@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 apply plugin: 'com.android.application'
 
 android {
@@ -28,11 +30,35 @@ android {
             jniLibs.srcDir 'src/main/libs'
         }
     }
+
+    // noinspection GroovyAssignabilityCheck
+    task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
+        def ndkDir = project.plugins.findPlugin('com.android.application').sdkHandler.getNdkFolder()
+        def ndkBuilder
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            ndkBuilder = 'ndk-build.cmd'
+        } else {
+            ndkBuilder = 'ndk-build'
+        }
+        commandLine "$ndkDir\\$ndkBuilder",
+                '-C', file('src/main/jni').absolutePath,
+                '-j', Runtime.runtime.availableProcessors()
+    }
+
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn ndkBuild
+    }
+}
+
+clean {
+    delete file('src/main/obj').absolutePath
+    delete file('src/main/libs').absolutePath
 }
 
 dependencies {
     compile project(':anani')
     compile project(':beerbelly')
+    compile project(':cardsalon')
     compile project(':conaco')
     compile project(':easyrecyclerview')
     compile project(':hotspot')
@@ -44,7 +70,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:cardview-v7:23.1.1'
     compile 'com.android.support:customtabs:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'de.greenrobot:greendao:2.0.0'

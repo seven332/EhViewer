@@ -39,7 +39,9 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhRequest;
+import com.hippo.rippleold.RippleSalon;
 import com.hippo.utils.ExceptionUtils;
+import com.hippo.widget.CardButton;
 
 public final class LoginScene extends BaseScene implements EditText.OnEditorActionListener,
         View.OnClickListener {
@@ -49,10 +51,11 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
     private TextInputLayout mPasswordLayout;
     private EditText mUsername;
     private EditText mPassword;
-    private View mRegister;
-    private View mSignIn;
+    private CardButton mRegister;
+    private CardButton mSignIn;
     private TextView mSignInViaWebview;
     private TextView mSignInViaCookies;
+    private TextView mSkipSigningIn;
 
     private EhClient mClient;
     private EhCookieStore mCookieStore;
@@ -78,13 +81,15 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
         mUsername = mUsernameLayout.getEditText();
         mPasswordLayout = (TextInputLayout) loginForm.findViewById(R.id.password_layout);
         mPassword = mPasswordLayout.getEditText();
-        mRegister = loginForm.findViewById(R.id.register);
-        mSignIn = loginForm.findViewById(R.id.sign_in);
+        mRegister = (CardButton) loginForm.findViewById(R.id.register);
+        mSignIn = (CardButton) loginForm.findViewById(R.id.sign_in);
         mSignInViaWebview = (TextView) loginForm.findViewById(R.id.sign_in_via_webview);
         mSignInViaCookies = (TextView) loginForm.findViewById(R.id.sign_in_via_cookies);
+        mSkipSigningIn = (TextView) loginForm.findViewById(R.id.skip_signing_in);
 
         mSignInViaWebview.setPaintFlags(mSignInViaWebview.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         mSignInViaCookies.setPaintFlags(mSignInViaCookies.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        mSkipSigningIn.setPaintFlags(mSignInViaCookies.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         mPassword.setOnEditorActionListener(this);
 
@@ -92,6 +97,12 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
         mSignIn.setOnClickListener(this);
         mSignInViaWebview.setOnClickListener(this);
         mSignInViaCookies.setOnClickListener(this);
+        mSkipSigningIn.setOnClickListener(this);
+
+        mRegister.setRawBackgroundDrawable(
+                RippleSalon.generateRippleDrawable(true, mRegister.getBackground()));
+        mSignIn.setRawBackgroundDrawable(
+                RippleSalon.generateRippleDrawable(true, mSignIn.getBackground()));
 
         return view;
     }
@@ -116,6 +127,8 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
 
         } else if (mSignInViaCookies == v) {
 
+        } else if (mSkipSigningIn == v) {
+            redirectTo();
         }
     }
 
@@ -187,6 +200,7 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
 
                     @Override
                     public void onFailure(Exception e) {
+                        e.printStackTrace();
                         mSignInRequest = null;
                         mProgress.setVisibility(View.GONE);
                         Toast.makeText(getContext(), ExceptionUtils.getReadableString(getContext(), e),
@@ -204,7 +218,9 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
     }
 
     private void redirectTo() {
-        startScene(GalleryListScene.class);
+        Bundle args = new Bundle();
+        args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+        startScene(GalleryListScene.class, args);
         finish();
         // Enable drawer
         setDrawerLayoutEnable(true);

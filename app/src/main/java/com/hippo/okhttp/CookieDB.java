@@ -62,6 +62,7 @@ public class CookieDB {
         return cookiesDomain(url.getHost());
     }
 
+    // FIXME It is not right to store like this
     public static String cookiesDomain(String domain) {
         if (TextUtils.isEmpty(domain)) {
             return "";

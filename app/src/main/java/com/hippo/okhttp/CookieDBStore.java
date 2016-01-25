@@ -100,6 +100,18 @@ public class CookieDBStore implements CookieJar {
         }
     }
 
+    private synchronized void removeInternal(String domain) {
+        // Remove all cookies of the domain from map
+        List<CookieWithID> cookies = map.remove(domain);
+        if (cookies != null) {
+            for (CookieWithID cwi : cookies) {
+                // Remove from DB
+                CookieDB.removeCookie(cwi.id);
+            }
+            cookies.clear();
+        }
+    }
+
     private synchronized void addInternal(String domain, Cookie cookie) {
         // Check expired
         if (hasExpired(cookie)) {
@@ -132,6 +144,10 @@ public class CookieDBStore implements CookieJar {
 
     public void remove(String url, String name) {
         removeInternal(CookieDB.cookiesDomain(url), name);
+    }
+
+    public void remove(String url) {
+        removeInternal(CookieDB.cookiesDomain(url));
     }
 
     public void add(Cookie cookie) {

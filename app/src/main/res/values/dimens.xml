@@ -20,8 +20,6 @@
 
     <dimen name="single_max_width">260dp</dimen>
 
-    <dimen name="button_min_height">40dp</dimen>
-
     <!-- Text size -->
     <dimen name="text_super_large">24sp</dimen>
     <dimen name="text_large">22sp</dimen>
@@ -30,5 +28,44 @@
     <dimen name="text_little_small">16sp</dimen>
     <dimen name="text_small">14sp</dimen>
     <dimen name="text_super_small">12sp</dimen>
+
+    <!-- RatingView -->
+    <dimen name="rating_size">16dp</dimen>
+    <dimen name="rating_interval">1dp</dimen>
+
+    <dimen name="list_thumb_height">120dp</dimen>
+    <dimen name="list_thumb_width">80dp</dimen>
+    <dimen name="list_item_margin">2dp</dimen>
+    <dimen name="list_content_margin_h">2dp</dimen>
+    <dimen name="list_content_margin_v">2dp</dimen>
+    <dimen name="list_search_bar_margin">4dp</dimen>
+
+    <!-- DrawerArrowDrawable -->
+    <dimen name="dad_drawable_size">24dp</dimen>
+    <dimen name="dad_bar_size">18dp</dimen>
+    <dimen name="dad_top_bottom_bar_arrow_size">11.31dp</dimen>
+    <dimen name="dad_thickness">2dp</dimen>
+    <dimen name="dad_gap_between_bars">3dp</dimen>
+    <dimen name="dad_middle_bar_arrow_size">16dp</dimen>
+
+    <!-- AddDeleteDrawable -->
+    <dimen name="add_size">20dp</dimen>
+    <dimen name="add_thickness">2dp</dimen>
+
+    <!-- CategoryTable -->
+    <dimen name="category_table_item_height">40dp</dimen>
+    <dimen name="category_table_item_margin">4dp</dimen>
+
+    <!-- AdvanceSearchTable -->
+    <dimen name="advance_search_table_item_margin">4dp</dimen>
+
+    <!-- Search item -->
+    <dimen name="search_item_interval">8dp</dimen>
+    <dimen name="search_category_padding_h">16dp</dimen>
+    <dimen name="search_category_padding_v">16dp</dimen>
+    <dimen name="search_category_title_height">48dp</dimen>
+
+    <!-- Switch padding -->
+    <dimen name="switch_padding">8dp</dimen>
 
 </resources>

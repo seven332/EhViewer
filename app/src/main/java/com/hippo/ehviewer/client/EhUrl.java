@@ -18,8 +18,10 @@ package com.hippo.ehviewer.client;
 
 public class EhUrl {
 
-    public static final String HOST_EX = "exhentai.org";
-    public static final String HOST_E = "e-hentai.org";
+    public static final String DOMAIN_EX = "exhentai.org";
+    public static final String DOMAIN_E = "e-hentai.org";
+
+    public static final String HOST_EX = "http://" + DOMAIN_EX + "/";
 
     public static final String API_SIGN_IN = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
 
