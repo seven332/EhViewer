@@ -100,12 +100,22 @@ public abstract class StageActivity extends AppCompatActivity {
         }
         transaction.add(getContainerViewId(), scene, newTag);
         transaction.commit();
+
+        // Update SoftInputMode
+        getWindow().setSoftInputMode(scene.getSoftInputMode());
+    }
+
+    int getStackIndex(SceneFragment scene) {
+        return getStackIndex(scene.getTag());
+    }
+
+    int getStackIndex(String tag) {
+        return Collections.binarySearch(mSceneTagList, tag);
     }
 
     public void finishScene(SceneFragment scene) {
         finishScene(scene.getTag());
     }
-
 
     private void finishScene(String tag) {
         FragmentManager fragmentManager = getSupportFragmentManager();

@@ -39,6 +39,11 @@ public class SceneFragment extends Fragment {
         return LAUNCH_MODE_STANDARD;
     }
 
+    public int getSoftInputMode() {
+        return 0; // WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED |
+                  // WindowManager.LayoutParams.SOFT_INPUT_ADJUST_UNSPECIFIED
+    }
+
     public void onNewArguments(@NonNull Bundle args) {}
 
     public <T extends SceneFragment> void startScene(Class<T> clazz) {
@@ -63,6 +68,18 @@ public class SceneFragment extends Fragment {
         FragmentActivity activity = getActivity();
         if (activity != null) {
             activity.finish();
+        }
+    }
+
+    /**
+     * @return negative for error
+     */
+    public int getStackIndex() {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof StageActivity) {
+            return ((StageActivity) activity).getStackIndex(this);
+        } else {
+            return -1;
         }
     }
 

@@ -45,4 +45,14 @@
         android:layout_marginTop="8dp"
         app:forceNoElevation="true"/>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        style="@style/Widget.Design.FloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:layout_marginRight="@dimen/corner_fab_margin"
+        android:layout_marginBottom="@dimen/corner_fab_margin"
+        android:visibility="gone"/>
+
 </com.hippo.ehviewer.widget.SearchBarLayout>

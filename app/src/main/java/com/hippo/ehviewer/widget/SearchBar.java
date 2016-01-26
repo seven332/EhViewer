@@ -207,6 +207,14 @@ public class SearchBar extends CardView implements View.OnClickListener,
         mEditText.setLayoutParams(lp);
     }
 
+    public void applySearch() {
+        String query = mEditText.getText().toString().trim();
+        // Put it into db
+        mSearchDatabase.addQuery(query);
+        // Callback
+        mHelper.onApplySearch(query);
+    }
+
     @Override
     public void onClick(View v) {
         if (v == mTitleTextView) {
@@ -222,8 +230,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (v == mEditText) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_NULL) {
-                String query = mEditText.getText().toString();
-                mHelper.onApplySearch(query);
+                applySearch();
                 return true;
             }
         }

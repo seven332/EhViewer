@@ -242,6 +242,7 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
 
     public ListUrlBuilder() {}
 
+    @SuppressWarnings("WrongConstant")
     protected ListUrlBuilder(Parcel in) {
         mMode = in.readInt();
         mPageIndex = in.readInt();

@@ -68,4 +68,6 @@
     <!-- Switch padding -->
     <dimen name="switch_padding">8dp</dimen>
 
+    <dimen name="corner_fab_margin">16dp</dimen>
+
 </resources>

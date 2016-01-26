@@ -127,4 +127,16 @@ public class EhUtils {
             return gi.title;
         }
     }
+
+    public static String getSpecifyUploaderKeyword(String query) {
+        return "uploader:\"" + query + "\"";
+    }
+
+    public static String getKeywordFromSpecifyUploader(String query) {
+        if (query.startsWith("uploader:\"") && query.endsWith("\"") && query.length() > 11) {
+            return query.substring(10, query.length() - 1);
+        } else {
+            return query;
+        }
+    }
 }

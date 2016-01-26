@@ -75,7 +75,11 @@ public final class MainActivity extends StageActivity
     }
 
     public void setNavCheckedItem(@IdRes int resId) {
-        mNavView.setCheckedItem(resId);
+        if (resId == 0) {
+            mNavView.setCheckedItem(R.id.nav_stub);
+        } else {
+            mNavView.setCheckedItem(resId);
+        }
     }
 
     private void onInit() {
@@ -108,7 +112,9 @@ public final class MainActivity extends StageActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_homepage) {
-
+            Bundle args = new Bundle();
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+            startScene(GalleryListScene.class, args);
         } else if (id == R.id.nav_whats_hot) {
 
         } else if (id == R.id.nav_favourite) {
@@ -119,6 +125,10 @@ public final class MainActivity extends StageActivity
 
         } else if (id == R.id.nav_settings) {
 
+        }
+
+        if (id != R.id.nav_stub) {
+            mDrawerLayout.closeDrawers();
         }
 
         return true;

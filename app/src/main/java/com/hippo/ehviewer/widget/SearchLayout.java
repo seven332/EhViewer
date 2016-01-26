@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.widget;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -41,6 +40,9 @@ import android.widget.TextView;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.client.EhUrl;
+import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.ViewUtils;
@@ -95,8 +97,6 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
     private AdvanceSearchTable mTableAdvanceSearch;
 
     private View mActionView;
-    private TextView mAction1;
-    private TextView mAction2;
 
     private LinearLayoutManager mLayoutManager;
     private SearchAdapter mAdapter;
@@ -113,7 +113,6 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         init(context);
     }
 
-    @SuppressLint("InflateParams")
     private void init(Context context) {
         Resources resources = context.getResources();
         mInflater = LayoutInflater.from(context);
@@ -149,13 +148,11 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         mEnableAdvanceSwitch.setSwitchPadding(resources.getDimensionPixelSize(R.dimen.switch_padding));
 
         // Create advance view
-        mAdvanceView = mInflater.inflate(R.layout.search_advance, null);
+        mAdvanceView = mInflater.inflate(R.layout.search_advance, frameLayout, false);
         mTableAdvanceSearch = (AdvanceSearchTable) mAdvanceView.findViewById(R.id.search_advance_search_table);
 
         // Create action view
-        mActionView = mInflater.inflate(R.layout.search_action, null);
-        mAction1 = (TextView) mActionView.findViewById(R.id.search_action_1);
-        mAction2 = (TextView) mActionView.findViewById(R.id.search_action_2);
+        mActionView = new View(context);// TODO mInflater.inflate(R.layout.search_action, frameLayout, false);
     }
 
     public void setHelper(Helper helper) {
@@ -218,6 +215,33 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
                     mHelper.onChangeSearchMode();
                 }
             }
+        }
+    }
+
+    // TODO image search
+    public void formatListUrlBuilder(ListUrlBuilder urlBuilder, String query) {
+        urlBuilder.reset();
+
+        int nsMode = mNormalSearchMode.getCheckedRadioButtonId();
+        switch (nsMode) {
+            default:
+            case R.id.search_normal_search:
+            case R.id.search_specify_uploader:
+                if (nsMode == R.id.search_specify_uploader) {
+                    urlBuilder.setKeyword(EhUtils.getSpecifyUploaderKeyword(query));
+                } else {
+                    urlBuilder.setKeyword(query);
+                }
+                urlBuilder.setCategory(mCategoryTable.getCategory());
+                if (mEnableAdvance) {
+                    urlBuilder.setAdvanceSearch(mTableAdvanceSearch.getAdvanceSearch());
+                    urlBuilder.setMinRating(mTableAdvanceSearch.getMinRating());
+                }
+                break;
+            case R.id.search_specify_tag:
+                urlBuilder.setMode(ListUrlBuilder.MODE_TAG);
+                urlBuilder.setKeyword(query);
+                break;
         }
     }
 
