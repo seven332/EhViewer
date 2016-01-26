@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.client;
 
-import com.hippo.okhttp.CookieDB;
 import com.hippo.okhttp.CookieDBStore;
 
 import java.util.ArrayList;
@@ -71,7 +70,7 @@ public class EhCookieStore extends CookieDBStore {
             if (EhUrl.DOMAIN_E.equals(cookie.domain()) &&
                     (KEY_IPD_MEMBER_ID.equals(cookie.name()) ||
                             KEY_IPD_PASS_HASH.equals(cookie.name()))) {
-                cs.add(newCookie(cookie, CookieDB.cookiesDomain(EhUrl.DOMAIN_EX)));
+                cs.add(newCookie(cookie, EhUrl.DOMAIN_EX));
             }
         }
 

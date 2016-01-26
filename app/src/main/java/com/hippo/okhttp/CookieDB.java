@@ -18,14 +18,12 @@ package com.hippo.okhttp;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.TextUtils;
 
 import com.hippo.okhttp.dao.DaoMaster;
 import com.hippo.okhttp.dao.DaoSession;
 import com.hippo.okhttp.dao.OkHttp3CookieDao;
 import com.hippo.okhttp.dao.OkHttp3CookieRaw;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,31 +54,6 @@ public class CookieDB {
         DaoMaster daoMaster = new DaoMaster(db);
 
         sDaoSession = daoMaster.newSession();
-    }
-
-    public static String cookiesDomain(URL url) {
-        return cookiesDomain(url.getHost());
-    }
-
-    // FIXME It is not right to store like this
-    public static String cookiesDomain(String domain) {
-        if (TextUtils.isEmpty(domain)) {
-            return "";
-        }
-
-        int count = 0;
-        for (int i = domain.length() - 1; i >= 0; i--) {
-            char ch = domain.charAt(i);
-            if (ch == '.') {
-                count++;
-            }
-
-            if (count == 2) {
-                return domain.substring(i + 1);
-            }
-        }
-
-        return domain;
     }
 
     public static Map<String, List<CookieWithID>> getAllCookies() {
@@ -122,12 +95,10 @@ public class CookieDB {
                 builder.httpOnly();
             }
 
-            String cookiesDomain = cookiesDomain(domain);
-
-            List<CookieWithID> cookies = result.get(cookiesDomain);
+            List<CookieWithID> cookies = result.get(domain);
             if (cookies == null) {
                 cookies = new ArrayList<>();
-                result.put(cookiesDomain, cookies);
+                result.put(domain, cookies);
             }
 
             cookies.add(new CookieWithID(raw.getId(), builder.build()));
