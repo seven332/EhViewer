@@ -47,13 +47,21 @@ public class SceneFragment extends Fragment {
     public void onNewArguments(@NonNull Bundle args) {}
 
     public <T extends SceneFragment> void startScene(Class<T> clazz) {
-        startScene(clazz, null);
+        startScene(clazz, null, null);
     }
 
     public <T extends SceneFragment> void startScene(Class<T> clazz, Bundle args) {
+        startScene(clazz, args, null);
+    }
+
+    public <T extends SceneFragment> void startScene(Class<T> clazz, TransitionHelper transitionHelper) {
+        startScene(clazz, null, transitionHelper);
+    }
+
+    public <T extends SceneFragment> void startScene(Class<T> clazz, Bundle args, TransitionHelper transitionHelper) {
         FragmentActivity activity = getActivity();
         if (activity instanceof StageActivity) {
-            ((StageActivity) activity).startScene(clazz, args);
+            ((StageActivity) activity).startScene(clazz, args, transitionHelper);
         }
     }
 

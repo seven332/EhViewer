@@ -61,10 +61,19 @@ public abstract class StageActivity extends AppCompatActivity {
     }
 
     public <T extends SceneFragment> void startScene(Class<T> clazz) {
-        startScene(clazz, null);
+        startScene(clazz, null, null);
     }
 
     public <T extends SceneFragment> void startScene(Class<T> clazz, Bundle args) {
+        startScene(clazz, args, null);
+    }
+
+    public <T extends SceneFragment> void startScene(Class<T> clazz, TransitionHelper transitionHelper) {
+        startScene(clazz, null, transitionHelper);
+    }
+
+    public <T extends SceneFragment> void startScene(Class<T> clazz,
+            Bundle args, TransitionHelper transitionHelper) {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         // Old scene
@@ -94,7 +103,12 @@ public abstract class StageActivity extends AppCompatActivity {
         mSceneTagList.add(newTag);
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.fragment_translate_in, R.anim.fragment_translate_out);
+        if (transitionHelper != null && old != null) {
+            transitionHelper.onTransition(this, transaction, old, scene);
+        } else {
+            transaction.setCustomAnimations(R.anim.fragment_translate_in, R.anim.fragment_translate_out);
+        }
+        transaction.remove(scene);
         if (old != null) {
             transaction.detach(old);
         }
@@ -158,6 +172,11 @@ public abstract class StageActivity extends AppCompatActivity {
 
         // Remove tag
         mSceneTagList.remove(index);
+
+        // Update SoftInputMode
+        if (next instanceof SceneFragment) {
+            getWindow().setSoftInputMode(((SceneFragment) scene).getSoftInputMode());
+        }
     }
 
     @Override

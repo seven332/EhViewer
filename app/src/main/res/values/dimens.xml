@@ -70,4 +70,7 @@
 
     <dimen name="corner_fab_margin">16dp</dimen>
 
+    <dimen name="gallery_detail_thumb_width">128dp</dimen>
+    <dimen name="gallery_detail_thumb_height">192dp</dimen>
+
 </resources>

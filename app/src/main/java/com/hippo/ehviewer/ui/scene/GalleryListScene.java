@@ -18,20 +18,26 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
+import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +66,8 @@ import com.hippo.ehviewer.widget.SearchBarLayout;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.scene.TransitionHelper;
+import com.hippo.utils.ApiHelper;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.ContentLayout;
@@ -70,6 +78,8 @@ import com.hippo.yorozuya.MathUtils;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+// TODO store list data to temp file in onSaveInstanceState and save file path
+// TODO new view fill recreate onResume, so remember to save, restore and free memory
 public final class GalleryListScene extends BaseScene
         implements EasyRecyclerView.OnItemClickListener, SearchBar.Helper,
         SearchBar.OnStateChangeListener, FastScroller.OnDragHandlerListener,
@@ -160,6 +170,10 @@ public final class GalleryListScene extends BaseScene
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+
+        Log.d("TAG", "GalleryListScene onCreate");
+
+
         super.onCreate(savedInstanceState);
 
         mClient = EhApplication.getEhClient(getContext());
@@ -227,6 +241,9 @@ public final class GalleryListScene extends BaseScene
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
+
+        Log.d("TAG", "GalleryListScene onCreateView");
+
         View view = inflater.inflate(R.layout.scene_gallery_list, container, false);
 
         Resources resources = getContext().getResources();
@@ -339,9 +356,46 @@ public final class GalleryListScene extends BaseScene
         }
     }
 
+    private static class GalleryDetailTransaction implements TransitionHelper {
+
+        private GalleryListHolder mHolder;
+
+        public GalleryDetailTransaction(GalleryListHolder holder) {
+            mHolder = holder;
+        }
+
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void onTransition(Context context, FragmentTransaction transaction,
+                Fragment exit, Fragment enter) {
+            exit.setSharedElementReturnTransition(
+                    TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
+            exit.setExitTransition(
+                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
+            enter.setSharedElementEnterTransition(
+                    TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
+            enter.setEnterTransition(
+                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
+            transaction.addSharedElement(mHolder.thumb, mHolder.thumb.getTransitionName());
+            transaction.addSharedElement(mHolder.title, mHolder.title.getTransitionName());
+            transaction.addSharedElement(mHolder.uploader, mHolder.uploader.getTransitionName());
+            transaction.addSharedElement(mHolder.category, mHolder.category.getTransitionName());
+        }
+    }
+
     @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-        return false;
+        GalleryInfo gi = mHelper.getDataAt(position);
+        Bundle args = new Bundle();
+        args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GALLERY_INFO);
+        args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, gi);
+        if (ApiHelper.SUPPORT_TRANSITION) {
+            GalleryListHolder holder = (GalleryListHolder) mRecyclerView.getChildViewHolder(view);
+            startScene(GalleryDetailScene.class, args, new GalleryDetailTransaction(holder));
+        } else {
+            startScene(GalleryDetailScene.class, args);
+        }
+        return true;
     }
 
     private void showFab() {
@@ -748,6 +802,7 @@ public final class GalleryListScene extends BaseScene
         }
 
         @Override
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         public void onBindViewHolder(GalleryListHolder holder, int position) {
             GalleryInfo gi = mHelper.getDataAt(position);
             holder.thumb.load(EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb, true);
@@ -762,6 +817,15 @@ public final class GalleryListScene extends BaseScene
             }
             holder.posted.setText(gi.posted);
             holder.simpleLanguage.setText(gi.simpleLanguage);
+
+            // Update transition name
+            if (ApiHelper.SUPPORT_TRANSITION) {
+                int gid = gi.gid;
+                holder.thumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
+                holder.title.setTransitionName(TransitionNameFactory.getTitleTransitionName(gid));
+                holder.uploader.setTransitionName(TransitionNameFactory.getUploaderTransitionName(gid));
+                holder.category.setTransitionName(TransitionNameFactory.getCategoryTransitionName(gid));
+            }
         }
 
         @Override
