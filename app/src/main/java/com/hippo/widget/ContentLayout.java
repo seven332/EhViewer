@@ -17,6 +17,8 @@
 package com.hippo.widget;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -36,7 +38,7 @@ import com.hippo.utils.ExceptionUtils;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.refreshlayout.RefreshLayout;
-import com.hippo.yorozuya.IdIntGenerator;
+import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.IntList;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -153,9 +155,29 @@ public class ContentLayout extends FrameLayout {
                 mRecyclerViewOriginBottom + fitPaddingBottom);
     }
 
-    public abstract static class ContentHelper<E> {
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        return mContentHelper.saveInstanceState(super.onSaveInstanceState());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        super.onRestoreInstanceState(mContentHelper.restoreInstanceState(state));
+    }
+
+    public abstract static class ContentHelper<E extends Parcelable> {
 
         private static final String TAG = ContentHelper.class.getSimpleName();
+
+        private static final String KEY_SUPER = "super";
+        private static final String KEY_SHOWN_VIEW = "shown_view";
+        private static final String KEY_TIP = "tip";
+        private static final String KEY_DATA = "data";
+        private static final String KEY_NEXT_ID = "next_id";
+        private static final String KEY_PAGE_DIVIDER = "page_divider";
+        private static final String KEY_START_PAGE = "start_page";
+        private static final String KEY_END_PAGE = "end_page";
+        private static final String KEY_PAGES = "pages";
 
         public static final int TYPE_REFRESH = 0;
         public static final int TYPE_PRE_PAGE = 1;
@@ -183,12 +205,12 @@ public class ContentLayout extends FrameLayout {
         /**
          * Store data
          */
-        private List<E> mData = new ArrayList<>();
+        private ArrayList<E> mData = new ArrayList<>();
 
         /**
          * Generate task id
          */
-        private IdIntGenerator mIdGenerator = new IdIntGenerator();
+        private IntIdGenerator mIdGenerator = new IntIdGenerator();
 
         /**
          * Store the page divider index
@@ -344,6 +366,10 @@ public class ContentLayout extends FrameLayout {
 
         public int size() {
             return mData.size();
+        }
+
+        public boolean isCurrentTask(int taskId) {
+            return mCurrentTaskId == taskId;
         }
 
         public void setPages(int taskId, int pages) {
@@ -705,6 +731,50 @@ public class ContentLayout extends FrameLayout {
                 mCurrentTaskType = TYPE_SOMEWHERE;
                 mCurrentTaskPage = page;
                 getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
+            }
+        }
+
+        private Parcelable saveInstanceState(Parcelable superState) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(KEY_SUPER, superState);
+            int shownView = mViewTransition.getShownViewIndex();
+            bundle.putInt(KEY_SHOWN_VIEW, shownView);
+            String tip;
+            if (shownView == 2) {
+                // It is progress view
+                tip = getContext().getResources().getString(R.string.content_layout_restore_tip);
+            } else {
+                tip = mTextView.getText().toString();
+            }
+            bundle.putString(KEY_TIP, tip);
+            // TODO What if data is large
+            bundle.putParcelableArrayList(KEY_DATA, mData);
+            bundle.putInt(KEY_NEXT_ID, mIdGenerator.nextId());
+            bundle.putParcelable(KEY_PAGE_DIVIDER, mPageDivider);
+            bundle.putInt(KEY_START_PAGE, mStartPage);
+            bundle.putInt(KEY_END_PAGE, mEndPage);
+            bundle.putInt(KEY_PAGES, mPages);
+            return bundle;
+        }
+
+        private Parcelable restoreInstanceState(Parcelable state) {
+            if (state instanceof Bundle) {
+                Bundle bundle = (Bundle) state;
+                int shownView = bundle.getInt(KEY_SHOWN_VIEW);
+                if (shownView != 0) {
+                    shownView = 2;
+                }
+                mViewTransition.showView(shownView, false);
+                mTextView.setText(bundle.getString(KEY_TIP));
+                mData = bundle.getParcelableArrayList(KEY_DATA);
+                mIdGenerator.setNextId(bundle.getInt(KEY_NEXT_ID));
+                mPageDivider = bundle.getParcelable(KEY_PAGE_DIVIDER);
+                mStartPage = bundle.getInt(KEY_START_PAGE);
+                mEndPage = bundle.getInt(KEY_END_PAGE);
+                mPages = bundle.getInt(KEY_PAGES);
+                return bundle.getParcelable(KEY_SUPER);
+            } else {
+                return state;
             }
         }
     }
