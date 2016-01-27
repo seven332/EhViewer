@@ -25,7 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.hippo.ehviewer.R;
-import com.hippo.yorozuya.IdIntGenerator;
+import com.hippo.yorozuya.IntIdGenerator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,10 +35,11 @@ public abstract class StageActivity extends AppCompatActivity {
     private static final String TAG = StageActivity.class.getSimpleName();
 
     private static final String KEY_STAGE_ACTIVITY_SCENE_TAG_LIST = "stage_activity_scene_tag_list";
+    private static final String KEY_STAGE_ACTIVITY_NEXT_ID = "stage_activity_next_id";
 
     // TODO ArrayList or LinkedList
     private ArrayList<String> mSceneTagList = new ArrayList<>();
-    private IdIntGenerator mIdGenerator = new IdIntGenerator();
+    private IntIdGenerator mIdGenerator = new IntIdGenerator();
 
     public abstract int getContainerViewId();
 
@@ -77,46 +78,49 @@ public abstract class StageActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         // Old scene
-        Fragment old = null;
+        Fragment currentFragment = null;
         if (mSceneTagList.size() > 0) {
             // Get last tag
             String tag = mSceneTagList.get(mSceneTagList.size() - 1);
-            old = fragmentManager.findFragmentByTag(tag);
+            currentFragment = fragmentManager.findFragmentByTag(tag);
         }
 
         // Launch mode single top
-        if (old instanceof SceneFragment && clazz.isInstance(old)) {
-            SceneFragment oldScene = (SceneFragment) old;
-            if (oldScene.getLaunchMode() == SceneFragment.LAUNCH_MODE_SINGLE_TOP) {
+        if (currentFragment instanceof SceneFragment && clazz.isInstance(currentFragment)) {
+            SceneFragment currentScene = (SceneFragment) currentFragment;
+            if (currentScene.getLaunchMode() == SceneFragment.LAUNCH_MODE_SINGLE_TOP) {
                 if (args != null) {
-                    oldScene.onNewArguments(args);
+                    currentScene.onNewArguments(args);
                 }
                 return;
             }
         }
 
-        // New scene
-        SceneFragment scene = newSceneInstance(clazz);
-        scene.setArguments(args);
-        // New scene tag
+        // Create new scene
+        SceneFragment newScene = newSceneInstance(clazz);
+        newScene.setArguments(args);
+
+        // Create new scene tag
         String newTag = Integer.toString(mIdGenerator.nextId());
-        mSceneTagList.add(newTag);
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        if (transitionHelper != null && old != null) {
-            transitionHelper.onTransition(this, transaction, old, scene);
+        if (transitionHelper != null && currentFragment != null) {
+            transitionHelper.onTransition(this, transaction, currentFragment, newScene);
         } else {
             transaction.setCustomAnimations(R.anim.fragment_translate_in, R.anim.fragment_translate_out);
         }
-        transaction.remove(scene);
-        if (old != null) {
-            transaction.detach(old);
+        transaction.remove(newScene);
+        if (currentFragment != null) {
+            transaction.detach(currentFragment);
         }
-        transaction.add(getContainerViewId(), scene, newTag);
+        transaction.add(getContainerViewId(), newScene, newTag);
         transaction.commit();
 
+        // Add new tag to list
+        mSceneTagList.add(newTag);
+
         // Update SoftInputMode
-        getWindow().setSoftInputMode(scene.getSoftInputMode());
+        getWindow().setSoftInputMode(newScene.getSoftInputMode());
     }
 
     int getStackIndex(SceneFragment scene) {
@@ -141,9 +145,8 @@ public abstract class StageActivity extends AppCompatActivity {
             return;
         }
 
-        // FIXME It will fail if mIdGenerator.nextId() called more than Integer.MAX_VALUE times
         // Get scene index
-        int index = Collections.binarySearch(mSceneTagList, tag);
+        int index = mSceneTagList.indexOf(tag);//Collections.binarySearch(mSceneTagList, tag);
         if (index < 0) {
             Log.e(TAG, "finishScene: Can't find the tag in tag list: " + tag);
             return;
@@ -157,16 +160,20 @@ public abstract class StageActivity extends AppCompatActivity {
         }
 
         Fragment next = null;
-        // It is first fragment, show the next one
         if (index == mSceneTagList.size() - 1) {
+            // It is first fragment, show the next one
             next = fragmentManager.findFragmentByTag(mSceneTagList.get(index - 1));
         }
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.fragment_translate_in, R.anim.fragment_translate_out);
         transaction.remove(scene);
-        if (next != null && next.isDetached()) {
-            transaction.attach(next);
+        if (next != null) {
+            if (next.isDetached()) {
+                transaction.attach(next);
+            } else {
+                Log.e(TAG, "finishScene: The scene should be detached");
+            }
         }
         transaction.commit();
 
@@ -208,11 +215,13 @@ public abstract class StageActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putStringArrayList(KEY_STAGE_ACTIVITY_SCENE_TAG_LIST, mSceneTagList);
+        outState.putInt(KEY_STAGE_ACTIVITY_NEXT_ID, mIdGenerator.nextId());
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mSceneTagList = savedInstanceState.getStringArrayList(KEY_STAGE_ACTIVITY_SCENE_TAG_LIST);
+        mIdGenerator.setNextId(savedInstanceState.getInt(KEY_STAGE_ACTIVITY_NEXT_ID));
     }
 }
