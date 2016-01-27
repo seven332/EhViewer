@@ -133,15 +133,15 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
 
     /**
      * Make them the same
-     * @param glub The template
+     * @param lub The template
      */
-    public void set(ListUrlBuilder glub) {
-        mMode = glub.mMode;
-        mPageIndex = glub.mPageIndex;
-        mCategory = glub.mCategory;
-        mKeyword = glub.mKeyword;
-        mAdvanceSearch = glub.mAdvanceSearch;
-        mMinRating = glub.mMinRating;
+    public void set(ListUrlBuilder lub) {
+        mMode = lub.mMode;
+        mPageIndex = lub.mPageIndex;
+        mCategory = lub.mCategory;
+        mKeyword = lub.mKeyword;
+        mAdvanceSearch = lub.mAdvanceSearch;
+        mMinRating = lub.mMinRating;
     }
 
     /*

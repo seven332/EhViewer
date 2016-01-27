@@ -15,16 +15,20 @@
   ~ limitations under the License.
   -->
 
-<com.hippo.ehviewer.widget.SearchBarLayout
+<com.hippo.ehviewer.widget.FitPaddingLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_bar_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:search_bar="@+id/search_bar"
     app:content1="@+id/recycler_view"
+    app:fitTop1="@+id/search_bar"
     app:content2="@+id/fast_scroller"
-    app:content3="@+id/search_layout">
+    app:fitTop2="@+id/search_bar"
+    app:content3="@+id/search_layout"
+    app:fitTop3="@+id/search_bar"
+    app:fitBottom3="@+id/fab"
+    app:once="true">
 
     <com.hippo.widget.ContentLayout
         android:id="@+id/content_layout"
@@ -53,6 +57,6 @@
         android:layout_gravity="right|bottom"
         android:layout_marginRight="@dimen/corner_fab_margin"
         android:layout_marginBottom="@dimen/corner_fab_margin"
-        android:visibility="gone"/>
+        android:visibility="invisible"/>
 
-</com.hippo.ehviewer.widget.SearchBarLayout>
+</com.hippo.ehviewer.widget.FitPaddingLayout>

@@ -90,6 +90,8 @@
 
     <string name="press_twice_exit">Press twice to exit</string>
 
+    <string name="content_layout_restore_tip">Click to retry</string>
+
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint">Search ExHentai.org</string>
     <string name="gallery_list_empty_hit">The World is Big and Pandas sit alone</string>

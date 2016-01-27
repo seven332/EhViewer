@@ -51,8 +51,8 @@ android {
 }
 
 clean {
-    delete file('src/main/obj').absolutePath
-    delete file('src/main/libs').absolutePath
+    //delete file('src/main/obj').absolutePath
+    //delete file('src/main/libs').absolutePath
 }
 
 dependencies {

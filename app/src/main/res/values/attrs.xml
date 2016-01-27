@@ -40,11 +40,17 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="SearchBarLayout">
-        <attr name="search_bar" format="reference"/>
+    <declare-styleable name="FitPaddingLayout">
+        <attr name="fitTop1" format="reference"/>
+        <attr name="fitTop2" format="reference"/>
+        <attr name="fitTop3" format="reference"/>
         <attr name="content1" format="reference"/>
         <attr name="content2" format="reference"/>
         <attr name="content3" format="reference"/>
+        <attr name="fitBottom1" format="reference"/>
+        <attr name="fitBottom2" format="reference"/>
+        <attr name="fitBottom3" format="reference"/>
+        <attr name="once" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="CheckTextView">

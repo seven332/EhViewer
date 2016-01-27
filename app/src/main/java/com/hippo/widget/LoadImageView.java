@@ -39,7 +39,7 @@ import com.hippo.ehviewer.R;
 public class LoadImageView extends FixedAspectImageView implements Unikery<ImageWrapper>,
         View.OnClickListener, View.OnLongClickListener {
 
-    private int mTaskId = Unikery.INVAILD_ID;
+    private int mTaskId = Unikery.INVALID_ID;
 
     private Conaco<ImageWrapper> mConaco;
 
