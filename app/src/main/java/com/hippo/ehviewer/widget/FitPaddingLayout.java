@@ -81,6 +81,9 @@ public class FitPaddingLayout extends OffsetLayout {
                         content.getPaddingRight(),
                         paddingBottom == -1 ? content.getPaddingBottom() : paddingBottom);
             }
+            mContentList.clear();
+            mPaddingTopList.clear();
+            mPaddingBottomList.clear();
         }
     };
 
@@ -135,10 +138,12 @@ public class FitPaddingLayout extends OffsetLayout {
         int newPaddingTop = -1;
         int newPaddingBottom = -1;
         if (fitTop != null) {
-            newPaddingTop = fitTop.getBottom() - ((LayoutParams) fitTop.getLayoutParams()).offsetY;
+            newPaddingTop = originalPaddingTop + fitTop.getBottom() -
+                    ((LayoutParams) fitTop.getLayoutParams()).offsetY;
         }
         if (fitBottom != null) {
-            newPaddingBottom = getHeight() - fitBottom.getTop() - ((LayoutParams) fitBottom.getLayoutParams()).offsetY;
+            newPaddingBottom = originalPaddingBottom + getHeight() - fitBottom.getTop() -
+                    ((LayoutParams) fitBottom.getLayoutParams()).offsetY;
         }
         newPaddins[0] = newPaddingTop;
         newPaddins[1] = newPaddingBottom;
