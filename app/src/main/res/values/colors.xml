@@ -85,4 +85,7 @@
     <color name="misc">#fff06292</color>
     <color name="unknown_bg">@android:color/black</color>
 
+    <!-- divider -->
+    <color name="divider">#20000000</color>
+
 </resources>

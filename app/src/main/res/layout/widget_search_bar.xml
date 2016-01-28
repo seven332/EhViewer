@@ -72,7 +72,10 @@
             android:id="@+id/search_bar_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:divider="@color/divider"
+            android:dividerHeight="1dp"
+            android:headerDividersEnabled="false"/>
 
     </LinearLayout>
 

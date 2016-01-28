@@ -78,6 +78,8 @@ public class SearchBar extends CardView implements View.OnClickListener,
     private SimpleImageView mActionButton;
     private SearchEditText mEditText;
     private ListView mList;
+    private View mListHeader;
+    private boolean mHeaderAttached = false;
 
     private ViewTransition mViewTransition;
 
@@ -108,12 +110,14 @@ public class SearchBar extends CardView implements View.OnClickListener,
     private void init(Context context) {
         mSearchDatabase = SearchDatabase.getInstance(getContext());
 
-        LayoutInflater.from(context).inflate(R.layout.widget_search_bar, this);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        inflater.inflate(R.layout.widget_search_bar, this);
         mMenuButton = (SimpleImageView) findViewById(R.id.search_menu);
         mTitleTextView = (TextView) findViewById(R.id.search_title);
         mActionButton = (SimpleImageView) findViewById(R.id.search_action);
         mEditText = (SearchEditText) findViewById(R.id.search_edit_text);
         mList = (ListView) findViewById(R.id.search_bar_list);
+        mListHeader = inflater.inflate(R.layout.header_suggestion_list, mList, false);
 
         mViewTransition = new ViewTransition(mTitleTextView, mEditText);
 
@@ -136,11 +140,26 @@ public class SearchBar extends CardView implements View.OnClickListener,
         mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String suggestion = mSuggestionList.get(position);
+                String suggestion = mSuggestionList.get(MathUtils.clamp(
+                        position - mList.getHeaderViewsCount(), 0, mSuggestionList.size() - 1));
                 mEditText.setText(suggestion);
                 mEditText.setSelection(suggestion.length());
             }
         });
+    }
+
+    private void addListHeader() {
+        if (!mHeaderAttached) {
+            mHeaderAttached = true;
+            mList.addHeaderView(mListHeader, null, false);
+        }
+    }
+
+    private void removeListHeader() {
+        if (mHeaderAttached) {
+            mHeaderAttached = false;
+            mList.removeHeaderView(mListHeader);
+        }
     }
 
     private void updateSuggestions() {
@@ -148,6 +167,11 @@ public class SearchBar extends CardView implements View.OnClickListener,
         String[] suggestions = mSearchDatabase.getSuggestions(prefix);
         mSuggestionList.clear();
         Collections.addAll(mSuggestionList, suggestions);
+        if (mSuggestionList.size() == 0) {
+            removeListHeader();
+        } else {
+            addListHeader();
+        }
         mSuggestionAdapter.notifyDataSetChanged();
     }
 
