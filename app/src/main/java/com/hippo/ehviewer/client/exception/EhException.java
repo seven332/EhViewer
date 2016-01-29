@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.client;
+package com.hippo.ehviewer.client.exception;
 
 public class EhException extends Exception {
 

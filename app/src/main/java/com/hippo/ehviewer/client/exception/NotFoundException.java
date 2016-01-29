@@ -16,8 +16,6 @@
 
 package com.hippo.ehviewer.client.exception;
 
-import com.hippo.ehviewer.client.EhException;
-
 public class NotFoundException extends EhException {
 
     public static final String MESSAGE = "Not found";

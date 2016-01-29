@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer.client.parser;
 
-import com.hippo.ehviewer.client.EhException;
+import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.exception.ParseException;
 
 import java.util.regex.Matcher;

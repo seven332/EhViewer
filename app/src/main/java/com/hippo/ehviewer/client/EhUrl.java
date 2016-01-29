@@ -25,8 +25,7 @@ public class EhUrl {
 
     public static final String API_SIGN_IN = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
 
-
-
-
-
+    public static String getGalleryDetailUrl(int gid, String token) {
+        return HOST_EX + "g/" + gid + '/' + token;
+    }
 }

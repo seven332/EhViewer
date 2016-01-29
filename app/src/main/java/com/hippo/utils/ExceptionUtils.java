@@ -21,7 +21,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.client.EhException;
+import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.network.StatusCodeException;
 
 import org.apache.http.conn.ConnectTimeoutException;

@@ -14,18 +14,29 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.client.exception;
+package com.hippo.ehviewer.client.data;
 
-public class ParseException extends EhException {
+import java.util.ArrayList;
 
-    private String mBody;
+public class LargePreviewSet {
 
-    public ParseException(String detailMessage, String body) {
-        super(detailMessage);
-        mBody = body;
+    private ArrayList<String> mImageUrlList = new ArrayList<>();
+    private ArrayList<String> mPageUrlList = new ArrayList<>();
+
+    public int size() {
+        return mImageUrlList.size();
     }
 
-    public String getBody() {
-        return mBody;
+    public void addItem(String imageUrl, String pageUrl) {
+        mImageUrlList.add(imageUrl);
+        mPageUrlList.add(pageUrl);
+    }
+
+    public String getImageUrlAt(int index) {
+        return mImageUrlList.get(index);
+    }
+
+    public String getPageUrlAt(int index) {
+        return mPageUrlList.get(index);
     }
 }

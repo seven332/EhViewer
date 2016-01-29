@@ -20,6 +20,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.hippo.ehviewer.EhApplication;
+import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.yorozuya.PriorityThreadFactory;
 import com.hippo.yorozuya.SimpleHandler;
 
@@ -38,6 +39,7 @@ public class EhClient {
 
     public static final int METHOD_SIGN_IN = 0;
     public static final int METHOD_GET_GALLERY_LIST = 1;
+    public static final int METHOD_GET_GALLERY_DETAIL = 2;
 
     private final ThreadPoolExecutor mRequestThreadPool;
     private final OkHttpClient mOkHttpClient;
@@ -124,6 +126,16 @@ public class EhClient {
             }
         }
 
+        private Object getGalleryDetail(Object... params) throws Exception {
+            Call call = EhEngine.prepareGetGalleryDetail(mOkHttpClient, (String) params[0]);
+            if (!mStop) {
+                mCall = call;
+                return EhEngine.doGetGalleryDetail(call);
+            } else {
+                throw new CancelledException();
+            }
+        }
+
         @Override
         protected Object doInBackground(Object... params) {
             try {
@@ -132,6 +144,8 @@ public class EhClient {
                         return signIn(params);
                     case METHOD_GET_GALLERY_LIST:
                         return getGalleryList(params);
+                    case METHOD_GET_GALLERY_DETAIL:
+                        return getGalleryDetail(params);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }
