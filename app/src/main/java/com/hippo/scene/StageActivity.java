@@ -104,13 +104,12 @@ public abstract class StageActivity extends AppCompatActivity {
         String newTag = Integer.toString(mIdGenerator.nextId());
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        if (transitionHelper != null && currentFragment != null) {
-            transitionHelper.onTransition(this, transaction, currentFragment, newScene);
-        } else {
-            transaction.setCustomAnimations(R.anim.fragment_translate_in, R.anim.fragment_translate_out);
-        }
-        transaction.remove(newScene);
         if (currentFragment != null) {
+            if (false && transitionHelper != null) {
+                transitionHelper.onTransition(this, transaction, currentFragment, newScene);
+            } else {
+                transaction.setCustomAnimations(R.anim.scene_open_enter, R.anim.scene_open_exit);
+            }
             transaction.detach(currentFragment);
         }
         transaction.add(getContainerViewId(), newScene, newTag);
@@ -166,7 +165,7 @@ public abstract class StageActivity extends AppCompatActivity {
         }
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.fragment_translate_in, R.anim.fragment_translate_out);
+        transaction.setCustomAnimations(R.anim.scene_close_enter, R.anim.scene_close_exit);
         transaction.remove(scene);
         if (next != null) {
             if (next.isDetached()) {
