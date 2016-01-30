@@ -19,10 +19,12 @@ package com.hippo.ehviewer.client;
 import com.hippo.okhttp.CookieDBStore;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
+import okhttp3.Request;
 
 public class EhCookieStore extends CookieDBStore {
 
@@ -62,18 +64,51 @@ public class EhCookieStore extends CookieDBStore {
     }
 
     @Override
+    public List<Cookie> loadForRequest(HttpUrl url, Request request) {
+        List<Cookie> cookies = super.loadForRequest(url, request);
+        Object tag = request.tag();
+
+        if (url.host().equals(EhUrl.DOMAIN_EX) && tag instanceof EhConfig) {
+            EhConfig ehConfig = (EhConfig) tag;
+
+            List<Cookie> result = new ArrayList<>(cookies.size() + 1);
+            // Add all but skip uconfig
+            for (Cookie cookie: cookies) {
+                if (EhConfig.KEY_UCONFIG.equals(cookie.name())) {
+                    continue;
+                }
+                result.add(cookie);
+            }
+            // Add uconfig from EhConfig
+            Cookie uconfigCookie = new Cookie.Builder()
+                    .name(EhConfig.KEY_UCONFIG)
+                    .value(ehConfig.uconfig())
+                    .domain(EhUrl.DOMAIN_EX)
+                    .path("/")
+                    .build();
+            result.add(uconfigCookie);
+
+            return Collections.unmodifiableList(result);
+        } else {
+            return cookies;
+        }
+    }
+
+    @Override
     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-        List<Cookie> cs = new ArrayList<>(cookies.size() + 2);
+        List<Cookie> result = new ArrayList<>(cookies.size() + 2);
 
         for (Cookie cookie: cookies) {
-            cs.add(cookie);
+            result.add(cookie);
+
+            // Save id and hash for exhentai
             if (EhUrl.DOMAIN_E.equals(cookie.domain()) &&
                     (KEY_IPD_MEMBER_ID.equals(cookie.name()) ||
                             KEY_IPD_PASS_HASH.equals(cookie.name()))) {
-                cs.add(newCookie(cookie, EhUrl.DOMAIN_EX));
+                result.add(newCookie(cookie, EhUrl.DOMAIN_EX));
             }
         }
 
-        super.saveFromResponse(url, cs);
+        super.saveFromResponse(url, Collections.unmodifiableList(result));
     }
 }

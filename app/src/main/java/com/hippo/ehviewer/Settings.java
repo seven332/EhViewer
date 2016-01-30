@@ -20,16 +20,25 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.yorozuya.NumberUtils;
 
 public class Settings {
 
     private static Context sContext;
     private static SharedPreferences sSettingsPre;
+    private static EhConfig sEhConfig;
 
     public static void initialize(Context context) {
         sContext = context.getApplicationContext();
         sSettingsPre = PreferenceManager.getDefaultSharedPreferences(sContext);
+        sEhConfig = loadEhConfig();
+    }
+
+    private static EhConfig loadEhConfig() {
+        EhConfig ehConfig= new EhConfig();
+        // TODO
+        return ehConfig;
     }
 
     public static boolean getBoolean(String key, boolean defValue) {
@@ -101,4 +110,14 @@ public class Settings {
     public static void putShowWarning(boolean value) {
         putBoolean(KEY_SHOW_WARNING, value);
     }
+
+
+
+    public static EhConfig getEhConfig() {
+        return sEhConfig;
+    }
+
+
+
+
 }

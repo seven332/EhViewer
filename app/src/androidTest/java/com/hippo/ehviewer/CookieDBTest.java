@@ -16,38 +16,7 @@
 
 package com.hippo.ehviewer;
 
-import com.hippo.okhttp.CookieDB;
-
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 public class CookieDBTest extends TestCase {
-
-    private static final String[] TEST_DOMAIN = {
-            null,
-            "",
-            "asdfghjkl",
-            "asdfghjkl.sds",
-            "asdfghjkl.sds.sddddd",
-            "asdfghjkl.sds.sddddd.aaaaa",
-            "asdfghjkl.sds.sddddd.",
-            "asdfghjkl.sds..",
-    };
-
-    private static final String[] TEST_COOKIES_DOMAIN = {
-            "",
-            "",
-            "asdfghjkl",
-            "asdfghjkl.sds",
-            "sds.sddddd",
-            "sddddd.aaaaa",
-            "sddddd.",
-            ".",
-    };
-
-    public void testCookiesDomain() {
-        for (int i = 0; i < TEST_DOMAIN.length; i++) {
-            Assert.assertEquals(TEST_COOKIES_DOMAIN[i], CookieDB.cookiesDomain(TEST_DOMAIN[i]));
-        }
-    }
 }

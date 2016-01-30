@@ -488,7 +488,7 @@ public class EhConfig implements Cloneable {
      * key: {@link #KEY_PREVIEW_SIZE}<br/>
      * value: {@link #PREVIEW_SIZE_NORMAL}, {@link #PREVIEW_SIZE_LARGE}
      */
-    public String previewSize = PREVIEW_SIZE_NORMAL;
+    public String previewSize = PREVIEW_SIZE_LARGE;
 
     /**
      * Preview row<br/>
@@ -650,16 +650,12 @@ public class EhConfig implements Cloneable {
                 KEY_MULTI_PAGE_THUMB + "_" + multiPageThumb;
     }
 
-    /*
-    public void fillCookie(Cookie cookie) {
+    public String uconfig() {
         if (mDirty) {
             mDirty = false;
             updateUconfig();
         }
 
-        cookie.put(KEY_UCONFIG, mUconfig);
-        cookie.put(KEY_LOFI_RESOLUTION, lofiResolution);
-        cookie.put(KEY_CONTENT_WARNING, contentWarning);
+        return mUconfig;
     }
-    */
 }
