@@ -41,11 +41,32 @@ public abstract class StageActivity extends AppCompatActivity {
     private ArrayList<String> mSceneTagList = new ArrayList<>();
     private IntIdGenerator mIdGenerator = new IntIdGenerator();
 
+    private int mStageId = IntIdGenerator.INVALID_ID;
+
     public abstract int getContainerViewId();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((SceneApplication) getApplicationContext()).registerStageActivity(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ((SceneApplication) getApplicationContext()).unregisterStageActivity(mStageId);
+    }
+
+    protected void onRegister(int id) {
+        mStageId = id;
+    }
+
+    protected void onUnregister() {
+        mStageId = IntIdGenerator.INVALID_ID;
+    }
+
+    public int getStageId() {
+        return mStageId;
     }
 
     private <T extends SceneFragment> SceneFragment newSceneInstance(Class<T> clazz) {
@@ -105,7 +126,7 @@ public abstract class StageActivity extends AppCompatActivity {
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (currentFragment != null) {
-            if (false && transitionHelper != null) {
+            if (transitionHelper != null) {
                 transitionHelper.onTransition(this, transaction, currentFragment, newScene);
             } else {
                 transaction.setCustomAnimations(R.anim.scene_open_enter, R.anim.scene_open_exit);
@@ -207,6 +228,16 @@ public abstract class StageActivity extends AppCompatActivity {
             } else {
                 finish();
             }
+        }
+    }
+
+    public SceneFragment findSceneByTag(String tag) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(tag);
+        if (fragment != null) {
+            return (SceneFragment) fragment;
+        } else {
+            return null;
         }
     }
 
