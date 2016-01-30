@@ -46,4 +46,41 @@
 
     <string name="app_waring">本应用中内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。本应用作者不会对由本应用造成的后果负责。您是否愿意继续使用该应用？</string>
 
+    <string name="skip_signing_in">跳过登陆</string>
+    <string name="skip_signing_in_plain">登陆失败。这可能是网站更新导致的。你愿意跳过登陆么？</string>
+
+    <string name="press_twice_exit">再按一次退出</string>
+
+    <string name="content_layout_restore_tip">点击重试</string>
+
+    <!-- Gallery List -->
+    <string name="gallery_list_search_bar_hint">搜索 ExHentai</string>
+    <string name="gallery_list_empty_hit">什么都没有找到</string>
+
+    <string name="search">搜索</string>
+
+    <string name="search_normal">普通搜索</string>
+    <string name="search_advance">高级选项</string>
+    <string name="search_image">图片搜索</string>
+    <string name="search_normal_search">一般搜索</string>
+    <string name="search_specify_uploader">指定上传者</string>
+    <string name="search_specify_tag">指定标签</string>
+    <string name="search_enable_advance">启用高级选项</string>
+
+    <string name="search_sname">Search Gallery</string>
+    <string name="search_stags">Search Gallery Tags</string>
+    <string name="search_sdesc">Search Gallery Description</string>
+    <string name="search_storr">Search Torrent Filenames</string>
+    <string name="search_sto">Only Show Galleries With Torrents</string>
+    <string name="search_sdt1">Search Low-Power Tags</string>
+    <string name="search_sdt2">Search Downvoted Tags</string>
+    <string name="search_sh">Show Expunged Galleries</string>
+    <string name="search_sr">最小评分：</string>
+
+    <!-- search_min_rating -->
+    <string name="star_2">2 星</string>
+    <string name="star_3">3 星</string>
+    <string name="star_4">4 星</string>
+    <string name="star_5">5 星</string>
+
 </resources>

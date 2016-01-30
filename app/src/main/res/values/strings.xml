@@ -47,31 +47,31 @@
     <string name="sign_in_via_webview">Sign in via WebView</string>
     <string name="sign_in_via_cookies">Sign in via cookies</string>
 
-    <string name="error_status_code_400">Bad Request</string>
-    <string name="error_status_code_401">Unauthorized</string>
-    <string name="error_status_code_402">Payment Required</string>
-    <string name="error_status_code_403">Forbidden</string>
-    <string name="error_status_code_404">Not Found</string>
-    <string name="error_status_code_405">Method Not Allowed</string>
-    <string name="error_status_code_406">Not Acceptable</string>
-    <string name="error_status_code_407">Proxy Authentication Required</string>
-    <string name="error_status_code_408">Request Timeout</string>
-    <string name="error_status_code_409">Conflict</string>
-    <string name="error_status_code_410">Gone</string>
-    <string name="error_status_code_411">Length Required</string>
-    <string name="error_status_code_412">Precondition Failed</string>
-    <string name="error_status_code_413">Request Entity Too Large</string>
-    <string name="error_status_code_414">Request-URI Too Long</string>
-    <string name="error_status_code_415">Unsupported Media Type</string>
-    <string name="error_status_code_416">Requested Range Not Satisfiable</string>
-    <string name="error_status_code_417">Expectation Failed</string>
+    <string name="error_status_code_400" translatable="false">Bad Request</string>
+    <string name="error_status_code_401" translatable="false">Unauthorized</string>
+    <string name="error_status_code_402" translatable="false">Payment Required</string>
+    <string name="error_status_code_403" translatable="false">Forbidden</string>
+    <string name="error_status_code_404" translatable="false">Not Found</string>
+    <string name="error_status_code_405" translatable="false">Method Not Allowed</string>
+    <string name="error_status_code_406" translatable="false">Not Acceptable</string>
+    <string name="error_status_code_407" translatable="false">Proxy Authentication Required</string>
+    <string name="error_status_code_408" translatable="false">Request Timeout</string>
+    <string name="error_status_code_409" translatable="false">Conflict</string>
+    <string name="error_status_code_410" translatable="false">Gone</string>
+    <string name="error_status_code_411" translatable="false">Length Required</string>
+    <string name="error_status_code_412" translatable="false">Precondition Failed</string>
+    <string name="error_status_code_413" translatable="false">Request Entity Too Large</string>
+    <string name="error_status_code_414" translatable="false">Request-URI Too Long</string>
+    <string name="error_status_code_415" translatable="false">Unsupported Media Type</string>
+    <string name="error_status_code_416" translatable="false">Requested Range Not Satisfiable</string>
+    <string name="error_status_code_417" translatable="false">Expectation Failed</string>
 
-    <string name="error_status_code_500">Internal Server Error</string>
-    <string name="error_status_code_501">Not Implemented</string>
-    <string name="error_status_code_502">Bad Gateway</string>
-    <string name="error_status_code_503">Service Unavailable</string>
-    <string name="error_status_code_504">Gateway Timeout</string>
-    <string name="error_status_code_505">HTTP Version Not Supported</string>
+    <string name="error_status_code_500" translatable="false">Internal Server Error</string>
+    <string name="error_status_code_501" translatable="false">Not Implemented</string>
+    <string name="error_status_code_502" translatable="false">Bad Gateway</string>
+    <string name="error_status_code_503" translatable="false">Service Unavailable</string>
+    <string name="error_status_code_504" translatable="false">Gateway Timeout</string>
+    <string name="error_status_code_505" translatable="false">HTTP Version Not Supported</string>
 
     <string name="error_bad_status_code">Bad status code: %d</string>
     <string name="error_timeout">Timeout</string>
@@ -93,7 +93,7 @@
     <string name="content_layout_restore_tip">Click to retry</string>
 
     <!-- Gallery List -->
-    <string name="gallery_list_search_bar_hint">Search ExHentai.org</string>
+    <string name="gallery_list_search_bar_hint">Search ExHentai</string>
     <string name="gallery_list_empty_hit">The World is Big and Pandas sit alone</string>
 
     <string name="search">Search</string>

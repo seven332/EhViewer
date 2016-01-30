@@ -26,4 +26,61 @@
     <string name="download">下載</string>
     <string name="settings">設定</string>
 
+    <string name="username">使用者名稱</string>
+    <string name="password">密碼</string>
+
+    <string name="sign_in">登陸</string>
+    <string name="register">註冊</string>
+    <string name="sign_in_via_webview">通過網頁登陸</string>
+    <string name="sign_in_via_cookies">通過 Cookie 登陸</string>
+
+    <string name="error_bad_status_code">錯誤的狀態碼：%d</string>
+    <string name="error_timeout">超時</string>
+    <string name="error_unknown_host">未知主機</string>
+    <string name="error_redirection">太多重定向</string>
+    <string name="error_socket">網路錯誤</string>
+    <string name="error_unknown">奇怪的錯誤</string>
+
+    <string name="error_username_cannot_empty">使用者名稱不可為空</string>
+    <string name="error_password_cannot_empty">密碼不可為空</string>
+
+    <string name="app_waring">本應用中內容來自網際網路，部分內容可能對您的生理及心理造成難以恢復的傷害。本應用作者不會對由本應用造成的後果負責。您是否願意繼續使用該應用？</string>
+
+    <string name="skip_signing_in">跳過登陸</string>
+    <string name="skip_signing_in_plain">登陸失敗。這可能是網站更新導致的。你願意跳過登陸麼？</string>
+
+    <string name="press_twice_exit">再按一次退出</string>
+
+    <string name="content_layout_restore_tip">點選重試</string>
+
+    <!-- Gallery List -->
+    <string name="gallery_list_search_bar_hint">搜尋 ExHentai</string>
+    <string name="gallery_list_empty_hit">什麼都沒有找到</string>
+
+    <string name="search">搜尋</string>
+
+    <string name="search_normal">普通搜尋</string>
+    <string name="search_advance">高階選項</string>
+    <string name="search_image">圖片搜尋</string>
+    <string name="search_normal_search">一般搜尋</string>
+    <string name="search_specify_uploader">指定上傳者</string>
+    <string name="search_specify_tag">指定標籤</string>
+    <string name="search_enable_advance">啟用高階選項</string>
+
+    <string name="search_sname">Search Gallery</string>
+    <string name="search_stags">Search Gallery Tags</string>
+    <string name="search_sdesc">Search Gallery Description</string>
+    <string name="search_storr">Search Torrent Filenames</string>
+    <string name="search_sto">Only Show Galleries With Torrents</string>
+    <string name="search_sdt1">Search Low-Power Tags</string>
+    <string name="search_sdt2">Search Downvoted Tags</string>
+    <string name="search_sh">Show Expunged Galleries</string>
+    <string name="search_sr">最小評分：</string>
+
+    <!-- search_min_rating -->
+    <string name="star_2">2 星</string>
+    <string name="star_3">3 星</string>
+    <string name="star_4">4 星</string>
+    <string name="star_5">5 星</string>
+
 </resources>
