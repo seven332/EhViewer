@@ -110,6 +110,7 @@ public class EhApplication extends Application {
             builder.diskCacheMaxSize = 80 * 1024 * 1024; // 80MB
             builder.okHttpClient = getOkHttpClient(context);
             builder.objectHelper = getImageWrapperHelper(context);
+            builder.debug = BuildConfig.DEBUG;
             application.mConaco = builder.build();
         }
         return application.mConaco;
