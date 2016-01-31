@@ -16,29 +16,53 @@
 
 package com.hippo.ehviewer.client;
 
+import com.hippo.ehviewer.Settings;
+
 public class EhRequest {
 
-    int method;
-    Object[] args;
-    EhClient.Callback callback;
+    private int mMethod;
+    private Object[] mArgs;
+    private EhClient.Callback mCallback;
+    private EhConfig mEhConfig;
 
     EhClient.Task task;
 
     private boolean mCancel = false;
 
     public EhRequest setMethod(int method) {
-        this.method = method;
+        mMethod = method;
         return this;
     }
 
     public EhRequest setArgs(Object... args) {
-        this.args = args;
+        mArgs = args;
         return this;
     }
 
     public EhRequest setCallback(EhClient.Callback callback) {
-        this.callback = callback;
+        mCallback = callback;
         return this;
+    }
+
+    public EhRequest setEhConfig(EhConfig ehConfig) {
+        mEhConfig = ehConfig;
+        return this;
+    }
+
+    public int getMethod() {
+        return mMethod;
+    }
+
+    public Object[] getArgs() {
+        return mArgs;
+    }
+
+    public EhClient.Callback getCallback() {
+        return mCallback;
+    }
+
+    public EhConfig getEhConfig() {
+        return mEhConfig != null ? mEhConfig : Settings.getEhConfig();
     }
 
     public void cancel() {

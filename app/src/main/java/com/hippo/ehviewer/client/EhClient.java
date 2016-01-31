@@ -56,11 +56,11 @@ public class EhClient {
 
     public void execute(EhRequest request) {
         if (!request.isCancelled()) {
-            Task task = new Task(request.method, request.callback);
-            task.executeOnExecutor(mRequestThreadPool, request.args);
+            Task task = new Task(request.getMethod(), request.getCallback(), request.getEhConfig());
+            task.executeOnExecutor(mRequestThreadPool, request.getArgs());
             request.task = task;
         } else {
-            request.callback.onCancel();
+            request.getCallback().onCancel();
         }
     }
 
@@ -68,13 +68,15 @@ public class EhClient {
 
         private int mMethod;
         private Callback mCallback;
+        private EhConfig mEhConfig;
 
         private Call mCall;
         private boolean mStop;
 
-        public Task(int method, Callback callback) {
+        public Task(int method, Callback callback, EhConfig ehConfig) {
             mMethod = method;
             mCallback = callback;
+            mEhConfig = ehConfig;
         }
 
         public void stop() {
@@ -106,8 +108,8 @@ public class EhClient {
             }
         }
 
-        private Object signIn(Object... params) throws Exception {
-            Call call = EhEngine.prepareSignIn(mOkHttpClient, (String) params[0], (String) params[1]);
+        private Object signIn(EhConfig ehConfig, Object... params) throws Exception {
+            Call call = EhEngine.prepareSignIn(mOkHttpClient, ehConfig, (String) params[0], (String) params[1]);
             if (!mStop) {
                 mCall = call;
                 return EhEngine.doSignIn(call);
@@ -116,8 +118,8 @@ public class EhClient {
             }
         }
 
-        private Object getGalleryList(Object... params) throws Exception {
-            Call call = EhEngine.prepareGetGalleryList(mOkHttpClient, (String) params[0]);
+        private Object getGalleryList(EhConfig ehConfig, Object... params) throws Exception {
+            Call call = EhEngine.prepareGetGalleryList(mOkHttpClient, ehConfig, (String) params[0]);
             if (!mStop) {
                 mCall = call;
                 return EhEngine.doGetGalleryList(call);
@@ -126,8 +128,8 @@ public class EhClient {
             }
         }
 
-        private Object getGalleryDetail(Object... params) throws Exception {
-            Call call = EhEngine.prepareGetGalleryDetail(mOkHttpClient, (String) params[0]);
+        private Object getGalleryDetail(EhConfig ehConfig, Object... params) throws Exception {
+            Call call = EhEngine.prepareGetGalleryDetail(mOkHttpClient, ehConfig, (String) params[0]);
             if (!mStop) {
                 mCall = call;
                 return EhEngine.doGetGalleryDetail(call);
@@ -141,11 +143,11 @@ public class EhClient {
             try {
                 switch (mMethod) {
                     case METHOD_SIGN_IN:
-                        return signIn(params);
+                        return signIn(mEhConfig, params);
                     case METHOD_GET_GALLERY_LIST:
-                        return getGalleryList(params);
+                        return getGalleryList(mEhConfig, params);
                     case METHOD_GET_GALLERY_DETAIL:
-                        return getGalleryDetail(params);
+                        return getGalleryDetail(mEhConfig, params);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }

@@ -63,7 +63,8 @@ public class EhEngine {
         }
     }
 
-    public static Call prepareSignIn(OkHttpClient okHttpClient, String username, String password) {
+    public static Call prepareSignIn(OkHttpClient okHttpClient,
+            EhConfig ehConfig, String username, String password) {
         FormBody.Builder builder = new FormBody.Builder()
                 .add("UserName", username)
                 .add("PassWord", password)
@@ -73,7 +74,7 @@ public class EhEngine {
 
         String url = EhUrl.API_SIGN_IN;
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url)
+        Request request = new EhRequestBuilder(url, ehConfig)
                 .post(builder.build())
                 .build();
         return okHttpClient.newCall(request);
@@ -95,9 +96,10 @@ public class EhEngine {
         }
     }
 
-    public static Call prepareGetGalleryList(OkHttpClient okHttpClient, String url) {
+    public static Call prepareGetGalleryList(OkHttpClient okHttpClient,
+            EhConfig ehConfig, String url) {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url).build();
+        Request request = new EhRequestBuilder(url, ehConfig).build();
         return okHttpClient.newCall(request);
     }
 
@@ -117,9 +119,10 @@ public class EhEngine {
         }
     }
 
-    public static Call prepareGetGalleryDetail(OkHttpClient okHttpClient, String url) {
+    public static Call prepareGetGalleryDetail(OkHttpClient okHttpClient,
+            EhConfig ehConfig, String url) {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url).build();
+        Request request = new EhRequestBuilder(url, ehConfig).build();
         return okHttpClient.newCall(request);
     }
 
