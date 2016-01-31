@@ -28,7 +28,6 @@ import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.IntIdGenerator;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public abstract class StageActivity extends AppCompatActivity {
 
@@ -148,7 +147,14 @@ public abstract class StageActivity extends AppCompatActivity {
     }
 
     int getStackIndex(String tag) {
-        return Collections.binarySearch(mSceneTagList, tag);
+        return mSceneTagList.indexOf(tag); // Collections.binarySearch(mSceneTagList, tag);
+    }
+
+    // TODO What about id is negative
+    int compareScene(String tag1, String tag2) throws NumberFormatException {
+        int int1 = Integer.parseInt(tag1);
+        int int2 = Integer.parseInt(tag2);
+        return int1 - int2;
     }
 
     public void finishScene(SceneFragment scene) {

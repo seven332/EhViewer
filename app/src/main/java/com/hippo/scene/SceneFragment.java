@@ -19,8 +19,12 @@ package com.hippo.scene;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+
+import com.hippo.ehviewer.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -96,5 +100,13 @@ public class SceneFragment extends Fragment {
      */
     public boolean onBackPressed() {
         return false;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        view.setTag(R.id.fragment_tag, getTag());
+        view.setBackgroundColor(getContext().getResources().getColor(R.color.background_light));
     }
 }

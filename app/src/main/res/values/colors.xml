@@ -36,6 +36,9 @@
     <color name="secondary_text_default_dark">#61ffffff</color>
     <color name="secondary_text_disabled_light">#24000000</color>
 
+    <color name="background_dark">#ff303030</color>
+    <color name="background_light">#fffafafa</color>
+
     <color name="red_500">#fff44336</color>
     <color name="teal_500">#ff009688</color>
     <color name="teal_700">#ff00796b</color>

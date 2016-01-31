@@ -19,12 +19,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <alpha
-        android:fromAlpha="0.0"
+        android:fromAlpha="0.7"
         android:toAlpha="1.0"
         android:fillEnabled="true"
         android:fillBefore="true"
         android:fillAfter="true"
-        android:interpolator="@anim/accelerate_terz"
+        android:interpolator="@anim/decelerate_terz"
         android:duration="250"/>
 
 </set>
