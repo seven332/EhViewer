@@ -125,7 +125,7 @@ public class StageLayout extends FrameLayout {
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
         ArrayList<View> disappearingChildren = mSuperDisappearingChildren;
 
-        if (mDoTrick && disappearingChildren != null && disappearingChildren.size() > 0) {
+        if (mDoTrick) {
             if (child == mDumpView) {
                 boolean more = false;
                 for (int i = disappearingChildren.size() - 1; i >= 0; i--) {

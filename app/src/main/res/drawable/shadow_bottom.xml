@@ -15,13 +15,13 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
 
-    <item name="left" type="id"/>
-    <item name="top" type="id"/>
-    <item name="right" type="id"/>
-    <item name="bottom" type="id"/>
+    <gradient
+        android:startColor="@android:color/transparent"
+        android:endColor="@color/shadow_light"
+        android:angle="90"/>
 
-    <item name="fragment_tag" type="id"/>
-
-</resources>
+</shape>

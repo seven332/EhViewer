@@ -32,6 +32,15 @@ public class SceneApplication extends Application {
         stage.onRegister(id);
     }
 
+    void registerStageActivity(StageActivity stage, int id) {
+        if (mStageMap.indexOfKey(id) >= 0) {
+            throw new IllegalStateException("The id exists: " + id);
+        }
+
+        mStageMap.put(id, stage);
+        stage.onRegister(id);
+    }
+
     void unregisterStageActivity(int id) {
         int index = mStageMap.indexOfKey(id);
         if (index >= 0) {

@@ -44,6 +44,7 @@
     <color name="teal_700">#ff00796b</color>
     <color name="purple_500">#ff9c27b0</color>
     <color name="purple_a200">#ffe040fb</color>
+    <color name="purple_a400">#ffd500f9</color>
     <color name="purple_a700">#ffaa00ff</color>
     <color name="cyan_600">#ff00acc1</color>
     <color name="light_green_600">#ff7cb342</color>
@@ -90,5 +91,8 @@
 
     <!-- divider -->
     <color name="divider">#20000000</color>
+
+    <!-- shadow -->
+    <color name="shadow_light">#38000000</color>
 
 </resources>

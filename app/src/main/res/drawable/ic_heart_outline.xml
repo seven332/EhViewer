@@ -15,13 +15,16 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<vector
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:width="48dp"
+    app:height="48dp"
+    app:viewportWidth="24"
+    app:viewportHeight="24">
 
-    <item name="left" type="id"/>
-    <item name="top" type="id"/>
-    <item name="right" type="id"/>
-    <item name="bottom" type="id"/>
+    <path
+        app:name="v"
+        app:pathData="@string/pd_heart_outline"
+        app:fillColor="@color/colorPrimary"/>
 
-    <item name="fragment_tag" type="id"/>
-
-</resources>
+</vector>

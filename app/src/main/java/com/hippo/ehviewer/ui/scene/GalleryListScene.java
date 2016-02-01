@@ -65,6 +65,9 @@ import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.scene.SceneApplication;
+import com.hippo.scene.SceneFragment;
+import com.hippo.scene.StageActivity;
 import com.hippo.scene.TransitionHelper;
 import com.hippo.utils.ApiHelper;
 import com.hippo.vector.VectorDrawable;
@@ -129,8 +132,6 @@ public final class GalleryListScene extends BaseScene
     // Double click back exit
     private long mPressBackTime = 0;
 
-    private EhRequest mRequest;
-
     private Animator.AnimatorListener mFabAnimatorListener = null;
 
     private boolean mHasFirstRefresh = false;
@@ -178,12 +179,21 @@ public final class GalleryListScene extends BaseScene
 
         if (savedInstanceState == null) {
             onInit();
+        } else {
+            onRestore(savedInstanceState);
         }
     }
 
     public void onInit() {
         mUrlBuilder = new ListUrlBuilder();
         handleArgs(getArguments());
+    }
+
+    @SuppressWarnings("WrongConstant")
+    private void onRestore(Bundle savedInstanceState) {
+        mHasFirstRefresh = savedInstanceState.getBoolean(KEY_HAS_FIRST_REFRESH);
+        mUrlBuilder = savedInstanceState.getParcelable(KEY_LIST_URL_BUILDER);
+        mState = savedInstanceState.getInt(KEY_STATE);
     }
 
     private void setSearchBarHint(Context context, SearchBar searchBar) {
@@ -235,22 +245,10 @@ public final class GalleryListScene extends BaseScene
         setNavCheckedItem(checkedItemId);
     }
 
-    private void restoreState(@Nullable Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            return;
-        }
-
-        mHasFirstRefresh = savedInstanceState.getBoolean(KEY_HAS_FIRST_REFRESH);
-        mUrlBuilder = savedInstanceState.getParcelable(KEY_LIST_URL_BUILDER);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
-        // Restore url builder
-        restoreState(savedInstanceState);
-
         View view = inflater.inflate(R.layout.scene_gallery_list, container, false);
 
         Resources resources = getContext().getResources();
@@ -304,15 +302,15 @@ public final class GalleryListScene extends BaseScene
         // Update list url builder
         onUpdateUrlBuilder();
 
+        // Restore state
+        int newState = mState;
+        mState = STATE_NORMAL;
+        setState(newState, false);
+
         // Only refresh for the first time
         if (!mHasFirstRefresh) {
             mHasFirstRefresh = true;
             mHelper.firstRefresh();
-        } else {
-            // Restore state
-            int newState = mState;
-            mState = STATE_NORMAL;
-            setState(newState, false);
         }
 
         return view;
@@ -324,11 +322,6 @@ public final class GalleryListScene extends BaseScene
 
         // End animation
         mSearchBarMoveHelper.cancelAnimation();
-
-        // Cancel request
-        if (mRequest != null) {
-            mRequest.cancel();
-        }
 
         mFitPaddingLayout = null;
         mRecyclerView = null;
@@ -342,7 +335,6 @@ public final class GalleryListScene extends BaseScene
         mRightDrawable = null;
         mSearchBarMoveHelper = null;
         mFabAnimatorListener = null;
-        mRequest = null;
     }
 
     @Override
@@ -351,13 +343,6 @@ public final class GalleryListScene extends BaseScene
         outState.putBoolean(KEY_HAS_FIRST_REFRESH, mHasFirstRefresh);
         outState.putParcelable(KEY_LIST_URL_BUILDER, mUrlBuilder);
         outState.putInt(KEY_STATE, mState);
-    }
-
-    @Override
-    @SuppressWarnings("WrongConstant")
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        setState(savedInstanceState.getInt(KEY_STATE), false);
     }
 
     @Override
@@ -904,9 +889,9 @@ public final class GalleryListScene extends BaseScene
 
             String url = mUrlBuilder.build();
             EhRequest request = new EhRequest();
-            mRequest = request;
             request.setMethod(EhClient.METHOD_GET_GALLERY_LIST);
-            request.setCallback(new GetGalleryListListener(taskId));
+            request.setCallback(new GetGalleryListListener(getContext(),
+                    ((StageActivity) getActivity()).getStageId(), getTag(), taskId));
             request.setArgs(url);
             mClient.execute(request);
         }
@@ -932,38 +917,67 @@ public final class GalleryListScene extends BaseScene
         }
     }
 
-    private class GetGalleryListListener implements EhClient.Callback<GalleryListParser.Result> {
+    private void onGetGalleryListSuccess(GalleryListParser.Result result, int taskId) {
+        if (mHelper != null && mSearchBarMoveHelper != null &&
+                mHelper.isCurrentTask(taskId)) {
+            mHelper.setPages(taskId, result.pages);
+            mHelper.onGetPageData(taskId, result.galleryInfos);
+            mSearchBarMoveHelper.returnSearchBarPosition();
+        }
+    }
 
+    private void onGetGalleryListFailure(Exception e, int taskId) {
+        if (mHelper != null && mSearchBarMoveHelper != null &&
+                mHelper.isCurrentTask(taskId)) {
+            mHelper.onGetExpection(taskId, e);
+            mSearchBarMoveHelper.returnSearchBarPosition();
+        }
+    }
+
+    private static class GetGalleryListListener implements EhClient.Callback<GalleryListParser.Result> {
+
+        private SceneApplication mApplication;
+        private int mStageId;
+        private String mSceneTag;
         private int mTaskId;
 
-        public GetGalleryListListener(int taskId) {
+        public GetGalleryListListener(Context context, int stageId, String sceneTag, int taskId) {
+            mApplication = (SceneApplication) context.getApplicationContext();
+            mStageId = stageId;
+            mSceneTag = sceneTag;
             mTaskId = taskId;
+        }
+
+        private GalleryListScene getScene() {
+            StageActivity stage = mApplication.findStageActivityById(mStageId);
+            if (stage == null) {
+                return null;
+            }
+            SceneFragment scene = stage.findSceneByTag(mSceneTag);
+            if (scene instanceof GalleryListScene) {
+                return (GalleryListScene) scene;
+            } else {
+                return null;
+            }
         }
 
         @Override
         public void onSuccess(GalleryListParser.Result result) {
-            if (mHelper != null && mHelper.isCurrentTask(mTaskId)) {
-                mRequest = null;
-                mHelper.setPages(mTaskId, result.pages);
-                mHelper.onGetPageData(mTaskId, result.galleryInfos);
-                mSearchBarMoveHelper.returnSearchBarPosition();
+            GalleryListScene scene = getScene();
+            if (scene != null) {
+                scene.onGetGalleryListSuccess(result, mTaskId);
             }
         }
 
         @Override
         public void onFailure(Exception e) {
-            if (mHelper != null && mHelper.isCurrentTask(mTaskId)) {
-                mRequest = null;
-                mHelper.onGetExpection(mTaskId, e);
-                mSearchBarMoveHelper.returnSearchBarPosition();
+            GalleryListScene scene = getScene();
+            if (scene != null) {
+                scene.onGetGalleryListFailure(e, mTaskId);
             }
         }
 
         @Override
-        public void onCancel() {
-            if (mHelper != null && mHelper.isCurrentTask(mTaskId)) {
-                mRequest = null;
-            }
-        }
+        public void onCancel() {}
     }
 }

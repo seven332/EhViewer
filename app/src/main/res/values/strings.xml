@@ -122,4 +122,73 @@
     <string name="star_4">4 stars</string>
     <string name="star_5">5 stars</string>
 
+    <!-- Gallery detail -->
+    <string name="read">Read</string>
+    <string name="more_information">More information</string>
+    <plurals name="page_count">
+        <item quantity="one">%d page</item>
+        <item quantity="other">%d pages</item>
+    </plurals>
+
+    <string name="favored_times">%d \u2665</string>
+    <string name="rating_text">%1$s (%2$d)</string>
+
+    <string name="favorite">Favorite</string>
+    <string name="torrent_count">Torrent (%d)</string>
+    <string name="share">Share</string>
+    <string name="rate">Rate</string>
+    <string name="no_tags">No tags</string>
+    <string name="no_comments">No comments</string>
+    <string name="no_more_comments">No more comments</string>
+    <string name="more_comment">More comments</string>
+    <string name="refresh">Refresh</string>
+    <string name="open_in_other_app">Open in other app</string>
+
+    <!-- Rating -->
+    <string name="rating10">MASTERPIECE</string>
+    <string name="rating9">AMAZING</string>
+    <string name="rating8">GREAT</string>
+    <string name="rating7">GOOD</string>
+    <string name="rating6">OKAY</string>
+    <string name="rating5">MEDIOCRE</string>
+    <string name="rating4">BAD</string>
+    <string name="rating3">AWFUL</string>
+    <string name="rating2">PAINFUL</string>
+    <string name="rating1">UNBEARABLE</string>
+    <string name="rating0">DISASTER</string>
+
+    <!-- Readable Time -->
+    <string name="from_the_future">From the future</string>
+    <string name="just_now">Just now</string>
+    <plurals name="some_minutes_ago">
+        <item quantity="one">A minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+    <plurals name="some_hours_ago">
+        <item quantity="one">An hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+    <string name="yesterday">Yesterday</string>
+    <string name="some_days_ago">%d days ago</string>
+    <plurals name="second">
+        <item quantity="one">second</item>
+        <item quantity="other">seconds</item>
+    </plurals>
+    <plurals name="minute">
+        <item quantity="one">minute</item>
+        <item quantity="other">minutes</item>
+    </plurals>
+    <plurals name="hour">
+        <item quantity="one">hour</item>
+        <item quantity="other">hours</item>
+    </plurals>
+    <plurals name="day">
+        <item quantity="one">day</item>
+        <item quantity="other">days</item>
+    </plurals>
+    <plurals name="year">
+        <item quantity="one">year</item>
+        <item quantity="other">years</item>
+    </plurals>
+
 </resources>

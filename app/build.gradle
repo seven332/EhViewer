@@ -73,4 +73,5 @@ dependencies {
     compile 'com.android.support:customtabs:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'de.greenrobot:greendao:2.0.0'
+    compile 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
 }

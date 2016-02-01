@@ -33,6 +33,7 @@ public abstract class StageActivity extends AppCompatActivity {
 
     private static final String TAG = StageActivity.class.getSimpleName();
 
+    private static final String KEY_STAGE_ACTIVITY_STAGE_ID = "stage_activity_stage_id";
     private static final String KEY_STAGE_ACTIVITY_SCENE_TAG_LIST = "stage_activity_scene_tag_list";
     private static final String KEY_STAGE_ACTIVITY_NEXT_ID = "stage_activity_next_id";
 
@@ -47,7 +48,18 @@ public abstract class StageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((SceneApplication) getApplicationContext()).registerStageActivity(this);
+
+        if (savedInstanceState != null) {
+            mStageId = savedInstanceState.getInt(KEY_STAGE_ACTIVITY_STAGE_ID, IntIdGenerator.INVALID_ID);
+            mSceneTagList = savedInstanceState.getStringArrayList(KEY_STAGE_ACTIVITY_SCENE_TAG_LIST);
+            mIdGenerator.setNextId(savedInstanceState.getInt(KEY_STAGE_ACTIVITY_NEXT_ID));
+        }
+
+        if (mStageId == IntIdGenerator.INVALID_ID) {
+            ((SceneApplication) getApplicationContext()).registerStageActivity(this);
+        } else {
+            ((SceneApplication) getApplicationContext()).registerStageActivity(this, mStageId);
+        }
     }
 
     @Override
@@ -61,7 +73,6 @@ public abstract class StageActivity extends AppCompatActivity {
     }
 
     protected void onUnregister() {
-        mStageId = IntIdGenerator.INVALID_ID;
     }
 
     public int getStageId() {
@@ -250,14 +261,8 @@ public abstract class StageActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putInt(KEY_STAGE_ACTIVITY_STAGE_ID, mStageId);
         outState.putStringArrayList(KEY_STAGE_ACTIVITY_SCENE_TAG_LIST, mSceneTagList);
         outState.putInt(KEY_STAGE_ACTIVITY_NEXT_ID, mIdGenerator.nextId());
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        mSceneTagList = savedInstanceState.getStringArrayList(KEY_STAGE_ACTIVITY_SCENE_TAG_LIST);
-        mIdGenerator.setNextId(savedInstanceState.getInt(KEY_STAGE_ACTIVITY_NEXT_ID));
     }
 }

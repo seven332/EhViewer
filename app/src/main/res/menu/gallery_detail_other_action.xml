@@ -15,13 +15,15 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item name="left" type="id"/>
-    <item name="top" type="id"/>
-    <item name="right" type="id"/>
-    <item name="bottom" type="id"/>
+    <item
+        android:id="@+id/action_refresh"
+        android:title="@string/refresh"/>
 
-    <item name="fragment_tag" type="id"/>
+    <item
+        android:id="@+id/action_open_in_other_app"
+        android:title="@string/open_in_other_app"/>
 
-</resources>
+</menu>

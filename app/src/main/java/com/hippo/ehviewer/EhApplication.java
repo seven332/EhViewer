@@ -17,29 +17,38 @@
 package com.hippo.ehviewer;
 
 import android.app.ActivityManager;
-import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.SparseArray;
 
+import com.hippo.beerbelly.LruMap;
 import com.hippo.conaco.Conaco;
 import com.hippo.drawable.ImageWrapper;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
+import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.network.StatusCodeException;
 import com.hippo.okhttp.CookieDB;
+import com.hippo.scene.SceneApplication;
+import com.hippo.utils.ReadableTime;
+import com.hippo.yorozuya.IntIdGenerator;
 
 import java.io.File;
+import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 
-public class EhApplication extends Application {
+public class EhApplication extends SceneApplication {
 
+    private IntIdGenerator mIdGenerator = new IntIdGenerator();
+    private SparseArray<Object> mGlobalStuffMap = new SparseArray<>();
     private EhCookieStore mEhCookieStore;
     private EhClient mEhClient;
     private OkHttpClient mOkHttpClient;
     private ImageWrapperHelper mImageWrapperHelper;
     private Conaco<ImageWrapper> mConaco;
+    private LruMap<Integer, GalleryDetail> mGalleryDetailCache;
 
     @Override
     public void onCreate() {
@@ -49,6 +58,42 @@ public class EhApplication extends Application {
         CookieDB.initialize(this);
         StatusCodeException.initialize(this);
         Settings.initialize(this);
+        ReadableTime.initialize(this);
+    }
+
+    public int putGlobalStuff(@NonNull Object o) {
+        int id = mIdGenerator.nextId();
+        mGlobalStuffMap.put(id, o);
+        return id;
+    }
+
+    public boolean containGlobalStuff(int id) {
+        return mGlobalStuffMap.indexOfKey(id) >= 0;
+    }
+
+    public Object getGlobalStuff(int id) {
+        return mGlobalStuffMap.get(id);
+    }
+
+    public Object removeGlobalStuff(int id) {
+        int index = mGlobalStuffMap.indexOfKey(id);
+        if (index >= 0) {
+            Object o = mGlobalStuffMap.valueAt(index);
+            mGlobalStuffMap.removeAt(index);
+            return o;
+        } else {
+            return null;
+        }
+    }
+
+    public boolean removeGlobalStuff(Object o) {
+        int index = mGlobalStuffMap.indexOfValue(o);
+        if (index >= 0) {
+            mGlobalStuffMap.removeAt(index);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static EhCookieStore getEhCookieStore(@NonNull Context context) {
@@ -114,5 +159,19 @@ public class EhApplication extends Application {
             application.mConaco = builder.build();
         }
         return application.mConaco;
+    }
+
+    @NonNull
+    public static LruMap<Integer, GalleryDetail> getGalleryDetailCache(@NonNull Context context) {
+        EhApplication application = ((EhApplication) context.getApplicationContext());
+        if (application.mGalleryDetailCache == null) {
+            application.mGalleryDetailCache = new LruMap<>(new Comparator<Integer>() {
+                @Override
+                public int compare(Integer lhs, Integer rhs) {
+                    return lhs - rhs;
+                }
+            }, 3 * 60 * 1000); // 3 min timeout
+        }
+        return application.mGalleryDetailCache;
     }
 }

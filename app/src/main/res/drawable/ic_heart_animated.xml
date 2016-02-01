@@ -15,13 +15,12 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<animated-vector
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:drawable="@drawable/ic_heart">
 
-    <item name="left" type="id"/>
-    <item name="top" type="id"/>
-    <item name="right" type="id"/>
-    <item name="bottom" type="id"/>
+    <target
+        app:name="v"
+        app:animation="@anim/path_heart"/>
 
-    <item name="fragment_tag" type="id"/>
-
-</resources>
+</animated-vector>

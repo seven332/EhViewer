@@ -19,12 +19,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <ScrollView
+        android:id="@+id/scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <include
+            layout="@layout/gallery_detail_content"/>
+
+    </ScrollView>
 
     <com.hippo.widget.ProgressView
         android:id="@+id/progress_view"
@@ -56,5 +62,4 @@
             android:paddingBottom="16dp"/>
 
     </LinearLayout>
-
 </FrameLayout>

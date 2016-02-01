@@ -57,4 +57,18 @@
         <attr name="maskColor" format="color"/>
     </declare-styleable>
 
+    <declare-styleable name="DividerView">
+        <attr name="dividerWidth" format="dimension"/>
+        <attr name="dividerHeight" format="dimension"/>
+        <attr name="dividerColor" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="AutoWrapLayout">
+        <attr name="alignment">
+            <enum name="top" value="0" />
+            <enum name="center" value="1" />
+            <enum name="bottom" value="2" />
+        </attr>
+    </declare-styleable>
+
 </resources>

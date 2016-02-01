@@ -43,6 +43,7 @@
     <style name="CardButton">
         <item name="android:minWidth">88dp</item>
         <item name="android:minHeight">48dp</item>
+        <item name="forceNoElevation">true</item>
     </style>
 
     <style name="TextAppearance.CardTitle">
@@ -88,6 +89,16 @@
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="ButtonInCard">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Button</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:minWidth">88dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
     </style>
 
 </resources>

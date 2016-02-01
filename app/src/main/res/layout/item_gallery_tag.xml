@@ -15,13 +15,14 @@
   ~ limitations under the License.
   -->
 
-<resources>
-
-    <item name="left" type="id"/>
-    <item name="top" type="id"/>
-    <item name="right" type="id"/>
-    <item name="bottom" type="id"/>
-
-    <item name="fragment_tag" type="id"/>
-
-</resources>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/CardMessage"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:paddingBottom="4dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="4dp"
+    android:textColor="@android:color/white"/>

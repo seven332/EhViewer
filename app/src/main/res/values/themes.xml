@@ -24,6 +24,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="AppTheme.Translucent">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
@@ -39,7 +44,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.Main" parent="AppTheme.Translucent.NoActionBar">
+    <style name="AppTheme.Main" parent="AppTheme.NoActionBar">
     </style>
 
 </resources>
