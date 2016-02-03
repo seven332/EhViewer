@@ -46,6 +46,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
     private String mKey;
     private String mUrl;
     private DataContainer mContainer;
+    private boolean mUseNetwork;
 
     private ValueHolder<ImageWrapper> mHolder;
 
@@ -95,6 +96,22 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
         mConaco = EhApplication.getConaco(context);
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        if (!mFailed) { // Restore if not failed
+            load(mKey, mUrl, mContainer, mUseNetwork);
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        // Cancel
+        mConaco.cancel(this);
+    }
+
     public void setRetryType(RetryType retryType) {
         if (mRetryType != retryType) {
             RetryType oldRetryType = mRetryType;
@@ -128,6 +145,10 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
         }
     }
 
+    public void load(String key, String url) {
+        load(key, url, null, true);
+    }
+
     public void load(String key, String url, boolean useNetwork) {
         load(key, url, null, useNetwork);
     }
@@ -147,6 +168,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
         mKey = key;
         mUrl = url;
         mContainer = container;
+        mUseNetwork = useNetwork;
 
         ConacoTask.Builder<ImageWrapper> builder = new ConacoTask.Builder<ImageWrapper>()
                 .setUnikery(this)
@@ -164,10 +186,6 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
         mContainer = null;
 
         removeDrawableAndHolder();
-    }
-
-    public void cancel() {
-        mConaco.cancel(this);
     }
 
     @Override
