@@ -26,56 +26,25 @@
         layout="@layout/gallery_detail_header"/>
 
     <LinearLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/below_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:divider="@drawable/divider_gallery_detail"
+        android:showDividers="middle"
+        android:dividerPadding="@dimen/keyline_margin">
 
         <include
             layout="@layout/gallery_detail_info"/>
 
-        <com.hippo.ehviewer.widget.DividerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/keyline_margin"
-            android:paddingRight="@dimen/keyline_margin"
-            android:paddingBottom="@dimen/keyline_margin"
-            app:dividerHeight="1dp"
-            app:dividerColor="@color/divider"/>
-
         <include
             layout="@layout/gallery_detail_actions"/>
-
-        <com.hippo.ehviewer.widget.DividerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/keyline_margin"
-            app:dividerHeight="1dp"
-            app:dividerColor="@color/divider"/>
 
         <include
             layout="@layout/gallery_detail_tags"/>
 
-        <com.hippo.ehviewer.widget.DividerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/keyline_margin"
-            android:paddingRight="@dimen/keyline_margin"
-            android:paddingTop="@dimen/keyline_margin"
-            app:dividerHeight="1dp"
-            app:dividerColor="@color/divider"/>
-
         <include
             layout="@layout/gallery_detail_comments"/>
-
-        <com.hippo.ehviewer.widget.DividerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/keyline_margin"
-            android:paddingRight="@dimen/keyline_margin"
-            app:dividerHeight="1dp"
-            app:dividerColor="@color/divider"/>
 
         <include
             layout="@layout/gallery_detail_previews"/>

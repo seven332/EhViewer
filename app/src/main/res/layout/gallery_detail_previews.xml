@@ -21,14 +21,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/keyline_margin">
+    android:padding="@dimen/keyline_margin"
+    android:divider="@drawable/spacer_keyline"
+    android:showDividers="middle">
 
     <com.hippo.widget.SimpleGridLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/grid_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         app:columnCount="3"
         app:itemMargin="16dp"/>
 
