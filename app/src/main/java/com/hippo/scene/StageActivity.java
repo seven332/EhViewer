@@ -16,12 +16,14 @@
 
 package com.hippo.scene;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.hippo.ehviewer.R;
@@ -33,9 +35,12 @@ public abstract class StageActivity extends AppCompatActivity {
 
     private static final String TAG = StageActivity.class.getSimpleName();
 
-    private static final String KEY_STAGE_ACTIVITY_STAGE_ID = "stage_activity_stage_id";
-    private static final String KEY_STAGE_ACTIVITY_SCENE_TAG_LIST = "stage_activity_scene_tag_list";
-    private static final String KEY_STAGE_ACTIVITY_NEXT_ID = "stage_activity_next_id";
+    public static final String KEY_SCENE_NAME = "stage_activity_scene_name";
+    public static final String KEY_SCENE_ARGS = "stage_activity_scene_args";
+
+    private static final String KEY_STAGE_ID = "stage_activity_stage_id";
+    private static final String KEY_SCENE_TAG_LIST = "stage_activity_scene_tag_list";
+    private static final String KEY_NEXT_ID = "stage_activity_next_id";
 
     // TODO ArrayList or LinkedList
     private ArrayList<String> mSceneTagList = new ArrayList<>();
@@ -46,13 +51,37 @@ public abstract class StageActivity extends AppCompatActivity {
     public abstract int getContainerViewId();
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        if (intent != null) {
+            String clazzStr = intent.getStringExtra(KEY_SCENE_NAME);
+            if (TextUtils.isEmpty(clazzStr)) {
+                return;
+            }
+
+            Class clazz;
+            try {
+                clazz = Class.forName(clazzStr);
+            } catch (ClassNotFoundException e) {
+                Log.e(TAG, "Can't find class " + clazzStr, e);
+                return;
+            }
+
+            Bundle args = intent.getBundleExtra(KEY_SCENE_ARGS);
+
+            startScene(clazz, args);
+        }
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
-            mStageId = savedInstanceState.getInt(KEY_STAGE_ACTIVITY_STAGE_ID, IntIdGenerator.INVALID_ID);
-            mSceneTagList = savedInstanceState.getStringArrayList(KEY_STAGE_ACTIVITY_SCENE_TAG_LIST);
-            mIdGenerator.setNextId(savedInstanceState.getInt(KEY_STAGE_ACTIVITY_NEXT_ID));
+            mStageId = savedInstanceState.getInt(KEY_STAGE_ID, IntIdGenerator.INVALID_ID);
+            mSceneTagList = savedInstanceState.getStringArrayList(KEY_SCENE_TAG_LIST);
+            mIdGenerator.setNextId(savedInstanceState.getInt(KEY_NEXT_ID));
         }
 
         if (mStageId == IntIdGenerator.INVALID_ID) {
@@ -79,9 +108,9 @@ public abstract class StageActivity extends AppCompatActivity {
         return mStageId;
     }
 
-    private <T extends SceneFragment> SceneFragment newSceneInstance(Class<T> clazz) {
+    private SceneFragment newSceneInstance(Class<?> clazz) {
         try {
-            return clazz.newInstance();
+            return (SceneFragment) clazz.newInstance();
         } catch (InstantiationException e) {
             throw new IllegalStateException("Can't instance " + clazz.getName(), e);
         } catch (IllegalAccessException e) {
@@ -92,19 +121,19 @@ public abstract class StageActivity extends AppCompatActivity {
         }
     }
 
-    public <T extends SceneFragment> void startScene(Class<T> clazz) {
+    public void startScene(Class<?> clazz) {
         startScene(clazz, null, null);
     }
 
-    public <T extends SceneFragment> void startScene(Class<T> clazz, Bundle args) {
+    public void startScene(Class<?> clazz, Bundle args) {
         startScene(clazz, args, null);
     }
 
-    public <T extends SceneFragment> void startScene(Class<T> clazz, TransitionHelper transitionHelper) {
+    public void startScene(Class<?> clazz, TransitionHelper transitionHelper) {
         startScene(clazz, null, transitionHelper);
     }
 
-    public <T extends SceneFragment> void startScene(Class<T> clazz,
+    public void startScene(Class<?> clazz,
             Bundle args, TransitionHelper transitionHelper) {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -261,8 +290,8 @@ public abstract class StageActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(KEY_STAGE_ACTIVITY_STAGE_ID, mStageId);
-        outState.putStringArrayList(KEY_STAGE_ACTIVITY_SCENE_TAG_LIST, mSceneTagList);
-        outState.putInt(KEY_STAGE_ACTIVITY_NEXT_ID, mIdGenerator.nextId());
+        outState.putInt(KEY_STAGE_ID, mStageId);
+        outState.putStringArrayList(KEY_SCENE_TAG_LIST, mSceneTagList);
+        outState.putInt(KEY_NEXT_ID, mIdGenerator.nextId());
     }
 }
