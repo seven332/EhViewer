@@ -71,4 +71,9 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="SimpleGridLayout">
+        <attr name="columnCount" format="integer"/>
+        <attr name="itemMargin" format="dimension"/>
+    </declare-styleable>
+
 </resources>

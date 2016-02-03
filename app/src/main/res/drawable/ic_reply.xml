@@ -15,10 +15,15 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<vector
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:width="24dp"
+    app:height="24dp"
+    app:viewportWidth="24"
+    app:viewportHeight="24">
 
-    <item name="tag" type="id"/>
+    <path
+        app:pathData="@string/pd_reply"
+        app:fillColor="@color/primary_drawable_dark"/>
 
-    <item name="fragment_tag" type="id"/>
-
-</resources>
+</vector>

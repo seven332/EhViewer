@@ -43,7 +43,9 @@
                 android:layout_marginRight="56dp"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/text_large"
-                android:textColor="@color/secondary_text_light"/>
+                android:textColor="@color/secondary_text_light"
+                android:singleLine="true"
+                android:maxLines="1"/>
 
             <com.hippo.widget.SimpleImageView
                 android:id="@+id/search_action"
@@ -62,6 +64,7 @@
                 android:layout_marginRight="56dp"
                 android:background="@null"
                 android:singleLine="true"
+                android:maxLines="1"
                 android:visibility="gone"
                 android:imeOptions="actionSearch"
                 android:inputType="text"/>

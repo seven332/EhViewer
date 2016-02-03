@@ -21,7 +21,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.SparseArray;
 
-import com.hippo.beerbelly.LruMap;
+import com.hippo.beerbelly.LruCacheEx;
 import com.hippo.conaco.Conaco;
 import com.hippo.drawable.ImageWrapper;
 import com.hippo.ehviewer.client.EhClient;
@@ -30,6 +30,7 @@ import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.network.StatusCodeException;
 import com.hippo.okhttp.CookieDB;
 import com.hippo.scene.SceneApplication;
+import com.hippo.text.Html;
 import com.hippo.utils.ReadableTime;
 import com.hippo.yorozuya.IntIdGenerator;
 
@@ -41,6 +42,8 @@ import okhttp3.OkHttpClient;
 
 public class EhApplication extends SceneApplication {
 
+    private static final boolean DEBUG_CONACO = false;
+
     private IntIdGenerator mIdGenerator = new IntIdGenerator();
     private SparseArray<Object> mGlobalStuffMap = new SparseArray<>();
     private EhCookieStore mEhCookieStore;
@@ -48,7 +51,7 @@ public class EhApplication extends SceneApplication {
     private OkHttpClient mOkHttpClient;
     private ImageWrapperHelper mImageWrapperHelper;
     private Conaco<ImageWrapper> mConaco;
-    private LruMap<Integer, GalleryDetail> mGalleryDetailCache;
+    private LruCacheEx<Integer, GalleryDetail> mGalleryDetailCache;
 
     @Override
     public void onCreate() {
@@ -59,6 +62,7 @@ public class EhApplication extends SceneApplication {
         StatusCodeException.initialize(this);
         Settings.initialize(this);
         ReadableTime.initialize(this);
+        Html.initialize(this);
     }
 
     public int putGlobalStuff(@NonNull Object o) {
@@ -155,22 +159,23 @@ public class EhApplication extends SceneApplication {
             builder.diskCacheMaxSize = 80 * 1024 * 1024; // 80MB
             builder.okHttpClient = getOkHttpClient(context);
             builder.objectHelper = getImageWrapperHelper(context);
-            builder.debug = BuildConfig.DEBUG;
+            builder.debug = DEBUG_CONACO;
             application.mConaco = builder.build();
         }
         return application.mConaco;
     }
 
     @NonNull
-    public static LruMap<Integer, GalleryDetail> getGalleryDetailCache(@NonNull Context context) {
+    public static LruCacheEx<Integer, GalleryDetail> getGalleryDetailCache(@NonNull Context context) {
         EhApplication application = ((EhApplication) context.getApplicationContext());
         if (application.mGalleryDetailCache == null) {
-            application.mGalleryDetailCache = new LruMap<>(new Comparator<Integer>() {
+            // Max size 25, 3 min timeout
+            application.mGalleryDetailCache = new LruCacheEx<>(25,  3 * 60 * 1000, new Comparator<Integer>() {
                 @Override
                 public int compare(Integer lhs, Integer rhs) {
                     return lhs - rhs;
                 }
-            }, 3 * 60 * 1000); // 3 min timeout
+            });
         }
         return application.mGalleryDetailCache;
     }

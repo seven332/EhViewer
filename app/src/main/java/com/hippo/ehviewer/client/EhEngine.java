@@ -19,6 +19,7 @@ package com.hippo.ehviewer.client;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.parser.GalleryDetailParser;
@@ -126,7 +127,7 @@ public class EhEngine {
         return okHttpClient.newCall(request);
     }
 
-    public static GalleryDetailParser.Result doGetGalleryDetail(Call call) throws Exception {
+    public static GalleryDetail doGetGalleryDetail(Call call) throws Exception {
         String body = null;
         Headers headers = null;
         int code = -1;

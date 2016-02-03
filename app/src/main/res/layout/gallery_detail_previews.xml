@@ -14,20 +14,29 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/comments"
+    android:id="@+id/previews"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="@dimen/keyline_margin">
 
+    <com.hippo.widget.SimpleGridLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/grid_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:columnCount="3"
+        app:itemMargin="16dp"/>
+
     <TextView
-        android:id="@+id/comments_text"
+        android:id="@+id/preview_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-
         android:textColor="@color/colorAccent"/>
 
 </LinearLayout>

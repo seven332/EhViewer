@@ -34,6 +34,7 @@ public class GalleryDetail extends GalleryInfo {
     public GalleryTagGroup[] tags;
     public GalleryComment[] comments;
     public int previewPages;
+    public LargePreviewSet previewSet;
 
 
     @Override
@@ -58,6 +59,7 @@ public class GalleryDetail extends GalleryInfo {
         dest.writeParcelableArray(this.tags, 0);
         dest.writeParcelableArray(this.comments, 0);
         dest.writeInt(this.previewPages);
+        dest.writeParcelable(previewSet, flags);
     }
 
     public GalleryDetail() {
@@ -79,6 +81,7 @@ public class GalleryDetail extends GalleryInfo {
         this.tags = in.createTypedArray(GalleryTagGroup.CREATOR);
         this.comments = in.createTypedArray(GalleryComment.CREATOR);
         this.previewPages = in.readInt();
+        this.previewSet = in.readParcelable(LargePreviewSet.class.getClassLoader());
     }
 
     public static final Creator<GalleryDetail> CREATOR = new Creator<GalleryDetail>() {

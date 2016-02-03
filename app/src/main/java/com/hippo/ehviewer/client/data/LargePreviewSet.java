@@ -16,10 +16,16 @@
 
 package com.hippo.ehviewer.client.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.hippo.yorozuya.IntList;
+
 import java.util.ArrayList;
 
-public class LargePreviewSet {
+public class LargePreviewSet implements Parcelable {
 
+    private IntList mIndexList = new IntList();
     private ArrayList<String> mImageUrlList = new ArrayList<>();
     private ArrayList<String> mPageUrlList = new ArrayList<>();
 
@@ -27,9 +33,14 @@ public class LargePreviewSet {
         return mImageUrlList.size();
     }
 
-    public void addItem(String imageUrl, String pageUrl) {
+    public void addItem(int index, String imageUrl, String pageUrl) {
+        mIndexList.add(index);
         mImageUrlList.add(imageUrl);
         mPageUrlList.add(pageUrl);
+    }
+
+    public int getIndexAt(int index) {
+        return mIndexList.get(index);
     }
 
     public String getImageUrlAt(int index) {
@@ -39,4 +50,36 @@ public class LargePreviewSet {
     public String getPageUrlAt(int index) {
         return mPageUrlList.get(index);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        this.mIndexList.writeToParcel(dest, flags);
+        dest.writeParcelable(this.mIndexList, 0);
+        dest.writeStringList(this.mImageUrlList);
+        dest.writeStringList(this.mPageUrlList);
+    }
+
+    public LargePreviewSet() {
+    }
+
+    protected LargePreviewSet(Parcel in) {
+        this.mIndexList = IntList.CREATOR.createFromParcel(in);
+        this.mImageUrlList = in.createStringArrayList();
+        this.mPageUrlList = in.createStringArrayList();
+    }
+
+    public static final Parcelable.Creator<LargePreviewSet> CREATOR = new Parcelable.Creator<LargePreviewSet>() {
+        public LargePreviewSet createFromParcel(Parcel source) {
+            return new LargePreviewSet(source);
+        }
+
+        public LargePreviewSet[] newArray(int size) {
+            return new LargePreviewSet[size];
+        }
+    };
 }

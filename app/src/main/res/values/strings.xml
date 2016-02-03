@@ -79,6 +79,7 @@
     <string name="error_redirection">Too many redirections</string>
     <string name="error_socket">Network error</string>
     <string name="error_unknown">Weird</string>
+    <string name="error_cant_find_activity">Can\'t find the application</string>
 
     <string name="error_username_cannot_empty">Username cannot be an empty string</string>
     <string name="error_password_cannot_empty">Password cannot be an empty string</string>
@@ -123,6 +124,7 @@
     <string name="star_5">5 stars</string>
 
     <!-- Gallery detail -->
+    <string name="cannot_find_gallery">Can\'t find the gallery</string>
     <string name="read">Read</string>
     <string name="more_information">More information</string>
     <plurals name="page_count">
@@ -130,7 +132,7 @@
         <item quantity="other">%d pages</item>
     </plurals>
 
-    <string name="favored_times">%d \u2665</string>
+    <string name="favored_times">\u2665 %d</string>
     <string name="rating_text">%1$s (%2$d)</string>
 
     <string name="favorite">Favorite</string>
@@ -141,6 +143,9 @@
     <string name="no_comments">No comments</string>
     <string name="no_more_comments">No more comments</string>
     <string name="more_comment">More comments</string>
+    <string name="no_previews">No previews</string>
+    <string name="no_more_previews">No more previews</string>
+    <string name="more_previews">More previews</string>
     <string name="refresh">Refresh</string>
     <string name="open_in_other_app">Open in other app</string>
 
@@ -156,6 +161,36 @@
     <string name="rating2">PAINFUL</string>
     <string name="rating1">UNBEARABLE</string>
     <string name="rating0">DISASTER</string>
+
+    <!-- Gallery Info -->
+    <string name="gallery_info">Gallery Info</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="header_key">Key</string>
+    <string name="header_value">Value</string>
+    <string name="key_gid" translatable="false">Gid</string>
+    <string name="key_token" translatable="false">Token</string>
+    <string name="key_url">Url</string>
+    <string name="key_title">Title</string>
+    <string name="key_title_jpn">Jpn Title</string>
+    <string name="key_thumb">Thumb</string>
+    <string name="key_category">Category</string>
+    <string name="key_uploader">Uploader</string>
+    <string name="key_posted">Posted</string>
+    <string name="key_parent">Parent</string>
+    <string name="key_visible">Visible</string>
+    <string name="key_language">Language</string>
+    <string name="key_pages">Pages</string>
+    <string name="key_size">Size</string>
+    <string name="key_resize">Resize</string>
+    <string name="key_favourites">Favourites</string>
+    <string name="key_favourited">Favourited</string>
+    <string name="key_rates">Rates</string>
+    <string name="key_rating">Rating</string>
+    <string name="key_torrents">Torrents</string>
+    <string name="key_torrent_url">Torrent Url</string>
+
+    <!-- Gallery Comments -->
+    <string name="gallery_comments">Gallery Comments</string>
 
     <!-- Readable Time -->
     <string name="from_the_future">From the future</string>

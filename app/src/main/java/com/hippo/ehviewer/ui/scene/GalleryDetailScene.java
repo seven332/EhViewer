@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,8 +35,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.EhApplication;
-import com.hippo.ehviewer.EhCacheKeyFactory;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUrl;
@@ -44,18 +45,24 @@ import com.hippo.ehviewer.client.data.GalleryComment;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.GalleryTagGroup;
-import com.hippo.ehviewer.client.parser.GalleryDetailParser;
+import com.hippo.ehviewer.client.data.LargePreviewSet;
+import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.text.Html;
+import com.hippo.text.URLImageGetter;
 import com.hippo.utils.ApiHelper;
+import com.hippo.utils.ExceptionUtils;
 import com.hippo.utils.ReadableTime;
 import com.hippo.vector.AnimatedVectorDrawable;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.AutoWrapLayout;
 import com.hippo.widget.LoadImageView;
+import com.hippo.widget.SimpleGridLayout;
 import com.hippo.widget.SimpleImageView;
+
+import java.util.Locale;
 
 // TODO Update drawer checked item
 public class GalleryDetailScene extends BaseScene implements View.OnClickListener {
@@ -111,8 +118,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     // Comments
     private LinearLayout mComments;
     private TextView mCommentsText;
-
-
+    // Previews
+    private View mPreviews;
+    private SimpleGridLayout mGridLayout;
+    private TextView mPreviewText;
     // Progress
     private View mProgress;
 
@@ -175,6 +184,27 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
+    private String getUploader() {
+        if (mGalleryDetail != null) {
+            return mGalleryDetail.uploader;
+        } else if (mGalleryInfo != null) {
+            return mGalleryInfo.uploader;
+        } else {
+            return null;
+        }
+    }
+
+    // -1 for error
+    private int getCategory() {
+        if (mGalleryDetail != null) {
+            return mGalleryDetail.category;
+        } else if (mGalleryInfo != null) {
+            return mGalleryInfo.category;
+        } else {
+            return -1;
+        }
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -199,6 +229,26 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mRequestId = savedInstanceState.getInt(KEY_REQUEST_ID);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (mAction != null) {
+            outState.putString(KEY_ACTION, mAction);
+        }
+        if (mGalleryInfo != null) {
+            outState.putParcelable(KEY_GALLERY_INFO, mGalleryInfo);
+        }
+        outState.putInt(KEY_GID, mGid);
+        if (mToken != null) {
+            outState.putString(KEY_TOKEN, mAction);
+        }
+        if (mGalleryDetail != null) {
+            outState.putParcelable(KEY_GALLERY_DETAIL, mGalleryDetail);
+        }
+        outState.putInt(KEY_REQUEST_ID, mRequestId);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -210,6 +260,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mProgressView = main.findViewById(R.id.progress_view);
         mFailedView = (ViewGroup) main.findViewById(R.id.tip);
         mFailedText = (TextView) mFailedView.getChildAt(1);
+        mFailedView.setOnClickListener(this);
 
         View mainView = mMainView;
         mHeader = mainView.findViewById(R.id.header);
@@ -225,6 +276,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         RippleSalon.addRipple(mOtherActions, false);
         RippleSalon.addRipple(mDownload, false);
         RippleSalon.addRipple(mRead, false);
+        mUploader.setOnClickListener(this);
+        mCategory.setOnClickListener(this);
         mOtherActions.setOnClickListener(this);
         mDownload.setOnClickListener(this);
         mRead.setOnClickListener(this);
@@ -265,16 +318,24 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mComments = (LinearLayout) belowHeader.findViewById(R.id.comments);
         mCommentsText = (TextView) mComments.findViewById(R.id.comments_text);
 
+        mPreviews = belowHeader.findViewById(R.id.previews);
+        mGridLayout = (SimpleGridLayout) mPreviews.findViewById(R.id.grid_layout);
+        mPreviewText = (TextView) mPreviews.findViewById(R.id.preview_text);
+
         mProgress = mainView.findViewById(R.id.progress);
 
-        fetchGalleryDetail();
-        adjustViewVisibility();
-        if (mGalleryDetail == null) {
-            bindViewFirst();
+        if (prepareData()) {
+            if (mGalleryDetail != null) {
+                bindViewSecond();
+                setTransitionName();
+            } else if (mGalleryInfo != null) {
+                bindViewFirst();
+                setTransitionName();
+            }
         } else {
-            bindViewSecond();
+            mFailedText.setText(R.string.cannot_find_gallery);
         }
-        setTransitionName();
+        adjustViewVisibility();
 
         return view;
     }
@@ -316,6 +377,16 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mShare = null;
         mRate = null;
 
+        mTags = null;
+        mNoTags = null;
+
+        mComments = null;
+        mCommentsText = null;
+
+        mPreviews = null;
+        mGridLayout = null;
+        mPreviewText = null;
+
         mProgress = null;
 
         mHeartDrawable = null;
@@ -323,32 +394,36 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mPopupMenu = null;
     }
 
-    private void fetchGalleryDetail() {
+    private boolean prepareData() {
         if (mGalleryDetail != null) {
-            return;
+            return true;
         }
 
         int gid = getGid();
         if (gid == -1) {
-            return;
+            return false;
         }
 
         // Get from cache
         mGalleryDetail = EhApplication.getGalleryDetailCache(getContext()).get(gid);
         if (mGalleryDetail != null) {
-            return;
+            return true;
         }
 
         EhApplication application = (EhApplication) getContext().getApplicationContext();
         if (application.containGlobalStuff(mRequestId)) {
             // request exist
-            return;
+            return true;
         }
 
         // Do request
+        return request();
+    }
+
+    private boolean request() {
         String url = getGalleryDetailUrl();
         if (url == null) {
-            return;
+            return false;
         }
 
         EhClient.Callback callback = new GetGalleryDetailListener(getContext(),
@@ -359,6 +434,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 .setArgs(url)
                 .setCallback(callback);
         EhApplication.getEhClient(getContext()).execute(request);
+
+        return true;
     }
 
     private void adjustViewVisibility() {
@@ -400,9 +477,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             mUploader.setText(gi.uploader);
             mCategory.setText(EhUtils.getCategory(gi.category));
             mCategory.setTextColor(EhUtils.getCategoryColor(gi.category));
-
-            // Hide actions
-            mActionGroup.setVisibility(View.GONE);
         }
     }
 
@@ -433,10 +507,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         if (gd == null) {
             return;
-        }
-
-        if (mActionGroup.getVisibility() == View.GONE) {
-            mActionGroup.setVisibility(View.VISIBLE);
         }
 
         Resources resources = getContext().getResources();
@@ -471,8 +541,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         bindTags(gd.tags);
         bindComments(gd.comments);
+        bindPreviews(gd);
     }
 
+    @SuppressWarnings("deprecation")
     private void bindTags(GalleryTagGroup[] tagGroups) {
         mTags.removeViews(1, mTags.getChildCount() - 1);
         if (tagGroups == null || tagGroups.length == 0) {
@@ -502,13 +574,19 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             for (int j = 0, z = tg.size(); j < z; j++) {
                 TextView tag = (TextView) inflater.inflate(R.layout.item_gallery_tag, awl, false);
                 awl.addView(tag);
-                tag.setText(tg.getTagAt(j));
+                String tagStr = tg.getTagAt(j);
+                tag.setText(tagStr);
                 tag.setBackgroundColor(colorTag);
+                tag.setTag(R.id.tag, tagStr);
+                tag.setOnClickListener(this);
             }
         }
     }
 
     private void bindComments(GalleryComment[] comments) {
+        RippleSalon.addRipple(mComments, false);
+        mComments.setOnClickListener(this);
+
         mComments.removeViews(0, mComments.getChildCount() - 1);
 
         final int maxShowCount = 2;
@@ -527,9 +605,40 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             GalleryComment comment = comments[i];
             View v = inflater.inflate(R.layout.item_gallery_comment, mComments, false);
             mComments.addView(v, i);
-            ((TextView) v.findViewById(R.id.user)).setText(comment.user);
-            ((TextView) v.findViewById(R.id.time)).setText(ReadableTime.getTimeAgo(comment.time));
-            ((TextView) v.findViewById(R.id.comment)).setText(Html.fromHtml(comment.comment));
+            TextView user = (TextView) v.findViewById(R.id.user);
+            user.setText(comment.user);
+            TextView time = (TextView) v.findViewById(R.id.time);
+            time.setText(ReadableTime.getTimeAgo(comment.time));
+            TextView c = (TextView) v.findViewById(R.id.comment);
+            c.setMaxLines(5);
+            c.setText(Html.fromHtml(comment.comment,
+                    new URLImageGetter(c, EhApplication.getConaco(getContext())), null));
+        }
+    }
+
+    private void bindPreviews(GalleryDetail gd) {
+        mGridLayout.removeAllViews();
+        LargePreviewSet previewSet = gd.previewSet;
+        if (gd.previewPages <= 0 || previewSet == null || previewSet.size() == 0) {
+            mPreviewText.setText(R.string.no_previews);
+            return;
+        } else if (gd.previewPages == 1) {
+            mPreviewText.setText(R.string.no_more_previews);
+        } else {
+            mPreviewText.setText(R.string.more_previews);
+        }
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        for (int i = 0, size = previewSet.size(); i < size; i++) {
+            View view = inflater.inflate(R.layout.item_preview, mGridLayout, false);
+            mGridLayout.addView(view);
+
+            int index = previewSet.getIndexAt(i);
+            String imageUrl = previewSet.getImageUrlAt(i);
+            LoadImageView image = (LoadImageView) view.findViewById(R.id.image);
+            image.load(EhCacheKeyFactory.getLargePreviewKey(gd.gid, index), imageUrl, true);
+            TextView text = (TextView) view.findViewById(R.id.text);
+            text.setText(String.format(Locale.US, "%d", index));
         }
     }
 
@@ -589,32 +698,12 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        if (mAction != null) {
-            outState.putString(KEY_ACTION, mAction);
-        }
-        if (mGalleryInfo != null) {
-            outState.putParcelable(KEY_GALLERY_INFO, mGalleryInfo);
-        }
-        outState.putInt(KEY_GID, mGid);
-        if (mToken != null) {
-            outState.putString(KEY_TOKEN, mAction);
-        }
-        if (mGalleryDetail != null) {
-            outState.putParcelable(KEY_GALLERY_DETAIL, mGalleryDetail);
-        }
-        outState.putInt(KEY_REQUEST_ID, mRequestId);
-    }
-
     private void ensurePopMenu() {
         if (mPopupMenu != null) {
             return;
         }
 
-        PopupMenu popup = new PopupMenu(getContext(), mOtherActions);
+        PopupMenu popup = new PopupMenu(getContext(), mOtherActions, Gravity.TOP);
         mPopupMenu = popup;
         popup.getMenuInflater().inflate(R.menu.gallery_detail_other_action, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -632,23 +721,65 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        if (mOtherActions == v) {
+        if (mFailedView == v) {
+            if (request()) {
+                mFailedText.setText("");
+                adjustViewVisibility();
+            }
+        } else if (mOtherActions == v) {
             ensurePopMenu();
             mPopupMenu.show();
+        } else if (mUploader == v) {
+            String uploader = getUploader();
+            if (TextUtils.isEmpty(uploader)) {
+                return;
+            }
+            ListUrlBuilder lub = new ListUrlBuilder();
+            lub.setMode(ListUrlBuilder.MODE_UPLOADER);
+            lub.setKeyword(EhUtils.getSpecifyUploaderKeyword(uploader));
+            GalleryListScene.startScene(this, lub);
+        } else if (mCategory == v) {
+            int category = getCategory();
+            if (category == -1) {
+                return;
+            }
+            ListUrlBuilder lub = new ListUrlBuilder();
+            lub.setCategory(category);
+            GalleryListScene.startScene(this, lub);
+        } else if (mInfo == v) {
+            Bundle args = new Bundle();
+            args.putParcelable(GalleryInfoScene.KEY_GALLERY_DETAIL, mGalleryDetail);
+            startScene(GalleryInfoScene.class, args);
+        } else if (mComments == v) {
+            Bundle args = new Bundle();
+            args.putParcelableArray(GalleryCommentsScene.KEY_COMMENTS, mGalleryDetail.comments);
+            startScene(GalleryCommentsScene.class, args);
+        } else {
+            Object tag;
+            tag = v.getTag(R.id.tag);
+            if (tag instanceof String) {
+                String tagStr = (String) tag;
+                ListUrlBuilder lub = new ListUrlBuilder();
+                lub.setMode(ListUrlBuilder.MODE_TAG);
+                lub.setKeyword(tagStr);
+                GalleryListScene.startScene(this, lub);
+            }
         }
     }
 
-    private void onGetGalleryDetailSuccess(GalleryDetailParser.Result result) {
-        mGalleryDetail = result.galleryDetail;
+    private void onGetGalleryDetailSuccess(GalleryDetail result) {
+        mGalleryDetail = result;
         adjustViewVisibility();
         bindViewSecond();
     }
 
     private void onGetGalleryDetailFailure(Exception e) {
-
+        String error = ExceptionUtils.getReadableString(getContext(), e);
+        mFailedText.setText(error);
+        adjustViewVisibility();
     }
 
-    private static class GetGalleryDetailListener implements EhClient.Callback<GalleryDetailParser.Result> {
+    private static class GetGalleryDetailListener implements EhClient.Callback<GalleryDetail> {
 
         private EhApplication mApplication;
         private int mStageId;
@@ -674,12 +805,11 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
 
         @Override
-        public void onSuccess(GalleryDetailParser.Result result) {
+        public void onSuccess(GalleryDetail result) {
             mApplication.removeGlobalStuff(this);
 
             // Put gallery detail to cache
-            GalleryDetail gd = result.galleryDetail;
-            EhApplication.getGalleryDetailCache(mApplication).put(gd.gid, gd);
+            EhApplication.getGalleryDetailCache(mApplication).put(result.gid, result);
 
             // Notify success
             GalleryDetailScene scene = getScene();

@@ -81,7 +81,7 @@ public class GalleryDetailParser {
     public static final Pattern PAGES_PATTERN = Pattern.compile("<tr><td[^<>]*>Length:</td><td[^<>]*>([\\d,]+) pages</td></tr>");
     public static final Pattern PREVIEW_PAGES_PATTERN = Pattern.compile("<td[^>]+><a[^>]+>([\\d,]+)</a></td><td[^>]+>(?:<a[^>]+>)?&gt;(?:</a>)?</td>");
     private static final Pattern NORMAL_PREVIEW_PATTERN = Pattern.compile("<div[^<>]*class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*>");
-    private static final Pattern LARGE_PREVIEW_PATTERN = Pattern.compile("<div class=\"gdtl\".+?<a href=\"(.+?)\"><img.+?src=\"(.+?)\"");
+    private static final Pattern LARGE_PREVIEW_PATTERN = Pattern.compile("<div class=\"gdtl\".+?<a href=\"(.+?)\"><img alt=\"([\\d,]+)\".+?src=\"(.+?)\"");
 
     static {
         WEB_COMMENT_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -92,12 +92,7 @@ public class GalleryDetailParser {
     private static final String PINING_STRING =
             "<p>This gallery is pining for the fjords.</p>";
 
-    public static class Result {
-        public GalleryDetail galleryDetail;
-        public LargePreviewSet previewSet;
-    }
-
-    public static GalleryDetailParser.Result parse(String body) throws EhException {
+    public static GalleryDetail parse(String body) throws EhException {
         if (body.contains(OFFENSIVE_STRING)) {
             throw new OffensiveException();
         }
@@ -117,15 +112,9 @@ public class GalleryDetailParser {
         galleryDetail.tags = parseTagGroup(body);
         galleryDetail.comments = parseComment(body);
         galleryDetail.previewPages = parsePreviewPages(body);
-
-        LargePreviewSet previewSet = parsePreview(body);
-
-        Result result = new Result();
-        result.galleryDetail = galleryDetail;
-        result.previewSet = previewSet;
-        return result;
+        galleryDetail.previewSet = parsePreview(body);
+        return galleryDetail;
     }
-
 
     public static void parseDetail(String body, GalleryDetail gd) throws EhException {
         Matcher m = DETAIL_PATTERN.matcher(body);
@@ -253,18 +242,23 @@ public class GalleryDetailParser {
     }
 
     public static LargePreviewSet parsePreview(String body) throws EhException {
+        return parseLargePreview(body);
+        /*
         if (body.contains("<div class=\"gdtm\"")) {
             throw new EhException("Not support normal preview now");
         } else {
             return parseLargePreview(body);
         }
+        */
     }
 
     private static LargePreviewSet parseLargePreview(String body) {
         Matcher m = LARGE_PREVIEW_PATTERN.matcher(body);
         LargePreviewSet largePreviewSet = new LargePreviewSet();
+
         while (m.find()) {
-            largePreviewSet.addItem(m.group(2), m.group(1));
+            largePreviewSet.addItem(ParserUtils.parseInt(m.group(2)),
+                    ParserUtils.trim(m.group(3)), ParserUtils.trim(m.group(1)));
         }
         return largePreviewSet;
     }

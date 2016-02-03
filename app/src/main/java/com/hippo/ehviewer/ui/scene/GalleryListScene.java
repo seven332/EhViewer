@@ -45,14 +45,14 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hippo.anani.AnimationUtils;
 import com.hippo.anani.SimpleAnimatorListener;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
-import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.ehviewer.EhApplication;
-import com.hippo.ehviewer.EhCacheKeyFactory;
+import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
@@ -94,7 +94,7 @@ public final class GalleryListScene extends BaseScene
     public final static String KEY_ACTION = "action";
     public final static String ACTION_HOMEPAGE = "action_homepage";
     public final static String ACTION_WHATS_HOT = "action_whats_hot";
-    public final static String ACTION_SEARCH = "action_search";
+    public final static String ACTION_LIST_URL_BUILDER = "action_list_url_builder";
 
     public final static String KEY_LIST_URL_BUILDER = "list_url_builder";
     public final static String KEY_HAS_FIRST_REFRESH = "has_first_refresh";
@@ -157,9 +157,11 @@ public final class GalleryListScene extends BaseScene
             mUrlBuilder.reset();
         } else if (ACTION_WHATS_HOT.equals(action)) {
             mUrlBuilder.setMode(ListUrlBuilder.MODE_WHATS_HOT);
-        } else if (ACTION_SEARCH.equals(action)) {
-            mUrlBuilder.reset();
-            // TODO
+        } else if (ACTION_LIST_URL_BUILDER.equals(action)) {
+            ListUrlBuilder builder = args.getParcelable(KEY_LIST_URL_BUILDER);
+            if (builder != null) {
+                mUrlBuilder.set(builder);
+            }
         }
     }
 
@@ -275,8 +277,6 @@ public final class GalleryListScene extends BaseScene
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setOnItemClickListener(this);
-        mRecyclerView.addItemDecoration(new MarginItemDecoration(
-                getContext().getResources().getDimensionPixelOffset(R.dimen.list_item_margin)));
         int paddingH = resources.getDimensionPixelOffset(R.dimen.list_content_margin_h);
         int paddingV = resources.getDimensionPixelOffset(R.dimen.list_content_margin_v);
         mRecyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
@@ -434,7 +434,8 @@ public final class GalleryListScene extends BaseScene
         mFab.setVisibility(View.VISIBLE);
         mFab.setScaleX(0.0f);
         mFab.setScaleY(0.0f);
-        mFab.animate().scaleX(1.0f).scaleY(1.0f).setListener(null).setDuration(ANIMATE_TIME).start();
+        mFab.animate().scaleX(1.0f).scaleY(1.0f).setListener(null).setDuration(ANIMATE_TIME)
+                .setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR).start();
     }
 
     private void hideFab() {
@@ -446,7 +447,8 @@ public final class GalleryListScene extends BaseScene
                 }
             };
         }
-        mFab.animate().scaleX(0.0f).scaleY(0.0f).setListener(mFabAnimatorListener).setDuration(ANIMATE_TIME).start();
+        mFab.animate().scaleX(0.0f).scaleY(0.0f).setListener(mFabAnimatorListener)
+                .setDuration(ANIMATE_TIME).setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR).start();
     }
 
     private void setState(@State int state) {
@@ -584,6 +586,7 @@ public final class GalleryListScene extends BaseScene
             mSearchLayout.formatListUrlBuilder(mUrlBuilder, query);
         } else {
             mUrlBuilder.reset();
+            mUrlBuilder.setKeyword(query);
         }
         onUpdateUrlBuilder();
         mHelper.refresh();
@@ -649,14 +652,14 @@ public final class GalleryListScene extends BaseScene
 
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState){
-            if (newState == RecyclerView.SCROLL_STATE_IDLE && isVaildView(recyclerView)) {
+            if (newState == RecyclerView.SCROLL_STATE_IDLE && isValidView(recyclerView)) {
                 returnSearchBarPosition();
             }
         }
 
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            if (isVaildView(recyclerView)) {
+            if (isValidView(recyclerView)) {
 
                 int oldBottom = mSearchBar.getBottom();
                 OffsetLayout.LayoutParams sbLayoutParams = (OffsetLayout.LayoutParams) mSearchBar.getLayoutParams();
@@ -673,12 +676,12 @@ public final class GalleryListScene extends BaseScene
             }
         }
 
-        private boolean isVaildView(RecyclerView view) {
+        private boolean isValidView(RecyclerView view) {
             return (mState == STATE_NORMAL && view == mRecyclerView) ||
                     (mState == STATE_SEARCH && view == mSearchLayout);
         }
 
-        private RecyclerView getVaildRecyclerView() {
+        private RecyclerView getValidRecyclerView() {
             if (mState == STATE_NORMAL || mState == STATE_SIMPLE_SEARCH) {
                 return mRecyclerView;
             } else {
@@ -700,7 +703,7 @@ public final class GalleryListScene extends BaseScene
             if (mState == STATE_SIMPLE_SEARCH || mState == STATE_SEARCH_SHOW_LIST) {
                 show = true;
             } else {
-                RecyclerView recyclerView = getVaildRecyclerView();
+                RecyclerView recyclerView = getValidRecyclerView();
                 if (!recyclerView.isShown()) {
                     show = true;
                 } else if (recyclerView.computeVerticalScrollOffset() < getSearchBarOriginalBottom()){
@@ -810,6 +813,13 @@ public final class GalleryListScene extends BaseScene
                 }
             }
         }
+    }
+
+    public static void startScene(SceneFragment scene, ListUrlBuilder lub) {
+        Bundle args = new Bundle();
+        args.putString(KEY_ACTION, ACTION_LIST_URL_BUILDER);
+        args.putParcelable(KEY_LIST_URL_BUILDER, lub);
+        scene.startScene(GalleryListScene.class, args);
     }
 
     private class GalleryListHolder extends RecyclerView.ViewHolder {

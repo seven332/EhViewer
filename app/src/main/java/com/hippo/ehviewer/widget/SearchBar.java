@@ -143,7 +143,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
                 String suggestion = mSuggestionList.get(MathUtils.clamp(
                         position - mList.getHeaderViewsCount(), 0, mSuggestionList.size() - 1));
                 mEditText.setText(suggestion);
-                mEditText.setSelection(suggestion.length());
+                mEditText.setSelection(mEditText.getText().length());
             }
         });
     }

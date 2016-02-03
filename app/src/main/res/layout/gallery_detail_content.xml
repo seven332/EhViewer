@@ -60,12 +60,25 @@
         <com.hippo.ehviewer.widget.DividerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/keyline_margin"
+            android:paddingLeft="@dimen/keyline_margin"
+            android:paddingRight="@dimen/keyline_margin"
+            android:paddingTop="@dimen/keyline_margin"
             app:dividerHeight="1dp"
             app:dividerColor="@color/divider"/>
 
         <include
             layout="@layout/gallery_detail_comments"/>
+
+        <com.hippo.ehviewer.widget.DividerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/keyline_margin"
+            android:paddingRight="@dimen/keyline_margin"
+            app:dividerHeight="1dp"
+            app:dividerColor="@color/divider"/>
+
+        <include
+            layout="@layout/gallery_detail_previews"/>
 
     </LinearLayout>
 
