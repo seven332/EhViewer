@@ -33,7 +33,7 @@
             android:name="com.hippo.ehviewer.ui.MainActivity"
             android:configChanges="screenSize|uiMode"
             android:theme="@style/AppTheme.Main"
-            android:launchMode="singleTask">
+            android:launchMode="singleTop">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

@@ -37,11 +37,11 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hippo.anani.SimpleAnimatorListener;
-import com.hippo.cardsalon.CardView;
 import com.hippo.ehviewer.R;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.SimpleImageView;
@@ -52,7 +52,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SearchBar extends CardView implements View.OnClickListener,
+public class SearchBar extends FrameLayout implements View.OnClickListener,
         TextView.OnEditorActionListener, TextWatcher,
         SearchEditText.SearchEditTextListener {
 
@@ -108,6 +108,8 @@ public class SearchBar extends CardView implements View.OnClickListener,
     }
 
     private void init(Context context) {
+        setBackgroundResource(R.drawable.card_white_2dp);
+
         mSearchDatabase = SearchDatabase.getInstance(getContext());
 
         LayoutInflater inflater = LayoutInflater.from(context);

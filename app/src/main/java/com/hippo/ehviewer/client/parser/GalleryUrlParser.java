@@ -22,13 +22,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Like http://exhentai.org/g/1234567/a1b2c3d4e5<br>
- *
+ * Like http://exhentai.org/s/91ea4b6d89/901103-12
  */
-public final class GalleryDetailUrlParser {
+public final class GalleryUrlParser {
 
     public static final Pattern URL_PATTERN = Pattern.compile("http://(?:" +
-            EhUrl.DOMAIN_EX + "|" + EhUrl.DOMAIN_G + "|" + EhUrl.DOMAIN_LOFI + ")/g/(\\d+)/(\\w+)");
+            EhUrl.DOMAIN_EX + "|" + EhUrl.DOMAIN_G + "|" + EhUrl.DOMAIN_LOFI + ")/s/(\\w+)/(\\d+)-(\\d+)");
 
     public static Result parse(String url) {
         if (url == null) {
@@ -38,8 +37,9 @@ public final class GalleryDetailUrlParser {
         Matcher m = URL_PATTERN.matcher(url);
         if (m.find()) {
             Result result = new Result();
-            result.gid = Integer.parseInt(m.group(1));
-            result.token = m.group(2);
+            result.gid = Integer.parseInt(m.group(2));
+            result.token = m.group(1);
+            result.index = Integer.parseInt(m.group(3)) - 1;
             return result;
         } else {
             return null;
@@ -49,5 +49,6 @@ public final class GalleryDetailUrlParser {
     public static class Result {
         public int gid;
         public String token;
+        public int index;
     }
 }

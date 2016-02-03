@@ -43,7 +43,8 @@
     <style name="CardButton">
         <item name="android:minWidth">88dp</item>
         <item name="android:minHeight">48dp</item>
-        <item name="forceNoElevation">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/card_white_2dp</item>
     </style>
 
     <style name="TextAppearance.CardTitle">

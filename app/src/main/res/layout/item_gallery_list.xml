@@ -14,88 +14,79 @@
   ~ limitations under the License.
   -->
 
-<com.h6ah4i.android.materialshadowninepatch.MaterialShadowContainerView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/ms9_DefaultShadowStyleCompatOnly"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    app:ms9_shadowTranslationZ="2dp"
-    app:ms9_affectsDisplayedPosition="false">
+    android:background="@drawable/card_white_2dp">
 
-    <RelativeLayout
+    <com.hippo.widget.LoadImageView
+        android:id="@+id/thumb"
+        android:layout_width="@dimen/list_thumb_width"
+        android:layout_height="@dimen/list_thumb_height"
+        app:retryType="click"/>
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/CardTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:background="@android:color/white">
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_toRightOf="@id/thumb"/>
 
-        <com.hippo.widget.LoadImageView
-            android:id="@+id/thumb"
-            android:layout_width="@dimen/list_thumb_width"
-            android:layout_height="@dimen/list_thumb_height"
-            app:retryType="click"/>
+    <TextView
+        android:id="@+id/uploader"
+        style="@style/CardMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/title"
+        android:layout_below="@id/title"
+        android:layout_marginTop="2dp"/>
 
-        <TextView
-            android:id="@+id/title"
-            style="@style/CardTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="4dp"
-            android:layout_toRightOf="@id/thumb"/>
+    <com.hippo.ehviewer.widget.SimpleRatingView
+        android:id="@+id/rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/title"
+        android:layout_below="@id/uploader"
+        android:layout_marginTop="2dp"/>
 
-        <TextView
-            android:id="@+id/uploader"
-            style="@style/CardMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/title"
-            android:layout_below="@id/title"
-            android:layout_marginTop="2dp"/>
+    <TextView
+        android:id="@+id/category"
+        style="@style/CardMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/title"
+        android:layout_alignBottom="@id/thumb"
+        android:layout_marginBottom="8dp"
+        android:paddingBottom="2dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="2dp"
+        android:textColor="@android:color/white"
+        android:textAllCaps="true"/>
 
-        <com.hippo.ehviewer.widget.SimpleRatingView
-            android:id="@+id/rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/title"
-            android:layout_below="@id/uploader"
-            android:layout_marginTop="2dp"/>
+    <TextView
+        android:id="@+id/posted"
+        style="@style/CardMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/thumb"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="6dp"
+        android:layout_marginBottom="4dp"/>
 
-        <TextView
-            android:id="@+id/category"
-            style="@style/CardMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/title"
-            android:layout_alignBottom="@id/thumb"
-            android:layout_marginBottom="8dp"
-            android:paddingBottom="2dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="2dp"
-            android:textColor="@android:color/white"
-            android:textAllCaps="true"/>
+    <TextView
+        android:id="@+id/simple_language"
+        style="@style/CardMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/posted"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="6dp"/>
 
-        <TextView
-            android:id="@+id/posted"
-            style="@style/CardMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/thumb"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="6dp"
-            android:layout_marginBottom="4dp"/>
-
-        <TextView
-            android:id="@+id/simple_language"
-            style="@style/CardMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/posted"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="6dp"/>
-
-    </RelativeLayout>
-</com.h6ah4i.android.materialshadowninepatch.MaterialShadowContainerView>
+</RelativeLayout>

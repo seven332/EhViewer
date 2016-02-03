@@ -69,7 +69,7 @@ import com.hippo.scene.SceneApplication;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.TransitionHelper;
-import com.hippo.utils.ApiHelper;
+import com.hippo.util.ApiHelper;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.ContentLayout;
@@ -171,6 +171,7 @@ public final class GalleryListScene extends BaseScene
         onUpdateUrlBuilder();
         mHelper.refresh();
         setState(STATE_NORMAL);
+        mSearchBarMoveHelper.showSearchBar();
     }
 
     @Override

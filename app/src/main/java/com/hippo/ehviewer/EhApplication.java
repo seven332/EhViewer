@@ -31,7 +31,7 @@ import com.hippo.network.StatusCodeException;
 import com.hippo.okhttp.CookieDB;
 import com.hippo.scene.SceneApplication;
 import com.hippo.text.Html;
-import com.hippo.utils.ReadableTime;
+import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.IntIdGenerator;
 
 import java.io.File;

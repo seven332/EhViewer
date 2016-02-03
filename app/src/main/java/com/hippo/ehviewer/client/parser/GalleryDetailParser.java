@@ -257,7 +257,7 @@ public class GalleryDetailParser {
         LargePreviewSet largePreviewSet = new LargePreviewSet();
 
         while (m.find()) {
-            largePreviewSet.addItem(ParserUtils.parseInt(m.group(2)),
+            largePreviewSet.addItem(ParserUtils.parseInt(m.group(2)) - 1,
                     ParserUtils.trim(m.group(3)), ParserUtils.trim(m.group(1)));
         }
         return largePreviewSet;

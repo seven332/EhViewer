@@ -28,13 +28,12 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.vector.VectorDrawable;
-import com.hippo.widget.CardButton;
 import com.hippo.widget.SimpleImageView;
 
 public final class WarningScene extends BaseScene implements View.OnClickListener {
 
-    private CardButton mCancel;
-    private CardButton mOk;
+    private View mCancel;
+    private View mOk;
 
     @Nullable
     @Override
@@ -43,8 +42,8 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
         View view = inflater.inflate(R.layout.scene_warning, container, false);
 
         SimpleImageView alert = (SimpleImageView) view.findViewById(R.id.icon_alert);
-        mCancel = (CardButton) view.findViewById(R.id.cancel);
-        mOk = (CardButton) view.findViewById(R.id.ok);
+        mCancel = view.findViewById(R.id.cancel);
+        mOk = view.findViewById(R.id.ok);
 
         Drawable drawable = VectorDrawable.create(getContext(), R.drawable.ic_alert);
         alert.setDrawable(drawable);
@@ -52,10 +51,8 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
         mCancel.setOnClickListener(this);
         mOk.setOnClickListener(this);
 
-        mCancel.setRawBackgroundDrawable(
-                RippleSalon.generateRippleDrawable(true, mCancel.getBackground()));
-        mOk.setRawBackgroundDrawable(
-                RippleSalon.generateRippleDrawable(true, mOk.getBackground()));
+        RippleSalon.addRipple(mCancel, true);
+        RippleSalon.addRipple(mOk, true);
 
         return view;
     }

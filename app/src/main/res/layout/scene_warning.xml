@@ -56,15 +56,13 @@
 
     </com.hippo.widget.MaxSizeContainer>
 
-
-
     <LinearLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <com.hippo.widget.CardButton
+        <TextView
             android:id="@+id/cancel"
             style="@style/CardButton"
             android:layout_width="0dp"
@@ -73,9 +71,9 @@
             android:layout_margin="@dimen/keyline_margin"
             android:text="@android:string/cancel"
             android:textColor="@android:color/white"
-            app:cardBackgroundColor="@color/purple_500"/>
+            android:background="@drawable/card_purple_2dp"/>
 
-        <com.hippo.widget.CardButton
+        <TextView
             android:id="@+id/ok"
             style="@style/CardButton"
             android:layout_width="0dp"
@@ -84,7 +82,7 @@
             android:layout_margin="@dimen/keyline_margin"
             android:text="@android:string/ok"
             android:textColor="@android:color/white"
-            app:cardBackgroundColor="@color/teal_500"/>
+            android:background="@drawable/card_teal_2dp"/>
 
     </LinearLayout>
 </LinearLayout>

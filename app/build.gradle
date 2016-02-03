@@ -58,7 +58,6 @@ clean {
 dependencies {
     compile project(':anani')
     compile project(':beerbelly')
-    compile project(':cardsalon')
     compile project(':conaco')
     compile project(':easyrecyclerview')
     compile project(':hotspot')
@@ -72,7 +71,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:customtabs:23.1.1'
     compile 'com.android.support:design:23.1.1'
-    compile 'com.h6ah4i.android.materialshadowninepatch:materialshadowninepatch:0.6.5'
     compile 'de.greenrobot:greendao:2.0.0'
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
 }

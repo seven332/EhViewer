@@ -46,8 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/list_search_bar_margin"
         android:layout_marginRight="@dimen/list_search_bar_margin"
-        android:layout_marginTop="8dp"
-        app:forceNoElevation="true"/>
+        android:layout_marginTop="8dp"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

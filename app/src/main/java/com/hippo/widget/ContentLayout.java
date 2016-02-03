@@ -34,7 +34,7 @@ import com.hippo.easyrecyclerview.FastScroller;
 import com.hippo.easyrecyclerview.HandlerDrawable;
 import com.hippo.easyrecyclerview.LayoutManagerUtils;
 import com.hippo.ehviewer.R;
-import com.hippo.utils.ExceptionUtils;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.refreshlayout.RefreshLayout;

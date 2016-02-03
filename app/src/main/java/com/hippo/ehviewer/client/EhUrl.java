@@ -20,12 +20,23 @@ public class EhUrl {
 
     public static final String DOMAIN_EX = "exhentai.org";
     public static final String DOMAIN_E = "e-hentai.org";
+    public static final String DOMAIN_G = "g.e-hentai.org";
+    public static final String DOMAIN_LOFI = "lofi.e-hentai.org";
 
     public static final String HOST_EX = "http://" + DOMAIN_EX + "/";
 
     public static final String API_SIGN_IN = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
 
     public static String getGalleryDetailUrl(int gid, String token) {
-        return HOST_EX + "g/" + gid + '/' + token;
+        return getGalleryDetailUrl(gid, token, 0);
+    }
+
+    public static String getGalleryDetailUrl(int gid, String token, int index) {
+        StringBuilder sb = new StringBuilder(HOST_EX);
+        sb.append("g/").append(gid).append('/').append(token);
+        if (index != 0) {
+            sb.append("/?p=").append(index);
+        }
+        return sb.toString();
     }
 }

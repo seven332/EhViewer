@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.utils;
+package com.hippo.util;
 
 import android.os.Build;
 

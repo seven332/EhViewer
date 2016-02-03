@@ -41,8 +41,7 @@ import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.utils.ExceptionUtils;
-import com.hippo.widget.CardButton;
+import com.hippo.util.ExceptionUtils;
 
 public final class LoginScene extends BaseScene implements EditText.OnEditorActionListener,
         View.OnClickListener {
@@ -52,8 +51,8 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
     private TextInputLayout mPasswordLayout;
     private EditText mUsername;
     private EditText mPassword;
-    private CardButton mRegister;
-    private CardButton mSignIn;
+    private View mRegister;
+    private View mSignIn;
     private TextView mSignInViaWebview;
     private TextView mSignInViaCookies;
     private TextView mSkipSigningIn;
@@ -88,8 +87,8 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
         mUsername = mUsernameLayout.getEditText();
         mPasswordLayout = (TextInputLayout) loginForm.findViewById(R.id.password_layout);
         mPassword = mPasswordLayout.getEditText();
-        mRegister = (CardButton) loginForm.findViewById(R.id.register);
-        mSignIn = (CardButton) loginForm.findViewById(R.id.sign_in);
+        mRegister = loginForm.findViewById(R.id.register);
+        mSignIn = loginForm.findViewById(R.id.sign_in);
         mSignInViaWebview = (TextView) loginForm.findViewById(R.id.sign_in_via_webview);
         mSignInViaCookies = (TextView) loginForm.findViewById(R.id.sign_in_via_cookies);
         mSkipSigningIn = (TextView) loginForm.findViewById(R.id.skip_signing_in);
@@ -106,10 +105,8 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
         mSignInViaCookies.setOnClickListener(this);
         mSkipSigningIn.setOnClickListener(this);
 
-        mRegister.setRawBackgroundDrawable(
-                RippleSalon.generateRippleDrawable(true, mRegister.getBackground()));
-        mSignIn.setRawBackgroundDrawable(
-                RippleSalon.generateRippleDrawable(true, mSignIn.getBackground()));
+        RippleSalon.addRipple(mRegister, true);
+        RippleSalon.addRipple(mSignIn, true);
 
         return view;
     }

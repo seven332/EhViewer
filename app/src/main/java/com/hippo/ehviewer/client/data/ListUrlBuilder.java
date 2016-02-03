@@ -19,16 +19,19 @@ package com.hippo.ehviewer.client.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.IntDef;
+import android.text.TextUtils;
 
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.widget.AdvanceSearchTable;
 import com.hippo.network.UrlBuilder;
+import com.hippo.yorozuya.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 public class ListUrlBuilder implements Cloneable, Parcelable {
@@ -144,16 +147,149 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         mMinRating = lub.mMinRating;
     }
 
-    /*
-    public void set(QuickSearch quickSearch) {
-        mMode = quickSearch.mode;
-        mPageIndex = 0;
-        mCategory = quickSearch.category;
-        mKeyword = quickSearch.keyword;
-        mAdvanceSearch = quickSearch.advancedSearch;
-        mMinRating = quickSearch.minRating;
+    /**
+     * @param query xxx=yyy&mmm=nnn
+     */
+    // TODO page
+    public void setQuery(String query) {
+        reset();
+
+        if (TextUtils.isEmpty(query)) {
+            return;
+        }
+
+        String[] querys = StringUtils.split(query, '&');
+        boolean apply = false;
+        int category = 0;
+        String keyword = null;
+        boolean enableAdvanceSearch = false;
+        int advanceSearch = 0;
+        boolean enableMinRating = false;
+        int minRating = 0;
+        for (int i = 0, size = querys.length; i < size; i++) {
+            String str = querys[i];
+            int index = str.indexOf('=');
+            if (index < 0) {
+                continue;
+            }
+            String key = str.substring(0, index);
+            String value = str.substring(index + 1);
+            if ("f_doujinshi".equals(key)) {
+                if ("1".equals(value)) {
+                    category |= EhConfig.DOUJINSHI;
+                }
+            } else if ("f_manga".equals(key)) {
+                if ("1".equals(value)) {
+                    category |= EhConfig.MANGA;
+                }
+            } else if ("f_artistcg".equals(key)) {
+                if ("1".equals(value)) {
+                    category |= EhConfig.ARTIST_CG;
+                }
+            } else if ("f_gamecg".equals(key)) {
+                if ("1".equals(value)) {
+                    category |= EhConfig.GAME_CG;
+                }
+            } else if ("f_western".equals(key)) {
+                if ("1".equals(value)) {
+                    category |= EhConfig.WESTERN;
+                }
+            } else if ("f_non-h".equals(key)) {
+                if ("1".equals(value)) {
+                    category |= EhConfig.NON_H;
+                }
+            } else if ("f_imageset".equals(key)) {
+                if ("1".equals(value)) {
+                    category |= EhConfig.IMAGE_SET;
+                }
+            } else if ("f_cosplay".equals(key)) {
+                if ("1".equals(value)) {
+                    category |= EhConfig.COSPLAY;
+                }
+            } else if ("f_asianporn".equals(key)) {
+                if ("1".equals(value)) {
+                    category |= EhConfig.ASIAN_PORN;
+                }
+            } else if ("f_misc".equals(key)) {
+                if ("1".equals(value)) {
+                    category |= EhConfig.MISC;
+                }
+            } else if ("f_search".equals(key)) {
+                try {
+                    keyword = URLDecoder.decode(value, "utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    // Ignore
+                }
+            } else if ("advsearch".equals(key)) {
+                if ("1".equals(value)) {
+                    enableAdvanceSearch = true;
+                }
+            } else if ("f_sname".equals(key)) {
+                if ("on".equals(value)) {
+                    advanceSearch |= AdvanceSearchTable.SNAME;
+                }
+            } else if ("f_stags".equals(key)) {
+                if ("on".equals(value)) {
+                    advanceSearch |= AdvanceSearchTable.STAGS;
+                }
+            } else if ("f_sdesc".equals(key)) {
+                if ("on".equals(value)) {
+                    advanceSearch |= AdvanceSearchTable.SDESC;
+                }
+            } else if ("f_storr".equals(key)) {
+                if ("on".equals(value)) {
+                    advanceSearch |= AdvanceSearchTable.STORR;
+                }
+            } else if ("f_sto".equals(key)) {
+                if ("on".equals(value)) {
+                    advanceSearch |= AdvanceSearchTable.STO;
+                }
+            } else if ("f_sdt1".equals(key)) {
+                if ("on".equals(value)) {
+                    advanceSearch |= AdvanceSearchTable.SDT1;
+                }
+            } else if ("f_sdt2".equals(key)) {
+                if ("on".equals(value)) {
+                    advanceSearch |= AdvanceSearchTable.SDT2;
+                }
+            } else if ("f_sh".equals(key)) {
+                if ("on".equals(value)) {
+                    advanceSearch |= AdvanceSearchTable.SH;
+                }
+            } else if ("f_sr".equals(key)) {
+                if ("on".equals(value)) {
+                    enableMinRating = true;
+                }
+            } else if ("f_srdd".equals(key)) {
+                try {
+                    minRating = Integer.parseInt(value);
+                } catch (NumberFormatException e) {
+                    // Ignore
+                }
+            } else if ("f_apply".equals(key)) {
+                if ("Apply+Filter".equals(value)) {
+                    apply = true;
+                }
+            }
+        }
+
+        if (!apply) {
+            return;
+        }
+
+        mCategory = category;
+        mKeyword = keyword;
+        if (enableAdvanceSearch) {
+            mAdvanceSearch = advanceSearch;
+            if (enableMinRating) {
+                mMinRating = minRating;
+            } else {
+                mMinRating = -1;
+            }
+        } else {
+            mAdvanceSearch = -1;
+        }
     }
-    */
 
     public String build() {
         switch (mMode) {
@@ -220,6 +356,7 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
                 } catch (UnsupportedEncodingException e) {
                     // Empty
                 }
+                sb.append('/').append(mPageIndex);
                 return sb.toString();
             }
         }

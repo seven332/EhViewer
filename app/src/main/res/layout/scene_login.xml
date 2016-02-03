@@ -84,12 +84,11 @@
                 android:layout_weight="1"/>
 
             <LinearLayout
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <com.hippo.widget.CardButton
+                <TextView
                     android:id="@+id/register"
                     style="@style/CardButton"
                     android:layout_width="0dp"
@@ -98,9 +97,9 @@
                     android:layout_margin="@dimen/keyline_margin"
                     android:text="@string/register"
                     android:textColor="@android:color/white"
-                    app:cardBackgroundColor="@color/purple_500"/>
+                    android:background="@drawable/card_purple_2dp"/>
 
-                <com.hippo.widget.CardButton
+                <TextView
                     android:id="@+id/sign_in"
                     style="@style/CardButton"
                     android:layout_width="0dp"
@@ -109,7 +108,7 @@
                     android:layout_margin="@dimen/keyline_margin"
                     android:text="@string/sign_in"
                     android:textColor="@android:color/white"
-                    app:cardBackgroundColor="@color/teal_500"/>
+                    android:background="@drawable/card_teal_2dp"/>
 
             </LinearLayout>
 

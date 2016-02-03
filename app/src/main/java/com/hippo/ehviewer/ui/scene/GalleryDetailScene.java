@@ -35,6 +35,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.EhApplication;
+import com.hippo.ehviewer.OpenUrlHelper;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
@@ -52,9 +53,9 @@ import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.text.Html;
 import com.hippo.text.URLImageGetter;
-import com.hippo.utils.ApiHelper;
-import com.hippo.utils.ExceptionUtils;
-import com.hippo.utils.ReadableTime;
+import com.hippo.util.ApiHelper;
+import com.hippo.util.ExceptionUtils;
+import com.hippo.util.ReadableTime;
 import com.hippo.vector.AnimatedVectorDrawable;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.AutoWrapLayout;
@@ -74,6 +75,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     public static final String KEY_GALLERY_INFO = "gallery_info";
     public static final String KEY_GID = "gid";
     public static final String KEY_TOKEN = "token";
+    public static final String KEY_PAGE = "page";
 
     private static final String KEY_GALLERY_DETAIL = "gallery_detail";
     private static final String KEY_REQUEST_ID = "request_id";
@@ -638,7 +640,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             LoadImageView image = (LoadImageView) view.findViewById(R.id.image);
             image.load(EhCacheKeyFactory.getLargePreviewKey(gd.gid, index), imageUrl, true);
             TextView text = (TextView) view.findViewById(R.id.text);
-            text.setText(String.format(Locale.US, "%d", index));
+            text.setText(String.format(Locale.US, "%d", index + 1));
         }
     }
 
@@ -711,7 +713,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_open_in_other_app:
-                        // TODO
+                        String url = getGalleryDetailUrl();
+                        if (url != null) {
+                            OpenUrlHelper.openUrl(getActivity(), url, false, false);
+                        }
                         break;
                 }
                 return true;

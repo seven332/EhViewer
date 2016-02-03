@@ -38,9 +38,9 @@ import com.hippo.ehviewer.client.data.GalleryComment;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.text.Html;
 import com.hippo.text.URLImageGetter;
-import com.hippo.utils.OpenUrlHelper;
-import com.hippo.utils.ReadableTime;
-import com.hippo.utils.TextUrl;
+import com.hippo.ehviewer.OpenUrlHelper;
+import com.hippo.util.ReadableTime;
+import com.hippo.util.TextUrl;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.LinkifyTextView;
 import com.hippo.yorozuya.LayoutUtils;
@@ -141,7 +141,7 @@ public final class GalleryCommentsScene extends ToolbarScene
             commentHolder.comment.clearCurrentSpan();
 
             if (span instanceof URLSpan) {
-                OpenUrlHelper.openUrl(getContext(), ((URLSpan) span).getURL(), true);
+                OpenUrlHelper.openUrl(getActivity(), ((URLSpan) span).getURL(), true, true);
                 return true;
             }
         }
