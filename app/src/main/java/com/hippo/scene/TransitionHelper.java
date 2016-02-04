@@ -22,5 +22,5 @@ import android.support.v4.app.FragmentTransaction;
 
 public interface TransitionHelper {
 
-    void onTransition(Context context, FragmentTransaction transaction, Fragment exit, Fragment enter);
+    boolean onTransition(Context context, FragmentTransaction transaction, Fragment exit, Fragment enter);
 }

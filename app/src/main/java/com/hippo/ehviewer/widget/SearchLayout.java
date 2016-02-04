@@ -38,9 +38,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.hippo.easyrecyclerview.EasyRecyclerView;
-import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.rippleold.RippleSalon;
@@ -125,8 +123,6 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         setHasFixedSize(true);
         setClipToPadding(false);
         //setItemAnimator(mAnimator);
-        addItemDecoration(new MarginItemDecoration(
-                getContext().getResources().getDimensionPixelOffset(R.dimen.list_item_margin)));
         int paddingH = resources.getDimensionPixelOffset(R.dimen.list_content_margin_h);
         int paddingV = resources.getDimensionPixelOffset(R.dimen.list_content_margin_v);
         setPadding(paddingV, paddingH, paddingV, paddingH);

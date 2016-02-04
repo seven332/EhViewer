@@ -19,39 +19,43 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:animateLayoutChanges="true">
+    android:orientation="vertical">
 
     <include
         layout="@layout/gallery_detail_header"/>
 
-    <LinearLayout
-        android:id="@+id/below_header"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:divider="@drawable/divider_gallery_detail"
-        android:showDividers="middle"
-        android:dividerPadding="@dimen/keyline_margin">
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/below_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:divider="@drawable/divider_gallery_detail"
+            android:showDividers="middle"
+            android:dividerPadding="@dimen/keyline_margin">
+
+            <include
+                layout="@layout/gallery_detail_info"/>
+
+            <include
+                layout="@layout/gallery_detail_actions"/>
+
+            <include
+                layout="@layout/gallery_detail_tags"/>
+
+            <include
+                layout="@layout/gallery_detail_comments"/>
+
+            <include
+                layout="@layout/gallery_detail_previews"/>
+
+        </LinearLayout>
 
         <include
-            layout="@layout/gallery_detail_info"/>
+            layout="@layout/gallery_detail_progress"/>
 
-        <include
-            layout="@layout/gallery_detail_actions"/>
-
-        <include
-            layout="@layout/gallery_detail_tags"/>
-
-        <include
-            layout="@layout/gallery_detail_comments"/>
-
-        <include
-            layout="@layout/gallery_detail_previews"/>
-
-    </LinearLayout>
-
-    <include
-        layout="@layout/gallery_detail_progress"/>
-
+    </FrameLayout>
 </LinearLayout>

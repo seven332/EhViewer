@@ -22,8 +22,11 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
+import android.transition.TransitionInflater;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -31,7 +34,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.EhApplication;
@@ -51,6 +53,7 @@ import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
+import com.hippo.scene.TransitionHelper;
 import com.hippo.text.Html;
 import com.hippo.text.URLImageGetter;
 import com.hippo.util.ApiHelper;
@@ -58,6 +61,7 @@ import com.hippo.util.ExceptionUtils;
 import com.hippo.util.ReadableTime;
 import com.hippo.vector.AnimatedVectorDrawable;
 import com.hippo.vector.VectorDrawable;
+import com.hippo.view.ViewTransition;
 import com.hippo.widget.AutoWrapLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.SimpleGridLayout;
@@ -80,10 +84,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private static final String KEY_GALLERY_DETAIL = "gallery_detail";
     private static final String KEY_REQUEST_ID = "request_id";
 
-    private ScrollView mMainView;
-    private View mProgressView;
     private ViewGroup mFailedView;
     private TextView mFailedText;
+    private ViewTransition mViewTransition;
 
     // Header
     private View mHeader;
@@ -126,6 +129,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private TextView mPreviewText;
     // Progress
     private View mProgress;
+
+    private ViewTransition mViewTransition2;
 
     private AnimatedVectorDrawable mHeartDrawable;
     private AnimatedVectorDrawable mHeartOutlineDrawable;
@@ -258,13 +263,13 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         View view = inflater.inflate(R.layout.scene_gallery_detail, container, false);
 
         ViewGroup main = (ViewGroup) view.findViewById(R.id.main);
-        mMainView = (ScrollView) main.findViewById(R.id.scroll_view);
-        mProgressView = main.findViewById(R.id.progress_view);
+        View mainView = main.findViewById(R.id.scroll_view);
+        View progressView = main.findViewById(R.id.progress_view);
         mFailedView = (ViewGroup) main.findViewById(R.id.tip);
         mFailedText = (TextView) mFailedView.getChildAt(1);
         mFailedView.setOnClickListener(this);
+        mViewTransition = new ViewTransition(mainView, progressView, mFailedView);
 
-        View mainView = mMainView;
         mHeader = mainView.findViewById(R.id.header);
         mThumb = (LoadImageView) mHeader.findViewById(R.id.thumb);
         mTitle = (TextView) mHeader.findViewById(R.id.title);
@@ -326,6 +331,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         mProgress = mainView.findViewById(R.id.progress);
 
+        mViewTransition2 = new ViewTransition(mBelowHeader, mProgress);
+
         if (prepareData()) {
             if (mGalleryDetail != null) {
                 bindViewSecond();
@@ -337,7 +344,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         } else {
             mFailedText.setText(R.string.cannot_find_gallery);
         }
-        adjustViewVisibility();
+        adjustViewVisibility(false);
 
         return view;
     }
@@ -346,10 +353,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     public void onDestroyView() {
         super.onDestroyView();
 
-        mMainView = null;
-        mProgressView = null;
         mFailedView = null;
         mFailedText = null;
+        mViewTransition = null;
 
         mHeader = null;
         mThumb = null;
@@ -390,6 +396,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mPreviewText = null;
 
         mProgress = null;
+
+        mViewTransition2 = null;
 
         mHeartDrawable = null;
         mHeartOutlineDrawable = null;
@@ -440,30 +448,23 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         return true;
     }
 
-    private void adjustViewVisibility() {
+    private void adjustViewVisibility(boolean animation) {
         if (mGalleryDetail != null) {
-            mMainView.setVisibility(View.VISIBLE);
-            mProgressView.setVisibility(View.GONE);
-            mFailedView.setVisibility(View.GONE);
-
-            mBelowHeader.setVisibility(View.VISIBLE);
-            mProgress.setVisibility(View.GONE);
+            // Show mMainView
+            mViewTransition.showView(0, animation);
+            // Show mBelowHeader
+            mViewTransition2.showView(0, animation);
         } else if (mGalleryInfo != null) {
-            mMainView.setVisibility(View.VISIBLE);
-            mProgressView.setVisibility(View.GONE);
-            mFailedView.setVisibility(View.GONE);
-
-            mBelowHeader.setVisibility(View.GONE);
-            mProgress.setVisibility(View.VISIBLE);
+            // Show mMainView
+            mViewTransition.showView(0, animation);
+            // Show mProgress
+            mViewTransition2.showView(1, animation);
+        } else if (TextUtils.isEmpty(mFailedText.getText())) {
+            // Show mProgressView
+            mViewTransition.showView(1, animation);
         } else {
-            mMainView.setVisibility(View.GONE);
-            if (TextUtils.isEmpty(mFailedText.getText())) {
-                mProgressView.setVisibility(View.VISIBLE);
-                mFailedView.setVisibility(View.GONE);
-            } else {
-                mProgressView.setVisibility(View.GONE);
-                mFailedView.setVisibility(View.VISIBLE);
-            }
+            // Show mFailedView
+            mViewTransition.showView(2, animation);
         }
     }
 
@@ -729,7 +730,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         if (mFailedView == v) {
             if (request()) {
                 mFailedText.setText("");
-                adjustViewVisibility();
+                adjustViewVisibility(true);
             }
         } else if (mOtherActions == v) {
             ensurePopMenu();
@@ -772,16 +773,69 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mViewTransition.getShownViewIndex() == 0 && ApiHelper.SUPPORT_TRANSITION) {
+            int[] location = new int[2];
+            mThumb.getLocationInWindow(location);
+            // Only show transaction when thumb can be seen
+            if (location[1] + mThumb.getHeight() > 0) {
+                finish(new EnterGalleryListTransaction(mThumb, mTitle, mUploader, mCategory));
+                return;
+            }
+        }
+
+        finish();
+    }
+
+    private static class EnterGalleryListTransaction implements TransitionHelper {
+
+        private View mThumb;
+        private View mTitle;
+        private View mUploader;
+        private View mCategory;
+
+        public EnterGalleryListTransaction(View thumb, View title, View uploader, View category) {
+            mThumb = thumb;
+            mTitle = title;
+            mUploader = uploader;
+            mCategory = category;
+        }
+
+        @Override
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        public boolean onTransition(Context context,
+                FragmentTransaction transaction, Fragment exit, Fragment enter) {
+            if (!(enter instanceof GalleryListScene)) {
+                return false;
+            }
+
+            exit.setSharedElementReturnTransition(
+                    TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
+            exit.setExitTransition(
+                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
+            enter.setSharedElementEnterTransition(
+                    TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
+            enter.setEnterTransition(
+                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
+            transaction.addSharedElement(mThumb, mThumb.getTransitionName());
+            transaction.addSharedElement(mTitle, mTitle.getTransitionName());
+            transaction.addSharedElement(mUploader, mUploader.getTransitionName());
+            transaction.addSharedElement(mCategory, mCategory.getTransitionName());
+            return true;
+        }
+    }
+
     private void onGetGalleryDetailSuccess(GalleryDetail result) {
         mGalleryDetail = result;
-        adjustViewVisibility();
+        adjustViewVisibility(true);
         bindViewSecond();
     }
 
     private void onGetGalleryDetailFailure(Exception e) {
         String error = ExceptionUtils.getReadableString(getContext(), e);
         mFailedText.setText(error);
-        adjustViewVisibility();
+        adjustViewVisibility(true);
     }
 
     private static class GetGalleryDetailListener implements EhClient.Callback<GalleryDetail> {

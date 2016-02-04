@@ -36,14 +36,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="left"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:textColor="@color/primary_text_light"/>
 
             <TextView
                 android:id="@+id/pages"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:textColor="@color/primary_text_light"/>
 
             <TextView
                 android:id="@+id/size"
@@ -51,7 +53,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:textColor="@color/primary_text_light"/>
 
         </TableRow>
 
@@ -64,7 +67,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="left"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:textColor="@color/primary_text_light"/>
 
             <TextView
                 android:id="@+id/posted"
@@ -72,7 +76,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:textColor="@color/primary_text_light"/>
 
         </TableRow>
     </TableLayout>

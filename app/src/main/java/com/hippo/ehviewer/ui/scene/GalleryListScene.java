@@ -372,35 +372,48 @@ public final class GalleryListScene extends BaseScene
     }
 
     @Override
-    public boolean onBackPressed() {
+    public void onBackPressed() {
+        boolean handle;
         switch (mState) {
             default:
             case STATE_NORMAL:
-                return checkDoubleClickExit();
+                handle = checkDoubleClickExit();
+                break;
             case STATE_SIMPLE_SEARCH:
                 setState(STATE_NORMAL);
-                return true;
+                handle = true;
+                break;
             case STATE_SEARCH:
                 setState(STATE_NORMAL);
-                return true;
+                handle = true;
+                break;
             case STATE_SEARCH_SHOW_LIST:
                 setState(STATE_SEARCH);
-                return true;
+                handle = true;
+                break;
+        }
+
+        if (!handle) {
+            finish();
         }
     }
 
-    private static class GalleryDetailTransaction implements TransitionHelper {
+    private static class EnterGalleryDetailTransaction implements TransitionHelper {
 
         private GalleryListHolder mHolder;
 
-        public GalleryDetailTransaction(GalleryListHolder holder) {
+        public EnterGalleryDetailTransaction(GalleryListHolder holder) {
             mHolder = holder;
         }
 
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override
-        public void onTransition(Context context, FragmentTransaction transaction,
+        public boolean onTransition(Context context, FragmentTransaction transaction,
                 Fragment exit, Fragment enter) {
+            if (!(enter instanceof GalleryDetailScene)) {
+                return false;
+            }
+
             exit.setSharedElementReturnTransition(
                     TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
             exit.setExitTransition(
@@ -413,6 +426,7 @@ public final class GalleryListScene extends BaseScene
             transaction.addSharedElement(mHolder.title, mHolder.title.getTransitionName());
             transaction.addSharedElement(mHolder.uploader, mHolder.uploader.getTransitionName());
             transaction.addSharedElement(mHolder.category, mHolder.category.getTransitionName());
+            return true;
         }
     }
 
@@ -424,7 +438,7 @@ public final class GalleryListScene extends BaseScene
         args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, gi);
         if (ApiHelper.SUPPORT_TRANSITION) {
             GalleryListHolder holder = (GalleryListHolder) mRecyclerView.getChildViewHolder(view);
-            startScene(GalleryDetailScene.class, args, new GalleryDetailTransaction(holder));
+            startScene(GalleryDetailScene.class, args, new EnterGalleryDetailTransaction(holder));
         } else {
             startScene(GalleryDetailScene.class, args);
         }

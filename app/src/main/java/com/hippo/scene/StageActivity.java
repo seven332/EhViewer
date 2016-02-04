@@ -165,9 +165,18 @@ public abstract class StageActivity extends AppCompatActivity {
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (currentFragment != null) {
-            if (transitionHelper != null) {
-                transitionHelper.onTransition(this, transaction, currentFragment, newScene);
-            } else {
+            if (transitionHelper == null || !transitionHelper.onTransition(
+                    this, transaction, currentFragment, newScene)) {
+                // Clear shared item
+                currentFragment.setSharedElementEnterTransition(null);
+                currentFragment.setSharedElementReturnTransition(null);
+                currentFragment.setEnterTransition(null);
+                currentFragment.setExitTransition(null);
+                newScene.setSharedElementEnterTransition(null);
+                newScene.setSharedElementReturnTransition(null);
+                newScene.setEnterTransition(null);
+                newScene.setExitTransition(null);
+                // Set default animation
                 transaction.setCustomAnimations(R.anim.scene_open_enter, R.anim.scene_open_exit);
             }
             transaction.detach(currentFragment);
@@ -198,10 +207,14 @@ public abstract class StageActivity extends AppCompatActivity {
     }
 
     public void finishScene(SceneFragment scene) {
-        finishScene(scene.getTag());
+        finishScene(scene, null);
     }
 
-    private void finishScene(String tag) {
+    public void finishScene(SceneFragment scene, TransitionHelper transitionHelper) {
+        finishScene(scene.getTag(), transitionHelper);
+    }
+
+    private void finishScene(String tag, TransitionHelper transitionHelper) {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         // Get scene
@@ -232,15 +245,25 @@ public abstract class StageActivity extends AppCompatActivity {
         }
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.scene_close_enter, R.anim.scene_close_exit);
-        transaction.remove(scene);
         if (next != null) {
-            if (next.isDetached()) {
-                transaction.attach(next);
-            } else {
-                Log.e(TAG, "finishScene: The scene should be detached");
+            if (transitionHelper == null || !transitionHelper.onTransition(
+                    this, transaction, scene, next)) {
+                // Clear shared item
+                scene.setSharedElementEnterTransition(null);
+                scene.setSharedElementReturnTransition(null);
+                scene.setEnterTransition(null);
+                scene.setExitTransition(null);
+                next.setSharedElementEnterTransition(null);
+                next.setSharedElementReturnTransition(null);
+                next.setEnterTransition(null);
+                next.setExitTransition(null);
+                // Do not show animate if it is not the first fragment
+                transaction.setCustomAnimations(R.anim.scene_close_enter, R.anim.scene_close_exit);
             }
+            // Attach fragment
+            transaction.attach(next);
         }
+        transaction.remove(scene);
         transaction.commit();
 
         // Remove tag
@@ -268,13 +291,7 @@ public abstract class StageActivity extends AppCompatActivity {
         }
 
         scene = (SceneFragment) fragment;
-        if (!scene.onBackPressed()) {
-            if (size > 0) {
-                finishScene(tag);
-            } else {
-                finish();
-            }
-        }
+        scene.onBackPressed();
     }
 
     public SceneFragment findSceneByTag(String tag) {

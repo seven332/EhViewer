@@ -104,7 +104,7 @@ public class StageLayout extends FrameLayout {
         }
 
         View view1 = mSuperDisappearingChildren.get(0);
-        View view2 = getChildAt(1); // dump view
+        View view2 = getChildAt(1); // Skip dump view
         String tag1 = getViewTag(view1);
         String tag2 = getViewTag(view2);
         try {

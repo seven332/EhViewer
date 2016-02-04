@@ -70,9 +70,13 @@ public class SceneFragment extends Fragment {
     }
 
     public void finish() {
+        finish(null);
+    }
+
+    public void finish(TransitionHelper transitionHelper) {
         FragmentActivity activity = getActivity();
         if (activity instanceof StageActivity) {
-            ((StageActivity) activity).finishScene(this);
+            ((StageActivity) activity).finishScene(this, transitionHelper);
         }
     }
 
@@ -95,11 +99,8 @@ public class SceneFragment extends Fragment {
         }
     }
 
-    /**
-     * @return true for handle this back pressed action
-     */
-    public boolean onBackPressed() {
-        return false;
+    public void onBackPressed() {
+        finish();
     }
 
     @Override

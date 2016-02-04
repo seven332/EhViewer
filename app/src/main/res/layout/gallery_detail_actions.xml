@@ -47,7 +47,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:text="@string/favorite"
-                    android:drawablePadding="8dp"/>
+                    android:drawablePadding="8dp"
+                    android:textColor="@color/primary_text_light"/>
 
                 <TextView
                     android:id="@+id/heart_outline"
@@ -55,7 +56,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:text="@string/favorite"
-                    android:drawablePadding="8dp"/>
+                    android:drawablePadding="8dp"
+                    android:textColor="@color/primary_text_light"/>
 
             </FrameLayout>
 
@@ -66,7 +68,8 @@
                 android:layout_marginLeft="16dp"
                 android:gravity="center_horizontal"
                 android:drawablePadding="8dp"
-                android:drawableTop="@drawable/ic_utorrent_primary_x48"/>
+                android:drawableTop="@drawable/ic_utorrent_primary_x48"
+                android:textColor="@color/primary_text_light"/>
 
             <TextView
                 android:id="@+id/share"
@@ -76,7 +79,8 @@
                 android:gravity="center_horizontal"
                 android:text="@string/share"
                 android:drawablePadding="8dp"
-                android:drawableTop="@drawable/ic_share_primary_x48"/>
+                android:drawableTop="@drawable/ic_share_primary_x48"
+                android:textColor="@color/primary_text_light"/>
 
             <TextView
                 android:id="@+id/rate"
@@ -86,7 +90,8 @@
                 android:gravity="center_horizontal"
                 android:text="@string/rate"
                 android:drawablePadding="8dp"
-                android:drawableTop="@drawable/ic_thumb_up_primary_x48"/>
+                android:drawableTop="@drawable/ic_thumb_up_primary_x48"
+                android:textColor="@color/primary_text_light"/>
 
         </LinearLayout>
     </HorizontalScrollView>
@@ -103,6 +108,7 @@
         android:id="@+id/rating_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/primary_text_light"/>
 
 </LinearLayout>
