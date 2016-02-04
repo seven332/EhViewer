@@ -32,6 +32,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -67,6 +68,7 @@ import com.hippo.widget.AutoWrapLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.SimpleGridLayout;
 import com.hippo.widget.SimpleImageView;
+import com.hippo.yorozuya.SimpleHandler;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -75,10 +77,11 @@ import java.util.Locale;
 // TODO Update drawer checked item
 public class GalleryDetailScene extends BaseScene implements View.OnClickListener {
 
-    @IntDef({STATE_NORMAL, STATE_REFRESH, STATE_REFRESH_HEADER, STATE_FAILED})
+    @IntDef({STATE_INIT, STATE_NORMAL, STATE_REFRESH, STATE_REFRESH_HEADER, STATE_FAILED})
     @Retention(RetentionPolicy.SOURCE)
     private @interface State {}
 
+    private static final int STATE_INIT = -1;
     private static final int STATE_NORMAL = 0;
     private static final int STATE_REFRESH = 1;
     private static final int STATE_REFRESH_HEADER = 2;
@@ -102,6 +105,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     // Header
     private View mHeader;
+    private View mColorBg;
     private LoadImageView mThumb;
     private TextView mTitle;
     private TextView mUploader;
@@ -157,7 +161,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private int mRequestId;
 
     @State
-    private int mState;
+    private int mState = STATE_INIT;
 
     private void handleArgs(Bundle args) {
         if (args == null) {
@@ -298,6 +302,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mViewTransition = new ViewTransition(mainView, progressView, mFailedView);
 
         mHeader = mainView.findViewById(R.id.header);
+        mColorBg = mainView.findViewById(R.id.color_bg);
         mThumb = (LoadImageView) mHeader.findViewById(R.id.thumb);
         mTitle = (TextView) mHeader.findViewById(R.id.title);
         mUploader = (TextView) mHeader.findViewById(R.id.uploader);
@@ -366,19 +371,18 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             if (mGalleryDetail != null) {
                 bindViewSecond();
                 setTransitionName();
-                mState = STATE_NORMAL;
+                adjustViewVisibility(STATE_NORMAL, false);
             } else if (mGalleryInfo != null) {
-                mState = STATE_REFRESH_HEADER;
                 bindViewFirst();
                 setTransitionName();
+                adjustViewVisibility(STATE_REFRESH_HEADER, false);
             } else {
-                mState = STATE_REFRESH;
+                adjustViewVisibility(STATE_REFRESH, false);
             }
         } else {
-            mState = STATE_FAILED;
             mFailedText.setText(R.string.error_cannot_find_gallery);
+            adjustViewVisibility(STATE_FAILED, false);
         }
-        adjustViewVisibility(false);
 
         return view;
     }
@@ -392,6 +396,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mViewTransition = null;
 
         mHeader = null;
+        mColorBg = null;
         mThumb = null;
         mTitle = null;
         mUploader = null;
@@ -482,8 +487,29 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         return true;
     }
 
-    private void adjustViewVisibility(boolean animation) {
-        switch (mState) {
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private boolean createCircularReveal() {
+        int w = mColorBg.getWidth();
+        int h = mColorBg.getHeight();
+        if (mColorBg.isAttachedToWindow() && w != 0 && h != 0) {
+            ViewAnimationUtils.createCircularReveal(mColorBg, w / 2, h / 2, 0,
+                    (float) Math.hypot(w, h)).setDuration(500).start();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    private void adjustViewVisibility(int state, boolean animation) {
+        if (state == mState) {
+            return;
+        }
+
+        int oldState = mState;
+        mState = state;
+
+        switch (state) {
             case STATE_NORMAL:
                 // Show mMainView
                 mViewTransition.showView(0, animation);
@@ -500,10 +526,25 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 // Show mProgress
                 mViewTransition2.showView(1, animation);
                 break;
+            default:
+            case STATE_INIT:
             case STATE_FAILED:
                 // Show mFailedView
                 mViewTransition.showView(2, animation);
                 break;
+        }
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP &&
+                (oldState == STATE_INIT || oldState == STATE_FAILED || oldState == STATE_REFRESH) &&
+                (state == STATE_NORMAL || state == STATE_REFRESH_HEADER)) {
+            if (!createCircularReveal()) {
+                SimpleHandler.getInstance().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        createCircularReveal();
+                    }
+                });
+            }
         }
     }
 
@@ -767,8 +808,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     public void onClick(View v) {
         if (mFailedView == v) {
             if (request()) {
-                mState = STATE_REFRESH;
-                adjustViewVisibility(true);
+                adjustViewVisibility(STATE_REFRESH, true);
             }
         } else if (mOtherActions == v) {
             ensurePopMenu();
@@ -875,18 +915,16 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     }
 
     private void onGetGalleryDetailSuccess(GalleryDetail result) {
-        mState = STATE_NORMAL;
         mGalleryDetail = result;
-        adjustViewVisibility(true);
+        adjustViewVisibility(STATE_NORMAL, true);
         bindViewSecond();
     }
 
     private void onGetGalleryDetailFailure(Exception e) {
         e.printStackTrace();
-        mState = STATE_FAILED;
         String error = ExceptionUtils.getReadableString(getContext(), e);
         mFailedText.setText(error);
-        adjustViewVisibility(true);
+        adjustViewVisibility(STATE_FAILED, true);
     }
 
     private static class GetGalleryDetailListener implements EhClient.Callback<GalleryDetail> {

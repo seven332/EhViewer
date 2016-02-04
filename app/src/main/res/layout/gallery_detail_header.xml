@@ -15,109 +15,109 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/header"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <RelativeLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/color_bg"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/shadow_bottom"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="24dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary">
+        android:orientation="vertical">
 
-        <com.hippo.widget.LoadImageView
-            android:id="@+id/thumb"
-            android:layout_width="@dimen/gallery_detail_thumb_width"
-            android:layout_height="@dimen/gallery_detail_thumb_height"
-            android:layout_marginTop="@dimen/keyline_margin"
-            android:layout_marginLeft="@dimen/keyline_margin"
-            android:layout_marginBottom="@dimen/keyline_margin"/>
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/thumb"
-            android:layout_alignTop="@id/thumb"
-            android:layout_marginLeft="@dimen/keyline_margin"
-            android:layout_marginRight="@dimen/keyline_margin"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/text_little_large"
-            android:maxLines="5"
-            android:ellipsize="end"/>
-
-        <TextView
-            android:id="@+id/uploader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/title"
-            android:layout_below="@id/title"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="@dimen/keyline_margin"
-            android:textColor="@color/primary_text_dark"
-            android:textSize="@dimen/text_little_small"
-            android:singleLine="true"
-            android:ellipsize="end"/>
-
-        <TextView
-            android:id="@+id/category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/title"
-            android:layout_below="@id/uploader"
-            android:layout_marginTop="12dp"
-            android:layout_marginRight="@dimen/keyline_margin"
-            android:background="@android:color/white"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textAllCaps="true"
-            android:textStyle="bold"/>
-
-        <com.hippo.widget.SimpleImageView
-            android:id="@+id/other_actions"
-            android:layout_width="48dp"
-            android:layout_height="56dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"/>
-
-    </RelativeLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@color/colorPrimary"/>
+            <com.hippo.widget.LoadImageView
+                android:id="@+id/thumb"
+                android:layout_width="@dimen/gallery_detail_thumb_width"
+                android:layout_height="@dimen/gallery_detail_thumb_height"
+                android:layout_marginTop="@dimen/keyline_margin"
+                android:layout_marginLeft="@dimen/keyline_margin"
+                android:layout_marginBottom="@dimen/keyline_margin"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="@drawable/shadow_bottom"/>
-            
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/thumb"
+                android:layout_alignTop="@id/thumb"
+                android:layout_marginLeft="@dimen/keyline_margin"
+                android:layout_marginRight="@dimen/keyline_margin"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/text_little_large"
+                android:maxLines="5"
+                android:ellipsize="end"/>
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/uploader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/title"
+                android:layout_below="@id/title"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="@dimen/keyline_margin"
+                android:textColor="@color/primary_text_dark"
+                android:textSize="@dimen/text_little_small"
+                android:singleLine="true"
+                android:ellipsize="end"/>
+
+            <TextView
+                android:id="@+id/category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/title"
+                android:layout_below="@id/uploader"
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="@dimen/keyline_margin"
+                android:background="@android:color/white"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textAllCaps="true"
+                android:textStyle="bold"/>
+
+            <com.hippo.widget.SimpleImageView
+                android:id="@+id/other_actions"
+                android:layout_width="48dp"
+                android:layout_height="56dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"/>
+
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/action_card"
@@ -153,5 +153,5 @@
                 android:text="@string/read"/>
 
         </LinearLayout>
-    </FrameLayout>
-</LinearLayout>
+    </LinearLayout>
+</FrameLayout>
