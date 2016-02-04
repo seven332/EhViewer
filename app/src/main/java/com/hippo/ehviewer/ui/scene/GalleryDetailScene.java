@@ -297,8 +297,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         View mainView = main.findViewById(R.id.scroll_view);
         View progressView = main.findViewById(R.id.progress_view);
         mFailedView = (ViewGroup) main.findViewById(R.id.tip);
+        SimpleImageView mFailedImage = (SimpleImageView) mFailedView.getChildAt(0);
         mFailedText = (TextView) mFailedView.getChildAt(1);
         mFailedView.setOnClickListener(this);
+        mFailedImage.setDrawable(VectorDrawable.create(getContext(), R.drawable.sadpanda_head));
         mViewTransition = new ViewTransition(mainView, progressView, mFailedView);
 
         mHeader = mainView.findViewById(R.id.header);
@@ -362,6 +364,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mPreviews = belowHeader.findViewById(R.id.previews);
         mGridLayout = (SimpleGridLayout) mPreviews.findViewById(R.id.grid_layout);
         mPreviewText = (TextView) mPreviews.findViewById(R.id.preview_text);
+        RippleSalon.addRipple(mPreviews, false);
+        mPreviews.setOnClickListener(this);
 
         mProgress = mainView.findViewById(R.id.progress);
 
@@ -706,8 +710,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             mPreviewText.setText(R.string.no_more_previews);
         } else {
             mPreviewText.setText(R.string.more_previews);
-            RippleSalon.addRipple(mPreviews, false);
-            mPreviews.setOnClickListener(this);
         }
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
