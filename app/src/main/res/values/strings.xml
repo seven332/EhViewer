@@ -133,7 +133,7 @@
     </plurals>
 
     <string name="favored_times">\u2665 %d</string>
-    <string name="rating_text">%1$s (%2$d)</string>
+    <string name="rating_text">%1$s (%2$.2f, %3$d)</string>
 
     <string name="favorite">Favorite</string>
     <string name="torrent_count">Torrent (%d)</string>
@@ -148,6 +148,9 @@
     <string name="more_previews">More previews</string>
     <string name="refresh">Refresh</string>
     <string name="open_in_other_app">Open in other app</string>
+
+    <string name="rate_successfully">Rate successfully</string>
+    <string name="rate_failed">Rate failed</string>
 
     <!-- Rating -->
     <string name="rating10">MASTERPIECE</string>
@@ -191,6 +194,7 @@
 
     <!-- Gallery Comments -->
     <string name="gallery_comments">Gallery Comments</string>
+    <string name="no_one_comments_gallery">No one comments on this gallery</string>
 
     <!-- Gallery Previews -->
     <string name="gallery_previews">Gallery Previews</string>

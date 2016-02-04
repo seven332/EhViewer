@@ -26,14 +26,20 @@ import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.parser.GalleryDetailParser;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
+import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.client.parser.SignInParser;
 import com.hippo.network.StatusCodeException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.Headers;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class EhEngine {
@@ -43,6 +49,11 @@ public class EhEngine {
     private static final String SAD_PANDA_DISPOSITION = "inline; filename=\"sadpanda.jpg\"";
     private static final String SAD_PANDA_TYPE = "image/gif";
     private static final String SAD_PANDA_LENGTH = "9615";
+
+    public static final long APIUID = 1363542;
+    public static final String APIKEY = "f4b5407ab1727b9d08d7";
+
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     private static void throwException(Call call, int code, @Nullable Headers headers,
             @Nullable String body, Exception e) throws Exception {
@@ -162,6 +173,44 @@ public class EhEngine {
             headers = response.headers();
             body = response.body().string();
             return Pair.create(GalleryDetailParser.parseLargePreview(body),GalleryDetailParser.parsePreviewPages(body));
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+    }
+
+    // rating 0.0 - 0.5
+    public static Call prepareRateGallery(OkHttpClient okHttpClient,
+            EhConfig ehConfig, int gid, String token, float rating) throws JSONException {
+        final JSONObject json = new JSONObject();
+        json.put("method", "rategallery");
+        json.put("apiuid", APIUID);
+        json.put("apikey", APIKEY);
+        json.put("gid", gid);
+        json.put("token", token);
+        json.put("rating", (int) Math.ceil(rating * 2));
+
+        final RequestBody body = RequestBody.create(JSON, json.toString());
+
+        String url = EhUrl.API_EX;
+        Log.d(TAG, url);
+
+        Request request = new EhRequestBuilder(url, ehConfig)
+                .post(body)
+                .build();
+        return okHttpClient.newCall(request);
+    }
+
+    public static RateGalleryParser.Result doRateGallery(Call call) throws Exception {
+        String body = null;
+        Headers headers = null;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            return RateGalleryParser.parse(body);
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;

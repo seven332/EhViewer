@@ -16,8 +16,10 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.transition.TransitionInflater;
@@ -37,6 +40,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.OpenUrlHelper;
@@ -52,6 +56,7 @@ import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.GalleryTagGroup;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
+import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
@@ -66,6 +71,7 @@ import com.hippo.vector.VectorDrawable;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.AutoWrapLayout;
 import com.hippo.widget.LoadImageView;
+import com.hippo.widget.ProgressiveRatingBar;
 import com.hippo.widget.SimpleGridLayout;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.SimpleHandler;
@@ -152,11 +158,14 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private AnimatedVectorDrawable mHeartOutlineDrawable;
     private PopupMenu mPopupMenu;
 
+    @Nullable
     private String mAction;
+    @Nullable
     private GalleryInfo mGalleryInfo;
     private int mGid;
     private String mToken;
 
+    @Nullable
     private GalleryDetail mGalleryDetail;
     private int mRequestId;
 
@@ -767,7 +776,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     private String getAllRatingText(float rating, int ratedTimes) {
         Resources resources = getResources();
-        return resources.getString(R.string.rating_text, getRatingText(rating, resources), ratedTimes);
+        return resources.getString(R.string.rating_text, getRatingText(rating, resources), rating, ratedTimes);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -836,7 +845,21 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             Bundle args = new Bundle();
             args.putParcelable(GalleryInfoScene.KEY_GALLERY_DETAIL, mGalleryDetail);
             startScene(GalleryInfoScene.class, args);
+        } else if (mRate == v) {
+            if (mGalleryDetail == null) {
+                return;
+            }
+            RateDialogHelper helper = new RateDialogHelper(mGalleryDetail.rating);
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.rate)
+                    .setView(helper.view)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok, helper)
+                    .show();
         } else if (mComments == v) {
+            if (mGalleryDetail == null) {
+                return;
+            }
             Bundle args = new Bundle();
             args.putParcelableArray(GalleryCommentsScene.KEY_COMMENTS, mGalleryDetail.comments);
             startScene(GalleryCommentsScene.class, args);
@@ -929,6 +952,17 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         adjustViewVisibility(STATE_FAILED, true);
     }
 
+    private void onRateGallerySuccess(RateGalleryParser.Result result) {
+        if (mGalleryDetail != null) {
+            mGalleryDetail.rating = result.rating;
+            mGalleryDetail.ratedTimes = result.ratedTimes;
+        }
+
+        // Update UI
+        mRatingText.setText(getAllRatingText(result.rating, result.ratedTimes));
+        mRating.setRating(result.rating);
+    }
+
     private static class GetGalleryDetailListener implements EhClient.Callback<GalleryDetail> {
 
         private EhApplication mApplication;
@@ -983,6 +1017,100 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         @Override
         public void onCancel() {
             mApplication.removeGlobalStuff(this);
+        }
+    }
+
+    private class RateDialogHelper implements ProgressiveRatingBar.OnUserRateListener,
+            DialogInterface.OnClickListener {
+
+        public View view;
+        private ProgressiveRatingBar mRatingBar;
+        private TextView mRatingText;
+
+        @SuppressLint("InflateParams")
+        private RateDialogHelper(float rating) {
+            view = getActivity().getLayoutInflater().inflate(R.layout.dialog_rate, null);
+            mRatingText = (TextView) view.findViewById(R.id.rating_text);
+            mRatingBar = (ProgressiveRatingBar) view.findViewById(R.id.rating_view);
+            mRatingText.setText(getRatingText(rating, getResources()));
+            mRatingBar.setRating(rating);
+            mRatingBar.setOnUserRateListener(this);
+        }
+
+        @Override
+        public void onUserRate(float rating) {
+            mRatingText.setText(getRatingText(rating, getResources()));
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (which != DialogInterface.BUTTON_POSITIVE || mGalleryDetail == null) {
+                return;
+            }
+
+            EhRequest request = new EhRequest()
+                    .setMethod(EhClient.METHOD_GET_RATE_GALLERY)
+                    .setArgs(mGalleryDetail.gid, mGalleryDetail.token, mRatingBar.getRating())
+                    .setCallback(new RateGalleryListener(getContext(),
+                            ((StageActivity) getActivity()).getStageId(), getTag(), mGalleryDetail.gid));
+            EhApplication.getEhClient(getContext()).execute(request);
+        }
+    }
+
+    private static class RateGalleryListener implements EhClient.Callback<RateGalleryParser.Result> {
+
+        private EhApplication mApplication;
+        private int mStageId;
+        private String mSceneTag;
+        private int mGid;
+
+        public RateGalleryListener(Context context, int stageId, String sceneTag, int gid) {
+            mApplication = (EhApplication) context.getApplicationContext();
+            mStageId = stageId;
+            mSceneTag = sceneTag;
+            mGid = gid;
+        }
+
+        private GalleryDetailScene getScene() {
+            StageActivity stage = mApplication.findStageActivityById(mStageId);
+            if (stage == null) {
+                return null;
+            }
+            SceneFragment scene = stage.findSceneByTag(mSceneTag);
+            if (scene instanceof GalleryDetailScene) {
+                return (GalleryDetailScene) scene;
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public void onSuccess(RateGalleryParser.Result result) {
+            // Show toast
+            Toast.makeText(mApplication, R.string.rate_successfully, Toast.LENGTH_SHORT).show();
+
+            GalleryDetailScene scene = getScene();
+            if (scene != null) {
+                scene.onRateGallerySuccess(result);
+            } else {
+                // Update rating in cache
+                GalleryDetail gd = EhApplication.getGalleryDetailCache(mApplication).get(mGid);
+                if (gd != null) {
+                    gd.rating = result.rating;
+                    gd.ratedTimes = result.ratedTimes;
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            e.printStackTrace();
+            // Show toast
+            Toast.makeText(mApplication, R.string.rate_failed, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onCancel() {
         }
     }
 }

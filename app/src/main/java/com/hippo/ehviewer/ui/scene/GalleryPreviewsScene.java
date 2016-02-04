@@ -139,6 +139,13 @@ public class GalleryPreviewsScene extends ToolbarScene {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mAdapter = null;
+        mHelper = null;
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setTitle(R.string.gallery_previews);

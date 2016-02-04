@@ -42,7 +42,9 @@ import com.hippo.ehviewer.OpenUrlHelper;
 import com.hippo.util.ReadableTime;
 import com.hippo.util.TextUrl;
 import com.hippo.vector.VectorDrawable;
+import com.hippo.view.ViewTransition;
 import com.hippo.widget.LinkifyTextView;
+import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.LayoutUtils;
 
 public final class GalleryCommentsScene extends ToolbarScene
@@ -52,7 +54,9 @@ public final class GalleryCommentsScene extends ToolbarScene
     public static final String KEY_COMMENTS = "comments";
 
     private GalleryComment[] mComments;
+
     private CommentAdapter mAdapter;
+    private ViewTransition mViewTransition;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,6 +103,8 @@ public final class GalleryCommentsScene extends ToolbarScene
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_gallery_comments, container, false);
         EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.recycler_view);
+        View tip = view.findViewById(R.id.tip);
+        SimpleImageView tipImage = (SimpleImageView) tip.findViewById(R.id.tip_image);
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
         mAdapter = new CommentAdapter();
@@ -115,9 +121,26 @@ public final class GalleryCommentsScene extends ToolbarScene
         recyclerView.setOnItemClickListener(this);
         recyclerView.setOnItemLongClickListener(this);
 
+        tipImage.setDrawable(VectorDrawable.create(getContext(), R.drawable.sadpanda_head));
+
         fab.setImageDrawable(VectorDrawable.create(getContext(), R.drawable.ic_reply));
 
+        mViewTransition = new ViewTransition(recyclerView, tip);
+
+        if (mComments == null || mComments.length <= 0) {
+            mViewTransition.showView(1);
+        } else {
+            mViewTransition.showView(0);
+        }
+
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mAdapter = null;
+        mViewTransition = null;
     }
 
     @Override

@@ -32,6 +32,31 @@
         android:paddingBottom="@dimen/corner_fab_margin"
         android:clipToPadding="false"/>
 
+    <LinearLayout
+        android:id="@+id/tip"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <com.hippo.widget.SimpleImageView
+            android:id="@+id/tip_image"
+            android:layout_width="168dp"
+            android:layout_height="168dp"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:text="@string/no_one_comments_gallery"/>
+
+    </LinearLayout>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         style="@style/Widget.Design.FloatingActionButton"
