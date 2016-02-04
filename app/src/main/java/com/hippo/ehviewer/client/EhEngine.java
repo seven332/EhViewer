@@ -18,8 +18,10 @@ package com.hippo.ehviewer.client;
 
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.Pair;
 
 import com.hippo.ehviewer.client.data.GalleryDetail;
+import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.parser.GalleryDetailParser;
@@ -137,6 +139,29 @@ public class EhEngine {
             headers = response.headers();
             body = response.body().string();
             return GalleryDetailParser.parse(body);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+    }
+
+    public static Call prepareGetLargePreviewSet(OkHttpClient okHttpClient,
+            EhConfig ehConfig, String url) {
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, ehConfig).build();
+        return okHttpClient.newCall(request);
+    }
+
+    public static Pair<LargePreviewSet, Integer> doGetLargePreviewSet(Call call) throws Exception {
+        String body = null;
+        Headers headers = null;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            return Pair.create(GalleryDetailParser.parseLargePreview(body),GalleryDetailParser.parsePreviewPages(body));
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;

@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -67,10 +68,21 @@ import com.hippo.widget.LoadImageView;
 import com.hippo.widget.SimpleGridLayout;
 import com.hippo.widget.SimpleImageView;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Locale;
 
 // TODO Update drawer checked item
 public class GalleryDetailScene extends BaseScene implements View.OnClickListener {
+
+    @IntDef({STATE_NORMAL, STATE_REFRESH, STATE_REFRESH_HEADER, STATE_FAILED})
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface State {}
+
+    private static final int STATE_NORMAL = 0;
+    private static final int STATE_REFRESH = 1;
+    private static final int STATE_REFRESH_HEADER = 2;
+    private static final int STATE_FAILED = 3;
 
     public final static String KEY_ACTION = "action";
     public static final String ACTION_GALLERY_INFO = "action_gallery_info";
@@ -144,6 +156,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private GalleryDetail mGalleryDetail;
     private int mRequestId;
 
+    @State
+    private int mState;
+
     private void handleArgs(Bundle args) {
         if (args == null) {
             return;
@@ -188,6 +203,18 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             return mGid;
         } else {
             return -1;
+        }
+    }
+
+    private String getToken() {
+        if (mGalleryDetail != null) {
+            return mGalleryDetail.token;
+        } else if (mGalleryInfo != null) {
+            return mGalleryInfo.token;
+        } else if (ACTION_GID_TOKEN.equals(mAction)) {
+            return mToken;
+        } else {
+            return null;
         }
     }
 
@@ -324,6 +351,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         mComments = (LinearLayout) belowHeader.findViewById(R.id.comments);
         mCommentsText = (TextView) mComments.findViewById(R.id.comments_text);
+        RippleSalon.addRipple(mComments, false);
+        mComments.setOnClickListener(this);
 
         mPreviews = belowHeader.findViewById(R.id.previews);
         mGridLayout = (SimpleGridLayout) mPreviews.findViewById(R.id.grid_layout);
@@ -337,12 +366,17 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             if (mGalleryDetail != null) {
                 bindViewSecond();
                 setTransitionName();
+                mState = STATE_NORMAL;
             } else if (mGalleryInfo != null) {
+                mState = STATE_REFRESH_HEADER;
                 bindViewFirst();
                 setTransitionName();
+            } else {
+                mState = STATE_REFRESH;
             }
         } else {
-            mFailedText.setText(R.string.cannot_find_gallery);
+            mState = STATE_FAILED;
+            mFailedText.setText(R.string.error_cannot_find_gallery);
         }
         adjustViewVisibility(false);
 
@@ -449,22 +483,27 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     }
 
     private void adjustViewVisibility(boolean animation) {
-        if (mGalleryDetail != null) {
-            // Show mMainView
-            mViewTransition.showView(0, animation);
-            // Show mBelowHeader
-            mViewTransition2.showView(0, animation);
-        } else if (mGalleryInfo != null) {
-            // Show mMainView
-            mViewTransition.showView(0, animation);
-            // Show mProgress
-            mViewTransition2.showView(1, animation);
-        } else if (TextUtils.isEmpty(mFailedText.getText())) {
-            // Show mProgressView
-            mViewTransition.showView(1, animation);
-        } else {
-            // Show mFailedView
-            mViewTransition.showView(2, animation);
+        switch (mState) {
+            case STATE_NORMAL:
+                // Show mMainView
+                mViewTransition.showView(0, animation);
+                // Show mBelowHeader
+                mViewTransition2.showView(0, animation);
+                break;
+            case STATE_REFRESH:
+                // Show mProgressView
+                mViewTransition.showView(1, animation);
+                break;
+            case STATE_REFRESH_HEADER:
+                // Show mMainView
+                mViewTransition.showView(0, animation);
+                // Show mProgress
+                mViewTransition2.showView(1, animation);
+                break;
+            case STATE_FAILED:
+                // Show mFailedView
+                mViewTransition.showView(2, animation);
+                break;
         }
     }
 
@@ -587,9 +626,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     }
 
     private void bindComments(GalleryComment[] comments) {
-        RippleSalon.addRipple(mComments, false);
-        mComments.setOnClickListener(this);
-
         mComments.removeViews(0, mComments.getChildCount() - 1);
 
         final int maxShowCount = 2;
@@ -629,11 +665,13 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             mPreviewText.setText(R.string.no_more_previews);
         } else {
             mPreviewText.setText(R.string.more_previews);
+            RippleSalon.addRipple(mPreviews, false);
+            mPreviews.setOnClickListener(this);
         }
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         for (int i = 0, size = previewSet.size(); i < size; i++) {
-            View view = inflater.inflate(R.layout.item_preview, mGridLayout, false);
+            View view = inflater.inflate(R.layout.item_gallery_preview, mGridLayout, false);
             mGridLayout.addView(view);
 
             int index = previewSet.getIndexAt(i);
@@ -708,7 +746,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         PopupMenu popup = new PopupMenu(getContext(), mOtherActions, Gravity.TOP);
         mPopupMenu = popup;
-        popup.getMenuInflater().inflate(R.menu.gallery_detail_other_action, popup.getMenu());
+        popup.getMenuInflater().inflate(R.menu.gallery_detail, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -729,7 +767,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     public void onClick(View v) {
         if (mFailedView == v) {
             if (request()) {
-                mFailedText.setText("");
+                mState = STATE_REFRESH;
                 adjustViewVisibility(true);
             }
         } else if (mOtherActions == v) {
@@ -760,6 +798,16 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             Bundle args = new Bundle();
             args.putParcelableArray(GalleryCommentsScene.KEY_COMMENTS, mGalleryDetail.comments);
             startScene(GalleryCommentsScene.class, args);
+        } else if (mPreviews == v) {
+            int gid = getGid();
+            String token = getToken();
+            if (gid == -1 || token == null) {
+                return;
+            }
+            Bundle args = new Bundle();
+            args.putInt(GalleryPreviewsScene.KEY_GID, gid);
+            args.putString(GalleryPreviewsScene.KEY_TOKEN, token);
+            startScene(GalleryPreviewsScene.class, args);
         } else {
             Object tag;
             tag = v.getTag(R.id.tag);
@@ -827,12 +875,15 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     }
 
     private void onGetGalleryDetailSuccess(GalleryDetail result) {
+        mState = STATE_NORMAL;
         mGalleryDetail = result;
         adjustViewVisibility(true);
         bindViewSecond();
     }
 
     private void onGetGalleryDetailFailure(Exception e) {
+        e.printStackTrace();
+        mState = STATE_FAILED;
         String error = ExceptionUtils.getReadableString(getContext(), e);
         mFailedText.setText(error);
         adjustViewVisibility(true);
@@ -869,6 +920,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
             // Put gallery detail to cache
             EhApplication.getGalleryDetailCache(mApplication).put(result.gid, result);
+            EhApplication.getLargePreviewSetCache(mApplication).put(
+                    EhCacheKeyFactory.getLargePreviewSetKey(result.gid, 0), result.previewSet);
+            EhApplication.getPreviewPagesCache(mApplication).put(result.gid, result.previewPages);
 
             // Notify success
             GalleryDetailScene scene = getScene();

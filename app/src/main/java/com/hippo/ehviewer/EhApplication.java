@@ -27,6 +27,7 @@ import com.hippo.drawable.ImageWrapper;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.data.GalleryDetail;
+import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.network.StatusCodeException;
 import com.hippo.okhttp.CookieDB;
 import com.hippo.scene.SceneApplication;
@@ -52,6 +53,8 @@ public class EhApplication extends SceneApplication {
     private ImageWrapperHelper mImageWrapperHelper;
     private Conaco<ImageWrapper> mConaco;
     private LruCacheEx<Integer, GalleryDetail> mGalleryDetailCache;
+    private LruCacheEx<String, LargePreviewSet> mLargePreviewSetCache;
+    private LruCacheEx<Integer, Integer> mPreviewPagesCache;
 
     @Override
     public void onCreate() {
@@ -178,5 +181,35 @@ public class EhApplication extends SceneApplication {
             });
         }
         return application.mGalleryDetailCache;
+    }
+
+    @NonNull
+    public static LruCacheEx<String, LargePreviewSet> getLargePreviewSetCache(@NonNull Context context) {
+        EhApplication application = ((EhApplication) context.getApplicationContext());
+        if (application.mLargePreviewSetCache == null) {
+            // Max size 50, 3 min timeout
+            application.mLargePreviewSetCache = new LruCacheEx<>(50,  3 * 60 * 1000, new Comparator<String>() {
+                @Override
+                public int compare(String lhs, String rhs) {
+                    return lhs.compareTo(rhs);
+                }
+            });
+        }
+        return application.mLargePreviewSetCache;
+    }
+
+    @NonNull
+    public static LruCacheEx<Integer, Integer> getPreviewPagesCache(@NonNull Context context) {
+        EhApplication application = ((EhApplication) context.getApplicationContext());
+        if (application.mPreviewPagesCache == null) {
+            // Max size 50, 3 min timeout
+            application.mPreviewPagesCache = new LruCacheEx<>(50,  3 * 60 * 1000, new Comparator<Integer>() {
+                @Override
+                public int compare(Integer lhs, Integer rhs) {
+                    return lhs - rhs;
+                }
+            });
+        }
+        return application.mPreviewPagesCache;
     }
 }

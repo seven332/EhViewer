@@ -33,9 +33,10 @@ public class EhUrl {
 
     public static String getGalleryDetailUrl(int gid, String token, int index) {
         StringBuilder sb = new StringBuilder(HOST_EX);
-        sb.append("g/").append(gid).append('/').append(token);
+        // TODO set hc 1 or 0
+        sb.append("g/").append(gid).append('/').append(token).append("/?hc=1");
         if (index != 0) {
-            sb.append("/?p=").append(index);
+            sb.append("&p=").append(index);
         }
         return sb.toString();
     }

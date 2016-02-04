@@ -76,4 +76,16 @@
         <attr name="itemMargin" format="dimension"/>
     </declare-styleable>
 
+    <declare-styleable name="Slider">
+        <attr name="start" format="integer"/>
+        <attr name="end" format="integer"/>
+        <attr name="slider_progress" format="integer"/>
+        <attr name="thickness"/>
+        <attr name="radius" format="dimension"/>
+        <attr name="color"/>
+        <attr name="textColor" format="color"/>
+        <attr name="textSize" format="dimension"/>
+        <attr name="dark" format="boolean"/>
+    </declare-styleable>
+
 </resources>

@@ -252,7 +252,7 @@ public class GalleryDetailParser {
         */
     }
 
-    private static LargePreviewSet parseLargePreview(String body) {
+    public static LargePreviewSet parseLargePreview(String body) {
         Matcher m = LARGE_PREVIEW_PATTERN.matcher(body);
         LargePreviewSet largePreviewSet = new LargePreviewSet();
 

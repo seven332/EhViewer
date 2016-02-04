@@ -124,7 +124,7 @@
     <string name="star_5">5 stars</string>
 
     <!-- Gallery detail -->
-    <string name="cannot_find_gallery">Can\'t find the gallery</string>
+    <string name="error_cannot_find_gallery">Can\'t find the gallery</string>
     <string name="read">Read</string>
     <string name="more_information">More information</string>
     <plurals name="page_count">
@@ -191,6 +191,11 @@
 
     <!-- Gallery Comments -->
     <string name="gallery_comments">Gallery Comments</string>
+
+    <!-- Gallery Previews -->
+    <string name="gallery_previews">Gallery Previews</string>
+    <string name="go_to">Go to</string>
+    <string name="error_out_of_range">Out of range</string>
 
     <!-- Readable Time -->
     <string name="from_the_future">From the future</string>

@@ -40,6 +40,7 @@ public class EhClient {
     public static final int METHOD_SIGN_IN = 0;
     public static final int METHOD_GET_GALLERY_LIST = 1;
     public static final int METHOD_GET_GALLERY_DETAIL = 2;
+    public static final int METHOD_GET_LARGE_PREVIEW_SET = 3;
 
     private final ThreadPoolExecutor mRequestThreadPool;
     private final OkHttpClient mOkHttpClient;
@@ -138,6 +139,16 @@ public class EhClient {
             }
         }
 
+        private Object getLargePreviewSet(EhConfig ehConfig, Object... params) throws Exception {
+            Call call = EhEngine.prepareGetLargePreviewSet(mOkHttpClient, ehConfig, (String) params[0]);
+            if (!mStop) {
+                mCall = call;
+                return EhEngine.doGetLargePreviewSet(call);
+            } else {
+                throw new CancelledException();
+            }
+        }
+
         @Override
         protected Object doInBackground(Object... params) {
             try {
@@ -148,6 +159,8 @@ public class EhClient {
                         return getGalleryList(mEhConfig, params);
                     case METHOD_GET_GALLERY_DETAIL:
                         return getGalleryDetail(mEhConfig, params);
+                    case METHOD_GET_LARGE_PREVIEW_SET:
+                        return getLargePreviewSet(mEhConfig, params);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }
