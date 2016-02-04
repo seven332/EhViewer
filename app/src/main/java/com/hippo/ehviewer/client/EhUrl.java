@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.client;
 
+import com.hippo.network.UrlBuilder;
+
 public class EhUrl {
 
     public static final String DOMAIN_EX = "exhentai.org";
@@ -30,16 +32,17 @@ public class EhUrl {
     public static final String API_EX = HOST_EX + "api.php";
 
     public static String getGalleryDetailUrl(int gid, String token) {
-        return getGalleryDetailUrl(gid, token, 0);
+        return getGalleryDetailUrl(gid, token, 0, false);
     }
 
-    public static String getGalleryDetailUrl(int gid, String token, int index) {
-        StringBuilder sb = new StringBuilder(HOST_EX);
-        // TODO set hc 1 or 0
-        sb.append("g/").append(gid).append('/').append(token).append("/?hc=1");
+    public static String getGalleryDetailUrl(int gid, String token, int index, boolean allComment) {
+        UrlBuilder builder = new UrlBuilder(HOST_EX + "g/" + gid + '/' + token + '/');
         if (index != 0) {
-            sb.append("&p=").append(index);
+            builder.addQuery("p", index);
         }
-        return sb.toString();
+        if (allComment) {
+            builder.addQuery("hc", 1);
+        }
+        return builder.build();
     }
 }

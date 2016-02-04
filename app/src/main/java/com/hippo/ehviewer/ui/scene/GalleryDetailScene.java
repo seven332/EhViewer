@@ -63,6 +63,7 @@ import com.hippo.scene.StageActivity;
 import com.hippo.scene.TransitionHelper;
 import com.hippo.text.Html;
 import com.hippo.text.URLImageGetter;
+import com.hippo.util.ActivityHelper;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.ReadableTime;
@@ -188,7 +189,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     }
 
     @Nullable
-    private String getGalleryDetailUrl() {
+    private String getGalleryDetailUrl(boolean allComment) {
         int gid;
         String token;
         if (mGalleryDetail != null) {
@@ -203,7 +204,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         } else {
             return null;
         }
-        return EhUrl.getGalleryDetailUrl(gid, token);
+        return EhUrl.getGalleryDetailUrl(gid, token, 0, allComment);
     }
 
     // -1 for error
@@ -483,7 +484,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     }
 
     private boolean request() {
-        String url = getGalleryDetailUrl();
+        String url = getGalleryDetailUrl(true);
         if (url == null) {
             return false;
         }
@@ -804,7 +805,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_open_in_other_app:
-                        String url = getGalleryDetailUrl();
+                        String url = getGalleryDetailUrl(false);
                         if (url != null) {
                             OpenUrlHelper.openUrl(getActivity(), url, false, false);
                         }
@@ -845,6 +846,11 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             Bundle args = new Bundle();
             args.putParcelable(GalleryInfoScene.KEY_GALLERY_DETAIL, mGalleryDetail);
             startScene(GalleryInfoScene.class, args);
+        } else if (mShare == v) {
+            String url = getGalleryDetailUrl(false);
+            if (url != null) {
+                ActivityHelper.share(getActivity(), url);
+            }
         } else if (mRate == v) {
             if (mGalleryDetail == null) {
                 return;

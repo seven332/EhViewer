@@ -232,7 +232,7 @@ public class GalleryPreviewsScene extends ToolbarScene {
                 return;
             }
 
-            String url = EhUrl.getGalleryDetailUrl(mGid, mToken, page);
+            String url = EhUrl.getGalleryDetailUrl(mGid, mToken, page, false);
             EhRequest request = new EhRequest();
             request.setMethod(EhClient.METHOD_GET_LARGE_PREVIEW_SET);
             request.setCallback(new GetLargePreviewSetListener(getContext(),
