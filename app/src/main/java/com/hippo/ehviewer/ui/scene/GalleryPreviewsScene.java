@@ -150,6 +150,9 @@ public class GalleryPreviewsScene extends ToolbarScene {
         super.onViewCreated(view, savedInstanceState);
         setTitle(R.string.gallery_previews);
         setNavigationIcon(VectorDrawable.create(getContext(), R.drawable.ic_arrow_left));
+
+        // Clear nav checked item
+        setNavCheckedItem(0);
     }
 
     @Override

@@ -39,6 +39,9 @@ public class BaseScene extends SceneFragment {
         }
     }
 
+    /**
+     * @param resId 0 for clear
+     */
     public void setNavCheckedItem(@IdRes int resId) {
         FragmentActivity activity = getActivity();
         if (activity instanceof MainActivity) {

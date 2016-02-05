@@ -402,6 +402,14 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Clear nav checked item
+        setNavCheckedItem(0);
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
 

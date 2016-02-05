@@ -137,6 +137,8 @@ public final class GalleryListScene extends BaseScene
 
     private boolean mHasFirstRefresh = false;
 
+    private int mNavCheckedId = 0;
+
     @Override
     public int getLaunchMode() {
         return LAUNCH_MODE_SINGLE_TOP;
@@ -247,6 +249,7 @@ public final class GalleryListScene extends BaseScene
             checkedItemId = 0;
         }
         setNavCheckedItem(checkedItemId);
+        mNavCheckedId = checkedItemId;
     }
 
     @Nullable
@@ -316,6 +319,14 @@ public final class GalleryListScene extends BaseScene
         }
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Update nav checked item
+        setNavCheckedItem(mNavCheckedId);
     }
 
     @Override

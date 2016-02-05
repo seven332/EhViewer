@@ -164,6 +164,9 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
         super.onViewCreated(view, savedInstanceState);
         setTitle(R.string.gallery_info);
         setNavigationIcon(VectorDrawable.create(getContext(), R.drawable.ic_arrow_left));
+
+        // Clear nav checked item
+        setNavCheckedItem(0);
     }
 
     @Override
