@@ -122,22 +122,25 @@ public abstract class StageActivity extends AppCompatActivity {
     }
 
     public void startScene(Class<?> clazz) {
-        startScene(clazz, null, null);
+        startScene(clazz, null, null, 0);
     }
 
     public void startScene(Class<?> clazz, Bundle args) {
-        startScene(clazz, args, null);
+        startScene(clazz, args, null, 0);
     }
 
     public void startScene(Class<?> clazz, TransitionHelper transitionHelper) {
-        startScene(clazz, null, transitionHelper);
+        startScene(clazz, null, transitionHelper, 0);
     }
 
     public void startScene(Class<?> clazz,
-            Bundle args, TransitionHelper transitionHelper) {
+            Bundle args, TransitionHelper transitionHelper, int flag) {
+        boolean createNewScene = true;
+        boolean removeAllTheOthers = (flag & SceneFragment.FLAG_REMOVE_ALL_THE_OTHER_SCENES) != 0;
+
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        // Old scene
+        // Current fragment
         Fragment currentFragment = null;
         if (mSceneTagList.size() > 0) {
             // Get last tag
@@ -149,22 +152,42 @@ public abstract class StageActivity extends AppCompatActivity {
         if (currentFragment instanceof SceneFragment && clazz.isInstance(currentFragment)) {
             SceneFragment currentScene = (SceneFragment) currentFragment;
             if (currentScene.getLaunchMode() == SceneFragment.LAUNCH_MODE_SINGLE_TOP) {
+                createNewScene = false;
                 if (args != null) {
                     currentScene.onNewArguments(args);
                 }
-                return;
+                if (!removeAllTheOthers) {
+                    // Done!
+                    return;
+                }
             }
         }
 
-        // Create new scene
-        SceneFragment newScene = newSceneInstance(clazz);
-        newScene.setArguments(args);
+        SceneFragment newScene = null;
+        String newTag = null;
+        if (createNewScene) {
+            // Create new scene
+            newScene = newSceneInstance(clazz);
+            newScene.setArguments(args);
 
-        // Create new scene tag
-        String newTag = Integer.toString(mIdGenerator.nextId());
+            // Create new scene tag
+            newTag = Integer.toString(mIdGenerator.nextId());
 
+            // Add new tag to list
+            mSceneTagList.add(newTag);
+        }
+
+        // 1. createNewScene false, removeAllTheOthers false
+        // Will not go here
+        // 2. createNewScene false, removeAllTheOthers true
+        // Keep current scene, remove all the others, no animation
+        // 3. createNewScene true, removeAllTheOthers false
+        // Add new scene, detach current fragment, with animation if exist currentFragment
+        // 4. createNewScene true, removeAllTheOthers true
+        // Add new scene, remove all the others, with animation if exist currentFragment
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        if (currentFragment != null) {
+        // Animation
+        if (newScene != null && currentFragment != null) {
             if (transitionHelper == null || !transitionHelper.onTransition(
                     this, transaction, currentFragment, newScene)) {
                 // Clear shared item
@@ -179,16 +202,39 @@ public abstract class StageActivity extends AppCompatActivity {
                 // Set default animation
                 transaction.setCustomAnimations(R.anim.scene_open_enter, R.anim.scene_open_exit);
             }
+        }
+        // Remove scene
+        if (removeAllTheOthers) {
+            int startIndex = mSceneTagList.size() - 2;
+            // Remove scene
+            for (int i = startIndex; i >= 0; i--) {
+                String tag = mSceneTagList.get(i);
+                Fragment fragment = fragmentManager.findFragmentByTag(tag);
+                if (fragment != null) {
+                    transaction.remove(fragment);
+                } else {
+                    Log.d(TAG, "Can't find fragment with tag: " + tag);
+                }
+            }
+            // Remove scene tag
+            if (startIndex >= 0) {
+                mSceneTagList.subList(0, startIndex + 1).clear();
+            }
+        }
+        // Detach
+        if (!removeAllTheOthers && currentFragment != null) {
             transaction.detach(currentFragment);
         }
-        transaction.add(getContainerViewId(), newScene, newTag);
+        // Add
+        if (newScene != null) {
+            transaction.add(getContainerViewId(), newScene, newTag);
+        }
         transaction.commit();
 
-        // Add new tag to list
-        mSceneTagList.add(newTag);
-
         // Update SoftInputMode
-        getWindow().setSoftInputMode(newScene.getSoftInputMode());
+        if (newScene != null) {
+            getWindow().setSoftInputMode(newScene.getSoftInputMode());
+        }
     }
 
     int getStackIndex(SceneFragment scene) {

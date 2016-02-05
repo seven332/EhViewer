@@ -38,6 +38,8 @@ public class SceneFragment extends Fragment {
     public static final int LAUNCH_MODE_STANDARD = 0;
     public static final int LAUNCH_MODE_SINGLE_TOP = 1;
 
+    public static final int FLAG_REMOVE_ALL_THE_OTHER_SCENES = 0x1;
+
     @LaunchMode
     public int getLaunchMode() {
         return LAUNCH_MODE_STANDARD;
@@ -51,21 +53,27 @@ public class SceneFragment extends Fragment {
     public void onNewArguments(@NonNull Bundle args) {}
 
     public <T extends SceneFragment> void startScene(Class<T> clazz) {
-        startScene(clazz, null, null);
+        startScene(clazz, null, null, 0);
     }
 
     public <T extends SceneFragment> void startScene(Class<T> clazz, Bundle args) {
-        startScene(clazz, args, null);
+        startScene(clazz, args, null, 0);
     }
 
     public <T extends SceneFragment> void startScene(Class<T> clazz, TransitionHelper transitionHelper) {
-        startScene(clazz, null, transitionHelper);
+        startScene(clazz, null, transitionHelper, 0);
     }
 
-    public <T extends SceneFragment> void startScene(Class<T> clazz, Bundle args, TransitionHelper transitionHelper) {
+    public <T extends SceneFragment> void startScene(Class<T> clazz, Bundle args,
+            TransitionHelper transitionHelper) {
+        startScene(clazz, args, transitionHelper, 0);
+    }
+
+    public <T extends SceneFragment> void startScene(Class<T> clazz, Bundle args,
+            TransitionHelper transitionHelper, int flag) {
         FragmentActivity activity = getActivity();
         if (activity instanceof StageActivity) {
-            ((StageActivity) activity).startScene(clazz, args, transitionHelper);
+            ((StageActivity) activity).startScene(clazz, args, transitionHelper, flag);
         }
     }
 

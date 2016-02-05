@@ -30,6 +30,7 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
 import com.hippo.ehviewer.ui.scene.LoginScene;
 import com.hippo.ehviewer.ui.scene.WarningScene;
+import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 
 public final class MainActivity extends StageActivity
@@ -114,7 +115,7 @@ public final class MainActivity extends StageActivity
         if (id == R.id.nav_homepage) {
             Bundle args = new Bundle();
             args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
-            startScene(GalleryListScene.class, args);
+            startScene(GalleryListScene.class, args, null, SceneFragment.FLAG_REMOVE_ALL_THE_OTHER_SCENES);
         } else if (id == R.id.nav_whats_hot) {
 
         } else if (id == R.id.nav_favourite) {
