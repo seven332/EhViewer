@@ -111,13 +111,14 @@ public class Settings {
         putBoolean(KEY_SHOW_WARNING, value);
     }
 
-
-
     public static EhConfig getEhConfig() {
         return sEhConfig;
     }
 
+    private static final String KEY_SHOW_JPN_TITLE = "show_jpn_title";
+    private static final boolean DEFAULT_SHOW_JPN_TITLE = false;
 
-
-
+    public static boolean getShowJpnTitle() {
+        return getBoolean(KEY_SHOW_JPN_TITLE, DEFAULT_SHOW_JPN_TITLE);
+    }
 }

@@ -201,6 +201,11 @@
     <string name="go_to">Go to</string>
     <string name="error_out_of_range">Out of range</string>
 
+    <string name="settings_eh_title">EH</string>
+    <string name="settings_eh_show_jpn_title_title">Show Japanese title</string>
+    <string name="settings_eh_show_jpn_title_summary_on">Try to show Japanese title. It takes more time to get gallery list</string>
+    <string name="settings_eh_show_jpn_title_summary_off">Show default title. It is usually English title</string>
+
     <!-- Readable Time -->
     <string name="from_the_future">From the future</string>
     <string name="just_now">Just now</string>

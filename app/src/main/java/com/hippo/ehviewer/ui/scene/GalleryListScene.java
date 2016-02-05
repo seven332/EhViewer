@@ -53,6 +53,7 @@ import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
@@ -926,7 +927,7 @@ public final class GalleryListScene extends BaseScene
         public void onBindViewHolder(GalleryListHolder holder, int position) {
             GalleryInfo gi = mHelper.getDataAt(position);
             holder.thumb.load(EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb, true);
-            holder.title.setText(gi.title);
+            holder.title.setText(EhUtils.getSuitableTitle(gi));
             holder.uploader.setText(gi.uploader);
             holder.rating.setRating(gi.rating);
             TextView category = holder.category;
@@ -965,7 +966,7 @@ public final class GalleryListScene extends BaseScene
             request.setMethod(EhClient.METHOD_GET_GALLERY_LIST);
             request.setCallback(new GetGalleryListListener(getContext(),
                     ((StageActivity) getActivity()).getStageId(), getTag(), taskId));
-            request.setArgs(url);
+            request.setArgs(url, Settings.getShowJpnTitle()); // TODO check tag filter
             mClient.execute(request);
         }
 

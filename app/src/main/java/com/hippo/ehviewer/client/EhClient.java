@@ -124,7 +124,7 @@ public class EhClient {
             Call call = EhEngine.prepareGetGalleryList(mOkHttpClient, ehConfig, (String) params[0]);
             if (!mStop) {
                 mCall = call;
-                return EhEngine.doGetGalleryList(call);
+                return EhEngine.doGetGalleryList(call, (Boolean) params[1], mOkHttpClient);
             } else {
                 throw new CancelledException();
             }

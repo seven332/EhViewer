@@ -121,10 +121,10 @@ public class EhUtils {
     }
 
     public static String getSuitableTitle(GalleryInfo gi) {
-        if (false) {//;Settings.getJpnTitle()) {
+        if (Settings.getShowJpnTitle()) {
             return TextUtils.isEmpty(gi.titleJpn) ? gi.title : gi.titleJpn;
         } else {
-            return gi.title;
+            return TextUtils.isEmpty(gi.title) ? gi.titleJpn : gi.title;
         }
     }
 

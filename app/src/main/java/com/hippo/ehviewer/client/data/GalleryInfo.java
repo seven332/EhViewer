@@ -86,6 +86,7 @@ public class GalleryInfo implements Parcelable {
     public String posted;
     public String uploader;
     public float rating;
+    public String[] simpleTags;
 
     /**
      * language from title

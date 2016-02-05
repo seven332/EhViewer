@@ -21,17 +21,23 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.hippo.ehviewer.client.data.GalleryDetail;
+import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.parser.GalleryDetailParser;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
+import com.hippo.ehviewer.client.parser.ParserUtils;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.client.parser.SignInParser;
 import com.hippo.network.StatusCodeException;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -117,7 +123,62 @@ public class EhEngine {
         return okHttpClient.newCall(request);
     }
 
-    public static GalleryListParser.Result doGetGalleryList(Call call) throws Exception {
+    private static GalleryInfo getGalleryInfoByGid(List<GalleryInfo> galleryInfos, int gid) {
+        for (int i = 0, size = galleryInfos.size(); i < size; i++) {
+            GalleryInfo gi = galleryInfos.get(i);
+            if (gi.gid == gid) {
+                return gi;
+            }
+        }
+        return null;
+    }
+
+    private static void parseGalleryApi(String body, List<GalleryInfo> galleryInfos) throws JSONException {
+        JSONObject jo = new JSONObject(body);
+        JSONArray ja = jo.getJSONArray("gmetadata");
+
+        for (int i = 0, length = ja.length(); i < length; i++) {
+            JSONObject g = ja.getJSONObject(i);
+            int gid = g.getInt("gid");
+            GalleryInfo gi = getGalleryInfoByGid(galleryInfos, gid);
+            if (gi == null) {
+                continue;
+            }
+            gi.titleJpn = ParserUtils.trim(g.getString("title_jpn"));
+            // tags
+            JSONArray tagJa = g.getJSONArray("tags");
+            int tagLength = tagJa.length();
+            String[] tags = new String[tagLength];
+            for (int j = 0; j < tagLength; j++) {
+                tags[j] = tagJa.getString(j);
+            }
+            gi.simpleTags = tags;
+        }
+    }
+
+    private static void doRequestGalleryApi(List<GalleryInfo> galleryInfos, OkHttpClient okHttpClient)
+            throws Exception {
+        JSONObject json = new JSONObject();
+        json.put("method", "gdata");
+        JSONArray ja = new JSONArray();
+        for (int i = 0, size = galleryInfos.size(); i < size; i++) {
+            GalleryInfo gi = galleryInfos.get(i);
+            JSONArray g = new JSONArray();
+            g.put(gi.gid);
+            g.put(gi.token);
+            ja.put(g);
+        }
+        json.put("gidlist", ja);
+        json.put("namespace", 1);
+
+        String url = EhUrl.API_EX;
+        Log.d(TAG, url);
+
+        Request request = new EhRequestBuilder(url)
+                .post(RequestBody.create(JSON, json.toString()))
+                .build();
+        Call call = okHttpClient.newCall(request);
+
         String body = null;
         Headers headers = null;
         int code = -1;
@@ -126,7 +187,41 @@ public class EhEngine {
             code = response.code();
             headers = response.headers();
             body = response.body().string();
-            return GalleryListParser.parse(body);
+            parseGalleryApi(body, galleryInfos);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+    }
+
+    private static void requestGalleryApi(List<GalleryInfo> galleryInfos,
+            OkHttpClient okHttpClient) throws Exception {
+        final int MAX_REQUEST_SIZE = 25;
+        List<GalleryInfo> requestItems = new ArrayList<>(MAX_REQUEST_SIZE);
+        for (int i = 0, size = galleryInfos.size(); i < size; i++) {
+            requestItems.add(galleryInfos.get(i));
+            if (requestItems.size() == MAX_REQUEST_SIZE || i == size - 1) {
+                doRequestGalleryApi(requestItems, okHttpClient);
+                requestItems.clear();
+            }
+        }
+    }
+
+    public static GalleryListParser.Result doGetGalleryList(Call call, boolean callApi,
+            OkHttpClient okHttpClient) throws Exception {
+        String body = null;
+        Headers headers = null;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            GalleryListParser.Result result = GalleryListParser.parse(body);
+            if (callApi && result.galleryInfos.size() > 0) {
+                requestGalleryApi(result.galleryInfos, okHttpClient);
+            }
+            return result;
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;
@@ -216,4 +311,6 @@ public class EhEngine {
             throw e;
         }
     }
+
+    // TODO Add get gallery api info
 }

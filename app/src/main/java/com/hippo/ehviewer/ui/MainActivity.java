@@ -16,7 +16,9 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -36,8 +38,11 @@ import com.hippo.scene.StageActivity;
 public final class MainActivity extends StageActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String KEY_NAV_CHECKED_ITEM = "nav_checked_item";
+
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavView;
+    private int mNavCheckedItem = 0;
 
     @Override
     public int getContainerViewId() {
@@ -56,7 +61,41 @@ public final class MainActivity extends StageActivity
 
         if (savedInstanceState == null) {
             onInit();
+        } else {
+            onRestore(savedInstanceState);
         }
+    }
+
+    private void onInit() {
+        if (Settings.getShowWarning()) {
+            setDrawerLayoutEnable(false);
+            startScene(WarningScene.class);
+        } else if (!EhUtils.hasSignedIn(this)) {
+            setDrawerLayoutEnable(false);
+            startScene(LoginScene.class);
+        } else {
+            setDrawerLayoutEnable(true);
+            Bundle args = new Bundle();
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+            startScene(GalleryListScene.class, args);
+        }
+    }
+
+    private void onRestore(Bundle savedInstanceState) {
+        mNavCheckedItem = savedInstanceState.getInt(KEY_NAV_CHECKED_ITEM);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putInt(KEY_NAV_CHECKED_ITEM, mNavCheckedItem);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        setNavCheckedItem(mNavCheckedItem);
     }
 
     public void setDrawerLayoutEnable(boolean enable) {
@@ -76,25 +115,11 @@ public final class MainActivity extends StageActivity
     }
 
     public void setNavCheckedItem(@IdRes int resId) {
+        mNavCheckedItem = resId;
         if (resId == 0) {
             mNavView.setCheckedItem(R.id.nav_stub);
         } else {
             mNavView.setCheckedItem(resId);
-        }
-    }
-
-    private void onInit() {
-        if (Settings.getShowWarning()) {
-            setDrawerLayoutEnable(false);
-            startScene(WarningScene.class);
-        } else if (!EhUtils.hasSignedIn(this)) {
-            setDrawerLayoutEnable(false);
-            startScene(LoginScene.class);
-        } else {
-            setDrawerLayoutEnable(true);
-            Bundle args = new Bundle();
-            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
-            startScene(GalleryListScene.class, args);
         }
     }
 
@@ -109,7 +134,11 @@ public final class MainActivity extends StageActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
+        // Don't select twice
+        if (item.isChecked()) {
+            return false;
+        }
+
         int id = item.getItemId();
 
         if (id == R.id.nav_homepage) {
@@ -125,7 +154,8 @@ public final class MainActivity extends StageActivity
         } else if (id == R.id.nav_download) {
 
         } else if (id == R.id.nav_settings) {
-
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
         }
 
         if (id != R.id.nav_stub) {

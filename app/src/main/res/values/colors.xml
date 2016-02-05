@@ -28,6 +28,7 @@
 
     <!-- Text -->
     <color name="primary_text_default_light">#de000000</color>
+    <color name="primary_text_default_light_inverse">#ffffffff</color>
     <color name="primary_text_disabled_dark">#4dffffff</color>
     <color name="secondary_text_default_light">#8a000000</color>
     <color name="secondary_text_disabled_dark">#36ffffff</color>
@@ -50,6 +51,7 @@
     <color name="light_green_600">#ff7cb342</color>
     <color name="yellow_800">#fff9a825</color>
     <color name="deep_orange_400">#ffff7043</color>
+    <color name="grey_500">#ff9e9e9e</color>
 
     <color name="colorPrimary">@color/teal_500</color>
     <color name="colorPrimaryDark">@color/teal_700</color>

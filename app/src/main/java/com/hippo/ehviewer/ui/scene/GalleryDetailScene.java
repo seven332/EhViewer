@@ -578,7 +578,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         if (ACTION_GALLERY_INFO.equals(mAction) && mGalleryInfo != null) {
             GalleryInfo gi = mGalleryInfo;
             mThumb.load(EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb, true);
-            mTitle.setText(gi.title);
+            mTitle.setText(EhUtils.getSuitableTitle(gi));
             mUploader.setText(gi.uploader);
             mCategory.setText(EhUtils.getCategory(gi.category));
             mCategory.setTextColor(EhUtils.getCategoryColor(gi.category));
@@ -618,7 +618,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         if (TextUtils.isEmpty(mCategory.getText())) {
             mThumb.load(EhCacheKeyFactory.getThumbKey(gd.gid), gd.thumb, true);
-            mTitle.setText(gd.title);
+            mTitle.setText(EhUtils.getSuitableTitle(gd));
             mUploader.setText(gd.uploader);
             mCategory.setText(EhUtils.getCategory(gd.category));
             mCategory.setTextColor(EhUtils.getCategoryColor(gd.category));

@@ -88,4 +88,24 @@
         <attr name="dark" format="boolean"/>
     </declare-styleable>
 
+    <declare-styleable name="FixedSwitchPreference">
+        <!-- The summary for the Preference in a PreferenceActivity screen when the
+             SwitchPreference is checked. If separate on/off summaries are not
+             needed, the summary attribute can be used instead. -->
+        <attr name="summaryOn" format="string"/>
+        <!-- The summary for the Preference in a PreferenceActivity screen when the
+             SwitchPreference is unchecked. If separate on/off summaries are not
+             needed, the summary attribute can be used instead. -->
+        <attr name="summaryOff" format="string"/>
+        <!-- The text used on the switch itself when in the "on" state.
+             This should be a very SHORT string, as it appears in a small space. -->
+        <attr name="switchTextOn" format="string"/>
+        <!-- The text used on the switch itself when in the "off" state.
+             This should be a very SHORT string, as it appears in a small space. -->
+        <attr name="switchTextOff" format="string"/>
+        <!-- The state (true for on, or false for off) that causes dependents to be disabled. By default,
+             dependents will be disabled when this is unchecked, so the value of this preference is false. -->
+        <attr name="disableDependentsState" format="boolean"/>
+    </declare-styleable>
+
 </resources>
