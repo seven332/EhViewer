@@ -52,8 +52,8 @@ import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
 import com.hippo.ehviewer.EhApplication;
-import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUtils;
@@ -76,6 +76,7 @@ import com.hippo.widget.ContentLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.OffsetLayout;
 import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.SimpleHandler;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -657,6 +658,7 @@ public final class GalleryListScene extends BaseScene
 
     private class SearchBarMoveHelper extends RecyclerView.OnScrollListener {
 
+        private boolean mShow;
         private ValueAnimator mSearchBarMoveAnimator;
 
         public void cancelAnimation() {
@@ -709,6 +711,10 @@ public final class GalleryListScene extends BaseScene
         }
 
         private void returnSearchBarPosition() {
+            returnSearchBarPosition(true);
+        }
+
+        private void returnSearchBarPosition(boolean animation) {
             if (mSearchBar.getHeight() == 0) {
                 // Layout not called
                 return;
@@ -735,7 +741,24 @@ public final class GalleryListScene extends BaseScene
                 offset = -mSearchBar.getBottom();
             }
 
-            if (offset != 0) {
+            if (offset == 0) {
+                // No need to scroll
+                return;
+            }
+
+            if (animation) {
+                if (mSearchBarMoveAnimator != null) {
+                    if (mShow == show) {
+                        // The same target, no need to do animation
+                        return;
+                    } else {
+                        // Cancel it
+                        mSearchBarMoveAnimator.cancel();
+                        mSearchBarMoveAnimator = null;
+                    }
+                }
+
+                mShow = show;
                 final boolean needRequestLayout = mSearchBar.getBottom() <= 0 && offset > 0;
                 final ValueAnimator va = ValueAnimator.ofInt(0, offset);
                 va.setDuration(ANIMATE_TIME);
@@ -765,11 +788,14 @@ public final class GalleryListScene extends BaseScene
                         }
                     }
                 });
+                mSearchBarMoveAnimator = va;
+                va.start();
+            } else {
                 if (mSearchBarMoveAnimator != null) {
                     mSearchBarMoveAnimator.cancel();
                 }
-                mSearchBarMoveAnimator = va;
-                va.start();
+                mSearchBar.offsetTopAndBottom(offset);
+                ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offset;
             }
         }
 
@@ -783,49 +809,60 @@ public final class GalleryListScene extends BaseScene
                 return;
             }
 
-            // Cancel old animator
-            if (mSearchBarMoveAnimator != null) {
-                mSearchBarMoveAnimator.cancel();
+            int offset = -((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY;
+
+            if (offset == 0) {
+                // No need to scroll
+                return;
             }
 
-            int offset = -((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY;
-            if (offset != 0) {
-                if (animation) {
-                    final boolean needRequestLayout = mSearchBar.getBottom() <= 0 && offset > 0;
-                    final ValueAnimator va = ValueAnimator.ofInt(0, offset);
-                    va.setDuration(ANIMATE_TIME);
-                    va.addListener(new SimpleAnimatorListener() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            mSearchBarMoveAnimator = null;
-                        }
-                    });
-                    va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                        int lastValue;
-                        boolean hasRequestLayout;
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator animation) {
-                            int value = (Integer) animation.getAnimatedValue();
-                            int offsetStep = value - lastValue;
-                            lastValue = value;
-                            mSearchBar.offsetTopAndBottom(offsetStep);
-                            ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offsetStep;
-
-                            if (!hasRequestLayout && needRequestLayout && mSearchBar.getBottom() > 0) {
-                                hasRequestLayout = true;
-                                mSearchBar.requestLayout();
-                            }
-                        }
-                    });
-                    if (mSearchBarMoveAnimator != null) {
+            if (animation) {
+                if (mSearchBarMoveAnimator != null) {
+                    if (mShow) {
+                        // The same target, no need to do animation
+                        return;
+                    } else {
+                        // Cancel it
                         mSearchBarMoveAnimator.cancel();
+                        mSearchBarMoveAnimator = null;
                     }
-                    mSearchBarMoveAnimator = va;
-                    va.start();
-                } else {
-                    mSearchBar.offsetTopAndBottom(offset);
-                    ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offset;
                 }
+
+                mShow = true;
+                final boolean needRequestLayout = mSearchBar.getBottom() <= 0 && offset > 0;
+                final ValueAnimator va = ValueAnimator.ofInt(0, offset);
+                va.setDuration(ANIMATE_TIME);
+                va.addListener(new SimpleAnimatorListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mSearchBarMoveAnimator = null;
+                    }
+                });
+                va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    int lastValue;
+                    boolean hasRequestLayout;
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        int value = (Integer) animation.getAnimatedValue();
+                        int offsetStep = value - lastValue;
+                        lastValue = value;
+                        mSearchBar.offsetTopAndBottom(offsetStep);
+                        ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offsetStep;
+
+                        if (!hasRequestLayout && needRequestLayout && mSearchBar.getBottom() > 0) {
+                            hasRequestLayout = true;
+                            mSearchBar.requestLayout();
+                        }
+                    }
+                });
+                mSearchBarMoveAnimator = va;
+                va.start();
+            } else {
+                if (mSearchBarMoveAnimator != null) {
+                    mSearchBarMoveAnimator.cancel();
+                }
+                mSearchBar.offsetTopAndBottom(offset);
+                ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offset;
             }
         }
     }
@@ -939,6 +976,18 @@ public final class GalleryListScene extends BaseScene
         @Override
         protected void notifyItemRangeInserted(int positionStart, int itemCount) {
             mAdapter.notifyItemRangeInserted(positionStart, itemCount);
+        }
+
+        @Override
+        protected void onScrollToPosition() {
+            super.onScrollToPosition();
+
+            SimpleHandler.getInstance().post(new Runnable() {
+                @Override
+                public void run() {
+                    mSearchBarMoveHelper.returnSearchBarPosition();
+                }
+            });
         }
     }
 
