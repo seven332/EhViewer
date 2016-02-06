@@ -222,13 +222,15 @@ public final class GalleryCommentsScene extends ToolbarScene
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void showEditPanelWithAnimationL() {
         mInAnimation = true;
-        mFab.setTranslationX(0);
-        mFab.setTranslationY(0);
+        mFab.setTranslationX(0.0f);
+        mFab.setTranslationY(0.0f);
+        mFab.setScaleX(1.0f);
+        mFab.setScaleY(1.0f);
         int fabEndX = mEditPanel.getLeft() + (mEditPanel.getWidth() / 2) - (mFab.getWidth() / 2);
         int fabEndY = mEditPanel.getTop() + (mEditPanel.getHeight() / 2) - (mFab.getHeight() / 2);
-        mFab.animate().x(fabEndX).y(fabEndY)
+        mFab.animate().x(fabEndX).y(fabEndY).scaleX(0.0f).scaleY(0.0f)
                 .setInterpolator(AnimationUtils.SLOW_FAST_SLOW_INTERPOLATOR)
-                .setDuration(300).setListener(new SimpleAnimatorListener() {
+                .setDuration(300L).setListener(new SimpleAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mFab.setVisibility(View.INVISIBLE);
@@ -246,10 +248,6 @@ public final class GalleryCommentsScene extends ToolbarScene
                 animator.start();
             }
         }).start();
-        int halfW = mFab.getWidth() / 2;
-        int halfH = mFab.getHeight() / 2;
-        ViewAnimationUtils.createCircularReveal(mFab, halfW, halfH, (float) Math.hypot(halfW, halfH), 0)
-                .setDuration(300).start();
     }
 
     private void showEditPanel(boolean animation) {
@@ -273,7 +271,7 @@ public final class GalleryCommentsScene extends ToolbarScene
         int halfW = mEditPanel.getWidth() / 2;
         int halfH = mEditPanel.getHeight() / 2;
         Animator animator = ViewAnimationUtils.createCircularReveal(mEditPanel, halfW, halfH,
-                (float) Math.hypot(halfW, halfH), 0).setDuration(300);
+                (float) Math.hypot(halfW, halfH), 0.0f).setDuration(300L);
         animator.addListener(new SimpleAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -283,18 +281,16 @@ public final class GalleryCommentsScene extends ToolbarScene
                 int fabStartY = mEditPanel.getTop() + (mEditPanel.getHeight() / 2) - (mFab.getHeight() / 2);
                 mFab.setX(fabStartX);
                 mFab.setY(fabStartY);
-                mFab.animate().translationX(0).translationY(0)
+                mFab.setScaleX(0.0f);
+                mFab.setScaleY(0.0f);
+                mFab.animate().translationX(0.0f).translationY(0.0f).scaleX(1.0f).scaleY(1.0f)
                         .setInterpolator(AnimationUtils.SLOW_FAST_SLOW_INTERPOLATOR)
-                        .setDuration(300).setListener(new SimpleAnimatorListener() {
+                        .setDuration(300L).setListener(new SimpleAnimatorListener() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         mInAnimation = false;
                     }
                 }).start();
-                int halfW = mFab.getWidth() / 2;
-                int halfH = mFab.getHeight() / 2;
-                ViewAnimationUtils.createCircularReveal(mFab, halfW, halfH, 0, (float) Math.hypot(halfW, halfH))
-                        .setDuration(300).start();
             }
         });
         animator.start();
