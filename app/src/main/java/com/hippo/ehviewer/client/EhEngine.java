@@ -20,6 +20,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
 
+import com.hippo.ehviewer.client.data.GalleryComment;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
@@ -306,6 +307,35 @@ public class EhEngine {
             headers = response.headers();
             body = response.body().string();
             return RateGalleryParser.parse(body);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+    }
+
+    public static Call prepareCommentGallery(OkHttpClient okHttpClient,
+            EhConfig ehConfig, String url, String comment) {
+        FormBody.Builder builder = new FormBody.Builder()
+                .add("commenttext", comment)
+                .add("postcomment", "Post New");
+
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, ehConfig)
+                .post(builder.build())
+                .build();
+        return okHttpClient.newCall(request);
+    }
+
+    public static GalleryComment[] doCommentGallery(Call call) throws Exception {
+        String body = null;
+        Headers headers = null;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            return GalleryDetailParser.parseComment(body);
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;

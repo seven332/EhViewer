@@ -27,6 +27,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.scene.Announcer;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
 
@@ -68,12 +69,12 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
             if (EhUtils.hasSignedIn(getContext())) {
                 Bundle args = new Bundle();
                 args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
-                startScene(GalleryListScene.class, args);
+                startScene(new Announcer(GalleryListScene.class).setArgs(args));
                 finish();
                 // Enable drawer
                 setDrawerLayoutEnable(true);
             } else {
-                startScene(LoginScene.class);
+                startScene(new Announcer(LoginScene.class));
                 finish();
             }
         }

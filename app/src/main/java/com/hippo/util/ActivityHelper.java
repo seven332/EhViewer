@@ -17,11 +17,15 @@
 package com.hippo.util;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.R;
@@ -60,6 +64,26 @@ public class ActivityHelper {
         } catch (ActivityNotFoundException e) {
             Toast.makeText(from, R.string.error_cant_find_activity, Toast.LENGTH_SHORT).show();
             return false;
+        }
+    }
+
+    public static void showSoftInput(Context context, View view) {
+        showSoftInput(context, view, true);
+    }
+
+    public static void showSoftInput(Context context, View view, boolean requestFocus) {
+        if (requestFocus) {
+            view.requestFocus();
+        }
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Service.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(view, 0);
+    }
+
+    public static void hideSoftInput(Activity activity) {
+        View view = activity.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 }

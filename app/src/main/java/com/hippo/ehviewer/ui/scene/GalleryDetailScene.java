@@ -58,6 +58,7 @@ import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.TransitionHelper;
@@ -857,7 +858,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         } else if (mInfo == v) {
             Bundle args = new Bundle();
             args.putParcelable(GalleryInfoScene.KEY_GALLERY_DETAIL, mGalleryDetail);
-            startScene(GalleryInfoScene.class, args);
+            startScene(new Announcer(GalleryInfoScene.class).setArgs(args));
         } else if (mShare == v) {
             String url = getGalleryDetailUrl(false);
             if (url != null) {
@@ -882,7 +883,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             args.putInt(GalleryCommentsScene.KEY_GID, mGalleryDetail.gid);
             args.putString(GalleryCommentsScene.KEY_TOKEN, mGalleryDetail.token);
             args.putParcelableArray(GalleryCommentsScene.KEY_COMMENTS, mGalleryDetail.comments);
-            startScene(GalleryCommentsScene.class, args);
+            startScene(new Announcer(GalleryCommentsScene.class).setArgs(args));
         } else if (mPreviews == v) {
             int gid = getGid();
             String token = getToken();
@@ -892,7 +893,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             Bundle args = new Bundle();
             args.putInt(GalleryPreviewsScene.KEY_GID, gid);
             args.putString(GalleryPreviewsScene.KEY_TOKEN, token);
-            startScene(GalleryPreviewsScene.class, args);
+            startScene(new Announcer(GalleryPreviewsScene.class).setArgs(args));
         } else {
             Object tag;
             tag = v.getTag(R.id.tag);

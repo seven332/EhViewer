@@ -47,4 +47,10 @@
     <style name="AppTheme.Main" parent="AppTheme.NoActionBar">
     </style>
 
+    <style name="CommentEditText" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@android:color/white</item>
+    </style>
+
 </resources>

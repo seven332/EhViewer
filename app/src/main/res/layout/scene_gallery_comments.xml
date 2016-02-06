@@ -57,6 +57,45 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/edit_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom"
+        android:visibility="invisible">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/shadow_top"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/colorPrimary">
+
+            <EditText
+                android:id="@+id/edit_text"
+                android:theme="@style/CommentEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="56dp"
+                android:maxHeight="112dp"
+                android:gravity="left|top"
+                android:inputType="textMultiLine"/>
+
+            <com.hippo.widget.SimpleImageView
+                android:id="@+id/send"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:padding="16dp"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         style="@style/Widget.Design.FloatingActionButton"

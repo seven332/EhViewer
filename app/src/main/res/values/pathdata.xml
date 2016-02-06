@@ -25,6 +25,7 @@
     <string name="pd_heart" translatable="false">M12,12L12,12L12,12C12,12 12,12 12,12C12,12 12,12 12,12C12,12 12,12 12,12H12C12,12 12,12 12,12C12,12 12,12 12,12C12,12 12,12 12,12M16.5,3C14.76,3 13.09,3.81 12,5.08C10.91,3.81 9.24,3 7.5,3C4.42,3 2,5.41 2,8.5C2,12.27 5.4,15.36 10.55,20.03L12,21.35L13.45,20.03C18.6,15.36 22,12.27 22,8.5C22,5.41 19.58,3 16.5,3Z</string>
     <string name="pd_arrow_left" translatable="false">M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z</string>
     <string name="pd_reply" translatable="false">M10,9V5L3,12L10,19V14.9C15,14.9 18.5,16.5 21,20C20,15 17,10 10,9Z</string>
+    <string name="pd_send" translatable="false">M2,21L23,12L2,3V10L17,12L2,14V21Z</string>
 
     <string name="pd_slider_bubble" translatable="false">M13,0C20.2,0,26,5.9,26,13.2,26,16.9,24,20.8,18.7,26.1L13,32,7.2,26.2C2,20.8,0,16.9,0,13.3,0,5.9,5.8,0,13,0Z</string>
 

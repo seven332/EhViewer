@@ -52,28 +52,10 @@ public class SceneFragment extends Fragment {
 
     public void onNewArguments(@NonNull Bundle args) {}
 
-    public <T extends SceneFragment> void startScene(Class<T> clazz) {
-        startScene(clazz, null, null, 0);
-    }
-
-    public <T extends SceneFragment> void startScene(Class<T> clazz, Bundle args) {
-        startScene(clazz, args, null, 0);
-    }
-
-    public <T extends SceneFragment> void startScene(Class<T> clazz, TransitionHelper transitionHelper) {
-        startScene(clazz, null, transitionHelper, 0);
-    }
-
-    public <T extends SceneFragment> void startScene(Class<T> clazz, Bundle args,
-            TransitionHelper transitionHelper) {
-        startScene(clazz, args, transitionHelper, 0);
-    }
-
-    public <T extends SceneFragment> void startScene(Class<T> clazz, Bundle args,
-            TransitionHelper transitionHelper, int flag) {
+    public void startScene(Announcer announcer) {
         FragmentActivity activity = getActivity();
         if (activity instanceof StageActivity) {
-            ((StageActivity) activity).startScene(clazz, args, transitionHelper, flag);
+            ((StageActivity) activity).startScene(announcer);
         }
     }
 

@@ -41,6 +41,7 @@ import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.scene.Announcer;
 import com.hippo.util.ExceptionUtils;
 
 public final class LoginScene extends BaseScene implements EditText.OnEditorActionListener,
@@ -224,7 +225,7 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
     private void redirectTo() {
         Bundle args = new Bundle();
         args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
-        startScene(GalleryListScene.class, args);
+        startScene(new Announcer(GalleryListScene.class).setArgs(args));
         finish();
         // Enable drawer
         setDrawerLayoutEnable(true);

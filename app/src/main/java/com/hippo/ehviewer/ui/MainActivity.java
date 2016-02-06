@@ -32,6 +32,7 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
 import com.hippo.ehviewer.ui.scene.LoginScene;
 import com.hippo.ehviewer.ui.scene.WarningScene;
+import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 
@@ -69,15 +70,15 @@ public final class MainActivity extends StageActivity
     private void onInit() {
         if (Settings.getShowWarning()) {
             setDrawerLayoutEnable(false);
-            startScene(WarningScene.class);
+            startScene(new Announcer(WarningScene.class));
         } else if (!EhUtils.hasSignedIn(this)) {
             setDrawerLayoutEnable(false);
-            startScene(LoginScene.class);
+            startScene(new Announcer(LoginScene.class));
         } else {
             setDrawerLayoutEnable(true);
             Bundle args = new Bundle();
             args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
-            startScene(GalleryListScene.class, args);
+            startScene(new Announcer(GalleryListScene.class).setArgs(args));
         }
     }
 
@@ -144,7 +145,9 @@ public final class MainActivity extends StageActivity
         if (id == R.id.nav_homepage) {
             Bundle args = new Bundle();
             args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
-            startScene(GalleryListScene.class, args, null, SceneFragment.FLAG_REMOVE_ALL_THE_OTHER_SCENES);
+            startScene(new Announcer(GalleryListScene.class)
+                    .setArgs(args)
+                    .setFlag(SceneFragment.FLAG_REMOVE_ALL_THE_OTHER_SCENES));
         } else if (id == R.id.nav_whats_hot) {
 
         } else if (id == R.id.nav_favourite) {

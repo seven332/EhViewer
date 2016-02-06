@@ -70,7 +70,7 @@ public abstract class StageActivity extends AppCompatActivity {
 
             Bundle args = intent.getBundleExtra(KEY_SCENE_ARGS);
 
-            startScene(clazz, args);
+            startScene(new Announcer(clazz).setArgs(args));
         }
     }
 
@@ -121,22 +121,12 @@ public abstract class StageActivity extends AppCompatActivity {
         }
     }
 
-    public void startScene(Class<?> clazz) {
-        startScene(clazz, null, null, 0);
-    }
-
-    public void startScene(Class<?> clazz, Bundle args) {
-        startScene(clazz, args, null, 0);
-    }
-
-    public void startScene(Class<?> clazz, TransitionHelper transitionHelper) {
-        startScene(clazz, null, transitionHelper, 0);
-    }
-
-    public void startScene(Class<?> clazz,
-            Bundle args, TransitionHelper transitionHelper, int flag) {
+    public void startScene(Announcer announcer) {
+        Class<?> clazz = announcer.clazz;
+        Bundle args = announcer.args;
+        TransitionHelper tranHelper = announcer.tranHelper;
         boolean createNewScene = true;
-        boolean removeAllTheOthers = (flag & SceneFragment.FLAG_REMOVE_ALL_THE_OTHER_SCENES) != 0;
+        boolean removeAllTheOthers = (announcer.flag & SceneFragment.FLAG_REMOVE_ALL_THE_OTHER_SCENES) != 0;
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -188,7 +178,7 @@ public abstract class StageActivity extends AppCompatActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         // Animation
         if (newScene != null && currentFragment != null) {
-            if (transitionHelper == null || !transitionHelper.onTransition(
+            if (tranHelper == null || !tranHelper.onTransition(
                     this, transaction, currentFragment, newScene)) {
                 // Clear shared item
                 currentFragment.setSharedElementEnterTransition(null);

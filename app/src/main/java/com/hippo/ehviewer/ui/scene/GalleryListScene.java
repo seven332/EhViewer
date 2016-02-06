@@ -66,6 +66,7 @@ import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneApplication;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
@@ -449,12 +450,12 @@ public final class GalleryListScene extends BaseScene
         Bundle args = new Bundle();
         args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GALLERY_INFO);
         args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, gi);
+        Announcer announcer = new Announcer(GalleryDetailScene.class).setArgs(args);
         if (ApiHelper.SUPPORT_TRANSITION) {
             GalleryListHolder holder = (GalleryListHolder) mRecyclerView.getChildViewHolder(view);
-            startScene(GalleryDetailScene.class, args, new EnterGalleryDetailTransaction(holder));
-        } else {
-            startScene(GalleryDetailScene.class, args);
+            announcer.setTranHelper(new EnterGalleryDetailTransaction(holder));
         }
+        startScene(announcer);
         return true;
     }
 
@@ -883,7 +884,7 @@ public final class GalleryListScene extends BaseScene
         Bundle args = new Bundle();
         args.putString(KEY_ACTION, ACTION_LIST_URL_BUILDER);
         args.putParcelable(KEY_LIST_URL_BUILDER, lub);
-        scene.startScene(GalleryListScene.class, args);
+        scene.startScene(new Announcer(GalleryListScene.class).setArgs(args));
     }
 
     private class GalleryListHolder extends RecyclerView.ViewHolder {
