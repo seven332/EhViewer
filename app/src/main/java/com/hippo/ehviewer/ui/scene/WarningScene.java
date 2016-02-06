@@ -46,7 +46,7 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
         mCancel = view.findViewById(R.id.cancel);
         mOk = view.findViewById(R.id.ok);
 
-        Drawable drawable = VectorDrawable.create(getContext(), R.drawable.ic_alert);
+        Drawable drawable = VectorDrawable.create(getContext(), R.xml.ic_alert_red_x48);
         alert.setDrawable(drawable);
 
         mCancel.setOnClickListener(this);

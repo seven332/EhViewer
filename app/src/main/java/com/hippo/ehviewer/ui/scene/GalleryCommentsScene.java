@@ -157,12 +157,12 @@ public final class GalleryCommentsScene extends ToolbarScene
         recyclerView.setOnItemClickListener(this);
         recyclerView.setOnItemLongClickListener(this);
 
-        tipImage.setDrawable(VectorDrawable.create(getContext(), R.drawable.sadpanda_head));
+        tipImage.setDrawable(VectorDrawable.create(getContext(), R.xml.sadpanda_head));
 
-        mSendImage.setDrawable(VectorDrawable.create(getContext(), R.drawable.ic_send));
+        mSendImage.setDrawable(VectorDrawable.create(getContext(), R.xml.ic_send_dark_x24));
         mSendImage.setOnClickListener(this);
 
-        mFab.setImageDrawable(VectorDrawable.create(getContext(), R.drawable.ic_reply));
+        mFab.setImageDrawable(VectorDrawable.create(getContext(), R.xml.ic_reply_dark_x24));
         mFab.setOnClickListener(this);
 
         mViewTransition = new ViewTransition(recyclerView, tip);
@@ -187,7 +187,7 @@ public final class GalleryCommentsScene extends ToolbarScene
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setTitle(R.string.gallery_comments);
-        setNavigationIcon(VectorDrawable.create(getContext(), R.drawable.ic_arrow_left));
+        setNavigationIcon(VectorDrawable.create(getContext(), R.xml.ic_arrow_left_dark_x24));
 
         // Clear nav checked item
         setNavCheckedItem(0);

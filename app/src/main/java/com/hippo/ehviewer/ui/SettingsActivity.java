@@ -134,7 +134,7 @@ public final class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setActionBarUpIndicator(VectorDrawable.create(this, R.drawable.ic_arrow_left));
+        setActionBarUpIndicator(VectorDrawable.create(this, R.xml.ic_arrow_left_dark_x24));
 
         replaceHeaderLayoutResId();
     }

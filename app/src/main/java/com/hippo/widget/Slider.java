@@ -469,7 +469,7 @@ public class Slider extends View {
         @SuppressWarnings("deprecation")
         public BubbleView(Context context, Paint paint) {
             super(context);
-            mVectorDrawable = VectorDrawable.create(context, R.drawable.slider_bubble);
+            mVectorDrawable = VectorDrawable.create(context, R.xml.slider_bubble);
             setBackgroundDrawable(mVectorDrawable);
             mTextPaint = paint;
         }

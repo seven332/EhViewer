@@ -17,10 +17,10 @@
 
 <animated-vector
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:drawable="@drawable/ic_heart_outline">
+    app:drawable="@xml/ic_heart_primary_x48">
 
     <target
         app:name="v"
-        app:animation="@anim/path_heart_outline"/>
+        app:animation="@anim/path_heart"/>
 
 </animated-vector>

@@ -99,7 +99,7 @@ public class ContentLayout extends FrameLayout {
         drawable.setColor(ResourcesUtils.getAttrColor(context, R.attr.colorAccent));
         mFastScroller.setHandlerDrawable(drawable);
 
-        imageView.setDrawable(VectorDrawable.create(context, R.drawable.sadpanda_head));
+        imageView.setDrawable(VectorDrawable.create(context, R.xml.sadpanda_head));
 
         mRefreshLayout.setHeaderColorSchemeResources(
                 R.color.loading_indicator_red,

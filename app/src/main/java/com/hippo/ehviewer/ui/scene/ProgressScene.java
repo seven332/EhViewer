@@ -157,7 +157,7 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
         mTipText = (TextView) mTip.findViewById(R.id.tip_text);
 
         mTip.setOnClickListener(this);
-        tipImage.setDrawable(VectorDrawable.create(getContext(), R.drawable.sadpanda_head));
+        tipImage.setDrawable(VectorDrawable.create(getContext(), R.xml.sadpanda_head));
         mTipText.setText(mError);
 
         mViewTransition = new ViewTransition(progress, mTip);

@@ -136,7 +136,7 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         mNormalSearchMode = (RadioGroup) normalView.findViewById(R.id.normal_search_mode);
         mNormalSearchModeHelp = (SimpleImageView) normalView.findViewById(R.id.normal_search_mode_help);
         mEnableAdvanceSwitch = (SwitchCompat) normalView.findViewById(R.id.search_enable_advance);
-        Drawable helpDrawable = com.hippo.vector.VectorDrawable.create(context, R.drawable.ic_help_circle);
+        Drawable helpDrawable = com.hippo.vector.VectorDrawable.create(context, R.xml.ic_help_circle_x24);
         mNormalSearchModeHelp.setDrawable(helpDrawable);
         mNormalSearchModeHelp.setOnClickListener(this);
         RippleSalon.addRipple(mNormalSearchModeHelp, false);

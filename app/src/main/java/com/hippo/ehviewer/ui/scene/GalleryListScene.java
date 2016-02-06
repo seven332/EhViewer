@@ -206,7 +206,7 @@ public final class GalleryListScene extends BaseScene
 
     private void setSearchBarHint(Context context, SearchBar searchBar) {
         Resources resources = context.getResources();
-        Drawable searchImage = VectorDrawable.create(context, R.drawable.ic_magnify);
+        Drawable searchImage = VectorDrawable.create(context, R.xml.ic_magnify_x24);
         SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
         ssb.append(resources.getString(R.string.gallery_list_search_bar_hint));
         int textSize = (int) (searchBar.getEditTextTextSize() * 1.25);
@@ -298,7 +298,7 @@ public final class GalleryListScene extends BaseScene
 
         mSearchLayout.setHelper(this);
 
-        Drawable searchDrawable = VectorDrawable.create(getContext(), R.drawable.ic_magnify_dark);
+        Drawable searchDrawable = VectorDrawable.create(getContext(), R.xml.ic_magnify_dark_x24);
         mFab.setImageDrawable(searchDrawable);
         mFab.setOnClickListener(this);
 

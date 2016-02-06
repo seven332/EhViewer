@@ -15,12 +15,16 @@
   ~ limitations under the License.
   -->
 
-<animated-vector
+<vector
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:drawable="@drawable/ic_heart">
+    app:width="48dp"
+    app:height="48dp"
+    app:viewportWidth="24"
+    app:viewportHeight="24">
 
-    <target
+    <path
         app:name="v"
-        app:animation="@anim/path_heart"/>
+        app:pathData="@string/pd_share"
+        app:fillColor="@color/colorPrimary"/>
 
-</animated-vector>
+</vector>

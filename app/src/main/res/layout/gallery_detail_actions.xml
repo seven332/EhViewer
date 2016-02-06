@@ -68,7 +68,6 @@
                 android:layout_marginLeft="16dp"
                 android:gravity="center_horizontal"
                 android:drawablePadding="8dp"
-                android:drawableTop="@drawable/ic_utorrent_primary_x48"
                 android:textColor="@color/primary_text_light"/>
 
             <TextView
@@ -79,7 +78,6 @@
                 android:gravity="center_horizontal"
                 android:text="@string/share"
                 android:drawablePadding="8dp"
-                android:drawableTop="@drawable/ic_share_primary_x48"
                 android:textColor="@color/primary_text_light"/>
 
             <TextView
@@ -90,7 +88,6 @@
                 android:gravity="center_horizontal"
                 android:text="@string/rate"
                 android:drawablePadding="8dp"
-                android:drawableTop="@drawable/ic_thumb_up_primary_x48"
                 android:textColor="@color/primary_text_light"/>
 
         </LinearLayout>

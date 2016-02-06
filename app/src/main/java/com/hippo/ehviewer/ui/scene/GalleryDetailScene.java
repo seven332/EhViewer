@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -314,7 +315,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         SimpleImageView mFailedImage = (SimpleImageView) mFailedView.getChildAt(0);
         mFailedText = (TextView) mFailedView.getChildAt(1);
         mFailedView.setOnClickListener(this);
-        mFailedImage.setDrawable(VectorDrawable.create(getContext(), R.drawable.sadpanda_head));
+        mFailedImage.setDrawable(VectorDrawable.create(getContext(), R.xml.sadpanda_head));
         mViewTransition = new ViewTransition(mainView, progressView, mFailedView);
 
         mHeader = mainView.findViewById(R.id.header);
@@ -327,7 +328,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mActionGroup = (ViewGroup) mHeader.findViewById(R.id.action_card);
         mDownload = mActionGroup.findViewById(R.id.download);
         mRead = mActionGroup.findViewById(R.id.read);
-        mOtherActions.setDrawable(VectorDrawable.create(getContext(), R.drawable.ic_dots_vertical));
+        mOtherActions.setDrawable(VectorDrawable.create(getContext(), R.xml.ic_dots_vertical_secondary_dark_x24));
         RippleSalon.addRipple(mOtherActions, false);
         RippleSalon.addRipple(mDownload, false);
         RippleSalon.addRipple(mRead, false);
@@ -589,26 +590,30 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
-    private void ensureHeartDrawable() {
-        if (mHeartDrawable == null) {
-            mHeartDrawable = AnimatedVectorDrawable.create(getContext(), R.drawable.ic_heart_animated);
-            if (mHeartDrawable == null) {
-                throw new IllegalStateException("Can't parse heart drawable");
-            }
-            mHeartDrawable.setBounds(0, 0, mHeartDrawable.getIntrinsicWidth(),
-                    mHeartDrawable.getIntrinsicHeight());
-            mHeart.setCompoundDrawables(null, mHeartDrawable, null, null);
+    private void setActionDrawable(TextView text, Drawable drawable) {
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        text.setCompoundDrawables(null, drawable, null, null);
+    }
+
+    private void ensureActionDrawable() {
+        if (mHeartDrawable != null) {
+            return;
         }
 
-        if (mHeartOutlineDrawable == null) {
-            mHeartOutlineDrawable = AnimatedVectorDrawable.create(getContext(), R.drawable.ic_heart_outline_animated);
-            if (mHeartOutlineDrawable == null) {
-                throw new IllegalStateException("Can't parse heart drawable");
-            }
-            mHeartOutlineDrawable.setBounds(0, 0, mHeartOutlineDrawable.getIntrinsicWidth(),
-                    mHeartOutlineDrawable.getIntrinsicHeight());
-            mHeartOutline.setCompoundDrawables(null, mHeartOutlineDrawable, null, null);
-        }
+        mHeartDrawable = AnimatedVectorDrawable.create(getContext(), R.xml.ic_heart_animated);
+        setActionDrawable(mHeart, mHeartDrawable);
+
+        mHeartOutlineDrawable = AnimatedVectorDrawable.create(getContext(), R.xml.ic_heart_outline_animated);
+        setActionDrawable(mHeartOutline, mHeartOutlineDrawable);
+
+        VectorDrawable torrent = VectorDrawable.create(getContext(), R.xml.ic_utorrent_primary_x48);
+        setActionDrawable(mTorrent, torrent);
+
+        VectorDrawable share = VectorDrawable.create(getContext(), R.xml.ic_share_primary_x48);
+        setActionDrawable(mShare, share);
+
+        VectorDrawable rate = VectorDrawable.create(getContext(), R.xml.ic_thumb_up_primary_x48);
+        setActionDrawable(mRate, rate);
     }
 
     private void bindViewSecond() {
@@ -636,7 +641,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mRatingText.setText(getAllRatingText(gd.rating, gd.ratedTimes));
         mRating.setRating(gd.rating);
 
-        ensureHeartDrawable();
+        ensureActionDrawable();
         if (gd.isFavored) {
             mHeart.setVisibility(View.VISIBLE);
             mHeartOutline.setVisibility(View.GONE);

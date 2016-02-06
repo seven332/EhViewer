@@ -21,32 +21,32 @@
         <item
             android:id="@+id/nav_homepage"
             android:title="@string/homepage"
-            android:icon="@drawable/ic_homepage_x24"/>
+            android:icon="@drawable/nav_homepage"/>
 
         <item
             android:id="@+id/nav_whats_hot"
             android:title="@string/whats_hot"
-            android:icon="@drawable/ic_whats_hot_x24"/>
+            android:icon="@drawable/nav_whats_hot"/>
 
         <item
             android:id="@+id/nav_favourite"
             android:title="@string/favourite"
-            android:icon="@drawable/ic_favourite_x24"/>
+            android:icon="@drawable/nav_favourite"/>
 
         <item
             android:id="@+id/nav_history"
             android:title="@string/history"
-            android:icon="@drawable/ic_history_x24"/>
+            android:icon="@drawable/nav_history"/>
 
         <item
             android:id="@+id/nav_download"
             android:title="@string/download"
-            android:icon="@drawable/ic_download_x24"/>
+            android:icon="@drawable/nav_download"/>
 
         <item
             android:id="@+id/nav_settings"
             android:title="@string/settings"
-            android:icon="@drawable/ic_settings_x24"/>
+            android:icon="@drawable/nav_settings"/>
 
         <item
             android:id="@+id/nav_stub"
