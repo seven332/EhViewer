@@ -18,12 +18,16 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
 
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.SceneFragment;
 
 public class BaseScene extends SceneFragment {
+
+    private boolean mViewCreated;
 
     public void setDrawerLayoutEnable(boolean enable) {
         FragmentActivity activity = getActivity();
@@ -47,6 +51,22 @@ public class BaseScene extends SceneFragment {
         if (activity instanceof MainActivity) {
             ((MainActivity) activity).setNavCheckedItem(resId);
         }
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mViewCreated = true;
+    }
+
+    @Override
+    public void onDestroyView() {
+        mViewCreated = false;
+        super.onDestroyView();
+    }
+
+    public boolean isViewCreated() {
+        return mViewCreated;
     }
 
     @Override

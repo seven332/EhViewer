@@ -53,6 +53,7 @@ import com.hippo.widget.ContentLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.Slider;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.SimpleHandler;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -221,17 +222,22 @@ public class GalleryPreviewsScene extends ToolbarScene {
     private class GalleryPreviewHelper extends ContentLayout.ContentHelper<GalleryPreview> {
 
         @Override
-        protected void getPageData(int taskId, int type, int page) {
+        protected void getPageData(final int taskId, int type, int page) {
             if (mGid == -1 || mToken == null) {
                 onGetExpection(taskId, new EhException(getString(R.string.error_cannot_find_gallery)));
                 return;
             }
 
-            LargePreviewSet previewSet = EhApplication.getLargePreviewSetCache(
+            final LargePreviewSet previewSet = EhApplication.getLargePreviewSetCache(
                     getContext()).get(EhCacheKeyFactory.getLargePreviewSetKey(mGid, page));
-            Integer pages = EhApplication.getPreviewPagesCache(getContext()).get(mGid);
+            final Integer pages = EhApplication.getPreviewPagesCache(getContext()).get(mGid);
             if (previewSet != null && pages != null) {
-                onGetLargePreviewSetSuccess(Pair.create(previewSet, pages), taskId);
+                SimpleHandler.getInstance().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onGetLargePreviewSetSuccess(Pair.create(previewSet, pages), taskId);
+                    }
+                });
                 return;
             }
 
@@ -266,7 +272,7 @@ public class GalleryPreviewsScene extends ToolbarScene {
     }
 
     private void onGetLargePreviewSetSuccess(Pair<LargePreviewSet, Integer> result, int taskId) {
-        if (mHelper != null && mHelper.isCurrentTask(taskId)) {
+        if (mHelper != null && mHelper.isCurrentTask(taskId) && isViewCreated()) {
             LargePreviewSet previewSet = result.first;
             int size = previewSet.size();
             ArrayList<GalleryPreview> list = new ArrayList<>(size);
@@ -284,7 +290,7 @@ public class GalleryPreviewsScene extends ToolbarScene {
     }
 
     private void onGetLargePreviewSetFailure(Exception e, int taskId) {
-        if (mHelper != null && mHelper.isCurrentTask(taskId)) {
+        if (mHelper != null && mHelper.isCurrentTask(taskId) && isViewCreated()) {
             mHelper.onGetExpection(taskId, e);
         }
     }

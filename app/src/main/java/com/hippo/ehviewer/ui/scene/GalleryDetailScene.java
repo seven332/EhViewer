@@ -23,6 +23,7 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -88,6 +89,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     @IntDef({STATE_INIT, STATE_NORMAL, STATE_REFRESH, STATE_REFRESH_HEADER, STATE_FAILED})
     @Retention(RetentionPolicy.SOURCE)
     private @interface State {}
+
+    private static final int REQUEST_CODE_COMMENT_GALLERY = 0;
 
     private static final int STATE_INIT = -1;
     private static final int STATE_NORMAL = 0;
@@ -883,7 +886,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             args.putInt(GalleryCommentsScene.KEY_GID, mGalleryDetail.gid);
             args.putString(GalleryCommentsScene.KEY_TOKEN, mGalleryDetail.token);
             args.putParcelableArray(GalleryCommentsScene.KEY_COMMENTS, mGalleryDetail.comments);
-            startScene(new Announcer(GalleryCommentsScene.class).setArgs(args));
+            startScene(new Announcer(GalleryCommentsScene.class)
+                    .setArgs(args)
+                    .setRequestCode(this, REQUEST_CODE_COMMENT_GALLERY));
         } else if (mPreviews == v) {
             int gid = getGid();
             String token = getToken();
@@ -920,6 +925,32 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
 
         finish();
+    }
+
+    @Override
+    protected void onSceneResult(int requestCode, int resultCode, Bundle data) {
+        switch (requestCode) {
+            case REQUEST_CODE_COMMENT_GALLERY:
+                if (resultCode != RESULT_OK || data == null){
+                    break;
+                }
+                Parcelable[] array = data.getParcelableArray(GalleryCommentsScene.KEY_COMMENTS);
+                if (!(array instanceof GalleryComment[])) {
+                    break;
+                }
+                GalleryComment[] comments = (GalleryComment[]) array;
+                if (mGalleryDetail == null) {
+                    break;
+                }
+                mGalleryDetail.comments = comments;
+                if (!isViewCreated()) {
+                    break;
+                }
+                bindComments(comments);
+                break;
+            default:
+                super.onSceneResult(requestCode, resultCode, data);
+        }
     }
 
     private static class EnterGalleryListTransaction implements TransitionHelper {
@@ -962,15 +993,19 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     private void onGetGalleryDetailSuccess(GalleryDetail result) {
         mGalleryDetail = result;
-        adjustViewVisibility(STATE_NORMAL, true);
-        bindViewSecond();
+        if (isViewCreated()) {
+            adjustViewVisibility(STATE_NORMAL, true);
+            bindViewSecond();
+        }
     }
 
     private void onGetGalleryDetailFailure(Exception e) {
         e.printStackTrace();
-        String error = ExceptionUtils.getReadableString(getContext(), e);
-        mFailedText.setText(error);
-        adjustViewVisibility(STATE_FAILED, true);
+        if (isViewCreated()) {
+            String error = ExceptionUtils.getReadableString(getContext(), e);
+            mFailedText.setText(error);
+            adjustViewVisibility(STATE_FAILED, true);
+        }
     }
 
     private void onRateGallerySuccess(RateGalleryParser.Result result) {
@@ -980,8 +1015,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
 
         // Update UI
-        mRatingText.setText(getAllRatingText(result.rating, result.ratedTimes));
-        mRating.setRating(result.rating);
+        if (isViewCreated()) {
+            mRatingText.setText(getAllRatingText(result.rating, result.ratedTimes));
+            mRating.setRating(result.rating);
+        }
     }
 
     private static class GetGalleryDetailListener implements EhClient.Callback<GalleryDetail> {

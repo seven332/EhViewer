@@ -25,9 +25,12 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.hippo.ehviewer.R;
+import com.hippo.yorozuya.IntList;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SceneFragment extends Fragment {
 
@@ -39,6 +42,17 @@ public class SceneFragment extends Fragment {
     public static final int LAUNCH_MODE_SINGLE_TOP = 1;
 
     public static final int FLAG_REMOVE_ALL_THE_OTHER_SCENES = 0x1;
+
+    /** Standard scene result: operation canceled. */
+    public static final int RESULT_CANCELED  = 0;
+    /** Standard scene result: operation succeeded. */
+    public static final int RESULT_OK = -1;
+
+    int resultCode = RESULT_CANCELED;
+    Bundle result = null;
+
+    List<String> mRequestSceneTagList = new ArrayList<>(0);
+    IntList mRequestCodeList = new IntList(0);
 
     @LaunchMode
     public int getLaunchMode() {
@@ -99,5 +113,31 @@ public class SceneFragment extends Fragment {
 
         view.setTag(R.id.fragment_tag, getTag());
         view.setBackgroundColor(getContext().getResources().getColor(R.color.background_light));
+    }
+
+    void addRequest(String requestSceneTag, int requestCode) {
+        mRequestSceneTagList.add(requestSceneTag);
+        mRequestCodeList.add(requestCode);
+    }
+
+    void returnResult(StageActivity stage) {
+        for (int i = 0, size = Math.min(mRequestSceneTagList.size(), mRequestCodeList.size()); i < size; i++) {
+            String tag = mRequestSceneTagList.get(i);
+            int code = mRequestCodeList.get(i);
+            SceneFragment scene = stage.findSceneByTag(tag);
+            if (scene != null) {
+                scene.onSceneResult(code, resultCode, result);
+            }
+        }
+        mRequestSceneTagList.clear();
+        mRequestCodeList.clear();
+    }
+
+    protected void onSceneResult(int requestCode, int resultCode, Bundle data) {
+    }
+
+    public void setResult(int resultCode, Bundle result) {
+        this.resultCode = resultCode;
+        this.result = result;
     }
 }

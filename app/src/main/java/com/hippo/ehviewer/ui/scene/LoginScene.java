@@ -185,6 +185,7 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
         // Clean up for sign in
         mCookieStore.cleanUpForSignIn();
 
+        // TODO Make callback static
         mSignInRequest = new EhRequest()
                 .setMethod(EhClient.METHOD_SIGN_IN)
                 .setArgs(username, password)

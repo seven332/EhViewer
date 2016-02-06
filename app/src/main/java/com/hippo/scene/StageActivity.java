@@ -147,6 +147,10 @@ public abstract class StageActivity extends AppCompatActivity {
                     currentScene.onNewArguments(args);
                 }
                 if (!removeAllTheOthers) {
+                    // Check request
+                    if (announcer.requestFrom != null) {
+                        currentScene.addRequest(announcer.requestFrom.getTag(), announcer.requestCode);
+                    }
                     // Done!
                     return;
                 }
@@ -220,6 +224,11 @@ public abstract class StageActivity extends AppCompatActivity {
             transaction.add(getContainerViewId(), newScene, newTag);
         }
         transaction.commit();
+
+        // Check request
+        if (newScene != null && announcer.requestFrom != null) {
+            newScene.addRequest(announcer.requestFrom.getTag(), announcer.requestCode);
+        }
 
         // Update SoftInputMode
         if (newScene != null) {
@@ -305,9 +314,14 @@ public abstract class StageActivity extends AppCompatActivity {
         // Remove tag
         mSceneTagList.remove(index);
 
+        // Return result
+        if (scene instanceof SceneFragment) {
+            ((SceneFragment) scene).returnResult(this);
+        }
+
         // Update SoftInputMode
         if (next instanceof SceneFragment) {
-            getWindow().setSoftInputMode(((SceneFragment) scene).getSoftInputMode());
+            getWindow().setSoftInputMode(((SceneFragment) next).getSoftInputMode());
         }
     }
 

@@ -1006,7 +1006,7 @@ public final class GalleryListScene extends BaseScene
 
     private void onGetGalleryListSuccess(GalleryListParser.Result result, int taskId) {
         if (mHelper != null && mSearchBarMoveHelper != null &&
-                mHelper.isCurrentTask(taskId)) {
+                mHelper.isCurrentTask(taskId) && isViewCreated()) {
             mHelper.setPages(taskId, result.pages);
             mHelper.onGetPageData(taskId, result.galleryInfos);
             mSearchBarMoveHelper.returnSearchBarPosition();
@@ -1015,7 +1015,7 @@ public final class GalleryListScene extends BaseScene
 
     private void onGetGalleryListFailure(Exception e, int taskId) {
         if (mHelper != null && mSearchBarMoveHelper != null &&
-                mHelper.isCurrentTask(taskId)) {
+                mHelper.isCurrentTask(taskId) && isViewCreated()) {
             mHelper.onGetExpection(taskId, e);
             mSearchBarMoveHelper.returnSearchBarPosition();
         }

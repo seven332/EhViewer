@@ -24,7 +24,8 @@ public final class Announcer {
     Bundle args;
     TransitionHelper tranHelper;
     int flag;
-    int requestId;
+    SceneFragment requestFrom;
+    int requestCode;
 
     public Announcer(Class<?> clazz) {
         this.clazz = clazz;
@@ -45,8 +46,9 @@ public final class Announcer {
         return this;
     }
 
-    public Announcer setRequestId(int requestId) {
-        this.requestId = requestId;
+    public Announcer setRequestCode(SceneFragment requestFrom, int requestCode) {
+        this.requestFrom = requestFrom;
+        this.requestCode = requestCode;
         return this;
     }
 }

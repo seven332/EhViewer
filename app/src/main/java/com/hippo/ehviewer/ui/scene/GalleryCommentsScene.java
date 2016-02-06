@@ -406,6 +406,9 @@ public final class GalleryCommentsScene extends ToolbarScene
     private void onCommentGallerySuccess(GalleryComment[] result) {
         mComments = result;
         mAdapter.notifyDataSetChanged();
+        Bundle re = new Bundle();
+        re.putParcelableArray(KEY_COMMENTS, result);
+        setResult(SceneFragment.RESULT_OK, re);
     }
 
     private static class CommentGalleryListener implements EhClient.Callback<GalleryComment[]> {

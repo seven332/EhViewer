@@ -16,6 +16,9 @@
 
 package com.hippo.ehviewer.client.parser;
 
+import android.os.Environment;
+import android.util.Log;
+
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryComment;
 import com.hippo.ehviewer.client.data.GalleryDetail;
@@ -27,6 +30,9 @@ import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.exception.PiningException;
 import com.hippo.yorozuya.NumberUtils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -260,6 +266,18 @@ public class GalleryDetailParser {
             largePreviewSet.addItem(ParserUtils.parseInt(m.group(2)) - 1,
                     ParserUtils.trim(m.group(3)), ParserUtils.trim(m.group(1)));
         }
+
+        if (largePreviewSet.size() == 0) {
+            Log.d("TAG", "largePreviewSet.size() == 0");
+            try {
+                OutputStream os = new FileOutputStream(new File(Environment.getExternalStorageDirectory(), "empty.txt"));
+                os.write(body.getBytes("utf-8"));
+                os.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         return largePreviewSet;
     }
 }
