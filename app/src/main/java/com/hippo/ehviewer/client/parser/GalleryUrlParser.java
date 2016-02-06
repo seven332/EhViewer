@@ -38,8 +38,8 @@ public final class GalleryUrlParser {
         if (m.find()) {
             Result result = new Result();
             result.gid = Integer.parseInt(m.group(2));
-            result.token = m.group(1);
-            result.index = Integer.parseInt(m.group(3)) - 1;
+            result.pToken = m.group(1);
+            result.page = Integer.parseInt(m.group(3)) - 1;
             return result;
         } else {
             return null;
@@ -48,7 +48,7 @@ public final class GalleryUrlParser {
 
     public static class Result {
         public int gid;
-        public String token;
-        public int index;
+        public String pToken;
+        public int page;
     }
 }

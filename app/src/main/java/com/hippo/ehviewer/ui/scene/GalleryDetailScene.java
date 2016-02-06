@@ -44,7 +44,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.EhApplication;
-import com.hippo.ehviewer.OpenUrlHelper;
+import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
@@ -817,7 +817,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                     case R.id.action_open_in_other_app:
                         String url = getGalleryDetailUrl(false);
                         if (url != null) {
-                            OpenUrlHelper.openUrl(getActivity(), url, false, false);
+                            UrlOpener.openUrl(getActivity(), url, false, false);
                         }
                         break;
                     case R.id.action_refresh:

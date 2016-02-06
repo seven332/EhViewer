@@ -25,9 +25,11 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
+import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
 import com.hippo.ehviewer.ui.scene.LoginScene;
@@ -67,18 +69,47 @@ public final class MainActivity extends StageActivity
         }
     }
 
+    private boolean handleIntent(Intent intent) {
+        if (intent == null) {
+            return false;
+        }
+
+        String action = intent.getAction();
+        if (Intent.ACTION_VIEW.equals(action)) {
+            return EhUrlOpener.openUrl(this, intent.getData().toString());
+        }
+
+        return false;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (!handleIntent(intent) && intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
+            Toast.makeText(this, R.string.error_cannot_parse_the_url, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void onInit() {
-        if (Settings.getShowWarning()) {
-            setDrawerLayoutEnable(false);
-            startScene(new Announcer(WarningScene.class));
-        } else if (!EhUtils.hasSignedIn(this)) {
-            setDrawerLayoutEnable(false);
-            startScene(new Announcer(LoginScene.class));
-        } else {
-            setDrawerLayoutEnable(true);
-            Bundle args = new Bundle();
-            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
-            startScene(new Announcer(GalleryListScene.class).setArgs(args));
+        Intent intent = getIntent();
+        if (!handleIntent(intent)) {
+            if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
+                Toast.makeText(this, R.string.error_cannot_parse_the_url, Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                if (Settings.getShowWarning()) {
+                    setDrawerLayoutEnable(false);
+                    startScene(new Announcer(WarningScene.class));
+                } else if (!EhUtils.hasSignedIn(this)) {
+                    setDrawerLayoutEnable(false);
+                    startScene(new Announcer(LoginScene.class));
+                } else {
+                    setDrawerLayoutEnable(true);
+                    Bundle args = new Bundle();
+                    args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+                    startScene(new Announcer(GalleryListScene.class).setArgs(args));
+                }
+            }
         }
     }
 

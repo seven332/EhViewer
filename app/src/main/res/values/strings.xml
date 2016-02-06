@@ -93,6 +93,8 @@
 
     <string name="content_layout_restore_tip">Click to retry</string>
 
+    <string name="error_cannot_parse_the_url">Can\'t parse the url</string>
+
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint">Search ExHentai</string>
     <string name="gallery_list_empty_hit">The World is Big and Pandas sit alone</string>
@@ -207,6 +209,9 @@
     <string name="settings_eh_show_jpn_title_title">Show Japanese title</string>
     <string name="settings_eh_show_jpn_title_summary_on">Try to show Japanese title. It takes more time to get gallery list</string>
     <string name="settings_eh_show_jpn_title_summary_off">Show default title. It is usually English title</string>
+    
+    <!-- Progress Scene -->
+    <string name="error_something_wrong_happened">Something wrong happened</string>
 
     <!-- Readable Time -->
     <string name="from_the_future">From the future</string>

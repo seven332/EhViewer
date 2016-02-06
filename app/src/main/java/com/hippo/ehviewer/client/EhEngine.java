@@ -26,8 +26,10 @@ import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.ehviewer.client.exception.EhException;
+import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.parser.GalleryDetailParser;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
+import com.hippo.ehviewer.client.parser.GalleryTokenApiParser;
 import com.hippo.ehviewer.client.parser.ParserUtils;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.client.parser.SignInParser;
@@ -75,7 +77,7 @@ public class EhEngine {
             throw new EhException("Sad Panda");
         }
 
-        if (body != null && !body.contains("<")) {
+        if (e instanceof ParseException && body != null && !body.contains("<")) {
             throw new EhException(body);
         }
 
@@ -336,6 +338,48 @@ public class EhEngine {
             headers = response.headers();
             body = response.body().string();
             return GalleryDetailParser.parseComment(body);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+    }
+
+    /**
+     *
+     * {
+     *  "method": "gtoken",
+     *  "pagelist": [
+     *   [902127,"5a4ee2caff",3]
+     *  ]
+     * }
+     */
+    public static Call prepareGetGalleryToken(OkHttpClient okHttpClient,
+            EhConfig ehConfig, int gid, String gtoken, int page) throws JSONException {
+        JSONObject json = new JSONObject()
+                .put("method", "gtoken")
+                .put("pagelist", new JSONArray().put(
+                        new JSONArray().put(gid).put(gtoken).put(page + 1)));
+        final RequestBody body = RequestBody.create(JSON, json.toString());
+
+        String url = EhUrl.API_EX;
+        Log.d(TAG, url);
+
+        Request request = new EhRequestBuilder(url, ehConfig)
+                .post(body)
+                .build();
+        return okHttpClient.newCall(request);
+    }
+
+    public static String doGetGalleryToken(Call call) throws Exception {
+        String body = null;
+        Headers headers = null;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            return GalleryTokenApiParser.parse(body);
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;

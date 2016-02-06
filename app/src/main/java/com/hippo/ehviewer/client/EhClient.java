@@ -43,6 +43,7 @@ public class EhClient {
     public static final int METHOD_GET_LARGE_PREVIEW_SET = 3;
     public static final int METHOD_GET_RATE_GALLERY = 4;
     public static final int METHOD_GET_COMMENT_GALLERY = 5;
+    public static final int METHOD_GET_GALLERY_TOKEN = 6;
 
     private final ThreadPoolExecutor mRequestThreadPool;
     private final OkHttpClient mOkHttpClient;
@@ -173,6 +174,17 @@ public class EhClient {
             }
         }
 
+        private Object getGalleryToken(EhConfig ehConfig, Object... params) throws Exception {
+            Call call = EhEngine.prepareGetGalleryToken(mOkHttpClient, ehConfig,
+                    (Integer) params[0], (String) params[1], (Integer) params[2]);
+            if (!mStop) {
+                mCall = call;
+                return EhEngine.doGetGalleryToken(call);
+            } else {
+                throw new CancelledException();
+            }
+        }
+
         @Override
         protected Object doInBackground(Object... params) {
             try {
@@ -189,6 +201,8 @@ public class EhClient {
                         return rateGallery(mEhConfig, params);
                     case METHOD_GET_COMMENT_GALLERY:
                         return commentGallery(mEhConfig, params);
+                    case METHOD_GET_GALLERY_TOKEN:
+                        return getGalleryToken(mEhConfig, params);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }

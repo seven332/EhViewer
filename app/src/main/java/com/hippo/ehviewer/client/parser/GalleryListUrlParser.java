@@ -30,7 +30,7 @@ import java.net.URLDecoder;
 
 public final class GalleryListUrlParser {
 
-    private static final String[] INVALID_HOSTS = {EhUrl.DOMAIN_EX, EhUrl.DOMAIN_G, EhUrl.DOMAIN_LOFI};
+    private static final String[] VALID_HOSTS = {EhUrl.DOMAIN_EX, EhUrl.DOMAIN_G, EhUrl.DOMAIN_LOFI};
 
     private static final String PATH_NORMAL = "/";
     private static final String PATH_UPLOADER = "/uploader/";
@@ -44,7 +44,7 @@ public final class GalleryListUrlParser {
             return null;
         }
 
-        if (!Utilities.contain(INVALID_HOSTS, url.getHost())) {
+        if (!Utilities.contain(VALID_HOSTS, url.getHost())) {
             return null;
         }
 
