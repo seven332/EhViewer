@@ -515,7 +515,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         int h = mColorBg.getHeight();
         if (mColorBg.isAttachedToWindow() && w != 0 && h != 0) {
             ViewAnimationUtils.createCircularReveal(mColorBg, w / 2, h / 2, 0,
-                    (float) Math.hypot(w, h)).setDuration(500).start();
+                    (float) Math.hypot(w / 2, h / 2)).setDuration(300).start();
             return true;
         } else {
             return false;
@@ -616,13 +616,11 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         Resources resources = getContext().getResources();
 
-        if (TextUtils.isEmpty(mCategory.getText())) {
-            mThumb.load(EhCacheKeyFactory.getThumbKey(gd.gid), gd.thumb, true);
-            mTitle.setText(EhUtils.getSuitableTitle(gd));
-            mUploader.setText(gd.uploader);
-            mCategory.setText(EhUtils.getCategory(gd.category));
-            mCategory.setTextColor(EhUtils.getCategoryColor(gd.category));
-        }
+        mThumb.load(EhCacheKeyFactory.getThumbKey(gd.gid), gd.thumb, true);
+        mTitle.setText(EhUtils.getSuitableTitle(gd));
+        mUploader.setText(gd.uploader);
+        mCategory.setText(EhUtils.getCategory(gd.category));
+        mCategory.setTextColor(EhUtils.getCategoryColor(gd.category));
 
         mLanguage.setText(gd.language);
         mPages.setText(resources.getQuantityString(
@@ -818,6 +816,12 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                             OpenUrlHelper.openUrl(getActivity(), url, false, false);
                         }
                         break;
+                    case R.id.action_refresh:
+                        if (mState != STATE_REFRESH && mState != STATE_REFRESH_HEADER) {
+                            adjustViewVisibility(STATE_REFRESH, true);
+                            request();
+                        }
+                        break;
                 }
                 return true;
             }
@@ -875,6 +879,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 return;
             }
             Bundle args = new Bundle();
+            args.putInt(GalleryCommentsScene.KEY_GID, mGalleryDetail.gid);
+            args.putString(GalleryCommentsScene.KEY_TOKEN, mGalleryDetail.token);
             args.putParcelableArray(GalleryCommentsScene.KEY_COMMENTS, mGalleryDetail.comments);
             startScene(GalleryCommentsScene.class, args);
         } else if (mPreviews == v) {
