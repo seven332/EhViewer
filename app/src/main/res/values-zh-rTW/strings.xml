@@ -40,17 +40,15 @@
     <string name="error_redirection">太多重定向</string>
     <string name="error_socket">網路錯誤</string>
     <string name="error_unknown">奇怪的錯誤</string>
-
-    <string name="error_username_cannot_empty">使用者名稱不可為空</string>
-    <string name="error_password_cannot_empty">密碼不可為空</string>
+    <string name="error_cant_find_activity">找不到相應的應用</string>
+    <string name="error_cannot_parse_the_url">無法解析連結</string>
 
     <string name="app_waring">本應用中內容來自網際網路，部分內容可能對您的生理及心理造成難以恢復的傷害。本應用作者不會對由本應用造成的後果負責。您是否願意繼續使用該應用？</string>
-
+    <string name="error_username_cannot_empty">使用者名稱不可為空</string>
+    <string name="error_password_cannot_empty">密碼不可為空</string>
     <string name="skip_signing_in">跳過登陸</string>
     <string name="skip_signing_in_plain">登陸失敗。這可能是網站更新導致的。你願意跳過登陸麼？</string>
-
     <string name="press_twice_exit">再按一次退出</string>
-
     <string name="content_layout_restore_tip">點選重試</string>
 
     <!-- Gallery List -->
@@ -67,14 +65,14 @@
     <string name="search_specify_tag">指定標籤</string>
     <string name="search_enable_advance">啟用高階選項</string>
 
-    <string name="search_sname">Search Gallery</string>
-    <string name="search_stags">Search Gallery Tags</string>
-    <string name="search_sdesc">Search Gallery Description</string>
-    <string name="search_storr">Search Torrent Filenames</string>
-    <string name="search_sto">Only Show Galleries With Torrents</string>
-    <string name="search_sdt1">Search Low-Power Tags</string>
-    <string name="search_sdt2">Search Downvoted Tags</string>
-    <string name="search_sh">Show Expunged Galleries</string>
+    <string name="search_sname">搜尋畫廊</string>
+    <string name="search_stags">搜尋畫廊標籤</string>
+    <string name="search_sdesc">搜尋畫廊描述</string>
+    <string name="search_storr">搜尋種子檔名</string>
+    <string name="search_sto">僅顯示有種子的畫廊</string>
+    <string name="search_sdt1">搜尋低願力標籤</string>
+    <string name="search_sdt2">搜尋差評標籤</string>
+    <string name="search_sh">顯示被刪除的畫廊</string>
     <string name="search_sr">最小評分：</string>
 
     <!-- search_min_rating -->
@@ -82,5 +80,118 @@
     <string name="star_3">3 星</string>
     <string name="star_4">4 星</string>
     <string name="star_5">5 星</string>
+
+    <!-- Gallery detail -->
+    <string name="error_cannot_find_gallery">找不到畫廊</string>
+    <string name="read">閱讀</string>
+    <string name="more_information">檢視更多資訊</string>
+    <plurals name="page_count">
+        <item quantity="other">%d 頁</item>
+    </plurals>
+    <string name="favored_times">\u2665 %d</string>
+    <string name="rating_text">%1$s (%2$.2f, %3$d)</string>
+    <string name="favorite">收藏</string>
+    <string name="torrent_count">種子 (%d)</string>
+    <string name="share">分享</string>
+    <string name="rate">評分</string>
+    <string name="no_tags">暫無標籤</string>
+    <string name="no_comments">暫無評論</string>
+    <string name="no_more_comments">已顯示所有評論</string>
+    <string name="more_comment">檢視更多評論</string>
+    <string name="no_previews">沒有預覽</string>
+    <string name="no_more_previews">已顯示所有預覽</string>
+    <string name="more_previews">檢視更多預覽</string>
+    <string name="refresh">重新整理</string>
+    <string name="open_in_other_app">在其他應用中開啟</string>
+    <string name="rate_successfully">評分成功</string>
+    <string name="rate_failed">評分失敗</string>
+
+    <!-- Rating -->
+    <string name="rating10">根本把持不住</string>
+    <string name="rating9">好極了</string>
+    <string name="rating8">很棒</string>
+    <string name="rating7">不錯</string>
+    <string name="rating6">還行</string>
+    <string name="rating5">一般般</string>
+    <string name="rating4">不行</string>
+    <string name="rating3">糟糕</string>
+    <string name="rating2">瞎眼</string>
+    <string name="rating1">快要窒息了</string>
+    <string name="rating0">…</string>
+
+    <!-- Gallery Info -->
+    <string name="gallery_info">畫廊資訊</string>
+    <string name="copied_to_clipboard">已複製到剪下板</string>
+    <string name="header_key">鍵</string>
+    <string name="header_value">值</string>
+    <string name="key_gid">Gid</string>
+    <string name="key_token">Token</string>
+    <string name="key_url">連結</string>
+    <string name="key_title">標題</string>
+    <string name="key_title_jpn">日文標題</string>
+    <string name="key_thumb">縮圖</string>
+    <string name="key_category">分類</string>
+    <string name="key_uploader">上傳者</string>
+    <string name="key_posted">上傳時間</string>
+    <string name="key_parent">父畫廊</string>
+    <string name="key_visible">可見性</string>
+    <string name="key_language">語言</string>
+    <string name="key_pages">頁數</string>
+    <string name="key_size">大小</string>
+    <string name="key_resize">壓縮情況</string>
+    <string name="key_favourites">收藏次數</string>
+    <string name="key_favourited">是否被收藏</string>
+    <string name="key_rates">評價次數</string>
+    <string name="key_rating">評分</string>
+    <string name="key_torrents">種子個數</string>
+    <string name="key_torrent_url">種子頁面連結</string>
+
+    <!-- Gallery Comments -->
+    <string name="gallery_comments">畫廊評論</string>
+    <string name="no_one_comments_gallery">暫時沒有評論</string>
+    <string name="comment_successfully">評論成功</string>
+    <string name="comment_failed">評論失敗</string>
+
+    <!-- Gallery Previews -->
+    <string name="gallery_previews">畫廊預覽</string>
+    <string name="go_to">跳頁</string>
+    <string name="error_out_of_range">越界</string>
+
+    <!-- Settings -->
+    <string name="settings_eh_title">EH</string>
+    <string name="settings_eh_show_jpn_title_title">顯示日文標題</string>
+    <string name="settings_eh_show_jpn_title_summary_on">嘗試顯示日文標題。這會使獲取畫廊列表花費更多時間</string>
+    <string name="settings_eh_show_jpn_title_summary_off">顯示預設標題。一般是英文標題</string>
+
+    <!-- Progress Scene -->
+    <string name="error_something_wrong_happened">被玩壞了</string>
+
+    <!-- Readable Time -->
+    <string name="from_the_future">來自未來</string>
+    <string name="just_now">剛剛</string>
+    <plurals name="some_minutes_ago">
+        <item quantity="other">%d 分鐘前</item>
+    </plurals>
+    <plurals name="some_hours_ago">
+        <item quantity="other">%d 小時前</item>
+    </plurals>
+    <string name="yesterday">昨天</string>
+    <string name="some_days_ago">%d 天前</string>
+
+    <plurals name="second">
+        <item quantity="other">秒</item>
+    </plurals>
+    <plurals name="minute">
+        <item quantity="other">分</item>
+    </plurals>
+    <plurals name="hour">
+        <item quantity="other">時</item>
+    </plurals>
+    <plurals name="day">
+        <item quantity="other">天</item>
+    </plurals>
+    <plurals name="year">
+        <item quantity="other">年</item>
+    </plurals>
 
 </resources>
