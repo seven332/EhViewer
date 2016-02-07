@@ -16,10 +16,13 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -37,9 +40,12 @@ import com.hippo.ehviewer.ui.scene.WarningScene;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
+import com.hippo.util.PermissionRequester;
 
 public final class MainActivity extends StageActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
 
     private static final String KEY_NAV_CHECKED_ITEM = "nav_checked_item";
 
@@ -96,6 +102,7 @@ public final class MainActivity extends StageActivity
             if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
                 Toast.makeText(this, R.string.error_cannot_parse_the_url, Toast.LENGTH_SHORT).show();
                 finish();
+                return;
             } else {
                 if (Settings.getShowWarning()) {
                     setDrawerLayoutEnable(false);
@@ -111,6 +118,10 @@ public final class MainActivity extends StageActivity
                 }
             }
         }
+
+        // Check permission
+        PermissionRequester.request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                getString(R.string.write_rationale), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
     }
 
     private void onRestore(Bundle savedInstanceState) {
@@ -128,6 +139,18 @@ public final class MainActivity extends StageActivity
         super.onResume();
 
         setNavCheckedItem(mNavCheckedItem);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+            @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE) {
+            if (grantResults.length == 1 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, R.string.you_rejected_me, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     public void setDrawerLayoutEnable(boolean enable) {
