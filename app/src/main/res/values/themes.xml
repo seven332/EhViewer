@@ -17,8 +17,10 @@
 
 <resources>
 
+    <!-- ========== -->
+    <!-- Base Theme -->
+    <!-- ========== -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -44,9 +46,37 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!-- =============== -->
+    <!-- Base Dark Theme -->
+    <!-- =============== -->
+    <style name="AppTheme.Dark" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.Dark.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.Dark.NoActionBar.TranslucentDecor">
+        <!-- Only available on API 19 and above -->
+    </style>
+
+    <!-- ========= -->
+    <!-- App Theme -->
+    <!-- ========= -->
     <style name="AppTheme.Main" parent="AppTheme.NoActionBar">
     </style>
 
+    <style name="AppTheme.Gallery" parent="AppTheme.Dark.NoActionBar.TranslucentDecor">
+        <item name="android:windowBackground">@color/gallery_background</item>
+    </style>
+
+    <!-- ============ -->
+    <!-- Widget Theme -->
+    <!-- ============ -->
     <style name="CommentEditText" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>

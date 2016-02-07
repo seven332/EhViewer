@@ -97,4 +97,7 @@
     <!-- shadow -->
     <color name="shadow_light">#38000000</color>
 
+    <!-- Gallery Activity -->
+    <color name="gallery_background">#ff212121</color>
+
 </resources>

@@ -50,6 +50,8 @@
     <string name="skip_signing_in_plain">登陸失敗。這可能是網站更新導致的。你願意跳過登陸麼？</string>
     <string name="press_twice_exit">再按一次退出</string>
     <string name="content_layout_restore_tip">點選重試</string>
+    <string name="write_rationale">寫！寫！寫！</string>
+    <string name="you_rejected_me">好痛</string>
 
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint">搜尋 ExHentai</string>
@@ -73,7 +75,7 @@
     <string name="search_sdt1">搜尋低願力標籤</string>
     <string name="search_sdt2">搜尋差評標籤</string>
     <string name="search_sh">顯示被刪除的畫廊</string>
-    <string name="search_sr">最小評分：</string>
+    <string name="search_sr">最低評分：</string>
 
     <!-- search_min_rating -->
     <string name="star_2">2 星</string>
@@ -140,11 +142,11 @@
     <string name="key_size">大小</string>
     <string name="key_resize">壓縮情況</string>
     <string name="key_favourites">收藏次數</string>
-    <string name="key_favourited">是否被收藏</string>
+    <string name="key_favourited">收藏</string>
     <string name="key_rates">評價次數</string>
     <string name="key_rating">評分</string>
     <string name="key_torrents">種子個數</string>
-    <string name="key_torrent_url">種子頁面連結</string>
+    <string name="key_torrent_url">種子</string>
 
     <!-- Gallery Comments -->
     <string name="gallery_comments">畫廊評論</string>
