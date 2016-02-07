@@ -28,6 +28,8 @@ android {
             jni.srcDirs = []
             // Set new jni lib dir
             jniLibs.srcDir 'src/main/libs'
+            // Vector res dir
+            res.srcDirs += 'src/main/res-vector'
         }
     }
 
