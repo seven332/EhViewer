@@ -28,13 +28,16 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 import okhttp3.internal.Internal;
 import okhttp3.internal.InternalCache;
+import okhttp3.internal.Platform;
 import okhttp3.internal.RouteDatabase;
 import okhttp3.internal.Util;
 import okhttp3.internal.http.StreamAllocation;
 import okhttp3.internal.io.RealConnection;
 import okhttp3.internal.tls.OkHostnameVerifier;
+import okhttp3.internal.tls.TrustRootIndex;
 
 /**
  * Factory for {@linkplain Call calls}, which can be used to send HTTP requests and read their
@@ -54,7 +57,7 @@ import okhttp3.internal.tls.OkHostnameVerifier;
  *   Response response = clientWith30sTimeout.newCall(request).execute();
  * }</pre>
  */
-public final class OkHttpClient implements Cloneable, Call.Factory {
+public class OkHttpClient implements Cloneable, Call.Factory {
   private static final List<Protocol> DEFAULT_PROTOCOLS = Util.immutableList(
       Protocol.HTTP_2, Protocol.SPDY_3, Protocol.HTTP_1_1);
 
@@ -130,6 +133,7 @@ public final class OkHttpClient implements Cloneable, Call.Factory {
   final InternalCache internalCache;
   final SocketFactory socketFactory;
   final SSLSocketFactory sslSocketFactory;
+  final TrustRootIndex trustRootIndex;
   final HostnameVerifier hostnameVerifier;
   final CertificatePinner certificatePinner;
   final Authenticator proxyAuthenticator;
@@ -159,7 +163,13 @@ public final class OkHttpClient implements Cloneable, Call.Factory {
     this.cache = builder.cache;
     this.internalCache = builder.internalCache;
     this.socketFactory = builder.socketFactory;
-    if (builder.sslSocketFactory != null) {
+
+    boolean isTLS = false;
+    for (ConnectionSpec spec : connectionSpecs) {
+      isTLS = isTLS || spec.isTls();
+    }
+
+    if (builder.sslSocketFactory != null || !isTLS) {
       this.sslSocketFactory = builder.sslSocketFactory;
     } else {
       try {
@@ -170,8 +180,21 @@ public final class OkHttpClient implements Cloneable, Call.Factory {
         throw new AssertionError(); // The system has no TLS. Just give up.
       }
     }
+    if (sslSocketFactory != null && builder.trustRootIndex == null) {
+      X509TrustManager trustManager = Platform.get().trustManager(sslSocketFactory);
+      if (trustManager == null) {
+        throw new IllegalStateException("Unable to extract the trust manager on " + Platform.get()
+            + ", sslSocketFactory is " + sslSocketFactory.getClass());
+      }
+      this.trustRootIndex = Platform.get().trustRootIndex(trustManager);
+      this.certificatePinner = builder.certificatePinner.newBuilder()
+          .trustRootIndex(trustRootIndex)
+          .build();
+    } else {
+      this.trustRootIndex = builder.trustRootIndex;
+      this.certificatePinner = builder.certificatePinner;
+    }
     this.hostnameVerifier = builder.hostnameVerifier;
-    this.certificatePinner = builder.certificatePinner;
     this.proxyAuthenticator = builder.proxyAuthenticator;
     this.authenticator = builder.authenticator;
     this.connectionPool = builder.connectionPool;
@@ -317,6 +340,7 @@ public final class OkHttpClient implements Cloneable, Call.Factory {
     InternalCache internalCache;
     SocketFactory socketFactory;
     SSLSocketFactory sslSocketFactory;
+    TrustRootIndex trustRootIndex;
     HostnameVerifier hostnameVerifier;
     CertificatePinner certificatePinner;
     Authenticator proxyAuthenticator;
@@ -364,6 +388,7 @@ public final class OkHttpClient implements Cloneable, Call.Factory {
       this.cache = okHttpClient.cache;
       this.socketFactory = okHttpClient.socketFactory;
       this.sslSocketFactory = okHttpClient.sslSocketFactory;
+      this.trustRootIndex = okHttpClient.trustRootIndex;
       this.hostnameVerifier = okHttpClient.hostnameVerifier;
       this.certificatePinner = okHttpClient.certificatePinner;
       this.proxyAuthenticator = okHttpClient.proxyAuthenticator;
@@ -501,6 +526,7 @@ public final class OkHttpClient implements Cloneable, Call.Factory {
     public Builder sslSocketFactory(SSLSocketFactory sslSocketFactory) {
       if (sslSocketFactory == null) throw new NullPointerException("sslSocketFactory == null");
       this.sslSocketFactory = sslSocketFactory;
+      this.trustRootIndex = null;
       return this;
     }
 

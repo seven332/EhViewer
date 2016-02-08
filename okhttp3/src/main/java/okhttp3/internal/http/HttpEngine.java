@@ -14,7 +14,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package okhttp3.internal.http;
 
 import java.io.IOException;
@@ -51,6 +50,7 @@ import okio.Sink;
 import okio.Source;
 import okio.Timeout;
 
+import static java.net.HttpURLConnection.HTTP_CLIENT_TIMEOUT;
 import static java.net.HttpURLConnection.HTTP_MOVED_PERM;
 import static java.net.HttpURLConnection.HTTP_MOVED_TEMP;
 import static java.net.HttpURLConnection.HTTP_MULT_CHOICE;
@@ -868,8 +868,8 @@ public final class HttpEngine {
 
   /**
    * Figures out the HTTP request to make in response to receiving this engine's response. This will
-   * either add authentication headers or follow redirects. If a follow-up is either unnecessary or
-   * not applicable, this returns null.
+   * either add authentication headers, follow redirects or handle a client request timeout. If a
+   * follow-up is either unnecessary or not applicable, this returns null.
    */
   public Request followUpRequest() throws IOException {
     if (userResponse == null) throw new IllegalStateException();
@@ -939,6 +939,17 @@ public final class HttpEngine {
         }
 
         return requestBuilder.url(url).build();
+
+      case HTTP_CLIENT_TIMEOUT:
+        // 408's are rare in practice, but some servers like HAProxy use this response code. The
+        // spec says that we may repeat the request without modifications. Modern browsers also
+        // repeat the request (even non-idempotent ones.)
+        boolean retryableBody = requestBodyOut == null || requestBodyOut instanceof RetryableSink;
+        if (callerWritesRequestBody && !retryableBody) {
+          return null;
+        }
+
+        return userRequest;
 
       default:
         return null;
