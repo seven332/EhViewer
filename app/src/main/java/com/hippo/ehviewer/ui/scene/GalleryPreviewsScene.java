@@ -45,7 +45,6 @@ import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.GalleryPreview;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.exception.EhException;
-import com.hippo.scene.SceneApplication;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.util.ActivityHelper;
@@ -299,42 +298,24 @@ public class GalleryPreviewsScene extends ToolbarScene {
         }
     }
 
-    private static class GetLargePreviewSetListener implements EhClient.Callback<Pair<LargePreviewSet, Integer>> {
+    private static class GetLargePreviewSetListener extends EhCallback<GalleryPreviewsScene, Pair<LargePreviewSet, Integer>> {
 
-        private SceneApplication mApplication;
-        private int mStageId;
-        private String mSceneTag;
         private int mTaskId;
         private int mGid;
         private int mPage;
 
         public GetLargePreviewSetListener(Context context, int stageId, String sceneTag, int taskId, int gid, int page) {
-            mApplication = (SceneApplication) context.getApplicationContext();
-            mStageId = stageId;
-            mSceneTag = sceneTag;
+            super(context, stageId, sceneTag);
             mTaskId = taskId;
             mGid = gid;
             mPage = page;
         }
 
-        private GalleryPreviewsScene getScene() {
-            StageActivity stage = mApplication.findStageActivityById(mStageId);
-            if (stage == null) {
-                return null;
-            }
-            SceneFragment scene = stage.findSceneByTag(mSceneTag);
-            if (scene instanceof GalleryPreviewsScene) {
-                return (GalleryPreviewsScene) scene;
-            } else {
-                return null;
-            }
-        }
-
         @Override
         public void onSuccess(Pair<LargePreviewSet, Integer> result) {
-            EhApplication.getLargePreviewSetCache(mApplication).put(
+            EhApplication.getLargePreviewSetCache(getApplication()).put(
                     EhCacheKeyFactory.getLargePreviewSetKey(mGid, mPage), result.first);
-            EhApplication.getPreviewPagesCache(mApplication).put(mGid, result.second);
+            EhApplication.getPreviewPagesCache(getApplication()).put(mGid, result.second);
 
             GalleryPreviewsScene scene = getScene();
             if (scene != null) {
@@ -353,6 +334,11 @@ public class GalleryPreviewsScene extends ToolbarScene {
         @Override
         public void onCancel() {
 
+        }
+
+        @Override
+        public boolean isInstance(SceneFragment scene) {
+            return scene instanceof GalleryPreviewsScene;
         }
     }
 

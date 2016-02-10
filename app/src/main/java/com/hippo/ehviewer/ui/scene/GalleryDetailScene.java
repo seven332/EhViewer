@@ -1036,40 +1036,21 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
-    private static class GetGalleryDetailListener implements EhClient.Callback<GalleryDetail> {
-
-        private EhApplication mApplication;
-        private int mStageId;
-        private String mSceneTag;
+    private static class GetGalleryDetailListener extends EhCallback<GalleryDetailScene, GalleryDetail> {
 
         public GetGalleryDetailListener(Context context, int stageId, String sceneTag) {
-            mApplication = (EhApplication) context.getApplicationContext();
-            mStageId = stageId;
-            mSceneTag = sceneTag;
-        }
-
-        private GalleryDetailScene getScene() {
-            StageActivity stage = mApplication.findStageActivityById(mStageId);
-            if (stage == null) {
-                return null;
-            }
-            SceneFragment scene = stage.findSceneByTag(mSceneTag);
-            if (scene instanceof GalleryDetailScene) {
-                return (GalleryDetailScene) scene;
-            } else {
-                return null;
-            }
+            super(context, stageId, sceneTag);
         }
 
         @Override
         public void onSuccess(GalleryDetail result) {
-            mApplication.removeGlobalStuff(this);
+            getApplication().removeGlobalStuff(this);
 
             // Put gallery detail to cache
-            EhApplication.getGalleryDetailCache(mApplication).put(result.gid, result);
-            EhApplication.getLargePreviewSetCache(mApplication).put(
+            EhApplication.getGalleryDetailCache(getApplication()).put(result.gid, result);
+            EhApplication.getLargePreviewSetCache(getApplication()).put(
                     EhCacheKeyFactory.getLargePreviewSetKey(result.gid, 0), result.previewSet);
-            EhApplication.getPreviewPagesCache(mApplication).put(result.gid, result.previewPages);
+            EhApplication.getPreviewPagesCache(getApplication()).put(result.gid, result.previewPages);
 
             // Notify success
             GalleryDetailScene scene = getScene();
@@ -1080,7 +1061,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         @Override
         public void onFailure(Exception e) {
-            mApplication.removeGlobalStuff(this);
+            getApplication().removeGlobalStuff(this);
             GalleryDetailScene scene = getScene();
             if (scene != null) {
                 scene.onGetGalleryDetailFailure(e);
@@ -1089,7 +1070,12 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         @Override
         public void onCancel() {
-            mApplication.removeGlobalStuff(this);
+            getApplication().removeGlobalStuff(this);
+        }
+
+        @Override
+        public boolean isInstance(SceneFragment scene) {
+            return scene instanceof GalleryDetailScene;
         }
     }
 
@@ -1130,44 +1116,26 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
-    private static class RateGalleryListener implements EhClient.Callback<RateGalleryParser.Result> {
+    private static class RateGalleryListener extends EhCallback<GalleryDetailScene, RateGalleryParser.Result> {
 
-        private EhApplication mApplication;
-        private int mStageId;
-        private String mSceneTag;
         private int mGid;
 
         public RateGalleryListener(Context context, int stageId, String sceneTag, int gid) {
-            mApplication = (EhApplication) context.getApplicationContext();
-            mStageId = stageId;
-            mSceneTag = sceneTag;
+            super(context, stageId, sceneTag);
             mGid = gid;
-        }
-
-        private GalleryDetailScene getScene() {
-            StageActivity stage = mApplication.findStageActivityById(mStageId);
-            if (stage == null) {
-                return null;
-            }
-            SceneFragment scene = stage.findSceneByTag(mSceneTag);
-            if (scene instanceof GalleryDetailScene) {
-                return (GalleryDetailScene) scene;
-            } else {
-                return null;
-            }
         }
 
         @Override
         public void onSuccess(RateGalleryParser.Result result) {
             // Show toast
-            Toast.makeText(mApplication, R.string.rate_successfully, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplication(), R.string.rate_successfully, Toast.LENGTH_SHORT).show();
 
             GalleryDetailScene scene = getScene();
             if (scene != null) {
                 scene.onRateGallerySuccess(result);
             } else {
                 // Update rating in cache
-                GalleryDetail gd = EhApplication.getGalleryDetailCache(mApplication).get(mGid);
+                GalleryDetail gd = EhApplication.getGalleryDetailCache(getApplication()).get(mGid);
                 if (gd != null) {
                     gd.rating = result.rating;
                     gd.ratedTimes = result.ratedTimes;
@@ -1179,11 +1147,16 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         public void onFailure(Exception e) {
             e.printStackTrace();
             // Show toast
-            Toast.makeText(mApplication, R.string.rate_failed, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplication(), R.string.rate_failed, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onCancel() {
+        }
+
+        @Override
+        public boolean isInstance(SceneFragment scene) {
+            return scene instanceof GalleryDetailScene;
         }
     }
 }

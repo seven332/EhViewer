@@ -37,6 +37,10 @@ public abstract class EhCallback<E extends SceneFragment, T> implements EhClient
 
     public abstract boolean isInstance(SceneFragment scene);
 
+    public EhApplication getApplication() {
+        return mApplication;
+    }
+
     @SuppressWarnings("unchecked")
     public E getScene() {
         StageActivity stage = mApplication.findStageActivityById(mStageId);

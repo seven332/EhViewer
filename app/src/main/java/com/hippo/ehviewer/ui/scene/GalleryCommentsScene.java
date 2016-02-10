@@ -408,37 +408,23 @@ public final class GalleryCommentsScene extends ToolbarScene
         Bundle re = new Bundle();
         re.putParcelableArray(KEY_COMMENTS, result);
         setResult(SceneFragment.RESULT_OK, re);
+
+        // Remove text
+        if (mEditText != null) {
+            mEditText.setText("");
+        }
     }
 
-    private static class CommentGalleryListener implements EhClient.Callback<GalleryComment[]> {
-
-        private EhApplication mApplication;
-        private int mStageId;
-        private String mSceneTag;
+    private static class CommentGalleryListener extends EhCallback<GalleryCommentsScene, GalleryComment[]> {
 
         public CommentGalleryListener(Context context, int stageId, String sceneTag) {
-            mApplication = (EhApplication) context.getApplicationContext();
-            mStageId = stageId;
-            mSceneTag = sceneTag;
-        }
-
-        private GalleryCommentsScene getScene() {
-            StageActivity stage = mApplication.findStageActivityById(mStageId);
-            if (stage == null) {
-                return null;
-            }
-            SceneFragment scene = stage.findSceneByTag(mSceneTag);
-            if (scene instanceof GalleryCommentsScene) {
-                return (GalleryCommentsScene) scene;
-            } else {
-                return null;
-            }
+            super(context, stageId, sceneTag);
         }
 
         @Override
         public void onSuccess(GalleryComment[] result) {
             // Show toast
-            Toast.makeText(mApplication, R.string.comment_successfully, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplication(), R.string.comment_successfully, Toast.LENGTH_SHORT).show();
 
             GalleryCommentsScene scene = getScene();
             if (scene != null) {
@@ -449,11 +435,16 @@ public final class GalleryCommentsScene extends ToolbarScene
         @Override
         public void onFailure(Exception e) {
             // Show toast
-            Toast.makeText(mApplication, R.string.comment_failed, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplication(), R.string.comment_failed, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onCancel() {
+        }
+
+        @Override
+        public boolean isInstance(SceneFragment scene) {
+            return scene instanceof GalleryCommentsScene;
         }
     }
 }

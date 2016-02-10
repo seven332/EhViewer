@@ -28,6 +28,7 @@ public class EhUrl {
     public static final String HOST_EX = "http://" + DOMAIN_EX + "/";
 
     public static final String API_SIGN_IN = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
+    public static final String API_REGISTER = "http://forums.e-hentai.org/index.php?act=Reg&CODE=00";
 
     public static final String API_EX = HOST_EX + "api.php";
 

@@ -68,6 +68,14 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mCancel = null;
+        mOk = null;
+    }
+
+    @Override
     public void onClick(View v) {
         if (mCancel == v) {
             finishStage();

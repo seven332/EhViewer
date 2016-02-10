@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -35,16 +36,21 @@ import android.widget.Toast;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
+import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.client.EhClient;
-import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhRequest;
+import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
+import com.hippo.scene.SceneFragment;
+import com.hippo.scene.StageActivity;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
 
 public final class LoginScene extends BaseScene implements EditText.OnEditorActionListener,
         View.OnClickListener {
+
+    private static final String KEY_REQUEST_ID = "request_id";
 
     private View mProgress;
     private TextInputLayout mUsernameLayout;
@@ -57,9 +63,7 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
     private TextView mSignInViaCookies;
     private TextView mSkipSigningIn;
 
-    private EhClient mClient;
-    private EhCookieStore mCookieStore;
-    private EhRequest mSignInRequest;
+    private int mRequestId;
 
     @Override
     public int getSoftInputMode() {
@@ -71,9 +75,26 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mClient = EhApplication.getEhClient(getContext());
-        mCookieStore = EhApplication.getEhCookieStore(getContext());
+        if (savedInstanceState == null) {
+            onInit();
+        } else {
+            onRestore(savedInstanceState);
+        }
     }
+
+    private void onInit() {
+    }
+
+    private void onRestore(Bundle savedInstanceState) {
+        mRequestId = savedInstanceState.getInt(KEY_REQUEST_ID);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_REQUEST_ID, mRequestId);
+    }
+
 
     @Nullable
     @Override
@@ -108,6 +129,13 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
         RippleSalon.addRipple(mRegister, true);
         RippleSalon.addRipple(mSignIn, true);
 
+        EhApplication application = (EhApplication) getContext().getApplicationContext();
+        if (application.containGlobalStuff(mRequestId)) {
+            // request exist
+            mProgress.setAlpha(1.0f);
+            mProgress.setVisibility(View.VISIBLE);
+        }
+
         return view;
     }
 
@@ -120,19 +148,9 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if (mSignInRequest != null) {
-            mSignInRequest.cancel();
-            mSignInRequest = null;
-        }
-    }
-
-    @Override
     public void onClick(View v) {
         if (mRegister == v) {
-
+            UrlOpener.openUrl(getActivity(), EhUrl.API_REGISTER, false, true);
         } else if (mSignIn == v) {
             signIn();
         } else if (mSignInViaWebview == v) {
@@ -157,10 +175,6 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
     }
 
     private void signIn() {
-        if (mSignInRequest != null) {
-            return;
-        }
-
         String username = mUsername.getText().toString();
         String password = mPassword.getText().toString();
 
@@ -185,44 +199,16 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
         mProgress.animate().alpha(1.0f).setDuration(500).start();
 
         // Clean up for sign in
-        mCookieStore.cleanUpForSignIn();
+        EhApplication.getEhCookieStore(getContext()).cleanUpForSignIn();
 
-        // TODO Make callback static
-        mSignInRequest = new EhRequest()
+        EhCallback callback = new SignInListener(getContext(),
+                ((StageActivity) getActivity()).getStageId(), getTag());
+        mRequestId = ((EhApplication) getContext().getApplicationContext()).putGlobalStuff(callback);
+        EhRequest request = new EhRequest()
                 .setMethod(EhClient.METHOD_SIGN_IN)
                 .setArgs(username, password)
-                .setCallback(new EhClient.Callback<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        mSignInRequest = null;
-                        Settings.putDisplayName(result);
-
-                        if (mCookieStore.hasSignedIn()) {
-                            // Has signed in
-                            redirectTo();
-                        } else {
-                            mProgress.setVisibility(View.GONE);
-                            whetherToSkip();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                        e.printStackTrace();
-                        mSignInRequest = null;
-                        mProgress.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), ExceptionUtils.getReadableString(getContext(), e),
-                                Toast.LENGTH_SHORT).show();
-                        whetherToSkip();
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        mSignInRequest = null;
-                        // User close this Scene
-                    }
-                });
-        mClient.execute(mSignInRequest);
+                .setCallback(callback);
+        EhApplication.getEhClient(getContext()).execute(request);
     }
 
     private void redirectTo() {
@@ -247,5 +233,62 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
                         }
                     }
                 }).show();
+    }
+
+
+    public void onSignInSuccess() {
+        if (EhApplication.getEhCookieStore(getContext()).hasSignedIn()) {
+            // Has signed in
+            redirectTo();
+        } else {
+            mProgress.setVisibility(View.GONE);
+            whetherToSkip();
+        }
+    }
+
+    public void onSignInFailure(Exception e) {
+        mProgress.setVisibility(View.GONE);
+        Toast.makeText(getContext(), ExceptionUtils.getReadableString(getContext(), e),
+                Toast.LENGTH_SHORT).show();
+        whetherToSkip();
+    }
+
+    private class SignInListener extends EhCallback<LoginScene, String> {
+
+        public SignInListener(Context context, int stageId, String sceneTag) {
+            super(context, stageId, sceneTag);
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            getApplication().removeGlobalStuff(this);
+            Settings.putDisplayName(result);
+
+            LoginScene scene = getScene();
+            if (scene != null) {
+                scene.onSignInSuccess();
+            }
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            getApplication().removeGlobalStuff(this);
+            e.printStackTrace();
+
+            LoginScene scene = getScene();
+            if (scene != null) {
+                scene.onSignInFailure(e);
+            }
+        }
+
+        @Override
+        public void onCancel() {
+            getApplication().removeGlobalStuff(this);
+        }
+
+        @Override
+        public boolean isInstance(SceneFragment scene) {
+            return scene instanceof LoginScene;
+        }
     }
 }

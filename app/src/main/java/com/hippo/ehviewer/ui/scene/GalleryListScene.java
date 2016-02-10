@@ -67,7 +67,6 @@ import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
-import com.hippo.scene.SceneApplication;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.TransitionHelper;
@@ -1052,31 +1051,13 @@ public final class GalleryListScene extends BaseScene
         }
     }
 
-    private static class GetGalleryListListener implements EhClient.Callback<GalleryListParser.Result> {
+    private static class GetGalleryListListener extends EhCallback<GalleryListScene, GalleryListParser.Result> {
 
-        private SceneApplication mApplication;
-        private int mStageId;
-        private String mSceneTag;
         private int mTaskId;
 
         public GetGalleryListListener(Context context, int stageId, String sceneTag, int taskId) {
-            mApplication = (SceneApplication) context.getApplicationContext();
-            mStageId = stageId;
-            mSceneTag = sceneTag;
+            super(context, stageId, sceneTag);
             mTaskId = taskId;
-        }
-
-        private GalleryListScene getScene() {
-            StageActivity stage = mApplication.findStageActivityById(mStageId);
-            if (stage == null) {
-                return null;
-            }
-            SceneFragment scene = stage.findSceneByTag(mSceneTag);
-            if (scene instanceof GalleryListScene) {
-                return (GalleryListScene) scene;
-            } else {
-                return null;
-            }
         }
 
         @Override
@@ -1097,5 +1078,10 @@ public final class GalleryListScene extends BaseScene
 
         @Override
         public void onCancel() {}
+
+        @Override
+        public boolean isInstance(SceneFragment scene) {
+            return scene instanceof GalleryListScene;
+        }
     }
 }
