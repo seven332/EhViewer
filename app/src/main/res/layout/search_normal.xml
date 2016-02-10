@@ -26,54 +26,64 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/search_item_interval"/>
 
+    <com.hippo.widget.RadioGridGroup
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/normal_search_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/search_item_interval"
+        android:checkedButton="@+id/search_normal_search"
+        app:columnCount="2">
+
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/search_normal_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search_normal_search"/>
+
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/search_specify_uploader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search_specify_uploader"/>
+
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/search_specify_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search_specify_tag"/>
+
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/search_specify_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search_specify_gallery"/>
+
+    </com.hippo.widget.RadioGridGroup>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <RadioGroup
-            android:id="@+id/normal_search_mode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="@dimen/search_item_interval"
-            android:paddingTop="@dimen/search_item_interval"
-            android:checkedButton="@+id/search_normal_search">
-
-            <android.support.v7.widget.AppCompatRadioButton
-                android:id="@+id/search_normal_search"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/search_normal_search"/>
-
-            <android.support.v7.widget.AppCompatRadioButton
-                android:id="@+id/search_specify_uploader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/search_specify_uploader"/>
-
-            <android.support.v7.widget.AppCompatRadioButton
-                android:id="@+id/search_specify_tag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/search_specify_tag"/>
-
-        </RadioGroup>
-
         <com.hippo.widget.SimpleImageView
             android:id="@+id/normal_search_mode_help"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginLeft="16dp"
-            android:padding="12dp"/>
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="6dp"/>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/search_enable_advance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="@string/search_enable_advance"/>
 
     </LinearLayout>
-
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/search_enable_advance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="@string/search_enable_advance"/>
-
 </LinearLayout>

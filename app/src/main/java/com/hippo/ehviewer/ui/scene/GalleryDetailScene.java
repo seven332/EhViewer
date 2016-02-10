@@ -855,7 +855,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             }
             ListUrlBuilder lub = new ListUrlBuilder();
             lub.setMode(ListUrlBuilder.MODE_UPLOADER);
-            lub.setKeyword(EhUtils.getSpecifyUploaderKeyword(uploader));
+            lub.setKeyword(uploader);
             GalleryListScene.startScene(this, lub);
         } else if (mCategory == v) {
             int category = getCategory();

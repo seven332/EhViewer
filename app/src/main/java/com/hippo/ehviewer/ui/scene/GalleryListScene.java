@@ -609,10 +609,37 @@ public final class GalleryListScene extends BaseScene
         }
     }
 
+
+
     @Override
     public void onApplySearch(String query) {
         if (mState == STATE_SEARCH || mState == STATE_SEARCH_SHOW_LIST) {
-            mSearchLayout.formatListUrlBuilder(mUrlBuilder, query);
+            if (mSearchLayout.isSpecifyGallery()) {
+                int index = query.indexOf(' ');
+                if (index <= 0 || index >= query.length() - 1) {
+                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show(); // TODO
+                    return;
+                }
+
+                int gid;
+                String token;
+                try {
+                    gid = Integer.parseInt(query.substring(0, index));
+                } catch (NumberFormatException e) {
+                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show(); // TODO
+                    return;
+                }
+                token = query.substring(index + 1);
+
+                Bundle args = new Bundle();
+                args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GID_TOKEN);
+                args.putInt(GalleryDetailScene.KEY_GID, gid);
+                args.putString(GalleryDetailScene.KEY_TOKEN, token);
+                startScene(new Announcer(GalleryDetailScene.class).setArgs(args));
+                return;
+            } else {
+                mSearchLayout.formatListUrlBuilder(mUrlBuilder, query);
+            }
         } else {
             mUrlBuilder.reset();
             mUrlBuilder.setKeyword(query);

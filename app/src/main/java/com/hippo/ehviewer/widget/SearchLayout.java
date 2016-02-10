@@ -34,14 +34,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.widget.RadioGridGroup;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -86,7 +85,7 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
 
     private View mNormalView;
     private CategoryTable mCategoryTable;
-    private RadioGroup mNormalSearchMode;
+    private RadioGridGroup mNormalSearchMode;
     private SimpleImageView mNormalSearchModeHelp;
     private View mSearchTagHelp;
     private SwitchCompat mEnableAdvanceSwitch;
@@ -133,7 +132,7 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         View normalView = mInflater.inflate(R.layout.search_normal, frameLayout, false);
         mNormalView = normalView;
         mCategoryTable = (CategoryTable) normalView.findViewById(R.id.search_category_table);
-        mNormalSearchMode = (RadioGroup) normalView.findViewById(R.id.normal_search_mode);
+        mNormalSearchMode = (RadioGridGroup) normalView.findViewById(R.id.normal_search_mode);
         mNormalSearchModeHelp = (SimpleImageView) normalView.findViewById(R.id.normal_search_mode_help);
         mEnableAdvanceSwitch = (SwitchCompat) normalView.findViewById(R.id.search_enable_advance);
         Drawable helpDrawable = com.hippo.vector.VectorDrawable.create(context, R.xml.ic_help_circle_x24);
@@ -214,6 +213,10 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         }
     }
 
+    public boolean isSpecifyGallery() {
+        return R.id.search_specify_gallery == mNormalSearchMode.getCheckedRadioButtonId();
+    }
+
     // TODO image search
     public void formatListUrlBuilder(ListUrlBuilder urlBuilder, String query) {
         urlBuilder.reset();
@@ -222,22 +225,21 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         switch (nsMode) {
             default:
             case R.id.search_normal_search:
+                urlBuilder.setMode(ListUrlBuilder.MODE_NORMAL);
+                break;
             case R.id.search_specify_uploader:
-                if (nsMode == R.id.search_specify_uploader) {
-                    urlBuilder.setKeyword(EhUtils.getSpecifyUploaderKeyword(query));
-                } else {
-                    urlBuilder.setKeyword(query);
-                }
-                urlBuilder.setCategory(mCategoryTable.getCategory());
-                if (mEnableAdvance) {
-                    urlBuilder.setAdvanceSearch(mTableAdvanceSearch.getAdvanceSearch());
-                    urlBuilder.setMinRating(mTableAdvanceSearch.getMinRating());
-                }
+                urlBuilder.setMode(ListUrlBuilder.MODE_UPLOADER);
                 break;
             case R.id.search_specify_tag:
                 urlBuilder.setMode(ListUrlBuilder.MODE_TAG);
-                urlBuilder.setKeyword(query);
                 break;
+        }
+
+        urlBuilder.setKeyword(query);
+        urlBuilder.setCategory(mCategoryTable.getCategory());
+        if (mEnableAdvance) {
+            urlBuilder.setAdvanceSearch(mTableAdvanceSearch.getAdvanceSearch());
+            urlBuilder.setMinRating(mTableAdvanceSearch.getMinRating());
         }
     }
 

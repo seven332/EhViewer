@@ -294,8 +294,7 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
     public String build() {
         switch (mMode) {
             default:
-            case MODE_NORMAL:
-            case MODE_UPLOADER: {
+            case MODE_NORMAL: {
                 boolean filter = false;
                 UrlBuilder ub = new UrlBuilder(EhUrl.HOST_EX);
                 if (mCategory != EhUtils.NONE) {
@@ -348,6 +347,19 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
                 }
                 return ub.build();
             }
+            case MODE_UPLOADER: {
+                StringBuilder sb = new StringBuilder(EhUrl.HOST_EX);
+                sb.append("uploader/");
+                try {
+                    sb.append(URLEncoder.encode(mKeyword, "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    // Empty
+                }
+                if (mPageIndex != 0) {
+                    sb.append('/').append(mPageIndex);
+                }
+                return sb.toString();
+            }
             case MODE_TAG: {
                 StringBuilder sb = new StringBuilder(EhUrl.HOST_EX);
                 sb.append("tag/");
@@ -356,7 +368,9 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
                 } catch (UnsupportedEncodingException e) {
                     // Empty
                 }
-                sb.append('/').append(mPageIndex);
+                if (mPageIndex != 0) {
+                    sb.append('/').append(mPageIndex);
+                }
                 return sb.toString();
             }
         }

@@ -104,6 +104,7 @@
     <string name="search_normal_search">Normal search</string>
     <string name="search_specify_uploader">Specify uploader</string>
     <string name="search_specify_tag">Specify tag</string>
+    <string name="search_specify_gallery">Specify gallery</string>
     <string name="search_enable_advance">Enable advance options</string>
 
     <string name="search_sname">Search Gallery</string>

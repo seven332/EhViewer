@@ -65,6 +65,7 @@
     <string name="search_normal_search">一般搜索</string>
     <string name="search_specify_uploader">指定上传者</string>
     <string name="search_specify_tag">指定标签</string>
+    <string name="search_specify_gallery">指定画廊</string>
     <string name="search_enable_advance">启用高级选项</string>
 
     <string name="search_sname">搜索画廊</string>

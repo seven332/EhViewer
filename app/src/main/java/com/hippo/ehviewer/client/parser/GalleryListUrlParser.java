@@ -19,7 +19,6 @@ package com.hippo.ehviewer.client.parser;
 import android.text.TextUtils;
 
 import com.hippo.ehviewer.client.EhUrl;
-import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.yorozuya.Utilities;
 
@@ -100,7 +99,7 @@ public final class GalleryListUrlParser {
 
         ListUrlBuilder builder = new ListUrlBuilder();
         builder.setMode(ListUrlBuilder.MODE_UPLOADER);
-        builder.setKeyword(EhUtils.getSpecifyUploaderKeyword(uploader));
+        builder.setKeyword(uploader);
         return builder;
     }
 
