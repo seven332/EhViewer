@@ -26,7 +26,7 @@ import com.hippo.gl.glrenderer.GLCanvas;
 /**
  * Material design edge effect
  */
-public class EdgeEffect {
+public class GLEdgeEffect {
 
     // Time it will take the effect to fully recede in ms
     private static final int RECEDE_TIME = 600;
@@ -91,7 +91,7 @@ public class EdgeEffect {
     /**
      * Construct a new EdgeEffect with a theme appropriate for the provided context.
      */
-    public EdgeEffect(int color) {
+    public GLEdgeEffect(int color) {
         mColor = color;
         mInterpolator = new DecelerateInterpolator();
     }

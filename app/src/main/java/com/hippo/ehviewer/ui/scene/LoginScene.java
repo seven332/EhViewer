@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.ui.scene;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -29,7 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +40,7 @@ import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
+import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
 
 public final class LoginScene extends BaseScene implements EditText.OnEditorActionListener,
@@ -171,12 +170,7 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
             mPasswordLayout.setError(null);
         }
 
-        // Hide ime keyboard
-        View view = getActivity().getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
+        ActivityHelper.hideSoftInput(getActivity());
 
         mProgress.setAlpha(0.0f);
         mProgress.setVisibility(View.VISIBLE);

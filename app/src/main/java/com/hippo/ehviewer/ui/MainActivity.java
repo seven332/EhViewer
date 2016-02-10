@@ -26,6 +26,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -90,6 +91,8 @@ public final class MainActivity extends StageActivity
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Log.d("TAG", "onNewIntent");
+
         super.onNewIntent(intent);
         if (!handleIntent(intent) && intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
             Toast.makeText(this, R.string.error_cannot_parse_the_url, Toast.LENGTH_SHORT).show();
@@ -97,6 +100,9 @@ public final class MainActivity extends StageActivity
     }
 
     private void onInit() {
+        Log.d("TAG", "onInit");
+
+
         Intent intent = getIntent();
         if (!handleIntent(intent)) {
             if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
@@ -125,6 +131,8 @@ public final class MainActivity extends StageActivity
     }
 
     private void onRestore(Bundle savedInstanceState) {
+        Log.d("TAG", "onRestore");
+
         mNavCheckedItem = savedInstanceState.getInt(KEY_NAV_CHECKED_ITEM);
     }
 

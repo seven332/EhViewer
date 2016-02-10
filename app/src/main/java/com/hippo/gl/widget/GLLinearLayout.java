@@ -27,7 +27,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LinearLayout extends GLView {
+public class GLLinearLayout extends GLView {
 
     @IntDef({HORIZONTAL, VERTICAL})
     @Retention(RetentionPolicy.SOURCE)

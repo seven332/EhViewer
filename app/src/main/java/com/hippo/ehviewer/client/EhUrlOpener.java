@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.GalleryDetailUrlParser;
@@ -32,6 +33,8 @@ import com.hippo.ehviewer.ui.scene.ProgressScene;
 import com.hippo.scene.StageActivity;
 
 public class EhUrlOpener {
+
+    private static final String TAG = EhUrlOpener.class.getSimpleName();
 
     public static boolean openUrl(Activity activity, String url) {
         if (TextUtils.isEmpty(url)) {
@@ -78,6 +81,8 @@ public class EhUrlOpener {
             activity.startActivity(intent);
             return true;
         }
+
+        Log.i(TAG, "Can't parse url: " + url);
 
         return false;
     }

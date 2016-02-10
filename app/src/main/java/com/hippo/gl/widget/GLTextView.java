@@ -17,6 +17,7 @@
 package com.hippo.gl.widget;
 
 import android.graphics.Rect;
+import android.text.TextUtils;
 
 import com.hippo.gl.glrenderer.GLCanvas;
 import com.hippo.gl.glrenderer.TextTexture;
@@ -24,7 +25,7 @@ import com.hippo.gl.view.GLView;
 import com.hippo.gl.view.Gravity;
 import com.hippo.yorozuya.ArrayUtils;
 
-public class TextView extends GLView {
+public class GLTextView extends GLView {
 
     TextTexture mTextTexture;
 
@@ -33,26 +34,35 @@ public class TextView extends GLView {
 
     private int mGravity = Gravity.NO_GRAVITY;
 
-    public TextView(TextTexture textTexture) {
+    private void generateIndexes() {
+        if (mTextTexture == null || TextUtils.isEmpty(mText)) {
+            mIndexes = ArrayUtils.EMPTY_INT_ARRAY;
+        } else {
+            mIndexes = mTextTexture.getTextIndexes(mText);
+        }
+    }
+
+    public void setTextTexture(TextTexture textTexture) {
+        if (mTextTexture == textTexture) {
+            return;
+        }
         mTextTexture = textTexture;
+
+        generateIndexes();
+        requestLayout();
     }
 
     public void setText(String text) {
         if (text == null) {
             text = "";
         }
-        if (!text.equals(mText)) {
-            int oldMinimumWidth = getSuggestedMinimumWidth();
-
-            mText = text;
-            mIndexes = mTextTexture.getTextIndexes(text);
-
-            if (getSuggestedMinimumWidth() != oldMinimumWidth) {
-                requestLayout();
-            } else {
-                invalidate();
-            }
+        if (text.equals(mText)) {
+            return;
         }
+        mText = text;
+
+        generateIndexes();
+        requestLayout();
     }
 
     public void setGravity(int gravity) {
@@ -80,12 +90,6 @@ public class TextView extends GLView {
             return Math.max((int) mTextTexture.getTextHeight() + mPaddings.top + mPaddings.bottom,
                     super.getSuggestedMinimumHeight());
         }
-    }
-
-    @Override
-    protected void onMeasure(int widthSpec, int heightSpec) {
-        setMeasuredSize(getDefaultSize(getSuggestedMinimumWidth(), widthSpec),
-                getDefaultSize(getSuggestedMinimumHeight(), heightSpec));
     }
 
     @Override

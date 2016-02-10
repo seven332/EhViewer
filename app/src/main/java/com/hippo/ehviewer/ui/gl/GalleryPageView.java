@@ -16,109 +16,68 @@
 
 package com.hippo.ehviewer.ui.gl;
 
-import android.graphics.Rect;
+import android.content.Context;
 
-import com.hippo.gl.view.GLView;
-import com.hippo.gl.widget.FrameLayout;
-import com.hippo.gl.widget.ScaledImageView;
+import com.hippo.gl.glrenderer.TextTexture;
+import com.hippo.gl.view.Gravity;
+import com.hippo.gl.widget.GLFrameLayout;
+import com.hippo.gl.widget.GLLinearLayout;
+import com.hippo.gl.widget.GLProgressView;
+import com.hippo.gl.widget.GLTextView;
+import com.hippo.gl.widget.GLTextureView;
+import com.hippo.yorozuya.LayoutUtils;
 
-public class GalleryPageView extends FrameLayout {
+public class GalleryPageView extends GLFrameLayout {
 
-    public ScaledImageView mImageView;
-    //public LinearLayout mLinearLayout;
-    //public TextView mIndexView;
-    //public ProgressView mProgressView;
+    public ImageView mImage;
+    public GLTextView mPage;
+    public GLTextureView mError;
+    public GLProgressView mProgress;
 
-    private Rect mSeen = new Rect();
+    // TODO
+    private static TextTexture sPageTextTexture;
 
-    //private static TextTexture sTextTexture;
+    public GalleryPageView(Context context) {
+        // Add image
+        mImage = new ImageView();
+        GravityLayoutParams glp = new GravityLayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT);
+        addComponent(mImage, glp);
 
-    //public static void setTextTexture(TextTexture textTexture) {
-    //    sTextTexture = textTexture;
-    //}
+        // Add other panel
+        GLLinearLayout ll = new GLLinearLayout();
+        ll.setOrientation(GLLinearLayout.VERTICAL);
+        glp = new GravityLayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT);
+        glp.gravity = Gravity.CENTER;
+        addComponent(ll, glp);
 
-    public GalleryPageView() {
-        mImageView = new ScaledImageView();
-        //mLinearLayout = new LinearLayout();
-        //mLinearLayout.setInterval(LayoutUtils.dp2pix(context, 24)); // 12dp
-        //mIndexView = new TextView(sTextTexture);
-        //mProgressView = new ProgressView();
-       // mProgressView.setMinimumWidth(LayoutUtils.dp2pix(context, 56)); // 56dp
-        //mProgressView.setMinimumHeight(LayoutUtils.dp2pix(context, 56)); // 56dp
-
-        /*
-        GravityLayoutParams lp = new GravityLayoutParams(LayoutParams.WRAP_CONTENT,
+        // Add page
+        mPage = new GLTextView();
+        mPage.setTextTexture(sPageTextTexture);
+        GLLinearLayout.LayoutParams lp = new GLLinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER_HORIZONTAL;
-        mLinearLayout.addComponent(mIndexView, lp);
-        //lp = new GravityLayoutParams(LayoutParams.WRAP_CONTENT,
-         //       LayoutParams.WRAP_CONTENT);
-        //lp.gravity = Gravity.CENTER_HORIZONTAL;
-        //mLinearLayout.addComponent(mProgressView, lp);
+        ll.addComponent(mPage, lp);
 
-
-
-        lp = new GravityLayoutParams(LayoutParams.WRAP_CONTENT,
+        // Add error
+        mError = new GLTextureView();
+        lp = new GLLinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
-        lp.gravity = Gravity.CENTER;
+        lp.gravity = Gravity.CENTER_HORIZONTAL;
+        ll.addComponent(mError, lp);
 
-        addComponent(mLinearLayout, lp);
-                */
-
-        GLView.GravityLayoutParams lp = new GLView.GravityLayoutParams(GLView.LayoutParams.MATCH_PARENT,
-                GLView.LayoutParams.MATCH_PARENT);
-        addComponent(mImageView, lp);
+        // Add progress
+        mProgress = new GLProgressView();
+        mProgress.setMinimumWidth(LayoutUtils.dp2pix(context, 56)); // 56dp
+        mProgress.setMinimumHeight(LayoutUtils.dp2pix(context, 56)); // 56dp
+        lp = new GLLinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT);
+        lp.gravity = Gravity.CENTER_HORIZONTAL;
+        ll.addComponent(mProgress, lp);
     }
 
-    private void updateSeen() {
-        Rect bounds = bounds();
-        Rect parentBounds = mParent.bounds();
-        mSeen.set(bounds);
-        if (!mSeen.intersect(0, 0, parentBounds.width(), parentBounds.height())) {
-            mSeen.set(0, 0, 0, 0);
-        } else {
-            mSeen.offset(-bounds.left, -bounds.top);
-        }
-        mImageView.setSeen(mSeen);
-    }
-
-    @Override
-    public void layout(int left, int top, int right, int bottom) {
-        super.layout(left, top, right, bottom);
-        updateSeen();
-    }
-
-    public ScaledImageView getImageView() {
-        return mImageView;
-    }
-
-    public void setAnimateState(int position) {
-        mImageView.setAnimateState(position);
-        mImageView.setAnimateState(position);
-    }
-
-    public boolean isLoaded() {
-        return mImageView.isLoaded();
-    }
-
-    public void setScaleOffset(@GalleryView.Scale int scale,
-            @GalleryView.StartPosition int startPosition, float lastScale) {
-        mImageView.setScaleOffset(scale, startPosition, lastScale);
-    }
-
-    public void scroll(int dx, int dy, int[] remain) {
-        mImageView.scroll(dx, dy, remain);
-    }
-
-    public void scale(float focusX, float focusY, float scale) {
-        mImageView.scale(focusX, focusY, scale);
-    }
-
-    public float getFitScale() {
-        return mImageView.getFitScale();
-    }
-
-    public float getScale() {
-        return  mImageView.getScale();
+    public ImageView getImageView() {
+        return mImage;
     }
 }

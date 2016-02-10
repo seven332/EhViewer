@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -45,8 +46,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.EhApplication;
-import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
@@ -59,6 +60,7 @@ import com.hippo.ehviewer.client.data.GalleryTagGroup;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
+import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
@@ -863,6 +865,11 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             ListUrlBuilder lub = new ListUrlBuilder();
             lub.setCategory(category);
             GalleryListScene.startScene(this, lub);
+        } else if (mDownload == v) {
+            // TODO
+        } else if (mRead == v) {
+            Intent intent = new Intent(getActivity(), GalleryActivity.class);
+            startActivity(intent);
         } else if (mInfo == v) {
             Bundle args = new Bundle();
             args.putParcelable(GalleryInfoScene.KEY_GALLERY_DETAIL, mGalleryDetail);

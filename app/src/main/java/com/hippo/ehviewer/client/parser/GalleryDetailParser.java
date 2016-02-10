@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.client.parser;
 
-import android.os.Environment;
 import android.util.Log;
 
 import com.hippo.ehviewer.client.EhUtils;
@@ -270,7 +269,7 @@ public class GalleryDetailParser {
         if (largePreviewSet.size() == 0) {
             Log.d("TAG", "largePreviewSet.size() == 0");
             try {
-                OutputStream os = new FileOutputStream(new File(Environment.getExternalStorageDirectory(), "empty.txt"));
+                OutputStream os = new FileOutputStream(new File("/data/data/com.hippo.ehviewer/cache/empty.txt"));
                 os.write(body.getBytes("utf-8"));
                 os.close();
             } catch (Exception e) {

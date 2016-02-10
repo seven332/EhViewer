@@ -19,7 +19,7 @@ package com.hippo.gl.widget;
 import com.hippo.gl.view.GLView;
 import com.hippo.gl.view.Gravity;
 
-public class FrameLayout extends GLView {
+public class GLFrameLayout extends GLView {
 
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {

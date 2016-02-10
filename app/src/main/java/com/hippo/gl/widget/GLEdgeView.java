@@ -17,18 +17,18 @@
 package com.hippo.gl.widget;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.opengl.Matrix;
 import android.support.annotation.IntDef;
 
 import com.hippo.ehviewer.R;
 import com.hippo.gl.glrenderer.GLCanvas;
 import com.hippo.gl.view.GLView;
+import com.hippo.yorozuya.ResourcesUtils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public final class EdgeView extends GLView {
+public final class GLEdgeView extends GLView {
 
     @IntDef({TOP, LEFT, BOTTOM, RIGHT})
     @Retention(RetentionPolicy.SOURCE)
@@ -50,18 +50,14 @@ public final class EdgeView extends GLView {
     private static final int BOTTOM_M = BOTTOM * 16;
     private static final int RIGHT_M = RIGHT * 16;
 
-    private EdgeEffect[] mEffect = new EdgeEffect[4];
+    private GLEdgeEffect[] mEffect = new GLEdgeEffect[4];
     private float[] mMatrix = new float[4 * 16];
 
-    public EdgeView(Context context) {
-        final TypedArray a = context.obtainStyledAttributes(
-                R.styleable.Theme);
-        final int themeColor = a.getColor(
-                R.styleable.Theme_colorPrimary, 0xff666666);
-        a.recycle();
+    public GLEdgeView(Context context) {
+        final int themeColor = ResourcesUtils.getAttrColor(context, R.attr.colorPrimary);
         int color = (themeColor & 0xffffff) | 0x33000000;
         for (int i = 0; i < 4; i++) {
-            mEffect[i] = new EdgeEffect(color);
+            mEffect[i] = new GLEdgeEffect(color);
         }
     }
 
@@ -101,7 +97,7 @@ public final class EdgeView extends GLView {
 
     @Override
     public void onRender(GLCanvas canvas) {
-        super.render(canvas);
+        super.onRender(canvas);
         boolean more = false;
         for (int i = 0; i < 4; i++) {
             canvas.save(GLCanvas.SAVE_FLAG_MATRIX);
@@ -146,7 +142,7 @@ public final class EdgeView extends GLView {
     }
 
     public void onRelease(@Direction int direction) {
-        EdgeEffect edgeEffect = mEffect[direction];
+        GLEdgeEffect edgeEffect = mEffect[direction];
         edgeEffect.onRelease();
         if (!edgeEffect.isFinished()) {
             invalidate();
@@ -161,5 +157,9 @@ public final class EdgeView extends GLView {
         if (!mEffect[direction].isFinished()) {
             invalidate();
         }
+    }
+
+    public boolean isFinished(int direction) {
+        return mEffect[direction].isFinished();
     }
 }

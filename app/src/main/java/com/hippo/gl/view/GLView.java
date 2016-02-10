@@ -631,9 +631,18 @@ public class GLView implements TouchOwner {
     }
 
     private boolean setBounds(int left, int top, int right, int bottom) {
-        boolean sizeChanged = (right - left) != (mBounds.right - mBounds.left)
-                || (bottom - top) != (mBounds.bottom - mBounds.top);
-        mBounds.set(left, top, right, bottom);
+        Rect bounds = mBounds;
+        int oldW = bounds.right - bounds.left;
+        int oldH = bounds.bottom - bounds.top;
+        int newW = right - left;
+        int newH = bottom - top;
+
+        boolean sizeChanged = oldW != newW || oldH != newH;
+        bounds.set(left, top, right, bottom);
+
+        if (sizeChanged) {
+            onSizeChanged(newW, newH, oldW, oldH);
+        }
 
         // Update position in root
         int[] position = mPosition;
@@ -655,6 +664,9 @@ public class GLView implements TouchOwner {
         }
 
         return sizeChanged;
+    }
+
+    protected void onSizeChanged(int newW, int newH, int oldW, int oldH) {
     }
 
     protected void onPositionInRootChanged(int x, int y, int oldX, int oldY) {
