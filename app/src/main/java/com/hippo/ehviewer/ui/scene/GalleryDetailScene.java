@@ -414,6 +414,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         // Clear nav checked item
         setNavCheckedItem(0);
+
+        // Hide IME
+        ActivityHelper.hideSoftInput(getActivity());
     }
 
     @Override

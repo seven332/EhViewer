@@ -71,6 +71,7 @@ import com.hippo.scene.SceneApplication;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.TransitionHelper;
+import com.hippo.util.ActivityHelper;
 import com.hippo.util.ApiHelper;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.view.ViewTransition;
@@ -329,6 +330,9 @@ public final class GalleryListScene extends BaseScene
 
         // Update nav checked item
         setNavCheckedItem(mNavCheckedId);
+
+        // Hide IME
+        ActivityHelper.hideSoftInput(getActivity());
     }
 
     @Override

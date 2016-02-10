@@ -48,6 +48,7 @@ import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.scene.SceneApplication;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
+import com.hippo.util.ActivityHelper;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.LoadImageView;
@@ -154,6 +155,9 @@ public class GalleryPreviewsScene extends ToolbarScene {
 
         // Clear nav checked item
         setNavCheckedItem(0);
+
+        // Hide IME
+        ActivityHelper.hideSoftInput(getActivity());
     }
 
     @Override

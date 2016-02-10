@@ -112,6 +112,14 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Show IME
+        ActivityHelper.showSoftInput(getActivity(), mUsername);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
 

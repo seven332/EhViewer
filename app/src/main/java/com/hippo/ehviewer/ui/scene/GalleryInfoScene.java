@@ -38,6 +38,7 @@ import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.util.ActivityHelper;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.yorozuya.LayoutUtils;
 
@@ -167,6 +168,9 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
 
         // Clear nav checked item
         setNavCheckedItem(0);
+
+        // Hide IME
+        ActivityHelper.hideSoftInput(getActivity());
     }
 
     @Override

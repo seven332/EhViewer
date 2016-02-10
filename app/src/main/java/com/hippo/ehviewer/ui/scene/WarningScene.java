@@ -28,6 +28,7 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
+import com.hippo.util.ActivityHelper;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.widget.SimpleImageView;
 
@@ -56,6 +57,14 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
         RippleSalon.addRipple(mOk, true);
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Hide IME
+        ActivityHelper.hideSoftInput(getActivity());
     }
 
     @Override
