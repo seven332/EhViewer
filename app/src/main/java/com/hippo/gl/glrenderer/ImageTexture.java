@@ -19,14 +19,13 @@ package com.hippo.gl.glrenderer;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.RectF;
-import android.os.Process;
 import android.os.SystemClock;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
-import com.hippo.gl.image.AnimatedImage;
-import com.hippo.gl.image.Image;
+import com.hippo.gl.annotation.RenderThread;
 import com.hippo.gl.view.GLRoot;
+import com.hippo.image.Image;
 import com.hippo.yorozuya.InfiniteThreadExecutor;
 import com.hippo.yorozuya.PVLock;
 import com.hippo.yorozuya.PriorityThreadFactory;
@@ -39,12 +38,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ImageTexture implements Texture {
 
-    @IntDef({SMALL, LARGE})
+    @IntDef({TILE_SMALL, TILE_LARGE})
     @Retention(RetentionPolicy.SOURCE)
-    private @interface Size {}
+    private @interface TileType {}
 
-    private static final int SMALL = 0;
-    private static final int LARGE = 1;
+    private static final int TILE_SMALL = 0;
+    private static final int TILE_LARGE = 1;
 
     private static final int SMALL_CONTENT_SIZE = 254;
     private static final int SMALL_BORDER_SIZE = 1;
@@ -62,28 +61,12 @@ public class ImageTexture implements Texture {
 
     private static Bitmap sSmallUploadBitmap;
     private static Bitmap sLargeUploadBitmap;
-
     private static InfiniteThreadExecutor sThreadExecutor;
     private static PVLock sPVLock;
 
     private static Tile sSmallFreeTileHead = null;
     private static Tile sLargeFreeTileHead = null;
     private static final Object sFreeTileLock = new Object();
-
-    public static void prepareResources() {
-        sSmallUploadBitmap = Bitmap.createBitmap(SMALL_TILE_SIZE, SMALL_TILE_SIZE, Bitmap.Config.ARGB_8888);
-        sLargeUploadBitmap = Bitmap.createBitmap(LARGE_TILE_SIZE, LARGE_TILE_SIZE, Bitmap.Config.ARGB_8888);
-        sThreadExecutor = new InfiniteThreadExecutor(3000, new LinkedBlockingQueue<Runnable>(),
-                new PriorityThreadFactory(ImageTexture.class.getSimpleName(), Process.THREAD_PRIORITY_BACKGROUND));
-        sPVLock = new PVLock(3);
-    }
-
-    public static void freeResources() {
-        sSmallUploadBitmap = null;
-        sLargeUploadBitmap = null;
-        sThreadExecutor = null;
-        sPVLock = null;
-    }
 
     private final Image mImage;
     private int mUploadIndex = 0;
@@ -95,12 +78,17 @@ public class ImageTexture implements Texture {
     private final RectF mSrcRect = new RectF();
     private final RectF mDestRect = new RectF();
 
-    private boolean mRecycled = false;
-    private boolean mRecycleLock = false;
-    private boolean mPause = false;
-    private volatile boolean mConfirmFrame = false;
-    private int mTargetFrame = -1;
-    private Callback mCallback;
+    private volatile boolean mFrameDirty = false;
+
+
+    static {
+        sSmallUploadBitmap = Bitmap.createBitmap(SMALL_TILE_SIZE, SMALL_TILE_SIZE, Bitmap.Config.ARGB_8888);
+        sLargeUploadBitmap = Bitmap.createBitmap(LARGE_TILE_SIZE, LARGE_TILE_SIZE, Bitmap.Config.ARGB_8888);
+        sThreadExecutor = new InfiniteThreadExecutor(3000, new LinkedBlockingQueue<Runnable>(),
+                new PriorityThreadFactory(ImageTexture.class.getSimpleName(),
+                        android.os.Process.THREAD_PRIORITY_BACKGROUND));
+        sPVLock = new PVLock(3);
+    }
 
     public static class Uploader implements GLRoot.OnGLIdleListener {
         private final ArrayDeque<ImageTexture> mTextures =
@@ -150,7 +138,8 @@ public class ImageTexture implements Texture {
 
     private static class Tile extends UploadedTexture {
 
-        private int mSize;
+        @TileType
+        private int mTileType;
         public int offsetX;
         public int offsetY;
         public Image image;
@@ -161,18 +150,18 @@ public class ImageTexture implements Texture {
         public int tileSize;
         public Bitmap uploadBitmap;
 
-        public void setSize(@Size int size, int width, int height) {
-            mSize = size;
-            if (size == SMALL) {
+        public void setSize(@TileType int tileType, int width, int height) {
+            mTileType = tileType;
+            if (tileType == TILE_SMALL) {
                 borderSize = SMALL_BORDER_SIZE;
                 tileSize = SMALL_TILE_SIZE;
                 uploadBitmap = sSmallUploadBitmap;
-            } else if (size == LARGE) {
+            } else if (tileType == TILE_LARGE) {
                 borderSize = LARGE_BORDER_SIZE;
                 tileSize = LARGE_TILE_SIZE;
                 uploadBitmap = sLargeUploadBitmap;
             } else {
-                throw new IllegalStateException("Not support size " + size);
+                throw new IllegalStateException("Not support tile type: " + tileType);
             }
             contentWidth = width;
             contentHeight = height;
@@ -188,8 +177,29 @@ public class ImageTexture implements Texture {
             final Image image = this.image;
             if (image != null) {
                 synchronized (image) {
-                    image.copyPixels(offsetX - borderSize, offsetY - borderSize, uploadBitmap,
-                            0, 0, tileSize, tileSize, Color.TRANSPARENT);
+                    int srcX;
+                    int dstX;
+                    if (offsetX - borderSize < 0) {
+                        srcX = 0;
+                        dstX = borderSize - offsetX;
+                    } else {
+                        srcX = offsetX - borderSize;
+                        dstX = 0;
+                    }
+                    int srcY;
+                    int dstY;
+                    if (offsetY - borderSize < 0) {
+                        srcY = 0;
+                        dstY = borderSize - offsetY;
+                    } else {
+                        srcY = offsetY - borderSize;
+                        dstY = 0;
+                    }
+
+                    image.render(srcX, srcY, uploadBitmap, dstX, dstY,
+                            Math.min(image.getWidth() - srcX, tileSize - dstX),
+                            Math.min(image.getHeight() - srcY, tileSize - dstY),
+                            true, Color.TRANSPARENT);
                 }
             }
             return uploadBitmap;
@@ -224,15 +234,31 @@ public class ImageTexture implements Texture {
         }
 
         public void free() {
-            switch (mSize) {
-                case SMALL:
+            switch (mTileType) {
+                case TILE_SMALL:
                     freeSmallTile(this);
                     break;
-                case LARGE:
+                case TILE_LARGE:
                     freeLargeTile(this);
                     break;
                 default:
-                    throw new IllegalStateException("Not support size " + mSize);
+                    throw new IllegalStateException("Not support tile type: " + mTileType);
+            }
+        }
+
+        private static void freeSmallTile(Tile tile) {
+            tile.invalidate();
+            synchronized (sFreeTileLock) {
+                tile.nextFreeTile = sSmallFreeTileHead;
+                sSmallFreeTileHead = tile;
+            }
+        }
+
+        private static void freeLargeTile(Tile tile) {
+            tile.invalidate();
+            synchronized (sFreeTileLock) {
+                tile.nextFreeTile = sLargeFreeTileHead;
+                sLargeFreeTileHead = tile;
             }
         }
     }
@@ -263,20 +289,69 @@ public class ImageTexture implements Texture {
         }
     }
 
-    private static void freeSmallTile(Tile tile) {
-        tile.invalidate();
-        synchronized (sFreeTileLock) {
-            tile.nextFreeTile = sSmallFreeTileHead;
-            sSmallFreeTileHead = tile;
-        }
-    }
+    public ImageTexture(@NonNull Image image) {
+        mImage = image;
+        int width = mWidth = image.getWidth();
+        int height = mHeight = image.getHeight();
+        ArrayList<Tile> list = new ArrayList<>();
 
-    private static void freeLargeTile(Tile tile) {
-        tile.invalidate();
-        synchronized (sFreeTileLock) {
-            tile.nextFreeTile = sLargeFreeTileHead;
-            sLargeFreeTileHead = tile;
+        for (int x = 0; x < width; x += LARGE_CONTENT_SIZE) {
+            for (int y = 0; y < height; y += LARGE_CONTENT_SIZE) {
+                int w = Math.min(LARGE_CONTENT_SIZE, width - x);
+                int h = Math.min(LARGE_CONTENT_SIZE, height - y);
+
+                if (w <= SMALL_CONTENT_SIZE) {
+                    Tile tile = obtainSmallTile();
+                    tile.offsetX = x;
+                    tile.offsetY = y;
+                    tile.image = image;
+                    tile.setSize(TILE_SMALL, w, Math.min(SMALL_CONTENT_SIZE, h));
+                    list.add(tile);
+
+                    int nextHeight = h - SMALL_CONTENT_SIZE;
+                    if (nextHeight > 0) {
+                        Tile nextTile = obtainSmallTile();
+                        nextTile.offsetX = x;
+                        nextTile.offsetY = y + SMALL_CONTENT_SIZE;
+                        nextTile.image = image;
+                        nextTile.setSize(TILE_SMALL, w, nextHeight);
+                        list.add(nextTile);
+                    }
+                } else if (h <= SMALL_CONTENT_SIZE) {
+                    Tile tile = obtainSmallTile();
+                    tile.offsetX = x;
+                    tile.offsetY = y;
+                    tile.image = image;
+                    tile.setSize(TILE_SMALL, Math.min(SMALL_CONTENT_SIZE, w), h);
+                    list.add(tile);
+
+                    int nextWidth = w - SMALL_CONTENT_SIZE;
+                    if (nextWidth > 0) {
+                        Tile nextTile = obtainSmallTile();
+                        nextTile.offsetX = x + SMALL_CONTENT_SIZE;
+                        nextTile.offsetY = y;
+                        nextTile.image = image;
+                        nextTile.setSize(TILE_SMALL, nextWidth, h);
+                        list.add(nextTile);
+                    }
+                } else {
+                    Tile tile = obtainLargeTile();
+                    tile.offsetX = x;
+                    tile.offsetY = y;
+                    tile.image = image;
+                    tile.setSize(TILE_LARGE, w, h);
+                    list.add(tile);
+                }
+            }
         }
+
+        mTiles = list.toArray(new Tile[list.size()]);
+
+        /*
+        if (image instanceof AnimatedImage) {
+            sThreadExecutor.execute(new DecodeTask());
+        }
+        */
     }
 
     private boolean uploadNextTile(GLCanvas canvas) {
@@ -299,195 +374,6 @@ public class ImageTexture implements Texture {
             }
         }
         return mUploadIndex == mTiles.length;
-    }
-
-    private class DecodeTask implements Runnable {
-
-        private boolean checkRecycle() {
-            if (mRecycled) {
-                if (!mImage.isRecycled()) {
-                    mImage.recycle();
-                }
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public void run() {
-            synchronized (mImage) {
-                if (checkRecycle()) {
-                    return;
-                }
-                mRecycleLock = true;
-            }
-
-            AnimatedImage aImage = (AnimatedImage) mImage;
-
-            // Avoid a lot of decode thread at same time
-            sPVLock.p();
-            boolean decode = aImage.decode();
-            sPVLock.v();
-
-            synchronized (mImage) {
-                mRecycleLock = false;
-                if (checkRecycle()) {
-                    return;
-                }
-            }
-
-            // No need to do animate if decode failed
-            if (!decode) {
-                return;
-            }
-
-            long delay;
-            long time;
-            int frame = aImage.getCurrentFrame();
-            int frameCount = aImage.getFrameCount();
-            long forecast = System.currentTimeMillis();
-
-            // No need to do animate if only on frame
-            if (frameCount <= 1) {
-                return;
-            }
-
-            while (true) {
-                synchronized (mImage) {
-                    // Check recycle and unlock recycle
-                    mRecycleLock = false;
-                    if (checkRecycle()) {
-                        return;
-                    }
-
-                    // Check pause
-                    while (mPause && mTargetFrame == -1) {
-                        try {
-                            mImage.wait();
-                        } catch (InterruptedException e) {
-                            // Ignore
-                        }
-                        mPause = false;
-
-                        // Check recycle
-                        if (checkRecycle()) {
-                            return;
-                        }
-
-                        // Update forecast
-                        forecast = System.currentTimeMillis();
-                    }
-
-                    // Get next frame and delay
-                    time = System.currentTimeMillis();
-                    if (mTargetFrame == -1) {
-                        frame = (frame + 1) % frameCount;
-                        delay = aImage.getDelay(frame) - (time - forecast);
-                    } else {
-                        frame = mTargetFrame;
-                        delay = 0;
-                        mTargetFrame = -1;
-                    }
-                    forecast = time + delay;
-                }
-
-                // Do sleep
-                if (delay > 0) {
-                    try {
-                        Thread.sleep(delay);
-                    } catch (InterruptedException e) {
-                        // Ignore
-                    }
-                }
-
-                // Check recycle and lock recycle
-                synchronized (mImage) {
-                    if (checkRecycle()) {
-                        return;
-                    }
-                    mRecycleLock = true;
-                }
-
-                aImage.setCurrentFrame(frame);
-                mConfirmFrame = true;
-
-                // Notify
-                Callback callback = mCallback;
-                if (callback != null) {
-                    callback.invalidateImage(mImage);
-                }
-            }
-        }
-    }
-
-    public ImageTexture(@NonNull Image image) {
-        mImage = image;
-        int width = mWidth = image.getWidth();
-        int height = mHeight = image.getHeight();
-        ArrayList<Tile> list = new ArrayList<>();
-
-        for (int x = 0; x < width; x += LARGE_CONTENT_SIZE) {
-            for (int y = 0; y < height; y += LARGE_CONTENT_SIZE) {
-                int w = Math.min(LARGE_CONTENT_SIZE, width - x);
-                int h = Math.min(LARGE_CONTENT_SIZE, height - y);
-
-                if (w <= SMALL_TILE_SIZE) {
-                    Tile tile = obtainSmallTile();
-                    tile.offsetX = x;
-                    tile.offsetY = y;
-                    tile.image = image;
-                    tile.setSize(SMALL, w, Math.min(SMALL_TILE_SIZE, h));
-                    list.add(tile);
-
-                    int nextHeight = h - SMALL_TILE_SIZE;
-                    if (nextHeight > 0) {
-                        Tile nextTile = obtainSmallTile();
-                        nextTile.offsetX = x;
-                        nextTile.offsetY = y + SMALL_TILE_SIZE;
-                        nextTile.image = image;
-                        nextTile.setSize(SMALL, w, nextHeight);
-                        list.add(nextTile);
-                    }
-
-                } else if (h <= SMALL_TILE_SIZE) {
-                    Tile tile = obtainSmallTile();
-                    tile.offsetX = x;
-                    tile.offsetY = y;
-                    tile.image = image;
-                    tile.setSize(SMALL, Math.min(SMALL_TILE_SIZE, w), h);
-                    list.add(tile);
-
-                    int nextWidth = w - SMALL_TILE_SIZE;
-                    if (nextWidth > 0) {
-                        Tile nextTile = obtainSmallTile();
-                        nextTile.offsetX = x + SMALL_TILE_SIZE;
-                        nextTile.offsetY = y;
-                        nextTile.image = image;
-                        nextTile.setSize(SMALL, nextWidth, h);
-                        list.add(nextTile);
-                    }
-
-                } else {
-                    Tile tile = obtainLargeTile();
-                    tile.offsetX = x;
-                    tile.offsetY = y;
-                    tile.image = image;
-                    tile.setSize(LARGE, w, h);
-                    list.add(tile);
-                }
-            }
-        }
-
-        mTiles = list.toArray(new Tile[list.size()]);
-
-        if (image instanceof AnimatedImage) {
-            sThreadExecutor.execute(new DecodeTask());
-        }
-    }
-
-    public void setCallback(Callback callback) {
-        mCallback = callback;
     }
 
     @Override
@@ -522,9 +408,10 @@ public class ImageTexture implements Texture {
                 y + (src.bottom - y0) * scaleY);
     }
 
+    @RenderThread
     private void syncFrame() {
-        if (mConfirmFrame && mImage instanceof AnimatedImage) {
-            mConfirmFrame = false;
+        if (mFrameDirty) {
+            mFrameDirty = false;
 
             // invalid tiles
             for (int i = 0, n = mTiles.length; i < n; i++) {
@@ -582,8 +469,9 @@ public class ImageTexture implements Texture {
                 Tile t = mTiles[i];
                 src.set(0, 0, t.contentWidth, t.contentHeight);
                 src.offset(t.offsetX, t.offsetY);
-                if (!src.intersect(source))
+                if (!src.intersect(source)) {
                     continue;
+                }
                 mapRect(dest, src, x0, y0, x, y, scaleX, scaleY);
                 src.offset(t.borderSize - t.offsetX, t.borderSize - t.offsetY);
                 canvas.drawTexture(t, src, dest);
@@ -630,8 +518,9 @@ public class ImageTexture implements Texture {
                 Tile t = mTiles[i];
                 src.set(0, 0, t.contentWidth, t.contentHeight);
                 src.offset(t.offsetX, t.offsetY);
-                if (!src.intersect(source))
+                if (!src.intersect(source)) {
                     continue;
+                }
                 mapRect(dest, src, x0, y0, x, y, scaleX, scaleY);
                 src.offset(t.borderSize - t.offsetX, t.borderSize - t.offsetY);
                 canvas.drawMixed(t, color, ratio, src, dest);
@@ -646,42 +535,5 @@ public class ImageTexture implements Texture {
 
     public boolean isReady() {
         return mUploadIndex == mTiles.length;
-    }
-
-    public void setFrame(int frame) {
-        synchronized (mImage) {
-            mTargetFrame = frame;
-            mImage.notify();
-        }
-    }
-
-    public void setPause(boolean pause) {
-        synchronized (mImage) {
-            mPause = pause;
-            if (!pause) {
-                mImage.notify();
-            }
-        }
-    }
-
-    // Can be called in UI thread.
-    public void recycle() {
-        synchronized (mImage) {
-            mRecycled = true;
-
-            for (int i = 0, n = mTiles.length; i < n; ++i) {
-                mTiles[i].free();
-            }
-
-            mImage.notify();
-
-            if (!mRecycleLock) {
-                mImage.recycle();
-            }
-        }
-    }
-
-    public interface Callback {
-        void invalidateImage(Image image);
     }
 }

@@ -61,6 +61,11 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
     }
 
     @Override
+    public boolean canScale() {
+        return false;
+    }
+
+    @Override
     public void onScale(float focusX, float focusY, float scale) {
 
     }

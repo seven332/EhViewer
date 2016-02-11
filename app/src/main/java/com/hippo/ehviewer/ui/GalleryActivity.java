@@ -25,12 +25,19 @@ import android.view.MotionEvent;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.gl.GalleryPageView;
 import com.hippo.ehviewer.ui.gl.GalleryView;
+import com.hippo.gl.glrenderer.ImageTexture;
 import com.hippo.gl.view.GLRootView;
+import com.hippo.image.Image;
 import com.hippo.util.Dpad;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class GalleryActivity extends AppCompatActivity {
 
     private GalleryView mGalleryView;
+
+    private ImageTexture.Uploader mUploader;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,12 +47,14 @@ public class GalleryActivity extends AppCompatActivity {
         GLRootView glRootView = (GLRootView) findViewById(R.id.gl_root_view);
         mGalleryView = new GalleryView(this, new InvalidPageIterator(), null);
         glRootView.setContentPane(mGalleryView);
+        mUploader = new ImageTexture.Uploader(glRootView);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mGalleryView = null;
+        mUploader = null;
     }
 
     @Override
@@ -145,51 +154,73 @@ public class GalleryActivity extends AppCompatActivity {
     }
 
 
+    private static final int MAX_SIZE = 10;
+
     private class InvalidPageIterator implements GalleryView.PageIterator {
+
+        private int mIndex = 0;
+        private int mBackup = mIndex;
+
+        public ImageTexture mImageTexture;
+
+        public InvalidPageIterator() {
+            try {
+                mImageTexture = new ImageTexture(Image.decode(new FileInputStream("/sdcard/1.jpg"), false));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
 
         @Override
         public void mark() {
-
+            mBackup = mIndex;
         }
 
         @Override
         public void reset() {
-
+            mIndex = mBackup;
         }
 
         @Override
         public boolean hasNext() {
-            return false;
+            return mIndex < MAX_SIZE - 1;
         }
 
         @Override
         public boolean hasPrevious() {
-            return false;
+            return mIndex > 0;
         }
 
         @Override
         public boolean isValid() {
-            return false;
+            return mIndex >= 0 && mIndex < MAX_SIZE;
         }
 
         @Override
         public void next() {
-
+            if (mIndex >= MAX_SIZE - 1) {
+                throw new IndexOutOfBoundsException();
+            }
+            mIndex++;
         }
 
         @Override
         public void previous() {
-
+            if (mIndex <= 0) {
+                throw new IndexOutOfBoundsException();
+            }
+            mIndex--;
         }
 
         @Override
         public void bind(GalleryPageView view) {
-
+            //view.showImage();
+            view.getImageView().setTexture(mImageTexture);
         }
 
         @Override
         public void unbind(GalleryPageView view) {
-
+            view.getImageView().setTexture(null);
         }
     }
 

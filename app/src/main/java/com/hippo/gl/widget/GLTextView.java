@@ -94,6 +94,10 @@ public class GLTextView extends GLView {
 
     @Override
     public void onRender(GLCanvas canvas) {
+        if (mTextTexture == null || mIndexes == null) {
+            return;
+        }
+
         Rect paddings = getPaddings();
         int x = getDefaultBegin(getWidth(), (int) mTextTexture.getTextWidth(mIndexes),
                 paddings.left, paddings.right, Gravity.getPosition(mGravity, Gravity.HORIZONTAL));

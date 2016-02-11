@@ -29,10 +29,11 @@ import com.hippo.yorozuya.LayoutUtils;
 
 public class GalleryPageView extends GLFrameLayout {
 
-    public ImageView mImage;
-    public GLTextView mPage;
-    public GLTextureView mError;
-    public GLProgressView mProgress;
+    private ImageView mImage;
+    private GLLinearLayout mInfo;
+    private GLTextView mPage;
+    private GLTextureView mError;
+    private GLProgressView mProgress;
 
     // TODO
     private static TextTexture sPageTextTexture;
@@ -45,12 +46,12 @@ public class GalleryPageView extends GLFrameLayout {
         addComponent(mImage, glp);
 
         // Add other panel
-        GLLinearLayout ll = new GLLinearLayout();
-        ll.setOrientation(GLLinearLayout.VERTICAL);
+        mInfo = new GLLinearLayout();
+        mInfo.setOrientation(GLLinearLayout.VERTICAL);
         glp = new GravityLayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
         glp.gravity = Gravity.CENTER;
-        addComponent(ll, glp);
+        addComponent(mInfo, glp);
 
         // Add page
         mPage = new GLTextView();
@@ -58,14 +59,14 @@ public class GalleryPageView extends GLFrameLayout {
         GLLinearLayout.LayoutParams lp = new GLLinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER_HORIZONTAL;
-        ll.addComponent(mPage, lp);
+        mInfo.addComponent(mPage, lp);
 
         // Add error
         mError = new GLTextureView();
         lp = new GLLinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER_HORIZONTAL;
-        ll.addComponent(mError, lp);
+        mInfo.addComponent(mError, lp);
 
         // Add progress
         mProgress = new GLProgressView();
@@ -74,7 +75,12 @@ public class GalleryPageView extends GLFrameLayout {
         lp = new GLLinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER_HORIZONTAL;
-        ll.addComponent(mProgress, lp);
+        mInfo.addComponent(mProgress, lp);
+    }
+
+    public void showImage() {
+        //mImage.setVisibility(VISIBLE);
+        //mInfo.setVisibility(INVISIBLE);
     }
 
     public ImageView getImageView() {

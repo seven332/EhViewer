@@ -26,6 +26,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
 
 import com.hippo.ehviewer.R;
+import com.hippo.gl.annotation.RenderThread;
 import com.hippo.gl.glrenderer.GLCanvas;
 import com.hippo.gl.util.GalleryUtils;
 import com.hippo.gl.view.AnimationTime;
@@ -139,7 +140,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
         int interval = LayoutUtils.dp2pix(context, INTERVAL_IN_DP);
         int progressSize = LayoutUtils.dp2pix(context, PROGRESS_SIZE_IN_DP);
-        mPagerLayoutManager = new PagerLayoutManager(this, interval, progressSize);
+        mPagerLayoutManager = new PagerLayoutManager(context, this, interval, progressSize);
         mPagerLayoutManager.onAttach(iterator);
         mLayoutManager = mPagerLayoutManager;
 
@@ -182,12 +183,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     public void requestFill() {
-        if (GalleryUtils.isRenderThread()) {
-            fill();
-        } else {
-            mRequestFill = true;
-            invalidate();
-        }
+        mRequestFill = true;
+        invalidate();
     }
 
     @Override
@@ -254,16 +251,9 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         return onScale(focusX, focusY, 1.0f);
     }
 
-    private boolean canScale() {
-        if (mLastLayoutMode != LAYOUT_MODE_LEFT_TO_RIGHT && mLastLayoutMode != LAYOUT_MODE_RIGHT_TO_LEFT) {
-            return false;
-        }
-        return !mScroll;
-    }
-
     @Override
     public boolean onScale(float focusX, float focusY, float scale) {
-        if (!canScale()) {
+        if (mScroll || !mLayoutManager.canScale()) {
             return false;
         }
         mScale = true;
@@ -294,7 +284,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @Override
     public void onPointerDown(float x, float y) {
-        if (canScale()) {
+        if (!mScroll && mLayoutManager.canScale()) {
             mScale = true;
         }
     }
@@ -330,6 +320,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         }
     }
 
+    @RenderThread
     private void fill() {
         // Must be in render thread
         GalleryUtils.assertInRenderThread();
@@ -341,7 +332,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     @Override
-    public void onRender(GLCanvas canvas) {
+    public void render(GLCanvas canvas) {
         long time = AnimationTime.get();
         boolean invalidate = mLayoutManager.onUpdateAnimation(time);
         if (invalidate) {
@@ -354,7 +345,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             fill();
         }
 
-        mEdgeView.onRender(canvas);
+        super.render(canvas);
+        mEdgeView.render(canvas);
     }
 
     public GalleryPageView obtainPage() {
@@ -435,6 +427,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         public abstract void onScroll(float dx, float dy, float totalX, float totalY, float x, float y);
 
         public abstract void onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY);
+
+        public abstract boolean canScale();
 
         public abstract void onScale(float focusX, float focusY, float scale);
 

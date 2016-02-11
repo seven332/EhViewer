@@ -16,9 +16,9 @@
 
 package com.hippo.ehviewer.ui.gl;
 
+import android.content.Context;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.animation.Interpolator;
 
@@ -70,10 +70,17 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     private int mDeltaX;
     private int mDeltaY;
 
-    public PagerLayoutManager(@NonNull GalleryView galleryView, int interval, int progressSize) {
+    private PageFling mPageFling;
+    private SmoothScroller mSmoothScroller;
+
+    public PagerLayoutManager(Context context, @NonNull GalleryView galleryView,
+            int interval, int progressSize) {
         super(galleryView);
         mInterval = interval;
         mProgressSpec = GLView.MeasureSpec.makeMeasureSpec(progressSize, GLView.MeasureSpec.EXACTLY);
+
+        mPageFling = new PageFling(context);
+        mSmoothScroller = new SmoothScroller();
     }
 
     public void setMode(@Mode int mode) {
@@ -255,11 +262,30 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     public void onDown() {
         mDeltaX = 0;
         mDeltaY = 0;
+
+        mSmoothScroller.cancel();
+        mPageFling.cancel();
     }
 
     @Override
     public void onUp() {
         mGalleryView.getEdgeView().onRelease();
+
+        // Scroll
+        if (mOffset != 0) {
+            int width = mGalleryView.getWidth();
+            int dx;
+            if (mOffset >= mInterval && getLeftPage() != null) {
+                dx = mOffset - width - mInterval;
+            } else if (mOffset <= -mInterval && getRightPage() != null) {
+                dx = mOffset + width + mInterval;
+            } else {
+                dx = mOffset;
+            }
+            final float pageDelta = 7 * (float) Math.abs(mOffset) / (width + mInterval);
+            int duration = (int) ((pageDelta + 1) * 100);
+            mSmoothScroller.startSmoothScroll(dx, 0, duration);
+        }
     }
 
     private void pagePrevious() {
@@ -303,9 +329,9 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         if (iterator.hasNext()) {
             iterator.mark();
             iterator.next();
-            mPrevious = mGalleryView.obtainPage();
-            iterator.bind(mPrevious);
-            mGalleryView.addComponent(mPrevious);
+            mNext = mGalleryView.obtainPage();
+            iterator.bind(mNext);
+            mGalleryView.addComponent(mNext);
             iterator.reset();
         }
     }
@@ -341,31 +367,41 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
         int remain;
         if (dx < 0) { // Try to show left
+            int limit;
             if (leftPage == null) {
-                return dx;
+                limit = 0;
+            } else {
+                limit = width + mInterval;
             }
 
-            if (dx > mOffset - width -  mInterval) {
+            if (dx > mOffset - limit) {
                 remain = 0;
                 mOffset -= dx;
             } else {
-                // Go to left page
-                pageLeft();
-                remain = dx + width + mInterval - mOffset;
+                // Go to left page if left page not null
+                if (leftPage != null) {
+                    pageLeft();
+                }
+                remain = dx + limit - mOffset;
                 mOffset = 0;
             }
         } else { // Try to show right
+            int limit;
             if (rightPage == null) {
-                return dx;
+                limit = 0;
+            } else {
+                limit = - width - mInterval;
             }
 
-            if (dx < width + mInterval + mOffset) {
+            if (dx < mOffset - limit) {
                 remain = 0;
                 mOffset -= dx;
             } else {
-                // Go to right page
-                pageRight();
-                remain = dx - width - mInterval - mOffset;
+                // Go to right page if right page not null
+                if (rightPage != null) {
+                    pageRight();
+                }
+                remain = dx + limit - mOffset;
                 mOffset = 0;
             }
         }
@@ -373,7 +409,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         return remain;
     }
 
-    public void overScrollEdge(float x, float y, int dx, int dy) {
+    public void overScrollEdge(int dx, int dy, float x, float y) {
         GLEdgeView edgeView = mGalleryView.getEdgeView();
 
         mDeltaX += dx;
@@ -391,11 +427,22 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
             }
         }
 
-        // TODO What about top and bottom
+        if (mCurrent.getImageView().canFlingVertically()) {
+            if (mDeltaY < 0) {
+                edgeView.onPull(-mDeltaY, x, GLEdgeView.TOP);
+                if (!edgeView.isFinished(GLEdgeView.BOTTOM)) {
+                    edgeView.onRelease(GLEdgeView.BOTTOM);
+                }
+            } else if (mDeltaY > 0) {
+                edgeView.onPull(mDeltaY, y, GLEdgeView.BOTTOM);
+                if (!edgeView.isFinished(GLEdgeView.TOP)) {
+                    edgeView.onRelease(GLEdgeView.TOP);
+                }
+            }
+        }
     }
 
-    @Override
-    public void onScroll(float dx, float dy, float totalX, float totalY, float x, float y) {
+    public void scrollInternal(float dx, float dy, float x, float y) {
         if (mCurrent == null) {
             return;
         }
@@ -422,7 +469,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
                     (getLeftPage() == null && mOffset == 0 && remainX < 0) ||
                     (getRightPage() == null && mOffset == 0 && remainX > 0)) {
                 // On edge
-                overScrollEdge(x, y, remainX, remainY);
+                overScrollEdge(remainX, remainY, x, y);
                 remainX = 0;
                 remainY = 0;
             } else if (mCanScrollBetweenPages) {
@@ -432,7 +479,6 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
                 mDeltaX = 0;
                 mDeltaY = 0;
             } else {
-                Log.w(TAG, "Something wrong?");
                 remainX = 0;
                 remainY = 0;
                 mDeltaX = 0;
@@ -446,13 +492,25 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     }
 
     @Override
+    public void onScroll(float dx, float dy, float totalX, float totalY, float x, float y) {
+        scrollInternal(dx, dy, x, y);
+    }
+
+    @Override
     public void onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        if (mCurrent == null) {
+        if (mCurrent == null || mOffset != 0 || !mCurrent.getImageView().isLoaded() ||
+                !mCurrent.getImageView().canFling()) {
             return;
         }
 
+        ImageView image = mCurrent.getImageView();
+        mPageFling.startFling((int) velocityX, image.getMinDx(), image.getMaxDx(),
+                (int) velocityY, image.getMinDy(), image.getMaxDy());
+    }
 
-
+    @Override
+    public boolean canScale() {
+        return mCurrent != null && mOffset == 0 && mCurrent.getImageView().isLoaded();
     }
 
     @Override
@@ -461,21 +519,16 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
             return;
         }
 
-
-
+        mCurrent.getImageView().scale(focusX, focusY, scale);
+        // TODO Save scale
     }
 
     @Override
     public boolean onUpdateAnimation(long time) {
-        return false;
+        boolean invalidate = mSmoothScroller.calculate(time);
+        invalidate |= mPageFling.calculate(time);
+        return invalidate;
     }
-
-
-
-
-
-
-
 
     class SmoothScroller extends Animation {
 
@@ -484,6 +537,10 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         private int mLastX;
         private int mLastY;
 
+        public SmoothScroller() {
+            setInterpolator(SMOOTH_SCROLLER_INTERPOLATOR);
+        }
+
         public void startSmoothScroll(int dx, int dy, int duration) {
             mDx = dx;
             mDy = dy;
@@ -491,7 +548,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
             mLastY = 0;
             setDuration(duration);
             start();
-            // TODO invalidate();
+            mGalleryView.invalidate();
         }
 
         @Override
@@ -501,16 +558,105 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
             int offsetX = x - mLastX;
             while (offsetX != 0) {
                 int oldOffsetX = offsetX;
-                // TODO offsetX = scrollBetweenPagesHMode(offsetX);
+                offsetX = scrollBetweenPages(offsetX);
                 // Avoid loop infinitely
                 if (offsetX == oldOffsetX) {
                     break;
                 } else {
-                    // TODO mRequestFill = true;
+                    mGalleryView.requestFill();
                 }
             }
             mLastX = x;
             mLastY = y;
+        }
+    }
+
+    class PageFling extends Fling {
+
+        private int mVelocityX;
+        private int mVelocityY;
+        private int mDx;
+        private int mDy;
+        private int mLastX;
+        private int mLastY;
+        private int[] mTemp = new int[2];
+
+        public PageFling(Context context) {
+            super(context);
+        }
+
+        public void startFling(int velocityX, int minX, int maxX,
+                int velocityY, int minY, int maxY) {
+            mVelocityX = velocityX;
+            mVelocityY = velocityY;
+            mDx = (int) (getSplineFlingDistance(velocityX) * Math.signum(velocityX));
+            mDy = (int) (getSplineFlingDistance(velocityY) * Math.signum(velocityY));
+            mLastX = 0;
+            mLastY = 0;
+            int durationX = getSplineFlingDuration(velocityX);
+            int durationY = getSplineFlingDuration(velocityY);
+
+            if (mDx < minX) {
+                durationX = adjustDuration(0, mDx, minX, durationX);
+                mDx = minX;
+            }
+            if (mDx > maxX) {
+                durationX = adjustDuration(0, mDx, maxX, durationX);
+                mDx = maxX;
+            }
+            if (mDy < minY) {
+                durationY = adjustDuration(0, mDy, minY, durationY);
+                mDy = minY;
+            }
+            if (mDy > maxY) {
+                durationY = adjustDuration(0, mDy, maxY, durationY);
+                mDy = maxY;
+            }
+
+            setDuration(Math.max(durationX, durationY));
+            start();
+            mGalleryView.invalidate();
+        }
+
+        @Override
+        protected void onCalculate(float progress) {
+            int x = (int) (mDx * progress);
+            int y = (int) (mDy * progress);
+            int offsetX = x - mLastX;
+            int offsetY = y - mLastY;
+            if (mCurrent != null && (offsetX != 0 || offsetY != 0)) {
+                mCurrent.getImageView().scroll(-offsetX, -offsetY, mTemp);
+            }
+            mLastX = x;
+            mLastY = y;
+        }
+
+        @Override
+        protected void onFinish() {
+            if (mCurrent == null) {
+                return;
+            }
+
+            GLEdgeView edgeView = mGalleryView.getEdgeView();
+            ImageView imageView = mCurrent.getImageView();
+            if (imageView.canFlingHorizontally()) {
+                if (mVelocityX > 0 && getLeftPage() == null && imageView.getMaxDx() == 0 &&
+                        edgeView.isFinished(GLEdgeView.LEFT)) {
+                    edgeView.onAbsorb(mVelocityX, GLEdgeView.LEFT);
+                } else if (mVelocityX < 0 && getRightPage() == null && imageView.getMinDx() == 0 &&
+                        edgeView.isFinished(GLEdgeView.RIGHT)) {
+                    edgeView.onAbsorb(-mVelocityX, GLEdgeView.RIGHT);
+                }
+            }
+            if (imageView.canFlingVertically()) {
+                if (mVelocityY > 0 && imageView.getMaxDy() == 0 &&
+                        edgeView.isFinished(GLEdgeView.TOP)) {
+                    edgeView.onAbsorb(mVelocityY, GLEdgeView.TOP);
+                } else if (mVelocityY < 0 && imageView.getMinDy() == 0 &&
+                        edgeView.isFinished(GLEdgeView.BOTTOM)) {
+                    edgeView.onAbsorb(-mVelocityY, GLEdgeView.BOTTOM);
+                }
+            }
         }
     }
 }

@@ -125,11 +125,11 @@ abstract public class Animation {
         return mStartTime != NO_ANIMATION;
     }
 
-    public void forceStop() {
+    public void cancel() {
         mStartTime = NO_ANIMATION;
     }
 
-    public void forceReset() {
+    public void reset() {
         mStartTime = ANIMATION_START;
         mRunnedCount = 0;
         mLastFrameTime = 0;
@@ -153,6 +153,7 @@ abstract public class Animation {
         if (elapse >= mDuration) {
             mRunnedCount++;
             if (mRunnedCount >= mRepeatCount && mRepeatCount != INFINITE) {
+                onFinish();
                 mStartTime = NO_ANIMATION;
             } else {
                 mStartTime += elapse;
@@ -163,4 +164,7 @@ abstract public class Animation {
     }
 
     abstract protected void onCalculate(float progress);
+
+    protected void onFinish() {
+    }
 }

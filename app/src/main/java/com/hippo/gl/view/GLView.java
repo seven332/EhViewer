@@ -49,7 +49,7 @@ import java.util.ArrayList;
 public class GLView implements TouchOwner {
     private static final String TAG = "GLView";
 
-    private static final boolean DEBUG_DRAW_BOUNDS = false;
+    private static final boolean DEBUG_DRAW_BOUNDS = true;
 
     public static final int VISIBLE = 0;
     public static final int INVISIBLE = 1;
@@ -86,7 +86,7 @@ public class GLView implements TouchOwner {
     /**
      * Position in root
      */
-    private final int[] mPosition = new int[2];
+    private final int[] mPositionInRoot = new int[2];
     protected final Rect mPaddings = new Rect();
 
     private GLRoot mRoot;
@@ -429,7 +429,7 @@ public class GLView implements TouchOwner {
         }
     }
 
-    protected void render(GLCanvas canvas) {
+    public void render(GLCanvas canvas) {
         // render background color
         if (Color.alpha(mBackgroundColor) != 0) {
             canvas.fillRect(0, 0, getWidth(), getHeight(), mBackgroundColor);
@@ -626,8 +626,43 @@ public class GLView implements TouchOwner {
         final boolean forceLayout = (mViewFlags & FLAG_LAYOUT_REQUESTED) == FLAG_LAYOUT_REQUESTED;
         if (sizeChanged || forceLayout) {
             onLayout(sizeChanged, left, top, right, bottom);
+            notifyPositionInRoot();
+        } else {
+            dispatchNotifyPositionInRoot();
         }
         mViewFlags &= ~FLAG_LAYOUT_REQUESTED;
+    }
+
+    public void dispatchNotifyPositionInRoot() {
+        if (notifyPositionInRoot()) {
+            for (int i = 0, size = getComponentCount(); i < size; i++) {
+                getComponent(i).dispatchNotifyPositionInRoot();
+            }
+        }
+    }
+
+    public boolean notifyPositionInRoot() {
+        // Update position in root
+        int[] position = mPositionInRoot;
+        int oldX = position[0];
+        int oldY = position[1];
+        if (mParent == null) {
+            position[0] = 0;
+            position[1] = 0;
+        } else {
+            mParent.getPositionInRoot(position);
+            // Apply offset in parent
+            position[0] += mBounds.left;
+            position[1] += mBounds.top;
+        }
+        int x = position[0];
+        int y = position[1];
+        if (x != oldX || y != oldY) {
+            onPositionInRootChanged(x, y, oldX, oldY);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private boolean setBounds(int left, int top, int right, int bottom) {
@@ -644,25 +679,6 @@ public class GLView implements TouchOwner {
             onSizeChanged(newW, newH, oldW, oldH);
         }
 
-        // Update position in root
-        int[] position = mPosition;
-        int oldX = position[0];
-        int oldY = position[1];
-        if (mParent == null) {
-            position[0] = 0;
-            position[1] = 0;
-        } else {
-            mParent.getPositionInRoot(position);
-            // Apply offset in parent
-            position[0] += left;
-            position[1] += top;
-        }
-        int x = position[0];
-        int y = position[1];
-        if (x != oldX || y != oldY) {
-            onPositionInRootChanged(x, y, oldX, oldY);
-        }
-
         return sizeChanged;
     }
 
@@ -674,8 +690,8 @@ public class GLView implements TouchOwner {
 
     public void getPositionInRoot(int[] position) {
         AssertUtils.assertEquals("position should be 2 length int array", position.length, 2);
-        position[0] = mPosition[0];
-        position[1] = mPosition[1];
+        position[0] = mPositionInRoot[0];
+        position[1] = mPositionInRoot[1];
     }
 
     /**
@@ -689,8 +705,8 @@ public class GLView implements TouchOwner {
             return;
         }
 
-        int x = mPosition[0];
-        int y = mPosition[1];
+        int x = mPositionInRoot[0];
+        int y = mPositionInRoot[1];
         rect.set(x, y, x + getWidth(), y + getHeight());
         if (!rect.intersect(0, 0, root.getWidth(), root.getHeight())) {
             rect.setEmpty();

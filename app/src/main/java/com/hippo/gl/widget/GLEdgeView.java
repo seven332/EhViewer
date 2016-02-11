@@ -96,8 +96,7 @@ public final class GLEdgeView extends GLView {
     }
 
     @Override
-    public void onRender(GLCanvas canvas) {
-        super.onRender(canvas);
+    public void render(GLCanvas canvas) {
         boolean more = false;
         for (int i = 0; i < 4; i++) {
             canvas.save(GLCanvas.SAVE_FLAG_MATRIX);

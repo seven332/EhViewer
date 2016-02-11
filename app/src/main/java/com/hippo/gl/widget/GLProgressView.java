@@ -135,14 +135,14 @@ public class GLProgressView extends GLView {
     private void startAnimations() {
         List<Animation> animations = mAnimations;
         for (int i = 0, n = animations.size(); i < n; i++) {
-            animations.get(i).forceReset();
+            animations.get(i).reset();
         }
     }
 
     private void stopAnimations() {
         List<Animation> animations = mAnimations;
         for (int i = 0, n = animations.size(); i < n; i++) {
-            animations.get(i).forceStop();
+            animations.get(i).cancel();
         }
     }
 

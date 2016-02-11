@@ -23,7 +23,7 @@ import android.view.animation.Interpolator;
 
 import com.hippo.gl.anim.Animation;
 
-class Fling extends Animation {
+public abstract class Fling extends Animation {
 
     private static final float DECELERATION_RATE = (float) (Math.log(0.78) / Math.log(0.9));
     private static final float INFLEXION = 0.35f; // Tension lines cross at (INFLEXION, 1)
@@ -38,13 +38,6 @@ class Fling extends Animation {
     private static final float[] SPLINE_TIME = new float[NB_SAMPLES + 1];
 
     private float mPhysicalCoeff;
-
-    //private GalleryPageView mPage;
-    private int mDx;
-    private int mDy;
-    private int mLastX;
-    private int mLastY;
-    private int[] mTemp = new int[2];
 
     static {
         float x_min = 0.0f;
@@ -103,6 +96,7 @@ class Fling extends Animation {
                 * 39.37f // inch/meter
                 * ppi
                 * 0.84f; // look and feel tuning
+        setInterpolator(FLING_INTERPOLATOR);
     }
 
     private double getSplineDeceleration(int velocity) {
@@ -110,13 +104,13 @@ class Fling extends Animation {
     }
 
     /* Returns the duration, expressed in milliseconds */
-    private int getSplineFlingDuration(int velocity) {
+    protected int getSplineFlingDuration(int velocity) {
         final double l = getSplineDeceleration(velocity);
         final double decelMinusOne = DECELERATION_RATE - 1.0;
         return (int) (1000.0 * Math.exp(l / decelMinusOne));
     }
 
-    private double getSplineFlingDistance(int velocity) {
+    protected double getSplineFlingDistance(int velocity) {
         final double l = getSplineDeceleration(velocity);
         final double decelMinusOne = DECELERATION_RATE - 1.0;
         return FLING_FRICTION * mPhysicalCoeff * Math.exp(DECELERATION_RATE / decelMinusOne * l);
@@ -126,7 +120,7 @@ class Fling extends Animation {
      *  Modifies mDuration to the duration it takes to get from start to newFinal using the
      *  spline interpolation. The previous duration was needed to get to oldFinal.
      **/
-    private int adjustDuration(int start, int oldFinal, int newFinal, int duration) {
+    protected int adjustDuration(int start, int oldFinal, int newFinal, int duration) {
         final int oldDistance = oldFinal - start;
         final int newDistance = newFinal - start;
         final float x = Math.abs((float) newDistance / oldDistance);
@@ -140,50 +134,5 @@ class Fling extends Animation {
             duration *= timeCoef;
         }
         return duration;
-    }
-
-    public void startFling(GalleryPageView page, int velocityX, int minX, int maxX,
-            int velocityY, int minY, int maxY) {
-        //mPage = page;
-        mDx = (int) (getSplineFlingDistance(velocityX) * Math.signum(velocityX));
-        mDy = (int) (getSplineFlingDistance(velocityY) * Math.signum(velocityY));
-        mLastX = 0;
-        mLastY = 0;
-        int durationX = getSplineFlingDuration(velocityX);
-        int durationY = getSplineFlingDuration(velocityY);
-
-        if (mDx < minX) {
-            durationX = adjustDuration(0, mDx, minX, durationX);
-            mDx = minX;
-        }
-        if (mDx > maxX) {
-            durationX = adjustDuration(0, mDx, maxX, durationX);
-            mDx = maxX;
-        }
-        if (mDy < minY) {
-            durationY = adjustDuration(0, mDy, minY, durationY);
-            mDy = minY;
-        }
-        if (mDy > maxY) {
-            durationY = adjustDuration(0, mDy, maxY, durationY);
-            mDy = maxY;
-        }
-
-        setDuration(Math.max(durationX, durationY));
-        start();
-        // TODO invalidate();
-    }
-
-    @Override
-    protected void onCalculate(float progress) {
-        int x = (int) (mDx * progress);
-        int y = (int) (mDy * progress);
-        int offsetX = x - mLastX;
-        int offsetY = y - mLastY;
-        if (offsetX != 0 || offsetY != 0) {
-            // TODO mPage.scroll(-offsetX, -offsetY, mTemp);
-        }
-        mLastX = x;
-        mLastY = y;
     }
 }

@@ -39,7 +39,7 @@ public class ImageView extends GLView {
     @Retention(RetentionPolicy.SOURCE)
     public @interface StartPosition {}
 
-    // TODO adjust scale max and min accroding to image size and screen size
+    // TODO adjust scale max and min according to image size and screen size
     private static final float SCALE_MIN = 1 / 10.0f;
     private static final float SCALE_MAX = 10.0f;
 
@@ -98,6 +98,83 @@ public class ImageView extends GLView {
         mTexture = texture;
         mScaleOffsetDirty = true;
         mPositionInRootDirty = true;
+    }
+
+    public boolean isLoaded() {
+        return mTexture != null;
+    }
+
+    public boolean canFlingVertically() {
+        if (mScaleOffsetDirty) {
+            setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
+            if (mScaleOffsetDirty) {
+                return false;
+            }
+        }
+
+        return mDst.top < 0.0f || mDst.bottom > getHeight();
+    }
+
+    public boolean canFlingHorizontally() {
+        if (mScaleOffsetDirty) {
+            setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
+            if (mScaleOffsetDirty) {
+                return false;
+            }
+        }
+
+        return mDst.left < 0.0f || mDst.right > getWidth();
+    }
+
+    public boolean canFling() {
+        if (mScaleOffsetDirty) {
+            setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
+            if (mScaleOffsetDirty) {
+                return false;
+            }
+        }
+
+        return mDst.left < 0.0f || mDst.top < 0.0f || mDst.right > getWidth() || mDst.bottom > getHeight();
+    }
+
+    public int getMaxDx() {
+        if (mScaleOffsetDirty) {
+            setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
+            if (mScaleOffsetDirty) {
+                return 0;
+            }
+        }
+        return Math.max(0, -(int) mDst.left);
+    }
+
+    public int getMinDx() {
+        if (mScaleOffsetDirty) {
+            setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
+            if (mScaleOffsetDirty) {
+                return 0;
+            }
+        }
+        return Math.min(0, getWidth() - (int) mDst.right);
+    }
+
+    public int getMaxDy() {
+        if (mScaleOffsetDirty) {
+            setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
+            if (mScaleOffsetDirty) {
+                return 0;
+            }
+        }
+        return Math.max(0, -(int) mDst.top);
+    }
+
+    public int getMinDy() {
+        if (mScaleOffsetDirty) {
+            setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
+            if (mScaleOffsetDirty) {
+                return 0;
+            }
+        }
+        return Math.min(0, getHeight() - (int) mDst.bottom);
     }
 
     /**
@@ -251,7 +328,6 @@ public class ImageView extends GLView {
         mPositionInRootDirty = true;
     }
 
-
     public void scroll(int dx, int dy, int[] remain) {
         // Only work after layout
         if (mScaleOffsetDirty) {
@@ -367,6 +443,8 @@ public class ImageView extends GLView {
             srcActual.setEmpty();
             dstActual.setEmpty();
         }
+
+        mPositionInRootDirty = false;
     }
 
     @Override
@@ -381,7 +459,6 @@ public class ImageView extends GLView {
         }
 
         if (mPositionInRootDirty) {
-            mPositionInRootDirty = false;
             applyPositionInRoot();
         } else {
             mSrcActual.set(0, 0, texture.getWidth(), texture.getHeight());
