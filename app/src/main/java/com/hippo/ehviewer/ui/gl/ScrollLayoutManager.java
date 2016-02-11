@@ -51,6 +51,11 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
     }
 
     @Override
+    public void onDoubleTapConfirmed(float x, float y) {
+
+    }
+
+    @Override
     public void onScroll(float dx, float dy, float totalX, float totalY, float x, float y) {
 
     }

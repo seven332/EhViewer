@@ -22,11 +22,13 @@ import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 import android.view.animation.Interpolator;
 
+import com.hippo.anani.AnimationUtils;
 import com.hippo.gl.anim.Animation;
 import com.hippo.gl.view.GLView;
 import com.hippo.gl.widget.GLEdgeView;
 import com.hippo.gl.widget.GLProgressView;
 import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.MathUtils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -64,6 +66,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     private int mProgressSpec;
 
     private int[] mScrollRemain = new int[2];
+    private float[] mScaleDefault = new float[3];
 
     private boolean mCanScrollBetweenPages = false;
 
@@ -72,6 +75,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
     private PageFling mPageFling;
     private SmoothScroller mSmoothScroller;
+    private SmoothScaler mSmoothScaler;
 
     public PagerLayoutManager(Context context, @NonNull GalleryView galleryView,
             int interval, int progressSize) {
@@ -81,6 +85,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
         mPageFling = new PageFling(context);
         mSmoothScroller = new SmoothScroller();
+        mSmoothScaler = new SmoothScaler();
     }
 
     public void setMode(@Mode int mode) {
@@ -265,10 +270,15 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
         mSmoothScroller.cancel();
         mPageFling.cancel();
+        mSmoothScaler.cancel();
     }
 
     @Override
     public void onUp() {
+        if (mCurrent == null) {
+            return;
+        }
+
         mGalleryView.getEdgeView().onRelease();
 
         // Scroll
@@ -286,6 +296,28 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
             int duration = (int) ((pageDelta + 1) * 100);
             mSmoothScroller.startSmoothScroll(dx, 0, duration);
         }
+    }
+
+    @Override
+    public void onDoubleTapConfirmed(float x, float y) {
+        if (mCurrent == null || !mCurrent.getImageView().isLoaded()) {
+            return;
+        }
+
+        float[] scales = mScaleDefault;
+        ImageView image = mCurrent.getImageView();
+        image.getScaleDefault(scales);
+        float scale = image.getScale();
+        float endScale = scales[0];
+        for (int i = 0, size = scales.length; i < size; i++) {
+            float value = scales[i];
+            if (scale < value) {
+                endScale = value;
+                break;
+            }
+        }
+
+        mSmoothScaler.startSmoothScaler(x, y, scale, endScale, 300);
     }
 
     private void pagePrevious() {
@@ -515,7 +547,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
     @Override
     public void onScale(float focusX, float focusY, float scale) {
-        if (mCurrent == null) {
+        if (mCurrent == null || !mCurrent.getImageView().isLoaded()) {
             return;
         }
 
@@ -527,6 +559,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     public boolean onUpdateAnimation(long time) {
         boolean invalidate = mSmoothScroller.calculate(time);
         invalidate |= mPageFling.calculate(time);
+        invalidate |= mSmoothScaler.calculate(time);
         return invalidate;
     }
 
@@ -657,6 +690,42 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
                     edgeView.onAbsorb(-mVelocityY, GLEdgeView.BOTTOM);
                 }
             }
+        }
+    }
+
+    class SmoothScaler extends Animation {
+
+        private float mFocusX;
+        private float mFocusY;
+        private float mStartScale;
+        private float mEndScale;
+        private float mLastScale;
+
+        public SmoothScaler() {
+            setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+        }
+
+        public void startSmoothScaler(float focusX, float focusY,
+                float startScale, float endScale, int duration) {
+            mFocusX = focusX;
+            mFocusY = focusY;
+            mStartScale = startScale;
+            mEndScale = endScale;
+            mLastScale = startScale;
+            setDuration(duration);
+            start();
+            mGalleryView.invalidate();
+        }
+
+        @Override
+        protected void onCalculate(float progress) {
+            if (mCurrent == null) {
+                return;
+            }
+
+            float scale = MathUtils.lerp(mStartScale, mEndScale, progress);
+            mCurrent.getImageView().scale(mFocusX, mFocusY, scale / mLastScale);
+            mLastScale = scale;
         }
     }
 }

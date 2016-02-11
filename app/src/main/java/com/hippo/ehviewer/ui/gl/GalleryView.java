@@ -214,6 +214,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         if (mScale) {
             return false;
         }
+
+        mLayoutManager.onDoubleTapConfirmed(x, y);
         return true;
     }
 
@@ -424,6 +426,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
         public abstract void onUp();
 
+        public abstract void onDoubleTapConfirmed(float x, float y);
+
         public abstract void onScroll(float dx, float dy, float totalX, float totalY, float x, float y);
 
         public abstract void onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY);
@@ -434,41 +438,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
         public abstract boolean onUpdateAnimation(long time);
     }
-
-    /*
-    class SmoothScaler extends Animation {
-
-        private GalleryPageView mPage;
-        private float mFocusX;
-        private float mFocusY;
-        private float mStartScale;
-        private float mEndScale;
-        private float mLastScale;
-
-        public void startSmoothScaler(GalleryPageView page, float focusX, float focusY,
-                float startScale, float endScale, int duration) {
-            mPage = page;
-            mFocusX = focusX;
-            mFocusY = focusY;
-            mStartScale = startScale;
-            mEndScale = endScale;
-            mLastScale = startScale;
-            setDuration(duration);
-            start();
-            invalidate();
-        }
-
-        @Override
-        protected void onCalculate(float progress) {
-            float scale = MathUtils.lerp(mStartScale, mEndScale, progress);
-            mPage.scale(mFocusX, mFocusY, scale / mLastScale);
-            mLastScale = scale;
-            if (progress == 1.0f) {
-                mPage = null;
-            }
-        }
-    }
-    */
 
     private static class Recycler {
 

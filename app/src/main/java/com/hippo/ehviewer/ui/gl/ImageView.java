@@ -27,6 +27,7 @@ import com.hippo.yorozuya.MathUtils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Arrays;
 
 public class ImageView extends GLView {
 
@@ -92,6 +93,26 @@ public class ImageView extends GLView {
     @Override
     protected void onPositionInRootChanged(int x, int y, int oldX, int oldY) {
         mPositionInRootDirty = true;
+    }
+
+    public void getScaleDefault(float[] scaleDefault) {
+        if (mTexture == null) {
+            return;
+        }
+
+        scaleDefault[0] = 1.0f;
+
+        float scaleX = (float) getWidth() / mTexture.getWidth();
+        float scaleY = (float) getHeight() / mTexture.getHeight();
+        if (scaleX < scaleY) {
+            scaleDefault[1] = scaleX;
+        } else {
+            scaleDefault[1] = scaleY;
+        }
+
+        scaleDefault[2] = scaleDefault[1] * 1.5f;
+
+        Arrays.sort(scaleDefault);
     }
 
     public void setTexture(Texture texture) {
@@ -175,6 +196,10 @@ public class ImageView extends GLView {
             }
         }
         return Math.min(0, getHeight() - (int) mDst.bottom);
+    }
+
+    public float getScale() {
+        return mScale;
     }
 
     /**
