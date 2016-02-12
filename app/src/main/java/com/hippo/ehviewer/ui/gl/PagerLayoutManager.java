@@ -19,6 +19,7 @@ package com.hippo.ehviewer.ui.gl;
 import android.content.Context;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.animation.Interpolator;
 
@@ -34,8 +35,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public class PagerLayoutManager extends GalleryView.LayoutManager {
-
-    private static final String TAG = PagerLayoutManager.class.getSimpleName();
 
     @IntDef({MODE_LEFT_TO_RIGHT, MODE_RIGHT_TO_LEFT})
     @Retention(RetentionPolicy.SOURCE)
@@ -62,16 +61,15 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     @Mode
     private int mMode = MODE_RIGHT_TO_LEFT;
     private int mOffset;
+    private int mDeltaX;
+    private int mDeltaY;
+    private boolean mCanScrollBetweenPages = false;
+
     private int mInterval;
     private int mProgressSpec;
 
     private int[] mScrollRemain = new int[2];
     private float[] mScaleDefault = new float[3];
-
-    private boolean mCanScrollBetweenPages = false;
-
-    private int mDeltaX;
-    private int mDeltaY;
 
     private PageFling mPageFling;
     private SmoothScroller mSmoothScroller;
@@ -88,12 +86,36 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         mSmoothScaler = new SmoothScaler();
     }
 
+    private void resetParameters() {
+        mOffset = 0;
+        mDeltaX = 0;
+        mDeltaY = 0;
+        mCanScrollBetweenPages = false;
+    }
+
+    private void cancelAllAnimations() {
+        mSmoothScroller.cancel();
+        mPageFling.cancel();
+        mSmoothScaler.cancel();
+    }
+
     public void setMode(@Mode int mode) {
-        // TODO
+        if (mMode == mode) {
+            return;
+        }
+
+        mMode = mode;
         if (mIterator != null) {
-
-        } else {
-
+            // It is attached, refill
+            // Cancel all animations
+            cancelAllAnimations();
+            // Remove all view
+            removeProgress();
+            removeAllPages();
+            // Reset parameters
+            resetParameters();
+            // Request fill
+            mGalleryView.requestFill();
         }
     }
 
@@ -101,6 +123,8 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     public void onAttach(GalleryView.PageIterator iterator) {
         AssertUtils.assertEquals("The PagerLayoutManager is attached", mIterator, null);
         mIterator = iterator;
+        // Reset parameters
+        resetParameters();
     }
 
     private void removeProgress() {
@@ -136,6 +160,11 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     public GalleryView.PageIterator onDetach() {
         AssertUtils.assertNotEquals("The PagerLayoutManager is not attached", mIterator, null);
 
+        // Cancel all animations
+        cancelAllAnimations();
+
+        // Remove all view
+        removeProgress();
         removeAllPages();
 
         // Clear iterator
@@ -268,18 +297,16 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         mDeltaX = 0;
         mDeltaY = 0;
 
-        mSmoothScroller.cancel();
-        mPageFling.cancel();
-        mSmoothScaler.cancel();
+        cancelAllAnimations();
     }
 
     @Override
     public void onUp() {
+        mGalleryView.getEdgeView().onRelease();
+
         if (mCurrent == null) {
             return;
         }
-
-        mGalleryView.getEdgeView().onRelease();
 
         // Scroll
         if (mOffset != 0) {
@@ -447,6 +474,9 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         mDeltaX += dx;
         mDeltaY += dy;
 
+
+        Log.d("TAG", "mDeltaX = " + mDeltaX);
+
         if (mDeltaX < 0) {
             edgeView.onPull(-mDeltaX, y, GLEdgeView.LEFT);
             if (!edgeView.isFinished(GLEdgeView.RIGHT)) {
@@ -466,7 +496,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
                     edgeView.onRelease(GLEdgeView.BOTTOM);
                 }
             } else if (mDeltaY > 0) {
-                edgeView.onPull(mDeltaY, y, GLEdgeView.BOTTOM);
+                edgeView.onPull(mDeltaY, x, GLEdgeView.BOTTOM);
                 if (!edgeView.isFinished(GLEdgeView.TOP)) {
                     edgeView.onRelease(GLEdgeView.TOP);
                 }
@@ -644,6 +674,10 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
             if (mDy > maxY) {
                 durationY = adjustDuration(0, mDy, maxY, durationY);
                 mDy = maxY;
+            }
+
+            if (mDx == 0 && mDy == 0) {
+                return;
             }
 
             setDuration(Math.max(durationX, durationY));

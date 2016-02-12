@@ -79,8 +79,8 @@ public class GalleryPageView extends GLFrameLayout {
     }
 
     public void showImage() {
-        //mImage.setVisibility(VISIBLE);
-        //mInfo.setVisibility(INVISIBLE);
+        mImage.setVisibility(VISIBLE);
+        mInfo.setVisibility(INVISIBLE);
     }
 
     public ImageView getImageView() {

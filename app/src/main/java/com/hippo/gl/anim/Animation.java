@@ -150,7 +150,8 @@ abstract public class Animation {
         Interpolator i = mInterpolator;
         onCalculate(i != null ? i.getInterpolation(x) : x);
 
-        if (elapse >= mDuration) {
+        // It is ok to call cancel() in onCalculate()
+        if (mStartTime != NO_ANIMATION && elapse >= mDuration) {
             mRunnedCount++;
             if (mRunnedCount >= mRepeatCount && mRepeatCount != INFINITE) {
                 onFinish();

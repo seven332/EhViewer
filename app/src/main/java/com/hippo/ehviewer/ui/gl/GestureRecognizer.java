@@ -35,6 +35,11 @@ public class GestureRecognizer {
         boolean onDoubleTap(float x, float y);
         boolean onDoubleTapConfirmed(float x, float y);
         boolean onScroll(float dx, float dy, float totalX, float totalY, float x, float y);
+
+        /**
+         * @param velocityX Finger from top to bottom is positive
+         * @param velocityY Finger from left to right is positive
+         */
         boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY);
         boolean onScaleBegin(float focusX, float focusY);
         boolean onScale(float focusX, float focusY, float scale);

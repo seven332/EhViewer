@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.gl.GalleryPageView;
@@ -28,7 +27,6 @@ import com.hippo.ehviewer.ui.gl.GalleryView;
 import com.hippo.gl.glrenderer.ImageTexture;
 import com.hippo.gl.view.GLRootView;
 import com.hippo.image.Image;
-import com.hippo.util.Dpad;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -55,29 +53,6 @@ public class GalleryActivity extends AppCompatActivity {
         super.onDestroy();
         mGalleryView = null;
         mUploader = null;
-    }
-
-    @Override
-    public boolean onGenericMotionEvent(MotionEvent event) {
-        switch (Dpad.getDirectionPressed(event)) {
-            case Dpad.LEFT:
-                // TODO do something
-                return true;
-            case Dpad.UP:
-                // TODO do something
-                return true;
-            case Dpad.RIGHT:
-                // TODO do something
-                return true;
-            case Dpad.DOWN:
-                // TODO do something
-                return true;
-            case Dpad.CENTER:
-                // TODO do something
-                return true;
-        }
-
-        return super.onGenericMotionEvent(event);
     }
 
     @Override
@@ -154,7 +129,7 @@ public class GalleryActivity extends AppCompatActivity {
     }
 
 
-    private static final int MAX_SIZE = 10;
+    private static final int MAX_SIZE = 2;
 
     private class InvalidPageIterator implements GalleryView.PageIterator {
 
@@ -214,7 +189,7 @@ public class GalleryActivity extends AppCompatActivity {
 
         @Override
         public void bind(GalleryPageView view) {
-            //view.showImage();
+            view.showImage();
             view.getImageView().setTexture(mImageTexture);
         }
 
@@ -223,5 +198,4 @@ public class GalleryActivity extends AppCompatActivity {
             view.getImageView().setTexture(null);
         }
     }
-
 }

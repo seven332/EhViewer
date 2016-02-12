@@ -48,7 +48,8 @@ public class PermissionRequester {
                                     new String[]{permission},
                                     requestCode);
                         }
-                    }).setNegativeButton(android.R.string.cancel, null);
+                    }).setNegativeButton(android.R.string.cancel, null)
+                    .show();
         } else {
             ActivityCompat.requestPermissions(activity,
                     new String[]{permission},

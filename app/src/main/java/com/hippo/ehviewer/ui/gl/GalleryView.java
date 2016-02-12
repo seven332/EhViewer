@@ -65,6 +65,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private static final int BACKGROUND_COLOR = 0xff212121;
     private static final int INTERVAL_IN_DP = 24;
     private static final int PROGRESS_SIZE_IN_DP = 48;
+    private static final int PAGE_MIN_HEIGHT_IN_DP = 256;
 
     private static final int PAGE_STATE_UNKNOWN_SEEN = 0;
     private static final int PAGE_STATE_SEEN = 1;
@@ -96,6 +97,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private GestureRecognizer mGestureRecognizer;
 
     private LayoutManager mPagerLayoutManager;
+    private LayoutManager mScrollLayoutManager;
     private LayoutManager mLayoutManager;
 
     private Recycler mRecycler;
@@ -103,6 +105,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private GLProgressView mProgressCache;
 
     private int mProgressColor;
+    private int mPageMinHeight;
 
     private boolean mEnableRequestLayout = true;
 
@@ -137,12 +140,14 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mRecycler = new Recycler();
 
         mProgressColor = ResourcesUtils.getAttrColor(context, R.attr.colorPrimary);
+        mPageMinHeight = LayoutUtils.dp2pix(context, PAGE_MIN_HEIGHT_IN_DP);
 
         int interval = LayoutUtils.dp2pix(context, INTERVAL_IN_DP);
         int progressSize = LayoutUtils.dp2pix(context, PROGRESS_SIZE_IN_DP);
         mPagerLayoutManager = new PagerLayoutManager(context, this, interval, progressSize);
-        mPagerLayoutManager.onAttach(iterator);
-        mLayoutManager = mPagerLayoutManager;
+        mScrollLayoutManager = new ScrollLayoutManager(context, this, interval, progressSize);
+        mScrollLayoutManager.onAttach(iterator);
+        mLayoutManager = mScrollLayoutManager;
 
         setBackgroundColor(BACKGROUND_COLOR);
     }
@@ -355,6 +360,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         GalleryPageView page = mRecycler.obtain();
         if (page == null) {
             page = new GalleryPageView(mContext);
+            page.setMinimumHeight(mPageMinHeight);
         }
         return page;
     }

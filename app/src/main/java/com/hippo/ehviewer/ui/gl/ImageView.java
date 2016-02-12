@@ -57,6 +57,8 @@ public class ImageView extends GLView {
     public static final int START_POSITION_CENTER = 4;
 
     private Texture mTexture;
+    private int mTextureWidth;
+    private int mTextureHeight;
 
     private RectF mDst = new RectF();
     private RectF mSrcActual = new RectF();
@@ -75,13 +77,52 @@ public class ImageView extends GLView {
     @Override
     protected int getSuggestedMinimumWidth() {
         return Math.max(super.getSuggestedMinimumWidth(),
-                mTexture == null ? 0 : mTexture.getWidth());
+                mTexture == null ? 0 : mTextureWidth);
     }
 
     @Override
     protected int getSuggestedMinimumHeight() {
         return Math.max(super.getSuggestedMinimumHeight(),
-                mTexture == null ? 0 : mTexture.getHeight());
+                mTexture == null ? 0 : mTextureHeight);
+    }
+
+    @Override
+    protected void onMeasure(int widthSpec, int heightSpec) {
+        if (mTexture == null) {
+            super.onMeasure(widthSpec, heightSpec);
+        } else {
+            float ratio = (float) mTextureWidth / mTextureHeight;
+            int widthSize = MeasureSpec.getSize(widthSpec);
+            int heightSize = MeasureSpec.getSize(heightSpec);
+            int widthMode = MeasureSpec.getMode(widthSpec);
+            int heightMode = MeasureSpec.getMode(heightSpec);
+            int measureWidth = -1;
+            int measureHeight = -1;
+
+            if (widthMode == MeasureSpec.EXACTLY) {
+                measureWidth = widthSize;
+                if (heightMode == MeasureSpec.EXACTLY) {
+                    measureHeight = heightSize;
+                } else {
+                    measureHeight = (int) (widthSize / ratio);
+                    if (heightMode == MeasureSpec.AT_MOST) {
+                        measureHeight = Math.min(measureHeight, heightSize);
+                    }
+                }
+            } else if (heightMode == MeasureSpec.EXACTLY) {
+                measureHeight = heightSize;
+                measureWidth = (int) (heightSize * ratio);
+                if (widthMode == MeasureSpec.AT_MOST) {
+                    measureWidth = Math.min(measureWidth, widthSize);
+                }
+            }
+
+            if (measureWidth == -1 || measureHeight == -1) {
+                super.onMeasure(widthSpec, heightSpec);
+            } else {
+                setMeasuredSize(measureWidth, measureHeight);
+            }
+        }
     }
 
     @Override
@@ -102,8 +143,8 @@ public class ImageView extends GLView {
 
         scaleDefault[0] = 1.0f;
 
-        float scaleX = (float) getWidth() / mTexture.getWidth();
-        float scaleY = (float) getHeight() / mTexture.getHeight();
+        float scaleX = (float) getWidth() / mTextureWidth;
+        float scaleY = (float) getHeight() / mTextureHeight;
         if (scaleX < scaleY) {
             scaleDefault[1] = scaleX;
         } else {
@@ -117,6 +158,22 @@ public class ImageView extends GLView {
 
     public void setTexture(Texture texture) {
         mTexture = texture;
+
+        if (texture != null) {
+            mTextureWidth = texture.getWidth();
+            mTextureHeight = texture.getHeight();
+            // Avoid zero and negative
+            if (mTextureWidth <= 0) {
+                mTextureWidth = 1;
+            }
+            if (mTextureHeight <= 0) {
+                mTextureHeight = 1;
+            }
+        } else {
+            mTextureWidth = 1;
+            mTextureHeight = 1;
+        }
+
         mScaleOffsetDirty = true;
         mPositionInRootDirty = true;
     }
@@ -254,15 +311,8 @@ public class ImageView extends GLView {
             return;
         }
 
-        int textureWidth = mTexture.getWidth();
-        int textureHeight = mTexture.getHeight();
-        // Avoid zero and negative
-        if (textureWidth <= 0) {
-            textureWidth = 1;
-        }
-        if (textureHeight <= 0) {
-            textureHeight = 1;
-        }
+        int textureWidth = mTextureWidth;
+        int textureHeight = mTextureHeight;
 
         // Set scale
         float targetWidth;

@@ -89,7 +89,7 @@
     <string name="skip_signing_in_plain">Sign in failed. But perhaps it is a mistake due to website update. Do you want to skip signing in?</string>
     <string name="press_twice_exit">Press twice to exit</string>
     <string name="content_layout_restore_tip">Click to retry</string>
-    <string name="write_rationale">Write! Write! Write!</string>
+    <string name="write_rationale">EhViewer will request WRITE_EXTERNAL_STORAGE permission for downloading gallery. Do you want to grant the permission?</string>
     <string name="you_rejected_me">It hurts</string>
 
     <!-- Gallery List -->

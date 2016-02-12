@@ -50,7 +50,7 @@
     <string name="skip_signing_in_plain">登陆失败。这可能是网站更新导致的。你愿意跳过登陆么？</string>
     <string name="press_twice_exit">再按一次退出</string>
     <string name="content_layout_restore_tip">点击重试</string>
-    <string name="write_rationale">写！写！写！</string>
+    <string name="write_rationale">EhViewer 将申请设备存储空间访问权限以便下载画廊。你愿意授权吗？</string>
     <string name="you_rejected_me">好痛</string>
 
     <!-- Gallery List -->
