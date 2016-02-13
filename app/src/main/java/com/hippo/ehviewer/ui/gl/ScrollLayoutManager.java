@@ -148,9 +148,10 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
             // Remove useless top view
             Iterator<GalleryPageView> pages = mPages.iterator();
+            int nextTop = mOffset;
             while (pages.hasNext()) {
                 GalleryPageView page = pages.next();
-                int nextTop = page.bounds().bottom + mInterval;
+                nextTop += page.getHeight() + mInterval;
                 if (nextTop < minY) {
                     removePage(page);
                     pages.remove();
@@ -353,18 +354,34 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
                     }
                 }
             } else { // Try to show bottom
-                boolean hasNext = hasNextPage();
+                int bottom = mOffset;
+                boolean hasNext = true;
+                GalleryView.PageIterator iterator = mIterator;
+                iterator.mark();
+                for (int i = 0, size = mPages.size(); i < size; i++) {
+                    if (i != 0) {
+                        bottom += mInterval;
+                    }
+                    bottom += mPages.get(i).getHeight();
+                    if (iterator.hasNext()) {
+                        iterator.next();
+                    } else {
+                        hasNext = false;
+                        break;
+                    }
+                }
+                iterator.reset();
+
                 int limit;
                 if (hasNext) {
                     limit = (int) (height * (1 + RESERVATIONS));
                 } else {
                     limit = height;
                 }
-                int pageBottom = mPages.getLast().bounds().bottom;
                 // Fix limit for page not fill screen
-                limit = Math.min(pageBottom, limit);
+                limit = Math.min(bottom, limit);
 
-                if (pageBottom - remainY > limit) {
+                if (bottom - remainY > limit) {
                     mOffset -= remainY;
                     remainY = 0;
                     requestFill = true;
@@ -372,19 +389,19 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
                     mDeltaY = 0;
                 } else {
                     if (hasNext) {
-                        mOffset -= pageBottom - limit;
-                        remainY = remainY + limit - pageBottom;
+                        mOffset -= bottom - limit;
+                        remainY = remainY + limit - bottom;
                         onFill();
                         requestFill = false;
                         mDeltaX = 0;
                         mDeltaY = 0;
                     } else {
                         if (mOffset != limit) {
-                            mOffset -= pageBottom - limit;
+                            mOffset -= bottom - limit;
                             requestFill = true;
                         }
                         if (!fling) {
-                            overScrollEdge(0, remainY + limit - pageBottom, x, y);
+                            overScrollEdge(0, remainY + limit - bottom, x, y);
                         }
                         remainY = 0;
                         result = true;
@@ -428,7 +445,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         if (mPages.size() <= 0) {
             return;
         }
-        // FIXME Bug here
+
         int maxY;
         if (mIterator.hasPrevious()) {
             maxY = Integer.MAX_VALUE;
@@ -571,10 +588,6 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             if (topEdge && bottomEdge) {
                 return;
             }
-
-            // FIXME Bug here
-            Log.d(TAG, "bottom = " + bottom);
-            Log.d(TAG, "mGalleryView.getHeight() = " + mGalleryView.getHeight());
 
             GLEdgeView edgeView = mGalleryView.getEdgeView();
             if (topEdge && edgeView.isFinished(GLEdgeView.TOP)) {
