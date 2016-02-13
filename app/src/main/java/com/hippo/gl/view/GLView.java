@@ -20,6 +20,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Parcelable;
 import android.os.SystemClock;
+import android.support.annotation.IntDef;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.MotionEvent;
@@ -29,6 +30,8 @@ import com.hippo.gl.glrenderer.GLCanvas;
 import com.hippo.gl.glrenderer.GLPaint;
 import com.hippo.yorozuya.AssertUtils;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 
 // GLView is a UI component. It can render to a GLCanvas and accept touch
@@ -49,14 +52,20 @@ import java.util.ArrayList;
 public class GLView implements TouchOwner {
     private static final String TAG = "GLView";
 
-    private static final boolean DEBUG_DRAW_BOUNDS = true;
+    private static final boolean DEBUG_DRAW_BOUNDS = false;
 
-    public static final int VISIBLE = 0;
-    public static final int INVISIBLE = 1;
+    @IntDef({VISIBLE, INVISIBLE, GONE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Visibility {}
 
-    private static final int FLAG_INVISIBLE = 1;
-    private static final int FLAG_SET_MEASURED_SIZE = 2;
-    private static final int FLAG_LAYOUT_REQUESTED = 4;
+    public static final int VISIBLE =                   0b00000000;
+    public static final int INVISIBLE =                 0b00000001;
+    public static final int GONE =                      0b00000010;
+    public static final int VISIBILITY_INVALID =        0b00000011;
+
+    private static final int FLAG_INVISIBLE =           0b00000011;
+    private static final int FLAG_SET_MEASURED_SIZE =   0b00000100;
+    private static final int FLAG_LAYOUT_REQUESTED =    0b00001000;
 
     /**
      * Used to mark a GlView that has no ID.
@@ -143,22 +152,47 @@ public class GLView implements TouchOwner {
     private OnClickListener mOnClickListener;
     private OnLongClickListener mOnLongClickListener;
 
-    // Sets the visibility of this GLView (either GLView.VISIBLE or
-    // GLView.INVISIBLE).
-    public void setVisibility(int visibility) {
-        if (visibility == getVisibility()) return;
-        if (visibility == VISIBLE) {
-            mViewFlags &= ~FLAG_INVISIBLE;
-        } else {
-            mViewFlags |= FLAG_INVISIBLE;
+    /**
+     * Set the enabled state of this view.
+     *
+     * @param visibility One of {@link #VISIBLE}, {@link #INVISIBLE}, or {@link #GONE}.
+     */
+    public void setVisibility(@Visibility int visibility) {
+        @Visibility
+        int oldVisibility = getVisibility();
+        if (visibility == oldVisibility) {
+            return;
         }
-        onVisibilityChanged(visibility);
-        invalidate();
+
+        mViewFlags &= ~FLAG_INVISIBLE;
+        mViewFlags |= visibility;
+
+        onVisibilityChanged(this, visibility);
+
+        if (oldVisibility == GLView.GONE || visibility == GLView.GONE) {
+            requestLayout();
+        } else {
+            invalidate();
+        }
     }
 
-    // Returns GLView.VISIBLE or GLView.INVISIBLE
+    /**
+     * Returns the visibility status for this view.
+     *
+     * @return One of {@link #VISIBLE}, {@link #INVISIBLE}, or {@link #GONE}.
+     */
+    @Visibility
+    @SuppressWarnings("WrongConstant")
     public int getVisibility() {
-        return (mViewFlags & FLAG_INVISIBLE) == 0 ? VISIBLE : INVISIBLE;
+        int visibility = mViewFlags & FLAG_INVISIBLE;
+
+        if (visibility == VISIBILITY_INVALID) {
+            visibility = VISIBLE;
+            mViewFlags &= ~FLAG_INVISIBLE;
+            mViewFlags |= visibility;
+        }
+
+        return visibility;
     }
 
     // This should only be called on the content pane (the topmost GLView).
@@ -979,6 +1013,9 @@ public class GLView implements TouchOwner {
     public static void measureAllComponents(GLView parent, int widthSpec, int heightSpec) {
         for (int i = 0, n = parent.getComponentCount(); i < n; i++) {
             GLView component = parent.getComponent(i);
+            if (component.getVisibility() == GONE) {
+                continue;
+            }
             measureComponent(component, widthSpec, heightSpec);
         }
     }
@@ -1030,12 +1067,9 @@ public class GLView implements TouchOwner {
         return true;
     }
 
-    protected void onVisibilityChanged(int visibility) {
+    protected void onVisibilityChanged(GLView changedView, @Visibility int visibility) {
         for (int i = 0, n = getComponentCount(); i < n; ++i) {
-            GLView child = getComponent(i);
-            if (child.getVisibility() == GLView.VISIBLE) {
-                child.onVisibilityChanged(visibility);
-            }
+            getComponent(i).onVisibilityChanged(changedView, visibility);
         }
     }
 

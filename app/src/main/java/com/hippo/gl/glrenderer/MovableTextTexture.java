@@ -9,18 +9,20 @@ import java.util.Arrays;
 
 // TODO support multiline
 /**
- * Only support single line
+ * Works like movable type.<br>
+ * <br>
+ * Only support single line now
  */
-public class TextTexture extends SpriteTexture {
+public class MovableTextTexture extends SpriteTexture {
 
     private char[] mCharacters;
     private float[] mWidths;
     private float mHeight;
     private float mMaxWidth;
 
-    private TextTexture(Bitmap bitmap, int count, int[] rects, char[] characters,
+    private MovableTextTexture(Bitmap bitmap, int count, int[] rects, char[] characters,
             float[] widths, float height, float maxWidth) {
-        super(bitmap, count, rects);
+        super(bitmap, false, count, rects);
         mCharacters = characters;
         mWidths = widths;
         mHeight = height;
@@ -120,7 +122,7 @@ public class TextTexture extends SpriteTexture {
      * @param characters all Characters
      * @return the TextTexture
      */
-    public static TextTexture create(Typeface typeface, int size, int color, char[] characters) {
+    public static MovableTextTexture create(Typeface typeface, int size, int color, char[] characters) {
         Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setTextSize(size);
@@ -176,6 +178,6 @@ public class TextTexture extends SpriteTexture {
             }
         }
 
-        return new TextTexture(bitmap, length, rects, characters, widths, height, maxWidth);
+        return new MovableTextTexture(bitmap, length, rects, characters, widths, height, maxWidth);
     }
 }

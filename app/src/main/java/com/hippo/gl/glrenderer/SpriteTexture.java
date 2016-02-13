@@ -13,8 +13,8 @@ public class SpriteTexture extends TiledTexture {
     private RectF mTempSource = new RectF();
     private RectF mTempTarget = new RectF();
 
-    public SpriteTexture(Bitmap bitmap, int count, int[] rects) {
-        super(bitmap);
+    public SpriteTexture(Bitmap bitmap, boolean isOpaque, int count, int[] rects) {
+        super(bitmap, isOpaque);
 
         AssertUtils.assertEquals("rects.length must be count * 4", count * 4, rects.length);
         mCount = count;

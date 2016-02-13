@@ -73,6 +73,9 @@ public class GLLinearLayout extends GLView {
 
             for (int i = 0, n = getComponentCount(); i < n; i++) {
                 final GLView component = getComponent(i);
+                if (component.getVisibility() == GONE) {
+                    continue;
+                }
                 final LayoutParams lp = (LayoutParams) component.getLayoutParams();
 
                 if (lp.weight > 0.0f) {
@@ -99,6 +102,9 @@ public class GLLinearLayout extends GLView {
 
             for (int i = 0, n = getComponentCount(); i < n; i++) {
                 final GLView component = getComponent(i);
+                if (component.getVisibility() == GONE) {
+                    continue;
+                }
                 final LayoutParams lp = (LayoutParams) component.getLayoutParams();
 
                 if (lp.weight > 0.0f) {
@@ -127,6 +133,9 @@ public class GLLinearLayout extends GLView {
         int maxHeight = 0;
         for (int i = 0, n = getComponentCount(); i < n; i++) {
             GLView component = getComponent(i);
+            if (component.getVisibility() == GONE) {
+                continue;
+            }
 
             if (mOrientation == VERTICAL) {
                 maxWidth = Math.max(maxWidth, component.getMeasuredWidth());
@@ -163,6 +172,9 @@ public class GLLinearLayout extends GLView {
 
             for (int i = 0, n = getComponentCount(); i < n; i++) {
                 GLView component = getComponent(i);
+                if (component.getVisibility() == GONE) {
+                    continue;
+                }
                 int measureWidth = component.getMeasuredWidth();
                 int measureHeight = component.getMeasuredHeight();
 
@@ -179,6 +191,9 @@ public class GLLinearLayout extends GLView {
 
             for (int i = 0, n = getComponentCount(); i < n; i++) {
                 GLView component = getComponent(i);
+                if (component.getVisibility() == GONE) {
+                    continue;
+                }
                 int measureWidth = component.getMeasuredWidth();
                 int measureHeight = component.getMeasuredHeight();
 

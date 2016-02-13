@@ -27,6 +27,9 @@ public class GLFrameLayout extends GLView {
         int maxHeight = 0;
         for (int i = 0, n = getComponentCount(); i < n; i++) {
             GLView component = getComponent(i);
+            if (component.getVisibility() == GONE) {
+                continue;
+            }
             measureComponent(component, widthSpec, heightSpec);
             maxWidth = Math.max(maxWidth, component.getMeasuredWidth());
             maxHeight = Math.max(maxHeight, component.getMeasuredHeight());
@@ -57,6 +60,9 @@ public class GLFrameLayout extends GLView {
 
         for (int i = 0, n = getComponentCount(); i < n; i++) {
             GLView component = getComponent(i);
+            if (component.getVisibility() == GONE) {
+                continue;
+            }
             int measureWidth = component.getMeasuredWidth();
             int measureHeight = component.getMeasuredHeight();
             int componentLeft;

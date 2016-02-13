@@ -17,11 +17,10 @@
 package com.hippo.gl.glrenderer;
 
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.SystemClock;
@@ -61,6 +60,16 @@ public class TiledTexture implements Texture {
     private final int mHeight;
     private final RectF mSrcRect = new RectF();
     private final RectF mDestRect = new RectF();
+
+    static {
+        sUploadBitmap = Bitmap.createBitmap(TILE_SIZE, TILE_SIZE, Bitmap.Config.ARGB_8888);
+        sCanvas = new Canvas(sUploadBitmap);
+        sBitmapPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
+        sBitmapPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+        sPaint = new Paint();
+        sPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+        sPaint.setColor(Color.TRANSPARENT);
+    }
 
     public static class Uploader implements GLRoot.OnGLIdleListener {
         private final ArrayDeque<TiledTexture> mTextures =
@@ -198,10 +207,10 @@ public class TiledTexture implements Texture {
         return mUploadIndex == mTiles.length;
     }
 
-    public TiledTexture(Bitmap bitmap) {
+    public TiledTexture(Bitmap bitmap, boolean isOpaque) {
         mWidth = bitmap.getWidth();
         mHeight = bitmap.getHeight();
-        ArrayList<Tile> list = new ArrayList<Tile>();
+        ArrayList<Tile> list = new ArrayList<>();
 
         for (int x = 0, w = mWidth; x < w; x += CONTENT_SIZE) {
             for (int y = 0, h = mHeight; y < h; y += CONTENT_SIZE) {
@@ -212,6 +221,7 @@ public class TiledTexture implements Texture {
                 tile.setSize(
                         Math.min(CONTENT_SIZE, mWidth - x),
                         Math.min(CONTENT_SIZE, mHeight - y));
+                tile.setOpaque(isOpaque);
                 list.add(tile);
             }
         }
@@ -229,23 +239,6 @@ public class TiledTexture implements Texture {
                 freeTile(mTiles[i]);
             }
         }
-    }
-
-    public static void freeResources() {
-        sUploadBitmap = null;
-        sCanvas = null;
-        sBitmapPaint = null;
-        sPaint = null;
-    }
-
-    public static void prepareResources() {
-        sUploadBitmap = Bitmap.createBitmap(TILE_SIZE, TILE_SIZE, Config.ARGB_8888);
-        sCanvas = new Canvas(sUploadBitmap);
-        sBitmapPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
-        sBitmapPaint.setXfermode(new PorterDuffXfermode(Mode.SRC));
-        sPaint = new Paint();
-        sPaint.setXfermode(new PorterDuffXfermode(Mode.SRC));
-        sPaint.setColor(Color.TRANSPARENT);
     }
 
     // We want to draw the "source" on the "target".
@@ -334,6 +327,7 @@ public class TiledTexture implements Texture {
     }
 
     // Draws a sub region of this texture on to the specified rectangle.
+    @Override
     public void draw(GLCanvas canvas, RectF source, RectF target) {
         RectF src = mSrcRect;
         RectF dest = mDestRect;

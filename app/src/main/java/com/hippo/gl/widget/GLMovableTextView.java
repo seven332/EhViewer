@@ -20,14 +20,14 @@ import android.graphics.Rect;
 import android.text.TextUtils;
 
 import com.hippo.gl.glrenderer.GLCanvas;
-import com.hippo.gl.glrenderer.TextTexture;
+import com.hippo.gl.glrenderer.MovableTextTexture;
 import com.hippo.gl.view.GLView;
 import com.hippo.gl.view.Gravity;
 import com.hippo.yorozuya.ArrayUtils;
 
-public class GLTextView extends GLView {
+public class GLMovableTextView extends GLView {
 
-    TextTexture mTextTexture;
+    MovableTextTexture mTextTexture;
 
     private String mText = "";
     private int[] mIndexes = ArrayUtils.EMPTY_INT_ARRAY;
@@ -42,7 +42,7 @@ public class GLTextView extends GLView {
         }
     }
 
-    public void setTextTexture(TextTexture textTexture) {
+    public void setTextTexture(MovableTextTexture textTexture) {
         if (mTextTexture == textTexture) {
             return;
         }
