@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.ui.gl;
+package com.hippo.ehviewer.gallery.gl;
 
 import android.content.Context;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.animation.Interpolator;
 
@@ -28,6 +27,7 @@ import com.hippo.gl.anim.Animation;
 import com.hippo.gl.view.GLView;
 import com.hippo.gl.widget.GLEdgeView;
 import com.hippo.gl.widget.GLProgressView;
+import com.hippo.gl.widget.GLTextureView;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.MathUtils;
 
@@ -40,8 +40,8 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     @Retention(RetentionPolicy.SOURCE)
     private @interface Mode {}
 
-    private static final int MODE_LEFT_TO_RIGHT = 0;
-    private static final int MODE_RIGHT_TO_LEFT = 1;
+    public static final int MODE_LEFT_TO_RIGHT = 0;
+    public static final int MODE_RIGHT_TO_LEFT = 1;
 
     private static final Interpolator SMOOTH_SCROLLER_INTERPOLATOR = new Interpolator() {
         @Override
@@ -54,6 +54,8 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     private GalleryView.PageIterator mIterator;
 
     private GLProgressView mProgress;
+    private String mErrorStr;
+    private GLTextureView mErrorView;
     private GalleryPageView mPrevious;
     private GalleryPageView mCurrent;
     private GalleryPageView mNext;
@@ -66,7 +68,6 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     private boolean mCanScrollBetweenPages = false;
 
     private int mInterval;
-    private int mProgressSpec;
 
     private int[] mScrollRemain = new int[2];
     private float[] mScaleDefault = new float[3];
@@ -76,10 +77,9 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     private SmoothScaler mSmoothScaler;
 
     public PagerLayoutManager(Context context, @NonNull GalleryView galleryView,
-            int interval, int progressSize) {
+            int interval) {
         super(galleryView);
         mInterval = interval;
-        mProgressSpec = GLView.MeasureSpec.makeMeasureSpec(progressSize, GLView.MeasureSpec.EXACTLY);
 
         mPageFling = new PageFling(context);
         mSmoothScroller = new SmoothScroller();
@@ -111,6 +111,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
             cancelAllAnimations();
             // Remove all view
             removeProgress();
+            removeErrorView();
             removeAllPages();
             // Reset parameters
             resetParameters();
@@ -122,6 +123,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     @Override
     public void onAttach(GalleryView.PageIterator iterator) {
         AssertUtils.assertEquals("The PagerLayoutManager is attached", mIterator, null);
+        AssertUtils.assertNotEquals("The iterator is null", iterator, null);
         mIterator = iterator;
         // Reset parameters
         resetParameters();
@@ -130,7 +132,17 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     private void removeProgress() {
         if (mProgress != null) {
             mGalleryView.removeComponent(mProgress);
+            mGalleryView.releaseProgress(mProgress);
             mProgress = null;
+        }
+    }
+
+    private void removeErrorView() {
+        if (mErrorView != null) {
+            mGalleryView.removeComponent(mErrorView);
+            mGalleryView.releaseErrorView(mErrorView);
+            mErrorView = null;
+            mErrorStr = null;
         }
     }
 
@@ -165,6 +177,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
         // Remove all view
         removeProgress();
+        removeErrorView();
         removeAllPages();
 
         // Clear iterator
@@ -226,9 +239,30 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
         int width = galleryView.getWidth();
         int height = galleryView.getHeight();
+        String errorStr = iterator.isError();
 
-        if (!iterator.isValid()) {
-            // Remove all pages
+        if (errorStr != null) {
+            // Remove progress and all pages
+            removeProgress();
+            removeAllPages();
+
+            // Ensure error view
+            if (mErrorView == null) {
+                mErrorView = galleryView.obtainErrorView();
+                galleryView.addComponent(mErrorView);
+            }
+
+            // Update error string
+            if (!errorStr.equals(mErrorStr)) {
+                mErrorStr = errorStr;
+                galleryView.bindErrorView(mErrorView, errorStr);
+            }
+
+            // Place error view center
+            placeCenter(mErrorView);
+        } else if (iterator.isBusy()) {
+            // Remove error view and all pages
+            removeErrorView();
             removeAllPages();
 
             // Ensure progress
@@ -237,16 +271,12 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
                 galleryView.addComponent(mProgress);
             }
 
-            // Measure and layout progress
-            mProgress.measure(mProgressSpec, mProgressSpec);
-            int progressWidth = mProgress.getMeasuredWidth();
-            int progressHeight = mProgress.getMeasuredHeight();
-            int progressLeft = width / 2 - progressWidth / 2;
-            int progressTop = height / 2 - progressHeight / 2;
-            mProgress.layout(progressLeft, progressTop, progressLeft + progressWidth, progressTop + progressHeight);
+            // Place progress center
+            placeCenter(mProgress);
         } else {
-            // Remove progress
+            // Remove progress and error view
             removeProgress();
+            removeErrorView();
 
             // Ensure pages
             if (mCurrent == null) {
@@ -474,9 +504,6 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         mDeltaX += dx;
         mDeltaY += dy;
 
-
-        Log.d("TAG", "mDeltaX = " + mDeltaX);
-
         if (mDeltaX < 0) {
             edgeView.onPull(-mDeltaX, y, GLEdgeView.LEFT);
             if (!edgeView.isFinished(GLEdgeView.RIGHT)) {
@@ -591,6 +618,35 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         invalidate |= mPageFling.calculate(time);
         invalidate |= mSmoothScaler.calculate(time);
         return invalidate;
+    }
+
+    @Override
+    public void onDataChanged() {
+        AssertUtils.assertNotEquals("The PagerLayoutManager is not attached", mIterator, null);
+
+        // Cancel all animations
+        cancelAllAnimations();
+        // Remove all views
+        removeProgress();
+        removeErrorView();
+        removeAllPages();
+        // Reset parameters
+        resetParameters();
+        mGalleryView.requestFill();
+    }
+
+    @Override
+    public GalleryPageView findPageById(int id) {
+        if (mCurrent != null && mCurrent.getId() == id) {
+            return mCurrent;
+        }
+        if (mPrevious != null && mPrevious.getId() == id) {
+            return mPrevious;
+        }
+        if (mNext != null && mNext.getId() == id) {
+            return mNext;
+        }
+        return null;
     }
 
     class SmoothScroller extends Animation {

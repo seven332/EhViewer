@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.ui.gl;
+package com.hippo.ehviewer.gallery.gl;
 
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -176,6 +176,10 @@ public class ImageView extends GLView {
 
         mScaleOffsetDirty = true;
         mPositionInRootDirty = true;
+    }
+
+    public Texture getTexture() {
+        return mTexture;
     }
 
     public boolean isLoaded() {

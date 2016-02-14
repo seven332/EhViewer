@@ -52,7 +52,7 @@ import java.util.ArrayList;
 public class GLView implements TouchOwner {
     private static final String TAG = "GLView";
 
-    private static final boolean DEBUG_DRAW_BOUNDS = false;
+    private static final boolean DEBUG_DRAW_BOUNDS = true;
 
     @IntDef({VISIBLE, INVISIBLE, GONE})
     @Retention(RetentionPolicy.SOURCE)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.ui.gl;
+package com.hippo.ehviewer.gallery.gl;
 
 import android.view.MotionEvent;
 

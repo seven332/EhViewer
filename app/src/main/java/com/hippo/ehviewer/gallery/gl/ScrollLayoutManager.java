@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.ui.gl;
+package com.hippo.ehviewer.gallery.gl;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -24,6 +24,7 @@ import android.view.MotionEvent;
 import com.hippo.gl.view.GLView;
 import com.hippo.gl.widget.GLEdgeView;
 import com.hippo.gl.widget.GLProgressView;
+import com.hippo.gl.widget.GLTextureView;
 import com.hippo.yorozuya.AssertUtils;
 
 import java.util.Iterator;
@@ -38,6 +39,8 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
     private GalleryView.PageIterator mIterator;
 
     private GLProgressView mProgress;
+    private String mErrorStr;
+    private GLTextureView mErrorView;
     private LinkedList<GalleryPageView> mPages = new LinkedList<>();
 
     private int mOffset;
@@ -50,11 +53,12 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
     private PageFling mPageFling;
 
     public ScrollLayoutManager(Context context, @NonNull GalleryView galleryView,
-            int interval, int progressSize) {
+            int interval) {
         super(galleryView);
 
         mInterval = interval;
-        mProgressSpec = GLView.MeasureSpec.makeMeasureSpec(progressSize, GLView.MeasureSpec.EXACTLY);
+        mProgressSpec = GLView.MeasureSpec.makeMeasureSpec(GLView.LayoutParams.WRAP_CONTENT,
+                GLView.LayoutParams.WRAP_CONTENT);
         mPageFling = new PageFling(context);
     }
 
@@ -70,7 +74,8 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
     @Override
     public void onAttach(GalleryView.PageIterator iterator) {
-        AssertUtils.assertEquals("The PagerLayoutManager is attached", mIterator, null);
+        AssertUtils.assertEquals("The ScrollLayoutManager is attached", mIterator, null);
+        AssertUtils.assertNotEquals("The iterator is null", iterator, null);
         mIterator = iterator;
         // Reset parameters
         resetParameters();
@@ -79,7 +84,17 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
     private void removeProgress() {
         if (mProgress != null) {
             mGalleryView.removeComponent(mProgress);
+            mGalleryView.releaseProgress(mProgress);
             mProgress = null;
+        }
+    }
+
+    private void removeErrorView() {
+        if (mErrorView != null) {
+            mGalleryView.removeComponent(mErrorView);
+            mGalleryView.releaseErrorView(mErrorView);
+            mErrorView = null;
+            mErrorStr = null;
         }
     }
 
@@ -105,6 +120,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
         // Remove all view
         removeProgress();
+        removeErrorView();
         removeAllPages();
 
         // Clear iterator
@@ -122,9 +138,30 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
         int width = galleryView.getWidth();
         int height = galleryView.getHeight();
+        String errorStr = iterator.isError();
 
-        if (!iterator.isValid()) {
-            // Remove all pages
+        if (errorStr != null) {
+            // Remove progress and all pages
+            removeProgress();
+            removeAllPages();
+
+            // Ensure error view
+            if (mErrorView == null) {
+                mErrorView = galleryView.obtainErrorView();
+                galleryView.addComponent(mErrorView);
+            }
+
+            // Update error string
+            if (!errorStr.equals(mErrorStr)) {
+                mErrorStr = errorStr;
+                galleryView.bindErrorView(mErrorView, errorStr);
+            }
+
+            // Place error view center
+            placeCenter(mErrorView);
+        } else if (iterator.isBusy()) {
+            // Remove error view and all pages
+            removeErrorView();
             removeAllPages();
 
             // Ensure progress
@@ -133,16 +170,12 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
                 galleryView.addComponent(mProgress);
             }
 
-            // Measure and layout progress
-            mProgress.measure(mProgressSpec, mProgressSpec);
-            int progressWidth = mProgress.getMeasuredWidth();
-            int progressHeight = mProgress.getMeasuredHeight();
-            int progressLeft = width / 2 - progressWidth / 2;
-            int progressTop = height / 2 - progressHeight / 2;
-            mProgress.layout(progressLeft, progressTop, progressLeft + progressWidth, progressTop + progressHeight);
+            // Place progress center
+            placeCenter(mProgress);
         } else {
-            // Remove progress
+            // Remove progress and error view
             removeProgress();
+            removeErrorView();
 
             int minY = (int) (-height * RESERVATIONS);
 
@@ -496,6 +529,32 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
     public boolean onUpdateAnimation(long time) {
         boolean invalidate = mPageFling.calculate(time);
         return invalidate;
+    }
+
+    @Override
+    public void onDataChanged() {
+        AssertUtils.assertNotEquals("The PagerLayoutManager is not attached", mIterator, null);
+
+        // Cancel all animations
+        cancelAllAnimations();
+        // Remove all views
+        removeProgress();
+        removeErrorView();
+        removeAllPages();
+        // Reset parameters
+        resetParameters();
+        mGalleryView.requestFill();
+    }
+
+    @Override
+    public GalleryPageView findPageById(int id) {
+        for (int i = 0, n = mPages.size(); i < n; i++) {
+            GalleryPageView page = mPages.get(i);
+            if (page.getId() == id) {
+                return page;
+            }
+        }
+        return null;
     }
 
     class PageFling extends Fling {

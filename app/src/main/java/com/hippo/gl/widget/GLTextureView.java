@@ -38,6 +38,10 @@ public class GLTextureView extends GLView {
         }
     }
 
+    public Texture getTexture() {
+        return mTexture;
+    }
+
     @Override
     protected int getSuggestedMinimumWidth() {
         return mTexture == null ? super.getSuggestedMinimumWidth() : mTexture.getWidth() + mPaddings.width();
@@ -61,13 +65,4 @@ public class GLTextureView extends GLView {
 
         mTexture.draw(canvas, mSrc, mDst);
     }
-
-
-
-
-
-
-
-
-
 }

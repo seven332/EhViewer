@@ -536,4 +536,13 @@ public class ImageTexture implements Texture {
     public boolean isReady() {
         return mUploadIndex == mTiles.length;
     }
+
+    public void recycle() {
+        for (int i = 0, n = mTiles.length; i < n; ++i) {
+            mTiles[i].free();
+        }
+        synchronized (mImage) {
+            mImage.recycle();
+        }
+    }
 }

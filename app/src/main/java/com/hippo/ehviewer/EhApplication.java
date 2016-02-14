@@ -60,7 +60,6 @@ public class EhApplication extends SceneApplication {
     public void onCreate() {
         super.onCreate();
 
-        GetText.initialize(this);
         CookieDB.initialize(this);
         StatusCodeException.initialize(this);
         Settings.initialize(this);
