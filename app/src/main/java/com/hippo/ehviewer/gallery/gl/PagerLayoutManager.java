@@ -29,6 +29,7 @@ import com.hippo.gl.widget.GLEdgeView;
 import com.hippo.gl.widget.GLProgressView;
 import com.hippo.gl.widget.GLTextureView;
 import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 
 import java.lang.annotation.Retention;
@@ -42,6 +43,8 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
     public static final int MODE_LEFT_TO_RIGHT = 0;
     public static final int MODE_RIGHT_TO_LEFT = 1;
+
+    private static final int INTERVAL = 48;
 
     private static final Interpolator SMOOTH_SCROLLER_INTERPOLATOR = new Interpolator() {
         @Override
@@ -76,10 +79,9 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     private SmoothScroller mSmoothScroller;
     private SmoothScaler mSmoothScaler;
 
-    public PagerLayoutManager(Context context, @NonNull GalleryView galleryView,
-            int interval) {
+    public PagerLayoutManager(Context context, @NonNull GalleryView galleryView) {
         super(galleryView);
-        mInterval = interval;
+        mInterval = LayoutUtils.dp2pix(context, INTERVAL);
 
         mPageFling = new PageFling(context);
         mSmoothScroller = new SmoothScroller();
@@ -239,7 +241,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
         int width = galleryView.getWidth();
         int height = galleryView.getHeight();
-        String errorStr = iterator.isError();
+        String errorStr = iterator.getError();
 
         if (errorStr != null) {
             // Remove progress and all pages
@@ -260,7 +262,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
             // Place error view center
             placeCenter(mErrorView);
-        } else if (iterator.isBusy()) {
+        } else if (iterator.isWaiting()) {
             // Remove error view and all pages
             removeErrorView();
             removeAllPages();

@@ -16,9 +16,10 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseIntArray;
@@ -28,6 +29,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.DirGalleryProvider;
 import com.hippo.ehviewer.gallery.GalleryProvider;
 import com.hippo.ehviewer.gallery.GalleryProviderListener;
+import com.hippo.ehviewer.gallery.ZipGalleryProvider;
 import com.hippo.ehviewer.gallery.gl.GalleryPageView;
 import com.hippo.ehviewer.gallery.gl.GalleryView;
 import com.hippo.gl.glrenderer.ImageTexture;
@@ -41,6 +43,20 @@ import java.io.File;
 
 public class GalleryActivity extends AppCompatActivity implements GalleryProviderListener {
 
+    public static final String ACTION_DIR = "dir";
+    public static final String ACTION_ZIP = "zip";
+    public static final String ACTION_EH = "eh";
+
+    public static final String KEY_ACTION = "action";
+    public static final String KEY_FILENAME = "filename";
+    public static final String KEY_GID = "gid";
+    public static final String KEY_TOKEN = "token";
+
+    private String mAction;
+    private String mFilename;
+    private int mGid;
+    private String mToken;
+
     @Nullable
     private GalleryView mGalleryView;
 
@@ -53,26 +69,82 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
     @Nullable
     private SparseIntArray mIndexIdMap;
 
+    private void buildProvider() {
+        if (mGalleryProvider != null) {
+            return;
+        }
+
+        if (ACTION_DIR.equals(mAction)) {
+            if (mFilename != null) {
+                mGalleryProvider = new DirGalleryProvider(new File(mFilename));
+            }
+        } else if (ACTION_ZIP.equals(mAction)) {
+            if (mFilename != null) {
+                mGalleryProvider = new ZipGalleryProvider(new File(mFilename));
+            }
+        } else if (ACTION_EH.equals(mAction)) {
+
+        }
+    }
+
+    private void onInit() {
+        Intent intent = getIntent();
+        if (intent == null) {
+            return;
+        }
+
+        mAction = intent.getAction();
+        mFilename = intent.getStringExtra(KEY_FILENAME);
+        mGid = intent.getIntExtra(KEY_GID, -1);
+        mToken = intent.getStringExtra(KEY_TOKEN);
+        buildProvider();
+    }
+
+    private void onRestore(@NonNull Bundle savedInstanceState) {
+        mAction = savedInstanceState.getString(KEY_ACTION);
+        mFilename = savedInstanceState.getString(KEY_FILENAME);
+        mGid = savedInstanceState.getInt(KEY_GID, -1);
+        mToken = savedInstanceState.getString(KEY_TOKEN);
+        buildProvider();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(KEY_ACTION, mAction);
+        outState.putString(KEY_FILENAME, mFilename);
+        outState.putInt(KEY_GID, mGid);
+        outState.putString(KEY_TOKEN, mToken);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_gallery);
-        GLRootView glRootView = (GLRootView) findViewById(R.id.gl_root_view);
+        if (savedInstanceState == null) {
+            onInit();
+        } else {
+            onRestore(savedInstanceState);
+        }
 
-        mUploader = new ImageTexture.Uploader(glRootView);
-        mIndexIdMap = new SparseIntArray();
-        mGalleryProvider = new DirGalleryProvider(new File(Environment.getExternalStorageDirectory(), "nmb/image"));
+        if (mGalleryProvider == null) {
+            finish();
+            return;
+        }
         mGalleryProvider.addGalleryProviderListener(this);
         mGalleryProvider.start();
 
+        setContentView(R.layout.activity_gallery);
+        GLRootView glRootView = (GLRootView) findViewById(R.id.gl_root_view);
+        mUploader = new ImageTexture.Uploader(glRootView);
+        mIndexIdMap = new SparseIntArray();
         mPageTextTexture = MovableTextTexture.create(Typeface.DEFAULT,
                 getResources().getDimensionPixelSize(R.dimen.gallery_page_text),
                 getResources().getColor(R.color.secondary_text_dark),
                 new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
 
         mGalleryView = new GalleryView(this, new GalleryPageIterator(),
-                mPageTextTexture, null, GalleryView.LAYOUT_MODE_LEFT_TO_RIGHT);
+                mPageTextTexture, null, GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT);
         glRootView.setContentPane(mGalleryView);
     }
 
@@ -183,6 +255,13 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
     }
 
     @Override
+    public void onDataChanged() {
+        if (mGalleryView != null) {
+            mGalleryView.onDataChanged();
+        }
+    }
+
+    @Override
     public void onPagePercent(int index, float percent) {
         GalleryPageView page = findPageByIndex(index);
         if (page != null) {
@@ -203,18 +282,20 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
             page.setPage(index + 1);
             page.setProgress(GalleryPageView.PROGRESS_GONE);
             page.setError(null, null);
+        } else {
+            image.recycle();
         }
     }
 
     @Override
-    public void onPageFailed(int index, Exception e) {
+    public void onPageFailed(int index, String error) {
         GalleryPageView page = findPageByIndex(index);
         if (page != null && mGalleryView != null) {
             page.showInfo();
             page.setImage(null);
             page.setPage(index + 1);
             page.setProgress(GalleryPageView.PROGRESS_GONE);
-            page.setError("Error", mGalleryView);
+            page.setError(error, mGalleryView);
         }
     }
 
@@ -235,20 +316,23 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
         }
 
         @Override
-        public boolean isBusy() {
-            return mGalleryProvider == null ||
-                    mGalleryProvider.size() == GalleryProvider.SIZE_WAIT;
+        public boolean isWaiting() {
+            return mGalleryProvider != null && mGalleryProvider.size() == GalleryProvider.STATE_WAIT;
         }
 
         @Override
-        public String isError() {
-            if (mGalleryProvider != null) {
-                int size = mGalleryProvider.size();
-                if (size == 0) {
-                    return "Empty Gallery"; // TODO hardcode
-                } else if (size < 0 && size != GalleryProvider.SIZE_WAIT) {
-                    return "Weird"; // TODO hardcode
+        public String getError() {
+            if (mGalleryProvider == null) {
+                return getString(R.string.error_no_provider);
+            } else if (mGalleryProvider.size() == GalleryProvider.STATE_ERROR) {
+                String error = mGalleryProvider.getError();
+                if (error != null) {
+                    return error;
+                } else {
+                    return getString(R.string.error_unknown);
                 }
+            } else if (mGalleryProvider.size() == 0) {
+                return getString(R.string.error_empty);
             }
             return null;
         }
@@ -282,29 +366,12 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
         @Override
         public int onBind(GalleryPageView view) {
             if (mGalleryProvider != null && mGalleryView != null) {
-                switch (mGalleryProvider.request(mIndex)) {
-                    case GalleryProvider.RESULT_WAIT:
-                        view.showInfo();
-                        view.setImage(null);
-                        view.setPage(mIndex + 1);
-                        view.setProgress(GalleryPageView.PROGRESS_INDETERMINATE);
-                        view.setError(null, null);
-                        break;
-                    case GalleryProvider.RESULT_FAILED:
-                        view.showInfo();
-                        view.setImage(null);
-                        view.setPage(mIndex + 1);
-                        view.setProgress(GalleryPageView.PROGRESS_GONE);
-                        view.setError("Failed", mGalleryView);
-                        break;
-                    case GalleryProvider.RESULT_ERROR:
-                        view.showInfo();
-                        view.setImage(null);
-                        view.setPage(mIndex + 1);
-                        view.setProgress(GalleryPageView.PROGRESS_GONE);
-                        view.setError("Error", mGalleryView);
-                        break;
-                }
+                mGalleryProvider.request(mIndex);
+                view.showInfo();
+                view.setImage(null);
+                view.setPage(mIndex + 1);
+                view.setProgress(GalleryPageView.PROGRESS_INDETERMINATE);
+                view.setError(null, null);
             }
 
             int id = mIdGenerator.nextId();

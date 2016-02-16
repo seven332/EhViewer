@@ -34,7 +34,7 @@
 #define STRINGIZE(L) #L
 #define MAKESTRING(M, L) M(L)
 #define FILE_LINE MAKESTRING(STRINGIZE, __LINE__ )
-#define EMSG(msg) __FILE__ "(" FILE_LINE ") : "msg
+#define EMSG(msg) __FILE__ "(" FILE_LINE "): "msg
 
 #define OUT_OF_MEMORY "Out of memory"
 

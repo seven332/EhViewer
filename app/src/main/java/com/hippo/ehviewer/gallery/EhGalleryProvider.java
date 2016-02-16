@@ -16,15 +16,30 @@
 
 package com.hippo.ehviewer.gallery;
 
-import com.hippo.image.Image;
+public class EhGalleryProvider extends GalleryProvider {
 
-public interface GalleryProviderListener {
+    @Override
+    public void start() {
 
-    void onDataChanged();
+    }
 
-    void onPagePercent(int index, float percent);
+    @Override
+    public void stop() {
 
-    void onPageSucceed(int index, Image image);
+    }
 
-    void onPageFailed(int index, String error);
+    @Override
+    public int size() {
+        return 0;
+    }
+
+    @Override
+    public int request(int index) {
+        return 0;
+    }
+
+    @Override
+    public String getError() {
+        return null;
+    }
 }

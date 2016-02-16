@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.gallery.gl;
 
+import android.content.Context;
+
 import com.hippo.gl.glrenderer.BasicTexture;
 import com.hippo.gl.glrenderer.ImageTexture;
 import com.hippo.gl.glrenderer.MovableTextTexture;
@@ -27,9 +29,11 @@ import com.hippo.gl.widget.GLMovableTextView;
 import com.hippo.gl.widget.GLProgressView;
 import com.hippo.gl.widget.GLTextureView;
 import com.hippo.image.Image;
+import com.hippo.yorozuya.LayoutUtils;
 
 public class GalleryPageView extends GLFrameLayout {
 
+    private static final int INFO_INTERVAL = 24;
     public static final float PROGRESS_GONE = -1.0f;
     public static final float PROGRESS_INDETERMINATE = -2.0f;
 
@@ -39,7 +43,7 @@ public class GalleryPageView extends GLFrameLayout {
     private GLTextureView mError;
     private GLProgressView mProgress;
 
-    public GalleryPageView(MovableTextTexture pageTextTexture,
+    public GalleryPageView(Context context, MovableTextTexture pageTextTexture,
             int progressColor, int progressSize) {
         // Add image
         mImage = new ImageView();
@@ -50,6 +54,7 @@ public class GalleryPageView extends GLFrameLayout {
         // Add other panel
         mInfo = new GLLinearLayout();
         mInfo.setOrientation(GLLinearLayout.VERTICAL);
+        mInfo.setInterval(LayoutUtils.dp2pix(context, INFO_INTERVAL));
         glp = new GravityLayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
         glp.gravity = Gravity.CENTER;

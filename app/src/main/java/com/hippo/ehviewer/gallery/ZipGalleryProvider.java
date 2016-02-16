@@ -27,20 +27,25 @@ import com.hippo.yorozuya.PriorityThread;
 import com.hippo.yorozuya.StringUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
-public class DirGalleryProvider extends GalleryProvider implements Runnable {
+public class ZipGalleryProvider extends GalleryProvider implements Runnable {
 
-    private static final String TAG = DirGalleryProvider.class.getSimpleName();
+    private static final String TAG = ZipGalleryProvider.class.getSimpleName();
     private static final AtomicInteger sIdGenerator = new AtomicInteger();
 
-    private final File mDir;
+    private final File mFile;
     private final Stack<Integer> mRequests = new Stack<>();
     @Nullable
     private Thread mBgThread;
@@ -48,8 +53,8 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
     private String mError;
     private boolean mStarted = false;
 
-    public DirGalleryProvider(File dir) {
-        mDir = dir;
+    public ZipGalleryProvider(File file) {
+        mFile = file;
     }
 
     @Override
@@ -82,9 +87,8 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
     }
 
     @Override
-    @Result
     public int request(int index) {
-        if (index < 0 || index >= size()) {
+        if (index < 0 || index >= mSize) {
             return RESULT_ERROR;
         } else {
             synchronized (mRequests) {
@@ -102,12 +106,23 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
 
     @Override
     public void run() {
-        // It may take a long time, so run it in new thread
-        String[] files = mDir.list(new ImageFilter());
+        ZipFile zipFile = null;
+        try {
+            zipFile = new ZipFile(mFile);
+        } catch (ZipException e) {
+            mError = GetText.getString(R.string.error_invalid_zip_file);
+        } catch (FileNotFoundException e) {
+            mError = GetText.getString(R.string.error_not_found);
+        } catch (IOException e) {
+            mError = GetText.getString(R.string.error_reading_failed);
+        }
 
-        if (files == null) {
+        // Check zip file null
+        if (zipFile == null) {
             mSize = STATE_ERROR;
-            mError = GetText.getString(R.string.error_not_folder_path);
+            if (mError == null) {
+                mError = GetText.getString(R.string.error_unknown);
+            }
             mBgThread = null;
 
             // Notify to to show error
@@ -117,11 +132,20 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
             return;
         }
 
-        // Sort it
-        Arrays.sort(files);
+        // Get all image name
+        List<String> filenames = new ArrayList<>(zipFile.size());
+        Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
+        while (enumeration.hasMoreElements()) {
+            ZipEntry zipEntry = enumeration.nextElement();
+            String filename = zipEntry.getName();
+            if (!zipEntry.isDirectory() && StringUtils.endsWith(filename, SUPPORT_IMAGE_EXTENSIONS)) {
+                filenames.add(filename);
+            }
+        }
+        Collections.sort(filenames);
 
-        // Set state normal and notify
-        mSize = files.length;
+        // Update size and notify changed
+        mSize = filenames.size();
         notifyDataChanged();
 
         while (!Thread.currentThread().isInterrupted()) {
@@ -140,29 +164,31 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
             }
 
             try {
-                InputStream is = new FileInputStream(new File(mDir, files[index]));
-                Image image = Image.decode(is, false);
-                if (image != null) {
-                    notifyPageSucceed(index, image);
+                ZipEntry zipEntry = zipFile.getEntry(filenames.get(index));
+                if (zipEntry != null) {
+                    InputStream is = zipFile.getInputStream(zipEntry);
+                    Image image = Image.decode(is, false);
+                    if (image != null) {
+                        notifyPageSucceed(index, image);
+                    } else {
+                        notifyPageFailed(index, GetText.getString(R.string.error_decoding_failed));
+                    }
                 } else {
-                    notifyPageFailed(index, GetText.getString(R.string.error_decoding_failed));
+                    notifyPageFailed(index, GetText.getString(R.string.error_reading_failed));
                 }
-            } catch (FileNotFoundException e) {
-                notifyPageFailed(index, GetText.getString(R.string.error_not_found));
+            } catch (IOException e) {
+                notifyPageFailed(index, GetText.getString(R.string.error_reading_failed));
             }
         }
 
         // Clear
+        try {
+            zipFile.close();
+        } catch (IOException e) {
+            // Ignore
+        }
         mBgThread = null;
 
         Log.i(TAG, "ImageDecoder end");
-    }
-
-    private static class ImageFilter implements FilenameFilter {
-
-        @Override
-        public boolean accept(File dir, String filename) {
-            return StringUtils.endsWith(filename.toLowerCase(), SUPPORT_IMAGE_EXTENSIONS);
-        }
     }
 }

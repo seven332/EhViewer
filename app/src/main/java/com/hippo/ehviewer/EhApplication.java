@@ -18,7 +18,9 @@ package com.hippo.ehviewer;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.os.Debug;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.hippo.beerbelly.LruCacheEx;
@@ -33,7 +35,9 @@ import com.hippo.okhttp.CookieDB;
 import com.hippo.scene.SceneApplication;
 import com.hippo.text.Html;
 import com.hippo.util.ReadableTime;
+import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IntIdGenerator;
+import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;
 import java.util.Comparator;
@@ -43,7 +47,10 @@ import okhttp3.OkHttpClient;
 
 public class EhApplication extends SceneApplication {
 
+    private static final String TAG = EhApplication.class.getSimpleName();
+
     private static final boolean DEBUG_CONACO = false;
+    private static final boolean DEBUG_NATIVE_MEMORY = false;
 
     private IntIdGenerator mIdGenerator = new IntIdGenerator();
     private SparseArray<Object> mGlobalStuffMap = new SparseArray<>();
@@ -60,11 +67,27 @@ public class EhApplication extends SceneApplication {
     public void onCreate() {
         super.onCreate();
 
+        GetText.initialize(this);
         CookieDB.initialize(this);
         StatusCodeException.initialize(this);
         Settings.initialize(this);
         ReadableTime.initialize(this);
         Html.initialize(this);
+
+        if (DEBUG_NATIVE_MEMORY) {
+            debugNativeMemory();
+        }
+    }
+
+    private void debugNativeMemory() {
+        new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG, "Native memory: " + FileUtils.humanReadableByteCount(
+                        Debug.getNativeHeapAllocatedSize(), false));
+                SimpleHandler.getInstance().postDelayed(this, 3000);
+            }
+        }.run();
     }
 
     public int putGlobalStuff(@NonNull Object o) {

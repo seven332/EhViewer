@@ -17,7 +17,6 @@
 package com.hippo.ehviewer.gallery.gl;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
@@ -144,8 +143,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mLayoutMode = layoutMode;
         mProgressColor = ResourcesUtils.getAttrColor(context, R.attr.colorPrimary);
         mProgressSize = LayoutUtils.dp2pix(context, PROGRESS_SIZE_IN_DP);
-        mErrorSize = context.getResources().getDimension(R.dimen.text_medium);
-        mErrorColor = Color.RED;
+        mErrorSize = context.getResources().getDimension(R.dimen.text_large);
+        mErrorColor = context.getResources().getColor(R.color.red_500);
         mPageMinHeight = LayoutUtils.dp2pix(context, PAGE_MIN_HEIGHT_IN_DP);
         mInterval = LayoutUtils.dp2pix(context, INTERVAL_IN_DP);
 
@@ -154,7 +153,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     private void ensurePagerLayoutManager() {
         if (mPagerLayoutManager == null) {
-            mPagerLayoutManager = new PagerLayoutManager(mContext, this, mInterval);
+            mPagerLayoutManager = new PagerLayoutManager(mContext, this);
         }
     }
 
@@ -436,7 +435,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     public GalleryPageView obtainPage() {
         GalleryPageView page = mRecycler.obtain();
         if (page == null) {
-            page = new GalleryPageView(mPageTextTexture, mProgressColor, mProgressSize);
+            page = new GalleryPageView(mContext, mPageTextTexture, mProgressColor, mProgressSize);
             page.setMinimumHeight(mPageMinHeight);
         }
         return page;
@@ -523,12 +522,16 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
         public abstract void reset();
 
-        public abstract boolean isBusy();
+        /**
+         * @return True for waiting now, layout manager
+         * should show a progress bar or something like it
+         */
+        public abstract boolean isWaiting();
 
         /**
-         * Null for no error
+         * @return Null for no error
          */
-        public abstract String isError();
+        public abstract String getError();
 
         public abstract boolean hasNext();
 

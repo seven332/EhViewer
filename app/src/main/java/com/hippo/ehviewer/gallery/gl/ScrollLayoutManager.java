@@ -138,7 +138,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
         int width = galleryView.getWidth();
         int height = galleryView.getHeight();
-        String errorStr = iterator.isError();
+        String errorStr = iterator.getError();
 
         if (errorStr != null) {
             // Remove progress and all pages
@@ -159,7 +159,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
             // Place error view center
             placeCenter(mErrorView);
-        } else if (iterator.isBusy()) {
+        } else if (iterator.isWaiting()) {
             // Remove error view and all pages
             removeErrorView();
             removeAllPages();
@@ -176,6 +176,12 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             // Remove progress and error view
             removeProgress();
             removeErrorView();
+
+
+            // TODO ensure first shown
+
+
+
 
             int minY = (int) (-height * RESERVATIONS);
 
@@ -280,6 +286,10 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
                 iterator.next();
             }
             iterator.reset();
+
+
+            // TODO Avoid page not fill bottom, but has previous
+
 
             // Remove useless page
             while (mPages.size() > pageSize) {

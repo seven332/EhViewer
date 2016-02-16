@@ -128,6 +128,8 @@ public final class MainActivity extends StageActivity
     private void onRestore(Bundle savedInstanceState) {
         Log.d("TAG", "onRestore");
 
+        Log.d("TAG", "action = " + getIntent().getAction());
+
         mNavCheckedItem = savedInstanceState.getInt(KEY_NAV_CHECKED_ITEM);
     }
 

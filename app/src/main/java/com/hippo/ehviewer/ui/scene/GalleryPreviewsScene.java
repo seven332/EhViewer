@@ -65,7 +65,9 @@ public class GalleryPreviewsScene extends ToolbarScene {
     public final static String KEY_HAS_FIRST_REFRESH = "has_first_refresh";
 
     private EhClient mClient;
+    @Nullable
     private GalleryPreviewAdapter mAdapter;
+    @Nullable
     private GalleryPreviewHelper mHelper;
     private int mGid = -1;
     private String mToken = null;
@@ -169,6 +171,9 @@ public class GalleryPreviewsScene extends ToolbarScene {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_go_to:
+                if (mHelper == null) {
+                    return true;
+                }
                 int pages = mHelper.getPages();
                 if (pages > 0 && mHelper.canGoTo()) {
                     GoToDialogHelper helper = new GoToDialogHelper(pages, mHelper.getPageForTop());
@@ -211,14 +216,16 @@ public class GalleryPreviewsScene extends ToolbarScene {
 
         @Override
         public void onBindViewHolder(GalleryPreviewHolder holder, int position) {
-            GalleryPreview preview = mHelper.getDataAt(position);
-            holder.image.load(EhCacheKeyFactory.getLargePreviewKey(mGid, preview.index), preview.imageUrl);
-            holder.text.setText(String.format(Locale.US, "%d", preview.index + 1));
+            if (mHelper != null) {
+                GalleryPreview preview = mHelper.getDataAt(position);
+                holder.image.load(EhCacheKeyFactory.getLargePreviewKey(mGid, preview.index), preview.imageUrl);
+                holder.text.setText(String.format(Locale.US, "%d", preview.index + 1));
+            }
         }
 
         @Override
         public int getItemCount() {
-            return mHelper.size();
+            return mHelper != null ? mHelper.size() : 0;
         }
     }
 
@@ -260,17 +267,23 @@ public class GalleryPreviewsScene extends ToolbarScene {
 
         @Override
         protected void notifyDataSetChanged() {
-            mAdapter.notifyDataSetChanged();
+            if (mAdapter != null) {
+                mAdapter.notifyDataSetChanged();
+            }
         }
 
         @Override
         protected void notifyItemRangeRemoved(int positionStart, int itemCount) {
-            mAdapter.notifyItemRangeRemoved(positionStart, itemCount);
+            if (mAdapter != null) {
+                mAdapter.notifyItemRangeRemoved(positionStart, itemCount);
+            }
         }
 
         @Override
         protected void notifyItemRangeInserted(int positionStart, int itemCount) {
-            mAdapter.notifyItemRangeInserted(positionStart, itemCount);
+            if (mAdapter != null) {
+                mAdapter.notifyItemRangeInserted(positionStart, itemCount);
+            }
         }
     }
 
@@ -376,7 +389,7 @@ public class GalleryPreviewsScene extends ToolbarScene {
         @Override
         public void onClick(View v) {
             int page = mSlider.getProgress() - 1;
-            if (page >= 0 && page < mPages) {
+            if (page >= 0 && page < mPages && mHelper != null) {
                 mHelper.goTo(page);
                 if (mDialog != null) {
                     mDialog.dismiss();

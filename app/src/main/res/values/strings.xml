@@ -81,6 +81,13 @@
     <string name="error_unknown">Weird</string>
     <string name="error_cant_find_activity">Can\'t find the application</string>
     <string name="error_cannot_parse_the_url">Can\'t parse the url</string>
+    <string name="error_not_folder_path">Not folder path</string>
+    <string name="error_no_provider">No provider</string>
+    <string name="error_decoding_failed">Decoding failed</string>
+    <string name="error_not_found">Not found</string>
+    <string name="error_empty">Empty</string>
+    <string name="error_invalid_zip_file">Invalid zip file</string>
+    <string name="error_reading_failed">Reading Failed</string>
 
     <string name="app_waring">The content of this application is from the Internet. Some of it may do physical or mental harm to you. You have learnt the risks above and would like to undertake them. Do you want to use this application?</string>
     <string name="error_username_cannot_empty">Username cannot be an empty string</string>
