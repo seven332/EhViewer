@@ -871,8 +871,18 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         } else if (mDownload == v) {
             // TODO
         } else if (mRead == v) {
-            Intent intent = new Intent(getActivity(), GalleryActivity.class);
-            startActivity(intent);
+            GalleryInfo galleryInfo = null;
+            if (mGalleryInfo != null) {
+                galleryInfo = mGalleryInfo;
+            } else if (mGalleryDetail != null) {
+                galleryInfo = mGalleryDetail;
+            }
+            if (galleryInfo != null) {
+                Intent intent = new Intent(getActivity(), GalleryActivity.class);
+                intent.setAction(GalleryActivity.ACTION_EH);
+                intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, galleryInfo);
+                startActivity(intent);
+            }
         } else if (mInfo == v) {
             Bundle args = new Bundle();
             args.putParcelable(GalleryInfoScene.KEY_GALLERY_DETAIL, mGalleryDetail);
@@ -929,11 +939,12 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     @Override
     public void onBackPressed() {
-        if (mViewTransition.getShownViewIndex() == 0 && ApiHelper.SUPPORT_TRANSITION) {
+        if (mViewTransition.getShownViewIndex() == 0 && ApiHelper.SUPPORT_TRANSITION && mThumb.isShown()) {
             int[] location = new int[2];
             mThumb.getLocationInWindow(location);
             // Only show transaction when thumb can be seen
             if (location[1] + mThumb.getHeight() > 0) {
+                setTransitionName();
                 finish(new EnterGalleryListTransaction(mThumb, mTitle, mUploader, mCategory));
                 return;
             }

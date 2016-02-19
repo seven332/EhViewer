@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class GalleryTagGroup implements Parcelable {
 
     public String groupName;
-    private ArrayList<String> mTagList = new ArrayList<>();
+    private ArrayList<String> mTagList;
 
     public void addTag(String tag) {
         mTagList.add(tag);
@@ -50,6 +50,7 @@ public class GalleryTagGroup implements Parcelable {
     }
 
     public GalleryTagGroup() {
+        mTagList = new ArrayList<>();
     }
 
     protected GalleryTagGroup(Parcel in) {
@@ -58,10 +59,12 @@ public class GalleryTagGroup implements Parcelable {
     }
 
     public static final Parcelable.Creator<GalleryTagGroup> CREATOR = new Parcelable.Creator<GalleryTagGroup>() {
+        @Override
         public GalleryTagGroup createFromParcel(Parcel source) {
             return new GalleryTagGroup(source);
         }
 
+        @Override
         public GalleryTagGroup[] newArray(int size) {
             return new GalleryTagGroup[size];
         }

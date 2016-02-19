@@ -16,22 +16,18 @@
 
 package com.hippo.ehviewer.client.parser;
 
-import android.util.Log;
-
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryComment;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryTagGroup;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
+import com.hippo.ehviewer.client.data.NormalPreviewSet;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.exception.OffensiveException;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.exception.PiningException;
 import com.hippo.yorozuya.NumberUtils;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -74,9 +70,11 @@ public class GalleryDetailParser {
                     + ".+?"
                     + "<td id=\"grt3\"><span id=\"rating_count\">([\\d,]+)</span></td>" // 18 ratedTimes
                     + "</tr>"
-                    + "<tr><td[^<>]*>([^<>]+)</td>" // 19 rating "Average: x.xx" or "Not Yet Rated"
-                    + ".+?"
-                    + "<a id=\"favoritelink\"[^<>]*>(.+?)</a>", Pattern.DOTALL); // 20 isFavored "Favorite Gallery" for favorite
+                    + "<tr><td[^<>]*>([^<>]+)</td>", // 19 rating "Average: x.xx" or "Not Yet Rated"
+            Pattern.DOTALL);
+
+    private static final Pattern IS_FAVORED_PATTERN = Pattern.compile("<a id=\"favoritelink\"[^<>]*>(.+?)</a>"); // isFavored "Favorite Gallery" for favorite
+
     private static final Pattern TAG_GROUP_PATTERN = Pattern.compile("<tr><td[^<>]+>([\\w\\s]+):</td><td>(?:<div[^<>]+><a[^<>]+>[\\w\\s]+</a></div>)+</td></tr>");
     private static final Pattern TAG_PATTERN = Pattern.compile("<div[^<>]+><a[^<>]+>([\\w\\s]+)</a></div>");
 
@@ -85,7 +83,7 @@ public class GalleryDetailParser {
 
     public static final Pattern PAGES_PATTERN = Pattern.compile("<tr><td[^<>]*>Length:</td><td[^<>]*>([\\d,]+) pages</td></tr>");
     public static final Pattern PREVIEW_PAGES_PATTERN = Pattern.compile("<td[^>]+><a[^>]+>([\\d,]+)</a></td><td[^>]+>(?:<a[^>]+>)?&gt;(?:</a>)?</td>");
-    private static final Pattern NORMAL_PREVIEW_PATTERN = Pattern.compile("<div[^<>]*class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*>");
+    private static final Pattern NORMAL_PREVIEW_PATTERN = Pattern.compile("<div class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*><img alt=\"([\\d,]+)\"");
     private static final Pattern LARGE_PREVIEW_PATTERN = Pattern.compile("<div class=\"gdtl\".+?<a href=\"(.+?)\"><img alt=\"([\\d,]+)\".+?src=\"(.+?)\"");
 
     static {
@@ -117,7 +115,7 @@ public class GalleryDetailParser {
         galleryDetail.tags = parseTagGroup(body);
         galleryDetail.comments = parseComment(body);
         galleryDetail.previewPages = parsePreviewPages(body);
-        galleryDetail.previewSet = parsePreview(body);
+        galleryDetail.previewSet = parseLargePreview(body);
         return galleryDetail;
     }
 
@@ -176,9 +174,9 @@ public class GalleryDetailParser {
             }
         }
 
-        gd.isFavored = "Favorite Gallery".equals(ParserUtils.trim(m.group(20)));
+        m = IS_FAVORED_PATTERN.matcher(body);
+        gd.isFavored = m.find() && "Favorite Gallery".equals(ParserUtils.trim(m.group(1)));
     }
-
 
     public static GalleryTagGroup[] parseTagGroup(String body) throws EhException {
         List<GalleryTagGroup> list = new LinkedList<>();
@@ -246,18 +244,7 @@ public class GalleryDetailParser {
         }
     }
 
-    public static LargePreviewSet parsePreview(String body) throws EhException {
-        return parseLargePreview(body);
-        /*
-        if (body.contains("<div class=\"gdtm\"")) {
-            throw new EhException("Not support normal preview now");
-        } else {
-            return parseLargePreview(body);
-        }
-        */
-    }
-
-    public static LargePreviewSet parseLargePreview(String body) {
+    public static LargePreviewSet parseLargePreview(String body) throws ParseException {
         Matcher m = LARGE_PREVIEW_PATTERN.matcher(body);
         LargePreviewSet largePreviewSet = new LargePreviewSet();
 
@@ -267,16 +254,27 @@ public class GalleryDetailParser {
         }
 
         if (largePreviewSet.size() == 0) {
-            Log.d("TAG", "largePreviewSet.size() == 0");
-            try {
-                OutputStream os = new FileOutputStream(new File("/data/data/com.hippo.ehviewer/cache/empty.txt"));
-                os.write(body.getBytes("utf-8"));
-                os.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            throw new ParseException("Can't parse large preview", body);
         }
 
         return largePreviewSet;
     }
+
+    public static NormalPreviewSet parseNormalPreviewSet(String body) throws ParseException {
+        Matcher m = NORMAL_PREVIEW_PATTERN.matcher(body);
+        NormalPreviewSet normalPreviewSet = new NormalPreviewSet();
+        while (m.find()) {
+            normalPreviewSet.addItem(ParserUtils.parseInt(m.group(6)) - 1,
+                    ParserUtils.trim(m.group(3)), ParserUtils.parseInt((m.group(4))), 0,
+                    ParserUtils.parseInt(m.group(1)), ParserUtils.parseInt(m.group(2)),
+                    ParserUtils.trim(m.group(5)));
+        }
+
+        if (normalPreviewSet.size() == 0) {
+            throw new ParseException("Can't parse large preview", body);
+        }
+
+        return normalPreviewSet;
+    }
+
 }

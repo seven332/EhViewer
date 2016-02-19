@@ -30,6 +30,7 @@ import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
+import com.hippo.ehviewer.spider.SpiderDen;
 import com.hippo.network.StatusCodeException;
 import com.hippo.okhttp.CookieDB;
 import com.hippo.scene.SceneApplication;
@@ -73,6 +74,8 @@ public class EhApplication extends SceneApplication {
         Settings.initialize(this);
         ReadableTime.initialize(this);
         Html.initialize(this);
+        AppConfig.initialize(this);
+        SpiderDen.initialize(this);
 
         if (DEBUG_NATIVE_MEMORY) {
             debugNativeMemory();

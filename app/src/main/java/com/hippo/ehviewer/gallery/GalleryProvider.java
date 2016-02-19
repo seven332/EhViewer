@@ -18,28 +18,22 @@ package com.hippo.ehviewer.gallery;
 
 import android.os.Handler;
 import android.support.annotation.IntDef;
+import android.support.annotation.UiThread;
 
 import com.hippo.image.Image;
+import com.hippo.yorozuya.OSUtils;
 import com.hippo.yorozuya.Pool;
 import com.hippo.yorozuya.SimpleHandler;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class GalleryProvider {
-
-    @IntDef({RESULT_WAIT, RESULT_ERROR})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Result {}
-
-    public static final int RESULT_WAIT = 0;
-    public static final int RESULT_ERROR = 1;
 
     public static final int STATE_WAIT = -1;
     public static final int STATE_ERROR = -2;
 
+    // With dot
     public static final String[] SUPPORT_IMAGE_EXTENSIONS = {
             ".jpg", // Joint Photographic Experts Group
             ".jpeg",
@@ -47,34 +41,46 @@ public abstract class GalleryProvider {
             ".gif", // Graphics Interchange Format
     };
 
-    private List<GalleryProviderListener> mGalleryProviderListeners = new ArrayList<>(2);
+    private GalleryProviderListener mGalleryProviderListener;
     private Pool<NotifyTask> mNotifyTaskPool = new Pool<>(5);
     private Handler mHandler = SimpleHandler.getInstance();
 
-    public abstract void start();
+    private boolean mStarted = false;
 
-    public abstract void stop();
+    @UiThread
+    public void start() {
+        OSUtils.checkMainLoop();
+
+        if (mStarted) {
+            throw new IllegalStateException("Can't start it twice");
+        }
+        mStarted = true;
+    }
+
+    @UiThread
+    public void stop() {
+        OSUtils.checkMainLoop();
+    }
 
     /**
      * @return {@link #STATE_WAIT} for wait, 0 for empty
      */
     public abstract int size();
 
-    @Result
-    public abstract int request(int index);
+    public abstract void request(int index);
 
     public abstract String getError();
 
-    public void addGalleryProviderListener(GalleryProviderListener listener) {
-        mGalleryProviderListeners.add(listener);
-    }
-
-    public void removeGalleryProviderListener(GalleryProviderListener listener) {
-        mGalleryProviderListeners.remove(listener);
+    public void setGalleryProviderListener(GalleryProviderListener listener) {
+        mGalleryProviderListener = listener;
     }
 
     public void notifyDataChanged() {
-        notify(NotifyTask.TYPE_DATA_CHANGED, 0, 0.0f, null, null);
+        notify(NotifyTask.TYPE_DATA_CHANGED, -1, 0.0f, null, null);
+    }
+
+    public void notifyDataChanged(int index) {
+        notify(NotifyTask.TYPE_DATA_CHANGED, index, 0.0f, null, null);
     }
 
     public void notifyPagePercent(int index, float percent) {
@@ -90,9 +96,14 @@ public abstract class GalleryProvider {
     }
 
     private void notify(@NotifyTask.Type int type, int index, float percent, Image image, String error) {
+        GalleryProviderListener listener = mGalleryProviderListener;
+        if (listener == null) {
+            return;
+        }
+
         NotifyTask task = mNotifyTaskPool.pop();
         if (task == null) {
-            task = new NotifyTask(mGalleryProviderListeners, mNotifyTaskPool);
+            task = new NotifyTask(listener, mNotifyTaskPool);
         }
         task.setData(type, index, percent, image, error);
         mHandler.post(task);
@@ -109,7 +120,7 @@ public abstract class GalleryProvider {
         public static final int TYPE_SUCCEED = 2;
         public static final int TYPE_FAILED = 3;
 
-        private List<GalleryProviderListener> mGalleryProviderListeners;
+        private GalleryProviderListener mGalleryProviderListener;
         private Pool<NotifyTask> mPool;
 
         @Type
@@ -119,8 +130,8 @@ public abstract class GalleryProvider {
         private Image mImage;
         private String mError;
 
-        public NotifyTask(List<GalleryProviderListener> galleryProviderListeners, Pool<NotifyTask> pool) {
-            mGalleryProviderListeners = galleryProviderListeners;
+        public NotifyTask(GalleryProviderListener galleryProviderListener, Pool<NotifyTask> pool) {
+            mGalleryProviderListener = galleryProviderListener;
             mPool = pool;
         }
 
@@ -136,24 +147,20 @@ public abstract class GalleryProvider {
         public void run() {
             switch (mType) {
                 case TYPE_DATA_CHANGED:
-                    for (int i = 0, n = mGalleryProviderListeners.size(); i < n; i++) {
-                        mGalleryProviderListeners.get(i).onDataChanged();
+                    if (mIndex < 0) {
+                        mGalleryProviderListener.onDataChanged();
+                    } else {
+                        mGalleryProviderListener.onDataChanged(mIndex);
                     }
                     break;
                 case TYPE_PERCENT:
-                    for (int i = 0, n = mGalleryProviderListeners.size(); i < n; i++) {
-                        mGalleryProviderListeners.get(i).onPagePercent(mIndex, mPercent);
-                    }
+                    mGalleryProviderListener.onPagePercent(mIndex, mPercent);
                     break;
                 case TYPE_SUCCEED:
-                    for (int i = 0, n = mGalleryProviderListeners.size(); i < n; i++) {
-                        mGalleryProviderListeners.get(i).onPageSucceed(mIndex, mImage);
-                    }
+                    mGalleryProviderListener.onPageSucceed(mIndex, mImage);
                     break;
                 case TYPE_FAILED:
-                    for (int i = 0, n = mGalleryProviderListeners.size(); i < n; i++) {
-                        mGalleryProviderListeners.get(i).onPageFailed(mIndex, mError);
-                    }
+                    mGalleryProviderListener.onPageFailed(mIndex, mError);
                     break;
             }
 

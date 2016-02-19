@@ -46,7 +46,6 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
     private Thread mBgThread;
     private volatile int mSize = STATE_WAIT;
     private String mError;
-    private boolean mStarted = false;
 
     public DirGalleryProvider(File dir) {
         mDir = dir;
@@ -54,26 +53,21 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
 
     @Override
     public void start() {
-        if (mStarted) {
-            throw new IllegalStateException("Can't start it twice");
-        }
-        mStarted = true;
+        super.start();
 
-        if (mBgThread == null || mBgThread.isInterrupted()) {
-            mBgThread = new PriorityThread(this, TAG + '-' + sIdGenerator.incrementAndGet(),
-                    Process.THREAD_PRIORITY_BACKGROUND);
-            mBgThread.start();
-        }
+        mBgThread = new PriorityThread(this, TAG + '-' + sIdGenerator.incrementAndGet(),
+                Process.THREAD_PRIORITY_BACKGROUND);
+        mBgThread.start();
     }
 
     @Override
     public void stop() {
-        if (mBgThread == null || mBgThread.isInterrupted()) {
-            return;
-        }
+        super.stop();
 
-        mBgThread.interrupt();
-        mBgThread = null;
+        if (mBgThread != null) {
+            mBgThread.interrupt();
+            mBgThread = null;
+        }
     }
 
     @Override
@@ -82,16 +76,10 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
     }
 
     @Override
-    @Result
-    public int request(int index) {
-        if (index < 0 || index >= size()) {
-            return RESULT_ERROR;
-        } else {
-            synchronized (mRequests) {
-                mRequests.add(index);
-                mRequests.notify();
-            }
-            return RESULT_WAIT;
+    public void request(int index) {
+        synchronized (mRequests) {
+            mRequests.add(index);
+            mRequests.notify();
         }
     }
 
@@ -108,7 +96,6 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
         if (files == null) {
             mSize = STATE_ERROR;
             mError = GetText.getString(R.string.error_not_folder_path);
-            mBgThread = null;
 
             // Notify to to show error
             notifyDataChanged();
@@ -139,6 +126,12 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
                 index = mRequests.pop();
             }
 
+            // Check index valid
+            if (index < 0 || index >= files.length) {
+                notifyPageFailed(index, GetText.getString(R.string.error_out_of_range));
+                continue;
+            }
+
             try {
                 InputStream is = new FileInputStream(new File(mDir, files[index]));
                 Image image = Image.decode(is, false);
@@ -151,9 +144,6 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
                 notifyPageFailed(index, GetText.getString(R.string.error_not_found));
             }
         }
-
-        // Clear
-        mBgThread = null;
 
         Log.i(TAG, "ImageDecoder end");
     }

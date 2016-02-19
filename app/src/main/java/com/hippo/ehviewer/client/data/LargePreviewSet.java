@@ -25,9 +25,9 @@ import java.util.ArrayList;
 
 public class LargePreviewSet implements Parcelable {
 
-    private IntList mIndexList = new IntList();
-    private ArrayList<String> mImageUrlList = new ArrayList<>();
-    private ArrayList<String> mPageUrlList = new ArrayList<>();
+    private IntList mIndexList;
+    private ArrayList<String> mImageUrlList;
+    private ArrayList<String> mPageUrlList;
 
     public int size() {
         return mImageUrlList.size();
@@ -58,26 +58,30 @@ public class LargePreviewSet implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        this.mIndexList.writeToParcel(dest, flags);
-        dest.writeParcelable(this.mIndexList, 0);
+        dest.writeParcelable(this.mIndexList, flags);
         dest.writeStringList(this.mImageUrlList);
         dest.writeStringList(this.mPageUrlList);
     }
 
     public LargePreviewSet() {
+        mIndexList = new IntList();
+        mImageUrlList = new ArrayList<>();
+        mPageUrlList = new ArrayList<>();
     }
 
     protected LargePreviewSet(Parcel in) {
-        this.mIndexList = IntList.CREATOR.createFromParcel(in);
+        this.mIndexList = in.readParcelable(IntList.class.getClassLoader());
         this.mImageUrlList = in.createStringArrayList();
         this.mPageUrlList = in.createStringArrayList();
     }
 
     public static final Parcelable.Creator<LargePreviewSet> CREATOR = new Parcelable.Creator<LargePreviewSet>() {
+        @Override
         public LargePreviewSet createFromParcel(Parcel source) {
             return new LargePreviewSet(source);
         }
 
+        @Override
         public LargePreviewSet[] newArray(int size) {
             return new LargePreviewSet[size];
         }

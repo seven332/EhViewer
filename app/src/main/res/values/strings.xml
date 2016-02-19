@@ -88,6 +88,12 @@
     <string name="error_empty">Empty</string>
     <string name="error_invalid_zip_file">Invalid zip file</string>
     <string name="error_reading_failed">Reading Failed</string>
+    <string name="error_out_of_range">Out of range</string>
+    <string name="error_write_failed">Write failed</string>
+    <string name="error_parse_error">Parse error</string>
+    <string name="error_509">509</string>
+    <string name="error_invalid_url">Invalid url</string>
+    <string name="error_get_ptoken_error">Get pToken error</string>
 
     <string name="app_waring">The content of this application is from the Internet. Some of it may do physical or mental harm to you. You have learnt the risks above and would like to undertake them. Do you want to use this application?</string>
     <string name="error_username_cannot_empty">Username cannot be an empty string</string>
@@ -205,7 +211,6 @@
     <!-- Gallery Previews -->
     <string name="gallery_previews">Gallery Previews</string>
     <string name="go_to">Go to</string>
-    <string name="error_out_of_range">Out of range</string>
 
     <string name="settings_eh_title">EH</string>
     <string name="settings_eh_show_jpn_title_title">Show Japanese title</string>

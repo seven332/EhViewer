@@ -25,7 +25,7 @@ import android.util.Log;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.GalleryDetailUrlParser;
 import com.hippo.ehviewer.client.parser.GalleryListUrlParser;
-import com.hippo.ehviewer.client.parser.GalleryUrlParser;
+import com.hippo.ehviewer.client.parser.GalleryPageUrlParser;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.ui.scene.GalleryDetailScene;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
@@ -68,7 +68,7 @@ public class EhUrlOpener {
             return true;
         }
 
-        GalleryUrlParser.Result result2 = GalleryUrlParser.parse(url);
+        GalleryPageUrlParser.Result result2 = GalleryPageUrlParser.parse(url);
         if (result2 != null) {
             Bundle args = new Bundle();
             args.putString(ProgressScene.KEY_ACTION, ProgressScene.ACTION_GALLERY_TOKEN);

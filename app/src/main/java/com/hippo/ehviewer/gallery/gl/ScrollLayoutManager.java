@@ -30,6 +30,7 @@ import com.hippo.yorozuya.AssertUtils;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+// TODO Not safe ! Ensure change component in render thread
 public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
     private static final String TAG = ScrollLayoutManager.class.getSimpleName();

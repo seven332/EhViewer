@@ -46,4 +46,8 @@ public class EhUrl {
         }
         return builder.build();
     }
+
+    public static String getPageUrl(int gid, int index, String pToken) {
+        return HOST_EX + "s/" + pToken + '/' + gid + '-' + (index + 1);
+    }
 }

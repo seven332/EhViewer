@@ -26,7 +26,9 @@ import android.util.SparseIntArray;
 import android.view.KeyEvent;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.gallery.DirGalleryProvider;
+import com.hippo.ehviewer.gallery.EhGalleryProvider;
 import com.hippo.ehviewer.gallery.GalleryProvider;
 import com.hippo.ehviewer.gallery.GalleryProviderListener;
 import com.hippo.ehviewer.gallery.ZipGalleryProvider;
@@ -49,13 +51,11 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
 
     public static final String KEY_ACTION = "action";
     public static final String KEY_FILENAME = "filename";
-    public static final String KEY_GID = "gid";
-    public static final String KEY_TOKEN = "token";
+    public static final String KEY_GALLERY_INFO = "gallery_info";
 
     private String mAction;
     private String mFilename;
-    private int mGid;
-    private String mToken;
+    private GalleryInfo mGalleryInfo;
 
     @Nullable
     private GalleryView mGalleryView;
@@ -83,7 +83,9 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
                 mGalleryProvider = new ZipGalleryProvider(new File(mFilename));
             }
         } else if (ACTION_EH.equals(mAction)) {
-
+            if (mGalleryInfo != null) {
+                mGalleryProvider = new EhGalleryProvider(this, mGalleryInfo);
+            }
         }
     }
 
@@ -95,16 +97,14 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
 
         mAction = intent.getAction();
         mFilename = intent.getStringExtra(KEY_FILENAME);
-        mGid = intent.getIntExtra(KEY_GID, -1);
-        mToken = intent.getStringExtra(KEY_TOKEN);
+        mGalleryInfo = intent.getParcelableExtra(KEY_GALLERY_INFO);
         buildProvider();
     }
 
     private void onRestore(@NonNull Bundle savedInstanceState) {
         mAction = savedInstanceState.getString(KEY_ACTION);
         mFilename = savedInstanceState.getString(KEY_FILENAME);
-        mGid = savedInstanceState.getInt(KEY_GID, -1);
-        mToken = savedInstanceState.getString(KEY_TOKEN);
+        mGalleryInfo = savedInstanceState.getParcelable(KEY_GALLERY_INFO);
         buildProvider();
     }
 
@@ -113,8 +113,9 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
         super.onSaveInstanceState(outState);
         outState.putString(KEY_ACTION, mAction);
         outState.putString(KEY_FILENAME, mFilename);
-        outState.putInt(KEY_GID, mGid);
-        outState.putString(KEY_TOKEN, mToken);
+        if (mGalleryInfo != null) {
+            outState.putParcelable(KEY_GALLERY_INFO, mGalleryInfo);
+        }
     }
 
     @Override
@@ -131,7 +132,7 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
             finish();
             return;
         }
-        mGalleryProvider.addGalleryProviderListener(this);
+        mGalleryProvider.setGalleryProviderListener(this);
         mGalleryProvider.start();
 
         setContentView(R.layout.activity_gallery);
@@ -161,7 +162,7 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
             mPageTextTexture = null;
         }
         if (mGalleryProvider != null) {
-            mGalleryProvider.removeGalleryProviderListener(this);
+            mGalleryProvider.setGalleryProviderListener(null);
             mGalleryProvider.stop();
             mGalleryProvider = null;
         }
@@ -296,6 +297,14 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
             page.setPage(index + 1);
             page.setProgress(GalleryPageView.PROGRESS_GONE);
             page.setError(error, mGalleryView);
+        }
+    }
+
+    @Override
+    public void onDataChanged(int index) {
+        GalleryPageView page = findPageByIndex(index);
+        if (page != null && mGalleryProvider != null) {
+            mGalleryProvider.request(index);
         }
     }
 

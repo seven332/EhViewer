@@ -39,6 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,7 +88,7 @@ public class EhEngine {
     }
 
     public static Call prepareSignIn(OkHttpClient okHttpClient,
-            EhConfig ehConfig, String username, String password) {
+            EhConfig ehConfig, String username, String password) throws MalformedURLException {
         FormBody.Builder builder = new FormBody.Builder()
                 .add("UserName", username)
                 .add("PassWord", password)
@@ -120,7 +121,7 @@ public class EhEngine {
     }
 
     public static Call prepareGetGalleryList(OkHttpClient okHttpClient,
-            EhConfig ehConfig, String url) {
+            EhConfig ehConfig, String url) throws MalformedURLException {
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, ehConfig).build();
         return okHttpClient.newCall(request);
@@ -232,7 +233,7 @@ public class EhEngine {
     }
 
     public static Call prepareGetGalleryDetail(OkHttpClient okHttpClient,
-            EhConfig ehConfig, String url) {
+            EhConfig ehConfig, String url) throws MalformedURLException {
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, ehConfig).build();
         return okHttpClient.newCall(request);
@@ -255,7 +256,7 @@ public class EhEngine {
     }
 
     public static Call prepareGetLargePreviewSet(OkHttpClient okHttpClient,
-            EhConfig ehConfig, String url) {
+            EhConfig ehConfig, String url) throws MalformedURLException {
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, ehConfig).build();
         return okHttpClient.newCall(request);
@@ -279,7 +280,7 @@ public class EhEngine {
 
     // rating 0.0 - 0.5
     public static Call prepareRateGallery(OkHttpClient okHttpClient,
-            EhConfig ehConfig, int gid, String token, float rating) throws JSONException {
+            EhConfig ehConfig, int gid, String token, float rating) throws JSONException, MalformedURLException {
         final JSONObject json = new JSONObject();
         json.put("method", "rategallery");
         json.put("apiuid", APIUID);
@@ -316,7 +317,7 @@ public class EhEngine {
     }
 
     public static Call prepareCommentGallery(OkHttpClient okHttpClient,
-            EhConfig ehConfig, String url, String comment) {
+            EhConfig ehConfig, String url, String comment) throws MalformedURLException {
         FormBody.Builder builder = new FormBody.Builder()
                 .add("commenttext", comment)
                 .add("postcomment", "Post New");
@@ -354,7 +355,7 @@ public class EhEngine {
      * }
      */
     public static Call prepareGetGalleryToken(OkHttpClient okHttpClient,
-            EhConfig ehConfig, int gid, String gtoken, int page) throws JSONException {
+            EhConfig ehConfig, int gid, String gtoken, int page) throws JSONException, MalformedURLException {
         JSONObject json = new JSONObject()
                 .put("method", "gtoken")
                 .put("pagelist", new JSONArray().put(

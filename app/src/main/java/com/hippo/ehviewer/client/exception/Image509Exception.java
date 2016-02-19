@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.gallery;
+package com.hippo.ehviewer.client.exception;
 
-import com.hippo.image.Image;
+public class Image509Exception extends EhException {
 
-public interface GalleryProviderListener {
-
-    void onDataChanged();
-
-    void onPagePercent(int index, float percent);
-
-    void onPageSucceed(int index, Image image);
-
-    void onPageFailed(int index, String error);
-
-    void onDataChanged(int index);
+    public Image509Exception() {
+        super("509");
+    }
 }

@@ -35,6 +35,7 @@ import com.hippo.yorozuya.MathUtils;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+// TODO Not safe ! Ensure change component in render thread
 public class PagerLayoutManager extends GalleryView.LayoutManager {
 
     @IntDef({MODE_LEFT_TO_RIGHT, MODE_RIGHT_TO_LEFT})

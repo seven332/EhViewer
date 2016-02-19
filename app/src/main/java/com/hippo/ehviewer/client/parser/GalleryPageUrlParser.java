@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 /**
  * Like http://exhentai.org/s/91ea4b6d89/901103-12
  */
-public final class GalleryUrlParser {
+public final class GalleryPageUrlParser {
 
     public static final Pattern URL_PATTERN = Pattern.compile("http://(?:" +
             EhUrl.DOMAIN_EX + "|" + EhUrl.DOMAIN_G + "|" + EhUrl.DOMAIN_LOFI + ")/s/(\\w+)/(\\d+)-(\\d+)");

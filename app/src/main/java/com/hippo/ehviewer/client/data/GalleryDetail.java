@@ -17,6 +17,9 @@
 package com.hippo.ehviewer.client.data;
 
 import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.Arrays;
 
 public class GalleryDetail extends GalleryInfo {
 
@@ -78,17 +81,29 @@ public class GalleryDetail extends GalleryInfo {
         this.favoredTimes = in.readInt();
         this.isFavored = in.readByte() != 0;
         this.ratedTimes = in.readInt();
-        this.tags = in.createTypedArray(GalleryTagGroup.CREATOR);
-        this.comments = in.createTypedArray(GalleryComment.CREATOR);
+        Parcelable[] array = in.readParcelableArray(GalleryTagGroup.class.getClassLoader());
+        if (array != null) {
+            this.tags = Arrays.copyOf(array, array.length, GalleryTagGroup[].class);
+        } else {
+            this.tags = null;
+        }
+        array = in.readParcelableArray(GalleryComment.class.getClassLoader());
+        if (array != null) {
+            this.comments = Arrays.copyOf(array, array.length, GalleryComment[].class);
+        } else {
+            this.comments = null;
+        }
         this.previewPages = in.readInt();
         this.previewSet = in.readParcelable(LargePreviewSet.class.getClassLoader());
     }
 
     public static final Creator<GalleryDetail> CREATOR = new Creator<GalleryDetail>() {
+        @Override
         public GalleryDetail createFromParcel(Parcel source) {
             return new GalleryDetail(source);
         }
 
+        @Override
         public GalleryDetail[] newArray(int size) {
             return new GalleryDetail[size];
         }

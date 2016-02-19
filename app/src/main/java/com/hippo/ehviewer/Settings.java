@@ -18,9 +18,13 @@ package com.hippo.ehviewer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.hippo.ehviewer.client.EhConfig;
+import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.NumberUtils;
 
 public class Settings {
@@ -120,5 +124,37 @@ public class Settings {
 
     public static boolean getShowJpnTitle() {
         return getBoolean(KEY_SHOW_JPN_TITLE, DEFAULT_SHOW_JPN_TITLE);
+    }
+
+    public static final String KEY_DOWNLOAD_SAVE_SCHEME = "image_scheme";
+    public static final String KEY_DOWNLOAD_SAVE_AUTHORITY = "image_authority";
+    public static final String KEY_DOWNLOAD_SAVE_PATH = "image_path";
+    public static final String KEY_DOWNLOAD_SAVE_QUERY = "image_query";
+    public static final String KEY_DOWNLOAD_SAVE_FRAGMENT = "image_fragment";
+
+    @Nullable
+    public static UniFile getDownloadLocation() {
+        UniFile dir = null;
+        try {
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme(getString(KEY_DOWNLOAD_SAVE_SCHEME, null));
+            builder.encodedAuthority(getString(KEY_DOWNLOAD_SAVE_AUTHORITY, null));
+            builder.encodedPath(getString(KEY_DOWNLOAD_SAVE_PATH, null));
+            builder.encodedQuery(getString(KEY_DOWNLOAD_SAVE_QUERY, null));
+            builder.encodedFragment(getString(KEY_DOWNLOAD_SAVE_FRAGMENT, null));
+            dir = UniFile.fromUri(sContext, builder.build());
+        } catch (Exception e) {
+            // Ignore
+        }
+        return dir != null ? dir : UniFile.fromFile(AppConfig.getDefaultDownloadDir());
+    }
+
+    public static void putImageSaveLocation(@NonNull UniFile location) {
+        Uri uri = location.getUri();
+        putString(KEY_DOWNLOAD_SAVE_SCHEME, uri.getScheme());
+        putString(KEY_DOWNLOAD_SAVE_AUTHORITY, uri.getEncodedAuthority());
+        putString(KEY_DOWNLOAD_SAVE_PATH, uri.getEncodedPath());
+        putString(KEY_DOWNLOAD_SAVE_QUERY, uri.getEncodedQuery());
+        putString(KEY_DOWNLOAD_SAVE_FRAGMENT, uri.getEncodedFragment());
     }
 }

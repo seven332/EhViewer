@@ -16,30 +16,107 @@
 
 package com.hippo.ehviewer.gallery;
 
-public class EhGalleryProvider extends GalleryProvider {
+import android.content.Context;
+import android.support.annotation.Nullable;
+
+import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.spider.SpiderQueen;
+import com.hippo.image.Image;
+
+public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.OnSpiderListener {
+
+    private Context mContext;
+    private GalleryInfo mGalleryInfo;
+    @Nullable
+    private SpiderQueen mSpiderQueen;
+
+    public EhGalleryProvider(Context context, GalleryInfo galleryInfo) {
+        mContext = context;
+        mGalleryInfo = galleryInfo;
+    }
 
     @Override
     public void start() {
+        super.start();
 
+        mSpiderQueen = SpiderQueen.obtainSpiderQueen(mContext, mGalleryInfo, SpiderQueen.MODE_READ);
+        mSpiderQueen.addOnSpiderListener(this);
     }
 
     @Override
     public void stop() {
+        super.stop();
 
+        if (mSpiderQueen != null) {
+            mSpiderQueen.removeOnSpiderListener(this);
+            SpiderQueen.releaseSpiderQueen(mSpiderQueen, SpiderQueen.MODE_READ);
+        }
     }
 
     @Override
     public int size() {
-        return 0;
+        if (mSpiderQueen != null) {
+            return mSpiderQueen.size();
+        } else {
+            return GalleryProvider.STATE_ERROR;
+        }
     }
 
     @Override
-    public int request(int index) {
-        return 0;
+    public void request(int index) {
+        if (mSpiderQueen != null) {
+            Object object = mSpiderQueen.request(index);
+            if (object instanceof Float) {
+                notifyPagePercent(index, (Float) object);
+            } else if (object instanceof String) {
+                notifyPageFailed(index, (String) object);
+            }
+        }
     }
 
     @Override
     public String getError() {
-        return null;
+        if (mSpiderQueen != null) {
+            return mSpiderQueen.getError();
+        } else {
+            return "Error"; // TODO
+        }
+    }
+
+    @Override
+    public void onGetPages(int pages) {
+        notifyDataChanged();
+    }
+
+    @Override
+    public void onGet509(int index) {
+        // TODO
+    }
+
+    @Override
+    public void onDownload(int index, long contentLength, long receivedSize, int bytesRead) {
+        if (contentLength > 0) {
+            notifyPagePercent(index, (float) receivedSize / contentLength);
+        }
+    }
+
+    @Override
+    public void onSuccess(int index) {
+        notifyDataChanged(index);
+    }
+
+    @Override
+    public void onFailure(int index, String error) {
+        notifyPageFailed(index, error);
+    }
+
+    @Override
+    public void onGetImageSuccess(int index, Image image) {
+        notifyPageSucceed(index, image);
+    }
+
+    @Override
+    public void onGetImageFailure(int index, String error) {
+        notifyPageFailed(index, error);
     }
 }

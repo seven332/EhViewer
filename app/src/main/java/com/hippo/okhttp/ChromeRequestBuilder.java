@@ -26,16 +26,8 @@ public class ChromeRequestBuilder extends Request.Builder {
     private static final String CHROME_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
             "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.103 Safari/537.36";
 
-    public ChromeRequestBuilder(String url) {
-        URL u;
-        try {
-            u = new URL(url);
-        } catch (MalformedURLException e) {
-            throw new IllegalStateException(e);
-        }
-
-        url(u);
-
+    public ChromeRequestBuilder(String url) throws MalformedURLException {
+        url(new URL(url));
         addHeader("User-Agent", CHROME_USER_AGENT);
     }
 }
