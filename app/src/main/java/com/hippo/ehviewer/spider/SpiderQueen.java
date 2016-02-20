@@ -454,9 +454,6 @@ public class SpiderQueen implements Runnable {
         UniFile downloadDir = mSpiderDen.getDownloadDir();
         if (downloadDir != null) {
             UniFile file = downloadDir.findFile(SPIDER_INFO_FILENAME);
-
-            Log.d("TAG", "file = " + file);
-
             SpiderInfo spiderInfo = SpiderInfo.readFromUniFile(file);
             if (spiderInfo != null && spiderInfo.gid == mGalleryInfo.gid &&
                     spiderInfo.token.equals(mGalleryInfo.token)) {
@@ -771,11 +768,10 @@ public class SpiderQueen implements Runnable {
         private GalleryPageParser.Result getImageUrl(int gid, int index, String pToken,
                 String skipHathKey) throws IOException, ParseException, Image509Exception {
             String url = EhUrl.getPageUrl(gid, index, pToken);
-            Log.d(TAG, url);
             if (skipHathKey != null) {
                 url = url + "?nl=" + skipHathKey;
             }
-
+            Log.d(TAG, url);
             Response response = mHttpClient.newCall(new EhRequestBuilder(url).build()).execute();
             String body = response.body().string();
             GalleryPageParser.Result result = GalleryPageParser.parse(body);
@@ -837,6 +833,8 @@ public class SpiderQueen implements Runnable {
                 // Download image
                 InputStream is = null;
                 try {
+                    Log.d(TAG, "Start download image " + index);
+
                     Response response = mHttpClient.newCall(new EhRequestBuilder(imageUrl).build()).execute();
                     ResponseBody responseBody = response.body();
                     long contentLength = responseBody.contentLength();
@@ -863,12 +861,13 @@ public class SpiderQueen implements Runnable {
                     }
                     os.flush();
 
-                    // Check interrupted, download may be stopped by interrupting
+                    // Check interrupted
                     if (Thread.currentThread().isInterrupted()) {
                         interrupt = true;
-                        mSpiderDen.remove(index);
                         break;
                     }
+
+                    Log.d(TAG, "Download image succeed " + index);
 
                     // Download finished
                     updatePageState(index, STATE_FINISHED);
@@ -879,8 +878,13 @@ public class SpiderQueen implements Runnable {
                     IOUtils.closeQuietly(is);
                     pipe.close();
                     pipe.release();
+
+                    Log.d(TAG, "End download image " + index);
                 }
             }
+
+            // Remove download failed image
+            mSpiderDen.remove(index);
 
             updatePageState(index, STATE_FAILED, error);
             return !interrupt;
@@ -963,6 +967,7 @@ public class SpiderQueen implements Runnable {
                             mWorkerLock.wait();
                         } catch (InterruptedException e) {
                             // Interrupted
+                            Log.d(TAG, Thread.currentThread().getName() + " Interrupted");
                             break;
                         }
                     }

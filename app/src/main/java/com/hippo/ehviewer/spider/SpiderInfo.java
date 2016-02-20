@@ -86,7 +86,7 @@ public class SpiderInfo {
                 }
             }
         } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
+            // Ignore
         } finally {
             IOUtils.closeQuietly(is);
         }

@@ -77,6 +77,7 @@ public final class SpiderDen {
         return mDownloadDir != null && mDownloadDir.ensureDir();
     }
 
+    @Nullable
     public UniFile getDownloadDir() {
         return mDownloadDir != null && mDownloadDir.isDirectory() ? mDownloadDir : null;
     }
@@ -97,6 +98,7 @@ public final class SpiderDen {
         return String.format(Locale.US, "%08d%s", index + 1, extension);
     }
 
+    @Nullable
     private static UniFile findImageFile(UniFile dir, int index) {
         for (String extension : GalleryProvider.SUPPORT_IMAGE_EXTENSIONS) {
             String filename = generateImageFilename(index, extension);
@@ -188,35 +190,39 @@ public final class SpiderDen {
         }
     }
 
-    private void removeFromCache(int index) {
+    private boolean removeFromCache(int index) {
         if (sCache == null) {
-            return;
+            return false;
         }
 
         String key = EhCacheKeyFactory.getImageKey(mGid, index);
-        sCache.remove(key);
+        return sCache.remove(key);
     }
 
-    private void removeFromDownloadDir(int index) {
+    private boolean removeFromDownloadDir(int index) {
         UniFile dir = getDownloadDir();
         if (dir == null) {
-            return;
+            return false;
         }
 
+        boolean result = false;
         for (int i = 0, n = GalleryProvider.SUPPORT_IMAGE_EXTENSIONS.length; i < n; i++) {
             String filename = generateImageFilename(index, GalleryProvider.SUPPORT_IMAGE_EXTENSIONS[i]);
             UniFile file = dir.subFile(filename);
             if (file != null) {
-                file.delete();
+                result |= file.delete();
             }
         }
+        return result;
     }
 
-    public void remove(int index) {
-        removeFromCache(index);
-        removeFromDownloadDir(index);
+    public boolean remove(int index) {
+        boolean result = removeFromCache(index);
+        result |= removeFromDownloadDir(index);
+        return result;
     }
 
+    @Nullable
     private OutputStreamPipe openCacheOutputStreamPipe(int index) {
         if (sCache == null) {
             return null;
@@ -229,6 +235,7 @@ public final class SpiderDen {
     /**
      * @param extension without dot
      */
+    @Nullable
     private OutputStreamPipe openDownloadOutputStreamPipe(int index, @Nullable String extension) {
         UniFile dir = getDownloadDir();
         if (dir == null) {
@@ -256,6 +263,7 @@ public final class SpiderDen {
     }
 
 
+    @Nullable
     private InputStreamPipe openCacheInputStreamPipe(int index) {
         if (sCache == null) {
             return null;
@@ -265,6 +273,7 @@ public final class SpiderDen {
         return sCache.getInputStreamPipe(key);
     }
 
+    @Nullable
     public InputStreamPipe openDownloadInputStreamPipe(int index) {
         UniFile dir = getDownloadDir();
         if (dir == null) {
