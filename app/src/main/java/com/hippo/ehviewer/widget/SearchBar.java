@@ -148,6 +148,16 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
                 mEditText.setSelection(mEditText.getText().length());
             }
         });
+        mList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                String suggestion = mSuggestionList.get(MathUtils.clamp(
+                        position - mList.getHeaderViewsCount(), 0, mSuggestionList.size() - 1));
+                mSearchDatabase.deleteQuery(suggestion);
+                updateSuggestions();
+                return true;
+            }
+        });
     }
 
     private void addListHeader() {
