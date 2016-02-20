@@ -208,6 +208,10 @@ public class GLView implements TouchOwner {
         onDetachFromRoot();
     }
 
+    public boolean isAttachedToRoot() {
+        return mRoot != null;
+    }
+
     // Returns the number of children of the GLView.
     public int getComponentCount() {
         return mComponents == null ? 0 : mComponents.size();
