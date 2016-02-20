@@ -137,6 +137,7 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
 
         setContentView(R.layout.activity_gallery);
         GLRootView glRootView = (GLRootView) findViewById(R.id.gl_root_view);
+        mGalleryProvider.setGLRoot(glRootView);
         mUploader = new ImageTexture.Uploader(glRootView);
         mIndexIdMap = new SparseIntArray();
         mPageTextTexture = MovableTextTexture.create(Typeface.DEFAULT,

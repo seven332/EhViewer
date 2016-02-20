@@ -16,14 +16,14 @@
 
 package com.hippo.ehviewer.gallery;
 
-import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.support.annotation.UiThread;
 
+import com.hippo.gl.glrenderer.GLCanvas;
+import com.hippo.gl.view.GLRoot;
 import com.hippo.image.Image;
 import com.hippo.yorozuya.OSUtils;
 import com.hippo.yorozuya.Pool;
-import com.hippo.yorozuya.SimpleHandler;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -41,9 +41,9 @@ public abstract class GalleryProvider {
             ".gif", // Graphics Interchange Format
     };
 
-    private GalleryProviderListener mGalleryProviderListener;
-    private Pool<NotifyTask> mNotifyTaskPool = new Pool<>(5);
-    private Handler mHandler = SimpleHandler.getInstance();
+    private final Pool<NotifyTask> mNotifyTaskPool = new Pool<>(5);
+    private volatile GalleryProviderListener mGalleryProviderListener;
+    private volatile GLRoot mGLRoot;
 
     private boolean mStarted = false;
 
@@ -61,6 +61,11 @@ public abstract class GalleryProvider {
     public void stop() {
         OSUtils.checkMainLoop();
     }
+
+    public void setGLRoot(GLRoot glRoot) {
+        mGLRoot = glRoot;
+    }
+
 
     /**
      * @return {@link #STATE_WAIT} for wait, 0 for empty
@@ -101,15 +106,20 @@ public abstract class GalleryProvider {
             return;
         }
 
+        GLRoot glRoot = mGLRoot;
+        if (glRoot == null) {
+            return;
+        }
+
         NotifyTask task = mNotifyTaskPool.pop();
         if (task == null) {
             task = new NotifyTask(listener, mNotifyTaskPool);
         }
         task.setData(type, index, percent, image, error);
-        mHandler.post(task);
+        glRoot.addOnGLIdleListener(task);
     }
 
-    private static class NotifyTask implements Runnable {
+    private static class NotifyTask implements GLRoot.OnGLIdleListener {
 
         @IntDef({TYPE_DATA_CHANGED, TYPE_PERCENT, TYPE_SUCCEED, TYPE_FAILED})
         @Retention(RetentionPolicy.SOURCE)
@@ -144,7 +154,7 @@ public abstract class GalleryProvider {
         }
 
         @Override
-        public void run() {
+        public boolean onGLIdle(GLCanvas canvas, boolean renderRequested) {
             switch (mType) {
                 case TYPE_DATA_CHANGED:
                     if (mIndex < 0) {
@@ -169,6 +179,8 @@ public abstract class GalleryProvider {
             mError = null;
             // Push back
             mPool.push(this);
+
+            return false;
         }
     }
 }
