@@ -97,6 +97,7 @@ public class GLView implements TouchOwner {
      */
     private final int[] mPositionInRoot = new int[2];
     protected final Rect mPaddings = new Rect();
+    private final Rect mTempRect = new Rect();
 
     private GLRoot mRoot;
     protected GLView mParent;
@@ -493,7 +494,8 @@ public class GLView implements TouchOwner {
     }
 
     protected void renderChild(GLCanvas canvas, GLView component) {
-        if (component.getVisibility() != GLView.VISIBLE
+        getValidRect(mTempRect);
+        if ((component.getVisibility() != GLView.VISIBLE || mTempRect.isEmpty())
                 && component.mAnimation == null) return;
 
         int xOffset = component.mBounds.left - mScrollX;
