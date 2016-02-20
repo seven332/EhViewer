@@ -201,6 +201,36 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mLayoutManager = null;
     }
 
+    @Override
+    public void requestLayout() {
+        // Do not need requestLayout, because the size will not change
+        requestFill();
+    }
+
+    public void requestFill() {
+        if (mEnableRequestFill) {
+            mRequestFill = true;
+            invalidate();
+        }
+    }
+
+    @Override
+    protected boolean dispatchTouchEvent(MotionEvent event) {
+        // Do not pass event to component, so handle event here
+        mGestureRecognizer.onTouchEvent(event);
+        return true;
+    }
+
+    GLEdgeView getEdgeView() {
+        return mEdgeView;
+    }
+
+    public boolean isFirstScroll() {
+        boolean firstScroll = mFirstScroll;
+        mFirstScroll = false;
+        return firstScroll;
+    }
+
     public void setLayoutMode(@LayoutMode int layoutMode) {
         if (mLayoutMode == layoutMode) {
             return;
@@ -243,26 +273,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     @Override
-    public void requestLayout() {
-        // Do not need requestLayout, because the size will not change
-        requestFill();
-    }
-
-    public void requestFill() {
-        if (mEnableRequestFill) {
-            mRequestFill = true;
-            invalidate();
-        }
-    }
-
-    @Override
-    protected boolean dispatchTouchEvent(MotionEvent event) {
-        // Do not pass event to component, so handle event here
-        mGestureRecognizer.onTouchEvent(event);
-        return true;
-    }
-
-    @Override
     public boolean onSingleTapUp(float x, float y) {
         return true;
     }
@@ -287,16 +297,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             mLayoutManager.onDoubleTapConfirmed(x, y);
         }
         return true;
-    }
-
-    GLEdgeView getEdgeView() {
-        return mEdgeView;
-    }
-
-    public boolean isFirstScroll() {
-        boolean firstScroll = mFirstScroll;
-        mFirstScroll = false;
-        return firstScroll;
     }
 
     @Override
@@ -377,7 +377,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @Override
     protected void onLayout(boolean changeSize, int left, int top, int right, int bottom) {
-
         mEdgeView.layout(left, top, right, bottom);
 
         fill();
@@ -504,7 +503,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mErrorViewCache = errorView;
     }
 
+    @RenderThread
     public void onDataChanged() {
+        GalleryUtils.assertInRenderThread();
+
         if (mLayoutManager != null){
             mLayoutManager.onDataChanged();
         }
@@ -553,10 +555,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         public abstract int onBind(GalleryPageView view);
 
         public abstract void onUnbind(GalleryPageView view);
-
-        public void notifyDataChanged() {
-            mGalleryView.onDataChanged();
-        }
     }
 
     public static abstract class LayoutManager {

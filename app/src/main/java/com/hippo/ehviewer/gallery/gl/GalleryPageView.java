@@ -154,4 +154,8 @@ public class GalleryPageView extends GLFrameLayout {
     public ImageView getImageView() {
         return mImage;
     }
+
+    public boolean isLoaded() {
+        return mImage.getVisibility() == VISIBLE;
+    }
 }

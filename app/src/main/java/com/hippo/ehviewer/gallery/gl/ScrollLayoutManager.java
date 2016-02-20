@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.gallery.gl;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -131,13 +132,129 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         return iterator;
     }
 
+    private void fillPages() {
+        GalleryView.PageIterator iterator = mIterator;
+        GalleryView galleryView = mGalleryView;
+        int width = galleryView.getWidth();
+        int height = galleryView.getHeight();
+
+        int minY = (int) (-height * RESERVATIONS);
+
+        // Remove useless top view
+        Iterator<GalleryPageView> pages = mPages.iterator();
+        int nextTop = mOffset;
+        while (pages.hasNext()) {
+            GalleryPageView page = pages.next();
+            nextTop += page.getHeight() + mInterval;
+            if (nextTop < minY) {
+                removePage(page);
+                pages.remove();
+                // Update offset
+                mOffset = nextTop;
+                if (iterator.hasNext()) {
+                    iterator.next();
+                } else {
+                    Log.e(TAG, "iterator should has next");
+                }
+            } else {
+                break;
+            }
+        }
+
+        // Fill missing top
+        int oldOffset = mOffset;
+        int y = oldOffset;
+        int widthSpec = GLView.MeasureSpec.makeMeasureSpec(width, GLView.MeasureSpec.EXACTLY);
+        int heightSpec = GLView.MeasureSpec.makeMeasureSpec(height, GLView.MeasureSpec.UNSPECIFIED);
+        int pageSize = 0;
+        while (y >= minY && iterator.hasPrevious()) {
+            iterator.previous();
+
+            GalleryPageView page = galleryView.obtainPage();
+            iterator.bind(page);
+            galleryView.addComponent(page);
+            mPages.add(0, page);
+
+            // Add interval
+            y -= mInterval;
+
+            // Measure and layout
+            page.measure(widthSpec, heightSpec);
+            page.layout(0, y - page.getMeasuredHeight(), width, y);
+
+            // Update y
+            y -= page.getMeasuredHeight();
+
+            // size increase
+            pageSize++;
+        }
+        mOffset = y;
+
+        // Fill from oldOffset
+        iterator.mark();
+        // Go to oldOffset
+        int maxY = (int) (height * (1 + RESERVATIONS));
+        y = oldOffset;
+        pages = mPages.iterator();
+        for (int i = 0; i < pageSize; i++) {
+            if (iterator.hasNext()) {
+                iterator.next();
+            } else {
+                Log.e(TAG, "iterator should has next");
+            }
+            pages.next();
+        }
+        // Do fill
+        while (true) {
+            GalleryPageView page;
+            if (pages == null || !pages.hasNext()) {
+                pages = null;
+                // New page
+                page = galleryView.obtainPage();
+                iterator.bind(page);
+                galleryView.addComponent(page);
+                mPages.add(page);
+            } else {
+                page = pages.next();
+            }
+
+            // Measure and layout
+            page.measure(widthSpec, heightSpec);
+            page.layout(0, y, width, y + page.getMeasuredHeight());
+
+            // size increase
+            pageSize++;
+
+            // Update y and check out of range
+            y += page.getMeasuredHeight();
+            if (y > maxY) {
+                break;
+            }
+
+            y += mInterval;
+
+            // Check has next
+            if (!iterator.hasNext()) {
+                break;
+            }
+
+            iterator.next();
+        }
+        iterator.reset();
+
+        // Remove useless page
+        while (mPages.size() > pageSize) {
+            GalleryPageView page = mPages.removeLast();
+            removePage(page);
+        }
+    }
+
     @Override
     public synchronized void onFill() {
         GalleryView.PageIterator iterator = mIterator;
         GalleryView galleryView = mGalleryView;
         AssertUtils.assertNotEquals("The PagerLayoutManager is not attached", iterator, null);
 
-        int width = galleryView.getWidth();
         int height = galleryView.getHeight();
         String errorStr = iterator.getError();
 
@@ -178,124 +295,34 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             removeProgress();
             removeErrorView();
 
-
-            // TODO ensure first shown
-
-
-
-
-            int minY = (int) (-height * RESERVATIONS);
-
-            // Remove useless top view
-            Iterator<GalleryPageView> pages = mPages.iterator();
-            int nextTop = mOffset;
-            while (pages.hasNext()) {
-                GalleryPageView page = pages.next();
-                nextTop += page.getHeight() + mInterval;
-                if (nextTop < minY) {
-                    removePage(page);
-                    pages.remove();
-                    // Update offset
-                    mOffset = nextTop;
-                    if (iterator.hasNext()) {
-                        iterator.next();
-                    } else {
-                        Log.e(TAG, "iterator should has next");
+            // Find first shown loaded page
+            GalleryPageView firstShownLoadedPage = null;
+            int firstShownLoadedPageTop = mOffset;
+            for (GalleryPageView page : mPages) {
+                // Check first shown loaded page
+                if (page.isLoaded()) {
+                    Rect bound = page.bounds();
+                    int pageTop = bound.top;
+                    int pageBottom = bound.bottom;
+                    if ((pageTop > 0 && pageTop < height) || (pageBottom > 0 && pageBottom < height)) {
+                        firstShownLoadedPage = page;
+                        break;
                     }
-                } else {
-                    break;
                 }
+                firstShownLoadedPageTop += page.getHeight() + mInterval;
             }
 
-            // Fill missing top
-            int oldOffset = mOffset;
-            int y = oldOffset;
-            int widthSpec = GLView.MeasureSpec.makeMeasureSpec(width, GLView.MeasureSpec.EXACTLY);
-            int heightSpec = GLView.MeasureSpec.makeMeasureSpec(height, GLView.MeasureSpec.UNSPECIFIED);
-            int pageSize = 0;
-            while (y >= minY && iterator.hasPrevious()) {
-                iterator.previous();
-
-                GalleryPageView page = galleryView.obtainPage();
-                iterator.bind(page);
-                galleryView.addComponent(page);
-                mPages.add(0, page);
-
-                // Add interval
-                y -= mInterval;
-
-                // Measure and layout
-                page.measure(widthSpec, heightSpec);
-                page.layout(0, y - page.getMeasuredHeight(), width, y);
-
-                // Update y
-                y -= page.getMeasuredHeight();
-
-                // size increase
-                pageSize++;
-            }
-            mOffset = y;
-
-            // Fill from oldOffset
-            iterator.mark();
-            // Go to oldOffset
-            int maxY = (int) (height * (1 + RESERVATIONS));
-            y = oldOffset;
-            pages = mPages.iterator();
-            for (int i = 0; i < pageSize; i++) {
-                if (iterator.hasNext()) {
-                    iterator.next();
-                } else {
-                    Log.e(TAG, "iterator should has next");
-                }
-                pages.next();
-            }
-            // Do fill
-            while (true) {
-                GalleryPageView page;
-                if (pages == null || !pages.hasNext()) {
-                    pages = null;
-                    // New page
-                    page = galleryView.obtainPage();
-                    iterator.bind(page);
-                    galleryView.addComponent(page);
-                    mPages.add(page);
-                } else {
-                    page = pages.next();
-                }
-
-                // Measure and layout
-                page.measure(widthSpec, heightSpec);
-                page.layout(0, y, width, y + page.getMeasuredHeight());
-
-                // size increase
-                pageSize++;
-
-                // Update y and check out of range
-                y += page.getMeasuredHeight();
-                if (y > maxY) {
-                    break;
-                }
-
-                y += mInterval;
-
-                // Check has next
-                if (!iterator.hasNext()) {
-                    break;
-                }
-
-                iterator.next();
-            }
-            iterator.reset();
-
+            fillPages();
 
             // TODO Avoid page not fill bottom, but has previous
 
-
-            // Remove useless page
-            while (mPages.size() > pageSize) {
-                GalleryPageView page = mPages.removeLast();
-                removePage(page);
+            // Ensure first shown loaded page top is the same
+            if (firstShownLoadedPage != null && firstShownLoadedPage.isAttachedToRoot()) {
+                int newTop = firstShownLoadedPage.bounds().top;
+                if (firstShownLoadedPageTop != newTop) {
+                    mOffset += firstShownLoadedPageTop - newTop;
+                    fillPages();
+                }
             }
         }
     }
