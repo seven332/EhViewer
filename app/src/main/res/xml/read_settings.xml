@@ -15,17 +15,14 @@
   ~ limitations under the License.
   -->
 
-<preference-headers
+<PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <header
-        android:fragment="com.hippo.ehviewer.ui.fragment.EhFragment"
-        android:title="@string/settings_eh_title"
-        android:icon="@drawable/ic_settings_eh"/>
+    <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
+        android:widgetLayout="@layout/preference_widget_fixed_switch"
+        android:key="volume_page"
+        android:title="@string/settings_read_volume_page_title"
+        android:defaultValue="false"/>
 
-    <header
-        android:fragment="com.hippo.ehviewer.ui.fragment.ReadFragment"
-        android:title="@string/settings_read_title"
-        android:icon="@drawable/ic_settings_read"/>
-
-</preference-headers>
+</PreferenceScreen>

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 
 import com.hippo.ehviewer.R;
@@ -38,11 +37,13 @@ import com.hippo.gl.widget.GLEdgeView;
 import com.hippo.gl.widget.GLProgressView;
 import com.hippo.gl.widget.GLTextureView;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.Pool;
 import com.hippo.yorozuya.ResourcesUtils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.Stack;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
@@ -60,7 +61,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private @interface LayoutMode {}
 
     public static final int BACKGROUND_COLOR = 0xff212121;
-    private static final int INTERVAL_IN_DP = 24;
     private static final int PROGRESS_SIZE_IN_DP = 48;
     private static final int PAGE_MIN_HEIGHT_IN_DP = 256;
 
@@ -84,37 +84,55 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private static final float[] RIGHT_AREA = {2.0f / 3.0f, 0.0f, 1.0f, 1f};
     private static final float[] CENTER_AREA = {1.0f / 3.0f, 2.0f / 5.0f, 2.0f / 3.0f, 3.0f / 5.0f};
 
-    private Context mContext;
-    private MovableTextTexture mPageTextTexture;
-    private GestureRecognizer mGestureRecognizer;
-    private PageIterator mIterator;
+    private static final int METHOD_ON_SINGLE_TAP_UP = 0;
+    private static final int METHOD_ON_SINGLE_TAP_CONFIRMED = 1;
+    private static final int METHOD_ON_DOUBLE_TAP = 2;
+    private static final int METHOD_ON_DOUBLE_TAP_CONFIRMED = 3;
+    private static final int METHOD_ON_SCROLL = 4;
+    private static final int METHOD_ON_FLING = 5;
+    private static final int METHOD_ON_SCALE_BEGIN = 6;
+    private static final int METHOD_ON_SCALE = 7;
+    private static final int METHOD_ON_SCALE_END = 8;
+    private static final int METHOD_ON_DOWN = 9;
+    private static final int METHOD_ON_UP = 10;
+    private static final int METHOD_ON_POINTER_DOWN = 11;
+    private static final int METHOD_ON_POINTER_UP = 12;
+    private static final int METHOD_SET_LAYOUT_MODE = 13;
+
+    private final Context mContext;
+    private final MovableTextTexture mPageTextTexture;
+    private final GestureRecognizer mGestureRecognizer;
+    private Adapter mAdapter;
 
     private PagerLayoutManager mPagerLayoutManager;
     private ScrollLayoutManager mScrollLayoutManager;
     private LayoutManager mLayoutManager;
 
-    private Recycler mRecycler;
-    private GLEdgeView mEdgeView;
+    private final Pool<GalleryPageView> mGalleryPageViewPool = new Pool<>(5);
+    private final GLEdgeView mEdgeView;
     private GLProgressView mProgressCache;
     private GLTextureView mErrorViewCache;
 
-    private int mProgressColor;
-    private int mProgressSize;
-    private float mErrorSize;
-    private int mErrorColor;
-    private int mPageMinHeight;
-    private int mInterval;
+    private final int mProgressColor;
+    private final int mProgressSize;
+    private final float mErrorSize;
+    private final int mErrorColor;
+    private final int mPageMinHeight;
 
     private boolean mEnableRequestFill = true;
+    private boolean mRequestFill = false;
 
     private boolean mScale = false;
     private boolean mScroll = false;
     private boolean mFirstScroll = false;
     private boolean mTouched = false;
 
-    private Rect mLeftArea = new Rect();
-    private Rect mRightArea = new Rect();
-    private Rect mCenterArea = new Rect();
+    private final Rect mLeftArea = new Rect();
+    private final Rect mRightArea = new Rect();
+    private final Rect mCenterArea = new Rect();
+
+    private final String mDefaultErrorStr;
+    private final String mEmptyStr;
 
     @LayoutMode
     private int mLayoutMode = LAYOUT_MODE_RIGHT_TO_LEFT;
@@ -124,21 +142,23 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     @StartPosition
     private int mStartPosition = START_POSITION_TOP_LEFT;
 
-    private boolean mRequestFill = false;
+    private final ActionListener mListener;
 
-    private ActionListener mListener;
+    private final List<Integer> mMethodList = new ArrayList<>(5);
+    private final List<Object[]> mArgsList = new ArrayList<>(5);
+    private final List<Integer> mMethodListTemp = new ArrayList<>(5);
+    private final List<Object[]> mArgsListTemp = new ArrayList<>(5);
 
-    public GalleryView(Context context, PageIterator iterator, MovableTextTexture pageTextTexture,
-            ActionListener listener, @LayoutMode int layoutMode) {
+    public GalleryView(@NonNull Context context, @NonNull Adapter adapter,
+            MovableTextTexture pageTextTexture, ActionListener listener, @LayoutMode int layoutMode) {
         mContext = context;
-        mIterator = iterator;
+        mAdapter = adapter;
         mPageTextTexture = pageTextTexture;
         mListener = listener;
         mEdgeView = new GLEdgeView(context);
         mGestureRecognizer = new GestureRecognizer(context, this);
-        mRecycler = new Recycler();
 
-        iterator.setGalleryView(this);
+        adapter.setGalleryView(this);
 
         mLayoutMode = layoutMode;
         mProgressColor = ResourcesUtils.getAttrColor(context, R.attr.colorPrimary);
@@ -146,7 +166,9 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mErrorSize = context.getResources().getDimension(R.dimen.text_large);
         mErrorColor = context.getResources().getColor(R.color.red_500);
         mPageMinHeight = LayoutUtils.dp2pix(context, PAGE_MIN_HEIGHT_IN_DP);
-        mInterval = LayoutUtils.dp2pix(context, INTERVAL_IN_DP);
+
+        mDefaultErrorStr = context.getResources().getString(R.string.error_unknown);
+        mEmptyStr = context.getResources().getString(R.string.error_empty);
 
         setBackgroundColor(BACKGROUND_COLOR);
     }
@@ -159,7 +181,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     private void ensureScrollLayoutManager() {
         if (mScrollLayoutManager == null) {
-            mScrollLayoutManager = new ScrollLayoutManager(mContext, this, mInterval);
+            mScrollLayoutManager = new ScrollLayoutManager(mContext, this);
         }
     }
 
@@ -172,24 +194,26 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             case LAYOUT_MODE_LEFT_TO_RIGHT:
                 ensurePagerLayoutManager();
                 mPagerLayoutManager.setMode(PagerLayoutManager.MODE_LEFT_TO_RIGHT);
-                mPagerLayoutManager.onAttach(mIterator);
-                mIterator = null;
+                mPagerLayoutManager.onAttach(mAdapter);
+                mAdapter = null;
                 mLayoutManager = mPagerLayoutManager;
                 break;
             case LAYOUT_MODE_RIGHT_TO_LEFT:
                 ensurePagerLayoutManager();
                 mPagerLayoutManager.setMode(PagerLayoutManager.MODE_RIGHT_TO_LEFT);
-                mPagerLayoutManager.onAttach(mIterator);
-                mIterator = null;
+                mPagerLayoutManager.onAttach(mAdapter);
+                mAdapter = null;
                 mLayoutManager = mPagerLayoutManager;
                 break;
             case LAYOUT_MODE_TOP_TO_BOTTOM:
                 ensureScrollLayoutManager();
-                mScrollLayoutManager.onAttach(mIterator);
-                mIterator = null;
+                mScrollLayoutManager.onAttach(mAdapter);
+                mAdapter = null;
                 mLayoutManager = mScrollLayoutManager;
                 break;
         }
+
+        requestFill();
     }
 
     @Override
@@ -197,7 +221,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         super.onDetachFromRoot();
         mEdgeView.onDetachFromRoot();
 
-        mIterator = mLayoutManager.onDetach();
+        mAdapter = mLayoutManager.onDetach();
         mLayoutManager = null;
     }
 
@@ -225,13 +249,215 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         return mEdgeView;
     }
 
-    public boolean isFirstScroll() {
+    String getDefaultErrorStr() {
+        return mDefaultErrorStr;
+    }
+
+    String getEmptyStr() {
+        return mEmptyStr;
+    }
+
+    boolean isFirstScroll() {
         boolean firstScroll = mFirstScroll;
         mFirstScroll = false;
         return firstScroll;
     }
 
+    // Make sure method run in render thread to ensure thread safe
+    private void postMethod(int method, Object... args) {
+        synchronized (this) {
+            mMethodList.add(method);
+            mArgsList.add(args);
+        }
+
+        invalidate();
+    }
+
     public void setLayoutMode(@LayoutMode int layoutMode) {
+        postMethod(METHOD_SET_LAYOUT_MODE, layoutMode);
+    }
+
+    @Override
+    public boolean onSingleTapUp(float x, float y) {
+        postMethod(METHOD_ON_SINGLE_TAP_UP, x, y);
+        return true;
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(float x, float y) {
+        postMethod(METHOD_ON_SINGLE_TAP_CONFIRMED, x, y);
+        return true;
+    }
+
+    @Override
+    public boolean onDoubleTap(float x, float y) {
+        postMethod(METHOD_ON_DOUBLE_TAP, x, y);
+        return true;
+    }
+
+    @Override
+    public boolean onDoubleTapConfirmed(float x, float y) {
+        postMethod(METHOD_ON_DOUBLE_TAP_CONFIRMED, x, y);
+        return true;
+    }
+
+    @Override
+    public boolean onScroll(float dx, float dy, float totalX, float totalY, float x, float y) {
+        postMethod(METHOD_ON_SCROLL, dx, dy, totalX, totalY, x, y);
+        return true;
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        postMethod(METHOD_ON_FLING, velocityX, velocityY);
+        return true;
+    }
+
+    @Override
+    public boolean onScaleBegin(float focusX, float focusY) {
+        postMethod(METHOD_ON_SCALE_BEGIN, focusX, focusY);
+        return true;
+    }
+
+    @Override
+    public boolean onScale(float focusX, float focusY, float scale) {
+        postMethod(METHOD_ON_SCALE, focusX, focusY, scale);
+        return true;
+    }
+
+    @Override
+    public void onScaleEnd() {
+        postMethod(METHOD_ON_SCALE_END);
+    }
+
+    @Override
+    public void onDown(float x, float y) {
+        postMethod(METHOD_ON_DOWN, x, y);
+    }
+
+    @Override
+    public void onUp() {
+        postMethod(METHOD_ON_UP);
+    }
+
+    @Override
+    public void onPointerDown(float x, float y) {
+        postMethod(METHOD_ON_POINTER_DOWN, x, y);
+    }
+
+    @Override
+    public void onPointerUp() {
+        postMethod(METHOD_ON_POINTER_UP);
+    }
+
+    @Override
+    protected void onLayout(boolean changeSize, int left, int top, int right, int bottom) {
+        mEdgeView.layout(left, top, right, bottom);
+
+        fill();
+
+        if (changeSize) {
+            int width = right - left;
+            int height = bottom - top;
+            mLeftArea.set((int) (LEFT_AREA[0] * width), (int) (LEFT_AREA[1] * height),
+                    (int) (LEFT_AREA[2] * width), (int) (LEFT_AREA[3] * height));
+            mRightArea.set((int) (RIGHT_AREA[0] * width), (int) (RIGHT_AREA[1] * height),
+                    (int) (RIGHT_AREA[2] * width), (int) (RIGHT_AREA[3] * height));
+            mCenterArea.set((int) (CENTER_AREA[0] * width), (int) (CENTER_AREA[1] * height),
+                    (int) (CENTER_AREA[2] * width), (int) (CENTER_AREA[3] * height));
+        }
+    }
+
+    @RenderThread
+    public void onDataChanged() {
+        GalleryUtils.assertInRenderThread();
+
+        if (mLayoutManager != null){
+            mLayoutManager.onDataChanged();
+        }
+    }
+
+    private void onSingleTapUpInternal(float x, float y) {
+    }
+
+    private void onSingleTapConfirmedInternal(float x, float y) {
+    }
+
+    private void onDoubleTapInternal(float x, float y) {
+    }
+
+    private void onDoubleTapConfirmedInternal(float x, float y) {
+        if (mScale) {
+            return;
+        }
+
+        if (mLayoutManager != null) {
+            mLayoutManager.onDoubleTapConfirmed(x, y);
+        }
+    }
+
+    private void onScrollInternal(float dx, float dy, float totalX, float totalY, float x, float y) {
+        if (mScale) {
+            return;
+        }
+        mScroll = true;
+
+        if (mLayoutManager != null) {
+            mLayoutManager.onScroll(dx, dy, totalX, totalY, x, y);
+        }
+    }
+
+    private void onFlingInternal(float velocityX, float velocityY) {
+        if (mLayoutManager != null) {
+            mLayoutManager.onFling(velocityX, velocityY);
+        }
+    }
+
+    private void onScaleBeginInternal(float focusX, float focusY) {
+        onScaleInternal(focusX, focusY, 1.0f);
+    }
+
+    private void onScaleInternal(float focusX, float focusY, float scale) {
+        if (mScroll || (mLayoutManager != null && !mLayoutManager.canScale())) {
+            return;
+        }
+        mScale = true;
+
+        if (mLayoutManager != null) {
+            mLayoutManager.onScale(focusX, focusY, scale);
+        }
+    }
+
+    private void onScaleEndInternal() {
+    }
+
+    private void onDownInternal(float x, float y) {
+        mTouched = true;
+        mScale = false;
+        mScroll = false;
+        mFirstScroll = true;
+        if (mLayoutManager != null) {
+            mLayoutManager.onDown();
+        }
+    }
+
+    private void onUpInternal() {
+        mTouched = false;
+        if (mLayoutManager != null) {
+            mLayoutManager.onUp();
+        }
+    }
+
+    private void onPointerDownInternal(float x, float y) {
+        if (!mScroll && (mLayoutManager != null && mLayoutManager.canScale())) {
+            mScale = true;
+        }
+    }
+
+    private void onPointerUpInternal() {
+    }
+
+    private void setLayoutModeInternal(int layoutMode) {
         if (mLayoutMode == layoutMode) {
             return;
         }
@@ -270,133 +496,23 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                 mLayoutManager = mScrollLayoutManager;
                 break;
         }
+
+        requestFill();
     }
 
-    @Override
-    public boolean onSingleTapUp(float x, float y) {
-        return true;
-    }
-
-    @Override
-    public boolean onSingleTapConfirmed(float x, float y) {
-        return true;
-    }
-
-    @Override
-    public boolean onDoubleTap(float x, float y) {
-        return true;
-    }
-
-    @Override
-    public boolean onDoubleTapConfirmed(float x, float y) {
-        if (mScale) {
-            return false;
-        }
-
-        if (mLayoutManager != null) {
-            mLayoutManager.onDoubleTapConfirmed(x, y);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onScroll(float dx, float dy, float totalX, float totalY, float x, float y) {
-        if (mScale) {
-            return false;
-        }
-        mScroll = true;
-
-        if (mLayoutManager != null) {
-            mLayoutManager.onScroll(dx, dy, totalX, totalY, x, y);
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        if (mLayoutManager != null) {
-            mLayoutManager.onFling(e1, e2, velocityX, velocityY);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onScaleBegin(float focusX, float focusY) {
-        return onScale(focusX, focusY, 1.0f);
-    }
-
-    @Override
-    public boolean onScale(float focusX, float focusY, float scale) {
-        if (mScroll || (mLayoutManager != null && !mLayoutManager.canScale())) {
-            return false;
-        }
-        mScale = true;
-
-        if (mLayoutManager != null) {
-            mLayoutManager.onScale(focusX, focusY, scale);
-        }
-
-        return true;
-    }
-
-    @Override
-    public void onScaleEnd() {
-    }
-
-    @Override
-    public void onDown(float x, float y) {
-        mTouched = true;
-        mScale = false;
-        mScroll = false;
-        mFirstScroll = true;
-        if (mLayoutManager != null) {
-            mLayoutManager.onDown();
-        }
-    }
-
-    @Override
-    public void onUp() {
-        mTouched = false;
-        if (mLayoutManager != null) {
-            mLayoutManager.onUp();
-        }
-    }
-
-    @Override
-    public void onPointerDown(float x, float y) {
-        if (!mScroll && (mLayoutManager != null && mLayoutManager.canScale())) {
-            mScale = true;
-        }
-    }
-
-    @Override
-    public void onPointerUp() {
-
-    }
-
-    @Override
-    protected void onLayout(boolean changeSize, int left, int top, int right, int bottom) {
-        mEdgeView.layout(left, top, right, bottom);
-
+    @RenderThread
+    void forceFill() {
+        mRequestFill = true;
         fill();
-
-        if (changeSize) {
-            int width = right - left;
-            int height = bottom - top;
-            mLeftArea.set((int) (LEFT_AREA[0] * width), (int) (LEFT_AREA[1] * height),
-                    (int) (LEFT_AREA[2] * width), (int) (LEFT_AREA[3] * height));
-            mRightArea.set((int) (RIGHT_AREA[0] * width), (int) (RIGHT_AREA[1] * height),
-                    (int) (RIGHT_AREA[2] * width), (int) (RIGHT_AREA[3] * height));
-            mCenterArea.set((int) (CENTER_AREA[0] * width), (int) (CENTER_AREA[1] * height),
-                    (int) (CENTER_AREA[2] * width), (int) (CENTER_AREA[3] * height));
-        }
     }
 
     @RenderThread
     private void fill() {
-        // Must be in render thread
         GalleryUtils.assertInRenderThread();
+
+        if (!mRequestFill) {
+            return;
+        }
 
         // Disable request layout
         mEnableRequestFill = false;
@@ -404,35 +520,108 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             mLayoutManager.onFill();
         }
         mEnableRequestFill = true;
+        mRequestFill = false;
+    }
+
+    private void dispatchMethod() {
+        List<Integer> methodListTemp = mMethodListTemp;
+        List<Object[]> argsListTemp = mArgsListTemp;
+
+        synchronized (this) {
+            if (mMethodList.isEmpty()) {
+                return;
+            }
+
+            methodListTemp.addAll(mMethodList);
+            argsListTemp.addAll(mArgsList);
+            mMethodList.clear();
+            mArgsList.clear();
+        }
+
+        for (int i = 0, n = methodListTemp.size(); i < n; i++) {
+            int method = methodListTemp.get(i);
+            Object[] args = argsListTemp.get(i);
+
+            switch (method) {
+                case METHOD_ON_SINGLE_TAP_UP:
+                    onSingleTapUpInternal((Float) args[0], (Float) args[1]);
+                    break;
+                case METHOD_ON_SINGLE_TAP_CONFIRMED:
+                    onSingleTapConfirmedInternal((Float) args[0], (Float) args[1]);
+                    break;
+                case METHOD_ON_DOUBLE_TAP:
+                    onDoubleTapInternal((Float) args[0], (Float) args[1]);
+                    break;
+                case METHOD_ON_DOUBLE_TAP_CONFIRMED:
+                    onDoubleTapConfirmedInternal((Float) args[0], (Float) args[1]);
+                    break;
+                case METHOD_ON_SCROLL:
+                    onScrollInternal((Float) args[0], (Float) args[1], (Float) args[2],
+                            (Float) args[3], (Float) args[4], (Float) args[5]);
+                    break;
+                case METHOD_ON_FLING:
+                    onFlingInternal((Float) args[0], (Float) args[1]);
+                    break;
+                case METHOD_ON_SCALE_BEGIN:
+                    onScaleBeginInternal((Float) args[0], (Float) args[1]);
+                    break;
+                case METHOD_ON_SCALE:
+                    onScaleInternal((Float) args[0], (Float) args[1], (Float) args[2]);
+                    break;
+                case METHOD_ON_SCALE_END:
+                    onScaleEndInternal();
+                    break;
+                case METHOD_ON_DOWN:
+                    onDownInternal((Float) args[0], (Float) args[1]);
+                    break;
+                case METHOD_ON_UP:
+                    onUpInternal();
+                    break;
+                case METHOD_ON_POINTER_DOWN:
+                    onPointerDownInternal((Float) args[0], (Float) args[1]);
+                    break;
+                case METHOD_ON_POINTER_UP:
+                    onPointerUpInternal();
+                    break;
+                case METHOD_SET_LAYOUT_MODE:
+                    setLayoutModeInternal((Integer) args[0]);
+                    break;
+            }
+        }
+
+        methodListTemp.clear();
+        argsListTemp.clear();
     }
 
     @Override
     public void render(GLCanvas canvas) {
+        // Dispatch method
+        dispatchMethod();
+
         long time = AnimationTime.get();
         if (mLayoutManager != null && mLayoutManager.onUpdateAnimation(time)) {
             invalidate();
         }
 
-        // mSmoothScroller may do fill too, so check fill request after scroll animator
-        if (mRequestFill) {
-            mRequestFill = false;
-            fill();
-        }
+        fill();
 
         super.render(canvas);
         mEdgeView.render(canvas);
     }
 
-    public GalleryPageView findPageById(int id) {
+    @RenderThread
+    public GalleryPageView findPageByIndex(int id) {
+        GalleryUtils.assertInRenderThread();
+
         if (mLayoutManager != null) {
-            return mLayoutManager.findPageById(id);
+            return mLayoutManager.findPageByIndex(id);
         } else {
             return null;
         }
     }
 
-    public GalleryPageView obtainPage() {
-        GalleryPageView page = mRecycler.obtain();
+    GalleryPageView obtainPage() {
+        GalleryPageView page = mGalleryPageViewPool.pop();
         if (page == null) {
             page = new GalleryPageView(mContext, mPageTextTexture, mProgressColor, mProgressSize);
             page.setMinimumHeight(mPageMinHeight);
@@ -440,14 +629,14 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         return page;
     }
 
-    public void releasePage(GalleryPageView page) {
-        mRecycler.release(page);
+    void releasePage(GalleryPageView page) {
+        mGalleryPageViewPool.push(page);
     }
 
     /**
      * Indeterminate GLProgressView
      */
-    public GLProgressView obtainProgress() {
+    GLProgressView obtainProgress() {
         GLProgressView progress;
         if (mProgressCache != null) {
             progress = mProgressCache;
@@ -466,11 +655,11 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     /**
      * @param progress Indeterminate GLProgressView
      */
-    public void releaseProgress(GLProgressView progress) {
+    void releaseProgress(GLProgressView progress) {
         mProgressCache = progress;
     }
 
-    public GLTextureView obtainErrorView() {
+    GLTextureView obtainErrorView() {
         GLTextureView errorView;
         if (mErrorViewCache != null) {
             errorView = mErrorViewCache;
@@ -481,7 +670,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         return errorView;
     }
 
-    public void unbindErrorView(GLTextureView errorView) {
+    void unbindErrorView(GLTextureView errorView) {
         Texture texture = errorView.getTexture();
         if (texture != null) {
             errorView.setTexture(null);
@@ -491,28 +680,19 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         }
     }
 
-    public void bindErrorView(GLTextureView errorView, String error) {
+    void bindErrorView(GLTextureView errorView, String error) {
         unbindErrorView(errorView);
 
         Texture texture = StringTexture.newInstance(error, mErrorSize, mErrorColor);
         errorView.setTexture(texture);
     }
 
-    public void releaseErrorView(GLTextureView errorView) {
+    void releaseErrorView(GLTextureView errorView) {
         unbindErrorView(errorView);
         mErrorViewCache = errorView;
     }
 
-    @RenderThread
-    public void onDataChanged() {
-        GalleryUtils.assertInRenderThread();
-
-        if (mLayoutManager != null){
-            mLayoutManager.onDataChanged();
-        }
-    }
-
-    public static abstract class PageIterator {
+    public static abstract class Adapter {
 
         protected GalleryView mGalleryView;
 
@@ -520,41 +700,26 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             mGalleryView = galleryView;
         }
 
-        public abstract void mark();
+        public void bind(GalleryPageView view, int index) {
+            onBind(view, index);
+            view.setIndex(index);
+        }
 
-        public abstract void reset();
+        public void unbind(GalleryPageView view) {
+            onUnbind(view);
+            view.setIndex(GalleryPageView.INVALID_INDEX);
+        }
 
-        /**
-         * @return True for waiting now, layout manager
-         * should show a progress bar or something like it
-         */
-        public abstract boolean isWaiting();
+        public abstract void onBind(GalleryPageView view, int index);
+
+        public abstract void onUnbind(GalleryPageView view);
 
         /**
          * @return Null for no error
          */
         public abstract String getError();
 
-        public abstract boolean hasNext();
-
-        public abstract boolean hasPrevious();
-
-        public abstract void next();
-
-        public abstract void previous();
-
-        public void bind(GalleryPageView view) {
-            view.setId(onBind(view));
-        }
-
-        public void unbind(GalleryPageView view) {
-            onUnbind(view);
-            view.setId(NO_ID);
-        }
-
-        public abstract int onBind(GalleryPageView view);
-
-        public abstract void onUnbind(GalleryPageView view);
+        public abstract int size();
     }
 
     public static abstract class LayoutManager {
@@ -565,9 +730,9 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             mGalleryView = galleryView;
         }
 
-        public abstract void onAttach(PageIterator iterator);
+        public abstract void onAttach(Adapter iterator);
 
-        public abstract PageIterator onDetach();
+        public abstract Adapter onDetach();
 
         public abstract void onFill();
 
@@ -579,7 +744,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
         public abstract void onScroll(float dx, float dy, float totalX, float totalY, float x, float y);
 
-        public abstract void onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY);
+        public abstract void onFling(float velocityX, float velocityY);
 
         public abstract boolean canScale();
 
@@ -589,7 +754,12 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
         public abstract void onDataChanged();
 
-        public abstract GalleryPageView findPageById(int id);
+        public abstract GalleryPageView findPageByIndex(int index);
+
+        /**
+         * @return {@link GalleryPageView#INVALID_INDEX} for error
+         */
+        public abstract int getCurrentIndex();
 
         protected void placeCenter(GLView view) {
             int spec = GLView.MeasureSpec.makeMeasureSpec(GLView.LayoutParams.WRAP_CONTENT,
@@ -600,36 +770,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
             int viewLeft = mGalleryView.getWidth() / 2 - viewWidth / 2;
             int viewTop = mGalleryView.getHeight() / 2 - viewHeight / 2;
             view.layout(viewLeft, viewTop, viewLeft + viewWidth, viewTop + viewHeight);
-        }
-    }
-
-    private static class Recycler {
-
-        private static final int MAX_SIZE = 3;
-
-        private int mSize = 0;
-
-        private Stack<GalleryPageView> mStack = new Stack<>();
-
-        @Nullable
-        private GalleryPageView obtain() {
-            if (mSize != 0) {
-                mSize--;
-                return mStack.pop();
-            } else {
-                return null;
-            }
-        }
-
-        public void release(@Nullable GalleryPageView page) {
-            if (page == null) {
-                return;
-            }
-
-            if (mSize < MAX_SIZE) {
-                mSize++;
-                mStack.push(page);
-            }
         }
     }
 

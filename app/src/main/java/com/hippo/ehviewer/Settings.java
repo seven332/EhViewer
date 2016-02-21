@@ -119,11 +119,24 @@ public class Settings {
         return sEhConfig;
     }
 
+    /********************
+     ****** Eh
+     ********************/
     private static final String KEY_SHOW_JPN_TITLE = "show_jpn_title";
     private static final boolean DEFAULT_SHOW_JPN_TITLE = false;
 
     public static boolean getShowJpnTitle() {
         return getBoolean(KEY_SHOW_JPN_TITLE, DEFAULT_SHOW_JPN_TITLE);
+    }
+
+    /********************
+     ****** Read
+     ********************/
+    private static final String KEY_VOLUME_PAGE = "volume_page";
+    private static final boolean DEFAULT_VOLUME_PAGE = false;
+
+    public static boolean getVolumePage() {
+        return getBoolean(KEY_VOLUME_PAGE, DEFAULT_VOLUME_PAGE);
     }
 
     public static final String KEY_DOWNLOAD_SAVE_SCHEME = "image_scheme";

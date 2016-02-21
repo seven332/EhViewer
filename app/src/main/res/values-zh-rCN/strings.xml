@@ -42,6 +42,19 @@
     <string name="error_unknown">奇怪的错误</string>
     <string name="error_cant_find_activity">找不到相应的应用</string>
     <string name="error_cannot_parse_the_url">无法解析链接</string>
+    <string name="error_not_folder_path">非文件夹路径</string>
+    <string name="error_no_provider">无 provider</string>
+    <string name="error_decoding_failed">解码失败</string>
+    <string name="error_not_found">未找到</string>
+    <string name="error_empty">空</string>
+    <string name="error_invalid_zip_file">无效 zip 文件</string>
+    <string name="error_reading_failed">读取失败</string>
+    <string name="error_out_of_range">越界</string>
+    <string name="error_write_failed">写入失败</string>
+    <string name="error_parse_error">解析失败</string>
+    <string name="error_509">509</string>
+    <string name="error_invalid_url">无效链接</string>
+    <string name="error_get_ptoken_error">获取 pToken 错误</string>
 
     <string name="app_waring">本应用中内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。本应用作者不会对由本应用造成的后果负责。您是否愿意继续使用该应用？</string>
     <string name="error_username_cannot_empty">用户名不可为空</string>
@@ -158,13 +171,15 @@
     <!-- Gallery Previews -->
     <string name="gallery_previews">画廊预览</string>
     <string name="go_to">跳页</string>
-    <string name="error_out_of_range">越界</string>
 
     <!-- Settings -->
     <string name="settings_eh_title">EH</string>
     <string name="settings_eh_show_jpn_title_title">显示日文标题</string>
     <string name="settings_eh_show_jpn_title_summary_on">尝试显示日文标题。这会使获取画廊列表花费更多时间</string>
     <string name="settings_eh_show_jpn_title_summary_off">显示默认标题。一般是英文标题</string>
+
+    <string name="settings_read_title">阅读</string>
+    <string name="settings_read_volume_page_title">使用音量键翻页</string>
 
     <!-- Progress Scene -->
     <string name="error_something_wrong_happened">被玩坏了</string>

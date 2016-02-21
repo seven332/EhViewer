@@ -22,8 +22,8 @@ import android.support.annotation.UiThread;
 import com.hippo.gl.glrenderer.GLCanvas;
 import com.hippo.gl.view.GLRoot;
 import com.hippo.image.Image;
+import com.hippo.yorozuya.ConcurrentPool;
 import com.hippo.yorozuya.OSUtils;
-import com.hippo.yorozuya.Pool;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -41,7 +41,7 @@ public abstract class GalleryProvider {
             ".gif", // Graphics Interchange Format
     };
 
-    private final Pool<NotifyTask> mNotifyTaskPool = new Pool<>(5);
+    private final ConcurrentPool<NotifyTask> mNotifyTaskPool = new ConcurrentPool<>(5);
     private volatile GalleryProviderListener mGalleryProviderListener;
     private volatile GLRoot mGLRoot;
 
@@ -130,8 +130,8 @@ public abstract class GalleryProvider {
         public static final int TYPE_SUCCEED = 2;
         public static final int TYPE_FAILED = 3;
 
-        private GalleryProviderListener mGalleryProviderListener;
-        private Pool<NotifyTask> mPool;
+        private final GalleryProviderListener mGalleryProviderListener;
+        private final ConcurrentPool<NotifyTask> mPool;
 
         @Type
         private int mType;
@@ -140,7 +140,7 @@ public abstract class GalleryProvider {
         private Image mImage;
         private String mError;
 
-        public NotifyTask(GalleryProviderListener galleryProviderListener, Pool<NotifyTask> pool) {
+        public NotifyTask(GalleryProviderListener galleryProviderListener, ConcurrentPool<NotifyTask> pool) {
             mGalleryProviderListener = galleryProviderListener;
             mPool = pool;
         }

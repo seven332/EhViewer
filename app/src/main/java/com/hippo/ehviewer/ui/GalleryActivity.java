@@ -22,10 +22,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.SparseIntArray;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.gallery.DirGalleryProvider;
 import com.hippo.ehviewer.gallery.EhGalleryProvider;
@@ -37,13 +39,14 @@ import com.hippo.ehviewer.gallery.gl.GalleryView;
 import com.hippo.gl.glrenderer.ImageTexture;
 import com.hippo.gl.glrenderer.MovableTextTexture;
 import com.hippo.gl.view.GLRootView;
-import com.hippo.gl.view.GLView;
 import com.hippo.image.Image;
-import com.hippo.yorozuya.IntIdGenerator;
+import com.hippo.util.SystemUiHelper;
+import com.hippo.widget.Slider;
 
 import java.io.File;
 
-public class GalleryActivity extends AppCompatActivity implements GalleryProviderListener {
+public class GalleryActivity extends AppCompatActivity
+        implements GalleryProviderListener, Slider.OnSetProgressListener {
 
     public static final String ACTION_DIR = "dir";
     public static final String ACTION_ZIP = "zip";
@@ -52,6 +55,7 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
     public static final String KEY_ACTION = "action";
     public static final String KEY_FILENAME = "filename";
     public static final String KEY_GALLERY_INFO = "gallery_info";
+    public static final String KEY_SHOWING = "showing";
 
     private String mAction;
     private String mFilename;
@@ -66,8 +70,19 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
     private ImageTexture.Uploader mUploader;
     @Nullable
     private GalleryProvider mGalleryProvider;
+
     @Nullable
-    private SparseIntArray mIndexIdMap;
+    private SystemUiHelper mSystemUiHelper;
+    private boolean mSystemUiShowing = false;
+
+    @Nullable
+    private View mSliderPanel;
+    @Nullable
+    private TextView mLeftText;
+    @Nullable
+    private TextView mRightText;
+    @Nullable
+    private Slider mSlider;
 
     private void buildProvider() {
         if (mGalleryProvider != null) {
@@ -116,6 +131,7 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
         if (mGalleryInfo != null) {
             outState.putParcelable(KEY_GALLERY_INFO, mGalleryInfo);
         }
+        outState.putBoolean(KEY_SHOWING, mSystemUiShowing);
     }
 
     @Override
@@ -139,15 +155,33 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
         GLRootView glRootView = (GLRootView) findViewById(R.id.gl_root_view);
         mGalleryProvider.setGLRoot(glRootView);
         mUploader = new ImageTexture.Uploader(glRootView);
-        mIndexIdMap = new SparseIntArray();
         mPageTextTexture = MovableTextTexture.create(Typeface.DEFAULT,
                 getResources().getDimensionPixelSize(R.dimen.gallery_page_text),
                 getResources().getColor(R.color.secondary_text_dark),
                 new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
 
-        mGalleryView = new GalleryView(this, new GalleryPageIterator(),
-                mPageTextTexture, null, GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT);
+        mGalleryView = new GalleryView(this, new GalleryAdapter(),
+                mPageTextTexture, null, GalleryView.LAYOUT_MODE_TOP_TO_BOTTOM);
         glRootView.setContentPane(mGalleryView);
+
+        // System UI helper
+        mSystemUiHelper = new SystemUiHelper(this, SystemUiHelper.LEVEL_IMMERSIVE,
+                SystemUiHelper.FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES | SystemUiHelper.FLAG_IMMERSIVE_STICKY);
+        if (savedInstanceState == null || !savedInstanceState.getBoolean(KEY_SHOWING, false)) {
+            mSystemUiHelper.hide();
+            mSystemUiShowing = false;
+        } else {
+            mSystemUiHelper.show();
+            mSystemUiShowing = true;
+        }
+
+        /*
+        mSliderPanel = findViewById(R.id.slider_panel);
+        mLeftText = (TextView) mSliderPanel.findViewById(R.id.left);
+        mRightText = (TextView) mSliderPanel.findViewById(R.id.right);
+        mSlider = (Slider) mSliderPanel.findViewById(R.id.slider);
+        mSlider.setOnSetProgressListener(this);
+        */
     }
 
     @Override
@@ -167,13 +201,29 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
             mGalleryProvider.stop();
             mGalleryProvider = null;
         }
-        mIndexIdMap = null;
+
+        mLeftText = null;
+        mRightText = null;
+        mSlider = null;
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (hasFocus && mSystemUiHelper != null) {
+            if (mSystemUiShowing) {
+                mSystemUiHelper.show();
+            } else {
+                mSystemUiHelper.hide();
+            }
+        }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // Check volume
-        if (false) { // TODO Setting.getVolumePage()
+        if (Settings.getVolumePage()) {
             if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
                 // TODO do something
                 return true;
@@ -220,7 +270,7 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         // Check volume
-        if (false) { // TODO Setting.getVolumePage()
+        if (Settings.getVolumePage()) {
             if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
                     keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
                 return true;
@@ -244,16 +294,25 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
     }
 
     private GalleryPageView findPageByIndex(int index) {
-        if (mIndexIdMap == null || mGalleryView == null) {
+        if (mGalleryView != null) {
+            return mGalleryView.findPageByIndex(index);
+        } else {
             return null;
         }
+    }
 
-        int id = mIndexIdMap.get(index, GLView.NO_ID);
-        if (id == GLView.NO_ID) {
-            return null;
+    private void updateSlider(int size) {
+        if (mSlider == null) {
+            return;
         }
 
-        return mGalleryView.findPageById(id);
+        if (size >= 0) {
+            mSlider.setRange(1, size);
+
+
+        } else {
+            // TODO hide slider
+        }
     }
 
     @Override
@@ -261,6 +320,16 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
         if (mGalleryView != null) {
             mGalleryView.onDataChanged();
         }
+        /*
+        SimpleHandler.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+                if (mGalleryProvider != null) {
+                    updateSlider(mGalleryProvider.size());
+                }
+            }
+        });
+        */
     }
 
     @Override
@@ -309,97 +378,49 @@ public class GalleryActivity extends AppCompatActivity implements GalleryProvide
         }
     }
 
-    private class GalleryPageIterator extends GalleryView.PageIterator {
-
-        private IntIdGenerator mIdGenerator = new IntIdGenerator();
-        private int mIndex = 0;
-        private int mBackup = mIndex;
-
-        @Override
-        public void mark() {
-            mBackup = mIndex;
+    @Override
+    public void onSetProgress(Slider slider, int newProgress, int oldProgress,
+            boolean byUser, boolean confirm) {
+        if (confirm && mGalleryView != null) {
+            //mGalleryView.goToPage(newProgress);
         }
+    }
 
-        @Override
-        public void reset() {
-            mIndex = mBackup;
-        }
-
-        @Override
-        public boolean isWaiting() {
-            return mGalleryProvider != null && mGalleryProvider.size() == GalleryProvider.STATE_WAIT;
-        }
+    private class GalleryAdapter extends GalleryView.Adapter {
 
         @Override
         public String getError() {
             if (mGalleryProvider == null) {
                 return getString(R.string.error_no_provider);
-            } else if (mGalleryProvider.size() == GalleryProvider.STATE_ERROR) {
-                String error = mGalleryProvider.getError();
-                if (error != null) {
-                    return error;
-                } else {
-                    return getString(R.string.error_unknown);
-                }
-            } else if (mGalleryProvider.size() == 0) {
-                return getString(R.string.error_empty);
+            } else if (mGalleryProvider.size() <= GalleryProvider.STATE_ERROR) {
+                return mGalleryProvider.getError();
             }
             return null;
         }
 
         @Override
-        public boolean hasNext() {
-            return mGalleryProvider != null && mIndex < mGalleryProvider.size() - 1;
-        }
-
-        @Override
-        public boolean hasPrevious() {
-            return mIndex > 0;
-        }
-
-        @Override
-        public void next() {
-            if (mGalleryProvider != null && mIndex >= mGalleryProvider.size() - 1) {
-                throw new IndexOutOfBoundsException();
+        public int size() {
+            if (mGalleryProvider == null) {
+                return GalleryProvider.STATE_ERROR;
+            } else {
+                return mGalleryProvider.size();
             }
-            mIndex++;
         }
 
         @Override
-        public void previous() {
-            if (mIndex <= 0) {
-                throw new IndexOutOfBoundsException();
-            }
-            mIndex--;
-        }
-
-        @Override
-        public int onBind(GalleryPageView view) {
+        public void onBind(GalleryPageView view, int index) {
             if (mGalleryProvider != null && mGalleryView != null) {
-                mGalleryProvider.request(mIndex);
+                mGalleryProvider.request(index);
                 view.showInfo();
                 view.setImage(null);
-                view.setPage(mIndex + 1);
+                view.setPage(index + 1);
                 view.setProgress(GalleryPageView.PROGRESS_INDETERMINATE);
                 view.setError(null, null);
             }
-
-            int id = mIdGenerator.nextId();
-            if (mIndexIdMap != null) {
-                mIndexIdMap.put(mIndex, id);
-            }
-            return id;
         }
 
         @Override
         public void onUnbind(GalleryPageView view) {
-            if (mIndexIdMap != null) {
-                int index = mIndexIdMap.indexOfKey(view.getId());
-                if (index >= 0) {
-                    mIndexIdMap.removeAt(index);
-                }
-            }
-
             view.setImage(null);
             view.setError(null, null);
         }

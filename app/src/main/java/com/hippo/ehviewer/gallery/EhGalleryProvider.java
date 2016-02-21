@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.spider.SpiderQueen;
 import com.hippo.image.Image;
+import com.hippo.yorozuya.SimpleHandler;
 
 public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.OnSpiderListener {
 
@@ -49,7 +50,15 @@ public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.On
 
         if (mSpiderQueen != null) {
             mSpiderQueen.removeOnSpiderListener(this);
-            SpiderQueen.releaseSpiderQueen(mSpiderQueen, SpiderQueen.MODE_READ);
+            final SpiderQueen spiderQueen = mSpiderQueen;
+            mSpiderQueen = null;
+            // Activity recreate may called
+            SimpleHandler.getInstance().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    SpiderQueen.releaseSpiderQueen(spiderQueen, SpiderQueen.MODE_READ);
+                }
+            }, 3000);
         }
     }
 

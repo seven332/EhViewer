@@ -33,6 +33,8 @@ import com.hippo.yorozuya.LayoutUtils;
 
 public class GalleryPageView extends GLFrameLayout {
 
+    public static final int INVALID_INDEX = -1;
+
     private static final int INFO_INTERVAL = 24;
     public static final float PROGRESS_GONE = -1.0f;
     public static final float PROGRESS_INDETERMINATE = -2.0f;
@@ -42,6 +44,8 @@ public class GalleryPageView extends GLFrameLayout {
     private GLMovableTextView mPage;
     private GLTextureView mError;
     private GLProgressView mProgress;
+
+    private int mIndex = INVALID_INDEX;
 
     public GalleryPageView(Context context, MovableTextTexture pageTextTexture,
             int progressColor, int progressSize) {
@@ -85,6 +89,14 @@ public class GalleryPageView extends GLFrameLayout {
                 LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER_HORIZONTAL;
         mInfo.addComponent(mProgress, lp);
+    }
+
+    int getIndex() {
+        return mIndex;
+    }
+
+    void setIndex(int index) {
+        mIndex = index;
     }
 
     public void showImage() {

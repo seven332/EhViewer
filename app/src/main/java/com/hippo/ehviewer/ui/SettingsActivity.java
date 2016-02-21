@@ -35,6 +35,7 @@ import android.widget.ListAdapter;
 import com.hippo.app.AppCompatPreferenceActivity;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.fragment.EhFragment;
+import com.hippo.ehviewer.ui.fragment.ReadFragment;
 import com.hippo.vector.VectorDrawable;
 
 import java.lang.reflect.Field;
@@ -46,6 +47,7 @@ public final class SettingsActivity extends AppCompatPreferenceActivity {
 
     private static final String[] ENTRY_FRAGMENTS = {
             EhFragment.class.getName(),
+            ReadFragment.class.getName(),
     };
 
     private class FakeLayoutInflater extends LayoutInflater {
