@@ -52,6 +52,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
     private int mDeltaX;
     private int mDeltaY;
     private int mFirstShownLoadedPageIndex = GalleryPageView.INVALID_INDEX;
+    private boolean mScrollUp;
 
     private final int mInterval;
 
@@ -79,6 +80,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         mDeltaX = 0;
         mDeltaY = 0;
         mFirstShownLoadedPageIndex = GalleryPageView.INVALID_INDEX;
+        mScrollUp = false;
     }
 
     private void cancelAllAnimations() {
@@ -393,15 +395,17 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             mFirstShownLoadedPageIndex = GalleryPageView.INVALID_INDEX;
             for (GalleryPageView page : mPages) {
                 // Check first shown loaded page
-                //if (page.isLoaded()) {
-                    Rect bound = page.bounds();
-                    int pageTop = bound.top;
-                    int pageBottom = bound.bottom;
-                    if ((pageTop > 0 && pageTop < height) || (pageBottom > 0 && pageBottom < height)) {
-                        mFirstShownLoadedPageIndex = page.getIndex();
-                        break;
-                    }
-                //}
+                if (mScrollUp && !page.isLoaded()) {
+                    continue;
+                }
+
+                Rect bound = page.bounds();
+                int pageTop = bound.top;
+                int pageBottom = bound.bottom;
+                if ((pageTop > 0 && pageTop < height) || (pageBottom > 0 && pageBottom < height)) {
+                    mFirstShownLoadedPageIndex = page.getIndex();
+                    break;
+                }
             }
         }
     }
@@ -410,6 +414,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
     public void onDown() {
         mDeltaX = 0;
         mDeltaY = 0;
+        mScrollUp = false;
 
         cancelAllAnimations();
     }
@@ -575,6 +580,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
     @Override
     public void onScroll(float dx, float dy, float totalX, float totalY, float x, float y) {
+        mScrollUp = dy < 0;
         scrollInternal(dx, dy, false, x, y);
     }
 
@@ -583,6 +589,8 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         if (mPages.size() <= 0) {
             return;
         }
+
+        mScrollUp = velocityY > 0;
 
         int maxY;
         if (mIndex > 0) {
