@@ -136,16 +136,35 @@ public class Settings {
     private static final String KEY_READING_DIRECTION = "reading_direction";
     private static final int DEFAULT_READING_DIRECTION = GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT;
 
-    @SuppressWarnings("WrongConstant")
     @GalleryView.LayoutMode
     public static int getReadingDirection() {
-        int value = getIntFromStr(KEY_READING_DIRECTION, DEFAULT_READING_DIRECTION);
-        if (value != GalleryView.LAYOUT_MODE_LEFT_TO_RIGHT &&
-                value != GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT &&
-                value != GalleryView.LAYOUT_MODE_TOP_TO_BOTTOM) {
-            value = GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT;
-        }
-        return value;
+        return GalleryView.sanitizeLayoutMode(getIntFromStr(KEY_READING_DIRECTION, DEFAULT_READING_DIRECTION));
+    }
+
+    public static void putReadingDirection(int value) {
+        putIntToStr(KEY_READING_DIRECTION, value);
+    }
+
+    private static final String KEY_SHOW_CLOCK = "gallery_show_clock";
+    private static final boolean DEFAULT_SHOW_CLOCK = true;
+
+    public static boolean getShowClock() {
+        return getBoolean(KEY_SHOW_CLOCK, DEFAULT_SHOW_CLOCK);
+    }
+
+    public static void putShowClock(boolean value) {
+        putBoolean(KEY_SHOW_CLOCK, value);
+    }
+
+    private static final String KEY_SHOW_BATTERY = "gallery_show_battery";
+    private static final boolean DEFAULT_SHOW_BATTERY = true;
+
+    public static boolean getShowBattery() {
+        return getBoolean(KEY_SHOW_BATTERY, DEFAULT_SHOW_BATTERY);
+    }
+
+    public static void putShowBattery(boolean value) {
+        putBoolean(KEY_SHOW_BATTERY, value);
     }
 
     private static final String KEY_VOLUME_PAGE = "volume_page";
@@ -153,6 +172,10 @@ public class Settings {
 
     public static boolean getVolumePage() {
         return getBoolean(KEY_VOLUME_PAGE, DEFAULT_VOLUME_PAGE);
+    }
+
+    public static void putVolumePage(boolean value) {
+        putBoolean(KEY_VOLUME_PAGE, value);
     }
 
     public static final String KEY_DOWNLOAD_SAVE_SCHEME = "image_scheme";

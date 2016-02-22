@@ -19,6 +19,50 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="@dimen/keyline_margin"
+    android:divider="@drawable/spacer_keyline"
+    android:showDividers="middle">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:text="@string/settings_read_reading_direction_title"
+            android:textColor="@color/primary_text_dark"/>
+
+        <Spinner
+            android:id="@+id/reading_direction"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_gravity="center_vertical"
+            android:entries="@array/reading_direction_entries"/>
+
+    </LinearLayout>
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/show_clock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_read_show_clock_title"/>
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/show_battery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_read_show_battery_title"/>
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/volume_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_read_volume_page_title"/>
 
 </LinearLayout>

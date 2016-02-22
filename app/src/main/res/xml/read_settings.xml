@@ -29,6 +29,20 @@
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"
         android:widgetLayout="@layout/preference_widget_fixed_switch"
+        android:key="gallery_show_clock"
+        android:title="@string/settings_read_show_clock_title"
+        android:defaultValue="true" />
+
+    <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
+        android:widgetLayout="@layout/preference_widget_fixed_switch"
+        android:key="gallery_show_battery"
+        android:title="@string/settings_read_show_battery_title"
+        android:defaultValue="true" />
+
+    <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
+        android:widgetLayout="@layout/preference_widget_fixed_switch"
         android:key="volume_page"
         android:title="@string/settings_read_volume_page_title"
         android:defaultValue="false"/>

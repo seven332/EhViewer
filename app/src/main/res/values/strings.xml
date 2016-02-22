@@ -230,6 +230,8 @@
     <string name="settings_read_reading_direction_left_to_right">Left to right</string>
     <string name="settings_read_reading_direction_right_to_Left">Right to left</string>
     <string name="settings_read_reading_direction_top_to_bottom">Top to bottom</string>
+    <string name="settings_read_show_clock_title">Show clock</string>
+    <string name="settings_read_show_battery_title">Show battery</string>
     <string name="settings_read_volume_page_title">Use volume key to turn pages</string>
 
     <!-- Progress Scene -->

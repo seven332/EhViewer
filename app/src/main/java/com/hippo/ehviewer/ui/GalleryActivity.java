@@ -26,8 +26,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.hippo.anani.AnimationUtils;
@@ -81,6 +83,10 @@ public class GalleryActivity extends AppCompatActivity
     private SystemUiHelper mSystemUiHelper;
     private boolean mSystemUiShowing = false;
 
+    @Nullable
+    private View mClock;
+    @Nullable
+    private View mBattery;
     @Nullable
     private View mSliderPanel;
     @Nullable
@@ -199,6 +205,16 @@ public class GalleryActivity extends AppCompatActivity
         } else {
             mSystemUiHelper.show();
             mSystemUiShowing = true;
+        }
+
+        mClock = findViewById(R.id.clock);
+        mBattery = findViewById(R.id.battery);
+
+        if (mClock != null && !Settings.getShowClock()) {
+            mClock.setVisibility(View.GONE);
+        }
+        if (mBattery != null && !Settings.getShowBattery()) {
+            mBattery.setVisibility(View.GONE);
         }
 
         mSliderPanel = findViewById(R.id.slider_panel);
@@ -481,6 +497,56 @@ public class GalleryActivity extends AppCompatActivity
         SimpleHandler.getInstance().post(task);
     }
 
+    private class GalleryMenuHelper implements DialogInterface.OnClickListener {
+
+        private final View mView;
+        private final Spinner mReadingDirection;
+        private final SwitchCompat mShowClock;
+        private final SwitchCompat mShowBattery;
+        private final SwitchCompat mVolumePage;
+
+        @SuppressLint("InflateParams")
+        public GalleryMenuHelper() {
+            mView = getLayoutInflater().inflate(R.layout.dialog_gallery_menu, null);
+            mReadingDirection = (Spinner) mView.findViewById(R.id.reading_direction);
+            mShowClock = (SwitchCompat) mView.findViewById(R.id.show_clock);
+            mShowBattery = (SwitchCompat) mView.findViewById(R.id.show_battery);
+            mVolumePage = (SwitchCompat) mView.findViewById(R.id.volume_page);
+
+            mReadingDirection.setSelection(Settings.getReadingDirection());
+            mShowClock.setChecked(Settings.getShowClock());
+            mShowBattery.setChecked(Settings.getShowBattery());
+            mVolumePage.setChecked(Settings.getVolumePage());
+        }
+
+        public View getView() {
+            return mView;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            int layoutMode = GalleryView.sanitizeLayoutMode(mReadingDirection.getSelectedItemPosition());
+            boolean showClock = mShowClock.isChecked();
+            boolean showBattery = mShowBattery.isChecked();
+            boolean volumePage = mVolumePage.isChecked();
+
+            Settings.putReadingDirection(layoutMode);
+            Settings.putShowClock(showClock);
+            Settings.putShowBattery(showBattery);
+            Settings.putVolumePage(volumePage);
+
+            if (mGalleryView != null) {
+                mGalleryView.setLayoutMode(layoutMode);
+            }
+            if (mClock != null) {
+                mClock.setVisibility(showClock ? View.VISIBLE : View.GONE);
+            }
+            if (mBattery != null) {
+                mBattery.setVisibility(showBattery ? View.VISIBLE : View.GONE);
+            }
+        }
+    }
+
     private class NotifyTask implements Runnable {
 
         public static final int KEY_LAYOUT_MODE = 0;
@@ -499,8 +565,11 @@ public class GalleryActivity extends AppCompatActivity
         }
 
         private void onTapMenuArea() {
+            GalleryMenuHelper helper = new GalleryMenuHelper();
             new AlertDialog.Builder(GalleryActivity.this)
-                    .setTitle(R.string.gallery_menu_title).show();
+                    .setTitle(R.string.gallery_menu_title)
+                    .setView(helper.getView())
+                    .setPositiveButton(android.R.string.ok, helper).show();
         }
 
         private void onTapSliderArea() {

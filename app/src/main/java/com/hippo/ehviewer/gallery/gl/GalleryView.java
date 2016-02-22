@@ -247,6 +247,17 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mPageTextTexture = null;
     }
 
+    @LayoutMode
+    public static int sanitizeLayoutMode(int layoutMode) {
+        if (layoutMode != GalleryView.LAYOUT_MODE_LEFT_TO_RIGHT &&
+                layoutMode != GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT &&
+                layoutMode != GalleryView.LAYOUT_MODE_TOP_TO_BOTTOM) {
+            return GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT;
+        } else {
+            return layoutMode;
+        }
+    }
+
     public int getLayoutMode() {
         return mLayoutMode;
     }
