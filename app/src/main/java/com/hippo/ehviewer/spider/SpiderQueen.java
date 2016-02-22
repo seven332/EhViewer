@@ -108,7 +108,7 @@ public class SpiderQueen implements Runnable {
             "/509s.gif"
     };
 
-    private static SparseArray<SpiderQueen> sQueenMap = new SparseArray<>();
+    private static final SparseArray<SpiderQueen> sQueenMap = new SparseArray<>();
 
     private final OkHttpClient mHttpClient;
     private final GalleryInfo mGalleryInfo;
@@ -123,7 +123,7 @@ public class SpiderQueen implements Runnable {
     @Nullable
     private volatile Thread mQueenThread;
     private final Object mQueenLock = new Object();
-    private ThreadFactory mThreadFactory = new PriorityThreadFactory(
+    private final ThreadFactory mThreadFactory = new PriorityThreadFactory(
             SpiderWorker.class.getSimpleName(), Process.THREAD_PRIORITY_BACKGROUND);
 
     @Nullable
@@ -135,7 +135,7 @@ public class SpiderQueen implements Runnable {
 
     private final Object mPTokenLock = new Object();
     private volatile SpiderInfo mSpiderInfo;
-    private Queue<Integer> mRequestPTokenQueue = new LinkedList<>();
+    private final Queue<Integer> mRequestPTokenQueue = new LinkedList<>();
 
     private final Object mPageStateLock = new Object();
     private volatile int[] mPageStateArray;
@@ -151,13 +151,13 @@ public class SpiderQueen implements Runnable {
 
     private final Set<Integer> mRequestPreviewPageSet = new HashSet<>();
 
-    private AtomicInteger mDownloadedPages = new AtomicInteger(0);
-    private AtomicInteger mFinishedPages = new AtomicInteger(0);
+    private final AtomicInteger mDownloadedPages = new AtomicInteger(0);
+    private final AtomicInteger mFinishedPages = new AtomicInteger(0);
 
     // Store page error
-    private ConcurrentHashMap<Integer, String> mPageErrorMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, String> mPageErrorMap = new ConcurrentHashMap<>();
     // Store page download percent
-    private ConcurrentHashMap<Integer, Float> mPagePercentMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, Float> mPagePercentMap = new ConcurrentHashMap<>();
 
     private final List<OnSpiderListener> mSpiderListeners = new ArrayList<>();
 
@@ -786,7 +786,7 @@ public class SpiderQueen implements Runnable {
         }
 
         // false for stop
-        private boolean downloadImage(int gid, int index, String pToken) {
+        private boolean downloadImage(int gid, int index, String pToken, boolean force) {
             String skipHathKey = null;
             String imageUrl;
             String error = null;
@@ -818,6 +818,11 @@ public class SpiderQueen implements Runnable {
 
                 imageUrl = result.imageUrl;
                 skipHathKey = result.skipHathKey;
+
+                // If it is force request, skip first image
+                if (force && i == 0) {
+                    continue;
+                }
 
                 Log.d(TAG, imageUrl);
 
@@ -990,7 +995,7 @@ public class SpiderQueen implements Runnable {
             }
 
             // Get image url
-            return downloadImage(mGid, index, pToken);
+            return downloadImage(mGid, index, pToken, force);
         }
 
         @Override
