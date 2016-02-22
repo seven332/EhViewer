@@ -18,6 +18,7 @@ package com.hippo.ehviewer.gallery.gl;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.view.MotionEvent;
@@ -100,7 +101,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private static final int METHOD_SET_LAYOUT_MODE = 13;
 
     private final Context mContext;
-    private final MovableTextTexture mPageTextTexture;
+    private MovableTextTexture mPageTextTexture;
     private final GestureRecognizer mGestureRecognizer;
     private Adapter mAdapter;
 
@@ -150,10 +151,9 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private final List<Object[]> mArgsListTemp = new ArrayList<>(5);
 
     public GalleryView(@NonNull Context context, @NonNull Adapter adapter,
-            MovableTextTexture pageTextTexture, ActionListener listener, @LayoutMode int layoutMode) {
+            ActionListener listener, @LayoutMode int layoutMode) {
         mContext = context;
         mAdapter = adapter;
-        mPageTextTexture = pageTextTexture;
         mListener = listener;
         mEdgeView = new GLEdgeView(context);
         mGestureRecognizer = new GestureRecognizer(context, this);
@@ -190,6 +190,11 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         super.onAttachToRoot(root);
         mEdgeView.onAttachToRoot(root);
 
+        mPageTextTexture = MovableTextTexture.create(Typeface.DEFAULT,
+                mContext.getResources().getDimensionPixelSize(R.dimen.gallery_page_text),
+                mContext.getResources().getColor(R.color.secondary_text_dark),
+                new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
+
         switch (mLayoutMode) {
             case LAYOUT_MODE_LEFT_TO_RIGHT:
                 ensurePagerLayoutManager();
@@ -223,6 +228,9 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
         mAdapter = mLayoutManager.onDetach();
         mLayoutManager = null;
+
+        mPageTextTexture.recycle();
+        mPageTextTexture = null;
     }
 
     @Override

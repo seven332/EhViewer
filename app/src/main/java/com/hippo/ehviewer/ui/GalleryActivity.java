@@ -17,7 +17,6 @@
 package com.hippo.ehviewer.ui;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,7 +36,6 @@ import com.hippo.ehviewer.gallery.ZipGalleryProvider;
 import com.hippo.ehviewer.gallery.gl.GalleryPageView;
 import com.hippo.ehviewer.gallery.gl.GalleryView;
 import com.hippo.gl.glrenderer.ImageTexture;
-import com.hippo.gl.glrenderer.MovableTextTexture;
 import com.hippo.gl.view.GLRootView;
 import com.hippo.image.Image;
 import com.hippo.util.SystemUiHelper;
@@ -64,8 +62,6 @@ public class GalleryActivity extends AppCompatActivity
     @Nullable
     private GalleryView mGalleryView;
 
-    @Nullable
-    private MovableTextTexture mPageTextTexture;
     @Nullable
     private ImageTexture.Uploader mUploader;
     @Nullable
@@ -155,13 +151,9 @@ public class GalleryActivity extends AppCompatActivity
         GLRootView glRootView = (GLRootView) findViewById(R.id.gl_root_view);
         mGalleryProvider.setGLRoot(glRootView);
         mUploader = new ImageTexture.Uploader(glRootView);
-        mPageTextTexture = MovableTextTexture.create(Typeface.DEFAULT,
-                getResources().getDimensionPixelSize(R.dimen.gallery_page_text),
-                getResources().getColor(R.color.secondary_text_dark),
-                new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
 
         mGalleryView = new GalleryView(this, new GalleryAdapter(),
-                mPageTextTexture, null, GalleryView.LAYOUT_MODE_TOP_TO_BOTTOM);
+                null, GalleryView.LAYOUT_MODE_TOP_TO_BOTTOM);
         glRootView.setContentPane(mGalleryView);
 
         // System UI helper
@@ -191,10 +183,6 @@ public class GalleryActivity extends AppCompatActivity
         if (mUploader != null) {
             mUploader.clear();
             mUploader = null;
-        }
-        if (mPageTextTexture != null) {
-            mPageTextTexture.recycle();
-            mPageTextTexture = null;
         }
         if (mGalleryProvider != null) {
             mGalleryProvider.setGalleryProviderListener(null);
