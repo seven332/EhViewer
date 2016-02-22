@@ -544,6 +544,10 @@ public class GalleryActivity extends AppCompatActivity
             if (mBattery != null) {
                 mBattery.setVisibility(showBattery ? View.VISIBLE : View.GONE);
             }
+
+            // Update slider
+            mLayoutMode = layoutMode;
+            updateSlider();
         }
     }
 
