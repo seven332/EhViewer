@@ -39,7 +39,7 @@ public class CookieDBStore implements CookieJar {
         return cookie.expiresAt() < System.currentTimeMillis();
     }
 
-    public boolean domainMatch(Cookie cookie, String urlHost) {
+    private static boolean domainMatch(Cookie cookie, String urlHost) {
         return cookie.hostOnly()
                 ? urlHost.equals(cookie.domain())
                 : domainMatch(urlHost, cookie.domain());
@@ -76,7 +76,7 @@ public class CookieDBStore implements CookieJar {
         return false;
     }
 
-    public boolean contain(String host, String name) {
+    public synchronized boolean contain(String host, String name) {
         for (String key : map.keySet()) {
             if (domainMatch(host, key)) {
                 List<CookieWithID> cookies = map.get(key);
@@ -116,7 +116,7 @@ public class CookieDBStore implements CookieJar {
         }
     }
 
-    public void remove(String host) {
+    public synchronized void remove(String host) {
         for (String key : map.keySet()) {
             if (domainMatch(host, key)) {
                 List<CookieWithID> cookies = map.get(key);
@@ -127,7 +127,7 @@ public class CookieDBStore implements CookieJar {
     }
 
 
-    public void add(Cookie cookie) {
+    public synchronized void add(Cookie cookie) {
         String domain = cookie.domain();
 
         // Check expired
@@ -172,7 +172,7 @@ public class CookieDBStore implements CookieJar {
         }
     }
 
-    public List<Cookie> get(HttpUrl url) {
+    public synchronized List<Cookie> get(HttpUrl url) {
         List<Cookie> result = new ArrayList<>();
 
         String host = url.host();
