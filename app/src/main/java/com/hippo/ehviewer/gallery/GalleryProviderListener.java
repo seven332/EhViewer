@@ -22,6 +22,8 @@ public interface GalleryProviderListener {
 
     void onDataChanged();
 
+    void onPageWait(int index);
+
     void onPagePercent(int index, float percent);
 
     void onPageSucceed(int index, Image image);

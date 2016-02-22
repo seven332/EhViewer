@@ -53,6 +53,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
     private int mDeltaY;
     private int mFirstShownLoadedPageIndex = GalleryPageView.INVALID_INDEX;
     private boolean mScrollUp;
+    private boolean mStopAnimationFinger;
 
     private final int mInterval;
 
@@ -61,12 +62,8 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
     // Current index
     private int mIndex;
 
-    private final BottomState mBottomState = new BottomState();
-
-    class BottomState {
-        int bottom;
-        boolean hasNext;
-    }
+    private int mBottomStateBottom;
+    private boolean mBottomStateHasNext;
 
     public ScrollLayoutManager(Context context, @NonNull GalleryView galleryView) {
         super(galleryView);
@@ -81,10 +78,14 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         mDeltaY = 0;
         mFirstShownLoadedPageIndex = GalleryPageView.INVALID_INDEX;
         mScrollUp = false;
+        mStopAnimationFinger = false;
     }
 
-    private void cancelAllAnimations() {
+    // Return true for animations are running
+    private boolean cancelAllAnimations() {
+        boolean running = mPageFling.isRunning();
         mPageFling.cancel();
+        return running;
     }
 
     @Override
@@ -415,8 +416,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         mDeltaX = 0;
         mDeltaY = 0;
         mScrollUp = false;
-
-        cancelAllAnimations();
+        mStopAnimationFinger = cancelAllAnimations();
     }
 
     @Override
@@ -426,6 +426,11 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
     @Override
     public void onDoubleTapConfirmed(float x, float y) {
+
+    }
+
+    @Override
+    public void onLongPress(float x, float y) {
 
     }
 
@@ -475,9 +480,8 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         }
         boolean hasNext = mIndex + pages.size() < mAdapter.size();
 
-        BottomState bottomState = mBottomState;
-        bottomState.bottom = bottom;
-        bottomState.hasNext = hasNext;
+        mBottomStateBottom = bottom;
+        mBottomStateHasNext = hasNext;
     }
 
     // True for get top or bottom
@@ -529,9 +533,8 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
                 }
             } else { // Try to show bottom
                 getBottomState();
-                BottomState bottomState = mBottomState;
-                int bottom = bottomState.bottom;
-                boolean hasNext = bottomState.hasNext;
+                int bottom = mBottomStateBottom;
+                boolean hasNext = mBottomStateHasNext;
 
                 int limit;
                 if (hasNext) {
@@ -600,12 +603,13 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         }
 
         getBottomState();
-        BottomState bottomState = mBottomState;
+        int bottom = mBottomStateBottom;
+        boolean hasNext = mBottomStateHasNext;
         int minY;
-        if (bottomState.hasNext) {
+        if (hasNext) {
             minY = Integer.MIN_VALUE;
         } else {
-            minY = mGalleryView.getHeight() - bottomState.bottom;
+            minY = mGalleryView.getHeight() - bottom;
         }
 
         mPageFling.startFling((int) velocityX, 0, 0,
@@ -645,24 +649,66 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
     @Override
     public void onPageLeft() {
-        /*
         int size = mAdapter.size();
         if (size <= 0 || mPages.isEmpty()) {
             return;
         }
-        */
-        // TODO
+
+        GalleryView galleryView = mGalleryView;
+        if (mIndex == 0 && mOffset >= 0) {
+            GLEdgeView edgeView = galleryView.getEdgeView();
+            edgeView.onPull(galleryView.getHeight(),
+                    galleryView.getWidth() / 2, GLEdgeView.TOP);
+            edgeView.onRelease(GLEdgeView.TOP);
+        } else {
+            // Cancel all animations
+            cancelAllAnimations();
+            mOffset += galleryView.getHeight() / 2;
+            // Backup offset
+            int offset = mOffset;
+            // Reset parameters
+            resetParameters();
+            // Restore offset
+            mOffset = offset;
+            // Request fill
+            mGalleryView.requestFill();
+        }
     }
 
     @Override
     public void onPageRight() {
-        /*
         int size = mAdapter.size();
         if (size <= 0 || mPages.isEmpty()) {
             return;
         }
-        */
-        // TODO
+
+        GalleryView galleryView = mGalleryView;
+        getBottomState();
+        int bottom = mBottomStateBottom;
+        boolean hasNext = mBottomStateHasNext;
+        if (!hasNext && bottom <= galleryView.getHeight()) {
+            GLEdgeView edgeView = galleryView.getEdgeView();
+            edgeView.onPull(galleryView.getHeight(),
+                    galleryView.getWidth() / 2, GLEdgeView.BOTTOM);
+            edgeView.onRelease(GLEdgeView.BOTTOM);
+        } else {
+            // Cancel all animations
+            cancelAllAnimations();
+            mOffset -= galleryView.getHeight() / 2;
+            // Backup offset
+            int offset = mOffset;
+            // Reset parameters
+            resetParameters();
+            // Restore offset
+            mOffset = offset;
+            // Request fill
+            mGalleryView.requestFill();
+        }
+    }
+
+    @Override
+    public boolean isTapOrPressEnable() {
+        return !mStopAnimationFinger;
     }
 
     @Override
@@ -736,6 +782,22 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
                 // Request fill
                 mGalleryView.requestFill();
             }
+        }
+    }
+
+    @Override
+    public int getIndexUnder(float x, float y) {
+        if (mPages.isEmpty()) {
+            return GalleryPageView.INVALID_INDEX;
+        } else {
+            int intX = (int) x;
+            int intY = (int) y;
+            for (GalleryPageView page : mPages) {
+                if (page.bounds().contains(intX, intY)) {
+                    return page.getIndex();
+                }
+            }
+            return GalleryPageView.INVALID_INDEX;
         }
     }
 
@@ -819,8 +881,9 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             boolean topEdge = index <= 0 && mOffset >= 0;
 
             getBottomState();
-            BottomState bottomState = mBottomState;
-            boolean bottomEdge = !bottomState.hasNext && bottomState.bottom <= mGalleryView.getHeight();
+            int bottom = mBottomStateBottom;
+            boolean hasNext = mBottomStateHasNext;
+            boolean bottomEdge = !hasNext && bottom <= mGalleryView.getHeight();
 
             if (topEdge && bottomEdge) {
                 return;

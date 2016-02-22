@@ -86,6 +86,7 @@ public class ZipGalleryProvider extends GalleryProvider implements Runnable {
             mRequests.add(index);
             mRequests.notify();
         }
+        notifyPageWait(index);
     }
 
     @Override

@@ -35,5 +35,12 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+    
+    <string-array name="page_menu_entries">
+        <item>@string/page_menu_refresh</item>
+        <item>@string/page_menu_share</item>
+        <item>@string/page_menu_save</item>
+        <item>@string/page_menu_add_bookmark</item>
+    </string-array>
 
 </resources>

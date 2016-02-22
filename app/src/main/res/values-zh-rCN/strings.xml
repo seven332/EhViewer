@@ -172,6 +172,14 @@
     <string name="gallery_previews">画廊预览</string>
     <string name="go_to">跳页</string>
 
+    <!-- Gallery Activity -->
+    <string name="page_menu_title">第 %d 页</string>
+    <string name="page_menu_refresh">@string/refresh</string>
+    <string name="page_menu_share">@string/share</string>
+    <string name="page_menu_save">保存</string>
+    <string name="page_menu_add_bookmark">添加书签</string>
+    <string name="gallery_menu_title">菜单</string>
+
     <!-- Settings -->
     <string name="settings_eh_title">EH</string>
     <string name="settings_eh_show_jpn_title_title">显示日文标题</string>
@@ -179,6 +187,10 @@
     <string name="settings_eh_show_jpn_title_summary_off">显示默认标题。一般是英文标题</string>
 
     <string name="settings_read_title">阅读</string>
+    <string name="settings_read_reading_direction_title">阅读方向</string>
+    <string name="settings_read_reading_direction_left_to_right">从左至右</string>
+    <string name="settings_read_reading_direction_right_to_Left">从右至左</string>
+    <string name="settings_read_reading_direction_top_to_bottom">从上至下</string>
     <string name="settings_read_volume_page_title">使用音量键翻页</string>
 
     <!-- Progress Scene -->

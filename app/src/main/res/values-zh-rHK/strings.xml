@@ -42,6 +42,19 @@
     <string name="error_unknown">奇怪的錯誤</string>
     <string name="error_cant_find_activity">找不到相應的應用</string>
     <string name="error_cannot_parse_the_url">無法解析鏈接</string>
+    <string name="error_not_folder_path">非文件夾路徑</string>
+    <string name="error_no_provider">無 provider</string>
+    <string name="error_decoding_failed">解碼失敗</string>
+    <string name="error_not_found">未找到</string>
+    <string name="error_empty">空</string>
+    <string name="error_invalid_zip_file">無效 zip 文件</string>
+    <string name="error_reading_failed">讀取失敗</string>
+    <string name="error_out_of_range">越界</string>
+    <string name="error_write_failed">寫入失敗</string>
+    <string name="error_parse_error">解析失敗</string>
+    <string name="error_509">509</string>
+    <string name="error_invalid_url">無效鏈接</string>
+    <string name="error_get_ptoken_error">獲取 pToken 錯誤</string>
 
     <string name="app_waring">本應用中內容來自互聯網，部分內容可能對您的生理及心理造成難以恢復的傷害。本應用作者不會對由本應用造成的後果負責。您是否願意繼續使用該應用？</string>
     <string name="error_username_cannot_empty">用户名不可為空</string>
@@ -50,6 +63,8 @@
     <string name="skip_signing_in_plain">登陸失敗。這可能是網站更新導致的。你願意跳過登陸麼？</string>
     <string name="press_twice_exit">再按一次退出</string>
     <string name="content_layout_restore_tip">點擊重試</string>
+    <string name="write_rationale">EhViewer 將申請設備存儲空間訪問權限以便下載畫廊。你願意授權嗎？</string>
+    <string name="you_rejected_me">好痛</string>
 
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint">搜索 ExHentai</string>
@@ -63,6 +78,7 @@
     <string name="search_normal_search">一般搜索</string>
     <string name="search_specify_uploader">指定上傳者</string>
     <string name="search_specify_tag">指定標籤</string>
+    <string name="search_specify_gallery">指定畫廊</string>
     <string name="search_enable_advance">啟用高級選項</string>
 
     <string name="search_sname">搜索畫廊</string>
@@ -73,7 +89,7 @@
     <string name="search_sdt1">搜索低願力標籤</string>
     <string name="search_sdt2">搜索差評標籤</string>
     <string name="search_sh">顯示被刪除的畫廊</string>
-    <string name="search_sr">最小評分：</string>
+    <string name="search_sr">最低評分：</string>
 
     <!-- search_min_rating -->
     <string name="star_2">2 星</string>
@@ -140,11 +156,11 @@
     <string name="key_size">大小</string>
     <string name="key_resize">壓縮情況</string>
     <string name="key_favourites">收藏次數</string>
-    <string name="key_favourited">是否被收藏</string>
+    <string name="key_favourited">收藏</string>
     <string name="key_rates">評價次數</string>
     <string name="key_rating">評分</string>
     <string name="key_torrents">種子個數</string>
-    <string name="key_torrent_url">種子頁面鏈接</string>
+    <string name="key_torrent_url">種子</string>
 
     <!-- Gallery Comments -->
     <string name="gallery_comments">畫廊評論</string>
@@ -155,13 +171,27 @@
     <!-- Gallery Previews -->
     <string name="gallery_previews">畫廊預覽</string>
     <string name="go_to">跳頁</string>
-    <string name="error_out_of_range">越界</string>
+
+    <!-- Gallery Activity -->
+    <string name="page_menu_title">第 %d 頁</string>
+    <string name="page_menu_refresh">@string/refresh</string>
+    <string name="page_menu_share">@string/share</string>
+    <string name="page_menu_save">保存</string>
+    <string name="page_menu_add_bookmark">添加書籤</string>
+    <string name="gallery_menu_title">菜單</string>
 
     <!-- Settings -->
     <string name="settings_eh_title">EH</string>
     <string name="settings_eh_show_jpn_title_title">顯示日文標題</string>
     <string name="settings_eh_show_jpn_title_summary_on">嘗試顯示日文標題。這會使獲取畫廊列表花費更多時間</string>
     <string name="settings_eh_show_jpn_title_summary_off">顯示默認標題。一般是英文標題</string>
+
+    <string name="settings_read_title">閲讀</string>
+    <string name="settings_read_reading_direction_title">閲讀方向</string>
+    <string name="settings_read_reading_direction_left_to_right">從左至右</string>
+    <string name="settings_read_reading_direction_right_to_Left">從右至左</string>
+    <string name="settings_read_reading_direction_top_to_bottom">從上至下</string>
+    <string name="settings_read_volume_page_title">使用音量鍵翻頁</string>
 
     <!-- Progress Scene -->
     <string name="error_something_wrong_happened">被玩壞了</string>

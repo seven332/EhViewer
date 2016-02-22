@@ -91,17 +91,20 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private static final int METHOD_ON_SINGLE_TAP_CONFIRMED = 1;
     private static final int METHOD_ON_DOUBLE_TAP = 2;
     private static final int METHOD_ON_DOUBLE_TAP_CONFIRMED = 3;
-    private static final int METHOD_ON_SCROLL = 4;
-    private static final int METHOD_ON_FLING = 5;
-    private static final int METHOD_ON_SCALE_BEGIN = 6;
-    private static final int METHOD_ON_SCALE = 7;
-    private static final int METHOD_ON_SCALE_END = 8;
-    private static final int METHOD_ON_DOWN = 9;
-    private static final int METHOD_ON_UP = 10;
-    private static final int METHOD_ON_POINTER_DOWN = 11;
-    private static final int METHOD_ON_POINTER_UP = 12;
-    private static final int METHOD_SET_LAYOUT_MODE = 13;
-    private static final int METHOD_CURRENT_PAGE = 14;
+    private static final int METHOD_ON_LONG_PRESS = 4;
+    private static final int METHOD_ON_SCROLL = 5;
+    private static final int METHOD_ON_FLING = 6;
+    private static final int METHOD_ON_SCALE_BEGIN = 7;
+    private static final int METHOD_ON_SCALE = 8;
+    private static final int METHOD_ON_SCALE_END = 9;
+    private static final int METHOD_ON_DOWN = 10;
+    private static final int METHOD_ON_UP = 11;
+    private static final int METHOD_ON_POINTER_DOWN = 12;
+    private static final int METHOD_ON_POINTER_UP = 13;
+    private static final int METHOD_SET_LAYOUT_MODE = 14;
+    private static final int METHOD_SET_CURRENT_PAGE = 15;
+    private static final int METHOD_PAGE_LEFT = 16;
+    private static final int METHOD_PAGE_RIGHT = 17;
 
     private final Context mContext;
     private MovableTextTexture mPageTextTexture;
@@ -305,7 +308,15 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     public void setCurrentPage(int page) {
-        postMethod(METHOD_CURRENT_PAGE, page);
+        postMethod(METHOD_SET_CURRENT_PAGE, page);
+    }
+
+    public void pageLeft() {
+        postMethod(METHOD_PAGE_LEFT);
+    }
+
+    public void pageRight() {
+        postMethod(METHOD_PAGE_RIGHT);
     }
 
     @Override
@@ -316,13 +327,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @Override
     public boolean onSingleTapConfirmed(float x, float y) {
-        if (mSliderArea.contains((int) x, (int) y)) {
-            mListener.onTapSliderArea();
-        } else if (mMenuArea.contains((int) x, (int) y)) {
-            mListener.onTapMenuArea();
-        } else {
-            postMethod(METHOD_ON_SINGLE_TAP_CONFIRMED, x, y);
-        }
+        postMethod(METHOD_ON_SINGLE_TAP_CONFIRMED, x, y);
         return true;
     }
 
@@ -336,6 +341,15 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     public boolean onDoubleTapConfirmed(float x, float y) {
         postMethod(METHOD_ON_DOUBLE_TAP_CONFIRMED, x, y);
         return true;
+    }
+
+    @Override
+    public void onLongPress(float x, float y) {
+        if (mLayoutManager != null && !mLayoutManager.isTapOrPressEnable()) {
+            return;
+        }
+
+        postMethod(METHOD_ON_LONG_PRESS, x, y);
     }
 
     @Override
@@ -420,11 +434,15 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     private void onSingleTapConfirmedInternal(float x, float y) {
-        if (mLayoutManager == null) {
+        if (mLayoutManager == null || !mLayoutManager.isTapOrPressEnable()) {
             return;
         }
 
-        if (mLeftArea.contains((int) x, (int) y)) {
+        if (mSliderArea.contains((int) x, (int) y)) {
+            mListener.onTapSliderArea();
+        } else if (mMenuArea.contains((int) x, (int) y)) {
+            mListener.onTapMenuArea();
+        } else if (mLeftArea.contains((int) x, (int) y)) {
             mLayoutManager.onPageLeft();
         } else if (mRightArea.contains((int) x, (int) y)) {
             mLayoutManager.onPageRight();
@@ -442,6 +460,19 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         if (mLayoutManager != null) {
             mLayoutManager.onDoubleTapConfirmed(x, y);
         }
+    }
+
+    private void onLongPressInternal(float x, float y) {
+        if (mLayoutManager == null) {
+            return;
+        }
+
+        int index = mLayoutManager.getIndexUnder(x, y);
+        if (index == GalleryPageView.INVALID_INDEX) {
+            return;
+        }
+
+        mListener.onLongPressPage(index);
     }
 
     private void onScrollInternal(float dx, float dy, float totalX, float totalY, float x, float y) {
@@ -562,6 +593,18 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         }
     }
 
+    private void pageLeftInternal() {
+        if (mLayoutManager != null) {
+            mLayoutManager.onPageLeft();
+        }
+    }
+
+    private void pageRightInternal() {
+        if (mLayoutManager != null) {
+            mLayoutManager.onPageRight();
+        }
+    }
+
     @RenderThread
     void forceFill() {
         mRequestFill = true;
@@ -617,6 +660,9 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                 case METHOD_ON_DOUBLE_TAP_CONFIRMED:
                     onDoubleTapConfirmedInternal((Float) args[0], (Float) args[1]);
                     break;
+                case METHOD_ON_LONG_PRESS:
+                    onLongPressInternal((Float) args[0], (Float) args[1]);
+                    break;
                 case METHOD_ON_SCROLL:
                     onScrollInternal((Float) args[0], (Float) args[1], (Float) args[2],
                             (Float) args[3], (Float) args[4], (Float) args[5]);
@@ -648,8 +694,15 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                 case METHOD_SET_LAYOUT_MODE:
                     setLayoutModeInternal((Integer) args[0]);
                     break;
-                case METHOD_CURRENT_PAGE:
+                case METHOD_SET_CURRENT_PAGE:
                     setCurrentPageInternal((Integer) args[0]);
+                    break;
+                case METHOD_PAGE_LEFT:
+                    pageLeftInternal();
+                    break;
+                case METHOD_PAGE_RIGHT:
+                    pageRightInternal();
+                    break;
             }
         }
 
@@ -820,6 +873,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
         public abstract void onDoubleTapConfirmed(float x, float y);
 
+        public abstract void onLongPress(float x, float y);
+
         public abstract void onScroll(float dx, float dy, float totalX, float totalY, float x, float y);
 
         public abstract void onFling(float velocityX, float velocityY);
@@ -836,6 +891,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
         public abstract void onPageRight();
 
+        public abstract boolean isTapOrPressEnable();
+
         public abstract GalleryPageView findPageByIndex(int index);
 
         /**
@@ -844,6 +901,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         public abstract int getCurrentIndex();
 
         public abstract void setCurrentIndex(int index);
+
+        public abstract int getIndexUnder(float x, float y);
 
         abstract int getInternalCurrentIndex();
 
@@ -861,10 +920,16 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     public interface Listener {
 
+        @RenderThread
         void onUpdateCurrentIndex(int index);
 
+        @RenderThread
         void onTapSliderArea();
 
+        @RenderThread
         void onTapMenuArea();
+
+        @RenderThread
+        void onLongPressPage(int index);
     }
 }

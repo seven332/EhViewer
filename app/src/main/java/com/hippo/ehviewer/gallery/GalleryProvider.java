@@ -74,6 +74,10 @@ public abstract class GalleryProvider {
 
     public abstract void request(int index);
 
+    public void forceRequest(int index) {
+        request(index);
+    }
+
     public abstract String getError();
 
     public void setGalleryProviderListener(GalleryProviderListener listener) {
@@ -86,6 +90,10 @@ public abstract class GalleryProvider {
 
     public void notifyDataChanged(int index) {
         notify(NotifyTask.TYPE_DATA_CHANGED, index, 0.0f, null, null);
+    }
+
+    public void notifyPageWait(int index) {
+        notify(NotifyTask.TYPE_WAIT, index, 0.0f, null, null);
     }
 
     public void notifyPagePercent(int index, float percent) {
@@ -121,14 +129,15 @@ public abstract class GalleryProvider {
 
     private static class NotifyTask implements GLRoot.OnGLIdleListener {
 
-        @IntDef({TYPE_DATA_CHANGED, TYPE_PERCENT, TYPE_SUCCEED, TYPE_FAILED})
+        @IntDef({TYPE_DATA_CHANGED, NotifyTask.TYPE_WAIT, TYPE_PERCENT, TYPE_SUCCEED, TYPE_FAILED})
         @Retention(RetentionPolicy.SOURCE)
         public @interface Type {}
 
         public static final int TYPE_DATA_CHANGED = 0;
-        public static final int TYPE_PERCENT = 1;
-        public static final int TYPE_SUCCEED = 2;
-        public static final int TYPE_FAILED = 3;
+        public static final int TYPE_WAIT = 1;
+        public static final int TYPE_PERCENT = 2;
+        public static final int TYPE_SUCCEED = 3;
+        public static final int TYPE_FAILED = 4;
 
         private final GalleryProviderListener mGalleryProviderListener;
         private final ConcurrentPool<NotifyTask> mPool;
@@ -162,6 +171,9 @@ public abstract class GalleryProvider {
                     } else {
                         mGalleryProviderListener.onDataChanged(mIndex);
                     }
+                    break;
+                case TYPE_WAIT:
+                    mGalleryProviderListener.onPageWait(mIndex);
                     break;
                 case TYPE_PERCENT:
                     mGalleryProviderListener.onPagePercent(mIndex, mPercent);

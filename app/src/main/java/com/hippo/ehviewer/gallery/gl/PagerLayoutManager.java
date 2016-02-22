@@ -72,6 +72,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     private int mDeltaX;
     private int mDeltaY;
     private boolean mCanScrollBetweenPages = false;
+    private boolean mStopAnimationFinger;
 
     private final int mInterval;
 
@@ -99,12 +100,17 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         mDeltaX = 0;
         mDeltaY = 0;
         mCanScrollBetweenPages = false;
+        mStopAnimationFinger = false;
     }
 
-    private void cancelAllAnimations() {
+    private boolean cancelAllAnimations() {
+        boolean running = mSmoothScroller.isRunning();
+        running |= mPageFling.isRunning();
+        running |= mSmoothScroller.isRunning();
         mSmoothScroller.cancel();
         mPageFling.cancel();
         mSmoothScaler.cancel();
+        return running;
     }
 
     public void setMode(@Mode int mode) {
@@ -336,8 +342,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     public void onDown() {
         mDeltaX = 0;
         mDeltaY = 0;
-
-        cancelAllAnimations();
+        mStopAnimationFinger = cancelAllAnimations();
     }
 
     @Override
@@ -385,6 +390,11 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         }
 
         mSmoothScaler.startSmoothScaler(x, y, scale, endScale, 300);
+    }
+
+    @Override
+    public void onLongPress(float x, float y) {
+
     }
 
     private void pagePrevious() {
@@ -700,6 +710,11 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     }
 
     @Override
+    public boolean isTapOrPressEnable() {
+        return !mStopAnimationFinger;
+    }
+
+    @Override
     public GalleryPageView findPageByIndex(int index) {
         if (mCurrent != null && mCurrent.getIndex() == index) {
             return mCurrent;
@@ -765,6 +780,25 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
             resetParameters();
             // Request fill
             mGalleryView.requestFill();
+        }
+    }
+
+    @Override
+    public int getIndexUnder(float x, float y) {
+        if (mCurrent == null) {
+            return GalleryPageView.INVALID_INDEX;
+        } else {
+            int intX = (int) x;
+            int intY = (int) y;
+            if (mCurrent.bounds().contains(intX, intY)) {
+                return mCurrent.getIndex();
+            } else if (mPrevious != null && mPrevious.bounds().contains(intX, intY)) {
+                return mPrevious.getIndex();
+            } else if (mNext != null && mNext.bounds().contains(intX, intY)) {
+                return mNext.getIndex();
+            } else {
+                return GalleryPageView.INVALID_INDEX;
+            }
         }
     }
 

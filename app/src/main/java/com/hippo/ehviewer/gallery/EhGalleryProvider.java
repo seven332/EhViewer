@@ -26,8 +26,8 @@ import com.hippo.yorozuya.SimpleHandler;
 
 public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.OnSpiderListener {
 
-    private Context mContext;
-    private GalleryInfo mGalleryInfo;
+    private final Context mContext;
+    private final GalleryInfo mGalleryInfo;
     @Nullable
     private SpiderQueen mSpiderQueen;
 
@@ -79,6 +79,22 @@ public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.On
                 notifyPagePercent(index, (Float) object);
             } else if (object instanceof String) {
                 notifyPageFailed(index, (String) object);
+            } else if (object == null) {
+                notifyPageWait(index);
+            }
+        }
+    }
+
+    @Override
+    public void forceRequest(int index) {
+        if (mSpiderQueen != null) {
+            Object object = mSpiderQueen.forceRequest(index);
+            if (object instanceof Float) {
+                notifyPagePercent(index, (Float) object);
+            } else if (object instanceof String) {
+                notifyPageFailed(index, (String) object);
+            } else if (object == null) {
+                notifyPageWait(index);
             }
         }
     }

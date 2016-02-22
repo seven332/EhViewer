@@ -212,6 +212,14 @@
     <string name="gallery_previews">Gallery Previews</string>
     <string name="go_to">Go to</string>
 
+    <!-- Gallery Activity -->
+    <string name="page_menu_title">Page %d</string>
+    <string name="page_menu_refresh">@string/refresh</string>
+    <string name="page_menu_share">@string/share</string>
+    <string name="page_menu_save">Save</string>
+    <string name="page_menu_add_bookmark">Add a bookmark</string>
+    <string name="gallery_menu_title">Menu</string>
+
     <string name="settings_eh_title">EH</string>
     <string name="settings_eh_show_jpn_title_title">Show Japanese title</string>
     <string name="settings_eh_show_jpn_title_summary_on">Try to show Japanese title. It takes more time to get gallery list</string>

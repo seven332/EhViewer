@@ -34,6 +34,7 @@ public class GestureRecognizer {
         boolean onSingleTapConfirmed(float x, float y);
         boolean onDoubleTap(float x, float y);
         boolean onDoubleTapConfirmed(float x, float y);
+        void onLongPress(float x, float y);
         boolean onScroll(float dx, float dy, float totalX, float totalY, float x, float y);
 
         /**
@@ -108,6 +109,11 @@ public class GestureRecognizer {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
             return mListener.onDoubleTap(e.getX(), e.getY());
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            mListener.onLongPress(e.getX(), e.getY());
         }
 
         @Override

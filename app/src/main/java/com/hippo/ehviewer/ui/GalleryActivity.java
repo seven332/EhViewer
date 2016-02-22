@@ -18,10 +18,13 @@ package com.hippo.ehviewer.ui;
 
 import android.animation.Animator;
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -245,13 +248,25 @@ public class GalleryActivity extends AppCompatActivity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (mGalleryView == null) {
+            return super.onKeyDown(keyCode, event);
+        }
+
         // Check volume
         if (Settings.getVolumePage()) {
-            if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                // TODO do something
+            if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                if (mLayoutMode == GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT) {
+                    mGalleryView.pageRight();
+                } else {
+                    mGalleryView.pageLeft();
+                }
                 return true;
-            } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                // TODO do something
+            } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                if (mLayoutMode == GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT) {
+                    mGalleryView.pageLeft();
+                } else {
+                    mGalleryView.pageRight();
+                }
                 return true;
             }
         }
@@ -259,31 +274,27 @@ public class GalleryActivity extends AppCompatActivity
         // Check keyboard and Dpad
         switch (keyCode) {
             case KeyEvent.KEYCODE_PAGE_UP:
-                // TODO do something
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+            case KeyEvent.KEYCODE_DPAD_UP:
+                if (mLayoutMode == GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT) {
+                    mGalleryView.pageRight();
+                } else {
+                    mGalleryView.pageLeft();
+                }
                 return true;
             case KeyEvent.KEYCODE_PAGE_DOWN:
-                // TODO do something
-                return true;
-            case KeyEvent.KEYCODE_DPAD_LEFT:
-                // TODO do something
-                return true;
-            case KeyEvent.KEYCODE_DPAD_UP:
-                // TODO do something
-                return true;
             case KeyEvent.KEYCODE_DPAD_RIGHT:
-                // TODO do something
-                return true;
             case KeyEvent.KEYCODE_DPAD_DOWN:
-                // TODO do something
+                if (mLayoutMode == GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT) {
+                    mGalleryView.pageLeft();
+                } else {
+                    mGalleryView.pageRight();
+                }
                 return true;
             case KeyEvent.KEYCODE_DPAD_CENTER:
-                // TODO do something
-                return true;
             case KeyEvent.KEYCODE_SPACE:
-                // TODO do something
-                return true;
             case KeyEvent.KEYCODE_MENU:
-                // TODO do something
+                onTapMenuArea();
                 return true;
         }
 
@@ -365,6 +376,18 @@ public class GalleryActivity extends AppCompatActivity
     }
 
     @Override
+    public void onPageWait(int index) {
+        GalleryPageView page = findPageByIndex(index);
+        if (page != null) {
+            page.showInfo();
+            page.setImage(null);
+            page.setPage(index + 1);
+            page.setProgress(GalleryPageView.PROGRESS_INDETERMINATE);
+            page.setError(null, null);
+        }
+    }
+
+    @Override
     public void onPagePercent(int index, float percent) {
         GalleryPageView page = findPageByIndex(index);
         if (page != null) {
@@ -430,28 +453,32 @@ public class GalleryActivity extends AppCompatActivity
 
     @Override
     public void onTapSliderArea() {
-        if (mSliderPanel == null || mSize <= 0 || mCurrentIndex < 0) {
-            return;
+        NotifyTask task = mNotifyTaskPool.pop();
+        if (task == null) {
+            task = new NotifyTask();
         }
-
-        if (mSliderPanel.getVisibility() == View.VISIBLE) {
-            mSliderPanel.animate().translationY(mSliderPanel.getHeight()).setDuration(300)
-                    .setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR)
-                    .setListener(mHideSliderListener).start();
-        } else {
-            mSliderPanel.setTranslationY(mSliderPanel.getHeight());
-            mSliderPanel.setVisibility(View.VISIBLE);
-            mSliderPanel.animate().translationY(0.0f).setDuration(300)
-                    .setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR)
-                    .setListener(null).start();
-            // Request layout ensure show it
-            SimpleHandler.getInstance().post(mRequestLayoutSliderTask);
-        }
+        task.setData(NotifyTask.KEY_TAP_SLIDER_AREA, 0);
+        SimpleHandler.getInstance().post(task);
     }
 
     @Override
     public void onTapMenuArea() {
+        NotifyTask task = mNotifyTaskPool.pop();
+        if (task == null) {
+            task = new NotifyTask();
+        }
+        task.setData(NotifyTask.KEY_TAP_MENU_AREA, 0);
+        SimpleHandler.getInstance().post(task);
+    }
 
+    @Override
+    public void onLongPressPage(int index) {
+        NotifyTask task = mNotifyTaskPool.pop();
+        if (task == null) {
+            task = new NotifyTask();
+        }
+        task.setData(NotifyTask.KEY_LONG_PRESS_PAGE, index);
+        SimpleHandler.getInstance().post(task);
     }
 
     private class NotifyTask implements Runnable {
@@ -459,6 +486,9 @@ public class GalleryActivity extends AppCompatActivity
         public static final int KEY_LAYOUT_MODE = 0;
         public static final int KEY_SIZE = 1;
         public static final int KEY_CURRENT_INDEX = 2;
+        public static final int KEY_TAP_SLIDER_AREA = 3;
+        public static final int KEY_TAP_MENU_AREA = 4;
+        public static final int KEY_LONG_PRESS_PAGE = 5;
 
         private int mKey;
         private int mValue;
@@ -468,20 +498,84 @@ public class GalleryActivity extends AppCompatActivity
             mValue = value;
         }
 
+        private void onTapMenuArea() {
+            new AlertDialog.Builder(GalleryActivity.this)
+                    .setTitle(R.string.gallery_menu_title).show();
+        }
+
+        private void onTapSliderArea() {
+            if (mSliderPanel == null || mSize <= 0 || mCurrentIndex < 0) {
+                return;
+            }
+
+            if (mSliderPanel.getVisibility() == View.VISIBLE) {
+                mSliderPanel.animate().translationY(mSliderPanel.getHeight()).setDuration(150)
+                        .setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR)
+                        .setListener(mHideSliderListener).start();
+            } else {
+                mSliderPanel.setTranslationY(mSliderPanel.getHeight());
+                mSliderPanel.setVisibility(View.VISIBLE);
+                mSliderPanel.animate().translationY(0.0f).setDuration(150)
+                        .setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR)
+                        .setListener(null).start();
+                // Request layout ensure show it
+                SimpleHandler.getInstance().post(mRequestLayoutSliderTask);
+            }
+        }
+
+        private void onLongPressPage(final int index) {
+            Resources resources = GalleryActivity.this.getResources();
+            new AlertDialog.Builder(GalleryActivity.this)
+                    .setTitle(resources.getString(R.string.page_menu_title, index + 1))
+                    .setItems(R.array.page_menu_entries, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (mGalleryProvider == null) {
+                                return;
+                            }
+
+                            switch (which) {
+                                case 0: // Refresh
+                                    mGalleryProvider.forceRequest(index);
+                                    break;
+                                case 1: // Share
+                                    // TODO
+                                    break;
+                                case 2: // Save
+                                    // TODO
+                                    break;
+                                case 3: // Add a bookmark
+                                    break;
+                            }
+                        }
+                    }).show();
+        }
+
         @Override
         public void run() {
             switch (mKey) {
                 case KEY_LAYOUT_MODE:
                     GalleryActivity.this.mLayoutMode = mValue;
+                    updateSlider();
                     break;
                 case KEY_SIZE:
                     GalleryActivity.this.mSize = mValue;
+                    updateSlider();
                     break;
                 case KEY_CURRENT_INDEX:
                     GalleryActivity.this.mCurrentIndex = mValue;
+                    updateSlider();
+                    break;
+                case KEY_TAP_MENU_AREA:
+                    onTapMenuArea();
+                    break;
+                case KEY_TAP_SLIDER_AREA:
+                    onTapSliderArea();
+                    break;
+                case KEY_LONG_PRESS_PAGE:
+                    onLongPressPage(mValue);
                     break;
             }
-            updateSlider();
             mNotifyTaskPool.push(this);
         }
     }

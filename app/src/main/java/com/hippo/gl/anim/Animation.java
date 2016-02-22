@@ -92,7 +92,7 @@ abstract public class Animation {
     }
 
     public boolean isRunning() {
-        return mStartTime > 0;
+        return mStartTime > 0 || mStartTime == ANIMATION_START;
     }
 
     public long getLastFrameTime() {
@@ -119,10 +119,6 @@ abstract public class Animation {
 
     public void setStartTime(long time) {
         mStartTime = time;
-    }
-
-    public boolean isActive() {
-        return mStartTime != NO_ANIMATION;
     }
 
     public void cancel() {
