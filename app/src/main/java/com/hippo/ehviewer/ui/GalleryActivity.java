@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.animation.Animator;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,6 +27,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.hippo.anani.AnimationUtils;
+import com.hippo.anani.SimpleAnimatorListener;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -40,11 +44,14 @@ import com.hippo.gl.view.GLRootView;
 import com.hippo.image.Image;
 import com.hippo.util.SystemUiHelper;
 import com.hippo.widget.Slider;
+import com.hippo.yorozuya.ConcurrentPool;
+import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;
 
 public class GalleryActivity extends AppCompatActivity
-        implements GalleryProviderListener, Slider.OnSetProgressListener {
+        implements GalleryProviderListener, Slider.OnSetProgressListener,
+        GalleryView.Listener {
 
     public static final String ACTION_DIR = "dir";
     public static final String ACTION_ZIP = "zip";
@@ -79,6 +86,30 @@ public class GalleryActivity extends AppCompatActivity
     private TextView mRightText;
     @Nullable
     private Slider mSlider;
+
+    private int mLayoutMode;
+    private int mSize;
+    private int mCurrentIndex;
+
+    private final ConcurrentPool<NotifyTask> mNotifyTaskPool = new ConcurrentPool<>(3);
+
+    private final Runnable mRequestLayoutSliderTask = new Runnable() {
+        @Override
+        public void run() {
+            if (mSliderPanel != null) {
+                mSliderPanel.requestLayout();
+            }
+        }
+    };
+
+    private final SimpleAnimatorListener mHideSliderListener = new SimpleAnimatorListener() {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            if (mSliderPanel != null) {
+                mSliderPanel.setVisibility(View.INVISIBLE);
+            }
+        }
+    };
 
     private void buildProvider() {
         if (mGalleryProvider != null) {
@@ -153,7 +184,7 @@ public class GalleryActivity extends AppCompatActivity
         mUploader = new ImageTexture.Uploader(glRootView);
 
         mGalleryView = new GalleryView(this, new GalleryAdapter(),
-                null, GalleryView.LAYOUT_MODE_TOP_TO_BOTTOM);
+                this, Settings.getReadingDirection());
         glRootView.setContentPane(mGalleryView);
 
         // System UI helper
@@ -167,13 +198,16 @@ public class GalleryActivity extends AppCompatActivity
             mSystemUiShowing = true;
         }
 
-        /*
         mSliderPanel = findViewById(R.id.slider_panel);
         mLeftText = (TextView) mSliderPanel.findViewById(R.id.left);
         mRightText = (TextView) mSliderPanel.findViewById(R.id.right);
         mSlider = (Slider) mSliderPanel.findViewById(R.id.slider);
         mSlider.setOnSetProgressListener(this);
-        */
+
+        mSize = mGalleryProvider.size();
+        mCurrentIndex = mGalleryView.getCurrentIndex();
+        mLayoutMode = mGalleryView.getLayoutMode();
+        updateSlider();
     }
 
     @Override
@@ -190,6 +224,7 @@ public class GalleryActivity extends AppCompatActivity
             mGalleryProvider = null;
         }
 
+        mSliderPanel = null;
         mLeftText = null;
         mRightText = null;
         mSlider = null;
@@ -289,18 +324,27 @@ public class GalleryActivity extends AppCompatActivity
         }
     }
 
-    private void updateSlider(int size) {
-        if (mSlider == null) {
+    @SuppressLint("SetTextI18n")
+    private void updateSlider() {
+        if (mSlider == null || mRightText == null || mLeftText == null || mSize <= 0 || mCurrentIndex < 0) {
             return;
         }
 
-        if (size >= 0) {
-            mSlider.setRange(1, size);
-
-
+        TextView start;
+        TextView end;
+        if (mLayoutMode == GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT) {
+            start = mRightText;
+            end = mLeftText;
+            mSlider.setReverse(true);
         } else {
-            // TODO hide slider
+            start = mLeftText;
+            end = mRightText;
+            mSlider.setReverse(false);
         }
+        start.setText(Integer.toString(mCurrentIndex + 1));
+        end.setText(Integer.toString(mSize));
+        mSlider.setRange(1, mSize);
+        mSlider.setProgress(mCurrentIndex + 1);
     }
 
     @Override
@@ -308,16 +352,16 @@ public class GalleryActivity extends AppCompatActivity
         if (mGalleryView != null) {
             mGalleryView.onDataChanged();
         }
-        /*
-        SimpleHandler.getInstance().post(new Runnable() {
-            @Override
-            public void run() {
-                if (mGalleryProvider != null) {
-                    updateSlider(mGalleryProvider.size());
-                }
+
+        if (mGalleryProvider != null) {
+            int size = mGalleryProvider.size();
+            NotifyTask task = mNotifyTaskPool.pop();
+            if (task == null) {
+                task = new NotifyTask();
             }
-        });
-        */
+            task.setData(NotifyTask.KEY_SIZE, size);
+            SimpleHandler.getInstance().post(task);
+        }
     }
 
     @Override
@@ -369,8 +413,76 @@ public class GalleryActivity extends AppCompatActivity
     @Override
     public void onSetProgress(Slider slider, int newProgress, int oldProgress,
             boolean byUser, boolean confirm) {
-        if (confirm && mGalleryView != null) {
-            //mGalleryView.goToPage(newProgress);
+        if (confirm && byUser && mGalleryView != null) {
+            mGalleryView.setCurrentPage(newProgress - 1);
+        }
+    }
+
+    @Override
+    public void onUpdateCurrentIndex(int index) {
+        NotifyTask task = mNotifyTaskPool.pop();
+        if (task == null) {
+            task = new NotifyTask();
+        }
+        task.setData(NotifyTask.KEY_CURRENT_INDEX, index);
+        SimpleHandler.getInstance().post(task);
+    }
+
+    @Override
+    public void onTapSliderArea() {
+        if (mSliderPanel == null || mSize <= 0 || mCurrentIndex < 0) {
+            return;
+        }
+
+        if (mSliderPanel.getVisibility() == View.VISIBLE) {
+            mSliderPanel.animate().translationY(mSliderPanel.getHeight()).setDuration(300)
+                    .setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR)
+                    .setListener(mHideSliderListener).start();
+        } else {
+            mSliderPanel.setTranslationY(mSliderPanel.getHeight());
+            mSliderPanel.setVisibility(View.VISIBLE);
+            mSliderPanel.animate().translationY(0.0f).setDuration(300)
+                    .setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR)
+                    .setListener(null).start();
+            // Request layout ensure show it
+            SimpleHandler.getInstance().post(mRequestLayoutSliderTask);
+        }
+    }
+
+    @Override
+    public void onTapMenuArea() {
+
+    }
+
+    private class NotifyTask implements Runnable {
+
+        public static final int KEY_LAYOUT_MODE = 0;
+        public static final int KEY_SIZE = 1;
+        public static final int KEY_CURRENT_INDEX = 2;
+
+        private int mKey;
+        private int mValue;
+
+        public void setData(int key, int value) {
+            mKey = key;
+            mValue = value;
+        }
+
+        @Override
+        public void run() {
+            switch (mKey) {
+                case KEY_LAYOUT_MODE:
+                    GalleryActivity.this.mLayoutMode = mValue;
+                    break;
+                case KEY_SIZE:
+                    GalleryActivity.this.mSize = mValue;
+                    break;
+                case KEY_CURRENT_INDEX:
+                    GalleryActivity.this.mCurrentIndex = mValue;
+                    break;
+            }
+            updateSlider();
+            mNotifyTaskPool.push(this);
         }
     }
 

@@ -644,6 +644,28 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
     }
 
     @Override
+    public void onPageLeft() {
+        /*
+        int size = mAdapter.size();
+        if (size <= 0 || mPages.isEmpty()) {
+            return;
+        }
+        */
+        // TODO
+    }
+
+    @Override
+    public void onPageRight() {
+        /*
+        int size = mAdapter.size();
+        if (size <= 0 || mPages.isEmpty()) {
+            return;
+        }
+        */
+        // TODO
+    }
+
+    @Override
     public GalleryPageView findPageByIndex(int index) {
         for (GalleryPageView page : mPages) {
             if (page.getIndex() == index) {
@@ -665,6 +687,65 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             }
         }
         return GalleryPageView.INVALID_INDEX;
+    }
+
+    @Override
+    public void setCurrentIndex(int index) {
+        int size = mAdapter.size();
+        if (size <= 0) {
+            // Can't get size now, assume size is MAX
+            size = Integer.MAX_VALUE;
+        }
+        if (index == mIndex || index < 0 || index >= size) {
+            return;
+        }
+        if (mPages.isEmpty()) {
+            mIndex = index;
+        } else {
+            mIndex = index;
+            // Fix the index page
+            GalleryPageView targetPage = null;
+            for (GalleryPageView page : mPages) {
+                if (page.getIndex() == index) {
+                    targetPage =page;
+                    break;
+                }
+            }
+
+            if (targetPage != null) {
+                // Cancel all animations
+                cancelAllAnimations();
+                mOffset -= targetPage.bounds().top;
+                // Backup offset
+                int offset = mOffset;
+                // Reset parameters
+                resetParameters();
+                // Restore offset
+                mOffset = offset;
+                // Request fill
+                mGalleryView.requestFill();
+            } else {
+                // Cancel all animations
+                cancelAllAnimations();
+                // Remove all view
+                removeProgress();
+                removeErrorView();
+                removeAllPages();
+                // Reset parameters
+                resetParameters();
+                // Request fill
+                mGalleryView.requestFill();
+            }
+        }
+    }
+
+    @Override
+    int getInternalCurrentIndex() {
+        int currentIndex = getCurrentIndex();
+        if (currentIndex == GalleryPageView.INVALID_INDEX) {
+            currentIndex = mIndex;
+        }
+        return currentIndex;
     }
 
     class PageFling extends Fling {

@@ -45,6 +45,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
@@ -59,7 +60,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @IntDef({LAYOUT_MODE_LEFT_TO_RIGHT, LAYOUT_MODE_RIGHT_TO_LEFT, LAYOUT_MODE_TOP_TO_BOTTOM})
     @Retention(RetentionPolicy.SOURCE)
-    private @interface LayoutMode {}
+    public @interface LayoutMode {}
 
     public static final int BACKGROUND_COLOR = 0xff212121;
     private static final int PROGRESS_SIZE_IN_DP = 48;
@@ -83,7 +84,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     private static final float[] LEFT_AREA = {0.0f, 0.0f, 1.0f / 3.0f, 1f};
     private static final float[] RIGHT_AREA = {2.0f / 3.0f, 0.0f, 1.0f, 1f};
-    private static final float[] CENTER_AREA = {1.0f / 3.0f, 2.0f / 5.0f, 2.0f / 3.0f, 3.0f / 5.0f};
+    private static final float[] MENU_AREA = {1.0f / 3.0f, 0.0f, 2.0f / 3.0f, 3.0f / 4.0f};
+    private static final float[] SLIDER_AREA = {1.0f / 3.0f, 3.0f / 4.0f, 2.0f / 3.0f, 1.0f};
 
     private static final int METHOD_ON_SINGLE_TAP_UP = 0;
     private static final int METHOD_ON_SINGLE_TAP_CONFIRMED = 1;
@@ -99,6 +101,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private static final int METHOD_ON_POINTER_DOWN = 11;
     private static final int METHOD_ON_POINTER_UP = 12;
     private static final int METHOD_SET_LAYOUT_MODE = 13;
+    private static final int METHOD_CURRENT_PAGE = 14;
 
     private final Context mContext;
     private MovableTextTexture mPageTextTexture;
@@ -130,28 +133,32 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     private final Rect mLeftArea = new Rect();
     private final Rect mRightArea = new Rect();
-    private final Rect mCenterArea = new Rect();
+    private final Rect mMenuArea = new Rect();
+    private final Rect mSliderArea = new Rect();
 
     private final String mDefaultErrorStr;
     private final String mEmptyStr;
 
     @LayoutMode
     private int mLayoutMode = LAYOUT_MODE_RIGHT_TO_LEFT;
+    private int mIndex;
 
     @Scale
     private int mScaleMode = SCALE_FIT;
     @StartPosition
     private int mStartPosition = START_POSITION_TOP_LEFT;
 
-    private final ActionListener mListener;
+    private final Listener mListener;
 
     private final List<Integer> mMethodList = new ArrayList<>(5);
     private final List<Object[]> mArgsList = new ArrayList<>(5);
     private final List<Integer> mMethodListTemp = new ArrayList<>(5);
     private final List<Object[]> mArgsListTemp = new ArrayList<>(5);
 
+    private final AtomicInteger mCurrentIndex = new AtomicInteger(GalleryPageView.INVALID_INDEX);
+
     public GalleryView(@NonNull Context context, @NonNull Adapter adapter,
-            ActionListener listener, @LayoutMode int layoutMode) {
+            Listener listener, @LayoutMode int layoutMode) {
         mContext = context;
         mAdapter = adapter;
         mListener = listener;
@@ -200,6 +207,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                 ensurePagerLayoutManager();
                 mPagerLayoutManager.setMode(PagerLayoutManager.MODE_LEFT_TO_RIGHT);
                 mPagerLayoutManager.onAttach(mAdapter);
+                mPagerLayoutManager.setCurrentIndex(mIndex);
                 mAdapter = null;
                 mLayoutManager = mPagerLayoutManager;
                 break;
@@ -207,12 +215,14 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                 ensurePagerLayoutManager();
                 mPagerLayoutManager.setMode(PagerLayoutManager.MODE_RIGHT_TO_LEFT);
                 mPagerLayoutManager.onAttach(mAdapter);
+                mPagerLayoutManager.setCurrentIndex(mIndex);
                 mAdapter = null;
                 mLayoutManager = mPagerLayoutManager;
                 break;
             case LAYOUT_MODE_TOP_TO_BOTTOM:
                 ensureScrollLayoutManager();
                 mScrollLayoutManager.onAttach(mAdapter);
+                mScrollLayoutManager.setCurrentIndex(mIndex);
                 mAdapter = null;
                 mLayoutManager = mScrollLayoutManager;
                 break;
@@ -226,11 +236,20 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         super.onDetachFromRoot();
         mEdgeView.onDetachFromRoot();
 
+        mIndex = mLayoutManager.getInternalCurrentIndex();
         mAdapter = mLayoutManager.onDetach();
         mLayoutManager = null;
 
         mPageTextTexture.recycle();
         mPageTextTexture = null;
+    }
+
+    public int getLayoutMode() {
+        return mLayoutMode;
+    }
+
+    public int getCurrentIndex() {
+        return mCurrentIndex.get();
     }
 
     @Override
@@ -285,6 +304,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         postMethod(METHOD_SET_LAYOUT_MODE, layoutMode);
     }
 
+    public void setCurrentPage(int page) {
+        postMethod(METHOD_CURRENT_PAGE, page);
+    }
+
     @Override
     public boolean onSingleTapUp(float x, float y) {
         postMethod(METHOD_ON_SINGLE_TAP_UP, x, y);
@@ -293,7 +316,13 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @Override
     public boolean onSingleTapConfirmed(float x, float y) {
-        postMethod(METHOD_ON_SINGLE_TAP_CONFIRMED, x, y);
+        if (mSliderArea.contains((int) x, (int) y)) {
+            mListener.onTapSliderArea();
+        } else if (mMenuArea.contains((int) x, (int) y)) {
+            mListener.onTapMenuArea();
+        } else {
+            postMethod(METHOD_ON_SINGLE_TAP_CONFIRMED, x, y);
+        }
         return true;
     }
 
@@ -371,8 +400,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                     (int) (LEFT_AREA[2] * width), (int) (LEFT_AREA[3] * height));
             mRightArea.set((int) (RIGHT_AREA[0] * width), (int) (RIGHT_AREA[1] * height),
                     (int) (RIGHT_AREA[2] * width), (int) (RIGHT_AREA[3] * height));
-            mCenterArea.set((int) (CENTER_AREA[0] * width), (int) (CENTER_AREA[1] * height),
-                    (int) (CENTER_AREA[2] * width), (int) (CENTER_AREA[3] * height));
+            mMenuArea.set((int) (MENU_AREA[0] * width), (int) (MENU_AREA[1] * height),
+                    (int) (MENU_AREA[2] * width), (int) (MENU_AREA[3] * height));
+            mSliderArea.set((int) (SLIDER_AREA[0] * width), (int) (SLIDER_AREA[1] * height),
+                    (int) (SLIDER_AREA[2] * width), (int) (SLIDER_AREA[3] * height));
         }
     }
 
@@ -389,6 +420,15 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     private void onSingleTapConfirmedInternal(float x, float y) {
+        if (mLayoutManager == null) {
+            return;
+        }
+
+        if (mLeftArea.contains((int) x, (int) y)) {
+            mLayoutManager.onPageLeft();
+        } else if (mRightArea.contains((int) x, (int) y)) {
+            mLayoutManager.onPageRight();
+        }
     }
 
     private void onDoubleTapInternal(float x, float y) {
@@ -483,7 +523,9 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                 } else {
                     ensurePagerLayoutManager();
                     mPagerLayoutManager.setMode(PagerLayoutManager.MODE_LEFT_TO_RIGHT);
+                    int index = mLayoutManager.getInternalCurrentIndex();
                     mPagerLayoutManager.onAttach(mLayoutManager.onDetach());
+                    mPagerLayoutManager.setCurrentIndex(index);
                     mLayoutManager = mPagerLayoutManager;
                 }
                 break;
@@ -494,18 +536,30 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                 } else {
                     ensurePagerLayoutManager();
                     mPagerLayoutManager.setMode(PagerLayoutManager.MODE_RIGHT_TO_LEFT);
+                    int index = mLayoutManager.getInternalCurrentIndex();
                     mPagerLayoutManager.onAttach(mLayoutManager.onDetach());
+                    mPagerLayoutManager.setCurrentIndex(index);
                     mLayoutManager = mPagerLayoutManager;
                 }
                 break;
             case LAYOUT_MODE_TOP_TO_BOTTOM:
                 ensureScrollLayoutManager();
+                int index = mLayoutManager.getInternalCurrentIndex();
                 mScrollLayoutManager.onAttach(mLayoutManager.onDetach());
+                mScrollLayoutManager.setCurrentIndex(index);
                 mLayoutManager = mScrollLayoutManager;
                 break;
         }
 
         requestFill();
+    }
+
+    private void setCurrentPageInternal(int page) {
+        if (mLayoutManager != null) {
+            mLayoutManager.setCurrentIndex(page);
+        } else {
+            mIndex = page;
+        }
     }
 
     @RenderThread
@@ -594,6 +648,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                 case METHOD_SET_LAYOUT_MODE:
                     setLayoutModeInternal((Integer) args[0]);
                     break;
+                case METHOD_CURRENT_PAGE:
+                    setCurrentPageInternal((Integer) args[0]);
             }
         }
 
@@ -603,6 +659,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @Override
     public void render(GLCanvas canvas) {
+        int oldCurrentIndex = mCurrentIndex.get();
+
         // Dispatch method
         dispatchMethod();
 
@@ -615,6 +673,18 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
         super.render(canvas);
         mEdgeView.render(canvas);
+
+        int newCurrentIndex;
+        if (mLayoutManager != null) {
+            newCurrentIndex = mLayoutManager.getCurrentIndex();
+        } else {
+            newCurrentIndex = GalleryPageView.INVALID_INDEX;
+        }
+        mCurrentIndex.lazySet(newCurrentIndex);
+
+        if (oldCurrentIndex != newCurrentIndex) {
+            mListener.onUpdateCurrentIndex(newCurrentIndex);
+        }
     }
 
     @RenderThread
@@ -762,12 +832,20 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
         public abstract void onDataChanged();
 
+        public abstract void onPageLeft();
+
+        public abstract void onPageRight();
+
         public abstract GalleryPageView findPageByIndex(int index);
 
         /**
          * @return {@link GalleryPageView#INVALID_INDEX} for error
          */
         public abstract int getCurrentIndex();
+
+        public abstract void setCurrentIndex(int index);
+
+        abstract int getInternalCurrentIndex();
 
         protected void placeCenter(GLView view) {
             int spec = GLView.MeasureSpec.makeMeasureSpec(GLView.LayoutParams.WRAP_CONTENT,
@@ -781,10 +859,12 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         }
     }
 
-    public interface ActionListener {
+    public interface Listener {
 
-        void onTapCenter();
+        void onUpdateCurrentIndex(int index);
 
-        void onScrollToPage(int page, boolean internal);
+        void onTapSliderArea();
+
+        void onTapMenuArea();
     }
 }

@@ -640,6 +640,66 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     }
 
     @Override
+    public void onPageLeft() {
+        int size = mAdapter.size();
+        if (size <= 0 || mCurrent == null) {
+            return;
+        }
+
+        if (mMode == MODE_LEFT_TO_RIGHT) {
+            if (mIndex == 0) {
+                GalleryView galleryView = mGalleryView;
+                GLEdgeView edgeView = galleryView.getEdgeView();
+                edgeView.onPull(galleryView.getWidth(),
+                        galleryView.getHeight() / 2, GLEdgeView.LEFT);
+                edgeView.onRelease(GLEdgeView.LEFT);
+            } else {
+                setCurrentIndex(mIndex - 1);
+            }
+        } else {
+            if (mIndex >= size - 1) {
+                GalleryView galleryView = mGalleryView;
+                GLEdgeView edgeView = galleryView.getEdgeView();
+                edgeView.onPull(galleryView.getWidth(),
+                        galleryView.getHeight() / 2, GLEdgeView.LEFT);
+                edgeView.onRelease(GLEdgeView.LEFT);
+            } else {
+                setCurrentIndex(mIndex + 1);
+            }
+        }
+    }
+
+    @Override
+    public void onPageRight() {
+        int size = mAdapter.size();
+        if (size <= 0 || mCurrent == null) {
+            return;
+        }
+
+        if (mMode == MODE_LEFT_TO_RIGHT) {
+            if (mIndex >= size - 1) {
+                GalleryView galleryView = mGalleryView;
+                GLEdgeView edgeView = galleryView.getEdgeView();
+                edgeView.onPull(galleryView.getWidth(),
+                        galleryView.getHeight() / 2, GLEdgeView.RIGHT);
+                edgeView.onRelease(GLEdgeView.RIGHT);
+            } else {
+                setCurrentIndex(mIndex + 1);
+            }
+        } else {
+            if (mIndex == 0) {
+                GalleryView galleryView = mGalleryView;
+                GLEdgeView edgeView = galleryView.getEdgeView();
+                edgeView.onPull(galleryView.getWidth(),
+                        galleryView.getHeight() / 2, GLEdgeView.RIGHT);
+                edgeView.onRelease(GLEdgeView.RIGHT);
+            } else {
+                setCurrentIndex(mIndex - 1);
+            }
+        }
+    }
+
+    @Override
     public GalleryPageView findPageByIndex(int index) {
         if (mCurrent != null && mCurrent.getIndex() == index) {
             return mCurrent;
@@ -660,6 +720,61 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         } else {
             return GalleryPageView.INVALID_INDEX;
         }
+    }
+
+    @Override
+    public void setCurrentIndex(int index) {
+        int size = mAdapter.size();
+        if (size <= 0) {
+            // Can't get size now, assume size is MAX
+            size = Integer.MAX_VALUE;
+        }
+        if (index == mIndex || index < 0 || index >= size) {
+            return;
+        }
+        if (mCurrent == null) {
+            mIndex = index;
+        } else if (index == mIndex - 1) {
+            // Cancel all animations
+            cancelAllAnimations();
+            // Reset parameters
+            resetParameters();
+            // Go to previous
+            pagePrevious();
+            // Request fill
+            mGalleryView.requestFill();
+        } else if (index == mIndex + 1) {
+            // Cancel all animations
+            cancelAllAnimations();
+            // Reset parameters
+            resetParameters();
+            // Go to next
+            pageNext();
+            // Request fill
+            mGalleryView.requestFill();
+        } else {
+            mIndex = index;
+            // It is attached, refill
+            // Cancel all animations
+            cancelAllAnimations();
+            // Remove all view
+            removeProgress();
+            removeErrorView();
+            removeAllPages();
+            // Reset parameters
+            resetParameters();
+            // Request fill
+            mGalleryView.requestFill();
+        }
+    }
+
+    @Override
+    int getInternalCurrentIndex() {
+        int currentIndex = getCurrentIndex();
+        if (currentIndex == GalleryPageView.INVALID_INDEX) {
+            currentIndex = mIndex;
+        }
+        return currentIndex;
     }
 
     class SmoothScroller extends Animation {

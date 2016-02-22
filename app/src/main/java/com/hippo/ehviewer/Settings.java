@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.hippo.ehviewer.client.EhConfig;
+import com.hippo.ehviewer.gallery.gl.GalleryView;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.NumberUtils;
 
@@ -132,6 +133,21 @@ public class Settings {
     /********************
      ****** Read
      ********************/
+    private static final String KEY_READING_DIRECTION = "reading_direction";
+    private static final int DEFAULT_READING_DIRECTION = GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT;
+
+    @SuppressWarnings("WrongConstant")
+    @GalleryView.LayoutMode
+    public static int getReadingDirection() {
+        int value = getIntFromStr(KEY_READING_DIRECTION, DEFAULT_READING_DIRECTION);
+        if (value != GalleryView.LAYOUT_MODE_LEFT_TO_RIGHT &&
+                value != GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT &&
+                value != GalleryView.LAYOUT_MODE_TOP_TO_BOTTOM) {
+            value = GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT;
+        }
+        return value;
+    }
+
     private static final String KEY_VOLUME_PAGE = "volume_page";
     private static final boolean DEFAULT_VOLUME_PAGE = false;
 

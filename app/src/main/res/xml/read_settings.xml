@@ -18,6 +18,14 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <ListPreference
+        android:key="reading_direction"
+        android:title="@string/settings_read_reading_direction_title"
+        android:summary="%s"
+        android:entries="@array/reading_direction_entries"
+        android:entryValues="@array/reading_direction_entry_values"
+        android:defaultValue="1"/>
+
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"
         android:widgetLayout="@layout/preference_widget_fixed_switch"

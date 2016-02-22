@@ -218,6 +218,10 @@
     <string name="settings_eh_show_jpn_title_summary_off">Show default title. It is usually English title</string>
 
     <string name="settings_read_title">Read</string>
+    <string name="settings_read_reading_direction_title">Reading direction</string>
+    <string name="settings_read_reading_direction_left_to_right">Left to right</string>
+    <string name="settings_read_reading_direction_right_to_Left">Right to left</string>
+    <string name="settings_read_reading_direction_top_to_bottom">Top to bottom</string>
     <string name="settings_read_volume_page_title">Use volume key to turn pages</string>
 
     <!-- Progress Scene -->
