@@ -748,7 +748,6 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         if (mPages.isEmpty()) {
             mIndex = index;
         } else {
-            mIndex = index;
             // Fix the index page
             GalleryPageView targetPage = null;
             for (GalleryPageView page : mPages) {
@@ -771,6 +770,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
                 // Request fill
                 mGalleryView.requestFill();
             } else {
+                mIndex = index;
                 // Cancel all animations
                 cancelAllAnimations();
                 // Remove all view
