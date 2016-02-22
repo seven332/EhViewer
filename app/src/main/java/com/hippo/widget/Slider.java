@@ -43,7 +43,7 @@ import com.hippo.yorozuya.SimpleHandler;
 
 public class Slider extends View {
 
-    private static char[] CHARACTERS = {
+    private static final char[] CHARACTERS = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
     };
 
@@ -55,8 +55,8 @@ public class Slider extends View {
     private Paint mPaint;
     private Paint mBgPaint;
 
-    private RectF mLeftRectF = new RectF();
-    private RectF mRightRectF = new RectF();
+    private final RectF mLeftRectF = new RectF();
+    private final RectF mRightRectF = new RectF();
 
     private PopupWindow mPopup;
     private BubbleView mBubble;
@@ -84,7 +84,7 @@ public class Slider extends View {
     private int mPopupY;
     private int mPopupWidth;
 
-    private int[] mTemp = new int[2];
+    private final int[] mTemp = new int[2];
 
     private boolean mReverse = false;
 
@@ -222,7 +222,7 @@ public class Slider extends View {
     }
 
     private void updateBubblePosition() {
-        float x = ((mPopupWidth - mBubbleWidth) * mDrawPercent);
+        float x = ((mPopupWidth - mBubbleWidth) * (mReverse ? (1.0f - mDrawPercent) : mDrawPercent));
         mBubble.setX(x);
     }
 
@@ -395,7 +395,6 @@ public class Slider extends View {
 
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
-
         int action = event.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
@@ -458,13 +457,13 @@ public class Slider extends View {
 
         private static final float TEXT_CENTER = (float) BUBBLE_WIDTH / 2.0f / BUBBLE_HEIGHT;
 
-        private VectorDrawable mVectorDrawable;
+        private final VectorDrawable mVectorDrawable;
 
-        private Paint mTextPaint;
+        private final Paint mTextPaint;
 
         private String mProgressStr = "";
 
-        private Rect mRect = new Rect();
+        private final Rect mRect = new Rect();
 
         @SuppressWarnings("deprecation")
         public BubbleView(Context context, Paint paint) {
