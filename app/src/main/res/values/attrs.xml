@@ -113,4 +113,9 @@
         <attr name="warningColor" format="color"/>
     </declare-styleable>
 
+    <declare-styleable name="IndicatingScrollView">
+        <attr name="indicatorHeight" format="dimension"/>
+        <attr name="indicatorColor" format="color"/>
+    </declare-styleable>
+
 </resources>
