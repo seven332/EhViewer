@@ -38,12 +38,15 @@ public class GalleryPageView extends GLFrameLayout {
     private static final int INFO_INTERVAL = 24;
     public static final float PROGRESS_GONE = -1.0f;
     public static final float PROGRESS_INDETERMINATE = -2.0f;
+    private static final int PAGE_MIN_HEIGHT = 256;
 
     private final ImageView mImage;
     private final GLLinearLayout mInfo;
     private final GLMovableTextView mPage;
     private final GLTextureView mError;
     private final GLProgressView mProgress;
+
+    private final int mPageMinHeight;
 
     private int mIndex = INVALID_INDEX;
 
@@ -89,6 +92,20 @@ public class GalleryPageView extends GLFrameLayout {
                 LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER_HORIZONTAL;
         mInfo.addComponent(mProgress, lp);
+
+        mPageMinHeight = LayoutUtils.dp2pix(context, PAGE_MIN_HEIGHT);
+    }
+
+    @Override
+    protected int getSuggestedMinimumHeight() {
+        // The height of the actual image may be smaller than mPageMinHeight.
+        // Set min height as 0 when the image is visible.
+        // For PageLayoutManager, min height is useless.
+        if (mImage.getVisibility() == VISIBLE) {
+            return 0;
+        } else {
+            return mPageMinHeight;
+        }
     }
 
     int getIndex() {

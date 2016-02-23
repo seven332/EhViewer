@@ -55,7 +55,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     public static final int BACKGROUND_COLOR = 0xff212121;
     private static final int PROGRESS_SIZE_IN_DP = 48;
-    private static final int PAGE_MIN_HEIGHT_IN_DP = 256;
 
     public static final int LAYOUT_MODE_LEFT_TO_RIGHT = 0;
     public static final int LAYOUT_MODE_RIGHT_TO_LEFT = 1;
@@ -105,7 +104,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private final int mProgressSize;
     private final float mErrorSize;
     private final int mErrorColor;
-    private final int mPageMinHeight;
 
     private boolean mEnableRequestFill = true;
     private boolean mRequestFill = false;
@@ -158,7 +156,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mProgressSize = LayoutUtils.dp2pix(context, PROGRESS_SIZE_IN_DP);
         mErrorSize = context.getResources().getDimension(R.dimen.text_large);
         mErrorColor = context.getResources().getColor(R.color.red_500);
-        mPageMinHeight = LayoutUtils.dp2pix(context, PAGE_MIN_HEIGHT_IN_DP);
 
         mDefaultErrorStr = context.getResources().getString(R.string.error_unknown);
         mEmptyStr = context.getResources().getString(R.string.error_empty);
@@ -777,7 +774,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         GalleryPageView page = mGalleryPageViewPool.pop();
         if (page == null) {
             page = new GalleryPageView(mContext, mPageTextTexture, mProgressColor, mProgressSize);
-            page.setMinimumHeight(mPageMinHeight);
         }
         return page;
     }
