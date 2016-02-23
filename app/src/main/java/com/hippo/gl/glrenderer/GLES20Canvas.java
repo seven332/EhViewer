@@ -16,6 +16,7 @@
 package com.hippo.gl.glrenderer;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.opengl.GLES20;
@@ -838,9 +839,11 @@ public class GLES20Canvas implements GLCanvas {
         setAlpha(textureAlpha);
         drawTexture(texture, source, target);
 
-        float colorAlpha = cappedRatio * currentAlpha;
-        setAlpha(colorAlpha);
-        fillRect(target.left, target.top, target.width(), target.height(), toColor);
+        if (0 != Color.alpha(toColor)) {
+            float colorAlpha = cappedRatio * currentAlpha;
+            setAlpha(colorAlpha);
+            fillRect(target.left, target.top, target.width(), target.height(), toColor);
+        }
 
         restore();
     }

@@ -361,20 +361,20 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
             // Ensure pages
             if (mCurrent == null) {
                 mCurrent = obtainPage();
-                adapter.bind(mCurrent, index);
                 galleryView.addComponent(mCurrent);
+                adapter.bind(mCurrent, index);
             }
             if (mPrevious == null && index > 0) {
                 mPrevious = obtainPage();
-                adapter.bind(mPrevious, index - 1);
                 galleryView.addComponent(mPrevious);
+                adapter.bind(mPrevious, index - 1);
             } else if (mPrevious != null && index == 0) {
                 removePage(mPrevious);
             }
             if (mNext == null && index < size - 1) {
                 mNext = obtainPage();
-                adapter.bind(mNext, index + 1);
                 galleryView.addComponent(mNext);
+                adapter.bind(mNext, index + 1);
             } else if (mNext != null && index == size - 1) {
                 removePage(mNext);
             }
@@ -480,8 +480,8 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
         if (mIndex > 0) {
             mPrevious = obtainPage();
-            mAdapter.bind(mPrevious, mIndex - 1);
             mGalleryView.addComponent(mPrevious);
+            mAdapter.bind(mPrevious, mIndex - 1);
         }
     }
 
@@ -502,8 +502,8 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
         if (mIndex < size - 1) {
             mNext = obtainPage();
-            adapter.bind(mNext, mIndex + 1);
             mGalleryView.addComponent(mNext);
+            adapter.bind(mNext, mIndex + 1);
         }
     }
 

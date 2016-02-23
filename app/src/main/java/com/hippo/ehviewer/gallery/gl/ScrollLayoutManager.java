@@ -192,8 +192,8 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             mIndex--;
 
             GalleryPageView page = obtainPage();
-            mAdapter.bind(page, mIndex);
             galleryView.addComponent(page);
+            mAdapter.bind(page, mIndex);
             mPages.add(0, page);
 
             // Add interval
@@ -239,8 +239,8 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
                 pages = null;
                 // New page
                 page = obtainPage();
-                mAdapter.bind(page, index);
                 galleryView.addComponent(page);
+                mAdapter.bind(page, index);
                 mPages.add(page);
             } else {
                 page = pages.next();

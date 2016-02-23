@@ -20,6 +20,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.IntDef;
 
+import com.hippo.anani.AnimationUtils;
+import com.hippo.gl.anim.AlphaAnimation;
 import com.hippo.gl.glrenderer.GLCanvas;
 import com.hippo.gl.glrenderer.Texture;
 import com.hippo.gl.view.GLView;
@@ -56,6 +58,8 @@ public class ImageView extends GLView {
     public static final int START_POSITION_BOTTOM_RIGHT = 3;
     public static final int START_POSITION_CENTER = 4;
 
+    private static final long ALPHA_ANIMATION_DURING = 300L;
+
     private Texture mTexture;
     private int mTextureWidth;
     private int mTextureHeight;
@@ -73,6 +77,14 @@ public class ImageView extends GLView {
 
     private boolean mScaleOffsetDirty = true;
     private boolean mPositionInRootDirty = true;
+
+    private final AlphaAnimation mAlphaAnimation;
+
+    public ImageView() {
+        mAlphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+        mAlphaAnimation.setDuration(ALPHA_ANIMATION_DURING);
+        mAlphaAnimation.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+    }
 
     @Scale
     public static int sanitizeScaleMode(int scaleMode) {
@@ -192,6 +204,11 @@ public class ImageView extends GLView {
             }
             if (mTextureHeight <= 0) {
                 mTextureHeight = 1;
+            }
+
+            // Start alpha animation
+            if (isAttachedToRoot()) {
+                startAnimation(mAlphaAnimation, true);
             }
         } else {
             mTextureWidth = 1;

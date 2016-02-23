@@ -153,6 +153,21 @@ public class GLView implements TouchOwner {
     private OnClickListener mOnClickListener;
     private OnLongClickListener mOnLongClickListener;
 
+    public void startAnimation(CanvasAnimation animation, boolean atOnce) {
+        GLRoot root = getGLRoot();
+        if (root == null) throw new IllegalStateException();
+        mAnimation = animation;
+        if (mAnimation != null) {
+            mAnimation.start();
+            if (atOnce) {
+                mAnimation.setStartTime(AnimationTime.get());
+            } else {
+                root.registerLaunchedAnimation(mAnimation);
+            }
+        }
+        invalidate();
+    }
+
     /**
      * Set the enabled state of this view.
      *
