@@ -45,6 +45,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hippo.drawable.RoundSideRectDrawable;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UrlOpener;
@@ -684,7 +685,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             TextView tgName = (TextView) inflater.inflate(R.layout.item_gallery_tag, ll, false);
             ll.addView(tgName);
             tgName.setText(tg.groupName);
-            tgName.setBackgroundColor(colorName);
+            tgName.setBackgroundDrawable(new RoundSideRectDrawable(colorName));
 
             AutoWrapLayout awl = new AutoWrapLayout(getContext());
             ll.addView(awl, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -693,7 +694,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 awl.addView(tag);
                 String tagStr = tg.getTagAt(j);
                 tag.setText(tagStr);
-                tag.setBackgroundColor(colorTag);
+                tag.setBackgroundDrawable(new RoundSideRectDrawable(colorTag));
                 tag.setTag(R.id.tag, tagStr);
                 tag.setOnClickListener(this);
             }
