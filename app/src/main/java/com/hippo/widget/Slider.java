@@ -400,6 +400,15 @@ public class Slider extends View {
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+
+                if (mListener != null) {
+                    if (action == MotionEvent.ACTION_DOWN) {
+                        mListener.onFingerDown();
+                    } else if (action == MotionEvent.ACTION_UP) {
+                        mListener.onFingerUp();
+                    }
+                }
+
                 int paddingLeft = getPaddingLeft();
                 int paddingRight = getPaddingRight();
                 float radius = mRadius;
@@ -507,6 +516,10 @@ public class Slider extends View {
     public interface OnSetProgressListener {
 
         void onSetProgress(Slider slider, int newProgress, int oldProgress, boolean byUser, boolean confirm);
+
+        void onFingerDown();
+
+        void onFingerUp();
     }
 
     private final class CheckForShowBubble implements Runnable {

@@ -68,6 +68,9 @@ public class GalleryActivity extends AppCompatActivity
     public static final String KEY_GALLERY_INFO = "gallery_info";
     public static final String KEY_SHOWING = "showing";
 
+    private static final long SLIDER_ANIMATION_DURING = 150;
+    private static final long HIDE_SLIDER_DELAY = 3000;
+
     private String mAction;
     private String mFilename;
     private GalleryInfo mGalleryInfo;
@@ -117,6 +120,15 @@ public class GalleryActivity extends AppCompatActivity
         public void onAnimationEnd(Animator animation) {
             if (mSliderPanel != null) {
                 mSliderPanel.setVisibility(View.INVISIBLE);
+            }
+        }
+    };
+
+    private final Runnable mHideSliderRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mSliderPanel != null) {
+                hideSlider(mSliderPanel);
             }
         }
     };
@@ -460,6 +472,16 @@ public class GalleryActivity extends AppCompatActivity
     }
 
     @Override
+    public void onFingerDown() {
+        SimpleHandler.getInstance().removeCallbacks(mHideSliderRunnable);
+    }
+
+    @Override
+    public void onFingerUp() {
+        SimpleHandler.getInstance().postDelayed(mHideSliderRunnable, HIDE_SLIDER_DELAY);
+    }
+
+    @Override
     public void onUpdateCurrentIndex(int index) {
         NotifyTask task = mNotifyTaskPool.pop();
         if (task == null) {
@@ -497,6 +519,22 @@ public class GalleryActivity extends AppCompatActivity
         }
         task.setData(NotifyTask.KEY_LONG_PRESS_PAGE, index);
         SimpleHandler.getInstance().post(task);
+    }
+
+    private void showSlider(View sliderPanel) {
+        sliderPanel.setTranslationY(sliderPanel.getHeight());
+        sliderPanel.setVisibility(View.VISIBLE);
+        sliderPanel.animate().translationY(0.0f).setDuration(SLIDER_ANIMATION_DURING)
+                .setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR)
+                .setListener(null).start();
+        // Request layout ensure show it
+        SimpleHandler.getInstance().post(mRequestLayoutSliderTask);
+    }
+
+    private void hideSlider(View sliderPanel) {
+        sliderPanel.animate().translationY(sliderPanel.getHeight()).setDuration(SLIDER_ANIMATION_DURING)
+                .setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR)
+                .setListener(mHideSliderListener).start();
     }
 
     private class GalleryMenuHelper implements DialogInterface.OnClickListener {
@@ -595,18 +633,13 @@ public class GalleryActivity extends AppCompatActivity
                 return;
             }
 
+            SimpleHandler.getInstance().removeCallbacks(mHideSliderRunnable);
+
             if (mSliderPanel.getVisibility() == View.VISIBLE) {
-                mSliderPanel.animate().translationY(mSliderPanel.getHeight()).setDuration(150)
-                        .setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR)
-                        .setListener(mHideSliderListener).start();
+                hideSlider(mSliderPanel);
             } else {
-                mSliderPanel.setTranslationY(mSliderPanel.getHeight());
-                mSliderPanel.setVisibility(View.VISIBLE);
-                mSliderPanel.animate().translationY(0.0f).setDuration(150)
-                        .setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR)
-                        .setListener(null).start();
-                // Request layout ensure show it
-                SimpleHandler.getInstance().post(mRequestLayoutSliderTask);
+                showSlider(mSliderPanel);
+                SimpleHandler.getInstance().postDelayed(mHideSliderRunnable, HIDE_SLIDER_DELAY);
             }
         }
 
