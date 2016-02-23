@@ -665,8 +665,8 @@ public class GLView implements TouchOwner {
         boolean sizeChanged = setBounds(left, top, right, bottom);
         final boolean forceLayout = (mViewFlags & FLAG_LAYOUT_REQUESTED) == FLAG_LAYOUT_REQUESTED;
         if (sizeChanged || forceLayout) {
-            onLayout(sizeChanged, left, top, right, bottom);
             notifyPositionInRoot();
+            onLayout(sizeChanged, left, top, right, bottom);
         } else {
             dispatchNotifyPositionInRoot();
         }
