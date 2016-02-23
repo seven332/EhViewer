@@ -42,6 +42,7 @@ import com.hippo.ehviewer.client.parser.GalleryDetailParser;
 import com.hippo.ehviewer.client.parser.GalleryPageParser;
 import com.hippo.ehviewer.client.parser.GalleryPageUrlParser;
 import com.hippo.ehviewer.gallery.GalleryProvider;
+import com.hippo.ehviewer.gallery.gl.GalleryPageView;
 import com.hippo.image.Image;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.IOUtils;
@@ -129,6 +130,7 @@ public class SpiderQueen implements Runnable {
     @Nullable
     private Thread mDecoderThread;
     private final Stack<Integer> mDecodeRequestStack = new Stack<>();
+    private final AtomicInteger mDecodeIndex = new AtomicInteger(GalleryPageView.INVALID_INDEX);
 
     private volatile AtomicReferenceArray<Thread> mWorkers;
     private final Object mWorkerLock = new Object();
@@ -425,8 +427,10 @@ public class SpiderQueen implements Runnable {
                 return error;
             case STATE_FINISHED:
                 synchronized (mDecodeRequestStack) {
-                    mDecodeRequestStack.add(index);
-                    mDecodeRequestStack.notify();
+                    if (!mDecodeRequestStack.contains(index) && index != mDecodeIndex.get()) {
+                        mDecodeRequestStack.add(index);
+                        mDecodeRequestStack.notify();
+                    }
                 }
                 return null;
         }
@@ -1036,16 +1040,19 @@ public class SpiderQueen implements Runnable {
                         continue;
                     }
                     index = mDecodeRequestStack.pop();
+                    mDecodeIndex.lazySet(index);
                 }
 
                 // Check index valid
                 if (index < 0 || index >= mPageStateArray.length) {
+                    mDecodeIndex.lazySet(GalleryPageView.INVALID_INDEX);
                     notifyGetImageFailure(index, GetText.getString(R.string.error_out_of_range));
                     continue;
                 }
 
                 InputStreamPipe pipe = mSpiderDen.openInputStreamPipe(index);
                 if (pipe == null) {
+                    mDecodeIndex.lazySet(GalleryPageView.INVALID_INDEX);
                     notifyGetImageFailure(index, GetText.getString(R.string.error_not_found));
                     continue;
                 }
@@ -1054,11 +1061,14 @@ public class SpiderQueen implements Runnable {
                     pipe.obtain();
                     Image image = Image.decode(pipe.open(), false);
                     if (image != null) {
+                        mDecodeIndex.lazySet(GalleryPageView.INVALID_INDEX);
                         notifyGetImageSuccess(index, image);
                     } else {
+                        mDecodeIndex.lazySet(GalleryPageView.INVALID_INDEX);
                         notifyGetImageFailure(index, GetText.getString(R.string.error_decoding_failed));
                     }
                 } catch (IOException e) {
+                    mDecodeIndex.lazySet(GalleryPageView.INVALID_INDEX);
                     notifyGetImageFailure(index, GetText.getString(R.string.error_reading_failed));
                 } finally {
                     pipe.close();
