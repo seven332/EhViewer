@@ -72,6 +72,7 @@ public class ImageView extends GLView {
     private float mScale = 1.0f;
 
     private boolean mScaleOffsetDirty = true;
+    private boolean mPositionInRootDirty = true;
 
     @Scale
     public static int sanitizeScaleMode(int scaleMode) {
@@ -153,6 +154,12 @@ public class ImageView extends GLView {
     @Override
     protected void onSizeChanged(int newW, int newH, int oldW, int oldH) {
         mScaleOffsetDirty = true;
+        mPositionInRootDirty = true;
+    }
+
+    @Override
+    protected void onPositionInRootChanged(int x, int y, int oldX, int oldY) {
+        mPositionInRootDirty = true;
     }
 
     public void getScaleDefault(float[] scaleDefault) {
@@ -192,6 +199,7 @@ public class ImageView extends GLView {
         }
 
         mScaleOffsetDirty = true;
+        mPositionInRootDirty = true;
     }
 
     public Texture getTexture() {
@@ -420,6 +428,7 @@ public class ImageView extends GLView {
         adjustPosition();
 
         mScaleOffsetDirty = false;
+        mPositionInRootDirty = true;
     }
 
     public void scroll(int dx, int dy, int[] remain) {
@@ -479,6 +488,7 @@ public class ImageView extends GLView {
         }
 
         if (dx != remain[0] || dy != remain[1]) {
+            mPositionInRootDirty = true;
             invalidate();
         }
     }
@@ -509,6 +519,7 @@ public class ImageView extends GLView {
         // adjust position
         adjustPosition();
 
+        mPositionInRootDirty = true;
         invalidate();
     }
 
@@ -535,6 +546,8 @@ public class ImageView extends GLView {
             srcActual.setEmpty();
             dstActual.setEmpty();
         }
+
+        mPositionInRootDirty = false;
     }
 
     @Override
@@ -548,7 +561,9 @@ public class ImageView extends GLView {
             setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
         }
 
-        applyPositionInRoot();
+        if (mPositionInRootDirty) {
+            applyPositionInRoot();
+        }
 
         if (!mSrcActual.isEmpty()) {
             texture.draw(canvas, mSrcActual, mDstActual);
