@@ -60,10 +60,10 @@ public class ImageView extends GLView {
     private int mTextureWidth;
     private int mTextureHeight;
 
-    private RectF mDst = new RectF();
-    private RectF mSrcActual = new RectF();
-    private RectF mDstActual = new RectF();
-    private Rect mValidRect = new Rect();
+    private final RectF mDst = new RectF();
+    private final RectF mSrcActual = new RectF();
+    private final RectF mDstActual = new RectF();
+    private final Rect mValidRect = new Rect();
 
     private int mScaleMode = SCALE_FIT;
     private int mStartPosition = START_POSITION_TOP_RIGHT;
@@ -142,16 +142,14 @@ public class ImageView extends GLView {
         }
 
         scaleDefault[0] = 1.0f;
+        scaleDefault[1] = (float) getWidth() / mTextureWidth;
+        scaleDefault[2] = (float) getHeight() / mTextureHeight;
+        scaleDefault[3] = Math.max(scaleDefault[1], scaleDefault[2]) * 2;
 
-        float scaleX = (float) getWidth() / mTextureWidth;
-        float scaleY = (float) getHeight() / mTextureHeight;
-        if (scaleX < scaleY) {
-            scaleDefault[1] = scaleX;
-        } else {
-            scaleDefault[1] = scaleY;
-        }
-
-        scaleDefault[2] = scaleDefault[1] * 1.5f;
+        scaleDefault[0] = MathUtils.clamp(scaleDefault[0], SCALE_MIN, SCALE_MAX);
+        scaleDefault[1] = MathUtils.clamp(scaleDefault[1], SCALE_MIN, SCALE_MAX);
+        scaleDefault[2] = MathUtils.clamp(scaleDefault[2], SCALE_MIN, SCALE_MAX);
+        scaleDefault[3] = MathUtils.clamp(scaleDefault[3], SCALE_MIN, SCALE_MAX);
 
         Arrays.sort(scaleDefault);
     }

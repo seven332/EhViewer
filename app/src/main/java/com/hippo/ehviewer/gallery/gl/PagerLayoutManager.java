@@ -77,7 +77,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     private final int mInterval;
 
     private final int[] mScrollRemain = new int[2];
-    private final float[] mScaleDefault = new float[3];
+    private final float[] mScaleDefault = new float[4];
 
     private final PageFling mPageFling;
     private final SmoothScroller mSmoothScroller;
