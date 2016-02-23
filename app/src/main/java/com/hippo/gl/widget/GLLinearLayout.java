@@ -39,7 +39,7 @@ public class GLLinearLayout extends GLView {
     private int mInterval = 0;
     private int mOrientation = VERTICAL;
 
-    private List<GLView> mTempList = new ArrayList<>();
+    private final List<GLView> mTempList = new ArrayList<>();
 
     public void setInterval(int interval) {
         if (mInterval != interval) {

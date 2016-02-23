@@ -44,6 +44,7 @@ import com.hippo.ehviewer.gallery.GalleryProviderListener;
 import com.hippo.ehviewer.gallery.ZipGalleryProvider;
 import com.hippo.ehviewer.gallery.gl.GalleryPageView;
 import com.hippo.ehviewer.gallery.gl.GalleryView;
+import com.hippo.ehviewer.gallery.gl.ImageView;
 import com.hippo.gl.glrenderer.ImageTexture;
 import com.hippo.gl.view.GLRootView;
 import com.hippo.image.Image;
@@ -192,8 +193,9 @@ public class GalleryActivity extends AppCompatActivity
         mGalleryProvider.setGLRoot(glRootView);
         mUploader = new ImageTexture.Uploader(glRootView);
 
-        mGalleryView = new GalleryView(this, new GalleryAdapter(),
-                this, Settings.getReadingDirection());
+        mGalleryView = new GalleryView(this, new GalleryAdapter(), this,
+                Settings.getReadingDirection(), Settings.getPageScaling(),
+                Settings.getStartPosition());
         glRootView.setContentPane(mGalleryView);
 
         // System UI helper
@@ -501,6 +503,8 @@ public class GalleryActivity extends AppCompatActivity
 
         private final View mView;
         private final Spinner mReadingDirection;
+        private final Spinner mScaleMode;
+        private final Spinner mStartPosition;
         private final SwitchCompat mShowClock;
         private final SwitchCompat mShowBattery;
         private final SwitchCompat mVolumePage;
@@ -509,11 +513,15 @@ public class GalleryActivity extends AppCompatActivity
         public GalleryMenuHelper() {
             mView = getLayoutInflater().inflate(R.layout.dialog_gallery_menu, null);
             mReadingDirection = (Spinner) mView.findViewById(R.id.reading_direction);
+            mScaleMode = (Spinner) mView.findViewById(R.id.page_scaling);
+            mStartPosition = (Spinner) mView.findViewById(R.id.start_position);
             mShowClock = (SwitchCompat) mView.findViewById(R.id.show_clock);
             mShowBattery = (SwitchCompat) mView.findViewById(R.id.show_battery);
             mVolumePage = (SwitchCompat) mView.findViewById(R.id.volume_page);
 
             mReadingDirection.setSelection(Settings.getReadingDirection());
+            mScaleMode.setSelection(Settings.getPageScaling());
+            mStartPosition.setSelection(Settings.getStartPosition());
             mShowClock.setChecked(Settings.getShowClock());
             mShowBattery.setChecked(Settings.getShowBattery());
             mVolumePage.setChecked(Settings.getVolumePage());
@@ -526,17 +534,23 @@ public class GalleryActivity extends AppCompatActivity
         @Override
         public void onClick(DialogInterface dialog, int which) {
             int layoutMode = GalleryView.sanitizeLayoutMode(mReadingDirection.getSelectedItemPosition());
+            int scaleMode = ImageView.sanitizeScaleMode(mScaleMode.getSelectedItemPosition());
+            int startPosition = ImageView.sanitizeStartPosition(mStartPosition.getSelectedItemPosition());
             boolean showClock = mShowClock.isChecked();
             boolean showBattery = mShowBattery.isChecked();
             boolean volumePage = mVolumePage.isChecked();
 
             Settings.putReadingDirection(layoutMode);
+            Settings.putPageScaling(scaleMode);
+            Settings.putStartPosition(startPosition);
             Settings.putShowClock(showClock);
             Settings.putShowBattery(showBattery);
             Settings.putVolumePage(volumePage);
 
             if (mGalleryView != null) {
                 mGalleryView.setLayoutMode(layoutMode);
+                mGalleryView.setScaleMode(scaleMode);
+                mGalleryView.setStartPosition(startPosition);
             }
             if (mClock != null) {
                 mClock.setVisibility(showClock ? View.VISIBLE : View.GONE);

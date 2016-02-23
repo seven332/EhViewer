@@ -146,6 +146,12 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         return iterator;
     }
 
+    private GalleryPageView obtainPage() {
+        GalleryPageView page = mGalleryView.obtainPage();
+        page.getImageView().setScaleOffset(ImageView.SCALE_FIT, ImageView.START_POSITION_TOP_RIGHT, 1.0f);
+        return page;
+    }
+
     private void fillPages() {
         GalleryView.Adapter adapter = mAdapter;
         GalleryView galleryView = mGalleryView;
@@ -185,7 +191,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         while (y >= minY && mIndex > 0) {
             mIndex--;
 
-            GalleryPageView page = galleryView.obtainPage();
+            GalleryPageView page = obtainPage();
             mAdapter.bind(page, mIndex);
             galleryView.addComponent(page);
             mPages.add(0, page);
@@ -232,7 +238,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             if (pages == null || !pages.hasNext()) {
                 pages = null;
                 // New page
-                page = galleryView.obtainPage();
+                page = obtainPage();
                 mAdapter.bind(page, index);
                 galleryView.addComponent(page);
                 mPages.add(page);

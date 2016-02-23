@@ -25,6 +25,7 @@ import android.support.annotation.Nullable;
 
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.gallery.gl.GalleryView;
+import com.hippo.ehviewer.gallery.gl.ImageView;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.NumberUtils;
 
@@ -143,6 +144,30 @@ public class Settings {
 
     public static void putReadingDirection(int value) {
         putIntToStr(KEY_READING_DIRECTION, value);
+    }
+
+    private static final String KEY_PAGE_SCALING = "page_scaling";
+    private static final int DEFAULT_PAGE_SCALING = ImageView.SCALE_FIT;
+
+    @ImageView.Scale
+    public static int getPageScaling() {
+        return ImageView.sanitizeScaleMode(getIntFromStr(KEY_PAGE_SCALING, DEFAULT_PAGE_SCALING));
+    }
+
+    public static void putPageScaling(int value) {
+        putIntToStr(KEY_PAGE_SCALING, value);
+    }
+
+    private static final String KEY_START_POSITION = "start_position";
+    private static final int DEFAULT_START_POSITION = ImageView.START_POSITION_TOP_RIGHT;
+
+    @ImageView.StartPosition
+    public static int getStartPosition() {
+        return ImageView.sanitizeStartPosition(getIntFromStr(KEY_START_POSITION, DEFAULT_START_POSITION));
+    }
+
+    public static void putStartPosition(int value) {
+        putIntToStr(KEY_START_POSITION, value);
     }
 
     private static final String KEY_SHOW_CLOCK = "gallery_show_clock";

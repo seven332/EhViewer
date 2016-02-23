@@ -93,6 +93,7 @@
 
     <!-- divider -->
     <color name="divider">#20000000</color>
+    <color name="divider_dark">#20ffffff</color>
 
     <!-- shadow -->
     <color name="shadow_light">#38000000</color>

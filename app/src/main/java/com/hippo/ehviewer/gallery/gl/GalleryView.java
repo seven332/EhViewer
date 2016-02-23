@@ -49,15 +49,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
-    @IntDef({SCALE_ORIGIN, SCALE_FIT_WIDTH, SCALE_FIT_HEIGHT, SCALE_FIT, SCALE_FIXED})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Scale {}
-
-    @IntDef({START_POSITION_TOP_LEFT, START_POSITION_TOP_RIGHT, START_POSITION_BOTTOM_LEFT,
-            START_POSITION_BOTTOM_RIGHT, START_POSITION_CENTER})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface StartPosition {}
-
     @IntDef({LAYOUT_MODE_LEFT_TO_RIGHT, LAYOUT_MODE_RIGHT_TO_LEFT, LAYOUT_MODE_TOP_TO_BOTTOM})
     @Retention(RetentionPolicy.SOURCE)
     public @interface LayoutMode {}
@@ -65,18 +56,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     public static final int BACKGROUND_COLOR = 0xff212121;
     private static final int PROGRESS_SIZE_IN_DP = 48;
     private static final int PAGE_MIN_HEIGHT_IN_DP = 256;
-
-    public static final int SCALE_ORIGIN = 0;
-    public static final int SCALE_FIT_WIDTH = 1;
-    public static final int SCALE_FIT_HEIGHT = 2;
-    public static final int SCALE_FIT = 3;
-    public static final int SCALE_FIXED = 4;
-
-    public static final int START_POSITION_TOP_LEFT = 0;
-    public static final int START_POSITION_TOP_RIGHT = 1;
-    public static final int START_POSITION_BOTTOM_LEFT = 2;
-    public static final int START_POSITION_BOTTOM_RIGHT = 3;
-    public static final int START_POSITION_CENTER = 4;
 
     public static final int LAYOUT_MODE_LEFT_TO_RIGHT = 0;
     public static final int LAYOUT_MODE_RIGHT_TO_LEFT = 1;
@@ -105,6 +84,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private static final int METHOD_SET_CURRENT_PAGE = 15;
     private static final int METHOD_PAGE_LEFT = 16;
     private static final int METHOD_PAGE_RIGHT = 17;
+    private static final int METHOD_SET_SCALE_MODE = 18;
+    private static final int METHOD_SET_START_POSITION = 19;
 
     private final Context mContext;
     private MovableTextTexture mPageTextTexture;
@@ -144,12 +125,11 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @LayoutMode
     private int mLayoutMode = LAYOUT_MODE_RIGHT_TO_LEFT;
+    @ImageView.Scale
+    private int mScaleMode = ImageView.SCALE_FIT;
+    @ImageView.StartPosition
+    private int mStartPosition = ImageView.START_POSITION_TOP_LEFT;
     private int mIndex;
-
-    @Scale
-    private int mScaleMode = SCALE_FIT;
-    @StartPosition
-    private int mStartPosition = START_POSITION_TOP_LEFT;
 
     private final Listener mListener;
 
@@ -161,7 +141,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private final AtomicInteger mCurrentIndex = new AtomicInteger(GalleryPageView.INVALID_INDEX);
 
     public GalleryView(@NonNull Context context, @NonNull Adapter adapter,
-            Listener listener, @LayoutMode int layoutMode) {
+            Listener listener, @LayoutMode int layoutMode, @ImageView.Scale int scaleMode,
+            @ImageView.StartPosition int startPosition) {
         mContext = context;
         mAdapter = adapter;
         mListener = listener;
@@ -171,6 +152,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         adapter.setGalleryView(this);
 
         mLayoutMode = layoutMode;
+        mScaleMode = scaleMode;
+        mStartPosition = startPosition;
         mProgressColor = ResourcesUtils.getAttrColor(context, R.attr.colorPrimary);
         mProgressSize = LayoutUtils.dp2pix(context, PROGRESS_SIZE_IN_DP);
         mErrorSize = context.getResources().getDimension(R.dimen.text_large);
@@ -185,7 +168,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     private void ensurePagerLayoutManager() {
         if (mPagerLayoutManager == null) {
-            mPagerLayoutManager = new PagerLayoutManager(mContext, this);
+            mPagerLayoutManager = new PagerLayoutManager(mContext, this, mScaleMode, mStartPosition, 1.0f);
         }
     }
 
@@ -328,6 +311,14 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     public void pageRight() {
         postMethod(METHOD_PAGE_RIGHT);
+    }
+
+    public void setScaleMode(@ImageView.Scale int scaleMode) {
+        postMethod(METHOD_SET_SCALE_MODE, scaleMode);
+    }
+
+    public void setStartPosition(@ImageView.StartPosition int startPosition) {
+        postMethod(METHOD_SET_START_POSITION, startPosition);
     }
 
     @Override
@@ -616,6 +607,20 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         }
     }
 
+    private void setScaleModeInternal(int scaleMode) {
+        mScaleMode = scaleMode;
+        if (mPagerLayoutManager != null) {
+            mPagerLayoutManager.setScaleMode(scaleMode);
+        }
+    }
+
+    private void setStartPositionInternal(int startPosition) {
+        mStartPosition = startPosition;
+        if (mPagerLayoutManager != null) {
+            mPagerLayoutManager.setStartPosition(startPosition);
+        }
+    }
+
     @RenderThread
     void forceFill() {
         mRequestFill = true;
@@ -713,6 +718,12 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                     break;
                 case METHOD_PAGE_RIGHT:
                     pageRightInternal();
+                    break;
+                case METHOD_SET_SCALE_MODE:
+                    setScaleModeInternal((Integer) args[0]);
+                    break;
+                case METHOD_SET_START_POSITION:
+                    setStartPositionInternal((Integer) args[0]);
                     break;
             }
         }

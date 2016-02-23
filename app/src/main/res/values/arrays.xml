@@ -35,6 +35,38 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+
+    <string-array name="page_scaling_entries">
+        <item>@string/settings_read_reading_page_scaling_actual_size</item>
+        <item>@string/settings_read_reading_page_scaling_fit_to_width</item>
+        <item>@string/settings_read_reading_page_scaling_fit_to_height</item>
+        <item>@string/settings_read_reading_page_scaling_fit_to_screen</item>
+        <item>@string/settings_read_reading_page_scaling_fixed_scale</item>
+    </string-array>
+
+    <string-array name="page_scaling_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="start_position_entries">
+        <item>@string/settings_read_reading_start_position_top_left</item>
+        <item>@string/settings_read_reading_start_position_top_right</item>
+        <item>@string/settings_read_reading_start_position_bottom_left</item>
+        <item>@string/settings_read_reading_start_position_bottom_right</item>
+        <item>@string/settings_read_reading_start_position_center</item>
+    </string-array>
+
+    <string-array name="start_position_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
     
     <string-array name="page_menu_entries">
         <item>@string/page_menu_refresh</item>

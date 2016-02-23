@@ -427,6 +427,7 @@ public class GLView implements TouchOwner {
     public void offsetTopAndBottom(int offset) {
         if (offset != 0){
             mBounds.offset(0, offset);
+            dispatchNotifyPositionInRoot();
             invalidate();
         }
     }
@@ -439,6 +440,7 @@ public class GLView implements TouchOwner {
     public void offsetLeftAndRight(int offset) {
         if (offset != 0){
             mBounds.offset(offset, 0);
+            dispatchNotifyPositionInRoot();
             invalidate();
         }
     }
@@ -498,9 +500,14 @@ public class GLView implements TouchOwner {
     }
 
     protected void renderChild(GLCanvas canvas, GLView component) {
+        if (component.getVisibility() != GLView.VISIBLE) {
+            return;
+        }
+
         getValidRect(mTempRect);
-        if ((component.getVisibility() != GLView.VISIBLE || mTempRect.isEmpty())
-                && component.mAnimation == null) return;
+        if (mTempRect.isEmpty()) {
+            return;
+        }
 
         int xOffset = component.mBounds.left - mScrollX;
         int yOffset = component.mBounds.top - mScrollY;

@@ -39,11 +39,11 @@ public class GalleryPageView extends GLFrameLayout {
     public static final float PROGRESS_GONE = -1.0f;
     public static final float PROGRESS_INDETERMINATE = -2.0f;
 
-    private ImageView mImage;
-    private GLLinearLayout mInfo;
-    private GLMovableTextView mPage;
-    private GLTextureView mError;
-    private GLProgressView mProgress;
+    private final ImageView mImage;
+    private final GLLinearLayout mInfo;
+    private final GLMovableTextView mPage;
+    private final GLTextureView mError;
+    private final GLProgressView mProgress;
 
     private int mIndex = INVALID_INDEX;
 

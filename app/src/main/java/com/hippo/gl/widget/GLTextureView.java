@@ -24,8 +24,8 @@ import com.hippo.gl.view.GLView;
 
 public class GLTextureView extends GLView {
 
-    private RectF mSrc = new RectF();
-    private RectF mDst = new RectF();
+    private final RectF mSrc = new RectF();
+    private final RectF mDst = new RectF();
 
     private Texture mTexture;
 
@@ -36,6 +36,7 @@ public class GLTextureView extends GLView {
         } else {
             mSrc.setEmpty();
         }
+        invalidate();
     }
 
     public Texture getTexture() {

@@ -26,19 +26,35 @@
         android:entryValues="@array/reading_direction_entry_values"
         android:defaultValue="1"/>
 
+    <ListPreference
+        android:key="page_scaling"
+        android:title="@string/settings_read_reading_page_scaling_title"
+        android:summary="%s"
+        android:entries="@array/page_scaling_entries"
+        android:entryValues="@array/page_scaling_entry_values"
+        android:defaultValue="3"/>
+
+    <ListPreference
+        android:key="start_position"
+        android:title="@string/settings_read_reading_start_position_title"
+        android:summary="%s"
+        android:entries="@array/start_position_entries"
+        android:entryValues="@array/start_position_values"
+        android:defaultValue="1"/>
+
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"
         android:widgetLayout="@layout/preference_widget_fixed_switch"
         android:key="gallery_show_clock"
         android:title="@string/settings_read_show_clock_title"
-        android:defaultValue="true" />
+        android:defaultValue="true"/>
 
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"
         android:widgetLayout="@layout/preference_widget_fixed_switch"
         android:key="gallery_show_battery"
         android:title="@string/settings_read_show_battery_title"
-        android:defaultValue="true" />
+        android:defaultValue="true"/>
 
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"

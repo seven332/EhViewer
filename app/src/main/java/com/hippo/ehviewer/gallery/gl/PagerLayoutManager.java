@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.gallery.gl;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -68,6 +69,12 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
     @Mode
     private int mMode = MODE_RIGHT_TO_LEFT;
+    @ImageView.Scale
+    private int mScaleMode;
+    @ImageView.StartPosition
+    private int mStartPosition;
+    private float mScaleValue;
+
     private int mOffset;
     private int mDeltaX;
     private int mDeltaY;
@@ -86,8 +93,15 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     // Current index
     private int mIndex;
 
-    public PagerLayoutManager(Context context, @NonNull GalleryView galleryView) {
+    private final Rect mTempRect = new Rect();
+
+    public PagerLayoutManager(Context context, @NonNull GalleryView galleryView,
+            @ImageView.Scale int scaleMode, @ImageView.StartPosition int startPoint, float scaleValue) {
         super(galleryView);
+
+        mScaleMode = scaleMode;
+        mStartPosition = startPoint;
+        mScaleValue = scaleValue;
 
         mInterval = LayoutUtils.dp2pix(context, INTERVAL);
         mPageFling = new PageFling(context);
@@ -131,6 +145,40 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
             resetParameters();
             // Request fill
             mGalleryView.requestFill();
+        }
+    }
+
+    public void setScaleMode(@ImageView.Scale int scaleMode) {
+        if (mScaleMode == scaleMode) {
+            return;
+        }
+        mScaleMode = scaleMode;
+
+        if (mCurrent != null) {
+            mCurrent.getImageView().setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
+        }
+        if (mPrevious != null) {
+            mPrevious.getImageView().setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
+        }
+        if (mNext != null) {
+            mNext.getImageView().setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
+        }
+    }
+
+    public void setStartPosition(@ImageView.StartPosition int startPosition) {
+        if (mStartPosition == startPosition) {
+            return;
+        }
+        mStartPosition = startPosition;
+
+        if (mCurrent != null) {
+            mCurrent.getImageView().setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
+        }
+        if (mPrevious != null) {
+            mPrevious.getImageView().setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
+        }
+        if (mNext != null) {
+            mNext.getImageView().setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
         }
     }
 
@@ -221,6 +269,26 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         }
     }
 
+    private GalleryPageView obtainPage() {
+        GalleryPageView page = mGalleryView.obtainPage();
+        page.getImageView().setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
+        return page;
+    }
+
+    private void layoutPage(GalleryPageView page, int widthSpec, int heightSpec,
+            int left, int top, int right, int bottom) {
+        Rect rect = mTempRect;
+        page.getValidRect(rect);
+        boolean oldValid = !rect.isEmpty();
+        page.measure(widthSpec, heightSpec);
+        page.layout(left, top, right, bottom);
+        page.getValidRect(rect);
+        boolean newValid = !rect.isEmpty();
+        if (!oldValid && newValid) {
+            page.getImageView().setScaleOffset(mScaleMode, mStartPosition, mScaleValue);
+        }
+    }
+
     @Override
     public void onFill() {
         GalleryView.Adapter adapter = mAdapter;
@@ -292,19 +360,19 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
             // Ensure pages
             if (mCurrent == null) {
-                mCurrent = galleryView.obtainPage();
+                mCurrent = obtainPage();
                 adapter.bind(mCurrent, index);
                 galleryView.addComponent(mCurrent);
             }
             if (mPrevious == null && index > 0) {
-                mPrevious = galleryView.obtainPage();
+                mPrevious = obtainPage();
                 adapter.bind(mPrevious, index - 1);
                 galleryView.addComponent(mPrevious);
             } else if (mPrevious != null && index == 0) {
                 removePage(mPrevious);
             }
             if (mNext == null && index < size - 1) {
-                mNext = galleryView.obtainPage();
+                mNext = obtainPage();
                 adapter.bind(mNext, index + 1);
                 galleryView.addComponent(mNext);
             } else if (mNext != null && index == size - 1) {
@@ -324,16 +392,16 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
             final int widthSpec = GLView.MeasureSpec.makeMeasureSpec(width, GLView.MeasureSpec.EXACTLY);
             final int heightSpec = GLView.MeasureSpec.makeMeasureSpec(height, GLView.MeasureSpec.EXACTLY);
             if (mCurrent != null) {
-                mCurrent.measure(widthSpec, heightSpec);
-                mCurrent.layout(offset, 0, width + offset, height);
+                layoutPage(mCurrent, widthSpec, heightSpec,
+                        offset, 0, width + offset, height);
             }
             if (leftPage != null) {
-                leftPage.measure(widthSpec, heightSpec);
-                leftPage.layout(-mInterval - width + offset, 0, -mInterval + offset, height);
+                layoutPage(leftPage, widthSpec, heightSpec,
+                        -mInterval - width + offset, 0, -mInterval + offset, height);
             }
             if (rightPage != null) {
-                rightPage.measure(widthSpec, heightSpec);
-                rightPage.layout(width + mInterval + offset, 0, width + mInterval + width + offset, height);
+                layoutPage(rightPage, widthSpec, heightSpec,
+                        width + mInterval + offset, 0, width + mInterval + width + offset, height);
             }
         }
     }
@@ -411,7 +479,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         mPrevious = null;
 
         if (mIndex > 0) {
-            mPrevious = mGalleryView.obtainPage();
+            mPrevious = obtainPage();
             mAdapter.bind(mPrevious, mIndex - 1);
             mGalleryView.addComponent(mPrevious);
         }
@@ -433,7 +501,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         mNext = null;
 
         if (mIndex < size - 1) {
-            mNext = mGalleryView.obtainPage();
+            mNext = obtainPage();
             adapter.bind(mNext, mIndex + 1);
             mGalleryView.addComponent(mNext);
         }
@@ -623,7 +691,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         }
 
         mCurrent.getImageView().scale(focusX, focusY, scale);
-        // TODO Save scale
+        mScaleValue = mCurrent.getImageView().getScale();
     }
 
     @Override
@@ -978,6 +1046,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
             float scale = MathUtils.lerp(mStartScale, mEndScale, progress);
             mCurrent.getImageView().scale(mFocusX, mFocusY, scale / mLastScale);
             mLastScale = scale;
+            mScaleValue = scale;
         }
     }
 }
