@@ -214,7 +214,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             // Translate pages
             pages = mPages.iterator();
             for (int i = 0; i < pageSize; i++) {
-                pages.next().bounds().offset(0, -offset);
+                pages.next().offsetTopAndBottom(-offset);
             }
         }
 
@@ -375,7 +375,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
                     mOffset += translate;
                     // Translate pages
                     for (GalleryPageView page : pages) {
-                        page.bounds().offset(0, translate);
+                        page.offsetTopAndBottom(-translate);
                     }
                     // Break if no previous
                     if (mIndex <= 0) {
