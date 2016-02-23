@@ -170,6 +170,17 @@ public class Settings {
         putIntToStr(KEY_START_POSITION, value);
     }
 
+    private static final String KEY_KEEP_SCREEN_ON = "keep_screen_on";
+    private static final boolean DEFAULT_KEEP_SCREEN_ON = false;
+
+    public static boolean getKeepScreenOn() {
+        return getBoolean(KEY_KEEP_SCREEN_ON, DEFAULT_KEEP_SCREEN_ON);
+    }
+
+    public static void putKeepScreenOn(boolean value) {
+        putBoolean(KEY_KEEP_SCREEN_ON, value);
+    }
+
     private static final String KEY_SHOW_CLOCK = "gallery_show_clock";
     private static final boolean DEFAULT_SHOW_CLOCK = true;
 

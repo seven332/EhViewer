@@ -29,6 +29,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -241,6 +242,13 @@ public class GalleryActivity extends AppCompatActivity
         mCurrentIndex = mGalleryView.getCurrentIndex();
         mLayoutMode = mGalleryView.getLayoutMode();
         updateSlider();
+
+        // Update keep screen on
+        if (Settings.getKeepScreenOn()) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
     }
 
     @Override
@@ -543,6 +551,7 @@ public class GalleryActivity extends AppCompatActivity
         private final Spinner mReadingDirection;
         private final Spinner mScaleMode;
         private final Spinner mStartPosition;
+        private final SwitchCompat mKeepScreenOn;
         private final SwitchCompat mShowClock;
         private final SwitchCompat mShowBattery;
         private final SwitchCompat mVolumePage;
@@ -553,6 +562,7 @@ public class GalleryActivity extends AppCompatActivity
             mReadingDirection = (Spinner) mView.findViewById(R.id.reading_direction);
             mScaleMode = (Spinner) mView.findViewById(R.id.page_scaling);
             mStartPosition = (Spinner) mView.findViewById(R.id.start_position);
+            mKeepScreenOn = (SwitchCompat) mView.findViewById(R.id.keep_screen_on);
             mShowClock = (SwitchCompat) mView.findViewById(R.id.show_clock);
             mShowBattery = (SwitchCompat) mView.findViewById(R.id.show_battery);
             mVolumePage = (SwitchCompat) mView.findViewById(R.id.volume_page);
@@ -560,6 +570,7 @@ public class GalleryActivity extends AppCompatActivity
             mReadingDirection.setSelection(Settings.getReadingDirection());
             mScaleMode.setSelection(Settings.getPageScaling());
             mStartPosition.setSelection(Settings.getStartPosition());
+            mKeepScreenOn.setChecked(Settings.getKeepScreenOn());
             mShowClock.setChecked(Settings.getShowClock());
             mShowBattery.setChecked(Settings.getShowBattery());
             mVolumePage.setChecked(Settings.getVolumePage());
@@ -574,6 +585,7 @@ public class GalleryActivity extends AppCompatActivity
             int layoutMode = GalleryView.sanitizeLayoutMode(mReadingDirection.getSelectedItemPosition());
             int scaleMode = ImageView.sanitizeScaleMode(mScaleMode.getSelectedItemPosition());
             int startPosition = ImageView.sanitizeStartPosition(mStartPosition.getSelectedItemPosition());
+            boolean keepScreenOn = mKeepScreenOn.isChecked();
             boolean showClock = mShowClock.isChecked();
             boolean showBattery = mShowBattery.isChecked();
             boolean volumePage = mVolumePage.isChecked();
@@ -581,6 +593,7 @@ public class GalleryActivity extends AppCompatActivity
             Settings.putReadingDirection(layoutMode);
             Settings.putPageScaling(scaleMode);
             Settings.putStartPosition(startPosition);
+            Settings.putKeepScreenOn(keepScreenOn);
             Settings.putShowClock(showClock);
             Settings.putShowBattery(showBattery);
             Settings.putVolumePage(volumePage);
@@ -589,6 +602,11 @@ public class GalleryActivity extends AppCompatActivity
                 mGalleryView.setLayoutMode(layoutMode);
                 mGalleryView.setScaleMode(scaleMode);
                 mGalleryView.setStartPosition(startPosition);
+            }
+            if (keepScreenOn) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             }
             if (mClock != null) {
                 mClock.setVisibility(showClock ? View.VISIBLE : View.GONE);
