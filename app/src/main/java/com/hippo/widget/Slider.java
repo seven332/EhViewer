@@ -299,8 +299,8 @@ public class Slider extends View {
 
     public void setProgress(int progress) {
         progress = MathUtils.clamp(progress, mStart, mEnd);
+        int oldProgress = mProgress;
         if (mProgress != progress) {
-            int oldProgress = mProgress;
             mProgress = progress;
             mPercent = MathUtils.delerp(mStart, mEnd, mProgress);
             mTargetProgress = progress;
@@ -314,11 +314,10 @@ public class Slider extends View {
             } else {
                 startProgressAnimation(mPercent);
             }
-
-            if (mListener != null) {
-                mListener.onSetProgress(this, progress, oldProgress, false, true);
-            }
             invalidate();
+        }
+        if (mListener != null) {
+            mListener.onSetProgress(this, progress, oldProgress, false, true);
         }
     }
 
@@ -421,7 +420,7 @@ public class Slider extends View {
                     startProgressAnimation(percent);
 
                     if (mListener != null) {
-                        mListener.onSetProgress(this, progress, progress, true, false);
+                        mListener.onSetProgress(this, mProgress, progress, true, false);
                     }
                 }
 
@@ -436,14 +435,13 @@ public class Slider extends View {
                 }
 
                 if (action == MotionEvent.ACTION_UP) {
+                    int oldProgress = mProgress;
                     if (mProgress != progress) {
-                        int oldProgress = mProgress;
                         mProgress = progress;
                         mPercent = mDrawPercent;
-
-                        if (mListener != null) {
-                            mListener.onSetProgress(this, progress, oldProgress, true, true);
-                        }
+                    }
+                    if (mListener != null) {
+                        mListener.onSetProgress(this, progress, oldProgress, true, true);
                     }
                 }
                 break;
