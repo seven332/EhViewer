@@ -68,7 +68,7 @@ public class GalleryInfo implements Parcelable {
             Pattern.compile("[(\\[]rus(?:sian)?[)\\]]", Pattern.CASE_INSENSITIVE),
             Pattern.compile("[(\\[]fr(?:ench)?[)\\]]", Pattern.CASE_INSENSITIVE),
             Pattern.compile("[(\\[]portuguese", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("[(\\[]thai(?: ภาษาไทย)?[)\\]]", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("[(\\[]thai(?: ภาษาไทย)?[)\\]]|แปลไทย", Pattern.CASE_INSENSITIVE),
             Pattern.compile("[(\\[]german[)\\]]", Pattern.CASE_INSENSITIVE),
             Pattern.compile("[(\\[]italiano?[)\\]]", Pattern.CASE_INSENSITIVE),
             Pattern.compile("[(\\[]vietnamese(?: Tiếng Việt)?[)\\]]", Pattern.CASE_INSENSITIVE),
