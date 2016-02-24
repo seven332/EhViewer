@@ -53,6 +53,7 @@ typedef struct
 {
   unsigned int width;
   unsigned int height;
+  bool is_opaque;
   unsigned char* buffer;
   bool apng;
   int buffer_index;
@@ -76,6 +77,7 @@ bool PNG_render(PNG* png, int src_x, int src_y,
 void PNG_advance(PNG* png);
 int PNG_get_delay(PNG* png);
 int PNG_get_frame_count(PNG* png);
+bool PNG_is_opaque(PNG* png);
 void PNG_recycle(PNG* png);
 
 #endif // IMAGE_SUPPORT_PNG

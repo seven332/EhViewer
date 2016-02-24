@@ -471,6 +471,11 @@ int GIF_get_frame_count(GIF* gif)
   return gif->gif_file->ImageCount;
 }
 
+bool GIF_is_opaque(GIF* gif)
+{
+  return gif->frame_info_array->tran < 0;
+}
+
 void GIF_recycle(GIF* gif)
 {
   DGifCloseFile(gif->gif_file, &error_code);

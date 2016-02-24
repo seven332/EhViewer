@@ -27,9 +27,9 @@ public class Image {
     public static final int FORMAT_GIF = 0x02;
 
     private long mNativePtr;
-    private int mFormat;
-    private int mWidth;
-    private int mHeight;
+    private final int mFormat;
+    private final int mWidth;
+    private final int mHeight;
 
     private Image(long nativePtr, int format, int width, int height) {
         mNativePtr = nativePtr;
@@ -88,6 +88,11 @@ public class Image {
         return nativeFrameCount(mNativePtr, mFormat);
     }
 
+    public boolean isOpaque() {
+        checkRecycled();
+        return nativeIsOpaque(mNativePtr, mFormat);
+    }
+
     public void recycle() {
         if (mNativePtr != 0) {
             nativeRecycle(mNativePtr, mFormat);
@@ -104,9 +109,6 @@ public class Image {
     }
 
     static {
-        System.loadLibrary("stream");
-        System.loadLibrary("jpeg-turbo");
-        System.loadLibrary("gif");
         System.loadLibrary("image");
     }
 
@@ -125,6 +127,8 @@ public class Image {
     private static native int nativeGetDelay(long nativePtr, int format);
 
     private static native int nativeFrameCount(long nativePtr, int format);
+
+    private static native boolean nativeIsOpaque(long nativePtr, int format);
 
     private static native void nativeRecycle(long nativePtr, int format);
 }

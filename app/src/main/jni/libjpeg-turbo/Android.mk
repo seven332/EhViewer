@@ -124,4 +124,4 @@ else
     LOCAL_SRC_FILES += jsimd_none.c
 endif
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)

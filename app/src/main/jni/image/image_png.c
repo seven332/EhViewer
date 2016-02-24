@@ -160,6 +160,7 @@ void* PNG_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, boo
   unsigned int height;
   int color_type;
   int bit_depth;
+  bool is_opaque;
   unsigned char* buffer = NULL;
   unsigned int frame_count = 0;
   bool hide_first_frame = false;
@@ -271,7 +272,10 @@ void* PNG_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, boo
     png_set_gray_to_rgb(png_ptr);
   }
   if (!(color_type & PNG_COLOR_MASK_ALPHA)) {
+    is_opaque = true;
     png_set_add_alpha(png_ptr, 0xff, PNG_FILLER_AFTER);
+  } else {
+    is_opaque = false;
   }
 
   if (apng) {
@@ -316,6 +320,7 @@ void* PNG_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, boo
     // Fill PNG
     png->width = width;
     png->height = height;
+    png->is_opaque = is_opaque;
     png->buffer = buffer;
     png->apng = true;
     png->buffer_index = -1;
@@ -558,6 +563,11 @@ int PNG_get_frame_count(PNG* png)
   } else {
     return 1;
   }
+}
+
+bool PNG_is_opaque(PNG* png)
+{
+  return png->is_opaque;
 }
 
 void PNG_recycle(PNG* png)

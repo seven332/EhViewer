@@ -49,6 +49,7 @@ bool JPEG_render(JPEG* jpeg, int src_x, int src_y,
 void JPEG_advance(JPEG* jpeg);
 int JPEG_get_delay(JPEG* jpeg);
 int JPEG_get_frame_count(JPEG* jpeg);
+bool JPEG_is_opaque(JPEG* jpeg);
 void JPEG_recycle(JPEG* jpeg);
 
 #endif // IMAGE_SUPPORT_JPEG

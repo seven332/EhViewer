@@ -176,6 +176,11 @@ int JPEG_get_frame_count(JPEG* jpeg)
   return 1;
 }
 
+bool JPEG_is_opaque(JPEG* jpeg)
+{
+  return true;
+}
+
 void JPEG_recycle(JPEG* jpeg)
 {
   free(jpeg->buffer);

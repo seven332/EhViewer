@@ -26,7 +26,6 @@ image_gif.c \
 image_utils.c \
 java_wrapper.c
 LOCAL_LDLIBS := -llog -ljnigraphics
-LOCAL_STATIC_LIBRARIES := png
-LOCAL_SHARED_LIBRARIES := jpeg-turbo png gif stream
+LOCAL_STATIC_LIBRARIES := jpeg-turbo png gif stream
 
 include $(BUILD_SHARED_LIBRARY)

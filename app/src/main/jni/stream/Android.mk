@@ -23,6 +23,5 @@ input_stream_pipe.c \
 output_stream.c \
 output_stream_pipe.c \
 patch_head_input_stream.c
-LOCAL_LDLIBS := -llog
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)

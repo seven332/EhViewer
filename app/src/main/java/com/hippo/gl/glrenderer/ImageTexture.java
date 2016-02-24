@@ -59,10 +59,10 @@ public class ImageTexture implements Texture {
     // In this 16ms, we use about 4~8 ms to upload tiles.
     private static final long UPLOAD_TILE_LIMIT = 4; // ms
 
-    private static Bitmap sSmallUploadBitmap;
-    private static Bitmap sLargeUploadBitmap;
-    private static InfiniteThreadExecutor sThreadExecutor;
-    private static PVLock sPVLock;
+    private static final Bitmap sSmallUploadBitmap;
+    private static final Bitmap sLargeUploadBitmap;
+    private static final InfiniteThreadExecutor sThreadExecutor;
+    private static final PVLock sPVLock;
 
     private static Tile sSmallFreeTileHead = null;
     private static Tile sLargeFreeTileHead = null;
@@ -75,6 +75,7 @@ public class ImageTexture implements Texture {
 
     private final int mWidth;
     private final int mHeight;
+    private final boolean mOpaque;
     private final RectF mSrcRect = new RectF();
     private final RectF mDestRect = new RectF();
 
@@ -293,6 +294,7 @@ public class ImageTexture implements Texture {
         mImage = image;
         int width = mWidth = image.getWidth();
         int height = mHeight = image.getHeight();
+        boolean opaque = mOpaque = image.isOpaque();
         ArrayList<Tile> list = new ArrayList<>();
 
         for (int x = 0; x < width; x += LARGE_CONTENT_SIZE) {
@@ -306,6 +308,7 @@ public class ImageTexture implements Texture {
                     tile.offsetY = y;
                     tile.image = image;
                     tile.setSize(TILE_SMALL, w, Math.min(SMALL_CONTENT_SIZE, h));
+                    tile.setOpaque(opaque);
                     list.add(tile);
 
                     int nextHeight = h - SMALL_CONTENT_SIZE;
@@ -315,6 +318,7 @@ public class ImageTexture implements Texture {
                         nextTile.offsetY = y + SMALL_CONTENT_SIZE;
                         nextTile.image = image;
                         nextTile.setSize(TILE_SMALL, w, nextHeight);
+                        nextTile.setOpaque(opaque);
                         list.add(nextTile);
                     }
                 } else if (h <= SMALL_CONTENT_SIZE) {
@@ -323,6 +327,7 @@ public class ImageTexture implements Texture {
                     tile.offsetY = y;
                     tile.image = image;
                     tile.setSize(TILE_SMALL, Math.min(SMALL_CONTENT_SIZE, w), h);
+                    tile.setOpaque(opaque);
                     list.add(tile);
 
                     int nextWidth = w - SMALL_CONTENT_SIZE;
@@ -332,6 +337,7 @@ public class ImageTexture implements Texture {
                         nextTile.offsetY = y;
                         nextTile.image = image;
                         nextTile.setSize(TILE_SMALL, nextWidth, h);
+                        nextTile.setOpaque(opaque);
                         list.add(nextTile);
                     }
                 } else {
@@ -340,6 +346,7 @@ public class ImageTexture implements Texture {
                     tile.offsetY = y;
                     tile.image = image;
                     tile.setSize(TILE_LARGE, w, h);
+                    tile.setOpaque(opaque);
                     list.add(tile);
                 }
             }
@@ -530,7 +537,7 @@ public class ImageTexture implements Texture {
 
     @Override
     public boolean isOpaque() {
-        return false;
+        return mOpaque;
     }
 
     public boolean isReady() {

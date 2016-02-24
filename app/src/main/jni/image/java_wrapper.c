@@ -145,6 +145,13 @@ Java_com_hippo_image_Image_nativeFrameCount(JNIEnv* env,
   return (jint) get_frame_count((void*) (intptr_t) ptr, format);
 }
 
+JNIEXPORT jboolean JNICALL
+Java_com_hippo_image_Image_nativeIsOpaque(JNIEnv* env,
+    jclass clazz, jlong ptr, jint format)
+{
+  return (jboolean) is_opaque((void*) (intptr_t) ptr, format);
+}
+
 JNIEXPORT void JNICALL
 Java_com_hippo_image_Image_nativeRecycle(JNIEnv* env,
     jclass clazz, jlong ptr, jint format)

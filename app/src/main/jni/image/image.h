@@ -48,6 +48,7 @@ bool render(void* image, int format, int src_x, int src_y,
 void advance(void* image, int format);
 int get_delay(void* image, int format);
 int get_frame_count(void* image, int format);
+bool is_opaque(void* image, int format);
 void recycle(void* image, int format);
 
 #endif //IMAGE_IMAGE_H

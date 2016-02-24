@@ -67,6 +67,7 @@ bool GIF_render(GIF* gif, int src_x, int src_y,
 void GIF_advance(GIF* gif);
 int GIF_get_delay(GIF* gif);
 int GIF_get_frame_count(GIF* gif);
+bool GIF_is_opaque(GIF* gif);
 void GIF_recycle(GIF* gif);
 
 #endif // IMAGE_SUPPORT_GIF

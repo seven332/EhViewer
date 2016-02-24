@@ -24,4 +24,4 @@ gif_hash.c \
 gifalloc.c \
 openbsd-reallocarray.c
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)

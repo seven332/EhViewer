@@ -289,6 +289,27 @@ int get_frame_count(void* image, int format)
   }
 }
 
+bool is_opaque(void* image, int format)
+{
+  switch (format) {
+#ifdef IMAGE_SUPPORT_JPEG
+    case IMAGE_FORMAT_JPEG:
+      return JPEG_is_opaque((JPEG*) image);
+#endif
+#ifdef IMAGE_SUPPORT_PNG
+    case IMAGE_FORMAT_PNG:
+      return PNG_is_opaque((PNG*) image);
+#endif
+#ifdef IMAGE_SUPPORT_GIF
+    case IMAGE_FORMAT_GIF:
+      return GIF_is_opaque((GIF*) image);
+#endif
+    default:
+      LOGE(EMSG("Can't detect format %d"), format);
+      return false;
+  }
+}
+
 void recycle(void* image, int format)
 {
   switch (format) {
