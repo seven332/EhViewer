@@ -28,7 +28,6 @@ import com.hippo.gl.widget.GLLinearLayout;
 import com.hippo.gl.widget.GLMovableTextView;
 import com.hippo.gl.widget.GLProgressView;
 import com.hippo.gl.widget.GLTextureView;
-import com.hippo.image.Image;
 import com.hippo.yorozuya.LayoutUtils;
 
 public class GalleryPageView extends GLFrameLayout {
@@ -136,10 +135,10 @@ public class GalleryPageView extends GLFrameLayout {
         }
     }
 
-    public void setImage(Image image) {
+    public void setImage(ImageTexture imageTexture) {
         unbindImage();
-        if (image != null) {
-            mImage.setTexture(new ImageTexture(image));
+        if (imageTexture != null) {
+            mImage.setTexture(imageTexture);
         }
     }
 
