@@ -441,8 +441,12 @@ public class GalleryActivity extends AppCompatActivity
     public void onPageSucceed(int index, Image image) {
         GalleryPageView page = findPageByIndex(index);
         if (page != null) {
+            ImageTexture imageTexture = new ImageTexture(image);
+            if (mUploader != null) {
+                mUploader.addTexture(imageTexture);
+            }
             page.showImage();
-            page.setImage(image);
+            page.setImage(imageTexture);
             page.setPage(index + 1);
             page.setProgress(GalleryPageView.PROGRESS_GONE);
             page.setError(null, null);
