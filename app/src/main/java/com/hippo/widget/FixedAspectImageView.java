@@ -113,6 +113,10 @@ public class FixedAspectImageView extends ImageView {
         mAdjustViewBounds = adjustViewBounds;
     }
 
+    public boolean isAdjustViewBounds() {
+        return mAdjustViewBounds;
+    }
+
     /**
      * Enable aspect will set AdjustViewBounds true.
      * Any negative float to disable it,
@@ -128,6 +132,10 @@ public class FixedAspectImageView extends ImageView {
             mAspect = -1f;
         }
         requestLayout();
+    }
+
+    public float getAspect() {
+        return mAspect;
     }
 
     private int resolveAdjustedSize(int desiredSize, int minSize, int maxSize,
