@@ -821,7 +821,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         PopupMenu popup = new PopupMenu(getContext(), mOtherActions, Gravity.TOP);
         mPopupMenu = popup;
-        popup.getMenuInflater().inflate(R.menu.gallery_detail, popup.getMenu());
+        popup.getMenuInflater().inflate(R.menu.scene_gallery_detail, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {

@@ -163,7 +163,7 @@ public class GalleryPreviewsScene extends ToolbarScene {
 
     @Override
     public int getMenuResId() {
-        return R.menu.gallery_previews;
+        return R.menu.scene_gallery_previews;
     }
 
     @Override
