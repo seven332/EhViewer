@@ -230,6 +230,7 @@
     <string name="download_remove_dialog_title">Remove Gallery</string>
     <string name="download_remove_dialog_message">Remove %s from download list ?</string>
     <string name="download_remove_dialog_check_text">Delete image files</string>
+    <string name="stat_download_action_stop_all">Stop All</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">Page %d</string>

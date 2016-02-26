@@ -173,12 +173,16 @@ public class DownloadService extends Service implements DownloadManager.Download
             return;
         }
 
+        Intent stopAllIntent = new Intent(this, DownloadService.class);
+        stopAllIntent.setAction(ACTION_STOP_ALL);
+        PendingIntent piStopAll = PendingIntent.getService(this, 0, stopAllIntent, 0);
         mDownloadingBuilder = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setOngoing(true)
                 .setAutoCancel(false)
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
-                .setColor(getResources().getColor(R.color.colorPrimary));
+                .setColor(getResources().getColor(R.color.colorPrimary))
+                .addAction(R.drawable.ic_stop_x24, getString(R.string.stat_download_action_stop_all), piStopAll);
     }
 
     private void ensureDownloadedBuilder() {

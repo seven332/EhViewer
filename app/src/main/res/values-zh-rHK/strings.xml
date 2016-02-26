@@ -190,6 +190,7 @@
     <string name="download_remove_dialog_title">移除畫廊</string>
     <string name="download_remove_dialog_message">從下載列表移除 %s ？</string>
     <string name="download_remove_dialog_check_text">刪除圖片文件</string>
+    <string name="stat_download_action_stop_all">全部停止</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 頁</string>
