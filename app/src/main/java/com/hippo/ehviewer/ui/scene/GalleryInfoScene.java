@@ -50,7 +50,9 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
     public static final String KEY_KEYS = "keys";
     public static final String KEY_VALUES = "values";
 
+    @Nullable
     private ArrayList<String> mKeys;
+    @Nullable
     private ArrayList<String> mValues;
 
     @Override
@@ -70,6 +72,9 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
         }
         GalleryDetail gd = args.getParcelable(KEY_GALLERY_DETAIL);
         if (gd == null) {
+            return;
+        }
+        if (mKeys == null || mValues == null) {
             return;
         }
 
@@ -138,6 +143,7 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
         outState.putStringArrayList(KEY_VALUES, mValues);
     }
 
+    @SuppressWarnings("deprecation")
     @Nullable
     @Override
     public View onCreateView2(LayoutInflater inflater,
@@ -175,7 +181,7 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
 
     @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-        if (position != 0) {
+        if (position != 0 && mValues != null) {
             ClipboardManager cmb = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
             cmb.setPrimaryClip(ClipData.newPlainText(null, mValues.get(position)));
             Toast.makeText(getContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
@@ -192,8 +198,8 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
 
     private static class InfoHolder extends RecyclerView.ViewHolder {
 
-        private TextView key;
-        private TextView value;
+        private final TextView key;
+        private final TextView value;
 
         public InfoHolder(View itemView) {
             super(itemView);
@@ -225,9 +231,11 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
 
         @Override
         public void onBindViewHolder(InfoHolder holder, int position) {
-            holder.key.setText(mKeys.get(position));
-            holder.value.setText(mValues.get(position));
-            holder.itemView.setEnabled(position != 0);
+            if (mKeys != null && mValues != null) {
+                holder.key.setText(mKeys.get(position));
+                holder.value.setText(mValues.get(position));
+                holder.itemView.setEnabled(position != 0);
+            }
         }
 
         @Override
