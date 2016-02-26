@@ -25,6 +25,7 @@ import android.util.SparseArray;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.dao.DownloadInfoRaw;
+import com.hippo.ehviewer.dao.DownloadLabelRaw;
 import com.hippo.ehviewer.spider.SpiderQueen;
 import com.hippo.image.Image;
 import com.hippo.yorozuya.ConcurrentPool;
@@ -49,7 +50,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
     private final Map<String, LinkedList<DownloadInfo>> mMap;
     // All labels without default label
     @NonNull
-    private final List<String> mLabelList;
+    private final List<DownloadLabelRaw> mLabelList;
     // Store download info with default label
     @NonNull
     private final LinkedList<DownloadInfo> mDefaultInfoList;
@@ -75,14 +76,14 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
     public DownloadManager(Context context) {
         mContext = context;
 
-        List<String> labels = EhDB.getAllDownloadLabelList();
+        List<DownloadLabelRaw> labels = EhDB.getAllDownloadLabelList();
         mLabelList = labels;
 
         // Create list for each label
         HashMap<String, LinkedList<DownloadInfo>> map = new HashMap<>();
         mMap = map;
-        for (String label : labels) {
-            map.put(label, new LinkedList<DownloadInfo>());
+        for (DownloadLabelRaw label : labels) {
+            map.put(label.getLabel(), new LinkedList<DownloadInfo>());
         }
         // Create default for non tag
         mDefaultInfoList = new LinkedList<>();
@@ -106,8 +107,9 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
             if (list == null) {
                 list = new LinkedList<>();
                 map.put(info.label, list);
-                if (!labels.contains(info.label)) {
-                    labels.add(info.label);
+                if (!containLabel(info.label)) {
+                    // Add label to DB and list
+                    labels.add(EhDB.addDownloadLabel(info.label));
                 }
             }
             list.add(info);
@@ -151,11 +153,21 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
     }
 
     public boolean containLabel(String label) {
-        return mLabelList.contains(label);
+        if (label == null) {
+            return false;
+        }
+
+        for (DownloadLabelRaw raw: mLabelList) {
+            if (label.equals(raw.getLabel())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @NonNull
-    public List<String> getLabelList() {
+    public List<DownloadLabelRaw> getLabelList() {
         return mLabelList;
     }
 

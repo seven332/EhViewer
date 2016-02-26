@@ -211,6 +211,12 @@ public final class MainActivity extends StageActivity
         }
     }
 
+    public void closeDrawer(int drawerGravity) {
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawer(drawerGravity);
+        }
+    }
+
     public void toggleDrawer(int drawerGravity) {
         if (mDrawerLayout != null) {
             if (mDrawerLayout.isDrawerOpen(drawerGravity)) {

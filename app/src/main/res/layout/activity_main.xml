@@ -38,11 +38,13 @@
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/nav_drawer_main"/>
 
-    <FrameLayout
+    <com.hippo.widget.DrawView
         android:id="@+id/right_drawer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="right"
-        android:minWidth="320dp"/>
+        android:maxWidth="280dp"
+        android:background="@color/background_light"
+        android:clickable="true"/>
 
 </android.support.v4.widget.DrawerLayout>

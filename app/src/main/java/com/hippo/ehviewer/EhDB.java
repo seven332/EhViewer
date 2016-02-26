@@ -44,7 +44,6 @@ import com.hippo.ehviewer.dao.QuickSearchDao;
 import com.hippo.ehviewer.dao.QuickSearchRaw;
 import com.hippo.ehviewer.download.DownloadInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.dao.query.LazyList;
@@ -329,17 +328,6 @@ public class EhDB {
         }
     }
 
-    @NonNull
-    public static synchronized List<String> getAllDownloadLabelList() {
-        DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
-        List<DownloadLabelRaw> list = dao.queryBuilder().orderAsc(DownloadLabelDao.Properties.Time).list();
-        List<String> result = new ArrayList<>(list.size());
-        for (int i = 0, n = list.size(); i < n; i++) {
-            result.add(list.get(i).getLabel());
-        }
-        return result;
-    }
-
     public static synchronized LazyList<DownloadInfoRaw> getDownloadInfoLazyList() {
         return sDaoSession.getDownloadInfoDao().queryBuilder()
                 .orderAsc(DownloadInfoDao.Properties.Date).listLazy();
@@ -413,5 +401,20 @@ public class EhDB {
     public static synchronized void removeDownloadDirname(int gid) {
         DownloadDirnameDao dao = sDaoSession.getDownloadDirnameDao();
         dao.deleteByKey((long) gid);
+    }
+
+    @NonNull
+    public static synchronized List<DownloadLabelRaw> getAllDownloadLabelList() {
+        DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
+        return dao.queryBuilder().orderAsc(DownloadLabelDao.Properties.Time).list();
+    }
+
+    public static synchronized DownloadLabelRaw addDownloadLabel(String label) {
+        DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
+        DownloadLabelRaw raw = new DownloadLabelRaw();
+        raw.setLabel(label);
+        raw.setTime(System.currentTimeMillis());
+        raw.setId(dao.insert(raw));
+        return raw;
     }
 }

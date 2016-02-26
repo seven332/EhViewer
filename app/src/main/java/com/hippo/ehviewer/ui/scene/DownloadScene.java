@@ -30,11 +30,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -47,6 +52,7 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.dao.DownloadLabelRaw;
 import com.hippo.ehviewer.download.DownloadInfo;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.download.DownloadService;
@@ -64,7 +70,9 @@ import com.hippo.view.ViewTransition;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadScene extends ToolbarScene
@@ -106,8 +114,7 @@ public class DownloadScene extends ToolbarScene
         }
     }
 
-    private void onInit() {
-        mLabel = Settings.getRecentDownloadLabel();
+    private void updateForLabel() {
         DownloadManager manager = EhApplication.getDownloadManager(getContext());
         if (mLabel == null) {
             mList = manager.getDefaultDownloadInfoList();
@@ -118,20 +125,19 @@ public class DownloadScene extends ToolbarScene
                 mList = manager.getDefaultDownloadInfoList();
             }
         }
+        setTitle(getString(R.string.scene_download_title,
+                mLabel != null ? mLabel : getString(R.string.default_download_label_name)));
+        Settings.putRecentDownloadLabel(mLabel);
+    }
+
+    private void onInit() {
+        mLabel = Settings.getRecentDownloadLabel();
+        updateForLabel();
     }
 
     private void onRestore(@NonNull Bundle savedInstanceState) {
         mLabel = savedInstanceState.getString(KEY_LABEL);
-        DownloadManager manager = EhApplication.getDownloadManager(getContext());
-        if (mLabel == null) {
-            mList = manager.getDefaultDownloadInfoList();
-        } else {
-            mList = manager.getLabelDownloadInfoList(mLabel);
-            if (mList == null) {
-                mLabel = null;
-                mList = manager.getDefaultDownloadInfoList();
-            }
-        }
+        updateForLabel();
     }
 
     @Override
@@ -177,7 +183,6 @@ public class DownloadScene extends ToolbarScene
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setTitle(R.string.download);
         setNavigationIcon(VectorDrawable.create(getContext(), R.xml.ic_arrow_left_dark_x24));
 
         // Clear nav checked item
@@ -226,6 +231,65 @@ public class DownloadScene extends ToolbarScene
         mRecyclerView = null;
         mViewTransition = null;
         mAdapter = null;
+    }
+
+    @Override
+    public View onCreateDrawerView(LayoutInflater inflater,
+            @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.drawer_download, container, false);
+
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.drawer_download_label_title);
+        toolbar.inflateMenu(R.menu.drawer_download);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                switch (id) {
+                    case R.id.action_settings:
+                        // TODO
+                        return true;
+                }
+                return false;
+            }
+        });
+
+        List<DownloadLabelRaw> list = EhApplication.getDownloadManager(getContext()).getLabelList();
+        final List<String> labels = new ArrayList<>(list.size() + 1);
+        // Add default label name
+        labels.add(getString(R.string.default_download_label_name));
+        for (DownloadLabelRaw raw: list) {
+            labels.add(raw.getLabel());
+        }
+
+        // TODO handle download label items update
+        ListView listView = (ListView) view.findViewById(R.id.list_view);
+        listView.setAdapter(new ArrayAdapter<>(getContext(), R.layout.item_simple_list, labels));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String label;
+                if (position == 0) {
+                    label = null;
+                } else {
+                    label = labels.get(position);
+                }
+                if (!ObjectUtils.equal(label, mLabel)) {
+                    mLabel = label;
+                    updateForLabel();
+                    if (mViewTransition != null) {
+                        if (mList == null || mList.size() == 0) {
+                            mViewTransition.showView(1);
+                        } else {
+                            mViewTransition.showView(0);
+                        }
+                    }
+                    closeDrawer(Gravity.RIGHT);
+                }
+            }
+        });
+
+        return view;
     }
 
     @Override

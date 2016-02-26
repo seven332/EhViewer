@@ -213,6 +213,7 @@
     <string name="go_to">Go to</string>
 
     <!-- Download -->
+    <string name="scene_download_title">Download - %s</string>
     <string name="no_download_info">No download items</string>
     <string name="download_state_none">Idle</string>
     <string name="download_state_wait">Waiting</string>
@@ -231,6 +232,8 @@
     <string name="download_remove_dialog_message">Remove %s from download list ?</string>
     <string name="download_remove_dialog_check_text">Delete image files</string>
     <string name="stat_download_action_stop_all">Stop All</string>
+    <string name="drawer_download_label_title">Label</string>
+    <string name="default_download_label_name">Default</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">Page %d</string>

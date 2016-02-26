@@ -33,7 +33,10 @@ import com.hippo.ehviewer.R;
 
 public abstract class ToolbarScene extends BaseScene {
 
+    @Nullable
     private Toolbar mToolbar;
+
+    private CharSequence mTempTitle;
 
     @Nullable
     public View onCreateView2(LayoutInflater inflater,
@@ -69,6 +72,11 @@ public abstract class ToolbarScene extends BaseScene {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (mToolbar != null) {
+            if (mTempTitle != null) {
+                mToolbar.setTitle(mTempTitle);
+                mTempTitle = null;
+            }
+
             int menuResId = getMenuResId();
             if (menuResId != 0) {
                 mToolbar.inflateMenu(menuResId);
@@ -78,6 +86,7 @@ public abstract class ToolbarScene extends BaseScene {
                         return ToolbarScene.this.onMenuItemClick(item);
                     }
                 });
+                onMenuCreated(mToolbar.getMenu());
             }
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
@@ -85,7 +94,6 @@ public abstract class ToolbarScene extends BaseScene {
                     onNavigationClick();
                 }
             });
-            onMenuCreated(mToolbar.getMenu());
         }
     }
 
@@ -116,14 +124,14 @@ public abstract class ToolbarScene extends BaseScene {
     }
 
     public void setTitle(@StringRes int resId) {
-        if (mToolbar != null) {
-            mToolbar.setTitle(resId);
-        }
+        setTitle(getString(resId));
     }
 
     public void setTitle(CharSequence title) {
         if (mToolbar != null) {
             mToolbar.setTitle(title);
+        } else {
+            mTempTitle = title;
         }
     }
 }

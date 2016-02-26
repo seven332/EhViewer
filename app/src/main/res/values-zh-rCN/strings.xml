@@ -173,6 +173,7 @@
     <string name="go_to">跳页</string>
 
     <!-- Download -->
+    <string name="scene_download_title">下载 - %s</string>
     <string name="no_download_info">无下载项目</string>
     <string name="download_state_none">未启动</string>
     <string name="download_state_wait">等待中</string>
@@ -191,6 +192,8 @@
     <string name="download_remove_dialog_message">从下载列表移除 %s ？</string>
     <string name="download_remove_dialog_check_text">删除图片文件</string>
     <string name="stat_download_action_stop_all">全部停止</string>
+    <string name="drawer_download_label_title">标签</string>
+    <string name="default_download_label_name">默认</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 页</string>
