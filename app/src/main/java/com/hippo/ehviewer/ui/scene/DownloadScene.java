@@ -19,7 +19,9 @@ package com.hippo.ehviewer.ui.scene;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,8 +37,10 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.hippo.app.CheckBoxDialogBuilder;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.EhApplication;
+import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
@@ -45,11 +49,13 @@ import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.download.DownloadInfo;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.download.DownloadService;
+import com.hippo.ehviewer.spider.SpiderDen;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.TransitionHelper;
+import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.ApiHelper;
 import com.hippo.vector.VectorDrawable;
@@ -57,7 +63,6 @@ import com.hippo.view.ViewTransition;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.FileUtils;
-import com.hippo.yorozuya.ObjectUtils;
 
 import java.util.List;
 
@@ -221,21 +226,22 @@ public class DownloadScene extends ToolbarScene
     }
 
     @Override
-    public void onAdd(DownloadInfo info) {
-        // TODO
+    public void onAdd(DownloadInfo info, List<DownloadInfo> list, int position) {
+        if (mList != list) {
+            return;
+        }
+        if (mAdapter != null) {
+            mAdapter.notifyItemInserted(position);
+        }
     }
 
     @Override
-    public void onUpdate(DownloadInfo info) {
-        if (!ObjectUtils.equal(info.label, mLabel)) {
+    public void onUpdate(DownloadInfo info, List<DownloadInfo> list) {
+        if (mList != list) {
             return;
         }
         RecyclerView recyclerView = mRecyclerView;
         if (recyclerView == null) {
-            return;
-        }
-        List<DownloadInfo> list = mList;
-        if (list == null) {
             return;
         }
 
@@ -276,8 +282,17 @@ public class DownloadScene extends ToolbarScene
     }
 
     @Override
-    public void onRemove(DownloadInfo info) {
+    public void onRemove(DownloadInfo info, List<DownloadInfo> list, int position) {
+        if (mList != list) {
+            return;
+        }
+        if (mAdapter != null) {
+            mAdapter.notifyItemRemoved(position);
+        }
 
+        if (mList != null && mList.size() == 0 && mViewTransition != null) {
+            mViewTransition.showView(1);
+        }
     }
 
     private void bindForState(DownloadHolder holder, DownloadInfo info) {
@@ -342,6 +357,48 @@ public class DownloadScene extends ToolbarScene
             speed = 0;
         }
         holder.speed.setText(FileUtils.humanReadableByteCount(speed, false) + "/S");
+    }
+
+    private class DeleteDialogHelper implements DialogInterface.OnClickListener {
+
+        private final GalleryInfo mGalleryInfo;
+        private final CheckBoxDialogBuilder mBuilder;
+
+        public DeleteDialogHelper(GalleryInfo galleryInfo, CheckBoxDialogBuilder builder) {
+            mGalleryInfo = galleryInfo;
+            mBuilder = builder;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (which != DialogInterface.BUTTON_POSITIVE) {
+                return;
+            }
+
+            // Delete
+            Intent intent = new Intent(getActivity(), DownloadService.class);
+            intent.setAction(DownloadService.ACTION_DELETE);
+            intent.putExtra(DownloadService.KEY_GID, mGalleryInfo.gid);
+            getActivity().startService(intent);
+
+            boolean checked = mBuilder.isChecked();
+            Settings.putRemoveImageFiles(checked);
+            if (checked) {
+                // Remove download path
+                EhDB.removeDownloadDirname(mGalleryInfo.gid);
+                // Delete file
+                UniFile file = SpiderDen.getGalleryDownloadDir(mGalleryInfo);
+                new AsyncTask<UniFile, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(UniFile... params) {
+                        for (UniFile file: params) {
+                            file.delete();
+                        }
+                        return null;
+                    }
+                }.execute(file);
+            }
+        }
     }
 
     private class DownloadHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -421,7 +478,15 @@ public class DownloadScene extends ToolbarScene
                 intent.putExtra(DownloadService.KEY_GID, list.get(index).galleryInfo.gid);
                 getActivity().startService(intent);
             } else if (delete == v) {
-                // TODO
+                GalleryInfo galleryInfo = list.get(index).galleryInfo;
+                CheckBoxDialogBuilder builder = new CheckBoxDialogBuilder(getContext(),
+                        getString(R.string.download_remove_dialog_message, galleryInfo.title),
+                        getString(R.string.download_remove_dialog_check_text),
+                        Settings.getRemoveImageFiles());
+                DeleteDialogHelper helper = new DeleteDialogHelper(galleryInfo, builder);
+                builder.setTitle(R.string.download_remove_dialog_title)
+                        .setPositiveButton(android.R.string.ok, helper)
+                        .show();
             }
         }
     }

@@ -117,7 +117,7 @@ public class Settings {
         putBoolean(KEY_SHOW_WARNING, value);
     }
 
-    public static final String KEY_RECENT_DOWNLOAD_LABEL = "recent_download_label";
+    private static final String KEY_RECENT_DOWNLOAD_LABEL = "recent_download_label";
     private static final String DEFAULT_RECENT_DOWNLOAD_LABEL = null;
 
     public static String getRecentDownloadLabel() {
@@ -128,6 +128,16 @@ public class Settings {
         putString(KEY_RECENT_DOWNLOAD_LABEL, value);
     }
 
+    private static final String KEY_REMOVE_IMAGE_FILES = "include_pic";
+    private static final boolean DEFAULT_REMOVE_IMAGE_FILES = true;
+
+    public static boolean getRemoveImageFiles() {
+        return getBoolean(KEY_REMOVE_IMAGE_FILES, DEFAULT_REMOVE_IMAGE_FILES);
+    }
+
+    public static void putRemoveImageFiles(boolean value) {
+        putBoolean(KEY_REMOVE_IMAGE_FILES, value);
+    }
 
     public static EhConfig getEhConfig() {
         return sEhConfig;

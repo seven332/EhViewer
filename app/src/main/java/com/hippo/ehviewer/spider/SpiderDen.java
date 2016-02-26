@@ -62,11 +62,18 @@ public final class SpiderDen {
     public static UniFile getGalleryDownloadDir(GalleryInfo galleryInfo) {
         UniFile dir = Settings.getDownloadLocation();
         if (dir != null) {
-            GalleryInfo info = EhDB.getGalleryInfo(galleryInfo.gid);
-            if (info == null) {
-                info = galleryInfo;
+            // Read from DB
+            String dirname = EhDB.getDownloadDirname(galleryInfo.gid);
+            if (dirname == null) {
+                GalleryInfo info = EhDB.getGalleryInfo(galleryInfo.gid);
+                if (info == null) {
+                    info = galleryInfo;
+                }
+                dirname = FileUtils.sanitizeFilename(info.gid + "-" + info.title);
+                // Put into DB
+                EhDB.putDownloadDirname(info.gid, dirname);
             }
-            return dir.subFile(FileUtils.sanitizeFilename(info.gid + "-" + info.title));
+            return dir.subFile(dirname);
         } else {
             return null;
         }

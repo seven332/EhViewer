@@ -40,6 +40,7 @@ public class EhDaoGenerator {
         addGalleryInfo(schema);
         addDownloadInfo(schema);
         addDownloadLabel(schema);
+        addDownloadDirname(schema);
         addHistoryInfo(schema);
         addQuickSearch(schema);
         addLocalFavorite(schema);
@@ -79,6 +80,14 @@ public class EhDaoGenerator {
         entity.addIdProperty();
         entity.addStringProperty("label");
         entity.addLongProperty("time");
+    }
+
+    private static void addDownloadDirname(Schema schema) {
+        Entity entity = schema.addEntity("DownloadDirnameRaw");
+        entity.setTableName("DOWNLOAD_DIRNAME");
+        entity.setClassNameDao("DownloadDirnameDao");
+        entity.addLongProperty("gid").primaryKey();
+        entity.addStringProperty("dirname");
     }
 
     private static void addHistoryInfo(Schema schema) {

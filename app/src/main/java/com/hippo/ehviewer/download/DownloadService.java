@@ -40,6 +40,7 @@ public class DownloadService extends Service implements DownloadManager.Download
     public static final String ACTION_STOP = "stop";
     public static final String ACTION_STOP_CURRENT = "stop_current";
     public static final String ACTION_STOP_ALL = "stop_all";
+    public static final String ACTION_DELETE = "delete";
 
     public static final String ACTION_CLEAR = "clear";
 
@@ -147,6 +148,11 @@ public class DownloadService extends Service implements DownloadManager.Download
         } else if (ACTION_STOP_ALL.equals(action)) {
             if (mDownloadManager != null) {
                 mDownloadManager.stopAllDownload();
+            }
+        } else if (ACTION_DELETE.equals(action)) {
+            int gid = intent.getIntExtra(KEY_GID, -1);
+            if (gid != -1 && mDownloadManager != null) {
+                mDownloadManager.deleteDownload(gid);
             }
         } else if (ACTION_CLEAR.equals(action)) {
             EhApplication.clearDownloadService(getApplicationContext(), this);

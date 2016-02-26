@@ -20,12 +20,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.dao.DaoMaster;
 import com.hippo.ehviewer.dao.DaoSession;
+import com.hippo.ehviewer.dao.DownloadDirnameDao;
+import com.hippo.ehviewer.dao.DownloadDirnameRaw;
 import com.hippo.ehviewer.dao.DownloadInfoDao;
 import com.hippo.ehviewer.dao.DownloadInfoRaw;
 import com.hippo.ehviewer.dao.DownloadLabelDao;
@@ -268,7 +272,7 @@ public class EhDB {
         }
     }
 
-    private static void addGalleryInfo(GalleryInfo galleryInfo) {
+    private static synchronized void addGalleryInfo(GalleryInfo galleryInfo) {
         GalleryInfoDao dao = sDaoSession.getGalleryInfoDao();
         GalleryInfoRaw raw = dao.load((long) galleryInfo.gid);
         if (raw == null) {
@@ -291,7 +295,7 @@ public class EhDB {
         }
     }
 
-    private static void removeGalleryInfo(int gid) {
+    private static synchronized void removeGalleryInfo(int gid) {
         GalleryInfoDao dao = sDaoSession.getGalleryInfoDao();
         GalleryInfoRaw raw = dao.load((long) gid);
         int reference = raw.getReference();
@@ -305,7 +309,7 @@ public class EhDB {
         }
     }
 
-    public static GalleryInfo getGalleryInfo(int gid) {
+    public static synchronized GalleryInfo getGalleryInfo(int gid) {
         GalleryInfoDao dao = sDaoSession.getGalleryInfoDao();
         GalleryInfoRaw raw = dao.load((long) gid);
         if (raw != null) {
@@ -325,7 +329,8 @@ public class EhDB {
         }
     }
 
-    public static List<String> getAllDownloadLabelList() {
+    @NonNull
+    public static synchronized List<String> getAllDownloadLabelList() {
         DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
         List<DownloadLabelRaw> list = dao.queryBuilder().orderAsc(DownloadLabelDao.Properties.Time).list();
         List<String> result = new ArrayList<>(list.size());
@@ -335,12 +340,12 @@ public class EhDB {
         return result;
     }
 
-    public static LazyList<DownloadInfoRaw> getDownloadInfoLazyList() {
+    public static synchronized LazyList<DownloadInfoRaw> getDownloadInfoLazyList() {
         return sDaoSession.getDownloadInfoDao().queryBuilder()
                 .orderAsc(DownloadInfoDao.Properties.Date).listLazy();
     }
 
-    public static void addDownloadInfo(DownloadInfo info) {
+    public static synchronized void addDownloadInfo(DownloadInfo info) {
         // Add gallery info first
         addGalleryInfo(info.galleryInfo);
         // Add download info
@@ -354,7 +359,7 @@ public class EhDB {
         dao.insert(raw);
     }
 
-    public static void updateDownloadInfo(DownloadInfo info) {
+    public static synchronized void updateDownloadInfo(DownloadInfo info) {
         DownloadInfoDao dao = sDaoSession.getDownloadInfoDao();
         DownloadInfoRaw raw = dao.load((long) info.galleryInfo.gid);
         if (raw == null) {
@@ -367,5 +372,46 @@ public class EhDB {
             raw.setLabel(info.label);
             dao.update(raw);
         }
+    }
+
+    public static synchronized void removeDownloadInfo(int gid) {
+        DownloadInfoDao dao = sDaoSession.getDownloadInfoDao();
+        if (null != dao.load((long) gid)) {
+            removeGalleryInfo(gid);
+            dao.deleteByKey((long) gid);
+        }
+    }
+
+    @Nullable
+    public static synchronized String getDownloadDirname(int gid) {
+        DownloadDirnameDao dao = sDaoSession.getDownloadDirnameDao();
+        DownloadDirnameRaw raw = dao.load((long) gid);
+        if (raw != null) {
+            return raw.getDirname();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Insert or update
+     */
+    public static synchronized void putDownloadDirname(int gid, String dirname) {
+        DownloadDirnameDao dao = sDaoSession.getDownloadDirnameDao();
+        DownloadDirnameRaw raw = dao.load((long) gid);
+        if (raw != null) { // Update
+            raw.setDirname(dirname);
+            dao.update(raw);
+        } else { // Insert
+            raw = new DownloadDirnameRaw();
+            raw.setGid((long) gid);
+            raw.setDirname(dirname);
+            dao.insert(raw);
+        }
+    }
+
+    public static synchronized void removeDownloadDirname(int gid) {
+        DownloadDirnameDao dao = sDaoSession.getDownloadDirnameDao();
+        dao.deleteByKey((long) gid);
     }
 }
