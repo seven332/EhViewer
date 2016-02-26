@@ -43,7 +43,7 @@
                 android:text="@string/settings_read_reading_direction_title"
                 android:textColor="@color/primary_text_dark"/>
 
-            <Spinner
+            <com.hippo.widget.CuteSpinner
                 android:id="@+id/reading_direction"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
                 android:text="@string/settings_read_page_scaling_title"
                 android:textColor="@color/primary_text_dark"/>
 
-            <Spinner
+            <com.hippo.widget.CuteSpinner
                 android:id="@+id/page_scaling"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
                 android:text="@string/settings_read_start_position_title"
                 android:textColor="@color/primary_text_dark"/>
 
-            <Spinner
+            <com.hippo.widget.CuteSpinner
                 android:id="@+id/start_position"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
