@@ -61,6 +61,7 @@ import com.hippo.ehviewer.client.data.GalleryTagGroup;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
+import com.hippo.ehviewer.download.DownloadService;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
@@ -870,7 +871,19 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             lub.setCategory(category);
             GalleryListScene.startScene(this, lub);
         } else if (mDownload == v) {
-            // TODO
+            // Add download
+            GalleryInfo galleryInfo = null;
+            if (mGalleryInfo != null) {
+                galleryInfo = mGalleryInfo;
+            } else if (mGalleryDetail != null) {
+                galleryInfo = mGalleryDetail;
+            }
+            if (galleryInfo != null) {
+                Intent intent = new Intent(getActivity(), DownloadService.class);
+                intent.setAction(DownloadService.ACTION_START);
+                intent.putExtra(DownloadService.KEY_GALLERY_INFO, galleryInfo);
+                getActivity().startService(intent);
+            }
         } else if (mRead == v) {
             GalleryInfo galleryInfo = null;
             if (mGalleryInfo != null) {
@@ -946,7 +959,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             // Only show transaction when thumb can be seen
             if (location[1] + mThumb.getHeight() > 0) {
                 setTransitionName();
-                finish(new EnterGalleryListTransaction(mThumb, mTitle, mUploader, mCategory));
+                finish(new ExitTransaction(mThumb, mTitle, mUploader, mCategory));
                 return;
             }
         }
@@ -980,14 +993,14 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
-    private static class EnterGalleryListTransaction implements TransitionHelper {
+    private static class ExitTransaction implements TransitionHelper {
 
-        private View mThumb;
-        private View mTitle;
-        private View mUploader;
-        private View mCategory;
+        private final View mThumb;
+        private final View mTitle;
+        private final View mUploader;
+        private final View mCategory;
 
-        public EnterGalleryListTransaction(View thumb, View title, View uploader, View category) {
+        public ExitTransaction(View thumb, View title, View uploader, View category) {
             mThumb = thumb;
             mTitle = title;
             mUploader = uploader;
@@ -998,7 +1011,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         public boolean onTransition(Context context,
                 FragmentTransaction transaction, Fragment exit, Fragment enter) {
-            if (!(enter instanceof GalleryListScene)) {
+            if (!(enter instanceof GalleryListScene) && !(enter instanceof DownloadScene)) {
                 return false;
             }
 

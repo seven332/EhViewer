@@ -67,6 +67,11 @@
             android:configChanges="screenSize|uiMode"
             android:theme="@style/AppTheme"/>
 
+        <service
+            android:name="com.hippo.ehviewer.download.DownloadService"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/download"/>
+
     </application>
 
 </manifest>

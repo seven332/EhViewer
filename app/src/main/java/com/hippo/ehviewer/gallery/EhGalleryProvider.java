@@ -119,20 +119,24 @@ public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.On
     }
 
     @Override
-    public void onDownload(int index, long contentLength, long receivedSize, int bytesRead) {
+    public void onPageDownload(int index, long contentLength, long receivedSize, int bytesRead) {
         if (contentLength > 0) {
             notifyPagePercent(index, (float) receivedSize / contentLength);
         }
     }
 
     @Override
-    public void onSuccess(int index) {
+    public void onPageSuccess(int index, int downloaded, int total) {
         notifyDataChanged(index);
     }
 
     @Override
-    public void onFailure(int index, String error) {
+    public void onPageFailure(int index, String error, int downloaded, int total) {
         notifyPageFailed(index, error);
+    }
+
+    @Override
+    public void onFinish(int downloaded, int total) {
     }
 
     @Override

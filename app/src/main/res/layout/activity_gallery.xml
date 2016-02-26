@@ -15,10 +15,8 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <com.hippo.gl.view.GLRootView
         android:id="@+id/gl_root_view"
@@ -80,4 +78,4 @@
             android:gravity="center_horizontal"/>
 
     </com.hippo.ehviewer.widget.SliderPanel>
-</FrameLayout>
+</merge>

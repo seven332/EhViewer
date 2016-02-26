@@ -22,6 +22,7 @@ import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.SparseBooleanArray;
 
 import com.hippo.beerbelly.LruCacheEx;
 import com.hippo.conaco.Conaco;
@@ -30,6 +31,8 @@ import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
+import com.hippo.ehviewer.download.DownloadManager;
+import com.hippo.ehviewer.download.DownloadService;
 import com.hippo.ehviewer.spider.SpiderDen;
 import com.hippo.network.StatusCodeException;
 import com.hippo.okhttp.CookieDB;
@@ -37,12 +40,12 @@ import com.hippo.scene.SceneApplication;
 import com.hippo.text.Html;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
-import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;
 import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.OkHttpClient;
 
@@ -53,8 +56,8 @@ public class EhApplication extends SceneApplication {
     private static final boolean DEBUG_CONACO = false;
     private static final boolean DEBUG_NATIVE_MEMORY = false;
 
-    private IntIdGenerator mIdGenerator = new IntIdGenerator();
-    private SparseArray<Object> mGlobalStuffMap = new SparseArray<>();
+    private final AtomicInteger mIdGenerator = new AtomicInteger();
+    private final SparseArray<Object> mGlobalStuffMap = new SparseArray<>();
     private EhCookieStore mEhCookieStore;
     private EhClient mEhClient;
     private OkHttpClient mOkHttpClient;
@@ -63,6 +66,13 @@ public class EhApplication extends SceneApplication {
     private LruCacheEx<Integer, GalleryDetail> mGalleryDetailCache;
     private LruCacheEx<String, LargePreviewSet> mLargePreviewSetCache;
     private LruCacheEx<Integer, Integer> mPreviewPagesCache;
+    private DownloadManager mDownloadManager;
+
+    private SparseBooleanArray mItemStateArray;
+    private SparseArray<String> mItemTitleArray;
+    private int mFailedCount;
+    private int mFinishedCount;
+    private int mDownloadedCount;
 
     @Override
     public void onCreate() {
@@ -76,6 +86,11 @@ public class EhApplication extends SceneApplication {
         Html.initialize(this);
         AppConfig.initialize(this);
         SpiderDen.initialize(this);
+        EhDB.initialize(this);
+
+        if (EhDB.needMerge()) {
+            EhDB.mergeOldDB(this);
+        }
 
         if (DEBUG_NATIVE_MEMORY) {
             debugNativeMemory();
@@ -94,7 +109,7 @@ public class EhApplication extends SceneApplication {
     }
 
     public int putGlobalStuff(@NonNull Object o) {
-        int id = mIdGenerator.nextId();
+        int id = mIdGenerator.getAndDecrement();
         mGlobalStuffMap.put(id, o);
         return id;
     }
@@ -236,5 +251,44 @@ public class EhApplication extends SceneApplication {
             });
         }
         return application.mPreviewPagesCache;
+    }
+
+    @NonNull
+    public static DownloadManager getDownloadManager(@NonNull Context context) {
+        EhApplication application = ((EhApplication) context.getApplicationContext());
+        if (application.mDownloadManager == null) {
+            application.mDownloadManager = new DownloadManager(application);
+        }
+        return application.mDownloadManager;
+    }
+
+
+    public static void initDownloadService(Context context, DownloadService service) {
+        EhApplication application = ((EhApplication) context.getApplicationContext());
+        if (application.mItemStateArray == null) {
+            application.mItemStateArray = new SparseBooleanArray();
+        }
+        if (application.mItemTitleArray == null) {
+            application.mItemTitleArray = new SparseArray<>();
+        }
+
+        service.init(application.mItemStateArray, application.mItemTitleArray,
+                application.mFailedCount, application.mFinishedCount, application.mDownloadedCount);
+    }
+
+    public static void clearDownloadService(Context context, DownloadService service) {
+        EhApplication application = ((EhApplication) context.getApplicationContext());
+        application.mFailedCount = 0;
+        application.mFinishedCount = 0;
+        application.mDownloadedCount = 0;
+        service.clear();
+    }
+
+    public static void backupDownloadService(Context context,
+            int failedCount, int finishedCount, int downloadedCount) {
+        EhApplication application = ((EhApplication) context.getApplicationContext());
+        application.mFailedCount = failedCount;
+        application.mFinishedCount = finishedCount;
+        application.mDownloadedCount = downloadedCount;
     }
 }

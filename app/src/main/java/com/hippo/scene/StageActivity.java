@@ -30,6 +30,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.IntIdGenerator;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class StageActivity extends AppCompatActivity {
 
@@ -44,7 +45,7 @@ public abstract class StageActivity extends AppCompatActivity {
 
     // TODO ArrayList or LinkedList
     private ArrayList<String> mSceneTagList = new ArrayList<>();
-    private IntIdGenerator mIdGenerator = new IntIdGenerator();
+    private final AtomicInteger mIdGenerator = new AtomicInteger();
 
     private int mStageId = IntIdGenerator.INVALID_ID;
 
@@ -81,7 +82,7 @@ public abstract class StageActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             mStageId = savedInstanceState.getInt(KEY_STAGE_ID, IntIdGenerator.INVALID_ID);
             mSceneTagList = savedInstanceState.getStringArrayList(KEY_SCENE_TAG_LIST);
-            mIdGenerator.setNextId(savedInstanceState.getInt(KEY_NEXT_ID));
+            mIdGenerator.lazySet(savedInstanceState.getInt(KEY_NEXT_ID));
         }
 
         if (mStageId == IntIdGenerator.INVALID_ID) {
@@ -95,6 +96,12 @@ public abstract class StageActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         ((SceneApplication) getApplicationContext()).unregisterStageActivity(mStageId);
+    }
+
+    public void onSceneViewCreated(SceneFragment scene, Bundle savedInstanceState) {
+    }
+
+    public void onSceneViewDestroyed(SceneFragment scene) {
     }
 
     protected void onRegister(int id) {
@@ -165,7 +172,7 @@ public abstract class StageActivity extends AppCompatActivity {
             newScene.setArguments(args);
 
             // Create new scene tag
-            newTag = Integer.toString(mIdGenerator.nextId());
+            newTag = Integer.toString(mIdGenerator.getAndIncrement());
 
             // Add new tag to list
             mSceneTagList.add(newTag);
@@ -359,6 +366,6 @@ public abstract class StageActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_STAGE_ID, mStageId);
         outState.putStringArrayList(KEY_SCENE_TAG_LIST, mSceneTagList);
-        outState.putInt(KEY_NEXT_ID, mIdGenerator.nextId());
+        outState.putInt(KEY_NEXT_ID, mIdGenerator.getAndIncrement());
     }
 }

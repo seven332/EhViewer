@@ -71,7 +71,6 @@ import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -82,6 +81,7 @@ public class SpiderQueen implements Runnable {
 
     private static final String TAG = SpiderQueen.class.getSimpleName();
     private static final AtomicInteger sIdGenerator = new AtomicInteger();
+    private static final boolean DEBUG_LOG = false;
 
     @IntDef({MODE_READ, MODE_DOWNLOAD})
     @Retention(RetentionPolicy.SOURCE)
@@ -132,7 +132,7 @@ public class SpiderQueen implements Runnable {
     private final Stack<Integer> mDecodeRequestStack = new Stack<>();
     private final AtomicInteger mDecodeIndex = new AtomicInteger(GalleryPageView.INVALID_INDEX);
 
-    private volatile AtomicReferenceArray<Thread> mWorkers;
+    private volatile Thread[] mWorkers;
     private final Object mWorkerLock = new Object();
 
     private final Object mPTokenLock = new Object();
@@ -196,26 +196,49 @@ public class SpiderQueen implements Runnable {
         }
     }
 
-    private void notifyDownload(int index, long contentLength, long receivedSize, int bytesRead) {
+    private void notifyPageDownload(int index, long contentLength, long receivedSize, int bytesRead) {
         synchronized (mSpiderListeners) {
             for (OnSpiderListener listener : mSpiderListeners) {
-                listener.onDownload(index, contentLength, receivedSize, bytesRead);
+                listener.onPageDownload(index, contentLength, receivedSize, bytesRead);
             }
         }
     }
 
-    private void notifySuccess(int index) {
+    private void notifyPageSuccess(int index) {
+        int size = -1;
+        int[] temp = mPageStateArray;
+        if (temp != null) {
+            size = temp.length;
+        }
         synchronized (mSpiderListeners) {
             for (OnSpiderListener listener : mSpiderListeners) {
-                listener.onSuccess(index);
+                listener.onPageSuccess(index, mFinishedPages.get(), size);
             }
         }
     }
 
-    private void notifyFailure(int index, String error) {
+    private void notifyPageFailure(int index, String error) {
+        int size = -1;
+        int[] temp = mPageStateArray;
+        if (temp != null) {
+            size = temp.length;
+        }
         synchronized (mSpiderListeners) {
             for (OnSpiderListener listener : mSpiderListeners) {
-                listener.onFailure(index, error);
+                listener.onPageFailure(index, error, mFinishedPages.get(), size);
+            }
+        }
+    }
+
+    private void notifyFinish() {
+        int size = -1;
+        int[] temp = mPageStateArray;
+        if (temp != null) {
+            size = temp.length;
+        }
+        synchronized (mSpiderListeners) {
+            for (OnSpiderListener listener : mSpiderListeners) {
+                listener.onFinish(mFinishedPages.get(), size);
             }
         }
     }
@@ -283,10 +306,19 @@ public class SpiderQueen implements Runnable {
         }
 
         // Update download page
-        if (mMode == MODE_DOWNLOAD) {
-            mDownloadPage = 0;
-        } else {
-            mDownloadPage = -1;
+        boolean startWorkers;
+        synchronized (mRequestPageQueue) {
+            if (mMode == MODE_DOWNLOAD) {
+                mDownloadPage = 0;
+                startWorkers = true;
+            } else {
+                mDownloadPage = -1;
+                startWorkers = false;
+            }
+        }
+
+        if (startWorkers && mPageStateArray != null) {
+            ensureWorkers();
         }
     }
 
@@ -439,14 +471,14 @@ public class SpiderQueen implements Runnable {
     private void ensureWorkers() {
         synchronized (mWorkerLock) {
             if (mWorkers == null) {
-                mWorkers = new AtomicReferenceArray<>(NUMBER_SPIDER_WORKER);
+                mWorkers = new Thread[NUMBER_SPIDER_WORKER];
             }
 
-            for (int i = 0, n = mWorkers.length(); i < n; i++) {
-                if (mWorkers.get(i) == null) {
+            for (int i = 0, n = mWorkers.length; i < n; i++) {
+                if (mWorkers[i] == null) {
                     SpiderWorker worker = new SpiderWorker(i);
                     Thread thread = mThreadFactory.newThread(worker);
-                    mWorkers.lazySet(i, thread);
+                    mWorkers[i] = thread;
                     thread.start();
                 }
             }
@@ -521,7 +553,9 @@ public class SpiderQueen implements Runnable {
         try {
             String url = EhUrl.getGalleryDetailUrl(
                     mGalleryInfo.gid, mGalleryInfo.token, previewIndex, false);
-            Log.d(TAG, url);
+            if (DEBUG_LOG) {
+                Log.d(TAG, url);
+            }
             Request request = new EhRequestBuilder(url, config).build();
             Response response = mHttpClient.newCall(request).execute();
             String body = response.body().string();
@@ -688,7 +722,9 @@ public class SpiderQueen implements Runnable {
 
     @Override
     public void run() {
-        Log.i(TAG, Thread.currentThread().getName() + ": start");
+        if (DEBUG_LOG) {
+            Log.i(TAG, Thread.currentThread().getName() + ": start");
+        }
 
         runInternal();
 
@@ -704,24 +740,28 @@ public class SpiderQueen implements Runnable {
         // Interrupt all workers
         synchronized (mWorkerLock) {
             if (mWorkers != null) {
-                for (int i = 0, n = mWorkers.length(); i < n; i++) {
-                    Thread thread = mWorkers.get(i);
+                for (int i = 0, n = mWorkers.length; i < n; i++) {
+                    Thread thread = mWorkers[i];
                     if (thread != null) {
                         thread.interrupt();
-                        mWorkers.set(i, null);
+                        mWorkers[i] = null;
                     }
                 }
                 mWorkers = null;
             }
         }
 
-        Log.i(TAG, Thread.currentThread().getName() + ": end");
+        notifyFinish();
+
+        if (DEBUG_LOG) {
+            Log.i(TAG, Thread.currentThread().getName() + ": end");
+        }
     }
 
     private class SpiderWorker implements Runnable {
 
-        private int mWorkerIndex;
-        private int mGid;
+        private final int mWorkerIndex;
+        private final int mGid;
 
         public SpiderWorker(int workerIndex) {
             mWorkerIndex = workerIndex;
@@ -732,6 +772,10 @@ public class SpiderQueen implements Runnable {
             updatePageState(index, state, null);
         }
 
+        private boolean isStateDone(int state) {
+            return state == STATE_FINISHED || state == STATE_FAILED;
+        }
+
         private void updatePageState(int index, @State int state, String error) {
             int oldState;
             synchronized (mPageStateLock) {
@@ -739,9 +783,9 @@ public class SpiderQueen implements Runnable {
                 mPageStateArray[index] = state;
             }
 
-            if (oldState == STATE_NONE && state != STATE_NONE) {
+            if (!isStateDone(oldState) && isStateDone(state)) {
                 mDownloadedPages.incrementAndGet();
-            } else if (oldState != STATE_NONE && state == STATE_NONE) {
+            } else if (isStateDone(oldState) && !isStateDone(state)) {
                 mDownloadedPages.decrementAndGet();
             }
             if (oldState != STATE_FINISHED && state == STATE_FINISHED) {
@@ -763,9 +807,9 @@ public class SpiderQueen implements Runnable {
                     error = GetText.getString(R.string.error_unknown);
                 }
                 mPageErrorMap.put(index, error);
-                notifyFailure(index, error);
+                notifyPageFailure(index, error);
             } else if (state == STATE_FINISHED) {
-                notifySuccess(index);
+                notifyPageSuccess(index);
             }
         }
 
@@ -775,7 +819,9 @@ public class SpiderQueen implements Runnable {
             if (skipHathKey != null) {
                 url = url + "?nl=" + skipHathKey;
             }
-            Log.d(TAG, url);
+            if (DEBUG_LOG) {
+                Log.d(TAG, url);
+            }
             Response response = mHttpClient.newCall(new EhRequestBuilder(url).build()).execute();
             String body = response.body().string();
             GalleryPageParser.Result result = GalleryPageParser.parse(body);
@@ -828,7 +874,9 @@ public class SpiderQueen implements Runnable {
                     continue;
                 }
 
-                Log.d(TAG, imageUrl);
+                if (DEBUG_LOG) {
+                    Log.d(TAG, imageUrl);
+                }
 
                 // Start download image
                 OutputStreamPipe pipe = mSpiderDen.openOutputStreamPipe(
@@ -842,7 +890,9 @@ public class SpiderQueen implements Runnable {
                 // Download image
                 InputStream is = null;
                 try {
-                    Log.d(TAG, "Start download image " + index);
+                    if (DEBUG_LOG) {
+                        Log.d(TAG, "Start download image " + index);
+                    }
 
                     Response response = mHttpClient.newCall(new EhRequestBuilder(imageUrl).build()).execute();
                     ResponseBody responseBody = response.body();
@@ -866,7 +916,7 @@ public class SpiderQueen implements Runnable {
                             mPagePercentMap.put(index, (float) receivedSize / contentLength);
                         }
                         // Notify listener
-                        notifyDownload(index, contentLength, receivedSize, bytesRead);
+                        notifyPageDownload(index, contentLength, receivedSize, bytesRead);
                     }
                     os.flush();
 
@@ -876,7 +926,9 @@ public class SpiderQueen implements Runnable {
                         break;
                     }
 
-                    Log.d(TAG, "Download image succeed " + index);
+                    if (DEBUG_LOG) {
+                        Log.d(TAG, "Download image succeed " + index);
+                    }
 
                     // Download finished
                     updatePageState(index, STATE_FINISHED);
@@ -888,7 +940,9 @@ public class SpiderQueen implements Runnable {
                     pipe.close();
                     pipe.release();
 
-                    Log.d(TAG, "End download image " + index);
+                    if (DEBUG_LOG) {
+                        Log.d(TAG, "End download image " + index);
+                    }
                 }
             }
 
@@ -976,7 +1030,9 @@ public class SpiderQueen implements Runnable {
                             mWorkerLock.wait();
                         } catch (InterruptedException e) {
                             // Interrupted
-                            Log.d(TAG, Thread.currentThread().getName() + " Interrupted");
+                            if (DEBUG_LOG) {
+                                Log.d(TAG, Thread.currentThread().getName() + " Interrupted");
+                            }
                             break;
                         }
                     }
@@ -1005,19 +1061,40 @@ public class SpiderQueen implements Runnable {
         @Override
         @SuppressWarnings("StatementWithEmptyBody")
         public void run() {
-            Log.i(TAG, Thread.currentThread().getName() + ": start");
+            if (DEBUG_LOG) {
+                Log.i(TAG, Thread.currentThread().getName() + ": start");
+            }
 
             while (!Thread.currentThread().isInterrupted() && runInternal());
 
+
+            boolean finish = true;
             // Clear in spider worker array
             synchronized (mWorkerLock) {
-                if (mWorkers != null && mWorkerIndex < mWorkers.length() &&
-                        mWorkers.get(mWorkerIndex) == Thread.currentThread()) {
-                    mWorkers.lazySet(mWorkerIndex, null);
+                if (mWorkers != null && mWorkerIndex < mWorkers.length &&
+                        mWorkers[mWorkerIndex] == Thread.currentThread()) {
+                    mWorkers[mWorkerIndex] = null;
+                }
+                if (mWorkers != null) {
+                    for (Thread mWorker : mWorkers) {
+                        if (null != mWorker) {
+                            finish = false;
+                            break;
+                        }
+                    }
+                }
+                if (finish) {
+                    mWorkers = null;
                 }
             }
 
-            Log.i(TAG, Thread.currentThread().getName() + ": end");
+            if (finish) {
+                notifyFinish();
+            }
+
+            if (DEBUG_LOG) {
+                Log.i(TAG, Thread.currentThread().getName() + ": end");
+            }
         }
     }
 
@@ -1025,7 +1102,9 @@ public class SpiderQueen implements Runnable {
 
         @Override
         public void run() {
-            Log.i(TAG, Thread.currentThread().getName() + ": start");
+            if (DEBUG_LOG) {
+                Log.i(TAG, Thread.currentThread().getName() + ": start");
+            }
 
             while (!Thread.currentThread().isInterrupted()) {
                 int index;
@@ -1076,7 +1155,9 @@ public class SpiderQueen implements Runnable {
                 }
             }
 
-            Log.i(TAG, Thread.currentThread().getName() + ": end");
+            if (DEBUG_LOG) {
+                Log.i(TAG, Thread.currentThread().getName() + ": end");
+            }
         }
     }
 
@@ -1089,11 +1170,16 @@ public class SpiderQueen implements Runnable {
         /**
          * @param contentLength -1 for unknown
          */
-        void onDownload(int index, long contentLength, long receivedSize, int bytesRead);
+        void onPageDownload(int index, long contentLength, long receivedSize, int bytesRead);
 
-        void onSuccess(int index);
+        void onPageSuccess(int index, int downloaded, int total);
 
-        void onFailure(int index, String error);
+        void onPageFailure(int index, String error, int downloaded, int total);
+
+        /**
+         * All workers end
+         */
+        void onFinish(int downloaded, int total);
 
         void onGetImageSuccess(int index, Image image);
 

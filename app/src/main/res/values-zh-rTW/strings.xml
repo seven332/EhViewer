@@ -172,6 +172,22 @@
     <string name="gallery_previews">畫廊預覽</string>
     <string name="go_to">跳頁</string>
 
+    <!-- Download -->
+    <string name="no_download_info">無下載項目</string>
+    <string name="download_state_none">未啟動</string>
+    <string name="download_state_wait">等待中</string>
+    <string name="download_state_failed">失敗</string>
+    <string name="download_state_failed_2">%d 未完成</string>
+    <string name="download_state_finish">完成</string>
+    <string name="stat_509_alert_title">509 警告</string>
+    <string name="stat_509_alert_text">圖片配額已用盡。請停止下載，休息一下。</string>
+    <string name="stat_download_done_title">下載結束</string>
+    <string name="stat_download_done_text_succeeded">%d 成功</string>
+    <string name="stat_download_done_text_failed">%d 失敗</string>
+    <string name="stat_download_done_text_mix">%1$d 成功，%2$d 失敗</string>
+    <string name="stat_download_done_line_succeeded">成功：%s</string>
+    <string name="stat_download_done_line_failed">失敗：%s</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 頁</string>
     <string name="page_menu_refresh">@string/refresh</string>
@@ -191,6 +207,21 @@
     <string name="settings_read_reading_direction_left_to_right">從左至右</string>
     <string name="settings_read_reading_direction_right_to_Left">從右至左</string>
     <string name="settings_read_reading_direction_top_to_bottom">從上至下</string>
+    <string name="settings_read_page_scaling_title">頁面縮放</string>
+    <string name="settings_read_page_scaling_actual_size">原始尺寸</string>
+    <string name="settings_read_page_scaling_fit_to_width">匹配寬度</string>
+    <string name="settings_read_page_scaling_fit_to_height">匹配長度</string>
+    <string name="settings_read_page_scaling_fit_to_screen">匹配螢幕</string>
+    <string name="settings_read_page_scaling_fixed_scale">固定縮放</string>
+    <string name="settings_read_start_position_title">開頁位置</string>
+    <string name="settings_read_start_position_top_left">左上角</string>
+    <string name="settings_read_start_position_top_right">右上角</string>
+    <string name="settings_read_start_position_bottom_left">左下角</string>
+    <string name="settings_read_start_position_bottom_right">右下角</string>
+    <string name="settings_read_start_position_center">中心</string>
+    <string name="settings_read_keep_screen_on_title">螢幕常亮</string>
+    <string name="settings_read_show_clock_title">顯示時鐘</string>
+    <string name="settings_read_show_battery_title">顯示電量</string>
     <string name="settings_read_volume_page_title">使用音量鍵翻頁</string>
 
     <!-- Progress Scene -->

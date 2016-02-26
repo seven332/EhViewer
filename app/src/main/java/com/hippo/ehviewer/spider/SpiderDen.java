@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.webkit.MimeTypeMap;
 
 import com.hippo.beerbelly.SimpleDiskCache;
+import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -42,7 +43,8 @@ import java.util.Locale;
 
 public final class SpiderDen {
 
-    private UniFile mDownloadDir;
+    @Nullable
+    private final UniFile mDownloadDir;
     private volatile int mMode = SpiderQueen.MODE_READ;
     private final int mGid;
 
@@ -57,12 +59,22 @@ public final class SpiderDen {
         }
     }
 
-    public SpiderDen(GalleryInfo galleryInfo) {
-        mGid = galleryInfo.gid;
+    public static UniFile getGalleryDownloadDir(GalleryInfo galleryInfo) {
         UniFile dir = Settings.getDownloadLocation();
         if (dir != null) {
-            mDownloadDir = dir.subFile(FileUtils.sanitizeFilename(galleryInfo.gid + "-" + galleryInfo.title));
+            GalleryInfo info = EhDB.getGalleryInfo(galleryInfo.gid);
+            if (info == null) {
+                info = galleryInfo;
+            }
+            return dir.subFile(FileUtils.sanitizeFilename(info.gid + "-" + info.title));
+        } else {
+            return null;
         }
+    }
+
+    public SpiderDen(GalleryInfo galleryInfo) {
+        mGid = galleryInfo.gid;
+        mDownloadDir = getGalleryDownloadDir(galleryInfo);
     }
 
     public void setMode(@SpiderQueen.Mode int mode) {

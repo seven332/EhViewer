@@ -117,6 +117,18 @@ public class Settings {
         putBoolean(KEY_SHOW_WARNING, value);
     }
 
+    public static final String KEY_RECENT_DOWNLOAD_LABEL = "recent_download_label";
+    private static final String DEFAULT_RECENT_DOWNLOAD_LABEL = null;
+
+    public static String getRecentDownloadLabel() {
+        return getString(KEY_RECENT_DOWNLOAD_LABEL, DEFAULT_RECENT_DOWNLOAD_LABEL);
+    }
+
+    public static void putRecentDownloadLabel(String value) {
+        putString(KEY_RECENT_DOWNLOAD_LABEL, value);
+    }
+
+
     public static EhConfig getEhConfig() {
         return sEhConfig;
     }

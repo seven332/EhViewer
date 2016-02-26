@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- TextAppearance -->
     <style name="TextAppearance" parent="TextAppearance.AppCompat">
@@ -127,6 +127,10 @@
 
     <style name="IndicatingScrollView.Dark">
         <item name="indicatorColor">@color/divider_dark</item>
+    </style>
+
+    <style name="Widget.Design.FloatingActionButton.Mini">
+        <item name="fabSize">mini</item>
     </style>
 
 </resources>

@@ -172,6 +172,22 @@
     <string name="gallery_previews">画廊预览</string>
     <string name="go_to">跳页</string>
 
+    <!-- Download -->
+    <string name="no_download_info">无下载项目</string>
+    <string name="download_state_none">未启动</string>
+    <string name="download_state_wait">等待中</string>
+    <string name="download_state_failed">失败</string>
+    <string name="download_state_failed_2">%d 未完成</string>
+    <string name="download_state_finish">完成</string>
+    <string name="stat_509_alert_title">509 警告</string>
+    <string name="stat_509_alert_text">图片配额已用尽。请停止下载，休息一下。</string>
+    <string name="stat_download_done_title">下载结束</string>
+    <string name="stat_download_done_text_succeeded">%d 成功</string>
+    <string name="stat_download_done_text_failed">%d 失败</string>
+    <string name="stat_download_done_text_mix">%1$d 成功，%2$d 失败</string>
+    <string name="stat_download_done_line_succeeded">成功：%s</string>
+    <string name="stat_download_done_line_failed">失败：%s</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 页</string>
     <string name="page_menu_refresh">@string/refresh</string>

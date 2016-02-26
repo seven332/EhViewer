@@ -212,6 +212,22 @@
     <string name="gallery_previews">Gallery Previews</string>
     <string name="go_to">Go to</string>
 
+    <!-- Download -->
+    <string name="no_download_info">No download items</string>
+    <string name="download_state_none">Idle</string>
+    <string name="download_state_wait">Waiting</string>
+    <string name="download_state_failed">Failed</string>
+    <string name="download_state_failed_2">%d incomplete</string>
+    <string name="download_state_finish">Done</string>
+    <string name="stat_509_alert_title">509 Alert</string>
+    <string name="stat_509_alert_text">Image limit is reached. Please stop download and have a relax.</string>
+    <string name="stat_download_done_title">Download Finished</string>
+    <string name="stat_download_done_text_succeeded">%d succeeded</string>
+    <string name="stat_download_done_text_failed">%d failed</string>
+    <string name="stat_download_done_text_mix">%1$d succeeded, %2$d failed</string>
+    <string name="stat_download_done_line_succeeded">Succeeded: %s</string>
+    <string name="stat_download_done_line_failed">Failed: %s</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">Page %d</string>
     <string name="page_menu_refresh">@string/refresh</string>

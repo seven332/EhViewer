@@ -35,7 +35,7 @@ public class CookieDB {
 
     private static DaoSession sDaoSession;
 
-    public static class DBOpenHelper extends DaoMaster.OpenHelper {
+    private static class DBOpenHelper extends DaoMaster.OpenHelper {
 
         public DBOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory) {
             super(context, name, factory);
@@ -56,7 +56,7 @@ public class CookieDB {
         sDaoSession = daoMaster.newSession();
     }
 
-    public static Map<String, List<CookieWithID>> getAllCookies() {
+    static Map<String, List<CookieWithID>> getAllCookies() {
         OkHttp3CookieDao dao = sDaoSession.getOkHttp3CookieDao();
         List<OkHttp3CookieRaw> list = dao.queryBuilder().list();
 
@@ -107,11 +107,11 @@ public class CookieDB {
         return result;
     }
 
-    public static void removeCookie(long id) {
+    static void removeCookie(long id) {
         sDaoSession.getOkHttp3CookieDao().deleteByKey(id);
     }
 
-    public static long addCookie(Cookie cookie) {
+    static long addCookie(Cookie cookie) {
         OkHttp3CookieDao dao = sDaoSession.getOkHttp3CookieDao();
 
         OkHttp3CookieRaw raw = new OkHttp3CookieRaw();

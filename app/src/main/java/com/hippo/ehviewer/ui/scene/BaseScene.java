@@ -20,7 +20,9 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.SceneFragment;
@@ -51,6 +53,14 @@ public class BaseScene extends SceneFragment {
         if (activity instanceof MainActivity) {
             ((MainActivity) activity).setNavCheckedItem(resId);
         }
+    }
+
+    public View onCreateDrawerView(LayoutInflater inflater,
+            @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return null;
+    }
+
+    public void onDestroyDrawerView() {
     }
 
     @Override

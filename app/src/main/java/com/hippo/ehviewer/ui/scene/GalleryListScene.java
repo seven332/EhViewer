@@ -204,6 +204,14 @@ public final class GalleryListScene extends BaseScene
         mState = savedInstanceState.getInt(KEY_STATE);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_HAS_FIRST_REFRESH, mHasFirstRefresh);
+        outState.putParcelable(KEY_LIST_URL_BUILDER, mUrlBuilder);
+        outState.putInt(KEY_STATE, mState);
+    }
+
     private void setSearchBarHint(Context context, SearchBar searchBar) {
         Resources resources = context.getResources();
         Drawable searchImage = VectorDrawable.create(context, R.xml.ic_magnify_x24);
@@ -356,14 +364,6 @@ public final class GalleryListScene extends BaseScene
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(KEY_HAS_FIRST_REFRESH, mHasFirstRefresh);
-        outState.putParcelable(KEY_LIST_URL_BUILDER, mUrlBuilder);
-        outState.putInt(KEY_STATE, mState);
-    }
-
-    @Override
     public void onClick(View v) {
         if (mFab == v) {
             if (mState != STATE_NORMAL) {
@@ -417,7 +417,7 @@ public final class GalleryListScene extends BaseScene
 
     private static class EnterGalleryDetailTransaction implements TransitionHelper {
 
-        private GalleryListHolder mHolder;
+        private final GalleryListHolder mHolder;
 
         public EnterGalleryDetailTransaction(GalleryListHolder holder) {
             mHolder = holder;
@@ -494,85 +494,69 @@ public final class GalleryListScene extends BaseScene
 
             switch (oldState) {
                 case STATE_NORMAL:
-                    switch (state) {
-                        case STATE_SIMPLE_SEARCH:
-                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
-                            mSearchBarMoveHelper.returnSearchBarPosition();
-                            showFab();
-                            break;
-                        case STATE_SEARCH:
-                            mViewTransition.showView(1, animation);
-                            mSearchLayout.scrollSearchContainerToTop();
-                            mSearchBar.setState(SearchBar.STATE_SEARCH, animation);
-                            mSearchBarMoveHelper.returnSearchBarPosition();
-                            showFab();
-                            break;
-                        case STATE_SEARCH_SHOW_LIST:
-                            mViewTransition.showView(1, animation);
-                            mSearchLayout.scrollSearchContainerToTop();
-                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
-                            mSearchBarMoveHelper.returnSearchBarPosition();
-                            showFab();
-                            break;
+                    if (state == STATE_SIMPLE_SEARCH) {
+                        mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
+                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        showFab();
+                    } else if (state == STATE_SEARCH) {
+                        mViewTransition.showView(1, animation);
+                        mSearchLayout.scrollSearchContainerToTop();
+                        mSearchBar.setState(SearchBar.STATE_SEARCH, animation);
+                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        showFab();
+                    } else if (state == STATE_SEARCH_SHOW_LIST) {
+                        mViewTransition.showView(1, animation);
+                        mSearchLayout.scrollSearchContainerToTop();
+                        mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
+                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        showFab();
                     }
                     break;
                 case STATE_SIMPLE_SEARCH:
-                    switch (state) {
-                        case STATE_NORMAL:
-                            mSearchBar.setState(SearchBar.STATE_NORMAL, animation);
-                            mSearchBarMoveHelper.returnSearchBarPosition();
-                            hideFab();
-                            break;
-                        case STATE_SEARCH:
-                            mViewTransition.showView(1, animation);
-                            mSearchLayout.scrollSearchContainerToTop();
-                            mSearchBar.setState(SearchBar.STATE_SEARCH, animation);
-                            mSearchBarMoveHelper.returnSearchBarPosition();
-                            break;
-                        case STATE_SEARCH_SHOW_LIST:
-                            mViewTransition.showView(1, animation);
-                            mSearchLayout.scrollSearchContainerToTop();
-                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
-                            mSearchBarMoveHelper.returnSearchBarPosition();
-                            break;
+                    if (state == STATE_NORMAL) {
+                        mSearchBar.setState(SearchBar.STATE_NORMAL, animation);
+                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        hideFab();
+                    } else if (state == STATE_SEARCH) {
+                        mViewTransition.showView(1, animation);
+                        mSearchLayout.scrollSearchContainerToTop();
+                        mSearchBar.setState(SearchBar.STATE_SEARCH, animation);
+                        mSearchBarMoveHelper.returnSearchBarPosition();
+                    } else if (state == STATE_SEARCH_SHOW_LIST) {
+                        mViewTransition.showView(1, animation);
+                        mSearchLayout.scrollSearchContainerToTop();
+                        mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
+                        mSearchBarMoveHelper.returnSearchBarPosition();
                     }
                     break;
                 case STATE_SEARCH:
-                    switch (state) {
-                        case STATE_NORMAL:
-                            mViewTransition.showView(0, animation);
-                            mSearchBar.setState(SearchBar.STATE_NORMAL, animation);
-                            mSearchBarMoveHelper.returnSearchBarPosition();
-                            hideFab();
-                            break;
-                        case STATE_SIMPLE_SEARCH:
-                            mViewTransition.showView(0, animation);
-                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
-                            mSearchBarMoveHelper.returnSearchBarPosition();
-                            break;
-                        case STATE_SEARCH_SHOW_LIST:
-                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
-                            mSearchBarMoveHelper.returnSearchBarPosition();
-                            break;
+                    if (state == STATE_NORMAL) {
+                        mViewTransition.showView(0, animation);
+                        mSearchBar.setState(SearchBar.STATE_NORMAL, animation);
+                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        hideFab();
+                    } else if (state == STATE_SIMPLE_SEARCH) {
+                        mViewTransition.showView(0, animation);
+                        mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
+                        mSearchBarMoveHelper.returnSearchBarPosition();
+                    } else if (state == STATE_SEARCH_SHOW_LIST) {
+                        mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
+                        mSearchBarMoveHelper.returnSearchBarPosition();
                     }
                     break;
                 case STATE_SEARCH_SHOW_LIST:
-                    switch (state) {
-                        case STATE_NORMAL:
-                            mViewTransition.showView(0, animation);
-                            mSearchBar.setState(SearchBar.STATE_NORMAL, animation);
-                            mSearchBarMoveHelper.returnSearchBarPosition();
-                            hideFab();
-                            break;
-                        case STATE_SIMPLE_SEARCH:
-                            mViewTransition.showView(0, animation);
-                            mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
-                            mSearchBarMoveHelper.returnSearchBarPosition();
-                            break;
-                        case STATE_SEARCH:
-                            mSearchBar.setState(SearchBar.STATE_SEARCH, animation);
-                            mSearchBarMoveHelper.returnSearchBarPosition();
-                            break;
+                    if (state == STATE_NORMAL) {
+                        mViewTransition.showView(0, animation);
+                        mSearchBar.setState(SearchBar.STATE_NORMAL, animation);
+                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        hideFab();
+                    } else if (state == STATE_SIMPLE_SEARCH) {
+                        mViewTransition.showView(0, animation);
+                        mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
+                        mSearchBarMoveHelper.returnSearchBarPosition();
+                    } else if (state == STATE_SEARCH) {
+                        mSearchBar.setState(SearchBar.STATE_SEARCH, animation);
+                        mSearchBarMoveHelper.returnSearchBarPosition();
                     }
                     break;
             }
@@ -757,6 +741,7 @@ public final class GalleryListScene extends BaseScene
             returnSearchBarPosition(true);
         }
 
+        @SuppressWarnings("SimplifiableIfStatement")
         private void returnSearchBarPosition(boolean animation) {
             if (mSearchBar.getHeight() == 0) {
                 // Layout not called
@@ -919,13 +904,13 @@ public final class GalleryListScene extends BaseScene
 
     private class GalleryListHolder extends RecyclerView.ViewHolder {
 
-        private LoadImageView thumb;
-        private TextView title;
-        private TextView uploader;
-        private SimpleRatingView rating;
-        private TextView category;
-        private TextView posted;
-        private TextView simpleLanguage;
+        private final LoadImageView thumb;
+        private final TextView title;
+        private final TextView uploader;
+        private final SimpleRatingView rating;
+        private final TextView category;
+        private final TextView posted;
+        private final TextView simpleLanguage;
 
         public GalleryListHolder(View itemView) {
             super(itemView);
@@ -942,7 +927,7 @@ public final class GalleryListScene extends BaseScene
 
     private class GalleryListAdapter extends RecyclerView.Adapter<GalleryListHolder> {
 
-        private LayoutInflater mInflater;
+        private final LayoutInflater mInflater;
 
         public GalleryListAdapter() {
             mInflater = getActivity().getLayoutInflater();
@@ -1053,7 +1038,7 @@ public final class GalleryListScene extends BaseScene
 
     private static class GetGalleryListListener extends EhCallback<GalleryListScene, GalleryListParser.Result> {
 
-        private int mTaskId;
+        private final int mTaskId;
 
         public GetGalleryListListener(Context context, int stageId, String sceneTag, int taskId) {
             super(context, stageId, sceneTag);
