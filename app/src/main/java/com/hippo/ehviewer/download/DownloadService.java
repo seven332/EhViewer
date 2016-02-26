@@ -21,6 +21,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -69,6 +71,8 @@ public class DownloadService extends Service implements DownloadManager.Download
     private int mFinishedCount;
     private int mDownloadedCount;
 
+    private Bitmap mLargeIcon;
+
     public void init(SparseBooleanArray stateArray, SparseArray<String> titleArray,
             int failedCount, int finishedCount, int downloadedCount) {
         mItemStateArray = stateArray;
@@ -76,6 +80,7 @@ public class DownloadService extends Service implements DownloadManager.Download
         mFailedCount = failedCount;
         mFinishedCount = finishedCount;
         mDownloadedCount = downloadedCount;
+        mLargeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
     }
 
     public void clear() {
@@ -88,6 +93,7 @@ public class DownloadService extends Service implements DownloadManager.Download
         if (mItemTitleArray != null) {
             mItemTitleArray.clear();
         }
+        mLargeIcon = null;
     }
 
     @Override
@@ -175,7 +181,9 @@ public class DownloadService extends Service implements DownloadManager.Download
         mDownloadingBuilder = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setOngoing(true)
-                .setAutoCancel(false);
+                .setAutoCancel(false)
+                .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+                .setColor(getResources().getColor(R.color.colorPrimary));
     }
 
     private void ensureDownloadedBuilder() {
@@ -188,6 +196,7 @@ public class DownloadService extends Service implements DownloadManager.Download
         PendingIntent piClear = PendingIntent.getService(this, 0, clearIntent, 0);
         mDownloadedBuilder = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(android.R.drawable.stat_sys_download_done)
+                .setLargeIcon(mLargeIcon)
                 .setContentTitle(getString(R.string.stat_download_done_title))
                 .setDeleteIntent(piClear)
                 .setOngoing(false)
@@ -201,10 +210,12 @@ public class DownloadService extends Service implements DownloadManager.Download
 
         m509dBuilder = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(R.drawable.ic_stat_alert)
+                .setLargeIcon(mLargeIcon)
                 .setContentText(getString(R.string.stat_509_alert_title))
                 .setContentText(getString(R.string.stat_509_alert_text))
                 .setAutoCancel(true)
-                .setOngoing(false);
+                .setOngoing(false)
+                .setCategory(NotificationCompat.CATEGORY_ERROR);
     }
 
     @Override
@@ -349,7 +360,9 @@ public class DownloadService extends Service implements DownloadManager.Download
             style = null;
         }
 
-        mDownloadedBuilder.setContentText(text).setStyle(style);
+        mDownloadedBuilder.setContentText(text)
+                .setStyle(style)
+                .setNumber(mDownloadedCount);
 
         mNotifyManager.notify(ID_DOWNLOADED, mDownloadedBuilder.build());
 

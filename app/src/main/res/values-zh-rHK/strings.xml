@@ -182,11 +182,14 @@
     <string name="stat_509_alert_title">509 警告</string>
     <string name="stat_509_alert_text">圖片配額已用盡。請停止下載，休息一下。</string>
     <string name="stat_download_done_title">下載結束</string>
-    <string name="stat_download_done_text_succeeded">%d 成功</string>
-    <string name="stat_download_done_text_failed">%d 失敗</string>
-    <string name="stat_download_done_text_mix">%1$d 成功，%2$d 失敗</string>
-    <string name="stat_download_done_line_succeeded">成功：%s</string>
-    <string name="stat_download_done_line_failed">失敗：%s</string>
+    <string name="stat_download_done_text_succeeded">%d 項下載成功</string>
+    <string name="stat_download_done_text_failed">%d 項下載失敗</string>
+    <string name="stat_download_done_text_mix">%1$d 項下載成功，%2$d 項下載失敗</string>
+    <string name="stat_download_done_line_succeeded">下載成功：%s</string>
+    <string name="stat_download_done_line_failed">下載失敗：%s</string>
+    <string name="download_remove_dialog_title">移除畫廊</string>
+    <string name="download_remove_dialog_message">從下載列表移除 %s ？</string>
+    <string name="download_remove_dialog_check_text">刪除圖片文件</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 頁</string>
