@@ -178,7 +178,7 @@
     <string name="download_state_wait">等待中</string>
     <string name="download_state_failed">失败</string>
     <string name="download_state_failed_2">%d 未完成</string>
-    <string name="download_state_finish">完成</string>
+    <string name="download_state_finish">已完成</string>
     <string name="stat_509_alert_title">509 警告</string>
     <string name="stat_509_alert_text">图片配额已用尽。请停止下载，休息一下。</string>
     <string name="stat_download_done_title">下载结束</string>

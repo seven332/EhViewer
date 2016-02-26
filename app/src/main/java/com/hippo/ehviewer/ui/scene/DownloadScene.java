@@ -32,6 +32,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -189,6 +190,31 @@ public class DownloadScene extends ToolbarScene
     @Override
     public void onNavigationClick() {
         finish();
+    }
+
+    @Override
+    public int getMenuResId() {
+        return R.menu.scene_download;
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_start_all: {
+                Intent intent = new Intent(getActivity(), DownloadService.class);
+                intent.setAction(DownloadService.ACTION_START_ALL);
+                getActivity().startService(intent);
+                return true;
+            }
+            case R.id.action_stop_all: {
+                Intent intent = new Intent(getActivity(), DownloadService.class);
+                intent.setAction(DownloadService.ACTION_STOP_ALL);
+                getActivity().startService(intent);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

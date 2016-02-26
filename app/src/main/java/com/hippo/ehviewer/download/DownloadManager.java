@@ -79,14 +79,16 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         mLabelList = labels;
 
         // Create list for each label
-        mMap = new HashMap<>();
+        HashMap<String, LinkedList<DownloadInfo>> map = new HashMap<>();
+        mMap = map;
         for (String label : labels) {
-            mMap.put(label, new LinkedList<DownloadInfo>());
+            map.put(label, new LinkedList<DownloadInfo>());
         }
         // Create default for non tag
         mDefaultInfoList = new LinkedList<>();
         // Create all download info map
-        mAllInfoMap = new SparseArray<>();
+        SparseArray<DownloadInfo> allInfoMap = new SparseArray<>();
+        mAllInfoMap = allInfoMap;
 
         // Fill download info list
         LazyList<DownloadInfoRaw> lazyList = EhDB.getDownloadInfoLazyList();
@@ -97,15 +99,15 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
             }
 
             // Add to all info map
-            mAllInfoMap.put(info.galleryInfo.gid, info);
+            allInfoMap.put(info.galleryInfo.gid, info);
 
             // Add to list
             LinkedList<DownloadInfo> list = getInfoListForLabel(info.label);
             if (list == null) {
                 list = new LinkedList<>();
-                mMap.put(info.label, list);
-                if (!mLabelList.contains(info.label)) {
-                    mLabelList.add(info.label);
+                map.put(info.label, list);
+                if (!labels.contains(info.label)) {
+                    labels.add(info.label);
                 }
             }
             list.add(info);
@@ -263,6 +265,34 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
                 mDownloadInfoListener.onAdd(info, list, list.size() - 1);
             }
             // Make sure download is running
+            ensureDownload();
+        }
+    }
+
+    void startAllDownload() {
+        boolean update = false;
+        // Start all STATE_NONE and STATE_FAILED item
+        SparseArray<DownloadInfo> allInfoMap = mAllInfoMap;
+        List<DownloadInfo> waitList = mWaitList;
+        for (int i = 0, n = allInfoMap.size(); i < n; i++) {
+            DownloadInfo info = allInfoMap.valueAt(i);
+            if (info.state == DownloadInfo.STATE_NONE || info.state == DownloadInfo.STATE_FAILED) {
+                update = true;
+                // Set state DownloadInfo.STATE_WAIT
+                info.state = DownloadInfo.STATE_WAIT;
+                // Add to wait list
+                waitList.add(info);
+                // Update in DB
+                EhDB.updateDownloadInfo(info);
+            }
+        }
+
+        if (update) {
+            // Notify Listener
+            if (mDownloadInfoListener != null) {
+                mDownloadInfoListener.onUpdateAll();
+            }
+            // Ensure download
             ensureDownload();
         }
     }

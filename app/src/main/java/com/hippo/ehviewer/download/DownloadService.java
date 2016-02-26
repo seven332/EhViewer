@@ -132,10 +132,14 @@ public class DownloadService extends Service implements DownloadManager.Download
         }
 
         if (ACTION_START.equals(action)) {
-            GalleryInfo gi= intent.getParcelableExtra(KEY_GALLERY_INFO);
+            GalleryInfo gi = intent.getParcelableExtra(KEY_GALLERY_INFO);
             String label = intent.getStringExtra(KEY_LABEL);
             if (gi != null && mDownloadManager != null) {
                 mDownloadManager.startDownload(gi, label);
+            }
+        } else if (ACTION_START_ALL.equals(action)) {
+            if (mDownloadManager != null) {
+                mDownloadManager.startAllDownload();
             }
         } else if (ACTION_STOP.equals(action)) {
             int gid = intent.getIntExtra(KEY_GID, -1);
@@ -182,7 +186,7 @@ public class DownloadService extends Service implements DownloadManager.Download
                 .setAutoCancel(false)
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setColor(getResources().getColor(R.color.colorPrimary))
-                .addAction(R.drawable.ic_stop_x24, getString(R.string.stat_download_action_stop_all), piStopAll);
+                .addAction(R.drawable.ic_pause_x24, getString(R.string.stat_download_action_stop_all), piStopAll);
     }
 
     private void ensureDownloadedBuilder() {
