@@ -190,7 +190,7 @@
     <string name="stat_download_done_text_mix">%1$d 项下载成功，%2$d 项下载失败</string>
     <string name="stat_download_done_line_succeeded">下载成功：%s</string>
     <string name="stat_download_done_line_failed">下载失败：%s</string>
-    <string name="download_remove_dialog_title">移除画廊</string>
+    <string name="download_remove_dialog_title">移除下载项</string>
     <string name="download_remove_dialog_message">从下载列表移除 %s ？</string>
     <string name="download_remove_dialog_check_text">删除图片文件</string>
     <string name="stat_download_action_stop_all">全部停止</string>

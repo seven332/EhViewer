@@ -230,7 +230,7 @@
     <string name="stat_download_done_text_mix">%1$d succeeded, %2$d failed</string>
     <string name="stat_download_done_line_succeeded">Succeeded: %s</string>
     <string name="stat_download_done_line_failed">Failed: %s</string>
-    <string name="download_remove_dialog_title">Remove Gallery</string>
+    <string name="download_remove_dialog_title">Remove Download Item</string>
     <string name="download_remove_dialog_message">Remove %s from download list ?</string>
     <string name="download_remove_dialog_check_text">Delete image files</string>
     <string name="stat_download_action_stop_all">Stop All</string>
