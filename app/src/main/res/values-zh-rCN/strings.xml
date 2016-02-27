@@ -91,6 +91,8 @@
     <string name="search_sh">显示被删除的画廊</string>
     <string name="search_sr">最低评分：</string>
 
+    <string name="add_to_favourites">收藏</string>
+
     <!-- search_min_rating -->
     <string name="star_2">2 星</string>
     <string name="star_3">3 星</string>

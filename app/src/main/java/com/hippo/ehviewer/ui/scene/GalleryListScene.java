@@ -20,6 +20,8 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -30,6 +32,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -61,6 +64,7 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
+import com.hippo.ehviewer.download.DownloadService;
 import com.hippo.ehviewer.widget.FitPaddingLayout;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchLayout;
@@ -84,8 +88,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public final class GalleryListScene extends BaseScene
-        implements EasyRecyclerView.OnItemClickListener, SearchBar.Helper,
-        SearchBar.OnStateChangeListener, FastScroller.OnDragHandlerListener,
+        implements EasyRecyclerView.OnItemClickListener, EasyRecyclerView.OnItemLongClickListener,
+        SearchBar.Helper, SearchBar.OnStateChangeListener, FastScroller.OnDragHandlerListener,
         SearchLayout.Helper, View.OnClickListener {
 
     @IntDef({STATE_NORMAL, STATE_SIMPLE_SEARCH, STATE_SEARCH, STATE_SEARCH_SHOW_LIST})
@@ -292,6 +296,7 @@ public final class GalleryListScene extends BaseScene
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setOnItemClickListener(this);
+        mRecyclerView.setOnItemLongClickListener(this);
         int paddingH = resources.getDimensionPixelOffset(R.dimen.list_content_margin_h);
         int paddingV = resources.getDimensionPixelOffset(R.dimen.list_content_margin_v);
         mRecyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
@@ -459,6 +464,30 @@ public final class GalleryListScene extends BaseScene
             announcer.setTranHelper(new EnterGalleryDetailTransaction(holder));
         }
         startScene(announcer);
+        return true;
+    }
+
+    @Override
+    public boolean onItemLongClick(EasyRecyclerView parent, View view, int position, long id) {
+        final GalleryInfo gi = mHelper.getDataAt(position);
+        new AlertDialog.Builder(getContext())
+                .setTitle(EhUtils.getSuitableTitle(gi))
+                .setItems(R.array.gallery_list_menu_entries, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0: // Download
+                                Intent intent = new Intent(getActivity(), DownloadService.class);
+                                intent.setAction(DownloadService.ACTION_START);
+                                intent.putExtra(DownloadService.KEY_GALLERY_INFO, gi);
+                                getActivity().startService(intent);
+                                break;
+                            case 1: // Favorite
+                                // TODO
+                                break;
+                        }
+                    }
+                }).show();
         return true;
     }
 

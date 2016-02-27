@@ -75,4 +75,9 @@
         <item>@string/page_menu_add_bookmark</item>
     </string-array>
 
+    <string-array name="gallery_list_menu_entries">
+        <item>@string/download</item>
+        <item>@string/add_to_favourites</item>
+    </string-array>
+
 </resources>
