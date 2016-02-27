@@ -29,6 +29,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -103,9 +104,6 @@ public class DownloadScene extends ToolbarScene
     @Nullable
     private List<DownloadInfo> mList;
 
-    private final IntList mTempIntList = new IntList();
-    private final List<GalleryInfo> mTempGalleryInfoList = new LinkedList<>();
-
     // TODO Only single instance
     @Override
     public int getLaunchMode() {
@@ -137,6 +135,11 @@ public class DownloadScene extends ToolbarScene
                 mList = manager.getDefaultDownloadInfoList();
             }
         }
+
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
+
         updateTitle();
         Settings.putRecentDownloadLabel(mLabel);
     }
@@ -250,6 +253,9 @@ public class DownloadScene extends ToolbarScene
                 intent.setAction(DownloadService.ACTION_STOP_ALL);
                 getActivity().startService(intent);
                 return true;
+            }
+            case R.id.action_label: {
+                openDrawer(Gravity.RIGHT);
             }
         }
         return false;
@@ -405,16 +411,36 @@ public class DownloadScene extends ToolbarScene
                 return;
             }
 
+            IntList gidList = null;
+            List<GalleryInfo> galleryInfoList = null;
+            List<DownloadInfo> downloadInfoList = null;
+            boolean collectGid = position == 1 || position == 2 || position == 3; // Start, Stop, Delete
             boolean collectGalleryInfo = position == 3; // Delete
+            boolean collectDownloadInfo = position == 4; // Move
+            if (collectGid) {
+                gidList = new IntList();
+            }
+            if (collectGalleryInfo) {
+                galleryInfoList = new LinkedList<>();
+            }
+            if (collectDownloadInfo) {
+                downloadInfoList = new LinkedList<>();
+            }
 
             SparseBooleanArray stateArray = recyclerView.getCheckedItemPositions();
             for (int i = 0, n = stateArray.size(); i < n; i++) {
                 if (stateArray.valueAt(i)) {
-                    GalleryInfo gi = list.get(stateArray.keyAt(i)).galleryInfo;
-                    if (collectGalleryInfo) {
-                        mTempGalleryInfoList.add(gi);
+                    DownloadInfo info = list.get(stateArray.keyAt(i));
+                    if (collectDownloadInfo) {
+                        downloadInfoList.add(info);
                     }
-                    mTempIntList.add(gi.gid);
+                    GalleryInfo gi = info.galleryInfo;
+                    if (collectGalleryInfo) {
+                        galleryInfoList.add(gi);
+                    }
+                    if (collectGid) {
+                        gidList.add(gi.gid);
+                    }
                 }
             }
 
@@ -422,10 +448,8 @@ public class DownloadScene extends ToolbarScene
                 case 1: { // Start
                     Intent intent = new Intent(getActivity(), DownloadService.class);
                     intent.setAction(DownloadService.ACTION_START_RANGE);
-                    intent.putExtra(DownloadService.KEY_GID_LIST, mTempIntList);
+                    intent.putExtra(DownloadService.KEY_GID_LIST, gidList);
                     getActivity().startService(intent);
-                    // Clear
-                    mTempIntList.clear();
                     // Cancel check mode
                     recyclerView.outOfCustomChoiceMode();
                     break;
@@ -433,29 +457,41 @@ public class DownloadScene extends ToolbarScene
                 case 2: { // Stop
                     Intent intent = new Intent(getActivity(), DownloadService.class);
                     intent.setAction(DownloadService.ACTION_STOP_RANGE);
-                    intent.putExtra(DownloadService.KEY_GID_LIST, mTempIntList);
+                    intent.putExtra(DownloadService.KEY_GID_LIST, gidList);
                     getActivity().startService(intent);
-                    // Clear
-                    mTempIntList.clear();
                     // Cancel check mode
                     recyclerView.outOfCustomChoiceMode();
                     break;
                 }
-                case 3: // Delete
+                case 3: { // Delete
                     CheckBoxDialogBuilder builder = new CheckBoxDialogBuilder(getContext(),
-                            getString(R.string.download_remove_dialog_message_2, mTempIntList.size()),
+                            getString(R.string.download_remove_dialog_message_2, gidList.size()),
                             getString(R.string.download_remove_dialog_check_text),
                             Settings.getRemoveImageFiles());
                     DeleteRangeDialogHelper helper = new DeleteRangeDialogHelper(
-                            mTempGalleryInfoList, mTempIntList, builder);
+                            galleryInfoList, gidList, builder);
                     builder.setTitle(R.string.download_remove_dialog_title)
                             .setPositiveButton(android.R.string.ok, helper)
-                            .setOnDismissListener(helper)
                             .show();
                     break;
-                case 4: // Move
-                    // TODO
+                }
+                case 4: {// Move
+                    List<DownloadLabelRaw> labelRawList = EhApplication.getDownloadManager(getContext()).getLabelList();
+                    List<String> labelList = new ArrayList<>(labelRawList.size() + 1);
+                    labelList.add(getString(R.string.default_download_label_name));
+                    for (int i = 0, n = labelRawList.size(); i < n; i++) {
+                        labelList.add(labelRawList.get(i).getLabel());
+                    }
+                    String[] labels = labelList.toArray(new String[labelList.size()]);
+
+                    MoveDialogHelper helper = new MoveDialogHelper(labels, downloadInfoList);
+
+                    new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.download_move_dialog_title)
+                            .setItems(labels, helper)
+                            .show();
                     break;
+                }
             }
         }
     }
@@ -543,6 +579,11 @@ public class DownloadScene extends ToolbarScene
         if (mList != null && mList.size() == 0 && mViewTransition != null) {
             mViewTransition.showView(1);
         }
+    }
+
+    @Override
+    public void onUpdateLabels() {
+        // TODO
     }
 
     private void bindForState(DownloadHolder holder, DownloadInfo info) {
@@ -656,8 +697,7 @@ public class DownloadScene extends ToolbarScene
         }
     }
 
-    private class DeleteRangeDialogHelper implements DialogInterface.OnClickListener,
-            DialogInterface.OnDismissListener {
+    private class DeleteRangeDialogHelper implements DialogInterface.OnClickListener {
 
         private final List<GalleryInfo> mGalleryInfoList;
         private final IntList mGidList;
@@ -674,6 +714,11 @@ public class DownloadScene extends ToolbarScene
         public void onClick(DialogInterface dialog, int which) {
             if (which != DialogInterface.BUTTON_POSITIVE) {
                 return;
+            }
+
+            // Cancel check mode
+            if (mRecyclerView != null) {
+                mRecyclerView.outOfCustomChoiceMode();
             }
 
             // Delete
@@ -698,17 +743,33 @@ public class DownloadScene extends ToolbarScene
                 // Delete file
                 deleteFileAsync(files);
             }
+        }
+    }
 
+    private class MoveDialogHelper implements DialogInterface.OnClickListener {
+
+        private final String[] mLabels;
+        private final List<DownloadInfo> mDownloadInfoList;
+
+        public MoveDialogHelper(String[] labels, List<DownloadInfo> downloadInfoList) {
+            mLabels = labels;
+            mDownloadInfoList = downloadInfoList;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
             // Cancel check mode
             if (mRecyclerView != null) {
                 mRecyclerView.outOfCustomChoiceMode();
             }
-        }
 
-        @Override
-        public void onDismiss(DialogInterface dialog) {
-            mGalleryInfoList.clear();
-            mGidList.clear();
+            String label;
+            if (which == 0) {
+                label = null;
+            } else {
+                label = mLabels[which];
+            }
+            EhApplication.getDownloadManager(getContext()).changeLabel(mDownloadInfoList, label);
         }
     }
 
@@ -743,6 +804,7 @@ public class DownloadScene extends ToolbarScene
             percent = (TextView) itemView.findViewById(R.id.percent);
             speed = (TextView) itemView.findViewById(R.id.speed);
 
+            // TODO cancel on click listener when select items
             thumb.setOnClickListener(this);
             start.setOnClickListener(this);
             stop.setOnClickListener(this);

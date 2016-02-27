@@ -237,6 +237,8 @@
     <string name="stat_download_action_stop_all">Stop All</string>
     <string name="drawer_download_label_title">Label</string>
     <string name="default_download_label_name">Default</string>
+    <string name="download_move_dialog_title">Move</string>
+    <string name="label">Label</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">Page %d</string>

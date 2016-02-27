@@ -23,6 +23,6 @@
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings_dark_x24"
         android:title="@string/settings"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 
 </menu>

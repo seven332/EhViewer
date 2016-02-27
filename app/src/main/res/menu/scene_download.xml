@@ -23,12 +23,18 @@
         android:id="@+id/action_start_all"
         android:icon="@drawable/ic_play_dark_x24"
         android:title="@string/refresh"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/action_stop_all"
         android:icon="@drawable/ic_pause_dark_x24"
         android:title="@string/refresh"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_label"
+        android:icon="@drawable/ic_label_dark_x24"
+        android:title="@string/label"
         app:showAsAction="ifRoom"/>
 
 </menu>

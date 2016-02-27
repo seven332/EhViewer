@@ -38,6 +38,13 @@ public class BaseScene extends SceneFragment {
         }
     }
 
+    public void openDrawer(int drawerGravity) {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).openDrawer(drawerGravity);
+        }
+    }
+
     public void closeDrawer(int drawerGravity) {
         FragmentActivity activity = getActivity();
         if (activity instanceof MainActivity) {

@@ -30,8 +30,11 @@ import com.hippo.ehviewer.spider.SpiderQueen;
 import com.hippo.image.Image;
 import com.hippo.yorozuya.ConcurrentPool;
 import com.hippo.yorozuya.IntList;
+import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.SimpleHandler;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -519,7 +522,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         // Two way
         if (gidList.size() < mWaitList.size()) {
             for (int i = 0, n = gidList.size(); i < n; i++) {
-                DownloadInfo info = stopDownloadInternal(gidList.get(i));
+                stopDownloadInternal(gidList.get(i));
             }
         } else {
             // Check current task
@@ -540,6 +543,51 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
                     EhDB.updateDownloadInfo(info);
                 }
             }
+        }
+    }
+
+    /**
+     * @param label Not allow new label
+     */
+    public void changeLabel(List<DownloadInfo> list, String label) {
+        if (null != label && !containLabel(label)) {
+            Log.e(TAG, "Not exits label: " + label);
+            return;
+        }
+
+        List<DownloadInfo> dstList = getInfoListForLabel(label);
+        if (dstList == null) {
+            Log.e(TAG, "Can't find label with label: " + label);
+            return;
+        }
+
+        boolean changed = false;
+
+        for (DownloadInfo info: list) {
+            if (ObjectUtils.equal(info.label, label)) {
+                continue;
+            }
+
+            List<DownloadInfo> srcList = getInfoListForLabel(info.label);
+            if (srcList == null) {
+                Log.e(TAG, "Can't find label with label: " + info.label);
+                continue;
+            }
+
+            srcList.remove(info);
+            dstList.add(info);
+            info.label = label;
+            // TODO Other comparator
+            Collections.sort(dstList, sDateAscComparator);
+
+            // Save to DB
+            EhDB.updateDownloadInfo(info);
+
+            changed = true;
+        }
+
+        if (changed && mDownloadInfoListener != null) {
+            mDownloadInfoListener.onReload();
         }
     }
 
@@ -825,6 +873,13 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         }
     }
 
+    private static Comparator<DownloadInfo> sDateAscComparator = new Comparator<DownloadInfo>() {
+        @Override
+        public int compare(DownloadInfo lhs, DownloadInfo rhs) {
+            return lhs.date - rhs.date > 0 ? 1 : -1;
+        }
+    };
+
     public interface DownloadInfoListener {
 
         void onAdd(DownloadInfo info, List<DownloadInfo> list, int position);
@@ -836,6 +891,8 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         void onReload();
 
         void onRemove(DownloadInfo info, List<DownloadInfo> list, int position);
+
+        void onUpdateLabels();
     }
 
     public interface DownloadListener {

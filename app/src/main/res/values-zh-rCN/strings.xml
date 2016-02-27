@@ -197,6 +197,7 @@
     <string name="stat_download_action_stop_all">全部停止</string>
     <string name="drawer_download_label_title">标签</string>
     <string name="default_download_label_name">默认</string>
+    <string name="label">标签</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 页</string>
