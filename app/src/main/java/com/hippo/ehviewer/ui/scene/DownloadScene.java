@@ -26,6 +26,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
@@ -67,6 +68,7 @@ import com.hippo.util.ActivityHelper;
 import com.hippo.util.ApiHelper;
 import com.hippo.vector.VectorDrawable;
 import com.hippo.view.ViewTransition;
+import com.hippo.widget.FabLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.FileUtils;
@@ -77,7 +79,9 @@ import java.util.List;
 
 public class DownloadScene extends ToolbarScene
         implements DownloadManager.DownloadInfoListener,
-        EasyRecyclerView.OnItemClickListener {
+        EasyRecyclerView.OnItemClickListener,
+        EasyRecyclerView.OnItemLongClickListener,
+        FabLayout.OnClickFabListener {
 
     private static final String KEY_LABEL = "label";
 
@@ -85,6 +89,8 @@ public class DownloadScene extends ToolbarScene
     private EasyRecyclerView mRecyclerView;
     @Nullable
     private ViewTransition mViewTransition;
+    @Nullable
+    private FabLayout mFabLayout;
 
     @Nullable
     private DownloadAdapter mAdapter;
@@ -125,9 +131,13 @@ public class DownloadScene extends ToolbarScene
                 mList = manager.getDefaultDownloadInfoList();
             }
         }
+        updateTitle();
+        Settings.putRecentDownloadLabel(mLabel);
+    }
+
+    private void updateTitle() {
         setTitle(getString(R.string.scene_download_title,
                 mLabel != null ? mLabel : getString(R.string.default_download_label_name)));
-        Settings.putRecentDownloadLabel(mLabel);
     }
 
     private void onInit() {
@@ -152,6 +162,7 @@ public class DownloadScene extends ToolbarScene
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_download, container, false);
         mRecyclerView = (EasyRecyclerView) view.findViewById(R.id.recycler_view);
+        mFabLayout = (FabLayout) view.findViewById(R.id.fab_layout);
         View tip = view.findViewById(R.id.tip);
         SimpleImageView tipImage = (SimpleImageView) tip.findViewById(R.id.tip_image);
         tipImage.setDrawable(VectorDrawable.create(getContext(), R.xml.sadpanda_head));
@@ -159,6 +170,7 @@ public class DownloadScene extends ToolbarScene
 
         if (mRecyclerView != null) {
             mAdapter = new DownloadAdapter();
+            mAdapter.setHasStableIds(true);
             mRecyclerView.setAdapter(mAdapter);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
@@ -166,9 +178,18 @@ public class DownloadScene extends ToolbarScene
             mRecyclerView.hasFixedSize();
             mRecyclerView.setClipToPadding(false);
             mRecyclerView.setOnItemClickListener(this);
+            mRecyclerView.setOnItemLongClickListener(this);
+            mRecyclerView.setChoiceMode(EasyRecyclerView.CHOICE_MODE_MULTIPLE_CUSTOM);
+            mRecyclerView.setCustomCheckedListener(new DownloadChoiceListener());
             int paddingH = getResources().getDimensionPixelOffset(R.dimen.list_content_margin_h);
             int paddingV = getResources().getDimensionPixelOffset(R.dimen.list_content_margin_v);
             mRecyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
+        }
+
+        if (mFabLayout != null) {
+            mFabLayout.setHidePrimaryFab(true);
+            mFabLayout.setAutoCancel(false);
+            mFabLayout.setOnClickFabListener(this);
         }
 
         if (mList == null || mList.isEmpty()) {
@@ -183,6 +204,7 @@ public class DownloadScene extends ToolbarScene
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        updateTitle();
         setNavigationIcon(VectorDrawable.create(getContext(), R.xml.ic_arrow_left_dark_x24));
 
         // Clear nav checked item
@@ -194,7 +216,7 @@ public class DownloadScene extends ToolbarScene
 
     @Override
     public void onNavigationClick() {
-        finish();
+        onBackPressed();
     }
 
     @Override
@@ -204,6 +226,11 @@ public class DownloadScene extends ToolbarScene
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
+        // Skip when in choice mode
+        if (mRecyclerView == null || mRecyclerView.isInCustomChoice()) {
+            return false;
+        }
+
         int id = item.getItemId();
         switch (id) {
             case R.id.action_start_all: {
@@ -229,6 +256,7 @@ public class DownloadScene extends ToolbarScene
         DownloadManager manager = EhApplication.getDownloadManager(getContext());
         manager.setDownloadInfoListener(null);
         mRecyclerView = null;
+        mFabLayout = null;
         mViewTransition = null;
         mAdapter = null;
     }
@@ -299,20 +327,84 @@ public class DownloadScene extends ToolbarScene
     }
 
     @Override
-    public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-        List<DownloadInfo> list = mList;
-        if (list == null) {
-            return false;
+    public void onBackPressed() {
+        if (mRecyclerView != null && mRecyclerView.isInCustomChoice()) {
+            mRecyclerView.outOfCustomChoiceMode();
+        } else {
+            super.onBackPressed();
         }
-        if (position < 0 && position >= list.size()) {
+    }
+
+    @Override
+    public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
+        EasyRecyclerView recyclerView = mRecyclerView;
+        if (recyclerView == null) {
             return false;
         }
 
-        Intent intent = new Intent(getActivity(), GalleryActivity.class);
-        intent.setAction(GalleryActivity.ACTION_EH);
-        intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, list.get(position).galleryInfo);
-        startActivity(intent);
+        if (recyclerView.isInCustomChoice()) {
+            recyclerView.toggleItemChecked(position);
+            return true;
+        } else {
+            List<DownloadInfo> list = mList;
+            if (list == null) {
+                return false;
+            }
+            if (position < 0 && position >= list.size()) {
+                return false;
+            }
+
+            Intent intent = new Intent(getActivity(), GalleryActivity.class);
+            intent.setAction(GalleryActivity.ACTION_EH);
+            intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, list.get(position).galleryInfo);
+            startActivity(intent);
+            return true;
+        }
+    }
+
+    @Override
+    public boolean onItemLongClick(EasyRecyclerView parent, View view, int position, long id) {
+        EasyRecyclerView recyclerView = mRecyclerView;
+        if (recyclerView == null) {
+            return false;
+        }
+
+        if (!recyclerView.isInCustomChoice()) {
+            recyclerView.intoCustomChoiceMode();
+        }
+        recyclerView.toggleItemChecked(position);
+
         return true;
+    }
+
+    @Override
+    public void onClickPrimaryFab(FabLayout view, FloatingActionButton fab) {
+        if (mRecyclerView != null && mRecyclerView.isInCustomChoice()) {
+            mRecyclerView.outOfCustomChoiceMode();
+        }
+    }
+
+    @Override
+    public void onClickSecondaryFab(FabLayout view, FloatingActionButton fab, int position) {
+        switch (position) {
+            case 0: // Check all
+                if (mRecyclerView != null) {
+                    mRecyclerView.checkAll();
+                }
+                break;
+            case 1: // Start
+                // TODO
+                break;
+            case 2: // Stop
+                // TODO
+                break;
+            case 3: // Delete
+                // TODO
+                break;
+            case 4: // Move
+                // TODO
+                break;
+        }
     }
 
     @Override
@@ -533,8 +625,8 @@ public class DownloadScene extends ToolbarScene
 
         @Override
         public void onClick(View v) {
-            RecyclerView recyclerView = mRecyclerView;
-            if (recyclerView == null) {
+            EasyRecyclerView recyclerView = mRecyclerView;
+            if (recyclerView == null || recyclerView.isInCustomChoice()) {
                 return;
             }
             List<DownloadInfo> list = mList;
@@ -616,6 +708,14 @@ public class DownloadScene extends ToolbarScene
     private class DownloadAdapter extends RecyclerView.Adapter<DownloadHolder> {
 
         @Override
+        public long getItemId(int position) {
+            if (mList == null || position < 0 || position >= mList.size()) {
+                return 0;
+            }
+            return mList.get(position).galleryInfo.gid;
+        }
+
+        @Override
         public DownloadHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new DownloadHolder(getActivity().getLayoutInflater().inflate(R.layout.item_download, parent, false));
         }
@@ -653,6 +753,41 @@ public class DownloadScene extends ToolbarScene
         @Override
         public int getItemCount() {
             return mList == null ? 0 : mList.size();
+        }
+    }
+
+    private class DownloadChoiceListener implements  EasyRecyclerView.CustomChoiceListener {
+
+        @Override
+        public void onIntoCustomChoice(EasyRecyclerView view) {
+            if (mRecyclerView != null) {
+                mRecyclerView.setOnItemLongClickListener(null);
+                mRecyclerView.setLongClickable(false);
+            }
+            if (mFabLayout != null) {
+                mFabLayout.setExpanded(true);
+            }
+            // Lock drawer
+            setDrawerLayoutEnable(false);
+        }
+
+        @Override
+        public void onOutOfCustomChoice(EasyRecyclerView view) {
+            if (mRecyclerView != null) {
+                mRecyclerView.setOnItemLongClickListener(DownloadScene.this);
+            }
+            if (mFabLayout != null) {
+                mFabLayout.setExpanded(false);
+            }
+            // Unlock drawer
+            setDrawerLayoutEnable(true);
+        }
+
+        @Override
+        public void onItemCheckedStateChanged(EasyRecyclerView view, int position, long id, boolean checked) {
+            if (view.getCheckedItemCount() == 0) {
+                view.outOfCustomChoiceMode();
+            }
         }
     }
 }

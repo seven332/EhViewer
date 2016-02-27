@@ -51,4 +51,52 @@
             android:text="@string/no_download_info"/>
 
     </LinearLayout>
+
+
+    <com.hippo.widget.FabLayout
+        android:id="@+id/fab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingRight="@dimen/corner_fab_margin"
+        android:paddingBottom="@dimen/corner_fab_margin"
+        android:clipToPadding="false">
+
+        <android.support.design.widget.FloatingActionButton
+            style="@style/Widget.Design.FloatingActionButton.Mini"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_check_all_dark_x24"/>
+
+        <android.support.design.widget.FloatingActionButton
+            style="@style/Widget.Design.FloatingActionButton.Mini"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_play_dark_x24"/>
+
+        <android.support.design.widget.FloatingActionButton
+            style="@style/Widget.Design.FloatingActionButton.Mini"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_pause_dark_x24"/>
+
+        <android.support.design.widget.FloatingActionButton
+            style="@style/Widget.Design.FloatingActionButton.Mini"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_close_dark_x24"/>
+
+        <android.support.design.widget.FloatingActionButton
+            style="@style/Widget.Design.FloatingActionButton.Mini"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_folder_move_dark_x24"/>
+
+        <android.support.design.widget.FloatingActionButton
+            style="@style/Widget.Design.FloatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_close_dark_x24"/>
+
+    </com.hippo.widget.FabLayout>
+
 </FrameLayout>
