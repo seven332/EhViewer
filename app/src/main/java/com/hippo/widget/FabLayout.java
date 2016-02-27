@@ -17,10 +17,7 @@
 package com.hippo.widget;
 
 import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -47,9 +44,11 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
     private boolean mFirst = true;
     private boolean mExpanded = false;
     private boolean mAutoCancel = true;
+    private boolean mHidePrimaryFab = false;
     private float mMainFabCenterY = -1f;
 
     private OnExpandListener mOnExpandListener;
+    private OnClickFabListener mOnClickFabListener;
 
     public FabLayout(Context context) {
         super(context);
@@ -124,7 +123,7 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
         if (mFirst) {
             mFirst = false;
             boolean expanded = mExpanded;
-            int count = getChildCount() - 1;
+            int count = getChildCount() - (mHidePrimaryFab ? 0 : 1);
             for (int i = 0; i < count; i++) {
                 getChildAt(i).setVisibility(expanded ? View.VISIBLE : View.INVISIBLE);
             }
@@ -201,6 +200,30 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
         mOnExpandListener = listener;
     }
 
+    public void setOnClickFabListener(OnClickFabListener listener) {
+        mOnClickFabListener = listener;
+        if (listener != null) {
+            for (int i = 0, n = getChildCount(); i < n; i++) {
+                getChildAt(i).setOnClickListener(this);
+            }
+        } else {
+            for (int i = 0, n = getChildCount(); i < n; i++) {
+                getChildAt(i).setClickable(false);
+            }
+        }
+    }
+
+    public void setHidePrimaryFab(boolean hidePrimaryFab) {
+        if (mHidePrimaryFab != hidePrimaryFab) {
+            mHidePrimaryFab = hidePrimaryFab;
+            boolean expanded = mExpanded;
+            int count = getChildCount();
+            if (!expanded && count > 0) {
+                getChildAt(count - 1).setVisibility(hidePrimaryFab ? INVISIBLE : VISIBLE);
+            }
+        }
+    }
+
     public void setAutoCancel(boolean autoCancel) {
         if (mAutoCancel != autoCancel) {
             mAutoCancel = autoCancel;
@@ -239,23 +262,26 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
                 }
             }
 
-            if (mMainFabCenterY == -1f) {
-                // It is before first onLayout
-                int count = getChildCount() - 1;
-                for (int i = 0; i < count; i++) {
-                    getChildAt(i).setVisibility(expanded ? View.VISIBLE : View.INVISIBLE);
-                }
-            } else {
-                int count = getChildCount() - 1;
-                for (int i = 0; i < count; i++) {
-                    View child = getChildAt(i);
-                    if (animation) {
-                        setChildAnimation(child, expanded);
-                    } else {
+            final int count = getChildCount();
+            if (count > 0) {
+                if (mMainFabCenterY == -1f || !animation) {
+                    // It is before first onLayout
+                    int checkCount = mHidePrimaryFab ? count : count - 1;
+                    for (int i = 0; i < checkCount; i++) {
+                        View child = getChildAt(i);
                         child.setVisibility(expanded ? View.VISIBLE : View.INVISIBLE);
                         if (expanded) {
                             child.setAlpha(1f);
                         }
+                    }
+                } else {
+                    if (mHidePrimaryFab) {
+                        setPrimaryFabAnimation(getChildAt(count - 1), expanded, !expanded);
+                    }
+
+                    for (int i = 0; i < count - 1; i++) {
+                        View child = getChildAt(i);
+                        setSecondaryFabAnimation(child, expanded, expanded);
                     }
                 }
             }
@@ -266,7 +292,47 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
         }
     }
 
-    private void setChildAnimation(final View child, final boolean expanded) {
+
+    private void setPrimaryFabAnimation(final View child, final boolean expanded, boolean delay) {
+        float startScale;
+        float endScale;
+        Interpolator interpolator;
+        if (expanded) {
+            startScale = 0.0f;
+            endScale = 1.0f;
+            interpolator = AnimationUtils.FAST_SLOW_INTERPOLATOR;
+        } else {
+            startScale  = 1.0f;
+            endScale = 0.0f;
+            interpolator = AnimationUtils.SLOW_FAST_INTERPOLATOR;
+        }
+
+        child.setScaleX(startScale);
+        child.setScaleY(startScale);
+        child.animate()
+                .scaleX(endScale)
+                .scaleY(endScale)
+                .setStartDelay(delay ? ANIMATE_TIME : 0L)
+                .setDuration(ANIMATE_TIME)
+                .setInterpolator(interpolator)
+                .setListener(new SimpleAnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (expanded) {
+                            child.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        if (!expanded) {
+                            child.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                }).start();
+    }
+
+    private void setSecondaryFabAnimation(final View child, final boolean expanded, boolean delay) {
         float startTranslationY;
         float endTranslationY;
         float startAlpha;
@@ -288,37 +354,43 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
             interpolator = AnimationUtils.SLOW_FAST_INTERPOLATOR;
         }
 
-        PropertyValuesHolder translationYPvh = PropertyValuesHolder.ofFloat(
-                "translationY", startTranslationY, endTranslationY);
-        PropertyValuesHolder alphaPvh = PropertyValuesHolder.ofFloat(
-                "alpha", startAlpha, endAlpha);
-        ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(child, translationYPvh, alphaPvh);
-        oa.setDuration(ANIMATE_TIME);
-        oa.setInterpolator(interpolator);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            oa.setAutoCancel(true);
-        }
-        oa.addListener(new SimpleAnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                if (expanded) {
-                    child.setVisibility(View.VISIBLE);
-                }
-            }
+        child.setAlpha(startAlpha);
+        child.setTranslationY(startTranslationY);
+        child.animate()
+                .alpha(endAlpha)
+                .translationY(endTranslationY)
+                .setStartDelay(delay ? ANIMATE_TIME : 0L)
+                .setDuration(ANIMATE_TIME)
+                .setInterpolator(interpolator)
+                .setListener(new SimpleAnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        if (expanded) {
+                            child.setVisibility(View.VISIBLE);
+                        }
+                    }
 
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (!expanded) {
-                    child.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-        oa.start();
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        if (!expanded) {
+                            child.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                }).start();
     }
 
     @Override
     public void onClick(View v) {
-        setExpanded(false);
+        if (this == v) {
+            setExpanded(false);
+        } else if (mOnClickFabListener != null) {
+            int position = indexOfChild(v);
+            if (position == getChildCount() - 1) {
+                mOnClickFabListener.onClickPrimaryFab(this, (FloatingActionButton) v);
+            } else if (position >= 0) {
+                mOnClickFabListener.onClickSecondaryFab(this, (FloatingActionButton) v, position);
+            }
+        }
     }
 
     @Override
@@ -347,5 +419,12 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
 
     public interface OnExpandListener {
         void onExpand(boolean expanded);
+    }
+
+    public interface OnClickFabListener {
+
+        void onClickPrimaryFab(FabLayout view, FloatingActionButton fab);
+
+        void onClickSecondaryFab(FabLayout view, FloatingActionButton fab, int position);
     }
 }
