@@ -23,6 +23,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
+import android.os.SystemClock;
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -34,8 +36,11 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IntList;
+import com.hippo.yorozuya.SimpleHandler;
 
-// TODO Avoid frequent notification
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 public class DownloadService extends Service implements DownloadManager.DownloadListener {
 
     public static final String ACTION_START = "start";
@@ -66,6 +71,9 @@ public class DownloadService extends Service implements DownloadManager.Download
     private NotificationCompat.Builder mDownloadingBuilder;
     private NotificationCompat.Builder mDownloadedBuilder;
     private NotificationCompat.Builder m509dBuilder;
+    private NotificationDelay mDownloadingDelay;
+    private NotificationDelay mDownloadedDelay;
+    private NotificationDelay m509Delay;
 
     @Nullable
     private SparseBooleanArray mItemStateArray;
@@ -119,6 +127,15 @@ public class DownloadService extends Service implements DownloadManager.Download
         mDownloadingBuilder = null;
         mDownloadedBuilder = null;
         m509dBuilder = null;
+        if (mDownloadingDelay != null) {
+            mDownloadingDelay.release();
+        }
+        if (mDownloadedDelay != null) {
+            mDownloadedDelay.release();
+        }
+        if (m509Delay != null) {
+            m509Delay.release();
+        }
         EhApplication.backupDownloadService(getApplicationContext(),
                 mFailedCount, mFinishedCount, mDownloadedCount);
         mItemStateArray = null;
@@ -193,6 +210,7 @@ public class DownloadService extends Service implements DownloadManager.Download
         throw new IllegalStateException("No bindService");
     }
 
+    @SuppressWarnings("deprecation")
     private void ensureDownloadingBuilder() {
         if (mDownloadingBuilder != null) {
             return;
@@ -208,6 +226,8 @@ public class DownloadService extends Service implements DownloadManager.Download
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setColor(getResources().getColor(R.color.colorPrimary))
                 .addAction(R.drawable.ic_pause_x24, getString(R.string.stat_download_action_stop_all), piStopAll);
+
+        mDownloadingDelay = new NotificationDelay(this, mNotifyManager, mDownloadingBuilder, ID_DOWNLOADING);
     }
 
     private void ensureDownloadedBuilder() {
@@ -225,6 +245,8 @@ public class DownloadService extends Service implements DownloadManager.Download
                 .setDeleteIntent(piClear)
                 .setOngoing(false)
                 .setAutoCancel(true);
+
+        mDownloadedDelay = new NotificationDelay(this, mNotifyManager, mDownloadedBuilder, ID_DOWNLOADED);
     }
 
     private void ensure509Builder() {
@@ -240,6 +262,8 @@ public class DownloadService extends Service implements DownloadManager.Download
                 .setAutoCancel(true)
                 .setOngoing(false)
                 .setCategory(NotificationCompat.CATEGORY_ERROR);
+
+        m509Delay = new NotificationDelay(this, mNotifyManager, m509dBuilder, ID_509);
     }
 
     @Override
@@ -250,7 +274,7 @@ public class DownloadService extends Service implements DownloadManager.Download
 
         ensure509Builder();
 
-        mNotifyManager.notify(ID_509, m509dBuilder.build());
+        m509Delay.show();
     }
 
     @Override
@@ -265,7 +289,7 @@ public class DownloadService extends Service implements DownloadManager.Download
                 .setContentText(null)
                 .setProgress(0, 0, true);
 
-        startForeground(ID_DOWNLOADING, mDownloadingBuilder.build());
+        mDownloadingDelay.startForeground();
     }
 
     private void onUpdate(DownloadInfo info) {
@@ -283,7 +307,7 @@ public class DownloadService extends Service implements DownloadManager.Download
                 .setContentText(text)
                 .setProgress(info.total, info.download, false);
 
-        startForeground(ID_DOWNLOADING, mDownloadingBuilder.build());
+        mDownloadingDelay.startForeground();
     }
 
     @Override
@@ -302,7 +326,7 @@ public class DownloadService extends Service implements DownloadManager.Download
             return;
         }
 
-        mNotifyManager.cancel(ID_DOWNLOADING);
+        mDownloadingDelay.cancel();
 
         ensureDownloadedBuilder();
 
@@ -388,7 +412,7 @@ public class DownloadService extends Service implements DownloadManager.Download
                 .setStyle(style)
                 .setNumber(mDownloadedCount);
 
-        mNotifyManager.notify(ID_DOWNLOADED, mDownloadedBuilder.build());
+        mDownloadedDelay.show();
 
         checkStopSelf();
     }
@@ -399,7 +423,7 @@ public class DownloadService extends Service implements DownloadManager.Download
             return;
         }
 
-        mNotifyManager.cancel(ID_DOWNLOADING);
+        mDownloadingDelay.cancel();
         checkStopSelf();
     }
 
@@ -407,6 +431,116 @@ public class DownloadService extends Service implements DownloadManager.Download
         if (mDownloadManager == null || mDownloadManager.isIdle()) {
             stopForeground(true);
             stopSelf();
+        }
+    }
+
+    // TODO Include all notification in one delay
+    // Avoid frequent notification
+    private static class NotificationDelay implements Runnable {
+
+        @IntDef({OPS_NOTIFY, OPS_CANCEL, OPS_START_FOREGROUND})
+        @Retention(RetentionPolicy.SOURCE)
+        private @interface Ops {}
+
+        private static final int OPS_NOTIFY = 0;
+        private static final int OPS_CANCEL = 1;
+        private static final int OPS_START_FOREGROUND = 2;
+
+        private static final long DELAY = 1000; // 1s
+
+        private Service mService;
+        private final NotificationManager mNotifyManager;
+        private final NotificationCompat.Builder mBuilder;
+        private final int mId;
+
+        private long mLastTime;
+        private boolean mPosted;
+        // false for show, true for cancel
+        @Ops
+        private int mOps;
+
+        public NotificationDelay(Service service, NotificationManager notifyManager,
+                NotificationCompat.Builder builder, int id) {
+            mService = service;
+            mNotifyManager = notifyManager;
+            mBuilder = builder;
+            mId = id;
+        }
+
+        public void release() {
+            mService = null;
+        }
+
+        public void show() {
+            if (mPosted) {
+                mOps = OPS_NOTIFY;
+            } else {
+                long now = SystemClock.currentThreadTimeMillis();
+                if (now - mLastTime > DELAY) {
+                    // Wait long enough, do it now
+                    mNotifyManager.notify(mId, mBuilder.build());
+                } else {
+                    // Too quick, post delay
+                    mOps = OPS_NOTIFY;
+                    mPosted = true;
+                    SimpleHandler.getInstance().postDelayed(this, DELAY);
+                }
+                mLastTime = now;
+            }
+        }
+
+        public void cancel() {
+            if (mPosted) {
+                mOps = OPS_CANCEL;
+            } else {
+                long now = SystemClock.currentThreadTimeMillis();
+                if (now - mLastTime > DELAY) {
+                    // Wait long enough, do it now
+                    mNotifyManager.cancel(mId);
+                } else {
+                    // Too quick, post delay
+                    mOps = OPS_CANCEL;
+                    mPosted = true;
+                    SimpleHandler.getInstance().postDelayed(this, DELAY);
+                }
+            }
+        }
+
+        public void startForeground() {
+            if (mPosted) {
+                mOps = OPS_START_FOREGROUND;
+            } else {
+                long now = SystemClock.currentThreadTimeMillis();
+                if (now - mLastTime > DELAY) {
+                    // Wait long enough, do it now
+                    if (mService != null) {
+                        mService.startForeground(mId, mBuilder.build());
+                    }
+                } else {
+                    // Too quick, post delay
+                    mOps = OPS_START_FOREGROUND;
+                    mPosted = true;
+                    SimpleHandler.getInstance().postDelayed(this, DELAY);
+                }
+            }
+        }
+
+        @Override
+        public void run() {
+            mPosted = false;
+            switch (mOps) {
+                case OPS_NOTIFY:
+                    mNotifyManager.notify(mId, mBuilder.build());
+                    break;
+                case OPS_CANCEL:
+                    mNotifyManager.cancel(mId);
+                    break;
+                case OPS_START_FOREGROUND:
+                    if (mService != null) {
+                        mService.startForeground(mId, mBuilder.build());
+                    }
+                    break;
+            }
         }
     }
 }
