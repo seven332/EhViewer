@@ -192,6 +192,7 @@
     <string name="stat_download_done_line_failed">下载失败：%s</string>
     <string name="download_remove_dialog_title">移除下载项</string>
     <string name="download_remove_dialog_message">从下载列表移除 %s ？</string>
+    <string name="download_remove_dialog_message_2">从下载列表移除 %d 项？</string>
     <string name="download_remove_dialog_check_text">删除图片文件</string>
     <string name="stat_download_action_stop_all">全部停止</string>
     <string name="drawer_download_label_title">标签</string>

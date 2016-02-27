@@ -29,6 +29,7 @@ import com.hippo.ehviewer.dao.DownloadLabelRaw;
 import com.hippo.ehviewer.spider.SpiderQueen;
 import com.hippo.image.Image;
 import com.hippo.yorozuya.ConcurrentPool;
+import com.hippo.yorozuya.IntList;
 import com.hippo.yorozuya.SimpleHandler;
 
 import java.util.HashMap;
@@ -63,7 +64,9 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
     @NonNull
     private final SpeedReminder mSpeedReminder;
 
+    @Nullable
     private DownloadListener mDownloadListener;
+    @Nullable
     private DownloadInfoListener mDownloadInfoListener;
 
     @Nullable
@@ -71,6 +74,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
     @Nullable
     private SpiderQueen mCurrentSpider;
 
+    @NonNull
     private final ConcurrentPool<NotifyTask> mNotifyTaskPool = new ConcurrentPool<>(5);
 
     public DownloadManager(Context context) {
@@ -181,11 +185,11 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         return mMap.get(label);
     }
 
-    public void setDownloadInfoListener(DownloadInfoListener downloadInfoListener) {
+    public void setDownloadInfoListener(@Nullable DownloadInfoListener downloadInfoListener) {
         mDownloadInfoListener = downloadInfoListener;
     }
 
-    public void setDownloadListener(DownloadListener listener) {
+    public void setDownloadListener(@Nullable DownloadListener listener) {
         mDownloadListener = listener;
     }
 
@@ -281,6 +285,38 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         }
     }
 
+    void startRangeDownload(IntList gidList) {
+        boolean update = false;
+
+        for (int i = 0, n = gidList.size(); i < n; i++) {
+            int gid = gidList.get(i);
+            DownloadInfo info = mAllInfoMap.get(gid);
+            if (null == info) {
+                Log.d(TAG, "Can't get download info with gid: " + gid);
+                continue;
+            }
+
+            if (info.state != DownloadInfo.STATE_WAIT) {
+                update = true;
+                // Set state DownloadInfo.STATE_WAIT
+                info.state = DownloadInfo.STATE_WAIT;
+                // Add to wait list
+                mWaitList.add(info);
+                // Update in DB
+                EhDB.updateDownloadInfo(info);
+            }
+        }
+
+        if (update) {
+            // Notify Listener
+            if (mDownloadInfoListener != null) {
+                mDownloadInfoListener.onUpdateAll();
+            }
+            // Ensure download
+            ensureDownload();
+        }
+    }
+
     void startAllDownload() {
         boolean update = false;
         // Start all STATE_NONE and STATE_FAILED item
@@ -335,6 +371,18 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         }
     }
 
+    void stopRangeDownload(IntList gidList) {
+        stopRangeDownloadInternal(gidList);
+
+        // Update listener
+        if (mDownloadInfoListener != null) {
+            mDownloadInfoListener.onUpdateAll();
+        }
+
+        // Ensure download
+        ensureDownload();
+    }
+
     void stopAllDownload() {
         // Stop all in wait list
         for (DownloadInfo info : mWaitList) {
@@ -378,6 +426,36 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
 
             // Ensure download
             ensureDownload();
+        }
+    }
+
+    void deleteRangeDownload(IntList gidList) {
+        stopRangeDownloadInternal(gidList);
+
+        for (int i = 0, n = gidList.size(); i < n; i++) {
+            int gid = gidList.get(i);
+            DownloadInfo info = mAllInfoMap.get(gid);
+            if (null == info) {
+                Log.d(TAG, "Can't get download info with gid: " + gid);
+                continue;
+            }
+
+            // Remove from DB
+            EhDB.removeDownloadInfo(info.galleryInfo.gid);
+
+            // Remove from all info map
+            mAllInfoMap.remove(info.galleryInfo.gid);
+
+            // Remove from label list
+            LinkedList<DownloadInfo> list = getInfoListForLabel(info.label);
+            if (list != null) {
+                list.remove(info);
+            }
+        }
+
+        // Update listener
+        if (mDownloadInfoListener != null) {
+            mDownloadInfoListener.onReload();
         }
     }
 
@@ -433,6 +511,36 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
             mDownloadListener.onCancel(info);
         }
         return info;
+    }
+
+    // Update in DB
+    // Update mDownloadListener
+    private void stopRangeDownloadInternal(IntList gidList) {
+        // Two way
+        if (gidList.size() < mWaitList.size()) {
+            for (int i = 0, n = gidList.size(); i < n; i++) {
+                DownloadInfo info = stopDownloadInternal(gidList.get(i));
+            }
+        } else {
+            // Check current task
+            if (mCurrentTask != null && gidList.contains(mCurrentTask.galleryInfo.gid)) {
+                // Stop current
+                stopCurrentDownloadInternal();
+            }
+
+            // Check all in wait list
+            for (Iterator<DownloadInfo> iterator = mWaitList.iterator(); iterator.hasNext();) {
+                DownloadInfo info = iterator.next();
+                if (gidList.contains(info.galleryInfo.gid)) {
+                    // Remove from wait list
+                    iterator.remove();
+                    // Update state
+                    info.state = DownloadInfo.STATE_NONE;
+                    // Update in DB
+                    EhDB.updateDownloadInfo(info);
+                }
+            }
+        }
     }
 
     boolean isIdle() {
@@ -724,6 +832,8 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         void onUpdate(DownloadInfo info, List<DownloadInfo> list);
 
         void onUpdateAll();
+
+        void onReload();
 
         void onRemove(DownloadInfo info, List<DownloadInfo> list, int position);
     }

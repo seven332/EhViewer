@@ -33,6 +33,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
+import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -72,9 +73,11 @@ import com.hippo.widget.FabLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.IntList;
 import com.hippo.yorozuya.ObjectUtils;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class DownloadScene extends ToolbarScene
@@ -99,6 +102,9 @@ public class DownloadScene extends ToolbarScene
     private String mLabel;
     @Nullable
     private List<DownloadInfo> mList;
+
+    private final IntList mTempIntList = new IntList();
+    private final List<GalleryInfo> mTempGalleryInfoList = new LinkedList<>();
 
     // TODO Only single instance
     @Override
@@ -386,24 +392,71 @@ public class DownloadScene extends ToolbarScene
 
     @Override
     public void onClickSecondaryFab(FabLayout view, FloatingActionButton fab, int position) {
-        switch (position) {
-            case 0: // Check all
-                if (mRecyclerView != null) {
-                    mRecyclerView.checkAll();
+        EasyRecyclerView recyclerView = mRecyclerView;
+        if (recyclerView == null) {
+            return;
+        }
+
+        if (0 == position) {
+            recyclerView.checkAll();
+        } else {
+            List<DownloadInfo> list = mList;
+            if (list == null) {
+                return;
+            }
+
+            boolean collectGalleryInfo = position == 3; // Delete
+
+            SparseBooleanArray stateArray = recyclerView.getCheckedItemPositions();
+            for (int i = 0, n = stateArray.size(); i < n; i++) {
+                if (stateArray.valueAt(i)) {
+                    GalleryInfo gi = list.get(stateArray.keyAt(i)).galleryInfo;
+                    if (collectGalleryInfo) {
+                        mTempGalleryInfoList.add(gi);
+                    }
+                    mTempIntList.add(gi.gid);
                 }
-                break;
-            case 1: // Start
-                // TODO
-                break;
-            case 2: // Stop
-                // TODO
-                break;
-            case 3: // Delete
-                // TODO
-                break;
-            case 4: // Move
-                // TODO
-                break;
+            }
+
+            switch (position) {
+                case 1: { // Start
+                    Intent intent = new Intent(getActivity(), DownloadService.class);
+                    intent.setAction(DownloadService.ACTION_START_RANGE);
+                    intent.putExtra(DownloadService.KEY_GID_LIST, mTempIntList);
+                    getActivity().startService(intent);
+                    // Clear
+                    mTempIntList.clear();
+                    // Cancel check mode
+                    recyclerView.outOfCustomChoiceMode();
+                    break;
+                }
+                case 2: { // Stop
+                    Intent intent = new Intent(getActivity(), DownloadService.class);
+                    intent.setAction(DownloadService.ACTION_STOP_RANGE);
+                    intent.putExtra(DownloadService.KEY_GID_LIST, mTempIntList);
+                    getActivity().startService(intent);
+                    // Clear
+                    mTempIntList.clear();
+                    // Cancel check mode
+                    recyclerView.outOfCustomChoiceMode();
+                    break;
+                }
+                case 3: // Delete
+                    CheckBoxDialogBuilder builder = new CheckBoxDialogBuilder(getContext(),
+                            getString(R.string.download_remove_dialog_message_2, mTempIntList.size()),
+                            getString(R.string.download_remove_dialog_check_text),
+                            Settings.getRemoveImageFiles());
+                    DeleteRangeDialogHelper helper = new DeleteRangeDialogHelper(
+                            mTempGalleryInfoList, mTempIntList, builder);
+                    builder.setTitle(R.string.download_remove_dialog_title)
+                            .setPositiveButton(android.R.string.ok, helper)
+                            .setOnDismissListener(helper)
+                            .show();
+                    break;
+                case 4: // Move
+                    // TODO
+                    break;
+            }
         }
     }
 
@@ -459,6 +512,21 @@ public class DownloadScene extends ToolbarScene
             if (index >= 0 && index < size) {
                 DownloadHolder holder = (DownloadHolder) recyclerView.getChildViewHolder(child);
                 bindForState(holder, list.get(index));
+            }
+        }
+    }
+
+    @Override
+    public void onReload() {
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
+
+        if (mViewTransition != null) {
+            if (mList != null && mList.size() == 0) {
+                mViewTransition.showView(1);
+            } else {
+                mViewTransition.showView(0);
             }
         }
     }
@@ -541,6 +609,18 @@ public class DownloadScene extends ToolbarScene
         holder.speed.setText(FileUtils.humanReadableByteCount(speed, false) + "/S");
     }
 
+    private static void deleteFileAsync(UniFile... files) {
+        new AsyncTask<UniFile, Void, Void>() {
+            @Override
+            protected Void doInBackground(UniFile... params) {
+                for (UniFile file: params) {
+                    file.delete();
+                }
+                return null;
+            }
+        }.execute(files);
+    }
+
     private class DeleteDialogHelper implements DialogInterface.OnClickListener {
 
         private final GalleryInfo mGalleryInfo;
@@ -563,6 +643,7 @@ public class DownloadScene extends ToolbarScene
             intent.putExtra(DownloadService.KEY_GID, mGalleryInfo.gid);
             getActivity().startService(intent);
 
+            // Delete image files
             boolean checked = mBuilder.isChecked();
             Settings.putRemoveImageFiles(checked);
             if (checked) {
@@ -570,16 +651,64 @@ public class DownloadScene extends ToolbarScene
                 EhDB.removeDownloadDirname(mGalleryInfo.gid);
                 // Delete file
                 UniFile file = SpiderDen.getGalleryDownloadDir(mGalleryInfo);
-                new AsyncTask<UniFile, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(UniFile... params) {
-                        for (UniFile file: params) {
-                            file.delete();
-                        }
-                        return null;
-                    }
-                }.execute(file);
+                deleteFileAsync(file);
             }
+        }
+    }
+
+    private class DeleteRangeDialogHelper implements DialogInterface.OnClickListener,
+            DialogInterface.OnDismissListener {
+
+        private final List<GalleryInfo> mGalleryInfoList;
+        private final IntList mGidList;
+        private final CheckBoxDialogBuilder mBuilder;
+
+        public DeleteRangeDialogHelper(List<GalleryInfo> galleryInfoList,
+                IntList gidList, CheckBoxDialogBuilder builder) {
+            mGalleryInfoList = galleryInfoList;
+            mGidList = gidList;
+            mBuilder = builder;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (which != DialogInterface.BUTTON_POSITIVE) {
+                return;
+            }
+
+            // Delete
+            Intent intent = new Intent(getActivity(), DownloadService.class);
+            intent.setAction(DownloadService.ACTION_DELETE_RANGE);
+            intent.putExtra(DownloadService.KEY_GID_LIST, mGidList);
+            getActivity().startService(intent);
+
+            // Delete image files
+            boolean checked = mBuilder.isChecked();
+            Settings.putRemoveImageFiles(checked);
+            if (checked) {
+                UniFile[] files = new UniFile[mGalleryInfoList.size()];
+                int i = 0;
+                for (GalleryInfo gi: mGalleryInfoList) {
+                    // Remove download path
+                    EhDB.removeDownloadDirname(gi.gid);
+                    // Put file
+                    files[i] = SpiderDen.getGalleryDownloadDir(gi);
+                    i++;
+                }
+                // Delete file
+                deleteFileAsync(files);
+            }
+
+            // Cancel check mode
+            if (mRecyclerView != null) {
+                mRecyclerView.outOfCustomChoiceMode();
+            }
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            mGalleryInfoList.clear();
+            mGidList.clear();
         }
     }
 

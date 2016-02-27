@@ -232,6 +232,7 @@
     <string name="stat_download_done_line_failed">Failed: %s</string>
     <string name="download_remove_dialog_title">Remove Download Item</string>
     <string name="download_remove_dialog_message">Remove %s from download list ?</string>
+    <string name="download_remove_dialog_message_2">Remove %d items from download list ?</string>
     <string name="download_remove_dialog_check_text">Delete image files</string>
     <string name="stat_download_action_stop_all">Stop All</string>
     <string name="drawer_download_label_title">Label</string>

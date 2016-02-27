@@ -33,21 +33,27 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.IntList;
 
+// TODO Avoid frequent notification
 public class DownloadService extends Service implements DownloadManager.DownloadListener {
 
     public static final String ACTION_START = "start";
+    public static final String ACTION_START_RANGE = "start_range";
     public static final String ACTION_START_ALL = "start_all";
     public static final String ACTION_STOP = "stop";
+    public static final String ACTION_STOP_RANGE = "stop_range";
     public static final String ACTION_STOP_CURRENT = "stop_current";
     public static final String ACTION_STOP_ALL = "stop_all";
     public static final String ACTION_DELETE = "delete";
+    public static final String ACTION_DELETE_RANGE = "delete_range";
 
     public static final String ACTION_CLEAR = "clear";
 
     public static final String KEY_GALLERY_INFO = "gallery_info";
     public static final String KEY_LABEL = "label";
     public static final String KEY_GID = "gid";
+    public static final String KEY_GID_LIST = "gid_list";
 
     private static final int ID_DOWNLOADING = 1;
     private static final int ID_DOWNLOADED = 2;
@@ -137,6 +143,11 @@ public class DownloadService extends Service implements DownloadManager.Download
             if (gi != null && mDownloadManager != null) {
                 mDownloadManager.startDownload(gi, label);
             }
+        } else if (ACTION_START_RANGE.equals(action)) {
+            IntList gidList = intent.getParcelableExtra(KEY_GID_LIST);
+            if (gidList != null && mDownloadManager != null) {
+                mDownloadManager.startRangeDownload(gidList);
+            }
         } else if (ACTION_START_ALL.equals(action)) {
             if (mDownloadManager != null) {
                 mDownloadManager.startAllDownload();
@@ -150,6 +161,11 @@ public class DownloadService extends Service implements DownloadManager.Download
             if (mDownloadManager != null) {
                 mDownloadManager.stopCurrentDownload();
             }
+        } else if (ACTION_STOP_RANGE.equals(action)) {
+            IntList gidList = intent.getParcelableExtra(KEY_GID_LIST);
+            if (gidList != null && mDownloadManager != null) {
+                mDownloadManager.stopRangeDownload(gidList);
+            }
         } else if (ACTION_STOP_ALL.equals(action)) {
             if (mDownloadManager != null) {
                 mDownloadManager.stopAllDownload();
@@ -158,6 +174,11 @@ public class DownloadService extends Service implements DownloadManager.Download
             int gid = intent.getIntExtra(KEY_GID, -1);
             if (gid != -1 && mDownloadManager != null) {
                 mDownloadManager.deleteDownload(gid);
+            }
+        } else if (ACTION_DELETE_RANGE.equals(action)) {
+            IntList gidList = intent.getParcelableExtra(KEY_GID_LIST);
+            if (gidList != null && mDownloadManager != null) {
+                mDownloadManager.deleteRangeDownload(gidList);
             }
         } else if (ACTION_CLEAR.equals(action)) {
             EhApplication.clearDownloadService(getApplicationContext(), this);
