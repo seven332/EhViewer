@@ -32,6 +32,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
 import android.util.SparseBooleanArray;
@@ -190,6 +191,11 @@ public class DownloadScene extends ToolbarScene
             mRecyclerView.setOnItemLongClickListener(this);
             mRecyclerView.setChoiceMode(EasyRecyclerView.CHOICE_MODE_MULTIPLE_CUSTOM);
             mRecyclerView.setCustomCheckedListener(new DownloadChoiceListener());
+            // Cancel change animation
+            RecyclerView.ItemAnimator itemAnimator = mRecyclerView.getItemAnimator();
+            if (itemAnimator instanceof SimpleItemAnimator) {
+                ((SimpleItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
+            }
             int paddingH = getResources().getDimensionPixelOffset(R.dimen.list_content_margin_h);
             int paddingV = getResources().getDimensionPixelOffset(R.dimen.list_content_margin_v);
             mRecyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
@@ -497,7 +503,7 @@ public class DownloadScene extends ToolbarScene
     }
 
     @Override
-    public void onAdd(DownloadInfo info, List<DownloadInfo> list, int position) {
+    public void onAdd(@NonNull DownloadInfo info, @NonNull List<DownloadInfo> list, int position) {
         if (mList != list) {
             return;
         }
@@ -507,48 +513,21 @@ public class DownloadScene extends ToolbarScene
     }
 
     @Override
-    public void onUpdate(DownloadInfo info, List<DownloadInfo> list) {
+    public void onUpdate(@NonNull DownloadInfo info, @NonNull List<DownloadInfo> list) {
         if (mList != list) {
             return;
         }
-        RecyclerView recyclerView = mRecyclerView;
-        if (recyclerView == null) {
-            return;
-        }
 
-        int size = list.size();
-        for (int i = 0, n = recyclerView.getChildCount(); i < n; i++) {
-            View child = recyclerView.getChildAt(i);
-            int index = recyclerView.getChildAdapterPosition(child);
-            if (index >= 0 && index < size && list.get(index) == info) {
-                DownloadHolder holder = (DownloadHolder) recyclerView.getChildViewHolder(child);
-                if (holder != null) {
-                    bindForState(holder, info);
-                }
-                break;
-            }
+        int index = list.indexOf(info);
+        if (index >= 0 && mAdapter != null) {
+            mAdapter.notifyItemChanged(index);
         }
     }
 
     @Override
     public void onUpdateAll() {
-        RecyclerView recyclerView = mRecyclerView;
-        if (recyclerView == null) {
-            return;
-        }
-        List<DownloadInfo> list = mList;
-        if (list == null) {
-            return;
-        }
-
-        int size = list.size();
-        for (int i = 0, n = recyclerView.getChildCount(); i < n; i++) {
-            View child = recyclerView.getChildAt(i);
-            int index = recyclerView.getChildAdapterPosition(child);
-            if (index >= 0 && index < size) {
-                DownloadHolder holder = (DownloadHolder) recyclerView.getChildViewHolder(child);
-                bindForState(holder, list.get(index));
-            }
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -568,7 +547,7 @@ public class DownloadScene extends ToolbarScene
     }
 
     @Override
-    public void onRemove(DownloadInfo info, List<DownloadInfo> list, int position) {
+    public void onRemove(@NonNull DownloadInfo info, @NonNull List<DownloadInfo> list, int position) {
         if (mList != list) {
             return;
         }
