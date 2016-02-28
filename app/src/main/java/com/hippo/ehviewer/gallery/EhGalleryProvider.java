@@ -100,6 +100,13 @@ public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.On
     }
 
     @Override
+    public void cancelRequest(int index) {
+        if (mSpiderQueen != null) {
+            mSpiderQueen.cancelRequest(index);
+        }
+    }
+
+    @Override
     public String getError() {
         if (mSpiderQueen != null) {
             return mSpiderQueen.getError();

@@ -756,7 +756,10 @@ public class GalleryActivity extends AppCompatActivity
         }
 
         @Override
-        public void onUnbind(GalleryPageView view) {
+        public void onUnbind(GalleryPageView view, int index) {
+            if (mGalleryProvider != null) {
+                mGalleryProvider.cancelRequest(index);
+            }
             view.setImage(null);
             view.setError(null, null);
         }

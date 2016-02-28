@@ -22,6 +22,7 @@ import android.util.Log;
 
 import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.gallery.gl.GalleryPageView;
 import com.hippo.image.Image;
 import com.hippo.yorozuya.PriorityThread;
 import com.hippo.yorozuya.StringUtils;
@@ -42,6 +43,7 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
 
     private final File mDir;
     private final Stack<Integer> mRequests = new Stack<>();
+    private final AtomicInteger mDecodingIndex = new AtomicInteger(GalleryPageView.INVALID_INDEX);
     @Nullable
     private Thread mBgThread;
     private volatile int mSize = STATE_WAIT;
@@ -78,10 +80,19 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
     @Override
     public void request(int index) {
         synchronized (mRequests) {
-            mRequests.add(index);
-            mRequests.notify();
+            if (!mRequests.contains(index) && index != mDecodingIndex.get()) {
+                mRequests.add(index);
+                mRequests.notify();
+            }
         }
         notifyPageWait(index);
+    }
+
+    @Override
+    public void cancelRequest(int index) {
+        synchronized (mRequests) {
+            mRequests.remove(Integer.valueOf(index));
+        }
     }
 
     @Override
@@ -125,10 +136,12 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
                     continue;
                 }
                 index = mRequests.pop();
+                mDecodingIndex.lazySet(index);
             }
 
             // Check index valid
             if (index < 0 || index >= files.length) {
+                mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
                 notifyPageFailed(index, GetText.getString(R.string.error_out_of_range));
                 continue;
             }
@@ -136,14 +149,17 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
             try {
                 InputStream is = new FileInputStream(new File(mDir, files[index]));
                 Image image = Image.decode(is, false);
+                mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
                 if (image != null) {
                     notifyPageSucceed(index, image);
                 } else {
                     notifyPageFailed(index, GetText.getString(R.string.error_decoding_failed));
                 }
             } catch (FileNotFoundException e) {
+                mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
                 notifyPageFailed(index, GetText.getString(R.string.error_not_found));
             }
+            mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
         }
 
         Log.i(TAG, "ImageDecoder end");

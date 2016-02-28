@@ -313,9 +313,9 @@ public class GalleryPreviewsScene extends ToolbarScene {
 
     private static class GetLargePreviewSetListener extends EhCallback<GalleryPreviewsScene, Pair<LargePreviewSet, Integer>> {
 
-        private int mTaskId;
-        private int mGid;
-        private int mPage;
+        private final int mTaskId;
+        private final int mGid;
+        private final int mPage;
 
         public GetLargePreviewSetListener(Context context, int stageId, String sceneTag, int taskId, int gid, int page) {
             super(context, stageId, sceneTag);

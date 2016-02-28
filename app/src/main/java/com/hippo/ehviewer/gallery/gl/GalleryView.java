@@ -855,13 +855,13 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         }
 
         public void unbind(GalleryPageView view) {
-            onUnbind(view);
+            onUnbind(view, view.getIndex());
             view.setIndex(GalleryPageView.INVALID_INDEX);
         }
 
         public abstract void onBind(GalleryPageView view, int index);
 
-        public abstract void onUnbind(GalleryPageView view);
+        public abstract void onUnbind(GalleryPageView view, int index);
 
         /**
          * @return Null for no error

@@ -130,7 +130,7 @@ public class SpiderQueen implements Runnable {
     @Nullable
     private Thread mDecoderThread;
     private final Stack<Integer> mDecodeRequestStack = new Stack<>();
-    private final AtomicInteger mDecodeIndex = new AtomicInteger(GalleryPageView.INVALID_INDEX);
+    private final AtomicInteger mDecodingIndex = new AtomicInteger(GalleryPageView.INVALID_INDEX);
 
     private volatile Thread[] mWorkers;
     private final Object mWorkerLock = new Object();
@@ -398,6 +398,43 @@ public class SpiderQueen implements Runnable {
         return request(index, false);
     }
 
+    private int getPageState(int index) {
+        synchronized (mPageStateLock) {
+            if (mPageStateArray != null && index >= 0 && index < mPageStateArray.length) {
+                return mPageStateArray[index];
+            } else {
+                return STATE_NONE;
+            }
+        }
+    }
+
+    private void tryToEnsureWorkers() {
+        boolean startWorkers = false;
+        synchronized (mRequestPageQueue) {
+            if (mPageStateArray != null &&
+                    (!mForceRequestPageQueue.isEmpty() ||
+                            !mRequestPageQueue.isEmpty() ||
+                            !mRequestPageQueue2.isEmpty() ||
+                            mDownloadPage >= 0 && mDownloadPage < mPageStateArray.length)) {
+                startWorkers = true;
+            }
+        }
+
+        if (startWorkers) {
+            ensureWorkers();
+        }
+    }
+
+    public void cancelRequest(int index) {
+        if (mQueenThread == null) {
+            return;
+        }
+
+        synchronized (mRequestPageQueue) {
+            mRequestPageQueue.remove(index);
+        }
+    }
+
     /**
      * @return
      * String for error<br>
@@ -410,62 +447,72 @@ public class SpiderQueen implements Runnable {
         }
 
         // Get page state
-        int state = STATE_NONE;
-        synchronized (mPageStateLock) {
-            if (mPageStateArray != null && index >= 0 && index < mPageStateArray.length) {
-                state = mPageStateArray[index];
-            }
-        }
+        int state = getPageState(index);
 
         // Fix state for force
         if (force && (state == STATE_FINISHED || state == STATE_FAILED)) {
             state = STATE_NONE;
         }
 
+        // Add to request
+        synchronized (mRequestPageQueue) {
+            if (state == STATE_NONE) {
+                if (force) {
+                    mForceRequestPageQueue.add(index);
+                } else {
+                    mRequestPageQueue.add(index);
+                }
+            }
+
+            // For not force add, add next some pages to request queue
+            if (!force) {
+                mRequestPageQueue2.clear();
+                int[] pageStateArray = mPageStateArray;
+                int size;
+                if (pageStateArray != null) {
+                    size = pageStateArray.length;
+                } else {
+                    size = Integer.MAX_VALUE;
+                }
+                for (int i = index + 1, n = index + i + NUMBER_PRELOAD; i < n && i < size; i++) {
+                    if (STATE_NONE == getPageState(i)) {
+                        mRequestPageQueue2.add(i);
+                    }
+                }
+            }
+        }
+
+        Object result;
+
         switch (state) {
             default:
             case STATE_NONE:
-                // Add to request queue
-                synchronized (mRequestPageQueue) {
-                    if (force) {
-                        mForceRequestPageQueue.add(index);
-                    } else {
-                        mRequestPageQueue.add(index);
-                        mRequestPageQueue2.clear();
-                        int[] pageStateArray = mPageStateArray;
-                        int size;
-                        if (pageStateArray != null) {
-                            size = pageStateArray.length;
-                        } else {
-                            size = Integer.MAX_VALUE;
-                        }
-                        for (int i = index + 1, n = index + i + NUMBER_PRELOAD; i < n && i < size; i++) {
-                            mRequestPageQueue2.add(i);
-                        }
-                    }
-                }
-                // Only ensure workers when get pages
-                if (mPageStateArray != null) {
-                    ensureWorkers();
-                }
-                return null;
+                result = null;
+                break;
             case STATE_DOWNLOADING:
-                return mPagePercentMap.get(index);
+                result = mPagePercentMap.get(index);
+                break;
             case STATE_FAILED:
                 String error = mPageErrorMap.get(index);
                 if (error == null) {
                     error = GetText.getString(R.string.error_unknown);
                 }
-                return error;
+                result = error;
+                break;
             case STATE_FINISHED:
                 synchronized (mDecodeRequestStack) {
-                    if (!mDecodeRequestStack.contains(index) && index != mDecodeIndex.get()) {
+                    if (!mDecodeRequestStack.contains(index) && index != mDecodingIndex.get()) {
                         mDecodeRequestStack.add(index);
                         mDecodeRequestStack.notify();
                     }
                 }
-                return null;
+                result = null;
+                break;
         }
+
+        tryToEnsureWorkers();
+
+        return result;
     }
 
     private void ensureWorkers() {
@@ -652,16 +699,7 @@ public class SpiderQueen implements Runnable {
         notifyGetPages(spiderInfo.pages);
 
         // Ensure worker
-        boolean startWorkers = false;
-        synchronized (mRequestPageQueue) {
-            if (!mForceRequestPageQueue.isEmpty() || !mRequestPageQueue.isEmpty() || !mRequestPageQueue2.isEmpty() ||
-                    mDownloadPage >= 0 && mDownloadPage < mPageStateArray.length) {
-                startWorkers = true;
-            }
-        }
-        if (startWorkers) {
-            ensureWorkers();
-        }
+        tryToEnsureWorkers();
 
         // Start spider decoder
         Thread decoderThread = new PriorityThread(new SpiderDecoder(), "SpiderDecoder-" + sIdGenerator.incrementAndGet(),
@@ -1119,19 +1157,19 @@ public class SpiderQueen implements Runnable {
                         continue;
                     }
                     index = mDecodeRequestStack.pop();
-                    mDecodeIndex.lazySet(index);
+                    mDecodingIndex.lazySet(index);
                 }
 
                 // Check index valid
                 if (index < 0 || index >= mPageStateArray.length) {
-                    mDecodeIndex.lazySet(GalleryPageView.INVALID_INDEX);
+                    mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
                     notifyGetImageFailure(index, GetText.getString(R.string.error_out_of_range));
                     continue;
                 }
 
                 InputStreamPipe pipe = mSpiderDen.openInputStreamPipe(index);
                 if (pipe == null) {
-                    mDecodeIndex.lazySet(GalleryPageView.INVALID_INDEX);
+                    mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
                     notifyGetImageFailure(index, GetText.getString(R.string.error_not_found));
                     continue;
                 }
@@ -1140,14 +1178,14 @@ public class SpiderQueen implements Runnable {
                     pipe.obtain();
                     Image image = Image.decode(pipe.open(), false);
                     if (image != null) {
-                        mDecodeIndex.lazySet(GalleryPageView.INVALID_INDEX);
+                        mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
                         notifyGetImageSuccess(index, image);
                     } else {
-                        mDecodeIndex.lazySet(GalleryPageView.INVALID_INDEX);
+                        mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
                         notifyGetImageFailure(index, GetText.getString(R.string.error_decoding_failed));
                     }
                 } catch (IOException e) {
-                    mDecodeIndex.lazySet(GalleryPageView.INVALID_INDEX);
+                    mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
                     notifyGetImageFailure(index, GetText.getString(R.string.error_reading_failed));
                 } finally {
                     pipe.close();

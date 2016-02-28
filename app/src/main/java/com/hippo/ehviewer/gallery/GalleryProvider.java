@@ -78,6 +78,8 @@ public abstract class GalleryProvider {
         request(index);
     }
 
+    public abstract void cancelRequest(int index);
+
     public abstract String getError();
 
     public void setGalleryProviderListener(GalleryProviderListener listener) {
