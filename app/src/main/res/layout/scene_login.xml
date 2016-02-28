@@ -48,7 +48,7 @@
                 android:layout_gravity="center_horizontal"
                 android:minWidth="@dimen/single_max_width">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                 android:layout_gravity="center_horizontal"
                 android:minWidth="@dimen/single_max_width">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -417,4 +417,29 @@ public class EhDB {
         raw.setId(dao.insert(raw));
         return raw;
     }
+
+    public static synchronized void moveDownloadLabel(int fromPosition, int toPosition) {
+        if (fromPosition == toPosition) {
+            return;
+        }
+
+        boolean reverse = fromPosition > toPosition;
+        int offset = reverse ? toPosition : fromPosition;
+        int limit = reverse ? fromPosition - toPosition + 1 : toPosition - fromPosition + 1;
+
+        DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
+        List<DownloadLabelRaw> list = dao.queryBuilder().orderAsc(DownloadLabelDao.Properties.Time)
+                .offset(offset).limit(limit).list();
+
+        int step = reverse ? 1 : -1;
+        int start = reverse ? limit - 1 : 0;
+        int end = reverse ? 0 : limit - 1;
+        long toTime = list.get(end).getTime();
+        for (int i = end; reverse ? i < start : i > start; i += step) {
+            list.get(i).setTime(list.get(i + step).getTime());
+        }
+        list.get(start).setTime(toTime);
+
+        dao.updateInTx(list);
+    }
 }

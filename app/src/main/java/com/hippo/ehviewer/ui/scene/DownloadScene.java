@@ -125,6 +125,14 @@ public class DownloadScene extends ToolbarScene
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mList = null;
+        DownloadManager manager = EhApplication.getDownloadManager(getContext());
+        manager.setDownloadInfoListener(null);
+    }
+
     private void updateForLabel() {
         DownloadManager manager = EhApplication.getDownloadManager(getContext());
         if (mLabel == null) {
@@ -271,8 +279,6 @@ public class DownloadScene extends ToolbarScene
     public void onDestroyView() {
         super.onDestroyView();
 
-        DownloadManager manager = EhApplication.getDownloadManager(getContext());
-        manager.setDownloadInfoListener(null);
         mRecyclerView = null;
         mFabLayout = null;
         mViewTransition = null;
@@ -293,7 +299,7 @@ public class DownloadScene extends ToolbarScene
                 int id = item.getItemId();
                 switch (id) {
                     case R.id.action_settings:
-                        // TODO
+                        startScene(new Announcer(DownloadLabelScene.class));
                         return true;
                 }
                 return false;
@@ -336,12 +342,6 @@ public class DownloadScene extends ToolbarScene
         });
 
         return view;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mList = null;
     }
 
     @Override
@@ -539,6 +539,19 @@ public class DownloadScene extends ToolbarScene
 
         if (mViewTransition != null) {
             if (mList != null && mList.size() == 0) {
+                mViewTransition.showView(1);
+            } else {
+                mViewTransition.showView(0);
+            }
+        }
+    }
+
+    @Override
+    public void onChange() {
+        mLabel = null;
+        updateForLabel();
+        if (mViewTransition != null) {
+            if (mList == null || mList.size() == 0) {
                 mViewTransition.showView(1);
             } else {
                 mViewTransition.showView(0);

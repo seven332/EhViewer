@@ -594,6 +594,29 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         }
     }
 
+    public void addLabel(String label) {
+        if (label == null || containLabel(label)) {
+            return;
+        }
+
+        mLabelList.add(EhDB.addDownloadLabel(label));
+        mMap.put(label, new LinkedList<DownloadInfo>());
+
+        if (mDownloadInfoListener != null) {
+            mDownloadInfoListener.onUpdateLabels();
+        }
+    }
+
+    public void moveLabel(int fromPosition, int toPosition) {
+        final DownloadLabelRaw item = mLabelList.remove(fromPosition);
+        mLabelList.add(toPosition, item);
+        EhDB.moveDownloadLabel(fromPosition, toPosition);
+
+        if (mDownloadInfoListener != null) {
+            mDownloadInfoListener.onUpdateLabels();
+        }
+    }
+
     boolean isIdle() {
         return mCurrentTask == null && mWaitList.isEmpty();
     }
@@ -901,9 +924,14 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         void onUpdateAll();
 
         /**
-         * Maybe all data is changed, maybe size is changed
+         * Maybe all data is changed, maybe list is changed
          */
         void onReload();
+
+        /**
+         * The list is gone
+         */
+        void onChange();
 
         /**
          * Remove the special info from the special position

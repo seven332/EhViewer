@@ -240,6 +240,14 @@
     <string name="download_move_dialog_title">Move</string>
     <string name="label">Label</string>
 
+    <!-- Download label -->
+    <string name="no_download_label">No labels</string>
+    <string name="add">Add</string>
+    <string name="new_label_title">New label</string>
+    <string name="label_text_is_empty">Label text is empty</string>
+    <string name="label_text_is_invalid">\"Default\" is an invalid label</string>
+    <string name="label_text_exist">Label text exists</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">Page %d</string>
     <string name="page_menu_refresh">@string/refresh</string>
